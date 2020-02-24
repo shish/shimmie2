@@ -107,6 +107,7 @@ class Image
     public static function by_hash(string $hash): ?Image
     {
         global $database;
+        $hash = strtolower($hash);
         $row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", ["hash"=>$hash]);
         return ($row ? new Image($row) : null);
     }

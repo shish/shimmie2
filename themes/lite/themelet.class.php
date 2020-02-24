@@ -72,7 +72,7 @@ class Themelet extends BaseThemelet
 
         $pages = [];
         foreach (range($start, $end) as $i) {
-            $pages[] = $this->litetheme_gen_page_link_block($base_url, $query, $i, $current_page, $i);
+            $pages[] = $this->litetheme_gen_page_link_block($base_url, $query, $i, $current_page, strval($i));
         }
         $pages_html = implode(" ", $pages);
 

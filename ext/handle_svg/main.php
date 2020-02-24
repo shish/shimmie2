@@ -67,6 +67,10 @@ class SVGFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $file): bool
     {
+        if (getMimeType($file)!="image/svg+xml") {
+            return false;
+        }
+
         $msp = new MiniSVGParser($file);
         return bool_escape($msp->valid);
     }
