@@ -51,6 +51,7 @@ class Page extends BasePage
 		<title>{$this->title}</title>
 		<meta name="description" content="Rule 34, if it exists there is porn of it."/>
 		<meta name="viewport" content="width=1024">
+		<meta name="theme-color" content="#7EB977">
 		<link rel="stylesheet" href="$data_href/themes/$theme_name/menuh.css" type="text/css">
 $header_html
 
