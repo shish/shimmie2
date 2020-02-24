@@ -179,16 +179,20 @@ class TranscodeImage extends Extension
                 if ($user->can(Permissions::EDIT_FILES)) {
                     $format = $_POST['transcode_format'];
                     $total = 0;
+                    $size_difference = 0;
                     foreach ($event->items as $image) {
                         try {
                             $database->beginTransaction();
 
-                            $this->transcode_and_replace_image($image, $format);
+                            $before_size =  $image->filesize;
+
+                            $new_image = $this->transcode_and_replace_image($image, $format);
                             // If a subsequent transcode fails, the database needs to have everything about the previous
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
                             $database->commit();
                             $total++;
+                            $size_difference += ($before_size - $new_image->filesize);
                         } catch (Exception $e) {
                             log_error("transcode", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
                             try {
@@ -198,7 +202,13 @@ class TranscodeImage extends Extension
                             }
                         }
                     }
-                    $page->flash("Transcoded $total items");
+                    if ($size_difference>0) {
+                        $page->flash("Transcoded $total items, reduced size by ".human_filesize($size_difference)." bytes");
+                    } elseif ($size_difference<0) {
+                        $page->flash("Transcoded $total items, increased size by ".human_filesize(-1*$size_difference)." bytes");
+                    } else {
+                        $page->flash("Transcoded $total items, no size difference");
+                    }
                 }
                 break;
         }
@@ -234,7 +244,7 @@ class TranscodeImage extends Extension
 
 
 
-    private function transcode_and_replace_image(Image $image_obj, String $target_format)
+    private function transcode_and_replace_image(Image $image_obj, String $target_format): Image
     {
         $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
 
@@ -258,6 +268,8 @@ class TranscodeImage extends Extension
         @unlink($tmp_filename);
 
         send_event(new ImageReplaceEvent($image_obj->id, $new_image));
+
+        return $new_image;
     }
 
 
