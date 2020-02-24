@@ -733,3 +733,10 @@ function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
         )
     );
 }
+
+const BYTE_DENOMINATIONS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+function human_filesize(int $bytes, $decimals = 2)
+{
+    $factor = floor((strlen(strval($bytes)) - 1) / 3);
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @BYTE_DENOMINATIONS[$factor];
+}
