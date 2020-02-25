@@ -518,12 +518,13 @@ class Image
             if (!(strpos($image_link, "://") > 0) && !startsWith($image_link, "/")) {
                 $image_link = make_link($image_link);
             }
-            return $this->parse_link_template($image_link);
+            $chosen = $image_link;
         } elseif ($config->get_bool('nice_urls', false)) {
-            return $this->parse_link_template(make_link($nice));
+            $chosen = make_link($nice);
         } else {
-            return $this->parse_link_template(make_link($plain));
+            $chosen = make_link($plain);
         }
+        return $this->parse_link_template($chosen);
     }
 
     /**
