@@ -252,7 +252,8 @@ class UploadTheme extends Themelet
 		";
     }
 
-    protected function get_accept() {
+    protected function get_accept()
+    {
         return join(",", DataHandlerExtension::get_all_supported_exts());
     }
 }

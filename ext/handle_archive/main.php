@@ -38,10 +38,22 @@ class ArchiveFileHandler extends DataHandlerExtension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event) {}
+    public function onDisplayingImage(DisplayingImageEvent $event)
+    {
+    }
 
     // we don't actually do anything, just accept one upload and spawn several
-    protected function media_check_properties(MediaCheckPropertiesEvent $event): void {}
-    protected function check_contents(string $tmpname): bool {return false;}
-    protected function create_thumb(string $hash, string $type): bool {return false;}
+    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    {
+    }
+
+    protected function check_contents(string $tmpname): bool
+    {
+        return false;
+    }
+
+    protected function create_thumb(string $hash, string $type): bool
+    {
+        return false;
+    }
 }
