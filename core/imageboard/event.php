@@ -114,7 +114,8 @@ class ThumbnailGenerationEvent extends Event
 
 /*
  * ParseLinkTemplateEvent:
- *   $link     -- the formatted link
+ *   $link     -- the formatted text (with each element URL Escape'd)
+ *   $text     -- the formatted text (not escaped)
  *   $original -- the formatting string, for reference
  *   $image    -- the image who's link is being parsed
  */
@@ -122,6 +123,8 @@ class ParseLinkTemplateEvent extends Event
 {
     /** @var string */
     public $link;
+    /** @var string */
+    public $text;
     /** @var string */
     public $original;
     /** @var Image */
@@ -131,6 +134,7 @@ class ParseLinkTemplateEvent extends Event
     {
         parent::__construct();
         $this->link = $link;
+        $this->text = $link;
         $this->original = $link;
         $this->image = $image;
     }
@@ -138,7 +142,8 @@ class ParseLinkTemplateEvent extends Event
     public function replace(string $needle, ?string $replace): void
     {
         if (!is_null($replace)) {
-            $this->link = str_replace($needle, $replace, $this->link);
+            $this->link = str_replace($needle, url_escape($replace), $this->link);
+            $this->text = str_replace($needle, $replace, $this->text);
         }
     }
 }

@@ -492,7 +492,9 @@ class Image
      */
     public function get_nice_image_name(): string
     {
-        return $this->parse_link_template('$id - $tags.$ext');
+        $plte = new ParseLinkTemplateEvent('$id - $tags.$ext', $this);
+        send_event($plte);
+        return $plte->text;
     }
 
     /**
@@ -534,7 +536,9 @@ class Image
     public function get_tooltip(): string
     {
         global $config;
-        return $this->parse_link_template($config->get_string(ImageConfig::TIP));
+        $plte = new ParseLinkTemplateEvent($config->get_string(ImageConfig::TIP), $this);
+        send_event($plte);
+        return $plte->text;
     }
 
     /**

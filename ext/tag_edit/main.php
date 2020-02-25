@@ -273,7 +273,7 @@ class TagEdit extends Extension
         $tags = $event->image->get_tag_list();
         $tags = str_replace("/", "", $tags);
         $tags = preg_replace("/^\.+/", "", $tags);
-        $event->replace('$tags', url_escape($tags));
+        $event->replace('$tags', $tags);
     }
 
     private function mass_tag_edit(string $search, string $replace)
