@@ -32,6 +32,12 @@ class RSSImages extends Extension
         }
     }
 
+    public function onImageInfoSet(ImageInfoSetEvent $event)
+    {
+        global $cache;
+        $cache->delete("rss-item-image:{$event->image->id}");
+    }
+
     private function do_rss(array $images, array $search_terms, int $page_number)
     {
         global $page;
@@ -81,7 +87,7 @@ class RSSImages extends Extension
     {
         global $cache;
 
-        $cached = $cache->get("rss-thumb:{$image->id}");
+        $cached = $cache->get("rss-item-image:{$image->id}");
         if ($cached) {
             return $cached;
         }
@@ -109,7 +115,7 @@ class RSSImages extends Extension
 		</item>
 		";
 
-        $cache->set("rss-thumb:{$image->id}", $data, 3600);
+        $cache->set("rss-item-image:{$image->id}", $data, 86400);
 
         return $data;
     }
