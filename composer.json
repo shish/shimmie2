@@ -37,7 +37,7 @@
 		"shish/ffsphp"              : "0.0.*",
 		"shish/microcrud"           : "dev-master",
 		"shish/microhtml"           : "^1.0.0",
-		"enshrined/svg-sanitize"    : "0.12.*",
+		"enshrined/svg-sanitize"    : "0.13.*",
 
 		"bower-asset/jquery"         : "1.12.*",
 		"bower-asset/jquery-timeago" : "1.5.*",
