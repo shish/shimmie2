@@ -1,0 +1,26 @@
+#comicMain {
+    background: black;
+    color: white;
+    font-size: 3em;
+}
+#comicPageList {
+    width: 90%;
+}
+
+#comicView {
+    display: flex;
+    flex-flow: row;
+}
+#comicView #comicPage {
+    flex: 10 auto;
+}
+#comicView #comicPrev,
+#comicView #comicNext {
+    flex: 1 auto;
+    padding-top: 45%;
+}
+#comicView .comicPager {
+    position: absolute;
+    top: 0;
+    margin: auto;
+}
