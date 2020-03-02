@@ -74,7 +74,7 @@ $(document).ready(function() {
 
 	/** setup arrow key bindings **/
     $(document).keyup(function(e) {
-        if($(e.target).is('input,textarea')){ return; }
+        if ($(e.target).is('input,textarea')) { return; }
         if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) { return; }
         if (e.keyCode === 37 && $("[rel='previous']").length) {
             window.location.href = $("[rel='previous']").attr("href");
