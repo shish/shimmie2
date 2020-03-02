@@ -252,6 +252,20 @@ class Database
     }
 
     /**
+     * Execute an SQL query and returns a bool indicating if any data was returned
+     */
+    public function exists(string $query, array $args = []): bool
+    {
+        $_start = microtime(true);
+        $row = $this->execute($query, $args)->fetch();
+        $this->count_time("exists", $_start, $query, $args);
+        if ($row==null) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Get the ID of the last inserted row.
      */
     public function get_last_insert_id(string $seq): int
