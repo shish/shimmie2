@@ -177,19 +177,22 @@ class AliasEditor extends Extension
         return $csv;
     }
 
-    private function add_alias_csv(Database $database, string $csv)
+    private function add_alias_csv(Database $database, string $csv): int
     {
         $csv = str_replace("\r", "\n", $csv);
+        $i = 0;
         foreach (explode("\n", $csv) as $line) {
             $parts = str_getcsv($line);
             if (count($parts) == 2) {
                 try {
                     send_event(new AddAliasEvent($parts[0], $parts[1]));
+                    $i++;
                 } catch (AddAliasException $ex) {
                     $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
                 }
             }
         }
+        return $i;
     }
 
     /**
