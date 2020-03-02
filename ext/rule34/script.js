@@ -1,4 +1,4 @@
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	if(Cookies.get("ui-tnc-agreed") !== "true") {
 		$("BODY").addClass("censored");
 		$("BODY").append("<div class='tnc_bg'></div>");

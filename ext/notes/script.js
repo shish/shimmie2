@@ -1,6 +1,6 @@
 /*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
 
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	if(window.notes) {
 		$('#main_image').load(function(){
 			$('#main_image').imgNotes({notes: window.notes});

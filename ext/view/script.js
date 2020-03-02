@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	if(document.location.hash.length > 3) {
 		var query = document.location.hash.substring(1);
 

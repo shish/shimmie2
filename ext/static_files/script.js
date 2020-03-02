@@ -1,6 +1,6 @@
 /*jshint bitwise:false, curly:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:false, strict:false, browser:true */
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	/** Load jQuery extensions **/
 	//Code via: http://stackoverflow.com/a/13106698
 	$.fn.highlight = function (fadeOut) {

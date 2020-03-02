@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	$(".shm-clink").each(function(idx, elm) {
 		var target_id = $(elm).data("clink-sel");
 		if(target_id && $(target_id).length > 0) {

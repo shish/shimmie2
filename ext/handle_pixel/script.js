@@ -1,4 +1,4 @@
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	function zoom(zoom_type, save_cookie) {
 		save_cookie = save_cookie === undefined ? true : save_cookie;
 		

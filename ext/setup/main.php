@@ -348,7 +348,7 @@ class Setup extends Extension
 			checkbox.disabled = true;
 			out_span.innerHTML = '(testing...)';
 
-			$(document).ready(function() {
+			document.addEventListener('DOMContentLoaded', () => {
 				var http_request = getHTTPObject();
 				http_request.open('GET', '$test_url', false);
 				http_request.send(null);

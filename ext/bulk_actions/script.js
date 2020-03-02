@@ -189,9 +189,7 @@ function add_selector_button($block) {
     $block.click(c); // sometimes the thumbs *is* the A
 }
 
-
-
-$(function () {
+document.addEventListener('DOMContentLoaded', () => {
 	// Clear the selection, in case it was autocompleted by the browser.
 	$('#bulk_selected_ids').val("");
 });
