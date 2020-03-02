@@ -17,7 +17,7 @@ class AutoTaggerTest extends ShimmiePHPUnitTestCase
 
         $this->log_out();
         $this->get_page('auto_tag/list');
-        $this->assert_title("Auto-Tag List");
+        $this->assert_title("Auto-Tag");
         $this->assert_no_text("Add");
     }
 
