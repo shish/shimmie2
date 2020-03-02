@@ -4,14 +4,14 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b01eaaf50b55561a6390d85f37e3a93f",
+    "content-hash": "3719624fc2c580e06fe8595e6bf6cb71",
     "packages": [
         {
             "name": "bower-asset/jquery",
             "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
@@ -151,16 +151,16 @@
         },
         {
             "name": "enshrined/svg-sanitize",
-            "version": "0.12.0",
+            "version": "0.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/darylldoyle/svg-sanitizer.git",
-                "reference": "51ca4b713f3706d6b27769c6296bbc0c28a5bbd0"
+                "reference": "6add43e5c5649bc40e3afcb68c522720dcb336f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/51ca4b713f3706d6b27769c6296bbc0c28a5bbd0",
-                "reference": "51ca4b713f3706d6b27769c6296bbc0c28a5bbd0",
+                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/6add43e5c5649bc40e3afcb68c522720dcb336f9",
+                "reference": "6add43e5c5649bc40e3afcb68c522720dcb336f9",
                 "shasum": ""
             },
             "require": {
@@ -188,7 +188,7 @@
                 }
             ],
             "description": "An SVG sanitizer for PHP",
-            "time": "2019-10-21T22:39:08+00:00"
+            "time": "2019-12-09T08:43:12+00:00"
         },
         {
             "name": "flexihash/flexihash",
