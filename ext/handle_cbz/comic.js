@@ -41,12 +41,14 @@ function Comic(root, comicURL) {
     this.prev = function() {
         if(self.comicPage > 0) {
             self.setPage(self.comicPage-1);
+            document.getElementById("comicMain").scrollIntoView();
         }
     };
 
     this.next = function() {
         if(self.comicPage < self.comicPages.length) {
             self.setPage(self.comicPage+1);
+            document.getElementById("comicMain").scrollIntoView();
         }
     };
 
