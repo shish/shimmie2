@@ -6,7 +6,7 @@ $(document).ready(function() {
 	$.fn.highlight = function (fadeOut) {
 		fadeOut = typeof fadeOut !== 'undefined' ? fadeOut : 5000;
 		$(this).each(function () {
-			var el = $(this);
+			let el = $(this);
 			$("<div/>")
 				.width(el.outerWidth())
 				.height(el.outerHeight())
@@ -33,27 +33,26 @@ $(document).ready(function() {
 	$("table.sortable").tablesorter();
 
 	/** Setup sidebar toggle **/
+	let sidebar_hidden = [];
 	try {
-		var sidebar_hidden = (Cookies.get("ui-sidebar-hidden") || "").split("|");
-		for(var i in sidebar_hidden) {
-			if(sidebar_hidden.hasOwnProperty(i) && sidebar_hidden[i].length > 0) {
+		sidebar_hidden = (Cookies.get("ui-sidebar-hidden") || "").split("|");
+        for (let i=0; i<sidebar_hidden.length; i++) {
+			if(sidebar_hidden[i].length > 0) {
 				$(sidebar_hidden[i]+" .blockbody").hide();
 			}
 		}
 	}
-	catch(err) {
-		var sidebar_hidden = [];
-	}
+	catch(err) {}
 	$(".shm-toggler").each(function(idx, elm) {
-		var tid = $(elm).data("toggle-sel");
-		var tob = $(tid+" .blockbody");
+		let tid = $(elm).data("toggle-sel");
+		let tob = $(tid+" .blockbody");
 		$(elm).click(function(e) {
 			tob.slideToggle("slow");
 			if(sidebar_hidden.indexOf(tid) === -1) {
 				sidebar_hidden.push(tid);
 			}
 			else {
-				for (var i in sidebar_hidden) {
+			    for (let i=0; i<sidebar_hidden.length; i++) {
 					if (sidebar_hidden[i] === tid) {
 						sidebar_hidden.splice(i, 1);
 					}
@@ -65,8 +64,8 @@ $(document).ready(function() {
 
 	/** setup unlocker buttons **/
 	$(".shm-unlocker").each(function(idx, elm) {
-		var tid = $(elm).data("unlock-sel");
-		var tob = $(tid);
+		let tid = $(elm).data("unlock-sel");
+		let tob = $(tid);
 		$(elm).click(function(e) {
 			$(elm).attr("disabled", true);
 			tob.attr("disabled", false);
