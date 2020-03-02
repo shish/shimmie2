@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 class AutoTaggerTest extends ShimmiePHPUnitTestCase
 {
-    public function testAutoTagerList()
+    public function testAutoTaggerList()
     {
         $this->get_page('auto_tag/list');
         $this->assert_response(200);
-        $this->assert_title("Auto-Tag List");
+        $this->assert_title("Auto-Tag");
     }
 
     public function testAutoTaggerListReadOnly()
@@ -21,7 +21,7 @@ class AutoTaggerTest extends ShimmiePHPUnitTestCase
         $this->assert_no_text("Add");
     }
 
-    public function testAutoTag()
+    public function testAutoTagger()
     {
         $this->log_in_as_admin();
 
@@ -50,7 +50,7 @@ class AutoTaggerTest extends ShimmiePHPUnitTestCase
         send_event(new DeleteAutoTagEvent("test1"));
         send_event(new DeleteAutoTagEvent("test2"));
         $this->get_page('auto_tag/list');
-        $this->assert_title("Auto-Tag List");
+        $this->assert_title("Auto-Tag");
         $this->assert_no_text("test1");
         $this->assert_no_text("test2");
         $this->assert_no_text("test3");
