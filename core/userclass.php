@@ -77,6 +77,7 @@ new UserClass("base", null, [
 
     Permissions::MANAGE_EXTENSION_LIST => false,
     Permissions::MANAGE_ALIAS_LIST => false,
+    Permissions::MANAGE_AUTO_TAG => false,
     Permissions::MASS_TAG_EDIT => false,
 
     Permissions::VIEW_IP => false,         # view IP addresses associated with things
@@ -209,6 +210,7 @@ new UserClass("admin", "base", [
     Permissions::REPLACE_IMAGE => true,
     Permissions::MANAGE_EXTENSION_LIST => true,
     Permissions::MANAGE_ALIAS_LIST => true,
+    Permissions::MANAGE_AUTO_TAG => true,
     Permissions::EDIT_IMAGE_TAG => true,
     Permissions::EDIT_IMAGE_SOURCE => true,
     Permissions::EDIT_IMAGE_OWNER => true,

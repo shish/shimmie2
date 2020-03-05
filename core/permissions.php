@@ -8,6 +8,7 @@ abstract class Permissions
 
     public const MANAGE_EXTENSION_LIST = "manage_extension_list";
     public const MANAGE_ALIAS_LIST = "manage_alias_list";
+    public const MANAGE_AUTO_TAG = "manage_auto_tag";
     public const MASS_TAG_EDIT = "mass_tag_edit";
 
     public const VIEW_IP = "view_ip";         # view IP addresses associated with things
