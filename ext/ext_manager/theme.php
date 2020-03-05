@@ -16,6 +16,7 @@ use function MicroHTML\DIV;
 use function MicroHTML\P;
 use function MicroHTML\BR;
 use function MicroHTML\emptyHTML;
+use function MicroHTML\rawHTML;
 
 class ExtManagerTheme extends Themelet
 {
@@ -92,7 +93,7 @@ class ExtManagerTheme extends Themelet
         $author = emptyHTML();
         if (count($info->authors) > 0) {
             $author->appendChild(BR());
-            $author->appendChild(B(count($info->authors) > 1 ? "Authors" : "Author"));
+            $author->appendChild(B(count($info->authors) > 1 ? "Authors: " : "Author: "));
             foreach ($info->authors as $auth=>$email) {
                 if (!empty($email)) {
                     $author->appendChild(A(["href"=>"mailto:$email"], $auth));
@@ -108,7 +109,7 @@ class ExtManagerTheme extends Themelet
             $author,
             ($info->version ? emptyHTML(BR(), B("Version"), $info->version) : null),
             ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href"=>$info->link], "Link")) : null),
-            P($info->documentation),
+            P(rawHTML($info->documentation)),
             // <hr>,
             P(A(["href"=>make_link("ext_manager")], "Back to the list"))
         );
