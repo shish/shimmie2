@@ -109,7 +109,7 @@ class ExtManagerTheme extends Themelet
             $author,
             ($info->version ? emptyHTML(BR(), B("Version"), $info->version) : null),
             ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href"=>$info->link], "Link")) : null),
-            P(rawHTML($info->documentation)),
+            P(rawHTML($info->documentation ?? "(This extension has no documentation)")),
             // <hr>,
             P(A(["href"=>make_link("ext_manager")], "Back to the list"))
         );
