@@ -45,7 +45,7 @@ class Themelet extends BaseThemelet
 
         $pages = [];
         foreach (range($start, $end) as $i) {
-            $pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, $i);
+            $pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, (string)$i);
         }
         $pages_html = implode(" ", $pages);
 
