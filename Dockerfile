@@ -17,4 +17,5 @@ RUN echo '=== Installing ===' && mkdir -p data/config && echo "<?php \$dsn = \"s
     echo '=== Unit Tests ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml && \
     echo '=== Coverage ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
     echo '=== Cleaning ===' && rm -rf data
+RUN chmod +x /app/tests/docker-init.sh
 CMD "/app/tests/docker-init.sh"
