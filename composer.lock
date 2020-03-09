@@ -151,16 +151,16 @@
         },
         {
             "name": "enshrined/svg-sanitize",
-            "version": "0.13.1",
+            "version": "0.13.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/darylldoyle/svg-sanitizer.git",
-                "reference": "6add43e5c5649bc40e3afcb68c522720dcb336f9"
+                "reference": "bc66593f255b7d2613d8f22041180036979b6403"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/6add43e5c5649bc40e3afcb68c522720dcb336f9",
-                "reference": "6add43e5c5649bc40e3afcb68c522720dcb336f9",
+                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/bc66593f255b7d2613d8f22041180036979b6403",
+                "reference": "bc66593f255b7d2613d8f22041180036979b6403",
                 "shasum": ""
             },
             "require": {
@@ -188,7 +188,7 @@
                 }
             ],
             "description": "An SVG sanitizer for PHP",
-            "time": "2019-12-09T08:43:12+00:00"
+            "time": "2020-01-20T01:34:17+00:00"
         },
         {
             "name": "flexihash/flexihash",
@@ -392,12 +392,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "2552a8ff50bbfd305a6eb1ed010df8428d916b8d"
+                "reference": "7e6ca02902fffce1883a052735b6b782443ab572"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/2552a8ff50bbfd305a6eb1ed010df8428d916b8d",
-                "reference": "2552a8ff50bbfd305a6eb1ed010df8428d916b8d",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/7e6ca02902fffce1883a052735b6b782443ab572",
+                "reference": "7e6ca02902fffce1883a052735b6b782443ab572",
                 "shasum": ""
             },
             "require": {
@@ -433,7 +433,7 @@
                 "crud",
                 "generator"
             ],
-            "time": "2020-02-19T00:22:36+00:00"
+            "time": "2020-03-09T23:50:13+00:00"
         },
         {
             "name": "shish/microhtml",
@@ -804,12 +804,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "7462d5f123dfc080dfdf26897032a6513644fc95"
+                "reference": "d6b5291650d058fe1162a54fee9d923de19bcda2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/7462d5f123dfc080dfdf26897032a6513644fc95",
-                "reference": "7462d5f123dfc080dfdf26897032a6513644fc95",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/d6b5291650d058fe1162a54fee9d923de19bcda2",
+                "reference": "d6b5291650d058fe1162a54fee9d923de19bcda2",
                 "shasum": ""
             },
             "require": {
@@ -842,7 +842,7 @@
                 }
             ],
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
-            "time": "2020-02-18T18:59:58+00:00"
+            "time": "2020-03-06T17:11:40+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -850,12 +850,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9"
+                "reference": "451c3cd1418cf640de218914901e51b064abb093"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/451c3cd1418cf640de218914901e51b064abb093",
+                "reference": "451c3cd1418cf640de218914901e51b064abb093",
                 "shasum": ""
             },
             "require": {
@@ -905,7 +905,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2020-01-20T15:57:02+00:00"
+            "time": "2020-03-05T15:02:03+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1165,12 +1165,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a8275a2fbc5cc069b0c8fe40c1b0cc7b4d551b8a"
+                "reference": "a2712903f99acd2c4ccbef6b46296141a4136a47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a8275a2fbc5cc069b0c8fe40c1b0cc7b4d551b8a",
-                "reference": "a8275a2fbc5cc069b0c8fe40c1b0cc7b4d551b8a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a2712903f99acd2c4ccbef6b46296141a4136a47",
+                "reference": "a2712903f99acd2c4ccbef6b46296141a4136a47",
                 "shasum": ""
             },
             "require": {
@@ -1240,7 +1240,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-02-22T07:04:45+00:00"
+            "time": "2020-03-09T13:12:32+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1863,12 +1863,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "fbdeaec0df06cf3d51c93de80c7eb76e271f5a38"
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/fbdeaec0df06cf3d51c93de80c7eb76e271f5a38",
-                "reference": "fbdeaec0df06cf3d51c93de80c7eb76e271f5a38",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
                 "shasum": ""
             },
             "require": {
@@ -1880,7 +1880,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.14-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -1913,7 +1913,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2020-01-13T11:15:53+00:00"
+            "time": "2020-02-27T09:26:54+00:00"
         },
         {
             "name": "theseer/tokenizer",

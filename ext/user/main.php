@@ -5,6 +5,7 @@ require_once "events.php";
 use function MicroHTML\A;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\EnumColumn;
+use MicroCRUD\IntegerColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
@@ -47,6 +48,7 @@ class UserTable extends Table
         $this->size = 100;
         $this->limit = 1000000;
         $this->set_columns([
+            new IntegerColumn("id", "ID"),
             new UserNameColumn("name", "Name"),
             new EnumColumn("class", "Class", $classes),
             // Added later, for admins only
