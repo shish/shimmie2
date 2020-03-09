@@ -54,7 +54,7 @@ class UserTable extends Table
             new DateColumn("joindate", "Join Date"),
             new UserActionColumn(),
         ]);
-        $this->order_by = ["name"];
+        $this->order_by = ["id DESC"];
         $this->table_attrs = ["class" => "zebra"];
     }
 }
