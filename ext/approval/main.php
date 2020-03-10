@@ -80,14 +80,14 @@ class Approval extends Extension
                     $database->set_timeout(300000); // These updates can take a little bit
                     $database->execute(
                         "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE approved = :false",
-                        ["approved_by_id"=>$user->id, "true"=>true, "false"=>false]
+                        ["approved_by_id"=>$user->id, "true"=>true, "false"=>$database->scoresql_value_prepare(false)]
                     );
                     break;
                 case "disapprove_all":
                     $database->set_timeout(300000); // These updates can take a little bit
                     $database->execute(
                         "UPDATE images SET approved = :false, approved_by_id = NULL WHERE approved = :true",
-                        ["true"=>true, "false"=>false]
+                        ["true"=>true, "false"=>$database->scoresql_value_prepare(false)]
                     );
                     break;
                 default:
@@ -173,7 +173,7 @@ class Approval extends Extension
 
         $database->execute(
             "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE id = :id AND approved = :false",
-            ["approved_by_id"=>$user->id, "id"=>$image_id, "true"=>true, "false"=>false]
+            ["approved_by_id"=>$user->id, "id"=>$image_id, "true"=>true, "false"=>$database->scoresql_value_prepare(false)]
         );
     }
 
@@ -183,7 +183,7 @@ class Approval extends Extension
 
         $database->execute(
             "UPDATE images SET approved = :false, approved_by_id = NULL WHERE id = :id AND approved = :true",
-            ["id"=>$image_id, "true"=>true, "false"=>false]
+            ["id"=>$image_id, "true"=>true, "false"=>$database->scoresql_value_prepare(false)]
         );
     }
 
