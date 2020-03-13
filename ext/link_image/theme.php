@@ -77,7 +77,7 @@ class LinkImageTheme extends Themelet
     {
         switch ($type) {
             case "html":
-                $text = "<img src=\"$src\" />";
+                $text = "<img src=\"$src\" alt=\"\" />";
                 break;
             case "ubb":
                 $text = "[img]".$src."[/img]";

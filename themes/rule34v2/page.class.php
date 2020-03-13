@@ -38,15 +38,15 @@ class Page extends BasePage
             }
         }
 
-        # used in header.inc
         $query = !empty($this->_search_query) ? html_escape(Tag::implode($this->_search_query)) : "";
+        assert(!is_null($query));  # used in header.inc, do not remove :P
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
         $generated = autodate(date('c'));
         $footer_html = $this->footer_html();
 
         print <<<EOD
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<title>{$this->title}</title>
 		<meta name="description" content="Rule 34, if it exists there is porn of it."/>
@@ -93,10 +93,18 @@ EOD;
 		</article>
 
 		<footer>
-<font size="2px"><a href="http://rule34.paheal.net/wiki/Terms%20of%20use">Terms of use</a> !!! <a href="http://rule34.paheal.net/wiki/Privacy%20policy">Privacy policy</a> !!! <a href="http://rule34.paheal.net/wiki/2257">18 U.S.C. &sect;2257</a><br /></font>
+<span style="font-size: 2px;">
+    <a href="http://rule34.paheal.net/wiki/Terms%20of%20use">Terms of use</a>
+    !!!
+    <a href="http://rule34.paheal.net/wiki/Privacy%20policy">Privacy policy</a>
+    !!!
+    <a href="http://rule34.paheal.net/wiki/2257">18 U.S.C. &sect;2257</a><br />
+</span>
 <hr />
-<font size="2px">BTC: <b>193gutWtgirF7js14ivcXfnfQgXv9n5BZo</b>
-ETH: <b>0x68B88a00e69Bde88E9db1b9fC10b8011226e26aF</b></font>
+<span style="font-size: 2px;">
+    BTC: <b>193gutWtgirF7js14ivcXfnfQgXv9n5BZo</b>
+    ETH: <b>0x68B88a00e69Bde88E9db1b9fC10b8011226e26aF</b>
+</span>
 <hr />
 <br>
 Thank you!

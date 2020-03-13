@@ -1,7 +1,10 @@
 <?php declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+
 require_once "core/polyfills.php";
 
-class PolyfillsTest extends \PHPUnit\Framework\TestCase
+class PolyfillsTest extends TestCase
 {
     public function test_html_escape()
     {

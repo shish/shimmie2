@@ -182,6 +182,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     public function testRemoveParentByTag($imgs)
     {
         [$image_1, $image_2, $image_3] = $imgs;
+        assert(!is_null($image_3));
 
         // check parent is set
         $this->assertEquals($image_2->parent_id, $image_1->id);

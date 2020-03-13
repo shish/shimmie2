@@ -172,7 +172,6 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMixedSearchTagMeta($image_ids)
     {
-        global $database;
         // multiple tags, many results
         $this->assert_search_results(["computer", "size=640x480"], [$image_ids[1], $image_ids[0]]);
     }

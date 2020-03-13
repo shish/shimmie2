@@ -5,7 +5,7 @@ class Page extends BasePage
     {
         global $config;
 
-        list($nav_links, $sub_links) = $this->get_nav_links();
+        // list($nav_links, $sub_links) = $this->get_nav_links();
         $theme_name = $config->get_string(SetupConfig::THEME, 'material');
         $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = get_base_href();

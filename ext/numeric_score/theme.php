@@ -80,11 +80,9 @@ class NumericScoreTheme extends Themelet
         $f_dte = make_link("popular_by_".$dte[3]."?".date($dte[2], (strtotime('+1 '.$dte[3], strtotime($dte[0])))));
 
         $html = "\n".
-            "<center>\n".
-            "	<h3>\n".
-            "		<a href='{$b_dte}'>&laquo;</a> {$dte[1]} <a href='{$f_dte}'>&raquo;</a>\n".
-            "	</h3>\n".
-            "</center>\n".
+            "<h3 style='text-align: center;'>\n".
+            "	<a href='{$b_dte}'>&laquo;</a> {$dte[1]} <a href='{$f_dte}'>&raquo;</a>\n".
+            "</h3>\n".
             "<br/>\n".$pop_images;
 
 

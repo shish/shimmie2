@@ -10,7 +10,7 @@ class HomeTheme extends Themelet
         $page->set_data(
             <<<EOD
 <!doctype html>
-<html>
+<html lang="en">
 	<head>
 		<title>$sitename</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">

@@ -64,7 +64,6 @@ class HelpPages extends Extension
             } else {
                 $page->set_mode(PageMode::PAGE);
                 $name = $event->get_arg(0);
-                $title = $name;
                 if (array_key_exists($name, $pages)) {
                     $title = $pages[$name];
                 } else {

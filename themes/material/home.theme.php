@@ -9,7 +9,7 @@ class CustomHomeTheme extends HomeTheme
         $hh = $page->get_all_html_headers();
         $page->set_data(
             <<<EOD
-<html>
+<html lang="en">
 	<head>
 		<title>$sitename</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">

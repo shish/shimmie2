@@ -1,7 +1,10 @@
 <?php declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+
 require_once "core/block.php";
 
-class BlockTest extends \PHPUnit\Framework\TestCase
+class BlockTest extends TestCase
 {
     public function test_basic()
     {

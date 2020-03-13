@@ -411,7 +411,7 @@ function tt_MkMainDivHtm()
 {
 	return(
 		'<div id="WzTtDiV"></div>' +
-		(tt_ie56 ? ('<iframe id="WzTtIfRm" src="javascript:false" scrolling="no" frameborder="0" style="filter:Alpha(opacity=0);position:absolute;top:0px;left:0px;display:none;"></iframe>')
+		(tt_ie56 ? ('<iframe id="WzTtIfRm" src="javascript:false" scrolling="no" frameborder="0" style="filter:Alpha(opacity=0);position:absolute;top:0;left:0;display:none;"></iframe>')
 		: '')
 	);
 }
@@ -1305,7 +1305,7 @@ function tt_GetWndCliSiz(s)
 	return(
 		// document.documentElement.client+s functional, returns > 0
 		((db = document.documentElement) && (y = db[sC])) ? y
-		// ... not functional, in which case document.body.client+s 
+		// ... not functional, in which case document.body.client+s
 		// is the clientarea size, fortunately
 		: document.body[sC]
 	);

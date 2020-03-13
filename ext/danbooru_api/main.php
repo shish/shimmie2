@@ -97,6 +97,7 @@ class DanbooruApi extends Extension
         elseif (false && isset($_GET['tags'])) {
             $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
             $tags = Tag::explode($_GET['tags']);
+            assert(!is_null($start) && !is_null($tags));
         } else {
             $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
             $sqlresult = $database->get_all(

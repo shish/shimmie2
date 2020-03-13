@@ -61,8 +61,10 @@ function get_dsn()
 {
     if (file_exists("data/config/auto_install.conf.php")) {
         $dsn = null;
+        /** @noinspection PhpIncludeInspection */
         require_once "data/config/auto_install.conf.php";
     } elseif (@$_POST["database_type"] == DatabaseDriver::SQLITE) {
+        /** @noinspection PhpUnhandledExceptionInspection */
         $id = bin2hex(random_bytes(5));
         $dsn = "sqlite:data/shimmie.{$id}.sqlite";
     } elseif (isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
@@ -136,7 +138,7 @@ function ask_questions()
 
     <h3>Database Install</h3>
     <form action="index.php" method="POST">
-        <center>
+        <div style="text-align: center;">
             <table class='form'>
                 <tr>
                     <th>Type:</th>
@@ -164,7 +166,7 @@ function ask_questions()
                 </tr>
                 <tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
             </table>
-        </center>
+        </div>
         <script>
         document.addEventListener('DOMContentLoaded', update_qs);
         function q(n) {
@@ -342,7 +344,7 @@ function write_config($dsn)
 function exit_with_page($title, $body, $code=0)
 {
     print("<!DOCTYPE html>
-<html>
+<html lang='en'>
 	<head>
 		<title>Shimmie Installer</title>
 		<link rel=\"shortcut icon\" href=\"ext/static_files/static/favicon.ico\">

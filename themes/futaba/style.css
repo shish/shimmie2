@@ -10,8 +10,8 @@ BODY {
 	color: #800000;
 	padding-left: 5px;
 	padding-right: 5px;
-	margin-right: 0px;
-	margin-left: 0px;
+	margin-right: 0;
+	margin-left: 0;
 	margin-top: 5px;
 }
 H1 {
@@ -30,7 +30,7 @@ FOOTER {
 
 A, A:visited {text-decoration: none; color: #0000EE;}
 A:hover {text-decoration: underline; color: #DD0000;}
-HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}
+HR {border: none; border-top: 1px solid #D9BFB7; height: 0; clear: both;}
 
 NAV {
 	width: 150px;
@@ -45,11 +45,11 @@ NAV TD {
 }
 NAV INPUT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 NAV SELECT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 NAV H3 {
 	text-align: left;
@@ -92,7 +92,7 @@ TABLE.tag_list>TBODY>TR>TD:after {
 }
 .comment {
 	/*background: #FFFFEE;*/
-	border-width: 0px;
+	border-width: 0;
 }
 .reply, .paginator {
 	margin-bottom: 2px;
@@ -106,7 +106,7 @@ TABLE.tag_list>TBODY>TR>TD:after {
 }
 .reply P {
 	margin-left: 32px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 
 .setupblock {

@@ -468,7 +468,9 @@ function get_debug_info(): string
 * Request initialisation stuff                                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/** @privatesection */
+/** @privatesection
+ * @noinspection PhpIncludeInspection
+ */
 
 function require_all(array $files): void
 {
@@ -493,7 +495,7 @@ function _load_theme_files()
 
 function _sanitise_environment(): void
 {
-    global $_tracer, $tracer_enabled;
+    global $tracer_enabled;
 
     $min_php = "7.3";
     if (version_compare(phpversion(), $min_php, ">=") === false) {
@@ -524,7 +526,6 @@ date and you should plan on moving elsewhere.
     // so to prevent running out of memory during complex operations code that uses it should
     // check if tracer output is enabled before making use of it.
     $tracer_enabled = constant('TRACE_FILE')!==null;
-    $_tracer = new EventTracer();
 
     ob_start();
 
@@ -553,12 +554,14 @@ function _get_themelet_files(string $_theme): array
 
 /**
  * Used to display fatal errors to the web user.
+ * @noinspection PhpPossiblePolymorphicInvocationInspection
  */
 function _fatal_error(Exception $e): void
 {
     $version = VERSION;
     $message = $e->getMessage();
     $phpver = phpversion();
+    $query = is_subclass_of($e, "SCoreException") ? $e->query : null;
 
     //$hash = exec("git rev-parse HEAD");
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
@@ -576,13 +579,13 @@ function _fatal_error(Exception $e): void
 
         print("Message: $message\n");
 
-        if (isset($e->query)) {
-            print("Query:   {$e->query}\n");
+        if ($query) {
+            print("Query:   {$query}\n");
         }
 
         print("Version: $version (on $phpver)\n");
     } else {
-        $q = (!isset($e->query) || is_null($e->query)) ? "" : "<p><b>Query:</b> " . html_escape($e->query);
+        $q = $query ? "" : "<p><b>Query:</b> " . html_escape($query);
         header("HTTP/1.0 500 Internal Error");
         echo '
 <!doctype html>

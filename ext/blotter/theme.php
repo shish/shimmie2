@@ -121,8 +121,8 @@ class BlotterTheme extends Themelet
             $clean_date = date("y/m/d", strtotime($messy_date));
             $entry_text = $entries[$i]['entry_text'];
             if ($entries[$i]['important'] == 'Y') {
-                $i_open = "<font color='#{$i_color}'>";
-                $i_close="</font>";
+                $i_open = "<span style='color: #$i_color;'>";
+                $i_close="</span>";
             }
             $html .= "{$i_open}{$clean_date} - {$entry_text}{$i_close}<br /><br />";
         }
@@ -149,8 +149,8 @@ class BlotterTheme extends Themelet
             $clean_date = date("m/d/y", strtotime($messy_date));
             $entry_text = $entries[$i]['entry_text'];
             if ($entries[$i]['important'] == 'Y') {
-                $i_open = "<font color='#{$i_color}'>";
-                $i_close="</font>";
+                $i_open = "<span style='color: #$i_color'>";
+                $i_close="</span>";
             }
             $entries_list .= "<li>{$i_open}{$clean_date} - {$entry_text}{$i_close}</li>";
         }

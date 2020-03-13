@@ -1,7 +1,10 @@
 <?php declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+
 require_once "core/urls.php";
 
-class UrlsTest extends \PHPUnit\Framework\TestCase
+class UrlsTest extends TestCase
 {
     public function test_make_link()
     {

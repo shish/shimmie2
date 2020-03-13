@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpUnusedPrivateMethodInspection */
+declare(strict_types=1);
 
 /**
  * Sent when the admin page is ready to be added to

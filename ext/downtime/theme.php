@@ -9,7 +9,7 @@ class DowntimeTheme extends Themelet
     {
         $page->add_block(new Block(
             "Downtime",
-            "<span style='font-size: 1.5em'><b><center>DOWNTIME MODE IS ON!</center></b></span>",
+            "<span style='font-size: 1.5em; text-align: center;'><b>DOWNTIME MODE IS ON!</b></span>",
             "left",
             0
         ));
@@ -30,7 +30,7 @@ class DowntimeTheme extends Themelet
         $page->set_code(503);
         $page->set_data(
             <<<EOD
-<html>
+<html lang="en">
 	<head>
 		<title>Downtime</title>
 		<link rel="stylesheet" href="$data_href/themes/$theme_name/style.css" type="text/css">
@@ -38,7 +38,7 @@ class DowntimeTheme extends Themelet
 	<body>
 		<div id="downtime">
 			<section>
-				<h1><center>Down for Maintenance</center></h1>
+				<h1 style="text-align: center;">Down for Maintenance</h1>
 				<div id="message" class="blockbody">
 					$message
 				</div>

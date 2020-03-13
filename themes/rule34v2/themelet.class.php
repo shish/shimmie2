@@ -3,7 +3,7 @@ class Themelet extends BaseThemelet
 {
     public function build_thumb_html(Image $image): string
     {
-        global $cache, $config, $database, $user;
+        global $cache, $config;
 
         $cached = $cache->get("thumb-block:{$image->id}");
         if ($cached) {
@@ -17,7 +17,7 @@ class Themelet extends BaseThemelet
         $h_tip = html_escape($image->get_tooltip());
         $h_tags = strtolower($image->get_tag_list());
         $h_ext = strtolower($image->ext);
-        
+
         // If file is flash or svg then sets thumbnail to max size.
         if ($image->ext === 'swf' || $image->ext === 'svg') {
             $tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));

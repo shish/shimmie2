@@ -49,7 +49,7 @@ class RegenThumbTheme extends Themelet
                 <tr><th><label for='regen_thumb_force'>Force</label></th><td><input type='checkbox' name='regen_thumb_force' id='regen_thumb_force' value='true' /></td></tr>
                 <tr><th><label for='regen_thumb_limit'>Limit</label></th><td><input type='number' name='regen_thumb_limit' id='regen_thumb_limit' value='1000' /></td></tr>
                 <tr><th><label for='regen_thumb_type'>Type</label></th><td>
-                    <select name='regen_thumb_type' id='regen_thumb_type' value='1000'>
+                    <select name='regen_thumb_type' id='regen_thumb_type'>
                         <option value=''>All</option>
                         ".implode($types)."
                     </select>
@@ -60,7 +60,7 @@ class RegenThumbTheme extends Themelet
 			<p>".make_form(make_link("admin/delete_thumbs"), "POST", false, "", "return confirm('Are you sure you want to delete all thumbnails?')")."
 				<table class='form'>
                     <tr><th><label for='delete_thumb_type'>Type</label></th><td>
-                        <select name='delete_thumb_type' id='delete_thumb_type' value='1000'>
+                        <select name='delete_thumb_type' id='delete_thumb_type'>
                             <option value=''>All</option>
                             ".implode($types)."
                         </select>

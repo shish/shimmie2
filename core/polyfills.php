@@ -341,6 +341,7 @@ function get_extension(?string $mime_type): ?string
     return ($ext ? $ext : null);
 }
 
+/** @noinspection PhpUnhandledExceptionInspection */
 function getSubclassesOf(string $parent)
 {
     $result = [];

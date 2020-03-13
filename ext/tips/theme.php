@@ -79,7 +79,7 @@ class TipsTheme extends Themelet
                 (
                     empty($tip['image']) ?
                     "<td></td>" :
-                    "<td><img src=".$url.$tip['image']." /></td>"
+                    "<td><img alt='' src=".$url.$tip['image']." /></td>"
                 ).
                 "<td class='left'>".$tip['text']."</td>";
 

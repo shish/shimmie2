@@ -94,13 +94,13 @@ class CommentListTest extends ShimmiePHPUnitTestCase
 
         # make a comment
         send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
-        $page = $this->get_page("post/view/$image_id");
+        $this->get_page("post/view/$image_id");
         $this->assert_text("ASDFASDF");
 
         # delete a comment
         $comment_id = (int)$database->get_one("SELECT id FROM comments");
         send_event(new CommentDeletionEvent($comment_id));
-        $page = $this->get_page("post/view/$image_id");
+        $this->get_page("post/view/$image_id");
         $this->assert_no_text("ASDFASDF");
     }
 }

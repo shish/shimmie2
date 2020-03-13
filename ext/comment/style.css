@@ -14,11 +14,11 @@
 	background: #DDD;
 	border: 1px solid #CCC;
 	position: absolute;
-	top: 0px;
+	top: 0;
 	left: -195px;
 	width: 180px;
 	z-index: 1;
-	box-shadow: 0px 0px 4px #000;
+	box-shadow: 0 0 4px #000;
 	border-radius: 4px;
 }
 .comment:hover .info {
@@ -39,6 +39,6 @@
 	background: none;
 	border: none;
 	box-shadow: none;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 }

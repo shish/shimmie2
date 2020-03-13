@@ -57,7 +57,7 @@ if (!file_exists("vendor/")) {
     //CHECK: Should we just point to install.php instead? Seems unsafe though.
     print <<<EOD
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<title>Shimmie Error</title>
 		<link rel="shortcut icon" href="ext/static_files/static/favicon.ico">
@@ -99,6 +99,7 @@ require_once "core/util.php";
 
 global $cache, $config, $database, $user, $page, $_tracer;
 _sanitise_environment();
+$_tracer = new EventTracer();
 $_tracer->begin("Bootstrap");
 _load_core_files();
 $cache = new Cache(CACHE_DSN);

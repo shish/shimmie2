@@ -1,7 +1,10 @@
 <?php declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+
 require_once "core/util.php";
 
-class UtilTest extends \PHPUnit\Framework\TestCase
+class UtilTest extends TestCase
 {
     public function test_warehouse_path()
     {

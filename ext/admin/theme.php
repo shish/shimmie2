@@ -37,7 +37,7 @@ class AdminPageTheme extends Themelet
      */
     public function display_form()
     {
-        global $page, $database;
+        global $page;
 
         $html = "";
         $html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);

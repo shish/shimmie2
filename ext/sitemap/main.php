@@ -107,10 +107,12 @@ class XMLSitemap extends Extension
 
         /* --- Add all other images to sitemap with lower priority --- */
         $otherimages = Image::find_images(51, 10000000, []);
+        $image = null;
         foreach ($otherimages as $arrayid => $image) {
             // create url from image id's
             $otherimages[$arrayid] = "post/view/$image->id";
         }
+        assert(!is_null($image));
         $this->add_sitemap_queue($otherimages, "monthly", "0.6", date("Y-m-d", strtotime($image->posted)));
 
 

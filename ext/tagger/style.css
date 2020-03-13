@@ -27,7 +27,7 @@
 #tagger_toolbar, #tagger_body {
 	padding:2px 2px 0 2px;
 	border-style:solid;
-	border-width: 0px 2px 0px 2px;	
+	border-width: 0 2px 0 2px;
 }
 #tagger_body {
 	max-height:175px;
@@ -47,7 +47,7 @@
 #tagger_body div {
 	padding-top:2px;
 	margin-top:2px;
-	border-top:1px solid;	
+	border-top:1px solid;
 }
 
 /* Tagger Styling
@@ -69,7 +69,7 @@
 	display: block;
 }
 #tagger_parent tag {
-	font-size:1.25em;	
+	font-size:1.25em;
 	display:block;
 }
 

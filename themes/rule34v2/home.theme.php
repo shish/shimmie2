@@ -9,7 +9,7 @@ class CustomHomeTheme extends HomeTheme
         $hh = $page->get_all_html_headers();
         $page->set_data(
             <<<EOD
-<html>
+<html lang="en">
 	<head>
 		<title>$sitename</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
@@ -17,7 +17,7 @@ class CustomHomeTheme extends HomeTheme
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		$hh
 		<style>
-			div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0px; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
+			div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
 			div#front-page {text-align:center;}
 			.space {margin-bottom: 1em;}
 			div#front-page div#links a {margin: 0 0.5em;}

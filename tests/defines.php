@@ -15,3 +15,4 @@ define("TRACE_THRESHOLD", 0.0);
 define("TIMEZONE", 'UTC');
 define("BASE_HREF", "/test");
 define("CLI_LOG_LEVEL", 50);
+define("STATSD_HOST", null);

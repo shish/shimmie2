@@ -3,6 +3,8 @@
 * CAPTCHA abstraction                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+use ReCaptcha\ReCaptcha;
+
 function captcha_get_html(): string
 {
     global $config, $user;
@@ -37,7 +39,7 @@ function captcha_check(): bool
     if ($user->is_anonymous() && $config->get_bool("comment_captcha")) {
         $r_privatekey = $config->get_string('api_recaptcha_privkey');
         if (!empty($r_privatekey)) {
-            $recaptcha = new \ReCaptcha\ReCaptcha($r_privatekey);
+            $recaptcha = new ReCaptcha($r_privatekey);
             $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
             if (!$resp->isSuccess()) {

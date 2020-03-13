@@ -239,6 +239,7 @@ class OuroborosPost extends _SafeOuroborosImage
     /**
      * Initialize an OuroborosPost for creation
      * Mainly just acts as a wrapper and validation layer
+     * @noinspection PhpMissingParentConstructorInspection
      */
     public function __construct(array $post, string $md5 = '')
     {

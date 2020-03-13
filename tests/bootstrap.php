@@ -1,4 +1,7 @@
 <?php declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+
 chdir(dirname(dirname(__FILE__)));
 require_once "vendor/autoload.php";
 require_once "tests/defines.php";
@@ -14,6 +17,7 @@ if (file_exists("tests/trace.json")) {
 global $cache, $config, $database, $user, $page, $_tracer;
 _sanitise_environment();
 $tracer_enabled = true;
+$_tracer = new EventTracer();
 $_tracer->begin("bootstrap");
 _load_core_files();
 $cache = new Cache(CACHE_DSN);
@@ -34,7 +38,7 @@ send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 $_tracer->end();
 
-abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
+abstract class ShimmiePHPUnitTestCase extends TestCase
 {
     protected static $anon_name = "anonymous";
     protected static $admin_name = "demo";
@@ -44,7 +48,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        global $_tracer, $config;
+        global $_tracer;
         $_tracer->begin(get_called_class());
 
         self::create_user(self::$admin_name);

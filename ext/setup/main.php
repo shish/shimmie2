@@ -271,6 +271,9 @@ class SetupBlock extends Block
 
 class Setup extends Extension
 {
+    /** @var SetupTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

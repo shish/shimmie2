@@ -37,7 +37,7 @@ class CustomCommentListTheme extends CommentListTheme
                 $comment_html .= $this->comment_to_html($comment, false);
             }
 
-            $html  = "<p style='clear:both'>&nbsp;</p><hr height='1'>";
+            $html  = "<p style='clear:both'>&nbsp;</p><hr >";
             $html .= "File: <a href=\"".make_link("post/view/{$image->id}")."\">$h_filename</a> - ($h_filesize, {$w}x{$h}) - ";
             $html .= html_escape($image->get_tag_list());
             $html .= "<div style='text-align: left'>";
@@ -48,7 +48,7 @@ class CustomCommentListTheme extends CommentListTheme
             $page->add_block(new Block(null, $html, "main", $position++));
         }
     }
-    
+
     public function display_recent_comments(array $comments)
     {
         // sidebar fails in this theme

@@ -395,7 +395,7 @@ abstract class DataHandlerExtension extends Extension
                     throw new UploadException("Unable to scan media properties: ".$e->getMessage());
                 }
 
-                $ire = send_event(new ImageReplaceEvent($image_id, $image));
+                send_event(new ImageReplaceEvent($image_id, $image));
                 $event->image_id = $image_id;
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
@@ -453,6 +453,7 @@ abstract class DataHandlerExtension extends Extension
     {
         global $page;
         if ($this->supported_ext($event->image->ext)) {
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             $this->theme->display_image($page, $event->image);
         }
     }

@@ -13,7 +13,7 @@ class CBZFileHandlerTheme extends Themelet
                 </div>
                 <div id='comicView'>
                     <a id='comicPrev'><span>&lt;</span></a>
-                    <img id='comicPage' src='{$data_href}/ext/handle_cbz/spinner.gif' />
+                    <img alt='comic' id='comicPage' src='{$data_href}/ext/handle_cbz/spinner.gif' />
                     <a id='comicNext'><span>&gt;</span></a>
                 </div>
             </div>

@@ -17,6 +17,7 @@ class VarnishPurger extends Extension
         $result = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+        assert(!is_null($result) && !is_null($httpCode));
         //return $result;
     }
 

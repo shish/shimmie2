@@ -1,7 +1,10 @@
 <?php declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+
 require_once "core/imageboard/tag.php";
 
-class TagTest extends \PHPUnit\Framework\TestCase
+class TagTest extends TestCase
 {
     public function test_caret()
     {

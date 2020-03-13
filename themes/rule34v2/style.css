@@ -7,11 +7,11 @@ BODY {
 	background: url(bg.png) #ACE4A3;
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
-	margin: 0px;
+	margin: 0;
 }
 #header {
 	border-bottom: 1px solid #7EB977;
-	margin-top: 0px;
+	margin-top: 0;
 	margin-bottom: 16px;
 	padding: 8px;
 	background: #ACE4A3;
@@ -19,15 +19,15 @@ BODY {
 }
 H1 {
 	font-size: 5em;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 }
 H1 A {
 	color: black;
 }
 H3 {
 	text-align: center;
-	margin: 0px;
+	margin: 0;
 }
 THEAD {
 	font-weight: bold;
@@ -40,9 +40,8 @@ TD {
 #subtitle {
 	width: 256px;
 	font-size: 0.75em;
-	margin: auto;
-	margin-top: -16px;
-	text-align: center;
+    margin: -16px auto auto;
+    text-align: center;
 	border: 1px solid black;
 	border-top: none;
 	background: #DDD;
@@ -56,7 +55,7 @@ TD {
 }
 
 TABLE.zebra {background: #ACE4A3; border-collapse: collapse; border: 1px solid #7EB977;}
-TABLE.zebra TD {font-size: 0.8em;margin: 0px;	border-top: 1px solid #7EB977;	padding: 2px;}
+TABLE.zebra TD {font-size: 0.8em;margin: 0;	border-top: 1px solid #7EB977;	padding: 2px;}
 TABLE.zebra TR:nth-child(odd) {background: #9CD493;}
 TABLE.zebra TR:nth-child(even) {background: #ACE4A3;}
 
@@ -100,11 +99,11 @@ NAV TD {
 }
 NAV INPUT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 NAV SELECT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 
 
@@ -136,13 +135,13 @@ NAV SELECT {
 	background: none;
 	border: none;
 	box-shadow: none;
-	padding: 0px;
+	padding: 0;
 }
 
 #commentlistimage .blockbody .comment,
 #commentlistrecent .blockbody .comment {
-	margin-left: 0px;
-	margin-right: 0px;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 
@@ -162,7 +161,7 @@ ARTICLE TABLE {
 	margin: auto;
 }
 NAV SECTION:first-child H3 {
-	margin-top: 0px;
+	margin-top: 0;
 }
 
 
@@ -209,7 +208,7 @@ SECTION>H3 {
 
 div#twitter_update_list li {
 	list-style:none;
-	padding-bottom:0px;
+	padding-bottom:0;
 	text-align:left;
 	margin-top:5px;
 	margin-bottom:5px;
@@ -241,7 +240,7 @@ div#twitter_update_list li {
 }
 
 UL.tagit {
-	margin: 0px;
+	margin: 0;
 }
 ul.tagit li.tagit-new {
 	width: 50px;
@@ -276,12 +275,12 @@ ul.tagit li.tagit-new {
 
 /* responsive padding */
 @media (max-width: 1024px) {
-	NAV {margin-left: 0px;}
-	ARTICLE {margin-right: 0px; margin-left: 242px;}
+	NAV {margin-left: 0;}
+	ARTICLE {margin-right: 0; margin-left: 242px;}
 }
 @media (max-width: 750px) {
-	NAV {margin-left: 0px;}
-	ARTICLE {margin-right: 0px; margin-left: 250px;}
+	NAV {margin-left: 0;}
+	ARTICLE {margin-right: 0; margin-left: 250px;}
 }
 
 /* responsive navbar */
@@ -293,15 +292,15 @@ ul.tagit li.tagit-new {
 
 	NAV>SECTION>.blockbody,
 	NAV>SECTION>.blockbody>.comment {
-		margin: 0px;
+		margin: 0;
 	}
 	NAV>SECTION>H3 {
-		margin: 0px;
+		margin: 0;
 	}
 
 	BODY.navHidden #menuh-container {display: none;}
 	BODY.navHidden NAV {display: none;}
-	BODY.navHidden ARTICLE {margin-left: 0px;}
+	BODY.navHidden ARTICLE {margin-left: 0;}
 
 /*
 	NAV {
@@ -318,7 +317,7 @@ ul.tagit li.tagit-new {
 	BODY.navHidden {padding-top: 5.4em}
 }
 @media (max-width: 750px) {
-	#header {position: fixed; top: 0px; left: 0px; z-index: 99999999999;}
+	#header {position: fixed; top: 0; left: 0; z-index: 99999999999;}
 	.ui-autocomplete {z-index: 999999999999;}
 	BODY {padding-top: 7em}
 }
@@ -347,7 +346,7 @@ ul.tagit li.tagit-new {
 	#mini-logo {display: table-cell; width: 100px;}
 
 	/* hide nav-search when header-search is sticky */
-	ARTICLE {margin-top: 0px;}
+	ARTICLE {margin-top: 0;}
 	#Navigationleft .blockbody {font-size: 1.5em;}
 	#Navigationleft .blockbody P,
 	#Navigationleft .blockbody FORM

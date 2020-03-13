@@ -1,7 +1,10 @@
 <?php declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+
 require_once "core/basepage.php";
 
-class BasePageTest extends \PHPUnit\Framework\TestCase
+class BasePageTest extends TestCase
 {
     public function test_page()
     {

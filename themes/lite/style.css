@@ -7,15 +7,15 @@ BODY {
 	background: #F0F7FF;
 	font-family: sans-serif;
 	font-size: 14px;
-	margin: 0px;
+	margin: 0;
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 3                            menu bar                            *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 .menu {
 	border-bottom: 1px solid #C3D2E0;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
 	padding: 4px;
 	background: #E3EFFA;
 }
@@ -45,7 +45,7 @@ a.tab:hover, a.tab:active, .tab-selected {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 .sbar {
 	border-bottom: 1px solid #C3D2E0;
-	margin-top: 0px;
+	margin-top: 0;
 	margin-bottom: 16px;
 	padding: 4px;
 	background: #CEDFF0;
@@ -53,8 +53,8 @@ a.tab:hover, a.tab:active, .tab-selected {
 }
 .sfoot {
 	border-top: 1px solid #C3D2E0;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
 	padding: 4px;
 	background: #CEDFF0;
 	text-align: right;
@@ -83,14 +83,14 @@ a.tab:hover, a.tab:active, .tab-selected {
 	margin:0 0 2px 0; /* top right bottom left */
 	padding:2px 10px;
 	position:relative;
-	left:0px;
+	left:0;
 	width:50%;
 }
 .navtop {
 	top:7px;
 }
 .maintop {
-	top:0px;
+	top:0;
 	margin-top:5px;
 	margin-bottom:5px;
 }
@@ -109,7 +109,7 @@ A, A:hover, A:active, A:visited {
 }
 H3 {
 	text-align: center;
-	margin: 0px;
+	margin: 0;
 }
 THEAD {
 	font-weight: bold;
@@ -132,7 +132,7 @@ CODE {
 	background: #DDD;
 }
 
-TABLE.zebra {border-spacing: 0px; border: 2px solid #C3D2E0;}
+TABLE.zebra {border-spacing: 0; border: 2px solid #C3D2E0;}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
 TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #C3D2E0;}
 TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #C3D2E0;}
@@ -198,11 +198,11 @@ NAV TD {
 }
 NAV INPUT, nav button {
 	width: 95%;
-	padding: 0px;
+	padding: 0;
 }
 NAV SELECT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 
 #comments P {
@@ -334,7 +334,7 @@ NAV .thumbblock {
 	height: auto;
 }
 NAV .thumb {
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 .thumbblock {
 	width: 220px;
