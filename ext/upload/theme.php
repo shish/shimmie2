@@ -216,7 +216,9 @@ class UploadTheme extends Themelet
 
     public function display_upload_error(Page $page, string $title, string $message)
     {
-        $page->add_block(new Block($title, html_escape($message)));
+        // this message has intentional HTML in it...
+        $message = strpos($message, "already has hash") ? $message : html_escape($message);
+        $page->add_block(new Block($title, $message));
     }
 
     protected function build_upload_block(): string
