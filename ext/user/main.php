@@ -307,7 +307,7 @@ class UserPage extends Extension
     {
         global $user;
         if ($event->parent==="system") {
-            if ($user->can(Permissions::EDIT_USER_CLASS)) {
+            if ($user->can(Permissions::EDIT_USER_PASSWORD)) {
                 $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
             }
         }
@@ -317,7 +317,7 @@ class UserPage extends Extension
     {
         global $user;
         $event->add_link("My Profile", make_link("user"));
-        if ($user->can(Permissions::EDIT_USER_CLASS)) {
+        if ($user->can(Permissions::EDIT_USER_PASSWORD)) {
             $event->add_link("User List", make_link("user_admin/list"), 98);
         }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
