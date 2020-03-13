@@ -26,10 +26,9 @@ jobs:
 
     - name: Set up database
       run: |
-        sudo apt update
         mkdir -p data/config
         if [[ "${{ matrix.database }}" == "pgsql" ]]; then
-            sudo apt-get install -y postgresql postgresql-client ;
+            sudo apt update && sudo apt-get install -y postgresql postgresql-client ;
             psql --version ;
             sudo -u postgres psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
             sudo -u postgres psql -c "CREATE USER shimmie WITH PASSWORD 'shimmie';" -U postgres ;
@@ -41,7 +40,7 @@ jobs:
             mysql -e "CREATE DATABASE shimmie;" -uroot -proot ;
         fi
         if [[ "${{ matrix.database }}" == "sqlite" ]]; then
-            sudo apt-get install -y sqlite3 ;
+            sudo apt update && sudo apt-get install -y sqlite3 ;
             sqlite3 --version ;
         fi
 
