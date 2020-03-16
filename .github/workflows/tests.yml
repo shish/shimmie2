@@ -35,6 +35,7 @@ jobs:
             sudo -u postgres psql -c "CREATE DATABASE shimmie WITH OWNER shimmie;" -U postgres ;
         fi
         if [[ "${{ matrix.database }}" == "mysql" ]]; then
+            sudo systemctl start mysql ;
             mysql --version ;
             mysql -e "SET GLOBAL general_log = 'ON';" -uroot -proot ;
             mysql -e "CREATE DATABASE shimmie;" -uroot -proot ;
