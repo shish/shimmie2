@@ -118,22 +118,22 @@ $_tracer->end();
 * Send events, display output                                               *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-//$_tracer->mark(@$_SERVER["REQUEST_URI"]);
-$_tracer->begin(
-    $_SERVER["REQUEST_URI"] ?? "No Request",
-    [
-        "user"=>$_COOKIE["shm_user"] ?? "No User",
-        "ip"=>$_SERVER['REMOTE_ADDR'] ?? "No IP",
-        "user_agent"=>$_SERVER['HTTP_USER_AGENT'] ?? "No UA",
-    ]
-);
-
-if (!SPEED_HAX) {
-    send_event(new DatabaseUpgradeEvent());
-}
-send_event(new InitExtEvent());
-
 try {
+    // $_tracer->mark(@$_SERVER["REQUEST_URI"]);
+    $_tracer->begin(
+        $_SERVER["REQUEST_URI"] ?? "No Request",
+        [
+            "user"=>$_COOKIE["shm_user"] ?? "No User",
+            "ip"=>$_SERVER['REMOTE_ADDR'] ?? "No IP",
+            "user_agent"=>$_SERVER['HTTP_USER_AGENT'] ?? "No UA",
+        ]
+    );
+
+    if (!SPEED_HAX) {
+        send_event(new DatabaseUpgradeEvent());
+    }
+    send_event(new InitExtEvent());
+
     // start the page generation waterfall
     $user = _get_user();
     send_event(new UserLoginEvent($user));
@@ -157,17 +157,17 @@ try {
         $database->rollback();
     }
     _fatal_error($e);
-}
-
-$_tracer->end();
-if (TRACE_FILE) {
-    if (
-        empty($_SERVER["REQUEST_URI"])
-        || (
-            (microtime(true) - $_shm_load_start) > TRACE_THRESHOLD
-            && ($_SERVER["REQUEST_URI"] ?? "") != "/upload"
-        )
-    ) {
-        $_tracer->flush(TRACE_FILE);
+} finally {
+    $_tracer->end();
+    if (TRACE_FILE) {
+        if (
+            empty($_SERVER["REQUEST_URI"])
+            || (
+                (microtime(true) - $_shm_load_start) > TRACE_THRESHOLD
+                && ($_SERVER["REQUEST_URI"] ?? "") != "/upload"
+            )
+        ) {
+            $_tracer->flush(TRACE_FILE);
+        }
     }
 }
