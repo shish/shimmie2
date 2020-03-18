@@ -1,4 +1,21 @@
-<?php
+<?php declare(strict_types=1);
+use function \MicroHTML\emptyHTML;
+use function \MicroHTML\rawHTML;
+use function \MicroHTML\TABLE;
+use function \MicroHTML\TBODY;
+use function \MicroHTML\TFOOT;
+use function \MicroHTML\TR;
+use function \MicroHTML\TH;
+use function \MicroHTML\TD;
+use function \MicroHTML\LABEL;
+use function \MicroHTML\INPUT;
+use function \MicroHTML\SMALL;
+use function \MicroHTML\A;
+use function \MicroHTML\BR;
+use function \MicroHTML\P;
+use function \MicroHTML\SELECT;
+use function \MicroHTML\OPTION;
+
 
 class CustomUserPageTheme extends UserPageTheme
 {
@@ -35,5 +52,58 @@ class CustomUserPageTheme extends UserPageTheme
         }
         $page->add_block(new Block("Login", $html, "head", 90));
         $page->add_block(new Block("Login", $html, "left", 15));
+    }
+
+    public function display_signup_page(Page $page)
+    {
+        global $config;
+        $tac = $config->get_string("login_tac", "");
+
+        if ($config->get_bool("login_tac_bbcode")) {
+            $tfe = new TextFormattingEvent($tac);
+            send_event($tfe);
+            $tac = $tfe->formatted;
+        }
+
+        $form = SHM_SIMPLE_FORM(
+            "user_admin/create",
+            TABLE(
+                ["class"=>"form"],
+                TBODY(
+                    TR(
+                        TH("Name"),
+                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                    ),
+                    TR(
+                        TH("Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Repeat&nbsp;Password")),
+                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Email")),
+                        TD(INPUT(["type"=>'email', "name"=>'email', "required"=>true]))
+                    ),
+                    TR(
+                        TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
+                    ),
+                ),
+                TFOOT(
+                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                )
+            )
+        );
+
+        $html = emptyHTML(
+            $tac ? P(rawHTML($tac)) : null,
+            $form
+        );
+
+        $page->set_title("Create Account");
+        $page->set_heading("Create Account");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Signup", (string)$html));
     }
 }

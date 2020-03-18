@@ -95,7 +95,7 @@ class UserPageTheme extends Themelet
         );
 
         $html = emptyHTML(
-            $tac ? P($tac) : null,
+            $tac ? P(rawHTML($tac)) : null,
             $form
         );
 
