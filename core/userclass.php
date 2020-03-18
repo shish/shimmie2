@@ -26,7 +26,7 @@ class UserClass
      */
     public $abilities = [];
 
-    public function __construct(string $name, string $parent=null, array $abilities=[])
+    public function __construct(string $name, string $parent = null, array $abilities = [])
     {
         global $_shm_user_classes;
 
@@ -189,28 +189,29 @@ new UserClass("user", "base", [
     Permissions::READ_PM => true,
 ]);
 
-new UserClass("admin", "base", [    Permissions::CHANGE_SETTING => true,  
-    Permissions::OVERRIDE_CONFIG => true, 
-    Permissions::BIG_SEARCH => true,      
+new UserClass("admin", "base", [
+    Permissions::CHANGE_SETTING => true,
+    Permissions::OVERRIDE_CONFIG => true,
+    Permissions::BIG_SEARCH => true,
 
     Permissions::MANAGE_EXTENSION_LIST => true,
     Permissions::MANAGE_ALIAS_LIST => true,
     Permissions::MANAGE_AUTO_TAG => true,
     Permissions::MASS_TAG_EDIT => true,
 
-    Permissions::VIEW_IP => true,         
+    Permissions::VIEW_IP => true,
     Permissions::BAN_IP => true,
 
     Permissions::CREATE_USER => true,
     Permissions::EDIT_USER_NAME => true,
     Permissions::EDIT_USER_PASSWORD => true,
-    Permissions::EDIT_USER_INFO => true,  
+    Permissions::EDIT_USER_INFO => true,
     Permissions::EDIT_USER_CLASS => true,
     Permissions::DELETE_USER => true,
 
     Permissions::CREATE_COMMENT => true,
     Permissions::DELETE_COMMENT => true,
-    Permissions::BYPASS_COMMENT_CHECKS => true,  
+    Permissions::BYPASS_COMMENT_CHECKS => true,
 
     Permissions::REPLACE_IMAGE => true,
     Permissions::CREATE_IMAGE => true,
@@ -231,7 +232,7 @@ new UserClass("admin", "base", [    Permissions::CHANGE_SETTING => true,
     Permissions::IGNORE_DOWNTIME => true,
 
     Permissions::CREATE_IMAGE_REPORT => true,
-    Permissions::VIEW_IMAGE_REPORT => true,  
+    Permissions::VIEW_IMAGE_REPORT => true,
 
     Permissions::WIKI_ADMIN => true,
     Permissions::EDIT_WIKI_PAGE => true,
@@ -252,7 +253,7 @@ new UserClass("admin", "base", [    Permissions::CHANGE_SETTING => true,
     Permissions::HELLBANNED => false,
     Permissions::VIEW_HELLBANNED => true,
 
-    Permissions::PROTECTED => true,          
+    Permissions::PROTECTED => true,
 
     Permissions::EDIT_IMAGE_RATING => true,
     Permissions::BULK_EDIT_IMAGE_RATING => true,
@@ -279,7 +280,6 @@ new UserClass("admin", "base", [    Permissions::CHANGE_SETTING => true,
 
     Permissions::APPROVE_IMAGE => true,
     Permissions::APPROVE_COMMENT => true,
-
 ]);
 
 new UserClass("hellbanned", "user", [
