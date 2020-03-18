@@ -47,7 +47,7 @@ class ActorColumn extends Column
         $driver = $this->table->db->getAttribute(PDO::ATTR_DRIVER_NAME);
         switch ($driver) {
             case "pgsql":
-                return "((username = :{$this->name}_0) OR (address && cast(:{$this->name}_1 as inet)))";
+                return "((LOWER(username) = LOWER(:{$this->name}_0)) OR (address && cast(:{$this->name}_1 as inet)))";
             default:
                 return "((username = :{$this->name}_0) OR (address = :{$this->name}_1))";
         }
