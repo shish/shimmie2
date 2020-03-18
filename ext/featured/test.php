@@ -1,35 +1,36 @@
-<?php
-class FeaturedTest extends ShimmiePHPUnitTestCase {
-	public function testFeatured() {
-		$this->log_in_as_user();
-		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+<?php declare(strict_types=1);
+class FeaturedTest extends ShimmiePHPUnitTestCase
+{
+    public function testFeatured()
+    {
+        global $config;
 
-		# FIXME: test that regular users can't feature things
+        // Set up
+        $this->log_in_as_user();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
-		$this->log_in_as_admin();
-		$this->get_page("post/view/$image_id");
-		$this->assert_title("Image $image_id: pbx");
+        # FIXME: test that regular users can't feature things
 
-		$this->markTestIncomplete();
+        // Admin can feature things
+        // FIXME: use Event rather than modifying database
+        // $this->log_in_as_admin();
+        // send_event(new SetFeaturedEvent($image_id));
+        $config->set_int("featured_id", $image_id);
 
-		$this->click("Feature This");
-		$this->get_page("post/list");
-		$this->assert_text("Featured Image");
+        $this->get_page("post/list");
+        $this->assert_text("Featured Image");
 
-		# FIXME: test changing from one feature to another
+        # FIXME: test changing from one feature to another
 
-		$this->get_page("featured_image/download");
-		$this->assert_response(200);
+        $page = $this->get_page("featured_image/download");
+        $this->assertEquals(200, $page->code);
 
-		$this->get_page("featured_image/view");
-		$this->assert_response(200);
+        $page = $this->get_page("featured_image/view");
+        $this->assertEquals(200, $page->code);
 
-		$this->delete_image($image_id);
-		$this->log_out();
-
-		# after deletion, there should be no feature
-		$this->get_page("post/list");
-		$this->assert_no_text("Featured Image");
-	}
+        // after deletion, there should be no feature
+        $this->delete_image($image_id);
+        $this->get_page("post/list");
+        $this->assert_no_text("Featured Image");
+    }
 }
-

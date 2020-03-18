@@ -1,43 +1,33 @@
-<?php
-/*
- * Name: Browser Search
- * Author: ATravelingGeek <atg@atravelinggeek.com>
- * Some code (and lots of help) by Artanis (Erik Youngren <artanis.00@gmail.com>) from the 'tagger' extention - Used with permission
- * Link: http://atravelinggeek.com/
- * License: GPLv2
- * Description: Allows the user to add a browser 'plugin' to search the site with real-time suggestions
- * Version: 0.1c, October 26, 2007
- * Documentation:
- *  Once installed, users with an opensearch compatible browser should see
- *  their search box light up with whatever "click here to add a search
- *  engine" notification they have
- */
+<?php declare(strict_types=1);
 
-class BrowserSearch extends Extension {
-	public function onInitExt(InitExtEvent $event) {
-		global $config;
-		$config->set_default_string("search_suggestions_results_order", 'a');
-	}
+class BrowserSearch extends Extension
+{
+    public function onInitExt(InitExtEvent $event)
+    {
+        global $config;
+        $config->set_default_string("search_suggestions_results_order", 'a');
+    }
 
-	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page;
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $config, $database, $page;
 
-		// Add in header code to let the browser know that the search plugin exists
-		// We need to build the data for the header
-		$search_title = $config->get_string('title');
-		$search_file_url = make_link('browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml');
-		$page->add_html_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
+        // Add in header code to let the browser know that the search plugin exists
+        // We need to build the data for the header
+        $search_title = $config->get_string(SetupConfig::TITLE);
+        $search_file_url = make_link('browser_search.xml');
+        $page->add_html_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
 
-		// The search.xml file that is generated on the fly
-		if($event->page_matches("browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml")) {
-			// First, we need to build all the variables we'll need
-			$search_title = $config->get_string('title');
-			$search_form_url =  make_link('post/list/{searchTerms}');
-			$suggenton_url = make_link('browser_search/')."{searchTerms}";
-			$icon_b64 = base64_encode(file_get_contents("lib/static/favicon.ico"));
+        // The search.xml file that is generated on the fly
+        if ($event->page_matches("browser_search.xml")) {
+            // First, we need to build all the variables we'll need
+            $search_title = $config->get_string(SetupConfig::TITLE);
+            $search_form_url =  make_link('post/list/{searchTerms}');
+            $suggenton_url = make_link('browser_search/')."{searchTerms}";
+            $icon_b64 = base64_encode(file_get_contents("ext/static_files/static/favicon.ico"));
 
-			// Now for the XML
-			$xml = "
+            // Now for the XML
+            $xml = "
 				<SearchPlugin xmlns='http://www.mozilla.org/2006/browser/search/' xmlns:os='http://a9.com/-/spec/opensearch/1.1/'>
 				<os:ShortName>$search_title</os:ShortName>
 				<os:InputEncoding>UTF-8</os:InputEncoding>
@@ -50,55 +40,46 @@ class BrowserSearch extends Extension {
 				</SearchPlugin>
 			";
 
-			// And now to send it to the browser
-			$page->set_mode("data");
-			$page->set_type("text/xml");
-			$page->set_data($xml);
-		}
+            // And now to send it to the browser
+            $page->set_mode(PageMode::DATA);
+            $page->set_type("text/xml");
+            $page->set_data($xml);
+        } elseif ($event->page_matches("browser_search")) {
+            $suggestions = $config->get_string("search_suggestions_results_order");
+            if ($suggestions == "n") {
+                return;
+            }
 
-		else if(
-			$event->page_matches("browser_search") &&
-			!$config->get_bool("disable_search_suggestions")
-		) {
-			// We have to build some json stuff
-			$tag_search = $event->get_arg(0);
+            // We have to build some json stuff
+            $tag_search = $event->get_arg(0);
 
-			// Now to get DB results
-			if($config->get_string("search_suggestions_results_order") == "a") {
-				$tags = $database->execute("SELECT tag FROM tags WHERE tag LIKE ? AND count > 0 ORDER BY tag ASC LIMIT 30",array($tag_search."%"));
-			} else {
-				$tags = $database->execute("SELECT tag FROM tags WHERE tag LIKE ? AND count > 0 ORDER BY count DESC LIMIT 30",array($tag_search."%"));
-			}
+            // Now to get DB results
+            if ($suggestions == "a") {
+                $order = "tag ASC";
+            } else {
+                $order = "count DESC";
+            }
+            $tags = $database->get_col(
+                "SELECT tag FROM tags WHERE tag LIKE :tag AND count > 0 ORDER BY $order LIMIT 30",
+                ['tag'=>$tag_search."%"]
+            );
 
+            // And to do stuff with it. We want our output to look like:
+            // ["shimmie",["shimmies","shimmy","shimmie","21 shimmies","hip shimmies","skea shimmies"],[],[]]
+            $page->set_mode(PageMode::DATA);
+            $page->set_data(json_encode([$tag_search, $tags, [], []]));
+        }
+    }
 
-			// And to do stuff with it. We want our output to look like:
-			// ["shimmie",["shimmies","shimmy","shimmie","21 shimmies","hip shimmies","skea shimmies"],[],[]]
-			$json_tag_list = "";
+    public function onSetupBuilding(SetupBuildingEvent $event)
+    {
+        $sort_by = [];
+        $sort_by['Alphabetical'] = 'a';
+        $sort_by['Tag Count'] = 't';
+        $sort_by['Disabled'] = 'n';
 
-			$tags_array = array();
-			foreach($tags as $tag) {
-				array_push($tags_array,$tag['tag']);
-			}
-
-			$json_tag_list .= implode("\",\"", $tags_array);
-
-			// And now for the final output
-			$json_string = "[\"$tag_search\",[\"$json_tag_list\"],[],[]]";
-			$page->set_mode("data");
-			$page->set_data($json_string);
-		}
-	}
-
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sort_by = array();
-		$sort_by['Alphabetical'] = 'a';
-		$sort_by['Tag Count'] = 't';
-
-		$sb = new SetupBlock("Browser Search");
-		$sb->add_bool_option("disable_search_suggestions", "Disable search suggestions: ");
-		$sb->add_label("<br>");
-		$sb->add_choice_option("search_suggestions_results_order", $sort_by, "Sort the suggestions by:");
-		$event->panel->add_block($sb);
-	}
+        $sb = new SetupBlock("Browser Search");
+        $sb->add_choice_option("search_suggestions_results_order", $sort_by, "Sort the suggestions by:");
+        $event->panel->add_block($sb);
+    }
 }
-

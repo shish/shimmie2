@@ -7,11 +7,11 @@ BODY {
 	background: url(bg.png);
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
-	margin: 0px;
+	margin: 0;
 }
 HEADER {
 	border-bottom: 1px solid #B89F7C;
-	margin-top: 0px;
+	margin-top: 0;
 	margin-bottom: 16px;
 	padding: 8px;
 	background: #FCD9A9;
@@ -19,15 +19,15 @@ HEADER {
 }
 H1 {
 	font-size: 5em;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 }
 H1 A {
 	color: black;
 }
 H3 {
 	text-align: center;
-	margin: 0px;
+	margin: 0;
 }
 THEAD {
 	font-weight: bold;
@@ -43,15 +43,14 @@ CODE {
 #subtitle {
 	width: 256px;
 	font-size: 0.75em;
-	margin: auto;
-	margin-top: -16px;
+	margin: -16px auto auto;
 	text-align: center;
 	border: 1px solid black;
 	border-top: none;
 	background: #DDD;
 }
 
-TABLE.zebra {border-spacing: 0px; border: 1px solid #B89F7C; }
+TABLE.zebra {border-spacing: 0; border: 1px solid #B89F7C; }
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
 TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #B89F7C;}
 TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #B89F7C;}
@@ -110,11 +109,11 @@ NAV TD {
 }
 NAV INPUT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 NAV SELECT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 
 TABLE.tag_list {

@@ -6,6 +6,10 @@
 * Do not remove this notice.                                                  *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+function byId(id) {
+	return document.getElementById(id);
+}
+
 var Tagger = {
 	initialize : function (image_id) {
 	// object navigation
@@ -53,7 +57,7 @@ var Tagger = {
 			}
 		} else if (text) {
 			// create
-			var t_alert = document.createElement("div");
+			t_alert = document.createElement("div");
 			t_alert.setAttribute("id",id);
 			t_alert.appendChild(document.createTextNode(text));
 			this.editor.statusbar.appendChild(t_alert);

@@ -1,122 +1,115 @@
-<?php
-class WikiTest extends ShimmiePHPUnitTestCase {
-	public function testIndex() {
-		$this->get_page("wiki");
-		$this->assert_title("Index");
-		$this->assert_text("This is a default page");
-	}
+<?php declare(strict_types=1);
+class WikiTest extends ShimmiePHPUnitTestCase
+{
+    public function testIndex()
+    {
+        $this->get_page("wiki");
+        $this->assert_title("Index");
+        $this->assert_text("This is a default page");
+    }
 
-	public function testAccess() {
-		$this->markTestIncomplete();
+    public function testAccess()
+    {
+        global $config;
+        foreach (["anon", "user", "admin"] as $user) {
+            foreach ([false, true] as $allowed) {
+                // admin has no settings to set
+                if ($user != "admin") {
+                    $config->set_bool("wiki_edit_$user", $allowed);
+                }
 
-		global $config;
-		foreach(array("anon", "user", "admin") as $user) {
-			foreach(array(false, true) as $allowed) {
-				// admin has no settings to set
-				if($user != "admin") {
-					$config->set_bool("wiki_edit_$user", $allowed);
-				}
+                if ($user == "user") {
+                    $this->log_in_as_user();
+                }
+                if ($user == "admin") {
+                    $this->log_in_as_admin();
+                }
 
-				if($user == "user") {$this->log_in_as_user();}
-				if($user == "admin") {$this->log_in_as_admin();}
+                $this->get_page("wiki/test");
+                $this->assert_title("test");
+                $this->assert_text("This is a default page");
 
-				$this->get_page("wiki/test");
-				$this->assert_title("test");
-				$this->assert_text("This is a default page");
+                if ($allowed || $user == "admin") {
+                    $this->post_page("wiki_admin/edit", ["title"=>"test"]);
+                    $this->assert_text("Editor");
+                }
+                /*
+                // Everyone can see the editor
+                else {
+                    $this->post_page("wiki_admin/edit", ["title"=>"test"]);
+                    $this->assert_no_text("Editor");
+                }
+                */
 
-				if($allowed || $user == "admin") {
-					$this->get_page("wiki/test", array('edit'=>'on'));
-					$this->assert_text("Editor");
-				}
-				else {
-					$this->get_page("wiki/test", array('edit'=>'on'));
-					$this->assert_no_text("Editor");
-				}
+                if ($user == "user" || $user == "admin") {
+                    $this->log_out();
+                }
+            }
+        }
+    }
 
-				if($user == "user" || $user == "admin") {
-					$this->log_out();
-				}
-			}
-		}
-	}
+    public function testDefault()
+    {
+        global $user;
+        $this->log_in_as_admin();
 
-	public function testLock() {
-		$this->markTestIncomplete();
+        // Check default page is default
+        $this->get_page("wiki/wiki:default");
+        $this->assert_title("wiki:default");
+        $this->assert_text("This is a default page");
 
-		global $config;
-		$config->set_bool("wiki_edit_anon", true);
-		$config->set_bool("wiki_edit_user", false);
+        // Customise default page
+        $wikipage = Wiki::get_page("wiki:default");
+        $wikipage->revision = 1;
+        $wikipage->body = "New Default Template";
+        send_event(new WikiUpdateEvent($user, $wikipage));
 
-		$this->log_in_as_admin();
+        // Check that some random page is using the new default
+        $this->get_page("wiki/something");
+        $this->assert_text("New Default Template");
 
-		$this->get_page("wiki/test_locked");
-		$this->assert_title("test_locked");
-		$this->assert_text("This is a default page");
-		$this->click("Edit");
-		$this->set_field("body", "test_locked content");
-		$this->set_field("lock", true);
-		$this->click("Save");
-		$this->log_out();
+        // Delete the custom default
+        send_event(new WikiDeletePageEvent("wiki:default"));
 
-		$this->log_in_as_user();
-		$this->get_page("wiki/test_locked");
-		$this->assert_title("test_locked");
-		$this->assert_text("test_locked content");
-		$this->assert_no_text("Edit");
-		$this->log_out();
+        // Check that the default page is back to normal
+        $this->get_page("wiki/wiki:default");
+        $this->assert_title("wiki:default");
+        $this->assert_text("This is a default page");
+    }
 
-		$this->get_page("wiki/test_locked");
-		$this->assert_title("test_locked");
-		$this->assert_text("test_locked content");
-		$this->assert_no_text("Edit");
+    public function testRevisions()
+    {
+        global $user;
+        $this->log_in_as_admin();
 
-		$this->log_in_as_admin();
-		$this->get_page("wiki/test_locked");
-		$this->click("Delete All");
-		$this->log_out();
-	}
+        $this->get_page("wiki/test");
+        $this->assert_title("test");
+        $this->assert_text("This is a default page");
 
-	public function testDefault() {
-		$this->markTestIncomplete();
+        $wikipage = Wiki::get_page("test");
+        $wikipage->revision = $wikipage->revision + 1;
+        $wikipage->body = "Mooooo 1";
+        send_event(new WikiUpdateEvent($user, $wikipage));
+        $this->get_page("wiki/test");
+        $this->assert_text("Mooooo 1");
+        $this->assert_text("Revision 1");
 
-		$this->log_in_as_admin();
-		$this->get_page("wiki/wiki:default");
-		$this->assert_title("wiki:default");
-		$this->assert_text("This is a default page");
-		$this->click("Edit");
-		$this->set_field("body", "Empty page! Fill it!");
-		$this->click("Save");
+        $wikipage = Wiki::get_page("test");
+        $wikipage->revision = $wikipage->revision + 1;
+        $wikipage->body = "Mooooo 2";
+        send_event(new WikiUpdateEvent($user, $wikipage));
+        $this->get_page("wiki/test");
+        $this->assert_text("Mooooo 2");
+        $this->assert_text("Revision 2");
 
-		$this->get_page("wiki/something");
-		$this->assert_text("Empty page! Fill it!");
+        send_event(new WikiDeleteRevisionEvent("test", 2));
+        $this->get_page("wiki/test");
+        $this->assert_text("Mooooo 1");
+        $this->assert_text("Revision 1");
 
-		$this->get_page("wiki/wiki:default");
-		$this->click("Delete All");
-		$this->log_out();
-	}
-
-	public function testRevisions() {
-		$this->markTestIncomplete();
-
-		$this->log_in_as_admin();
-		$this->get_page("wiki/test");
-		$this->assert_title("test");
-		$this->assert_text("This is a default page");
-		$this->click("Edit");
-		$this->set_field("body", "Mooooo 1");
-		$this->click("Save");
-		$this->assert_text("Mooooo 1");
-		$this->assert_text("Revision 1");
-		$this->click("Edit");
-		$this->set_field("body", "Mooooo 2");
-		$this->click("Save");
-		$this->assert_text("Mooooo 2");
-		$this->assert_text("Revision 2");
-		$this->click("Delete This Version");
-		$this->assert_text("Mooooo 1");
-		$this->assert_text("Revision 1");
-		$this->click("Delete All");
-		$this->log_out();
-	}
+        send_event(new WikiDeletePageEvent("test"));
+        $this->get_page("wiki/test");
+        $this->assert_title("test");
+        $this->assert_text("This is a default page");
+    }
 }
-

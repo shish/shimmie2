@@ -3,8 +3,8 @@
 
 	background-color: #FFE;
 	border: 1px dashed black;
-	overflow: hidden; 
-	position: absolute; 
+	overflow: hidden;
+	position: absolute;
 	z-index: 0;
 
 	filter:alpha(opacity=50);
@@ -14,16 +14,16 @@
 }
 
 .notep {
-	display: none; 
+	display: none;
 	color: #412a21;
-	background-color: #fffdef; 
-	border: #412a21 1px solid; 
-	font-size: 8pt; 
-	margin-top: 0px; 
+	background-color: #fffdef;
+	border: #412a21 1px solid;
+	font-size: 8pt;
+	margin-top: 0;
 	padding: 2px;
 	position: absolute;
 	width: 175px;
-} 
+}
 
 #noteform, #noteEditForm {
 	display: none;
@@ -74,7 +74,7 @@
     opacity: 0.5;
 }
 
-.imgareaselect-selection {  
+.imgareaselect-selection {
 }
 
 /* Makes sure the note block is hidden */

@@ -1,0 +1,76 @@
+name: Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix:
+        php: ['7.3']
+        database: ['pgsql', 'mysql', 'sqlite']
+
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: ${{ matrix.php }}
+        coverage: pcov
+        extensions: mbstring
+
+    - name: Set up database
+      run: |
+        mkdir -p data/config
+        if [[ "${{ matrix.database }}" == "pgsql" ]]; then
+            sudo apt update && sudo apt-get install -y postgresql postgresql-client ;
+            psql --version ;
+            sudo -u postgres psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
+            sudo -u postgres psql -c "CREATE USER shimmie WITH PASSWORD 'shimmie';" -U postgres ;
+            sudo -u postgres psql -c "CREATE DATABASE shimmie WITH OWNER shimmie;" -U postgres ;
+        fi
+        if [[ "${{ matrix.database }}" == "mysql" ]]; then
+            sudo systemctl start mysql ;
+            mysql --version ;
+            mysql -e "SET GLOBAL general_log = 'ON';" -uroot -proot ;
+            mysql -e "CREATE DATABASE shimmie;" -uroot -proot ;
+        fi
+        if [[ "${{ matrix.database }}" == "sqlite" ]]; then
+            sudo apt update && sudo apt-get install -y sqlite3 ;
+            sqlite3 --version ;
+        fi
+
+    - name: Check versions
+      run: php -v && composer -V
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install PHP dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Install shimmie
+      run: php index.php
+        
+    - name: Run test suite
+      run: |
+        if [[ "${{ matrix.database }}" == "pgsql" ]]; then
+            export DSN="pgsql:user=shimmie;password=shimmie;host=127.0.0.1;dbname=shimmie"
+        fi
+        if [[ "${{ matrix.database }}" == "mysql" ]]; then
+            export DSN="mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie"
+        fi
+        if [[ "${{ matrix.database }}" == "sqlite" ]]; then
+            export DSN="sqlite:data/shimmie.sqlite"
+        fi
+        vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+      
+    - name: Upload coverage
+      run: |
+          wget https://scrutinizer-ci.com/ocular.phar
+          php ocular.phar code-coverage:upload --format=php-clover data/coverage.clover

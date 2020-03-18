@@ -1,85 +1,65 @@
-<?php
-class TipsTest extends ShimmiePHPUnitTestCase {
-	public function setUp() {
-		parent::setUp();
+<?php declare(strict_types=1);
+class TipsTest extends ShimmiePHPUnitTestCase
+{
+    public function setUp(): void
+    {
+        parent::setUp();
+        // Delete default tips so we can test from a blank slate
+        global $database;
+        $database->execute("DELETE FROM tips");
+    }
 
-		$this->log_in_as_admin();
-		$this->get_page("tips/list");
+    public function testImageless()
+    {
+        global $database;
+        $this->log_in_as_admin();
 
-		$this->markTestIncomplete();
+        $this->get_page("tips/list");
+        $this->assert_title("Tips List");
 
-		// get rid of the default data if it's there
-		if(strpos($raw, "Delete")) {
-			$this->click("Delete");
-		}
-		$this->log_out();
-	}
+        send_event(new CreateTipEvent(true, "", "an imageless tip"));
+        $this->get_page("post/list");
+        $this->assert_text("an imageless tip");
 
-	public function testImageless() {
-		$this->log_in_as_admin();
+        $tip_id = (int)$database->get_one("SELECT id FROM tips");
+        send_event(new DeleteTipEvent($tip_id));
+        $this->get_page("post/list");
+        $this->assert_no_text("an imageless tip");
+    }
 
-		$this->get_page("tips/list");
-		$this->assert_title("Tips List");
+    public function testImaged()
+    {
+        global $database;
+        $this->log_in_as_admin();
 
-		$this->markTestIncomplete();
+        $this->get_page("tips/list");
+        $this->assert_title("Tips List");
 
-		$this->set_field("image", "");
-		$this->set_field("text", "an imageless tip");
-		$this->click("Submit");
-		$this->assert_title("Tips List");
+        send_event(new CreateTipEvent(true, "coins.png", "an imageless tip"));
+        $this->get_page("post/list");
+        $this->assert_text("an imageless tip");
 
-		$this->get_page("post/list");
-		$this->assert_text("an imageless tip");
+        $tip_id = (int)$database->get_one("SELECT id FROM tips");
+        send_event(new DeleteTipEvent($tip_id));
+        $this->get_page("post/list");
+        $this->assert_no_text("an imageless tip");
+    }
 
-		$this->get_page("tips/list");
-		$this->click("Delete");
+    public function testDisabled()
+    {
+        global $database;
+        $this->log_in_as_admin();
 
-		$this->log_out();
-	}
+        $this->get_page("tips/list");
+        $this->assert_title("Tips List");
 
-	public function testImaged() {
-		$this->log_in_as_admin();
+        send_event(new CreateTipEvent(false, "", "an imageless tip"));
+        $this->get_page("post/list");
+        $this->assert_no_text("an imageless tip");
 
-		$this->get_page("tips/list");
-		$this->assert_title("Tips List");
-
-		$this->markTestIncomplete();
-
-		$this->set_field("image", "coins.png");
-		$this->set_field("text", "an imaged tip");
-		$this->click("Submit");
-		$this->assert_title("Tips List");
-
-		$this->get_page("post/list");
-		$this->assert_text("an imaged tip");
-
-		$this->get_page("tips/list");
-		$this->click("Delete");
-
-		$this->log_out();
-	}
-
-	public function testDisabled() {
-		$this->log_in_as_admin();
-
-		$this->get_page("tips/list");
-		$this->assert_title("Tips List");
-
-		$this->markTestIncomplete();
-
-		$this->set_field("image", "coins.png");
-		$this->set_field("text", "an imaged tip");
-		$this->click("Submit");
-		$this->click("Yes");
-		$this->assert_title("Tips List");
-
-		$this->get_page("post/list");
-		$this->assert_no_text("an imaged tip");
-
-		$this->get_page("tips/list");
-		$this->click("Delete");
-
-		$this->log_out();
-	}
+        $tip_id = (int)$database->get_one("SELECT id FROM tips");
+        send_event(new DeleteTipEvent($tip_id));
+        $this->get_page("post/list");
+        $this->assert_no_text("an imageless tip");
+    }
 }
-

@@ -1,16 +1,18 @@
-<?php
-class TipsTheme extends Themelet {
-	public function manageTips($url, $images) {
-		global $page;
-		$select = "<select name='image'><option value=''>- Select Image -</option>";
+<?php declare(strict_types=1);
+class TipsTheme extends Themelet
+{
+    public function manageTips($url, $images)
+    {
+        global $page;
+        $select = "<select name='image'><option value=''>- Select Image -</option>";
 
-		foreach($images as $image){
-			$select .= "<option style='background-image:url(".$url.$image."); background-repeat:no-repeat; padding-left:20px;'  value=\"".$image."\">".$image."</option>\n";
-		}
+        foreach ($images as $image) {
+            $select .= "<option style='background-image:url(".$url.$image."); background-repeat:no-repeat; padding-left:20px;'  value=\"".$image."\">".$image."</option>\n";
+        }
 
-		$select .= "</select>";
+        $select .= "</select>";
 
-		$html = "
+        $html = "
 ".make_form(make_link("tips/save"))."
 <table>
   <tr>
@@ -32,64 +34,65 @@ class TipsTheme extends Themelet {
 </form>
 ";
 
-		$page->set_title("Tips List");
-		$page->set_heading("Tips List");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Add Tip", $html, "main", 10));
-	}
+        $page->set_title("Tips List");
+        $page->set_heading("Tips List");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Add Tip", $html, "main", 10));
+    }
 
-	public function showTip($url, $tip) {
-		global $page;
+    public function showTip($url, $tip)
+    {
+        global $page;
 
-		$img = "";
-		if(!empty($tip['image'])) {
-			$img = "<img src=".$url.$tip['image']." /> ";
-		}
-		$html = "<div id='tips'>".$img.$tip['text']."</div>";
-		$page->add_block(new Block(null, $html, "subheading", 10));
-	}
+        $img = "";
+        if (!empty($tip['image'])) {
+            $img = "<img src=".$url.url_escape($tip['image'])." /> ";
+        }
+        $html = "<div id='tips'>".$img.html_escape($tip['text'])."</div>";
+        $page->add_block(new Block(null, $html, "subheading", 10));
+    }
 
-	public function showAll($url, $tips){
-		global $user, $page;
+    public function showAll($url, $tips)
+    {
+        global $user, $page;
 
-		$html = "<table id='poolsList' class='zebra'>".
-			"<thead><tr>".
-			"<th>ID</th>".
-			"<th>Enabled</th>".
-			"<th>Image</th>".
-			"<th>Text</th>";
+        $html = "<table id='poolsList' class='zebra'>".
+            "<thead><tr>".
+            "<th>ID</th>".
+            "<th>Enabled</th>".
+            "<th>Image</th>".
+            "<th>Text</th>";
 
-		if($user->is_admin()){
-			$html .= "<th>Action</th>";
-		}	
+        if ($user->can(Permissions::TIPS_ADMIN)) {
+            $html .= "<th>Action</th>";
+        }
 
-		$html .= "</tr></thead>";
+        $html .= "</tr></thead>";
 
-		foreach ($tips as $tip) {
-			$tip_enable = ($tip['enable'] == "Y") ? "Yes" : "No";
-			$set_link = "<a href='".make_link("tips/status/".$tip['id'])."'>".$tip_enable."</a>";
+        foreach ($tips as $tip) {
+            $tip_enable = ($tip['enable'] == "Y") ? "Yes" : "No";
+            $set_link = "<a href='".make_link("tips/status/".$tip['id'])."'>".$tip_enable."</a>";
 
-			$html .= "<tr>".
-				"<td>".$tip['id']."</td>".
-				"<td>".$set_link."</td>".
-				(
-				empty($tip['image']) ?
-					"<td></td>" :
-					"<td><img src=".$url.$tip['image']." /></td>"
-				).
-				"<td class='left'>".$tip['text']."</td>";
+            $html .= "<tr>".
+                "<td>".$tip['id']."</td>".
+                "<td>".$set_link."</td>".
+                (
+                    empty($tip['image']) ?
+                    "<td></td>" :
+                    "<td><img alt='' src=".$url.$tip['image']." /></td>"
+                ).
+                "<td class='left'>".$tip['text']."</td>";
 
-			$del_link = "<a href='".make_link("tips/delete/".$tip['id'])."'>Delete</a>";
+            $del_link = "<a href='".make_link("tips/delete/".$tip['id'])."'>Delete</a>";
 
-			if($user->is_admin()){
-				$html .= "<td>".$del_link."</td>";
-			}
+            if ($user->can(Permissions::TIPS_ADMIN)) {
+                $html .= "<td>".$del_link."</td>";
+            }
 
-			$html .= "</tr>";
-		}
-		$html .= "</tbody></table>";
+            $html .= "</tr>";
+        }
+        $html .= "</tbody></table>";
 
-		$page->add_block(new Block("All Tips", $html, "main", 20));
-	}
+        $page->add_block(new Block("All Tips", $html, "main", 20));
+    }
 }
-

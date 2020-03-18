@@ -1,31 +1,4 @@
-<?php
-
-/*
- * Name: Ouroboros API
- * Author: Diftraku <diftraku[at]derpy.me>
- * Description: Ouroboros-like API for Shimmie
- * Version: 0.2
- * Documentation:
- *   Currently working features
- *   <ul>
- *     <li>Post:
- *       <ul>
- *         <li>Index/List</li>
- *         <li>Show</li>
- *         <li>Create</li>
- *       </ul>
- *     </li>
- *     <li>Tag:
- *       <ul>
- *         <li>Index/List</li>
- *       </ul>
- *     </li>
- *   </ul>
- *   Tested to work with CartonBox using "Danbooru 1.18.x" as site type.
- *   Does not work with Andbooru or Danbooru Gallery for reasons beyond me, took me a while to figure rating "u" is bad...
- *   Lots of Ouroboros/Danbooru specific values use their defaults (or what I gathered them to be default)
- *   and tons of stuff not supported directly in Shimmie is botched to work
- */
+<?php declare(strict_types=1);
 
 
 class _SafeOuroborosImage
@@ -190,10 +163,6 @@ class _SafeOuroborosImage
      */
     public $sample_width = null;
 
-    /**
-     * Constructor
-     * @param Image $img
-     */
     public function __construct(Image $img)
     {
         global $config;
@@ -213,20 +182,20 @@ class _SafeOuroborosImage
         // meta
         $this->change = intval($img->id); //DaFug is this even supposed to do? ChangeID?
         // Should be JSON specific, just strip this when converting to XML
-        $this->created_at = array('n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time');
+        $this->created_at = ['n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time'];
         $this->id = intval($img->id);
         $this->parent_id = null;
-        if (defined('ENABLED_EXTS')) {
-            if (strstr(ENABLED_EXTS, 'rating') !== false) {
-                // 'u' is not a "valid" rating
-                if ($img->rating == 's' || $img->rating == 'q' || $img->rating == 'e') {
-                    $this->rating = $img->rating;
-                }
-            }
-            if (strstr(ENABLED_EXTS, 'numeric_score') !== false) {
-                $this->score = $img->numeric_score;
+
+        if (Extension::is_enabled(RatingsInfo::KEY)!== false) {
+            // 'u' is not a "valid" rating
+            if ($img->rating == 's' || $img->rating == 'q' || $img->rating == 'e') {
+                $this->rating = $img->rating;
             }
         }
+        if (Extension::is_enabled(NumericScoreInfo::KEY)!== false) {
+            $this->score = $img->numeric_score;
+        }
+
         $this->source = $img->source;
         $this->status = 'active'; //not supported in Shimmie... yet
         $this->tags = $img->get_tag_list();
@@ -235,8 +204,8 @@ class _SafeOuroborosImage
         $this->has_notes = false;
 
         // thumb
-        $this->preview_height = $config->get_int('thumb_height');
-        $this->preview_width = $config->get_int('thumb_width');
+        $this->preview_height = $config->get_int(ImageConfig::THUMB_HEIGHT);
+        $this->preview_width = $config->get_int(ImageConfig::THUMB_WIDTH);
         $this->preview_url = make_http($img->get_thumb_link());
 
         // sample (use the full image here)
@@ -252,7 +221,7 @@ class OuroborosPost extends _SafeOuroborosImage
      * Multipart File
      * @var array
      */
-    public $file = array();
+    public $file = [];
 
     /**
      * Create with rating locked
@@ -270,10 +239,9 @@ class OuroborosPost extends _SafeOuroborosImage
     /**
      * Initialize an OuroborosPost for creation
      * Mainly just acts as a wrapper and validation layer
-     * @param   array   $post
-     * @param   string  $md5
+     * @noinspection PhpMissingParentConstructorInspection
      */
-    public function __construct(array $post, $md5 = '')
+    public function __construct(array $post, string $md5 = '')
     {
         if (array_key_exists('tags', $post)) {
             // implode(explode()) to resolve aliases and sanitise
@@ -410,22 +378,20 @@ class OuroborosAPI extends Extension
             } elseif ($this->type == 'xml') {
                 $page->set_type('text/xml; charset=utf-8');
             }
-            $page->set_mode('data');
+            $page->set_mode(PageMode::DATA);
             $this->tryAuth();
 
             if ($event->page_matches('post')) {
                 if ($this->match('create')) {
                     // Create
-                    if ($user->can("create_image")) {
+                    if ($user->can(Permissions::CREATE_IMAGE)) {
                         $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
                         $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                     } else {
                         $this->sendResponse(403, 'You cannot create new posts');
                     }
-
                 } elseif ($this->match('update')) {
-                    // Update
-                    //@todo add post update
+                    throw new SCoreException("update not implemented");
                 } elseif ($this->match('show')) {
                     // Show
                     $id = !empty($_REQUEST['id']) ? filter_var($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
@@ -438,8 +404,8 @@ class OuroborosAPI extends Extension
                     $p = !empty($_REQUEST['page']) ? intval(
                         filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 1;
-                    $tags = !empty($_REQUEST['tags']) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : array();
-                    if (!empty($tags)) {
+                    $tags = !empty($_REQUEST['tags']) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : [];
+                    if (is_string($tags)) {
                         $tags = Tag::explode($tags);
                     }
                     $this->postIndex($limit, $p, $tags);
@@ -471,12 +437,11 @@ class OuroborosAPI extends Extension
                 }
             }
         } elseif ($event->page_matches('post/show')) {
-            $page->set_mode('redirect');
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link(str_replace('post/show', 'post/view', implode('/', $event->args))));
             $page->display();
             die();
         }
-
     }
 
     /**
@@ -485,33 +450,29 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for post creation
-     * @param OuroborosPost $post
-     * @param string $md5
      */
-    protected function postCreate(OuroborosPost $post, $md5 = '')
+    protected function postCreate(OuroborosPost $post, ?string $md5 = '')
     {
         global $config;
-        $handler = $config->get_string("upload_collision_handler");
-        if (!empty($md5) && !($handler == 'merge')) {
+        $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+        if (!empty($md5) && !($handler == ImageConfig::COLLISION_MERGE)) {
             $img = Image::by_hash($md5);
             if (!is_null($img)) {
                 $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
                 return;
             }
         }
-        $meta = array();
+        $meta = [];
         $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
         $meta['source'] = $post->source;
-        if (defined('ENABLED_EXTS')) {
-            if (strstr(ENABLED_EXTS, 'rating') !== false) {
-                $meta['rating'] = $post->rating;
-            }
+        if (Extension::is_enabled(RatingsInfo::KEY)!== false) {
+            $meta['rating'] = $post->rating;
         }
         // Check where we should try for the file
         if (empty($post->file) && !empty($post->file_url) && filter_var(
-                $post->file_url,
-                FILTER_VALIDATE_URL
-            ) !== false
+            $post->file_url,
+            FILTER_VALIDATE_URL
+        ) !== false
         ) {
             // Transload from source
             $meta['file'] = tempnam('/tmp', 'shimmie_transload_' . $config->get_string('transload_engine'));
@@ -534,20 +495,19 @@ class OuroborosAPI extends Extension
         if (!empty($meta['hash'])) {
             $img = Image::by_hash($meta['hash']);
             if (!is_null($img)) {
-                $handler = $config->get_string("upload_collision_handler");
-                if($handler == "merge") {
+                $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+                if ($handler == ImageConfig::COLLISION_MERGE) {
                     $postTags = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
                     $merged = array_merge($postTags, $img->get_tag_array());
                     send_event(new TagSetEvent($img, $merged));
 
                     // This is really the only thing besides tags we should care
-                    if(isset($meta['source'])){
+                    if (isset($meta['source'])) {
                         send_event(new SourceSetEvent($img, $meta['source']));
                     }
                     $this->sendResponse(200, self::OK_POST_CREATE_UPDATE . ' ID: ' . $img->id);
                     return;
-                }
-                else {
+                } else {
                     $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
                     return;
                 }
@@ -575,13 +535,12 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a single post
-     * @param int $id
      */
-    protected function postShow($id = null)
+    protected function postShow(int $id = null)
     {
         if (!is_null($id)) {
             $post = new _SafeOuroborosImage(Image::by_id($id));
-            $this->sendData('post', $post);
+            $this->sendData('post', [$post]);
         } else {
             $this->sendResponse(424, 'ID is mandatory');
         }
@@ -589,15 +548,13 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of posts
-     * @param int $limit
-     * @param int $page
-     * @param string[] $tags
+     * #param string[] $tags
      */
-    protected function postIndex($limit, $page, $tags)
+    protected function postIndex(int $limit, int $page, array $tags)
     {
         $start = ($page - 1) * $limit;
         $results = Image::find_images(max($start, 0), min($limit, 100), $tags);
-        $posts = array();
+        $posts = [];
         foreach ($results as $img) {
             if (!is_object($img)) {
                 continue;
@@ -611,37 +568,25 @@ class OuroborosAPI extends Extension
      * Tag
      */
 
-    /**
-     * Wrapper for getting a list of tags
-     * @param int $limit
-     * @param int $page
-     * @param string $order
-     * @param int $id
-     * @param int $after_id
-     * @param string $name
-     * @param string $name_pattern
-     */
-    protected function tagIndex($limit, $page, $order, $id, $after_id, $name, $name_pattern)
+    protected function tagIndex(int $limit, int $page, string $order, int $id, int $after_id, string $name, string $name_pattern)
     {
         global $database, $config;
         $start = ($page - 1) * $limit;
-        $tag_data = array();
         switch ($order) {
             case 'name':
                 $tag_data = $database->get_col(
-                    $database->scoreql_to_sql(
-                        "
-                                                        SELECT DISTINCT
-                                                            id, SCORE_STRNORM(substr(tag, 1, 1)), count
-                                                        FROM tags
-                                                        WHERE count >= :tags_min
-                                                        ORDER BY SCORE_STRNORM(substr(tag, 1, 1)) LIMIT :start, :max_items
-                                                    "
-                    ),
-                    array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit)
+                    "
+                        SELECT DISTINCT
+                            id, LOWER(substr(tag, 1, 1)), count
+                        FROM tags
+                        WHERE count >= :tags_min
+                        ORDER BY LOWER(substr(tag, 1, 1)) LIMIT :start, :max_items
+                    ",
+                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
             case 'count':
+            default:
                 $tag_data = $database->get_all(
                     "
                                                     SELECT id, tag, count
@@ -649,22 +594,11 @@ class OuroborosAPI extends Extension
                                                     WHERE count >= :tags_min
                                                     ORDER BY count DESC, tag ASC LIMIT :start, :max_items
                                                     ",
-                    array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit)
-                );
-                break;
-            case 'date':
-                $tag_data = $database->get_all(
-                    "
-                                                    SELECT id, tag, count
-                                                    FROM tags
-                                                    WHERE count >= :tags_min
-                                                    ORDER BY count DESC, tag ASC LIMIT :start, :max_items
-                                                    ",
-                    array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit)
+                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
         }
-        $tags = array();
+        $tags = [];
         foreach ($tag_data as $tag) {
             if (!is_array($tag)) {
                 continue;
@@ -680,12 +614,8 @@ class OuroborosAPI extends Extension
 
     /**
      * Sends a simple {success,reason} message to browser
-     *
-     * @param int $code HTTP equivalent code for the message
-     * @param string $reason Reason for the code
-     * @param bool $location Is $reason a location? (used mainly for post/create)
      */
-    private function sendResponse($code = 200, $reason = '', $location = false)
+    private function sendResponse(int $code = 200, string $reason = '', bool $location = false)
     {
         global $page;
         if ($code == 200) {
@@ -711,7 +641,7 @@ class OuroborosAPI extends Extension
             }
             header("{$proto} {$code} {$header}", true);
         }
-        $response = array('success' => $success, 'reason' => $reason);
+        $response = ['success' => $success, 'reason' => $reason];
         if ($this->type == 'json') {
             if ($location !== false) {
                 $response['location'] = $response['reason'];
@@ -738,13 +668,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    /**
-     * Send data to the browser
-     * @param string $type
-     * @param mixed $data
-     * @param int $offset
-     */
-    private function sendData($type = '', $data = array(), $offset = 0)
+    private function sendData(string $type = '', array $data = [], int $offset = 0)
     {
         global $page;
         $response = '';
@@ -777,10 +701,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    /**
-     * @param string $type
-     */
-    private function createItemXML(XMLWriter &$xml, $type, $item)
+    private function createItemXML(XMLWriter &$xml, string $type, $item)
     {
         $xml->startElement($type);
         foreach ($item as $key => $val) {
@@ -801,8 +722,6 @@ class OuroborosAPI extends Extension
      *
      * Currently checks for either user & session in request or cookies
      * and initializes a global User
-     * @param void
-     * @return void
      */
     private function tryAuth()
     {
@@ -818,6 +737,7 @@ class OuroborosAPI extends Extension
             } else {
                 $user = User::by_id($config->get_int("anon_id", 0));
             }
+            send_event(new UserLoginEvent($user));
         } elseif (isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'session']) &&
             isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'user'])
         ) {
@@ -830,15 +750,14 @@ class OuroborosAPI extends Extension
             } else {
                 $user = User::by_id($config->get_int("anon_id", 0));
             }
+            send_event(new UserLoginEvent($user));
         }
     }
 
     /**
      * Helper for matching API methods from event
-     * @param string $page
-     * @return bool
      */
-    private function match($page)
+    private function match(string $page): bool
     {
         return (preg_match("%{$page}\.(xml|json)$%", implode('/', $this->event->args), $matches) === 1);
     }

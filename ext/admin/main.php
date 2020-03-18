@@ -1,271 +1,194 @@
-<?php
-/**
- * Name: Admin Controls
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Various things to make admins' lives easier
- * Documentation:
- *  Various moderate-level tools for admins; for advanced, obscure, and
- *  possibly dangerous tools see the shimmie2-utils script set
- *  <p>Lowercase all tags:
- *  <br>Set all tags to lowercase for consistency
- *  <p>Recount tag use:
- *  <br>If the counts of images per tag get messed up somehow, this will
- *  reset them, and remove any unused tags
- *  <p>Database dump:
- *  <br>Download the contents of the database in plain text format, useful
- *  for backups.
- *  <p>Image dump:
- *  <br>Download all the images as a .zip file (Requires ZipArchive)
- */
+<?php /** @noinspection PhpUnusedPrivateMethodInspection */
+declare(strict_types=1);
 
 /**
  * Sent when the admin page is ready to be added to
  */
-class AdminBuildingEvent extends Event {
-	/** @var \Page */
-	public $page;
+class AdminBuildingEvent extends Event
+{
+    /** @var Page */
+    public $page;
 
-	/**
-	 * @param Page $page
-	 */
-	public function __construct(Page $page) {
-		$this->page = $page;
-	}
+    public function __construct(Page $page)
+    {
+        parent::__construct();
+        $this->page = $page;
+    }
 }
 
-class AdminActionEvent extends Event {
-	/** @var string */
-	public $action;
-	/** @var bool */
-	public $redirect = true;
+class AdminActionEvent extends Event
+{
+    /** @var string */
+    public $action;
+    /** @var bool */
+    public $redirect = true;
 
-	/**
-	 * @param string $action
-	 */
-	public function __construct(/*string*/ $action) {
-		$this->action = $action;
-	}
+    public function __construct(string $action)
+    {
+        parent::__construct();
+        $this->action = $action;
+    }
 }
 
-class AdminPage extends Extension {
-	public function onPageRequest(PageRequestEvent $event) {
-		global $page, $user;
+class AdminPage extends Extension
+{
+    /** @var AdminPageTheme */
+    protected $theme;
 
-		if($event->page_matches("admin")) {
-			if(!$user->can("manage_admintools")) {
-				$this->theme->display_permission_denied();
-			}
-			else {
-				if($event->count_args() == 0) {
-					send_event(new AdminBuildingEvent($page));
-				}
-				else {
-					$action = $event->get_arg(0);
-					$aae = new AdminActionEvent($action);
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $page, $user;
 
-					if($user->check_auth_token()) {
-						log_info("admin", "Util: $action");
-						set_time_limit(0);
-						send_event($aae);
-					}
+        if ($event->page_matches("admin")) {
+            if (!$user->can(Permissions::MANAGE_ADMINTOOLS)) {
+                $this->theme->display_permission_denied();
+            } else {
+                if ($event->count_args() == 0) {
+                    send_event(new AdminBuildingEvent($page));
+                } else {
+                    $action = $event->get_arg(0);
+                    $aae = new AdminActionEvent($action);
 
-					if($aae->redirect) {
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
-					}
-				}
-			}
-		}
-	}
+                    if ($user->check_auth_token()) {
+                        log_info("admin", "Util: $action");
+                        set_time_limit(0);
+                        send_event($aae);
+                    }
 
-	public function onCommand(CommandEvent $event) {
-		if($event->cmd == "help") {
-			print "  get-page [query string]\n";
-			print "    eg 'get-page post/list'\n\n";
-		}
-		if($event->cmd == "get-page") {
-			global $page;
-			send_event(new PageRequestEvent($event->args[0]));
-			$page->display();
-		}
-	}
+                    if ($aae->redirect) {
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("admin"));
+                    }
+                }
+            }
+        }
+    }
 
-	public function onAdminBuilding(AdminBuildingEvent $event) {
-		$this->theme->display_page();
-		$this->theme->display_form();
-	}
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tget-page <query string>\n";
+            print "\t\teg 'get-page post/list'\n\n";
+            print "\tpost-page <query string> <urlencoded params>\n";
+            print "\t\teg 'post-page ip_ban/delete id=1'\n\n";
+            print "\tget-token\n";
+            print "\t\tget a CSRF auth token\n\n";
+            print "\tregen-thumb <id / hash>\n";
+            print "\t\tregenerate a thumbnail\n\n";
+            print "\tcache [get|set|del] [key] <value>\n";
+            print "\t\teg 'cache get config'\n\n";
+        }
+        if ($event->cmd == "get-page") {
+            global $page;
+            if (isset($event->args[1])) {
+                parse_str($event->args[1], $_GET);
+            }
+            send_event(new PageRequestEvent($event->args[0]));
+            $page->display();
+        }
+        if ($event->cmd == "post-page") {
+            global $page;
+            $_SERVER['REQUEST_METHOD'] = "POST";
+            if (isset($event->args[1])) {
+                parse_str($event->args[1], $_POST);
+            }
+            send_event(new PageRequestEvent($event->args[0]));
+            $page->display();
+        }
+        if ($event->cmd == "get-token") {
+            global $user;
+            print($user->get_auth_token());
+        }
+        if ($event->cmd == "regen-thumb") {
+            $uid = $event->args[0];
+            $image = Image::by_id_or_hash($uid);
+            if ($image) {
+                send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
+            } else {
+                print("No post with ID '$uid'\n");
+            }
+        }
+        if ($event->cmd == "cache") {
+            global $cache;
+            $cmd = $event->args[0];
+            $key = $event->args[1];
+            switch ($cmd) {
+                case "get":
+                    var_dump($cache->get($key));
+                    break;
+                case "set":
+                    $cache->set($key, $event->args[2], 60);
+                    break;
+                case "del":
+                    $cache->delete($key);
+                    break;
+            }
+        }
+    }
 
-	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
-		global $user;
-		if($user->can("manage_admintools")) {
-			$event->add_link("Board Admin", make_link("admin"));
-		}
-	}
+    public function onAdminBuilding(AdminBuildingEvent $event)
+    {
+        $this->theme->display_page();
+        $this->theme->display_form();
+    }
 
-	public function onAdminAction(AdminActionEvent $event) {
-		$action = $event->action;
-		if(method_exists($this, $action)) {
-			$event->redirect = $this->$action();
-		}
-	}
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if ($event->parent==="system") {
+            if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
+                $event->add_nav_link("admin", new Link('admin'), "Board Admin");
+            }
+        }
+    }
 
-	public function onPostListBuilding(PostListBuildingEvent $event) {
-		global $user;
-		if($user->can("manage_admintools") && !empty($event->search_terms)) {
-			$event->add_control($this->theme->dbq_html(implode(" ", $event->search_terms)));
-		}
-	}
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
+            $event->add_link("Board Admin", make_link("admin"));
+        }
+    }
 
-	private function delete_by_query() {
-		global $page;
-		$query = $_POST['query'];
-		$reason = @$_POST['reason'];
-		assert(strlen($query) > 1);
+    public function onAdminAction(AdminActionEvent $event)
+    {
+        $action = $event->action;
+        if (method_exists($this, $action)) {
+            $event->redirect = $this->$action();
+        }
+    }
 
-		log_warning("admin", "Mass deleting: $query");
-		$count = 0;
-		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {
-			if($reason && class_exists("ImageBan")) {
-				send_event(new AddImageHashBanEvent($image->hash, $reason));
-			}
-			send_event(new ImageDeletionEvent($image));
-			$count++;
-		}
-		log_debug("admin", "Deleted $count images", true);
+    private function set_tag_case()
+    {
+        global $database;
+        $database->execute(
+            "UPDATE tags SET tag=:tag1 WHERE LOWER(tag) = LOWER(:tag2)",
+            ["tag1" => $_POST['tag'], "tag2" => $_POST['tag']]
+        );
+        log_info("admin", "Fixed the case of {$_POST['tag']}", "Fixed case");
+        return true;
+    }
 
-		$page->set_mode("redirect");
-		$page->set_redirect(make_link("post/list"));
-		return false;
-	}
+    private function lowercase_all_tags()
+    {
+        global $database;
+        $database->execute("UPDATE tags SET tag=lower(tag)");
+        log_warning("admin", "Set all tags to lowercase", "Set all tags to lowercase");
+        return true;
+    }
 
-	private function set_tag_case() {
-		global $database;
-		$database->execute($database->scoreql_to_sql(
-			"UPDATE tags SET tag=:tag1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag2)"
-		), array("tag1" => $_POST['tag'], "tag2" => $_POST['tag']));
-		log_info("admin", "Fixed the case of ".html_escape($_POST['tag']), true);
-		return true;
-	}
-
-	private function lowercase_all_tags() {
-		global $database;
-		$database->execute("UPDATE tags SET tag=lower(tag)");
-		log_warning("admin", "Set all tags to lowercase", true);
-		return true;
-	}
-
-	private function recount_tag_use() {
-		global $database;
-		$database->Execute("
+    private function recount_tag_use()
+    {
+        global $database;
+        $database->Execute("
 			UPDATE tags
 			SET count = COALESCE(
 				(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id),
 				0
 			)
 		");
-		$database->Execute("DELETE FROM tags WHERE count=0");
-		log_warning("admin", "Re-counted tags", true);
-		return true;
-	}
-
-
-	private function database_dump() {
-		global $page;
-
-		$matches = array();
-		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
-		$software = $matches['proto'];
-		$username = $matches['user'];
-		$password = $matches['password'];
-		$hostname = $matches['host'];
-		$database = $matches['dbname'];
-
-		switch($software) {
-			case 'mysql':
-				$cmd = "mysqldump -h$hostname -u$username -p$password $database";
-				break;
-			case 'pgsql':
-				putenv("PGPASSWORD=$password");
-				$cmd = "pg_dump -h $hostname -U $username $database";
-				break;
-			case 'sqlite':
-				$cmd = "sqlite3 $database .dump";
-				break;
-			default:
-				$cmd = false;
-		}
-
-		//FIXME: .SQL dump is empty if cmd doesn't exist
-
-		if($cmd) {
-			$page->set_mode("data");
-			$page->set_type("application/x-unknown");
-			$page->set_filename('shimmie-'.date('Ymd').'.sql');
-			$page->set_data(shell_exec($cmd));
-		}
-
-		return false;
-	}
-
-	private function download_all_images() {
-		global $database, $page;
-
-		$images = $database->get_all("SELECT hash, ext FROM images");
-		$filename = data_path('imgdump-'.date('Ymd').'.zip');
-
-		$zip = new ZipArchive;
-		if($zip->open($filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === TRUE){
-			foreach($images as $img){
-				$img_loc = warehouse_path("images", $img["hash"], FALSE);
-				$zip->addFile($img_loc, $img["hash"].".".$img["ext"]);
-			}
-			$zip->close();
-		}
-
-		$page->set_mode("redirect");
-		$page->set_redirect(make_link($filename)); //TODO: Delete file after downloaded?
-
-		return false;  // we do want a redirect, but a manual one
-	}
-
-    private function reset_image_ids() {
-        global $database;
-
-		//TODO: Make work with PostgreSQL + SQLite
-		//TODO: Update score_log (Having an optional ID column for score_log would be nice..)
-		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
-
-		if($matches['proto'] == "mysql"){
-			$tables = $database->get_col("SELECT TABLE_NAME
-			                              FROM information_schema.KEY_COLUMN_USAGE
-			                              WHERE TABLE_SCHEMA = :db
-			                              AND REFERENCED_COLUMN_NAME = 'id'
-			                              AND REFERENCED_TABLE_NAME = 'images'", array("db" => $matches['dbname']));
-
-			$i = 1;
-			$ids = $database->get_col("SELECT id FROM images ORDER BY images.id ASC");
-			foreach($ids as $id){
-				$sql = "SET FOREIGN_KEY_CHECKS=0;
-				        UPDATE images SET id={$i} WHERE image_id={$id};";
-
-				foreach($tables as $table){
-					$sql .= "UPDATE {$table} SET image_id={$i} WHERE image_id={$id};";
-				}
-
-				$sql .= " SET FOREIGN_KEY_CHECKS=1;";
-				$database->execute($sql);
-
-				$i++;
-			}
-			$database->execute("ALTER TABLE images AUTO_INCREMENT=".(count($ids) + 1));
-		}elseif($matches['proto'] == "pgsql"){
-			//TODO: Make this work with PostgreSQL
-		}elseif($matches['proto'] == "sqlite"){
-			//TODO: Make this work with SQLite
-		}
+        $database->Execute("DELETE FROM tags WHERE count=0");
+        log_warning("admin", "Re-counted tags", "Re-counted tags");
         return true;
     }
 }
-

@@ -1,12 +1,4 @@
-<?php
-/**
- * Name: [Beta] Forum
- * Author: Sein Kraft <mail@seinkraft.info>
- *         Alpha <alpha@furries.com.ar>
- * License: GPLv2
- * Description: Rough forum extension
- * Documentation:
- */
+<?php declare(strict_types=1);
 /*
 Todo:
 *Quote buttons on posts
@@ -15,419 +7,398 @@ Todo:
 *Smiley filter, word filter, etc should work with our extension
 
 */
-class Forum extends Extension {
-	public function onInitExt(InitExtEvent $event) {
-		global $config, $database;
+class Forum extends Extension
+{
+    /** @var ForumTheme */
+    protected $theme;
 
-		// shortcut to latest
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
+        global $config, $database;
 
-		if ($config->get_int("forum_version") < 1) {
-			$database->create_table("forum_threads", "
+        // shortcut to latest
+
+        if ($config->get_int("forum_version") < 1) {
+            $database->create_table("forum_threads", "
 					id SCORE_AIPK,
 					sticky SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 					title VARCHAR(255) NOT NULL,
 					user_id INTEGER NOT NULL,
-					date SCORE_DATETIME NOT NULL,
-					uptodate SCORE_DATETIME NOT NULL,
+					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					uptodate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
 					");
-			$database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", array());
-			
-			$database->create_table("forum_posts", "
+            $database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", []);
+
+            $database->create_table("forum_posts", "
 					id SCORE_AIPK,
 					thread_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					date SCORE_DATETIME NOT NULL,
+					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					message TEXT,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
 					FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
-			$database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", array());
+            $database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", []);
 
-			$config->set_int("forum_version", 2);
-			$config->set_int("forumTitleSubString", 25);
-			$config->set_int("forumThreadsPerPage", 15);
-			$config->set_int("forumPostsPerPage", 15);
+            $config->set_int("forum_version", 2);
+            $config->set_int("forumTitleSubString", 25);
+            $config->set_int("forumThreadsPerPage", 15);
+            $config->set_int("forumPostsPerPage", 15);
 
-			$config->set_int("forumMaxCharsPerPost", 512);
+            $config->set_int("forumMaxCharsPerPost", 512);
 
-			log_info("forum", "extension installed");
-		}
-		if ($config->get_int("forum_version") < 2) {
-			$database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
-			$database->execute("ALTER TABLE forum_posts ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
-			$config->set_int("forum_version", 2);
-		}
-	}
-	
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Forum");
-		$sb->add_int_option("forumTitleSubString", "Title max long: ");
-		$sb->add_int_option("forumThreadsPerPage", "<br>Threads per page: ");
-		$sb->add_int_option("forumPostsPerPage", "<br>Posts per page: ");
-		
-		$sb->add_int_option("forumMaxCharsPerPost", "<br>Max chars per post: ");
-		$event->panel->add_block($sb);
-	}
-	
-	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $database;
-		
-		$threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=?", array($event->display_user->id));
-        $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=?", array($event->display_user->id));
-			
+            log_info("forum", "extension installed");
+        }
+        if ($config->get_int("forum_version") < 2) {
+            $database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
+            $database->execute("ALTER TABLE forum_posts ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
+            $config->set_int("forum_version", 2);
+        }
+    }
+
+    public function onSetupBuilding(SetupBuildingEvent $event)
+    {
+        $sb = new SetupBlock("Forum");
+        $sb->add_int_option("forumTitleSubString", "Title max long: ");
+        $sb->add_int_option("forumThreadsPerPage", "<br>Threads per page: ");
+        $sb->add_int_option("forumPostsPerPage", "<br>Posts per page: ");
+
+        $sb->add_int_option("forumMaxCharsPerPost", "<br>Max chars per post: ");
+        $event->panel->add_block($sb);
+    }
+
+    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    {
+        global $database;
+
+        $threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=:user_id", ['user_id'=>$event->display_user->id]);
+        $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=:user_id", ['user_id'=>$event->display_user->id]);
+
         $days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
-				
+
         $threads_rate = sprintf("%.1f", ($threads_count / $days_old));
-		$posts_rate = sprintf("%.1f", ($posts_count / $days_old));
-				
-		$event->add_stats("Forum threads: $threads_count, $threads_rate per day");
+        $posts_rate = sprintf("%.1f", ($posts_count / $days_old));
+
+        $event->add_stats("Forum threads: $threads_count, $threads_rate per day");
         $event->add_stats("Forum posts: $posts_count, $posts_rate per day");
-	}
+    }
 
 
-	public function onPageRequest(PageRequestEvent $event) {
-		global $page, $user;
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $page, $user;
 
-		if($event->page_matches("forum")) {
-			switch($event->get_arg(0)) {
-				case "index":
-					$this->show_last_threads($page, $event, $user->is_admin());
-					if(!$user->is_anonymous()) $this->theme->display_new_thread_composer($page);
-					break;
-				case "view":
-					$threadID = int_escape($event->get_arg(1));
-					$pageNumber = int_escape($event->get_arg(2));
-					list($errors) = $this->sanity_check_viewed_thread($threadID);
+        if ($event->page_matches("forum")) {
+            switch ($event->get_arg(0)) {
+                case "index":
+                    $this->show_last_threads($page, $event, $user->can(Permissions::FORUM_ADMIN));
+                    if (!$user->is_anonymous()) {
+                        $this->theme->display_new_thread_composer($page);
+                    }
+                    break;
+                case "view":
+                    $threadID = int_escape($event->get_arg(1));
+                    // $pageNumber = int_escape($event->get_arg(2));
+                    list($errors) = $this->sanity_check_viewed_thread($threadID);
 
-					if($errors!=null)
-					{
-						$this->theme->display_error(500, "Error", $errors);
-						break;
-					}
+                    if ($errors!=null) {
+                        $this->theme->display_error(500, "Error", $errors);
+                        break;
+                    }
 
-					$this->show_posts($event, $user->is_admin());
-					if($user->is_admin()) $this->theme->add_actions_block($page, $threadID);
-					if(!$user->is_anonymous()) $this->theme->display_new_post_composer($page, $threadID);
-					break;
-				case "new":
-					global $page;
-					$this->theme->display_new_thread_composer($page);
-					break;
-				case "create":
-					$redirectTo = "forum/index";
-					if (!$user->is_anonymous())
-					{
-						list($errors) = $this->sanity_check_new_thread();
+                    $this->show_posts($event, $user->can(Permissions::FORUM_ADMIN));
+                    if ($user->can(Permissions::FORUM_ADMIN)) {
+                        $this->theme->add_actions_block($page, $threadID);
+                    }
+                    if (!$user->is_anonymous()) {
+                        $this->theme->display_new_post_composer($page, $threadID);
+                    }
+                    break;
+                case "new":
+                    global $page;
+                    $this->theme->display_new_thread_composer($page);
+                    break;
+                case "create":
+                    $redirectTo = "forum/index";
+                    if (!$user->is_anonymous()) {
+                        list($errors) = $this->sanity_check_new_thread();
 
-						if($errors!=null)
-						{
-							$this->theme->display_error(500, "Error", $errors);
-							break;
-						}
+                        if ($errors!=null) {
+                            $this->theme->display_error(500, "Error", $errors);
+                            break;
+                        }
 
-						$newThreadID = $this->save_new_thread($user);
-						$this->save_new_post($newThreadID, $user);
-						$redirectTo = "forum/view/".$newThreadID."/1";
-					}
+                        $newThreadID = $this->save_new_thread($user);
+                        $this->save_new_post($newThreadID, $user);
+                        $redirectTo = "forum/view/".$newThreadID."/1";
+                    }
 
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link($redirectTo));
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link($redirectTo));
 
-					break;
-				case "delete":
-					$threadID = int_escape($event->get_arg(1));
-					$postID = int_escape($event->get_arg(2));
+                    break;
+                case "delete":
+                    $threadID = int_escape($event->get_arg(1));
+                    $postID = int_escape($event->get_arg(2));
 
-					if ($user->is_admin()) {$this->delete_post($postID);}
+                    if ($user->can(Permissions::FORUM_ADMIN)) {
+                        $this->delete_post($postID);
+                    }
 
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("forum/view/".$threadID));
-					break;
-				case "nuke":
-					$threadID = int_escape($event->get_arg(1));
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("forum/view/".$threadID));
+                    break;
+                case "nuke":
+                    $threadID = int_escape($event->get_arg(1));
 
-					if ($user->is_admin())
-						$this->delete_thread($threadID);
+                    if ($user->can(Permissions::FORUM_ADMIN)) {
+                        $this->delete_thread($threadID);
+                    }
 
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("forum/index"));
-					break;
-				case "answer":
-					$threadID = int_escape($_POST["threadID"]);
-					$total_pages = $this->get_total_pages_for_thread($threadID);
-					if (!$user->is_anonymous())
-					{
-						list($errors) = $this->sanity_check_new_post();
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("forum/index"));
+                    break;
+                case "answer":
+                    $threadID = int_escape($_POST["threadID"]);
+                    $total_pages = $this->get_total_pages_for_thread($threadID);
+                    if (!$user->is_anonymous()) {
+                        list($errors) = $this->sanity_check_new_post();
 
-						if ($errors!=null)
-						{
-							$this->theme->display_error(500, "Error", $errors);
-							break;
-						}
-						$this->save_new_post($threadID, $user);
-					}
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("forum/view/".$threadID."/".$total_pages));
-					break;
-				default:
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("forum/index"));
-					//$this->theme->display_error(400, "Invalid action", "You should check forum/index.");
-					break;
-			}
-		}
-	}
+                        if ($errors!=null) {
+                            $this->theme->display_error(500, "Error", $errors);
+                            break;
+                        }
+                        $this->save_new_post($threadID, $user);
+                    }
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("forum/view/".$threadID."/".$total_pages));
+                    break;
+                default:
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("forum/index"));
+                    //$this->theme->display_error(400, "Invalid action", "You should check forum/index.");
+                    break;
+            }
+        }
+    }
 
-	/**
-	 * @param int $threadID
-	 */
-	private function get_total_pages_for_thread($threadID)
-	{
-		global $database, $config;
-		$result = $database->get_row("SELECT COUNT(1) AS count FROM forum_posts WHERE thread_id = ?", array($threadID));
+    private function get_total_pages_for_thread(int $threadID)
+    {
+        global $database, $config;
+        $result = $database->get_row("SELECT COUNT(1) AS count FROM forum_posts WHERE thread_id = :thread_id", ['thread_id'=>$threadID]);
 
-		return ceil($result["count"] / $config->get_int("forumPostsPerPage"));
-	}
+        return ceil($result["count"] / $config->get_int("forumPostsPerPage"));
+    }
 
-	private function sanity_check_new_thread()
-	{
-		$errors = null;
-		if (!array_key_exists("title", $_POST))
-		{
-			$errors .= "<div id='error'>No title supplied.</div>";
-		}
-		else if (strlen($_POST["title"]) == 0)
-		{
-			$errors .= "<div id='error'>You cannot have an empty title.</div>";
-		}
-		else if (strlen(html_escape($_POST["title"])) > 255)
-		{
-			$errors .= "<div id='error'>Your title is too long.</div>";
-		}
+    private function sanity_check_new_thread()
+    {
+        $errors = null;
+        if (!array_key_exists("title", $_POST)) {
+            $errors .= "<div id='error'>No title supplied.</div>";
+        } elseif (strlen($_POST["title"]) == 0) {
+            $errors .= "<div id='error'>You cannot have an empty title.</div>";
+        } elseif (strlen(html_escape($_POST["title"])) > 255) {
+            $errors .= "<div id='error'>Your title is too long.</div>";
+        }
 
-		if (!array_key_exists("message", $_POST))
-		{
-			$errors .= "<div id='error'>No message supplied.</div>";
-		}
-		else if (strlen($_POST["message"]) == 0)
-		{
-			$errors .= "<div id='error'>You cannot have an empty message.</div>";
-		}
+        if (!array_key_exists("message", $_POST)) {
+            $errors .= "<div id='error'>No message supplied.</div>";
+        } elseif (strlen($_POST["message"]) == 0) {
+            $errors .= "<div id='error'>You cannot have an empty message.</div>";
+        }
 
-		return array($errors);
-	}
+        return [$errors];
+    }
 
-	private function sanity_check_new_post()
-	{
-		$errors = null;
-		if (!array_key_exists("threadID", $_POST))
-		{
-			$errors = "<div id='error'>No thread ID supplied.</div>";
-		}
-		else if (strlen($_POST["threadID"]) == 0)
-		{
-			$errors = "<div id='error'>No thread ID supplied.</div>";
-		}
-		else if (is_numeric($_POST["threadID"]))
+    private function sanity_check_new_post()
+    {
+        $errors = null;
+        if (!array_key_exists("threadID", $_POST)) {
+            $errors = "<div id='error'>No thread ID supplied.</div>";
+        } elseif (strlen($_POST["threadID"]) == 0) {
+            $errors = "<div id='error'>No thread ID supplied.</div>";
+        } elseif (is_numeric($_POST["threadID"])) {
+            if (!array_key_exists("message", $_POST)) {
+                $errors .= "<div id='error'>No message supplied.</div>";
+            } elseif (strlen($_POST["message"]) == 0) {
+                $errors .= "<div id='error'>You cannot have an empty message.</div>";
+            }
+        }
 
-			if (!array_key_exists("message", $_POST))
-			{
-				$errors .= "<div id='error'>No message supplied.</div>";
-			}
-			else if (strlen($_POST["message"]) == 0)
-			{
-				$errors .= "<div id='error'>You cannot have an empty message.</div>";
-			}
+        return [$errors];
+    }
 
-		return array($errors);
-	}
+    private function sanity_check_viewed_thread(int $threadID)
+    {
+        $errors = null;
+        if (!$this->threadExists($threadID)) {
+            $errors = "<div id='error'>Inexistent thread.</div>";
+        }
+        return [$errors];
+    }
 
-	/**
-	 * @param int $threadID
-	 */
-	private function sanity_check_viewed_thread($threadID)
-	{
-		$errors = null;
-		if (!$this->threadExists($threadID))
-		{
-			$errors = "<div id='error'>Inexistent thread.</div>";
-		}            
-		return array($errors);
-	}
+    private function get_thread_title(int $threadID)
+    {
+        global $database;
+        $result = $database->get_row("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id'=>$threadID]);
+        return $result["title"];
+    }
 
-	/**
-	 * @param int $threadID
-	 */
-	private function get_thread_title($threadID)
-	{
-		global $database;
-		$result = $database->get_row("SELECT t.title FROM forum_threads AS t WHERE t.id = ? ", array($threadID));
-		return $result["title"];
-	}
-		
-	private function show_last_threads(Page $page, PageRequestEvent $event, $showAdminOptions = false)
-	{
-		global $config, $database;
-		$pageNumber = $event->get_arg(1);
-		$threadsPerPage = $config->get_int('forumThreadsPerPage', 15);
-		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
+    private function show_last_threads(Page $page, PageRequestEvent $event, $showAdminOptions = false)
+    {
+        global $config, $database;
+        $threadsPerPage = $config->get_int('forumThreadsPerPage', 15);
+        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
 
-		if(is_null($pageNumber) || !is_numeric($pageNumber))
-			$pageNumber = 0;
-		else if ($pageNumber <= 0)
-			$pageNumber = 0;
-		else if ($pageNumber >= $totalPages)
-			$pageNumber = $totalPages - 1;
-		else
-			$pageNumber--;
+        if ($event->count_args() >= 2) {
+            $pageNumber = $event->get_arg(1);
+            if (!is_numeric($pageNumber)) {
+                $pageNumber = 0;
+            } elseif ($pageNumber <= 0) {
+                $pageNumber = 0;
+            } elseif ($pageNumber >= $totalPages) {
+                $pageNumber = $totalPages - 1;
+            } else {
+                $pageNumber--;
+            }
+        } else {
+            $pageNumber = 0;
+        }
 
-		$threads = $database->get_all(
-				"SELECT f.id, f.sticky, f.title, f.date, f.uptodate, u.name AS user_name, u.email AS user_email, u.class AS user_class, sum(1) - 1 AS response_count ".
-				"FROM forum_threads AS f ".
-				"INNER JOIN users AS u ".
-				"ON f.user_id = u.id ".
-				"INNER JOIN forum_posts AS p ".
-				"ON p.thread_id = f.id ".
-				"GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.class ".
-				"ORDER BY f.sticky ASC, f.uptodate DESC LIMIT :limit OFFSET :offset"
-				, array("limit"=>$threadsPerPage, "offset"=>$pageNumber * $threadsPerPage)
-				);
+        $threads = $database->get_all(
+            "SELECT f.id, f.sticky, f.title, f.date, f.uptodate, u.name AS user_name, u.email AS user_email, u.class AS user_class, sum(1) - 1 AS response_count ".
+                "FROM forum_threads AS f ".
+                "INNER JOIN users AS u ".
+                "ON f.user_id = u.id ".
+                "INNER JOIN forum_posts AS p ".
+                "ON p.thread_id = f.id ".
+                "GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.class ".
+                "ORDER BY f.sticky ASC, f.uptodate DESC LIMIT :limit OFFSET :offset",
+            ["limit"=>$threadsPerPage, "offset"=>$pageNumber * $threadsPerPage]
+        );
 
-		$this->theme->display_thread_list($page, $threads, $showAdminOptions, $pageNumber + 1, $totalPages);
-	}
+        $this->theme->display_thread_list($page, $threads, $showAdminOptions, $pageNumber + 1, $totalPages);
+    }
 
-	private function show_posts(PageRequestEvent $event, $showAdminOptions = false)
-	{
-		global $config, $database;
-		$threadID = $event->get_arg(1);
-		$pageNumber = $event->get_arg(2);
-		$postsPerPage = $config->get_int('forumPostsPerPage', 15);
-		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = ?", array($threadID)) / $postsPerPage);
-		$threadTitle = $this->get_thread_title($threadID);
+    private function show_posts(PageRequestEvent $event, $showAdminOptions = false)
+    {
+        global $config, $database;
+        $threadID = int_escape($event->get_arg(1));
+        $postsPerPage = $config->get_int('forumPostsPerPage', 15);
+        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id'=>$threadID]) / $postsPerPage);
+        $threadTitle = $this->get_thread_title($threadID);
 
-		if(is_null($pageNumber) || !is_numeric($pageNumber))
-			$pageNumber = 0;
-		else if ($pageNumber <= 0)
-			$pageNumber = 0;
-		else if ($pageNumber >= $totalPages)
-			$pageNumber = $totalPages - 1;
-		else
-			$pageNumber--;
+        if ($event->count_args() >= 3) {
+            $pageNumber = $event->get_arg(2);
+            if (!is_numeric($pageNumber)) {
+                $pageNumber = 0;
+            } elseif ($pageNumber <= 0) {
+                $pageNumber = 0;
+            } elseif ($pageNumber >= $totalPages) {
+                $pageNumber = $totalPages - 1;
+            } else {
+                $pageNumber--;
+            }
+        } else {
+            $pageNumber = 0;
+        }
 
-		$posts = $database->get_all(
-				"SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
-				"FROM forum_posts AS p ".
-				"INNER JOIN users AS u ".
-				"ON p.user_id = u.id ".
-				"WHERE thread_id = :thread_id ".
-				"ORDER BY p.date ASC ".
-				"LIMIT :limit OFFSET :offset"
-				, array("thread_id"=>$threadID, "offset"=>$pageNumber * $postsPerPage, "limit"=>$postsPerPage)
-				);
-		$this->theme->display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber + 1, $totalPages);
-	}
+        $posts = $database->get_all(
+            "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
+                "FROM forum_posts AS p ".
+                "INNER JOIN users AS u ".
+                "ON p.user_id = u.id ".
+                "WHERE thread_id = :thread_id ".
+                "ORDER BY p.date ASC ".
+                "LIMIT :limit OFFSET :offset",
+            ["thread_id"=>$threadID, "offset"=>$pageNumber * $postsPerPage, "limit"=>$postsPerPage]
+        );
+        $this->theme->display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber + 1, $totalPages);
+    }
 
-	private function save_new_thread(User $user)
-	{
-		$title = html_escape($_POST["title"]);
-		$sticky = !empty($_POST["sticky"]) ? html_escape($_POST["sticky"]) : "N";
+    private function save_new_thread(User $user)
+    {
+        $title = html_escape($_POST["title"]);
+        $sticky = !empty($_POST["sticky"]) ? html_escape($_POST["sticky"]) : "N";
 
-		if($sticky == ""){
-			$sticky = "N";
-		}
+        if ($sticky == "") {
+            $sticky = "N";
+        }
 
-		global $database;
-		$database->execute("
+        global $database;
+        $database->execute(
+            "
 				INSERT INTO forum_threads
 				(title, sticky, user_id, date, uptodate)
 				VALUES
-				(?, ?, ?, now(), now())",
-				array($title, $sticky, $user->id));
+				(:title, :sticky, :user_id, now(), now())",
+            ['title'=>$title, 'sticky'=>$sticky, 'user_id'=>$user->id]
+        );
 
-		$threadID = $database->get_last_insert_id("forum_threads_id_seq");
+        $threadID = $database->get_last_insert_id("forum_threads_id_seq");
 
-		log_info("forum", "Thread {$threadID} created by {$user->name}");
+        log_info("forum", "Thread {$threadID} created by {$user->name}");
 
-		return $threadID;
-	}
+        return $threadID;
+    }
 
-	/**
-	 * @param int $threadID
-	 */
-	private function save_new_post($threadID, User $user)
-	{
-		global $config;
-		$userID = $user->id;
-		$message = html_escape($_POST["message"]);
+    private function save_new_post(int $threadID, User $user)
+    {
+        global $config;
+        $userID = $user->id;
+        $message = html_escape($_POST["message"]);
 
-		$max_characters = $config->get_int('forumMaxCharsPerPost');
-		$message = substr($message, 0, $max_characters);
+        $max_characters = $config->get_int('forumMaxCharsPerPost');
+        $message = substr($message, 0, $max_characters);
 
-		global $database;
-		$database->execute("INSERT INTO forum_posts
-				(thread_id, user_id, date, message)
-				VALUES
-				(?, ?, now(), ?)"
-				, array($threadID, $userID, $message));
+        global $database;
+        $database->execute("
+			INSERT INTO forum_posts (thread_id, user_id, date, message)
+			VALUES (:thread_id, :user_id, now(), :message)
+		", ['thread_id'=>$threadID, 'user_id'=>$userID, 'message'=>$message]);
 
-		$postID = $database->get_last_insert_id("forum_posts_id_seq");
+        $postID = $database->get_last_insert_id("forum_posts_id_seq");
 
-		log_info("forum", "Post {$postID} created by {$user->name}");
+        log_info("forum", "Post {$postID} created by {$user->name}");
 
-		$database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=?", array ($threadID));
-	}
+        $database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=:id", ['id'=>$threadID]);
+    }
 
-	/**
-	 * @param int $threadID
-	 * @param int $pageNumber
-	 */
-	private function retrieve_posts($threadID, $pageNumber)
-	{
-		global $database, $config;
-		$postsPerPage = $config->get_int('forumPostsPerPage', 15);
+    private function retrieve_posts(int $threadID, int $pageNumber)
+    {
+        global $database, $config;
+        $postsPerPage = $config->get_int('forumPostsPerPage', 15);
 
-		return $database->get_all(
-				"SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
-				"FROM forum_posts AS p ".
-				"INNER JOIN users AS u ".
-				"ON p.user_id = u.id ".
-				"WHERE thread_id = :thread_id ".
-				"ORDER BY p.date ASC ".
-				"LIMIT :limit OFFSET :offset "
-				, array("thread_id"=>$threadID, "offset"=>($pageNumber - 1) * $postsPerPage, "limit"=>$postsPerPage));
-	}
+        return $database->get_all(
+            "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
+                "FROM forum_posts AS p ".
+                "INNER JOIN users AS u ".
+                "ON p.user_id = u.id ".
+                "WHERE thread_id = :thread_id ".
+                "ORDER BY p.date ASC ".
+                "LIMIT :limit OFFSET :offset ",
+            ["thread_id"=>$threadID, "offset"=>($pageNumber - 1) * $postsPerPage, "limit"=>$postsPerPage]
+        );
+    }
 
-	/**
-	 * @param int $threadID
-	 */
-	private function delete_thread($threadID)
-	{
-		global $database;
-		$database->execute("DELETE FROM forum_threads WHERE id = ?", array($threadID));
-		$database->execute("DELETE FROM forum_posts WHERE thread_id = ?", array($threadID));
-	}
+    private function delete_thread(int $threadID)
+    {
+        global $database;
+        $database->execute("DELETE FROM forum_threads WHERE id = :id", ['id'=>$threadID]);
+        $database->execute("DELETE FROM forum_posts WHERE thread_id = :thread_id", ['thread_id'=>$threadID]);
+    }
 
-	/**
-	 * @param int $postID
-	 */
-	private function delete_post($postID)
-	{
-		global $database;
-		$database->execute("DELETE FROM forum_posts WHERE id = ?", array($postID));
-	}
+    private function delete_post(int $postID)
+    {
+        global $database;
+        $database->execute("DELETE FROM forum_posts WHERE id = :id", ['id'=>$postID]);
+    }
 
-	/**
-	 * @param int $threadID
-	 */
-	private function threadExists($threadID)
-	{
-		global $database;
-		$result=$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id= ?)", array($threadID));
-		if ($result==1){
-			return true;
-		}else{
-			return false;
-		}
-	}
+    private function threadExists(int $threadID)
+    {
+        global $database;
+        $result=$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id'=>$threadID]);
+        return $result == 1;
+    }
 }

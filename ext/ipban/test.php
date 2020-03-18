@@ -1,29 +1,58 @@
-<?php
-class IPBanTest extends ShimmiePHPUnitTestCase {
-	public function testIPBan() {
-		$this->get_page('ip_ban/list');
-		$this->assert_response(403);
-		$this->assert_title("Permission Denied");
+<?php declare(strict_types=1);
 
-		$this->log_in_as_admin();
+class IPBanTest extends ShimmiePHPUnitTestCase
+{
+    # FIXME: test that the IP is actually banned
 
-		$this->get_page('ip_ban/list');
-		$this->assert_no_text("42.42.42.42");
+    public function testAccess()
+    {
+        $page = $this->get_page('ip_ban/list');
+        $this->assertEquals(403, $page->code);
+        $this->assertEquals("Permission Denied", $page->title);
+    }
 
-		$this->markTestIncomplete();
+    public function testIPBan()
+    {
+        global $database;
 
-		$this->set_field('ip', '42.42.42.42');
-		$this->set_field('reason', 'unit testing');
-		$this->set_field('end', '1 week');
-		$this->click("Ban");
+        $this->log_in_as_admin();
 
-		$this->assert_text("42.42.42.42");
-		$this->click("Remove"); // FIXME: remove which ban? :S
-		$this->assert_no_text("42.42.42.42");
+        // Check initial state
+        $this->get_page('ip_ban/list');
+        $this->assert_no_text("42.42.42.42");
 
-		$this->get_page('ip_ban/list?all=on'); // just test it doesn't crash for now
+        // Add ban
+        send_event(new AddIPBanEvent(
+            '42.42.42.42',
+            'block',
+            'unit testing',
+            '2030-01-01'
+        ));
 
-		# FIXME: test that the IP is actually banned
-	}
+        // Check added
+        $page = $this->get_page('ip_ban/list');
+        $this->assertStringContainsString(
+            "42.42.42.42",
+            $page->find_block("Edit IP Bans")->body
+        );
+
+        // Delete ban
+        $ban_id = (int)$database->get_one("SELECT id FROM bans");
+        send_event(new RemoveIPBanEvent($ban_id));
+
+        // Check delete
+        $page = $this->get_page('ip_ban/list');
+        $this->assertStringNotContainsString(
+            "42.42.42.42",
+            $page->find_block("Edit IP Bans")->body
+        );
+    }
+
+    public function test_all()
+    {
+        // just test it doesn't crash for now
+        $this->log_in_as_admin();
+        $page = $this->get_page('ip_ban/list', ['r_all'=>'on']);
+        $this->assertEquals(200, $page->code);
+    }
 }
-

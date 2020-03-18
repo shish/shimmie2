@@ -1,32 +1,36 @@
-<?php
+<?php declare(strict_types=1);
 
-class DowntimeTheme extends Themelet {
-	/**
-	 * Show the admin that downtime mode is enabled
-	 *
-	 * @param Page $page
-	 */
-	public function display_notification(Page $page) {
-		$page->add_block(new Block("Downtime",
-			"<span style='font-size: 1.5em'><b><center>DOWNTIME MODE IS ON!</center></b></span>", "left", 0));
-	}
+class DowntimeTheme extends Themelet
+{
+    /**
+     * Show the admin that downtime mode is enabled
+     */
+    public function display_notification(Page $page)
+    {
+        $page->add_block(new Block(
+            "Downtime",
+            "<span style='font-size: 1.5em; text-align: center;'><b>DOWNTIME MODE IS ON!</b></span>",
+            "left",
+            0
+        ));
+    }
 
-	/**
-	 * Display $message and exit
-	 *
-	 * @param string $message
-	 */
-	public function display_message(/*string*/ $message) {
-		global $config, $user, $page;
-		$theme_name = $config->get_string('theme');
-		$data_href = get_base_href();
-		$login_link = make_link("user_admin/login");
-		$auth = $user->get_auth_html();
+    /**
+     * Display $message and exit
+     */
+    public function display_message(string $message)
+    {
+        global $config, $user, $page;
+        $theme_name = $config->get_string(SetupConfig::THEME);
+        $data_href = get_base_href();
+        $login_link = make_link("user_admin/login");
+        $auth = $user->get_auth_html();
 
-		$page->set_mode('data');
-		$page->set_code(503);
-		$page->set_data(<<<EOD
-<html>
+        $page->set_mode(PageMode::DATA);
+        $page->set_code(503);
+        $page->set_data(
+            <<<EOD
+<html lang="en">
 	<head>
 		<title>Downtime</title>
 		<link rel="stylesheet" href="$data_href/themes/$theme_name/style.css" type="text/css">
@@ -34,7 +38,7 @@ class DowntimeTheme extends Themelet {
 	<body>
 		<div id="downtime">
 			<section>
-				<h1><center>Down for Maintenance</center></h1>
+				<h1 style="text-align: center;">Down for Maintenance</h1>
 				<div id="message" class="blockbody">
 					$message
 				</div>
@@ -62,6 +66,6 @@ class DowntimeTheme extends Themelet {
 	</body>
 </html>
 EOD
-);
-	}
+        );
+    }
 }

@@ -1,4 +1,4 @@
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	var original_width = $("#original_width").val();
 	var original_height = $("#original_height").val();
 

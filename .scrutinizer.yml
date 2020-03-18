@@ -3,7 +3,17 @@ imports:
 - php
 
 filter:
-  excluded_paths: [lib/*,ext/*/lib/*,ext/tagger/script.js,ext/chatbox/*]
+  excluded_paths: [ext/*/lib/*,ext/tagger/script.js,tests/*]
+
+build:
+  nodes:
+    analysis:
+      tests:
+        before:
+          - mkdir -p data/config
+          - cp tests/defines.php data/config/shimmie.conf.php
+        override:
+          - php-scrutinizer-run
 
 tools:
   external_code_coverage: true

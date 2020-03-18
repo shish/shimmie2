@@ -1,160 +1,258 @@
-<?php
-define("UNITTEST", true);
-define("TIMEZONE", 'UTC');
-define("EXTRA_EXTS", str_replace("ext/", "", implode(',', glob('ext/*'))));
-define("BASE_HREF", "/");
-define("CLI_LOG_LEVEL", 50);
+<?php declare(strict_types=1);
 
-$_SERVER['QUERY_STRING'] = '/';
+use PHPUnit\Framework\TestCase;
 
 chdir(dirname(dirname(__FILE__)));
-require_once "core/_bootstrap.inc.php";
+require_once "vendor/autoload.php";
+require_once "tests/defines.php";
+require_once "core/sys_config.php";
+require_once "core/polyfills.php";
+require_once "core/util.php";
 
-if(is_null(User::by_name("demo"))) {
-	$userPage = new UserPage();
-	$userPage->onUserCreation(new UserCreationEvent("demo", "demo", ""));
-	$userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
+$_SERVER['QUERY_STRING'] = '/';
+if (file_exists("tests/trace.json")) {
+    unlink("tests/trace.json");
 }
 
-abstract class ShimmiePHPUnitTestCase extends \PHPUnit_Framework_TestCase {
-	protected $backupGlobalsBlacklist = array('database', 'config');
-	private $images = array();
+global $cache, $config, $database, $user, $page, $_tracer;
+_sanitise_environment();
+$tracer_enabled = true;
+$_tracer = new EventTracer();
+$_tracer->begin("bootstrap");
+_load_core_files();
+$cache = new Cache(CACHE_DSN);
+$dsn = getenv("DSN");
+$database = new Database($dsn ? $dsn : "sqlite::memory:");
+create_dirs();
+create_tables($database);
+$config = new DatabaseConfig($database);
+ExtensionInfo::load_all_extension_info();
+Extension::determine_enabled_extensions();
+require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php"));
+_load_theme_files();
+$page = new Page();
+_load_event_listeners();
+$config->set_string("thumb_engine", "static");  # GD has less overhead per-call
+$config->set_bool("nice_urls", true);
+send_event(new DatabaseUpgradeEvent());
+send_event(new InitExtEvent());
+$_tracer->end();
 
-	public function setUp() {
-		$class = str_replace("Test", "", get_class($this));
-		if(!class_exists($class)) {
-			$this->markTestSkipped("$class not loaded");
-		}
-		elseif(!ext_is_live($class)) {
-			$this->markTestSkipped("$class not supported with this database");
-		}
+abstract class ShimmiePHPUnitTestCase extends TestCase
+{
+    protected static $anon_name = "anonymous";
+    protected static $admin_name = "demo";
+    protected static $user_name = "test";
+    protected $wipe_time = "test";
 
-		// things to do after bootstrap and before request
-		// log in as anon
-		$this->log_out();
-	}
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        global $_tracer;
+        $_tracer->begin(get_called_class());
 
-	public function tearDown() {
-		foreach($this->images as $image_id) {
-			$this->delete_image($image_id);
-		}
-	}
+        self::create_user(self::$admin_name);
+        self::create_user(self::$user_name);
+    }
 
-	protected function get_page($page_name, $args=null) {
-		// use a fresh page
-		global $page;
-		if(!$args) $args = array();
-		$_GET = $args;
-		$page = class_exists("CustomPage") ? new CustomPage() : new Page();
-		send_event(new PageRequestEvent($page_name));
-		if($page->mode == "redirect") {
-			$page->code = 302;
-		}
-	}
+    public function setUp(): void
+    {
+        global $database, $_tracer;
+        $_tracer->begin($this->getName());
+        $_tracer->begin("setUp");
+        $class = str_replace("Test", "", get_class($this));
+        if (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
+            $this->markTestSkipped("$class not supported with this database");
+        }
 
-	// page things
-	protected function assert_title($title) {
-		global $page;
-		$this->assertContains($title, $page->title);
-	}
+        // If we have a parent test, don't wipe out the state they gave us
+        if (!$this->getDependencyInput()) {
+            // things to do after bootstrap and before request
+            // log in as anon
+            self::log_out();
 
-	protected function assert_no_title($title) {
-		global $page;
-		$this->assertNotContains($title, $page->title);
-	}
+            foreach ($database->get_col("SELECT id FROM images") as $image_id) {
+                send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
+            }
+        }
 
-	/**
-	 * @param integer $code
-	 */
-	protected function assert_response($code) {
-		global $page;
-		$this->assertEquals($code, $page->code);
-	}
+        $_tracer->end();
+        $_tracer->begin("test");
+    }
 
-	protected function page_to_text($section=null) {
-		global $page;
-		$text = $page->title . "\n";
-		foreach($page->blocks as $block) {
-			if(is_null($section) || $section == $block->section) {
-				$text .= $block->header . "\n";
-				$text .= $block->body . "\n\n";
-			}
-		}
-		return $text;
-	}
+    public function tearDown(): void
+    {
+        global $_tracer;
+        $_tracer->end();
+        $_tracer->end();
+        $_tracer->clear();
+        $_tracer->flush("tests/trace.json");
+    }
 
-	protected function assert_text($text, $section=null) {
-		$this->assertContains($text, $this->page_to_text($section));
-	}
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        global $_tracer;
+        $_tracer->end();
+    }
 
-	/**
-	 * @param string $text
-	 */
-	protected function assert_no_text($text, $section=null) {
-		$this->assertNotContains($text, $this->page_to_text($section));
-	}
+    protected static function create_user(string $name)
+    {
+        if (is_null(User::by_name($name))) {
+            $userPage = new UserPage();
+            $userPage->onUserCreation(new UserCreationEvent($name, $name, ""));
+            assert(!is_null(User::by_name($name)), "Creation of user $name failed");
+        }
+    }
 
-	/**
-	 * @param string $content
-	 */
-	protected function assert_content($content) {
-		global $page;
-		$this->assertContains($content, $page->data);
-	}
+    protected static function get_page($page_name, $args=null)
+    {
+        // use a fresh page
+        global $page;
+        if (!$args) {
+            $args = [];
+        }
+        $_GET = $args;
+        $_POST = [];
+        $page = new Page();
+        send_event(new PageRequestEvent($page_name));
+        if ($page->mode == PageMode::REDIRECT) {
+            $page->code = 302;
+        }
+        return $page;
+    }
 
-	/**
-	 * @param string $content
-	 */
-	protected function assert_no_content($content) {
-		global $page;
-		$this->assertNotContains($content, $page->data);
-	}
+    protected static function post_page($page_name, $args=null)
+    {
+        // use a fresh page
+        global $page;
+        if (!$args) {
+            $args = [];
+        }
+        foreach ($args as $k=>$v) {
+            $args[$k] = (string)$v;
+        }
+        $_GET = [];
+        $_POST = $args;
+        $page = new Page();
+        send_event(new PageRequestEvent($page_name));
+        if ($page->mode == PageMode::REDIRECT) {
+            $page->code = 302;
+        }
+    }
 
-	// user things
-	protected function log_in_as_admin() {
-		global $user;
-		$user = User::by_name('demo');
-		$this->assertNotNull($user);
-	}
+    // page things
+    protected function assert_title(string $title)
+    {
+        global $page;
+        $this->assertStringContainsString($title, $page->title);
+    }
 
-	protected function log_in_as_user() {
-		global $user;
-		$user = User::by_name('test');
-		$this->assertNotNull($user);
-	}
+    protected function assert_title_matches($title)
+    {
+        global $page;
+        $this->assertStringMatchesFormat($title, $page->title);
+    }
 
-	protected function log_out() {
-		global $user, $config;
-		$user = User::by_id($config->get_int("anon_id", 0));
-		$this->assertNotNull($user);
-	}
+    protected function assert_no_title(string $title)
+    {
+        global $page;
+        $this->assertStringNotContainsString($title, $page->title);
+    }
 
-	// post things
-	/**
-	 * @param string $filename
-	 * @param string $tags
-	 * @return int
-	 */
-	protected function post_image($filename, $tags) {
-		$dae = new DataUploadEvent($filename, array(
-			"filename" => $filename,
-			"extension" => pathinfo($filename, PATHINFO_EXTENSION),
-			"tags" => Tag::explode($tags),
-			"source" => null,
-		));
-		send_event($dae);
-		$this->images[] = $dae->image_id;
-		return $dae->image_id;
-	}
+    protected function assert_response(int $code)
+    {
+        global $page;
+        $this->assertEquals($code, $page->code);
+    }
 
-	/**
-	 * @param int $image_id
-	 */
-	protected function delete_image($image_id) {
-		$img = Image::by_id($image_id);
-		if($img) {
-			$ide = new ImageDeletionEvent($img);
-			send_event($ide);
-		}
-	}
+    protected function page_to_text(string $section=null)
+    {
+        global $page;
+        if ($page->mode == PageMode::PAGE) {
+            $text = $page->title . "\n";
+            foreach ($page->blocks as $block) {
+                if (is_null($section) || $section == $block->section) {
+                    $text .= $block->header . "\n";
+                    $text .= $block->body . "\n\n";
+                }
+            }
+            return $text;
+        } elseif ($page->mode == PageMode::DATA) {
+            return $page->data;
+        } else {
+            $this->assertTrue(false, "Page mode is not PAGE or DATA");
+        }
+    }
+
+    protected function assert_text(string $text, string $section=null)
+    {
+        $this->assertStringContainsString($text, $this->page_to_text($section));
+    }
+
+    protected function assert_no_text(string $text, string $section=null)
+    {
+        $this->assertStringNotContainsString($text, $this->page_to_text($section));
+    }
+
+    protected function assert_content(string $content)
+    {
+        global $page;
+        $this->assertStringContainsString($content, $page->data);
+    }
+
+    protected function assert_no_content(string $content)
+    {
+        global $page;
+        $this->assertStringNotContainsString($content, $page->data);
+    }
+
+    protected function assert_search_results($tags, $results)
+    {
+        $images = Image::find_images(0, null, $tags);
+        $ids = [];
+        foreach ($images as $image) {
+            $ids[] = $image->id;
+        }
+        $this->assertEquals($results, $ids);
+    }
+
+    // user things
+    protected static function log_in_as_admin()
+    {
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
+    }
+
+    protected static function log_in_as_user()
+    {
+        send_event(new UserLoginEvent(User::by_name(self::$user_name)));
+    }
+
+    protected static function log_out()
+    {
+        global $config;
+        send_event(new UserLoginEvent(User::by_id($config->get_int("anon_id", 0))));
+    }
+
+    // post things
+    protected function post_image(string $filename, string $tags): int
+    {
+        $dae = new DataUploadEvent($filename, [
+            "filename" => $filename,
+            "extension" => pathinfo($filename, PATHINFO_EXTENSION),
+            "tags" => Tag::explode($tags),
+            "source" => null,
+        ]);
+        send_event($dae);
+        return $dae->image_id;
+    }
+
+    protected function delete_image(int $image_id)
+    {
+        $img = Image::by_id($image_id);
+        if ($img) {
+            $ide = new ImageDeletionEvent($img, true);
+            send_event($ide);
+        }
+    }
 }

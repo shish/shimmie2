@@ -131,18 +131,17 @@ if(document.getElementById("image-container") !== null) {
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		history.pushState(history.state, document.title, location.href);
-		var href = ste + furl +
+        location.href = ste + furl +
 			"&tags=" + encodeURIComponent(tag) +
 			"&rating=" + encodeURIComponent(rating) +
 			"&source=" + encodeURIComponent(source);
-		location.href = href;
 	}
 	else{
 		alert(notsup);
 	}
 }
 
-/* 
+/*
  * Shimmie
  *
  * One problem with shimmie is each theme does not show the same info

@@ -1,138 +1,297 @@
-<?php
-/*
- * Name: Logging (Database)
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Keep a record of SCore events (in the database).
- * Visibility: admin
- */
+<?php declare(strict_types=1);
 
-class LogDatabase extends Extension {
-	public function onInitExt(InitExtEvent $event) {
-		global $database;
-		global $config;
+use function MicroHTML\A;
+use function MicroHTML\SPAN;
+use function MicroHTML\emptyHTML;
+use function MicroHTML\INPUT;
+use function MicroHTML\BR;
+use function MicroHTML\SELECT;
+use function MicroHTML\OPTION;
+use function MicroHTML\rawHTML;
+use MicroCRUD\ActionColumn;
+use MicroCRUD\Column;
+use MicroCRUD\DateTimeColumn;
+use MicroCRUD\TextColumn;
+use MicroCRUD\Table;
 
-		if($config->get_int("ext_log_database_version") < 1) {
-			$database->create_table("score_log", "
+class ShortDateTimeColumn extends DateTimeColumn
+{
+    public function read_input(array $inputs)
+    {
+        return emptyHTML(
+            INPUT([
+                "type"=>"date",
+                "name"=>"r_{$this->name}[]",
+                "value"=>@$inputs["r_{$this->name}"][0]
+            ]),
+            BR(),
+            INPUT([
+                "type"=>"date",
+                "name"=>"r_{$this->name}[]",
+                "value"=>@$inputs["r_{$this->name}"][1]
+            ])
+        );
+    }
+}
+
+class ActorColumn extends Column
+{
+    public function __construct($name, $title)
+    {
+        parent::__construct($name, $title);
+        $this->sortable = false;
+    }
+
+    public function get_sql_filter(): string
+    {
+        $driver = $this->table->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+        switch ($driver) {
+            case "pgsql":
+                return "((username = :{$this->name}_0) OR (address && cast(:{$this->name}_1 as inet)))";
+            default:
+                return "((username = :{$this->name}_0) OR (address = :{$this->name}_1))";
+        }
+    }
+
+    public function read_input($inputs)
+    {
+        return emptyHTML(
+            INPUT([
+                "type" => "text",
+                "name" => "r_{$this->name}[]",
+                "placeholder" => "Username",
+                "value" => @$inputs["r_{$this->name}"][0]
+            ]),
+            BR(),
+            INPUT([
+                "type" => "text",
+                "name" => "r_{$this->name}[]",
+                "placeholder" => "IP Address",
+                "value" => @$inputs["r_{$this->name}"][1]
+            ])
+        );
+    }
+
+    public function modify_input_for_read($input)
+    {
+        list($un, $ip) = $input;
+        if (empty($un)) {
+            $un = null;
+        }
+        if (empty($ip)) {
+            $ip = null;
+        }
+        return [$un, $ip];
+    }
+
+    public function display($row)
+    {
+        $ret = emptyHTML();
+        if ($row['username'] != "Anonymous") {
+            $ret->appendChild(A(["href"=>make_link("user/{$row['username']}"), "title"=>$row['address']], $row['username']));
+            $ret->appendChild(BR());
+        }
+        $ret->appendChild($row['address']);
+        return $ret;
+    }
+}
+
+class MessageColumn extends Column
+{
+    public function __construct(string $name, string $title)
+    {
+        parent::__construct($name, $title);
+        $this->sortable = false;
+    }
+
+    public function get_sql_filter(): string
+    {
+        return "({$this->name} LIKE :{$this->name}_0 AND priority >= :{$this->name}_1)";
+    }
+
+    public function read_input(array $inputs)
+    {
+        $ret = emptyHTML(
+            INPUT([
+                "type"=>"text",
+                "name"=>"r_{$this->name}[]",
+                "placeholder"=>$this->title,
+                "value"=>@$inputs["r_{$this->name}"][0]
+            ])
+        );
+
+        $options = [
+            "Debug" => SCORE_LOG_DEBUG,
+            "Info" => SCORE_LOG_INFO,
+            "Warning" => SCORE_LOG_WARNING,
+            "Error" => SCORE_LOG_ERROR,
+            "Critical" => SCORE_LOG_CRITICAL,
+        ];
+        $s = SELECT(["name"=>"r_{$this->name}[]"]);
+        $s->appendChild(OPTION(["value"=>""], '-'));
+        foreach ($options as $k => $v) {
+            $attrs = ["value"=>$v];
+            if ($v == @$inputs["r_{$this->name}"][1]) {
+                $attrs["selected"] = true;
+            }
+            $s->appendChild(OPTION($attrs, $k));
+        }
+        $ret->appendChild($s);
+        return $ret;
+    }
+
+    public function modify_input_for_read($input)
+    {
+        list($m, $l) = $input;
+        if (empty($m)) {
+            $m = "%";
+        } else {
+            $m = "%$m%";
+        }
+        if (empty($l)) {
+            $l = 0;
+        }
+        return [$m, $l];
+    }
+
+    public function display($row)
+    {
+        $c = "#000";
+        switch ($row['priority']) {
+            case SCORE_LOG_DEBUG: $c = "#999"; break;
+            case SCORE_LOG_INFO: $c = "#000"; break;
+            case SCORE_LOG_WARNING: $c = "#800"; break;
+            case SCORE_LOG_ERROR: $c = "#C00"; break;
+            case SCORE_LOG_CRITICAL: $c = "#F00"; break;
+        }
+        return SPAN(["style"=>"color: $c"], rawHTML($this->scan_entities($row[$this->name])));
+    }
+
+    protected function scan_entities(string $line)
+    {
+        return preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
+    }
+
+    protected function link_image($id)
+    {
+        $iid = int_escape($id[1]);
+        return "<a href='".make_link("post/view/$iid")."'>Image #$iid</a>";
+    }
+}
+
+class LogTable extends Table
+{
+    public function __construct(\FFSPHP\PDO $db)
+    {
+        parent::__construct($db);
+        $this->table = "score_log";
+        $this->base_query = "SELECT * FROM score_log";
+        $this->size = 100;
+        $this->limit = 1000000;
+        $this->set_columns([
+            new ShortDateTimeColumn("date_sent", "Time"),
+            new TextColumn("section", "Module"),
+            new ActorColumn("username_or_address", "User"),
+            new MessageColumn("message", "Message"),
+            new ActionColumn("id"),
+        ]);
+        $this->order_by = ["date_sent DESC"];
+        $this->table_attrs = ["class" => "zebra"];
+    }
+}
+
+class LogDatabase extends Extension
+{
+    /** @var LogDatabaseTheme */
+    protected $theme;
+
+    public function onInitExt(InitExtEvent $event)
+    {
+        global $config;
+        $config->set_default_int("log_db_priority", SCORE_LOG_INFO);
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
+        global $database;
+
+        if ($this->get_version("ext_log_database_version") < 1) {
+            $database->create_table("score_log", "
 				id SCORE_AIPK,
-				date_sent SCORE_DATETIME NOT NULL,
+				date_sent TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				section VARCHAR(32) NOT NULL,
 				username VARCHAR(32) NOT NULL,
 				address SCORE_INET NOT NULL,
 				priority INT NOT NULL,
 				message TEXT NOT NULL
 			");
-				//INDEX(section)
-			$config->set_int("ext_log_database_version", 1);
-		}
+            //INDEX(section)
+            $this->set_version("ext_log_database_version", 1);
+        }
+    }
 
-		$config->set_default_int("log_db_priority", SCORE_LOG_INFO);
-	}
+    public function onSetupBuilding(SetupBuildingEvent $event)
+    {
+        $sb = new SetupBlock("Logging (Database)");
+        $sb->add_choice_option("log_db_priority", [
+            "Debug" => SCORE_LOG_DEBUG,
+            "Info" => SCORE_LOG_INFO,
+            "Warning" => SCORE_LOG_WARNING,
+            "Error" => SCORE_LOG_ERROR,
+            "Critical" => SCORE_LOG_CRITICAL,
+        ], "Debug Level: ");
+        $event->panel->add_block($sb);
+    }
 
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Logging (Database)");
-		$sb->add_choice_option("log_db_priority", array(
-			"Debug" => SCORE_LOG_DEBUG,
-			"Info" => SCORE_LOG_INFO,
-			"Warning" => SCORE_LOG_WARNING,
-			"Error" => SCORE_LOG_ERROR,
-			"Critical" => SCORE_LOG_CRITICAL,
-		), "Debug Level: ");
-		$event->panel->add_block($sb);
-	}
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $database, $user;
+        if ($event->page_matches("log/view")) {
+            if ($user->can(Permissions::VIEW_EVENTLOG)) {
+                $t = new LogTable($database->raw_db());
+                $t->inputs = $_GET;
+                $this->theme->display_events($t->table($t->query()), $t->paginator());
+            }
+        }
+    }
 
-	public function onPageRequest(PageRequestEvent $event) {
-		global $database, $user;
-		if($event->page_matches("log/view")) {
-			if($user->can("view_eventlog")) {
-				$wheres = array();
-				$args = array();
-				$page_num = int_escape($event->get_arg(0));
-				if($page_num <= 0) $page_num = 1;
-				if(!empty($_GET["time"])) {
-					$wheres[] = "date_sent LIKE :time";
-					$args["time"] = $_GET["time"]."%";
-				}
-				if(!empty($_GET["module"])) {
-					$wheres[] = "section = :module";
-					$args["module"] = $_GET["module"];
-				}
-				if(!empty($_GET["user"])) {
-					if($database->get_driver_name() == "pgsql") {
-						if(preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
-							$wheres[] = "(username = :user1 OR text(address) = :user2)";
-							$args["user1"] = $_GET["user"];
-							$args["user2"] = $_GET["user"] . "/32";
-						}
-						else {
-							$wheres[] = "lower(username) = lower(:user)";
-							$args["user"] = $_GET["user"];
-						}
-					}
-					else {
-						$wheres[] = "(username = :user1 OR address = :user2)";
-						$args["user1"] = $_GET["user"];
-						$args["user2"] = $_GET["user"];
-					}
-				}
-				if(!empty($_GET["priority"])) {
-					$wheres[] = "priority >= :priority";
-					$args["priority"] = int_escape($_GET["priority"]);
-				}
-				else {
-					$wheres[] = "priority >= :priority";
-					$args["priority"] = 20;
-				}
-				$where = "";
-				if(count($wheres) > 0) {
-					$where = "WHERE ";
-					$where .= join(" AND ", $wheres);
-				}
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if ($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_EVENTLOG)) {
+                $event->add_nav_link("event_log", new Link('log/view'), "Event Log");
+            }
+        }
+    }
 
-				$limit = 50;
-				$offset = ($page_num-1) * $limit;
-				$page_total = $database->cache->get("event_log_length");
-				if(!$page_total) {
-					$page_total = $database->get_one("SELECT count(*) FROM score_log $where", $args);
-					// don't cache a length of zero when the extension is first installed
-					if($page_total > 10) {
-						$database->cache->set("event_log_length", $page_total, 600);
-					}
-				}
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::VIEW_EVENTLOG)) {
+            $event->add_link("Event Log", make_link("log/view"));
+        }
+    }
 
-				$args["limit"] = $limit;
-				$args["offset"] = $offset;
-				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT :limit OFFSET :offset", $args);
+    public function onLog(LogEvent $event)
+    {
+        global $config, $database, $user;
 
-				$this->theme->display_events($events, $page_num, 100);
-			}
-		}
-	}
+        $username = ($user && $user->name) ? $user->name : "null";
 
-	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
-		global $user;
-		if($user->can("view_eventlog")) {
-			$event->add_link("Event Log", make_link("log/view"));
-		}
-	}
+        // not installed yet...
+        if ($this->get_version("ext_log_database_version") < 1) {
+            return;
+        }
 
-	public function onLog(LogEvent $event) {
-		global $config, $database, $user;
-
-		$username = ($user && $user->name) ? $user->name : "null";
-
-		// not installed yet...
-		if($config->get_int("ext_log_database_version") < 1) return;
-
-		if($event->priority >= $config->get_int("log_db_priority")) {
-			$database->execute("
+        if ($event->priority >= $config->get_int("log_db_priority")) {
+            $database->execute("
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
 				VALUES(now(), :section, :priority, :username, :address, :message)
-			", array(
-				"section"=>$event->section, "priority"=>$event->priority, "username"=>$username,
-				"address"=>$_SERVER['REMOTE_ADDR'], "message"=>$event->message
-			));
-		}
-	}
+			", [
+                "section"=>$event->section, "priority"=>$event->priority, "username"=>$username,
+                "address"=>$_SERVER['REMOTE_ADDR'], "message"=>$event->message
+            ]);
+        }
+    }
 }
-

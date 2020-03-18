@@ -1,15 +1,15 @@
-<?php
-class RegenThumbTest extends ShimmiePHPUnitTestCase {
-	public function testRegenThumb() {
-		$this->log_in_as_admin();
-		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-		$this->get_page("post/view/$image_id");
+<?php declare(strict_types=1);
+class RegenThumbTest extends ShimmiePHPUnitTestCase
+{
+    public function testRegenThumb()
+    {
+        $this->log_in_as_admin();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $this->get_page("post/view/$image_id");
 
-		$_POST['image_id'] = $image_id;
-		$this->get_page("regen_thumb/one");
-		$this->assert_title("Thumbnail Regenerated");
+        $this->post_page("regen_thumb/one", ['image_id'=>$image_id]);
+        $this->assert_title("Thumbnail Regenerated");
 
-		# FIXME: test that the thumb's modified time has been updated
-	}
+        # FIXME: test that the thumb's modified time has been updated
+    }
 }
-

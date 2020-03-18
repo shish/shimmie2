@@ -1,78 +1,90 @@
-<?php
-/**
- * Name: [Beta] Artists System
- * Author: Sein Kraft <mail@seinkraft.info>
- *         Alpha <alpha@furries.com.ar>
- * License: GPLv2
- * Description: Simple artists extension
- * Documentation:
- *
- */
-class AuthorSetEvent extends Event {
-	/** @var \Image  */
-	public $image;
-	/** @var \User  */
-	public $user;
-	/** @var string */
-	public $author;
+<?php declare(strict_types=1);
 
-	/**
-	 * @param Image $image
-	 * @param User $user
-	 * @param string $author
-	 */
-	public function __construct(Image $image, User $user, /*string*/ $author) {
+class AuthorSetEvent extends Event
+{
+    /** @var Image  */
+    public $image;
+    /** @var User  */
+    public $user;
+    /** @var string */
+    public $author;
+
+    public function __construct(Image $image, User $user, string $author)
+    {
+        parent::__construct();
         $this->image = $image;
         $this->user = $user;
         $this->author = $author;
     }
 }
 
-class Artists extends Extension {
-	public function onImageInfoSet(ImageInfoSetEvent $event) {
-        global $user;
-		if (isset($_POST["tag_edit__author"])) {
-			send_event(new AuthorSetEvent($event->image, $user, $_POST["tag_edit__author"]));
-		}
-	}
+class Artists extends Extension
+{
+    /** @var ArtistsTheme */
+    protected $theme;
 
-	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
+    public function onImageInfoSet(ImageInfoSetEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::EDIT_IMAGE_ARTIST) && isset($_POST["tag_edit__author"])) {
+            send_event(new AuthorSetEvent($event->image, $user, $_POST["tag_edit__author"]));
+        }
+    }
+
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    {
         global $user;
         $artistName = $this->get_artistName_by_imageID($event->image->id);
-        if(!$user->is_anonymous()) {
+        if (!$user->is_anonymous()) {
             $event->add_part($this->theme->get_author_editor_html($artistName), 42);
         }
-	}
+    }
 
-	public function onSearchTermParse(SearchTermParseEvent $event) {
-		$matches = array();
-		if(preg_match("/^author[=|:](.*)$/i", $event->term, $matches)) {
-			$char = $matches[1];
-			$event->add_querylet(new Querylet("Author = :author_char", array("author_char"=>$char)));
-		}
-	}
+    public function onSearchTermParse(SearchTermParseEvent $event)
+    {
+        if (is_null($event->term)) {
+            return;
+        }
 
-    public function onInitExt(InitExtEvent $event) {
-    	global $config, $database;
-                
-    	if ($config->get_int("ext_artists_version") < 1) {
+        $matches = [];
+        if (preg_match("/^(author|artist)[=|:](.*)$/i", $event->term, $matches)) {
+            $char = $matches[2];
+            $event->add_querylet(new Querylet("author = :author_char", ["author_char"=>$char]));
+        }
+    }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if ($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Artist";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
+        global $config, $database;
+
+        if ($this->get_version("ext_artists_version") < 1) {
             $database->create_table("artists", "
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
 					name VARCHAR(255) NOT NULL,
-					created SCORE_DATETIME NOT NULL,
-					updated SCORE_DATETIME NOT NULL,
+					created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					notes TEXT,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
-			
+
             $database->create_table("artist_members", "
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					name VARCHAR(255) NOT NULL,
-					created SCORE_DATETIME NOT NULL,
-					updated SCORE_DATETIME NOT NULL,
+					created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -80,8 +92,8 @@ class Artists extends Extension {
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created SCORE_DATETIME,
-					updated SCORE_DATETIME,
+					created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					alias VARCHAR(255),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -90,8 +102,8 @@ class Artists extends Extension {
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created SCORE_DATETIME NOT NULL,
-					updated SCORE_DATETIME NOT NULL,
+					created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					url VARCHAR(1000) NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -99,53 +111,57 @@ class Artists extends Extension {
             $database->execute("ALTER TABLE images ADD COLUMN author VARCHAR(255) NULL");
 
             $config->set_int("artistsPerPage", 20);
-            $config->set_int("ext_artists_version", 1);
-
-            log_info("artists", "extension installed");
+            $this->set_version("ext_artists_version", 1);
         }
     }
 
-    public function onAuthorSet(AuthorSetEvent $event) {
+    public function onAuthorSet(AuthorSetEvent $event)
+    {
         global $database;
 
         $author = strtolower($event->author);
-        if (strlen($author) === 0 || strpos($author, " "))
-           return;
+        if (strlen($author) === 0 || strpos($author, " ")) {
+            return;
+        }
 
         $paddedAuthor = str_replace(" ", "_", $author);
 
-        $artistID = NULL;
-        if ($this->artist_exists($author))
+        $artistID = null;
+        if ($this->artist_exists($author)) {
             $artistID = $this->get_artist_id($author);
+        }
 
-        if (is_null($artistID) && $this->alias_exists_by_name($paddedAuthor))
+        if (is_null($artistID) && $this->alias_exists_by_name($paddedAuthor)) {
             $artistID = $this->get_artistID_by_aliasName($paddedAuthor);
+        }
 
-        if (is_null($artistID) && $this->member_exists_by_name($paddedAuthor))
+        if (is_null($artistID) && $this->member_exists_by_name($paddedAuthor)) {
             $artistID = $this->get_artistID_by_memberName($paddedAuthor);
+        }
 
-        if (is_null($artistID) && $this->url_exists_by_url($author))
+        if (is_null($artistID) && $this->url_exists_by_url($author)) {
             $artistID = $this->get_artistID_by_url($author);
+        }
 
         if (!is_null($artistID)) {
             $artistName = $this->get_artistName_by_artistID($artistID);
-        }
-        else {
+        } else {
             $this->save_new_artist($author, "");
             $artistName = $author;
         }
 
         $database->execute(
-            "UPDATE images SET author = ? WHERE id = ?",
-            array($artistName, $event->image->id)
+            "UPDATE images SET author = :author WHERE id = :id",
+            ['author'=>$artistName, 'id'=>$event->image->id]
         );
     }
 
-    public function onPageRequest(PageRequestEvent $event) {
+    public function onPageRequest(PageRequestEvent $event)
+    {
         global $page, $user;
 
-        if($event->page_matches("artist")) {
-            switch($event->get_arg(0)) {
+        if ($event->page_matches("artist")) {
+            switch ($event->get_arg(0)) {
                 //*************ARTIST SECTION**************
                 case "list":
                 {
@@ -155,33 +171,30 @@ class Artists extends Extension {
                 }
                 case "new":
                 {
-                    if(!$user->is_anonymous()) {
-                    	$this->theme->new_artist_composer();
-                    }
-                    else {
+                    if (!$user->is_anonymous()) {
+                        $this->theme->new_artist_composer();
+                    } else {
                         $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
                     }
                     break;
                 }
                 case "new_artist":
                 {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/new"));
                     break;
                 }
                 case "create":
                 {
-                    if(!$user->is_anonymous()) {
+                    if (!$user->is_anonymous()) {
                         $newArtistID = $this->add_artist();
                         if ($newArtistID == -1) {
                             $this->theme->display_error(400, "Error", "Error when entering artist data.");
-                        }
-                        else {
-                            $page->set_mode("redirect");
+                        } else {
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$newArtistID));
                         }
-                    }
-                    else {
+                    } else {
                         $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
                     }
                     break;
@@ -189,44 +202,45 @@ class Artists extends Extension {
 
                 case "view":
                 {
-                    $artistID = $event->get_arg(1);
+                    $artistID = int_escape($event->get_arg(1));
                     $artist = $this->get_artist($artistID);
                     $aliases = $this->get_alias($artist['id']);
                     $members = $this->get_members($artist['id']);
                     $urls = $this->get_urls($artist['id']);
 
                     $userIsLogged = !$user->is_anonymous();
-                    $userIsAdmin = $user->is_admin();
-					
+                    $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
+
                     $images = Image::find_images(0, 4, Tag::explode($artist['name']));
 
                     $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
+                    /*
                     if ($userIsLogged) {
-                        //$this->theme->show_new_alias_composer($artistID);
-                        //$this->theme->show_new_member_composer($artistID);
-                        //$this->theme->show_new_url_composer($artistID);
+                        $this->theme->show_new_alias_composer($artistID);
+                        $this->theme->show_new_member_composer($artistID);
+                        $this->theme->show_new_url_composer($artistID);
                     }
-					
+                    */
+
                     $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-					
+
                     break;
                 }
 
                 case "edit":
                 {
-                    $artistID = $event->get_arg(1);
+                    $artistID = int_escape($event->get_arg(1));
                     $artist = $this->get_artist($artistID);
                     $aliases = $this->get_alias($artistID);
                     $members = $this->get_members($artistID);
                     $urls = $this->get_urls($artistID);
-					
-                    if(!$user->is_anonymous()) {
-                    	$this->theme->show_artist_editor($artist, $aliases, $members, $urls);
-						
-                        $userIsAdmin = $user->is_admin();
+
+                    if (!$user->is_anonymous()) {
+                        $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
+
+                        $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
                         $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-                    }
-                    else {
+                    } else {
                         $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");
                     }
                     break;
@@ -234,7 +248,7 @@ class Artists extends Extension {
                 case "edit_artist":
                 {
                     $artistID = $_POST['artist_id'];
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/edit/".$artistID));
                     break;
                 }
@@ -242,22 +256,22 @@ class Artists extends Extension {
                 {
                     $artistID = int_escape($_POST['id']);
                     $this->update_artist();
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/view/".$artistID));
                     break;
                 }
                 case "nuke_artist":
                 {
                     $artistID = $_POST['artist_id'];
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/nuke/".$artistID));
                     break;
                 }
                 case "nuke":
                 {
-                    $artistID = $event->get_arg(1);
+                    $artistID = int_escape($event->get_arg(1));
                     $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/list"));
                     break;
                 }
@@ -282,22 +296,21 @@ class Artists extends Extension {
                 //***********ALIAS SECTION ***********************
                 case "alias":
                 {
-                    switch ($event->get_arg(1))
-                    {
+                    switch ($event->get_arg(1)) {
                         case "add":
                         {
                             $artistID = $_POST['artistID'];
                             $this->add_alias();
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
                         case "delete":
                         {
-                            $aliasID = $event->get_arg(2);
+                            $aliasID = int_escape($event->get_arg(2));
                             $artistID = $this->get_artistID_by_aliasID($aliasID);
                             $this->delete_alias($aliasID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -313,7 +326,7 @@ class Artists extends Extension {
                             $this->update_alias();
                             $aliasID = int_escape($_POST['aliasID']);
                             $artistID = $this->get_artistID_by_aliasID($aliasID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -324,22 +337,21 @@ class Artists extends Extension {
                 //**************** URLS SECTION **********************
                 case "url":
                 {
-                    switch ($event->get_arg(1))
-                    {
+                    switch ($event->get_arg(1)) {
                         case "add":
                         {
                             $artistID = $_POST['artistID'];
                             $this->add_urls();
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
                         case "delete":
                         {
-                            $urlID = $event->get_arg(2);
+                            $urlID = int_escape($event->get_arg(2));
                             $artistID = $this->get_artistID_by_urlID($urlID);
                             $this->delete_url($urlID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -355,7 +367,7 @@ class Artists extends Extension {
                             $this->update_url();
                             $urlID = int_escape($_POST['urlID']);
                             $artistID = $this->get_artistID_by_urlID($urlID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -365,13 +377,12 @@ class Artists extends Extension {
                 //******************* MEMBERS SECTION *********************
                 case "member":
                 {
-                    switch ($event->get_arg(1))
-                    {
+                    switch ($event->get_arg(1)) {
                         case "add":
                         {
                             $artistID = $_POST['artistID'];
                             $this->add_members();
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -380,7 +391,7 @@ class Artists extends Extension {
                             $memberID = int_escape($event->get_arg(2));
                             $artistID = $this->get_artistID_by_memberID($memberID);
                             $this->delete_member($memberID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -396,7 +407,7 @@ class Artists extends Extension {
                             $this->update_member();
                             $memberID = int_escape($_POST['memberID']);
                             $artistID = $this->get_artistID_by_memberID($memberID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -407,206 +418,127 @@ class Artists extends Extension {
         }
     }
 
-    /**
-     * @param int $imageID
-     * @return string
-     */
-    private function get_artistName_by_imageID($imageID) {
-        assert(is_numeric($imageID));
-
+    private function get_artistName_by_imageID(int $imageID): string
+    {
         global $database;
-        $result = $database->get_row("SELECT author FROM images WHERE id = ?", array($imageID));
-        return stripslashes($result['author']);
+        $result = $database->get_row("SELECT author FROM images WHERE id = :id", ['id'=>$imageID]);
+        return $result['author'] ?? "";
     }
 
-    /**
-     * @param string $url
-     * @return bool
-     */
-    private function url_exists_by_url($url) {
+    private function url_exists_by_url(string $url): bool
+    {
         global $database;
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array($url));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = :url", ['url'=>$url]);
         return ($result != 0);
     }
 
-    /**
-     * @param string $member
-     * @return bool
-     */
-    private function member_exists_by_name($member) {
+    private function member_exists_by_name(string $member): bool
+    {
         global $database;
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = ?", array($member));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = :name", ['name'=>$member]);
         return ($result != 0);
     }
 
-    /**
-     * @param string $alias
-     * @return bool
-     */
-    private function alias_exists_by_name($alias) {
+    private function alias_exists_by_name(string $alias): bool
+    {
         global $database;
-
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array($alias));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = :alias", ['alias'=>$alias]);
         return ($result != 0);
     }
 
-    /**
-     * @param int $artistID
-     * @param string $alias
-     * @return bool
-     */
-    private function alias_exists($artistID, $alias) {
-        assert(is_numeric($artistID));
-
+    private function alias_exists(int $artistID, string $alias): bool
+    {
         global $database;
         $result = $database->get_one(
-            "SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?",
-            array($artistID, $alias)
+            "SELECT COUNT(1) FROM artist_alias WHERE artist_id = :artist_id AND alias = :alias",
+            ['artist_id'=>$artistID, 'alias'=>$alias]
         );
         return ($result != 0);
     }
 
-    /**
-     * @param string $url
-     * @return int
-     */
-    private function get_artistID_by_url($url) {
+    private function get_artistID_by_url(string $url): int
+    {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_urls WHERE url = ?", array($url));
+        return (int)$database->get_one("SELECT artist_id FROM artist_urls WHERE url = :url", ['url'=>$url]);
     }
 
-    /**
-     * @param string $member
-     * @return int
-     */
-    private function get_artistID_by_memberName($member) {
+    private function get_artistID_by_memberName(string $member): int
+    {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_members WHERE name = ?", array($member));
+        return (int)$database->get_one("SELECT artist_id FROM artist_members WHERE name = :name", ['name'=>$member]);
     }
 
-    /**
-     * @param int $artistID
-     * @return string
-     */
-    private function get_artistName_by_artistID($artistID) {
-        assert(is_numeric($artistID));
-
+    private function get_artistName_by_artistID(int $artistID): string
+    {
         global $database;
-        return $database->get_one("SELECT name FROM artists WHERE id = ?", array($artistID));
+        return (string)$database->get_one("SELECT name FROM artists WHERE id = :id", ['id'=>$artistID]);
     }
 
-    /**
-     * @param int $aliasID
-     * @return int
-     */
-    private function get_artistID_by_aliasID($aliasID) {
-        assert(is_numeric($aliasID));
-
+    private function get_artistID_by_aliasID(int $aliasID): int
+    {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_alias WHERE id = ?", array($aliasID));
+        return (int)$database->get_one("SELECT artist_id FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
     }
 
-    /**
-     * @param int $memberID
-     * @return int
-     */
-    private function get_artistID_by_memberID($memberID) {
-        assert(is_numeric($memberID));
-
+    private function get_artistID_by_memberID(int $memberID): int
+    {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_members WHERE id = ?", array($memberID));
+        return (int)$database->get_one("SELECT artist_id FROM artist_members WHERE id = :id", ['id'=>$memberID]);
     }
 
-    /**
-     * @param int $urlID
-     * @return int
-     */
-    private function get_artistID_by_urlID($urlID) {
-        assert(is_numeric($urlID));
-
+    private function get_artistID_by_urlID(int $urlID): int
+    {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_urls WHERE id = ?", array($urlID));
+        return (int)$database->get_one("SELECT artist_id FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
     }
 
-    /**
-     * @param int $aliasID
-     */
-    private function delete_alias($aliasID) {
-        assert(is_numeric($aliasID));
-
+    private function delete_alias(int $aliasID)
+    {
         global $database;
-        $database->execute("DELETE FROM artist_alias WHERE id = ?", array($aliasID));
+        $database->execute("DELETE FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
     }
 
-    /**
-     * @param int $urlID
-     */
-    private function delete_url($urlID) {
-        assert(is_numeric($urlID));
-
+    private function delete_url(int $urlID)
+    {
         global $database;
-        $database->execute("DELETE FROM artist_urls WHERE id = ?", array($urlID));
+        $database->execute("DELETE FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
     }
 
-    /**
-     * @param int $memberID
-     */
-    private function delete_member($memberID) {
-        assert(is_numeric($memberID));
-
+    private function delete_member(int $memberID)
+    {
         global $database;
-        $database->execute("DELETE FROM artist_members WHERE id = ?", array($memberID));
+        $database->execute("DELETE FROM artist_members WHERE id = :id", ['id'=>$memberID]);
     }
 
-    /**
-     * @param int $aliasID
-     * @return array
-     */
-    private function get_alias_by_id($aliasID) {
-        assert(is_numeric($aliasID));
-
+    private function get_alias_by_id(int $aliasID): array
+    {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_alias WHERE id = ?", array($aliasID));
-        $result["alias"] = stripslashes($result["alias"]);
-        return $result;
+        return $database->get_row("SELECT * FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
     }
 
-    /**
-     * @param int $urlID
-     * @return array
-     */
-    private function get_url_by_id($urlID) {
-        assert(is_numeric($urlID));
-
+    private function get_url_by_id(int $urlID): array
+    {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_urls WHERE id = ?", array($urlID));
-        $result["url"] = stripslashes($result["url"]);
-        return $result;
+        return $database->get_row("SELECT * FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
     }
 
-    /**
-     * @param int $memberID
-     * @return array
-     */
-    private function get_member_by_id($memberID) {
-        assert(is_numeric($memberID));
-
+    private function get_member_by_id(int $memberID): array
+    {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_members WHERE id = ?", array($memberID));
-        $result["name"] = stripslashes($result["name"]);
-        return $result;
+        return $database->get_row("SELECT * FROM artist_members WHERE id = :id", ['id'=>$memberID]);
     }
 
-    private function update_artist() {
+    private function update_artist()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             'id' => 'int',
             'name' => 'string,lower',
             'notes' => 'string,trim,nullify',
             'aliases' => 'string,trim,nullify',
             'aliasesIDs' => 'string,trim,nullify',
             'members' => 'string,trim,nullify',
-        ));
+        ]);
         $artistID = $inputs['id'];
         $name = $inputs['name'];
         $notes = $inputs['notes'];
@@ -621,165 +553,151 @@ class Artists extends Extension {
         $urlsAsString = $inputs["urls"];
         $urlsIDsAsString = $inputs["urlsIDs"];
 
-        if(strpos($name, " "))
+        if (strpos($name, " ")) {
             return;
+        }
 
         global $database;
         $database->execute(
-            "UPDATE artists SET name = ?, notes = ?, updated = now(), user_id = ? WHERE id = ? ",
-            array($name, $notes, $userID, $artistID)
+            "UPDATE artists SET name = :name, notes = :notes, updated = now(), user_id = :user_id WHERE id = :id",
+            ['name'=>$name, 'notes'=>$notes, 'user_id'=>$userID, 'id'=>$artistID]
         );
 
         // ALIAS MATCHING SECTION
         $i = 0;
-        $aliasesAsArray = is_null($aliasesAsString) ? array() : explode(" ", $aliasesAsString);
-        $aliasesIDsAsArray = is_null($aliasesIDsAsString) ? array() : explode(" ", $aliasesIDsAsString);
-        while ($i < count($aliasesAsArray))
-        {
+        $aliasesAsArray = is_null($aliasesAsString) ? [] : explode(" ", $aliasesAsString);
+        $aliasesIDsAsArray = is_null($aliasesIDsAsString) ? [] : explode(" ", $aliasesIDsAsString);
+        while ($i < count($aliasesAsArray)) {
             // if an alias was updated
-            if ($i < count($aliasesIDsAsArray))
+            if ($i < count($aliasesIDsAsArray)) {
                 $this->save_existing_alias($aliasesIDsAsArray[$i], $aliasesAsArray[$i], $userID);
-            else
+            } else {
                 // if we already updated all, save new ones
                 $this->save_new_alias($artistID, $aliasesAsArray[$i], $userID);
+            }
 
             $i++;
         }
         // if we have more ids than alias, then some alias have been deleted -- delete them from db
-        while ($i < count($aliasesIDsAsArray))
+        while ($i < count($aliasesIDsAsArray)) {
             $this->delete_alias($aliasesIDsAsArray[$i++]);
+        }
 
         // MEMBERS MATCHING SECTION
         $i = 0;
-        $membersAsArray = is_null($membersAsString) ? array() : explode(" ", $membersAsString);
-        $membersIDsAsArray = is_null($membersIDsAsString) ? array() : explode(" ", $membersIDsAsString);
-        while ($i < count($membersAsArray))
-        {
+        $membersAsArray = is_null($membersAsString) ? [] : explode(" ", $membersAsString);
+        $membersIDsAsArray = is_null($membersIDsAsString) ? [] : explode(" ", $membersIDsAsString);
+        while ($i < count($membersAsArray)) {
             // if a member was updated
-            if ($i < count($membersIDsAsArray))
+            if ($i < count($membersIDsAsArray)) {
                 $this->save_existing_member($membersIDsAsArray[$i], $membersAsArray[$i], $userID);
-            else
+            } else {
                 // if we already updated all, save new ones
                 $this->save_new_member($artistID, $membersAsArray[$i], $userID);
+            }
 
             $i++;
         }
         // if we have more ids than members, then some members have been deleted -- delete them from db
-        while ($i < count($membersIDsAsArray))
+        while ($i < count($membersIDsAsArray)) {
             $this->delete_member($membersIDsAsArray[$i++]);
+        }
 
         // URLS MATCHING SECTION
         $i = 0;
         $urlsAsString = str_replace("\r\n", "\n", $urlsAsString);
         $urlsAsString = str_replace("\n\r", "\n", $urlsAsString);
-        $urlsAsArray = is_null($urlsAsString) ? array() : explode("\n", $urlsAsString);
-        $urlsIDsAsArray = is_null($urlsIDsAsString) ? array() : explode(" ", $urlsIDsAsString);
-        while ($i < count($urlsAsArray))
-        {
+        $urlsAsArray = is_null($urlsAsString) ? [] : explode("\n", $urlsAsString);
+        $urlsIDsAsArray = is_null($urlsIDsAsString) ? [] : explode(" ", $urlsIDsAsString);
+        while ($i < count($urlsAsArray)) {
             // if an URL was updated
             if ($i < count($urlsIDsAsArray)) {
                 $this->save_existing_url($urlsIDsAsArray[$i], $urlsAsArray[$i], $userID);
-            }
-            else {
+            } else {
                 $this->save_new_url($artistID, $urlsAsArray[$i], $userID);
             }
 
             $i++;
         }
-        
+
         // if we have more ids than urls, then some urls have been deleted -- delete them from db
-        while ($i < count($urlsIDsAsArray))
+        while ($i < count($urlsIDsAsArray)) {
             $this->delete_url($urlsIDsAsArray[$i++]);
+        }
     }
 
-    private function update_alias() {
+    private function update_alias()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             "aliasID" => "int",
             "alias" => "string,lower",
-        ));
+        ]);
         $this->save_existing_alias($inputs['aliasID'], $inputs['alias'], $user->id);
     }
 
-    /**
-     * @param int $aliasID
-     * @param string $alias
-     * @param int $userID
-     */
-    private function save_existing_alias($aliasID, $alias, $userID) {
-        assert(is_numeric($userID));
-        assert(is_numeric($aliasID));
-
+    private function save_existing_alias(int $aliasID, string $alias, int $userID)
+    {
         global $database;
         $database->execute(
-            "UPDATE artist_alias SET alias = ?, updated = now(), user_id  = ? WHERE id = ? ",
-            array($alias, $userID, $aliasID)
+            "UPDATE artist_alias SET alias = :alias, updated = now(), user_id = :user_id WHERE id = :id",
+            ['alias'=>$alias, 'user_id'=>$userID, 'id'=>$aliasID]
         );
     }
 
-    private function update_url() {
+    private function update_url()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             "urlID" => "int",
             "url" => "string",
-        ));
+        ]);
         $this->save_existing_url($inputs['urlID'], $inputs['url'], $user->id);
     }
 
-    /**
-     * @param int $urlID
-     * @param string $url
-     * @param int $userID
-     */
-    private function save_existing_url($urlID, $url, $userID) {
-        assert(is_numeric($userID));
-        assert(is_numeric($urlID));
-
+    private function save_existing_url(int $urlID, string $url, int $userID)
+    {
         global $database;
         $database->execute(
-            "UPDATE artist_urls SET url = ?, updated = now(), user_id = ? WHERE id = ?",
-            array($url, $userID, $urlID)
+            "UPDATE artist_urls SET url = :url, updated = now(), user_id = :user_id WHERE id = :id",
+            ['url'=>$url, 'user_id'=>$userID, 'id'=>$urlID]
         );
     }
 
-    private function update_member() {
+    private function update_member()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             "memberID" => "int",
             "name" => "string,lower",
-        ));
+        ]);
         $this->save_existing_member($inputs['memberID'], $inputs['name'], $user->id);
     }
 
-    /**
-     * @param int $memberID
-     * @param string $memberName
-     * @param int $userID
-     */
-    private function save_existing_member($memberID, $memberName, $userID) {
-        assert(is_numeric($memberID));
-        assert(is_numeric($userID));
-
+    private function save_existing_member(int $memberID, string $memberName, int $userID)
+    {
         global $database;
         $database->execute(
-            "UPDATE artist_members SET name = ?, updated = now(), user_id = ? WHERE id = ?",
-            array($memberName, $userID, $memberID)
+            "UPDATE artist_members SET name = :name, updated = now(), user_id = :user_id WHERE id = :id",
+            ['name'=>$memberName, 'user_id'=>$userID, 'id'=>$memberID]
         );
     }
 
-    private function add_artist(){
+    private function add_artist()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             "name" => "string,lower",
             "notes" => "string,optional",
             "aliases" => "string,lower,optional",
             "members" => "string,lower,optional",
             "urls" => "string,optional"
-        ));
+        ]);
 
         $name = $inputs["name"];
-        if(strpos($name, " "))
+        if (strpos($name, " ")) {
             return -1;
+        }
 
         $notes = $inputs["notes"];
 
@@ -791,79 +709,72 @@ class Artists extends Extension {
         //$artistID = "";
 
         //// WE CHECK IF THE ARTIST ALREADY EXISTS ON DATABASE; IF NOT WE CREATE
-        if(!$this->artist_exists($name)) {
+        if (!$this->artist_exists($name)) {
             $artistID = $this->save_new_artist($name, $notes);
             log_info("artists", "Artist {$artistID} created by {$user->name}");
-        }
-        else {
+        } else {
             $artistID = $this->get_artist_id($name);
         }
 
         if (!is_null($aliases)) {
             $aliasArray = explode(" ", $aliases);
-            foreach($aliasArray as $alias)
-                if (!$this->alias_exists($artistID, $alias))
+            foreach ($aliasArray as $alias) {
+                if (!$this->alias_exists($artistID, $alias)) {
                     $this->save_new_alias($artistID, $alias, $userID);
+                }
+            }
         }
 
         if (!is_null($members)) {
             $membersArray = explode(" ", $members);
-            foreach ($membersArray as $member)
-                if (!$this->member_exists($artistID, $member))
+            foreach ($membersArray as $member) {
+                if (!$this->member_exists($artistID, $member)) {
                     $this->save_new_member($artistID, $member, $userID);
+                }
+            }
         }
 
         if (!is_null($urls)) {
             //delete double "separators"
             $urls = str_replace("\r\n", "\n", $urls);
             $urls = str_replace("\n\r", "\n", $urls);
-            
+
             $urlsArray = explode("\n", $urls);
-            foreach ($urlsArray as $url)
-                if (!$this->url_exists($artistID, $url))
+            foreach ($urlsArray as $url) {
+                if (!$this->url_exists($artistID, $url)) {
                     $this->save_new_url($artistID, $url, $userID);
+                }
+            }
         }
         return $artistID;
     }
 
-    /**
-     * @param string $name
-     * @param string $notes
-     * @return int
-     */
-    private function save_new_artist($name, $notes) {
+    private function save_new_artist(string $name, string $notes): int
+    {
         global $database, $user;
         $database->execute("
             INSERT INTO artists (user_id, name, notes, created, updated)
-            VALUES (?, ?, ?, now(), now())
-        ", array($user->id, $name, $notes));
+            VALUES (:user_id, :name, :notes, now(), now())
+        ", ['user_id'=>$user->id, 'name'=>$name, 'notes'=>$notes]);
         return $database->get_last_insert_id('artists_id_seq');
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    private function artist_exists($name) {
+    private function artist_exists(string $name): bool
+    {
         global $database;
         $result = $database->get_one(
-            "SELECT COUNT(1) FROM artists WHERE name = ?",
-            array($name)
+            "SELECT COUNT(1) FROM artists WHERE name = :name",
+            ['name'=>$name]
         );
         return ($result != 0);
     }
 
-    /**
-     * @param int $artistID
-     * @return array
-     */
-    private function get_artist($artistID){
-        assert(is_numeric($artistID));
-
+    private function get_artist(int $artistID): array
+    {
         global $database;
         $result = $database->get_row(
-            "SELECT * FROM artists WHERE id = ?",
-            array($artistID)
+            "SELECT * FROM artists WHERE id = :id",
+            ['id'=>$artistID]
         );
 
         $result["name"] = stripslashes($result["name"]);
@@ -872,20 +783,15 @@ class Artists extends Extension {
         return $result;
     }
 
-    /**
-     * @param int $artistID
-     * @return array
-     */
-    private function get_members($artistID) {
-        assert(is_numeric($artistID));
-
+    private function get_members(int $artistID): array
+    {
         global $database;
         $result = $database->get_all(
-            "SELECT * FROM artist_members WHERE artist_id = ?",
-            array($artistID)
+            "SELECT * FROM artist_members WHERE artist_id = :artist_id",
+            ['artist_id'=>$artistID]
         );
-		
-		$num = count($result);
+
+        $num = count($result);
         for ($i = 0 ; $i < $num ; $i++) {
             $result[$i]["name"] = stripslashes($result[$i]["name"]);
         }
@@ -893,20 +799,15 @@ class Artists extends Extension {
         return $result;
     }
 
-    /**
-     * @param int $artistID
-     * @return array
-     */
-    private function get_urls($artistID) {
-        assert(is_numeric($artistID));
-
+    private function get_urls(int $artistID): array
+    {
         global $database;
         $result = $database->get_all(
-            "SELECT id, url FROM artist_urls WHERE artist_id = ?",
-            array($artistID)
+            "SELECT id, url FROM artist_urls WHERE artist_id = :artist_id",
+            ['artist_id'=>$artistID]
         );
-			
-		$num = count($result);
+
+        $num = count($result);
         for ($i = 0 ; $i < $num ; $i++) {
             $result[$i]["url"] = stripslashes($result[$i]["url"]);
         }
@@ -914,57 +815,46 @@ class Artists extends Extension {
         return $result;
     }
 
-	/**
-	 * @param string $name
-	 * @return int
-	 */
-	private function get_artist_id($name) {
-		global $database;
-		return (int)$database->get_one(
-            "SELECT id FROM artists WHERE name = ?",
-            array($name)
-        );
-	}
-
-    /**
-     * @param string $alias
-     * @return int
-     */
-    private function get_artistID_by_aliasName($alias) {
+    private function get_artist_id(string $name): int
+    {
         global $database;
-
         return (int)$database->get_one(
-            "SELECT artist_id FROM artist_alias WHERE alias = ?",
-            array($alias)
+            "SELECT id FROM artists WHERE name = :name",
+            ['name'=>$name]
         );
     }
 
+    private function get_artistID_by_aliasName(string $alias): int
+    {
+        global $database;
 
-    /**
-     * @param int $artistID
-     */
-	private function delete_artist($artistID) {
-        assert(is_numeric($artistID));
+        return (int)$database->get_one(
+            "SELECT artist_id FROM artist_alias WHERE alias = :alias",
+            ['alias'=>$alias]
+        );
+    }
 
+    private function delete_artist(int $artistID)
+    {
         global $database;
         $database->execute(
-            "DELETE FROM artists WHERE id = ? ",
-            array($artistID)
+            "DELETE FROM artists WHERE id = :id",
+            ['id'=>$artistID]
         );
-	}
-	
-	/*
-	* HERE WE GET THE LIST OF ALL ARTIST WITH PAGINATION
-	*/
-        private function get_listing(Page $page, PageRequestEvent $event)
-        {
-            global $config, $database;
+    }
 
-            $pageNumber = clamp($event->get_arg(1), 1, null) - 1;
-            $artistsPerPage = $config->get_int("artistsPerPage");
+    /*
+    * HERE WE GET THE LIST OF ALL ARTIST WITH PAGINATION
+    */
+    private function get_listing(Page $page, PageRequestEvent $event)
+    {
+        global $config, $database;
 
-            $listing = $database->get_all(
-                "
+        $pageNumber = clamp(int_escape($event->get_arg(1)), 1, null) - 1;
+        $artistsPerPage = $config->get_int("artistsPerPage");
+
+        $listing = $database->get_all(
+            "
                         (
                             SELECT a.id, a.user_id, a.name, u.name AS user_name, COALESCE(t.count, 0) AS posts
                                 , 'artist' as type, a.id AS artist_id, a.name AS artist_name, a.updated
@@ -1009,22 +899,23 @@ class Artists extends Extension {
                             ORDER BY m.updated DESC
                         )
                 ORDER BY updated DESC
-                LIMIT ?, ?
-            ", array(
-                    $pageNumber * $artistsPerPage
-                    , $artistsPerPage
-                ));
-			
-			$number_of_listings = count($listing);
+                LIMIT :offset, :limit
+            ",
+            [
+                "offset"=>$pageNumber * $artistsPerPage,
+                "limit"=>$artistsPerPage
+            ]
+        );
 
-            for ($i = 0 ; $i < $number_of_listings ; $i++)
-            {
-                $listing[$i]["name"] = stripslashes($listing[$i]["name"]);
-                $listing[$i]["user_name"] = stripslashes($listing[$i]["user_name"]);
-                $listing[$i]["artist_name"] = stripslashes($listing[$i]["artist_name"]);
-            }
+        $number_of_listings = count($listing);
 
-            $count = $database->get_one("
+        for ($i = 0 ; $i < $number_of_listings ; $i++) {
+            $listing[$i]["name"] = stripslashes($listing[$i]["name"]);
+            $listing[$i]["user_name"] = stripslashes($listing[$i]["user_name"]);
+            $listing[$i]["artist_name"] = stripslashes($listing[$i]["artist_name"]);
+        }
+
+        $count = $database->get_one("
                 SELECT COUNT(1)
                 FROM artists AS a
                     LEFT OUTER JOIN artist_members AS am
@@ -1033,162 +924,134 @@ class Artists extends Extension {
                         ON a.id = aa.artist_id
             ");
 
-            $totalPages = ceil ($count / $artistsPerPage);
+        $totalPages = ceil($count / $artistsPerPage);
 
-            $this->theme->list_artists($listing, $pageNumber + 1, $totalPages);
-        }
-	
-	/*
-	* HERE WE ADD AN ALIAS
-	*/
-    private function add_urls() {
+        $this->theme->list_artists($listing, $pageNumber + 1, $totalPages);
+    }
+
+    /*
+    * HERE WE ADD AN ALIAS
+    */
+    private function add_urls()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             "artistID" => "int",
             "urls" => "string",
-        ));
+        ]);
         $artistID = $inputs["artistID"];
         $urls = explode("\n", $inputs["urls"]);
 
-        foreach ($urls as $url)
-            if (!$this->url_exists($artistID, $url))
+        foreach ($urls as $url) {
+            if (!$this->url_exists($artistID, $url)) {
                 $this->save_new_url($artistID, $url, $user->id);
+            }
+        }
     }
 
-    /**
-     * @param int $artistID
-     * @param string $url
-     * @param int $userID
-     */
-    private function save_new_url($artistID, $url, $userID) {
+    private function save_new_url(int $artistID, string $url, int $userID)
+    {
         global $database;
 
-        assert(is_numeric($artistID));
-        assert(is_numeric($userID));
-
         $database->execute(
-            "INSERT INTO artist_urls (artist_id, created, updated, url, user_id) VALUES (?, now(), now(), ?, ?)",
-            array($artistID, $url, $userID)
+            "INSERT INTO artist_urls (artist_id, created, updated, url, user_id) VALUES (:artist_id, now(), now(), :url, :user_id)",
+            ['artist'=>$artistID, 'url'=>$url, 'user_id'=>$userID]
         );
     }
 
-	private function add_alias() {
+    private function add_alias()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             "artistID" => "int",
             "aliases" => "string,lower",
-        ));
+        ]);
         $artistID = $inputs["artistID"];
         $aliases = explode(" ", $inputs["aliases"]);
 
-        foreach ($aliases as $alias)
-            if (!$this->alias_exists($artistID, $alias))
+        foreach ($aliases as $alias) {
+            if (!$this->alias_exists($artistID, $alias)) {
                 $this->save_new_alias($artistID, $alias, $user->id);
+            }
+        }
     }
 
-    /**
-     * @param int $artistID
-     * @param string $alias
-     * @param int $userID
-     */
-    private function save_new_alias($artistID, $alias, $userID) {
+    private function save_new_alias(int $artistID, string $alias, int $userID)
+    {
         global $database;
 
-        assert(is_numeric($artistID));
-        assert(is_numeric($userID));
-
         $database->execute(
-            "INSERT INTO artist_alias (artist_id, created, updated, alias, user_id) VALUES (?, now(), now(), ?, ?)",
-            array($artistID, $alias, $userID)
+            "INSERT INTO artist_alias (artist_id, created, updated, alias, user_id) VALUES (:artist_id, now(), now(), :alias, :user_id)",
+            ['artist_id'=>$artistID, 'alias'=>$alias, 'user_id'=>$userID]
         );
     }
 
-    private function add_members() {
+    private function add_members()
+    {
         global $user;
-        $inputs = validate_input(array(
+        $inputs = validate_input([
             "artistID" => "int",
             "members" => "string,lower",
-        ));
+        ]);
         $artistID = $inputs["artistID"];
         $members = explode(" ", $inputs["members"]);
 
-        foreach ($members as $member)
-            if (!$this->member_exists($artistID, $member))
+        foreach ($members as $member) {
+            if (!$this->member_exists($artistID, $member)) {
                 $this->save_new_member($artistID, $member, $user->id);
+            }
+        }
     }
 
-    /**
-     * @param int $artistID
-     * @param string $member
-     * @param int $userID
-     */
-    private function save_new_member($artistID, $member, $userID) {
+    private function save_new_member(int $artistID, string $member, int $userID)
+    {
         global $database;
-
-        assert(is_numeric($artistID));
-        assert(is_numeric($userID));
 
         $database->execute(
-            "INSERT INTO artist_members (artist_id, name, created, updated, user_id) VALUES (?, ?, now(), now(), ?)",
-            array($artistID, $member, $userID)
+            "INSERT INTO artist_members (artist_id, name, created, updated, user_id) VALUES (:artist_id, :name, now(), now(), :user_id)",
+            ['artist'=>$artistID, 'name'=>$member, 'user_id'=>$userID]
         );
     }
 
-    /**
-     * @param int $artistID
-     * @param string $member
-     * @return bool
-     */
-    private function member_exists($artistID, $member) {
+    private function member_exists(int $artistID, string $member): bool
+    {
         global $database;
 
-        assert(is_numeric($artistID));
+        $result = $database->get_one(
+            "SELECT COUNT(1) FROM artist_members WHERE artist_id = :artist_id AND name = :name",
+            ['artist_id'=>$artistID, 'name'=>$member]
+        );
+        return ($result != 0);
+    }
+
+    private function url_exists(int $artistID, string $url): bool
+    {
+        global $database;
 
         $result = $database->get_one(
-            "SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?",
-            array($artistID, $member)
+            "SELECT COUNT(1) FROM artist_urls WHERE artist_id = :artist_id AND url = :url",
+            ['artist_id'=>$artistID, 'url'=>$url]
         );
         return ($result != 0);
     }
 
     /**
-     * @param int $artistID
-     * @param string $url
-     * @return bool
+     * HERE WE GET THE INFO OF THE ALIAS
      */
-    private function url_exists($artistID, $url) {
+    private function get_alias(int $artistID): array
+    {
         global $database;
-
-        assert(is_numeric($artistID));
-
-        $result = $database->get_one(
-            "SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?",
-            array($artistID, $url)
-        );
-        return ($result != 0);
-    }
-
-	/**
-	 * HERE WE GET THE INFO OF THE ALIAS
-     *
-     * @param int $artistID
-     * @return array
-	 */
-	private function get_alias($artistID) {
-        global $database;
-
-        assert(is_numeric($artistID));
 
         $result = $database->get_all("
             SELECT id AS alias_id, alias AS alias_name
             FROM artist_alias
-            WHERE artist_id = ?
+            WHERE artist_id = :artist_id
             ORDER BY alias ASC
-        ", array($artistID));
+        ", ['artist_id'=>$artistID]);
 
         for ($i = 0 ; $i < count($result) ; $i++) {
             $result[$i]["alias_name"] = stripslashes($result[$i]["alias_name"]);
         }
         return $result;
-	}	
+    }
 }

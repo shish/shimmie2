@@ -7,15 +7,15 @@ BODY {
 	background: #F0F7FF;
 	font-family: sans-serif;
 	font-size: 14px;
-	margin: 0px;
+	margin: 0;
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 3                            menu bar                            *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 .menu {
 	border-bottom: 1px solid #C3D2E0;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
 	padding: 4px;
 	background: #E3EFFA;
 }
@@ -32,7 +32,6 @@ a.tab:hover, a.tab:active, .tab-selected {
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
-	padding:4px;
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
@@ -46,7 +45,7 @@ a.tab:hover, a.tab:active, .tab-selected {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 .sbar {
 	border-bottom: 1px solid #C3D2E0;
-	margin-top: 0px;
+	margin-top: 0;
 	margin-bottom: 16px;
 	padding: 4px;
 	background: #CEDFF0;
@@ -54,8 +53,8 @@ a.tab:hover, a.tab:active, .tab-selected {
 }
 .sfoot {
 	border-top: 1px solid #C3D2E0;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
 	padding: 4px;
 	background: #CEDFF0;
 	text-align: right;
@@ -84,14 +83,14 @@ a.tab:hover, a.tab:active, .tab-selected {
 	margin:0 0 2px 0; /* top right bottom left */
 	padding:2px 10px;
 	position:relative;
-	left:0px;
+	left:0;
 	width:50%;
 }
 .navtop {
 	top:7px;
 }
 .maintop {
-	top:0px;
+	top:0;
 	margin-top:5px;
 	margin-bottom:5px;
 }
@@ -110,7 +109,7 @@ A, A:hover, A:active, A:visited {
 }
 H3 {
 	text-align: center;
-	margin: 0px;
+	margin: 0;
 }
 THEAD {
 	font-weight: bold;
@@ -126,15 +125,14 @@ CODE {
 #subtitle {
 	width: 256px;
 	font-size: 0.75em;
-	margin: auto;
-	margin-top: -16px;
+	margin: -16px auto auto;
 	text-align: center;
 	border: 1px solid black;
 	border-top: none;
 	background: #DDD;
 }
 
-TABLE.zebra {border-spacing: 0px; border: 2px solid #C3D2E0;}
+TABLE.zebra {border-spacing: 0; border: 2px solid #C3D2E0;}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
 TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #C3D2E0;}
 TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #C3D2E0;}
@@ -142,17 +140,16 @@ TABLE.zebra TR TD {border-bottom: 1px solid #C3D2E0;}
 TABLE.zebra TR:nth-child(odd) {background: #CEDFF0;}
 TABLE.zebra TR:nth-child(even) {background: #F0F7FF;}
 
-INPUT, TEXTAREA {
+INPUT, TEXTAREA, button {
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
-	padding:4px;
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
 }
 
-INPUT:hover, TEXTAREA:hover {
+INPUT:hover, button:hover, TEXTAREA:hover {
 	background-color:#FFFFFF;
 	text-decoration:none;
 }
@@ -199,13 +196,13 @@ NAV TABLE {
 NAV TD {
 	vertical-align: middle;
 }
-NAV INPUT {
+NAV INPUT, nav button {
 	width: 95%;
-	padding: 0px;
+	padding: 0;
 }
 NAV SELECT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 
 #comments P {
@@ -255,7 +252,6 @@ TABLE.tag_list>TBODY>TR>TD:after {
 	-webkit-border-radius:4px;
 	color: #000;
 	border:1px solid #C8D1DB;
-	padding:4px;
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
@@ -275,7 +271,7 @@ ARTICLE {
 	text-align: left;
 	height: 1%;
 }
-ARTICLE_noleft {
+ARTICLE.body_noleft {
 	margin-left: 4px;
 	margin-right: 16px;
 	margin-bottom:16px;
@@ -338,7 +334,7 @@ NAV .thumbblock {
 	height: auto;
 }
 NAV .thumb {
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 .thumbblock {
 	width: 220px;

@@ -1,0 +1,13 @@
+.command_example {
+	margin: 12pt;
+	padding-left: 16pt;
+}
+
+.command_example pre {
+	padding:4pt;
+	border: dashed 2px black;
+}
+
+.command_example p {
+	padding-left: 16pt;
+}

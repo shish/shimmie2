@@ -1,30 +1,33 @@
-<?php
+<?php declare(strict_types=1);
 
-class BulkAddTheme extends Themelet {
-	private $messages = array();
+class BulkAddTheme extends Themelet
+{
+    private $messages = [];
 
-	/*
-	 * Show a standard page for results to be put into
-	 */
-	public function display_upload_results(Page $page) {
-		$page->set_title("Adding folder");
-		$page->set_heading("Adding folder");
-		$page->add_block(new NavBlock());
-		$html = "";
-		foreach($this->messages as $block) {
-			$html .= "<br/>" . $block->body;
-		}
-		$page->add_block(new Block("Results", $html));
-	}
+    /*
+     * Show a standard page for results to be put into
+     */
+    public function display_upload_results(Page $page)
+    {
+        $page->set_title("Adding folder");
+        $page->set_heading("Adding folder");
+        $page->add_block(new NavBlock());
+        $html = "";
+        foreach ($this->messages as $block) {
+            $html .= "<br/>" . $block->body;
+        }
+        $page->add_block(new Block("Results", $html));
+    }
 
-	/*
-	 * Add a section to the admin page. This should contain a form which
-	 * links to bulk_add with POST[dir] set to the name of a server-side
-	 * directory full of images
-	 */
-	public function display_admin_block() {
-		global $page;
-		$html = "
+    /*
+     * Add a section to the admin page. This should contain a form which
+     * links to bulk_add with POST[dir] set to the name of a server-side
+     * directory full of images
+     */
+    public function display_admin_block()
+    {
+        global $page;
+        $html = "
 			Add a folder full of images; any subfolders will have their names
 			used as tags for the images within.
 			<br>Note: this is the folder as seen by the server -- you need to
@@ -37,10 +40,11 @@ class BulkAddTheme extends Themelet {
 				</table>
 			</form>
 		";
-		$page->add_block(new Block("Bulk Add", $html));
-	}
+        $page->add_block(new Block("Bulk Add", $html));
+    }
 
-	public function add_status($title, $body) {
-		$this->messages[] = new Block($title, $body);
-	}
+    public function add_status($title, $body)
+    {
+        $this->messages[] = new Block($title, $body);
+    }
 }

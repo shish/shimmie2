@@ -1,0 +1,366 @@
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                  things common to all pages                    *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+BODY {
+	background: url(bg.png) #ACE4A3;
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	margin: 0;
+}
+#header {
+	border-bottom: 1px solid #7EB977;
+	margin-top: 0;
+	margin-bottom: 16px;
+	padding: 8px;
+	background: #ACE4A3;
+	text-align: center;
+}
+H1 {
+	font-size: 5em;
+	margin: 0;
+	padding: 0;
+}
+H1 A {
+	color: black;
+}
+H3 {
+	text-align: center;
+	margin: 0;
+}
+THEAD {
+	font-weight: bold;
+}
+TD {
+	vertical-align: top;
+	text-align: center;
+}
+
+#subtitle {
+	width: 256px;
+	font-size: 0.75em;
+    margin: -16px auto auto;
+    text-align: center;
+	border: 1px solid black;
+	border-top: none;
+	background: #DDD;
+}
+#flash {
+	background: #FF7;
+	display: block;
+	padding: 8px;
+	margin: 8px;
+	border: 1px solid #882;
+}
+
+TABLE.zebra {background: #ACE4A3; border-collapse: collapse; border: 1px solid #7EB977;}
+TABLE.zebra TD {font-size: 0.8em;margin: 0;	border-top: 1px solid #7EB977;	padding: 2px;}
+TABLE.zebra TR:nth-child(odd) {background: #9CD493;}
+TABLE.zebra TR:nth-child(even) {background: #ACE4A3;}
+
+FOOTER {
+	clear: both;
+	padding: 8px;
+	font-size: 0.7em;
+	text-align: center;
+	border-top: 1px solid #7EB977;
+	background: #ACE4A3;
+}
+
+A         {color: #000099; text-decoration: none; font-weight: bold;}
+A:hover   {color: #000099; text-decoration: underline;}
+A:visited {color: #000099; text-decoration: none}
+A:active  {color: #000099; text-decoration: underline;}
+
+UL {
+	text-align: left;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*             the navigation bar, and all its blocks             *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+NAV {
+	width: 250px;
+	float: left;
+	text-align: center;
+	margin-left: 16px;
+}
+NAV .blockbody {
+	font-size: 0.85em;
+	text-align: center;
+}
+NAV TABLE {
+	width: 100%;
+}
+NAV TD {
+	vertical-align: middle;
+}
+NAV INPUT {
+	width: 100%;
+	padding: 0;
+}
+NAV SELECT {
+	width: 100%;
+	padding: 0;
+}
+
+
+.comment .info {
+	background: #ACE4A3;
+	border: 1px solid #7EB977;
+}
+
+.more:after {
+	content: " >>>";
+}
+
+.tag_count:before {
+	content: "(";
+}
+.tag_count:after {
+	content: ")";
+}
+
+#imagelist .blockbody,
+#paginator .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
+}
+
+#commentlistimage .blockbody,
+#commentlistrecent .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
+	padding: 0;
+}
+
+#commentlistimage .blockbody .comment,
+#commentlistrecent .blockbody .comment {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                 the main part of each page                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ARTICLE {
+	margin-left: 276px;
+	margin-right: 16px;
+	text-align: center;
+	height: 1%;
+	margin-top: 16px;
+}
+ARTICLE TABLE {
+	width: 90%;
+	margin: auto;
+}
+NAV SECTION:first-child H3 {
+	margin-top: 0;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                     specific page types                        *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#pagelist {
+	margin-top: 32px;
+}
+
+#tagmap A {
+	padding: 8px 4px 8px 4px;
+}
+
+SECTION>.blockbody, .comment, .setupblock {
+	background: #ACE4A3;
+	margin: 8px;
+	border: 1px solid #7EB977;
+	padding: 8px;
+}
+
+SECTION>H3 {
+	text-align: center;
+	background: #9CD493;
+	margin: 8px;
+	border: 1px solid #7EB977;
+	padding: 8px;
+}
+
+.thumb {
+	width: 226px;
+	display: inline-block;
+	zoom: 1; /* ie6 */
+	*display: inline; /* ie6 */
+	text-align: center;
+	margin-bottom: 8px;
+}
+.thumb IMG {
+	border: 1px solid #7EB977;
+	background: #ACE4A3;
+	padding: 4px;
+}
+
+div#twitter_update_list li {
+	list-style:none;
+	padding-bottom:0;
+	text-align:left;
+	margin-top:5px;
+	margin-bottom:5px;
+	border: solid 1px #000;
+	background: url(bg.png);
+}
+
+.username {
+	font-weight: bold;
+}
+
+#bans TD, .image_info TD {
+	vertical-align: middle;
+}
+#bans INPUT {
+	font-size: 0.85em;
+}
+
+.need-del {
+	display: none;
+}
+.can-del .need-del {
+	display: inline;
+}
+
+
+.unread {
+	color: red;
+}
+
+UL.tagit {
+	margin: 0;
+}
+ul.tagit li.tagit-new {
+	width: 50px;
+}
+
+
+[data-tags~="animated"]>A>IMG { background: #CC00CC; }
+[data-ext="mp4"]>A>IMG,
+[data-ext="webm"]>A>IMG { background: #0000FF; }
+
+#menuh-container {
+	float: none;
+	width: 500px;
+	margin: auto;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                     responsive overrides                       *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+@media (max-width: 750px) {
+	.atoz, #paginator {
+		font-size: 2em;
+	}
+	.header-sites {
+		display: none;
+	}
+	SECTION>.blockbody {
+		overflow-x: auto;
+	}
+}
+
+/* responsive padding */
+@media (max-width: 1024px) {
+	NAV {margin-left: 0;}
+	ARTICLE {margin-right: 0; margin-left: 242px;}
+}
+@media (max-width: 750px) {
+	NAV {margin-left: 0;}
+	ARTICLE {margin-right: 0; margin-left: 250px;}
+}
+
+/* responsive navbar */
+#nav-toggle {display: none;}
+@media (max-width: 750px) {
+	TD#nav-toggle {display: table-cell; width: 40px;}
+	#nav-toggle A {border: 1px solid black; border-radius: 8px;}
+	#nav-toggle A:hover {text-decoration: none;}
+
+	NAV>SECTION>.blockbody,
+	NAV>SECTION>.blockbody>.comment {
+		margin: 0;
+	}
+	NAV>SECTION>H3 {
+		margin: 0;
+	}
+
+	BODY.navHidden #menuh-container {display: none;}
+	BODY.navHidden NAV {display: none;}
+	BODY.navHidden ARTICLE {margin-left: 0;}
+
+/*
+	NAV {
+		position: fixed;
+		top: 6.5em;
+		bottom: 0px;
+		overflow-y: scroll;
+	}
+	*/
+}
+
+/* sticky header */
+@media (max-width: 750px) {
+	BODY.navHidden {padding-top: 5.4em}
+}
+@media (max-width: 750px) {
+	#header {position: fixed; top: 0; left: 0; z-index: 99999999999;}
+	.ui-autocomplete {z-index: 999999999999;}
+	BODY {padding-top: 7em}
+}
+
+/* responsive header */
+#Uploadleft {display: none;}
+#Uploadhead {display: block;}
+#UserBlockleft {display: none;}
+#UserBlockhead {display: block;}
+#Loginleft {display: none;}
+#Loginhead {display: block;}
+.headcol {width: 250px; font-size: 0.85em;}
+.headbox {width: 80%; margin: auto;}
+#big-logo {display: table-cell;}
+#mini-logo {display: none;}
+@media (max-width: 1024px) {
+	#Uploadleft {display: block;}
+	#Uploadhead {display: none;}
+	#UserBlockleft {display: block;}
+	#UserBlockhead {display: none;}
+	#Loginleft {display: block;}
+	#Loginhead {display: none;}
+	.headcol {display: none;}
+	.headbox {width: 100%; margin: auto;}
+	#big-logo {display: none;}
+	#mini-logo {display: table-cell; width: 100px;}
+
+	/* hide nav-search when header-search is sticky */
+	ARTICLE {margin-top: 0;}
+	#Navigationleft .blockbody {font-size: 1.5em;}
+	#Navigationleft .blockbody P,
+	#Navigationleft .blockbody FORM
+	{display: none;}
+}
+
+/* responsive comments */
+.comment_list_table {width: 100%;}
+
+/* responsive misc */
+@media (max-width: 750px) {
+	#shm-main-image { max-width: 95%; }
+}
+
+#ed91727bc9c7a73fdcec6db562e63151main {
+	overflow: scroll;
+}

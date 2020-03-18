@@ -2,10 +2,11 @@ backup
 data
 images
 thumbs
-!lib/images
 *.phar
 *.sqlite
-/lib/vendor/
+*.cache
+.devcontainer
+trace.json
 
 #Composer
 composer.phar
@@ -54,7 +55,6 @@ Icon
 *.un~
 Session.vim
 .netrwhist
-*~
 
 
 ### PhpStorm ###

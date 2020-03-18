@@ -1,3 +1,4 @@
-<?php
-class Themelet extends BaseThemelet {}
-
+<?php declare(strict_types=1);
+class Themelet extends BaseThemelet
+{
+}

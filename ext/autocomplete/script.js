@@ -1,7 +1,7 @@
-$(function(){
+document.addEventListener('DOMContentLoaded', () => {
 	var metatags = ['order:id', 'order:width', 'order:height', 'order:filesize', 'order:filename'];
 
-	$('[name=search]').tagit({
+	$('[name="search"]').tagit({
 		singleFieldDelimiter: ' ',
 		beforeTagAdded: function(event, ui) {
 			if(metatags.indexOf(ui.tagLabel) !== -1) {
@@ -51,7 +51,7 @@ $(function(){
 						);
 					},
 					error : function (request, status, error) {
-						alert(error);
+						console.log(error);
 					}
 				});
 			},
@@ -66,7 +66,7 @@ $(function(){
 		if(keyCode == 32) {
 			e.preventDefault();
 
-			$('[name=search]').tagit('createTag', $(this).val());
+			$('.autocomplete_tags').tagit('createTag', $(this).val());
 			$(this).autocomplete('close');
 		} else if (keyCode == 9) {
 			e.preventDefault();

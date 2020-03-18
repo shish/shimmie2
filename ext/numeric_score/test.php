@@ -1,60 +1,57 @@
-<?php
-class NumericScoreTest extends ShimmiePHPUnitTestCase {
-	public function testNumericScore() {
-		$this->log_in_as_user();
-		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-		$this->get_page("post/view/$image_id");
+<?php declare(strict_types=1);
+class NumericScoreTest extends ShimmiePHPUnitTestCase
+{
+    public function testNumericScore()
+    {
+        global $user;
 
-		$this->markTestIncomplete();
+        $this->log_in_as_user();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $this->get_page("post/view/$image_id");
+        $this->assert_text("Current Score: 0");
 
-		$this->assert_text("Current Score: 0");
-		$this->click("Vote Down");
-		$this->assert_text("Current Score: -1");
-		$this->click("Vote Up");
-		$this->assert_text("Current Score: 1");
-		# FIXME: "remove vote" button?
-		# FIXME: test that up and down are hidden if already voted up or down
+        send_event(new NumericScoreSetEvent($image_id, $user, -1));
+        $this->get_page("post/view/$image_id");
+        $this->assert_text("Current Score: -1");
 
-		# test search by score
-		$this->get_page("post/list/score=1/1");
-		$this->assert_title("Image $image_id: pbx");
+        send_event(new NumericScoreSetEvent($image_id, $user, 1));
+        $this->get_page("post/view/$image_id");
+        $this->assert_text("Current Score: 1");
 
-		$this->get_page("post/list/score>0/1");
-		$this->assert_title("Image $image_id: pbx");
+        # FIXME: test that up and down are hidden if already voted up or down
 
-		$this->get_page("post/list/score>-5/1");
-		$this->assert_title("Image $image_id: pbx");
+        # test search by score
+        $page = $this->get_page("post/list/score=1/1");
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
-		$this->get_page("post/list/-score>5/1");
-		$this->assert_title("Image $image_id: pbx");
+        $page = $this->get_page("post/list/score>0/1");
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
-		$this->get_page("post/list/-score<-5/1");
-		$this->assert_title("Image $image_id: pbx");
+        $page = $this->get_page("post/list/score>-5/1");
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
-		# test search by vote
-		$this->get_page("post/list/upvoted_by=test/1");
-		$this->assert_title("Image $image_id: pbx");
-		$this->assert_no_text("No Images Found");
+        $page = $this->get_page("post/list/-score>5/1");
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
-		# and downvote
-		$this->get_page("post/list/downvoted_by=test/1");
-		$this->assert_text("No Images Found");
+        $page = $this->get_page("post/list/-score<-5/1");
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
-		# test errors
-		$this->get_page("post/list/upvoted_by=asdfasdf/1");
-		$this->assert_text("No Images Found");
-		$this->get_page("post/list/downvoted_by=asdfasdf/1");
-		$this->assert_text("No Images Found");
-		$this->get_page("post/list/upvoted_by_id=0/1");
-		$this->assert_text("No Images Found");
-		$this->get_page("post/list/downvoted_by_id=0/1");
-		$this->assert_text("No Images Found");
+        # test search by vote
+        $page = $this->get_page("post/list/upvoted_by=test/1");
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
-		$this->log_out();
+        # and downvote
+        $page = $this->get_page("post/list/downvoted_by=test/1");
+        $this->assertEquals(404, $page->code);
 
-		$this->log_in_as_admin();
-		$this->delete_image($image_id);
-		$this->log_out();
-	}
+        # test errors
+        $page = $this->get_page("post/list/upvoted_by=asdfasdf/1");
+        $this->assertEquals(404, $page->code);
+        $page = $this->get_page("post/list/downvoted_by=asdfasdf/1");
+        $this->assertEquals(404, $page->code);
+        $page = $this->get_page("post/list/upvoted_by_id=0/1");
+        $this->assertEquals(404, $page->code);
+        $page = $this->get_page("post/list/downvoted_by_id=0/1");
+        $this->assertEquals(404, $page->code);
+    }
 }
-

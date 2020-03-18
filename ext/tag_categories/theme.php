@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
-class TagCategoriesTheme extends Themelet {
-	private $heading = "";
-	private $list = "";
-
-    public function show_tag_categories($page, $tc_dict) {
+class TagCategoriesTheme extends Themelet
+{
+    public function show_tag_categories(Page $page, $tc_dict)
+    {
         $tc_block_index = 0;
         $html = '';
 
@@ -50,7 +49,7 @@ class TagCategoriesTheme extends Themelet {
                 </table>
                 <button class="tc_edit" type="button" onclick="$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') tr + tr td span\').hide(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') td input\').show(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_edit\').hide(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_submit\').show();">Edit</button>
                 <button class="tc_submit" type="submit" style="display:none;" name="tc_status" value="edit">Submit</button>
-                <button class="tc_submit" type="button" style="display:none.tagcategoryblock:nth-of-type('.$tc_block_index.');" onclick="$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_delete\').show(); $(this).hide();">Delete</button>
+                <button class="tc_submit" type="button" style="display:none;" onclick="$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_delete\').show(); $(this).hide();">Delete</button>
                 <button class="tc_delete" type="submit" style="display:none;" name="tc_status" value="delete">Really, really delete</button>
             </form>
             </div>
@@ -98,5 +97,21 @@ class TagCategoriesTheme extends Themelet {
 
         // add html to stuffs
         $page->add_block(new Block("Editing", $html, "main", 10));
+    }
+
+    public function get_help_html()
+    {
+        return '<p>Search for images containing a certain number of tags with the specified tag category.</p>
+        <div class="command_example">
+        <pre>persontags=1</pre>
+        <p>Returns images with exactly 1 tag with the tag category "person".</p>
+        </div>
+        <div class="command_example">
+        <pre>cattags>0</pre>
+        <p>Returns images with 1 or more tags with the tag category "cat". </p>
+        </div>
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
+        <p>Category name is not case sensitive, category must exist for search to work.</p>
+        ';
     }
 }

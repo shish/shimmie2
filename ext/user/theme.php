@@ -1,294 +1,305 @@
-<?php
+<?php declare(strict_types=1);
+use function \MicroHTML\emptyHTML;
+use function \MicroHTML\rawHTML;
+use function \MicroHTML\TABLE;
+use function \MicroHTML\TBODY;
+use function \MicroHTML\TFOOT;
+use function \MicroHTML\TR;
+use function \MicroHTML\TH;
+use function \MicroHTML\TD;
+use function \MicroHTML\LABEL;
+use function \MicroHTML\INPUT;
+use function \MicroHTML\SMALL;
+use function \MicroHTML\A;
+use function \MicroHTML\BR;
+use function \MicroHTML\P;
+use function \MicroHTML\SELECT;
+use function \MicroHTML\OPTION;
 
-class UserPageTheme extends Themelet {
-	public function display_login_page(Page $page) {
-		$page->set_title("Login");
-		$page->set_heading("Login");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Login There",
-			"There should be a login box to the left"));
-	}
+class UserPageTheme extends Themelet
+{
+    public function display_login_page(Page $page)
+    {
+        $page->set_title("Login");
+        $page->set_heading("Login");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block(
+            "Login There",
+            "There should be a login box to the left"
+        ));
+    }
 
-	/**
-	 * @param Page $page
-	 * @param User[] $users
-	 * @param User $user
-	 */
-	public function display_user_list(Page $page, $users, User $user) {
-		$page->set_title("User List");
-		$page->set_heading("User List");
-		$page->add_block(new NavBlock());
+    public function display_user_list(Page $page, $table, $paginator)
+    {
+        $page->set_title("User List");
+        $page->set_heading("User List");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Users", $table . $paginator));
+    }
 
-		$html = "<table class='zebra'>";
+    public function display_user_links(Page $page, User $user, $parts)
+    {
+        # $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
+    }
 
-		$html .= "<tr>";
-		$html .= "<td>Name</td>";
-		if($user->can('delete_user'))
-			$html .= "<td>Email</td>";
-		$html .= "<td>Class</td>";
-		$html .= "<td>Action</td>";
-		$html .= "</tr>";
+    public function display_user_block(Page $page, User $user, $parts)
+    {
+        $html = emptyHTML('Logged in as ', $user->name);
+        foreach ($parts as $part) {
+            $html->appendChild(BR());
+            $html->appendChild(A(["href"=>$part["link"]], $part["name"]));
+        }
+        $page->add_block(new Block("User Links", (string)$html, "left", 90));
+    }
 
-		$h_username = html_escape(@$_GET['username']);
-		$h_email = html_escape(@$_GET['email']);
-		$h_class = html_escape(@$_GET['class']);
+    public function display_signup_page(Page $page)
+    {
+        global $config;
+        $tac = $config->get_string("login_tac", "");
 
-		$html .= "<tr>" . make_form("user_admin/list", "GET");
-		$html .= "<td><input type='text' name='username' value='$h_username'/></td>";
-		if($user->can('delete_user'))
-			$html .= "<td><input type='email' name='email' value='$h_email'/></td>";
-		$html .= "<td><input type='text' name='class' value='$h_class'/></td>";
-		$html .= "<td><input type='submit' value='Search'/></td>";
-		$html .= "</form></tr>";
+        if ($config->get_bool("login_tac_bbcode")) {
+            $tfe = new TextFormattingEvent($tac);
+            send_event($tfe);
+            $tac = $tfe->formatted;
+        }
 
-		foreach($users as $duser) {
-			$h_name = html_escape($duser->name);
-			$h_email = html_escape($duser->email);
-			$h_class = html_escape($duser->class->name);
-			$u_link = make_link("user/" . url_escape($duser->name));
-			$u_posts = make_link("post/list/user_id=" . url_escape($duser->id) . "/1");
+        $form = SHM_SIMPLE_FORM(
+            "user_admin/create",
+            TABLE(
+                ["class"=>"form"],
+                TBODY(
+                    TR(
+                        TH("Name"),
+                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                    ),
+                    TR(
+                        TH("Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Repeat&nbsp;Password")),
+                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Email&nbsp;(Optional)")),
+                        TD(INPUT(["type"=>'email', "name"=>'email']))
+                    ),
+                    TR(
+                        TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
+                    ),
+                ),
+                TFOOT(
+                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                )
+            )
+        );
 
-			$html .= "<tr>";
-			$html .= "<td><a href='$u_link'>$h_name</a></td>";
-			if($user->can('delete_user'))
-				$html .= "<td>$h_email</td>";
-			$html .= "<td>$h_class</td>";
-			$html .= "<td><a href='$u_posts'>Show Posts</a></td>";
-			$html .= "</tr>";
-		}
+        $html = emptyHTML(
+            $tac ? P(rawHTML($tac)) : null,
+            $form
+        );
 
-		$html .= "</table>";
+        $page->set_title("Create Account");
+        $page->set_heading("Create Account");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Signup", (string)$html));
+    }
 
-		$page->add_block(new Block("Users", $html));
-	}
+    public function display_signups_disabled(Page $page)
+    {
+        $page->set_title("Signups Disabled");
+        $page->set_heading("Signups Disabled");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block(
+            "Signups Disabled",
+            "The board admin has disabled the ability to create new accounts~"
+        ));
+    }
 
-	public function display_user_links(Page $page, User $user, $parts) {
-		# $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
-	}
+    public function display_login_block(Page $page)
+    {
+        global $config, $user;
+        $form = SHM_SIMPLE_FORM(
+            "user_admin/login",
+            TABLE(
+                ["style"=>"width: 100%", "class"=>"form"],
+                TBODY(
+                    TR(
+                        TH(LABEL(["for"=>"user"], "Name")),
+                        TD(INPUT(["id"=>"user", "type"=>"text", "name"=>"user", "autocomplete"=>"username"]))
+                    ),
+                    TR(
+                        TH(LABEL(["for"=>"pass"], "Password")),
+                        TD(INPUT(["id"=>"pass", "type"=>"password", "name"=>"pass", "autocomplete"=>"current-password"]))
+                    )
+                ),
+                TFOOT(
+                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Log In"])))
+                )
+            )
+        );
 
-	public function display_user_block(Page $page, User $user, $parts) {
-		$h_name = html_escape($user->name);
-		$html = 'Logged in as '.$h_name;
-		foreach($parts as $part) {
-			$html .= '<br><a href="'.$part["link"].'">'.$part["name"].'</a>';
-		}
-		$page->add_block(new Block("User Links", $html, "left", 90));
-	}
+        $html = emptyHTML();
+        $html->appendChild($form);
+        if ($config->get_bool("login_signup_enabled") && $user->can(Permissions::CREATE_USER)) {
+            $html->appendChild(SMALL(A(["href"=>make_link("user_admin/create")], "Create Account")));
+        }
 
-	public function display_signup_page(Page $page) {
-		global $config;
-		$tac = $config->get_string("login_tac", "");
+        $page->add_block(new Block("Login", (string)$html, "left", 90));
+    }
 
-		if($config->get_bool("login_tac_bbcode")) {
-			$tfe = new TextFormattingEvent($tac);
-			send_event($tfe);
-			$tac = $tfe->formatted;
-		}
+    private function _ip_list(string $name, array $ips)
+    {
+        $td = TD("$name: ");
+        $n = 0;
+        foreach ($ips as $ip => $count) {
+            $td->appendChild(BR());
+            $td->appendChild("$ip ($count)");
+            if (++$n >= 20) {
+                $td->appendChild(BR());
+                $td->appendChild("...");
+                break;
+            }
+        }
+        return $td;
+    }
 
-		if(empty($tac)) {$html = "";}
-		else {$html = '<p>'.$tac.'</p>';}
+    public function display_ip_list(Page $page, array $uploads, array $comments, array $events)
+    {
+        $html = TABLE(
+            ["id"=>"ip-history"],
+            TR(
+                $this->_ip_list("Uploaded from", $uploads),
+                $this->_ip_list("Commented from", $comments),
+                $this->_ip_list("Logged Events", $events)
+            ),
+            TR(
+                TD(["colspan"=>"3"], "(Most recent at top)")
+            )
+        );
 
-		$h_reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
+        $page->add_block(new Block("IPs", (string)$html, "main", 70));
+    }
 
-		$html .= '
-		'.make_form(make_link("user_admin/create"))."
-			<table class='form'>
-				<tbody>
-					<tr><th>Name</th><td><input type='text' name='name' required></td></tr>
-					<tr><th>Password</th><td><input type='password' name='pass1' required></td></tr>
-					<tr><th>Repeat&nbsp;Password</th><td><input type='password' name='pass2' required></td></tr>
-					<tr><th>Email&nbsp;(Optional)</th><td><input type='email' name='email'></td></tr>
-					$h_reca
-				</tbody>
-				<tfoot>
-					<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
-				</tfoot>
-			</table>
-		</form>
-		";
+    public function display_user_page(User $duser, $stats)
+    {
+        global $page;
+        assert(is_array($stats));
+        $stats[] = 'User ID: '.$duser->id;
 
-		$page->set_title("Create Account");
-		$page->set_heading("Create Account");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Signup", $html));
-	}
+        $page->set_title(html_escape($duser->name)."'s Page");
+        $page->set_heading(html_escape($duser->name)."'s Page");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
+    }
 
-	public function display_signups_disabled(Page $page) {
-		$page->set_title("Signups Disabled");
-		$page->set_heading("Signups Disabled");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Signups Disabled",
-			"The board admin has disabled the ability to create new accounts~"));
-	}
+    public function build_options(User $duser, UserOptionsBuildingEvent $event): string
+    {
+        global $config, $user;
+        $html = emptyHTML();
 
-	public function display_login_block(Page $page) {
-		global $config;
-		$html = '
-			'.make_form(make_link("user_admin/login"))."
-				<table style='width: 100%;' class='form'>
-					<tbody>
-						<tr>
-							<th><label for='user'>Name</label></th>
-							<td><input id='user' type='text' name='user'></td>
-						</tr>
-						<tr>
-							<th><label for='pass'>Password</label></th>
-							<td><input id='pass' type='password' name='pass'></td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr><td colspan='2'><input type='submit' value='Log In'></td></tr>
-					</tfoot>
-				</table>
-			</form>
-		";
-		if($config->get_bool("login_signup_enabled")) {
-			$html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
-		}
-		$page->add_block(new Block("Login", $html, "left", 90));
-	}
+        // just a fool-admin protection so they dont mess around with anon users.
+        if ($duser->id != $config->get_int('anon_id')) {
+            if ($user->can(Permissions::EDIT_USER_NAME)) {
+                $html->appendChild(SHM_USER_FORM(
+                    $duser,
+                    "user_admin/change_name",
+                    "Change Name",
+                    TBODY(TR(
+                        TH("New name"),
+                        TD(INPUT(["type"=>'text', "name"=>'name', "value"=>$duser->name]))
+                    )),
+                    "Set"
+                ));
+            }
 
-	/**
-	 * @param Page $page
-	 * @param array $uploads
-	 * @param array $comments
-	 */
-	public function display_ip_list(Page $page, $uploads, $comments) {
-		$html = "<table id='ip-history'>";
-		$html .= "<tr><td>Uploaded from: ";
-		$n = 0;
-		foreach($uploads as $ip => $count) {
-			$html .= '<br>'.$ip.' ('.$count.')';
-			if(++$n >= 20) {
-				$html .= "<br>...";
-				break;
-			}
-		}
+            $html->appendChild(SHM_USER_FORM(
+                $duser,
+                "user_admin/change_pass",
+                "Change Password",
+                TBODY(
+                    TR(
+                        TH("Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass1', "autocomplete"=>'new-password']))
+                    ),
+                    TR(
+                        TH("Repeat Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass2', "autocomplete"=>'new-password']))
+                    ),
+                ),
+                "Set"
+            ));
 
-		$html .= "</td><td>Commented from:";
-		$n = 0;
-		foreach($comments as $ip => $count) {
-			$html .= '<br>'.$ip.' ('.$count.')';
-			if(++$n >= 20) {
-				$html .= "<br>...";
-				break;
-			}
-		}
+            $html->appendChild(SHM_USER_FORM(
+                $duser,
+                "user_admin/change_email",
+                "Change Email",
+                TBODY(TR(
+                    TH("Address"),
+                    TD(INPUT(["type"=>'text', "name"=>'address', "value"=>$duser->email, "autocomplete"=>'email', "inputmode"=>'email']))
+                )),
+                "Set"
+            ));
 
-		$html .= "</td></tr>";
-		$html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
+            if ($user->can(Permissions::EDIT_USER_CLASS)) {
+                global $_shm_user_classes;
+                $select = SELECT(["name"=>"class"]);
+                foreach ($_shm_user_classes as $name => $values) {
+                    $select->appendChild(
+                        OPTION(["value"=>$name, "selected"=>$name == $duser->class->name], ucwords($name))
+                    );
+                }
+                $html->appendChild(SHM_USER_FORM(
+                    $duser,
+                    "user_admin/change_class",
+                    "Change Class",
+                    TBODY(TR(TD($select))),
+                    "Set"
+                ));
+            }
 
-		$page->add_block(new Block("IPs", $html, "main", 70));
-	}
+            if ($user->can(Permissions::DELETE_USER)) {
+                $html->appendChild(SHM_USER_FORM(
+                    $duser,
+                    "user_admin/delete_user",
+                    "Delete User",
+                    TBODY(
+                        TR(TD(LABEL(INPUT(["type"=>'checkbox', "name"=>'with_images']), "Delete images"))),
+                        TR(TD(LABEL(INPUT(["type"=>'checkbox', "name"=>'with_comments']), "Delete comments"))),
+                    ),
+                    TFOOT(
+                        TR(TD(INPUT(["type"=>'button', "class"=>'shm-unlocker', "data-unlock-sel"=>'.deluser', "value"=>'Unlock']))),
+                        TR(TD(INPUT(["type"=>'submit', "class"=>'deluser', "value"=>'Delete User', "disabled"=>'true']))),
+                    )
+                ));
+            }
 
-	public function display_user_page(User $duser, $stats) {
-		global $page, $user;
-		assert(is_array($stats));
-		$stats[] = 'User ID: '.$duser->id;
+            foreach ($event->parts as $part) {
+                $html .= $part;
+            }
+        }
+        return (string)$html;
+    }
 
-		$page->set_title(html_escape($duser->name)."'s Page");
-		$page->set_heading(html_escape($duser->name)."'s Page");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
+    public function get_help_html()
+    {
+        global $user;
+        $output = emptyHTML(P("Search for images posted by particular individuals."));
+        $output->appendChild(SHM_COMMAND_EXAMPLE(
+            "poster=username",
+            'Returns images posted by "username".'
+        ));
+        $output->appendChild(SHM_COMMAND_EXAMPLE(
+            "poster_id=123",
+            'Returns images posted by user 123.'
+        ));
 
-		if(!$user->is_anonymous()) {
-			if($user->id == $duser->id || $user->can("edit_user_info")) {
-				$page->add_block(new Block("Options", $this->build_options($duser), "main", 60));
-			}
-		}
-	}
-
-	protected function build_options(User $duser) {
-		global $config, $user;
-		$html = "";
-		if($duser->id != $config->get_int('anon_id')){  //justa fool-admin protection so they dont mess around with anon users.
-		
-			if($user->can('edit_user_name')) {
-				$html .= "
-				<p>".make_form(make_link("user_admin/change_name"))."
-					<input type='hidden' name='id' value='{$duser->id}'>
-					<table class='form'>
-						<thead><tr><th colspan='2'>Change Name</th></tr></thead>
-						<tbody><tr><th>New name</th><td><input type='text' name='name' value='".html_escape($duser->name)."'></td></tr></tbody>
-						<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
-					</table>
-				</form>
-				";
-			}
-
-			$html .= "
-			<p>".make_form(make_link("user_admin/change_pass"))."
-				<input type='hidden' name='id' value='{$duser->id}'>
-				<table class='form'>
-					<thead>
-						<tr><th colspan='2'>Change Password</th></tr>
-					</thead>
-					<tbody>
-						<tr><th>Password</th><td><input type='password' name='pass1'></td></tr>
-						<tr><th>Repeat Password</th><td><input type='password' name='pass2'></td></tr>
-					</tbody>
-					<tfoot>
-						<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
-					</tfoot>
-				</table>
-			</form>
-
-			<p>".make_form(make_link("user_admin/change_email"))."
-				<input type='hidden' name='id' value='{$duser->id}'>
-				<table class='form'>
-					<thead><tr><th colspan='2'>Change Email</th></tr></thead>
-					<tbody><tr><th>Address</th><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr></tbody>
-					<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
-				</table>
-			</form>
-			";
-
-			$i_user_id = int_escape($duser->id);
-
-			if($user->can("edit_user_class")) {
-				global $_shm_user_classes;
-				$class_html = "";
-				foreach($_shm_user_classes as $name => $values) {
-					$h_name = html_escape($name);
-					$h_title = html_escape(ucwords($name));
-					$h_selected = ($name == $duser->class->name ? " selected" : "");
-					$class_html .= "<option value='$h_name'$h_selected>$h_title</option>\n";
-				}
-				$html .= "
-					<p>".make_form(make_link("user_admin/change_class"))."
-						<input type='hidden' name='id' value='$i_user_id'>
-						<table style='width: 300px;'>
-							<thead><tr><th colspan='2'>Change Class</th></tr></thead>
-							<tbody><tr><td><select name='class'>$class_html</select></td></tr></tbody>
-							<tfoot><tr><td><input type='submit' value='Set'></td></tr></tfoot>
-						</table>
-					</form>
-				";
-			}
-
-			if($user->can("delete_user")) {
-				$html .= "
-					<p>".make_form(make_link("user_admin/delete_user"))."
-						<input type='hidden' name='id' value='$i_user_id'>
-						<table style='width: 300px;'>
-							<thead>
-								<tr><th colspan='2'>Delete User</th></tr>
-							</thead>
-							<tbody>
-								<tr><td><input type='checkbox' name='with_images'> Delete images</td></tr>
-								<tr><td><input type='checkbox' name='with_comments'> Delete comments</td></tr>
-							</tbody>
-							<tfoot>
-								<tr><td><input type='button' class='shm-unlocker' data-unlock-sel='.deluser' value='Unlock'></td></tr>
-								<tr><td><input type='submit' class='deluser' value='Delete User' disabled='true'/></td></tr>
-							</tfoot>
-						</table>
-					</form>
-				";
-			}
-		}
-		return $html;
-	}
-// }}}
+        if ($user->can(Permissions::VIEW_IP)) {
+            $output->appendChild(SHM_COMMAND_EXAMPLE(
+                "poster_ip=127.0.0.1",
+                "Returns images posted from IP 127.0.0.1."
+            ));
+        }
+        return $output;
+    }
 }
-

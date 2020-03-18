@@ -1,21 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
-class IndexTheme extends Themelet {
-	protected $page_number, $total_pages, $search_terms;
+class IndexTheme extends Themelet
+{
+    protected $page_number;
+    protected $total_pages;
+    protected $search_terms;
 
-	/**
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param string[] $search_terms
-	 */
-	public function set_page($page_number, $total_pages, $search_terms) {
-		$this->page_number = $page_number;
-		$this->total_pages = $total_pages;
-		$this->search_terms = $search_terms;
-	}
+    public function set_page(int $page_number, int $total_pages, array $search_terms)
+    {
+        $this->page_number = $page_number;
+        $this->total_pages = $total_pages;
+        $this->search_terms = $search_terms;
+    }
 
-	public function display_intro(Page $page) {
-		$text = "
+    public function display_intro(Page $page)
+    {
+        $text = "
 <div style='text-align: left;'>
 <p>The first thing you'll probably want to do is create a new account; note
 that the first account you create will by default be marked as the board's
@@ -27,59 +27,57 @@ and of course start organising your images :-)
 <p>This message will go away once your first image is uploaded~
 </div>
 ";
-		$page->set_title("Welcome to Shimmie ".VERSION);
-		$page->set_heading("Welcome to Shimmie");
-		$page->add_block(new Block("Installation Succeeded!", $text, "main", 0));
-	}
+        $page->set_title("Welcome to Shimmie ".VERSION);
+        $page->set_heading("Welcome to Shimmie");
+        $page->add_block(new Block("Installation Succeeded!", $text, "main", 0));
+    }
 
-	/**
-	 * @param Page $page
-	 * @param Image[] $images
-	 */
-	public function display_page(Page $page, $images) {
-		$this->display_page_header($page, $images);
+    /**
+     * #param Image[] $images
+     */
+    public function display_page(Page $page, array $images)
+    {
+        $this->display_page_header($page, $images);
 
-		$nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
-		$page->add_block(new Block("Navigation", $nav, "left", 0));
+        $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
+        $page->add_block(new Block("Navigation", $nav, "left", 0));
 
-		if(count($images) > 0) {
-			$this->display_page_images($page, $images);
-		}
-		else {
-			$this->display_error(404, "No Images Found", "No images were found to match the search criteria");
-		}
-	}
+        if (count($images) > 0) {
+            $this->display_page_images($page, $images);
+        } else {
+            $this->display_error(404, "No Images Found", "No images were found to match the search criteria");
+        }
+    }
 
-	/**
-	 * @param string[] $parts
-	 */
-	public function display_admin_block($parts) {
-		global $page;
-		$page->add_block(new Block("List Controls", join("<br>", $parts), "left", 50));
-	}
-
-
-	/**
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param string[] $search_terms
-	 * @return string
-	 */
-	protected function build_navigation($page_number, $total_pages, $search_terms) {
-		$prev = $page_number - 1;
-		$next = $page_number + 1;
-
-		$u_tags = url_escape(implode(" ", $search_terms));
-		$query = empty($u_tags) ? "" : '/'.$u_tags;
+    /**
+     * #param string[] $parts
+     */
+    public function display_admin_block(array $parts)
+    {
+        global $page;
+        $page->add_block(new Block("List Controls", join("<br>", $parts), "left", 50));
+    }
 
 
-		$h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.make_link('post/list'.$query.'/'.$prev).'">Prev</a>';
-		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.make_link('post/list'.$query.'/'.$next).'">Next</a>';
+    /**
+     * #param string[] $search_terms
+     */
+    protected function build_navigation(int $page_number, int $total_pages, array $search_terms): string
+    {
+        $prev = $page_number - 1;
+        $next = $page_number + 1;
 
-		$h_search_string = html_escape(implode(" ", $search_terms));
-		$h_search_link = make_link();
-		$h_search = "
+        $u_tags = url_escape(Tag::implode($search_terms));
+        $query = empty($u_tags) ? "" : '/'.$u_tags;
+
+
+        $h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.make_link('post/list'.$query.'/'.$prev).'">Prev</a>';
+        $h_index = "<a href='".make_link()."'>Index</a>";
+        $h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.make_link('post/list'.$query.'/'.$next).'">Next</a>';
+
+        $h_search_string = html_escape(Tag::implode($search_terms));
+        $h_search_link = make_link();
+        $h_search = "
 			<p><form action='$h_search_link' method='GET'>
 				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' autocomplete='off' />
 				<input type='hidden' name='q' value='/post/list'>
@@ -87,61 +85,261 @@ and of course start organising your images :-)
 			</form>
 		";
 
-		return $h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search;
-	}
+        return $h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search;
+    }
 
-	/**
-	 * @param Image[] $images
-	 * @param string $query
-	 * @return string
-	 */
-	protected function build_table($images, $query) {
-		$h_query = html_escape($query);
-		$table = "<div class='shm-image-list' data-query='$h_query'>";
-		foreach($images as $image) {
-			$table .= $this->build_thumb_html($image);
-		}
-		$table .= "</div>";
-		return $table;
-	}
+    /**
+     * #param Image[] $images
+     */
+    protected function build_table(array $images, ?string $query): string
+    {
+        $h_query = html_escape($query);
+        $table = "<div class='shm-image-list' data-query='$h_query'>";
+        foreach ($images as $image) {
+            $table .= $this->build_thumb_html($image);
+        }
+        $table .= "</div>";
+        return $table;
+    }
 
-	/**
-	 * @param Page $page
-	 * @param Image[] $images
-	 */
-	protected function display_page_header(Page $page, $images) {
-		global $config;
+    /**
+     * #param Image[] $images
+     */
+    protected function display_page_header(Page $page, array $images)
+    {
+        global $config;
 
-		if (count($this->search_terms) == 0) {
-			$page_title = $config->get_string('title');
-		} else {
-			$search_string = implode(' ', $this->search_terms);
-			$page_title = html_escape($search_string);
-			if (count($images) > 0) {
-				$page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
-			}
-		}
-		if ($this->page_number > 1 || count($this->search_terms) > 0) {
-			// $page_title .= " / $page_number";
-		}
+        if (count($this->search_terms) == 0) {
+            $page_title = $config->get_string(SetupConfig::TITLE);
+        } else {
+            $search_string = implode(' ', $this->search_terms);
+            $page_title = html_escape($search_string);
+            if (count($images) > 0) {
+                $page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
+            }
+        }
+        /*
+        if ($this->page_number > 1 || count($this->search_terms) > 0) {
+            $page_title .= " / $page_number";
+        }
+        */
 
-		$page->set_title($page_title);
-		$page->set_heading($page_title);
-	}
+        $page->set_title($page_title);
+        $page->set_heading($page_title);
+    }
 
-	/**
-	 * @param Page $page
-	 * @param Image[] $images
-	 */
-	protected function display_page_images(Page $page, $images) {
-		if (count($this->search_terms) > 0) {
-			$query = url_escape(implode(' ', $this->search_terms));
-			$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
-			$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, TRUE);
-		} else {
-			$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
-			$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages, TRUE);
-		}
-	}
+    /**
+     * #param Image[] $images
+     */
+    protected function display_page_images(Page $page, array $images)
+    {
+        if (count($this->search_terms) > 0) {
+            if ($this->page_number > 3) {
+                // only index the first pages of each term
+                $page->add_html_header('<meta name="robots" content="noindex, nofollow">');
+            }
+            $query = url_escape(Tag::caret(Tag::implode($this->search_terms)));
+            $page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
+            $this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, true);
+        } else {
+            $page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
+            $this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages, true);
+        }
+    }
+
+    public function get_help_html()
+    {
+        return '<p>Searching is largely based on tags, with a number of special keywords available that allow searching based on properties of the images.</p>
+
+        <div class="command_example">
+        <pre>tagname</pre>
+        <p>Returns images that are tagged with "tagname".</p>
+        </div>
+         
+        <div class="command_example">
+        <pre>tagname othertagname</pre>
+        <p>Returns images that are tagged with "tagname" and "othertagname".</p> 
+        </div>
+
+        <p>Most tags and keywords can be prefaced with a negative sign (-) to indicate that you want to search for images that do not match something.</p>
+
+        <div class="command_example">
+        <pre>-tagname</pre>
+        <p>Returns images that are not tagged with "tagname".</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>-tagname -othertagname</pre>
+        <p>Returns images that are not tagged with "tagname" and "othertagname". This is different than without the negative sign, as images with "tagname" or "othertagname" can still be returned as long as the other one is not present.</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>tagname -othertagname</pre>
+        <p>Returns images that are tagged with "tagname", but are not tagged with "othertagname".</p> 
+        </div>
+
+        <p>Wildcard searches are possible as well using * for "any one, more, or none" and ? for "any one".</p>
+
+        <div class="command_example">
+        <pre>tagn*</pre>
+        <p>Returns images that are tagged with "tagname", "tagnot", or anything else that starts with "tagn".</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>tagn?me</pre>
+        <p>Returns images that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", has one character, and ends with "me".</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>tags=1</pre>
+        <p>Returns images with exactly 1 tag.</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>tags>0</pre>
+        <p>Returns images with 1 or more tags. </p>
+        </div>
+
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
+
+        <hr/>
+        
+        <p>Search for images by aspect ratio</p>
+        
+        <div class="command_example">
+        <pre>ratio=4:3</pre>
+        <p>Returns images with an aspect ratio of 4:3.</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>ratio>16:9</pre>
+        <p>Returns images with an aspect ratio greater than 16:9. </p>
+        </div>
+
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. The relation is calculated by dividing width by height.</p>
+        
+        <hr/>
+
+        <p>Search for images by file size</p>
+        
+        <div class="command_example">
+        <pre>filesize=1</pre>
+        <p>Returns images exactly 1 byte in size.</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>filesize>100mb</pre>
+        <p>Returns images greater than 100 megabytes in size. </p>
+        </div>
+
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Supported suffixes are kb, mb, and gb. Uses multiples of 1024.</p>
+        
+        <hr/>
+
+        <p>Search for images by MD5 hash</p>
+        
+        <div class="command_example">
+        <pre>hash=0D3512CAA964B2BA5D7851AF5951F33B</pre>
+        <p>Returns image with an MD5 hash 0D3512CAA964B2BA5D7851AF5951F33B.</p> 
+        </div>
+
+        <hr/>
+
+        <p>Search for images by file type</p>
+        
+        <div class="command_example">
+        <pre>filetype=jpg</pre>
+        <p>Returns images that are of type "jpg".</p> 
+        </div>
+
+        <hr/>
+
+        <p>Search for images by file name</p>
+        
+        <div class="command_example">
+        <pre>filename=picasso.jpg</pre>
+        <p>Returns images that are named "picasso.jpg".</p> 
+        </div>
+
+        <hr/>
+
+        <p>Search for images by source</p>
+        
+        <div class="command_example">
+        <pre>source=http://google.com/</pre>
+        <p>Returns images with a source of "http://google.com/".</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>source=any</pre>
+        <p>Returns images with a source set.</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>source=none</pre>
+        <p>Returns images without a source set.</p> 
+        </div>
+        
+        <hr/>
+
+        <p>Search for images by date posted.</p>
+
+        <div class="command_example">
+        <pre>posted>=07-19-2019</pre>
+        <p>Returns images posted on or after 07-19-2019.</p> 
+        </div>
+
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Date format is mm-dd-yyyy. Date posted includes time component, so = will not work unless the time is exact.</p>
+        
+        <hr/>
+
+        <p>Search for images by image dimensions</p>
+
+        <div class="command_example">
+        <pre>size=640x480</pre>
+        <p>Returns images exactly 640 pixels wide by 480 pixels high.</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>size>1920x1080</pre>
+        <p>Returns images with a width larger than 1920 and a height larger than 1080.</p>
+        </div>
+
+        <div class="command_example">
+        <pre>width=1000</pre>
+        <p>Returns images exactly 1000 pixels wide.</p>
+        </div>
+
+        <div class="command_example">
+        <pre>height=1000</pre>
+        <p>Returns images exactly 1000 pixels high.</p>
+        </div>
+
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
+        
+        <hr/>
+        
+        <p>Sorting search results can be done using the pattern order:field_direction. _direction can be either _asc or _desc, indicating ascending (123) or descending (321) order.</p>
+        
+        <div class="command_example">
+        <pre>order:id_asc</pre>
+        <p>Returns images sorted by ID, smallest first.</p> 
+        </div>
+
+        <div class="command_example">
+        <pre>order:width_desc</pre>
+        <p>Returns images sorted by width, largest first.</p>
+        </div>
+        
+        <p>These fields are supported:
+            <ul>
+            <li>id</li>
+            <li>width</li>
+            <li>height</li>
+            <li>filesize</li>
+            <li>filename</li>
+            </ul>
+        </p>
+        ';
+    }
 }
-

@@ -7,7 +7,7 @@ BODY {
 	background: #EEE;
 	font-family: sans-serif;
 	font-size: 14px;
-	margin: 0px;
+	margin: 0;
 }
 H1 {
 	background: #BBB;
@@ -19,7 +19,7 @@ H1 A {
 }
 H3 {
 	text-align: center;
-	margin: 0px;
+	margin: 0;
 }
 SECTION>H3 {
 	background: #CCC;
@@ -46,7 +46,7 @@ TD {
 	text-align: center;
 }
 
-TABLE.zebra {border-spacing: 0px; border: 2px solid #CCC;}
+TABLE.zebra {border-spacing: 0; border: 2px solid #CCC;}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
 TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #CCC;}
 TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #CCC;}
@@ -89,11 +89,11 @@ NAV TABLE {
 }
 NAV INPUT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 NAV SELECT {
 	width: 100%;
-	padding: 0px;
+	padding: 0;
 }
 
 TABLE.tag_list {

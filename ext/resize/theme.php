@@ -1,19 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
-class ResizeImageTheme extends Themelet {
-	/*
-	 * Display a link to resize an image
-	 */
-	public function get_resize_html(Image $image) {
-		global $config;
+class ResizeImageTheme extends Themelet
+{
+    /*
+     * Display a link to resize an image
+     */
+    public function get_resize_html(Image $image)
+    {
+        global $config;
 
-		$default_width = $config->get_int('resize_default_width');
-		$default_height = $config->get_int('resize_default_height');
+        $default_width = $config->get_int(ResizeConfig::DEFAULT_WIDTH);
+        $default_height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
 
-		if(!$default_width) $default_width = $image->width;
-		if(!$default_height) $default_height = $image->height;
-		
-		$html = "
+        if (!$default_width) {
+            $default_width = $image->width;
+        }
+        if (!$default_height) {
+            $default_height = $image->height;
+        }
+        
+        $html = "
 			".make_form(make_link("resize/{$image->id}"), 'POST')."
 				<input type='hidden' name='image_id' value='{$image->id}'>
 				<input id='original_width'  name='original_width'  type='hidden' value='{$image->width}'>
@@ -24,15 +30,15 @@ class ResizeImageTheme extends Themelet {
 				<br><input id='resizebutton' type='submit' value='Resize'>
 			</form>
 		";
-		
-		return $html;
-	}
-	
-	public function display_resize_error(Page $page, /*string*/ $title, /*string*/ $message) {
-		$page->set_title("Resize Image");
-		$page->set_heading("Resize Image");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block($title, $message));
-	}
+        
+        return $html;
+    }
+    
+    public function display_resize_error(Page $page, string $title, string $message)
+    {
+        $page->set_title("Resize Image");
+        $page->set_heading("Resize Image");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block($title, $message));
+    }
 }
-

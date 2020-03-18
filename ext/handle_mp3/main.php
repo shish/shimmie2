@@ -1,68 +1,28 @@
-<?php
-/*
- * Name: Handle MP3
- * Author: Shish <webmaster@shishnet.org>
- * Description: Handle MP3 files
- */
+<?php declare(strict_types=1);
 
-class MP3FileHandler extends DataHandlerExtension {
-	/**
-	 * @param string $hash
-	 * @return bool
-	 */
-	protected function create_thumb($hash) {
-		copy("ext/handle_mp3/thumb.jpg", warehouse_path("thumbs", $hash));
-		return true;
-	}
+class MP3FileHandler extends DataHandlerExtension
+{
+    protected $SUPPORTED_EXT = ["mp3"];
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
-	protected function supported_ext($ext) {
-		$exts = array("mp3");
-		return in_array(strtolower($ext), $exts);
-	}
+    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    {
+        $event->image->audio = true;
+        $event->image->video = false;
+        $event->image->lossless = false;
+        $event->image->image = false;
+        $event->image->width = 0;
+        $event->image->height = 0;
+        // TODO: ->length = ???
+    }
 
-	/**
-	 * @param string $filename
-	 * @param mixed[] $metadata
-	 * @return Image|null
-	 */
-	protected function create_image_from_data($filename, $metadata) {
-		$image = new Image();
+    protected function create_thumb(string $hash, string $type): bool
+    {
+        copy("ext/handle_mp3/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
+        return true;
+    }
 
-		//NOTE: No need to set width/height as we don't use it.
-		$image->width  = 1;
-		$image->height = 1;
-
-		$image->filesize  = $metadata['size'];
-		$image->hash      = $metadata['hash'];
-
-		//Filename is renamed to "artist - title.mp3" when the user requests download by using the download attribute & jsmediatags.js
-		$image->filename = $metadata['filename'];
-
-		$image->ext       = $metadata['extension'];
-		$image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
-		$image->source    = $metadata['source'];
-
-		return $image;
-	}
-
-	/**
-	 * @param $file
-	 * @return bool
-	 */
-	protected function check_contents($file) {
-		$success = FALSE;
-
-		if (file_exists($file)) {
-			$mimeType = mime_content_type($file);
-
-			$success = ($mimeType == 'audio/mpeg');
-		}
-
-		return $success;
-	}
+    protected function check_contents(string $tmpname): bool
+    {
+        return getMimeType($tmpname) == 'audio/mpeg';
+    }
 }
-

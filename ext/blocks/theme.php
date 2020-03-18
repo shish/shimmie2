@@ -1,46 +1,68 @@
-<?php
-class BlocksTheme extends Themelet {
-	public function display_blocks($blocks) {
-		global $page;
+<?php declare(strict_types=1);
+use function MicroHTML\TABLE;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+use function MicroHTML\INPUT;
+use function MicroHTML\TEXTAREA;
+use function MicroHTML\rawHTML;
+use function MicroHTML\SELECT;
+use function MicroHTML\OPTION;
 
-		$html = "<table class='form' style='width: 100%;'>";
-		foreach($blocks as $block) {
-			$html .= make_form(make_link("blocks/update"));
-			$html .= "<input type='hidden' name='id' value='".html_escape($block['id'])."'>";
-			$html .= "<tr>";
-			$html .= "<th>Title</th><td><input type='text' name='title' value='".html_escape($block['title'])."'></td>";
-			$html .= "<th>Area</th><td><input type='text' name='area' value='".html_escape($block['area'])."'></td>";
-			$html .= "<th>Priority</th><td><input type='text' name='priority' value='".html_escape($block['priority'])."'></td>";
-			$html .= "<th>Pages</th><td><input type='text' name='pages' value='".html_escape($block['pages'])."'></td>";
-			$html .= "<th>Delete</th><td><input type='checkbox' name='delete'></td>";
-			$html .= "<td><input type='submit' value='Save'></td>";
-			$html .= "</tr>";
-			$html .= "<tr>";
-			$html .= "<td colspan='11'><textarea rows='5' name='content'>".html_escape($block['content'])."</textarea></td>";
-			$html .= "</tr>\n";
-			$html .= "<tr>";
-			$html .= "<td colspan='11'>&nbsp;</td>";
-			$html .= "</tr>\n";
-			$html .= "</form>\n";
-		}
-		$html .= make_form(make_link("blocks/add"));
-			$html .= "<tr>";
-			$html .= "<th>Title</th><td><input type='text' name='title' value=''></td>";
-			$html .= "<th>Area</th><td><select name='area'><option>left<option>main</select></td>";
-			$html .= "<th>Priority</th><td><input type='text' name='priority' value='50'></td>";
-			$html .= "<th>Pages</th><td><input type='text' name='pages' value='post/list*'></td>";
-			$html .= "<td colspan='3'><input type='submit' value='Add'></td>";
-			$html .= "</tr>";
-			$html .= "<tr>";
-			$html .= "<td colspan='11'><textarea rows='5' name='content'></textarea></td>";
-			$html .= "</tr>\n";
-		$html .= "</form>";
-		$html .= "</table>";
+class BlocksTheme extends Themelet
+{
+    public function display_blocks($blocks)
+    {
+        global $page;
 
-		$page->set_title("Blocks");
-		$page->set_heading("Blocks");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Block Editor", $html));
-	}
+        $html = TABLE(["class"=>"form", "style"=>"width: 100%;"]);
+        foreach ($blocks as $block) {
+            $html->appendChild(SHM_SIMPLE_FORM(
+                "blocks/update",
+                TR(
+                    INPUT(["type"=>"hidden", "name"=>"id", "value"=>$block['id']]),
+                    TH("Title"),
+                    TD(INPUT(["type"=>"text", "name"=>"title", "value"=>$block['title']])),
+                    TH("Area"),
+                    TD(INPUT(["type"=>"text", "name"=>"area", "value"=>$block['area']])),
+                    TH("Priority"),
+                    TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>$block['priority']])),
+                    TH("Pages"),
+                    TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>$block['pages']])),
+                    TH("Delete"),
+                    TD(INPUT(["type"=>"checkbox", "name"=>"delete"])),
+                    TD(INPUT(["type"=>"submit", "value"=>"Save"]))
+                ),
+                TR(
+                    TD(["colspan"=>"11"], TEXTAREA(["rows"=>"5", "name"=>"content"], $block['content']))
+                ),
+                TR(
+                    TD(["colspan"=>"11"], rawHTML("&nbsp;"))
+                ),
+            ));
+        }
+
+        $html->appendChild(SHM_SIMPLE_FORM(
+            "blocks/add",
+            TR(
+                TH("Title"),
+                TD(INPUT(["type"=>"text", "name"=>"title", "value"=>""])),
+                TH("Area"),
+                TD(SELECT(["name"=>"area"], OPTION("left"), OPTION("main"))),
+                TH("Priority"),
+                TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>'50'])),
+                TH("Pages"),
+                TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>'post/list*'])),
+                TD(["colspan"=>'3'], INPUT(["type"=>"submit", "value"=>"Add"]))
+            ),
+            TR(
+                TD(["colspan"=>"11"], TEXTAREA(["rows"=>"5", "name"=>"content"]))
+            ),
+        ));
+
+        $page->set_title("Blocks");
+        $page->set_heading("Blocks");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Block Editor", (string)$html));
+    }
 }
-

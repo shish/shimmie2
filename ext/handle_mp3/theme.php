@@ -1,11 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
-class MP3FileHandlerTheme extends Themelet {
-	public function display_image(Page $page, Image $image) {
-		$data_href = get_base_href();
-		$ilink = $image->get_image_link();
-		$fname = url_escape($image->filename); //Most of the time this will be the title/artist of the song.
-		$html = "
+class MP3FileHandlerTheme extends Themelet
+{
+    public function display_image(Page $page, Image $image)
+    {
+        $data_href = get_base_href();
+        $ilink = $image->get_image_link();
+        $html = "
 			<audio controls class='shm-main-image audio_image' id='main_image' alt='main image'>
 				<source src=\"$ilink\" type=\"audio/mpeg\">
 				Your browser does not support the audio element.
@@ -34,8 +35,7 @@ class MP3FileHandlerTheme extends Themelet {
 
 			<p><a href='$ilink' id='audio-download'>Download</a>";
 
-		$page->add_html_header("<script src='{$data_href}/ext/handle_mp3/lib/jsmediatags.min.js' type='text/javascript'></script>");
-		$page->add_block(new Block("Music", $html, "main", 10));
-	}
+        $page->add_html_header("<script src='{$data_href}/ext/handle_mp3/lib/jsmediatags.min.js' type='text/javascript'></script>");
+        $page->add_block(new Block("Music", $html, "main", 10));
+    }
 }
-

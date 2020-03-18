@@ -1,37 +1,23 @@
-<?php
-class BulkAddTest extends ShimmiePHPUnitTestCase {
-	public function testBulkAdd() {
-		$this->log_in_as_admin();
+<?php declare(strict_types=1);
 
-		$this->get_page('admin');
-		$this->assert_title("Admin Tools");
+class BulkAddTest extends ShimmiePHPUnitTestCase
+{
+    public function testInvalidDir()
+    {
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
+        $bae = send_event(new BulkAddEvent('asdf'));
+        $this->assertContains(
+            "Error, asdf is not a readable directory",
+            $bae->results,
+            implode("\n", $bae->results)
+        );
+    }
 
-		$bae = new BulkAddEvent('asdf');
-		send_event($bae);
-		$this->assertContains("Error, asdf is not a readable directory",
-			$bae->results, implode("\n", $bae->results));
-
-		// FIXME: have BAE return a list of successes as well as errors?
-		$this->markTestIncomplete();
-
-		$this->get_page('admin');
-		$this->assert_title("Admin Tools");
-		send_event(new BulkAddEvent('tests'));
-
-		# FIXME: test that the output here makes sense, no "adding foo.php ... ok"
-
-		$this->get_page("post/list/hash=17fc89f372ed3636e28bd25cc7f3bac1/1");
-		$this->assert_title(new PatternExpectation("/^Image \d+: data/"));
-		$this->click("Delete");
-
-		$this->get_page("post/list/hash=feb01bab5698a11dd87416724c7a89e3/1");
-		$this->assert_title(new PatternExpectation("/^Image \d+: data/"));
-		$this->click("Delete");
-
-		$this->get_page("post/list/hash=e106ea2983e1b77f11e00c0c54e53805/1");
-		$this->assert_title(new PatternExpectation("/^Image \d+: data/"));
-		$this->click("Delete");
-
-		$this->log_out();
-	}
+    public function testValidDir()
+    {
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
+        send_event(new BulkAddEvent('tests'));
+        $page = $this->get_page("post/list/hash=17fc89f372ed3636e28bd25cc7f3bac1/1");
+        $this->assertEquals(302, $page->code);
+    }
 }
