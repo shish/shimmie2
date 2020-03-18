@@ -306,12 +306,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/eventtracer-php.git",
-                "reference": "2fbc7f6d9ba53f7b41703751afd070736757505a"
+                "reference": "57c1eb94028d8973907ee859455d9756b7cc597d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/2fbc7f6d9ba53f7b41703751afd070736757505a",
-                "reference": "2fbc7f6d9ba53f7b41703751afd070736757505a",
+                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/57c1eb94028d8973907ee859455d9756b7cc597d",
+                "reference": "57c1eb94028d8973907ee859455d9756b7cc597d",
                 "shasum": ""
             },
             "require": {
@@ -342,7 +342,7 @@
             ],
             "description": "An API to write JSON traces as used by the Chrome Trace Viewer",
             "homepage": "https://github.com/shish/eventtracer-php",
-            "time": "2020-02-17T02:23:53+00:00"
+            "time": "2020-03-16T15:07:22+00:00"
         },
         {
             "name": "shish/ffsphp",
@@ -392,12 +392,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "7e6ca02902fffce1883a052735b6b782443ab572"
+                "reference": "60d501a7b21d88652af40bc0ddd964153bc16697"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/7e6ca02902fffce1883a052735b6b782443ab572",
-                "reference": "7e6ca02902fffce1883a052735b6b782443ab572",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/60d501a7b21d88652af40bc0ddd964153bc16697",
+                "reference": "60d501a7b21d88652af40bc0ddd964153bc16697",
                 "shasum": ""
             },
             "require": {
@@ -433,7 +433,7 @@
                 "crud",
                 "generator"
             ],
-            "time": "2020-03-09T23:50:13+00:00"
+            "time": "2020-03-18T17:19:10+00:00"
         },
         {
             "name": "shish/microhtml",
@@ -545,12 +545,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "b2c28789e80a97badd14145fda39b545d83ca3ef"
+                "reference": "a491d65139e2411c75704e871dd02bdddf5a4bdc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/b2c28789e80a97badd14145fda39b545d83ca3ef",
-                "reference": "b2c28789e80a97badd14145fda39b545d83ca3ef",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/a491d65139e2411c75704e871dd02bdddf5a4bdc",
+                "reference": "a491d65139e2411c75704e871dd02bdddf5a4bdc",
                 "shasum": ""
             },
             "require": {
@@ -585,7 +585,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2020-01-17T21:11:47+00:00"
+            "time": "2020-03-12T21:49:07+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1165,12 +1165,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a2712903f99acd2c4ccbef6b46296141a4136a47"
+                "reference": "014b4c58184c41572c9ae4297c73d9efe2bc9bd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a2712903f99acd2c4ccbef6b46296141a4136a47",
-                "reference": "a2712903f99acd2c4ccbef6b46296141a4136a47",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/014b4c58184c41572c9ae4297c73d9efe2bc9bd3",
+                "reference": "014b4c58184c41572c9ae4297c73d9efe2bc9bd3",
                 "shasum": ""
             },
             "require": {
@@ -1240,7 +1240,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-03-09T13:12:32+00:00"
+            "time": "2020-03-11T07:08:11+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
