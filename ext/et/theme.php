@@ -55,7 +55,7 @@ Applications: {$info['stat_image_tags']}
 Extensions: {$info['sys_extensions']}
 EOD;
         return <<<EOD
-<form action='http://shimmie.shishnet.org/register.php' method='POST'>
+<form action='https://shimmie.shishnet.org/register.php' method='POST'>
 	<input type='hidden' name='registration_api' value='1'>
 	<textarea name='data' rows='20' cols='80'>$data</textarea>
 	<br><input type='submit' value='Click to send to Shish'>
