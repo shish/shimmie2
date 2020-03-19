@@ -11,10 +11,9 @@ WORKDIR /app
 RUN composer install
 
 COPY . /app/
-RUN echo '=== Installing ===' && mkdir -p data/config && echo "<?php \$dsn = \"sqlite:data/shimmie.sqlite\";" > data/config/auto_install.conf.php && php index.php && \
-    echo '=== Smoke Test ===' && php index.php get-page /post/list && \
-    echo '=== Unit Tests ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml && \
-    echo '=== Coverage ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
-    echo '=== Cleaning ===' && rm -rf data
-RUN chmod +x /app/tests/docker-init.sh
-CMD "/app/tests/docker-init.sh"
+#RUN echo '=== Installing ===' && mkdir -p data/config && echo "<?php \$dsn = \"sqlite:data/shimmie.sqlite\";" > data/config/auto_install.conf.php && php index.php && \
+#    echo '=== Smoke Test ===' && php index.php get-page /post/list && \
+#    echo '=== Unit Tests ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml && \
+#    echo '=== Coverage ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
+#    echo '=== Cleaning ===' && rm -rf data
+CMD ["/bin/sh", "/app/tests/docker-init.sh"]
