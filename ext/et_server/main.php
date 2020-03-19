@@ -22,7 +22,7 @@ class ETServer extends Extension
             elseif ($user->can(Permissions::VIEW_REGISTRATIONS)) {
                 $page->set_title("Registrations");
                 $page->set_heading("Registrations");
-                foreach($database->get_all("SELECT responded, data FROM registration") as $row) {
+                foreach($database->get_all("SELECT responded, data FROM registration ORDER BY responded DESC") as $row) {
                     $page->add_block(new Block(
                         $row["responded"],
                         (string)PRE(["style"=>"text-align: left; overflow: scroll;"], $row["data"])
