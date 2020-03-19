@@ -67,101 +67,12 @@ class UserClass
     }
 }
 
-// action_object_attribute
-// action = create / view / edit / delete
-// object = image / user / tag / setting
-new UserClass("base", null, [
-    Permissions::CHANGE_SETTING => false,  # modify web-level settings, eg the config table
-    Permissions::OVERRIDE_CONFIG => false, # modify sys-level settings, eg shimmie.conf.php
-    Permissions::BIG_SEARCH => false,      # search for more than 3 tags at once (speed mode only)
-
-    Permissions::MANAGE_EXTENSION_LIST => false,
-    Permissions::MANAGE_ALIAS_LIST => false,
-    Permissions::MANAGE_AUTO_TAG => false,
-    Permissions::MASS_TAG_EDIT => false,
-
-    Permissions::VIEW_IP => false,         # view IP addresses associated with things
-    Permissions::BAN_IP => false,
-
-    Permissions::CREATE_USER => false,
-    Permissions::EDIT_USER_NAME => false,
-    Permissions::EDIT_USER_PASSWORD => false,
-    Permissions::EDIT_USER_INFO => false,  # email address, etc
-    Permissions::EDIT_USER_CLASS => false,
-    Permissions::DELETE_USER => false,
-
-    Permissions::CREATE_COMMENT => false,
-    Permissions::DELETE_COMMENT => false,
-    Permissions::BYPASS_COMMENT_CHECKS => false,  # spam etc
-
-    Permissions::REPLACE_IMAGE => false,
-    Permissions::CREATE_IMAGE => false,
-    Permissions::EDIT_IMAGE_TAG => false,
-    Permissions::EDIT_IMAGE_SOURCE => false,
-    Permissions::EDIT_IMAGE_OWNER => false,
-    Permissions::EDIT_IMAGE_LOCK => false,
-    Permissions::EDIT_IMAGE_TITLE => false,
-    Permissions::EDIT_IMAGE_RELATIONSHIPS => false,
-    Permissions::EDIT_IMAGE_ARTIST => false,
-    Permissions::BULK_EDIT_IMAGE_TAG => false,
-    Permissions::BULK_EDIT_IMAGE_SOURCE => false,
-    Permissions::DELETE_IMAGE => false,
-
-    Permissions::BAN_IMAGE => false,
-
-    Permissions::VIEW_EVENTLOG => false,
-    Permissions::IGNORE_DOWNTIME => false,
-
-    Permissions::CREATE_IMAGE_REPORT => false,
-    Permissions::VIEW_IMAGE_REPORT => false,  # deal with reported images
-
-    Permissions::WIKI_ADMIN => false,
-    Permissions::EDIT_WIKI_PAGE => false,
-    Permissions::DELETE_WIKI_PAGE => false,
-
-    Permissions::MANAGE_BLOCKS => false,
-
-    Permissions::MANAGE_ADMINTOOLS => false,
-
-    Permissions::SEND_PM => false,
-    Permissions::READ_PM => false,
-    Permissions::VIEW_OTHER_PMS => false,
-    Permissions::EDIT_FEATURE => false,
-    Permissions::BULK_EDIT_VOTE => false,
-    Permissions::EDIT_OTHER_VOTE => false,
-    Permissions::VIEW_SYSINTO => false,
-
-    Permissions::HELLBANNED => false,
-    Permissions::VIEW_HELLBANNED => false,
-
-    Permissions::PROTECTED => false,          # only admins can modify protected users (stops a moderator changing an admin's password)
-
-    Permissions::EDIT_IMAGE_RATING => false,
-    Permissions::BULK_EDIT_IMAGE_RATING => false,
-
-    Permissions::VIEW_TRASH => false,
-
-    Permissions::PERFORM_BULK_ACTIONS => false,
-
-    Permissions::BULK_ADD => false,
-    Permissions::EDIT_FILES => false,
-    Permissions::EDIT_TAG_CATEGORIES => false,
-    Permissions::RESCAN_MEDIA => false,
-    Permissions::SEE_IMAGE_VIEW_COUNTS => false,
-
-    Permissions::EDIT_FAVOURITES => false,
-
-    Permissions::ARTISTS_ADMIN => false,
-    Permissions::BLOTTER_ADMIN => false,
-    Permissions::FORUM_ADMIN => false,
-    Permissions::NOTES_ADMIN => false,
-    Permissions::POOLS_ADMIN => false,
-    Permissions::TIPS_ADMIN => false,
-    Permissions::CRON_ADMIN => false,
-
-    Permissions::APPROVE_IMAGE => false,
-    Permissions::APPROVE_COMMENT => false,
-]);
+$_all_false = [];
+foreach(get_class_vars("Permissions") as $k => $v) {
+    $_all_false[$v] = false;
+}
+new UserClass("base", null, $_all_false);
+unset($_all_false);
 
 // Ghost users can't do anything
 new UserClass("ghost", "base", [
@@ -187,6 +98,10 @@ new UserClass("user", "base", [
     Permissions::EDIT_FAVOURITES => true,
     Permissions::SEND_PM => true,
     Permissions::READ_PM => true,
+]);
+
+new UserClass("hellbanned", "user", [
+    Permissions::HELLBANNED => true,
 ]);
 
 new UserClass("admin", "base", [
@@ -230,6 +145,7 @@ new UserClass("admin", "base", [
 
     Permissions::VIEW_EVENTLOG => true,
     Permissions::IGNORE_DOWNTIME => true,
+    Permissions::VIEW_REGISTRATIONS => true,
 
     Permissions::CREATE_IMAGE_REPORT => true,
     Permissions::VIEW_IMAGE_REPORT => true,
@@ -280,10 +196,6 @@ new UserClass("admin", "base", [
 
     Permissions::APPROVE_IMAGE => true,
     Permissions::APPROVE_COMMENT => true,
-]);
-
-new UserClass("hellbanned", "user", [
-    Permissions::HELLBANNED => true,
 ]);
 
 @include_once "data/config/user-classes.conf.php";

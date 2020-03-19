@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 
+// action_object_attribute
+// action = create / view / edit / delete
+// object = image / user / tag / setting
 abstract class Permissions
 {
     public const CHANGE_SETTING = "change_setting";  # modify web-level settings, eg the config table
@@ -42,6 +45,7 @@ abstract class Permissions
 
     public const VIEW_EVENTLOG = "view_eventlog";
     public const IGNORE_DOWNTIME = "ignore_downtime";
+    public const VIEW_REGISTRATIONS = "view_registrations";
 
     public const CREATE_IMAGE_REPORT = "create_image_report";
     public const VIEW_IMAGE_REPORT = "view_image_report";  # deal with reported images
