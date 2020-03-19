@@ -68,7 +68,7 @@ class UserClass
 }
 
 $_all_false = [];
-foreach(get_class_vars("Permissions") as $k => $v) {
+foreach((new ReflectionClass('Permissions'))->getConstants() as $k => $v) {
     $_all_false[$v] = false;
 }
 new UserClass("base", null, $_all_false);
