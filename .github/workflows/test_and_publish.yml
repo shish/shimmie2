@@ -1,6 +1,10 @@
 name: Test & Publish
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * 0' # Weekly on Sundays at 02:00
 
 jobs:
   test:
@@ -87,3 +91,4 @@ jobs:
         name: shish2k/shimmie2
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        cache: ${{ github.event_name != 'schedule' }}
