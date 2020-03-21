@@ -1,11 +1,11 @@
 ```
-     _________.__     .__                   .__         ________   
-    /   _____/|  |__  |__|  _____    _____  |__|  ____  \_____  \  
-    \_____  \ |  |  \ |  | /     \  /     \ |  |_/ __ \  /  ____/  
-    /        \|   Y  \|  ||  Y Y  \|  Y Y  \|  |\  ___/ /       \  
-   /_______  /|___|  /|__||__|_|  /|__|_|  /|__| \___  >\_______ \ 
-           \/      \/           \/       \/          \/         \/ 
-                                                                
+     _________.__     .__                   .__         ________
+    /   _____/|  |__  |__|  _____    _____  |__|  ____  \_____  \
+    \_____  \ |  |  \ |  | /     \  /     \ |  |_/ __ \  /  ____/
+    /        \|   Y  \|  ||  Y Y  \|  Y Y  \|  |\  ___/ /       \
+   /_______  /|___|  /|__||__|_|  /|__|_|  /|__| \___  >\_______ \
+           \/      \/           \/       \/          \/         \/
+
 ```
 
 # Shimmie
@@ -60,14 +60,11 @@ Once you have an image which has passed all tests, you can then run it to get
 a live system:
 
 ```
-docker run -p 0.0.0.0:8123:8000 shimmie
+docker run -p 0.0.0.0:8123:8000 -v /mnt/shimmie-data:/app/data shimmie
 ```
 
-Then you can visit your server on port 8123 to see the site.
-
-Note that the docker image is entirely self-contained and has no persistence
-(assuming you use the sqlite database); each `docker run` will give a clean
-un-installed image.
+Then you can visit your server on port 8123 to see the site, with data
+stored in /mnt/shimmie-data on your local drive.
 
 ### Upgrade from earlier versions
 

@@ -100,8 +100,6 @@ class IPBan extends Extension
     {
         global $cache, $config, $database, $page, $_shm_user_classes;
 
-        $d = @$_GET['DEBUG'];
-
         // Get lists of banned IPs and banned networks
         $ips = $cache->get("ip_bans");
         $networks = $cache->get("network_bans");
@@ -127,24 +125,11 @@ class IPBan extends Extension
         }
 
         // Check if our current IP is in either of the ban lists
-        $remote = $_SERVER['REMOTE_ADDR'];
-        $active_ban_id = null;
-        if (isset($ips[$remote])) {
-            $active_ban_id = $ips[$remote];
-        } else {
-            foreach ($networks as $range => $ban_id) {
-                if (ip_in_range($remote, $range)) {
-                    $active_ban_id = $ban_id;
-                }
-            }
-        }
+        $active_ban_id = (
+            $this->find_active_ban($ips, $_SERVER['REMOTE_ADDR'], $networks) ||
+            $this->find_active_ban($ips, @$_SERVER['HTTP_X_FORWARDED_FOR'], $networks)
+        );
 
-        if ($d) {
-            print($remote);
-            print("\n");
-            print($active_ban_id);
-            print("\n");
-        }
         // If an active ban is found, act on it
         if (!is_null($active_ban_id)) {
             $row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$active_ban_id]);
@@ -364,5 +349,21 @@ class IPBan extends Extension
             $database->execute("CREATE INDEX bans__expires ON bans(expires)");
             $this->set_version("ext_ipban_version", 10);
         }
+    }
+
+    public function find_active_ban($ips, $remote, $networks)
+    {
+        if(!$remote) return null;
+        $active_ban_id = null;
+        if (isset($ips[$remote])) {
+            $active_ban_id = $ips[$remote];
+        } else {
+            foreach ($networks as $range => $ban_id) {
+                if (ip_in_range($remote, $range)) {
+                    $active_ban_id = $ban_id;
+                }
+            }
+        }
+        return $active_ban_id;
     }
 }
