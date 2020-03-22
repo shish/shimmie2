@@ -29,7 +29,7 @@ and of course start organising your images :-)
 ";
         $page->set_title("Welcome to Shimmie ".VERSION);
         $page->set_heading("Welcome to Shimmie");
-        $page->add_block(new Block("Installation Succeeded!", $text, "main", 0));
+        $page->add_block(new Block("Nothing here yet!", $text, "main", 0));
     }
 
     /**

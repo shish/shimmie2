@@ -21,7 +21,7 @@ $_tracer = new EventTracer();
 $_tracer->begin("bootstrap");
 _load_core_files();
 $cache = new Cache(CACHE_DSN);
-$dsn = getenv("DSN");
+$dsn = getenv("TEST_DSN");
 $database = new Database($dsn ? $dsn : "sqlite::memory:");
 create_dirs();
 create_tables($database);

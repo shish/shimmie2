@@ -64,13 +64,13 @@ jobs:
     - name: Run test suite
       run: |
         if [[ "${{ matrix.database }}" == "pgsql" ]]; then
-            export DSN="pgsql:user=shimmie;password=shimmie;host=127.0.0.1;dbname=shimmie"
+            export TEST_DSN="pgsql:user=shimmie;password=shimmie;host=127.0.0.1;dbname=shimmie"
         fi
         if [[ "${{ matrix.database }}" == "mysql" ]]; then
-            export DSN="mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie"
+            export TEST_DSN="mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie"
         fi
         if [[ "${{ matrix.database }}" == "sqlite" ]]; then
-            export DSN="sqlite:data/shimmie.sqlite"
+            export TEST_DSN="sqlite:data/shimmie.sqlite"
         fi
         vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
       
@@ -82,7 +82,7 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     needs: test
-    if: github.ref == 'refs/heads/master'
+    if: github.event_name == 'push'
     steps:
     - uses: actions/checkout@master
     - name: Publish to Registry
@@ -92,3 +92,4 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         cache: ${{ github.event_name != 'schedule' }}
+        buildoptions: "--build-arg RUN_TESTS=false"

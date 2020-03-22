@@ -5,3 +5,4 @@ data
 images
 thumbs
 *.sqlite
+Dockerfile

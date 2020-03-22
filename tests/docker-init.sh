@@ -1,3 +1,6 @@
 #!/bin/sh
-echo "<?php define(\"DATABASE_DSN\", \"${DB_DSN}\");" > data/config/auto_install.conf.php
-/usr/bin/php -d upload_max_filesize=50M -d post_max_size=50M -S 0.0.0.0:8000 tests/router.php
+groupadd -g $GID shimmie
+useradd -ms /bin/bash -u $UID -g $GID shimmie
+mkdir /app/data
+chown shimmie:shimmie /app/data
+exec /usr/local/bin/su-exec shimmie:shimmie /usr/bin/php -d upload_max_filesize=50M -d post_max_size=50M -S 0.0.0.0:8000 tests/router.php

@@ -18,7 +18,6 @@
 function install()
 {
     date_default_timezone_set('UTC');
-    define("DATABASE_TIMEOUT", 10000);
 
     if (is_readable("data/config/shimmie.conf.php")) {
         exit_with_page(
@@ -59,10 +58,8 @@ function install()
 
 function get_dsn()
 {
-    if (file_exists("data/config/auto_install.conf.php")) {
-        $dsn = null;
-        /** @noinspection PhpIncludeInspection */
-        require_once "data/config/auto_install.conf.php";
+    if (getenv("INSTALL_DSN")) {
+        $dsn = getenv("INSTALL_DSN");;
     } elseif (@$_POST["database_type"] == DatabaseDriver::SQLITE) {
         /** @noinspection PhpUnhandledExceptionInspection */
         $id = bin2hex(random_bytes(5));
@@ -136,37 +133,34 @@ function ask_questions()
     $warn_msg
     $err_msg
 
-    <h3>Database Install</h3>
     <form action="index.php" method="POST">
-        <div style="text-align: center;">
-            <table class='form'>
-                <tr>
-                    <th>Type:</th>
-                    <td><select name="database_type" id="database_type" onchange="update_qs();">
-                        $db_m
-                        $db_p
-                        $db_s
-                    </select></td>
-                </tr>
-                <tr class="dbconf mysql pgsql">
-                    <th>Host:</th>
-                    <td><input type="text" name="database_host" size="40" value="localhost"></td>
-                </tr>
-                <tr class="dbconf mysql pgsql">
-                    <th>Username:</th>
-                    <td><input type="text" name="database_user" size="40"></td>
-                </tr>
-                <tr class="dbconf mysql pgsql">
-                    <th>Password:</th>
-                    <td><input type="password" name="database_password" size="40"></td>
-                </tr>
-                <tr class="dbconf mysql pgsql">
-                    <th>DB&nbsp;Name:</th>
-                    <td><input type="text" name="database_name" size="40" value="shimmie"></td>
-                </tr>
-                <tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
-            </table>
-        </div>
+		<table class='form' style="margin: 1em auto;">
+			<tr>
+				<th>Type:</th>
+				<td><select name="database_type" id="database_type" onchange="update_qs();">
+					$db_m
+					$db_p
+					$db_s
+				</select></td>
+			</tr>
+			<tr class="dbconf mysql pgsql">
+				<th>Host:</th>
+				<td><input type="text" name="database_host" size="40" value="localhost"></td>
+			</tr>
+			<tr class="dbconf mysql pgsql">
+				<th>Username:</th>
+				<td><input type="text" name="database_user" size="40"></td>
+			</tr>
+			<tr class="dbconf mysql pgsql">
+				<th>Password:</th>
+				<td><input type="password" name="database_password" size="40"></td>
+			</tr>
+			<tr class="dbconf mysql pgsql">
+				<th>DB&nbsp;Name:</th>
+				<td><input type="text" name="database_name" size="40" value="shimmie"></td>
+			</tr>
+			<tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
+		</table>
         <script>
         document.addEventListener('DOMContentLoaded', update_qs);
         function q(n) {
@@ -205,14 +199,14 @@ EOD
 function create_dirs()
 {
     $data_exists = file_exists("data") || mkdir("data");
-    $data_writable = is_writable("data") || chmod("data", 0755);
+    $data_writable = $data_exists && (is_writable("data") || chmod("data", 0755));
 
     if (!$data_exists || !$data_writable) {
         throw new InstallerException(
             "Directory Permissions Error:",
             "<p>Shimmie needs to have a 'data' folder in its directory, writable by the PHP user.</p>
 			<p>If you see this error, if probably means the folder is owned by you, and it needs to be writable by the web server.</p>
-			<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
+			<p>PHP reports that it is currently running as user: ".get_current_user()." (". getmyuid() .")</p>
 			<p>Once you have created this folder and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>",
             7
         );
@@ -319,7 +313,7 @@ function write_config($dsn)
     }
 
     if (file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
-        header("Location: index.php");
+        header("Location: index.php?flash=Installation%20complete");
         exit_with_page(
             "Installation Successful",
             "<p>If you aren't redirected, <a href=\"index.php\">click here to Continue</a>."

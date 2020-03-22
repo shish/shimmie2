@@ -48,23 +48,21 @@ check out one of the versioned branches.
 5. Follow instructions noted in "Installation" starting from step 3.
 
 # Docker
+If you just want to run shimmie inside docker, there's a pre-built image
+in dockerhub - `shish2k/shimmie2` - which can be used like:
+```
+docker run -p 8000 -v /my/hard/drive:/app/data shish2k/shimmie2
+```
 
-Useful for testing in a known-good environment, this command will build a
-simple debian image and run all the unit tests inside it:
-
+If you want to build your own image from source:
 ```
 docker build -t shimmie .
 ```
 
-Once you have an image which has passed all tests, you can then run it to get
-a live system:
-
-```
-docker run -p 0.0.0.0:8123:8000 -v /mnt/shimmie-data:/app/data shimmie
-```
-
-Then you can visit your server on port 8123 to see the site, with data
-stored in /mnt/shimmie-data on your local drive.
+There are various options settable with environment variables:
+- `UID` / `GID` - which user ID to run as (default 1000/1000)
+- `INSTALL_DSN` - specify a data source to install into, to skip the installer screen, eg
+  `-e INSTALL_DSN="pgsql:user=shimmie;password=6y5erdfg;host=127.0.0.1;dbname=shimmie"`
 
 ### Upgrade from earlier versions
 
