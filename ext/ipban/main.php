@@ -126,7 +126,7 @@ class IPBan extends Extension
 
         // Check if our current IP is in either of the ban lists
         $active_ban_id = (
-            $this->find_active_ban($ips, $_SERVER['REMOTE_ADDR'], $networks) ||
+            $this->find_active_ban($ips, $_SERVER['REMOTE_ADDR'], $networks) ??
             $this->find_active_ban($ips, @$_SERVER['HTTP_X_FORWARDED_FOR'], $networks)
         );
 
