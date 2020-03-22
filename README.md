@@ -10,7 +10,7 @@
 
 # Shimmie
 
-[![Unit Tests](https://github.com/shish/shimmie2/workflows/Unit%20Tests/badge.svg)](https://github.com/shish/shimmie2/actions)
+[![Test & Publish](https://github.com/shish/shimmie2/workflows/Test%20&%20Publish/badge.svg)](https://github.com/shish/shimmie2/actions)
 [![Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
 
