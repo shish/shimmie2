@@ -84,12 +84,14 @@ class ViewImage extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user;
-        $this->theme->display_meta_headers($event->get_image());
+		$image = $event->get_image();
 
-        $iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
+        $this->theme->display_meta_headers($image);
+
+        $iibbe = new ImageInfoBoxBuildingEvent($image, $user);
         send_event($iibbe);
         ksort($iibbe->parts);
-        $this->theme->display_page($event->get_image(), $iibbe->parts);
+        $this->theme->display_page($image, $iibbe->parts);
 
         $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
         send_event($iabbe);
