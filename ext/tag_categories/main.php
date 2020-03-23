@@ -127,12 +127,12 @@ class TagCategories extends Extension
         return $tc_keyed_dict;
     }
 
-    public function getTagHtml(string $tag, $tag_category_dict, string $extra_text = '')
+    public function getTagHtml(string $h_tag, $tag_category_dict, string $extra_text = '')
     {
-        $h_tag_no_underscores = str_replace("_", " ", $tag);
+        $h_tag_no_underscores = str_replace("_", " ", $h_tag);
 
         // we found a tag, see if it's valid!
-        $h_tag_split = explode(':', $tag, 2);
+        $h_tag_split = explode(':', $h_tag, 2);
         if ((count($h_tag_split) > 1) and array_key_exists($h_tag_split[0], $tag_category_dict)) {
             $category = $h_tag_split[0];
             $h_tag = $h_tag_split[1];

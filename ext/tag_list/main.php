@@ -301,7 +301,7 @@ class TagList extends Extension
             }
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
             if (class_exists('TagCategories')) {
-                $h_tag_no_underscores = $this->tagcategories->getTagHtml(html_escape($h_tag), $tag_category_dict);
+                $h_tag_no_underscores = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict);
             }
             $html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
