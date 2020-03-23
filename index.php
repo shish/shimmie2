@@ -4,6 +4,7 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 if (!file_exists("vendor/")) {
+    $cwd = getcwd();
     print <<<EOD
 <!DOCTYPE html>
 <html lang="en">
@@ -15,11 +16,11 @@ if (!file_exists("vendor/")) {
 	<body>
 		<div id="installer">
 			<h1>Install Error</h1>
-			<h3>Warning: Composer vendor folder does not exist!</h3>
+			<h3>Shimmie is unable to find the composer <code>vendor</code> directory.</h3>
 			<div class="container">
-				<p>Shimmie is unable to find the composer <code>vendor</code> directory.
-				<br>To finish installing, you need to run <code>composer install</code>
-				in the shimmie directory.
+				<p>To finish installing, you need to run <code>composer install</code>
+				in the shimmie directory (<code>$cwd</code>).</p>
+				<p>(If you don't have composer, <a href="https://getcomposer.org/">get it here</a>)</p>
 			</div>
 		</div>
 	</body>
