@@ -61,10 +61,6 @@ class ViewImage extends Extension
 
             if (!is_null($image)) {
                 send_event(new DisplayingImageEvent($image));
-                $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
-                send_event($iabbe);
-                ksort($iabbe->parts);
-                $this->theme->display_admin_block($page, $iabbe->parts);
             } else {
                 $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
             }
@@ -88,10 +84,16 @@ class ViewImage extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user;
+        $this->theme->display_meta_headers($event->get_image());
+
         $iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
         send_event($iibbe);
         ksort($iibbe->parts);
-        $this->theme->display_meta_headers($event->get_image());
         $this->theme->display_page($event->get_image(), $iibbe->parts);
+
+        $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
+        send_event($iabbe);
+        ksort($iabbe->parts);
+        $this->theme->display_admin_block($page, $iabbe->parts);
     }
 }

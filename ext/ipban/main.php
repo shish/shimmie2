@@ -353,7 +353,9 @@ class IPBan extends Extension
 
     public function find_active_ban($ips, $remote, $networks)
     {
-        if(!$remote) return null;
+        if (!$remote) {
+            return null;
+        }
         $active_ban_id = null;
         if (isset($ips[$remote])) {
             $active_ban_id = $ips[$remote];

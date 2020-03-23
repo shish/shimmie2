@@ -16,7 +16,6 @@ use function \MicroHTML\P;
 use function \MicroHTML\SELECT;
 use function \MicroHTML\OPTION;
 
-
 class CustomUserPageTheme extends UserPageTheme
 {
     public function display_user_block(Page $page, User $user, $parts)
