@@ -148,6 +148,13 @@ ARTICLE TABLE {
 *                     specific page types                        *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#short-wiki-description > .blockbody {
+	padding-bottom: 15px;
+}
+#short-wiki-description h2 {
+	margin: 0 0 0.4em;
+}
+
 #pagelist {
 	margin-top: 32px;
 }

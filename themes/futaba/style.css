@@ -84,6 +84,14 @@ TABLE.tag_list>TBODY>TR>TD:after {
 *                     specific page types                        *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#short-wiki-description > .blockbody {
+	padding-bottom: 15px;
+	font-size: 1.1em;
+}
+#short-wiki-description h2 {
+	margin: 0 0 0.4em;
+}
+
 .doubledash {
 	color: #D9BFB7;
 	vertical-align: top;

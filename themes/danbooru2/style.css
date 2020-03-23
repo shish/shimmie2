@@ -99,6 +99,13 @@ border-top:medium none;
 text-align:center;
 font-size:0.75em;
 }
+#short-wiki-description {
+padding:0 2em;
+font-size:1.2em;
+}
+#short-wiki-description h2 {
+padding-bottom:0.2em;
+}
 FOOTER {
 clear:both;
 border-top:solid 1px #E7E7F7;

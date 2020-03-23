@@ -7,6 +7,8 @@ class CustomIndexTheme extends IndexTheme
      */
     public function display_page(Page $page, array $images)
     {
+        $this->display_shortwiki($page);
+
         global $config;
 
         if (count($this->search_terms) == 0) {

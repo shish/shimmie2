@@ -7,6 +7,8 @@ class CustomIndexTheme extends IndexTheme
      */
     public function display_page(Page $page, array $images)
     {
+        $this->display_shortwiki($page);
+
         $this->display_page_header($page, $images);
 
         $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
