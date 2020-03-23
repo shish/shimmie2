@@ -127,6 +127,27 @@ class TagCategories extends Extension
         return $tc_keyed_dict;
     }
 
+    public function getTagHtml(string $tag, $tag_category_dict, string $extra_text = '')
+    {
+        $h_tag_no_underscores = str_replace("_", " ", $tag);
+
+        // we found a tag, see if it's valid!
+        $h_tag_split = explode(':', $tag, 2);
+        if ((count($h_tag_split) > 1) and array_key_exists($h_tag_split[0], $tag_category_dict)) {
+            $category = $h_tag_split[0];
+            $h_tag = $h_tag_split[1];
+            $tag_category_css = ' tag_category_'.$category;
+            $tag_category_style = 'style="color:'.html_escape($tag_category_dict[$category]['color']).';" ';
+            $h_tag_no_underscores = str_replace("_", " ", $h_tag);
+
+            $h_tag_no_underscores = '<span class="'.$tag_category_css.'" '.$tag_category_style.'>'.$h_tag_no_underscores.$extra_text.'</span>';
+        } else {
+            $h_tag_no_underscores .= $extra_text;
+        }
+
+        return $h_tag_no_underscores;
+    }
+
     public function page_update()
     {
         global $user, $database;
