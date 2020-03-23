@@ -12,9 +12,9 @@
 Two main options:
 
 1. Via Git (allows easiest updates via `git pull`):
-  1. `git clone https://github.com/shish/shimmie2`
-  2. Install [Composer](https://getcomposer.org/). (If you don't already have it)
-  3. Run `composer install` in the shimmie folder.
+   1. `git clone https://github.com/shish/shimmie2`
+   2. Install [Composer](https://getcomposer.org/). (If you don't already have it)
+   3. Run `composer install` in the shimmie folder.
 2. Via Stable Release:
    Download the latest release under [Releases](https://github.com/shish/shimmie2/releases).
 
