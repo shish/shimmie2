@@ -48,7 +48,7 @@ class Page extends BasePage
 				<tr>
 					<td style="text-align: center;">
 						<h1><a href="$data_href/$main_page">{$site_name}</a></h1>
-						<p>[Navigation links go here]
+						<!-- <p>[Navigation links go here] -->
 					</td>
 					$head_block_html
 				</tr>
