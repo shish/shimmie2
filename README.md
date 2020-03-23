@@ -14,12 +14,6 @@
 [![Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
 
-This is the main branch of Shimmie, if you know anything at all about running
-websites, this is the version to use.
-
-Alternatively if you want a version that will never have significant changes,
-check out one of the versioned branches.
-
 
 # Documentation
 
