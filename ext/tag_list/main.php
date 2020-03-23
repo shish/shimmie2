@@ -288,6 +288,10 @@ class TagList extends Extension
         if ($config->get_bool(TagListConfig::PAGES)) {
             $html .= $this->build_az();
         }
+        if (class_exists('TagCategories')) {
+            $this->tagcategories = new TagCategories;
+            $tag_category_dict = $this->tagcategories->getKeyedDict();
+        }
         foreach ($tag_data as $row) {
             $h_tag = html_escape($row['tag']);
             $size = sprintf("%.2f", (float)$row['scaled']);
@@ -296,6 +300,9 @@ class TagList extends Extension
                 $size = 0.5;
             }
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
+            if (class_exists('TagCategories')) {
+                $h_tag_no_underscores = $this->tagcategories->getTagHtml(html_escape($h_tag), $tag_category_dict);
+            }
             $html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
 
@@ -347,6 +354,11 @@ class TagList extends Extension
         */
         mb_internal_encoding('UTF-8');
 
+        if (class_exists('TagCategories')) {
+            $this->tagcategories = new TagCategories;
+            $tag_category_dict = $this->tagcategories->getKeyedDict();
+        }
+
         $lastLetter = "";
         # postres utf8 string sort ignores punctuation, so we get "aza, a-zb, azc"
         # which breaks down into "az, a-, az" :(
@@ -361,7 +373,10 @@ class TagList extends Extension
             }
             $link = $this->theme->tag_link($tag);
             $h_tag = html_escape($tag);
-            $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
+            if (class_exists('TagCategories')) {
+                $h_tag = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict, "&nbsp;($count)");
+            }
+            $html .= "<a href='$link'>$h_tag</a>\n";
         }
 
         if (SPEED_HAX) {
