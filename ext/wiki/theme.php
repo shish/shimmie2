@@ -25,11 +25,19 @@ class WikiTheme extends Themelet
             $tfe->formatted .= "<p>(<a href='".make_link("wiki/wiki:sidebar", "edit=on")."'>Edit</a>)";
         }
 
+        // see if title is a category'd tag
+        $title_html = html_escape($wiki_page->title);
+        if (class_exists('TagCategories')) {
+            $this->tagcategories = new TagCategories;
+            $tag_category_dict = $this->tagcategories->getKeyedDict();
+            $title_html = $this->tagcategories->getTagHtml($title_html, $tag_category_dict);
+        }
+
         $page->set_title(html_escape($wiki_page->title));
         $page->set_heading(html_escape($wiki_page->title));
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Wiki Index", $tfe->formatted, "left", 20));
-        $page->add_block(new Block(html_escape($wiki_page->title), $this->create_display_html($wiki_page)));
+        $page->add_block(new Block($title_html, $this->create_display_html($wiki_page)));
     }
 
     public function display_page_editor(Page $page, WikiPage $wiki_page)

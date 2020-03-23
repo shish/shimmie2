@@ -96,10 +96,30 @@ class WikiPage
     }
 }
 
+abstract class WikiConfig
+{
+    const TAG_SHORTWIKIS = "shortwikis_on_tags";
+}
+
 class Wiki extends Extension
 {
     /** @var WikiTheme */
     protected $theme;
+
+    public function onInitExt(InitExtEvent $event)
+    {
+        global $config;
+        $config->set_default_bool(WikiConfig::TAG_SHORTWIKIS, false);
+    }
+
+    // Add a block to the Board Config / Setup
+    public function onSetupBuilding(SetupBuildingEvent $event)
+    {
+        $sb = new SetupBlock("Wiki");
+        $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "Show shortwiki entry when searching for a single tag: ");
+
+        $event->panel->add_block($sb);
+    }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

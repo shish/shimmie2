@@ -87,6 +87,12 @@ margin:auto;
 text-align:center;
 width:256px;
 }
+#short-wiki-description {
+padding:0 1.5em;
+}
+#short-wiki-description h2 {
+padding-bottom:0.2em;
+}
 FOOTER {
 clear:both;
 color:#CCCCCC;

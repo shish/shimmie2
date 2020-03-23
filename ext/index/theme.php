@@ -37,6 +37,8 @@ and of course start organising your images :-)
      */
     public function display_page(Page $page, array $images)
     {
+        $this->display_shortwiki($page);
+
         $this->display_page_header($page, $images);
 
         $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
@@ -100,6 +102,36 @@ and of course start organising your images :-)
         }
         $table .= "</div>";
         return $table;
+    }
+
+    protected function display_shortwiki(Page $page)
+    {
+        global $config;
+
+        if (class_exists('Wiki') && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
+            if (count($this->search_terms) == 1) {
+                $st = Tag::implode($this->search_terms);
+
+                $wikiPage = Wiki::get_page($st);
+                $short_wiki_description = '';
+                if ($wikiPage->id != -1) {
+                    // only show first line of wiki
+                    $short_wiki_description = explode("\n", $wikiPage->body, 2)[0];
+
+                    $tfe = new TextFormattingEvent($short_wiki_description);
+                    send_event($tfe);
+                    $short_wiki_description = $tfe->formatted;
+                }
+                $wikiLink = make_link("wiki/$st");
+                if (class_exists('TagCategories')) {
+                    $this->tagcategories = new TagCategories;
+                    $tag_category_dict = $this->tagcategories->getKeyedDict();
+                    $st = $this->tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
+                }
+                $short_wiki_description = '<h2>'.$st.'&nbsp;<a href="'.$wikiLink.'"><sup>ⓘ</sup></a></h2>'.$short_wiki_description;
+                $page->add_block(new Block(null, $short_wiki_description, "main", 0, "short-wiki-description"));
+            }
+        }
     }
 
     /**
