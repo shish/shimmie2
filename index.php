@@ -3,14 +3,7 @@
 * Make sure that shimmie is correctly installed                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-if (!file_exists("data/config/shimmie.conf.php")) {
-    require_once "core/install.php";
-    install();
-    exit;
-}
-
 if (!file_exists("vendor/")) {
-    //CHECK: Should we just point to install.php instead? Seems unsafe though.
     print <<<EOD
 <!DOCTYPE html>
 <html lang="en">
@@ -24,19 +17,21 @@ if (!file_exists("vendor/")) {
 			<h1>Install Error</h1>
 			<h3>Warning: Composer vendor folder does not exist!</h3>
 			<div class="container">
-				<p>Shimmie is unable to find the composer vendor directory.<br>
-				Have you followed the composer setup instructions found in the
-				<a href="https://github.com/shish/shimmie2#installation-development">README</a>?</p>
-
-				<p>If you are not intending to do any development with Shimmie,
-				it is highly recommend you use one of the pre-packaged releases
-				found on <a href="https://github.com/shish/shimmie2/releases">Github</a> instead.</p>
+				<p>Shimmie is unable to find the composer <code>vendor</code> directory.
+				<br>To finish installing, you need to run <code>composer install</code>
+				in the shimmie directory.
 			</div>
 		</div>
 	</body>
 </html>
 EOD;
     http_response_code(500);
+    exit;
+}
+
+if (!file_exists("data/config/shimmie.conf.php")) {
+    require_once "core/install.php";
+    install();
     exit;
 }
 

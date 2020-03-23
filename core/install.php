@@ -26,17 +26,6 @@ function install()
         );
     }
 
-    if (!file_exists("vendor/")) {
-        exit_with_page("Install Error", "
-            <p>Shimmie is unable to find the composer vendor directory.</p>
-            <p>Have you followed the composer setup instructions found in the
-            <a href=\"https://github.com/shish/shimmie2#installation-development\">README</a>?</p>
-            <p>If you are not intending to do any development with Shimmie,
-            it is highly recommend you use one of the pre-packaged releases
-            found on <a href=\"https://github.com/shish/shimmie2/releases\">Github</a> instead.</p>
-        ");
-    }
-
     // Pull in necessary files
     require_once "vendor/autoload.php";
     global $_tracer;
