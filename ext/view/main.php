@@ -83,7 +83,7 @@ class ViewImage extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $user;
+        global $page, $user;
 		$image = $event->get_image();
 
         $this->theme->display_meta_headers($image);
