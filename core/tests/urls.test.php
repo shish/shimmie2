@@ -35,8 +35,8 @@ class UrlsTest extends TestCase
 
         // absolute
         $this->assertEquals(
-            "http://foo.com",
-            make_http("http://foo.com")
+            "https://foo.com",
+            make_http("https://foo.com")
         );
     }
 }

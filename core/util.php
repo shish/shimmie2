@@ -104,7 +104,7 @@ function get_memory_limit(): int
     Get PHP's configured memory limit.
     Note that this is set to -1 for NO memory limit.
 
-    http://ca2.php.net/manual/en/ini.core.php#ini.memory-limit
+    https://ca2.php.net/manual/en/ini.core.php#ini.memory-limit
     */
     $memory = parse_shorthand_int(ini_get("memory_limit"));
 

@@ -13,7 +13,7 @@ class TagList extends Extension
         $config->set_default_int(TagListConfig::LENGTH, 15);
         $config->set_default_int(TagListConfig::POPULAR_TAG_LIST_LENGTH, 15);
         $config->set_default_int(TagListConfig::TAGS_MIN, 3);
-        $config->set_default_string(TagListConfig::INFO_LINK, 'http://en.wikipedia.org/wiki/$tag');
+        $config->set_default_string(TagListConfig::INFO_LINK, 'https://en.wikipedia.org/wiki/$tag');
         $config->set_default_string(TagListConfig::OMIT_TAGS, 'tagme*');
         $config->set_default_string(TagListConfig::IMAGE_TYPE, TagListConfig::TYPE_RELATED);
         $config->set_default_string(TagListConfig::RELATED_SORT, TagListConfig::SORT_ALPHABETICAL);
@@ -341,7 +341,7 @@ class TagList extends Extension
 
         /*
           strtolower() vs. mb_strtolower()
-          ( See http://www.php.net/manual/en/function.mb-strtolower.php for more info )
+          ( See https://www.php.net/manual/en/function.mb-strtolower.php for more info )
 
           PHP5's strtolower function does not support Unicode (UTF-8) properly, so
           you have to use another function, mb_strtolower, to handle UTF-8 strings.

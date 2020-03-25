@@ -16,12 +16,12 @@ class TagEditInfo extends ExtensionInfo
    <ul>
      <li>source=(*, none) eg -- using this metatag will ignore anything set in the \"Source\" box
        <ul>
-         <li>source=http://example.com -- set source to http://example.com
+         <li>source=https://example.com -- set source to https://example.com
          <li>source=none -- set source to NULL
        </ul>
    </ul>
    <p>Metatags can be followed by \":\" rather than \"=\" if you prefer.
-   <br />I.E: \"source:http://example.com\", \"source=http://example.com\" etc.
+   <br />I.E: \"source:https://example.com\", \"source=https://example.com\" etc.
    <p>Some tagging metatags provided by extensions:
    <ul>
      <li>Numeric Score

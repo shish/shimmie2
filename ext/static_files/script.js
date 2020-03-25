@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 	/** Load jQuery extensions **/
-	//Code via: http://stackoverflow.com/a/13106698
+	//Code via: https://stackoverflow.com/a/13106698
 	$.fn.highlight = function (fadeOut) {
 		fadeOut = typeof fadeOut !== 'undefined' ? fadeOut : 5000;
 		$(this).each(function () {

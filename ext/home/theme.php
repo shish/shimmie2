@@ -50,7 +50,7 @@ EOD
 			<div class='space' id='foot'>
 				<small><small>
 				$contact_link Serving $num_comma posts &ndash;
-				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie2</a>
+				Running <a href='https://code.shishnet.org/shimmie2/'>Shimmie2</a>
 				</small></small>
 			</div>
 		</div>";

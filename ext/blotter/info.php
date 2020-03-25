@@ -12,5 +12,5 @@ class BlotterInfo extends ExtensionInfo
     public $description = "Displays brief updates about whatever you want on every page.
 Colors and positioning can be configured to match your site's design.
 
-Development TODO at http://github.com/zshall/shimmie2/issues";
+Development TODO at https://github.com/zshall/shimmie2/issues";
 }

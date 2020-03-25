@@ -30,20 +30,20 @@ var Tagger = {
 		this.tag.list         = null;
 		this.tag.suggest      = null;
 		this.tag.image_tags();
-		
+
 	// reveal
 		this.editor.container.style.display = "";
-	
+
 	// dragging
 		DragHandler.attach(this.editor.titlebar);
-	
+
 	// positioning
 		this.position.load();
-	
+
 	// events
 		window.onunload = function () { Tagger.position.save(); };
 	},
-	
+
 	alert : function (type,text,timeout) {
 		var id = "tagger_alert-"+type;
 		var t_alert = byId(id);
@@ -67,9 +67,9 @@ var Tagger = {
 			}
 		}
 	},
-	
+
 	editor : {},
-	
+
 	tag : {
 		submit : function () {
 			var l = this.list.childNodes.length;
@@ -82,14 +82,14 @@ var Tagger = {
 			this.parent.editor.tags.value = tags;
 			return true;
 		},
-		
+
 		search : function(s,ms) {
 			clearTimeout(Tagger.tag.timer);
 			Tagger.tag.timer = setTimeout(
 				"Tagger.tag.ajax('"+Tagger.tag.query+"?s="+s+"',Tagger.tag.receive)",
 				ms);
 		},
-		
+
 		receive : function (xml) {
 			if(xml) {
 				Tagger.tag.suggest = document.importNode(
@@ -104,7 +104,7 @@ var Tagger = {
 				Tagger.alert("maxout",false);
 			}
 		},
-		
+
 		image_tags : function(xml) {
 			if (!xml) {
 				this.ajax(this.query+"/"+this.image,this.image_tags);
@@ -115,10 +115,10 @@ var Tagger = {
 				Tagger.tag.publish(Tagger.tag.list,byId("tagger_p-applied"));
 			}
 		},
-		
+
 		publish : function (list, page) {
 			list.setAttribute("xmlns","http://www.w3.org/1999/xhtml");
-			
+
 			var l = list.childNodes.length;
 			for(var i=0; i<l; i++) {
 				var tag = list.childNodes[i];
@@ -128,11 +128,11 @@ var Tagger = {
 				};
 				tag.setAttribute("title",tag.getAttribute("count")+" uses");
 			}
-			
+
 			page.innerHTML = "";
 			page.appendChild(list);
 		},
-		
+
 		create : function (tag_name) {
 			if(tag_name.length > 0) {
 				var tag = document.createElement("tag");
@@ -146,7 +146,7 @@ var Tagger = {
 				Tagger.tag.list.appendChild(tag);
 			}
 		},
-		
+
 		toggle : function (tag) {
 			if(tag.parentNode == this.list) {
 				this.list.removeChild(tag);
@@ -154,7 +154,7 @@ var Tagger = {
 				this.list.appendChild(tag);
 			}
 		},
-		
+
 		ajax : function (url, callback) {
 			var http = (new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP"));
 			http.open("GET",url,true);
@@ -164,7 +164,7 @@ var Tagger = {
 			http.send(null);
 		}
 	},
-	
+
 	position : {
 		set : function (x,y) {
 			if (!x || !y) {
@@ -182,9 +182,9 @@ var Tagger = {
 			this.parent.editor.container.style.right = "";
 			this.parent.editor.container.style.bottom = "";
 		},
-		
+
 		get : function () {
-			// http://www.quirksmode.org/js/findpos.html
+			// https://www.quirksmode.org/js/findpos.html
 			var left = 0;
 			var top  = 0;
 			var obj  = this.parent.editor.container;
@@ -198,7 +198,7 @@ var Tagger = {
 			}
 			return [left,top];
 		},
-		
+
 		save : function (x,y) {
 			if (!x || !y) {
 				var xy = this.get();
@@ -207,7 +207,7 @@ var Tagger = {
 			}
 			Cookies.set(config.title+"_tagger-position", x+" "+y, {expires: 14});
 		},
-		
+
 		load : function () {
 			var p = Cookies.get(config.title+"_tagger-position");
 			if(p) {

@@ -30,12 +30,12 @@
 
 Email: webmaster at shishnet.org
 
-Issue/Bug tracker: http://github.com/shish/shimmie2/issues
+Issue/Bug tracker: https://github.com/shish/shimmie2/issues
 
 
 # Licence
 
-All code is released under the [GNU GPL Version 2](http://www.gnu.org/licenses/gpl-2.0.html) unless mentioned otherwise.
+All code is released under the [GNU GPL Version 2](https://www.gnu.org/licenses/gpl-2.0.html) unless mentioned otherwise.
 
 If you give shimmie to someone else, you have to give them the source (which
 should be easy, as PHP is an interpreted language...). If you want to add

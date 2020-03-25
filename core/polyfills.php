@@ -27,7 +27,7 @@ function array_iunique(array $array): array
 /**
  * Figure out if an IP is in a specified range
  *
- * from http://uk.php.net/network
+ * from https://uk.php.net/network
  */
 function ip_in_range(string $IP, string $CIDR): bool
 {
@@ -86,7 +86,7 @@ function deltree(string $f): void
 /**
  * Copy an entire file hierarchy
  *
- * from a comment on http://uk.php.net/copy
+ * from a comment on https://uk.php.net/copy
  */
 function full_copy(string $source, string $target): void
 {
@@ -380,7 +380,7 @@ function zglob(string $pattern): array
 /**
  * Figure out the path to the shimmie install directory.
  *
- * eg if shimmie is visible at http://foo.com/gallery, this
+ * eg if shimmie is visible at https://foo.com/gallery, this
  * function should return /gallery
  *
  * PHP really, really sucks.
@@ -478,7 +478,7 @@ function bool_escape($input): bool
      Sometimes, I don't like PHP -- this, is one of those times...
       "a boolean FALSE is not considered a valid boolean value by this function."
      Yay for Got'chas!
-     http://php.net/manual/en/filter.filters.validate.php
+     https://php.net/manual/en/filter.filters.validate.php
     */
     if (is_bool($input)) {
         return $input;

@@ -5,8 +5,8 @@
  * @package    Shimmie
  * @copyright  Copyright (c) 2007-2015, Shish et al.
  * @author     Shish [webmaster at shishnet.org], jgen [jeffgenovy at gmail.com]
- * @link       http://code.shishnet.org/shimmie2/
- * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ * @link       https://code.shishnet.org/shimmie2/
+ * @license    https://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  *
  * Initialise the database, check that folder
  * permissions are set properly.

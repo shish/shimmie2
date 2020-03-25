@@ -20,7 +20,7 @@ class VideoFileHandlerTheme extends Themelet
         if (array_key_exists($ext, $supportedExts)) {
             //FLV isn't supported by <video>, but it should always fallback to the flash-based method.
             if ($ext == "webm") {
-                //Several browsers still lack WebM support sadly: http://caniuse.com/#feat=webm
+                //Several browsers still lack WebM support sadly: https://caniuse.com/#feat=webm
                 $html .= "<!--[if IE]><p>To view webm files with IE, please <a href='https://tools.google.com/dlpage/webmmf/' target='_blank'>download this plugin</a>.</p><![endif]-->";
             }
 

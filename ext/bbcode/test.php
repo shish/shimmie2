@@ -67,12 +67,12 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
     public function testURL()
     {
         $this->assertEquals(
-            $this->filter("[url]http://shishnet.org[/url]"),
-            "<a href=\"http://shishnet.org\">http://shishnet.org</a>"
+            $this->filter("[url]https://shishnet.org[/url]"),
+            "<a href=\"https://shishnet.org\">https://shishnet.org</a>"
         );
         $this->assertEquals(
-            $this->filter("[url=http://shishnet.org]ShishNet[/url]"),
-            "<a href=\"http://shishnet.org\">ShishNet</a>"
+            $this->filter("[url=https://shishnet.org]ShishNet[/url]"),
+            "<a href=\"https://shishnet.org\">ShishNet</a>"
         );
         $this->assertEquals(
             $this->filter("[url=javascript:alert(\"owned\")]click to fail[/url]"),

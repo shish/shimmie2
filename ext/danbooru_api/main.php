@@ -22,8 +22,8 @@ class DanbooruApi extends Extension
 
             // Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper
             // Shimmie view page
-            // Example: danbooruup says the url is http://shimmie/api/danbooru/post/show/123
-            // This redirects that to http://shimmie/post/view/123
+            // Example: danbooruup says the url is https://shimmie/api/danbooru/post/show/123
+            // This redirects that to https://shimmie/post/view/123
             elseif ($event->page_matches("api/danbooru/post/show")) {
                 $fixedlocation = make_link("post/view/" . $event->get_arg(0));
                 $page->set_mode(PageMode::REDIRECT);

@@ -87,7 +87,7 @@ class ResizeImage extends Extension
             if ($image_obj->ext == "gif") {
                 $image_filename = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
                 if (($fh = @fopen($image_filename, 'rb'))) {
-                    //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+                    //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                     while (!feof($fh) && $isanigif < 2) {
                         $chunk = fread($fh, 1024 * 100);
                         $isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);

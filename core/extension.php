@@ -7,7 +7,7 @@
  * Also loads the theme object into $this->theme if available
  *
  * The original concept came from Artanis's Extension extension
- * --> http://github.com/Artanis/simple-extension/tree/master
+ * --> https://github.com/Artanis/simple-extension/tree/master
  * Then re-implemented by Shish after he broke the forum and couldn't
  * find the thread where the original was posted >_<
  */
@@ -115,7 +115,7 @@ abstract class ExtensionInfo
     // Every credit you get costs us RAM. It stops now.
     public const SHISH_NAME = "Shish";
     public const SHISH_EMAIL = "webmaster@shishnet.org";
-    public const SHIMMIE_URL = "http://code.shishnet.org/shimmie2/";
+    public const SHIMMIE_URL = "https://code.shishnet.org/shimmie2/";
     public const SHISH_AUTHOR = [self::SHISH_NAME=>self::SHISH_EMAIL];
 
     public const LICENSE_GPLV2 = "GPLv2";

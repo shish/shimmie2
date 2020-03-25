@@ -101,7 +101,7 @@ function send_event(Event $event): Event
     if ($tracer_enabled) {
         $_tracer->begin(get_class($event));
     }
-    // SHIT: http://bugs.php.net/bug.php?id=35106
+    // SHIT: https://bugs.php.net/bug.php?id=35106
     $my_event_listeners = $_shm_event_listeners[get_class($event)];
     ksort($my_event_listeners);
 

@@ -321,7 +321,7 @@ class Media extends Extension
      * We need to consider the size that we are GOING TO instead.
      *
      * The factor of 2.5 is simply a rough guideline.
-     * http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
+     * https://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
      *
      * @param array $info The output of getimagesize() for the source file in question.
      * @return int The number of bytes an image resize operation is estimated to use.
@@ -741,7 +741,7 @@ class Media extends Extension
                 case IMAGETYPE_PNG:
                 case IMAGETYPE_WEBP:
                     //
-                    // More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
+                    // More info here:  https://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
                     //
                     if (imagealphablending($image_resized, false) === false) {
                         throw new MediaException("Unable to disable image alpha blending");
@@ -816,7 +816,7 @@ class Media extends Extension
         $is_anim_gif = 0;
         if (($fh = @fopen($image_filename, 'rb'))) {
             try {
-                //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+                //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 while (!feof($fh) && $is_anim_gif < 2) {
                     $chunk = fread($fh, 1024 * 100);
                     $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);

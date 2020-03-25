@@ -15,7 +15,7 @@ class LinkImageTheme extends Themelet
 			<table><tr>
 
 			<td><fieldset>
-				<legend><a href='http://en.wikipedia.org/wiki/Bbcode' target='_blank'>BBCode</a></legend>
+				<legend><a href='https://en.wikipedia.org/wiki/Bbcode' target='_blank'>BBCode</a></legend>
 				<table>
 				".
                     $this->link_code("Link", $this->url($post_link, $text_link, "ubb"), "ubb_text-link").
@@ -26,7 +26,7 @@ class LinkImageTheme extends Themelet
 			</fieldset></td>
 
 			<td><fieldset>
-				<legend><a href='http://en.wikipedia.org/wiki/Html' target='_blank'>HTML</a></legend>
+				<legend><a href='https://en.wikipedia.org/wiki/Html' target='_blank'>HTML</a></legend>
 				<table>
 				".
                     $this->link_code("Link", $this->url($post_link, $text_link, "html"), "html_text-link").

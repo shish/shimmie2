@@ -15,7 +15,7 @@ class BBCodeInfo extends ExtensionInfo
 "  Supported tags:
    <ul>
      <li>[img]url[/img]
-     <li>[url]<a href=\"{self::SHIMMIE_URL}\">http://code.shishnet.org/</a>[/url]
+     <li>[url]<a href=\"{self::SHIMMIE_URL}\">https://code.shishnet.org/</a>[/url]
      <li>[email]<a href=\"mailto:{self::SHISH_EMAIL}\">webmaster@shishnet.org</a>[/email]
      <li>[b]<b>bold</b>[/b]
      <li>[i]<i>italic</i>[/i]
