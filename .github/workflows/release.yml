@@ -13,9 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
 
-      - name: Get the version
+      - name: Get version from tag
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+
+      - name: Test version in sys_config
+        run: grep ${{ steps.get_version.outputs.VERSION }} core/sys_config.php
 
       - name: Build
         run: |
