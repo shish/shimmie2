@@ -4,6 +4,16 @@ FROM debian:stable-slim AS app
 RUN apt update && apt install -y composer php7.3-gd php7.3-dom php7.3-sqlite3 php-xdebug imagemagick
 COPY composer.json composer.lock /app/
 WORKDIR /app
+RUN composer install --no-dev
+COPY . /app/
+
+# Tests in their own image. Really we should inherit from app and then
+# `composer install` phpunit on top of that; but for some reason
+# `composer install --no-dev && composer install` doesn't install dev
+FROM debian:stable-slim AS tests
+RUN apt update && apt install -y composer php7.3-gd php7.3-dom php7.3-sqlite3 php-xdebug imagemagick
+COPY composer.json composer.lock /app/
+WORKDIR /app
 RUN composer install
 COPY . /app/
 ARG RUN_TESTS=true
