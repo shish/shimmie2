@@ -1,6 +1,6 @@
 # "Build" shimmie (composer install - done in its own stage so that we don't
 # need to include all the composer fluff in the final image)
-FROM debian:stable-slim
+FROM debian:stable-slim AS app
 RUN apt update && apt install -y composer php7.3-gd php7.3-dom php7.3-sqlite3 imagemagick
 COPY composer.json composer.lock /app/
 WORKDIR /app
@@ -15,7 +15,7 @@ RUN [ $RUN_TESTS = false ] || (\
     echo '=== Cleaning ===' && rm -rf data)
 
 # Build su-exec so that our final image can be nicer
-FROM debian:stable-slim
+FROM debian:stable-slim AS suexec
 RUN  apt-get update && apt-get install -y --no-install-recommends gcc libc-dev curl
 RUN  curl -k -o /usr/local/bin/su-exec.c https://raw.githubusercontent.com/ncopa/su-exec/master/su-exec.c; \
      gcc -Wall /usr/local/bin/su-exec.c -o/usr/local/bin/su-exec; \
@@ -32,8 +32,8 @@ RUN apt update && apt install -y curl \
     php7.3-cli php7.3-gd php7.3-pgsql php7.3-mysql php7.3-sqlite3 php7.3-zip php7.3-dom php7.3-mbstring php-xdebug \
     composer imagemagick vim zip unzip && \
     rm -rf /var/lib/apt/lists/*
-COPY --from=0 /app /app
-COPY --from=1 /usr/local/bin/su-exec /usr/local/bin/su-exec
+COPY --from=app /app /app
+COPY --from=suexec /usr/local/bin/su-exec /usr/local/bin/su-exec
 
 WORKDIR /app
 CMD ["/bin/sh", "/app/tests/docker-init.sh"]
