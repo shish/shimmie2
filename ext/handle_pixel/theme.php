@@ -9,7 +9,7 @@ class PixelFileHandlerTheme extends Themelet
         $u_ilink = $image->get_image_link();
         if ($config->get_bool(ImageConfig::SHOW_META) && function_exists(ImageIO::EXIF_READ_FUNCTION)) {
             # FIXME: only read from jpegs?
-            $exif = @exif_read_data($image->get_image_filename(), 0, true);
+            $exif = @exif_read_data($image->get_image_filename(), "IFD0", true);
             if ($exif) {
                 $head = "";
                 foreach ($exif as $key => $section) {
