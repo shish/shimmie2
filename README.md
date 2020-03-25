@@ -17,12 +17,13 @@
 
 # Documentation
 
-* [Install straight on disk](https://github.com/shish/shimmie2/tree/master/docs/INSTALL.md)
-* [Install in docker container](https://github.com/shish/shimmie2/tree/master/docs/DOCKER.md)
-* [Upgrade process](https://github.com/shish/shimmie2/tree/master/docs/UPGRADE.md)
-* [Advanced config](https://github.com/shish/shimmie2/tree/master/docs/CONFIG.md)
-* [Developer notes](https://github.com/shish/shimmie2/tree/master/docs/DEV.md)
-* [High-performance notes](https://github.com/shish/shimmie2/tree/master/docs/SPEED.md)
+* [Install straight on disk](https://github.com/shish/shimmie2/wiki/Install)
+* [Install in docker container](https://github.com/shish/shimmie2/wiki/Docker)
+* [Upgrade process](https://github.com/shish/shimmie2/wiki/Upgrade)
+* [Basic settings](https://github.com/shish/shimmie2/wiki/Settings)
+* [Advanced config](https://github.com/shish/shimmie2/wiki/Advanced-Config)
+* [Developer notes](https://github.com/shish/shimmie2/wiki/Development-Info)
+* [High-performance notes](https://github.com/shish/shimmie2/wiki/Performance)
 
 
 # Contact
