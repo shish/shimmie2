@@ -1,7 +1,7 @@
 # "Build" shimmie (composer install - done in its own stage so that we don't
 # need to include all the composer fluff in the final image)
 FROM debian:stable-slim AS app
-RUN apt update && apt install -y composer php7.3-gd php7.3-dom php7.3-sqlite3 imagemagick
+RUN apt update && apt install -y composer php7.3-gd php7.3-dom php7.3-sqlite3 php-xdebug imagemagick
 COPY composer.json composer.lock /app/
 WORKDIR /app
 RUN composer install
@@ -29,8 +29,8 @@ HEALTHCHECK --interval=5m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ ||
 ENV UID=1000 \
     GID=1000
 RUN apt update && apt install -y curl \
-    php7.3-cli php7.3-gd php7.3-pgsql php7.3-mysql php7.3-sqlite3 php7.3-zip php7.3-dom php7.3-mbstring php-xdebug \
-    composer imagemagick vim zip unzip && \
+    php7.3-cli php7.3-gd php7.3-pgsql php7.3-mysql php7.3-sqlite3 php7.3-zip php7.3-dom php7.3-mbstring \
+    imagemagick zip unzip && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=app /app /app
 COPY --from=suexec /usr/local/bin/su-exec /usr/local/bin/su-exec
