@@ -53,35 +53,8 @@ class CustomUserPageTheme extends UserPageTheme
 
     public function display_signup_page(Page $page)
     {
-        global $config;
-        $tac = $config->get_string("login_tac", "");
-
-        $tfe = new TextFormattingEvent($tac);
-        send_event($tfe);
-        $tac = $tfe->formatted;
-
-        if (empty($tac)) {
-            $html = "";
-        } else {
-            $html = "<p>$tac</p>";
-        }
-
-        $html .= "
-		<form action='".make_link("user_admin/create")."' method='POST'>
-			<table style='width: 300px;'>
-				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
-			</table>
-		</form>
-		";
-
-        $page->set_title("Create Account");
-        $page->set_heading("Create Account");
         $page->disable_left();
-        $page->add_block(new Block("Signup", $html));
+        parent::display_signup_page($page);
     }
 
     public function display_ip_list(Page $page, array $uploads, array $comments, array $events)
