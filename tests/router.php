@@ -14,6 +14,7 @@ require_once "core/util.php";
 $matches = [];
 if (preg_match('/\/_(images|thumbs)\/([0-9a-f]{32}).*$/', $_SERVER["REQUEST_URI"], $matches)) {
     header('Content-Type: image/jpeg');
+    header("Cache-control: public, max-age=86400");
     print(file_get_contents(warehouse_path($matches[1], $matches[2])));
     return true;
 }
