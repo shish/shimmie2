@@ -1,0 +1,55 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Build
+        run: |
+          composer install --no-dev
+          cd ..
+          tar cvzf shimmie2-${{ github.ref }}.tgz shimmie2
+          zip -r shimmie2-${{ github.ref }}.zip shimmie2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Shimmie ${{ github.ref }}
+          body: Automated release from tags
+          draft: false
+          prerelease: false
+
+      - name: Upload Zip
+        id: upload-release-asset-zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ../shimmie2-${{ github.ref }}.zip
+          asset_name: shimmie2-${{ github.ref }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload Tar
+        id: upload-release-asset-tar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ../shimmie2-${{ github.ref }}.tgz
+          asset_name: shimmie2-${{ github.ref }}.tgz
+          asset_content_type: application/gzip
