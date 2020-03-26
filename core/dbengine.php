@@ -31,6 +31,8 @@ abstract class DBEngine
     }
 
     abstract public function set_timeout(PDO $db, int $time);
+
+    abstract public function get_version(PDO $db): string;
 }
 
 class MySQL extends DBEngine
@@ -68,12 +70,15 @@ class MySQL extends DBEngine
         // These only apply to read-only queries, which appears to be the best we can to mysql-wise
         // $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
     }
+
+    public function get_version(PDO $db): string
+    {
+        return $db->query('select version()')->fetch()[0];
+    }
 }
 
 class PostgreSQL extends DBEngine
 {
-
-
     /** @var string */
     public $name = DatabaseDriver::PGSQL;
 
@@ -109,6 +114,11 @@ class PostgreSQL extends DBEngine
     public function set_timeout(PDO $db, int $time): void
     {
         $db->exec("SET statement_timeout TO ".$time.";");
+    }
+
+    public function get_version(PDO $db): string
+    {
+        return $db->query('select version()')->fetch()[0];
     }
 }
 
@@ -215,5 +225,10 @@ class SQLite extends DBEngine
     public function set_timeout(PDO $db, int $time): void
     {
         // There doesn't seem to be such a thing for SQLite, so it does nothing
+    }
+
+    public function get_version(PDO $db): string
+    {
+        return $db->query('select sqlite_version()')->fetch()[0];
     }
 }

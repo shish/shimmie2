@@ -139,6 +139,11 @@ class Database
         return $this->engine->name;
     }
 
+    public function get_version(): string
+    {
+        return $this->engine->get_version($this->db);
+    }
+
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
         global $_tracer, $tracer_enabled;
