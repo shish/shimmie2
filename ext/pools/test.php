@@ -75,7 +75,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     /** @depends testCreate */
-    public function testHitory($args)
+    public function testHistory($args)
     {
         [$pool_id, $image_ids] = $args;
 
