@@ -4,27 +4,23 @@ about: Create a report to help us improve
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Server Software**
+ - Shimmie version:
+ - Database: [mysql, postgres, ...]
+ - Web server: [apache, nginx, ...]
 
-**To Reproduce**
-Steps to reproduce the behavior:
+**Client Software (please complete the following information)**
+ - Device: [e.g. iphone, windows desktop]
+ - Browser: [e.g. chrome, safari]
+
+**What steps trigger this bug**
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
-4. See error
 
-**Expected behavior**
+**What did you expect to happen?**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+**What actually happened?**
 If applicable, add screenshots to help explain your problem.
 
-**Server Software, if you're the server admin (please complete the following information):**
- - Shimmie version
- - Database [mysql, postgres, ...]
- - Web server [apache, nginx, ...]
-
-**Client Software (please complete the following information):**
- - Device [e.g. iphone, windows desktop]
- - Browser [e.g. chrome, safari]
