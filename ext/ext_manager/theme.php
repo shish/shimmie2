@@ -30,7 +30,7 @@ class ExtManagerTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             "ext_manager/set",
             TABLE(
-                ["id"=>'extensions', "class"=>'zebra sortable'],
+                ["id"=>'extensions', "class"=>'zebra'],
                 THEAD(TR(
                     $editable ? TH("Enabled") : null,
                     TH("Name"),

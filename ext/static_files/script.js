@@ -29,9 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	$.timeago.settings.cutoff = 365 * 24 * 60 * 60 * 1000; // Display original dates older than 1 year
 	$("time").timeago();
 
-	/** Setup tablesorter **/
-	$("table.sortable").tablesorter();
-
 	/** Setup sidebar toggle **/
 	let sidebar_hidden = [];
 	try {

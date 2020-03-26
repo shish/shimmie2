@@ -63,7 +63,7 @@ class SetupTheme extends Themelet
 
         $table = "
 			".make_form(make_link("setup/save"))."
-				<table id='settings' class='sortable zebra'>
+				<table id='settings' class='zebra'>
 					<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
 					<tbody>$h_rows</tbody>
 					<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>

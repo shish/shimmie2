@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3719624fc2c580e06fe8595e6bf6cb71",
+    "content-hash": "b29c81be8da841653840750829153dda",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -80,25 +80,6 @@
             "license": [
                 "MIT"
             ]
-        },
-        {
-            "name": "bower-asset/tablesorter",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/christianbach/tablesorter.git",
-                "reference": "07e0918254df3c2057d6d8e4653a0769f1881412"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/christianbach/tablesorter/zipball/07e0918254df3c2057d6d8e4653a0769f1881412",
-                "reference": "07e0918254df3c2057d6d8e4653a0769f1881412"
-            },
-            "type": "bower-asset",
-            "license": [
-                "MIT,GPL"
-            ],
-            "time": "2017-12-20T18:16:21+00:00"
         },
         {
             "name": "dapphp/securimage",
@@ -302,21 +283,20 @@
         },
         {
             "name": "shish/eventtracer-php",
-            "version": "dev-master",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/eventtracer-php.git",
-                "reference": "57c1eb94028d8973907ee859455d9756b7cc597d"
+                "reference": "e7816dbaa155d9552ee4e5721be799d932518a84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/57c1eb94028d8973907ee859455d9756b7cc597d",
-                "reference": "57c1eb94028d8973907ee859455d9756b7cc597d",
+                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/e7816dbaa155d9552ee4e5721be799d932518a84",
+                "reference": "e7816dbaa155d9552ee4e5721be799d932518a84",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "ext-posix": "*",
                 "php": "^7.2"
             },
             "require-dev": {
@@ -342,7 +322,7 @@
             ],
             "description": "An API to write JSON traces as used by the Chrome Trace Viewer",
             "homepage": "https://github.com/shish/eventtracer-php",
-            "time": "2020-03-16T15:07:22+00:00"
+            "time": "2020-03-26T14:11:54+00:00"
         },
         {
             "name": "shish/ffsphp",
@@ -388,7 +368,7 @@
         },
         {
             "name": "shish/microcrud",
-            "version": "dev-master",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
@@ -1165,12 +1145,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "014b4c58184c41572c9ae4297c73d9efe2bc9bd3"
+                "reference": "fb668be523b1975b0fb9ee22afbfa8f5acdb840e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/014b4c58184c41572c9ae4297c73d9efe2bc9bd3",
-                "reference": "014b4c58184c41572c9ae4297c73d9efe2bc9bd3",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fb668be523b1975b0fb9ee22afbfa8f5acdb840e",
+                "reference": "fb668be523b1975b0fb9ee22afbfa8f5acdb840e",
                 "shasum": ""
             },
             "require": {
@@ -1240,7 +1220,17 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-03-11T07:08:11+00:00"
+            "funding": [
+                {
+                    "url": "https://phpunit.de/donate.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/sebastianbergmann",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-03-25T06:16:24+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -2006,11 +1996,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "shish/eventtracer-php": 20,
-        "shish/microcrud": 20,
-        "bower-asset/tablesorter": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -2018,5 +2004,6 @@
         "ext-pdo": "*",
         "ext-json": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

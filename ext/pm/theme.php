@@ -7,7 +7,7 @@ class PrivMsgTheme extends Themelet
         global $user;
 
         $html = "
-			<table id='pms' class='zebra sortable'>
+			<table id='pms' class='zebra'>
 				<thead><tr><th>R?</th><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr></thead>
 				<tbody>";
         foreach ($pms as $pm) {
