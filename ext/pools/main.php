@@ -114,8 +114,8 @@ class Pools extends Extension
         }
 
         if ($this->get_version("ext_pools_version") < 2) {
-            $database->Execute("ALTER TABLE pools ADD UNIQUE INDEX (title);");
-            $database->Execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
+            $database->execute("ALTER TABLE pools ADD UNIQUE INDEX (title);");
+            $database->execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
 
             $this->set_version("ext_pools_version", 3); // skip 2
         }
@@ -151,8 +151,6 @@ class Pools extends Extension
             $event->add_nav_link("pool_help", new Link('ext_doc/pools'), "Help");
         }
     }
-
-
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -316,7 +314,6 @@ class Pools extends Extension
         $event->add_link("Pools", make_link("pool/list"));
     }
 
-
     /**
      * When displaying an image, optionally list all the pools that the
      * image is currently a member of on a side panel, as well as a link
@@ -374,7 +371,6 @@ class Pools extends Extension
             $event->add_block($block);
         }
     }
-
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
@@ -440,7 +436,6 @@ class Pools extends Extension
 
         $pools = $database->get_all("SELECT * FROM pools ORDER BY title ");
 
-
         $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", $this->theme->get_bulk_pool_selector($pools));
         $event->add_action("bulk_pool_add_new", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms));
     }
@@ -494,9 +489,6 @@ class Pools extends Extension
         }
     }
 
-    /**
-     * HERE WE GET THE LIST OF POOLS.
-     */
     private function list_pools(Page $page, int $pageNumber)
     {
         global $config, $database;
@@ -527,15 +519,11 @@ class Pools extends Extension
 			LIMIT :l OFFSET :o
 		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]);
 
-        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
+        $totalPages = (int)ceil((int)$database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
 
         $this->theme->list_pools($page, $pools, $pageNumber + 1, $totalPages);
     }
 
-
-    /**
-     * HERE WE CREATE A NEW POOL
-     */
     public function onPoolCreation(PoolCreationEvent $event)
     {
         global $user, $database;
@@ -549,7 +537,6 @@ class Pools extends Extension
         if ($this->get_single_pool_from_title($event->title)) {
             throw new PoolCreationException("A pool using this title already exists.");
         }
-
 
         $database->execute(
             "
@@ -627,10 +614,8 @@ class Pools extends Extension
         $this->theme->pool_result($page, $images, $this->get_pool($pool_id));
     }
 
-
     /**
      * HERE WE ADD CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
-     *
      */
     public function onPoolAddPosts(PoolAddPostsEvent $event)
     {
@@ -665,7 +650,7 @@ class Pools extends Extension
 
         foreach ($_POST['imgs'] as $data) {
             list($imageORDER, $imageID) = $data;
-            $database->Execute(
+            $database->execute(
                 "
 				UPDATE pool_images
 				SET image_order = :ord
@@ -719,7 +704,7 @@ class Pools extends Extension
     private function check_post(int $poolID, int $imageID): bool
     {
         global $database;
-        $result = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid AND image_id=:iid", ["pid" => $poolID, "iid" => $imageID]);
+        $result = (int)$database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid AND image_id=:iid", ["pid" => $poolID, "iid" => $imageID]);
         return ($result != 0);
     }
 
@@ -811,21 +796,18 @@ class Pools extends Extension
             ["pid" => $poolID, "l" => $imagesPerPage, "o" => $pageNumber * $imagesPerPage]
         );
 
-        $totalPages = (int)ceil($database->get_one(
-            "
-					SELECT COUNT(*) FROM pool_images p
-					$query",
+        $totalPages = (int)ceil((int)$database->get_one(
+            "SELECT COUNT(*) FROM pool_images p $query",
             ["pid" => $poolID]
         ) / $imagesPerPage);
 
         $images = [];
         foreach ($result as $singleResult) {
-            $images[] = Image::by_id($singleResult["image_id"]);
+            $images[] = Image::by_id((int)$singleResult["image_id"]);
         }
 
         $this->theme->view_pool($pool, $images, $pageNumber + 1, $totalPages);
     }
-
 
     /**
      * This function gets the current order of images from a given pool.
@@ -835,17 +817,16 @@ class Pools extends Extension
     {
         global $database;
 
-        $result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $poolID]);
+        $result = $database->execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $poolID]);
         $images = [];
 
         while ($row = $result->fetch()) {
-            $image = Image::by_id($row["image_id"]);
+            $image = Image::by_id((int)$row["image_id"]);
             $images[] = [$image];
         }
 
         return $images;
     }
-
 
     /**
      * WE GET THE ORDER OF THE IMAGES BUT HERE WE SEND KEYS ADDED IN ARRAY TO GET THE ORDER IN THE INPUT VALUE.
@@ -856,7 +837,7 @@ class Pools extends Extension
     {
         global $database;
 
-        $result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $poolID]);
+        $result = $database->execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $poolID]);
         $images = [];
 
         while ($row = $result->fetch()) {
@@ -865,7 +846,7 @@ class Pools extends Extension
 					SELECT * FROM images AS i
 					INNER JOIN pool_images AS p ON i.id = p.image_id
 					WHERE pool_id=:pid AND i.id=:iid",
-                ["pid" => $poolID, "iid" => $row['image_id']]
+                ["pid" => $poolID, "iid" => (int)$row['image_id']]
             );
             $image = ($image ? new Image($image) : null);
             $images[] = [$image];
@@ -874,7 +855,6 @@ class Pools extends Extension
         return $images;
     }
 
-
     /**
      * HERE WE NUKE ENTIRE POOL. WE REMOVE POOLS AND POSTS FROM REMOVED POOL AND HISTORIES ENTRIES FROM REMOVED POOL.
      */
@@ -882,7 +862,7 @@ class Pools extends Extension
     {
         global $user, $database;
 
-        $p_id = $database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
+        $p_id = (int)$database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
         if ($user->can(Permissions::POOLS_ADMIN)) {
             $database->execute("DELETE FROM pool_history WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pool_images WHERE pool_id = :pid", ["pid" => $poolID]);
@@ -911,9 +891,6 @@ class Pools extends Extension
         );
     }
 
-    /**
-     * HERE WE GET THE HISTORY LIST.
-     */
     private function get_history(int $pageNumber)
     {
         global $config, $database;
@@ -940,7 +917,7 @@ class Pools extends Extension
 				LIMIT :l OFFSET :o
 				", ["l" => $historiesPerPage, "o" => $pageNumber * $historiesPerPage]);
 
-        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
+        $totalPages = (int)ceil((int)$database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
 
         $this->theme->show_history($history, $pageNumber + 1, $totalPages);
     }
@@ -999,7 +976,7 @@ class Pools extends Extension
 
         if (!$this->check_post($poolID, $imageID)) {
             if ($config->get_bool(PoolsConfig::AUTO_INCREMENT_ORDER) && $imageOrder === 0) {
-                $imageOrder = $database->get_one(
+                $imageOrder = (int)$database->get_one(
                     "
 						SELECT COALESCE(MAX(image_order),0) + 1
 						FROM pool_images
@@ -1027,7 +1004,6 @@ class Pools extends Extension
         }
         return true;
     }
-
 
     private function update_count($pool_id)
     {
