@@ -10,7 +10,7 @@ class ET extends Extension
         global $user;
         if ($event->page_matches("system_info")) {
             if ($user->can(Permissions::VIEW_SYSINTO)) {
-                $this->theme->display_info_page($this->get_info());
+                $this->theme->display_info_page($this->to_yaml($this->get_info()));
             }
         }
     }
@@ -29,7 +29,7 @@ class ET extends Extension
     {
         global $user;
         if ($user->can(Permissions::VIEW_SYSINTO)) {
-            $event->add_link("System Info", make_link("system_info"));
+            $event->add_link("System Info", make_link("system_info"), 99);
         }
     }
 
@@ -40,9 +40,7 @@ class ET extends Extension
             print "\t\tList a bunch of info\n\n";
         }
         if ($event->cmd == "info") {
-            foreach ($this->get_info() as $k => $v) {
-                print("$k = $v\n");
-            }
+            print($this->to_yaml($this->get_info()));
         }
     }
 
@@ -53,51 +51,66 @@ class ET extends Extension
     {
         global $config, $database;
 
-        $info = [];
-        $info['site_title'] = $config->get_string(SetupConfig::TITLE);
-        $info['site_theme'] = $config->get_string(SetupConfig::THEME);
-        $info['site_url']   = "http://" . $_SERVER["HTTP_HOST"] . get_base_href();
-
-        $info['sys_shimmie'] = VERSION;
-        $info['sys_schema']  = $config->get_int("db_version");
-        $info['sys_php']     = phpversion();
-        $info['sys_db']      = $database->get_driver_name();
-        $info['sys_os']      = php_uname();
-        $info['sys_disk']    = to_shorthand_int((int)disk_total_space("./") - (int)disk_free_space("./")) . " / " .
-                               to_shorthand_int((int)disk_total_space("./"));
-        $info['sys_server']  = isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown';
-
-        $info[MediaConfig::FFMPEG_PATH]	= $config->get_string(MediaConfig::FFMPEG_PATH);
-        $info[MediaConfig::CONVERT_PATH]	= $config->get_string(MediaConfig::CONVERT_PATH);
-        $info[MediaConfig::MEM_LIMIT]	= $config->get_int(MediaConfig::MEM_LIMIT);
-
-        $info[ImageConfig::THUMB_ENGINE]	= $config->get_string(ImageConfig::THUMB_ENGINE);
-        $info[ImageConfig::THUMB_QUALITY]	= $config->get_int(ImageConfig::THUMB_QUALITY);
-        $info[ImageConfig::THUMB_WIDTH]	= $config->get_int(ImageConfig::THUMB_WIDTH);
-        $info[ImageConfig::THUMB_HEIGHT]	= $config->get_int(ImageConfig::THUMB_HEIGHT);
-        $info[ImageConfig::THUMB_SCALING]	= $config->get_int(ImageConfig::THUMB_SCALING);
-        $info[ImageConfig::THUMB_TYPE]	    = $config->get_string(ImageConfig::THUMB_TYPE);
-
-        $info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");
-        $info['stat_comments'] = $database->get_one("SELECT COUNT(*) FROM comments");
-        $info['stat_users']    = $database->get_one("SELECT COUNT(*) FROM users");
-        $info['stat_tags']     = $database->get_one("SELECT COUNT(*) FROM tags");
-        $info['stat_image_tags'] = $database->get_one("SELECT COUNT(*) FROM image_tags");
-
-        $els = [];
-        foreach (getSubclassesOf("Extension") as $class) {
-            $els[] = $class;
+        $core_exts = ExtensionInfo::get_core_extensions();
+        $extra_exts = [];
+        foreach (ExtensionInfo::get_all() as $info) {
+            if ($info->is_enabled() && !in_array($info->key, $core_exts)) {
+                $extra_exts[] = $info->key;
+            }
         }
-        $info['sys_extensions'] = join(', ', $els);
 
-        $info['handled_extensions'] = join(', ', DataHandlerExtension::get_all_supported_exts());
-
-        //$cfs = array();
-        //foreach($database->get_all("SELECT name, value FROM config") as $pair) {
-        //	$cfs[] = $pair['name']."=".$pair['value'];
-        //}
-        //$info[''] = "Config: ".join(", ", $cfs);
+        $info = [
+            "about" => [
+                'title' => $config->get_string(SetupConfig::TITLE),
+                'theme' => $config->get_string(SetupConfig::THEME),
+                'url'   => "http://" . $_SERVER["HTTP_HOST"] . get_base_href(),
+            ],
+            "versions" => [
+                'shimmie' => VERSION,
+                'schema'  => $config->get_int("db_version"),
+                'php'     => phpversion(),
+                'db'      => $database->get_driver_name(),
+                'os'      => php_uname(),
+                'server'  => isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown',
+            ],
+            "extensions" => [
+                "core" => $core_exts,
+                "extra" => $extra_exts,
+                "handled_extensions" => DataHandlerExtension::get_all_supported_exts(),
+            ],
+            "stats" => [
+                'images'   => (int)$database->get_one("SELECT COUNT(*) FROM images"),
+                'comments' => (int)$database->get_one("SELECT COUNT(*) FROM comments"),
+                'users'    => (int)$database->get_one("SELECT COUNT(*) FROM users"),
+            ],
+            "media" => [
+                "memory_limit" => to_shorthand_int($config->get_int(MediaConfig::MEM_LIMIT)),
+                "disk_use" => to_shorthand_int((int)disk_total_space("./") - (int)disk_free_space("./")),
+                "disk_total" => to_shorthand_int((int)disk_total_space("./")),
+            ],
+            "thumbnails" => [
+                "engine" => $config->get_string(ImageConfig::THUMB_ENGINE),
+                "quality" => $config->get_int(ImageConfig::THUMB_QUALITY),
+                "width" => $config->get_int(ImageConfig::THUMB_WIDTH),
+                "height" => $config->get_int(ImageConfig::THUMB_HEIGHT),
+                "scaling" => $config->get_int(ImageConfig::THUMB_SCALING),
+                "type" => $config->get_string(ImageConfig::THUMB_TYPE),
+            ],
+        ];
 
         return $info;
+    }
+
+    private function to_yaml($info)
+    {
+        $data = "";
+        foreach ($info as $title => $section) {
+            $data .= "$title:\n";
+            foreach ($section as $k => $v) {
+                $data .= "  $k: " . json_encode($v, JSON_UNESCAPED_SLASHES) . "\n";
+            }
+            $data .= "\n";
+        }
+        return $data;
     }
 }

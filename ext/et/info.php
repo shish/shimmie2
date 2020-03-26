@@ -9,6 +9,7 @@ class ETInfo extends ExtensionInfo
     public $url = self::SHIMMIE_URL;
     public $authors = self::SHISH_AUTHOR;
     public $license = self::LICENSE_GPLV2;
+    public $core = true;
     public $description = "Show various bits of system information";
     public $documentation =
 "Knowing the information that this extension shows can be very useful for debugging. There's also an option to send
