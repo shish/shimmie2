@@ -190,4 +190,14 @@ class IndexTest extends ShimmiePHPUnitTestCase
         // negative tag alone, should work
         $this->assert_search_results(["-pbx"], [$image_ids[1]]);
     }
+
+    // This isn't really an index thing, we just want to test this from
+    // SOMEWHERE because the default theme doesn't use them.
+    public function test_nav()
+    {
+        send_event(new UserLoginEvent(User::by_name(self::$user_name)));
+        send_event(new PageNavBuildingEvent());
+        send_event(new PageSubNavBuildingEvent("parent"));
+        $this->assertTrue(true);
+    }
 }
