@@ -5,6 +5,8 @@ about: Create a report to help us improve
 ---
 
 **Server Software**
+(You can get all these stats from `http://<your site>/system_info`)
+
  - Shimmie version:
  - Database: [mysql, postgres, ...]
  - Web server: [apache, nginx, ...]
