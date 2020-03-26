@@ -40,7 +40,7 @@ class PoolsTheme extends Themelet
         foreach ($pools as $pool) {
             $h .= "<option value='" . $pool['id'] . "'>" . html_escape($pool['title']) . "</option>";
         }
-        $editor = "\n" . make_form(make_link("pool/add_post")) . "
+        return "\n" . make_form(make_link("pool/add_post")) . "
 				<select name='pool_id'>
 					$h
 				</select>
@@ -48,7 +48,6 @@ class PoolsTheme extends Themelet
 				<input type='submit' value='Add Image to Pool'>
 			</form>
 		";
-        return $editor;
     }
 
     /**
