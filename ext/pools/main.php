@@ -600,7 +600,9 @@ class Pools extends Extension
     private function get_pool_ids(int $imageID): array
     {
         global $database;
-        return $database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", ["iid" => $imageID]);
+        $col = $database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", ["iid" => $imageID]);
+        $col = array_map('intval', $col);
+        return $col;
     }
 
     /**
