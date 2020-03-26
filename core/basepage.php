@@ -396,7 +396,6 @@ class BasePage
             [
                 "vendor/bower-asset/jquery/dist/jquery.min.js",
                 "vendor/bower-asset/jquery-timeago/jquery.timeago.js",
-                "vendor/bower-asset/tablesorter/jquery.tablesorter.min.js",
                 "vendor/bower-asset/js-cookie/src/js.cookie.js",
                 "ext/static_files/modernizr-3.3.1.custom.js",
             ],
