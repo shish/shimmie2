@@ -677,7 +677,7 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     global $user;
 
     $attrs = [
-        "action"=>$target,
+        "action"=>make_link($target),
         "method"=>$method
     ];
 
