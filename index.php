@@ -71,7 +71,7 @@ $_tracer->end();
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 try {
-    // $_tracer->mark(@$_SERVER["REQUEST_URI"]);
+    // $_tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
     $_tracer->begin(
         $_SERVER["REQUEST_URI"] ?? "No Request",
         [

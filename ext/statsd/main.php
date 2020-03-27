@@ -43,9 +43,6 @@ class StatsDInterface extends Extension
         } elseif ($event->page_matches("api")) {
             $this->_stats("api");
         } else {
-            #global $_shm_load_start;
-            #$time = microtime(true) - $_shm_load_start;
-            #file_put_contents("data/other.log", "{$_SERVER['REQUEST_URI']} $time\n", FILE_APPEND);
             $this->_stats("other");
         }
 

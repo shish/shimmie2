@@ -63,7 +63,7 @@ class ET extends Extension
             "about" => [
                 'title' => $config->get_string(SetupConfig::TITLE),
                 'theme' => $config->get_string(SetupConfig::THEME),
-                'url'   => "http://" . $_SERVER["HTTP_HOST"] . get_base_href(),
+                'url'   => make_http(make_link("/")),
             ],
             "versions" => [
                 'shimmie' => VERSION,
@@ -71,7 +71,7 @@ class ET extends Extension
                 'php'     => phpversion(),
                 'db'      => $database->get_driver_name() . " " . $database->get_version(),
                 'os'      => php_uname(),
-                'server'  => isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown',
+                'server'  =>  $_SERVER["SERVER_SOFTWARE"] ?? 'unknown',
             ],
             "extensions" => [
                 "core" => $core_exts,
