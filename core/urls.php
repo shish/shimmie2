@@ -1,7 +1,4 @@
 <?php declare(strict_types=1);
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-* HTML Generation                                                           *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class Link
 {
@@ -60,40 +57,24 @@ function make_link(?string $page=null, ?string $query=null): string
  */
 function modify_current_url(array $changes): string
 {
-    return modify_url($_SERVER['QUERY_STRING'], $changes);
+    return modify_url($_SERVER['REQUEST_URI'], $changes);
 }
 
 function modify_url(string $url, array $changes): string
 {
-    // SHIT: PHP is officially the worst web API ever because it does not
-    // have a built-in function to do this.
+    $parts = parse_url($url);
 
-    // SHIT: parse_str is magically retarded; not only is it a useless name, it also
-    // didn't return the parsed array, preferring to overwrite global variables with
-    // whatever data the user supplied. Thankfully, 4.0.3 added an extra option to
-    // give it an array to use...
     $params = [];
-    parse_str($url, $params);
-
-    if (isset($changes['q'])) {
-        $base = $changes['q'];
-        unset($changes['q']);
-    } else {
-        $base = _get_query();
-    }
-
-    if (isset($params['q'])) {
-        unset($params['q']);
-    }
-
+    if(isset($parts['query'])) parse_str($parts['query'], $params);
     foreach ($changes as $k => $v) {
         if (is_null($v) and isset($params[$k])) {
             unset($params[$k]);
         }
         $params[$k] = $v;
     }
+    $parts['query'] = http_build_query($params);
 
-    return make_link($base, http_build_query($params));
+    return unparse_url($parts);
 }
 
 
@@ -117,6 +98,10 @@ function make_http(string $link): string
     return $link;
 }
 
+/**
+ * If HTTP_REFERER is set, and not blacklisted, then return it
+ * Else return a default $dest
+ */
 function referer_or(string $dest, ?array $blacklist=null): string
 {
     if(empty($_SERVER['HTTP_REFERER'])) return $dest;

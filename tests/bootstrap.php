@@ -112,6 +112,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         if (!$args) {
             $args = [];
         }
+        $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($args));
         $_GET = $args;
         $_POST = [];
         $page = new Page();
@@ -129,6 +130,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         if (!$args) {
             $args = [];
         }
+        $_SERVER['REQUEST_URI'] = make_link($page_name);
         foreach ($args as $k=>$v) {
             if(is_array($v)) {
                 $args[$k] = $v;
