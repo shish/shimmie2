@@ -167,7 +167,7 @@ class PrivMsg extends Extension
                                 $cache->delete("pm-count-{$user->id}");
                                 log_info("pm", "Deleted PM #$pm_id", "PM deleted");
                                 $page->set_mode(PageMode::REDIRECT);
-                                $page->set_redirect($_SERVER["HTTP_REFERER"]);
+                                $page->set_redirect(referer_or(make_link()));
                             }
                         }
                     }
@@ -182,7 +182,7 @@ class PrivMsg extends Extension
                             send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
                             $page->flash("PM sent");
                             $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect($_SERVER["HTTP_REFERER"]);
+                            $page->set_redirect(referer_or(make_link()));
                         }
                     }
                     break;

@@ -116,3 +116,8 @@ function make_http(string $link): string
 
     return $link;
 }
+
+function referer_or(string $dest): string
+{
+    return $_SERVER['HTTP_REFERER'] ?? $dest;
+}

@@ -113,7 +113,7 @@ class NotATag extends Extension
                         ["tag"=>$input['c_tag'], "redirect"=>$input['c_redirect']]
                     );
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect($_SERVER['HTTP_REFERER']);
+                    $page->set_redirect(referer_or(make_link()));
                 } elseif ($event->get_arg(0) == "remove") {
                     $user->ensure_authed();
                     $input = validate_input(["d_tag"=>"string"]);
@@ -123,7 +123,7 @@ class NotATag extends Extension
                     );
                     $page->flash("Image ban removed");
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect($_SERVER['HTTP_REFERER']);
+                    $page->set_redirect(referer_or(make_link()));
                 } elseif ($event->get_arg(0) == "list") {
                     $t = new NotATagTable($database->raw_db());
                     $t->token = $user->get_auth_token();

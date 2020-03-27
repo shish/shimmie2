@@ -226,11 +226,7 @@ class CommentList extends Extension
                 send_event(new CommentDeletionEvent(int_escape($event->get_arg(1))));
                 $page->flash("Deleted comment");
                 $page->set_mode(PageMode::REDIRECT);
-                if (!empty($_SERVER['HTTP_REFERER'])) {
-                    $page->set_redirect($_SERVER['HTTP_REFERER']);
-                } else {
-                    $page->set_redirect(make_link("post/view/" . $event->get_arg(2)));
-                }
+                $page->set_redirect(referer_or(make_link("post/view/" . $event->get_arg(2))));
             }
         } else {
             $this->theme->display_permission_denied();

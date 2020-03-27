@@ -118,14 +118,14 @@ class Rule34 extends Extension
                     ['is_admin'=>$input['is_admin'] ? 't' : 'f', 'id'=>$input['user_id']]
                 );
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(@$_SERVER['HTTP_REFERER']);
+                $page->set_redirect(referer_or(make_link()));
             }
         }
 
         if ($event->page_matches("tnc_agreed")) {
             setcookie("ui-tnc-agreed", "true", 0, "/");
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(@$_SERVER['HTTP_REFERER'] ?? "/");
+            $page->set_redirect(referer_or("/"));
         }
 
         if ($event->page_matches("admin/cache_purge")) {

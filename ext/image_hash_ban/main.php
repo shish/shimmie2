@@ -105,7 +105,7 @@ class ImageBan extends Extension
                         }
 
                         $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect($_SERVER['HTTP_REFERER']);
+                        $page->set_redirect(referer_or(make_link()));
                     }
                 } elseif ($event->get_arg(0) == "remove") {
                     $user->ensure_authed();
@@ -113,7 +113,7 @@ class ImageBan extends Extension
                     send_event(new RemoveImageHashBanEvent($input['d_hash']));
                     $page->flash("Image ban removed");
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect($_SERVER['HTTP_REFERER']);
+                    $page->set_redirect(referer_or(make_link()));
                 } elseif ($event->get_arg(0) == "list") {
                     $t = new HashBanTable($database->raw_db());
                     $t->token = $user->get_auth_token();
