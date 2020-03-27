@@ -117,7 +117,13 @@ function make_http(string $link): string
     return $link;
 }
 
-function referer_or(string $dest): string
+function referer_or(string $dest, ?array $blacklist=null): string
 {
-    return $_SERVER['HTTP_REFERER'] ?? $dest;
+    if(empty($_SERVER['HTTP_REFERER'])) return $dest;
+    if($blacklist) {
+        foreach($blacklist as $b) {
+            if(strstr($_SERVER['HTTP_REFERER'], $b)) return $dest;
+        }
+    }
+    return $_SERVER['HTTP_REFERER'];
 }

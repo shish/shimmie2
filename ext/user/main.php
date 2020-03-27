@@ -391,10 +391,8 @@ class UserPage extends Extension
             $page->set_mode(PageMode::REDIRECT);
 
             // Try returning to previous page
-            if ($config->get_int("user_loginshowprofile", 0) == 0 &&
-                            isset($_SERVER['HTTP_REFERER']) &&
-                            strstr($_SERVER['HTTP_REFERER'], "post/")) {
-                $page->set_redirect($_SERVER['HTTP_REFERER']);
+            if ($config->get_int("user_loginshowprofile", 0)) {
+                $page->set_redirect(referer_or(make_link(), ["user/"]));
             } else {
                 $page->set_redirect(make_link("user"));
             }
@@ -416,11 +414,8 @@ class UserPage extends Extension
         $page->set_mode(PageMode::REDIRECT);
 
         // Try forwarding to same page on logout unless user comes from registration page
-        if ($config->get_int("user_loginshowprofile", 0) == 0 &&
-            isset($_SERVER['HTTP_REFERER']) &&
-            strstr($_SERVER['HTTP_REFERER'], "post/")
-        ) {
-            $page->set_redirect($_SERVER['HTTP_REFERER']);
+        if ($config->get_int("user_loginshowprofile", 0)) {
+            $page->set_redirect(referer_or(make_link(), ["post/"]));
         } else {
             $page->set_redirect(make_link());
         }

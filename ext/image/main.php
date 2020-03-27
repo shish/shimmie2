@@ -53,11 +53,7 @@ class ImageIO extends Extension
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
                     $page->set_mode(PageMode::REDIRECT);
-                    if (isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], 'post/view')) {
-                        $page->set_redirect($_SERVER['HTTP_REFERER']);
-                    } else {
-                        $page->set_redirect(make_link("post/list"));
-                    }
+                    $page->set_redirect(referer_or(make_link("post/list"), ['post/view']));
                 }
             }
         } elseif ($event->page_matches("image/replace")) {
