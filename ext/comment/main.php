@@ -551,18 +551,9 @@ class CommentList extends Extension
                 'website'      => '',
                 'body'         => $text,
                 'permalink'    => '',
-                ];
-
-            # akismet breaks if there's no referrer in the environment; so if there
-            # isn't, supply one manually
-            if (!isset($_SERVER['HTTP_REFERER'])) {
-                $comment['referrer'] = 'none';
-                log_warning("comment", "User '{$user->name}' commented with no referrer: $text");
-            }
-            if (!isset($_SERVER['HTTP_USER_AGENT'])) {
-                $comment['user_agent'] = 'none';
-                log_warning("comment", "User '{$user->name}' commented with no user-agent: $text");
-            }
+                'referrer'     => $_SERVER['HTTP_REFERER'] ?? 'none',
+                'user_agent'   => $_SERVER['HTTP_USER_AGENT'] ?? 'none',
+            ];
 
             $akismet = new Akismet(
                 $_SERVER['SERVER_NAME'],
