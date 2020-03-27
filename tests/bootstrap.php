@@ -105,7 +105,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         }
     }
 
-    protected static function get_page($page_name, $args=null)
+    protected static function get_page($page_name, $args=null): Page
     {
         // use a fresh page
         global $page;
@@ -122,7 +122,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         return $page;
     }
 
-    protected static function post_page($page_name, $args=null)
+    protected static function post_page($page_name, $args=null): Page
     {
         // use a fresh page
         global $page;
@@ -130,7 +130,12 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
             $args = [];
         }
         foreach ($args as $k=>$v) {
-            $args[$k] = (string)$v;
+            if(is_array($v)) {
+                $args[$k] = $v;
+            }
+            else {
+                $args[$k] = (string)$v;
+            }
         }
         $_GET = [];
         $_POST = $args;
@@ -139,6 +144,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         if ($page->mode == PageMode::REDIRECT) {
             $page->code = 302;
         }
+        return $page;
     }
 
     // page things

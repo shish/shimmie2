@@ -355,7 +355,7 @@ class Notes extends Extension
     {
         global $database, $config;
 
-        $pageNumber = $event->try_page_num(1) - 1;
+        $pageNumber = $event->try_page_num(1);
 
         $notesPerPage = $config->get_int('notesNotesPerPage');
 
@@ -383,7 +383,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $pageNumber = $event->try_page_num(1) - 1;
+        $pageNumber = $event->try_page_num(1);
 
         $requestsPerPage = $config->get_int('notesRequestsPerPage');
 
@@ -430,7 +430,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $pageNumber = $event->try_page_num(1) - 1;
+        $pageNumber = $event->try_page_num(1);
 
         $historiesPerPage = $config->get_int('notesHistoriesPerPage');
 

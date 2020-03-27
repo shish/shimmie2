@@ -86,6 +86,11 @@ class Pool {
     }
 }
 
+function _image_to_id(Image $image): int
+{
+    return $image->id;
+}
+
 class Pools extends Extension
 {
     /** @var PoolsTheme */
@@ -237,7 +242,7 @@ class Pools extends Extension
                     break;
 
                 case "updated":
-                    $this->get_history(page_number($event->get_arg(1)));
+                    $this->get_history($event->try_page_num(1));
                     break;
 
                 case "revert":
@@ -322,11 +327,8 @@ class Pools extends Extension
 
                 case "add_posts":
                     if ($this->have_permission($user, $pool)) {
-                        $images = [];
-                        foreach ($_POST['check'] as $imageID) {
-                            $images[] = $imageID;
-                        }
-                        send_event(new PoolAddPostsEvent($pool_id, $images));
+                        $image_ids = array_map('intval', $_POST['check']);
+                        send_event(new PoolAddPostsEvent($pool_id, $image_ids));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $pool_id));
                     } else {
@@ -361,7 +363,7 @@ class Pools extends Extension
                     if ($this->have_permission($user, $pool)) {
                         $database->execute(
                             "UPDATE pools SET description=:dsc WHERE id=:pid",
-                            ["dsc" => $_POST['description'], "pid" => int_escape($_POST['pool_id'])]
+                            ["dsc" => $_POST['description'], "pid" => $pool_id]
                         );
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $pool_id));
@@ -374,7 +376,7 @@ class Pools extends Extension
                 case "nuke":
                     // Completely remove the given pool.
                     //  -> Only admins and owners may do this
-                    if ($user->can(Permissions::POOLS_ADMIN) || $user->id == $pool['user_id']) {
+                    if ($user->can(Permissions::POOLS_ADMIN) || $user->id == $pool->user_id) {
                         $this->nuke_pool($pool_id);
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/list"));
@@ -469,7 +471,7 @@ class Pools extends Extension
             $pool = $this->get_single_pool_from_title($poolTitle);
             $poolID = 0;
             if ($pool) {
-                $poolID = $pool['id'];
+                $poolID = $pool->id;
             }
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
         }
@@ -500,7 +502,7 @@ class Pools extends Extension
 
             if ($pool && $this->have_permission($user, $pool)) {
                 $image_order = ($matches[2] ?: 0);
-                $this->add_post($pool['id'], $event->image_id, true, $image_order);
+                $this->add_post($pool->id, $event->image_id, true, $image_order);
             }
         }
     }
@@ -532,7 +534,7 @@ class Pools extends Extension
 
                 if ($this->have_permission($user, $pool)) {
                     send_event(
-                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("image_to_id", $event->items))
+                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("_image_to_id", $event->items))
                     );
                 }
                 break;
@@ -543,7 +545,7 @@ class Pools extends Extension
                 $new_pool_title = $_POST['bulk_pool_new'];
                 $pce = new PoolCreationEvent($new_pool_title);
                 send_event($pce);
-                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("image_to_id", $event->items)));
+                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("_image_to_id", $event->items)));
                 break;
         }
     }
@@ -572,8 +574,6 @@ class Pools extends Extension
     private function list_pools(Page $page, int $pageNumber)
     {
         global $config, $database;
-
-        $pageNumber = clamp($pageNumber, 1, null) - 1;
 
         $poolsPerPage = $config->get_int(PoolsConfig::LISTS_PER_PAGE);
 
@@ -752,7 +752,7 @@ class Pools extends Extension
     {
         global $config, $user, $database;
 
-        $pageNumber = $event->try_page_num(2) - 1;
+        $pageNumber = $event->try_page_num(2);
         $pool = $this->get_single_pool($poolID);
         $imagesPerPage = $config->get_int(PoolsConfig::IMAGES_PER_PAGE);
 
@@ -862,7 +862,7 @@ class Pools extends Extension
         foreach ($status as $entry) {
             $images = trim($entry['images']);
             $images = explode(" ", $images);
-            $poolID = $entry['pool_id'];
+            $poolID = (int)$entry['pool_id'];
             $imageArray = "";
             $newAction = -1;
 

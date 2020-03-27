@@ -225,7 +225,6 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Manage Pool", $editor, "left", 15));
     }
 
-
     /**
      * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT.
      */
@@ -234,11 +233,9 @@ class PoolsTheme extends Themelet
         $this->display_top($pool, "Importing Posts", true);
         $pool_images = "
 			<script type='text/javascript'>
-			<!--
 			function confirm_action() {
 				return confirm('Are you sure you want to add selected posts to this pool?');
 			}
-			//-->
 			</script>
 		";
 

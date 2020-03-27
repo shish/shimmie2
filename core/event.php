@@ -108,21 +108,26 @@ class PageRequestEvent extends Event
         if ($offset >= 0 && $offset < $this->arg_count) {
             return $this->args[$offset];
         } else {
-            throw new SCoreException("Requested an invalid argument #$n");
+            $nm1 = $this->arg_count - 1;
+            throw new SCoreException("Requested an invalid page argument {$offset} / {$nm1}");
         }
     }
 
-    public function try_page_num(int $n): int
+    /**
+     * If page arg $n is set, then treat that as a 1-indexed page number
+     * and return a 0-indexed page number less than $max; else return 0
+     */
+    public function try_page_num(int $n, ?int $max=null): int
     {
         if ($this->count_args() > $n) {
             $i = $this->get_arg($n);
             if (is_numeric($i) && int_escape($i) > 0) {
-                return int_escape($i);
+                return page_number($i, $max);
             } else {
-                return 1;
+                return 0;
             }
         } else {
-            return 1;
+            return 0;
         }
     }
 

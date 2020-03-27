@@ -264,8 +264,51 @@ class CommentList extends Extension
 
     private function onPageRequest_list(PageRequestEvent $event)
     {
-        $page_num = $event->try_page_num(1);
-        $this->build_page($page_num);
+        global $cache, $database, $user;
+
+        $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
+
+        $total_pages = $cache->get("comment_pages");
+        if (empty($total_pages)) {
+            $total_pages = (int)($database->get_one("
+				SELECT COUNT(c1)
+				FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1
+			") / 10);
+            $cache->set("comment_pages", $total_pages, 600);
+        }
+        $total_pages = max($total_pages, 1);
+
+        $current_page = $event->try_page_num(1, $total_pages);
+        $threads_per_page = 10;
+        $start = $threads_per_page * $current_page;
+
+        $result = $database->Execute("
+			SELECT image_id,MAX(posted) AS latest
+			FROM comments
+			$where
+			GROUP BY image_id
+			ORDER BY latest DESC
+			LIMIT :limit OFFSET :offset
+		", ["limit"=>$threads_per_page, "offset"=>$start]);
+
+        $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_class_privs($user) : "";
+
+        $images = [];
+        while ($row = $result->fetch()) {
+            $image = Image::by_id((int)$row["image_id"]);
+            if (
+                Extension::is_enabled(RatingsInfo::KEY) && !is_null($image) &&
+                !in_array($image->rating, $user_ratings)
+            ) {
+                $image = null; // this is "clever", I may live to regret it
+            }
+            if (!is_null($image)) {
+                $comments = $this->get_comments($image->id);
+                $images[] = [$image, $comments];
+            }
+        }
+
+        $this->theme->display_comment_list($images, $current_page+1, $total_pages, $user->can(Permissions::CREATE_COMMENT));
     }
 
     private function onPageRequest_beta_search(PageRequestEvent $event)
@@ -276,9 +319,8 @@ class CommentList extends Extension
         $i_comment_count = Comment::count_comments_by_user($duser);
         $com_per_page = 50;
         $total_pages = (int)ceil($i_comment_count / $com_per_page);
-        $page_num = clamp($page_num, 1, $total_pages);
-        $comments = $this->get_user_comments($duser->id, $com_per_page, ($page_num - 1) * $com_per_page);
-        $this->theme->display_all_user_comments($comments, $page_num, $total_pages, $duser);
+        $comments = $this->get_user_comments($duser->id, $com_per_page, $page_num * $com_per_page);
+        $this->theme->display_all_user_comments($comments, $page_num+1, $total_pages, $duser);
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)
@@ -387,56 +429,6 @@ class CommentList extends Extension
             $block->body = $this->theme->get_help_html();
             $event->add_block($block);
         }
-    }
-
-    private function build_page(int $current_page)
-    {
-        global $cache, $database, $user;
-
-        $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
-
-        $total_pages = $cache->get("comment_pages");
-        if (empty($total_pages)) {
-            $total_pages = (int)($database->get_one("
-				SELECT COUNT(c1)
-				FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1
-			") / 10);
-            $cache->set("comment_pages", $total_pages, 600);
-        }
-        $total_pages = max($total_pages, 1);
-
-        $current_page = clamp($current_page, 1, $total_pages);
-
-        $threads_per_page = 10;
-        $start = $threads_per_page * ($current_page - 1);
-
-        $result = $database->Execute("
-			SELECT image_id,MAX(posted) AS latest
-			FROM comments
-			$where
-			GROUP BY image_id
-			ORDER BY latest DESC
-			LIMIT :limit OFFSET :offset
-		", ["limit"=>$threads_per_page, "offset"=>$start]);
-
-        $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_class_privs($user) : "";
-
-        $images = [];
-        while ($row = $result->fetch()) {
-            $image = Image::by_id((int)$row["image_id"]);
-            if (
-                Extension::is_enabled(RatingsInfo::KEY) && !is_null($image) &&
-                !in_array($image->rating, $user_ratings)
-            ) {
-                $image = null; // this is "clever", I may live to regret it
-            }
-            if (!is_null($image)) {
-                $comments = $this->get_comments($image->id);
-                $images[] = [$image, $comments];
-            }
-        }
-
-        $this->theme->display_comment_list($images, $current_page, $total_pages, $user->can(Permissions::CREATE_COMMENT));
     }
 
     /**
