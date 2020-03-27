@@ -39,6 +39,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         global $config;
         $config->set_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE, true);
         $config->set_bool(PoolsConfig::INFO_ON_VIEW_IMAGE, true);
+        $config->set_bool(PoolsConfig::SHOW_NAV_LINKS, true);
 
         $this->get_page("post/view/{$image_ids[0]}");
         $this->assert_text("Pool");
