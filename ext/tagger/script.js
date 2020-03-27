@@ -156,7 +156,7 @@ var Tagger = {
 		},
 
 		ajax : function (url, callback) {
-			var http = (new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP"));
+			var http = new XMLHttpRequest();
 			http.open("GET",url,true);
 			http.onreadystatechange = function () {
 				if(http.readyState == 4) { callback(http); }

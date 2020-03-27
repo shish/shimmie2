@@ -327,15 +327,6 @@ class Setup extends Extension
         $test_url = make_http(str_replace("/index.php", "/nicetest", $_SERVER["SCRIPT_NAME"]));
 
         $nicescript = "<script type='text/javascript'>
-			function getHTTPObject() {
-				if (window.XMLHttpRequest){
-					return new XMLHttpRequest();
-				}
-				else if(window.ActiveXObject){
-					return new ActiveXObject('Microsoft.XMLHTTP');
-				}
-			}
-
 			checkbox = document.getElementById('nice_urls');
 			out_span = document.getElementById('nicetest');
 
@@ -343,7 +334,7 @@ class Setup extends Extension
 			out_span.innerHTML = '(testing...)';
 
 			document.addEventListener('DOMContentLoaded', () => {
-				var http_request = getHTTPObject();
+				var http_request = new XMLHttpRequest();
 				http_request.open('GET', '$test_url', false);
 				http_request.send(null);
 
