@@ -249,19 +249,10 @@ class Forum extends Extension
     {
         global $config, $database;
         $threadsPerPage = $config->get_int('forumThreadsPerPage', 15);
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
 
         if ($event->count_args() >= 2) {
-            $pageNumber = $event->get_arg(1);
-            if (!is_numeric($pageNumber)) {
-                $pageNumber = 0;
-            } elseif ($pageNumber <= 0) {
-                $pageNumber = 0;
-            } elseif ($pageNumber >= $totalPages) {
-                $pageNumber = $totalPages - 1;
-            } else {
-                $pageNumber--;
-            }
+            $pageNumber = page_number($event->get_arg(1), $totalPages);
         } else {
             $pageNumber = 0;
         }
@@ -286,20 +277,11 @@ class Forum extends Extension
         global $config, $database;
         $threadID = int_escape($event->get_arg(1));
         $postsPerPage = $config->get_int('forumPostsPerPage', 15);
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id'=>$threadID]) / $postsPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id'=>$threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
 
         if ($event->count_args() >= 3) {
-            $pageNumber = $event->get_arg(2);
-            if (!is_numeric($pageNumber)) {
-                $pageNumber = 0;
-            } elseif ($pageNumber <= 0) {
-                $pageNumber = 0;
-            } elseif ($pageNumber >= $totalPages) {
-                $pageNumber = $totalPages - 1;
-            } else {
-                $pageNumber--;
-            }
+            $pageNumber = page_number($event->get_arg(2), $totalPages);
         } else {
             $pageNumber = 0;
         }

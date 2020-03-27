@@ -511,6 +511,24 @@ function no_escape(string $input): string
     return $input;
 }
 
+/**
+ * Given a 1-indexed numeric-ish thing, return a zero-indexed
+ * number between 0 and $max
+ */
+function page_number(string $input, ?int $max=null): int
+{
+    if (!is_numeric($input)) {
+        $pageNumber = 0;
+    } elseif ($input <= 0) {
+        $pageNumber = 0;
+    } elseif (!is_null($max) && $input >= $max) {
+        $pageNumber = $max - 1;
+    } else {
+        $pageNumber = $input - 1;
+    }
+    return $pageNumber;
+}
+
 function clamp(?int $val, ?int $min=null, ?int $max=null): int
 {
     if (!is_numeric($val) || (!is_null($min) && $val < $min)) {

@@ -237,7 +237,7 @@ class Pools extends Extension
                     break;
 
                 case "updated":
-                    $this->get_history(int_escape($event->get_arg(1)));
+                    $this->get_history(page_number($event->get_arg(1)));
                     break;
 
                 case "revert":
@@ -831,14 +831,6 @@ class Pools extends Extension
     private function get_history(int $pageNumber)
     {
         global $config, $database;
-
-        if (is_null($pageNumber) || !is_numeric($pageNumber)) {
-            $pageNumber = 0;
-        } elseif ($pageNumber <= 0) {
-            $pageNumber = 0;
-        } else {
-            $pageNumber--;
-        }
 
         $historiesPerPage = $config->get_int(PoolsConfig::UPDATED_PER_PAGE);
 
