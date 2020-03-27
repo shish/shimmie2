@@ -332,7 +332,7 @@ class Setup extends Extension
                 $host .= ":" . $_SERVER["SERVER_PORT"];
             }
         }
-        $full = "//" . $host . $_SERVER["PHP_SELF"];
+        $full = "//" . $host . $_SERVER["SCRIPT_NAME"];
         $test_url = str_replace("/index.php", "/nicetest", $full);
 
         $nicescript = "<script type='text/javascript'>

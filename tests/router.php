@@ -28,7 +28,6 @@ elseif (preg_match('/\.(?:png|jpg|jpeg|gif|css|js|php)(\?.*)?$/', $_SERVER["REQU
 unset($matches);
 
 // all other requests (use shimmie routing based on URL)
-$_SERVER["PHP_SELF"] = '/index.php';
 $_GET['q'] = explode("?", $_SERVER["REQUEST_URI"])[0];
 error_log($_GET['q']);  // if we use a custom handler, we need to do our own access log
 require_once "index.php";
