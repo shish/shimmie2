@@ -210,7 +210,7 @@ class CommentList extends Extension
                 $cpe = new CommentPostingEvent(int_escape($_POST['image_id']), $user, $_POST['comment']);
                 send_event($cpe);
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$i_iid#comment_on_$i_iid"));
+                $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
             } catch (CommentPostingException $ex) {
                 $this->theme->display_error(403, "Comment Blocked", $ex->getMessage());
             }

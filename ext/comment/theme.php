@@ -234,7 +234,7 @@ class CommentListTheme extends Themelet
             $html = "
 			<div class=\"comment $hb\">
 				$h_userlink: $h_comment
-				<a href=\"".make_link("post/view/$i_image_id#c$i_comment_id")."\">&gt;&gt;&gt;</a>
+				<a href=\"".make_link("post/view/$i_image_id", null, "c$i_comment_id")."\">&gt;&gt;&gt;</a>
 			</div>
 			";
         } else {

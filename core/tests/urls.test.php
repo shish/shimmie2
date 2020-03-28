@@ -8,14 +8,34 @@ class UrlsTest extends TestCase
 {
     public function test_make_link()
     {
+        // basic
         $this->assertEquals(
             "/test/foo",
             make_link("foo")
         );
 
+        // remove leading slash from path
         $this->assertEquals(
             "/test/foo",
             make_link("/foo")
+        );
+
+        // query
+        $this->assertEquals(
+            "/test/foo?a=1&b=2",
+            make_link("foo", "a=1&b=2")
+        );
+
+        // hash
+        $this->assertEquals(
+            "/test/foo#cake",
+            make_link("foo", null, "cake")
+        );
+
+        // query + hash
+        $this->assertEquals(
+            "/test/foo?a=1&b=2#cake",
+            make_link("foo", "a=1&b=2", "cake")
         );
     }
 
@@ -55,6 +75,27 @@ class UrlsTest extends TestCase
         $this->assertEquals(
             "/foo/bar",
             modify_url("/foo/bar?a=1&b=2", ["a"=>null, "b"=>null])
+        );
+    }
+
+    public function test_referer_or()
+    {
+        unset($_SERVER['HTTP_REFERER']);
+        $this->assertEquals(
+            "foo",
+            referer_or("foo")
+        );
+
+        $_SERVER['HTTP_REFERER'] = "cake";
+        $this->assertEquals(
+            "cake",
+            referer_or("foo")
+        );
+
+        $_SERVER['HTTP_REFERER'] = "cake";
+        $this->assertEquals(
+            "foo",
+            referer_or("foo", ["cake"])
         );
     }
 }

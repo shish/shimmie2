@@ -107,4 +107,32 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         $bb = new BBCode();
         return $bb->strip($in);
     }
+
+    public function testSiteLinks()
+    {
+        $this->assertEquals(
+            '<a class="shm-clink" data-clink-sel="" href="/test/post/view/123">&gt;&gt;123</a>',
+            $this->filter("&gt;&gt;123")
+        );
+        $this->assertEquals(
+            '<a class="shm-clink" data-clink-sel="#c456" href="/test/post/view/123#c456">&gt;&gt;123#c456</a>',
+            $this->filter("&gt;&gt;123#c456")
+        );
+        $this->assertEquals(
+            '<a class="shm-clink" data-clink-sel="" href="/test/foo/bar">foo/bar</a>',
+            $this->filter("[url]site://foo/bar[/url]")
+        );
+        $this->assertEquals(
+            '<a class="shm-clink" data-clink-sel="#c123" href="/test/foo/bar#c123">foo/bar#c123</a>',
+            $this->filter("[url]site://foo/bar#c123[/url]")
+        );
+        $this->assertEquals(
+            '<a class="shm-clink" data-clink-sel="" href="/test/foo/bar">look at my post</a>',
+            $this->filter("[url=site://foo/bar]look at my post[/url]")
+        );
+        $this->assertEquals(
+            '<a class="shm-clink" data-clink-sel="#c123" href="/test/foo/bar#c123">look at my comment</a>',
+            $this->filter("[url=site://foo/bar#c123]look at my comment[/url]")
+        );
+    }
 }

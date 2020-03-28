@@ -76,8 +76,8 @@ class NumericScoreTheme extends Themelet
             $pop_images .= $this->build_thumb_html($image)."\n";
         }
 
-        $b_dte = make_link("popular_by_".$dte[3]."?".date($dte[2], (strtotime('-1 '.$dte[3], strtotime($dte[0])))));
-        $f_dte = make_link("popular_by_".$dte[3]."?".date($dte[2], (strtotime('+1 '.$dte[3], strtotime($dte[0])))));
+        $b_dte = make_link("popular_by_".$dte[3], date($dte[2], (strtotime('-1 '.$dte[3], strtotime($dte[0])))));
+        $f_dte = make_link("popular_by_".$dte[3], date($dte[2], (strtotime('+1 '.$dte[3], strtotime($dte[0])))));
 
         $html = "\n".
             "<h3 style='text-align: center;'>\n".

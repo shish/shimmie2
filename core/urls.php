@@ -23,32 +23,27 @@ class Link
  *
  * eg make_link("post/list") becomes "/v2/index.php?q=post/list"
  */
-function make_link(?string $page=null, ?string $query=null): string
+function make_link(?string $page=null, ?string $query=null, ?string $fragment=null): string
 {
     global $config;
 
     if (is_null($page)) {
         $page = $config->get_string(SetupConfig::MAIN_PAGE);
     }
+    $page = trim($page, "/");
 
+    $parts = [];
     $install_dir = get_base_href();
     if (SPEED_HAX || $config->get_bool('nice_urls', false)) {
-        $base = $install_dir;
+        $parts['path'] = "$install_dir/$page";
     } else {
-        $base = "$install_dir/index.php?q=";
+        $parts['path'] = "$install_dir/index.php";
+        $query = "q=$page&$query";
     }
+    $parts['query'] = $query;  // http_build_query($query);
+    $parts['fragment'] = $fragment;  // http_build_query($hash);
 
-    if (is_null($query)) {
-        return str_replace("//", "/", $base.'/'.$page);
-    } else {
-        if (strpos($base, "?")) {
-            return $base .'/'. $page .'&'. $query;
-        } elseif (strpos($query, "#") === 0) {
-            return $base .'/'. $page . $query;
-        } else {
-            return $base .'/'. $page .'?'. $query;
-        }
-    }
+    return unparse_url($parts);
 }
 
 
