@@ -324,7 +324,7 @@ class Setup extends Extension
             $themes[$human] = $name;
         }
 
-        $test_url = make_http(str_replace("/index.php", "/nicetest", $_SERVER["SCRIPT_NAME"]));
+        $test_url = str_replace("/index.php", "/nicetest", $_SERVER["SCRIPT_NAME"]);
 
         $nicescript = "<script type='text/javascript'>
 			checkbox = document.getElementById('nice_urls');
