@@ -77,7 +77,6 @@ function modify_url(string $url, array $changes): string
     return unparse_url($parts);
 }
 
-
 /**
  * Turn a relative link into an absolute one, including hostname
  */

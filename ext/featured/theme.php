@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 use function MicroHTML\INPUT;
+use function MicroHTML\DIV;
+use function MicroHTML\A;
+use function MicroHTML\IMG;
 
 class FeaturedTheme extends Themelet
 {
@@ -19,16 +22,21 @@ class FeaturedTheme extends Themelet
 
     public function build_featured_html(Image $image, ?string $query=null): string
     {
-        $i_id = $image->id;
-        $h_view_link = make_link("post/view/$i_id", $query);
-        $h_thumb_link = $image->get_thumb_link();
-        $h_tip = html_escape($image->get_tooltip());
         $tsize = get_thumbnail_size($image->width, $image->height);
 
-        return "
-			<a href='$h_view_link'>
-				<img id='thumb_{$i_id}' title='{$h_tip}' alt='{$h_tip}' class='highlighted' style='height: {$tsize[1]}px; width: {$tsize[0]}px;' src='{$h_thumb_link}'>
-			</a>
-		";
+        return (string)DIV(
+            ["style"=>"text-align: center;"],
+            A(
+                ["href"=>make_link("post/view/{$image->id}", $query)],
+                IMG([
+                    "id"=>"thumb_rand_{$image->id}",
+                    "title"=>$image->get_tooltip(),
+                    "alt"=>$image->get_tooltip(),
+                    "class"=>'highlighted',
+                    "style"=>"max-height: {$tsize[1]}px; max-width: 100%;",
+                    "src"=>$image->get_thumb_link()
+                ])
+            )
+        );
     }
 }
