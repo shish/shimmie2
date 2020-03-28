@@ -3,6 +3,13 @@ class ImageBanTest extends ShimmiePHPUnitTestCase
 {
     private $hash = "feb01bab5698a11dd87416724c7a89e3";
 
+    public function testPages()
+    {
+        $this->log_in_as_admin();
+        $page = $this->get_page("image_hash_ban/list");
+        $this->assertEquals(200, $page->code);
+    }
+
     public function testBan()
     {
         $this->log_in_as_admin();
