@@ -32,7 +32,7 @@ class Themelet extends BaseThemelet
                "</div>\n";
 
         // cache for ages; will be cleared in ext/index:onImageInfoSet
-        $cache->set("thumb-block:{$image->id}", $html, 86400);
+        $cache->set("thumb-block:{$image->id}", $html, rand(43200, 86400));
 
         return $html;
     }

@@ -115,7 +115,7 @@ class RSSImages extends Extension
 		</item>
 		";
 
-        $cache->set("rss-item-image:{$image->id}", $data, 86400);
+        $cache->set("rss-item-image:{$image->id}", $data, rand(43200, 86400));
 
         return $data;
     }
