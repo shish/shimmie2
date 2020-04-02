@@ -38,7 +38,7 @@ function make_link(?string $page=null, ?string $query=null, ?string $fragment=nu
         $parts['path'] = "$install_dir/$page";
     } else {
         $parts['path'] = "$install_dir/index.php";
-        $query = "q=$page&$query";
+        $query = empty($query) ? "q=$page" : "q=$page&$query";
     }
     $parts['query'] = $query;  // http_build_query($query);
     $parts['fragment'] = $fragment;  // http_build_query($hash);
