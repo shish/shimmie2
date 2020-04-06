@@ -311,6 +311,10 @@ class UserPage extends Extension
                 $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
             }
         }
+
+        if ($event->parent==="user" && !$user->is_anonymous()) {
+            $event->add_nav_link("logout", new Link('user_admin/logout'), "Log Out", false, 90);
+        }
     }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
