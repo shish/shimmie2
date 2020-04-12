@@ -1,49 +1,13 @@
 <?php declare(strict_types=1);
+use function MicroHTML\{UL,LI,A,INPUT,FORM,DIV,LABEL,P,B,SPAN,rawHTML};
+
 class SourceHistoryTheme extends Themelet
 {
     private $messages = [];
 
     public function display_history_page(Page $page, int $image_id, array $history)
     {
-        global $user;
-        $start_string = "
-			<div style='text-align: left'>
-				".make_form(make_link("source_history/revert"))."
-					<ul style='list-style-type:none;'>
-		";
-
-        $history_list = "";
-        $n = 0;
-        foreach ($history as $fields) {
-            $n++;
-            $current_id = $fields['id'];
-            $current_source = html_escape($fields['source']);
-            $name = $fields['name'];
-            $date_set = autodate($fields['date_set']);
-            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Sourcing Image #$image_id as '$current_source'") : "";
-            $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
-
-            $selected = ($n == 2) ? " checked" : "";
-
-            $history_list .= "
-				<li>
-					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>
-					<label for='$current_id'>
-						$current_source
-						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						Set by $setter $date_set
-					</label>
-				</li>
-				";
-        }
-
-        $end_string = "
-					</ul>
-					<input type='submit' value='Revert To'>
-				</form>
-			</div>
-		";
-        $history_html = $start_string . $history_list . $end_string;
+        $history_html = $this->history_list($history, true);
 
         $page->set_title('Image '.$image_id.' Source History');
         $page->set_heading('Source History: '.$image_id);
@@ -53,42 +17,11 @@ class SourceHistoryTheme extends Themelet
 
     public function display_global_page(Page $page, array $history, int $page_number)
     {
-        $start_string = "
-			<div style='text-align: left'>
-				".make_form(make_link("source_history/revert"))."
-					<ul style='list-style-type:none;'>
-		";
-        $end_string = "
-					</ul>
-					<input type='submit' value='Revert To'>
-				</form>
-			</div>
-		";
+        $history_html = $this->history_list($history, false);
 
-        global $user;
-        $history_list = "";
-        foreach ($history as $fields) {
-            $current_id = $fields['id'];
-            $image_id = $fields['image_id'];
-            $current_source = html_escape($fields['source']);
-            $name = $fields['name'];
-            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Sourcing Image #$image_id as '$current_source'") : "";
-            $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
-
-            $history_list .= '
-				<li>
-					<input type="radio" name="revert" value="'.$current_id.'">
-					<a href="'.make_link('post/view/'.$image_id).'">'.$image_id.'</a>:
-					'.$current_source.' (Set by '.$setter.')
-				</li>
-			';
-        }
-
-        $history_html = $start_string . $history_list . $end_string;
         $page->set_title("Global Source History");
         $page->set_heading("Global Source History");
         $page->add_block(new Block("Source History", $history_html, "main", 10));
-
 
         $h_prev = ($page_number <= 1) ? "Prev" :
             '<a href="'.make_link('source_history/all/'.($page_number-1)).'">Prev</a>';
@@ -105,11 +38,11 @@ class SourceHistoryTheme extends Themelet
     public function display_admin_block(string $validation_msg='')
     {
         global $page;
-        
+
         if (!empty($validation_msg)) {
             $validation_msg = '<br><b>'. $validation_msg .'</b>';
         }
-        
+
         $html = '
 			Revert source changes by a specific IP address or username, optionally limited to recent changes.
 			'.$validation_msg.'
@@ -125,7 +58,7 @@ class SourceHistoryTheme extends Themelet
 		";
         $page->add_block(new Block("Mass Source Revert", $html));
     }
-    
+
     /*
      * Show a standard page for results to be put into
      */
@@ -139,5 +72,53 @@ class SourceHistoryTheme extends Themelet
     public function add_status(string $title, string $body)
     {
         $this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
+    }
+
+    protected function history_list(array $history, bool $select_2nd): string
+    {
+        $history_list = "";
+        foreach ($history as $n => $fields) {
+            $history_list .= $this->history_entry($fields, $select_2nd && $n == 1);
+        }
+
+        return "
+			<div style='text-align: left'>
+				" . make_form(make_link("source_history/revert")) . "
+					<ul style='list-style-type:none;'>
+					    $history_list
+					</ul>
+					<input type='submit' value='Revert To'>
+				</form>
+			</div>
+		";
+    }
+
+    protected function history_entry(array $fields, bool $selected): string
+    {
+        global $user;
+        $image_id = $fields['image_id'];
+        $current_id = $fields['id'];
+        $current_source = html_escape($fields['source']);
+        $name = $fields['name'];
+        $date_set = rawHTML(autodate($fields['date_set']));
+        $ip = $user->can(Permissions::VIEW_IP) ?
+            rawHTML(" " . show_ip($fields['user_ip'], "Sourcing Image #$image_id as '$current_source'"))
+            : null;
+        $setter = A(["href"=>make_link("user/" . url_escape($name))], $name);
+
+        return (string)LI(
+            INPUT(["type"=>"radio", "name"=>"revert", "id"=>"$current_id", "value"=>"$current_id", "checked"=>$selected]),
+            A(["href"=>make_link("post/view/$image_id")], $image_id),
+            ": ",
+            LABEL(
+                ["for"=>"$current_id"],
+                $current_source,
+                " - ",
+                $setter,
+                $ip,
+                " - ",
+                $date_set
+            )
+        );
     }
 }

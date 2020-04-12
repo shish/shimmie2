@@ -1,56 +1,13 @@
 <?php declare(strict_types=1);
+use function MicroHTML\{UL,LI,A,INPUT,FORM,DIV,LABEL,P,B,SPAN,rawHTML};
+
 class TagHistoryTheme extends Themelet
 {
     private $messages = [];
 
     public function display_history_page(Page $page, int $image_id, array $history)
     {
-        global $user;
-        $start_string = "
-			<div style='text-align: left'>
-				".make_form(make_link("tag_history/revert"))."
-					<ul style='list-style-type:none;'>
-		";
-
-        $history_list = "";
-        $n = 0;
-        foreach ($history as $fields) {
-            $n++;
-            $current_id = $fields['id'];
-            $current_tags = html_escape($fields['tags']);
-            $name = $fields['name'];
-            $date_set = autodate($fields['date_set']);
-            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
-            $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
-
-            $selected = ($n == 2) ? " checked" : "";
-
-            $current_tags = Tag::explode($current_tags);
-            $taglinks = [];
-            foreach ($current_tags as $tag) {
-                $taglinks[] = "<a href='".make_link("post/list/".$tag."/1")."'>".$tag."</a>";
-            }
-            $current_tags = implode(' ', $taglinks);
-
-            $history_list .= "
-				<li>
-					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>
-					<label for='$current_id'>
-						$current_tags
-						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						Set by $setter $date_set
-					</label>
-				</li>
-				";
-        }
-
-        $end_string = "
-					</ul>
-					<input type='submit' value='Revert To'>
-				</form>
-			</div>
-		";
-        $history_html = $start_string . $history_list . $end_string;
+        $history_html = $this->history_list($history, true);
 
         $page->set_title('Image '.$image_id.' Tag History');
         $page->set_heading('Tag History: '.$image_id);
@@ -60,42 +17,11 @@ class TagHistoryTheme extends Themelet
 
     public function display_global_page(Page $page, array $history, int $page_number)
     {
-        $start_string = "
-			<div style='text-align: left'>
-				".make_form(make_link("tag_history/revert"))."
-					<ul style='list-style-type:none;'>
-		";
-        $end_string = "
-					</ul>
-					<input type='submit' value='Revert To'>
-				</form>
-			</div>
-		";
+        $history_html = $this->history_list($history, false);
 
-        global $user;
-        $history_list = "";
-        foreach ($history as $fields) {
-            $current_id = $fields['id'];
-            $image_id = $fields['image_id'];
-            $current_tags = html_escape($fields['tags']);
-            $name = $fields['name'];
-            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
-            $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
-
-            $history_list .= '
-				<li>
-					<input type="radio" name="revert" value="'.$current_id.'">
-					<a href="'.make_link('post/view/'.$image_id).'">'.$image_id.'</a>:
-					'.$current_tags.' (Set by '.$setter.')
-				</li>
-			';
-        }
-
-        $history_html = $start_string . $history_list . $end_string;
         $page->set_title("Global Tag History");
         $page->set_heading("Global Tag History");
         $page->add_block(new Block("Tag History", $history_html, "main", 10));
-
 
         $h_prev = ($page_number <= 1) ? "Prev" :
             '<a href="'.make_link('tag_history/all/'.($page_number-1)).'">Prev</a>';
@@ -146,5 +72,60 @@ class TagHistoryTheme extends Themelet
     public function add_status(string $title, string $body)
     {
         $this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
+    }
+
+    protected function history_list(array $history, bool $select_2nd): string
+    {
+        $history_list = "";
+        foreach ($history as $n => $fields) {
+            $history_list .= $this->history_entry($fields, $select_2nd && $n == 1);
+        }
+
+        return "
+			<div style='text-align: left'>
+				" . make_form(make_link("tag_history/revert")) . "
+					<ul style='list-style-type:none;'>
+					    $history_list
+					</ul>
+					<input type='submit' value='Revert To'>
+				</form>
+			</div>
+		";
+    }
+
+    protected function history_entry(array $fields, bool $selected): string
+    {
+        global $user;
+        $image_id = $fields['image_id'];
+        $current_id = $fields['id'];
+        $current_tags = html_escape($fields['tags']);
+        $name = $fields['name'];
+        $date_set = rawHTML(autodate($fields['date_set']));
+        $ip = $user->can(Permissions::VIEW_IP) ?
+            rawHTML(" " . show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'"))
+            : null;
+        $setter = A(["href"=>make_link("user/" . url_escape($name))], $name);
+
+        $current_tags = Tag::explode($current_tags);
+        $taglinks = SPAN();
+        foreach ($current_tags as $tag) {
+            $taglinks->appendChild(A(["href"=>make_link("post/list/$tag/1")], $tag));
+            $taglinks->appendChild(" ");
+        }
+
+        return (string)LI(
+            INPUT(["type"=>"radio", "name"=>"revert", "id"=>"$current_id", "value"=>"$current_id", "checked"=>$selected]),
+            A(["href"=>make_link("post/view/$image_id")], $image_id),
+            ": ",
+            LABEL(
+                ["for"=>"$current_id"],
+                $taglinks,
+                " - ",
+                $setter,
+                $ip,
+                " - ",
+                $date_set
+            )
+        );
     }
 }

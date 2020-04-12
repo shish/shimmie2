@@ -151,7 +151,7 @@ class SourceHistory extends Extension
 
         // lets get the values out of the result
         //$stored_result_id = $result['id'];
-        $stored_image_id = $result['image_id'];
+        $stored_image_id = (int)$result['image_id'];
         $stored_source = $result['source'];
 
         log_debug("source_history", 'Reverting source of Image #'.$stored_image_id.' to ['.$stored_source.']');
