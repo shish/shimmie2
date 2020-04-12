@@ -98,7 +98,7 @@ class SourceHistoryTheme extends Themelet
         global $user;
         $image_id = $fields['image_id'];
         $current_id = $fields['id'];
-        $current_source = html_escape($fields['source']);
+        $current_source = $fields['source'];
         $name = $fields['name'];
         $date_set = rawHTML(autodate($fields['date_set']));
         $ip = $user->can(Permissions::VIEW_IP) ?

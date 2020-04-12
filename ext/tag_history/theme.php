@@ -98,7 +98,7 @@ class TagHistoryTheme extends Themelet
         global $user;
         $image_id = $fields['image_id'];
         $current_id = $fields['id'];
-        $current_tags = html_escape($fields['tags']);
+        $current_tags = $fields['tags'];
         $name = $fields['name'];
         $date_set = rawHTML(autodate($fields['date_set']));
         $ip = $user->can(Permissions::VIEW_IP) ?
