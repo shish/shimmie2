@@ -59,7 +59,7 @@ class ImageIO extends Extension
         } elseif ($event->page_matches("image/replace")) {
             global $page, $user;
             if ($user->can(Permissions::REPLACE_IMAGE) && isset($_POST['image_id']) && $user->check_auth_token()) {
-                $image = Image::by_id($_POST['image_id']);
+                $image = Image::by_id(int_escape($_POST['image_id']));
                 if ($image) {
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link('upload/replace/'.$image->id));
