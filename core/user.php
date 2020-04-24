@@ -247,6 +247,7 @@ class User
 
     public function check_auth_token(): bool
     {
+        if(defined("UNITTEST")) return true;
         return (isset($_POST["auth_token"]) && $_POST["auth_token"] == $this->get_auth_token());
     }
 

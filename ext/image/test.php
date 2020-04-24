@@ -20,4 +20,23 @@ class ImageIOTest extends ShimmiePHPUnitTestCase
         $page = $this->get_page("thumb/$image_id/moo.jpg");
         $this->assertEquals(200, $page->code);
     }
+
+    public function testDeleteRequest()
+    {
+        $this->log_in_as_admin();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $_POST['image_id'] = "$image_id";
+        send_event(new PageRequestEvent("image/delete"));
+        $this->assertTrue(true);  // FIXME: assert image was deleted?
+    }
+
+    public function testReplaceRequest()
+    {
+        global $page;
+        $this->log_in_as_admin();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $_POST['image_id'] = "$image_id";
+        send_event(new PageRequestEvent("image/replace"));
+        $this->assertEquals("redirect", $page->mode);
+    }
 }
