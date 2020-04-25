@@ -298,14 +298,11 @@ abstract class DataHandlerExtension extends Extension
             send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 
             /* Check if we are replacing an image */
-            if (array_key_exists('replace', $event->metadata) && isset($event->metadata['replace'])) {
+            if (!is_null($event->replace_id)) {
                 /* hax: This seems like such a dirty way to do this.. */
 
-                /* Validate things */
-                $image_id = int_escape($event->metadata['replace']);
-
                 /* Check to make sure the image exists. */
-                $existing = Image::by_id($image_id);
+                $existing = Image::by_id($event->replace_id);
 
                 if (is_null($existing)) {
                     throw new UploadException("Image to replace does not exist!");
@@ -326,8 +323,8 @@ abstract class DataHandlerExtension extends Extension
                     throw new UploadException("Unable to scan media properties: ".$e->getMessage());
                 }
 
-                send_event(new ImageReplaceEvent($image_id, $image));
-                $event->image_id = $image_id;
+                send_event(new ImageReplaceEvent($event->replace_id, $image));
+                $event->image_id = $event->replace_id;
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 if (is_null($image)) {

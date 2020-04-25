@@ -15,6 +15,8 @@ class DataUploadEvent extends Event
     public $type = "";
     /** @var int */
     public $image_id = -1;
+    /** @var int */
+    public $replace_id = null;
     /** @var bool */
     public $handled = false;
     /** @var bool */
@@ -192,49 +194,33 @@ class Upload extends Extension
                 if ($this->is_full) {
                     throw new UploadException("Can not replace Image: disk nearly full");
                 }
+                
                 // Try to get the image ID
                 if ($event->count_args() >= 1) {
                     $image_id = int_escape($event->get_arg(0));
                 } elseif (isset($_POST['image_id'])) {
-                    $image_id = $_POST['image_id'];
+                    $image_id = int_escape($_POST['image_id']);
                 } else {
                     throw new UploadException("Can not replace Image: No valid Image ID given.");
                 }
 
                 $image_old = Image::by_id($image_id);
                 if (is_null($image_old)) {
-                    $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
+                    throw new UploadException("Can not replace Image: No image with ID $image_id");
                 }
 
-                if (count($_FILES) + count($_POST) > 0) {
-                    if (count($_FILES) > 1) {
-                        throw new UploadException("Can not upload more than one image for replacing.");
-                    }
+                $source = $_POST['source'] ?? null;
 
-                    $source = isset($_POST['source']) ? $_POST['source'] : null;
-                    $tags = []; // Tags aren't changed when replacing. Set to empty to stop PHP warnings.
-
-                    $ok = false;
-                    if (count($_FILES)) {
-                        foreach ($_FILES as $file) {
-                            $ok = $this->try_upload($file, $tags, $source, $image_id);
-                            break; // leave the foreach loop.
-                        }
-                    } else {
-                        foreach ($_POST as $name => $value) {
-                            if (substr($name, 0, 3) == "url" && strlen($value) > 0) {
-                                $ok = $this->try_transload($value, $tags, $source, $image_id);
-                                break; // leave the foreach loop.
-                            }
-                        }
-                    }
+                if (!empty($_POST["url"])) {
+                    $ok = $this->try_transload($_POST["url"], [], $source, $image_id);
+                    $cache->delete("thumb-block:{$image_id}");
+                    $this->theme->display_upload_status($page, $ok);
+                } elseif (count($_FILES) > 0) {
+                    $ok = $this->try_upload($_FILES["data"], [], $source, $image_id);
                     $cache->delete("thumb-block:{$image_id}");
                     $this->theme->display_upload_status($page, $ok);
                 } elseif (!empty($_GET['url'])) {
-                    $url = $_GET['url'];
-                    $tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : 'tagme';
-                    $source = isset($_GET['source']) ? $_GET['source'] : $url;
-                    $ok = $this->try_transload($url, $tags, $source, $image_id);
+                    $ok = $this->try_transload($_GET['url'], [], $source, $image_id);
                     $cache->delete("thumb-block:{$image_id}");
                     $this->theme->display_upload_status($page, $ok);
                 } else {
@@ -332,7 +318,7 @@ class Upload extends Extension
      * #param string[] $file
      * #param string[] $tags
      */
-    private function try_upload(array $file, array $tags, ?string $source = null, int $replace = -1): bool
+    private function try_upload(array $file, array $tags, ?string $source = null, ?int $replace_id = null): bool
     {
         global $page;
 
@@ -359,12 +345,8 @@ class Upload extends Extension
                 $metadata['tags'] = $tags;
                 $metadata['source'] = $source;
 
-                /* check if we have been given an image ID to replace */
-                if ($replace >= 0) {
-                    $metadata['replace'] = $replace;
-                }
-
                 $event = new DataUploadEvent($file['tmp_name'], $metadata);
+                $event->replace_id = $replace_id;
                 send_event($event);
                 if ($event->image_id == -1) {
                     throw new UploadException("File type not supported: " . $metadata['extension']);
@@ -383,7 +365,7 @@ class Upload extends Extension
         return $ok;
     }
 
-    private function try_transload(string $url, array $tags, string $source = null, int $replace = -1): bool
+    private function try_transload(string $url, array $tags, string $source = null, ?int $replace_id = null): bool
     {
         global $page, $config, $user;
 
@@ -454,13 +436,9 @@ class Upload extends Extension
                 $metadata['rating'] = $rating;
             }
 
-            /* check if we have been given an image ID to replace */
-            if ($replace >= 0) {
-                $metadata['replace'] = $replace;
-            }
-
             try {
                 $event = new DataUploadEvent($tmp_filename, $metadata);
+                $event->replace_id = $replace_id;
                 send_event($event);
                 if ($event->image_id == -1) {
                     throw new UploadException("File type not supported: " . $metadata['extension']);
