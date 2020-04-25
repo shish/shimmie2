@@ -47,8 +47,7 @@ class PoolCreationEvent extends Event
         User $pool_user = null,
         bool $public = false,
         string $description = ""
-    )
-    {
+    ) {
         parent::__construct();
         global $user;
 
@@ -59,7 +58,8 @@ class PoolCreationEvent extends Event
     }
 }
 
-class Pool {
+class Pool
+{
     public $id;
     public $user_id;
     public $user_name;
@@ -81,7 +81,8 @@ class Pool {
         $this->posts = (int)$row['posts'];
     }
 
-    public static function makePool(array $row): Pool {
+    public static function makePool(array $row): Pool
+    {
         return new Pool($row);
     }
 }
@@ -316,7 +317,8 @@ class Pools extends Extension
                 case "import":
                     if ($this->have_permission($user, $pool)) {
                         $images = Image::find_images(
-                            0, $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
+                            0,
+                            $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
                             Tag::explode($_POST["pool_tag"])
                         );
                         $this->theme->pool_result($page, $images, $pool);

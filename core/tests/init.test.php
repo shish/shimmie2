@@ -2,7 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 
-class TestInit extends TestCase {
+class TestInit extends TestCase
+{
     public function testInitExt()
     {
         send_event(new InitExtEvent());

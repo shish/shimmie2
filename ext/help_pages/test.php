@@ -2,7 +2,6 @@
 
 class HelpPagesTest extends ShimmiePHPUnitTestCase
 {
-
     public function test_list()
     {
         send_event(new HelpPageListBuildingEvent());

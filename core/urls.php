@@ -60,7 +60,9 @@ function modify_url(string $url, array $changes): string
     $parts = parse_url($url);
 
     $params = [];
-    if(isset($parts['query'])) parse_str($parts['query'], $params);
+    if (isset($parts['query'])) {
+        parse_str($parts['query'], $params);
+    }
     foreach ($changes as $k => $v) {
         if (is_null($v) and isset($params[$k])) {
             unset($params[$k]);
@@ -98,10 +100,14 @@ function make_http(string $link): string
  */
 function referer_or(string $dest, ?array $blacklist=null): string
 {
-    if(empty($_SERVER['HTTP_REFERER'])) return $dest;
-    if($blacklist) {
-        foreach($blacklist as $b) {
-            if(strstr($_SERVER['HTTP_REFERER'], $b)) return $dest;
+    if (empty($_SERVER['HTTP_REFERER'])) {
+        return $dest;
+    }
+    if ($blacklist) {
+        foreach ($blacklist as $b) {
+            if (strstr($_SERVER['HTTP_REFERER'], $b)) {
+                return $dest;
+            }
         }
     }
     return $_SERVER['HTTP_REFERER'];

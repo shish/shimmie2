@@ -132,10 +132,9 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         }
         $_SERVER['REQUEST_URI'] = make_link($page_name);
         foreach ($args as $k=>$v) {
-            if(is_array($v)) {
+            if (is_array($v)) {
                 $args[$k] = $v;
-            }
-            else {
+            } else {
                 $args[$k] = (string)$v;
             }
         }
