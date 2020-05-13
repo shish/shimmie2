@@ -245,20 +245,19 @@ class Index extends Extension
             Image::$order_sql = "images.$ord $sort";
             $event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
         } elseif (preg_match("/^order[=|:]random[_]([0-9]{1,4})$/i", $event->term, $matches)) {
-            //order[=|:]random requires a seed to avoid duplicates
-            //since the tag can't be changed during the parseevent, we instead generate the seed during submit using js
+            // requires a seed to avoid duplicates
+            // since the tag can't be changed during the parseevent, we instead generate the seed during submit using js
             $seed = $matches[1];
             Image::$order_sql = "RAND($seed)";
             $event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
-        } elseif (preg_match("/^order[=|:]fullrandom$/i", $event->term, $matches)) {
-            //order[=|:]fullrandom will use today's date as seed, thus allowing for a dynamic randomized list without outside intervention.
-            //This way the list will change every day, giving a more dynamic feel to the imageboard.
-            //recommended to change homepage to "post/list/order:fullrandom/1"
-	        $seed = date("Ymd");
-	        Image::$order_sql = "RAND($seed)";
+        } elseif (preg_match("/^order[=|:]dailyshuffle$/i", $event->term, $matches)) {
+            // will use today's date as seed, thus allowing for a dynamic randomized list without outside intervention.
+            // This way the list will change every day, giving a more dynamic feel to the imageboard.
+            // recommended to change homepage to "post/list/order:dailyshuffle/1"
+            $seed = date("Ymd");
+            Image::$order_sql = "RAND($seed)";
             $event->add_querylet(new Querylet("1=1"));
-	}
-	//fullrandom is new
+        }
 
         $this->stpen++;
     }

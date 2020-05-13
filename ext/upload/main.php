@@ -194,7 +194,7 @@ class Upload extends Extension
                 if ($this->is_full) {
                     throw new UploadException("Can not replace Image: disk nearly full");
                 }
-                
+
                 // Try to get the image ID
                 if ($event->count_args() >= 1) {
                     $image_id = int_escape($event->get_arg(0));
