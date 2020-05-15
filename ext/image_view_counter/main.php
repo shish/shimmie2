@@ -1,7 +1,15 @@
 <?php declare(strict_types=1);
 
+class ImageViewCounterEvent extends Event
+{
+    public $image_id;
+    public $user;
+
+ }
+
 class ImageViewCounter extends Extension
 {
+    protected $theme;
     private $view_interval = 3600; # allows views to be added each hour
 
     # Add Setup Block with options for view counter
@@ -130,4 +138,38 @@ class ImageViewCounter extends Extension
         // returns the count as int
         return $view_count;
     }
+    
+    //All of this below is new stuff
+    
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $config, $database, $user, $page;
+
+        if ($event->page_matches("popular_images")) {
+		$sql = "SELECT image_id , count(*) as total_views
+		FROM image_views,images
+		WHERE image_views.image_id = image_views.image_id
+		AND image_views.image_id = images.id
+		GROUP BY image_views.image_id
+		ORDER BY total_views desc";
+       $result = $database->get_col($sql);
+           $images = [];
+            foreach ($result as $id) {
+              $images[] = Image::by_id(intval($id));
+            }
+            $this->theme->view_popular($images);
+        }
+    }
+    
+
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if ($event->parent=="posts") {
+            $event->add_nav_link("sort_by_visits", new Link('popular_images'), "Popular Images");
+        }
+    }
+
+//This is the end of the struct
+    
 }
