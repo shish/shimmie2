@@ -144,14 +144,25 @@ class ImageViewCounter extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $database, $user, $page;
+        
+        $rating = "";
+        
+        $pageNumber = $event->try_page_num(2);
+        $imagesPerPage = $config->get_int(IndexConfig::IMAGES);
+        
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
+            $rating = "AND images.rating IN (".Ratings::privs_to_sql(Ratings::get_user_class_privs($user)).")";
+        }
 
         if ($event->page_matches("popular_images")) {
 		$sql = "SELECT image_id , count(*) as total_views
 		FROM image_views,images
 		WHERE image_views.image_id = image_views.image_id
 		AND image_views.image_id = images.id
+		$rating
 		GROUP BY image_views.image_id
 		ORDER BY total_views desc";
+            
        $result = $database->get_col($sql);
            $images = [];
             foreach ($result as $id) {
