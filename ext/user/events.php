@@ -55,13 +55,16 @@ class UserCreationEvent extends Event
     public $password;
     /** @var  string */
     public $email;
+    /** @var bool */
+    public $login;
 
-    public function __construct(string $name, string $pass, string $email)
+    public function __construct(string $name, string $pass, string $email, bool $login)
     {
         parent::__construct();
         $this->username = $name;
         $this->password = $pass;
         $this->email = $email;
+        $this->login = $login;
     }
 }
 

@@ -118,6 +118,7 @@ new UserClass("admin", "base", [
     Permissions::BAN_IP => true,
 
     Permissions::CREATE_USER => true,
+    Permissions::CREATE_OTHER_USER => true,
     Permissions::EDIT_USER_NAME => true,
     Permissions::EDIT_USER_PASSWORD => true,
     Permissions::EDIT_USER_INFO => true,

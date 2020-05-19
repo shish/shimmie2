@@ -100,7 +100,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     {
         if (is_null(User::by_name($name))) {
             $userPage = new UserPage();
-            $userPage->onUserCreation(new UserCreationEvent($name, $name, ""));
+            $userPage->onUserCreation(new UserCreationEvent($name, $name, "", false));
             assert(!is_null(User::by_name($name)), "Creation of user $name failed");
         }
     }

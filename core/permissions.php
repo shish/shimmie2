@@ -18,6 +18,7 @@ abstract class Permissions
     public const BAN_IP = "ban_ip";
 
     public const CREATE_USER = "create_user";
+    public const CREATE_OTHER_USER = "create_other_user";
     public const EDIT_USER_NAME = "edit_user_name";
     public const EDIT_USER_PASSWORD = "edit_user_password";
     public const EDIT_USER_INFO = "edit_user_info";  # email address, etc

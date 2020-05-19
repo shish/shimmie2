@@ -105,6 +105,40 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Signup", (string)$html));
     }
 
+    public function display_user_creator()
+    {
+        global $page;
+
+        $form = SHM_SIMPLE_FORM(
+            "user_admin/create_other",
+            TABLE(
+                ["class"=>"form"],
+                TBODY(
+                    TR(
+                        TH("Name"),
+                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                    ),
+                    TR(
+                        TH("Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Repeat&nbsp;Password")),
+                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Email&nbsp;(Optional)")),
+                        TD(INPUT(["type"=>'email', "name"=>'email']))
+                    ),
+                ),
+                TFOOT(
+                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                )
+            )
+        );
+        $page->add_block(new Block("Create User", (string)$form, "main", 75));
+    }
+
     public function display_signups_disabled(Page $page)
     {
         $page->set_title("Signups Disabled");

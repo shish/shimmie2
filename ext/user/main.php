@@ -109,6 +109,12 @@ class UserPage extends Extension
                 $this->page_recover($_POST['username']);
             } elseif ($event->get_arg(0) == "create") {
                 $this->page_create();
+            } elseif ($event->get_arg(0) == "create_other") {
+                $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], false);
+                send_event($uce);
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("admin"));
+                $page->flash("Created new user");
             } elseif ($event->get_arg(0) == "list") {
                 $t = new UserTable($database->raw_db());
                 $t->token = $user->get_auth_token();
@@ -327,10 +333,21 @@ class UserPage extends Extension
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
     }
 
+    public function onAdminBuilding(AdminBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::CREATE_OTHER_USER)) {
+            $this->theme->display_user_creator();
+        }
+    }
+
     public function onUserCreation(UserCreationEvent $event)
     {
         $this->check_user_creation($event);
-        $this->create_user($event);
+        $user = $this->create_user($event);
+        if ($event->login) {
+            send_event(new UserLoginEvent($user));
+        }
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event)
@@ -363,7 +380,6 @@ class UserPage extends Extension
             $event->add_block($block);
         }
     }
-
 
     private function show_user_info()
     {
@@ -457,7 +473,7 @@ class UserPage extends Extension
                     throw new UserCreationException("Error in captcha");
                 }
 
-                $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
+                $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], true);
                 send_event($uce);
                 $this->set_login_cookie($uce->username, $uce->password);
                 $page->set_mode(PageMode::REDIRECT);
@@ -486,7 +502,7 @@ class UserPage extends Extension
         }
     }
 
-    private function create_user(UserCreationEvent $event)
+    private function create_user(UserCreationEvent $event): User
     {
         global $database, $user;
 
@@ -503,9 +519,10 @@ class UserPage extends Extension
         $uid = $database->get_last_insert_id('users_id_seq');
         $user = User::by_name($event->username);
         $user->set_password($event->password);
-        send_event(new UserLoginEvent($user));
 
         log_info("user", "Created User #$uid ({$event->username})");
+
+        return $user;
     }
 
     private function set_login_cookie(string $name, string $pass)
