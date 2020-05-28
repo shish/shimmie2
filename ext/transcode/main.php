@@ -17,20 +17,20 @@ class TranscodeImage extends Extension
     const ACTION_BULK_TRANSCODE = "bulk_transcode";
 
     const INPUT_FORMATS = [
-        "BMP" => "bmp",
-        "GIF" => "gif",
-        "ICO" => "ico",
-        "JPG" => "jpg",
-        "PNG" => "png",
-        "PSD" => "psd",
-        "TIFF" => "tiff",
-        "WEBP" => "webp",
+        "BMP" => EXTENSION_BMP,
+        "GIF" => EXTENSION_GIF,
+        "ICO" => EXTENSION_ICO,
+        "JPG" => EXTENSION_JPG,
+        "PNG" => EXTENSION_PNG,
+        "PSD" => EXTENSION_PSD,
+        "TIFF" => EXTENSION_TIFF,
+        "WEBP" => EXTENSION_WEBP,
     ];
 
     const OUTPUT_FORMATS = [
         "" => "",
-        "JPEG (lossy)" => "jpg",
-        "PNG (lossless)" => "png",
+        "JPEG (lossy)" => EXTENSION_JPG,
+        "PNG (lossless)" => EXTENSION_PNG,
         "WEBP (lossy)" => Media::WEBP_LOSSY,
         "WEBP (lossless)" => Media::WEBP_LOSSLESS,
     ];
@@ -102,7 +102,7 @@ class TranscodeImage extends Extension
 
             $ext = Media::normalize_format($ext);
 
-            if ($event->type=="gif"&&Media::is_animated_gif($event->tmpname)) {
+            if ($event->type==EXTENSION_GIF&&Media::is_animated_gif($event->tmpname)) {
                 return;
             }
 
@@ -314,14 +314,14 @@ class TranscodeImage extends Extension
         try {
             $result = false;
             switch ($target_format) {
-                case "webp":
+                case EXTENSION_WEBP:
                 case Media::WEBP_LOSSY:
                     $result = imagewebp($image, $tmp_name, $q);
                     break;
-                case "png":
+                case EXTENSION_PNG:
                     $result = imagepng($image, $tmp_name, 9);
                     break;
-                case "jpg":
+                case EXTENSION_JPG:
                     // In case of alpha channels
                     $width = imagesx($image);
                     $height = imagesy($image);
@@ -376,7 +376,7 @@ class TranscodeImage extends Extension
             case Media::WEBP_LOSSY:
                 $args .= '';
                 break;
-            case "png":
+            case EXTENSION_PNG:
                 $args .= '-define png:compression-level=9';
                 break;
             default:
@@ -387,7 +387,7 @@ class TranscodeImage extends Extension
 
         $source_type = "";
         switch ($source_format) {
-            case "ico":
+            case EXTENSION_ICO:
                 $source_type = "ico:";
         }
 

@@ -45,14 +45,18 @@ class DataUploadEvent extends Event
         $this->set_tmpname($tmpname);
 
         if ($config->get_bool("upload_use_mime")) {
-            $this->set_type(get_extension(getMimeType($tmpname)));
-        } else {
+            $filetype = get_extension_for_file($tmpname);
+        }
+
+        if(empty($filetype)) {
             if (array_key_exists('extension', $metadata) && !empty($metadata['extension'])) {
-                $this->type = strtolower($metadata['extension']);
+                $filetype = strtolower($metadata['extension']);
             } else {
                 throw new UploadException("Could not determine extension for file " . $metadata["filename"]);
             }
         }
+
+        $this->set_type($filetype);
     }
 
     public function set_type(String $type)

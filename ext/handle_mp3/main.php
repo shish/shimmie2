@@ -2,7 +2,7 @@
 
 class MP3FileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_EXT = ["mp3"];
+    protected $SUPPORTED_MIME = [MIME_TYPE_MP3];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -23,6 +23,6 @@ class MP3FileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        return getMimeType($tmpname) == 'audio/mpeg';
+        return get_mime($tmpname) === MIME_TYPE_MP3;
     }
 }

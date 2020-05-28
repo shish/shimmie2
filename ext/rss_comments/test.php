@@ -9,7 +9,7 @@ class RSSCommentsTest extends ShimmiePHPUnitTestCase
         send_event(new CommentPostingEvent($image_id, $user, "ASDFASDF"));
 
         $this->get_page('rss/comments');
-        //$this->assert_mime("application/rss+xml");
+        //$this->assert_mime(MIME_TYPE_RSS);
         $this->assert_no_content("Exception");
         $this->assert_content("ASDFASDF");
     }

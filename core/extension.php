@@ -275,7 +275,7 @@ abstract class FormatterExtension extends Extension
  */
 abstract class DataHandlerExtension extends Extension
 {
-    protected $SUPPORTED_EXT = [];
+    protected $SUPPORTED_MIME = [];
 
     protected function move_upload_to_archive(DataUploadEvent $event)
     {
@@ -403,7 +403,7 @@ abstract class DataHandlerExtension extends Extension
         $image->hash = $metadata['hash'];
         $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
         if ($config->get_bool("upload_use_mime")) {
-            $image->ext = get_extension(getMimeType($filename));
+            $image->ext = get_extension_for_file($filename);
         } else {
             $image->ext = (($pos = strpos($metadata['extension'], '?')) !== false) ? substr($metadata['extension'], 0, $pos) : $metadata['extension'];
         }
@@ -419,15 +419,20 @@ abstract class DataHandlerExtension extends Extension
 
     protected function supported_ext(string $ext): bool
     {
-        return in_array(strtolower($ext), $this->SUPPORTED_EXT);
+        return in_array(get_mime_for_extension($ext), $this->SUPPORTED_MIME);
     }
 
     public static function get_all_supported_exts(): array
     {
         $arr = [];
         foreach (getSubclassesOf("DataHandlerExtension") as $handler) {
-            $arr = array_merge($arr, (new $handler())->SUPPORTED_EXT);
+            $handler = (new $handler());
+
+            foreach($handler->SUPPORTED_MIME as $mime) {
+                $arr = array_merge($arr, get_all_extension_for_mime($mime));
+            }
         }
+        $arr = array_unique($arr);
         return $arr;
     }
 }

@@ -2,13 +2,13 @@
 
 class PixelFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_EXT = ["jpg", "jpeg", "gif", "png", "webp"];
+    protected $SUPPORTED_MIME = [MIME_TYPE_JPEG, MIME_TYPE_GIF, MIME_TYPE_PNG, MIME_TYPE_WEBP];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
         if (in_array($event->ext, Media::LOSSLESS_FORMATS)) {
             $event->image->lossless = true;
-        } elseif ($event->ext=="webp") {
+        } elseif ($event->ext==EXTENSION_WEBP) {
             $event->image->lossless = Media::is_lossless_webp($event->file_name);
         }
 
@@ -17,10 +17,10 @@ class PixelFileHandler extends DataHandlerExtension
         }
         $event->image->audio = false;
         switch ($event->ext) {
-            case "gif":
+            case EXTENSION_GIF:
                 $event->image->video = Media::is_animated_gif($event->file_name);
                 break;
-            case "webp":
+            case EXTENSION_WEBP:
                 $event->image->video = Media::is_animated_webp($event->file_name);
                 break;
             default:

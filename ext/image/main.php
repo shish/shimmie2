@@ -21,8 +21,8 @@ class ImageIO extends Extension
     ];
 
     const THUMBNAIL_TYPES = [
-        'JPEG' => "jpg",
-        'WEBP (Not IE/Safari compatible)' => "webp"
+        'JPEG' => EXTENSION_JPG,
+        'WEBP (Not IE/Safari compatible)' => EXTENSION_WEBP
     ];
 
     public function onInitExt(InitExtEvent $event)
@@ -32,7 +32,7 @@ class ImageIO extends Extension
         $config->set_default_int(ImageConfig::THUMB_HEIGHT, 192);
         $config->set_default_int(ImageConfig::THUMB_SCALING, 100);
         $config->set_default_int(ImageConfig::THUMB_QUALITY, 75);
-        $config->set_default_string(ImageConfig::THUMB_TYPE, 'jpg');
+        $config->set_default_string(ImageConfig::THUMB_TYPE, EXTENSION_JPG);
 
         if (function_exists(self::EXIF_READ_FUNCTION)) {
             $config->set_default_bool(ImageConfig::SHOW_META, false);
@@ -271,11 +271,7 @@ class ImageIO extends Extension
         if (!is_null($image)) {
             if ($type == "thumb") {
                 $ext = $config->get_string(ImageConfig::THUMB_TYPE);
-                if (array_key_exists($ext, MIME_TYPE_MAP)) {
-                    $page->set_type(MIME_TYPE_MAP[$ext]);
-                } else {
-                    $page->set_type("image/jpeg");
-                }
+                $page->set_type(get_mime_for_extension($ext));
 
                 $file = $image->get_thumb_filename();
             } else {

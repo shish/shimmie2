@@ -26,26 +26,26 @@ class Media extends Extension
 
     const LOSSLESS_FORMATS = [
         self::WEBP_LOSSLESS,
-        "png",
-        "psd",
-        "bmp",
-        "ico",
-        "cur",
-        "ani",
-        "gif"
+        EXTENSION_PNG,
+        EXTENSION_PSD,
+        EXTENSION_BMP,
+        EXTENSION_ICO,
+        EXTENSION_CUR,
+        EXTENSION_ANI,
+        EXTENSION_GIF
 
     ];
 
     const ALPHA_FORMATS = [
         self::WEBP_LOSSLESS,
         self::WEBP_LOSSY,
-        "webp",
-        "png",
+        EXTENSION_WEBP,
+        EXTENSION_PNG,
     ];
 
     const FORMAT_ALIASES = [
-        "tif" => "tiff",
-        "jpeg" => "jpg",
+        EXTENSION_TIF => EXTENSION_TIFF,
+        EXTENSION_JPEG => EXTENSION_JPG,
     ];
 
 
@@ -363,7 +363,7 @@ class Media extends Extension
 
         $codec = "mjpeg";
         $quality = $config->get_int(ImageConfig::THUMB_QUALITY);
-        if ($config->get_string(ImageConfig::THUMB_TYPE) == "webp") {
+        if ($config->get_string(ImageConfig::THUMB_TYPE) == EXTENSION_WEBP) {
             $codec = "libwebp";
         } else {
             // mjpeg quality ranges from 2-31, with 2 being the best quality.
@@ -436,7 +436,7 @@ class Media extends Extension
         switch ($format) {
             case self::WEBP_LOSSLESS:
             case self::WEBP_LOSSY:
-                return "webp";
+                return EXTENSION_WEBP;
             default:
                 return $format;
         }
@@ -445,7 +445,7 @@ class Media extends Extension
 //    private static function image_save_imagick(Imagick $image, string $path, string $format, int $output_quality = 80, bool $minimize)
 //    {
 //        switch ($format) {
-//            case "png":
+//            case EXTENSION_PNG:
 //                $result = $image->setOption('png:compression-level', 9);
 //                if ($result !== true) {
 //                    throw new GraphicsException("Could not set png compression option");
@@ -555,7 +555,7 @@ class Media extends Extension
             return true;
         }
         switch ($format) {
-            case "webp":
+            case EXTENSION_WEBP:
                 return self::is_lossless_webp($filename);
                 break;
         }
@@ -586,7 +586,7 @@ class Media extends Extension
             $output_type = $input_type;
         }
 
-        if ($output_type=="webp" && self::is_lossless($input_path, $input_type)) {
+        if ($output_type==EXTENSION_WEBP && self::is_lossless($input_path, $input_type)) {
             $output_type = self::WEBP_LOSSLESS;
         }
 
@@ -612,7 +612,7 @@ class Media extends Extension
             case Media::WEBP_LOSSLESS:
                 $args .= '-define webp:lossless=true';
                 break;
-            case "png":
+            case EXTENSION_PNG:
                 $args .= '-define png:compression-level=9';
                 break;
         }
@@ -668,19 +668,19 @@ class Media extends Extension
             /* If not specified, output to the same format as the original image */
             switch ($info[2]) {
                 case IMAGETYPE_GIF:
-                    $output_type = "gif";
+                    $output_type = EXTENSION_GIF;
                     break;
                 case IMAGETYPE_JPEG:
-                    $output_type = "jpeg";
+                    $output_type = EXTENSION_JPEG;
                     break;
                 case IMAGETYPE_PNG:
-                    $output_type = "png";
+                    $output_type = EXTENSION_PNG;
                     break;
                 case IMAGETYPE_WEBP:
-                    $output_type = "webp";
+                    $output_type = EXTENSION_WEBP;
                     break;
                 case IMAGETYPE_BMP:
-                    $output_type = "bmp";
+                    $output_type = EXTENSION_BMP;
                     break;
                 default:
                     throw new MediaException("Failed to save the new image - Unsupported image type.");
@@ -776,21 +776,21 @@ class Media extends Extension
             }
 
             switch ($output_type) {
-                case "bmp":
+                case EXTENSION_BMP:
                     $result = imagebmp($image_resized, $output_filename, true);
                     break;
-                case "webp":
+                case EXTENSION_WEBP:
                 case Media::WEBP_LOSSY:
                     $result = imagewebp($image_resized, $output_filename, $output_quality);
                     break;
-                case "jpg":
-                case "jpeg":
+                case EXTENSION_JPG:
+                case EXTENSION_JPEG:
                     $result = imagejpeg($image_resized, $output_filename, $output_quality);
                     break;
-                case "png":
+                case EXTENSION_PNG:
                     $result = imagepng($image_resized, $output_filename, 9);
                     break;
-                case "gif":
+                case EXTENSION_GIF:
                     $result = imagegif($image_resized, $output_filename);
                     break;
                 default:
@@ -904,7 +904,7 @@ class Media extends Extension
      */
     public static function normalize_format(string $format, ?bool $lossless = null): ?string
     {
-        if ($format == "webp") {
+        if ($format == EXTENSION_WEBP) {
             if ($lossless === true) {
                 $format = Media::WEBP_LOSSLESS;
             } else {

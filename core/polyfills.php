@@ -3,6 +3,9 @@
 * Things which should be in the core API                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+require_once "filetypes.php";
+
+
 /**
  * Return the unique elements of an array, case insensitively
  */
@@ -251,99 +254,6 @@ if (!function_exists('mb_strlen')) {
     {
         return strtolower($str);
     }
-}
-
-const MIME_TYPE_MAP = [
-    'jpg' => 'image/jpeg',
-    'gif' => 'image/gif',
-    'png' => 'image/png',
-    'tif' => 'image/tiff',
-    'tiff' => 'image/tiff',
-    'ico' => 'image/x-icon',
-    'swf' => 'application/x-shockwave-flash',
-    'flv' => 'video/x-flv',
-    'svg' => 'image/svg+xml',
-    'pdf' => 'application/pdf',
-    'zip' => 'application/zip',
-    'gz' => 'application/x-gzip',
-    'tar' => 'application/x-tar',
-    'bz' => 'application/x-bzip',
-    'bz2' => 'application/x-bzip2',
-    'txt' => 'text/plain',
-    'asc' => 'text/plain',
-    'htm' => 'text/html',
-    'html' => 'text/html',
-    'css' => 'text/css',
-    'js' => 'text/javascript',
-    'xml' => 'text/xml',
-    'xsl' => 'application/xsl+xml',
-    'ogg' => 'application/ogg',
-    'mp3' => 'audio/mpeg',
-    'wav' => 'audio/x-wav',
-    'avi' => 'video/x-msvideo',
-    'mpg' => 'video/mpeg',
-    'mpeg' => 'video/mpeg',
-    'mov' => 'video/quicktime',
-    'php' => 'text/x-php',
-    'mp4' => 'video/mp4',
-    'ogv' => 'video/ogg',
-    'webm' => 'video/webm',
-    'webp' => 'image/webp',
-    'bmp' =>'image/x-ms-bmp',
-    'psd' => 'image/vnd.adobe.photoshop',
-    'mkv' => 'video/x-matroska'
-];
-
-/**
- * Get MIME type for file
- *
- * The contents of this function are taken from the __getMimeType() function
- * from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
- * and released under the 'Simplified BSD License'.
- */
-function getMimeType(string $file, string $ext=""): string
-{
-    // Static extension lookup
-    $ext = strtolower($ext);
-
-    if (array_key_exists($ext, MIME_TYPE_MAP)) {
-        return MIME_TYPE_MAP[$ext];
-    }
-
-    $type = false;
-    // Fileinfo documentation says fileinfo_open() will use the
-    // MAGIC env var for the magic file
-    if (extension_loaded('fileinfo') && isset($_ENV['MAGIC']) &&
-        ($finfo = finfo_open(FILEINFO_MIME, $_ENV['MAGIC'])) !== false) {
-        if (($type = finfo_file($finfo, $file)) !== false) {
-            // Remove the charset and grab the last content-type
-            $type = explode(' ', str_replace('; charset=', ';charset=', $type));
-            $type = array_pop($type);
-            $type = explode(';', $type);
-            $type = trim(array_shift($type));
-        }
-        finfo_close($finfo);
-
-    // If anyone is still using mime_content_type()
-    } elseif (function_exists('mime_content_type')) {
-        $type = trim(mime_content_type($file));
-    }
-
-    if ($type !== false && strlen($type) > 0) {
-        return $type;
-    }
-
-    return 'application/octet-stream';
-}
-
-function get_extension(?string $mime_type): ?string
-{
-    if (empty($mime_type)) {
-        return null;
-    }
-
-    $ext = array_search($mime_type, MIME_TYPE_MAP);
-    return ($ext ? $ext : null);
 }
 
 /** @noinspection PhpUnhandledExceptionInspection */
@@ -860,3 +770,4 @@ function stringer($s)
     }
     return (string)$s;
 }
+

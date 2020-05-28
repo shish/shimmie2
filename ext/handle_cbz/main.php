@@ -2,7 +2,7 @@
 
 class CBZFileHandler extends DataHandlerExtension
 {
-    public $SUPPORTED_EXT = ["cbz"];
+    public $SUPPORTED_MIME = [MIME_TYPE_COMIC_ZIP];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -27,7 +27,7 @@ class CBZFileHandler extends DataHandlerExtension
             $cover,
             warehouse_path(Image::THUMBNAIL_DIR, $hash),
             get_thumbnail_max_size_scaled(),
-            get_extension(getMimeType($cover)),
+            get_extension(get_mime($cover)),
             null
         );
         return true;

@@ -42,7 +42,7 @@ class BrowserSearch extends Extension
 
             // And now to send it to the browser
             $page->set_mode(PageMode::DATA);
-            $page->set_type("text/xml");
+            $page->set_type(MIME_TYPE_XML);
             $page->set_data($xml);
         } elseif ($event->page_matches("browser_search")) {
             $suggestions = $config->get_string("search_suggestions_results_order");

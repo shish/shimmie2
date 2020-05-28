@@ -2,7 +2,7 @@
 
 class ArchiveFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_EXT = ["zip"];
+    protected $SUPPORTED_MIME = [MIME_TYPE_ZIP];
 
     public function onInitExt(InitExtEvent $event)
     {

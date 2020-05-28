@@ -53,7 +53,7 @@ class BaseThemelet
         $h_tip = html_escape($image->get_tooltip());
         $h_tags = html_escape(strtolower($image->get_tag_list()));
 
-        $extArr = array_flip(['swf', 'svg', 'mp3']); //List of thumbless filetypes
+        $extArr = array_flip([EXTENSION_FLASH, EXTENSION_SVG, EXTENSION_MP3]); //List of thumbless filetypes
         if (!isset($extArr[$image->ext])) {
             $tsize = get_thumbnail_size($image->width, $image->height);
         } else {

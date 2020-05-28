@@ -19,7 +19,7 @@ class Themelet extends BaseThemelet
         $h_ext = strtolower($image->ext);
 
         // If file is flash or svg then sets thumbnail to max size.
-        if ($image->ext === 'swf' || $image->ext === 'svg') {
+        if ($image->ext === EXTENSION_FLASH || $image->ext === EXTENSION_SVG) {
             $tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
         } else {
             $tsize = get_thumbnail_size($image->width, $image->height);

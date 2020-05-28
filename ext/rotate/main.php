@@ -15,7 +15,7 @@ class RotateImage extends Extension
     /** @var RotateImageTheme */
     protected $theme;
 
-    const SUPPORTED_EXT = ["jpg","jpeg","png","gif","webp"];
+    const SUPPORTED_MIME = [MIME_TYPE_JPEG, MIME_TYPE_PNG, MIME_TYPE_GIF, MIME_TYPE_WEBP];
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -28,7 +28,7 @@ class RotateImage extends Extension
     {
         global $user, $config;
         if ($user->can(Permissions::EDIT_FILES) && $config->get_bool("rotate_enabled")
-                && in_array($event->image->ext, self::SUPPORTED_EXT)) {
+                && in_array(get_mime_for_extension($event->image->ext), self::SUPPORTED_MIME)) {
             /* Add a link to rotate the image */
             $event->add_part($this->theme->get_rotate_html($event->image->id));
         }

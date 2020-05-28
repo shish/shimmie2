@@ -123,22 +123,8 @@ class UploadTheme extends Themelet
         $html .= ' (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
 
         // Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
-        $supported_ext = "jpg jpeg gif png webp";
-        if (class_exists("FlashFileHandler")) {
-            $supported_ext .= " swf";
-        }
-        if (class_exists("ICOFileHandler")) {
-            $supported_ext .= " ico ani cur";
-        }
-        if (class_exists("MP3FileHandler")) {
-            $supported_ext .= " mp3";
-        }
-        if (class_exists("SVGFileHandler")) {
-            $supported_ext .= " svg";
-        }
-        if (class_exists("VideoFileHandler")) {
-            $supported_ext .= " flv mp4 ogv webm m4v";
-        }
+        $supported_ext = join(" ", DataHandlerExtension::get_all_supported_exts());
+
         $title = "Booru to " . $config->get_string(SetupConfig::TITLE);
         // CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
         $html .= '<p><a href="javascript:

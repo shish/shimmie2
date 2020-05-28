@@ -116,8 +116,6 @@ class Tag
 
         for ($i = 0; $i < count($tags1); $i++) {
             if ($tags1[$i]!==$tags2[$i]) {
-                var_dump($tags1);
-                var_dump($tags2);
                 return false;
             }
         }

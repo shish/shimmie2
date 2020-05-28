@@ -570,7 +570,7 @@ class Image
      */
     public function get_mime_type(): string
     {
-        return getMimeType($this->get_image_filename(), $this->get_ext());
+        return get_mime($this->get_image_filename(), $this->get_ext());
     }
 
     /**

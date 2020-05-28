@@ -84,7 +84,7 @@ class ResizeImage extends Extension
                 $height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
             }
             $isanigif = 0;
-            if ($image_obj->ext == "gif") {
+            if ($image_obj->ext == EXTENSION_GIF) {
                 $image_filename = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
                 if (($fh = @fopen($image_filename, 'rb'))) {
                     //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)

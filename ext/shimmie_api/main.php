@@ -36,7 +36,7 @@ class ShimmieApi extends Extension
 
         if ($event->page_matches("api/shimmie")) {
             $page->set_mode(PageMode::DATA);
-            $page->set_type("text/plain");
+            $page->set_type(MIME_TYPE_TEXT);
 
             if ($event->page_matches("api/shimmie/get_tags")) {
                 if ($event->count_args() > 0) {

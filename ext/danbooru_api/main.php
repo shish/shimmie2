@@ -10,13 +10,13 @@ class DanbooruApi extends Extension
 
             if ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
                 // No XML data is returned from this function
-                $page->set_type("text/plain");
+                $page->set_type(MIME_TYPE_TEXT);
                 $this->api_add_post();
             } elseif ($event->page_matches("api/danbooru/find_posts") || $event->page_matches("api/danbooru/post/index.xml")) {
-                $page->set_type("application/xml");
+                $page->set_type(MIME_TYPE_XML_APPLICATION);
                 $page->set_data($this->api_find_posts());
             } elseif ($event->page_matches("api/danbooru/find_tags")) {
-                $page->set_type("application/xml");
+                $page->set_type(MIME_TYPE_XML_APPLICATION);
                 $page->set_data($this->api_find_tags());
             }
 

@@ -3,13 +3,12 @@
 class VideoFileHandler extends DataHandlerExtension
 {
     protected $SUPPORTED_MIME = [
-        'video/webm',
-        'video/mp4',
-        'video/ogg',
-        'video/flv',
-        'video/x-flv'
+        MIME_TYPE_WEBM,
+        MIME_TYPE_MP4_VIDEO,
+        MIME_TYPE_OGG_VIDEO,
+        MIME_TYPE_FLASH_VIDEO,
     ];
-    protected $SUPPORTED_EXT = ["flv", "mp4", "m4v", "ogv", "webm"];
+    protected $SUPPORTED_EXT = [EXTENSION_FLASH_VIDEO, EXTENSION_MP4, EXTENSION_M4V, EXTENSION_OGG_VIDEO, EXTENSION_WEBM];
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -87,6 +86,6 @@ class VideoFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        return in_array(getMimeType($tmpname), $this->SUPPORTED_MIME);
+        return in_array(get_mime($tmpname), $this->SUPPORTED_MIME);
     }
 }

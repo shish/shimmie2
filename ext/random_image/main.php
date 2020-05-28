@@ -35,7 +35,7 @@ class RandomImage extends Extension
                 send_event(new DisplayingImageEvent($image));
             } elseif ($action === "widget") {
                 $page->set_mode(PageMode::DATA);
-                $page->set_type("text/html");
+                $page->set_type(MIME_TYPE_HTML);
                 $page->set_data($this->theme->build_thumb_html($image));
             }
         }

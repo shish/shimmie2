@@ -8,26 +8,26 @@ class RSSImagesTest extends ShimmiePHPUnitTestCase
         $this->log_out();
 
         $this->get_page('rss/images');
-        //$this->assert_mime("application/rss+xml");
+        //$this->assert_mime(MIME_TYPE_RSS);
         $this->assert_no_content("Exception");
 
         $this->get_page('rss/images/1');
-        //$this->assert_mime("application/rss+xml");
+        //$this->assert_mime(MIME_TYPE_RSS);
         $this->assert_no_content("Exception");
 
         # FIXME: test that the image is actually found
         $this->get_page('rss/images/computer/1');
-        //$this->assert_mime("application/rss+xml");
+        //$this->assert_mime(MIME_TYPE_RSS);
         $this->assert_no_content("Exception");
 
         # valid tag, invalid page
         $this->get_page('rss/images/computer/2');
-        //$this->assert_mime("application/rss+xml");
+        //$this->assert_mime(MIME_TYPE_RSS);
         $this->assert_no_content("Exception");
 
         # not found
         $this->get_page('rss/images/waffle/2');
-        //$this->assert_mime("application/rss+xml");
+        //$this->assert_mime(MIME_TYPE_RSS);
         $this->assert_no_content("Exception");
     }
 }

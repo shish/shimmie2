@@ -142,7 +142,7 @@ function create_scaled_image(string $inname, string $outname, array $tsize, stri
     }
 
     $output_format = $config->get_string(ImageConfig::THUMB_TYPE);
-    if ($output_format=="webp") {
+    if ($output_format==EXTENSION_WEBP) {
         $output_format = Media::WEBP_LOSSY;
     }
 

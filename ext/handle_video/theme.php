@@ -2,6 +2,9 @@
 
 class VideoFileHandlerTheme extends Themelet
 {
+
+    const SUPPORTED_TYPES = [MIME_TYPE_MP4_VIDEO, MIME_TYPE_OGG_VIDEO, MIME_TYPE_WEBM, MIME_TYPE_FLASH_VIDEO];
+
     public function display_image(Page $page, Image $image)
     {
         global $config;
@@ -16,10 +19,11 @@ class VideoFileHandlerTheme extends Themelet
         $html = "Video not playing? <a href='$ilink'>Click here</a> to download the file.<br/>";
 
         //Browser media format support: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
-        $supportedExts = ['mp4' => 'video/mp4', 'm4v' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm', 'flv' => 'video/flv'];
-        if (array_key_exists($ext, $supportedExts)) {
+        $mime = get_mime_for_extension($ext);
+
+        if (in_array($mime, self::SUPPORTED_TYPES)) {
             //FLV isn't supported by <video>, but it should always fallback to the flash-based method.
-            if ($ext == "webm") {
+            if ($mime == MIME_TYPE_WEBM) {
                 //Several browsers still lack WebM support sadly: https://caniuse.com/#feat=webm
                 $html .= "<!--[if IE]><p>To view webm files with IE, please <a href='https://tools.google.com/dlpage/webmmf/' target='_blank'>download this plugin</a>.</p><![endif]-->";
             }
@@ -40,7 +44,7 @@ class VideoFileHandlerTheme extends Themelet
 							<img alt='thumb' src=\"{$thumb_url}\" />
 						</object>";
 
-            if ($ext == "flv") {
+            if ($mime == MIME_TYPE_FLASH_VIDEO) {
                 //FLV doesn't support <video>.
                 $html .= $html_fallback;
             } else {
@@ -50,7 +54,7 @@ class VideoFileHandlerTheme extends Themelet
                 $html .= "
 					<video controls class='shm-main-image' id='main_image' alt='main image' poster='$thumb_url' {$autoplay} {$loop}
 					style='max-width: 100%'>
-						<source src='{$ilink}' type='{$supportedExts[$ext]}'>
+						<source src='{$ilink}' type='{$mime}'>
 
 						<!-- If browser doesn't support filetype, fallback to flash -->
 						{$html_fallback}
@@ -60,7 +64,7 @@ class VideoFileHandlerTheme extends Themelet
             }
         } else {
             //This should never happen, but just in case let's have a fallback..
-            $html = "Video type '$ext' not recognised";
+            $html = "Video type '$mime' not recognised";
         }
         $page->add_block(new Block("Video", $html, "main", 10));
     }
