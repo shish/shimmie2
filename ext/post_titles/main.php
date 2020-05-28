@@ -33,10 +33,10 @@ class PostTitles extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $config;
+        global $config, $page;
 
         if ($config->get_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
-            $event->set_title(self::get_title($event->get_image()));
+            $page->set_title(self::get_title($event->get_image()));
         }
     }
 
