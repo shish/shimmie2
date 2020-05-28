@@ -150,6 +150,14 @@ function list_files(string $base, string $_sub_dir=""): array
     return $file_list;
 }
 
+function flush_output(): void
+{
+    if (!defined("UNITTEST")) {
+        @ob_flush();
+    }
+    flush();
+}
+
 function stream_file(string $file, int $start, int $end): void
 {
     $fp = fopen($file, 'r');
@@ -162,10 +170,7 @@ function stream_file(string $file, int $start, int $end): void
                 $buffer = $end - $p + 1;
             }
             echo fread($fp, $buffer);
-            if (!defined("UNITTEST")) {
-                @ob_flush();
-            }
-            flush();
+            flush_output();
 
             // After flush, we can tell if the client browser has disconnected.
             // This means we can start sending a large file, and if we detect they disappeared

@@ -7,6 +7,7 @@ abstract class PageMode
     const DATA = 'data';
     const PAGE = 'page';
     const FILE = 'file';
+    const MANUAL = 'manual';
 }
 
 /**
@@ -238,16 +239,13 @@ class BasePage
 
     // ==============================================
 
-    /**
-     * Display the page according to the mode and data given.
-     */
-    public function display(): void
+    public function send_headers(): void
     {
-        header("HTTP/1.0 {$this->code} Shimmie");
-        header("Content-type: " . $this->type);
-        header("X-Powered-By: Shimmie-" . VERSION);
-
         if (!headers_sent()) {
+            header("HTTP/1.0 {$this->code} Shimmie");
+            header("Content-type: " . $this->type);
+            header("X-Powered-By: Shimmie-" . VERSION);
+
             foreach ($this->http_headers as $head) {
                 header($head);
             }
@@ -257,8 +255,25 @@ class BasePage
         } else {
             print "Error: Headers have already been sent to the client.";
         }
+    }
+
+    public function flush_output(): void
+    {
+
+    }
+
+    /**
+     * Display the page according to the mode and data given.
+     */
+    public function display(): void
+    {
+        if($this->mode!=PageMode::MANUAL) {
+            $this->send_headers();
+        }
 
         switch ($this->mode) {
+            case PageMode::MANUAL:
+                break;
             case PageMode::PAGE:
                 usort($this->blocks, "blockcmp");
                 $this->add_auto_html_headers();
