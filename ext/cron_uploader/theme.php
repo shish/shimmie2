@@ -57,6 +57,9 @@ class CronUploaderTheme extends Themelet
 			        <br />When you create the cron job, you choose when to upload new images.</li>
             </ol>";
 
+
+        $max_time = intval(ini_get('max_execution_time'))*.8;
+
         $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means.
 <br />(<b>{$queue_dirinfo['path']}</b>)
                     <ol>
@@ -71,7 +74,7 @@ class CronUploaderTheme extends Themelet
 
             <ul>
                 <li>If an import is already running, another cannot start until it is done.</li>
-                <li>Each time it runs it will import up to ".CronUploaderConfig::get_count()." file(s). This is controlled from <a href='".make_link("setup")."'>Board Config</a>.</li>
+                <li>Each time it runs it will import for up to ".number_format ($max_time)." seconds. This is controlled by the PHP max execution time.</li>
                 <li>Uploaded images will be moved to the 'uploaded' directory into a subfolder named after the time the import started. It's recommended that you remove everything out of this directory from time to time. If you have admin controls enabled, this can be done from <a href='".make_link("admin")."'>Board Admin</a>.</li>
                 <li>If you enable the db logging extension, you can view the log output on this screen. Otherwise the log will be written to a file at ".CronUploaderConfig::get_dir().DIRECTORY_SEPARATOR."uploads.log</li>
 			</ul>
@@ -107,7 +110,7 @@ class CronUploaderTheme extends Themelet
 
         $html .= make_form(make_link("admin/cron_uploader_restage"));
         $html .= "<table class='form'>";
-        $html .= "<tr><th>Failed dir</th><td><select name='failed_dir' required='required'><option></option>";
+        $html .= "<tr><th>Failed dir</th><td><select name='failed_dir' required='required'>";
 
         foreach ($failed_dirs as $dir) {
             $html .= "<option value='$dir'>$dir</option>";

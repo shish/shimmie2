@@ -6,14 +6,12 @@ abstract class CronUploaderConfig
     const DEFAULT_PATH = "cron_uploader";
 
     const KEY = "cron_uploader_key";
-    const COUNT = "cron_uploader_count";
     const DIR = "cron_uploader_dir";
     const USER = "cron_uploader_user";
 
     public static function set_defaults(): void
     {
         global $config;
-        $config->set_default_int(self::COUNT, 1);
         $config->set_default_string(self::DIR, data_path(self::DEFAULT_PATH));
 
         $upload_key = $config->get_string(self::KEY, "");
@@ -46,18 +44,6 @@ abstract class CronUploaderConfig
     {
         global $config;
         $config->set_string(self::KEY, $value);
-    }
-
-    public static function get_count(): int
-    {
-        global $config;
-        return $config->get_int(self::COUNT);
-    }
-
-    public static function set_count(int $value): void
-    {
-        global $config;
-        $config->set_int(self::COUNT, $value);
     }
 
     public static function get_dir(): string

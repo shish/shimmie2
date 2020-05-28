@@ -15,8 +15,6 @@ class CronUploader extends Extension
     const UPLOADED_DIR = "uploaded";
     const FAILED_DIR = "failed_to_upload";
 
-    public $output_buffer = [];
-
     public function onInitExt(InitExtEvent $event)
     {
         // Set default values
@@ -57,7 +55,6 @@ class CronUploader extends Extension
 
         $sb = new SetupBlock("Cron Uploader");
         $sb->start_table();
-        $sb->add_int_option(CronUploaderConfig::COUNT, "Upload per run", true);
         $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
         $sb->add_text_option(CronUploaderConfig::KEY, "Key", true);
         $sb->add_choice_option(CronUploaderConfig::USER, $users, "User", true);
@@ -123,33 +120,46 @@ class CronUploader extends Extension
 
         $this->prep_root_dir();
 
-        $results = get_dir_contents($queue_dir);
-
-        if (count($results) > 0) {
-            $page->flash("Queue folder must be empty to re-stage");
-            return;
-        }
-
-        $results = get_dir_contents($stage_dir);
+        $results = get_files_recursively($stage_dir);
 
         if (count($results) == 0) {
-            if (rmdir($stage_dir)===false) {
+            if (remove_empty_dirs($stage_dir)===false) {
                 $page->flash("Nothing to stage from $folder, cannot remove folder");
             } else {
                 $page->flash("Nothing to stage from $folder, removing folder");
             }
             return;
         }
-
         foreach ($results as $result) {
-            $original_path = join_path($stage_dir, $result);
-            $new_path = join_path($queue_dir, $result);
+            $new_path = join_path($queue_dir, substr($result,strlen($stage_dir)));
 
-            rename($original_path, $new_path);
+            if(file_exists($new_path)) {
+                $page->flash("File already exists in queue folder: " .$result);
+                return;
+            }
         }
 
-        $page->flash("Re-staged $folder to queue");
-        rmdir($stage_dir);
+        $success = true;
+        foreach ($results as $result) {
+            $new_path = join_path($queue_dir, substr($result,strlen($stage_dir)));
+
+            $dir = dirname($new_path);
+            if(!is_dir($dir)) {
+                mkdir($dir, 0775, true);
+            }
+
+            if(rename($result, $new_path)===false){
+                $page->flash("Could not move file: " .$result);
+                $success = false;
+            }
+        }
+
+        if($success===true) {
+            $page->flash("Re-staged $folder to queue");
+            if(remove_empty_dirs($stage_dir)===false) {
+                $page->flash("Could not remove $folder");
+            }
+        }
     }
 
     private function clear_folder($folder)
@@ -265,7 +275,11 @@ class CronUploader extends Extension
      */
     public function process_upload(string $key, ?int $upload_count = null): bool
     {
-        global $database;
+        global $database, $_shm_load_start;
+
+        $max_time = intval(ini_get('max_execution_time'))*.8;
+
+        $this->set_headers();
 
         if ($key!=CronUploaderConfig::get_key()) {
             throw new SCoreException("Cron upload key incorrect");
@@ -290,21 +304,8 @@ class CronUploader extends Extension
         try {
             //set_time_limit(0);
 
-            // Gets amount of imgs to upload
-            if ($upload_count == null) {
-                $upload_count = CronUploaderConfig::get_count();
-            }
-
             $output_subdir = date('Ymd-His', time());
-            $image_queue = $this->generate_image_queue(CronUploaderConfig::get_dir(), $upload_count);
-
-
-            // Throw exception if there's nothing in the queue
-            if (count($image_queue) == 0) {
-                $this->log_message(SCORE_LOG_WARNING, "Your queue is empty so nothing could be uploaded.");
-                $this->handle_log();
-                return false;
-            }
+            $image_queue = $this->generate_image_queue(CronUploaderConfig::get_dir());
 
             // Randomize Images
             //shuffle($this->image_queue);
@@ -314,9 +315,11 @@ class CronUploader extends Extension
             $failed = 0;
 
             // Upload the file(s)
-            for ($i = 0; $i < $upload_count && sizeof($image_queue) > 0; $i++) {
-                $img = array_pop($image_queue);
-
+            foreach ($image_queue as $img) {
+                $execution_time = microtime(true) - $_shm_load_start;
+                if($execution_time>$max_time) {
+                    break;
+                }
                 try {
                     $database->beginTransaction();
                     $this->log_message(SCORE_LOG_INFO, "Adding file: {$img[0]} - tags: {$img[2]}");
@@ -341,14 +344,16 @@ class CronUploader extends Extension
                 }
             }
 
+            // Throw exception if there's nothing in the queue
+            if ($merged+$failed+$added === 0) {
+                $this->log_message(SCORE_LOG_WARNING, "Your queue is empty so nothing could be uploaded.");
+                return false;
+            }
 
             $this->log_message(SCORE_LOG_INFO, "Items added: $added");
             $this->log_message(SCORE_LOG_INFO, "Items merged: $merged");
             $this->log_message(SCORE_LOG_INFO, "Items failed: $failed");
 
-
-            // Display upload log
-            $this->handle_log();
 
             return true;
         } finally {
@@ -428,26 +433,42 @@ class CronUploader extends Extension
     }
 
     private const PARTIAL_DOWNLOAD_EXTENSIONS = ['crdownload','part'];
+    private const SKIPPABLE_FILES = ['.ds_store','thumbs.db'];
+    private const SKIPPABLE_DIRECTORIES = ['__macosx'];
 
-    private function is_skippable_file(string $path)
+    private function is_skippable_dir(string $path)
     {
         $info = pathinfo($path);
 
-        if (in_array(strtolower($info['extension']), self::PARTIAL_DOWNLOAD_EXTENSIONS)) {
+        if (array_key_exists("basename", $info) && in_array(strtolower($info['basename']), self::SKIPPABLE_DIRECTORIES)) {
             return true;
         }
 
         return false;
     }
 
-    private function generate_image_queue(string $root_dir, ?int $limit = null): array
+    private function is_skippable_file(string $path)
+    {
+        $info = pathinfo($path);
+
+        if (array_key_exists("basename", $info) && in_array(strtolower($info['basename']), self::SKIPPABLE_FILES)) {
+            return true;
+        }
+
+        if (array_key_exists("extension", $info) && in_array(strtolower($info['extension']), self::PARTIAL_DOWNLOAD_EXTENSIONS)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function generate_image_queue(string $root_dir, ?int $limit = null): Generator
     {
         $base = $this->get_queue_dir();
-        $output = [];
 
         if (!is_dir($base)) {
             $this->log_message(SCORE_LOG_WARNING, "Image Queue Directory could not be found at \"$base\".");
-            return [];
+            return;
         }
 
         $ite = new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS);
@@ -458,18 +479,13 @@ class CronUploader extends Extension
                 $relativePath = substr($fullpath, strlen($base));
                 $tags = path_to_tags($relativePath);
 
-                $img = [
+                yield [
                     0 => $fullpath,
                     1 => $pathinfo ["basename"],
                     2 => $tags
                 ];
-                $output[] = $img;
-                if (!empty($limit) && count($output) >= $limit) {
-                    break;
-                }
             }
         }
-        return $output;
     }
 
 
@@ -478,10 +494,11 @@ class CronUploader extends Extension
         log_msg(self::NAME, $severity, $message);
 
         $time = "[" . date('Y-m-d H:i:s') . "]";
-        $this->output_buffer[] = $time . " " . $message;
+
+        echo $time . " " . $message."\r\n";
+        flush_output();
 
         $log_path = $this->get_log_file();
-
         file_put_contents($log_path, $time . " " . $message);
     }
 
@@ -490,16 +507,13 @@ class CronUploader extends Extension
         return join_path(CronUploaderConfig::get_dir(), "uploads.log");
     }
 
-    /**
-     * This is run at the end to display & save the log.
-     */
-    private function handle_log()
+    private function set_headers(): void
     {
         global $page;
 
-        // Display message
-        $page->set_mode(PageMode::DATA);
-        $page->set_type("text/plain");
-        $page->set_data(implode("\r\n", $this->output_buffer));
+        $page->set_mode(PageMode::MANUAL);
+        $page->set_type(MIME_TYPE_TEXT);
+        $page->send_headers();
     }
+
 }

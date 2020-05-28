@@ -393,6 +393,68 @@ function get_dir_contents(string $dir): array
     );
 }
 
+function remove_empty_dirs(string $dir): bool
+{
+    assert(!empty($dir));
+
+    $result = true;
+
+    if (!is_dir($dir)) {
+        return false;
+    }
+
+    $items = array_diff(
+        scandir(
+            $dir
+        ),
+        ['..', '.']
+    );
+    foreach($items as $item) {
+        $path = join_path($dir, $item);
+        if(is_dir($path)) {
+            $result = $result && remove_empty_dirs($path);
+        } else {
+            $result = false;
+        }
+    }
+    if($result===true) {
+        $result = $result && rmdir($dir);
+    }
+    return $result;
+}
+
+
+function get_files_recursively(string $dir): array
+{
+
+    assert(!empty($dir));
+
+    if (!is_dir($dir)) {
+        return [];
+    }
+
+    $things = array_diff(
+        scandir(
+            $dir
+        ),
+        ['..', '.']
+    );
+
+    $output = [];
+
+
+    foreach($things as $thing) {
+        $path = join_path($dir,$thing);
+        if(is_file($path)) {
+            $output[] = $path;
+        } else {
+            $output = array_merge($output, get_files_recursively($path));
+        }
+    }
+
+    return $output;
+}
+
 /**
  * Returns amount of files & total size of dir.
  */
@@ -598,6 +660,7 @@ function _fatal_error(Exception $e): void
 		<p><b>Message:</b> '.html_escape($message).'
 		'.$q.'
 		<p><b>Version:</b> '.$version.' (on '.$phpver.')
+        <p><b>Stack Trace:</b></p><pre>'.$e->getTraceAsString().'</pre>
 	</body>
 </html>
 ';
