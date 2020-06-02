@@ -131,9 +131,9 @@ class CronUploader extends Extension
             return;
         }
         foreach ($results as $result) {
-            $new_path = join_path($queue_dir, substr($result,strlen($stage_dir)));
+            $new_path = join_path($queue_dir, substr($result, strlen($stage_dir)));
 
-            if(file_exists($new_path)) {
+            if (file_exists($new_path)) {
                 $page->flash("File already exists in queue folder: " .$result);
                 return;
             }
@@ -141,22 +141,22 @@ class CronUploader extends Extension
 
         $success = true;
         foreach ($results as $result) {
-            $new_path = join_path($queue_dir, substr($result,strlen($stage_dir)));
+            $new_path = join_path($queue_dir, substr($result, strlen($stage_dir)));
 
             $dir = dirname($new_path);
-            if(!is_dir($dir)) {
+            if (!is_dir($dir)) {
                 mkdir($dir, 0775, true);
             }
 
-            if(rename($result, $new_path)===false){
+            if (rename($result, $new_path)===false) {
                 $page->flash("Could not move file: " .$result);
                 $success = false;
             }
         }
 
-        if($success===true) {
+        if ($success===true) {
             $page->flash("Re-staged $folder to queue");
-            if(remove_empty_dirs($stage_dir)===false) {
+            if (remove_empty_dirs($stage_dir)===false) {
                 $page->flash("Could not remove $folder");
             }
         }
@@ -317,7 +317,7 @@ class CronUploader extends Extension
             // Upload the file(s)
             foreach ($image_queue as $img) {
                 $execution_time = microtime(true) - $_shm_load_start;
-                if($execution_time>$max_time) {
+                if ($execution_time>$max_time) {
                     break;
                 }
                 try {
@@ -410,7 +410,7 @@ class CronUploader extends Extension
         if (array_key_exists('extension', $pathinfo)) {
             $metadata ['extension'] = $pathinfo ['extension'];
         }
-        $metadata ['tags'] = $tagArray; // doesn't work when not logged in here, handled below
+        $metadata ['tags'] = $tagArray;
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -424,10 +424,6 @@ class CronUploader extends Extension
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename}";
         }
         $this->log_message(SCORE_LOG_INFO, $infomsg);
-
-        // Set tags
-        $img = Image::by_id($event->image_id);
-        $img->set_tags(array_merge($tagArray, $img->get_tag_array()));
 
         return $event;
     }
