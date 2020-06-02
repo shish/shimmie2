@@ -317,6 +317,9 @@ abstract class DataHandlerExtension extends Extension
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
                 }
+                if (empty($image->ext)) {
+                    throw new UploadException("Unable to determine extension for ". $event->tmpname);
+                }
                 try {
                     send_event(new MediaCheckPropertiesEvent($image));
                 } catch (MediaException $e) {
@@ -329,6 +332,9 @@ abstract class DataHandlerExtension extends Extension
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
+                }
+                if (empty($image->ext)) {
+                    throw new UploadException("Unable to determine extension for ". $event->tmpname);
                 }
                 try {
                     send_event(new MediaCheckPropertiesEvent($image));
@@ -404,9 +410,11 @@ abstract class DataHandlerExtension extends Extension
         $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
         if ($config->get_bool("upload_use_mime")) {
             $image->ext = get_extension_for_file($filename);
-        } else {
+        }
+        if (empty($image->ext)) {
             $image->ext = (($pos = strpos($metadata['extension'], '?')) !== false) ? substr($metadata['extension'], 0, $pos) : $metadata['extension'];
         }
+
         $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
         $image->source = $metadata['source'];
 
@@ -428,7 +436,7 @@ abstract class DataHandlerExtension extends Extension
         foreach (getSubclassesOf("DataHandlerExtension") as $handler) {
             $handler = (new $handler());
 
-            foreach($handler->SUPPORTED_MIME as $mime) {
+            foreach ($handler->SUPPORTED_MIME as $mime) {
                 $arr = array_merge($arr, get_all_extension_for_mime($mime));
             }
         }
