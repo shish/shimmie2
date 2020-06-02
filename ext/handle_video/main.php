@@ -1,29 +1,55 @@
 <?php declare(strict_types=1);
 
+abstract class VideoFileHandlerConfig
+{
+    public const PLAYBACK_AUTOPLAY = "video_playback_autoplay";
+    public const PLAYBACK_LOOP = "video_playback_loop";
+    public const ENABLED_FORMATS = "video_enabled_formats";
+}
+
 class VideoFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [
-        MIME_TYPE_WEBM,
+    public const SUPPORTED_MIME = [
+        MIME_TYPE_ASF,
+        MIME_TYPE_AVI,
+        MIME_TYPE_FLASH_VIDEO,
+        MIME_TYPE_MKV,
         MIME_TYPE_MP4_VIDEO,
         MIME_TYPE_OGG_VIDEO,
-        MIME_TYPE_FLASH_VIDEO,
+        MIME_TYPE_QUICKTIME,
+        MIME_TYPE_WEBM,
     ];
-    protected $SUPPORTED_EXT = [EXTENSION_FLASH_VIDEO, EXTENSION_MP4, EXTENSION_M4V, EXTENSION_OGG_VIDEO, EXTENSION_WEBM];
+    protected $SUPPORTED_MIME = self::SUPPORTED_MIME;
 
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
 
-        $config->set_default_bool('video_playback_autoplay', true);
-        $config->set_default_bool('video_playback_loop', true);
+        $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, true);
+        $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_LOOP, true);
+        $config->set_default_array(
+            VideoFileHandlerConfig::ENABLED_FORMATS,
+            [MIME_TYPE_FLASH_VIDEO, MIME_TYPE_MP4_VIDEO, MIME_TYPE_OGG_VIDEO, MIME_TYPE_WEBM]
+        );
+    }
+
+    private function get_options(): array
+    {
+        $output = [];
+        foreach ($this->SUPPORTED_MIME as $format) {
+            $output[MIME_TYPE_MAP[$format][MIME_TYPE_MAP_NAME]] = $format;
+        }
+        return $output;
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Video Options");
-        $sb->add_bool_option("video_playback_autoplay", "Autoplay: ");
+        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, "Autoplay: ");
         $sb->add_label("<br>");
-        $sb->add_bool_option("video_playback_loop", "Loop: ");
+        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_LOOP, "Loop: ");
+        $sb->add_label("<br>Enabled Formats:");
+        $sb->add_multichoice_option(VideoFileHandlerConfig::ENABLED_FORMATS, $this->get_options());
         $event->panel->add_block($sb);
     }
 
@@ -79,6 +105,19 @@ class VideoFileHandler extends DataHandlerExtension
         }
     }
 
+    protected function supported_ext(string $ext): bool
+    {
+        global $config;
+
+        $enabled_formats = $config->get_array(VideoFileHandlerConfig::ENABLED_FORMATS);
+        foreach ($enabled_formats as $format) {
+            if (in_array($ext, MIME_TYPE_MAP[$format][MIME_TYPE_MAP_EXT])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected function create_thumb(string $hash, string $type): bool
     {
         return Media::create_thumbnail_ffmpeg($hash);
@@ -86,6 +125,18 @@ class VideoFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        return in_array(get_mime($tmpname), $this->SUPPORTED_MIME);
+        global $config;
+
+        if (file_exists($tmpname)) {
+            $mime = get_mime($tmpname);
+
+            $enabled_formats = $config->get_array(VideoFileHandlerConfig::ENABLED_FORMATS);
+            foreach ($enabled_formats as $format) {
+                if (in_array($mime, MIME_TYPE_MAP[$format][MIME_TYPE_MAP_MIME])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

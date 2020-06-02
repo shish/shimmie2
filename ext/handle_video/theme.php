@@ -2,9 +2,6 @@
 
 class VideoFileHandlerTheme extends Themelet
 {
-
-    const SUPPORTED_TYPES = [MIME_TYPE_MP4_VIDEO, MIME_TYPE_OGG_VIDEO, MIME_TYPE_WEBM, MIME_TYPE_FLASH_VIDEO];
-
     public function display_image(Page $page, Image $image)
     {
         global $config;
@@ -12,8 +9,8 @@ class VideoFileHandlerTheme extends Themelet
         $thumb_url = make_http($image->get_thumb_link()); //used as fallback image
         $ext = strtolower($image->get_ext());
         $full_url = make_http($ilink);
-        $autoplay = $config->get_bool("video_playback_autoplay");
-        $loop = $config->get_bool("video_playback_loop");
+        $autoplay = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY);
+        $loop = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_LOOP);
         $player = make_link('vendor/bower-asset/mediaelement/build/flashmediaelement.swf');
 
         $width="auto";
@@ -30,7 +27,7 @@ class VideoFileHandlerTheme extends Themelet
         //Browser media format support: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
         $mime = get_mime_for_extension($ext);
 
-        if (in_array($mime, self::SUPPORTED_TYPES)) {
+        if (in_array($mime, VideoFileHandler::SUPPORTED_MIME)) {
             //FLV isn't supported by <video>, but it should always fallback to the flash-based method.
             if ($mime == MIME_TYPE_WEBM) {
                 //Several browsers still lack WebM support sadly: https://caniuse.com/#feat=webm
