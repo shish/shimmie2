@@ -350,6 +350,20 @@ class UserPage extends Extension
         }
     }
 
+    public const USER_SEARCH_REGEX = "/^(?:poster|user)[=|:](.*)$/i";
+    public const USER_ID_SEARCH_REGEX = "/^(?:poster|user)_id[=|:]([0-9]+)$/i";
+
+    public static function has_user_query(array $context): bool
+    {
+        foreach ($context as $term) {
+            if (preg_match(self::USER_SEARCH_REGEX, $term)||
+                preg_match(self::USER_ID_SEARCH_REGEX, $term)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         global $user;
@@ -359,10 +373,10 @@ class UserPage extends Extension
         }
 
         $matches = [];
-        if (preg_match("/^(?:poster|user)[=|:](.*)$/i", $event->term, $matches)) {
+        if (preg_match(self::USER_SEARCH_REGEX, $event->term, $matches)) {
             $user_id = User::name_to_id($matches[1]);
             $event->add_querylet(new Querylet("images.owner_id = $user_id"));
-        } elseif (preg_match("/^(?:poster|user)_id[=|:]([0-9]+)$/i", $event->term, $matches)) {
+        } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
             $user_id = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.owner_id = $user_id"));
         } elseif ($user->can(Permissions::VIEW_IP) && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {

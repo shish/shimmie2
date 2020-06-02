@@ -96,7 +96,10 @@ abstract class Permissions
     public const CRON_ADMIN = "cron_admin";
     public const APPROVE_IMAGE = "approve_image";
     public const APPROVE_COMMENT = "approve_comment";
-    
+
+    public const SET_PRIVATE_IMAGE = "set_private_image";
+    public const SET_OTHERS_PRIVATE_IMAGES = "set_others_private_images";
+
     public const BULK_IMPORT = "bulk_import";
     public const BULK_EXPORT = "bulk_export";
 }

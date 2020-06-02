@@ -98,6 +98,7 @@ new UserClass("user", "base", [
     Permissions::EDIT_FAVOURITES => true,
     Permissions::SEND_PM => true,
     Permissions::READ_PM => true,
+    Permissions::SET_PRIVATE_IMAGE => true,
 ]);
 
 new UserClass("hellbanned", "user", [
@@ -200,6 +201,9 @@ new UserClass("admin", "base", [
 
     Permissions::BULK_IMPORT =>true,
     Permissions::BULK_EXPORT =>true,
+
+    Permissions::SET_PRIVATE_IMAGE => true,
+    Permissions::SET_OTHERS_PRIVATE_IMAGES => true,
 ]);
 
 @include_once "data/config/user-classes.conf.php";
