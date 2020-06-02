@@ -364,7 +364,13 @@ class CronUploader extends Extension
 
     private function move_uploaded(string $path, string $filename, string $output_subdir, bool $corrupt = false)
     {
-        $relativeDir = dirname(substr($path, strlen(CronUploaderConfig::get_dir()) + 7));
+        $rootDir = CronUploaderConfig::get_dir();
+        $rootLength = strlen($rootDir);
+        if ($rootDir[$rootLength-1]=="/"||$rootDir[$rootLength-1]=="\\") {
+            $rootLength--;
+        }
+
+        $relativeDir = dirname(substr($path, $rootLength + 7));
 
         if ($relativeDir==".") {
             $relativeDir = "";
