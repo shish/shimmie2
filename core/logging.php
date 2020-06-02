@@ -10,6 +10,15 @@ define("SCORE_LOG_INFO", 20);
 define("SCORE_LOG_DEBUG", 10);
 define("SCORE_LOG_NOTSET", 0);
 
+const LOGGING_LEVEL_NAMES = [
+    SCORE_LOG_NOTSET=>"Not Set",
+    SCORE_LOG_DEBUG=>"Debug",
+    SCORE_LOG_INFO=>"Info",
+    SCORE_LOG_WARNING=>"Warning",
+    SCORE_LOG_ERROR=>"Error",
+    SCORE_LOG_CRITICAL=>"Critical",
+];
+
 /**
  * A shorthand way to send a LogEvent
  *

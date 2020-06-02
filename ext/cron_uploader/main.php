@@ -15,6 +15,8 @@ class CronUploader extends Extension
     const UPLOADED_DIR = "uploaded";
     const FAILED_DIR = "failed_to_upload";
 
+    private static $IMPORT_RUNNING = false;
+
     public function onInitExt(InitExtEvent $event)
     {
         // Set default values
@@ -58,6 +60,15 @@ class CronUploader extends Extension
         $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
         $sb->add_text_option(CronUploaderConfig::KEY, "Key", true);
         $sb->add_choice_option(CronUploaderConfig::USER, $users, "User", true);
+        $sb->add_bool_option(CronUploaderConfig::STOP_ON_ERROR, "Stop On Error", true);
+        $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, [
+            LOGGING_LEVEL_NAMES[SCORE_LOG_DEBUG] => SCORE_LOG_DEBUG,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_INFO] => SCORE_LOG_INFO,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_WARNING] => SCORE_LOG_WARNING,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_ERROR] => SCORE_LOG_ERROR,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_CRITICAL] => SCORE_LOG_CRITICAL,
+        ], "Output Log Level: ", true);
+        $sb->add_bool_option(CronUploaderConfig::INCLUDE_ALL_LOGS, "Include All Logs", true);
         $sb->end_table();
         $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
 
@@ -102,6 +113,23 @@ class CronUploader extends Extension
                     $this->restage_folder($_POST["failed_dir"]);
                 }
                 break;
+        }
+    }
+
+    public function onLog(LogEvent $event)
+    {
+        global $config;
+        if (self::$IMPORT_RUNNING &&
+            $event->priority >= $config->get_int(CronUploaderConfig::LOG_LEVEL) &&
+            ($event->section==self::NAME || $config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS))
+        ) {
+            $output =  "[" . date('Y-m-d H:i:s') . "] [" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message  ;
+
+            echo $output . "\r\n";
+            flush_output();
+
+            $log_path = $this->get_log_file();
+            file_put_contents($log_path, $output);
         }
     }
 
@@ -275,7 +303,7 @@ class CronUploader extends Extension
      */
     public function process_upload(string $key, ?int $upload_count = null): bool
     {
-        global $database, $_shm_load_start;
+        global $database, $config, $_shm_load_start;
 
         $max_time = intval(ini_get('max_execution_time'))*.8;
 
@@ -301,6 +329,7 @@ class CronUploader extends Extension
             throw new SCoreException("Cron upload process is already running");
         }
 
+        self::$IMPORT_RUNNING = true;
         try {
             //set_time_limit(0);
 
@@ -338,9 +367,13 @@ class CronUploader extends Extension
                     }
 
                     $failed++;
-                    $this->move_uploaded($img[0], $img[1], $output_subdir, true);
                     $this->log_message(SCORE_LOG_ERROR, "(" . gettype($e) . ") " . $e->getMessage());
                     $this->log_message(SCORE_LOG_ERROR, $e->getTraceAsString());
+                    if ($config->get_bool(CronUploaderConfig::STOP_ON_ERROR)) {
+                        break;
+                    } else {
+                        $this->move_uploaded($img[0], $img[1], $output_subdir, true);
+                    }
                 }
             }
 
@@ -357,6 +390,7 @@ class CronUploader extends Extension
 
             return true;
         } finally {
+            self::$IMPORT_RUNNING = false;
             flock($lockfile, LOCK_UN);
             fclose($lockfile);
         }
@@ -494,14 +528,6 @@ class CronUploader extends Extension
     private function log_message(int $severity, string $message): void
     {
         log_msg(self::NAME, $severity, $message);
-
-        $time = "[" . date('Y-m-d H:i:s') . "]";
-
-        echo $time . " " . $message."\r\n";
-        flush_output();
-
-        $log_path = $this->get_log_file();
-        file_put_contents($log_path, $time . " " . $message);
     }
 
     private function get_log_file(): string
@@ -517,5 +543,4 @@ class CronUploader extends Extension
         $page->set_type(MIME_TYPE_TEXT);
         $page->send_headers();
     }
-
 }
