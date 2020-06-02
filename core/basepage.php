@@ -259,7 +259,6 @@ class BasePage
 
     public function flush_output(): void
     {
-
     }
 
     /**
@@ -267,7 +266,7 @@ class BasePage
      */
     public function display(): void
     {
-        if($this->mode!=PageMode::MANUAL) {
+        if ($this->mode!=PageMode::MANUAL) {
             $this->send_headers();
         }
 

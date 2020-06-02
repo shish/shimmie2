@@ -74,7 +74,7 @@ class CronUploaderTheme extends Themelet
 
             <ul>
                 <li>If an import is already running, another cannot start until it is done.</li>
-                <li>Each time it runs it will import for up to ".number_format ($max_time)." seconds. This is controlled by the PHP max execution time.</li>
+                <li>Each time it runs it will import for up to ".number_format($max_time)." seconds. This is controlled by the PHP max execution time.</li>
                 <li>Uploaded images will be moved to the 'uploaded' directory into a subfolder named after the time the import started. It's recommended that you remove everything out of this directory from time to time. If you have admin controls enabled, this can be done from <a href='".make_link("admin")."'>Board Admin</a>.</li>
                 <li>If you enable the db logging extension, you can view the log output on this screen. Otherwise the log will be written to a file at ".CronUploaderConfig::get_dir().DIRECTORY_SEPARATOR."uploads.log</li>
 			</ul>

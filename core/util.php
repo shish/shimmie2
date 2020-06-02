@@ -409,15 +409,15 @@ function remove_empty_dirs(string $dir): bool
         ),
         ['..', '.']
     );
-    foreach($items as $item) {
+    foreach ($items as $item) {
         $path = join_path($dir, $item);
-        if(is_dir($path)) {
+        if (is_dir($path)) {
             $result = $result && remove_empty_dirs($path);
         } else {
             $result = false;
         }
     }
-    if($result===true) {
+    if ($result===true) {
         $result = $result && rmdir($dir);
     }
     return $result;
@@ -426,7 +426,6 @@ function remove_empty_dirs(string $dir): bool
 
 function get_files_recursively(string $dir): array
 {
-
     assert(!empty($dir));
 
     if (!is_dir($dir)) {
@@ -443,9 +442,9 @@ function get_files_recursively(string $dir): array
     $output = [];
 
 
-    foreach($things as $thing) {
-        $path = join_path($dir,$thing);
-        if(is_file($path)) {
+    foreach ($things as $thing) {
+        $path = join_path($dir, $thing);
+        if (is_file($path)) {
             $output[] = $path;
         } else {
             $output = array_merge($output, get_files_recursively($path));
