@@ -197,6 +197,9 @@ new UserClass("admin", "base", [
 
     Permissions::APPROVE_IMAGE => true,
     Permissions::APPROVE_COMMENT => true,
+
+    Permissions::BULK_IMPORT =>true,
+    Permissions::BULK_EXPORT =>true,
 ]);
 
 @include_once "data/config/user-classes.conf.php";

@@ -39,7 +39,7 @@ function add_dir(string $base): array
  * @param string $tags
  * @throws UploadException
  */
-function add_image(string $tmpname, string $filename, string $tags): void
+function add_image(string $tmpname, string $filename, string $tags): int
 {
     assert(file_exists($tmpname));
 
@@ -52,7 +52,11 @@ function add_image(string $tmpname, string $filename, string $tags): void
 
     $metadata['tags'] = Tag::explode($tags);
     $metadata['source'] = null;
-    send_event(new DataUploadEvent($tmpname, $metadata));
+
+    $due = new DataUploadEvent($tmpname, $metadata);
+    send_event($due);
+
+    return $due->image_id;
 }
 
 /**

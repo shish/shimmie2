@@ -170,6 +170,19 @@ class Ratings extends Extension
         }
     }
 
+    public function onBulkExport(BulkExportEvent $event)
+    {
+        $event->fields["rating"] = $event->image->rating;
+    }
+    public function onBulkImport(BulkImportEvent $event)
+    {
+        if (property_exists($event->fields, "rating")
+            && $event->fields->rating != null
+            && Ratings::rating_is_valid($event->fields->rating)) {
+            $this->set_rating($event->image->id, $event->fields->rating, "");
+        }
+    }
+
     public function onRatingSet(RatingSetEvent $event)
     {
         if (empty($event->image->rating)) {
