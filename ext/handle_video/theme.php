@@ -16,6 +16,15 @@ class VideoFileHandlerTheme extends Themelet
         $loop = $config->get_bool("video_playback_loop");
         $player = make_link('vendor/bower-asset/mediaelement/build/flashmediaelement.swf');
 
+        $width="auto";
+        if ($image->width>1) {
+            $width = $image->width."px";
+        }
+        $height="auto";
+        if ($image->height>1) {
+            $height = $image->height."px";
+        }
+
         $html = "Video not playing? <a href='$ilink'>Click here</a> to download the file.<br/>";
 
         //Browser media format support: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
@@ -53,7 +62,7 @@ class VideoFileHandlerTheme extends Themelet
 
                 $html .= "
 					<video controls class='shm-main-image' id='main_image' alt='main image' poster='$thumb_url' {$autoplay} {$loop}
-					style='max-width: 100%'>
+					style='height: $height; width: $width; max-width: 100%'>
 						<source src='{$ilink}' type='{$mime}'>
 
 						<!-- If browser doesn't support filetype, fallback to flash -->
