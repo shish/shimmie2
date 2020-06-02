@@ -3,10 +3,6 @@
 * MIME types and extension information and resolvers                        *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-class MimeTypeMap {
-
-}
-
 const EXTENSION_ANI = 'ani';
 const EXTENSION_ASC = 'asc';
 const EXTENSION_ASF = 'asf';
@@ -116,6 +112,7 @@ const MIME_TYPE_XML_APPLICATION = 'application/xml';
 const MIME_TYPE_XSL = 'application/xsl+xml';
 const MIME_TYPE_ZIP = 'application/zip';
 
+const MIME_TYPE_MAP_NAME = 'name';
 const MIME_TYPE_MAP_EXT = 'ext';
 const MIME_TYPE_MAP_MIME = 'mime';
 
@@ -126,166 +123,207 @@ const MIME_TYPE_MAP_MIME = 'mime';
 
 const MIME_TYPE_MAP = [
     MIME_TYPE_ANI => [
+        MIME_TYPE_MAP_NAME => "ANI Cursor",
         MIME_TYPE_MAP_EXT => [EXTENSION_ANI],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_ANI],
     ],
     MIME_TYPE_AVI => [
+        MIME_TYPE_MAP_NAME => "AVI",
         MIME_TYPE_MAP_EXT => [EXTENSION_AVI],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_AVI,'video/avi','video/msvideo'],
     ],
     MIME_TYPE_ASF => [
+        MIME_TYPE_MAP_NAME => "ASF/WMV",
         MIME_TYPE_MAP_EXT => [EXTENSION_ASF,EXTENSION_WMA,EXTENSION_WMV],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_ASF,'audio/x-ms-wma','video/x-ms-wmv'],
     ],
     MIME_TYPE_BMP => [
+        MIME_TYPE_MAP_NAME => "BMP",
         MIME_TYPE_MAP_EXT => [EXTENSION_BMP],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_BMP],
     ],
     MIME_TYPE_BZIP => [
+        MIME_TYPE_MAP_NAME => "BZIP",
         MIME_TYPE_MAP_EXT => [EXTENSION_BZIP],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_BZIP],
     ],
     MIME_TYPE_BZIP2 => [
+        MIME_TYPE_MAP_NAME => "BZIP2",
         MIME_TYPE_MAP_EXT => [EXTENSION_BZIP2],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_BZIP2],
     ],
     MIME_TYPE_COMIC_ZIP => [
+        MIME_TYPE_MAP_NAME => "CBZ",
         MIME_TYPE_MAP_EXT => [EXTENSION_CBZ],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_COMIC_ZIP],
     ],
     MIME_TYPE_CSS => [
+        MIME_TYPE_MAP_NAME => "Cascading Style Sheet",
         MIME_TYPE_MAP_EXT => [EXTENSION_CSS],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_CSS],
     ],
     MIME_TYPE_CSV => [
+        MIME_TYPE_MAP_NAME => "CSV",
         MIME_TYPE_MAP_EXT => [EXTENSION_CSV],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_CSV],
     ],
     MIME_TYPE_FLASH => [
+        MIME_TYPE_MAP_NAME => "Flash",
         MIME_TYPE_MAP_EXT => [EXTENSION_FLASH],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_FLASH],
     ],
     MIME_TYPE_FLASH_VIDEO => [
+        MIME_TYPE_MAP_NAME => "Flash Video",
         MIME_TYPE_MAP_EXT => [EXTENSION_FLASH_VIDEO],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_FLASH_VIDEO,'video/flv'],
     ],
     MIME_TYPE_GIF => [
+        MIME_TYPE_MAP_NAME => "GIF",
         MIME_TYPE_MAP_EXT => [EXTENSION_GIF],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_GIF],
     ],
     MIME_TYPE_GZIP => [
+        MIME_TYPE_MAP_NAME => "GZIP",
         MIME_TYPE_MAP_EXT => [EXTENSION_GZIP],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_TAR],
     ],
     MIME_TYPE_HTML => [
+        MIME_TYPE_MAP_NAME => "HTML",
         MIME_TYPE_MAP_EXT => [EXTENSION_HTM, EXTENSION_HTML],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_HTML],
     ],
     MIME_TYPE_ICO => [
+        MIME_TYPE_MAP_NAME => "Icon",
         MIME_TYPE_MAP_EXT => [EXTENSION_ICO, EXTENSION_CUR],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_ICO, MIME_TYPE_WIN_BITMAP],
     ],
     MIME_TYPE_JPEG => [
+        MIME_TYPE_MAP_NAME => "JPEG",
         MIME_TYPE_MAP_EXT => [EXTENSION_JPG, EXTENSION_JPEG, EXTENSION_JFIF, EXTENSION_JFI],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_JPEG],
     ],
     MIME_TYPE_JS => [
+        MIME_TYPE_MAP_NAME => "JavaScript",
         MIME_TYPE_MAP_EXT => [EXTENSION_JS],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_JS],
     ],
     MIME_TYPE_JSON => [
+        MIME_TYPE_MAP_NAME => "JSON",
         MIME_TYPE_MAP_EXT => [EXTENSION_JSON],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_JSON],
     ],
     MIME_TYPE_MKV => [
+        MIME_TYPE_MAP_NAME => "Matroska",
         MIME_TYPE_MAP_EXT => [EXTENSION_MKV],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_MKV],
     ],
     MIME_TYPE_MP3 => [
+        MIME_TYPE_MAP_NAME => "MP3",
         MIME_TYPE_MAP_EXT => [EXTENSION_MP3],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_MP3],
     ],
     MIME_TYPE_MP4_AUDIO => [
+        MIME_TYPE_MAP_NAME => "MP4 Audio",
         MIME_TYPE_MAP_EXT => [EXTENSION_M4A],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_MP4_AUDIO,"audio/m4a"],
     ],
     MIME_TYPE_MP4_VIDEO => [
+        MIME_TYPE_MAP_NAME => "MP4 Video",
         MIME_TYPE_MAP_EXT => [EXTENSION_MP4,EXTENSION_M4V],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_MP4_VIDEO,'video/x-m4v'],
     ],
     MIME_TYPE_MPEG => [
+        MIME_TYPE_MAP_NAME => "MPEG",
         MIME_TYPE_MAP_EXT => [EXTENSION_MPG,EXTENSION_MPEG],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_MPEG],
     ],
     MIME_TYPE_PDF => [
+        MIME_TYPE_MAP_NAME => "PDF",
         MIME_TYPE_MAP_EXT => [EXTENSION_PDF],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_PDF],
     ],
     MIME_TYPE_PHP => [
+        MIME_TYPE_MAP_NAME => "PHP",
         MIME_TYPE_MAP_EXT => [EXTENSION_PHP,EXTENSION_PHP5],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_PHP],
     ],
     MIME_TYPE_PNG => [
+        MIME_TYPE_MAP_NAME => "PNG",
         MIME_TYPE_MAP_EXT => [EXTENSION_PNG],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_PNG],
     ],
     MIME_TYPE_PSD => [
+        MIME_TYPE_MAP_NAME => "PSD",
         MIME_TYPE_MAP_EXT => [EXTENSION_PSD],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_PSD],
     ],
     MIME_TYPE_OGG_AUDIO => [
+        MIME_TYPE_MAP_NAME => "Ogg Vorbis",
         MIME_TYPE_MAP_EXT => [EXTENSION_OGG_AUDIO,EXTENSION_OGG],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_OGG_AUDIO,MIME_TYPE_OGG],
     ],
     MIME_TYPE_OGG_VIDEO => [
+        MIME_TYPE_MAP_NAME => "Ogg Theora",
         MIME_TYPE_MAP_EXT => [EXTENSION_OGG_VIDEO],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_OGG_VIDEO],
     ],
     MIME_TYPE_QUICKTIME => [
+        MIME_TYPE_MAP_NAME => "Quicktime",
         MIME_TYPE_MAP_EXT => [EXTENSION_MOV],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_QUICKTIME],
     ],
     MIME_TYPE_RSS => [
+        MIME_TYPE_MAP_NAME => "RSS",
         MIME_TYPE_MAP_EXT => [EXTENSION_RSS],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_RSS],
     ],
     MIME_TYPE_SVG => [
+        MIME_TYPE_MAP_NAME => "SVG",
         MIME_TYPE_MAP_EXT => [EXTENSION_SVG],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_SVG],
     ],
     MIME_TYPE_TAR => [
+        MIME_TYPE_MAP_NAME => "TAR",
         MIME_TYPE_MAP_EXT => [EXTENSION_TAR],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_TAR],
     ],
     MIME_TYPE_TEXT => [
+        MIME_TYPE_MAP_NAME => "Text",
         MIME_TYPE_MAP_EXT => [EXTENSION_TEXT, EXTENSION_ASC],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_TEXT],
     ],
     MIME_TYPE_TIFF => [
+        MIME_TYPE_MAP_NAME => "TIFF",
         MIME_TYPE_MAP_EXT => [EXTENSION_TIF,EXTENSION_TIFF],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_TIFF],
     ],
     MIME_TYPE_WAV => [
+        MIME_TYPE_MAP_NAME => "Wave",
         MIME_TYPE_MAP_EXT => [EXTENSION_WAV],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_WAV],
     ],
     MIME_TYPE_WEBM => [
+        MIME_TYPE_MAP_NAME => "WebM",
         MIME_TYPE_MAP_EXT => [EXTENSION_WEBM],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_WEBM],
     ],
     MIME_TYPE_WEBP => [
+        MIME_TYPE_MAP_NAME => "WebP",
         MIME_TYPE_MAP_EXT => [EXTENSION_WEBP],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_WEBP],
     ],
     MIME_TYPE_XML => [
+        MIME_TYPE_MAP_NAME => "XML",
         MIME_TYPE_MAP_EXT => [EXTENSION_XML],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_XML,MIME_TYPE_XML_APPLICATION],
     ],
     MIME_TYPE_XSL => [
+        MIME_TYPE_MAP_NAME => "XSL",
         MIME_TYPE_MAP_EXT => [EXTENSION_XSL],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_XSL],
     ],
     MIME_TYPE_ZIP => [
+        MIME_TYPE_MAP_NAME => "ZIP",
         MIME_TYPE_MAP_EXT => [EXTENSION_ZIP],
         MIME_TYPE_MAP_MIME => [MIME_TYPE_ZIP],
     ],
@@ -299,7 +337,7 @@ function get_mime_for_extension(string $ext): ?string
     $ext = strtolower($ext);
 
     foreach (MIME_TYPE_MAP as $key=>$value) {
-        if(in_array($ext,$value[MIME_TYPE_MAP_EXT])) {
+        if (in_array($ext, $value[MIME_TYPE_MAP_EXT])) {
             return $key;
         }
     }
@@ -314,7 +352,7 @@ function get_mime_for_extension(string $ext): ?string
  */
 function get_mime(string $file, string $ext=""): string
 {
-    if(!file_exists($file)) {
+    if (!file_exists($file)) {
         throw new SCoreException("File not found: ".$file);
     }
 
@@ -332,10 +370,11 @@ function get_mime(string $file, string $ext=""): string
         $type = trim(mime_content_type($file));
     }
 
-    if($type===false || empty($type)) {
+    if ($type===false || empty($type)) {
         // Checking by extension is our last resort
-        if($ext==null||strlen($ext) == 0)
+        if ($ext==null||strlen($ext) == 0) {
             $ext = pathinfo($file, PATHINFO_EXTENSION);
+        }
 
         $type = get_mime_for_extension($ext);
     }
@@ -356,12 +395,12 @@ function get_extension(?string $mime_type): ?string
         return null;
     }
 
-    if($mime_type==MIME_TYPE_OCTET_STREAM) {
+    if ($mime_type==MIME_TYPE_OCTET_STREAM) {
         return null;
     }
 
     foreach (MIME_TYPE_MAP as $key=>$value) {
-        if(in_array($mime_type,$value[MIME_TYPE_MAP_MIME])) {
+        if (in_array($mime_type, $value[MIME_TYPE_MAP_MIME])) {
             return $value[MIME_TYPE_MAP_EXT][0];
         }
     }
@@ -379,7 +418,7 @@ function get_all_extension_for_mime(?string $mime_type): array
     }
 
     foreach (MIME_TYPE_MAP as $key=>$value) {
-        if(in_array($mime_type,$value[MIME_TYPE_MAP_MIME])) {
+        if (in_array($mime_type, $value[MIME_TYPE_MAP_MIME])) {
             $output = array_merge($output, $value[MIME_TYPE_MAP_EXT]);
         }
     }
@@ -396,7 +435,7 @@ function get_extension_for_file(String $file_path): ?String
 {
     $mime = get_mime($file_path);
     if (!empty($mime)) {
-        if($mime==MIME_TYPE_OCTET_STREAM) {
+        if ($mime==MIME_TYPE_OCTET_STREAM) {
             return null;
         } else {
             $ext = get_extension($mime);
