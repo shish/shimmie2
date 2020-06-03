@@ -257,10 +257,6 @@ class BasePage
         }
     }
 
-    public function flush_output(): void
-    {
-    }
-
     /**
      * Display the page according to the mode and data given.
      */
