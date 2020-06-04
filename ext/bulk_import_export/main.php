@@ -30,11 +30,14 @@ class BulkImportExport extends DataHandlerExtension
                     throw new SCoreException("Could not get " . self::EXPORT_INFO_FILE_NAME . " from archive");
                 }
                 $total = 0;
+                $skipped = 0;
 
                 while (!empty($json_data)) {
                     $item = array_pop($json_data);
                     $image = Image::by_hash($item->hash);
                     if ($image!=null) {
+                        $skipped++;
+                        log_info("BulkImportExport", "Image $item->hash already present, skipping");
                         continue;
                     }
 
@@ -78,7 +81,7 @@ class BulkImportExport extends DataHandlerExtension
                 }
                 $event->image_id = -2; // default -1 = upload wasn't handled
 
-                log_info("BulkImportExport", "Imported " . $total . " items", "Imported " . $total . " items");
+                log_info("BulkImportExport", "Imported $total items, skipped $skipped", "Imported $total items, skipped $skipped");
             } else {
                 throw new SCoreException("Could not open zip archive");
             }
