@@ -123,7 +123,7 @@ class PrivateImage extends Extension
     }
 
 
-    const SEARCH_REGEXP = "/^private:(yes|no)/";
+    const SEARCH_REGEXP = "/^private:(yes|no|any)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         global $user, $database, $user_config;
@@ -153,20 +153,26 @@ class PrivateImage extends Extension
         }
 
         if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
-            $query = "private = ";
             $params = [];
+            $query = "";
+            switch ($matches[1]) {
+                case "no":
+                    $query .= "private = SCORE_BOOL_N";
+                    break;
+                case "yes":
+                    $query .= "private = SCORE_BOOL_Y";
 
-            if ($matches[1] == "no") {
-                $query .= "SCORE_BOOL_N";
-            } else {
-                $query .= "SCORE_BOOL_Y";
-
-                // Admins can view others private images, but they have to specify the user
-                if (!$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES) ||
-                    !UserPage::has_user_query($event->context)) {
-                    $query .= " AND owner_id = :private_owner_id";
+                    // Admins can view others private images, but they have to specify the user
+                    if (!$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES) ||
+                        !UserPage::has_user_query($event->context)) {
+                        $query .= " AND owner_id = :private_owner_id";
+                        $params["private_owner_id"] = $user->id;
+                    }
+                    break;
+                case "any":
+                    $query .= "private = SCORE_BOOL_N OR owner_id = :private_owner_id";
                     $params["private_owner_id"] = $user->id;
-                }
+                    break;
             }
             $event->add_querylet(new Querylet($database->scoreql_to_sql($query), $params));
         }
