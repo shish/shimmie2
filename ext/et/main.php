@@ -98,6 +98,20 @@ class ET extends Extension
             ],
         ];
 
+        if (file_exists(".git")) {
+            try {
+                $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
+                $commitBranch= trim(exec('git rev-parse --abbrev-ref HEAD'));
+                $commitOrigin= trim(exec('git config --get remote.origin.url'));
+                $info['git'] = [
+                    'commit' => $commitHash,
+                    'branch' => $commitBranch,
+                    'origin' => $commitOrigin,
+                ];
+            } catch (Exception $e) {
+            }
+        }
+
         return $info;
     }
 
