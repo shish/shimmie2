@@ -207,8 +207,8 @@ class SetupBlock extends Block
         global $config;
         $val = $config->get_int($name);
 
-        $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;'>\n";
-        $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
+        $html = "<input type='number' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;' step='1' />\n";
+        $html .= "<input type='hidden' name='_type_$name' value='int' />\n";
 
         $this->format_option($name, $html, $label, $table_row);
     }
