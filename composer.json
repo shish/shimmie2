@@ -58,7 +58,7 @@
 		"ext-curl": "some extensions",
 		"ext-ctype": "some extensions",
 		"ext-json": "some extensions",
-		"ext-zip": "self-updater extension",
+		"ext-zip": "self-updater extension, bulk import/export",
 		"ext-zlib": "anti-spam",
 		"ext-xml": "some extensions",
 		"ext-gd": "GD-based thumbnailing"
