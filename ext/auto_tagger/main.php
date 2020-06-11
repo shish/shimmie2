@@ -52,6 +52,10 @@ class DeleteAutoTagEvent extends Event
     }
 }
 
+class AutoTaggerException extends SCoreException
+{
+}
+
 class AddAutoTagException extends SCoreException
 {
 }
