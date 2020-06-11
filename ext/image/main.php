@@ -33,6 +33,7 @@ class ImageIO extends Extension
         $config->set_default_int(ImageConfig::THUMB_SCALING, 100);
         $config->set_default_int(ImageConfig::THUMB_QUALITY, 75);
         $config->set_default_string(ImageConfig::THUMB_TYPE, EXTENSION_JPG);
+        $config->set_default_string(ImageConfig::THUMB_FIT, Media::RESIZE_TYPE_FIT);
 
         if (function_exists(self::EXIF_READ_FUNCTION)) {
             $config->set_default_bool(ImageConfig::SHOW_META, false);
@@ -215,35 +216,41 @@ class ImageIO extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
+        global $config;
+
         $sb = new SetupBlock("Image Options");
+        $sb->start_table();
         $sb->position = 30;
         // advanced only
         //$sb->add_text_option(ImageConfig::ILINK, "Image link: ");
         //$sb->add_text_option(ImageConfig::TLINK, "<br>Thumbnail link: ");
-        $sb->add_text_option(ImageConfig::TIP, "Image tooltip: ");
-        $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "<br>Upload collision handler: ");
+        $sb->add_text_option(ImageConfig::TIP, "Image tooltip", true);
+        $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "Upload collision handler", true);
         if (function_exists(self::EXIF_READ_FUNCTION)) {
-            $sb->add_bool_option(ImageConfig::SHOW_META, "<br>Show metadata: ");
+            $sb->add_bool_option(ImageConfig::SHOW_META, "Show metadata", true);
         }
-
+        $sb->end_table();
         $event->panel->add_block($sb);
 
         $sb = new SetupBlock("Thumbnailing");
-        $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine: ");
-        $sb->add_label("<br>");
-        $sb->add_choice_option(ImageConfig::THUMB_TYPE, self::THUMBNAIL_TYPES, "Filetype: ");
+        $sb->start_table();
+        $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine", true);
+        $sb->add_choice_option(ImageConfig::THUMB_TYPE, self::THUMBNAIL_TYPES, "Filetype", true);
 
-        $sb->add_label("<br>Size ");
-        $sb->add_int_option(ImageConfig::THUMB_WIDTH);
-        $sb->add_label(" x ");
-        $sb->add_int_option(ImageConfig::THUMB_HEIGHT);
-        $sb->add_label(" px at ");
-        $sb->add_int_option(ImageConfig::THUMB_QUALITY);
-        $sb->add_label(" % quality ");
+        $sb->add_int_option(ImageConfig::THUMB_WIDTH, "Max Width", true);
+        $sb->add_int_option(ImageConfig::THUMB_HEIGHT, "Max Height", true);
 
-        $sb->add_label("<br>High-DPI scaling ");
-        $sb->add_int_option(ImageConfig::THUMB_SCALING);
-        $sb->add_label("%");
+        $options = [];
+        foreach (MediaEngine::RESIZE_TYPE_SUPPORT[$config->get_string(ImageConfig::THUMB_ENGINE)] as $type) {
+            $options[$type] = $type;
+        }
+
+        $sb->add_choice_option(ImageConfig::THUMB_FIT, $options, "Fit", true);
+
+        $sb->add_int_option(ImageConfig::THUMB_QUALITY, "Quality", true);
+        $sb->add_int_option(ImageConfig::THUMB_SCALING, "High-DPI Scale %", true);
+
+        $sb->end_table();
 
         $event->panel->add_block($sb);
     }

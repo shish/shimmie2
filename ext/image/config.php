@@ -8,6 +8,7 @@ abstract class ImageConfig
     const THUMB_SCALING =    'thumb_scaling';
     const THUMB_QUALITY =    'thumb_quality';
     const THUMB_TYPE =       'thumb_type';
+    const THUMB_FIT =        'thumb_fit';
 
     const SHOW_META =        'image_show_meta';
     const ILINK =            'image_ilink';

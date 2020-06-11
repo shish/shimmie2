@@ -73,6 +73,12 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
 {
     global $config;
 
+    $fit = $config->get_string(ImageConfig::THUMB_FIT);
+
+    if (in_array($fit, [Media::RESIZE_TYPE_FILL, Media::RESIZE_TYPE_STRETCH, Media::RESIZE_TYPE_FIT_BLUR])) {
+        return [$config->get_int(ImageConfig::THUMB_WIDTH), $config->get_int(ImageConfig::THUMB_HEIGHT)];
+    }
+
     if ($orig_width === 0) {
         $orig_width = 192;
     }
@@ -132,17 +138,31 @@ function get_thumbnail_max_size_scaled(): array
 
 function create_image_thumb(string $hash, string $type, string $engine = null)
 {
+    global $config;
+
     $inname = warehouse_path(Image::IMAGE_DIR, $hash);
     $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
     $tsize = get_thumbnail_max_size_scaled();
-    create_scaled_image($inname, $outname, $tsize, $type, $engine);
+    create_scaled_image(
+        $inname,
+        $outname,
+        $tsize,
+        $type,
+        $engine,
+        $config->get_string(ImageConfig::THUMB_FIT)
+    );
 }
 
-function create_scaled_image(string $inname, string $outname, array $tsize, string $type, ?string $engine)
+
+
+function create_scaled_image(string $inname, string $outname, array $tsize, string $type, ?string $engine = null, ?string $resize_type = null)
 {
     global $config;
     if (empty($engine)) {
         $engine = $config->get_string(ImageConfig::THUMB_ENGINE);
+    }
+    if (empty($resize_type)) {
+        $resize_type = $config->get_string(ImageConfig::THUMB_FIT);
     }
 
     $output_format = $config->get_string(ImageConfig::THUMB_TYPE);
@@ -157,10 +177,10 @@ function create_scaled_image(string $inname, string $outname, array $tsize, stri
         $outname,
         $tsize[0],
         $tsize[1],
-        false,
+        $resize_type,
         $output_format,
         $config->get_int(ImageConfig::THUMB_QUALITY),
         true,
-        $config->get_bool('thumb_upscale', false)
+        true
     ));
 }

@@ -88,7 +88,7 @@ class TranscodeImage extends Extension
                 $sb->add_choice_option(TranscodeConfig::UPLOAD_PREFIX.$format, $outputs, "$display", true);
             }
         }
-        $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy format quality: ");
+        $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality", true);
         $sb->end_table();
         $event->panel->add_block($sb);
     }

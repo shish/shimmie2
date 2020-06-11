@@ -74,4 +74,19 @@ abstract class MediaEngine
             EXTENSION_PNG,
         ],
     ];
+    public const RESIZE_TYPE_SUPPORT = [
+        MediaEngine::GD => [
+            Media::RESIZE_TYPE_FIT,
+            Media::RESIZE_TYPE_STRETCH
+        ],
+        MediaEngine::IMAGICK => [
+            Media::RESIZE_TYPE_FIT,
+            Media::RESIZE_TYPE_FIT_BLUR,
+            Media::RESIZE_TYPE_FILL,
+            Media::RESIZE_TYPE_STRETCH,
+        ],
+        MediaEngine::FFMPEG => [
+            Media::RESIZE_TYPE_FIT
+        ]
+    ];
 }

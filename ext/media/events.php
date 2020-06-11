@@ -11,8 +11,8 @@ class MediaResizeEvent extends Event
     public $target_height;
     public $target_quality;
     public $minimize;
-    public $ignore_aspect_ratio;
     public $allow_upscale;
+    public $resize_type;
 
     public function __construct(
         String $engine,
@@ -21,7 +21,7 @@ class MediaResizeEvent extends Event
         string $output_path,
         int $target_width,
         int $target_height,
-        bool $ignore_aspect_ratio = false,
+        string $resize_type = Media::RESIZE_TYPE_FIT,
         string $target_format = null,
         int $target_quality = 80,
         bool $minimize = false,
@@ -38,8 +38,8 @@ class MediaResizeEvent extends Event
         $this->target_format = $target_format;
         $this->target_quality = $target_quality;
         $this->minimize = $minimize;
-        $this->ignore_aspect_ratio = $ignore_aspect_ratio;
         $this->allow_upscale = $allow_upscale;
+        $this->resize_type = $resize_type;
     }
 }
 

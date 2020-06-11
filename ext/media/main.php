@@ -48,6 +48,10 @@ class Media extends Extension
         EXTENSION_JPEG => EXTENSION_JPG,
     ];
 
+    const RESIZE_TYPE_FIT = "Fit";
+    const RESIZE_TYPE_FIT_BLUR = "Fit Blur";
+    const RESIZE_TYPE_FILL =  "Fill";
+    const RESIZE_TYPE_STRETCH =  "Stretch";
 
     //RIFF####WEBPVP8?..............ANIM
     private const WEBP_ANIMATION_HEADER =
@@ -206,6 +210,10 @@ class Media extends Extension
      */
     public function onMediaResize(MediaResizeEvent $event)
     {
+        if (!in_array($event->resize_type, MediaEngine::RESIZE_TYPE_SUPPORT[MediaEngine::IMAGICK])) {
+            throw new MediaException("Resize type $event->resize_type not supported by selected media engine $event->engine");
+        }
+
         switch ($event->engine) {
             case MediaEngine::GD:
                 $info = getimagesize($event->input_path);
@@ -220,7 +228,7 @@ class Media extends Extension
                     $event->target_height,
                     $event->output_path,
                     $event->target_format,
-                    $event->ignore_aspect_ratio,
+                    $event->resize_type,
                     $event->target_quality,
                     $event->allow_upscale
                 );
@@ -236,7 +244,7 @@ class Media extends Extension
                     $event->target_height,
                     $event->output_path,
                     $event->target_format,
-                    $event->ignore_aspect_ratio,
+                    $event->resize_type,
                     $event->target_quality,
                     $event->minimize,
                     $event->allow_upscale
@@ -356,6 +364,7 @@ class Media extends Extension
         }
 
         $inname = warehouse_path(Image::IMAGE_DIR, $hash);
+        $tmpname = tempnam("/tmp", "shimmie_ffmpeg_thumb");
         $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
 
         $orig_size = self::video_size($inname);
@@ -376,12 +385,11 @@ class Media extends Extension
         $args = [
             escapeshellarg($ffmpeg),
             "-y", "-i", escapeshellarg($inname),
-            "-vf", "thumbnail,scale={$scaled_size[0]}:{$scaled_size[1]}",
+            "-vf", "thumbnail",
             "-f", "image2",
             "-vframes", "1",
-            "-c:v", $codec,
-            "-q:v", $quality,
-            escapeshellarg($outname),
+            "-c:v", "png",
+            escapeshellarg($tmpname),
         ];
 
         $cmd = escapeshellcmd(implode(" ", $args));
@@ -390,6 +398,10 @@ class Media extends Extension
 
         if ((int)$ret == (int)0) {
             log_debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
+
+            create_scaled_image($tmpname, $outname, $scaled_size, "png");
+
+
             return true;
         } else {
             log_error('media', "Generating thumbnail with command `$cmd`, returns $ret");
@@ -569,7 +581,7 @@ class Media extends Extension
         int $new_height,
         string $output_filename,
         string $output_type = null,
-        bool $ignore_aspect_ratio = false,
+        string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
         bool $minimize = false,
         bool $allow_upscale = true
@@ -598,16 +610,41 @@ class Media extends Extension
             $input_type = $input_type . ":";
         }
 
-
-        $resize_args = "";
+        $resize_suffix = "";
         if (!$allow_upscale) {
-            $resize_args .= "\>";
+            $resize_suffix .= "\>";
         }
-        if ($ignore_aspect_ratio) {
-            $resize_args .= "\!";
+        if ($resize_type==Media::RESIZE_TYPE_STRETCH) {
+            $resize_suffix .= "\!";
         }
 
         $args = "";
+        $resize_arg = "-resize";
+        if ($minimize) {
+            $args .= "-strip ";
+            $resize_arg = "-thumbnail";
+        }
+
+        $file_arg = "${input_type}\"${input_path}[0]\"";
+
+        switch ($resize_type) {
+            case Media::RESIZE_TYPE_FIT:
+            case Media::RESIZE_TYPE_STRETCH:
+                $args .= "${resize_arg} ${new_width}x${new_height}${resize_suffix} ${file_arg}";
+                break;
+            case Media::RESIZE_TYPE_FILL:
+                $args .= "${resize_arg} ${new_width}x${new_height}\^ -gravity center -extent ${new_width}x${new_height} ${file_arg}";
+                break;
+            case Media::RESIZE_TYPE_FIT_BLUR:
+                $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
+                $args .= "${file_arg} ".
+                    "\( -clone 0 -resize ${new_width}x${new_height}\^ -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
+                    "\( -clone 0 -resize ${new_width}x${new_height} \) ".
+                    "-delete 0 -gravity center -compose over -composite";
+                break;
+        }
+
+
         switch ($output_type) {
             case Media::WEBP_LOSSLESS:
                 $args .= '-define webp:lossless=true';
@@ -617,17 +654,14 @@ class Media extends Extension
                 break;
         }
 
-        if ($minimize) {
-            $args .= " -strip -thumbnail";
-        } else {
-            $args .= " -resize";
-        }
+
+        $args .= " -quality ${output_quality} -background ${bg}";
 
 
         $output_ext = self::determine_ext($output_type);
 
-        $format = '"%s"  %s %ux%u%s -quality %u -background %s %s"%s[0]"  %s:"%s" 2>&1';
-        $cmd = sprintf($format, $convert, $args, $new_width, $new_height, $resize_args, $output_quality, $bg, $input_type, $input_path, $output_ext, $output_filename);
+        $format = '"%s"  %s   %s:"%s" 2>&1';
+        $cmd = sprintf($format, $convert, $args, $output_ext, $output_filename);
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
         if ($ret != 0) {
@@ -657,7 +691,7 @@ class Media extends Extension
         int $new_height,
         string $output_filename,
         string $output_type = null,
-        bool $ignore_aspect_ratio = false,
+        string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
         bool $allow_upscale = true
     ) {
@@ -693,7 +727,7 @@ class Media extends Extension
             throw new InsufficientMemoryException("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
         }
 
-        if (!$ignore_aspect_ratio) {
+        if ($resize_type==Media::RESIZE_TYPE_FIT) {
             list($new_width, $new_height) = get_scaled_by_aspect_ratio($width, $height, $new_width, $new_height);
         }
         if (!$allow_upscale &&
