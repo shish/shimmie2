@@ -85,14 +85,12 @@ class TagCategories extends Extension
             );
             if (in_array($type, $types)) {
                 $event->add_querylet(
-                    new Querylet("EXISTS (
-					    SELECT 1
-					    FROM image_tags it
-					    LEFT JOIN tags t ON it.tag_id = t.id
-					    WHERE images.id = it.image_id
-					    GROUP BY image_id
-					    HAVING SUM(CASE WHEN LOWER(t.tag) LIKE LOWER('$type:%') THEN 1 ELSE 0 END) $cmp $count
-					)")
+                    new Querylet("(
+					    SELECT count(distinct t.id)
+					    FROM tags t
+					    INNER JOIN image_tags it ON it.tag_id = t.id AND images.id = it.image_id
+					    WHERE LOWER(t.tag) LIKE LOWER('$type:%')) $cmp $count
+					")
                 );
             }
         }
