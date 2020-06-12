@@ -15,6 +15,7 @@ class BulkExportEvent extends Event
 class BulkImportEvent extends Event
 {
     public $image;
+    public $fields = [];
 
     public function __construct(Image $image, $fields)
     {

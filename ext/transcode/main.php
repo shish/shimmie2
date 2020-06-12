@@ -182,7 +182,7 @@ class TranscodeImage extends Extension
                     $size_difference = 0;
                     foreach ($event->items as $image) {
                         try {
-                            $database->beginTransaction();
+                            $database->begin_transaction();
 
                             $before_size =  $image->filesize;
 

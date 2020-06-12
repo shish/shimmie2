@@ -60,7 +60,7 @@ class Database
         $this->connect_engine();
         $this->engine->init($this->db);
 
-        $this->beginTransaction();
+        $this->begin_transaction();
     }
 
     private function connect_engine(): void
@@ -82,7 +82,7 @@ class Database
         }
     }
 
-    public function beginTransaction(): void
+    public function begin_transaction(): void
     {
         if ($this->transaction === false) {
             $this->db->beginTransaction();
@@ -90,9 +90,14 @@ class Database
         }
     }
 
+    public function is_transaction_open(): bool
+    {
+        return !is_null($this->db) && $this->transaction === true;
+    }
+
     public function commit(): bool
     {
-        if (!is_null($this->db) && $this->transaction === true) {
+        if ($this->is_transaction_open()) {
             $this->transaction = false;
             return $this->db->commit();
         } else {
@@ -102,7 +107,7 @@ class Database
 
     public function rollback(): bool
     {
-        if (!is_null($this->db) && $this->transaction === true) {
+        if ($this->is_transaction_open()) {
             $this->transaction = false;
             return $this->db->rollback();
         } else {

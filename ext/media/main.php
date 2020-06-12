@@ -1050,7 +1050,7 @@ class Media extends Extension
 
             $this->set_version(MediaConfig::VERSION, 2);
 
-            $database->beginTransaction();
+            $database->begin_transaction();
         }
     }
 }

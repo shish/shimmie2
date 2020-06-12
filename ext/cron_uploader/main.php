@@ -351,7 +351,7 @@ class CronUploader extends Extension
                     break;
                 }
                 try {
-                    $database->beginTransaction();
+                    $database->begin_transaction();
                     $this->log_message(SCORE_LOG_INFO, "Adding file: {$img[0]} - tags: {$img[2]}");
                     $result = $this->add_image($img[0], $img[1], $img[2]);
                     $database->commit();
@@ -363,7 +363,9 @@ class CronUploader extends Extension
                     }
                 } catch (Exception $e) {
                     try {
-                        $database->rollback();
+                        if ($database->is_transaction_open()) {
+                            $database->rollback();
+                        }
                     } catch (Exception $e) {
                     }
 

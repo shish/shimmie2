@@ -10,7 +10,7 @@ class BulkImportExport extends DataHandlerExtension
 
     public function onDataUpload(DataUploadEvent $event)
     {
-        global $user;
+        global $user, $database;
 
         if ($this->supported_ext($event->type) &&
             $user->can(Permissions::BULK_IMPORT)) {
@@ -32,23 +32,26 @@ class BulkImportExport extends DataHandlerExtension
                 $total = 0;
                 $skipped = 0;
 
+                $database->commit();
+
                 while (!empty($json_data)) {
                     $item = array_pop($json_data);
-                    $image = Image::by_hash($item->hash);
-                    if ($image!=null) {
-                        $skipped++;
-                        log_info("BulkImportExport", "Image $item->hash already present, skipping");
-                        continue;
-                    }
-
-                    $tmpfile = tempnam("/tmp", "shimmie_bulk_import");
-                    $stream = $zip->getStream($item->hash);
-                    if ($zip === false) {
-                        log_error("BulkImportExport", "Could not import " . $item->hash . ": File not in zip", "Could not import " . $item->hash . ": File not in zip");
-                        continue;
-                    }
-
+                    $database->begin_transaction();
                     try {
+                        $image = Image::by_hash($item->hash);
+                        if ($image!=null) {
+                            $skipped++;
+                            log_info(BulkImportExportInfo::KEY, "Image $item->hash already present, skipping");
+                            $database->commit();
+                            continue;
+                        }
+
+                        $tmpfile = tempnam("/tmp", "shimmie_bulk_import");
+                        $stream = $zip->getStream($item->hash);
+                        if ($zip === false) {
+                            throw new SCoreException("Could not import " . $item->hash . ": File not in zip");
+                        }
+
                         file_put_contents($tmpfile, $stream);
 
                         $id = add_image($tmpfile, $item->filename, Tag::implode($item->tags));
@@ -68,20 +71,25 @@ class BulkImportExport extends DataHandlerExtension
                         }
                         send_event(new BulkImportEvent($image, $item));
 
+                        $database->commit();
                         $total++;
                     } catch (Exception $ex) {
-                        throw new SCoreException("Could not import " . $item->hash . ": " . $ex->getMessage());
-                        //log_error("BulkImportExport", "Could not import " . $item->hash . ": " . $ex->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
-                        //continue;
+                        try {
+                            $database->rollBack();
+                        } catch (Exception $ex2) {
+                            log_error(BulkImportExportInfo::KEY, "Could not roll back transaction: " . $ex2->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
+                        }
+                        log_error(BulkImportExportInfo::KEY, "Could not import " . $item->hash . ": " . $ex->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
+                        continue;
                     } finally {
-                        if (is_file($tmpfile)) {
+                        if (!empty($tmpfile) && is_file($tmpfile)) {
                             unlink($tmpfile);
                         }
                     }
                 }
                 $event->image_id = -2; // default -1 = upload wasn't handled
 
-                log_info("BulkImportExport", "Imported $total items, skipped $skipped", "Imported $total items, skipped $skipped");
+                log_info(BulkImportExportInfo::KEY, "Imported $total items, skipped $skipped", "Imported $total items, skipped $skipped");
             } else {
                 throw new SCoreException("Could not open zip archive");
             }
@@ -135,8 +143,6 @@ class BulkImportExport extends DataHandlerExtension
                 $page->set_mode(PageMode::FILE);
                 $page->set_file($zip_filename, true);
                 $page->set_filename(basename($zip_filename));
-
-                $event->redirect = false;
             }
         }
     }
