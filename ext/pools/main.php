@@ -705,7 +705,7 @@ class Pools extends Extension
      *
      * #return int[] Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
      */
-    private function get_nav_posts(Pool $pool, int $imageID): array
+    private function get_nav_posts(Pool $pool, int $imageID): ?array
     {
         global $database;
 
