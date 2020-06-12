@@ -10,4 +10,5 @@ class TagListInfo extends ExtensionInfo
     public $authors = self::SHISH_AUTHOR;
     public $description = "Show the tags in various ways";
     public $core = true;
+    public $visibility = self::VISIBLE_HIDDEN;
 }

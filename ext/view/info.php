@@ -10,4 +10,5 @@ class ViewImageInfo extends ExtensionInfo
     public $authors = self::SHISH_AUTHOR;
     public $description = "Allows users to see uploaded images";
     public $core = true;
+    public $visibility = self::VISIBLE_HIDDEN;
 }

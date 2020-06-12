@@ -10,4 +10,5 @@ class SetupInfo extends ExtensionInfo
     public $authors = self::SHISH_AUTHOR;
     public $description = "Allows the site admin to configure the board to his or her taste";
     public $core = true;
+    public $visibility = self::VISIBLE_HIDDEN;
 }

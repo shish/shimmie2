@@ -9,6 +9,6 @@ class UpgradeInfo extends ExtensionInfo
     public $url = self::SHIMMIE_URL;
     public $authors = self::SHISH_AUTHOR;
     public $description = "Keeps things happy behind the scenes";
-    public $visibility = self::VISIBLE_ADMIN;
+    public $visibility = self::VISIBLE_HIDDEN;
     public $core = true;
 }

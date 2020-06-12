@@ -9,7 +9,7 @@ class FourOhFourInfo extends ExtensionInfo
     public $url = self::SHIMMIE_URL;
     public $authors = self::SHISH_AUTHOR;
     public $license = self::LICENSE_GPLV2;
-    public $visibility = self::VISIBLE_ADMIN;
+    public $visibility = self::VISIBLE_HIDDEN;
     public $description = "If no other extension puts anything onto the page, show 404";
     public $core = true;
 }

@@ -9,5 +9,6 @@ class HelpPagesInfo extends ExtensionInfo
     public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
     public $license = self::LICENSE_WTFPL;
     public $description = "Provides documentation screens";
+    public $visibility = self::VISIBLE_HIDDEN;
     public $core = true;
 }
