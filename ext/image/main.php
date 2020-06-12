@@ -279,6 +279,12 @@ class ImageIO extends Extension
                 $file = $image->get_image_filename();
             }
 
+            if (!file_exists($file)) {
+                http_response_code(404);
+                die();
+            }
+
+
             if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
                 $if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
             } else {
