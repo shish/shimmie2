@@ -590,7 +590,7 @@ class Media extends Extension
             $output_type = self::WEBP_LOSSLESS;
         }
 
-        $bg = "black";
+        $bg = "white";
         if (self::supports_alpha($output_type)) {
             $bg = "none";
         }
@@ -618,7 +618,7 @@ class Media extends Extension
         }
 
         if ($minimize) {
-            $args .= " -strip -thumbnail";
+            $args .= " -strip -flatten -thumbnail";
         } else {
             $args .= " -resize";
         }
