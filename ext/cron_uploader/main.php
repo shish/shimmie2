@@ -119,11 +119,12 @@ class CronUploader extends Extension
     public function onLog(LogEvent $event)
     {
         global $config;
+        $all = $config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
         if (self::$IMPORT_RUNNING &&
             $event->priority >= $config->get_int(CronUploaderConfig::LOG_LEVEL) &&
-            ($event->section==self::NAME || $config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS))
+            ($event->section==self::NAME || $all)
         ) {
-            $output =  "[" . date('Y-m-d H:i:s') . "] [" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message  ;
+            $output =  "[" . date('Y-m-d H:i:s') . "] " . ($all ? '['. $event->section .'] ' :'') . "[" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message  ;
 
             echo $output . "\r\n";
             flush_output();
