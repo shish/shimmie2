@@ -7,6 +7,11 @@ abstract class MediaEngine
     public const FFMPEG = "ffmpeg";
     public const STATIC = "static";
 
+    const IMAGE_ENGINES = [
+        "GD" => MediaEngine::GD,
+        "ImageMagick" => MediaEngine::IMAGICK,
+    ];
+
     public const ALL = [
         MediaEngine::GD,
         MediaEngine::FFMPEG,

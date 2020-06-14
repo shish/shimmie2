@@ -176,6 +176,7 @@ function create_scaled_image(string $inname, string $outname, array $tsize, stri
         $tsize[1],
         $resize_type,
         $output_mime,
+        $config->get_string(ImageConfig::THUMB_ALPHA_COLOR),
         $config->get_int(ImageConfig::THUMB_QUALITY),
         true,
         true

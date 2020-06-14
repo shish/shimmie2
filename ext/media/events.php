@@ -10,6 +10,7 @@ class MediaResizeEvent extends Event
     public $target_width;
     public $target_height;
     public $target_quality;
+    public $alpha_color;
     public $minimize;
     public $allow_upscale;
     public $resize_type;
@@ -23,6 +24,7 @@ class MediaResizeEvent extends Event
         int $target_height,
         string $resize_type = Media::RESIZE_TYPE_FIT,
         string $target_mime = null,
+        string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         int $target_quality = 80,
         bool $minimize = false,
         bool $allow_upscale = true
@@ -36,6 +38,10 @@ class MediaResizeEvent extends Event
         $this->target_height = $target_height;
         $this->target_width = $target_width;
         $this->target_mime = $target_mime;
+        if (empty($alpha_color)) {
+            $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR;
+        }
+        $this->alpha_color = $alpha_color;
         $this->target_quality = $target_quality;
         $this->minimize = $minimize;
         $this->allow_upscale = $allow_upscale;

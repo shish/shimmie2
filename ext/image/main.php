@@ -37,6 +37,7 @@ class ImageIO extends Extension
         $config->set_default_int(ImageConfig::THUMB_QUALITY, 75);
         $config->set_default_string(ImageConfig::THUMB_MIME, MimeType::JPEG);
         $config->set_default_string(ImageConfig::THUMB_FIT, Media::RESIZE_TYPE_FIT);
+        $config->set_default_string(ImageConfig::THUMB_ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
 
         if (function_exists(self::EXIF_READ_FUNCTION)) {
             $config->set_default_bool(ImageConfig::SHOW_META, false);
@@ -275,6 +276,9 @@ class ImageIO extends Extension
 
         $sb->add_int_option(ImageConfig::THUMB_QUALITY, "Quality", true);
         $sb->add_int_option(ImageConfig::THUMB_SCALING, "High-DPI Scale %", true);
+        if ($config->get_string(ImageConfig::THUMB_MIME)===MimeType::JPEG) {
+            $sb->add_color_option(ImageConfig::THUMB_ALPHA_COLOR, "Alpha Conversion Color", true);
+        }
 
         $sb->end_table();
 

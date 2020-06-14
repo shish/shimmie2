@@ -9,4 +9,5 @@ class TranscodeConfig
     const UPLOAD = "transcode_upload";
     const UPLOAD_PREFIX = "transcode_upload_";
     const QUALITY = "transcode_quality";
+    const ALPHA_COLOR = "transcode_alpha_color";
 }

@@ -50,9 +50,9 @@ class ResizeImage extends Extension
     {
         $sb = new SetupBlock("Image Resize");
         $sb->start_table();
-        $sb->add_choice_option(ResizeConfig::ENGINE, Media::IMAGE_MEDIA_ENGINES, "Engine: ", true);
-        $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images: ", true);
-        $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload: ", true);
+        $sb->add_choice_option(ResizeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
+        $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images", true);
+        $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload", true);
         $sb->end_table();
         $sb->start_table();
         $sb->add_table_header("Preset/Default Dimensions");

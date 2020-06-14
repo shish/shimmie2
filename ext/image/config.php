@@ -11,6 +11,7 @@ abstract class ImageConfig
     const THUMB_QUALITY =    'thumb_quality';
     const THUMB_MIME =       'thumb_mime';
     const THUMB_FIT =        'thumb_fit';
+    const THUMB_ALPHA_COLOR ='thumb_alpha_color';
 
     const SHOW_META =        'image_show_meta';
     const ILINK =            'image_ilink';

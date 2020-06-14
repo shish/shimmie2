@@ -16,12 +16,7 @@ class Media extends Extension
     /** @var MediaTheme */
     protected $theme;
 
-    const IMAGE_MEDIA_ENGINES = [
-        "GD" => MediaEngine::GD,
-        "ImageMagick" => MediaEngine::IMAGICK,
-    ];
-
-    const LOSSLESS_FORMATS = [
+    private const LOSSLESS_FORMATS = [
         MimeType::WEBP_LOSSLESS,
         MimeType::PNG,
         MimeType::PSD,
@@ -31,16 +26,17 @@ class Media extends Extension
         MimeType::GIF
     ];
 
-    const ALPHA_FORMATS = [
+    private const ALPHA_FORMATS = [
         MimeType::WEBP_LOSSLESS,
         MimeType::WEBP,
         MimeType::PNG,
     ];
 
-    const RESIZE_TYPE_FIT = "Fit";
-    const RESIZE_TYPE_FIT_BLUR = "Fit Blur";
-    const RESIZE_TYPE_FILL =  "Fill";
-    const RESIZE_TYPE_STRETCH =  "Stretch";
+    public const RESIZE_TYPE_FIT = "Fit";
+    public const RESIZE_TYPE_FIT_BLUR = "Fit Blur";
+    public const RESIZE_TYPE_FILL =  "Fill";
+    public const RESIZE_TYPE_STRETCH =  "Stretch";
+    public const DEFAULT_ALPHA_CONVERSION_COLOR = "#00000000";
 
     public static function imagick_available(): bool
     {
@@ -194,6 +190,7 @@ class Media extends Extension
                     $event->target_height,
                     $event->output_path,
                     $event->target_mime,
+                    $event->alpha_color,
                     $event->resize_type,
                     $event->target_quality,
                     $event->allow_upscale
@@ -210,6 +207,7 @@ class Media extends Extension
                     $event->target_height,
                     $event->output_path,
                     $event->target_mime,
+                    $event->alpha_color,
                     $event->resize_type,
                     $event->target_quality,
                     $event->minimize,
@@ -542,6 +540,7 @@ class Media extends Extension
         int $new_height,
         string $output_filename,
         string $output_mime = null,
+        string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
         bool $minimize = false,
@@ -563,7 +562,7 @@ class Media extends Extension
             $output_mime = MimeType::WEBP_LOSSLESS;
         }
 
-        $bg = "black";
+        $bg = "\"$alpha_color\"";
         if (self::supports_alpha($output_mime)) {
             $bg = "none";
         }
@@ -590,15 +589,15 @@ class Media extends Extension
         switch ($resize_type) {
             case Media::RESIZE_TYPE_FIT:
             case Media::RESIZE_TYPE_STRETCH:
-                $args .= "${resize_arg} ${new_width}x${new_height}${resize_suffix} ${file_arg}";
+                $args .= "${file_arg} ${resize_arg} ${new_width}x${new_height}${resize_suffix} -background ${bg} -flatten ";
                 break;
             case Media::RESIZE_TYPE_FILL:
-                $args .= "${resize_arg} ${new_width}x${new_height}\^ -background none -gravity center -extent ${new_width}x${new_height} ${file_arg}";
+                $args .= "${file_arg} ${resize_arg} ${new_width}x${new_height}\^ -background ${bg} -flatten -gravity center -extent ${new_width}x${new_height} ";
                 break;
             case Media::RESIZE_TYPE_FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
                 $args .= "${file_arg} ".
-                    "\( -clone 0 -resize ${new_width}x${new_height}\^ -background none -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
+                    "\( -clone 0 -resize ${new_width}x${new_height}\^ -background ${bg} -flatten -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
                     "\( -clone 0 -resize ${new_width}x${new_height} \) ".
                     "-delete 0 -gravity center -compose over -composite";
                 break;
@@ -615,7 +614,7 @@ class Media extends Extension
         }
 
 
-        $args .= " -quality ${output_quality} -background ${bg}";
+        $args .= " -quality ${output_quality} ";
 
 
         $output_ext = self::determine_ext($output_mime);
@@ -651,6 +650,7 @@ class Media extends Extension
         int $new_height,
         string $output_filename,
         string $output_mime = null,
+        string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
         bool $allow_upscale = true
@@ -767,6 +767,34 @@ class Media extends Extension
                 $height
             ) === false) {
                 throw new MediaException("Unable to copy resized image data to new image");
+            }
+
+            switch ($output_mime) {
+                case MimeType::BMP:
+                case MimeType::JPEG:
+                    // In case of alpha channels
+                    $width = imagesx($image_resized);
+                    $height = imagesy($image_resized);
+                    $new_image = imagecreatetruecolor($width, $height);
+                    if ($new_image===false) {
+                        throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
+                    }
+
+                    $background_color = Media::hex_color_allocate($new_image, $alpha_color);
+                    if ($background_color===false) {
+                        throw new ImageTranscodeException("Could not allocate background color");
+                    }
+                    if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color)===false) {
+                        throw new ImageTranscodeException("Could not fill background color");
+                    }
+                    if (imagecopy($new_image, $image_resized, 0, 0, 0, 0, $width, $height)===false) {
+                        throw new ImageTranscodeException("Could not copy source image to new image");
+                    }
+
+                    imagedestroy($image_resized);
+                    $image_resized = $new_image;
+                break;
+
             }
 
             switch ($output_mime) {
@@ -903,5 +931,14 @@ class Media extends Extension
 
             $database->begin_transaction();
         }
+    }
+
+    public static function hex_color_allocate($im, $hex)
+    {
+        $hex = ltrim($hex, '#');
+        $a = hexdec(substr($hex, 0, 2));
+        $b = hexdec(substr($hex, 2, 2));
+        $c = hexdec(substr($hex, 4, 2));
+        return imagecolorallocate($im, $a, $b, $c);
     }
 }

@@ -51,6 +51,7 @@ class TranscodeImage extends Extension
         $config->set_default_bool(TranscodeConfig::UPLOAD, false);
         $config->set_default_string(TranscodeConfig::ENGINE, MediaEngine::GD);
         $config->set_default_int(TranscodeConfig::QUALITY, 80);
+        $config->set_default_string(TranscodeConfig::ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
 
         foreach (array_values(self::INPUT_MIMES) as $mime) {
             $config->set_default_string(self::get_mapping_name($mime), "");
@@ -142,9 +143,9 @@ class TranscodeImage extends Extension
 
         $sb = new SetupBlock("Image Transcode");
         $sb->start_table();
-        $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images: ", true);
-        $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE, Media::IMAGE_MEDIA_ENGINES, "Engine", true);
+        $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images", true);
+        $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload", true);
+        $sb->add_choice_option(TranscodeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
         foreach (self::INPUT_MIMES as $display=> $mime) {
             if (MediaEngine::is_input_supported($engine, $mime)) {
                 $outputs = $this->get_supported_output_mimes($engine, $mime);
@@ -152,6 +153,7 @@ class TranscodeImage extends Extension
             }
         }
         $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality", true);
+        $sb->add_color_option(TranscodeConfig::ALPHA_COLOR, "Alpha Conversion Color", true);
         $sb->end_table();
         $event->panel->add_block($sb);
     }
@@ -337,7 +339,7 @@ class TranscodeImage extends Extension
             throw new ImageTranscodeException("Source and target MIMEs are the same: ".$source_mime);
         }
 
-        $engine = $config->get_string("transcode_engine");
+        $engine = $config->get_string(TranscodeConfig::ENGINE);
 
 
 
@@ -385,11 +387,11 @@ class TranscodeImage extends Extension
                         throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
                     }
                     try {
-                        $black = imagecolorallocate($new_image, 0, 0, 0);
-                        if ($black===false) {
+                        $background_color = Media::hex_color_allocate($new_image, $config->get_string(TranscodeConfig::ALPHA_COLOR));
+                        if ($background_color===false) {
                             throw new ImageTranscodeException("Could not allocate background color");
                         }
-                        if (imagefilledrectangle($new_image, 0, 0, $width, $height, $black)===false) {
+                        if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color)===false) {
                             throw new ImageTranscodeException("Could not fill background color");
                         }
                         if (imagecopy($new_image, $image, 0, 0, 0, 0, $width, $height)===false) {
@@ -422,13 +424,14 @@ class TranscodeImage extends Extension
         }
         $ext = Media::determine_ext($target_mime);
 
-        $args = " -flatten -background ";
+        $args = " -background ";
 
         if (Media::supports_alpha($target_mime)) {
             $args .= "none ";
         } else {
-            $args .= "black ";
+            $args .= "\"".$config->get_string(TranscodeConfig::ALPHA_COLOR)."\" ";
         }
+        $args .= " -flatten ";
 
         switch ($target_mime) {
             case MimeType::PNG:

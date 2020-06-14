@@ -278,6 +278,17 @@ class SetupBlock extends Block
 
         $this->format_option($name, $html, $label, $table_row);
     }
+
+    public function add_color_option(string $name, string $label=null, bool $table_row = false)
+    {
+        global $config;
+        $val = html_escape($config->get_string($name));
+
+        $html = "<input type='color' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
+        $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
+    }
 }
 
 class Setup extends Extension
