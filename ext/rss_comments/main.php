@@ -16,7 +16,7 @@ class RSSComments extends Extension
         global $config, $database, $page;
         if ($event->page_matches("rss/comments")) {
             $page->set_mode(PageMode::DATA);
-            $page->set_type(MIME_TYPE_RSS);
+            $page->set_mime(MimeType::RSS);
 
             $comments = $database->get_all("
 				SELECT

@@ -10,10 +10,12 @@ class ImageIO extends Extension
     /** @var ImageIOTheme */
     protected $theme;
 
-    const COLLISION_OPTIONS = ['Error'=>ImageConfig::COLLISION_ERROR, 'Merge'=>ImageConfig::COLLISION_MERGE];
+    const COLLISION_OPTIONS = [
+        'Error'=>ImageConfig::COLLISION_ERROR,
+        'Merge'=>ImageConfig::COLLISION_MERGE
+    ];
 
     const EXIF_READ_FUNCTION = "exif_read_data";
-
 
     const THUMBNAIL_ENGINES = [
         'Built-in GD' => MediaEngine::GD,
@@ -21,8 +23,8 @@ class ImageIO extends Extension
     ];
 
     const THUMBNAIL_TYPES = [
-        'JPEG' => EXTENSION_JPG,
-        'WEBP (Not IE/Safari compatible)' => EXTENSION_WEBP
+        'JPEG' => MimeType::JPEG,
+        'WEBP (Not IE/Safari compatible)' => MimeType::WEBP
     ];
 
     public function onInitExt(InitExtEvent $event)
@@ -33,7 +35,7 @@ class ImageIO extends Extension
         $config->set_default_int(ImageConfig::THUMB_HEIGHT, 192);
         $config->set_default_int(ImageConfig::THUMB_SCALING, 100);
         $config->set_default_int(ImageConfig::THUMB_QUALITY, 75);
-        $config->set_default_string(ImageConfig::THUMB_TYPE, EXTENSION_JPG);
+        $config->set_default_string(ImageConfig::THUMB_MIME, MimeType::JPEG);
         $config->set_default_string(ImageConfig::THUMB_FIT, Media::RESIZE_TYPE_FIT);
 
         if (function_exists(self::EXIF_READ_FUNCTION)) {
@@ -44,6 +46,25 @@ class ImageIO extends Extension
         $config->set_default_string(ImageConfig::TIP, '$tags // $size // $filesize');
         $config->set_default_string(ImageConfig::UPLOAD_COLLISION_HANDLER, ImageConfig::COLLISION_ERROR);
         $config->set_default_int(ImageConfig::EXPIRES, (60*60*24*31));	// defaults to one month
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
+        global $config;
+
+        if ($this->get_version(ImageConfig::VERSION) < 1) {
+            switch ($config->get_string("thumb_type")) {
+                case FileExtension::WEBP:
+                    $config->set_string(ImageConfig::THUMB_MIME, MimeType::WEBP);
+                    break;
+                case FileExtension::JPEG:
+                    $config->set_string(ImageConfig::THUMB_MIME, MimeType::JPEG);
+                    break;
+            }
+            $config->set_string("thumb_type", null);
+
+            $this->set_version(ImageConfig::VERSION, 1);
+        }
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -164,6 +185,10 @@ class ImageIO extends Extension
             $id = $event->id;
             $image = $event->image;
 
+            $image->set_mime(
+                MimeType::get_for_file($image->get_image_filename())
+            );
+
             /* Check to make sure the image exists. */
             $existing = Image::by_id($id);
 
@@ -197,7 +222,7 @@ class ImageIO extends Extension
             $existing->remove_image_only(); // Actually delete the old image file from disk
 
             /* Generate new thumbnail */
-            send_event(new ThumbnailGenerationEvent($image->hash, strtolower($image->ext)));
+            send_event(new ThumbnailGenerationEvent($image->hash, strtolower($image->get_mime())));
 
             log_info("image", "Replaced Image #{$id} with ({$image->hash})");
         } catch (ImageReplaceException $e) {
@@ -236,7 +261,7 @@ class ImageIO extends Extension
         $sb = new SetupBlock("Thumbnailing");
         $sb->start_table();
         $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine", true);
-        $sb->add_choice_option(ImageConfig::THUMB_TYPE, self::THUMBNAIL_TYPES, "Filetype", true);
+        $sb->add_choice_option(ImageConfig::THUMB_MIME, self::THUMBNAIL_TYPES, "Filetype", true);
 
         $sb->add_int_option(ImageConfig::THUMB_WIDTH, "Max Width", true);
         $sb->add_int_option(ImageConfig::THUMB_HEIGHT, "Max Height", true);
@@ -277,18 +302,18 @@ class ImageIO extends Extension
         $image = Image::by_id($image_id);
         if (!is_null($image)) {
             if ($type == "thumb") {
-                $ext = $config->get_string(ImageConfig::THUMB_TYPE);
-                $page->set_type(get_mime_for_extension($ext));
-
+                $mime = $config->get_string(ImageConfig::THUMB_MIME);
                 $file = $image->get_thumb_filename();
             } else {
-                $page->set_type($image->get_mime_type());
+                $mime = $image->get_mime();
                 $file = $image->get_image_filename();
             }
             if (!file_exists($file)) {
                 http_response_code(404);
                 die();
             }
+
+            $page->set_mime($mime);
 
 
             if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
@@ -319,7 +344,7 @@ class ImageIO extends Extension
                 $page->add_http_header('Expires: ' . $expires);
             }
 
-            send_event(new ImageDownloadingEvent($image, $file, $image->get_mime_type()));
+            send_event(new ImageDownloadingEvent($image, $file, $image->get_mime()));
         } else {
             $page->set_title("Not Found");
             $page->set_heading("Not Found");

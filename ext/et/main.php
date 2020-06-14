@@ -76,7 +76,7 @@ class ET extends Extension
             "extensions" => [
                 "core" => $core_exts,
                 "extra" => $extra_exts,
-                "handled_extensions" => DataHandlerExtension::get_all_supported_exts(),
+                "handled_mimes" => DataHandlerExtension::get_all_supported_mimes(),
             ],
             "stats" => [
                 'images'   => (int)$database->get_one("SELECT COUNT(*) FROM images"),
@@ -94,7 +94,7 @@ class ET extends Extension
                 "width" => $config->get_int(ImageConfig::THUMB_WIDTH),
                 "height" => $config->get_int(ImageConfig::THUMB_HEIGHT),
                 "scaling" => $config->get_int(ImageConfig::THUMB_SCALING),
-                "type" => $config->get_string(ImageConfig::THUMB_TYPE),
+                "mime" => $config->get_string(ImageConfig::THUMB_MIME),
             ],
         ];
 

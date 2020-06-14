@@ -12,7 +12,7 @@ class DataUploadEvent extends Event
     /** @var string */
     public $hash;
     /** @var string */
-    public $type = "";
+    public $mime = "";
     /** @var int */
     public $image_id = -1;
     /** @var int */
@@ -44,29 +44,23 @@ class DataUploadEvent extends Event
 
         $this->set_tmpname($tmpname);
 
-        if ($config->get_bool("upload_use_mime")) {
-            $filetype = get_extension_for_file($tmpname);
+        if (array_key_exists("extension", $metadata)) {
+            $mime = MimeType::get_for_file($tmpname, $metadata["extension"]);
+        } else {
+            $mime = MimeType::get_for_file($tmpname);
         }
 
-        if (empty($filetype)) {
-            if (array_key_exists('extension', $metadata) && !empty($metadata['extension'])) {
-                $filetype = strtolower($metadata['extension']);
-            } else {
-                throw new UploadException("Could not determine extension for file " . $metadata["filename"]);
-            }
+        if (empty($mime)) {
+            throw new UploadException("Could not determine mime type for file " . $metadata["filename"]);
         }
 
-        if (empty($filetype)) {
-            throw new UploadException("Could not determine extension for file " . $metadata["filename"]);
-        }
-
-        $this->set_type($filetype);
+        $this->set_mime($mime);
     }
 
-    public function set_type(String $type)
+    public function set_mime(String $mime)
     {
-        $this->type = strtolower($type);
-        $this->metadata["extension"] = $this->type;
+        $this->mime = strtolower($mime);
+        $this->metadata["mime"] = $this->mime;
     }
 
     public function set_tmpname(String $tmpname)
@@ -111,7 +105,6 @@ class Upload extends Extension
         $config->set_default_int('upload_size', parse_shorthand_int('1MB'));
         $config->set_default_int('upload_min_free_space', parse_shorthand_int('100MB'));
         $config->set_default_bool('upload_tlsource', true);
-        $config->set_default_bool('upload_use_mime', false);
 
         $this->is_full = false;
 
@@ -147,7 +140,6 @@ class Upload extends Extension
         $sb->add_label("<i>PHP Limit = " . ini_get('upload_max_filesize') . "</i>");
         $sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
         $sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source if none is provided: ");
-        $sb->add_bool_option("upload_use_mime", "<br/>Use mime type to determine file types: ");
         $event->panel->add_block($sb);
     }
 
@@ -347,9 +339,15 @@ class Upload extends Extension
                 $pathinfo = pathinfo($file['name']);
                 $metadata = [];
                 $metadata['filename'] = $pathinfo['basename'];
+                $metadata['extension'] = "";
                 if (array_key_exists('extension', $pathinfo)) {
                     $metadata['extension'] = $pathinfo['extension'];
                 }
+                $metadata['mime'] = MimeType::get_for_file($file['tmp_name'], $metadata['extension']);
+                if (empty($metadata['mime'])) {
+                    throw new UploadException("Unable to determine MIME for file ".$metadata['filename']);
+                }
+
                 $metadata['tags'] = $tags;
                 $metadata['source'] = $source;
 
@@ -357,7 +355,7 @@ class Upload extends Extension
                 $event->replace_id = $replace_id;
                 send_event($event);
                 if ($event->image_id == -1) {
-                    throw new UploadException("File type not supported: " . $metadata['extension']);
+                    throw new UploadException("MIME type not supported: " . $metadata['mime']);
                 }
                 $page->add_http_header("X-Shimmie-Image-ID: " . $event->image_id);
             } catch (UploadException $ex) {
@@ -424,15 +422,6 @@ class Upload extends Extension
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
             $metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
-
-            $ext = false;
-            if (is_array($headers)) {
-                $ext = get_extension(findHeader($headers, 'Content-Type'));
-            }
-            if ($ext === false) {
-                $ext = $pathinfo['extension'];
-            }
-            $metadata['extension'] = $ext;
 
             /* check for locked > adds to metadata if it has */
             if (!empty($locked)) {

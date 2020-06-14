@@ -23,7 +23,7 @@ class BasePage
     /** @var string */
     public $mode = PageMode::PAGE;
     /** @var string */
-    private $type = "text/html; charset=utf-8";
+    private $mime;
 
     /**
      * Set what this page should do; "page", "data", or "redirect".
@@ -36,13 +36,14 @@ class BasePage
     /**
      * Set the page's MIME type.
      */
-    public function set_type(string $type): void
+    public function set_mime(string $mime): void
     {
-        $this->type = $type;
+        $this->mime = $mime;
     }
 
     public function __construct()
     {
+        $this->mime = MimeType::add_parameters(MimeType::HTML, MimeType::CHARSET_UTF8);
         if (@$_GET["flash"]) {
             $this->flash[] = $_GET['flash'];
             unset($_GET["flash"]);
@@ -243,7 +244,7 @@ class BasePage
     {
         if (!headers_sent()) {
             header("HTTP/1.0 {$this->code} Shimmie");
-            header("Content-type: " . $this->type);
+            header("Content-type: " . $this->mime);
             header("X-Powered-By: Shimmie-" . VERSION);
 
             foreach ($this->http_headers as $head) {

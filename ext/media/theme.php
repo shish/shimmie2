@@ -9,28 +9,6 @@ use function MicroHTML\OPTION;
 
 class MediaTheme extends Themelet
 {
-    public function display_form(array $types)
-    {
-        global $page;
-
-        $select = SELECT(["name"=>"media_rescan_type"]);
-        $select->appendChild(OPTION(["value"=>""], "All"));
-        foreach ($types as $type) {
-            $select->appendChild(OPTION(["value"=>$type["ext"]], "{$type["ext"]} ({$type["count"]})"));
-        }
-
-        $html = (string)SHM_SIMPLE_FORM(
-            "admin/media_rescan",
-            "Use this to force scanning for media properties.",
-            TABLE(
-                ["class"=>"form"],
-                TR(TH("Image Type"), TD($select)),
-                TR(TD(["colspan"=>"2"], SHM_SUBMIT('Scan Media Information')))
-            )
-        );
-        $page->add_block(new Block("Media Tools", $html));
-    }
-
     public function get_buttons_html(int $image_id): string
     {
         return (string)SHM_SIMPLE_FORM(

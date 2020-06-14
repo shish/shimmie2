@@ -16,10 +16,10 @@ class Themelet extends BaseThemelet
         $h_thumb_link = $image->get_thumb_link();
         $h_tip = html_escape($image->get_tooltip());
         $h_tags = strtolower($image->get_tag_list());
-        $h_ext = strtolower($image->ext);
+        $h_ext = strtolower($image->get_ext());
 
         // If file is flash or svg then sets thumbnail to max size.
-        if ($image->ext === EXTENSION_FLASH || $image->ext === EXTENSION_SVG) {
+        if ($image->get_mime() === MimeType::FLASH || $image->get_mime() === MimeType::SVG) {
             $tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
         } else {
             $tsize = get_thumbnail_size($image->width, $image->height);

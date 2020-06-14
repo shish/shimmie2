@@ -5,14 +5,14 @@ class BulkImportExport extends DataHandlerExtension
 {
     const EXPORT_ACTION_NAME = "bulk_export";
     const EXPORT_INFO_FILE_NAME = "export.json";
-    protected $SUPPORTED_MIME = [MIME_TYPE_ZIP];
+    protected $SUPPORTED_MIME = [MimeType::ZIP];
 
 
     public function onDataUpload(DataUploadEvent $event)
     {
         global $user, $database;
 
-        if ($this->supported_ext($event->type) &&
+        if ($this->supported_mime($event->mime) &&
             $user->can(Permissions::BULK_IMPORT)) {
             $zip = new ZipArchive;
 

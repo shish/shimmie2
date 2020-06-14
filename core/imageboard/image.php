@@ -34,7 +34,10 @@ class Image
     public $filename;
 
     /** @var string */
-    public $ext;
+    private $ext;
+
+    /** @var string */
+    private $mime;
 
     /** @var string[]|null */
     public $tag_array;
@@ -396,22 +399,22 @@ class Image
                 "INSERT INTO images(
 					owner_id, owner_ip,
                     filename, filesize,
-				    hash, ext,
+				    hash, mime, ext,
                     width, height,
                     posted, source
 				)
 				VALUES (
 					:owner_id, :owner_ip,
 				    :filename, :filesize,
-					:hash, :ext,
+					:hash, :mime, :ext,
 				    0, 0,
 				    now(), :source
 				)",
                 [
                     "owner_id" => $user->id, "owner_ip" => $_SERVER['REMOTE_ADDR'],
                     "filename" => $cut_name, "filesize" => $this->filesize,
-                    "hash" => $this->hash, "ext" => strtolower($this->ext),
-                    "source" => $this->source
+                    "hash" => $this->hash, "mime" => strtolower($this->mime),
+                    "ext" => strtolower($this->ext), "source" => $this->source
                 ]
             );
             $this->id = $database->get_last_insert_id('images_id_seq');
@@ -419,12 +422,13 @@ class Image
             $database->execute(
                 "UPDATE images SET ".
                 "filename = :filename, filesize = :filesize, hash = :hash, ".
-                "ext = :ext, width = 0, height = 0, source = :source ".
+                "mime = :mime, ext = :ext, width = 0, height = 0, source = :source ".
                 "WHERE id = :id",
                 [
                     "filename" => $cut_name,
                     "filesize" => $this->filesize,
                     "hash" => $this->hash,
+                    "mime" => strtolower($this->mime),
                     "ext" => strtolower($this->ext),
                     "source" => $this->source,
                     "id" => $this->id,
@@ -503,7 +507,8 @@ class Image
     public function get_thumb_link(): string
     {
         global $config;
-        $ext = $config->get_string(ImageConfig::THUMB_TYPE);
+        $mime = $config->get_string(ImageConfig::THUMB_MIME);
+        $ext = FileExtension::get_for_mime($mime);
         return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
     }
 
@@ -566,20 +571,33 @@ class Image
     }
 
     /**
-     * Get the image's mime type.
-     */
-    public function get_mime_type(): string
-    {
-        return get_mime($this->get_image_filename(), $this->get_ext());
-    }
-
-    /**
-     * Get the image's filename extension
+     * Get the image's extension.
      */
     public function get_ext(): string
     {
         return $this->ext;
     }
+
+    /**
+     * Get the image's mime type.
+     */
+    public function get_mime(): string
+    {
+        if ($this->mime===MimeType::WEBP&&$this->lossless) {
+            return MimeType::WEBP_LOSSLESS;
+        }
+        return $this->mime;
+    }
+
+    /**
+     * Set the image's mime type.
+     */
+    public function set_mime($mime): void
+    {
+        $this->mime = $mime;
+        $this->ext = FileExtension::get_for_mime($this->get_mime());
+    }
+
 
     /**
      * Get the image's source URL

@@ -2,14 +2,14 @@
 
 class IcoFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MIME_TYPE_ICO, MIME_TYPE_ANI];
+    protected $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
         $event->image->lossless = true;
         $event->image->video = false;
         $event->image->audio = false;
-        $event->image->image = ($event->ext!="ani");
+        $event->image->image = ($event->mime!= MimeType::ANI);
 
         $fp = fopen($event->file_name, "r");
         try {
@@ -25,10 +25,10 @@ class IcoFileHandler extends DataHandlerExtension
         $event->image->height = $height == 0 ? 256 : $height;
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         try {
-            create_image_thumb($hash, $type, MediaEngine::IMAGICK);
+            create_image_thumb($hash, $mime, MediaEngine::IMAGICK);
             return true;
         } catch (MediaException $e) {
             log_warning("handle_ico", "Could not generate thumbnail. " . $e->getMessage());

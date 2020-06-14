@@ -186,6 +186,19 @@ class Upgrade extends Extension
             $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_Y WHERE ext IN ('flv','mp4','m4v','ogv','webm')"));
             $this->set_version("db_version", 18);
         }
+
+        if ($this->get_version("db_version") < 19) {
+            log_info("upgrade", "Adding MIME type column");
+
+            $database->execute($database->scoreql_to_sql(
+                "ALTER TABLE images ADD COLUMN mime varchar(512) NULL"
+            ));
+            // Column is primed in mime extension
+            log_info("upgrade", "Setting index for mime column");
+            $database->execute('CREATE INDEX images_mime_idx ON images(mime)');
+
+            $this->set_version("db_version", 19);
+        }
     }
 
     public function get_priority(): int

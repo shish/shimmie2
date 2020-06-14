@@ -6,10 +6,10 @@ class RegenThumb extends Extension
     /** @var RegenThumbTheme */
     protected $theme;
 
-    public function regenerate_thumbnail($image, $force = true): bool
+    public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
         global $cache;
-        $event = new ThumbnailGenerationEvent($image->hash, $image->ext, $force);
+        $event = new ThumbnailGenerationEvent($image->hash, $image->get_mime(), $force);
         send_event($event);
         $cache->delete("thumb-block:{$image->id}");
         return $event->generated;
@@ -109,11 +109,11 @@ class RegenThumb extends Extension
                     $limit=intval($_POST["regen_thumb_limit"]);
                 }
 
-                $type = "";
-                if (isset($_POST["regen_thumb_limit"])) {
-                    $type = $_POST["regen_thumb_type"];
+                $mime = "";
+                if (isset($_POST["regen_thumb_mime"])) {
+                    $mime = $_POST["regen_thumb_mime"];
                 }
-                $images = $this->get_images($type);
+                $images = $this->get_images($mime);
 
                 $i = 0;
                 foreach ($images as $image) {
@@ -123,7 +123,7 @@ class RegenThumb extends Extension
                             continue;
                         }
                     }
-                    $event = new ThumbnailGenerationEvent($image["hash"], $image["ext"], $force);
+                    $event = new ThumbnailGenerationEvent($image["hash"], $image["mime"], $force);
                     send_event($event);
                     if ($event->generated) {
                         $i++;
@@ -137,8 +137,8 @@ class RegenThumb extends Extension
             case "delete_thumbs":
                 $event->redirect = true;
 
-                if (isset($_POST["delete_thumb_type"])&&$_POST["delete_thumb_type"]!="") {
-                    $images = $this->get_images($_POST["delete_thumb_type"]);
+                if (isset($_POST["delete_thumb_mime"])&&$_POST["delete_thumb_mime"]!="") {
+                    $images = $this->get_images($_POST["delete_thumb_mime"]);
 
                     $i = 0;
                     foreach ($images as $image) {
@@ -148,7 +148,7 @@ class RegenThumb extends Extension
                             $i++;
                         }
                     }
-                    $page->flash("Deleted $i thumbnails for ".$_POST["delete_thumb_type"]." images");
+                    $page->flash("Deleted $i thumbnails for ".$_POST["delete_thumb_mime"]." images");
                 } else {
                     $dir = "data/thumbs/";
                     $this->remove_dir_recursively($dir);
@@ -160,15 +160,15 @@ class RegenThumb extends Extension
         }
     }
 
-    public function get_images(String $ext = null)
+    public function get_images(String $mime = null)
     {
         global $database;
 
-        $query = "SELECT hash, ext FROM images";
+        $query = "SELECT hash, mime FROM images";
         $args = [];
-        if ($ext!=null&&$ext!="") {
-            $query .= " WHERE ext = :ext";
-            $args["ext"] = $ext;
+        if (!empty($mime)) {
+            $query .= " WHERE mime = :mime";
+            $args["mime"] = $mime;
         }
 
         return $database->get_all($query, $args);

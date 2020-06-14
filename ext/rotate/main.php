@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 
+// TODO Add warning that rotate doesn't support lossless webp output
+
 /**
  * This class is just a wrapper around SCoreException.
  */
@@ -15,7 +17,7 @@ class RotateImage extends Extension
     /** @var RotateImageTheme */
     protected $theme;
 
-    const SUPPORTED_MIME = [MIME_TYPE_JPEG, MIME_TYPE_PNG, MIME_TYPE_GIF, MIME_TYPE_WEBP];
+    const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -28,7 +30,7 @@ class RotateImage extends Extension
     {
         global $user, $config;
         if ($user->can(Permissions::EDIT_FILES) && $config->get_bool("rotate_enabled")
-                && in_array(get_mime_for_extension($event->image->ext), self::SUPPORTED_MIME)) {
+                && MimeType::matches_array($event->image->get_mime(), self::SUPPORTED_MIME)) {
             /* Add a link to rotate the image */
             $event->add_part($this->theme->get_rotate_html($event->image->id));
         }
@@ -126,28 +128,6 @@ class RotateImage extends Extension
             throw new ImageRotateException("Could not load image: ".$image_filename);
         }
 
-        /* Rotate and resample the image */
-        /*
-        $image_rotated = imagecreatetruecolor( $new_width, $new_height );
-
-        if ( ($info[2] == IMAGETYPE_GIF) || ($info[2] == IMAGETYPE_PNG) ) {
-          $transparency = imagecolortransparent($image);
-
-          if ($transparency >= 0) {
-            $transparent_color  = imagecolorsforindex($image, $trnprt_indx);
-            $transparency       = imagecolorallocate($image_rotated, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-            imagefill($image_rotated, 0, 0, $transparency);
-            imagecolortransparent($image_rotated, $transparency);
-          }
-          elseif ($info[2] == IMAGETYPE_PNG) {
-            imagealphablending($image_rotated, false);
-            $color = imagecolorallocatealpha($image_rotated, 0, 0, 0, 127);
-            imagefill($image_rotated, 0, 0, $color);
-            imagesavealpha($image_rotated, true);
-          }
-        }
-        */
-
         $background_color = 0;
         switch ($info[2]) {
             case IMAGETYPE_PNG:
@@ -193,7 +173,6 @@ class RotateImage extends Extension
         $new_image->filename = 'rotated-'.$image_obj->filename;
         $new_image->width = $new_width;
         $new_image->height = $new_height;
-        $new_image->ext = $image_obj->ext;
 
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);

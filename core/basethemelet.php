@@ -53,8 +53,9 @@ class BaseThemelet
         $h_tip = html_escape($image->get_tooltip());
         $h_tags = html_escape(strtolower($image->get_tag_list()));
 
-        $extArr = array_flip([EXTENSION_FLASH, EXTENSION_SVG, EXTENSION_MP3]); //List of thumbless filetypes
-        if (!isset($extArr[$image->ext])) {
+        // TODO: Set up a function for fetching what kind of files are currently thumbnailable
+        $mimeArr = array_flip([MimeType::MP3]); //List of thumbless filetypes
+        if (!isset($mimeArr[$image->get_mime()])) {
             $tsize = get_thumbnail_size($image->width, $image->height);
         } else {
             //Use max thumbnail size if using thumbless filetype

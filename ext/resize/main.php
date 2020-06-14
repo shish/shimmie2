@@ -40,7 +40,7 @@ class ResizeImage extends Extension
     {
         global $user, $config;
         if ($user->can(Permissions::EDIT_FILES) && $config->get_bool(ResizeConfig::ENABLED)
-            && $this->can_resize_format($event->image->ext, $event->image->lossless)) {
+            && $this->can_resize_mime($event->image->get_mime())) {
             /* Add a link to resize the image */
             $event->add_part($this->theme->get_resize_html($event->image));
         }
@@ -74,7 +74,7 @@ class ResizeImage extends Extension
         $image_obj = Image::by_id($event->image_id);
 
         if ($config->get_bool(ResizeConfig::UPLOAD) == true
-                && $this->can_resize_format($event->type, $image_obj->lossless)) {
+                && $this->can_resize_mime($event->mime)) {
             $width = $height = 0;
 
             if ($config->get_int(ResizeConfig::DEFAULT_WIDTH) !== 0) {
@@ -84,7 +84,7 @@ class ResizeImage extends Extension
                 $height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
             }
             $isanigif = 0;
-            if ($image_obj->ext == EXTENSION_GIF) {
+            if ($image_obj->get_mime() == MimeType::GIF) {
                 $image_filename = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
                 if (($fh = @fopen($image_filename, 'rb'))) {
                     //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
@@ -104,7 +104,7 @@ class ResizeImage extends Extension
                 //Need to generate thumbnail again...
                 //This only seems to be an issue if one of the sizes was set to 0.
                 $image_obj = Image::by_id($event->image_id); //Must be a better way to grab the new hash than setting this again..
-                send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->ext, true));
+                send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->get_mime(), true));
 
                 log_info("resize", "Image #{$event->image_id} has been resized to: ".$width."x".$height);
                 //TODO: Notify user that image has been resized.
@@ -161,12 +161,12 @@ class ResizeImage extends Extension
         }
     }
 
-    private function can_resize_format($format, ?bool $lossless = null): bool
+    private function can_resize_mime($mime): bool
     {
         global $config;
         $engine = $config->get_string(ResizeConfig::ENGINE);
-        return Media::is_input_supported($engine, $format, $lossless)
-                && Media::is_output_supported($engine, $format, $lossless);
+        return MediaEngine::is_input_supported($engine, $mime)
+                && MediaEngine::is_output_supported($engine, $mime);
     }
 
 
@@ -183,7 +183,7 @@ class ResizeImage extends Extension
         $engine = $config->get_string(ResizeConfig::ENGINE);
 
 
-        if (!$this->can_resize_format($image_obj->ext, $image_obj->lossless)) {
+        if (!$this->can_resize_mime($image_obj->get_mime())) {
             throw new ImageResizeException("Engine $engine cannot resize selected image");
         }
 
@@ -206,11 +206,11 @@ class ResizeImage extends Extension
         send_event(new MediaResizeEvent(
             $engine,
             $image_filename,
-            $image_obj->ext,
+            $image_obj->get_mime(),
             $tmp_filename,
             $new_width,
             $new_height,
-            true
+            Media::RESIZE_TYPE_STRETCH
         ));
 
         $new_image = new Image();
@@ -219,7 +219,6 @@ class ResizeImage extends Extension
         $new_image->filename = 'resized-'.$image_obj->filename;
         $new_image->width = $new_width;
         $new_image->height = $new_height;
-        $new_image->ext = $image_obj->ext;
 
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);

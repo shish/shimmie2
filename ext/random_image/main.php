@@ -29,13 +29,13 @@ class RandomImage extends Extension
 
             if ($action === "download") {
                 if (!is_null($image)) {
-                    send_event(new ImageDownloadingEvent($image, $image->get_image_filename(), $image->get_mime_type()));
+                    send_event(new ImageDownloadingEvent($image, $image->get_image_filename(), $image->get_mime()));
                 }
             } elseif ($action === "view") {
                 send_event(new DisplayingImageEvent($image));
             } elseif ($action === "widget") {
                 $page->set_mode(PageMode::DATA);
-                $page->set_type(MIME_TYPE_HTML);
+                $page->set_mime(MimeType::HTML);
                 $page->set_data($this->theme->build_thumb_html($image));
             }
         }

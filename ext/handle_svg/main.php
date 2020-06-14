@@ -3,7 +3,7 @@ use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MIME_TYPE_SVG];
+    protected $SUPPORTED_MIME = [MimeType::SVG];
 
     /** @var SVGFileHandlerTheme */
     protected $theme;
@@ -16,7 +16,7 @@ class SVGFileHandler extends DataHandlerExtension
             $image = Image::by_id($id);
             $hash = $image->hash;
 
-            $page->set_type(MIME_TYPE_SVG);
+            $page->set_mime(MimeType::SVG);
             $page->set_mode(PageMode::DATA);
 
             $sanitizer = new Sanitizer();
@@ -67,7 +67,7 @@ class SVGFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $file): bool
     {
-        if (get_mime($file)!==MIME_TYPE_SVG) {
+        if (MimeType::get_for_file($file)!==MimeType::SVG) {
             return false;
         }
 

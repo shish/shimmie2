@@ -22,7 +22,7 @@ class StaticFiles extends Extension
                 $page->set_mode(PageMode::DATA);
                 $page->set_data(file_get_contents($filename));
 
-                $page->set_type(get_mime($filename));
+                $page->set_mime(MimeType::get_for_file($filename));
             }
         }
     }

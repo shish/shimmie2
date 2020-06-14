@@ -545,7 +545,7 @@ class CronUploader extends Extension
         global $page;
 
         $page->set_mode(PageMode::MANUAL);
-        $page->set_type(MIME_TYPE_TEXT);
+        $page->set_mime(MimeType::TEXT);
         $page->send_headers();
     }
 }

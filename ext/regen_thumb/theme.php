@@ -36,10 +36,10 @@ class RegenThumbTheme extends Themelet
     {
         global $page, $database;
 
-        $types = [];
-        $results = $database->get_all("SELECT ext, count(*) count FROM images group by ext");
+        $mimes = [];
+        $results = $database->get_all("SELECT mime, count(*) count FROM images group by mime");
         foreach ($results as $result) {
-            array_push($types, "<option value='".$result["ext"]."'>".$result["ext"]." (".$result["count"].")</option>");
+            array_push($mimes, "<option value='".$result["mime"]."'>".$result["mime"]." (".$result["count"].")</option>");
         }
 
         $html = "
@@ -48,10 +48,10 @@ class RegenThumbTheme extends Themelet
 				<table class='form'>
                 <tr><th><label for='regen_thumb_force'>Force</label></th><td><input type='checkbox' name='regen_thumb_force' id='regen_thumb_force' value='true' /></td></tr>
                 <tr><th><label for='regen_thumb_limit'>Limit</label></th><td><input type='number' name='regen_thumb_limit' id='regen_thumb_limit' value='1000' /></td></tr>
-                <tr><th><label for='regen_thumb_type'>Type</label></th><td>
-                    <select name='regen_thumb_type' id='regen_thumb_type'>
+                <tr><th><label for='regen_thumb_mime'>MIME</label></th><td>
+                    <select name='regen_thumb_mime' id='regen_thumb_mime'>
                         <option value=''>All</option>
-                        ".implode($types)."
+                        ".implode($mimes)."
                     </select>
                 </td></tr>
                 <tr><td colspan='2'><input type='submit' value='Regenerate Thumbnails'></td></tr>
@@ -59,10 +59,10 @@ class RegenThumbTheme extends Themelet
 			</form></p>
 			<p>".make_form(make_link("admin/delete_thumbs"), "POST", false, "", "return confirm('Are you sure you want to delete all thumbnails?')")."
 				<table class='form'>
-                    <tr><th><label for='delete_thumb_type'>Type</label></th><td>
-                        <select name='delete_thumb_type' id='delete_thumb_type'>
+                    <tr><th><label for='delete_thumb_mime'>MIME</label></th><td>
+                        <select name='delete_thumb_mime' id='delete_thumb_mime'>
                             <option value=''>All</option>
-                            ".implode($types)."
+                            ".implode($mimes)."
                         </select>
                     </td></tr>
 					<tr><td colspan='2'><input type='submit' value='Delete Thumbnails'></td></tr>

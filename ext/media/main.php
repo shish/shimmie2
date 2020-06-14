@@ -16,52 +16,31 @@ class Media extends Extension
     /** @var MediaTheme */
     protected $theme;
 
-    const WEBP_LOSSY = "webp-lossy";
-    const WEBP_LOSSLESS = "webp-lossless";
-
     const IMAGE_MEDIA_ENGINES = [
         "GD" => MediaEngine::GD,
         "ImageMagick" => MediaEngine::IMAGICK,
     ];
 
     const LOSSLESS_FORMATS = [
-        self::WEBP_LOSSLESS,
-        EXTENSION_PNG,
-        EXTENSION_PSD,
-        EXTENSION_BMP,
-        EXTENSION_ICO,
-        EXTENSION_CUR,
-        EXTENSION_ANI,
-        EXTENSION_GIF
-
+        MimeType::WEBP_LOSSLESS,
+        MimeType::PNG,
+        MimeType::PSD,
+        MimeType::BMP,
+        MimeType::ICO,
+        MimeType::ANI,
+        MimeType::GIF
     ];
 
     const ALPHA_FORMATS = [
-        self::WEBP_LOSSLESS,
-        self::WEBP_LOSSY,
-        EXTENSION_WEBP,
-        EXTENSION_PNG,
-    ];
-
-    const FORMAT_ALIASES = [
-        EXTENSION_TIF => EXTENSION_TIFF,
-        EXTENSION_JPEG => EXTENSION_JPG,
+        MimeType::WEBP_LOSSLESS,
+        MimeType::WEBP,
+        MimeType::PNG,
     ];
 
     const RESIZE_TYPE_FIT = "Fit";
     const RESIZE_TYPE_FIT_BLUR = "Fit Blur";
     const RESIZE_TYPE_FILL =  "Fill";
     const RESIZE_TYPE_STRETCH =  "Stretch";
-
-    //RIFF####WEBPVP8?..............ANIM
-    private const WEBP_ANIMATION_HEADER =
-        [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0x41, 0x4E, 0x49, 0x4D];
-
-    //RIFF####WEBPVP8L
-    private const WEBP_LOSSLESS_HEADER =
-        [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, 0x4C];
-
 
     public static function imagick_available(): bool
     {
@@ -126,22 +105,6 @@ class Media extends Extension
         $sb->end_table();
 
         $event->panel->add_block($sb);
-    }
-
-    public function onAdminBuilding(AdminBuildingEvent $event)
-    {
-        global $database;
-        $types = $database->get_all("SELECT ext, count(*) count FROM images group by ext");
-
-        $this->theme->display_form($types);
-    }
-
-    public function onAdminAction(AdminActionEvent $event)
-    {
-        $action = $event->action;
-        if (method_exists($this, $action)) {
-            $event->redirect = $this->$action();
-        }
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
@@ -210,7 +173,10 @@ class Media extends Extension
      */
     public function onMediaResize(MediaResizeEvent $event)
     {
-        if (!in_array($event->resize_type, MediaEngine::RESIZE_TYPE_SUPPORT[MediaEngine::IMAGICK])) {
+        if (!in_array(
+            $event->resize_type,
+            MediaEngine::RESIZE_TYPE_SUPPORT[$event->engine]
+        )) {
             throw new MediaException("Resize type $event->resize_type not supported by selected media engine $event->engine");
         }
 
@@ -227,7 +193,7 @@ class Media extends Extension
                     $event->target_width,
                     $event->target_height,
                     $event->output_path,
-                    $event->target_format,
+                    $event->target_mime,
                     $event->resize_type,
                     $event->target_quality,
                     $event->allow_upscale
@@ -239,11 +205,11 @@ class Media extends Extension
 //                } else {
                 self::image_resize_convert(
                     $event->input_path,
-                    $event->input_type,
+                    $event->input_mime,
                     $event->target_width,
                     $event->target_height,
                     $event->output_path,
-                    $event->target_format,
+                    $event->target_mime,
                     $event->resize_type,
                     $event->target_quality,
                     $event->minimize,
@@ -315,8 +281,6 @@ class Media extends Extension
             $s = ((int)($event->image->length / 100))/10;
             $event->replace('$size', "${s}s");
         }
-
-        $event->replace('$ext', $event->image->ext);
     }
 
     /**
@@ -372,7 +336,7 @@ class Media extends Extension
 
         $codec = "mjpeg";
         $quality = $config->get_int(ImageConfig::THUMB_QUALITY);
-        if ($config->get_string(ImageConfig::THUMB_TYPE) == EXTENSION_WEBP) {
+        if ($config->get_string(ImageConfig::THUMB_MIME) == MimeType::WEBP) {
             $codec = "libwebp";
         } else {
             // mjpeg quality ranges from 2-31, with 2 being the best quality.
@@ -399,7 +363,7 @@ class Media extends Extension
         if ((int)$ret == (int)0) {
             log_debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
 
-            create_scaled_image($tmpname, $outname, $scaled_size, "png");
+            create_scaled_image($tmpname, $outname, $scaled_size, MimeType::PNG);
 
 
             return true;
@@ -442,22 +406,19 @@ class Media extends Extension
         }
     }
 
-    public static function determine_ext(string $format): string
+    public static function determine_ext(string $mime): string
     {
-        $format = self::normalize_format($format);
-        switch ($format) {
-            case self::WEBP_LOSSLESS:
-            case self::WEBP_LOSSY:
-                return EXTENSION_WEBP;
-            default:
-                return $format;
+        $ext = FileExtension::get_for_mime($mime);
+        if (empty($ext)) {
+            throw new SCoreException("Could not determine extension for $mime");
         }
+        return $ext;
     }
 
 //    private static function image_save_imagick(Imagick $image, string $path, string $format, int $output_quality = 80, bool $minimize)
 //    {
 //        switch ($format) {
-//            case EXTENSION_PNG:
+//            case FileExtension::PNG:
 //                $result = $image->setOption('png:compression-level', 9);
 //                if ($result !== true) {
 //                    throw new GraphicsException("Could not set png compression option");
@@ -561,14 +522,14 @@ class Media extends Extension
 //        }
 //    }
 
-    public static function is_lossless(string $filename, string $format)
+    public static function is_lossless(string $filename, string $mime)
     {
-        if (in_array($format, self::LOSSLESS_FORMATS)) {
+        if (in_array($mime, self::LOSSLESS_FORMATS)) {
             return true;
         }
-        switch ($format) {
-            case EXTENSION_WEBP:
-                return self::is_lossless_webp($filename);
+        switch ($mime) {
+            case MimeType::WEBP:
+                return MimeType::is_lossless_webp($filename);
                 break;
         }
         return false;
@@ -576,11 +537,11 @@ class Media extends Extension
 
     public static function image_resize_convert(
         string $input_path,
-        string $input_type,
+        string $input_mime,
         int $new_width,
         int $new_height,
         string $output_filename,
-        string $output_type = null,
+        string $output_mime = null,
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
         bool $minimize = false,
@@ -594,20 +555,17 @@ class Media extends Extension
             throw new MediaException("convert command not configured");
         }
 
-        if (empty($output_type)) {
-            $output_type = $input_type;
+        if (empty($output_mime)) {
+            $output_mime = $input_mime;
         }
 
-        if ($output_type==EXTENSION_WEBP && self::is_lossless($input_path, $input_type)) {
-            $output_type = self::WEBP_LOSSLESS;
+        if ($output_mime==MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
+            $output_mime = MimeType::WEBP_LOSSLESS;
         }
 
         $bg = "black";
-        if (self::supports_alpha($output_type)) {
+        if (self::supports_alpha($output_mime)) {
             $bg = "none";
-        }
-        if (!empty($input_type)) {
-            $input_type = $input_type . ":";
         }
 
         $resize_suffix = "";
@@ -625,7 +583,9 @@ class Media extends Extension
             $resize_arg = "-thumbnail";
         }
 
-        $file_arg = "${input_type}\"${input_path}[0]\"";
+        $input_ext = self::determine_ext($input_mime);
+
+        $file_arg = "${input_ext}:\"${input_path}[0]\"";
 
         switch ($resize_type) {
             case Media::RESIZE_TYPE_FIT:
@@ -633,24 +593,24 @@ class Media extends Extension
                 $args .= "${resize_arg} ${new_width}x${new_height}${resize_suffix} ${file_arg}";
                 break;
             case Media::RESIZE_TYPE_FILL:
-                $args .= "${resize_arg} ${new_width}x${new_height}\^ -gravity center -extent ${new_width}x${new_height} ${file_arg}";
+                $args .= "${resize_arg} ${new_width}x${new_height}\^ -background none -gravity center -extent ${new_width}x${new_height} ${file_arg}";
                 break;
             case Media::RESIZE_TYPE_FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
                 $args .= "${file_arg} ".
-                    "\( -clone 0 -resize ${new_width}x${new_height}\^ -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
+                    "\( -clone 0 -resize ${new_width}x${new_height}\^ -background none -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
                     "\( -clone 0 -resize ${new_width}x${new_height} \) ".
                     "-delete 0 -gravity center -compose over -composite";
                 break;
         }
 
 
-        switch ($output_type) {
-            case Media::WEBP_LOSSLESS:
-                $args .= '-define webp:lossless=true';
+        switch ($output_mime) {
+            case MimeType::WEBP_LOSSLESS:
+                $args .= ' -define webp:lossless=true';
                 break;
-            case EXTENSION_PNG:
-                $args .= '-define png:compression-level=9';
+            case MimeType::PNG:
+                $args .= ' -define png:compression-level=9';
                 break;
         }
 
@@ -658,7 +618,7 @@ class Media extends Extension
         $args .= " -quality ${output_quality} -background ${bg}";
 
 
-        $output_ext = self::determine_ext($output_type);
+        $output_ext = self::determine_ext($output_mime);
 
         $format = '"%s"  %s   %s:"%s" 2>&1';
         $cmd = sprintf($format, $convert, $args, $output_ext, $output_filename);
@@ -679,7 +639,7 @@ class Media extends Extension
      * @param int $new_width
      * @param int $new_height
      * @param string $output_filename
-     * @param string|null $output_type If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
+     * @param string|null $output_mime If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
      * @param int $output_quality Defaults to 80.
      * @throws MediaException
      * @throws InsufficientMemoryException if the estimated memory usage exceeds the memory limit.
@@ -690,7 +650,7 @@ class Media extends Extension
         int $new_width,
         int $new_height,
         string $output_filename,
-        string $output_type = null,
+        string $output_mime = null,
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
         bool $allow_upscale = true
@@ -698,26 +658,26 @@ class Media extends Extension
         $width = $info[0];
         $height = $info[1];
 
-        if ($output_type == null) {
+        if ($output_mime == null) {
             /* If not specified, output to the same format as the original image */
             switch ($info[2]) {
                 case IMAGETYPE_GIF:
-                    $output_type = EXTENSION_GIF;
+                    $output_mime = MimeType::GIF;
                     break;
                 case IMAGETYPE_JPEG:
-                    $output_type = EXTENSION_JPEG;
+                    $output_mime = MimeType::JPEG;
                     break;
                 case IMAGETYPE_PNG:
-                    $output_type = EXTENSION_PNG;
+                    $output_mime = MimeType::PNG;
                     break;
                 case IMAGETYPE_WEBP:
-                    $output_type = EXTENSION_WEBP;
+                    $output_mime = MimeType::WEBP;
                     break;
                 case IMAGETYPE_BMP:
-                    $output_type = EXTENSION_BMP;
+                    $output_mime = MimeType::BMP;
                     break;
                 default:
-                    throw new MediaException("Failed to save the new image - Unsupported image type.");
+                    throw new MediaException("Failed to save the new image - Unsupported MIME type.");
             }
         }
 
@@ -809,29 +769,27 @@ class Media extends Extension
                 throw new MediaException("Unable to copy resized image data to new image");
             }
 
-            switch ($output_type) {
-                case EXTENSION_BMP:
+            switch ($output_mime) {
+                case MimeType::BMP:
                     $result = imagebmp($image_resized, $output_filename, true);
                     break;
-                case EXTENSION_WEBP:
-                case Media::WEBP_LOSSY:
+                case MimeType::WEBP:
                     $result = imagewebp($image_resized, $output_filename, $output_quality);
                     break;
-                case EXTENSION_JPG:
-                case EXTENSION_JPEG:
+                case MimeType::JPEG:
                     $result = imagejpeg($image_resized, $output_filename, $output_quality);
                     break;
-                case EXTENSION_PNG:
+                case MimeType::PNG:
                     $result = imagepng($image_resized, $output_filename, 9);
                     break;
-                case EXTENSION_GIF:
+                case MimeType::GIF:
                     $result = imagegif($image_resized, $output_filename);
                     break;
                 default:
-                    throw new MediaException("Failed to save the new image - Unsupported image type: $output_type");
+                    throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime");
             }
             if ($result === false) {
-                throw new MediaException("Failed to save the new image, function returned false when saving type: $output_type");
+                throw new MediaException("Failed to save the new image, function returned false when saving type: $output_mime");
             }
         } finally {
             @imagedestroy($image);
@@ -839,117 +797,10 @@ class Media extends Extension
         }
     }
 
-    /**
-     * Determines if a file is an animated gif.
-     *
-     * @param String $image_filename The path of the file to check.
-     * @return bool true if the file is an animated gif, false if it is not.
-     */
-    public static function is_animated_gif(string $image_filename): bool
+
+    public static function supports_alpha(string $mime): bool
     {
-        $is_anim_gif = 0;
-        if (($fh = @fopen($image_filename, 'rb'))) {
-            try {
-                //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
-                while (!feof($fh) && $is_anim_gif < 2) {
-                    $chunk = fread($fh, 1024 * 100);
-                    $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
-                }
-            } finally {
-                @fclose($fh);
-            }
-        }
-        return ($is_anim_gif == 0);
-    }
-
-
-    private static function compare_file_bytes(string $file_name, array $comparison): bool
-    {
-        $size = filesize($file_name);
-        if ($size < count($comparison)) {
-            // Can't match because it's too small
-            return false;
-        }
-
-        if (($fh = @fopen($file_name, 'rb'))) {
-            try {
-                $chunk = unpack("C*", fread($fh, count($comparison)));
-
-                for ($i = 0; $i < count($comparison); $i++) {
-                    $byte = $comparison[$i];
-                    if ($byte == null) {
-                        continue;
-                    } else {
-                        $fileByte = $chunk[$i + 1];
-                        if ($fileByte != $byte) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            } finally {
-                @fclose($fh);
-            }
-        } else {
-            throw new MediaException("Unable to open file for byte check: $file_name");
-        }
-    }
-
-    public static function is_animated_webp(string $image_filename): bool
-    {
-        return self::compare_file_bytes($image_filename, self::WEBP_ANIMATION_HEADER);
-    }
-
-    public static function is_lossless_webp(string $image_filename): bool
-    {
-        return self::compare_file_bytes($image_filename, self::WEBP_LOSSLESS_HEADER);
-    }
-
-    public static function supports_alpha(string $format): bool
-    {
-        return in_array(self::normalize_format($format), self::ALPHA_FORMATS);
-    }
-
-    public static function is_input_supported(string $engine, string $format, ?bool $lossless = null): bool
-    {
-        $format = self::normalize_format($format, $lossless);
-        if (!in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
-            return false;
-        }
-        return true;
-    }
-
-    public static function is_output_supported(string $engine, string $format, ?bool $lossless = false): bool
-    {
-        $format = self::normalize_format($format, $lossless);
-        if (!in_array($format, MediaEngine::OUTPUT_SUPPORT[$engine])) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Checks if a format (normally a file extension) is a variant name of another format (ie, jpg and jpeg).
-     * If one is found, then the maine name that the Media extension will recognize is returned,
-     * otherwise the incoming format is returned.
-     *
-     * @param $format
-     * @return string|null The format name that the media extension will recognize.
-     */
-    public static function normalize_format(string $format, ?bool $lossless = null): ?string
-    {
-        if ($format == EXTENSION_WEBP) {
-            if ($lossless === true) {
-                $format = Media::WEBP_LOSSLESS;
-            } else {
-                $format = Media::WEBP_LOSSY;
-            }
-        }
-
-        if (array_key_exists($format, Media::FORMAT_ALIASES)) {
-            return self::FORMAT_ALIASES[$format];
-        }
-        return $format;
+        return MimeType::matches_array($mime, self::ALPHA_FORMATS, true);
     }
 
 

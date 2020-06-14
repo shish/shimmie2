@@ -8,6 +8,7 @@ class _SafeImage
     public $hash;
     public $filesize;
     public $ext;
+    public $mime;
     public $posted;
     public $source;
     public $owner_id;
@@ -20,7 +21,8 @@ class _SafeImage
         $this->width    = $img->width;
         $this->hash     = $img->hash;
         $this->filesize = $img->filesize;
-        $this->ext      = $img->ext;
+        $this->ext      = $img->get_ext();
+        $this->mime     = $img->get_mime();
         $this->posted   = strtotime($img->posted);
         $this->source   = $img->source;
         $this->owner_id = $img->owner_id;
@@ -36,7 +38,7 @@ class ShimmieApi extends Extension
 
         if ($event->page_matches("api/shimmie")) {
             $page->set_mode(PageMode::DATA);
-            $page->set_type(MIME_TYPE_TEXT);
+            $page->set_mime(MimeType::TEXT);
 
             if ($event->page_matches("api/shimmie/get_tags")) {
                 if ($event->count_args() > 0) {

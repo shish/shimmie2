@@ -91,7 +91,7 @@ class ThumbnailGenerationEvent extends Event
     /** @var string */
     public $hash;
     /** @var string */
-    public $type;
+    public $mime;
     /** @var bool */
     public $force;
 
@@ -101,11 +101,11 @@ class ThumbnailGenerationEvent extends Event
     /**
      * Request a thumbnail be made for an image object
      */
-    public function __construct(string $hash, string $type, bool $force=false)
+    public function __construct(string $hash, string $mime, bool $force=false)
     {
         parent::__construct();
         $this->hash = $hash;
-        $this->type = $type;
+        $this->mime = $mime;
         $this->force = $force;
         $this->generated = false;
     }

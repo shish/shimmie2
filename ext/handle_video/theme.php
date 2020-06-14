@@ -7,7 +7,7 @@ class VideoFileHandlerTheme extends Themelet
         global $config;
         $ilink = $image->get_image_link();
         $thumb_url = make_http($image->get_thumb_link()); //used as fallback image
-        $ext = strtolower($image->get_ext());
+        $mime = strtolower($image->get_mime());
         $full_url = make_http($ilink);
         $autoplay = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY);
         $loop = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_LOOP);
@@ -26,11 +26,10 @@ class VideoFileHandlerTheme extends Themelet
         $html = "Video not playing? <a href='$ilink'>Click here</a> to download the file.<br/>";
 
         //Browser media format support: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
-        $mime = get_mime_for_extension($ext);
 
-        if (in_array($mime, VideoFileHandler::SUPPORTED_MIME)) {
+        if (MimeType::matches_array($mime, VideoFileHandler::SUPPORTED_MIME)) {
             //FLV isn't supported by <video>, but it should always fallback to the flash-based method.
-            if ($mime == MIME_TYPE_WEBM) {
+            if ($mime == MimeType::WEBM) {
                 //Several browsers still lack WebM support sadly: https://caniuse.com/#feat=webm
                 $html .= "<!--[if IE]><p>To view webm files with IE, please <a href='https://tools.google.com/dlpage/webmmf/' target='_blank'>download this plugin</a>.</p><![endif]-->";
             }
@@ -51,7 +50,7 @@ class VideoFileHandlerTheme extends Themelet
 							<img alt='thumb' src=\"{$thumb_url}\" />
 						</object>";
 
-            if ($mime == MIME_TYPE_FLASH_VIDEO) {
+            if ($mime == MimeType::FLASH_VIDEO) {
                 //FLV doesn't support <video>.
                 $html .= $html_fallback;
             } else {

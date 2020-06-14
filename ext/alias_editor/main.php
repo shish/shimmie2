@@ -96,7 +96,7 @@ class AliasEditor extends Extension
                 $this->theme->display_aliases($t->table($t->query()), $t->paginator());
             } elseif ($event->get_arg(0) == "export") {
                 $page->set_mode(PageMode::DATA);
-                $page->set_type(MIME_TYPE_CSV);
+                $page->set_mime(MimeType::CSV);
                 $page->set_filename("aliases.csv");
                 $page->set_data($this->get_alias_csv($database));
             } elseif ($event->get_arg(0) == "import") {

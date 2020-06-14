@@ -174,7 +174,7 @@ class _SafeOuroborosImage
         // file
         $this->height = intval($img->height);
         $this->width = intval($img->width);
-        $this->file_ext = $img->ext;
+        $this->file_ext = $img->get_ext();
         $this->file_size = intval($img->filesize);
         $this->file_url = make_http($img->get_image_link());
         $this->md5 = $img->hash;
@@ -374,9 +374,9 @@ class OuroborosAPI extends Extension
             $this->event = $event;
             $this->type = $matches[1];
             if ($this->type == 'json') {
-                $page->set_type('application/json; charset=utf-8');
+                $page->set_mime('application/json; charset=utf-8');
             } elseif ($this->type == 'xml') {
-                $page->set_type('text/xml; charset=utf-8');
+                $page->set_mime('text/xml; charset=utf-8');
             }
             $page->set_mode(PageMode::DATA);
             $this->tryAuth();

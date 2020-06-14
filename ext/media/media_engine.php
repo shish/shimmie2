@@ -13,65 +13,61 @@ abstract class MediaEngine
         MediaEngine::IMAGICK,
         MediaEngine::STATIC,
     ];
-    public const OUTPUT_SUPPORT = [
+    private const OUTPUT_SUPPORT = [
         MediaEngine::GD => [
-            EXTENSION_GIF,
-            EXTENSION_JPG,
-            EXTENSION_PNG,
-            EXTENSION_WEBP,
-            Media::WEBP_LOSSY,
+            MimeType::GIF,
+            MimeType::JPEG,
+            MimeType::PNG,
+            MimeType::WEBP
         ],
         MediaEngine::IMAGICK => [
-            EXTENSION_GIF,
-            EXTENSION_JPG,
-            EXTENSION_PNG,
-            EXTENSION_WEBP,
-            Media::WEBP_LOSSY,
-            Media::WEBP_LOSSLESS,
+            MimeType::GIF,
+            MimeType::JPEG,
+            MimeType::PNG,
+            MimeType::WEBP,
+            MimeType::WEBP_LOSSLESS,
         ],
         MediaEngine::FFMPEG => [
-            EXTENSION_JPG,
-            EXTENSION_WEBP,
-            EXTENSION_PNG,
+            MimeType::JPEG,
+            MimeType::WEBP,
+            MimeType::PNG,
         ],
         MediaEngine::STATIC => [
-            EXTENSION_JPG,
+            MimeType::JPEG,
         ],
     ];
-    public const INPUT_SUPPORT = [
+    private const INPUT_SUPPORT = [
         MediaEngine::GD => [
-            EXTENSION_BMP,
-            EXTENSION_GIF,
-            EXTENSION_JPG,
-            EXTENSION_PNG,
-            EXTENSION_WEBP,
-            Media::WEBP_LOSSY,
-            Media::WEBP_LOSSLESS,
+            MimeType::BMP,
+            MimeType::GIF,
+            MimeType::JPEG,
+            MimeType::PNG,
+            MimeType::WEBP,
+            MimeType::WEBP_LOSSLESS,
         ],
         MediaEngine::IMAGICK => [
-            EXTENSION_BMP,
-            EXTENSION_GIF,
-            EXTENSION_JPG,
-            EXTENSION_PNG,
-            EXTENSION_PSD,
-            EXTENSION_TIFF,
-            EXTENSION_WEBP,
-            Media::WEBP_LOSSY,
-            Media::WEBP_LOSSLESS,
-            EXTENSION_ICO,
+            MimeType::BMP,
+            MimeType::GIF,
+            MimeType::JPEG,
+            MimeType::PNG,
+            MimeType::PSD,
+            MimeType::TIFF,
+            MimeType::WEBP,
+            MimeType::WEBP_LOSSLESS,
+            MimeType::ICO,
         ],
         MediaEngine::FFMPEG => [
-            EXTENSION_AVI,
-            EXTENSION_MKV,
-            EXTENSION_WEBM,
-            EXTENSION_MP4,
-            EXTENSION_MOV,
-            EXTENSION_FLASH_VIDEO,
+            MimeType::AVI,
+            MimeType::MKV,
+            MimeType::WEBM,
+            MimeType::MP4_VIDEO,
+            MimeType::QUICKTIME,
+            MimeType::FLASH_VIDEO,
         ],
         MediaEngine::STATIC => [
-            EXTENSION_JPG,
-            EXTENSION_GIF,
-            EXTENSION_PNG,
+            MimeType::JPEG,
+            MimeType::GIF,
+            MimeType::PNG,
         ],
     ];
     public const RESIZE_TYPE_SUPPORT = [
@@ -92,4 +88,21 @@ abstract class MediaEngine
             Media::RESIZE_TYPE_FIT
         ]
     ];
+
+    public static function is_output_supported(string $engine, string $mime): bool
+    {
+        return MimeType::matches_array(
+            $mime,
+            MediaEngine::OUTPUT_SUPPORT[$engine],
+            true
+        );
+    }
+
+    public static function is_input_supported(string $engine, string $mime): bool
+    {
+        return MimeType::matches_array(
+            $mime,
+            MediaEngine::INPUT_SUPPORT[$engine]
+        );
+    }
 }

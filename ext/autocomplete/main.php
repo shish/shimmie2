@@ -20,7 +20,7 @@ class AutoComplete extends Extension
             }
 
             $page->set_mode(PageMode::DATA);
-            $page->set_type(MIME_TYPE_JSON);
+            $page->set_mime(MimeType::JSON);
 
             $s = strtolower($_GET["s"]);
             if (

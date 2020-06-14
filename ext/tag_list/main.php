@@ -77,7 +77,7 @@ class TagList extends Extension
             }
 
             $page->set_mode(PageMode::DATA);
-            $page->set_type(MIME_TYPE_TEXT);
+            $page->set_mime(MimeType::TEXT);
             $page->set_data(implode("\n", $res));
         }
     }

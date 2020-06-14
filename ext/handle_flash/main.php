@@ -2,7 +2,7 @@
 
 class FlashFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MIME_TYPE_FLASH];
+    protected $SUPPORTED_MIME = [MimeType::FLASH];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {

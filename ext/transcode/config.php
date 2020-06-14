@@ -2,6 +2,7 @@
 
 class TranscodeConfig
 {
+    const VERSION = "ext_transcode_version";
     const ENGINE = "transcode_engine";
     const ENABLED = "transcode_enabled";
     const GET_ENABLED = "transcode_get_enabled";

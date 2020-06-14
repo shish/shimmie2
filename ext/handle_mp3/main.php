@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
+// TODO: Add support for generating an icon from embedded cover art
+// TODO: MORE AUDIO FORMATS
+
 class MP3FileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MIME_TYPE_MP3];
+    protected $SUPPORTED_MIME = [MimeType::MP3];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -23,6 +26,6 @@ class MP3FileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        return get_mime($tmpname) === MIME_TYPE_MP3;
+        return MimeType::get_for_file($tmpname) === MimeType::MP3;
     }
 }

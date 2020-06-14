@@ -2,7 +2,7 @@
 
 class CBZFileHandler extends DataHandlerExtension
 {
-    public $SUPPORTED_MIME = [MIME_TYPE_COMIC_ZIP];
+    protected $SUPPORTED_MIME = [MimeType::COMIC_ZIP];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -20,14 +20,14 @@ class CBZFileHandler extends DataHandlerExtension
         unlink($tmp);
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         $cover = $this->get_representative_image(warehouse_path(Image::IMAGE_DIR, $hash));
         create_scaled_image(
             $cover,
             warehouse_path(Image::THUMBNAIL_DIR, $hash),
             get_thumbnail_max_size_scaled(),
-            get_extension(get_mime($cover)),
+            MimeType::get_for_file($cover),
             null
         );
         return true;

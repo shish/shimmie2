@@ -43,7 +43,7 @@ class RSSImages extends Extension
         global $page;
         global $config;
         $page->set_mode(PageMode::DATA);
-        $page->set_type(MIME_TYPE_RSS);
+        $page->set_mime(MimeType::RSS);
 
         $data = "";
         foreach ($images as $image) {

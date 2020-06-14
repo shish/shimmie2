@@ -3,9 +3,6 @@
 * Things which should be in the core API                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-require_once "filetypes.php";
-
-
 /**
  * Return the unique elements of an array, case insensitively
  */

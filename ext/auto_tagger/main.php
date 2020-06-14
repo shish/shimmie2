@@ -102,7 +102,7 @@ class AutoTagger extends Extension
                 $this->theme->display_auto_tagtable($t->table($t->query()), $t->paginator());
             } elseif ($event->get_arg(0) == "export") {
                 $page->set_mode(PageMode::DATA);
-                $page->set_type(MIME_TYPE_CSV);
+                $page->set_mime(MimeType::CSV);
                 $page->set_filename("auto_tag.csv");
                 $page->set_data($this->get_auto_tag_csv($database));
             } elseif ($event->get_arg(0) == "import") {

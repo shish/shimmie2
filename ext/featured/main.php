@@ -30,7 +30,7 @@ class Featured extends Extension
                 $image = Image::by_id($config->get_int("featured_id"));
                 if (!is_null($image)) {
                     $page->set_mode(PageMode::DATA);
-                    $page->set_type($image->get_mime_type());
+                    $page->set_mime($image->get_mime());
                     $page->set_data(file_get_contents($image->get_image_filename()));
                 }
             }

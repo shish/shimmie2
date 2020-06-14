@@ -291,11 +291,11 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDataUpload(DataUploadEvent $event)
     {
-        $supported_ext = $this->supported_ext($event->type);
+        $supported_mime = $this->supported_mime($event->mime);
         $check_contents = $this->check_contents($event->tmpname);
-        if ($supported_ext && $check_contents) {
+        if ($supported_mime && $check_contents) {
             $this->move_upload_to_archive($event);
-            send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
+            send_event(new ThumbnailGenerationEvent($event->hash, $event->mime));
 
             /* Check if we are replacing an image */
             if (!is_null($event->replace_id)) {
@@ -317,8 +317,8 @@ abstract class DataHandlerExtension extends Extension
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
                 }
-                if (empty($image->ext)) {
-                    throw new UploadException("Unable to determine extension for ". $event->tmpname);
+                if (empty($image->get_mime())) {
+                    throw new UploadException("Unable to determine MIME for ". $event->tmpname);
                 }
                 try {
                     send_event(new MediaCheckPropertiesEvent($image));
@@ -333,8 +333,8 @@ abstract class DataHandlerExtension extends Extension
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
                 }
-                if (empty($image->ext)) {
-                    throw new UploadException("Unable to determine extension for ". $event->tmpname);
+                if (empty($image->get_mime())) {
+                    throw new UploadException("Unable to determine MIME for ". $event->tmpname);
                 }
                 try {
                     send_event(new MediaCheckPropertiesEvent($image));
@@ -358,7 +358,7 @@ abstract class DataHandlerExtension extends Extension
                     send_event(new LockSetEvent($image, !empty($locked)));
                 }
             }
-        } elseif ($supported_ext && !$check_contents) {
+        } elseif ($supported_mime && !$check_contents) {
             // We DO support this extension - but the file looks corrupt
             throw new UploadException("Invalid or corrupted file");
         }
@@ -367,15 +367,15 @@ abstract class DataHandlerExtension extends Extension
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
     {
         $result = false;
-        if ($this->supported_ext($event->type)) {
+        if ($this->supported_mime($event->mime)) {
             if ($event->force) {
-                $result = $this->create_thumb($event->hash, $event->type);
+                $result = $this->create_thumb($event->hash, $event->mime);
             } else {
                 $outname = warehouse_path(Image::THUMBNAIL_DIR, $event->hash);
                 if (file_exists($outname)) {
                     return;
                 }
-                $result = $this->create_thumb($event->hash, $event->type);
+                $result = $this->create_thumb($event->hash, $event->mime);
             }
         }
         if ($result) {
@@ -386,7 +386,7 @@ abstract class DataHandlerExtension extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $page;
-        if ($this->supported_ext($event->image->ext)) {
+        if ($this->supported_mime($event->image->get_mime())) {
             /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             $this->theme->display_image($page, $event->image);
         }
@@ -394,7 +394,7 @@ abstract class DataHandlerExtension extends Extension
 
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
-        if ($this->supported_ext($event->ext)) {
+        if ($this->supported_mime($event->mime)) {
             $this->media_check_properties($event);
         }
     }
@@ -408,11 +408,11 @@ abstract class DataHandlerExtension extends Extension
         $image->filesize = $metadata['size'];
         $image->hash = $metadata['hash'];
         $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
-        if ($config->get_bool("upload_use_mime")) {
-            $image->ext = get_extension_for_file($filename);
-        }
-        if (empty($image->ext)) {
-            $image->ext = (($pos = strpos($metadata['extension'], '?')) !== false) ? substr($metadata['extension'], 0, $pos) : $metadata['extension'];
+
+        if (array_key_exists("extension", $metadata)) {
+            $image->set_mime(MimeType::get_for_file($filename, $metadata["extension"]));
+        } else {
+            $image->set_mime(MimeType::get_for_file($filename));
         }
 
         $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
@@ -423,22 +423,35 @@ abstract class DataHandlerExtension extends Extension
 
     abstract protected function media_check_properties(MediaCheckPropertiesEvent $event): void;
     abstract protected function check_contents(string $tmpname): bool;
-    abstract protected function create_thumb(string $hash, string $type): bool;
+    abstract protected function create_thumb(string $hash, string $mime): bool;
 
-    protected function supported_ext(string $ext): bool
+    protected function supported_mime(string $mime): bool
     {
-        return in_array(get_mime_for_extension($ext), $this->SUPPORTED_MIME);
+        return MimeType::matches_array($mime, $this->SUPPORTED_MIME);
+    }
+
+    public static function get_all_supported_mimes(): array
+    {
+        $arr = [];
+        foreach (getSubclassesOf("DataHandlerExtension") as $handler) {
+            $handler = (new $handler());
+            $arr = array_merge($arr, $handler->SUPPORTED_MIME);
+        }
+
+        // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class
+        if (class_exists("TranscodeImage")) {
+            $arr = array_merge($arr, TranscodeImage::get_enabled_mimes());
+        }
+
+        $arr = array_unique($arr);
+        return $arr;
     }
 
     public static function get_all_supported_exts(): array
     {
         $arr = [];
-        foreach (getSubclassesOf("DataHandlerExtension") as $handler) {
-            $handler = (new $handler());
-
-            foreach ($handler->SUPPORTED_MIME as $mime) {
-                $arr = array_merge($arr, get_all_extension_for_mime($mime));
-            }
+        foreach (self::get_all_supported_mimes() as $mime) {
+            $arr = array_merge($arr, FileExtension::get_all_for_mime($mime));
         }
         $arr = array_unique($arr);
         return $arr;

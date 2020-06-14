@@ -1,15 +1,14 @@
 <?php declare(strict_types=1);
 
-class MediaInfo extends ExtensionInfo
+class MimeSystemInfo extends ExtensionInfo
 {
-    public const KEY = "media";
+    public const KEY = "mime";
 
     public $key = self::KEY;
-    public $name = "Media";
-    public $url = self::SHIMMIE_URL;
+    public $name = "MIME";
     public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
     public $license = self::LICENSE_WTFPL;
-    public $description = "Provides common functions and settings used for media operations.";
+    public $description = "Provides system mime-related functionality";
     public $core = true;
     public $visibility = self::VISIBLE_HIDDEN;
 }

@@ -11,14 +11,14 @@ abstract class VideoFileHandlerConfig
 class VideoFileHandler extends DataHandlerExtension
 {
     public const SUPPORTED_MIME = [
-        MIME_TYPE_ASF,
-        MIME_TYPE_AVI,
-        MIME_TYPE_FLASH_VIDEO,
-        MIME_TYPE_MKV,
-        MIME_TYPE_MP4_VIDEO,
-        MIME_TYPE_OGG_VIDEO,
-        MIME_TYPE_QUICKTIME,
-        MIME_TYPE_WEBM,
+        MimeType::ASF,
+        MimeType::AVI,
+        MimeType::FLASH_VIDEO,
+        MimeType::MKV,
+        MimeType::MP4_VIDEO,
+        MimeType::OGG_VIDEO,
+        MimeType::QUICKTIME,
+        MimeType::WEBM,
     ];
     protected $SUPPORTED_MIME = self::SUPPORTED_MIME;
 
@@ -31,15 +31,15 @@ class VideoFileHandler extends DataHandlerExtension
         $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_MUTE, false);
         $config->set_default_array(
             VideoFileHandlerConfig::ENABLED_FORMATS,
-            [MIME_TYPE_FLASH_VIDEO, MIME_TYPE_MP4_VIDEO, MIME_TYPE_OGG_VIDEO, MIME_TYPE_WEBM]
+            [MimeType::FLASH_VIDEO, MimeType::MP4_VIDEO, MimeType::OGG_VIDEO, MimeType::WEBM]
         );
     }
 
     private function get_options(): array
     {
         $output = [];
-        foreach ($this->SUPPORTED_MIME as $format) {
-            $output[MIME_TYPE_MAP[$format][MIME_TYPE_MAP_NAME]] = $format;
+        foreach ($this->SUPPORTED_MIME as $mime) {
+            $output[MimeMap::get_name_for_mime($mime)] = $mime;
         }
         return $output;
     }
@@ -108,17 +108,13 @@ class VideoFileHandler extends DataHandlerExtension
         }
     }
 
-    protected function supported_ext(string $ext): bool
+    protected function supported_mime(string $mime): bool
     {
         global $config;
 
         $enabled_formats = $config->get_array(VideoFileHandlerConfig::ENABLED_FORMATS);
-        foreach ($enabled_formats as $format) {
-            if (in_array($ext, MIME_TYPE_MAP[$format][MIME_TYPE_MAP_EXT])) {
-                return true;
-            }
-        }
-        return false;
+
+        return MimeType::matches_array($mime, $enabled_formats, true);
     }
 
     protected function create_thumb(string $hash, string $type): bool
@@ -131,13 +127,11 @@ class VideoFileHandler extends DataHandlerExtension
         global $config;
 
         if (file_exists($tmpname)) {
-            $mime = get_mime($tmpname);
+            $mime = MimeType::get_for_file($tmpname);
 
             $enabled_formats = $config->get_array(VideoFileHandlerConfig::ENABLED_FORMATS);
-            foreach ($enabled_formats as $format) {
-                if (in_array($mime, MIME_TYPE_MAP[$format][MIME_TYPE_MAP_MIME])) {
-                    return true;
-                }
+            if (MimeType::matches_array($mime, $enabled_formats)) {
+                return true;
             }
         }
         return false;

@@ -16,23 +16,23 @@ class TranscodeImage extends Extension
 
     const ACTION_BULK_TRANSCODE = "bulk_transcode";
 
-    const INPUT_FORMATS = [
-        "BMP" => EXTENSION_BMP,
-        "GIF" => EXTENSION_GIF,
-        "ICO" => EXTENSION_ICO,
-        "JPG" => EXTENSION_JPG,
-        "PNG" => EXTENSION_PNG,
-        "PSD" => EXTENSION_PSD,
-        "TIFF" => EXTENSION_TIFF,
-        "WEBP" => EXTENSION_WEBP,
+    const INPUT_MIMES = [
+        "BMP" => MimeType::BMP,
+        "GIF" => MimeType::GIF,
+        "ICO" => MimeType::ICO,
+        "JPG" => MimeType::JPEG,
+        "PNG" => MimeType::PNG,
+        "PSD" => MimeType::PSD,
+        "TIFF" => MimeType::TIFF,
+        "WEBP" => MimeType::WEBP
     ];
 
-    const OUTPUT_FORMATS = [
+    const OUTPUT_MIMES = [
         "" => "",
-        "JPEG (lossy)" => EXTENSION_JPG,
-        "PNG (lossless)" => EXTENSION_PNG,
-        "WEBP (lossy)" => Media::WEBP_LOSSY,
-        "WEBP (lossless)" => Media::WEBP_LOSSLESS,
+        "JPEG (lossy)" => MimeType::JPEG,
+        "PNG (lossless)" => MimeType::PNG,
+        "WEBP (lossy)" => MimeType::WEBP,
+        "WEBP (lossless)" => MimeType::WEBP_LOSSLESS,
     ];
 
     /**
@@ -52,10 +52,73 @@ class TranscodeImage extends Extension
         $config->set_default_string(TranscodeConfig::ENGINE, MediaEngine::GD);
         $config->set_default_int(TranscodeConfig::QUALITY, 80);
 
-        foreach (array_values(self::INPUT_FORMATS) as $format) {
-            $config->set_default_string(TranscodeConfig::UPLOAD_PREFIX.$format, "");
+        foreach (array_values(self::INPUT_MIMES) as $mime) {
+            $config->set_default_string(self::get_mapping_name($mime), "");
         }
     }
+
+    private static function get_mapping_name(string $mime): string
+    {
+        $mime = str_replace(".", "_", $mime);
+        $mime = str_replace("/", "_", $mime);
+        return TranscodeConfig::UPLOAD_PREFIX.$mime;
+    }
+
+    private static function get_mapping(String $mime): ?string
+    {
+        global $config;
+        return $config->get_string(self::get_mapping_name($mime));
+    }
+    private static function set_mapping(String $from_mime, ?String $to_mime): void
+    {
+        global $config;
+        $config->set_string(self::get_mapping_name($from_mime), $to_mime);
+    }
+
+    public static function get_enabled_mimes(): array
+    {
+        $output = [];
+        foreach (array_values(self::INPUT_MIMES) as $mime) {
+            $value = self::get_mapping($mime);
+            if (!empty($value)) {
+                $output[] = $mime;
+            }
+        }
+        return $output;
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
+        global $config;
+
+        if ($this->get_version(TranscodeConfig::VERSION) < 1) {
+            $old_extensions =[];
+            foreach (array_values(self::INPUT_MIMES) as $mime) {
+                $old_extensions = array_merge($old_extensions, FileExtension::get_all_for_mime($mime));
+            }
+
+            foreach ($old_extensions as $old_extension) {
+                $oldValue = $this->get_mapping($old_extension);
+                if (!empty($oldValue)) {
+                    $from_mime = MimeType::get_for_extension($old_extension);
+                    if (empty($from_mime)) {
+                        continue;
+                    }
+
+                    $to_mime = MimeType::get_for_extension($oldValue);
+                    if (empty($to_mime)) {
+                        continue;
+                    }
+
+                    $this->set_mapping($from_mime, $to_mime);
+                    $this->set_mapping($old_extension, null);
+                }
+            }
+
+            $this->set_version(TranscodeConfig::VERSION, 1);
+        }
+    }
+
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
@@ -63,8 +126,8 @@ class TranscodeImage extends Extension
 
         if ($user->can(Permissions::EDIT_FILES)) {
             $engine = $config->get_string(TranscodeConfig::ENGINE);
-            if ($this->can_convert_format($engine, $event->image->ext, $event->image->lossless)) {
-                $options = $this->get_supported_output_formats($engine, $event->image->ext, $event->image->lossless??false);
+            if ($this->can_convert_mime($engine, $event->image->get_mime())) {
+                $options = $this->get_supported_output_mimes($engine, $event->image->get_mime());
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
             }
         }
@@ -82,10 +145,10 @@ class TranscodeImage extends Extension
         $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images: ", true);
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
         $sb->add_choice_option(TranscodeConfig::ENGINE, Media::IMAGE_MEDIA_ENGINES, "Engine", true);
-        foreach (self::INPUT_FORMATS as $display=>$format) {
-            if (in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
-                $outputs = $this->get_supported_output_formats($engine, $format);
-                $sb->add_choice_option(TranscodeConfig::UPLOAD_PREFIX.$format, $outputs, "$display", true);
+        foreach (self::INPUT_MIMES as $display=> $mime) {
+            if (MediaEngine::is_input_supported($engine, $mime)) {
+                $outputs = $this->get_supported_output_mimes($engine, $mime);
+                $sb->add_choice_option(self::get_mapping_name($mime), $outputs, "$display", true);
             }
         }
         $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality", true);
@@ -98,22 +161,19 @@ class TranscodeImage extends Extension
         global $config;
 
         if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
-            $ext = strtolower($event->type);
-
-            $ext = Media::normalize_format($ext);
-
-            if ($event->type==EXTENSION_GIF&&Media::is_animated_gif($event->tmpname)) {
+            $mime = strtolower($event->mime);
+            if ($mime===MimeType::GIF&&MimeType::is_animated_gif($event->tmpname)) {
                 return;
             }
 
-            if (in_array($ext, array_values(self::INPUT_FORMATS))) {
-                $target_format = $config->get_string(TranscodeConfig::UPLOAD_PREFIX.$ext);
-                if (empty($target_format)) {
+            if (in_array($mime, array_values(self::INPUT_MIMES))) {
+                $target_mime = self::get_mapping($mime);
+                if (empty($target_mime)) {
                     return;
                 }
                 try {
-                    $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-                    $event->set_type(Media::determine_ext($target_format));
+                    $new_image = $this->transcode_image($event->tmpname, $mime, $target_mime);
+                    $event->set_mime($target_mime);
                     $event->set_tmpname($new_image);
                 } catch (Exception $e) {
                     log_error("transcode", "Error while performing upload transcode: ".$e->getMessage());
@@ -142,9 +202,9 @@ class TranscodeImage extends Extension
             if (is_null($image_obj)) {
                 $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
             } else {
-                if (isset($_POST['transcode_format'])) {
+                if (isset($_POST['transcode_mime'])) {
                     try {
-                        $this->transcode_and_replace_image($image_obj, $_POST['transcode_format']);
+                        $this->transcode_and_replace_image($image_obj, $_POST['transcode_mime']);
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageTranscodeException $e) {
@@ -163,7 +223,7 @@ class TranscodeImage extends Extension
         $engine = $config->get_string(TranscodeConfig::ENGINE);
 
         if ($user->can(Permissions::EDIT_FILES)) {
-            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_formats($engine)));
+            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_mimes($engine)));
         }
     }
 
@@ -173,11 +233,11 @@ class TranscodeImage extends Extension
 
         switch ($event->action) {
             case self::ACTION_BULK_TRANSCODE:
-                if (!isset($_POST['transcode_format'])) {
+                if (!isset($_POST['transcode_mime'])) {
                     return;
                 }
                 if ($user->can(Permissions::EDIT_FILES)) {
-                    $format = $_POST['transcode_format'];
+                    $mime = $_POST['transcode_mime'];
                     $total = 0;
                     $size_difference = 0;
                     foreach ($event->items as $image) {
@@ -186,7 +246,7 @@ class TranscodeImage extends Extension
 
                             $before_size =  $image->filesize;
 
-                            $new_image = $this->transcode_and_replace_image($image, $format);
+                            $new_image = $this->transcode_and_replace_image($image, $mime);
                             // If a subsequent transcode fails, the database needs to have everything about the previous
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
@@ -194,7 +254,7 @@ class TranscodeImage extends Extension
                             $total++;
                             $size_difference += ($before_size - $new_image->filesize);
                         } catch (Exception $e) {
-                            log_error("transcode", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
+                            log_error("transcode", "Error while bulk transcode on item {$image->id} to $mime: ".$e->getMessage());
                             try {
                                 $database->rollback();
                             } catch (Exception $e) {
@@ -215,27 +275,24 @@ class TranscodeImage extends Extension
     }
 
 
-    private function can_convert_format($engine, $format, ?bool $lossless = null): bool
+    private function can_convert_mime($engine, $mime): bool
     {
-        return Media::is_input_supported($engine, $format, $lossless);
+        return MediaEngine::is_input_supported($engine, $mime);
     }
 
 
-    private function get_supported_output_formats($engine, ?String $omit_format = null, ?bool $lossless = null): array
+    private function get_supported_output_mimes($engine, ?String $omit_mime = null): array
     {
-        if ($omit_format!=null) {
-            $omit_format = Media::normalize_format($omit_format, $lossless);
-        }
         $output = [];
 
 
-        foreach (self::OUTPUT_FORMATS as $key=>$value) {
+        foreach (self::OUTPUT_MIMES as $key=> $value) {
             if ($value=="") {
                 $output[$key] = $value;
                 continue;
             }
-            if (Media::is_output_supported($engine, $value)
-                &&(empty($omit_format)||$omit_format!=$value)) {
+            if (MediaEngine::is_output_supported($engine, $value)
+                &&(empty($omit_mime)||$omit_mime!=$value)) {
                 $output[$key] = $value;
             }
         }
@@ -244,11 +301,11 @@ class TranscodeImage extends Extension
 
 
 
-    private function transcode_and_replace_image(Image $image_obj, String $target_format): Image
+    private function transcode_and_replace_image(Image $image_obj, String $target_mime): Image
     {
         $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
 
-        $tmp_filename = $this->transcode_image($original_file, $image_obj->ext, $target_format);
+        $tmp_filename = $this->transcode_image($original_file, $image_obj->get_mime(), $target_mime);
 
         $new_image = new Image();
         $new_image->hash = md5_file($tmp_filename);
@@ -256,7 +313,6 @@ class TranscodeImage extends Extension
         $new_image->filename = $image_obj->filename;
         $new_image->width = $image_obj->width;
         $new_image->height = $image_obj->height;
-        $new_image->ext = Media::determine_ext($target_format);
 
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
@@ -273,36 +329,36 @@ class TranscodeImage extends Extension
     }
 
 
-    private function transcode_image(String $source_name, String $source_format, string $target_format): string
+    private function transcode_image(String $source_name, String $source_mime, string $target_mime): string
     {
         global $config;
 
-        if ($source_format==$target_format) {
-            throw new ImageTranscodeException("Source and target formats are the same: ".$source_format);
+        if ($source_mime==$target_mime) {
+            throw new ImageTranscodeException("Source and target MIMEs are the same: ".$source_mime);
         }
 
         $engine = $config->get_string("transcode_engine");
 
 
 
-        if (!$this->can_convert_format($engine, $source_format)) {
-            throw new ImageTranscodeException("Engine $engine does not support input format $source_format");
+        if (!$this->can_convert_mime($engine, $source_mime)) {
+            throw new ImageTranscodeException("Engine $engine does not support input MIME $source_mime");
         }
-        if (!in_array($target_format, MediaEngine::OUTPUT_SUPPORT[$engine])) {
-            throw new ImageTranscodeException("Engine $engine does not support output format $target_format");
+        if (!MediaEngine::is_output_supported($engine, $target_mime)) {
+            throw new ImageTranscodeException("Engine $engine does not support output MIME $target_mime");
         }
 
         switch ($engine) {
             case "gd":
-                return $this->transcode_image_gd($source_name, $source_format, $target_format);
+                return $this->transcode_image_gd($source_name, $source_mime, $target_mime);
             case "convert":
-                return $this->transcode_image_convert($source_name, $source_format, $target_format);
+                return $this->transcode_image_convert($source_name, $source_mime, $target_mime);
             default:
                 throw new ImageTranscodeException("No engine specified");
         }
     }
 
-    private function transcode_image_gd(String $source_name, String $source_format, string $target_format): string
+    private function transcode_image_gd(String $source_name, String $source_mime, string $target_mime): string
     {
         global $config;
 
@@ -313,15 +369,14 @@ class TranscodeImage extends Extension
         $image = imagecreatefromstring(file_get_contents($source_name));
         try {
             $result = false;
-            switch ($target_format) {
-                case EXTENSION_WEBP:
-                case Media::WEBP_LOSSY:
+            switch ($target_mime) {
+                case MimeType::WEBP:
                     $result = imagewebp($image, $tmp_name, $q);
                     break;
-                case EXTENSION_PNG:
+                case MimeType::PNG:
                     $result = imagepng($image, $tmp_name, 9);
                     break;
-                case EXTENSION_JPG:
+                case MimeType::JPEG:
                     // In case of alpha channels
                     $width = imagesx($image);
                     $height = imagesy($image);
@@ -350,12 +405,12 @@ class TranscodeImage extends Extension
             imagedestroy($image);
         }
         if ($result===false) {
-            throw new ImageTranscodeException("Error while transcoding ".$source_name." to ".$target_format);
+            throw new ImageTranscodeException("Error while transcoding ".$source_name." to ".$target_mime);
         }
         return $tmp_name;
     }
 
-    private function transcode_image_convert(String $source_name, String $source_format, string $target_format): string
+    private function transcode_image_convert(String $source_name, String $source_mime, string $target_mime): string
     {
         global $config;
 
@@ -365,35 +420,35 @@ class TranscodeImage extends Extension
         if ($convert==null||$convert=="") {
             throw new ImageTranscodeException("ImageMagick path not configured");
         }
-        $ext = Media::determine_ext($target_format);
+        $ext = Media::determine_ext($target_mime);
 
-        $args = " -flatten ";
-        $bg = "none";
-        switch ($target_format) {
-            case Media::WEBP_LOSSLESS:
-                $args .= '-define webp:lossless=true';
+        $args = " -flatten -background ";
+
+        if (Media::supports_alpha($target_mime)) {
+            $args .= "none ";
+        } else {
+            $args .= "black ";
+        }
+
+        switch ($target_mime) {
+            case MimeType::PNG:
+                $args .= ' -define png:compression-level=9';
                 break;
-            case Media::WEBP_LOSSY:
-                $args .= '';
-                break;
-            case EXTENSION_PNG:
-                $args .= '-define png:compression-level=9';
+            case MimeType::WEBP_LOSSLESS:
+                $args .= ' -define webp:lossless=true -quality 100 ';
                 break;
             default:
-                $bg = "black";
+                $args .= ' -quality '.$q;
                 break;
         }
 
         $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
 
-        $source_type = "";
-        switch ($source_format) {
-            case EXTENSION_ICO:
-                $source_type = "ico:";
-        }
+        $source_type = FileExtension::get_for_mime($source_mime);
 
-        $format = '"%s" %s -quality %u -background %s %s"%s"  %s:"%s" 2>&1';
-        $cmd = sprintf($format, $convert, $args, $q, $bg, $source_type, $source_name, $ext, $tmp_name);
+        $format = '"%s" %s:"%s" %s %s:"%s" 2>&1';
+        $cmd = sprintf($format, $convert, $source_type, $source_name, $args, $ext, $tmp_name);
+
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
 

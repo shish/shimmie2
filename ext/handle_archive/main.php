@@ -2,7 +2,7 @@
 
 class ArchiveFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MIME_TYPE_ZIP];
+    protected $SUPPORTED_MIME = [MimeType::ZIP];
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -21,7 +21,7 @@ class ArchiveFileHandler extends DataHandlerExtension
 
     public function onDataUpload(DataUploadEvent $event)
     {
-        if ($this->supported_ext($event->type)) {
+        if ($this->supported_mime($event->mime)) {
             global $config, $page;
             $tmp = sys_get_temp_dir();
             $tmpdir = "$tmp/shimmie-archive-{$event->hash}";

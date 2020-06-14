@@ -136,7 +136,7 @@ function get_thumbnail_max_size_scaled(): array
 }
 
 
-function create_image_thumb(string $hash, string $type, string $engine = null)
+function create_image_thumb(string $hash, string $mime, string $engine = null)
 {
     global $config;
 
@@ -147,7 +147,7 @@ function create_image_thumb(string $hash, string $type, string $engine = null)
         $inname,
         $outname,
         $tsize,
-        $type,
+        $mime,
         $engine,
         $config->get_string(ImageConfig::THUMB_FIT)
     );
@@ -155,7 +155,7 @@ function create_image_thumb(string $hash, string $type, string $engine = null)
 
 
 
-function create_scaled_image(string $inname, string $outname, array $tsize, string $type, ?string $engine = null, ?string $resize_type = null)
+function create_scaled_image(string $inname, string $outname, array $tsize, string $mime, ?string $engine = null, ?string $resize_type = null)
 {
     global $config;
     if (empty($engine)) {
@@ -165,20 +165,17 @@ function create_scaled_image(string $inname, string $outname, array $tsize, stri
         $resize_type = $config->get_string(ImageConfig::THUMB_FIT);
     }
 
-    $output_format = $config->get_string(ImageConfig::THUMB_TYPE);
-    if ($output_format==EXTENSION_WEBP) {
-        $output_format = Media::WEBP_LOSSY;
-    }
+    $output_mime = $config->get_string(ImageConfig::THUMB_MIME);
 
     send_event(new MediaResizeEvent(
         $engine,
         $inname,
-        $type,
+        $mime,
         $outname,
         $tsize[0],
         $tsize[1],
         $resize_type,
-        $output_format,
+        $output_mime,
         $config->get_int(ImageConfig::THUMB_QUALITY),
         true,
         true
