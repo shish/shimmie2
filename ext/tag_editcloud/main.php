@@ -32,7 +32,7 @@ class TagEditCloud extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sort_by = ['Alphabetical'=>'a','Popularity'=>'p','Relevance'=>'r'];
+        $sort_by = ['Alphabetical'=>'a','Popularity'=>'p','Relevance'=>'r','Categories'=>'c'];
 
         $sb = new SetupBlock("Tag Edit Cloud");
         $sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
@@ -96,6 +96,24 @@ class TagEditCloud extends Extension
                     ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count, "relevant_tags"=>$relevant_tags]
                 );
                 break;
+            case 'c':
+                if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
+                    $tag_data = $database->get_all(
+                    "
+                                        SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
+                                        FROM tags
+                                        WHERE count >= :tag_min2
+                                        ORDER BY CASE
+                                            WHEN tag LIKE '%:%' THEN 1
+                                            ELSE 2
+                                        END, tag
+                                        LIMIT :limit",
+                    ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count]
+                    );
+                    break;
+                } else {
+                    $sort_method = 'a';
+                }
             case 'a':
             case 'p':
             default:
@@ -113,12 +131,16 @@ class TagEditCloud extends Extension
         }
 
         $counter = 1;
+        $last_cat = NULL;
+        $last_used_cat = NULL;
         foreach ($tag_data as $row) {
             $full_tag = $row['tag'];
 
+            $current_cat = "";
             if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $tc = explode(':', $row['tag']);
                 if (isset($tc[1]) && isset($cat_color[$tc[0]])) {
+                    $current_cat = $tc[0];
                     $h_tag = html_escape($tc[1]);
                     $color = '; color:'.$cat_color[$tc[0]];
                 } else {
@@ -135,6 +157,9 @@ class TagEditCloud extends Extension
 
             if (array_search($row['tag'], $image->get_tag_array()) !== false) {
                 if ($used_first) {
+                    if ($last_used_cat !== $current_cat && $last_used_cat !== NULL)
+                        $precloud .= "</span><span class='tag-category'>\n";
+                    $last_used_cat = $current_cat;
                     $precloud .= "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
                     continue;
                 } else {
@@ -145,21 +170,28 @@ class TagEditCloud extends Extension
             }
 
             if ($counter++ <= $def_count) {
+                if ($last_cat !== $current_cat && $last_cat != NULL)
+                    $cloud .= "</span><span class='tag-category'>\n"; //TODO: Maybe add a title for the category after the span opens?
                 $cloud .= $entry;
             } else {
+                if ($last_cat !== $current_cat && $counter !== $def_count + 2) {
+                    $postcloud .= "</span><span class='tag-category'>\n";
+                }
                 $postcloud .= $entry;
             }
+
+            $last_cat = $current_cat;
         }
 
         if ($precloud != '') {
-            $html .= "<div id='tagcloud_set'>{$precloud}</div>";
+            $html .= "<div id='tagcloud_set'><span class='tag-category'>{$precloud}</span></div>";
         }
 
         if ($postcloud != '') {
-            $postcloud = "<div id='tagcloud_extra' style='display: none;'>{$postcloud}</div>";
+            $postcloud = "<div id='tagcloud_extra' style='display: none;'><span class='tag-category'>{$postcloud}</span></div>";
         }
 
-        $html .= "<div id='tagcloud_unset'>{$cloud}{$postcloud}</div>";
+        $html .= "<div id='tagcloud_unset'><span class='tag-category'>{$cloud}</span>{$postcloud}</div>";
 
         if ($sort_method != 'a' && $counter > $def_count) {
             $rem = $counter - $def_count;
