@@ -39,6 +39,8 @@ class BulkActionEvent extends Event
     public $action;
     /** @var array  */
     public $items;
+    /** @var bool  */
+    public $redirect = true;
 
     public function __construct(String $action, Generator $items)
     {
@@ -177,12 +179,16 @@ class BulkActions extends Extension
                 }
             }
 
+            $bae = new BulkActionEvent($action, $items);
+
             if (is_iterable($items)) {
-                send_event(new BulkActionEvent($action, $items));
+                send_event($bae);
             }
 
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link()));
+            if ($bae->redirect) {
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(referer_or(make_link()));
+            }
         }
     }
 
