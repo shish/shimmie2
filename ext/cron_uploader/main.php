@@ -354,7 +354,9 @@ class CronUploader extends Extension
                     $database->begin_transaction();
                     $this->log_message(SCORE_LOG_INFO, "Adding file: {$img[0]} - tags: {$img[2]}");
                     $result = $this->add_image($img[0], $img[1], $img[2]);
-                    $database->commit();
+                    if ($database->is_transaction_open()) {
+                        $database->commit();
+                    }
                     $this->move_uploaded($img[0], $img[1], $output_subdir, false);
                     if ($result->merged) {
                         $merged++;
