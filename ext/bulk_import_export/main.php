@@ -31,6 +31,7 @@ class BulkImportExport extends DataHandlerExtension
                 }
                 $total = 0;
                 $skipped = 0;
+                $failed = 0;
 
                 $database->commit();
 
@@ -46,7 +47,7 @@ class BulkImportExport extends DataHandlerExtension
                             continue;
                         }
 
-                        $tmpfile = tempnam("/tmp", "shimmie_bulk_import");
+                        $tmpfile = tempnam(sys_get_temp_dir(), "shimmie_bulk_import");
                         $stream = $zip->getStream($item->hash);
                         if ($zip === false) {
                             throw new SCoreException("Could not import " . $item->hash . ": File not in zip");
@@ -74,6 +75,7 @@ class BulkImportExport extends DataHandlerExtension
                         $database->commit();
                         $total++;
                     } catch (Exception $ex) {
+                        $failed++;
                         try {
                             $database->rollBack();
                         } catch (Exception $ex2) {
@@ -89,7 +91,11 @@ class BulkImportExport extends DataHandlerExtension
                 }
                 $event->image_id = -2; // default -1 = upload wasn't handled
 
-                log_info(BulkImportExportInfo::KEY, "Imported $total items, skipped $skipped", "Imported $total items, skipped $skipped");
+                log_info(
+                    BulkImportExportInfo::KEY,
+                    "Imported $total items, skipped $skipped, $failed failed",
+                    "Imported $total items, skipped $skipped, $failed failed"
+                );
             } else {
                 throw new SCoreException("Could not open zip archive");
             }
@@ -113,7 +119,8 @@ class BulkImportExport extends DataHandlerExtension
 
         if ($user->can(Permissions::BULK_EXPORT) &&
             ($event->action == self::EXPORT_ACTION_NAME)) {
-            $zip_filename = data_path($user->name . '-' . date('YmdHis') . '.zip');
+            $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
+            $zip_filename = tempnam(sys_get_temp_dir(), "shimmie_bulk_export");
             $zip = new ZipArchive;
 
             $json_data = [];
@@ -142,7 +149,9 @@ class BulkImportExport extends DataHandlerExtension
 
                 $page->set_mode(PageMode::FILE);
                 $page->set_file($zip_filename, true);
-                $page->set_filename(basename($zip_filename));
+                $page->set_filename($download_filename);
+
+                $event->redirect = false;
             }
         }
     }
