@@ -271,10 +271,9 @@ class ImageIO extends Extension
 
     private function send_file(int $image_id, string $type)
     {
-        global $config;
-        $image = Image::by_id($image_id);
+        global $config, $page;
 
-        global $page;
+        $image = Image::by_id($image_id);
         if (!is_null($image)) {
             if ($type == "thumb") {
                 $ext = $config->get_string(ImageConfig::THUMB_TYPE);
@@ -285,7 +284,6 @@ class ImageIO extends Extension
                 $page->set_type($image->get_mime_type());
                 $file = $image->get_image_filename();
             }
-
             if (!file_exists($file)) {
                 http_response_code(404);
                 die();
@@ -319,6 +317,8 @@ class ImageIO extends Extension
                 }
                 $page->add_http_header('Expires: ' . $expires);
             }
+
+            send_event(new ImageDownloadingEvent($image, $file, $mime));
         } else {
             $page->set_title("Not Found");
             $page->set_heading("Not Found");

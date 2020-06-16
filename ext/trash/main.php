@@ -41,11 +41,31 @@ class Trash extends Extension
         }
     }
 
+    private function check_permissions(Image $image): bool
+    {
+        global $user;
+
+        if ($image->trash===true && !$user->can(Permissions::VIEW_TRASH)) {
+            return false;
+        }
+        return true;
+    }
+
+    public function onImageDownloading(ImageDownloadingEvent $event)
+    {
+        /**
+         * Deny images upon insufficient permissions.
+         **/
+        if (!$this->check_permissions($event->image)) {
+            throw new SCoreException("Access denied");
+        }
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $user, $page;
+        global $page;
 
-        if ($event->image->trash===true && !$user->can(Permissions::VIEW_TRASH)) {
+        if (!$this->check_permissions(($event->image))) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }

@@ -115,9 +115,30 @@ class Ratings extends Extension
         }
     }
 
+    private function check_permissions(Image $image): bool
+    {
+        global $user;
+
+        $user_view_level = Ratings::get_user_class_privs($user);
+        if (!in_array($image->rating, $user_view_level)) {
+            return false;
+        }
+        return true;
+    }
+
     public function onInitUserConfig(InitUserConfigEvent $event)
     {
         $event->user_config->set_default_array(RatingsConfig::USER_DEFAULTS, self::get_user_class_privs($event->user));
+    }
+
+    public function onImageDownloading(ImageDownloadingEvent $event)
+    {
+        /**
+         * Deny images upon insufficient permissions.
+         **/
+        if (!$this->check_permissions($event->image)) {
+            throw new SCoreException("Access denied");
+        }
     }
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
@@ -159,12 +180,11 @@ class Ratings extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $user, $page;
+        global $page;
         /**
          * Deny images upon insufficient permissions.
          **/
-        $user_view_level = Ratings::get_user_class_privs($user);
-        if (!in_array($event->image->rating, $user_view_level)) {
+        if (!$this->check_permissions($event->image)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }

@@ -99,9 +99,9 @@ class Approval extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $user, $page, $config;
+        global $page;
 
-        if ($config->get_bool(ApprovalConfig::IMAGES) && $event->image->approved===false && !$user->can(Permissions::APPROVE_IMAGE)) {
+        if (!$this->check_permissions(($event->image))) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
@@ -185,6 +185,26 @@ class Approval extends Extension
             "UPDATE images SET approved = :false, approved_by_id = NULL WHERE id = :id AND approved = :true",
             ["id"=>$image_id, "true"=>true, "false"=>false]
         );
+    }
+
+    private function check_permissions(Image $image): bool
+    {
+        global $user, $config;
+
+        if ($config->get_bool(ApprovalConfig::IMAGES) && $image->approved===false && !$user->can(Permissions::APPROVE_IMAGE)) {
+            return false;
+        }
+        return true;
+    }
+
+    public function onImageDownloading(ImageDownloadingEvent $event)
+    {
+        /**
+         * Deny images upon insufficient permissions.
+         **/
+        if (!$this->check_permissions($event->image)) {
+            throw new SCoreException("Access denied");
+        }
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
