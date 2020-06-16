@@ -364,7 +364,7 @@ class Media extends Extension
         }
 
         $inname = warehouse_path(Image::IMAGE_DIR, $hash);
-        $tmpname = tempnam("/tmp", "shimmie_ffmpeg_thumb");
+        $tmpname = tempnam(sys_get_temp_dir(), "shimmie_ffmpeg_thumb");
         $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
 
         $orig_size = self::video_size($inname);

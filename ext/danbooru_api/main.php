@@ -271,7 +271,7 @@ class DanbooruApi extends Extension
             }
         } elseif (isset($_REQUEST['source']) || isset($_REQUEST['post']['source'])) {    // A url was provided
             $source = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
-            $file = tempnam("/tmp", "shimmie_transload");
+            $file = tempnam(sys_get_temp_dir(), "shimmie_transload");
             $ok = transload($source, $file);
             if (!$ok) {
                 $page->set_code(409);

@@ -308,7 +308,7 @@ class TranscodeImage extends Extension
 
         $q = $config->get_int("transcode_quality");
 
-        $tmp_name = tempnam("/tmp", "shimmie_transcode");
+        $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
 
         $image = imagecreatefromstring(file_get_contents($source_name));
         try {
@@ -383,7 +383,8 @@ class TranscodeImage extends Extension
                 $bg = "black";
                 break;
         }
-        $tmp_name = tempnam("/tmp", "shimmie_transcode");
+
+        $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
 
         $source_type = "";
         switch ($source_format) {

@@ -198,7 +198,7 @@ class ResizeImage extends Extension
         list($new_height, $new_width) = $this->calc_new_size($image_obj, $width, $height);
 
         /* Temp storage while we resize */
-        $tmp_filename = tempnam("/tmp", 'shimmie_resize');
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'shimmie_resize');
         if (empty($tmp_filename)) {
             throw new ImageResizeException("Unable to save temporary image file.");
         }
