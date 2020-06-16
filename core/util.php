@@ -263,7 +263,7 @@ function transload(string $url, string $mfile): ?array
 {
     global $config;
 
-    if ($config->get_string("transload_engine") === "curl" && function_exists("curl_init")) {
+    if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "curl" && function_exists("curl_init")) {
         $ch = curl_init($url);
         $fp = fopen($mfile, "w");
 
@@ -291,7 +291,7 @@ function transload(string $url, string $mfile): ?array
         return $headers;
     }
 
-    if ($config->get_string("transload_engine") === "wget") {
+    if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "wget") {
         $s_url = escapeshellarg($url);
         $s_mfile = escapeshellarg($mfile);
         system("wget --no-check-certificate $s_url --output-document=$s_mfile");
@@ -299,14 +299,14 @@ function transload(string $url, string $mfile): ?array
         return file_exists($mfile) ? ["ok"=>"true"] : null;
     }
 
-    if ($config->get_string("transload_engine") === "fopen") {
+    if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "fopen") {
         $fp_in = @fopen($url, "r");
         $fp_out = fopen($mfile, "w");
         if (!$fp_in || !$fp_out) {
             return null;
         }
         $length = 0;
-        while (!feof($fp_in) && $length <= $config->get_int('upload_size')) {
+        while (!feof($fp_in) && $length <= $config->get_int(UploadConfig::SIZE)) {
             $data = fread($fp_in, 8192);
             $length += strlen($data);
             fwrite($fp_out, $data);

@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 
+require_once "config.php";
+
 /**
  * Occurs when some data is being uploaded.
  */
@@ -101,14 +103,14 @@ class Upload extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_int('upload_count', 3);
-        $config->set_default_int('upload_size', parse_shorthand_int('1MB'));
-        $config->set_default_int('upload_min_free_space', parse_shorthand_int('100MB'));
-        $config->set_default_bool('upload_tlsource', true);
+        $config->set_default_int(UploadConfig::COUNT, 3);
+        $config->set_default_int(UploadConfig::SIZE, parse_shorthand_int('1MB'));
+        $config->set_default_int(UploadConfig::MIN_FREE_SPACE, parse_shorthand_int('100MB'));
+        $config->set_default_bool(UploadConfig::TLSOURCE, true);
 
         $this->is_full = false;
 
-        $min_free_space = $config->get_int("upload_min_free_space");
+        $min_free_space = $config->get_int(UploadConfig::MIN_FREE_SPACE);
         if ($min_free_space > 0) {
             // SHIT: fucking PHP "security" measures -_-;;;
             $img_path = realpath("./images/");
@@ -134,12 +136,12 @@ class Upload extends Extension
         $sb = new SetupBlock("Upload");
         $sb->position = 10;
         // Output the limits from PHP so the user has an idea of what they can set.
-        $sb->add_int_option("upload_count", "Max uploads: ");
+        $sb->add_int_option(UploadConfig::COUNT, "Max uploads: ");
         $sb->add_label("<i>PHP Limit = " . ini_get('max_file_uploads') . "</i>");
-        $sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
+        $sb->add_shorthand_int_option(UploadConfig::SIZE, "<br/>Max size per file: ");
         $sb->add_label("<i>PHP Limit = " . ini_get('upload_max_filesize') . "</i>");
-        $sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
-        $sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source if none is provided: ");
+        $sb->add_choice_option(UploadConfig::TRANSLOAD_ENGINE, $tes, "<br/>Transload: ");
+        $sb->add_bool_option(UploadConfig::TLSOURCE, "<br/>Use transloaded URL as source if none is provided: ");
         $event->panel->add_block($sb);
     }
 
@@ -167,9 +169,9 @@ class Upload extends Extension
         if ($this->is_full) {
             throw new UploadException("Upload failed; disk nearly full");
         }
-        if (filesize($event->tmpname) > $config->get_int('upload_size')) {
+        if (filesize($event->tmpname) > $config->get_int(UploadConfig::SIZE)) {
             $size = to_shorthand_int(filesize($event->tmpname));
-            $limit = to_shorthand_int($config->get_int('upload_size'));
+            $limit = to_shorthand_int($config->get_int(UploadConfig::SIZE));
             throw new UploadException("File too large ($size > $limit)");
         }
     }
@@ -320,7 +322,7 @@ class Upload extends Extension
      */
     private function try_upload(array $file, array $tags, ?string $source = null, ?int $replace_id = null): bool
     {
-        global $page;
+        global $page, $config;
 
         if (empty($source)) {
             $source = null;
@@ -330,38 +332,58 @@ class Upload extends Extension
 
         // blank file boxes cause empty uploads, no need for error message
         if (!empty($file['name'])) {
+            $size = sizeof($file['name']);
+            $limit = $config->get_int(UploadConfig::COUNT);
             try {
-                // check if the upload was successful
-                if ($file['error'] !== UPLOAD_ERR_OK) {
-                    throw new UploadException($this->upload_error_message($file['error']));
+                if ($size > $limit) {
+                    throw new UploadException("Upload limited to $limit");
                 }
 
-                $pathinfo = pathinfo($file['name']);
-                $metadata = [];
-                $metadata['filename'] = $pathinfo['basename'];
-                $metadata['extension'] = "";
-                if (array_key_exists('extension', $pathinfo)) {
-                    $metadata['extension'] = $pathinfo['extension'];
-                }
-                $metadata['mime'] = MimeType::get_for_file($file['tmp_name'], $metadata['extension']);
-                if (empty($metadata['mime'])) {
-                    throw new UploadException("Unable to determine MIME for file ".$metadata['filename']);
-                }
+                for ($i = 0; $i < $size;$i++) {
+                    if (empty($file['name'][$i])) {
+                        continue;
+                    }
+                    try {
+                        // check if the upload was successful
+                        if ($file['error'][$i] !== UPLOAD_ERR_OK) {
+                            throw new UploadException($this->upload_error_message($file['error'][$i]));
+                        }
 
-                $metadata['tags'] = $tags;
-                $metadata['source'] = $source;
+                        $pathinfo = pathinfo($file['name'][$i]);
+                        $metadata = [];
+                        $metadata['filename'] = $pathinfo['basename'];
+                        $metadata['extension'] = "";
+                        if (array_key_exists('extension', $pathinfo)) {
+                            $metadata['extension'] = $pathinfo['extension'];
+                        }
+                        $metadata['mime'] = MimeType::get_for_file($file['tmp_name'][$i], $metadata['extension']);
+                        if (empty($metadata['mime'])) {
+                            throw new UploadException("Unable to determine MIME for file " . $metadata['filename']);
+                        }
 
-                $event = new DataUploadEvent($file['tmp_name'], $metadata);
-                $event->replace_id = $replace_id;
-                send_event($event);
-                if ($event->image_id == -1) {
-                    throw new UploadException("MIME type not supported: " . $metadata['mime']);
+                        $metadata['tags'] = $tags;
+                        $metadata['source'] = $source;
+
+                        $event = new DataUploadEvent($file['tmp_name'][$i], $metadata);
+                        $event->replace_id = $replace_id;
+                        send_event($event);
+                        if ($event->image_id == -1) {
+                            throw new UploadException("MIME type not supported: " . $metadata['mime']);
+                        }
+                        $page->add_http_header("X-Shimmie-Image-ID: " . $event->image_id);
+                    } catch (UploadException $ex) {
+                        $this->theme->display_upload_error(
+                            $page,
+                            "Error with " . html_escape($file['name'][$i]),
+                            $ex->getMessage()
+                        );
+                        $ok = false;
+                    }
                 }
-                $page->add_http_header("X-Shimmie-Image-ID: " . $event->image_id);
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(
                     $page,
-                    "Error with " . html_escape($file['name']),
+                    "Error with upload",
                     $ex->getMessage()
                 );
                 $ok = false;
@@ -383,7 +405,7 @@ class Upload extends Extension
         }
 
         // Checks if url contains rating, also checks if the rating extension is enabled.
-        if ($config->get_string("transload_engine", "none") != "none" && Extension::is_enabled(RatingsInfo::KEY) && !empty($_GET['rating'])) {
+        if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none" && Extension::is_enabled(RatingsInfo::KEY) && !empty($_GET['rating'])) {
             // Rating event will validate that this is s/q/e/u
             $rating = strtolower($_GET['rating']);
             $rating = $rating[0];
@@ -421,7 +443,7 @@ class Upload extends Extension
             $metadata = [];
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
-            $metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
+            $metadata['source'] = (($url == $source) && !$config->get_bool(UploadConfig::TLSOURCE) ? "" : $source);
 
             /* check for locked > adds to metadata if it has */
             if (!empty($locked)) {

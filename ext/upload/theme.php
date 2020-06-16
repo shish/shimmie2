@@ -18,8 +18,8 @@ class UploadTheme extends Themelet
     {
         global $config, $page;
 
-        $tl_enabled = ($config->get_string("transload_engine", "none") != "none");
-        $max_size = $config->get_int('upload_size');
+        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
+        $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
         $upload_list = $this->h_upload_list_1();
         $html = "
@@ -47,8 +47,8 @@ class UploadTheme extends Themelet
     {
         global $config;
         $upload_list = "";
-        $upload_count = $config->get_int('upload_count');
-        $tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+        $upload_count = $config->get_int(UploadConfig::COUNT);
+        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
         $accept = $this->get_accept();
 
         if ($tl_enabled) {
@@ -63,7 +63,7 @@ class UploadTheme extends Themelet
             for ($i=0; $i<$upload_count; $i++) {
                 $upload_list .= "
 					<tr>
-						<td colspan='2'><input type='file' name='data$i' accept='$accept'></td>
+						<td colspan='2'><input type='file' name='data${i}[]' accept='$accept' multiple></td>
 						<td colspan='2'><input type='text' name='url$i'></td>
 						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
@@ -80,7 +80,7 @@ class UploadTheme extends Themelet
             for ($i=0; $i<$upload_count; $i++) {
                 $upload_list .= "
 					<tr>
-						<td colspan='4'><input type='file' name='data$i' accept='$accept'></td>
+						<td colspan='4'><input type='file' name='data${i}[]' accept='$accept' multiple></td>
 						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
 				";
@@ -96,7 +96,7 @@ class UploadTheme extends Themelet
         $link = make_http(make_link("upload"));
         $main_page = make_http(make_link());
         $title = $config->get_string(SetupConfig::TITLE);
-        $max_size = $config->get_int('upload_size');
+        $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
         $delimiter = $config->get_bool('nice_urls') ? '?' : '&amp;';
         $html = '';
@@ -146,7 +146,7 @@ class UploadTheme extends Themelet
     public function display_replace_page(Page $page, int $image_id)
     {
         global $config, $page;
-        $tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
         $accept = $this->get_accept();
 
         $upload_list = "
@@ -164,7 +164,7 @@ class UploadTheme extends Themelet
 			";
         }
 
-        $max_size = $config->get_int('upload_size');
+        $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
 
         $image = Image::by_id($image_id);
@@ -213,26 +213,17 @@ class UploadTheme extends Themelet
     {
         global $config;
 
-        $upload_list = "";
-        $upload_count = $config->get_int('upload_count');
+        $upload_count = $config->get_int(UploadConfig::COUNT);
         $accept = $this->get_accept();
 
-        for ($i=0; $i<$upload_count; $i++) {
-            if ($i == 0) {
-                $style = "";
-            } // "style='display:visible'";
-            else {
-                $style = "style='display:none'";
-            }
-            $upload_list .= "<input id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" size='16' type='file' accept='$accept'>\n";
-        }
-        $max_size = $config->get_int('upload_size');
+        $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
+
         // <input type='hidden' name='max_file_size' value='$max_size' />
         return "
 			<div class='mini_upload'>
 			".make_form(make_link("upload"), "POST", $multipart=true)."
-				$upload_list
+				<input id='data[]' name='data[]' size='16' type='file' accept='$accept' multiple>
 				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags' required='required' autocomplete='off'>
 				<input type='submit' value='Post'>
 			</form>

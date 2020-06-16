@@ -23,7 +23,7 @@ class Update extends Extension
     public function onAdminBuilding(AdminBuildingEvent $event)
     {
         global $config;
-        if ($config->get_string('transload_engine') !== "none") {
+        if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) !== "none") {
             $this->theme->display_admin_block();
         }
     }
