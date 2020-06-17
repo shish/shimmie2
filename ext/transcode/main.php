@@ -48,6 +48,7 @@ class TranscodeImage extends Extension
     {
         global $config;
         $config->set_default_bool(TranscodeConfig::ENABLED, true);
+        $config->set_default_bool(TranscodeConfig::GET_ENABLED, false);
         $config->set_default_bool(TranscodeConfig::UPLOAD, false);
         $config->set_default_string(TranscodeConfig::ENGINE, MediaEngine::GD);
         $config->set_default_int(TranscodeConfig::QUALITY, 80);
@@ -144,6 +145,7 @@ class TranscodeImage extends Extension
         $sb = new SetupBlock("Image Transcode");
         $sb->start_table();
         $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images", true);
+        $sb->add_bool_option(TranscodeConfig::GET_ENABLED, "Enable GET args", true);
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload", true);
         $sb->add_choice_option(TranscodeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
         foreach (self::INPUT_MIMES as $display=> $mime) {
@@ -217,6 +219,41 @@ class TranscodeImage extends Extension
         }
     }
 
+    public function onImageDownloading(ImageDownloadingEvent $event)
+    {
+        global $config, $user;
+
+        if ($config->get_bool(TranscodeConfig::GET_ENABLED) &&
+            isset($_GET['transcode']) &&
+            $user->can(Permissions::EDIT_FILES) &&
+            $this->can_convert_mime($config->get_string(TranscodeConfig::ENGINE), $event->image->get_mime())) {
+            $target_mime = $_GET['transcode'];
+
+            if (!MimeType::is_mime($target_mime)) {
+                $target_mime = MimeType::get_for_extension($target_mime);
+            }
+            if (empty($target_mime)) {
+                throw new ImageTranscodeException("Unable to determine output MIME for ".$_GET['transcode']);
+            }
+
+            MediaEngine::is_output_supported($config->get_string(TranscodeConfig::ENGINE), $target_mime);
+
+            $source_mime = $event->image->get_mime();
+
+            if ($source_mime!=$target_mime) {
+                $tmp_filename = $this->transcode_image($event->path, $source_mime, $target_mime);
+
+                if ($event->file_modified===true&&$event->path!=$event->image->get_image_filename()) {
+                    // This means that we're dealing with a temp file that will need cleaned up
+                    unlink($event->path);
+                }
+
+                $event->path = $tmp_filename;
+                $event->mime = $target_mime;
+                $event->file_modified = true;
+            }
+        }
+    }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {

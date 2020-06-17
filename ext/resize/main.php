@@ -7,6 +7,7 @@ abstract class ResizeConfig
     const ENGINE = 'resize_engine';
     const DEFAULT_WIDTH = 'resize_default_width';
     const DEFAULT_HEIGHT = 'resize_default_height';
+    const GET_ENABLED = 'resize_get_enabled';
 }
 
 /**
@@ -30,6 +31,7 @@ class ResizeImage extends Extension
     {
         global $config;
         $config->set_default_bool(ResizeConfig::ENABLED, true);
+        $config->set_default_bool(ResizeConfig::GET_ENABLED, false);
         $config->set_default_bool(ResizeConfig::UPLOAD, false);
         $config->set_default_string(ResizeConfig::ENGINE, MediaEngine::GD);
         $config->set_default_int(ResizeConfig::DEFAULT_WIDTH, 0);
@@ -52,6 +54,7 @@ class ResizeImage extends Extension
         $sb->start_table();
         $sb->add_choice_option(ResizeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
         $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images", true);
+        $sb->add_bool_option(ResizeConfig::GET_ENABLED, "Allow GET args", true);
         $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload", true);
         $sb->end_table();
         $sb->start_table();
@@ -157,6 +160,60 @@ class ResizeImage extends Extension
                         $this->theme->display_resize_error($page, "Error Resizing", $e->error);
                     }
                 }
+            }
+        }
+    }
+
+    public function onImageDownloading(ImageDownloadingEvent $event)
+    {
+        global $config, $user;
+
+        if ($config->get_bool(ResizeConfig::GET_ENABLED) &&
+            $user->can(Permissions::EDIT_FILES) &&
+            $this->can_resize_mime($event->image->get_mime())) {
+            $new_width = $event->image->width;
+            $new_height = $event->image->height;
+
+            $max_height = 0;
+            $max_width = 0;
+
+            if (isset($_GET['max_height'])) {
+                $max_height = int_escape($_GET['max_height']);
+            } else {
+                $max_height = $event->image->height;
+            }
+
+            if (isset($_GET['max_width'])) {
+                $max_width = int_escape($_GET['max_width']);
+            } else {
+                $max_width = $event->image->width;
+            }
+
+            [$new_width, $new_height] = get_scaled_by_aspect_ratio($event->image->width, $event->image->height, $max_width, $max_height);
+
+            if ($new_width!==$event->image->width || $new_height !==$event->image->height) {
+                $tmp_filename = tempnam(sys_get_temp_dir(), 'shimmie_resize');
+                if (empty($tmp_filename)) {
+                    throw new ImageResizeException("Unable to save temporary image file.");
+                }
+
+                $mre = new MediaResizeEvent(
+                    $config->get_string(ResizeConfig::ENGINE),
+                    $event->path,
+                    $event->mime,
+                    $tmp_filename,
+                    $new_width,
+                    $new_height
+                );
+                send_event($mre);
+
+                if ($event->file_modified===true&&$event->path!=$event->image->get_image_filename()) {
+                    // This means that we're dealing with a temp file that will need cleaned up
+                    unlink($event->path);
+                }
+
+                $event->path = $tmp_filename;
+                $event->file_modified = true;
             }
         }
     }
