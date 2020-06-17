@@ -111,9 +111,9 @@ class SetupBlock extends Block
         $this->body .= $content;
         $this->end_table_cell();
     }
-    public function start_table_header_cell(int $colspan = 1)
+    public function start_table_header_cell(int $colspan = 1, string $align = 'right')
     {
-        $this->body .= "<th colspan='$colspan'>";
+        $this->body .= "<th colspan='$colspan' style='text-align: $align'>";
     }
     public function end_table_header_cell()
     {
@@ -126,23 +126,34 @@ class SetupBlock extends Block
         $this->end_table_header_cell();
     }
 
-    private function format_option(string $name, $html, ?string $label, bool $table_row)
-    {
+    private function format_option(
+        string $name,
+        $html,
+        ?string $label,
+        bool $table_row,
+        bool $label_row = false
+    ) {
         if ($table_row) {
             $this->start_table_row();
         }
         if ($table_row) {
-            $this->start_table_header_cell();
+            $this->start_table_header_cell($label_row ? 2 : 1, $label_row ? 'center' : 'right');
         }
         if (!is_null($label)) {
             $this->body .= "<label for='{$name}'>{$label}</label>";
         }
+
         if ($table_row) {
             $this->end_table_header_cell();
         }
 
+        if ($table_row && $label_row) {
+            $this->end_table_row();
+            $this->start_table_row();
+        }
+
         if ($table_row) {
-            $this->start_table_cell();
+            $this->start_table_cell($label_row ? 2 : 1);
         }
         $this->body .= $html;
         if ($table_row) {
@@ -173,7 +184,7 @@ class SetupBlock extends Block
         $html = "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
         $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->format_option($name, $html, $label, $table_row, true);
     }
 
     public function add_bool_option(string $name, string $label=null, bool $table_row = false)

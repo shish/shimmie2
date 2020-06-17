@@ -805,3 +805,18 @@ function human_filesize(int $bytes, $decimals = 2)
     $factor = floor((strlen(strval($bytes)) - 1) / 3);
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @BYTE_DENOMINATIONS[$factor];
 }
+
+/*
+ * Generates a unique key for the website to prevent unauthorized access.
+ */
+function generate_key(int $length = 20)
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters [rand(0, strlen($characters) - 1)];
+    }
+
+    return $randomString;
+}

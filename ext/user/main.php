@@ -276,12 +276,27 @@ class UserPage extends Extension
         ];
 
         $sb = new SetupBlock("User Options");
-        $sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
-        $sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
-        $sb->add_choice_option("avatar_host", $hosts, "<br>Avatars: ");
+        $sb->start_table();
+        $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
+        $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
+        $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
+        $sb->add_choice_option(
+            "user_loginshowprofile",
+            [
+                "return to previous page" => 0, // 0 is default
+                "send to user profile" => 1],
+            "On log in/out",
+            true
+        );
+        $sb->add_choice_option("avatar_host", $hosts, "Avatars", true);
 
         if ($config->get_string("avatar_host") == "gravatar") {
-            $sb->add_label("<br>&nbsp;<br><b>Gravatar Options</b>");
+            $sb->start_table_row();
+            $sb->start_table_cell(2);
+            $sb->add_label("<div style='text-align: center'><b>Gravatar Options</b></div>", );
+            $sb->end_table_cell();
+            $sb->end_table_row();
+
             $sb->add_choice_option(
                 "avatar_gravatar_type",
                 [
@@ -290,22 +305,19 @@ class UserPage extends Extension
                     'Monster ID'=>'monsterid',
                     'Identicon'=>'identicon'
                 ],
-                "<br>Type: "
+                "Type",
+                true
             );
             $sb->add_choice_option(
                 "avatar_gravatar_rating",
                 ['G'=>'g', 'PG'=>'pg', 'R'=>'r', 'X'=>'x'],
-                "<br>Rating: "
+                "Rating",
+                true
             );
+            $sb->end_table();
         }
 
-        $sb->add_choice_option(
-            "user_loginshowprofile",
-            [
-                            "return to previous page" => 0, // 0 is default
-                            "send to user profile" => 1],
-            "<br>When user logs in/out"
-        );
+
         $event->panel->add_block($sb);
     }
 

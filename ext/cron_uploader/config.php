@@ -21,7 +21,7 @@ abstract class CronUploaderConfig
         $config->set_default_int(self::LOG_LEVEL, SCORE_LOG_INFO);
         $upload_key = $config->get_string(self::KEY, "");
         if (empty($upload_key)) {
-            $upload_key = self::generate_key();
+            $upload_key = generate_key();
 
             $config->set_string(self::KEY, $upload_key);
         }
@@ -66,22 +66,5 @@ abstract class CronUploaderConfig
     {
         global $config;
         $config->set_string(self::DIR, $value);
-    }
-
-
-    /*
-     * Generates a unique key for the website to prevent unauthorized access.
-     */
-    private static function generate_key()
-    {
-        $length = 20;
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $randomString = '';
-
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters [rand(0, strlen($characters) - 1)];
-        }
-
-        return $randomString;
     }
 }
