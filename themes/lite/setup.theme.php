@@ -15,7 +15,7 @@ class CustomSetupTheme extends SetupTheme
         $i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
         $html = "
 			<script type='text/javascript'><!--
-			$(document).ready(function() {
+			document.addEventListener('DOMContentLoaded', () => {
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\", function() {
 						if($(\"#$i\").is(\":hidden\")) {
