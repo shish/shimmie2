@@ -53,6 +53,7 @@ function deactivate_bulk_selector() {
     set_selected_items([]);
     $('#bulk_selector_controls').hide();
     $('#bulk_selector_activate').show();
+    $('input[name="bulk_selected_ids"]').val("");
     bulk_selector_active = false;
 }
 
@@ -94,7 +95,6 @@ function deselect_item(id) {
 
 function toggle_selection( id ) {
     var data = get_selected_items();
-    console.log(id);
     if(data.includes(id)) {
         data.splice(data.indexOf(id),1);
         set_selected_items(data);            

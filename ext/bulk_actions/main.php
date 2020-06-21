@@ -167,8 +167,11 @@ class BulkActions extends Extension
             $action = $_POST['bulk_action'];
 
             $items = null;
-            if (isset($_POST['bulk_selected_ids']) && $_POST['bulk_selected_ids'] != "") {
+            if (isset($_POST['bulk_selected_ids']) && !empty($_POST['bulk_selected_ids'])) {
                 $data = json_decode($_POST['bulk_selected_ids']);
+                if (empty($data)) {
+                    throw new SCoreException("No ids specified in bulk_selected_ids");
+                }
                 if (is_array($data)&&!empty($data)) {
                     $items = $this->yield_items($data);
                 }
@@ -177,6 +180,8 @@ class BulkActions extends Extension
                 if ($query != null && $query != "") {
                     $items = $this->yield_search_results($query);
                 }
+            } else {
+                throw new SCoreException("No ids selected and no query present, cannot perform bulk operation on entire collection");
             }
 
             $bae = new BulkActionEvent($action, $items);
