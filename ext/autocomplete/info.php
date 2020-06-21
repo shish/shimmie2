@@ -6,6 +6,7 @@ class AutoCompleteInfo extends ExtensionInfo
 
     public $key = self::KEY;
     public $name = "Autocomplete";
-    public $authors = ["Daku"=>"admin@codeanimu.net"];
+    public $authors = ["Daku"=>"admin@codeanimu.net", "Matthew Barbour"=>"matthew@darkholme.net"];
     public $description = "Adds autocomplete to search & tagging.";
+    public $dependencies = [ApiInternalInfo::KEY];
 }
