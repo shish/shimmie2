@@ -53,7 +53,9 @@ class TagEditTheme extends Themelet
 				<td>
 		".($user->can(Permissions::EDIT_IMAGE_TAG) ? "
 					<span class='view'>$h_tag_links</span>
-					<input class='edit autocomplete_tags' type='text' name='tag_edit__tags' value='$h_tags' id='tag_editor' autocomplete='off'>
+                    <div class='edit'>
+					<input class='autocomplete_tags' type='text' name='tag_edit__tags' value='$h_tags' autocomplete='off'>
+					</div>
 		" : "
 					$h_tag_links
 		")."
