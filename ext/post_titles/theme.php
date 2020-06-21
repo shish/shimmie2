@@ -9,9 +9,7 @@ class PostTitlesTheme extends Themelet
 				<td>
 		".($can_set ? "
 					<span class='view'>".html_escape($title)."</span>
-					<span class='edit'>
 						<input class='edit'  type='text' name='post_title' value='".html_escape($title)."' />
-					</span>
 		" : html_escape("
 					 $title
 		"))."
