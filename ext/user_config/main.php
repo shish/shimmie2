@@ -112,14 +112,6 @@ class UserConfig extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
-    {
-        $sb = new SetupBlock("User Options");
-        $sb->start_table();
-        $sb->end_table();
-        $event->panel->add_block($sb);
-    }
-
 
     // This needs to happen before any other events, but after db upgrade
     public function get_priority(): int
