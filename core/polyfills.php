@@ -520,11 +520,14 @@ function truncate(string $string, int $limit, string $break=" ", string $pad="..
  */
 function parse_shorthand_int(string $limit): int
 {
-    if (preg_match('/^([\d\.]+)([gmk])?b?$/i', (string)$limit, $m)) {
+    if (preg_match('/^([\d\.]+)([tgmk])?b?$/i', (string)$limit, $m)) {
         $value = $m[1];
         if (isset($m[2])) {
             switch (strtolower($m[2])) {
                 /** @noinspection PhpMissingBreakStatementInspection */
+                case 't': $value *= 1024;  // fall through
+                /** @noinspection PhpMissingBreakStatementInspection */
+                // no break
                 case 'g': $value *= 1024;  // fall through
                 /** @noinspection PhpMissingBreakStatementInspection */
                 // no break
@@ -548,7 +551,9 @@ function to_shorthand_int(int $int): string
 {
     assert($int >= 0);
 
-    if ($int >= pow(1024, 3)) {
+    if ($int >= pow(1024, 4)) {
+        return sprintf("%.1fTB", $int / pow(1024, 4));
+    } elseif ($int >= pow(1024, 3)) {
         return sprintf("%.1fGB", $int / pow(1024, 3));
     } elseif ($int >= pow(1024, 2)) {
         return sprintf("%.1fMB", $int / pow(1024, 2));
