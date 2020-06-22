@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 
+class BulkActionException extends SCoreException
+{
+}
 class BulkActionBlockBuildingEvent extends Event
 {
     /** @var array  */
@@ -166,28 +169,32 @@ class BulkActions extends Extension
 
             $action = $_POST['bulk_action'];
 
-            $items = null;
-            if (isset($_POST['bulk_selected_ids']) && !empty($_POST['bulk_selected_ids'])) {
-                $data = json_decode($_POST['bulk_selected_ids']);
-                if (empty($data)) {
-                    throw new SCoreException("No ids specified in bulk_selected_ids");
+            try {
+                $items = null;
+                if (isset($_POST['bulk_selected_ids']) && !empty($_POST['bulk_selected_ids'])) {
+                    $data = json_decode($_POST['bulk_selected_ids']);
+                    if (empty($data)) {
+                        throw new BulkActionException("No ids specified in bulk_selected_ids");
+                    }
+                    if (is_array($data) && !empty($data)) {
+                        $items = $this->yield_items($data);
+                    }
+                } elseif (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
+                    $query = $_POST['bulk_query'];
+                    if ($query != null && $query != "") {
+                        $items = $this->yield_search_results($query);
+                    }
+                } else {
+                    throw new BulkActionException("No ids selected and no query present, cannot perform bulk operation on entire collection");
                 }
-                if (is_array($data)&&!empty($data)) {
-                    $items = $this->yield_items($data);
-                }
-            } elseif (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
-                $query = $_POST['bulk_query'];
-                if ($query != null && $query != "") {
-                    $items = $this->yield_search_results($query);
-                }
-            } else {
-                throw new SCoreException("No ids selected and no query present, cannot perform bulk operation on entire collection");
-            }
 
-            $bae = new BulkActionEvent($action, $items);
+                $bae = new BulkActionEvent($action, $items);
 
-            if (is_iterable($items)) {
-                send_event($bae);
+                if (is_iterable($items)) {
+                    send_event($bae);
+                }
+            } catch (BulkActionException $e) {
+                log_error(BulkActionsInfo::KEY, $e->getMessage(), $e->getMessage());
             }
 
             if ($bae->redirect) {
