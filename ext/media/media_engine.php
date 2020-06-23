@@ -87,6 +87,9 @@ abstract class MediaEngine
         ],
         MediaEngine::FFMPEG => [
             Media::RESIZE_TYPE_FIT
+        ],
+        MediaEngine::STATIC => [
+            Media::RESIZE_TYPE_FIT
         ]
     ];
 }
