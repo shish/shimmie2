@@ -99,7 +99,7 @@ class TagEditCloud extends Extension
             case 'c':
                 if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                     $tag_data = $database->get_all(
-                    "
+                        "
                                         SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
                                         FROM tags
                                         WHERE count >= :tag_min2
@@ -108,12 +108,13 @@ class TagEditCloud extends Extension
                                             ELSE 2
                                         END, tag
                                         LIMIT :limit",
-                    ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count]
+                        ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count]
                     );
                     break;
                 } else {
                     $sort_method = 'a';
                 }
+                // no break
             case 'a':
             case 'p':
             default:
@@ -131,8 +132,8 @@ class TagEditCloud extends Extension
         }
 
         $counter = 1;
-        $last_cat = NULL;
-        $last_used_cat = NULL;
+        $last_cat = null;
+        $last_used_cat = null;
         foreach ($tag_data as $row) {
             $full_tag = $row['tag'];
 
@@ -157,8 +158,9 @@ class TagEditCloud extends Extension
 
             if (array_search($row['tag'], $image->get_tag_array()) !== false) {
                 if ($used_first) {
-                    if ($last_used_cat !== $current_cat && $last_used_cat !== NULL)
+                    if ($last_used_cat !== $current_cat && $last_used_cat !== null) {
                         $precloud .= "</span><span class='tag-category'>\n";
+                    }
                     $last_used_cat = $current_cat;
                     $precloud .= "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
                     continue;
@@ -170,8 +172,9 @@ class TagEditCloud extends Extension
             }
 
             if ($counter++ <= $def_count) {
-                if ($last_cat !== $current_cat && $last_cat != NULL)
-                    $cloud .= "</span><span class='tag-category'>\n"; //TODO: Maybe add a title for the category after the span opens?
+                if ($last_cat !== $current_cat && $last_cat != null) {
+                    $cloud .= "</span><span class='tag-category'>\n";
+                } //TODO: Maybe add a title for the category after the span opens?
                 $cloud .= $entry;
             } else {
                 if ($last_cat !== $current_cat && $counter !== $def_count + 2) {

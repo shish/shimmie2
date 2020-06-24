@@ -5,7 +5,6 @@ use function MicroHTML\INPUT;
 
 class UserConfigTheme extends Themelet
 {
-
     public function get_user_options(string $key): string
     {
         $html = "
