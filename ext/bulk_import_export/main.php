@@ -17,18 +17,12 @@ class BulkImportExport extends DataHandlerExtension
             $zip = new ZipArchive;
 
             if ($zip->open($event->tmpname) === true) {
-                $info = $zip->getStream(self::EXPORT_INFO_FILE_NAME);
-                $json_data = [];
-                if ($info !== false) {
-                    try {
-                        $json_string = stream_get_contents($info);
-                        $json_data = json_decode($json_string);
-                    } finally {
-                        fclose($info);
-                    }
-                } else {
-                    throw new SCoreException("Could not get " . self::EXPORT_INFO_FILE_NAME . " from archive");
+                $json_data = $this->get_export_data($zip);
+
+                if(empty($json_data)) {
+                    return;
                 }
+
                 $total = 0;
                 $skipped = 0;
                 $failed = 0;
@@ -169,4 +163,22 @@ class BulkImportExport extends DataHandlerExtension
     {
         return false;
     }
+
+    private function get_export_data(ZipArchive $zip): ?array
+    {
+        $info = $zip->getStream(self::EXPORT_INFO_FILE_NAME);
+        $json_data = [];
+        if ($info !== false) {
+            try {
+                $json_string = stream_get_contents($info);
+                $json_data = json_decode($json_string);
+            } finally {
+                fclose($info);
+            }
+            return $json_data;
+        } else {
+            return null;
+        }
+    }
+
 }
