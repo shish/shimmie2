@@ -127,10 +127,16 @@ function list_files(string $base, string $_sub_dir=""): array
 
     $files = [];
     $dir = opendir("$base/$_sub_dir");
-    while ($f = readdir($dir)) {
-        $files[] = $f;
+    if($dir===false) {
+        throw new SCoreException("Unable to open directory $base/$_sub_dir");
     }
-    closedir($dir);
+    try {
+        while ($f = readdir($dir)) {
+            $files[] = $f;
+        }
+    } finally {
+        closedir($dir);
+    }
     sort($files);
 
     foreach ($files as $filename) {
