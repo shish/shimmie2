@@ -554,58 +554,26 @@ function _load_theme_files()
     require_all(_get_themelet_files(get_theme()));
 }
 
-function _sanitise_environment(): void
+function _set_up_shimmie_environment(): void
 {
     global $tracer_enabled;
 
-    $min_php = "7.3";
-    if (version_compare(phpversion(), $min_php, ">=") === false) {
-        print "
-Shimmie does not support versions of PHP lower than $min_php
-(PHP reports that it is version ".phpversion().").
-If your web host is running an older version, they are dangerously out of
-date and you should plan on moving elsewhere.
-";
-        exit;
-    }
-
     if (file_exists("images") && !file_exists("data/images")) {
-        die("As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
+        die_nicely("Upgrade error", "As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
     }
 
     if (TIMEZONE) {
         date_default_timezone_set(TIMEZONE);
     }
 
-    # ini_set('zend.assertions', '1');  // generate assertions
-    ini_set('assert.exception', '1');  // throw exceptions when failed
     if (DEBUG) {
         error_reporting(E_ALL);
     }
-    set_error_handler(function ($errNo, $errStr) {
-        // Should we turn ALL notices into errors? PHP allows a lot of
-        // terrible things to happen by default...
-        if (strpos($errStr, 'Use of undefined constant ') === 0) {
-            throw new Exception("PHP Error#$errNo: $errStr");
-        } else {
-            return false;
-        }
-    });
 
     // The trace system has a certain amount of memory consumption every time it is used,
     // so to prevent running out of memory during complex operations code that uses it should
     // check if tracer output is enabled before making use of it.
     $tracer_enabled = constant('TRACE_FILE')!==null;
-
-    ob_start();
-
-    if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            die("CLI with remote addr? Confused, not taking the risk.");
-        }
-        $_SERVER['REMOTE_ADDR'] = "0.0.0.0";
-        $_SERVER['HTTP_HOST'] = "<cli command>";
-    }
 }
 
 

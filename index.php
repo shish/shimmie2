@@ -3,31 +3,18 @@
 * Make sure that shimmie is correctly installed                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+require_once "core/sanitize_php.php";
+
 if (!file_exists("vendor/")) {
     $cwd = getcwd();
-    print <<<EOD
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>Shimmie Error</title>
-		<link rel="shortcut icon" href="ext/static_files/static/favicon.ico">
-		<link rel="stylesheet" href="ext/static_files/style.css" type="text/css">
-	</head>
-	<body>
-		<div id="installer">
-			<h1>Install Error</h1>
-			<h3>Shimmie is unable to find the composer <code>vendor</code> directory.</h3>
-			<div class="container">
-				<p>To finish installing, you need to run <code>composer install</code>
-				in the shimmie directory (<code>$cwd</code>).</p>
-				<p>(If you don't have composer, <a href="https://getcomposer.org/">get it here</a>)</p>
-			</div>
-		</div>
-	</body>
-</html>
-EOD;
-    http_response_code(500);
-    exit;
+    die_nicely(
+        "Shimmie is unable to find the composer <code>vendor</code> directory.",
+        "
+			<p>To finish installing, you need to run <code>composer install</code>
+			in the shimmie directory (<code>$cwd</code>).</p>
+			<p>(If you don't have composer, <a href='https://getcomposer.org/'>get it here</a>)</p>
+		"
+    );
 }
 
 if (!file_exists("data/config/shimmie.conf.php")) {
@@ -50,7 +37,7 @@ require_once "core/polyfills.php";
 require_once "core/util.php";
 
 global $cache, $config, $database, $user, $page, $_tracer;
-_sanitise_environment();
+_set_up_shimmie_environment();
 $_tracer = new EventTracer();
 $_tracer->begin("Bootstrap");
 _load_core_files();

@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 
 chdir(dirname(dirname(__FILE__)));
+require_once "core/sanitize_php.php";
 require_once "vendor/autoload.php";
 require_once "tests/defines.php";
 require_once "core/sys_config.php";
@@ -15,7 +16,7 @@ if (file_exists("tests/trace.json")) {
 }
 
 global $cache, $config, $database, $user, $page, $_tracer;
-_sanitise_environment();
+_set_up_shimmie_environment();
 $tracer_enabled = true;
 $_tracer = new EventTracer();
 $_tracer->begin("bootstrap");

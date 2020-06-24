@@ -78,7 +78,10 @@ class Database
         } elseif ($db_proto === DatabaseDriver::SQLITE) {
             $this->engine = new SQLite();
         } else {
-            die('Unknown PDO driver: '.$db_proto);
+            die_nicely(
+                'Unknown PDO driver: '.$db_proto,
+                "Please check that this is a valid driver, installing the PHP modules if needed"
+            );
         }
     }
 

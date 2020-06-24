@@ -20,7 +20,7 @@ function install()
     date_default_timezone_set('UTC');
 
     if (is_readable("data/config/shimmie.conf.php")) {
-        exit_with_page(
+        die_nicely(
             "Shimmie is already installed.",
             "data/config/shimmie.conf.php exists, how did you get here?"
         );
@@ -69,7 +69,7 @@ function do_install($dsn)
         create_tables(new Database($dsn));
         write_config($dsn);
     } catch (InstallerException $e) {
-        exit_with_page($e->title, $e->body, $e->code);
+        die_nicely($e->title, $e->body, $e->code);
     }
 }
 
@@ -117,7 +117,7 @@ function ask_questions()
     $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
     $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
 
-    exit_with_page(
+    die_nicely(
         "Install Options",
         <<<EOD
     $warn_msg
@@ -304,7 +304,7 @@ function write_config($dsn)
 
     if (file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
         header("Location: index.php?flash=Installation%20complete");
-        exit_with_page(
+        die_nicely(
             "Installation Successful",
             "<p>If you aren't redirected, <a href=\"index.php\">click here to Continue</a>."
         );
@@ -323,26 +323,4 @@ function write_config($dsn)
             0
         );
     }
-}
-
-function exit_with_page($title, $body, $code=0)
-{
-    print("<!DOCTYPE html>
-<html lang='en'>
-	<head>
-		<title>Shimmie Installer</title>
-		<link rel=\"shortcut icon\" href=\"ext/static_files/static/favicon.ico\">
-		<link rel=\"stylesheet\" href=\"ext/static_files/style.css\" type=\"text/css\">
-	</head>
-	<body>
-		<div id=\"installer\">
-		    <h1>Shimmie Installer</h1>
-		    <h3>$title</h3>
-			<div class=\"container\">
-			    $body
-			</div>
-		</div>
-    </body>
-</html>");
-    exit($code);
 }
