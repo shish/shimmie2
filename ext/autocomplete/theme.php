@@ -35,7 +35,7 @@ class AutoCompleteTheme extends Themelet
             $scripts .= self::generate_autocomplete_enable_script('.autocomplete_tags[name^="tags"], .autocomplete_tags[name="bulk_tags"], .autocomplete_tags[name="tag_edit__tags"]');
         }
 
-        $page->add_block(new Block(
+        $b = new Block(
             null,
             "<script type='text/javascript'>
 				document.addEventListener('DOMContentLoaded', () => {
@@ -45,7 +45,10 @@ class AutoCompleteTheme extends Themelet
 			</script>",
             "main",
             1000
-        ));
+        );
+        $b->is_content = false;
+
+        $page->add_block($b);
     }
 
     public function display_admin_block(SetupBuildingEvent $event)
