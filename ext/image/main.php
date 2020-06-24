@@ -319,7 +319,7 @@ class ImageIO extends Extension
                 $page->add_http_header('Expires: ' . $expires);
             }
 
-            send_event(new ImageDownloadingEvent($image, $file, $mime));
+            send_event(new ImageDownloadingEvent($image, $file, $image->get_mime_type()));
         } else {
             $page->set_title("Not Found");
             $page->set_heading("Not Found");

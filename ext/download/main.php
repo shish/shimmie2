@@ -15,7 +15,7 @@ class Download extends Extension
     {
         global $page;
 
-        $page->set_mime($event->mime);
+        $page->set_type($event->mime);
 
         $page->set_mode(PageMode::FILE);
 
