@@ -4,6 +4,7 @@ abstract class VideoFileHandlerConfig
 {
     public const PLAYBACK_AUTOPLAY = "video_playback_autoplay";
     public const PLAYBACK_LOOP = "video_playback_loop";
+    public const PLAYBACK_MUTE = "video_playback_mute";
     public const ENABLED_FORMATS = "video_enabled_formats";
 }
 
@@ -27,6 +28,7 @@ class VideoFileHandler extends DataHandlerExtension
 
         $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, true);
         $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_LOOP, true);
+        $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_MUTE, false);
         $config->set_default_array(
             VideoFileHandlerConfig::ENABLED_FORMATS,
             [MIME_TYPE_FLASH_VIDEO, MIME_TYPE_MP4_VIDEO, MIME_TYPE_OGG_VIDEO, MIME_TYPE_WEBM]
@@ -45,11 +47,12 @@ class VideoFileHandler extends DataHandlerExtension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Video Options");
-        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, "Autoplay: ");
-        $sb->add_label("<br>");
-        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_LOOP, "Loop: ");
-        $sb->add_label("<br>Enabled Formats:");
-        $sb->add_multichoice_option(VideoFileHandlerConfig::ENABLED_FORMATS, $this->get_options());
+        $sb->start_table();
+        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, "Autoplay", true);
+        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_LOOP, "Loop", true);
+        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_MUTE, "Mute", true);
+        $sb->add_multichoice_option(VideoFileHandlerConfig::ENABLED_FORMATS, $this->get_options(), "Enabled Formats", true);
+        $sb->end_table();
         $event->panel->add_block($sb);
     }
 

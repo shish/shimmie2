@@ -11,6 +11,7 @@ class VideoFileHandlerTheme extends Themelet
         $full_url = make_http($ilink);
         $autoplay = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY);
         $loop = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_LOOP);
+        $mute = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_MUTE);
         $player = make_link('vendor/bower-asset/mediaelement/build/flashmediaelement.swf');
 
         $width="auto";
@@ -56,9 +57,10 @@ class VideoFileHandlerTheme extends Themelet
             } else {
                 $autoplay = ($autoplay ? ' autoplay' : '');
                 $loop     = ($loop ? ' loop' : '');
+                $mute     = ($mute ? ' muted' : '');
 
                 $html .= "
-					<video controls class='shm-main-image' id='main_image' alt='main image' poster='$thumb_url' {$autoplay} {$loop}
+					<video controls class='shm-main-image' id='main_image' alt='main image' poster='$thumb_url' {$autoplay} {$loop} {$mute}
 					style='height: $height; width: $width; max-width: 100%'>
 						<source src='{$ilink}' type='{$mime}'>
 
