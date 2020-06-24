@@ -29,12 +29,17 @@ class ArchiveFileHandler extends DataHandlerExtension
             $cmd = str_replace('%f', $event->tmpname, $cmd);
             $cmd = str_replace('%d', $tmpdir, $cmd);
             exec($cmd);
-            $results = add_dir($tmpdir);
-            if (count($results) > 0) {
-                $page->flash("Adding files" . implode("\n", $results));
+            if(file_exists($tmpdir)) {
+                try {
+                    $results = add_dir($tmpdir);
+                    if (count($results) > 0) {
+                        $page->flash("Adding files" . implode("\n", $results));
+                    }
+                } finally {
+                    deltree($tmpdir);
+                }
+                $event->image_id = -2; // default -1 = upload wasn't handled
             }
-            deltree($tmpdir);
-            $event->image_id = -2; // default -1 = upload wasn't handled
         }
     }
 
