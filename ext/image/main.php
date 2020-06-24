@@ -28,6 +28,7 @@ class ImageIO extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
+        $config->set_default_string(ImageConfig::THUMB_ENGINE, MediaEngine::GD);
         $config->set_default_int(ImageConfig::THUMB_WIDTH, 192);
         $config->set_default_int(ImageConfig::THUMB_HEIGHT, 192);
         $config->set_default_int(ImageConfig::THUMB_SCALING, 100);
