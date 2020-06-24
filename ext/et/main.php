@@ -36,10 +36,10 @@ class ET extends Extension
     public function onCommand(CommandEvent $event)
     {
         if ($event->cmd == "help") {
-            print "\tget-info\n";
+            print "\tshimmie-info\n";
             print "\t\tList a bunch of info\n\n";
         }
-        if ($event->cmd == "info") {
+        if ($event->cmd == "shimmie-info") {
             print($this->to_yaml($this->get_info()));
         }
     }
