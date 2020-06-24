@@ -48,7 +48,9 @@ class CustomUserPageTheme extends UserPageTheme
             }
             $html .= "<a href='{$part["link"]}' class='tab'>{$part["name"]}</a>";
         }
-        $page->add_block(new Block("User Links", $html, "user", 90));
+        $b = new Block("User Links", $html, "user", 90);
+        $b->is_content = false;
+        $page->add_block($b);
     }
 
     public function display_signup_page(Page $page)

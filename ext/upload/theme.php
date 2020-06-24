@@ -4,7 +4,9 @@ class UploadTheme extends Themelet
 {
     public function display_block(Page $page)
     {
-        $page->add_block(new Block("Upload", $this->build_upload_block(), "left", 20));
+        $b = new Block("Upload", $this->build_upload_block(), "left", 20);
+        $b->is_content = false;
+        $page->add_block($b);
     }
 
     public function display_full(Page $page)

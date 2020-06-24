@@ -48,7 +48,9 @@ class CustomUserPageTheme extends UserPageTheme
             }
             $html .= "<li><a href='{$part["link"]}'>{$part["name"]}</a>";
         }
-        $page->add_block(new Block("User Links", $html, "user", 90));
+        $b = new Block("User Links", $html, "user", 90);
+        $b->is_content = false;
+        $page->add_block($b);
     }
 
     public function display_signup_page(Page $page)
@@ -59,7 +61,7 @@ class CustomUserPageTheme extends UserPageTheme
         $tfe = new TextFormattingEvent($tac);
         send_event($tfe);
         $tac = $tfe->formatted;
-        
+
         $reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
         if (empty($tac)) {
