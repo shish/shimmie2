@@ -127,7 +127,7 @@ function list_files(string $base, string $_sub_dir=""): array
 
     $files = [];
     $dir = opendir("$base/$_sub_dir");
-    if($dir===false) {
+    if ($dir===false) {
         throw new SCoreException("Unable to open directory $base/$_sub_dir");
     }
     try {

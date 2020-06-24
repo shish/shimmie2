@@ -29,7 +29,7 @@ class ArchiveFileHandler extends DataHandlerExtension
             $cmd = str_replace('%f', $event->tmpname, $cmd);
             $cmd = str_replace('%d', $tmpdir, $cmd);
             exec($cmd);
-            if(file_exists($tmpdir)) {
+            if (file_exists($tmpdir)) {
                 try {
                     $results = add_dir($tmpdir);
                     if (count($results) > 0) {
