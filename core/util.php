@@ -582,6 +582,15 @@ date and you should plan on moving elsewhere.
     if (DEBUG) {
         error_reporting(E_ALL);
     }
+    set_error_handler(function ($errNo, $errStr) {
+        // Should we turn ALL notices into errors? PHP allows a lot of
+        // terrible things to happen by default...
+        if (strpos($errStr, 'Use of undefined constant ') === 0) {
+            throw new Exception("PHP Error#$errNo: $errStr");
+        } else {
+            return false;
+        }
+    });
 
     // The trace system has a certain amount of memory consumption every time it is used,
     // so to prevent running out of memory during complex operations code that uses it should
