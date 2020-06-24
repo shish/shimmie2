@@ -28,6 +28,7 @@
 		"php" : ">=7.3",
 		"ext-pdo": "*",
 		"ext-json": "*",
+		"ext-fileinfo": "*",
 
 		"flexihash/flexihash"       : "^2.0.0",
 		"ifixit/php-akismet"        : "1.*",
