@@ -22,6 +22,7 @@ class MimeType
     public const GZIP = 'application/x-gzip';
     public const HTML = 'text/html';
     public const ICO = 'image/x-icon';
+    public const ICO_OSX = 'image/vnd.microsoft.icon';
     public const JPEG = 'image/jpeg';
     public const JS = 'text/javascript';
     public const JSON = 'application/json';

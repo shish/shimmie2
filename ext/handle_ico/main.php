@@ -2,7 +2,7 @@
 
 class IcoFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP];
+    protected $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {

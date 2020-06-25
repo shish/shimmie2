@@ -87,7 +87,7 @@ class MimeMap
         MimeType::ICO => [
             self::MAP_NAME => "Icon",
             self::MAP_EXT => [FileExtension::ICO, FileExtension::CUR],
-            self::MAP_MIME => [MimeType::ICO, MimeType::WIN_BITMAP],
+            self::MAP_MIME => [MimeType::ICO, MimeType::ICO_OSX, MimeType::WIN_BITMAP],
         ],
         MimeType::JPEG => [
             self::MAP_NAME => "JPEG",
