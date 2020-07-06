@@ -314,9 +314,8 @@ class UserPage extends Extension
                 "Rating",
                 true
             );
-            $sb->end_table();
         }
-
+        $sb->end_table();
 
         $event->panel->add_block($sb);
     }

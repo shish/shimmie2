@@ -74,7 +74,7 @@ class SetupBlock extends Block
     }
     public function start_table_row()
     {
-        $this->body .= "</tr>";
+        $this->body .= "<tr>";
     }
     public function end_table_row()
     {
