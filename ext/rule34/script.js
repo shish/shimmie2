@@ -49,7 +49,7 @@ function toggleNav() {
 	navHidden = !navHidden;
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	if(Cookies.get("ui-shownav") === "false") {
 		toggleNav();
 	}
@@ -73,7 +73,7 @@ function toggleDesktop() {
 	forceDesktop = !forceDesktop;
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
 	if(Cookies.get("ui-desktop") === "true") {
 		toggleDesktop();
 	}
