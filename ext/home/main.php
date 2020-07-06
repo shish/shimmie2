@@ -55,21 +55,21 @@ class Home extends Extension
         $length = strlen($strtotal);
         for ($n=0; $n<$length; $n++) {
             $cur = $strtotal[$n];
-            $counter_text .= " <img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />  ";
+            $counter_text .= "<img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />";
         }
 
         // get the homelinks and process them
         if (strlen($config->get_string('home_links', '')) > 0) {
             $main_links = $config->get_string('home_links');
         } else {
-            $main_links = '[url=site://post/list]Posts[/url] [url=site://comment/list]Comments[/url] [url=site://tags]Tags[/url]';
+            $main_links = '[url=site://post/list]Posts[/url][url=site://comment/list]Comments[/url][url=site://tags]Tags[/url]';
             if (class_exists("Pools")) {
-                $main_links .= ' [url=site://pool]Pools[/url]';
+                $main_links .= '[url=site://pool]Pools[/url]';
             }
             if (class_exists("Wiki")) {
-                $main_links .= ' [url=site://wiki]Wiki[/url]';
+                $main_links .= '[url=site://wiki]Wiki[/url]';
             }
-            $main_links .= ' [url=site://ext_doc]Documentation[/url]';
+            $main_links .= '[url=site://ext_doc]Documentation[/url]';
         }
         $main_links = format_text($main_links);
         $main_text = $config->get_string('home_text', '');
