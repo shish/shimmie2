@@ -31,7 +31,7 @@ function die_nicely($title, $body, $code=0)
 
 $min_php = "7.3";
 if (version_compare(phpversion(), $min_php, ">=") === false) {
-	die_nicely("Not Supported", "
+    die_nicely("Not Supported", "
         Shimmie does not support versions of PHP lower than $min_php
         (PHP reports that it is version ".phpversion().").
     ", 1);

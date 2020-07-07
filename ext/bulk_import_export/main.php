@@ -19,7 +19,7 @@ class BulkImportExport extends DataHandlerExtension
             if ($zip->open($event->tmpname) === true) {
                 $json_data = $this->get_export_data($zip);
 
-                if(empty($json_data)) {
+                if (empty($json_data)) {
                     return;
                 }
 
@@ -180,5 +180,4 @@ class BulkImportExport extends DataHandlerExtension
             return null;
         }
     }
-
 }
