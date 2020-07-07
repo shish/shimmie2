@@ -296,6 +296,7 @@ class ImageIO extends Extension
         $event->replace('$hash', $event->image->hash);
         $event->replace('$filesize', to_shorthand_int($event->image->filesize));
         $event->replace('$filename', $base_fname);
+        $event->replace('$ext', $event->image->get_ext());
         $event->replace('$date', autodate($event->image->posted, false));
     }
 
