@@ -85,6 +85,10 @@
 	<ul>
 		<li><a class="menu top_parent" href="//rule34.paheal.net/wiki/Notes">ANNOUNCEMENTS</a></li>
 	</ul>
+
+	<ul>
+		<li><a class="menu top_parent" href="https://s.zlink2.com/splash.php?idzone=3832265&return_url=" target="_blank" style="color: red;">Cunt Empire!</a></li>
+	</ul>
 	
 </div>
 </div>

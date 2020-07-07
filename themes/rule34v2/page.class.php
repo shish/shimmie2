@@ -52,7 +52,7 @@ class Page extends BasePage
 		<meta name="description" content="Rule 34, if it exists there is porn of it."/>
 		<meta name="viewport" content="width=1024">
 		<meta name="theme-color" content="#7EB977">
-		<link rel="stylesheet" href="$data_href/themes/$theme_name/menuh.css" type="text/css">
+		<link rel="stylesheet" href="$data_href/themes/$theme_name/menuh.css?_=1" type="text/css">
 $header_html
 
 		<script defer src="https://unpkg.com/webp-hero@0.0.0-dev.21/dist-cjs/polyfills.js"></script>

@@ -68,6 +68,7 @@ FOOTER {
 	background: #ACE4A3;
 }
 
+
 A         {color: #000099; text-decoration: none; font-weight: bold;}
 A:hover   {color: #000099; text-decoration: underline;}
 A:visited {color: #000099; text-decoration: none}
@@ -253,7 +254,7 @@ ul.tagit li.tagit-new {
 
 #menuh-container {
 	float: none;
-	width: 500px;
+	width: 650px;
 	margin: auto;
 }
 

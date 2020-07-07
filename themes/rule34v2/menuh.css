@@ -74,7 +74,7 @@ a:active.menu { color: #FF0000; text-decoration: none; }
 	margin:0;
 	padding:0;
 	float:left;
-	width:9em;	/* width of all menu boxes */
+	width:10em;	/* width of all menu boxes */
 	}
 
 #menuh li
