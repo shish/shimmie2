@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			$('#main_image').imgNotes({notes: window.notes});
 
 			//Make sure notes are always shown
-			$('#main_image').off('mouseenter mouseleave');
+			//$('#main_image').off('mouseenter mouseleave');
 		});
 	}
 
