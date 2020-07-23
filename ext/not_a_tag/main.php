@@ -133,30 +133,4 @@ class NotATag extends Extension
             }
         }
     }
-
-    public function get_untags(int $page, int $size=100): array
-    {
-        global $database;
-
-        // FIXME: many
-        $where = ["(1=1)"];
-        $args = ["limit"=>$size, "offset"=>($page-1)*$size];
-        if (!empty($_GET['tag'])) {
-            $where[] = 'LOWER(tag) LIKE LOWER(:tag)';
-            $args["tag"] = "%".$_GET['tag']."%";
-        }
-        if (!empty($_GET['redirect'])) {
-            $where[] = 'LOWER(redirect) LIKE LOWER(:redirect)';
-            $args["redirect"] = "%".$_GET['redirect']."%";
-        }
-        $where = implode(" AND ", $where);
-        return $database->get_all("
-			SELECT *
-			FROM untags
-			WHERE $where
-			ORDER BY tag
-			LIMIT :limit
-			OFFSET :offset
-		", $args);
-    }
 }
