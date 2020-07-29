@@ -55,7 +55,12 @@ class NotATag extends Extension
 
     public function onTagSet(TagSetEvent $event)
     {
-        $this->scan($event->tags);
+        global $user;
+        if ($user->can(Permissions::BAN_IMAGE)) {
+            $event->tags = $this->strip($event->tags);
+        } else {
+            $this->scan($event->tags);
+        }
     }
 
     /**
@@ -70,15 +75,34 @@ class NotATag extends Extension
             $tags[] = strtolower($tag);
         }
 
-        $pairs = $database->get_all("SELECT * FROM untags");
-        foreach ($pairs as $tag_url) {
-            $tag = strtolower($tag_url[0]);
-            $url = $tag_url[1];
-            if (in_array($tag, $tags)) {
-                header("Location: $url");
-                exit; # FIXME: need a better way of aborting the tag-set or upload
+        $pairs = $database->get_pairs("SELECT LOWER(tag), redirect FROM untags");
+        foreach ($pairs as $tag => $url) {
+            if (in_array(strtolower($tag), $tags)) {
+                throw new TagSetException("Invalid tag used: $tag", $url);
             }
         }
+    }
+
+    /**
+     * #param string[] $tags
+     */
+    private function strip(array $tags): array
+    {
+        global $database;
+        $untags = $database->get_col("SELECT LOWER(tag) FROM untags");
+
+        $ok_tags = [];
+        foreach ($tags as $tag) {
+            if (!in_array(strtolower($tag), $untags)) {
+                $ok_tags[] = $tag;
+            }
+        }
+
+        if (count($ok_tags) == 0) {
+            $ok_tags = ["tagme"];
+        }
+
+        return $ok_tags;
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
