@@ -152,7 +152,7 @@ class NumericScore extends Extension
             $result = $database->get_col($sql, $args);
             $images = [];
             foreach ($result as $id) {
-                $images[] = Image::by_id($id);
+                $images[] = Image::by_id(int_escape($id));
             }
 
             $this->theme->view_popular($images, $dte);
