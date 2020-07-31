@@ -16,6 +16,18 @@ class ViewImageTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Image $image_id_1: test");
     }
 
+    public function testViewInfo()
+    {
+        global $config;
+
+        $this->log_in_as_user();
+        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
+
+        $config->set_string(ImageConfig::INFO, '$size // $filesize // $ext');
+        $this->get_page("post/view/$image_id_1");
+        $this->assert_text("640x480 // 19.3KB // jpg");
+    }
+
     public function testPrevNext()
     {
         $this->log_in_as_user();

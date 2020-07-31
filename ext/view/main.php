@@ -5,6 +5,9 @@ require_once "events/image_info_box_building_event.php";
 require_once "events/image_info_set_event.php";
 require_once "events/image_admin_block_building_event.php";
 
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
 
 class ViewImage extends Extension
 {
@@ -97,5 +100,18 @@ class ViewImage extends Extension
         send_event($iabbe);
         ksort($iabbe->parts);
         $this->theme->display_admin_block($page, $iabbe->parts);
+    }
+
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    {
+        global $config;
+        $image_info = $config->get_string(ImageConfig::INFO);
+        if ($image_info) {
+            $html = (string)TR(
+                TH("Info"),
+                TD($event->image->parse_link_template($image_info))
+            );
+            $event->add_part($html, 85);
+        }
     }
 }
