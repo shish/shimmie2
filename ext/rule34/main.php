@@ -46,6 +46,12 @@ class Rule34 extends Extension
             )
         );
         $event->add_part($html, 90);
+
+        $html = (string)TR(
+            TH("Info"),
+            TD($event->image->parse_link_template('$size // $filesize // $ext'))
+        );
+        $event->add_part($html, 90);
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)
