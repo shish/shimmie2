@@ -77,7 +77,9 @@ class NotATag extends Extension
 
         $pairs = $database->get_pairs("SELECT LOWER(tag), redirect FROM untags");
         foreach ($pairs as $tag => $url) {
-            if (in_array(strtolower($tag), $tags)) {
+            // cast to string because PHP automatically turns ["69" => "No sex"]
+            // into [69 => "No sex"]
+            if (in_array(strtolower((string)$tag), $tags)) {
                 throw new TagSetException("Invalid tag used: $tag", $url);
             }
         }
