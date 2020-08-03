@@ -29,7 +29,7 @@ class ImageViewCounterTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images that have received views by users.</p>;
+        return '<p>Search for images that have received views by users.</p>';
        
     }
 }
