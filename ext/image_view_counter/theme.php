@@ -6,7 +6,6 @@ class ImageViewCounterTheme extends Themelet
     {
         global $page, $config;
         $pop_images = "";
-        $i = 0;
         foreach ($images as $image) {
             $thumb_html = $this->build_thumb_html($image);
            $pop_images .= $thumb_html . "\n";
@@ -30,42 +29,7 @@ class ImageViewCounterTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images that have received numeric scores by the score or by the scorer.</p>
-        <div class="command_example">
-        <pre>score=1</pre>
-        <p>Returns images with a score of 1.</p>
-        </div>
-        <div class="command_example">
-        <pre>score>0</pre>
-        <p>Returns images with a score of 1 or more.</p>
-        </div>
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
-
-        <div class="command_example">
-        <pre>upvoted_by=username</pre>
-        <p>Returns images upvoted by "username".</p>
-        </div>
-        <div class="command_example">
-        <pre>upvoted_by_id=123</pre>
-        <p>Returns images upvoted by user 123.</p>
-        </div>
-        <div class="command_example">
-        <pre>downvoted_by=username</pre>
-        <p>Returns images downvoted by "username".</p>
-        </div>
-        <div class="command_example">
-        <pre>downvoted_by_id=123</pre>
-        <p>Returns images downvoted by user 123.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>order:score_desc</pre>
-        <p>Sorts the search results by score, descending.</p>
-        </div>
-        <div class="command_example">
-        <pre>order:score_asc</pre>
-        <p>Sorts the search results by score, ascending.</p>
-        </div>
-        ';
+        return '<p>Search for images that have received views by users.</p>
+       
     }
 }
