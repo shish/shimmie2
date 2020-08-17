@@ -931,6 +931,13 @@ class Media extends Extension
 
             $database->begin_transaction();
         }
+
+        if ($this->get_version(MediaConfig::VERSION) < 3) {
+            $database->execute($database->scoreql_to_sql(
+                "ALTER TABLE images ADD COLUMN video_codec varchar(512) NULL"
+            ));
+            $this->set_version(MediaConfig::VERSION, 3);
+        }
     }
 
     public static function hex_color_allocate($im, $hex)

@@ -439,7 +439,7 @@ class Image
         $database->execute(
             "UPDATE images SET ".
             "lossless = :lossless, ".
-            "video = :video, audio = :audio,image = :image, ".
+            "video = :video, video_codec = :video_codec, audio = :audio,image = :image, ".
             "height = :height, width = :width, ".
             "length = :length WHERE id = :id",
             [
@@ -448,6 +448,7 @@ class Image
                 "height" => $this->height ?? 0,
                 "lossless" => $database->scoresql_value_prepare($this->lossless),
                 "video" => $database->scoresql_value_prepare($this->video),
+                "video_codec" => $database->scoresql_value_prepare($this->video_codec),
                 "image" => $database->scoresql_value_prepare($this->image),
                 "audio" => $database->scoresql_value_prepare($this->audio),
                 "length" => $this->length

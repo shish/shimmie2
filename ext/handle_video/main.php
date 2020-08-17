@@ -67,6 +67,7 @@ class VideoFileHandler extends DataHandlerExtension
                 if (array_key_exists("streams", $data)) {
                     $video = false;
                     $audio = true;
+                    $video_codec = null;
                     $streams = $data["streams"];
                     if (is_array($streams)) {
                         foreach ($streams as $stream) {
@@ -79,6 +80,7 @@ class VideoFileHandler extends DataHandlerExtension
                                             break;
                                         case "video":
                                             $video = true;
+                                            $video_codec = $stream["codec_name"];
                                             break;
                                     }
                                 }
@@ -93,7 +95,15 @@ class VideoFileHandler extends DataHandlerExtension
                             }
                         }
                         $event->image->video = $video;
+                        $event->image->video_codec = $video_codec;
                         $event->image->audio = $audio;
+                        if($event->image->get_mime()==MimeType::MKV &&
+                            ($event->image->video_codec == "vp9" ||
+                                $event->image->video_codec == "vp8")) {
+                            // WEBMs are MKVs with the VP9 or VP8 codec
+                            // For browser-friendliness, we'll just change the mime type
+                            $event->image->set_mime(MimeType::WEBM);
+                        }
                     }
                 }
                 if (array_key_exists("format", $data)&& is_array($data["format"])) {
