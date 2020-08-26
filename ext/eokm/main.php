@@ -16,7 +16,7 @@ class Eokm extends Extension
         if($username && $password) {
             $ch = curl_init("https://api.eokmhashdb.nl/v1/check/md5");
             // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/xml', $additionalHeaders));
-            curl_setopt($ch, CURLOPT_HEADER, 1);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             curl_setopt($ch, CURLOPT_POST, 1);
