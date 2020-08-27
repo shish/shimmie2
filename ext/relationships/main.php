@@ -83,7 +83,7 @@ class Relationships extends Extension
             }
         } elseif (preg_match("/^child[=|:](any|none)$/", $event->term, $matches)) {
             $not = ($matches[1] == "any" ? "=" : "!=");
-            $event->add_querylet(new Querylet("images.has_children $not :true", ["true"=>true]));
+            $event->add_querylet(new Querylet("images.has_children $not :true", ["true"=>"Y"]));
         }
     }
 
