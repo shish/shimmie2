@@ -34,6 +34,7 @@ class Media extends Extension
 
     public const RESIZE_TYPE_FIT = "Fit";
     public const RESIZE_TYPE_FIT_BLUR = "Fit Blur";
+    public const RESIZE_TYPE_FIT_BLUR_PORTRAIT = "Fit Blur Tall, Fill Wide";
     public const RESIZE_TYPE_FILL =  "Fill";
     public const RESIZE_TYPE_STRETCH =  "Stretch";
     public const DEFAULT_ALPHA_CONVERSION_COLOR = "#00000000";
@@ -585,6 +586,14 @@ class Media extends Extension
         $input_ext = self::determine_ext($input_mime);
 
         $file_arg = "${input_ext}:\"${input_path}[0]\"";
+
+        if($resize_type===Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
+            if($new_height>$new_width) {
+                $resize_type = Media::RESIZE_TYPE_FIT_BLUR;
+            } else {
+                $resize_type = Media::RESIZE_TYPE_FILL;
+            }
+        }
 
         switch ($resize_type) {
             case Media::RESIZE_TYPE_FIT:
