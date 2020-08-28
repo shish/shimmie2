@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-class TranscodeImageTheme extends Themelet
+class TranscodeVideoTheme extends Themelet
 {
     /*
      * Display a link to resize an image
@@ -9,16 +9,16 @@ class TranscodeImageTheme extends Themelet
     {
         $html = "
 			".make_form(
-            make_link("transcode/{$image->id}"),
+            make_link("transcode_video/{$image->id}"),
             'POST',
             false,
             "",
-            "return transcodeSubmit()"
+            //"return transcodeSubmit()"
         )."
                 <input type='hidden' name='image_id' value='{$image->id}'>
-                <input type='hidden' id='image_lossless' name='image_lossless' value='{$image->lossless}'>
+                <input type='hidden' name='codec' value='{$image->video_codec}'>
                 ".$this->get_transcode_picker_html($options)."
-				<br><input id='transcodebutton' type='submit' value='Transcode Image'>
+				<br><input id='transcodebutton' type='submit' value='Transcode Video'>
 			</form>
 		";
 
@@ -27,7 +27,7 @@ class TranscodeImageTheme extends Themelet
 
     public function get_transcode_picker_html(array $options)
     {
-        $html = "<select id='transcode_mime'  name='transcode_mime' required='required' >";
+        $html = "<select id='transcode_format'  name='transcode_format' required='required' >";
         foreach ($options as $display=>$value) {
             $html .= "<option value='$value'>$display</option>";
         }
@@ -37,8 +37,8 @@ class TranscodeImageTheme extends Themelet
 
     public function display_transcode_error(Page $page, string $title, string $message)
     {
-        $page->set_title("Transcode Image");
-        $page->set_heading("Transcode Image");
+        $page->set_title("Transcode Video");
+        $page->set_heading("Transcode Video");
         $page->add_block(new NavBlock());
         $page->add_block(new Block($title, $message));
     }
