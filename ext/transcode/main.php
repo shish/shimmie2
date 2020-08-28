@@ -262,7 +262,7 @@ class TranscodeImage extends Extension
         $engine = $config->get_string(TranscodeConfig::ENGINE);
 
         if ($user->can(Permissions::EDIT_FILES)) {
-            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_mimes($engine)));
+            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode Image", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_mimes($engine)));
         }
     }
 
@@ -401,7 +401,7 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        $q = $config->get_int("transcode_quality");
+        $q = $config->get_int(TranscodeConfig::QUALITY);
 
         $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
 
@@ -453,10 +453,10 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        $q = $config->get_int("transcode_quality");
+        $q = $config->get_int(TranscodeConfig::QUALITY);
         $convert = $config->get_string(MediaConfig::CONVERT_PATH);
 
-        if ($convert==null||$convert=="") {
+        if (empty($convert)) {
             throw new ImageTranscodeException("ImageMagick path not configured");
         }
         $ext = Media::determine_ext($target_mime);

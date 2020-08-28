@@ -63,6 +63,9 @@ class Image
     /** @var boolean */
     public $video = null;
 
+    /** @var string */
+    public $video_codec = null;
+
     /** @var boolean */
     public $image = null;
 

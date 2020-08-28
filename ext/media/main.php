@@ -3,6 +3,7 @@
 require_once "config.php";
 require_once "events.php";
 require_once "media_engine.php";
+require_once "video_codecs.php";
 
 /*
 * This is used by the media code when there is an error
