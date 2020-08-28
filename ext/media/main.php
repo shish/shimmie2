@@ -328,47 +328,51 @@ class Media extends Extension
 
         $inname = warehouse_path(Image::IMAGE_DIR, $hash);
         $tmpname = tempnam(sys_get_temp_dir(), "shimmie_ffmpeg_thumb");
-        $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
+        try {
+            $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
 
-        $orig_size = self::video_size($inname);
-        $scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1], true);
+            $orig_size = self::video_size($inname);
+            $scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1], true);
 
-        $codec = "mjpeg";
-        $quality = $config->get_int(ImageConfig::THUMB_QUALITY);
-        if ($config->get_string(ImageConfig::THUMB_MIME) == MimeType::WEBP) {
-            $codec = "libwebp";
-        } else {
-            // mjpeg quality ranges from 2-31, with 2 being the best quality.
-            $quality = floor(31 - (31 * ($quality / 100)));
-            if ($quality < 2) {
-                $quality = 2;
+            $codec = "mjpeg";
+            $quality = $config->get_int(ImageConfig::THUMB_QUALITY);
+            if ($config->get_string(ImageConfig::THUMB_MIME) == MimeType::WEBP) {
+                $codec = "libwebp";
+            } else {
+                // mjpeg quality ranges from 2-31, with 2 being the best quality.
+                $quality = floor(31 - (31 * ($quality / 100)));
+                if ($quality < 2) {
+                    $quality = 2;
+                }
             }
-        }
 
-        $args = [
-            escapeshellarg($ffmpeg),
-            "-y", "-i", escapeshellarg($inname),
-            "-vf", "thumbnail",
-            "-f", "image2",
-            "-vframes", "1",
-            "-c:v", "png",
-            escapeshellarg($tmpname),
-        ];
+            $args = [
+                escapeshellarg($ffmpeg),
+                "-y", "-i", escapeshellarg($inname),
+                "-vf", "thumbnail",
+                "-f", "image2",
+                "-vframes", "1",
+                "-c:v", "png",
+                escapeshellarg($tmpname),
+            ];
 
-        $cmd = escapeshellcmd(implode(" ", $args));
+            $cmd = escapeshellcmd(implode(" ", $args));
 
-        exec($cmd, $output, $ret);
+            exec($cmd, $output, $ret);
 
-        if ((int)$ret == (int)0) {
-            log_debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
+            if ((int)$ret === (int)0) {
+                log_debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
 
-            create_scaled_image($tmpname, $outname, $scaled_size, MimeType::PNG);
+                create_scaled_image($tmpname, $outname, $scaled_size, MimeType::PNG);
 
 
-            return true;
-        } else {
-            log_error('media', "Generating thumbnail with command `$cmd`, returns $ret");
-            return false;
+                return true;
+            } else {
+                log_error('media', "Generating thumbnail with command `$cmd`, returns $ret");
+                return false;
+            }
+        } finally {
+            @unlink($tmpname);
         }
     }
 
