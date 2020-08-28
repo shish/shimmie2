@@ -551,6 +551,19 @@ class Image
     }
 
     /**
+     * Get the info for this image, formatted according to the
+     * configured template.
+     */
+    public function get_info(): string
+    {
+        global $config;
+        $plte = new ParseLinkTemplateEvent($config->get_string(ImageConfig::INFO), $this);
+        send_event($plte);
+        return $plte->text;
+    }
+
+
+    /**
      * Figure out where the full size image is on disk.
      */
     public function get_image_filename(): string
