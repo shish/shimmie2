@@ -252,6 +252,7 @@ class ImageIO extends Extension
         //$sb->add_text_option(ImageConfig::ILINK, "Image link: ");
         //$sb->add_text_option(ImageConfig::TLINK, "<br>Thumbnail link: ");
         $sb->add_text_option(ImageConfig::TIP, "Image tooltip", true);
+        $sb->add_text_option(ImageConfig::INFO, "Image info", true);
         $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "Upload collision handler", true);
         if (function_exists(self::EXIF_READ_FUNCTION)) {
             $sb->add_bool_option(ImageConfig::SHOW_META, "Show metadata", true);

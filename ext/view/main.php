@@ -109,7 +109,7 @@ class ViewImage extends Extension
         if ($image_info) {
             $html = (string)TR(
                 TH("Info"),
-                TD($event->image->parse_link_template($image_info))
+                TD($event->image->get_info())
             );
             $event->add_part($html, 85);
         }
