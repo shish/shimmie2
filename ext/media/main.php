@@ -3,6 +3,7 @@
 require_once "config.php";
 require_once "events.php";
 require_once "media_engine.php";
+require_once "video_codecs.php";
 
 /*
 * This is used by the media code when there is an error
@@ -943,6 +944,13 @@ class Media extends Extension
             $this->set_version(MediaConfig::VERSION, 2);
 
             $database->begin_transaction();
+        }
+
+        if ($this->get_version(MediaConfig::VERSION) < 3) {
+            $database->execute($database->scoreql_to_sql(
+                "ALTER TABLE images ADD COLUMN video_codec varchar(512) NULL"
+            ));
+            $this->set_version(MediaConfig::VERSION, 3);
         }
     }
 
