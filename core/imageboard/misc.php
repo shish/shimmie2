@@ -75,7 +75,12 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
 
     $fit = $config->get_string(ImageConfig::THUMB_FIT);
 
-    if (in_array($fit, [Media::RESIZE_TYPE_FILL, Media::RESIZE_TYPE_STRETCH, Media::RESIZE_TYPE_FIT_BLUR])) {
+    if (in_array($fit, [
+            Media::RESIZE_TYPE_FILL,
+            Media::RESIZE_TYPE_STRETCH,
+            Media::RESIZE_TYPE_FIT_BLUR,
+            Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT
+        ])) {
         return [$config->get_int(ImageConfig::THUMB_WIDTH), $config->get_int(ImageConfig::THUMB_HEIGHT)];
     }
 
