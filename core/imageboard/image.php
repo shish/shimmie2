@@ -226,10 +226,10 @@ class Image
         global $cache, $database;
         $tag_count = count($tags);
 
-        if ($tag_count === 0) {
+        if (SPEED_HAX && $tag_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();
-        } elseif ($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
+        } elseif (SPEED_HAX && $tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
             if (!startsWith($tags[0], "-")) {
                 // one tag - we can look that up directly
                 $total = self::count_tag($tags[0]);
