@@ -210,7 +210,7 @@ class Index extends Extension
             $event->add_querylet(new Querylet('images.phash = :phash', ["phash" => $phash]));
         } elseif (preg_match("/^(filename|name)[=|:]([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
             $filename = strtolower($matches[2]);
-            $event->add_querylet(new Querylet("images.filename LIKE :filename{$this->stpen}", ["filename{$this->stpen}"=>"%$filename%"]));
+            $event->add_querylet(new Querylet("lower(images.filename) LIKE :filename{$this->stpen}", ["filename{$this->stpen}"=>"%$filename%"]));
         } elseif (preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
             $source = strtolower($matches[2]);
 
