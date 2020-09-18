@@ -33,8 +33,8 @@ abstract class VideoContainers
 
     public static function is_video_codec_supported(string $container, string $codec): bool
     {
-        return array_key_exists($container,self::VIDEO_CODEC_SUPPORT) &&
-                in_array($codec,self::VIDEO_CODEC_SUPPORT[$container]);
+        return array_key_exists($container, self::VIDEO_CODEC_SUPPORT) &&
+                in_array($codec, self::VIDEO_CODEC_SUPPORT[$container]);
     }
 }
 

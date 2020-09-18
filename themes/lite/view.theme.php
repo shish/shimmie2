@@ -34,7 +34,7 @@ class CustomViewImageTheme extends ViewImageTheme
 		<br>Filesize: $h_filesize
 		<br>Type: ".$h_type."
 		";
-        if($image->video_codec!=null) {
+        if ($image->video_codec!=null) {
             $html .= "<br/>Video Codec: $image->video_codec";
         }
         if ($image->length!=null) {

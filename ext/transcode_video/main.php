@@ -46,8 +46,8 @@ class TranscodeVideo extends Extension
 
         if ($event->image->video===true && $user->can(Permissions::EDIT_FILES)) {
             $options = self::get_output_options($event->image->get_mime(), $event->image->video_codec);
-            if(!empty($options)&&sizeof($options)>1) {
-                $event->add_part($this->theme->get_transcode_html($event->image,$options));
+            if (!empty($options)&&sizeof($options)>1) {
+                $event->add_part($this->theme->get_transcode_html($event->image, $options));
             }
         }
     }
@@ -163,7 +163,7 @@ class TranscodeVideo extends Extension
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
                             $database->commit();
-                            if($output_image!=$image) {
+                            if ($output_image!=$image) {
                                 $total++;
                             }
                         } catch (Exception $e) {
@@ -187,11 +187,11 @@ class TranscodeVideo extends Extension
 
 
         foreach (VideoContainers::ALL as $container) {
-            if($starting_container==$container) {
+            if ($starting_container==$container) {
                 continue;
             }
-            if(!empty($starting_codec)&&
-                !VideoContainers::is_video_codec_supported($container,$starting_codec)) {
+            if (!empty($starting_codec)&&
+                !VideoContainers::is_video_codec_supported($container, $starting_codec)) {
                 continue;
             }
             $description = MimeMap::get_name_for_mime($container);
@@ -202,16 +202,16 @@ class TranscodeVideo extends Extension
 
     private function transcode_and_replace_video(Image $image, String $target_mime): Image
     {
-        if($image->get_mime()==$target_mime) {
+        if ($image->get_mime()==$target_mime) {
             return $image;
         }
 
-        if($image->video==null||($image->video===true && empty($image->video_codec))) {
+        if ($image->video==null||($image->video===true && empty($image->video_codec))) {
             // If image predates the media system, or the video codec support, run a media check
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();
         }
-        if(empty($image->video_codec)) {
+        if (empty($image->video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item $image->id because its video codec is not known");
         }
 
@@ -237,12 +237,10 @@ class TranscodeVideo extends Extension
             send_event(new ImageReplaceEvent($image->id, $new_image));
 
             return $new_image;
-
         } finally {
             /* Remove temporary file */
             @unlink($tmp_filename);
         }
-
     }
 
 
@@ -250,7 +248,7 @@ class TranscodeVideo extends Extension
     {
         global $config;
 
-        if(empty($source_video_codec)) {
+        if (empty($source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
         }
 
@@ -267,7 +265,7 @@ class TranscodeVideo extends Extension
         $command->add_flag("-i");
         $command->add_escaped_arg($source_file);
 
-        if(!VideoContainers::is_video_codec_supported($target_mime, $source_video_codec)) {
+        if (!VideoContainers::is_video_codec_supported($target_mime, $source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec $source_video_codec");
         }
 
@@ -289,6 +287,4 @@ class TranscodeVideo extends Extension
 
         return $target_file;
     }
-
-
 }

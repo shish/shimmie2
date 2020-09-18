@@ -592,8 +592,8 @@ class Media extends Extension
 
         $file_arg = "${input_ext}:\"${input_path}[0]\"";
 
-        if($resize_type===Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
-            if($new_height>$new_width) {
+        if ($resize_type===Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
+            if ($new_height>$new_width) {
                 $resize_type = Media::RESIZE_TYPE_FIT_BLUR;
             } else {
                 $resize_type = Media::RESIZE_TYPE_FILL;

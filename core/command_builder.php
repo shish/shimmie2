@@ -9,8 +9,9 @@ class CommandBuilder
     private $args = [];
     public $output;
 
-    function __construct(String $executable) {
-        if(empty($executable)) {
+    public function __construct(String $executable)
+    {
+        if (empty($executable)) {
             throw new InvalidArgumentException("executable cannot be empty");
         }
 
@@ -30,7 +31,7 @@ class CommandBuilder
     public function generate(): string
     {
         $command = escapeshellarg($this->executable);
-        if(!empty($this->args)) {
+        if (!empty($this->args)) {
             $command .= " ";
             $command .= join(" ", $this->args);
         }
@@ -40,12 +41,11 @@ class CommandBuilder
 
     public function combineOutput(string $empty_output = ""): string
     {
-        if(empty($this->output)) {
+        if (empty($this->output)) {
             return $empty_output;
         } else {
             return implode("\r\n", $this->output);
         }
-
     }
 
     public function execute(bool $fail_on_non_zero_return = false): int
@@ -57,7 +57,7 @@ class CommandBuilder
 
         log_debug('command_builder', "Command `$cmd` returned $ret and outputted $output");
 
-        if($fail_on_non_zero_return&&(int)$ret!==(int)0) {
+        if ($fail_on_non_zero_return&&(int)$ret!==(int)0) {
             throw new SCoreException("Command `$cmd` failed, returning $ret and outputting $output");
         }
         return $ret;
