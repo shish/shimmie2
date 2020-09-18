@@ -84,6 +84,10 @@ class Forum extends Extension
         $event->add_stats("Forum posts: $posts_count, $posts_rate per day");
     }
 
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        $event->add_link("Forum", make_link("forum/index"));
+    }
 
     public function onPageRequest(PageRequestEvent $event)
     {
