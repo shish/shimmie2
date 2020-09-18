@@ -2,7 +2,7 @@
 
 class ForumInfo extends ExtensionInfo
 {
-    public const KEY = "dorum";
+    public const KEY = "forum";
 
     public $key = self::KEY;
     public $name = "Forum";
