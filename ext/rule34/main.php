@@ -21,7 +21,7 @@ class Rule34 extends Extension
     public function onImageDeletion(ImageDeletionEvent $event)
     {
         global $database;
-        $database->execute("NOTIFY shm_image_bans, '{$event->image->hash}';");
+        $database->notify("shm_image_bans", $event->image->hash);
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event)
@@ -71,7 +71,7 @@ class Rule34 extends Extension
     {
         global $database, $user;
         if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
-            $database->execute("NOTIFY shm_image_bans, '{$event->hash}';");
+            $database->notify("shm_image_bans", $event->hash);
         }
     }
 
@@ -145,7 +145,7 @@ class Rule34 extends Extension
                             log_info("admin", "Cleaning {$hash}");
                             @unlink(warehouse_path(Image::IMAGE_DIR, $hash));
                             @unlink(warehouse_path(Image::THUMBNAIL_DIR, $hash));
-                            $database->execute("NOTIFY shm_image_bans, '{$hash}';");
+                            $database->notify("shm_image_bans", $hash);
                         }
                     }
                 }
