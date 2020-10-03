@@ -334,5 +334,6 @@ class DatabaseConfig extends BaseConfig
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here
         $cache->set("config", $this->values);
+        $this->database->notify("config");
     }
 }
