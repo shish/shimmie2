@@ -33,6 +33,8 @@ abstract class DBEngine
     abstract public function set_timeout(PDO $db, int $time);
 
     abstract public function get_version(PDO $db): string;
+
+    abstract public function notify(PDO $db, string $channel, ?string $data=null): void;
 }
 
 class MySQL extends DBEngine
@@ -69,6 +71,10 @@ class MySQL extends DBEngine
     {
         // These only apply to read-only queries, which appears to be the best we can to mysql-wise
         // $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
+    }
+
+    public function notify(PDO $db, string $channel, ?string $data=null): void
+    {
     }
 
     public function get_version(PDO $db): string
@@ -116,6 +122,15 @@ class PostgreSQL extends DBEngine
     public function set_timeout(PDO $db, int $time): void
     {
         $db->exec("SET statement_timeout TO ".$time.";");
+    }
+
+    public function notify(PDO $db, string $channel, ?string $data=null): void
+    {
+        if ($data) {
+            $db->exec("NOTIFY $channel, '$data';");
+        } else {
+            $db->exec("NOTIFY $channel;");
+        }
     }
 
     public function get_version(PDO $db): string
@@ -227,6 +242,10 @@ class SQLite extends DBEngine
     public function set_timeout(PDO $db, int $time): void
     {
         // There doesn't seem to be such a thing for SQLite, so it does nothing
+    }
+
+    public function notify(PDO $db, string $channel, ?string $data=null): void
+    {
     }
 
     public function get_version(PDO $db): string

@@ -169,6 +169,11 @@ class Database
         $this->engine->set_timeout($this->db, $time);
     }
 
+    public function notify(string $channel, ?string $data=null): void
+    {
+        $this->engine->notify($this->db, $channel, $data);
+    }
+
     public function execute(string $query, array $args = []): PDOStatement
     {
         try {
