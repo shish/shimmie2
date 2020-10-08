@@ -77,7 +77,13 @@ class ViewImage extends Extension
             if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
                 send_event(new ImageInfoSetEvent($image));
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$image_id", url_escape(@$_POST['query'])));
+
+                if (isset($_GET['search'])) {
+                    $query = "search=" . url_escape($_GET['search']);
+                } else {
+                    $query = null;
+                }
+                $page->set_redirect(make_link("post/view/$image_id", null, $query)); 
             } else {
                 $this->theme->display_error(403, "Post Locked", "An admin has locked this post");
             }
