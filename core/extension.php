@@ -61,7 +61,7 @@ abstract class Extension
         return 50;
     }
 
-    public static function determine_enabled_extensions()
+    public static function determine_enabled_extensions(): void
     {
         self::$enabled_extensions = [];
         foreach (array_merge(
@@ -138,6 +138,7 @@ abstract class ExtensionInfo
     public $license;
     public $version;
     public $dependencies = [];
+    public $conflicts = [];
     public $visibility;
     public $description;
     public $documentation;
@@ -193,6 +194,13 @@ abstract class ExtensionInfo
         if (!empty($this->db_support) && !in_array($database->get_driver_name(), $this->db_support)) {
             $this->support_info .= "Database not supported. ";
         }
+        if (!empty($this->conflicts)) {
+            $intersects = array_intersect($this->conflicts, Extension::get_enabled_extensions());
+            if (!empty($intersects)) {
+                $this->support_info .= "Conflicts with other extension(s): " . join(", ", $intersects);
+            }
+        }
+
         // Additional checks here as needed
 
         $this->supported = empty($this->support_info);

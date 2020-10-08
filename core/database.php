@@ -258,6 +258,20 @@ class Database
         return $res;
     }
 
+
+    /**
+     * Execute an SQL query and return the the first column => the second column as an iterable object.
+     */
+    public function get_pairs_iterable(string $query, array $args = []): Generator
+    {
+        $_start = microtime(true);
+        $stmt = $this->execute($query, $args);
+        $this->count_time("get_pairs_iterable", $_start, $query, $args);
+        foreach ($stmt as $row) {
+            yield $row[0] => $row[1];
+        }
+    }
+
     /**
      * Execute an SQL query and return a single value, or null.
      */

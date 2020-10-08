@@ -131,15 +131,17 @@ class MimeType
         if (($fh = @fopen($image_filename, 'rb'))) {
             try {
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+                $chunk = false;
+
                 while (!feof($fh) && $is_anim_gif < 2) {
-                    $chunk = fread($fh, 1024 * 100);
-                    $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
+                    $chunk =  ($chunk ? substr($chunk, -20) : "") . fread($fh, 1024 * 100); //read 100kb at a time
+                    $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
                 }
             } finally {
                 @fclose($fh);
             }
         }
-        return ($is_anim_gif == 0);
+        return ($is_anim_gif >=2);
     }
 
 

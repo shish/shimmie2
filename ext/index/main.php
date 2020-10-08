@@ -208,7 +208,7 @@ class Index extends Extension
         } elseif (preg_match("/^(phash)[=|:]([0-9a-fA-F]*)$/i", $event->term, $matches)) {
             $phash = strtolower($matches[2]);
             $event->add_querylet(new Querylet('images.phash = :phash', ["phash" => $phash]));
-        } elseif (preg_match("/^(filename|name)[=|:]([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
+        } elseif (preg_match("/^(filename|name)[=|:](.+)$/i", $event->term, $matches)) {
             $filename = strtolower($matches[2]);
             $event->add_querylet(new Querylet("lower(images.filename) LIKE :filename{$this->stpen}", ["filename{$this->stpen}"=>"%$filename%"]));
         } elseif (preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
