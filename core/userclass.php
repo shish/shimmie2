@@ -203,6 +203,8 @@ new UserClass("admin", "base", [
     Permissions::APPROVE_IMAGE => true,
     Permissions::APPROVE_COMMENT => true,
 
+    Permissions::CRON_RUN =>true,
+
     Permissions::BULK_IMPORT =>true,
     Permissions::BULK_EXPORT =>true,
     Permissions::BULK_DOWNLOAD => true,

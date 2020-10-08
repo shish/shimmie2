@@ -17,11 +17,39 @@ class CronUploader extends Extension
 
     private static $IMPORT_RUNNING = false;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitUserConfig(InitUserConfigEvent $event)
     {
-        // Set default values
-        CronUploaderConfig::set_defaults();
+        $event->user_config->set_default_string(
+            CronUploaderConfig::DIR,
+            data_path(CronUploaderConfig::DEFAULT_PATH.DIRECTORY_SEPARATOR.$event->user->name)
+        );
+        $event->user_config->set_default_bool(CronUploaderConfig::INCLUDE_ALL_LOGS, false);
+        $event->user_config->set_default_bool(CronUploaderConfig::STOP_ON_ERROR, false);
+        $event->user_config->set_default_int(CronUploaderConfig::LOG_LEVEL, SCORE_LOG_INFO);
     }
+
+    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
+    {
+        if ($event->user->can(Permissions::CRON_ADMIN)) {
+            $documentation_link = make_http(make_link("cron_upload"));
+
+            $sb = $event->panel->create_new_block("Cron Uploader");
+            $sb->start_table();
+            $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
+            $sb->add_bool_option(CronUploaderConfig::STOP_ON_ERROR, "Stop On Error", true);
+            $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, [
+            LOGGING_LEVEL_NAMES[SCORE_LOG_DEBUG] => SCORE_LOG_DEBUG,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_INFO] => SCORE_LOG_INFO,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_WARNING] => SCORE_LOG_WARNING,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_ERROR] => SCORE_LOG_ERROR,
+            LOGGING_LEVEL_NAMES[SCORE_LOG_CRITICAL] => SCORE_LOG_CRITICAL,
+        ], "Output Log Level: ", true);
+            $sb->add_bool_option(CronUploaderConfig::INCLUDE_ALL_LOGS, "Include All Logs", true);
+            $sb->end_table();
+            $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
+        }
+    }
+
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
@@ -39,38 +67,12 @@ class CronUploader extends Extension
         global $user;
 
         if ($event->page_matches("cron_upload")) {
-            if ($event->count_args() == 1) {
-                $this->process_upload($event->get_arg(0)); // Start upload
-            } elseif ($user->can(Permissions::CRON_ADMIN)) {
+            if ($event->count_args() == 1 && $event->get_arg(0) =="run") {
+                $this->process_upload(); // Start upload
+            } elseif ($user->can(Permissions::CRON_RUN)) {
                 $this->display_documentation();
             }
         }
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event)
-    {
-        global $database;
-
-        $documentation_link = make_http(make_link("cron_upload"));
-
-        $users = $database->get_pairs("SELECT name, id FROM users UNION ALL SELECT '', null order by name");
-
-        $sb = $event->panel->create_new_block("Cron Uploader");
-        $sb->start_table();
-        $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
-        $sb->add_text_option(CronUploaderConfig::KEY, "Key", true);
-        $sb->add_choice_option(CronUploaderConfig::USER, $users, "User", true);
-        $sb->add_bool_option(CronUploaderConfig::STOP_ON_ERROR, "Stop On Error", true);
-        $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, [
-            LOGGING_LEVEL_NAMES[SCORE_LOG_DEBUG] => SCORE_LOG_DEBUG,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_INFO] => SCORE_LOG_INFO,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_WARNING] => SCORE_LOG_WARNING,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_ERROR] => SCORE_LOG_ERROR,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_CRITICAL] => SCORE_LOG_CRITICAL,
-        ], "Output Log Level: ", true);
-        $sb->add_bool_option(CronUploaderConfig::INCLUDE_ALL_LOGS, "Include All Logs", true);
-        $sb->end_table();
-        $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)
@@ -116,10 +118,10 @@ class CronUploader extends Extension
 
     public function onLog(LogEvent $event)
     {
-        global $config;
-        $all = $config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
+        global $user_config;
+        $all = $user_config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
         if (self::$IMPORT_RUNNING &&
-            $event->priority >= $config->get_int(CronUploaderConfig::LOG_LEVEL) &&
+            $event->priority >= $user_config->get_int(CronUploaderConfig::LOG_LEVEL) &&
             ($event->section==self::NAME || $all)
         ) {
             $output =  "[" . date('Y-m-d H:i:s') . "] " . ($all ? '['. $event->section .'] ' :'') . "[" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message  ;
@@ -191,8 +193,8 @@ class CronUploader extends Extension
 
     private function clear_folder($folder)
     {
-        global $page;
-        $path = join_path(CronUploaderConfig::get_dir(), $folder);
+        global $page, $user_config;
+        $path = join_path($user_config->get_string(CronUploaderConfig::DIR), $folder);
         deltree($path);
         $page->flash("Cleared $path");
     }
@@ -200,7 +202,11 @@ class CronUploader extends Extension
 
     private function get_cron_url()
     {
-        return make_http(make_link("/cron_upload/" . CronUploaderConfig::get_key()));
+        global $user_config;
+
+        $user_api_key = $user_config->get_string(UserConfig::API_KEY);
+
+        return make_http(make_link("/cron_upload/run", "api_key=".urlencode($user_api_key)));
     }
 
     private function get_cron_cmd()
@@ -256,26 +262,34 @@ class CronUploader extends Extension
 
     public function get_queue_dir()
     {
-        $dir = CronUploaderConfig::get_dir();
+        global $user_config;
+
+        $dir = $user_config->get_string(CronUploaderConfig::DIR);
         return join_path($dir, self::QUEUE_DIR);
     }
 
     public function get_uploaded_dir()
     {
-        $dir = CronUploaderConfig::get_dir();
+        global $user_config;
+
+        $dir = $user_config->get_string(CronUploaderConfig::DIR);
         return join_path($dir, self::UPLOADED_DIR);
     }
 
     public function get_failed_dir()
     {
-        $dir = CronUploaderConfig::get_dir();
+        global $user_config;
+
+        $dir = $user_config->get_string(CronUploaderConfig::DIR);
         return join_path($dir, self::FAILED_DIR);
     }
 
     private function prep_root_dir(): string
     {
+        global $user_config;
+
         // Determine directory (none = default)
-        $dir = CronUploaderConfig::get_dir();
+        $dir = $user_config->get_string(CronUploaderConfig::DIR);
 
         // Make the directory if it doesn't exist yet
         if (!is_dir($this->get_queue_dir())) {
@@ -293,35 +307,36 @@ class CronUploader extends Extension
 
     private function get_lock_file(): string
     {
-        $root_dir = CronUploaderConfig::get_dir();
+        global $user_config;
+
+        $root_dir = $user_config->get_string(CronUploaderConfig::DIR);
         return join_path($root_dir, ".lock");
     }
 
     /**
      * Uploads the image & handles everything
      */
-    public function process_upload(string $key, ?int $upload_count = null): bool
+    public function process_upload(): bool
     {
-        global $database, $config, $_shm_load_start;
+        global $database, $user, $user_config, $config, $_shm_load_start;
 
         $max_time = intval(ini_get('max_execution_time'))*.8;
 
         $this->set_headers();
 
-        if ($key!=CronUploaderConfig::get_key()) {
-            throw new SCoreException("Cron upload key incorrect");
-        }
-        $user_id = CronUploaderConfig::get_user();
-        if (empty($user_id)) {
-            throw new SCoreException("Cron upload user not set");
-        }
-        $my_user = User::by_id($user_id);
-        if ($my_user == null) {
-            throw new SCoreException("No user found for cron upload user $user_id");
+        if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
+            throw new SCoreException("User API keys are note enabled. Please enable them for the cron upload functionality to work.");
         }
 
-        send_event(new UserLoginEvent($my_user));
-        $this->log_message(SCORE_LOG_INFO, "Logged in as user {$my_user->name}");
+        if ($user->is_anonymous()) {
+            throw new SCoreException("User not present. Please specify the api_key for the user to run cron upload as.");
+        }
+
+        $this->log_message(SCORE_LOG_INFO, "Logged in as user {$user->name}");
+
+        if (!$user->can(Permissions::CRON_RUN)) {
+            throw new SCoreException("User does not have permission to run cron upload");
+        }
 
         $lockfile = fopen($this->get_lock_file(), "w");
         if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
@@ -333,7 +348,7 @@ class CronUploader extends Extension
             //set_time_limit(0);
 
             $output_subdir = date('Ymd-His', time());
-            $image_queue = $this->generate_image_queue(CronUploaderConfig::get_dir());
+            $image_queue = $this->generate_image_queue($user_config->get_string(CronUploaderConfig::DIR));
 
             // Randomize Images
             //shuffle($this->image_queue);
@@ -372,7 +387,7 @@ class CronUploader extends Extension
                     $failed++;
                     $this->log_message(SCORE_LOG_ERROR, "(" . gettype($e) . ") " . $e->getMessage());
                     $this->log_message(SCORE_LOG_ERROR, $e->getTraceAsString());
-                    if ($config->get_bool(CronUploaderConfig::STOP_ON_ERROR)) {
+                    if ($user_config->get_bool(CronUploaderConfig::STOP_ON_ERROR)) {
                         break;
                     } else {
                         $this->move_uploaded($img[0], $img[1], $output_subdir, true);
@@ -401,7 +416,9 @@ class CronUploader extends Extension
 
     private function move_uploaded(string $path, string $filename, string $output_subdir, bool $corrupt = false)
     {
-        $rootDir = CronUploaderConfig::get_dir();
+        global $user_config;
+
+        $rootDir = $user_config->get_string(CronUploaderConfig::DIR);
         $rootLength = strlen($rootDir);
         if ($rootDir[$rootLength-1]=="/"||$rootDir[$rootLength-1]=="\\") {
             $rootLength--;
@@ -538,7 +555,11 @@ class CronUploader extends Extension
 
     private function get_log_file(): string
     {
-        return join_path(CronUploaderConfig::get_dir(), "uploads.log");
+        global $user_config;
+
+        $dir = $user_config->get_string(CronUploaderConfig::DIR);
+
+        return join_path($dir, "uploads.log");
     }
 
     private function set_headers(): void

@@ -103,6 +103,7 @@ abstract class Permissions
     public const SET_PRIVATE_IMAGE = "set_private_image";
     public const SET_OTHERS_PRIVATE_IMAGES = "set_others_private_images";
 
+    public const CRON_RUN = "cron_run";
     public const BULK_IMPORT = "bulk_import";
     public const BULK_EXPORT = "bulk_export";
     public const BULK_DOWNLOAD = "bulk_download";
