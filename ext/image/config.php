@@ -23,4 +23,8 @@ abstract class ImageConfig
 
     const COLLISION_MERGE =  'merge';
     const COLLISION_ERROR =  'error';
+
+    const ON_DELETE =        'image_on_delete';
+    const ON_DELETE_NEXT =   'next';
+    const ON_DELETE_LIST =   'list';
 }

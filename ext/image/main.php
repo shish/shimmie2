@@ -15,6 +15,11 @@ class ImageIO extends Extension
         'Merge'=>ImageConfig::COLLISION_MERGE
     ];
 
+    const ON_DELETE_OPTIONS = [
+        'Return to post list'=>ImageConfig::ON_DELETE_LIST,
+        'Go to next image'=>ImageConfig::ON_DELETE_NEXT
+    ];
+
     const EXIF_READ_FUNCTION = "exif_read_data";
 
     const THUMBNAIL_ENGINES = [
@@ -70,14 +75,20 @@ class ImageIO extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
+        global $config;
         if ($event->page_matches("image/delete")) {
             global $page, $user;
             if ($user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id']) && $user->check_auth_token()) {
                 $image = Image::by_id(int_escape($_POST['image_id']));
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(referer_or(make_link("post/list"), ['post/view']));
+
+                    if ($config->get_string(ImageConfig::ON_DELETE)===ImageConfig::ON_DELETE_NEXT) {
+                        redirect_to_next_image($image);
+                    } else {
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(referer_or(make_link("post/list"), ['post/view']));
+                    }
                 }
             }
         } elseif ($event->page_matches("image/replace")) {
@@ -254,6 +265,7 @@ class ImageIO extends Extension
         $sb->add_text_option(ImageConfig::TIP, "Image tooltip", true);
         $sb->add_text_option(ImageConfig::INFO, "Image info", true);
         $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "Upload collision handler", true);
+        $sb->add_choice_option(ImageConfig::ON_DELETE, self::ON_DELETE_OPTIONS, "On Delete", true);
         if (function_exists(self::EXIF_READ_FUNCTION)) {
             $sb->add_bool_option(ImageConfig::SHOW_META, "Show metadata", true);
         }
