@@ -581,7 +581,7 @@ class Media extends Extension
             $resize_suffix .= "\!";
         }
 
-        $args = "";
+        $args = " -auto-orient ";
         $resize_arg = "-resize";
         if ($minimize) {
             $args .= "-strip ";
@@ -611,8 +611,8 @@ class Media extends Extension
             case Media::RESIZE_TYPE_FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
                 $args .= "${file_arg} ".
-                    "\( -clone 0 -resize ${new_width}x${new_height}\^ -background ${bg} -flatten -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
-                    "\( -clone 0 -resize ${new_width}x${new_height} \) ".
+                    "\( -clone 0 -auto-orient -resize ${new_width}x${new_height}\^ -background ${bg} -flatten -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
+                    "\( -clone 0 -auto-orient -resize ${new_width}x${new_height} \) ".
                     "-delete 0 -gravity center -compose over -composite";
                 break;
         }
