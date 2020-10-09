@@ -167,7 +167,7 @@ class ImageIO extends Extension
             // actually insert the info
             $image->save_to_db();
 
-            log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
+            log_info("image", "Uploaded >>{$image->id} ({$image->hash})");
 
             # at this point in time, the image's tags haven't really been set,
             # and so, having $image->tag_array set to something is a lie (but
@@ -179,7 +179,7 @@ class ImageIO extends Extension
             send_event(new TagSetEvent($image, $tags_to_set));
 
             if ($image->source !== null) {
-                log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
+                log_info("core-image", "Source for >>{$image->id} set to: {$image->source}");
             }
         } catch (ImageAdditionException $e) {
             throw new UploadException($e->error);
@@ -236,7 +236,7 @@ class ImageIO extends Extension
             /* Generate new thumbnail */
             send_event(new ThumbnailGenerationEvent($image->hash, strtolower($image->get_mime())));
 
-            log_info("image", "Replaced Image #{$id} with ({$image->hash})");
+            log_info("image", "Replaced >>{$id} with ({$image->hash})");
         } catch (ImageReplaceException $e) {
             throw new UploadException($e->error);
         }

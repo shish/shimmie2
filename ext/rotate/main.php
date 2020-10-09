@@ -185,6 +185,6 @@ class RotateImage extends Extension
 
         send_event(new ImageReplaceEvent($image_id, $new_image));
 
-        log_info("rotate", "Rotated Image #{$image_id} - New hash: {$new_image->hash}");
+        log_info("rotate", "Rotated >>{$image_id} - New hash: {$new_image->hash}");
     }
 }

@@ -109,7 +109,7 @@ class ResizeImage extends Extension
                 $image_obj = Image::by_id($event->image_id); //Must be a better way to grab the new hash than setting this again..
                 send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->get_mime(), true));
 
-                log_info("resize", "Image #{$event->image_id} has been resized to: ".$width."x".$height);
+                log_info("resize", ">>{$event->image_id} has been resized to: ".$width."x".$height);
                 //TODO: Notify user that image has been resized.
             }
         }
@@ -288,7 +288,7 @@ class ResizeImage extends Extension
 
         send_event(new ImageReplaceEvent($image_obj->id, $new_image));
 
-        log_info("resize", "Resized Image #{$image_obj->id} - New hash: {$new_image->hash}");
+        log_info("resize", "Resized >>{$image_obj->id} - New hash: {$new_image->hash}");
     }
 
     /**

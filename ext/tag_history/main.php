@@ -159,7 +159,7 @@ class TagHistory extends Extension
             throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
         }
 
-        log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
+        log_debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
         // all should be ok so we can revert by firing the SetUserTags event.
         send_event(new TagSetEvent($image, Tag::explode($stored_tags)));
 
@@ -325,10 +325,10 @@ class TagHistory extends Extension
                     //throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
                 }
 
-                log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
+                log_debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
                 // all should be ok so we can revert by firing the SetTags event.
                 send_event(new TagSetEvent($image, Tag::explode($stored_tags)));
-                $this->theme->add_status('Reverted Change', 'Reverted Image #'.$image_id.' to Tag History #'.$stored_result_id.' ('.$row['tags'].')');
+                $this->theme->add_status('Reverted Change', 'Reverted >>'.$image_id.' to Tag History #'.$stored_result_id.' ('.$row['tags'].')');
             }
         }
 

@@ -154,7 +154,7 @@ class SourceHistory extends Extension
         $stored_image_id = (int)$result['image_id'];
         $stored_source = $result['source'];
 
-        log_debug("source_history", 'Reverting source of Image #'.$stored_image_id.' to ['.$stored_source.']');
+        log_debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
 
         $image = Image::by_id($stored_image_id);
 
@@ -321,7 +321,7 @@ class SourceHistory extends Extension
                 $stored_image_id = $result['image_id'];
                 $stored_source = $result['source'];
 
-                log_debug("source_history", 'Reverting source of Image #'.$stored_image_id.' to ['.$stored_source.']');
+                log_debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
 
                 $image = Image::by_id($stored_image_id);
 
@@ -331,7 +331,7 @@ class SourceHistory extends Extension
 
                 // all should be ok so we can revert by firing the SetSources event.
                 send_event(new SourceSetEvent($image, $stored_source));
-                $this->theme->add_status('Reverted Change', 'Reverted Image #'.$image_id.' to Source History #'.$stored_result_id.' ('.$row['source'].')');
+                $this->theme->add_status('Reverted Change', 'Reverted >>'.$image_id.' to Source History #'.$stored_result_id.' ('.$row['source'].')');
             }
         }
 

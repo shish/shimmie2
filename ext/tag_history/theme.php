@@ -112,7 +112,7 @@ class TagHistoryTheme extends Themelet
         $name = $fields['name'];
         $date_set = rawHTML(autodate($fields['date_set']));
         $ip = $user->can(Permissions::VIEW_IP) ?
-            rawHTML(" " . show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'"))
+            rawHTML(" " . show_ip($fields['user_ip'], "Tagging >>$image_id as '$current_tags'"))
             : null;
         $setter = A(["href"=>make_link("user/" . url_escape($name))], $name);
 
