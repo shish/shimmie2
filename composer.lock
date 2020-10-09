@@ -326,19 +326,20 @@
         },
         {
             "name": "shish/ffsphp",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/ffsphp.git",
-                "reference": "82d45b2691da11c82a28f85b07752334a06b8a8e"
+                "reference": "94de4a502b7fc514e0e1c3557806baf162b87040"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/ffsphp/zipball/82d45b2691da11c82a28f85b07752334a06b8a8e",
-                "reference": "82d45b2691da11c82a28f85b07752334a06b8a8e",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/94de4a502b7fc514e0e1c3557806baf162b87040",
+                "reference": "94de4a502b7fc514e0e1c3557806baf162b87040",
                 "shasum": ""
             },
             "require": {
+                "ext-pdo": "*",
                 "php": "^7.3"
             },
             "require-dev": {
@@ -364,7 +365,7 @@
             ],
             "description": "A collection of workarounds for stupid PHP things",
             "homepage": "https://github.com/shish/ffsphp",
-            "time": "2020-09-20T13:15:53+00:00"
+            "time": "2020-10-09T15:15:29+00:00"
         },
         {
             "name": "shish/microcrud",
