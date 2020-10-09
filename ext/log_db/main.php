@@ -170,12 +170,13 @@ class MessageColumn extends Column
     protected function scan_entities(string $line)
     {
         return preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
+        return preg_replace_callback("/>>(\d+)/s", [$this, "link_image"], $line);
     }
 
     protected function link_image($id)
     {
         $iid = int_escape($id[1]);
-        return "<a href='".make_link("post/view/$iid")."'>Image #$iid</a>";
+        return "<a href='".make_link("post/view/$iid")."'>&gt;&gt;$iid</a>";
     }
 }
 
