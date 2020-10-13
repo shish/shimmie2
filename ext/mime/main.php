@@ -45,7 +45,7 @@ class MimeSystem extends Extension
                 $normalized_extension = FileExtension::get_for_mime($mime);
 
                 $database->execute(
-                    "UPDATE images SET mime = :mime, ext = :new_ext WHERE ext = :ext AND (mime != :mime OR ext != :new_ext)",
+                    "UPDATE images SET mime = :mime, ext = :new_ext WHERE ext = :ext AND (mime IS NULL OR mime != :mime OR ext != :new_ext)",
                     ["mime" => $mime, "new_ext" => $normalized_extension, "ext" => $ext]
                 );
             }

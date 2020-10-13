@@ -598,7 +598,7 @@ class Image
     /**
      * Get the image's mime type.
      */
-    public function get_mime(): string
+    public function get_mime(): ?string
     {
         if ($this->mime===MimeType::WEBP&&$this->lossless) {
             return MimeType::WEBP_LOSSLESS;
