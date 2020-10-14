@@ -444,6 +444,10 @@ class Upload extends Extension
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
             $metadata['source'] = (($url == $source) && !$config->get_bool(UploadConfig::TLSOURCE) ? "" : $source);
+            $metadata['extension'] = "";
+            if (array_key_exists('extension', $pathinfo)) {
+                $metadata['extension'] = $pathinfo['extension'];
+            }
 
             /* check for locked > adds to metadata if it has */
             if (!empty($locked)) {
