@@ -129,6 +129,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->testUpload();
         $this->assert_search_results(["hash=1234567890"], []);
+        $this->assert_search_results(["ratio=42:12345"], []);
     }
 
     /** @depends testUpload */
