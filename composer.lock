@@ -330,12 +330,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/ffsphp.git",
-                "reference": "94de4a502b7fc514e0e1c3557806baf162b87040"
+                "reference": "ebba39ad7c183f3e4445a35ca7c883a74d70a415"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/ffsphp/zipball/94de4a502b7fc514e0e1c3557806baf162b87040",
-                "reference": "94de4a502b7fc514e0e1c3557806baf162b87040",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/ebba39ad7c183f3e4445a35ca7c883a74d70a415",
+                "reference": "ebba39ad7c183f3e4445a35ca7c883a74d70a415",
                 "shasum": ""
             },
             "require": {
@@ -369,16 +369,16 @@
         },
         {
             "name": "shish/microcrud",
-            "version": "v2.0.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "1d55c02c405fc75ad6a0e952e9333552bef492f0"
+                "reference": "f0b6fbcaaece5489ab2e44fa28fe775b77a9dbb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/1d55c02c405fc75ad6a0e952e9333552bef492f0",
-                "reference": "1d55c02c405fc75ad6a0e952e9333552bef492f0",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/f0b6fbcaaece5489ab2e44fa28fe775b77a9dbb9",
+                "reference": "f0b6fbcaaece5489ab2e44fa28fe775b77a9dbb9",
                 "shasum": ""
             },
             "require": {
@@ -414,7 +414,7 @@
                 "crud",
                 "generator"
             ],
-            "time": "2020-09-20T13:10:42+00:00"
+            "time": "2020-10-14T15:49:35+00:00"
         },
         {
             "name": "shish/microhtml",
@@ -518,20 +518,6 @@
                 "constructor",
                 "instantiate"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finstantiator",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-15T18:51:04+00:00"
         },
         {
@@ -579,12 +565,6 @@
                 "duplicate",
                 "object",
                 "object graph"
-            ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/myclabs/deep-copy",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-10-01T09:35:15+00:00"
         },
@@ -1233,16 +1213,6 @@
                 "phpunit",
                 "testing",
                 "xunit"
-            ],
-            "funding": [
-                {
-                    "url": "https://phpunit.de/donate.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
             ],
             "time": "2020-09-28T04:52:07+00:00"
         },
@@ -1921,20 +1891,6 @@
                 "polyfill",
                 "portable"
             ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-07-14T12:35:20+00:00"
         },
         {
@@ -1975,12 +1931,6 @@
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "funding": [
-                {
-                    "url": "https://github.com/theseer",
-                    "type": "github"
-                }
-            ],
             "time": "2020-07-12T23:59:07+00:00"
         },
         {
@@ -2044,6 +1994,5 @@
         "ext-json": "*",
         "ext-fileinfo": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }
