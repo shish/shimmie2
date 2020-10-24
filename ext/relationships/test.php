@@ -75,6 +75,21 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     }
 
     /**
+     * @depends testSetParent
+     */
+    public function testSearch($imgs)
+    {
+        [$image_1, $image_2, $image_3] = $this->testSetParent(null);
+
+        $this->assert_search_results(["parent:any"], [$image_2->id]);
+        $this->assert_search_results(["parent:none"], [$image_3->id, $image_1->id]);
+        $this->assert_search_results(["parent:{$image_1->id}"], [$image_2->id]);
+
+        $this->assert_search_results(["child:any"], [$image_1->id]);
+        $this->assert_search_results(["child:none"], [$image_3->id, $image_2->id]);
+    }
+
+    /**
      * @depends testChangeParent
      */
     public function testRemoveParent($imgs)
