@@ -63,7 +63,7 @@ jobs:
       run: composer validate
 
     - name: Install PHP dependencies
-      run: composer update && composer install --prefer-dist --no-progress --no-suggest
+      run: composer update && composer install --prefer-dist --no-progress
 
     - name: Install shimmie
       run: php index.php
