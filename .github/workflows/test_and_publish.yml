@@ -10,7 +10,6 @@ jobs:
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
-      max-parallel: 3
       fail-fast: false
       matrix:
         php: ['7.3', '7.4', '8.0']
