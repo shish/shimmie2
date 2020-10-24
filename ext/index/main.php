@@ -171,7 +171,6 @@ class Index extends Extension
         }
     }
 
-
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         if (is_null($event->term)) {
@@ -195,8 +194,9 @@ class Index extends Extension
             );
         } elseif (preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
             $cmp = preg_replace('/^:/', '=', $matches[1]);
-            $args = ["width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3])];
-            $event->add_querylet(new Querylet("width / height $cmp :width{$this->stpen} / :height{$this->stpen}", $args));
+            $ratio = int_escape($matches[2]) / int_escape($matches[3]);
+            $args = ["ratio{$this->stpen}"=>$ratio];
+            $event->add_querylet(new Querylet("width / height $cmp :ratio{$this->stpen}", $args));
         } elseif (preg_match("/^(filesize|id)([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+[kmg]?b?)$/i", $event->term, $matches)) {
             $col = $matches[1];
             $cmp = ltrim($matches[2], ":") ?: "=";
