@@ -190,8 +190,8 @@ function stream_file(string $file, int $start, int $end): void
     }
 }
 
-if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
-
+# http://www.php.net/manual/en/function.http-parse-headers.php#112917
+if (!function_exists('http_parse_headers')) {
     /**
      * #return string[]
      */
@@ -476,25 +476,6 @@ function clamp(?int $val, ?int $min=null, ?int $max=null): int
         assert($val >= $min && $val <= $max, "$min <= $val <= $max");
     }
     return $val;
-}
-
-function xml_tag(string $name, array $attrs=[], array $children=[]): string
-{
-    $xml = "<$name ";
-    foreach ($attrs as $k => $v) {
-        $xv = str_replace('&#039;', '&apos;', htmlspecialchars((string)$v, ENT_QUOTES));
-        $xml .= "$k=\"$xv\" ";
-    }
-    if (count($children) > 0) {
-        $xml .= ">\n";
-        foreach ($children as $child) {
-            $xml .= xml_tag($child);
-        }
-        $xml .= "</$name>\n";
-    } else {
-        $xml .= "/>\n";
-    }
-    return $xml;
 }
 
 /**

@@ -76,14 +76,6 @@ class PolyfillsTest extends TestCase
         $this->assertEquals(clamp(15, 5, 10), 10);
     }
 
-    public function test_xml_tag()
-    {
-        $this->assertEquals(
-            "<test foo=\"bar\" >\n<cake />\n</test>\n",
-            xml_tag("test", ["foo"=>"bar"], ["cake"])
-        );
-    }
-
     public function test_truncate()
     {
         $this->assertEquals(truncate("test words", 10), "test words");
