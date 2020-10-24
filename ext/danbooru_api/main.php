@@ -1,10 +1,23 @@
 <?php declare(strict_types=1);
 
 use \MicroHTML\HTMLElement;
-function TAGS(...$args) {return new HTMLElement("tags", $args);}
-function TAG(...$args) {return new HTMLElement("tag", $args);}
-function POSTS(...$args) {return new HTMLElement("posts", $args);}
-function POST(...$args) {return new HTMLElement("post", $args);}
+
+function TAGS(...$args)
+{
+    return new HTMLElement("tags", $args);
+}
+function TAG(...$args)
+{
+    return new HTMLElement("tag", $args);
+}
+function POSTS(...$args)
+{
+    return new HTMLElement("posts", $args);
+}
+function POST(...$args)
+{
+    return new HTMLElement("post", $args);
+}
 
 
 class DanbooruApi extends Extension

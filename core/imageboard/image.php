@@ -86,7 +86,9 @@ class Image
     {
         if (!is_null($row)) {
             foreach ($row as $name => $value) {
-                if(is_numeric($name)) continue;
+                if (is_numeric($name)) {
+                    continue;
+                }
 
                 // some databases use table.name rather than name
                 $name = str_replace("images.", "", $name);

@@ -58,7 +58,8 @@ class PoolCreationEvent extends Event
     }
 }
 
-class PoolDeletionEvent extends Event {
+class PoolDeletionEvent extends Event
+{
     public $pool_id;
 
     public function __construct(int $pool_id)
