@@ -53,8 +53,8 @@ class NotesTheme extends Themelet
     {
         $base_href = get_base_href();
 
-        $page->add_html_header("<script src='$base_href/ext/notes/lib/jquery.imgnotes-1.0.min.js' type='text/javascript'></script>");
-        $page->add_html_header("<script src='$base_href/ext/notes/lib/jquery.imgareaselect-1.0.0-rc1.min.js' type='text/javascript'></script>");
+        $page->add_html_header("<script defer src='$base_href/ext/notes/lib/jquery.imgnotes-1.0.min.js' type='text/javascript'></script>");
+        $page->add_html_header("<script defer src='$base_href/ext/notes/lib/jquery.imgareaselect-1.0.0-rc1.min.js' type='text/javascript'></script>");
         $page->add_html_header("<link rel='stylesheet' type='text/css' href='$base_href/ext/notes/lib/jquery.imgnotes-1.0.min.css' />");
 
         $to_json = [];
@@ -254,7 +254,7 @@ class NotesTheme extends Themelet
         <div class="command_example">
         <pre>note=noted</pre>
         <p>Returns images with a note matching "noted".</p>
-        </div> 
+        </div>
         <div class="command_example">
         <pre>notes>0</pre>
         <p>Returns images with 1 or more notes.</p>
