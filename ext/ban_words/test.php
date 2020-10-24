@@ -8,7 +8,7 @@ class BanWordsTest extends ShimmiePHPUnitTestCase
             send_event(new CommentPostingEvent($image_id, $user, $words));
             $this->fail("Exception not thrown");
         } catch (CommentPostingException $e) {
-            $this->assertEquals($e->getMessage(), "Comment contains banned terms");
+            $this->assertEquals("Comment contains banned terms", $e->getMessage());
         }
     }
 

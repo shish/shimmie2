@@ -4,60 +4,60 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
     public function testBasics()
     {
         $this->assertEquals(
-            $this->filter("[b]bold[/b][i]italic[/i]"),
-            "<b>bold</b><i>italic</i>"
+            "<b>bold</b><i>italic</i>",
+            $this->filter("[b]bold[/b][i]italic[/i]")
         );
     }
 
     public function testStacking()
     {
         $this->assertEquals(
-            $this->filter("[b]B[/b][i]I[/i][b]B[/b]"),
-            "<b>B</b><i>I</i><b>B</b>"
+            "<b>B</b><i>I</i><b>B</b>",
+            $this->filter("[b]B[/b][i]I[/i][b]B[/b]")
         );
         $this->assertEquals(
-            $this->filter("[b]bold[i]bolditalic[/i]bold[/b]"),
-            "<b>bold<i>bolditalic</i>bold</b>"
+            "<b>bold<i>bolditalic</i>bold</b>",
+            $this->filter("[b]bold[i]bolditalic[/i]bold[/b]")
         );
     }
 
     public function testFailure()
     {
         $this->assertEquals(
-            $this->filter("[b]bold[i]italic"),
-            "[b]bold[i]italic"
+            "[b]bold[i]italic",
+            $this->filter("[b]bold[i]italic")
         );
     }
 
     public function testCode()
     {
         $this->assertEquals(
-            $this->filter("[code][b]bold[/b][/code]"),
-            "<pre>[b]bold[/b]</pre>"
+            "<pre>[b]bold[/b]</pre>",
+            $this->filter("[code][b]bold[/b][/code]")
         );
     }
 
     public function testNestedList()
     {
         $this->assertEquals(
-            $this->filter("[list][*]a[list][*]a[*]b[/list][*]b[/list]"),
-            "<ul><li>a<ul><li>a<li>b</ul><li>b</ul>"
+            "<ul><li>a<ul><li>a<li>b</ul><li>b</ul>",
+            $this->filter("[list][*]a[list][*]a[*]b[/list][*]b[/list]")
         );
         $this->assertEquals(
-            $this->filter("[ul][*]a[ol][*]a[*]b[/ol][*]b[/ul]"),
-            "<ul><li>a<ol><li>a<li>b</ol><li>b</ul>"
+            "<ul><li>a<ol><li>a<li>b</ol><li>b</ul>",
+            $this->filter("[ul][*]a[ol][*]a[*]b[/ol][*]b[/ul]")
         );
     }
 
     public function testSpoiler()
     {
         $this->assertEquals(
-            $this->filter("[spoiler]ShishNet[/spoiler]"),
-            "<span style=\"background-color:#000; color:#000;\">ShishNet</span>"
+            "<span style=\"background-color:#000; color:#000;\">ShishNet</span>",
+            $this->filter("[spoiler]ShishNet[/spoiler]")
         );
         $this->assertEquals(
-            $this->strip("[spoiler]ShishNet[/spoiler]"),
-            "FuvfuArg"
+            "FuvfuArg",
+            $this->strip("[spoiler]ShishNet[/spoiler]")
         );
         #$this->assertEquals(
         #	$this->filter("[spoiler]ShishNet"),
@@ -67,32 +67,32 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
     public function testURL()
     {
         $this->assertEquals(
-            $this->filter("[url]https://shishnet.org[/url]"),
-            "<a href=\"https://shishnet.org\">https://shishnet.org</a>"
+            "<a href=\"https://shishnet.org\">https://shishnet.org</a>",
+            $this->filter("[url]https://shishnet.org[/url]")
         );
         $this->assertEquals(
-            $this->filter("[url=https://shishnet.org]ShishNet[/url]"),
-            "<a href=\"https://shishnet.org\">ShishNet</a>"
+            "<a href=\"https://shishnet.org\">ShishNet</a>",
+            $this->filter("[url=https://shishnet.org]ShishNet[/url]")
         );
         $this->assertEquals(
-            $this->filter("[url=javascript:alert(\"owned\")]click to fail[/url]"),
-            "[url=javascript:alert(\"owned\")]click to fail[/url]"
+            "[url=javascript:alert(\"owned\")]click to fail[/url]",
+            $this->filter("[url=javascript:alert(\"owned\")]click to fail[/url]")
         );
     }
 
     public function testEmailURL()
     {
         $this->assertEquals(
-            $this->filter("[email]spam@shishnet.org[/email]"),
-            "<a href=\"mailto:spam@shishnet.org\">spam@shishnet.org</a>"
+            "<a href=\"mailto:spam@shishnet.org\">spam@shishnet.org</a>",
+            $this->filter("[email]spam@shishnet.org[/email]")
         );
     }
 
     public function testAnchor()
     {
         $this->assertEquals(
-            $this->filter("[anchor=rules]Rules[/anchor]"),
-            '<span class="anchor">Rules <a class="alink" href="#bb-rules" name="bb-rules" title="link to this anchor"> ¶ </a></span>'
+            '<span class="anchor">Rules <a class="alink" href="#bb-rules" name="bb-rules" title="link to this anchor"> ¶ </a></span>',
+            $this->filter("[anchor=rules]Rules[/anchor]")
         );
     }
 

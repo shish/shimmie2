@@ -43,13 +43,13 @@ class UrlsTest extends TestCase
     {
         // relative to shimmie install
         $this->assertEquals(
-            "http://<cli command>/test/foo",
+            "http://cli-command/test/foo",
             make_http("foo")
         );
 
         // relative to web server
         $this->assertEquals(
-            "http://<cli command>/foo",
+            "http://cli-command/foo",
             make_http("/foo")
         );
 

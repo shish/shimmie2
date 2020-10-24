@@ -409,8 +409,6 @@ abstract class DataHandlerExtension extends Extension
 
     protected function create_image_from_data(string $filename, array $metadata): Image
     {
-        global $config;
-
         $image = new Image();
 
         $image->filesize = $metadata['size'];

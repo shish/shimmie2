@@ -9,13 +9,13 @@ class PolyfillsTest extends TestCase
     public function test_html_escape()
     {
         $this->assertEquals(
-            html_escape("Foo & <waffles>"),
-            "Foo &amp; &lt;waffles&gt;"
+            "Foo &amp; &lt;main&gt;",
+            html_escape("Foo & <main>")
         );
 
         $this->assertEquals(
-            html_unescape("Foo &amp; &lt;waffles&gt;"),
-            "Foo & <waffles>"
+            "Foo & <main>",
+            html_unescape("Foo &amp; &lt;main&gt;")
         );
 
         $x = "Foo &amp; &lt;waffles&gt;";
@@ -24,17 +24,17 @@ class PolyfillsTest extends TestCase
 
     public function test_int_escape()
     {
-        $this->assertEquals(int_escape(""), 0);
-        $this->assertEquals(int_escape("1"), 1);
-        $this->assertEquals(int_escape("-1"), -1);
-        $this->assertEquals(int_escape("-1.5"), -1);
-        $this->assertEquals(int_escape(null), 0);
+        $this->assertEquals(0, int_escape(""));
+        $this->assertEquals(1, int_escape("1"));
+        $this->assertEquals(-1, int_escape("-1"));
+        $this->assertEquals(-1, int_escape("-1.5"));
+        $this->assertEquals(0, int_escape(null));
     }
 
     public function test_url_escape()
     {
-        $this->assertEquals(url_escape("^\o/^"), "%5E%5Co%2F%5E");
-        $this->assertEquals(url_escape(null), "");
+        $this->assertEquals("%5E%5Co%2F%5E", url_escape("^\o/^"));
+        $this->assertEquals("", url_escape(null));
     }
 
     public function test_bool_escape()
@@ -69,33 +69,33 @@ class PolyfillsTest extends TestCase
 
     public function test_clamp()
     {
-        $this->assertEquals(clamp(0, 5, 10), 5);
-        $this->assertEquals(clamp(5, 5, 10), 5);
-        $this->assertEquals(clamp(7, 5, 10), 7);
-        $this->assertEquals(clamp(10, 5, 10), 10);
-        $this->assertEquals(clamp(15, 5, 10), 10);
+        $this->assertEquals(5, clamp(0, 5, 10));
+        $this->assertEquals(5, clamp(5, 5, 10));
+        $this->assertEquals(7, clamp(7, 5, 10));
+        $this->assertEquals(10, clamp(10, 5, 10));
+        $this->assertEquals(10, clamp(15, 5, 10));
     }
 
     public function test_truncate()
     {
-        $this->assertEquals(truncate("test words", 10), "test words");
-        $this->assertEquals(truncate("test...", 9), "test...");
-        $this->assertEquals(truncate("test...", 6), "test...");
-        $this->assertEquals(truncate("te...", 2), "te...");
+        $this->assertEquals("test words", truncate("test words", 10));
+        $this->assertEquals("test...", truncate("test...", 9));
+        $this->assertEquals("test...", truncate("test...", 6));
+        $this->assertEquals("te...", truncate("te...", 2));
     }
 
     public function test_to_shorthand_int()
     {
-        $this->assertEquals(to_shorthand_int(1231231231), "1.1GB");
-        $this->assertEquals(to_shorthand_int(2), "2");
+        $this->assertEquals("1.1GB", to_shorthand_int(1231231231));
+        $this->assertEquals("2", to_shorthand_int(2));
     }
 
     public function test_parse_shorthand_int()
     {
-        $this->assertEquals(parse_shorthand_int("foo"), -1);
-        $this->assertEquals(parse_shorthand_int("32M"), 33554432);
-        $this->assertEquals(parse_shorthand_int("43.4KB"), 44441);
-        $this->assertEquals(parse_shorthand_int("1231231231"), 1231231231);
+        $this->assertEquals(-1, parse_shorthand_int("foo"));
+        $this->assertEquals(33554432, parse_shorthand_int("32M"));
+        $this->assertEquals(44441, parse_shorthand_int("43.4KB"));
+        $this->assertEquals(1231231231, parse_shorthand_int("1231231231"));
     }
 
     public function test_format_milliseconds()

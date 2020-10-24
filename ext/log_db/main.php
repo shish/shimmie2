@@ -169,8 +169,9 @@ class MessageColumn extends Column
 
     protected function scan_entities(string $line)
     {
-        return preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
-        return preg_replace_callback("/>>(\d+)/s", [$this, "link_image"], $line);
+        $line = preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
+        $line = preg_replace_callback("/>>(\d+)/s", [$this, "link_image"], $line);
+        return $line;
     }
 
     protected function link_image($id)

@@ -49,7 +49,6 @@ function get_dsn()
 {
     if (getenv("INSTALL_DSN")) {
         $dsn = getenv("INSTALL_DSN");
-        ;
     } elseif (@$_POST["database_type"] == DatabaseDriver::SQLITE) {
         /** @noinspection PhpUnhandledExceptionInspection */
         $id = bin2hex(random_bytes(5));

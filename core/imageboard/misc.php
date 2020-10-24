@@ -33,11 +33,6 @@ function add_dir(string $base): array
 
 /**
  * Sends a DataUploadEvent for a file.
- *
- * @param string $tmpname
- * @param string $filename
- * @param string $tags
- * @throws UploadException
  */
 function add_image(string $tmpname, string $filename, string $tags): int
 {

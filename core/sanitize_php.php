@@ -56,5 +56,5 @@ if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
         die("CLI with remote addr? Confused, not taking the risk.");
     }
     $_SERVER['REMOTE_ADDR'] = "0.0.0.0";
-    $_SERVER['HTTP_HOST'] = "<cli command>";
+    $_SERVER['HTTP_HOST'] = "cli-command";
 }
