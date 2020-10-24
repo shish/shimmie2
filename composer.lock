@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "84fc7d8382a9ae4804ec27d6bc8b2766",
+    "content-hash": "06b50111e7fba77ad2acb2b5d30b88a6",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -26,16 +26,16 @@
         },
         {
             "name": "bower-asset/jquery-timeago",
-            "version": "v1.5.4",
+            "version": "v1.6.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:rmm5t/jquery-timeago.git",
-                "reference": "180864a9c544a49e43719b457250af216d5e4c3a"
+                "reference": "48fdda3ca724dcd655e8e990f6d7fbd203718905"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rmm5t/jquery-timeago/zipball/180864a9c544a49e43719b457250af216d5e4c3a",
-                "reference": "180864a9c544a49e43719b457250af216d5e4c3a"
+                "url": "https://api.github.com/repos/rmm5t/jquery-timeago/zipball/48fdda3ca724dcd655e8e990f6d7fbd203718905",
+                "reference": "48fdda3ca724dcd655e8e990f6d7fbd203718905"
             },
             "require": {
                 "bower-asset/jquery": ">=1.4"
@@ -47,16 +47,16 @@
         },
         {
             "name": "bower-asset/js-cookie",
-            "version": "v2.1.4",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/js-cookie/js-cookie.git",
-                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44"
+                "reference": "54962f884e9ae33f93e13ac903ffaf1d5a523598"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/8b70250875f7e07445b6a457f9c2474ead4cba44",
-                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44"
+                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/54962f884e9ae33f93e13ac903ffaf1d5a523598",
+                "reference": "54962f884e9ae33f93e13ac903ffaf1d5a523598"
             },
             "type": "bower-asset",
             "license": [
@@ -65,16 +65,16 @@
         },
         {
             "name": "bower-asset/mediaelement",
-            "version": "2.21.2",
+            "version": "2.23.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:johndyer/mediaelement.git",
-                "reference": "394db3b4a2e3f5f7988cacdefe62ed973bf4a3ce"
+                "reference": "b78c8e9416b1ba9d8be3de9417fbb7eda95a6b59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johndyer/mediaelement/zipball/394db3b4a2e3f5f7988cacdefe62ed973bf4a3ce",
-                "reference": "394db3b4a2e3f5f7988cacdefe62ed973bf4a3ce"
+                "url": "https://api.github.com/repos/johndyer/mediaelement/zipball/b78c8e9416b1ba9d8be3de9417fbb7eda95a6b59",
+                "reference": "b78c8e9416b1ba9d8be3de9417fbb7eda95a6b59"
             },
             "type": "bower-asset",
             "license": [

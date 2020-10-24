@@ -30,20 +30,20 @@
 		"ext-json": "*",
 		"ext-fileinfo": "*",
 
-		"flexihash/flexihash"       : "^2.0.0",
-		"ifixit/php-akismet"        : "1.*",
-		"google/recaptcha"          : "~1.1",
-		"dapphp/securimage"         : "3.6.*",
-		"shish/eventtracer-php"     : "^2.0.0",
-		"shish/ffsphp"              : "^1.0.0",
-		"shish/microcrud"           : "^2.0.0",
-		"shish/microhtml"           : "^2.0.0",
-		"enshrined/svg-sanitize"    : "0.13.*",
+		"flexihash/flexihash"       : "^2.0",
+		"ifixit/php-akismet"        : "^1.0",
+		"google/recaptcha"          : "^1.1",
+		"dapphp/securimage"         : "^3.6",
+		"shish/eventtracer-php"     : "^2.0",
+		"shish/ffsphp"              : "^1.0",
+		"shish/microcrud"           : "^2.0",
+		"shish/microhtml"           : "^2.0",
+		"enshrined/svg-sanitize"    : "^0.13",
 
-		"bower-asset/jquery"         : "1.12.*",
-		"bower-asset/jquery-timeago" : "1.5.*",
-		"bower-asset/mediaelement"   : "2.21.*",
-		"bower-asset/js-cookie"      : "2.1.*"
+		"bower-asset/jquery"         : "^1.12",
+		"bower-asset/jquery-timeago" : "^1.5",
+		"bower-asset/mediaelement"   : "^2.21",
+		"bower-asset/js-cookie"      : "^2.1"
     },
 
 	"require-dev" : {
