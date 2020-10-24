@@ -58,6 +58,16 @@ class PoolCreationEvent extends Event
     }
 }
 
+class PoolDeletionEvent extends Event {
+    public $pool_id;
+
+    public function __construct(int $pool_id)
+    {
+        parent::__construct();
+        $this->pool_id = $pool_id;
+    }
+}
+
 class Pool
 {
     public $id;
@@ -379,7 +389,7 @@ class Pools extends Extension
                     // Completely remove the given pool.
                     //  -> Only admins and owners may do this
                     if ($user->can(Permissions::POOLS_ADMIN) || $user->id == $pool->user_id) {
-                        $this->nuke_pool($pool_id);
+                        send_event(new PoolDeletionEvent($pool_id));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/list"));
                     } else {
@@ -797,19 +807,16 @@ class Pools extends Extension
     /**
      * HERE WE NUKE ENTIRE POOL. WE REMOVE POOLS AND POSTS FROM REMOVED POOL AND HISTORIES ENTRIES FROM REMOVED POOL.
      */
-    private function nuke_pool(int $poolID)
+    public function onPoolDeletion(PoolDeletionEvent $event)
     {
         global $user, $database;
+        $poolID = $event->pool_id;
 
-        $p_id = (int)$database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
-        if ($user->can(Permissions::POOLS_ADMIN)) {
+        $owner_id = (int)$database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
+        if ($owner_id == $user->id || $user->can(Permissions::POOLS_ADMIN)) {
             $database->execute("DELETE FROM pool_history WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pool_images WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pools WHERE id = :pid", ["pid" => $poolID]);
-        } elseif ($user->id == $p_id) {
-            $database->execute("DELETE FROM pool_history WHERE pool_id = :pid", ["pid" => $poolID]);
-            $database->execute("DELETE FROM pool_images WHERE pool_id = :pid", ["pid" => $poolID]);
-            $database->execute("DELETE FROM pools WHERE id = :pid AND user_id = :uid", ["pid" => $poolID, "uid" => $user->id]);
         }
     }
 

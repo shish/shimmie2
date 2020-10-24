@@ -1,8 +1,22 @@
 <?php declare(strict_types=1);
 class PoolsTest extends ShimmiePHPUnitTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        // Clean up any leftovers to create a fresh test env
+        $this->log_in_as_admin();
+        global $database;
+        foreach ($database->get_col("SELECT id FROM pools") as $pool_id) {
+            send_event(new PoolDeletionEvent((int)$pool_id));
+        }
+    }
+
     public function testAnon()
     {
+        $this->log_out();
+
         $this->get_page('pool/list');
         $this->assert_title("Pools");
 
@@ -34,7 +48,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testOnViewImage($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         global $config;
         $config->set_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE, true);
@@ -48,7 +62,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testSearch($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         $this->get_page("post/list/pool=$pool_id/1");
         $this->assert_text("Pool");
@@ -60,7 +74,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testList($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         $this->get_page("pool/list");
         $this->assert_text("Pool");
@@ -69,7 +83,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testView($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         $this->get_page("pool/view/$pool_id");
         $this->assert_text("Pool");
@@ -78,7 +92,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testHistory($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         $this->get_page("pool/updated/$pool_id");
         $this->assert_text("Pool");
@@ -87,7 +101,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testImport($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         $this->post_page("pool/import", [
             "pool_id" => $pool_id,
@@ -99,7 +113,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testRemovePosts($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         $page = $this->post_page("pool/remove_posts", [
             "pool_id" => $pool_id,
@@ -107,13 +121,13 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         ]);
         $this->assertEquals("redirect", $page->mode);
 
-        return $args;
+        return [$pool_id, $image_ids];
     }
 
     /** @depends testRemovePosts */
     public function testAddPosts($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testRemovePosts(null);
 
         $page = $this->post_page("pool/add_posts", [
             "pool_id" => $pool_id,
@@ -125,7 +139,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testEditDescription($args)
     {
-        [$pool_id, $image_ids] = $args;
+        [$pool_id, $image_ids] = $this->testCreate();
 
         $page = $this->post_page("pool/edit_description", [
             "pool_id" => $pool_id,
@@ -133,7 +147,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         ]);
         $this->assertEquals("redirect", $page->mode);
 
-        return $args;
+        return [$pool_id, $image_ids];
     }
 
     public function testNuke()

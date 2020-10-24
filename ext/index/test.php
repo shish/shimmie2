@@ -77,18 +77,21 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testTagSearchNoResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["maumaumau"], []);
     }
 
     /** @depends testUpload */
     public function testTagSearchOneResult($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["pbx"], [$image_ids[0]]);
     }
 
     /** @depends testUpload */
     public function testTagSearchManyResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["computer"], [$image_ids[1], $image_ids[0]]);
     }
 
@@ -98,6 +101,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMultiTagSearchNoResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         # multiple tags, one of which doesn't exist
         # (test the "one tag doesn't exist = no hits" path)
         $this->assert_search_results(["computer", "asdfasdfwaffle"], []);
@@ -106,12 +110,14 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMultiTagSearchOneResult($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["computer", "screenshot"], [$image_ids[0]]);
     }
 
     /** @depends testUpload */
     public function testMultiTagSearchManyResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["computer", "thing"], [$image_ids[1], $image_ids[0]]);
     }
 
@@ -121,12 +127,14 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMetaSearchNoResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["hash=1234567890"], []);
     }
 
     /** @depends testUpload */
     public function testMetaSearchOneResult($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["hash=feb01bab5698a11dd87416724c7a89e3"], [$image_ids[0]]);
         $this->assert_search_results(["md5=feb01bab5698a11dd87416724c7a89e3"], [$image_ids[0]]);
         $this->assert_search_results(["id={$image_ids[1]}"], [$image_ids[1]]);
@@ -136,6 +144,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMetaSearchManyResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["size=640x480"], [$image_ids[1], $image_ids[0]]);
         $this->assert_search_results(["tags=5"], [$image_ids[1], $image_ids[0]]);
         $this->assert_search_results(["ext=jpg"], [$image_ids[1], $image_ids[0]]);
@@ -147,12 +156,14 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testWildSearchNoResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         $this->assert_search_results(["asdfasdf*"], []);
     }
 
     /** @depends testUpload */
     public function testWildSearchOneResult($image_ids)
     {
+        $image_ids = $this->testUpload();
         // Only the first image matches both the wildcard and the tag.
         // This checks for https://github.com/shish/shimmie2/issues/547
         $this->assert_search_results(["comp*", "screenshot"], [$image_ids[0]]);
@@ -161,6 +172,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testWildSearchManyResults($image_ids)
     {
+        $image_ids = $this->testUpload();
         // two images match comp* - one matches it once,
         // one matches it twice
         $this->assert_search_results(["comp*"], [$image_ids[1], $image_ids[0]]);
@@ -172,6 +184,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMixedSearchTagMeta($image_ids)
     {
+        $image_ids = $this->testUpload();
         // multiple tags, many results
         $this->assert_search_results(["computer", "size=640x480"], [$image_ids[1], $image_ids[0]]);
     }
@@ -184,6 +197,8 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testNegative($image_ids)
     {
+        $image_ids = $this->testUpload();
+
         // negative tag, should have one result
         $this->assert_search_results(["computer", "-pbx"], [$image_ids[1]]);
 

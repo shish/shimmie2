@@ -1,17 +1,18 @@
-<phpunit bootstrap="../tests/bootstrap.php" colors="true">
-	<testsuites>
-		<testsuite name="core">
-			<directory suffix="test.php">../core/</directory>
-		</testsuite>
-		<testsuite name="ext">
-			<directory suffix="test.php">../ext/</directory>
-		</testsuite>
-	</testsuites>
-	<filter>
-		<whitelist>
-			<directory suffix=".php">../core</directory>
-			<directory suffix=".php">../ext</directory>
-			<directory suffix=".php">../themes/default</directory>
-		</whitelist>
-	</filter>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="../tests/bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">../core</directory>
+      <directory suffix=".php">../ext</directory>
+      <directory suffix=".php">../themes/default</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="core">
+      <directory suffix="test.php">../core/</directory>
+    </testsuite>
+    <testsuite name="ext">
+      <directory suffix="test.php">../ext/</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>

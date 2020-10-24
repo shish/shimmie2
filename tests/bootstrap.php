@@ -66,26 +66,21 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
             $this->markTestSkipped("$class not supported with this database");
         }
 
-        // If we have a parent test, don't wipe out the state they gave us
-        if (!$this->getDependencyInput()) {
-            // things to do after bootstrap and before request
-            // log in as anon
-            self::log_out();
-
-            foreach ($database->get_col("SELECT id FROM images") as $image_id) {
-                send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
-            }
+        // Set up a clean environment for each test
+        self::log_out();
+        foreach ($database->get_col("SELECT id FROM images") as $image_id) {
+            send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
         }
 
-        $_tracer->end();
+        $_tracer->end();  # setUp
         $_tracer->begin("test");
     }
 
     public function tearDown(): void
     {
         global $_tracer;
-        $_tracer->end();
-        $_tracer->end();
+        $_tracer->end();  # test
+        $_tracer->end();  # $this->getName()
         $_tracer->clear();
         $_tracer->flush("tests/trace.json");
     }
@@ -94,7 +89,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     {
         parent::tearDownAfterClass();
         global $_tracer;
-        $_tracer->end();
+        $_tracer->end();  # get_called_class()
     }
 
     protected static function create_user(string $name)

@@ -32,7 +32,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
      */
     public function testSetParent($imgs)
     {
-        [$image_1, $image_2, $image_3] = $imgs;
+        [$image_1, $image_2, $image_3] = $this->testNoParent();
 
         send_event(new ImageRelationshipSetEvent($image_2->id, $image_1->id));
 
@@ -56,7 +56,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
      */
     public function testChangeParent($imgs)
     {
-        [$image_1, $image_2, $image_3] = $imgs;
+        [$image_1, $image_2, $image_3] = $this->testSetParent(null);
         send_event(new ImageRelationshipSetEvent($image_2->id, $image_3->id));
 
         // refresh data from database
@@ -79,7 +79,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
      */
     public function testRemoveParent($imgs)
     {
-        [$image_1, $image_2, $image_3] = $imgs;
+        [$image_1, $image_2, $image_3] = $this->testChangeParent(null);
 
         global $database;
         $database->execute(
@@ -131,7 +131,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
      */
     public function testSetParentByTag($imgs)
     {
-        [$image_1, $image_2, $image_3] = $imgs;
+        [$image_1, $image_2, $image_3] = $this->testSetParentByTagBase();
 
         send_event(new TagSetEvent($image_2, ["pbx", "parent:{$image_1->id}"]));
 
@@ -156,7 +156,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
      */
     public function testSetChildByTag($imgs)
     {
-        [$image_1, $image_2, $image_3] = $imgs;
+        [$image_1, $image_2, $image_3] = $this->testSetParentByTag(null);
 
         send_event(new TagSetEvent($image_3, ["pbx", "child:{$image_1->id}"]));
 
@@ -181,7 +181,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
      */
     public function testRemoveParentByTag($imgs)
     {
-        [$image_1, $image_2, $image_3] = $imgs;
+        [$image_1, $image_2, $image_3] = $this->testSetChildByTag(null);
         assert(!is_null($image_3));
 
         // check parent is set
