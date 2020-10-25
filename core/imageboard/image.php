@@ -289,7 +289,7 @@ class Image
         $stpe = send_event(new SearchTermParseEvent($stpen++, null, $terms));
         if ($stpe->order) {
             $order = $stpe->order;
-        } elseif ($stpe->querylets) {
+        } elseif (!empty($stpe->querylets)) {
             foreach ($stpe->querylets as $querylet) {
                 $img_conditions[] = new ImgCondition($querylet, true);
             }
@@ -309,7 +309,7 @@ class Image
             $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
             if ($stpe->order) {
                 $order = $stpe->order;
-            } elseif ($stpe->querylets) {
+            } elseif (!empty($stpe->querylets)) {
                 foreach ($stpe->querylets as $querylet) {
                     $img_conditions[] = new ImgCondition($querylet, $positive);
                 }
