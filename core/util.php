@@ -46,9 +46,9 @@ function contact_link(): ?string
     }
 
     if (
-        startsWith($text, "http:") ||
-        startsWith($text, "https:") ||
-        startsWith($text, "mailto:")
+        str_starts_with($text, "http:") ||
+        str_starts_with($text, "https:") ||
+        str_starts_with($text, "mailto:")
     ) {
         return $text;
     }

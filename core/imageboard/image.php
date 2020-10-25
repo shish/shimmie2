@@ -232,7 +232,7 @@ class Image
             // total number of images in the DB
             $total = self::count_total_images();
         } elseif (SPEED_HAX && $tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
-            if (!startsWith($tags[0], "-")) {
+            if (!str_starts_with($tags[0], "-")) {
                 // one tag - we can look that up directly
                 $total = self::count_tag($tags[0]);
             } else {
@@ -533,7 +533,7 @@ class Image
         $image_link = $config->get_string($template);
 
         if (!empty($image_link)) {
-            if (!(strpos($image_link, "://") > 0) && !startsWith($image_link, "/")) {
+            if (!(strpos($image_link, "://") > 0) && !str_starts_with($image_link, "/")) {
                 $image_link = make_link($image_link);
             }
             $chosen = $image_link;
@@ -723,7 +723,7 @@ class Image
                 $page->flash("Can't set a tag longer than 255 characters");
                 continue;
             }
-            if (startsWith($tag, "-")) {
+            if (str_starts_with($tag, "-")) {
                 $page->flash("Can't set a tag which starts with a minus");
                 continue;
             }

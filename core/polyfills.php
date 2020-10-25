@@ -341,17 +341,20 @@ function unparse_url($parsed_url)
     return "$scheme$user$pass$host$port$path$query$fragment";
 }
 
-function startsWith(string $haystack, string $needle): bool
-{
-    $length = strlen($needle);
-    return (substr($haystack, 0, $length) === $needle);
-}
+# finally in the core library starting from php8
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool
+    {
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
+    }
 
-function endsWith(string $haystack, string $needle): bool
-{
-    $length = strlen($needle);
-    $start  = $length * -1; //negative
-    return (substr($haystack, $start) === $needle);
+    function str_ends_with(string $haystack, string $needle): bool
+    {
+        $length = strlen($needle);
+        $start = $length * -1; //negative
+        return (substr($haystack, $start) === $needle);
+    }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
