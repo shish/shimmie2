@@ -189,7 +189,7 @@ class LogTable extends Table
         $this->table = "score_log";
         $this->base_query = "SELECT * FROM score_log";
         $this->size = 100;
-        $this->limit = 1000000;
+        $this->limit = 100000;
         $this->set_columns([
             new ShortDateTimeColumn("date_sent", "Time"),
             new TextColumn("section", "Module"),

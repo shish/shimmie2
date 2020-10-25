@@ -268,21 +268,24 @@ class TagList extends Extension
         $starts_with = $this->get_starts_with();
 
         // check if we have a cached version
-        $cache_key = warehouse_path("cache/tag_cloud", md5("tc" . $tags_min . $starts_with));
+        $cache_key = warehouse_path(
+            "cache/tag_cloud",
+            md5("tc" . $tags_min . $starts_with . VERSION)
+        );
         if (file_exists($cache_key)) {
             return file_get_contents($cache_key);
         }
 
         // SHIT: PDO/pgsql has problems using the same named param twice -_-;;
         $tag_data = $database->get_all("
-				SELECT
-					tag,
-					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
-				FROM tags
-				WHERE count >= :tags_min
-				AND LOWER(tag) LIKE LOWER(:starts_with)
-				ORDER BY LOWER(tag)
-			", ["tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with]);
+            SELECT
+                tag,
+                FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
+            FROM tags
+            WHERE count >= :tags_min
+            AND LOWER(tag) LIKE LOWER(:starts_with)
+            ORDER BY LOWER(tag)
+        ", ["tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with]);
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
@@ -321,18 +324,21 @@ class TagList extends Extension
         $starts_with = $this->get_starts_with();
 
         // check if we have a cached version
-        $cache_key = warehouse_path("cache/tag_alpha", md5("ta" . $tags_min . $starts_with));
+        $cache_key = warehouse_path(
+            "cache/tag_alpha",
+            md5("ta" . $tags_min . $starts_with . VERSION)
+        );
         if (file_exists($cache_key)) {
             return file_get_contents($cache_key);
         }
 
         $tag_data = $database->get_pairs("
-				SELECT tag, count
-				FROM tags
-				WHERE count >= :tags_min
-				AND LOWER(tag) LIKE LOWER(:starts_with)
-				ORDER BY LOWER(tag)
-				", ["tags_min"=>$tags_min, "starts_with"=>$starts_with]);
+            SELECT tag, count
+            FROM tags
+            WHERE count >= :tags_min
+            AND LOWER(tag) LIKE LOWER(:starts_with)
+            ORDER BY LOWER(tag)
+        ", ["tags_min"=>$tags_min, "starts_with"=>$starts_with]);
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
@@ -399,17 +405,20 @@ class TagList extends Extension
         }
 
         // check if we have a cached version
-        $cache_key = warehouse_path("cache/tag_popul", md5("tp" . $tags_min));
+        $cache_key = warehouse_path(
+            "cache/tag_popul",
+            md5("tp" . $tags_min . VERSION)
+        );
         if (file_exists($cache_key)) {
             return file_get_contents($cache_key);
         }
 
         $tag_data = $database->get_all("
-				SELECT tag, count, FLOOR(LOG(count)) AS scaled
-				FROM tags
-				WHERE count >= :tags_min
-				ORDER BY count DESC, tag ASC
-				", ["tags_min"=>$tags_min]);
+            SELECT tag, count, FLOOR(LOG(count)) AS scaled
+            FROM tags
+            WHERE count >= :tags_min
+            ORDER BY count DESC, tag ASC
+        ", ["tags_min"=>$tags_min]);
 
         $html = "Results grouped by log<sub>10</sub>(n)";
         $lastLog = "";
