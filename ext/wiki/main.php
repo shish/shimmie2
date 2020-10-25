@@ -141,7 +141,7 @@ class Wiki extends Extension
             $this->set_version("ext_wiki_version", 2);
         }
         if ($this->get_version("ext_wiki_version") < 2) {
-            $database->Execute("ALTER TABLE wiki_pages ADD COLUMN
+            $database->execute("ALTER TABLE wiki_pages ADD COLUMN
 				locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION");
             $this->set_version("ext_wiki_version", 2);
         }
@@ -228,7 +228,7 @@ class Wiki extends Extension
         global $database;
         $wpage = $event->wikipage;
         try {
-            $database->Execute(
+            $database->execute(
                 "
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
 				VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
@@ -243,7 +243,7 @@ class Wiki extends Extension
     public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event)
     {
         global $database;
-        $database->Execute(
+        $database->execute(
             "DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
             ["title"=>$event->title, "rev"=>$event->revision]
         );
@@ -252,7 +252,7 @@ class Wiki extends Extension
     public function onWikiDeletePage(WikiDeletePageEvent $event)
     {
         global $database;
-        $database->Execute(
+        $database->execute(
             "DELETE FROM wiki_pages WHERE title=:title",
             ["title" => $event->title]
         );

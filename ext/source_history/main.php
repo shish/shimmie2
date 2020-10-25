@@ -113,13 +113,13 @@ class SourceHistory extends Extension
         }
 
         if ($this->get_version("ext_source_history_version") == 1) {
-            $database->Execute("ALTER TABLE source_histories ADD COLUMN user_id INTEGER NOT NULL");
-            $database->Execute("ALTER TABLE source_histories ADD COLUMN date_set DATETIME NOT NULL");
+            $database->execute("ALTER TABLE source_histories ADD COLUMN user_id INTEGER NOT NULL");
+            $database->execute("ALTER TABLE source_histories ADD COLUMN date_set DATETIME NOT NULL");
             $this->set_version("ext_source_history_version", 2);
         }
 
         if ($this->get_version("ext_source_history_version") == 2) {
-            $database->Execute("ALTER TABLE source_histories ADD COLUMN user_ip CHAR(15) NOT NULL");
+            $database->execute("ALTER TABLE source_histories ADD COLUMN user_ip CHAR(15) NOT NULL");
             $this->set_version("ext_source_history_version", 3);
         }
     }

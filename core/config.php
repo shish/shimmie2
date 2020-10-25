@@ -323,10 +323,10 @@ class DatabaseConfig extends BaseConfig
                 $params[] = ":sub_value";
             }
 
-            $this->database->Execute($query, $args);
+            $this->database->execute($query, $args);
 
             $args["value"] =$this->values[$name];
-            $this->database->Execute(
+            $this->database->execute(
                 "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
                 $args
             );

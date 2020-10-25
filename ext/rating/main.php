@@ -521,25 +521,25 @@ class Ratings extends Extension
         global $database, $config;
 
         if ($this->get_version(RatingsConfig::VERSION) < 1) {
-            $database->Execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT '?'");
-            $database->Execute("CREATE INDEX images__rating ON images(rating)");
+            $database->execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT '?'");
+            $database->execute("CREATE INDEX images__rating ON images(rating)");
             $this->set_version(RatingsConfig::VERSION, 3);
         }
 
         if ($this->get_version(RatingsConfig::VERSION) < 2) {
-            $database->Execute("CREATE INDEX images__rating ON images(rating)");
+            $database->execute("CREATE INDEX images__rating ON images(rating)");
             $this->set_version(RatingsConfig::VERSION, 2);
         }
 
         if ($this->get_version(RatingsConfig::VERSION) < 3) {
-            $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
+            $database->execute("UPDATE images SET rating = 'u' WHERE rating is null");
             switch ($database->get_driver_name()) {
                 case DatabaseDriver::MYSQL:
-                    $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
+                    $database->execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
                     break;
                 case DatabaseDriver::PGSQL:
-                    $database->Execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
-                    $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
+                    $database->execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
+                    $database->execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
             }
             $this->set_version(RatingsConfig::VERSION, 3);
@@ -561,10 +561,10 @@ class Ratings extends Extension
 
             switch ($database->get_driver_name()) {
                 case DatabaseDriver::MYSQL:
-                    $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT '?'");
+                    $database->execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT '?'");
                     break;
                 case DatabaseDriver::PGSQL:
-                    $database->Execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT '?'");
+                    $database->execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT '?'");
                     break;
             }
 
@@ -580,7 +580,7 @@ class Ratings extends Extension
     {
         global $database;
         if ($old_rating != $rating) {
-            $database->Execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating'=>$rating, 'id'=>$image_id]);
+            $database->execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating'=>$rating, 'id'=>$image_id]);
             log_info("rating", "Rating for >>{$image_id} set to: ".$this->rating_to_human($rating));
         }
     }

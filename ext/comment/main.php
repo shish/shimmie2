@@ -158,15 +158,15 @@ class CommentList extends Extension
             }
 
             if ($this->get_version("ext_comments_version") == 1) {
-                $database->Execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
-                $database->Execute("CREATE INDEX comments_posted ON comments(posted)");
+                $database->execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
+                $database->execute("CREATE INDEX comments_posted ON comments(posted)");
                 $this->set_version("ext_comments_version", 2);
             }
 
             if ($this->get_version("ext_comments_version") == 2) {
                 $this->set_version("ext_comments_version", 3);
-                $database->Execute("ALTER TABLE comments ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
-                $database->Execute("ALTER TABLE comments ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
+                $database->execute("ALTER TABLE comments ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
+                $database->execute("ALTER TABLE comments ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
             }
 
             // FIXME: add foreign keys, bump to v3
@@ -278,7 +278,7 @@ class CommentList extends Extension
         $threads_per_page = 10;
         $start = $threads_per_page * $current_page;
 
-        $result = $database->Execute("
+        $result = $database->execute("
 			SELECT image_id,MAX(posted) AS latest
 			FROM comments
 			$where
@@ -370,7 +370,7 @@ class CommentList extends Extension
     public function onCommentDeletion(CommentDeletionEvent $event)
     {
         global $database;
-        $database->Execute("
+        $database->execute("
 			DELETE FROM comments
 			WHERE id=:comment_id
 		", ["comment_id"=>$event->comment_id]);
@@ -595,7 +595,7 @@ class CommentList extends Extension
         if ($user->is_anonymous()) {
             $page->add_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
         }
-        $database->Execute(
+        $database->execute(
             "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
                 "VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
             ["image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment]

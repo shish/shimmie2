@@ -537,7 +537,7 @@ class UserPage extends Extension
         $need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
         $class = $need_admin ? 'admin' : 'user';
 
-        $database->Execute(
+        $database->execute(
             "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
             ["username"=>$event->username, "hash"=>'', "email"=>$email, "class"=>$class]
         );
@@ -731,7 +731,7 @@ class UserPage extends Extension
                     }
                 }
             } else {
-                $database->Execute(
+                $database->execute(
                     "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
                     ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id']]
                 );
@@ -741,7 +741,7 @@ class UserPage extends Extension
                 log_warning("user", "Deleting user #{$_POST['id']}'s comments");
                 $database->execute("DELETE FROM comments WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
             } else {
-                $database->Execute(
+                $database->execute(
                     "UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
                     ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id']]
                 );

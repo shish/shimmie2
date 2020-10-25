@@ -53,7 +53,7 @@ class Upgrade extends Extension
 
         if ($this->get_version("db_version") < 10) {
             log_info("upgrade", "Adding foreign keys to images");
-            $database->Execute("ALTER TABLE images ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
+            $database->execute("ALTER TABLE images ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
 
             $this->set_version("db_version", 10);
         }

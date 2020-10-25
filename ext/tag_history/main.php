@@ -114,13 +114,13 @@ class TagHistory extends Extension
         }
 
         if ($this->get_version("ext_tag_history_version") == 1) {
-            $database->Execute("ALTER TABLE tag_histories ADD COLUMN user_id INTEGER NOT NULL");
-            $database->Execute("ALTER TABLE tag_histories ADD COLUMN date_set TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+            $database->execute("ALTER TABLE tag_histories ADD COLUMN user_id INTEGER NOT NULL");
+            $database->execute("ALTER TABLE tag_histories ADD COLUMN date_set TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
             $this->set_version("ext_tag_history_version", 2);
         }
 
         if ($this->get_version("ext_tag_history_version") == 2) {
-            $database->Execute("ALTER TABLE tag_histories ADD COLUMN user_ip CHAR(15) NOT NULL");
+            $database->execute("ALTER TABLE tag_histories ADD COLUMN user_ip CHAR(15) NOT NULL");
             $this->set_version("ext_tag_history_version", 3);
         }
     }

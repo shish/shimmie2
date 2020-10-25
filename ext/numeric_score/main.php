@@ -342,7 +342,7 @@ class NumericScore extends Extension
                 ["imageid" => $image_id, "userid" => $user_id, "score" => $score]
             );
         }
-        $database->Execute(
+        $database->execute(
             "UPDATE images SET numeric_score=(
 				COALESCE(
 					(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=:imageid),

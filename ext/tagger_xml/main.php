@@ -71,7 +71,7 @@ class TaggerXML extends Extension
             $count = null;
         }
 
-        $tags = $database->Execute(
+        $tags = $database->execute(
             "
 			SELECT *
 			{$q_from}
@@ -86,7 +86,7 @@ class TaggerXML extends Extension
     private function image_tag_list(int $image_id)
     {
         global $database;
-        $tags = $database->Execute("
+        $tags = $database->execute("
 			SELECT tags.*
 			FROM image_tags JOIN tags ON image_tags.tag_id = tags.id
 			WHERE image_id=:image_id ORDER BY tag", ['image_id'=>$image_id]);
@@ -124,7 +124,7 @@ class TaggerXML extends Extension
     private function count(string $query, $values)
     {
         global $database;
-        return $database->Execute(
+        return $database->execute(
             "SELECT COUNT(*) FROM `tags` $query",
             $values
         )->fields['COUNT(*)'];

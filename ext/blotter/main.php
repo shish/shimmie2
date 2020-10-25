@@ -124,7 +124,7 @@ class Blotter extends Extension
                         if (!isset($id)) {
                             die("No ID!");
                         }
-                        $database->Execute("DELETE FROM blotter WHERE id=:id", ["id"=>$id]);
+                        $database->execute("DELETE FROM blotter WHERE id=:id", ["id"=>$id]);
                         log_info("blotter", "Removed Entry #$id");
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("blotter/editor"));

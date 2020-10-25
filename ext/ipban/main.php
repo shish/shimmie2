@@ -253,7 +253,7 @@ class IPBan extends Extension
         global $cache, $database;
         $ban = $database->get_row("SELECT * FROM bans WHERE id = :id", ["id"=>$event->id]);
         if ($ban) {
-            $database->Execute("DELETE FROM bans WHERE id = :id", ["id"=>$event->id]);
+            $database->execute("DELETE FROM bans WHERE id = :id", ["id"=>$event->id]);
             $cache->delete("ip_bans");
             $cache->delete("network_bans");
             log_info("ipban", "Removed {$ban['ip']}'s ban");
@@ -283,7 +283,7 @@ class IPBan extends Extension
         // ===
 
         if ($this->get_version("ext_ipban_version") < 1) {
-            $database->Execute("CREATE TABLE bans (
+            $database->execute("CREATE TABLE bans (
 				id int(11) NOT NULL auto_increment,
 				ip char(15) default NULL,
 				date TIMESTAMP default NULL,
@@ -327,7 +327,7 @@ class IPBan extends Extension
         }
 
         if ($this->get_version("ext_ipban_version") == 6) {
-            $database->Execute("ALTER TABLE bans ADD FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
+            $database->execute("ALTER TABLE bans ADD FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
             $this->set_version("ext_ipban_version", 7);
         }
 

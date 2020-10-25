@@ -181,14 +181,14 @@ class AdminPage extends Extension
     private function recount_tag_use()
     {
         global $database;
-        $database->Execute("
+        $database->execute("
 			UPDATE tags
 			SET count = COALESCE(
 				(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id),
 				0
 			)
 		");
-        $database->Execute("DELETE FROM tags WHERE count=0");
+        $database->execute("DELETE FROM tags WHERE count=0");
         log_warning("admin", "Re-counted tags", "Re-counted tags");
         return true;
     }

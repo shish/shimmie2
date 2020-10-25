@@ -163,7 +163,7 @@ class User
     public function set_class(string $class): void
     {
         global $database;
-        $database->Execute("UPDATE users SET class=:class WHERE id=:id", ["class"=>$class, "id"=>$this->id]);
+        $database->execute("UPDATE users SET class=:class WHERE id=:id", ["class"=>$class, "id"=>$this->id]);
         log_info("core-user", 'Set class for '.$this->name.' to '.$class);
     }
 
@@ -175,7 +175,7 @@ class User
         }
         $old_name = $this->name;
         $this->name = $name;
-        $database->Execute("UPDATE users SET name=:name WHERE id=:id", ["name"=>$this->name, "id"=>$this->id]);
+        $database->execute("UPDATE users SET name=:name WHERE id=:id", ["name"=>$this->name, "id"=>$this->id]);
         log_info("core-user", "Changed username for {$old_name} to {$this->name}");
     }
 
@@ -185,7 +185,7 @@ class User
         $hash = password_hash($password, PASSWORD_BCRYPT);
         if (is_string($hash)) {
             $this->passhash = $hash;
-            $database->Execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash"=>$this->passhash, "id"=>$this->id]);
+            $database->execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash"=>$this->passhash, "id"=>$this->id]);
             log_info("core-user", 'Set password for '.$this->name);
         } else {
             throw new SCoreException("Failed to hash password");
@@ -195,7 +195,7 @@ class User
     public function set_email(string $address): void
     {
         global $database;
-        $database->Execute("UPDATE users SET email=:email WHERE id=:id", ["email"=>$address, "id"=>$this->id]);
+        $database->execute("UPDATE users SET email=:email WHERE id=:id", ["email"=>$address, "id"=>$this->id]);
         log_info("core-user", 'Set email for '.$this->name);
     }
 

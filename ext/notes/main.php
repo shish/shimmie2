@@ -11,7 +11,7 @@ class Notes extends Extension
 
         // shortcut to latest
         if ($this->get_version("ext_notes_version") < 1) {
-            $database->Execute("ALTER TABLE images ADD COLUMN notes INTEGER NOT NULL DEFAULT 0");
+            $database->execute("ALTER TABLE images ADD COLUMN notes INTEGER NOT NULL DEFAULT 0");
             $database->create_table("notes", "
 					id SCORE_AIPK,
 					enable INTEGER NOT NULL,

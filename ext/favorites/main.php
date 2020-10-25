@@ -202,8 +202,8 @@ class Favorites extends Extension
         global $database;
 
         if ($this->get_version("ext_favorites_version") < 1) {
-            $database->Execute("ALTER TABLE images ADD COLUMN favorites INTEGER NOT NULL DEFAULT 0");
-            $database->Execute("CREATE INDEX images__favorites ON images(favorites)");
+            $database->execute("ALTER TABLE images ADD COLUMN favorites INTEGER NOT NULL DEFAULT 0");
+            $database->execute("CREATE INDEX images__favorites ON images(favorites)");
             $database->create_table("user_favorites", "
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
@@ -218,12 +218,12 @@ class Favorites extends Extension
 
         if ($this->get_version("ext_favorites_version") < 2) {
             log_info("favorites", "Cleaning user favourites");
-            $database->Execute("DELETE FROM user_favorites WHERE user_id NOT IN (SELECT id FROM users)");
-            $database->Execute("DELETE FROM user_favorites WHERE image_id NOT IN (SELECT id FROM images)");
+            $database->execute("DELETE FROM user_favorites WHERE user_id NOT IN (SELECT id FROM users)");
+            $database->execute("DELETE FROM user_favorites WHERE image_id NOT IN (SELECT id FROM images)");
 
             log_info("favorites", "Adding foreign keys to user favourites");
-            $database->Execute("ALTER TABLE user_favorites ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;");
-            $database->Execute("ALTER TABLE user_favorites ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;");
+            $database->execute("ALTER TABLE user_favorites ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;");
+            $database->execute("ALTER TABLE user_favorites ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;");
             $this->set_version("ext_favorites_version", 2);
         }
     }
@@ -233,18 +233,18 @@ class Favorites extends Extension
         global $database;
         if ($do_set) {
             if (!$database->get_row("select 1 from user_favorites where image_id=:image_id and user_id=:user_id", ["image_id"=>$image_id, "user_id"=>$user_id])) {
-                $database->Execute(
+                $database->execute(
                     "INSERT INTO user_favorites(image_id, user_id, created_at) VALUES(:image_id, :user_id, NOW())",
                     ["image_id"=>$image_id, "user_id"=>$user_id]
                 );
             }
         } else {
-            $database->Execute(
+            $database->execute(
                 "DELETE FROM user_favorites WHERE image_id = :image_id AND user_id = :user_id",
                 ["image_id"=>$image_id, "user_id"=>$user_id]
             );
         }
-        $database->Execute(
+        $database->execute(
             "UPDATE images SET favorites=(SELECT COUNT(*) FROM user_favorites WHERE image_id=:image_id) WHERE id=:user_id",
             ["image_id"=>$image_id, "user_id"=>$user_id]
         );

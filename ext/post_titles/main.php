@@ -26,7 +26,7 @@ class PostTitles extends Extension
         global $database;
 
         if ($this->get_version(PostTitlesConfig::VERSION) < 1) {
-            $database->Execute("ALTER TABLE images ADD COLUMN title varchar(255) NULL");
+            $database->execute("ALTER TABLE images ADD COLUMN title varchar(255) NULL");
             $this->set_version(PostTitlesConfig::VERSION, 1);
         }
     }
@@ -87,7 +87,7 @@ class PostTitles extends Extension
     private function set_title(int $image_id, string $title)
     {
         global $database;
-        $database->Execute("UPDATE images SET title=:title WHERE id=:id", ['title'=>$title, 'id'=>$image_id]);
+        $database->execute("UPDATE images SET title=:title WHERE id=:id", ['title'=>$title, 'id'=>$image_id]);
         log_info("post_titles", "Title for >>{$image_id} set to: ".$title);
     }
 

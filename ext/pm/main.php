@@ -85,9 +85,9 @@ class PrivMsg extends Extension
 
         if ($config->get_int("pm_version") < 2) {
             log_info("pm", "Adding foreign keys to private messages");
-            $database->Execute("delete from private_message where to_id not in (select id from users);");
-            $database->Execute("delete from private_message where from_id not in (select id from users);");
-            $database->Execute("ALTER TABLE private_message
+            $database->execute("delete from private_message where to_id not in (select id from users);");
+            $database->execute("delete from private_message where from_id not in (select id from users);");
+            $database->execute("ALTER TABLE private_message
 			ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 			ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
             $config->set_int("pm_version", 2);

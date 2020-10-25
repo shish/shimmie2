@@ -182,10 +182,10 @@ class Trash extends Extension
         global $database;
 
         if ($this->get_version(TrashConfig::VERSION) < 1) {
-            $database->Execute($database->scoreql_to_sql(
+            $database->execute($database->scoreql_to_sql(
                 "ALTER TABLE images ADD COLUMN trash SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
             ));
-            $database->Execute("CREATE INDEX images_trash_idx ON images(trash)");
+            $database->execute("CREATE INDEX images_trash_idx ON images(trash)");
             $this->set_version(TrashConfig::VERSION, 1);
         }
     }
