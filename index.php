@@ -4,6 +4,7 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 require_once "core/sanitize_php.php";
+require_once "core/polyfills.php";
 
 if (!file_exists("vendor/")) {
     $cwd = getcwd();
@@ -33,7 +34,6 @@ require_once "vendor/autoload.php";
 @include_once "data/config/shimmie.conf.php";
 @include_once "data/config/extensions.conf.php";
 require_once "core/sys_config.php";
-require_once "core/polyfills.php";
 require_once "core/util.php";
 
 global $cache, $config, $database, $user, $page, $_tracer;
