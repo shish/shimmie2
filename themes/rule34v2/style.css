@@ -107,6 +107,10 @@ NAV SELECT {
 	padding: 0;
 }
 
+#Friends_of_Pahealleft {
+	z-index: 0;
+	position: relative;
+}
 
 .comment .info {
 	background: #ACE4A3;
