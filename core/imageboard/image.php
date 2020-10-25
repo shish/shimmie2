@@ -13,8 +13,6 @@ class Image
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
-    public static $order_sql = null; // this feels ugly
-
     /** @var null|int */
     public $id = null;
 
@@ -162,11 +160,8 @@ class Image
             }
         }
 
-        $order = (Image::$order_sql ?: "images.".$config->get_string(IndexConfig::ORDER));
-        $querylet = Image::build_search_querylet($tags, $order, $limit, $start);
+        $querylet = Image::build_search_querylet($tags, $limit, $start);
         $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
-
-        Image::$order_sql = null;
 
         return $result;
     }
@@ -284,14 +279,18 @@ class Image
         $tag_conditions = [];
         $img_conditions = [];
         $stpen = 0;  // search term parse event number
+        $order = null;
 
         /*
          * Turn a bunch of strings into a bunch of TagCondition
          * and ImgCondition objects
          */
+        /** @var $stpe SearchTermParseEvent */
         $stpe = send_event(new SearchTermParseEvent($stpen++, null, $terms));
-        if ($stpe->is_querylet_set()) {
-            foreach ($stpe->get_querylets() as $querylet) {
+        if ($stpe->order) {
+            $order = $stpe->order;
+        } elseif ($stpe->querylets) {
+            foreach ($stpe->querylets as $querylet) {
                 $img_conditions[] = new ImgCondition($querylet, true);
             }
         }
@@ -306,9 +305,12 @@ class Image
                 continue;
             }
 
+            /** @var $stpe SearchTermParseEvent */
             $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
-            if ($stpe->is_querylet_set()) {
-                foreach ($stpe->get_querylets() as $querylet) {
+            if ($stpe->order) {
+                $order = $stpe->order;
+            } elseif ($stpe->querylets) {
+                foreach ($stpe->querylets as $querylet) {
                     $img_conditions[] = new ImgCondition($querylet, $positive);
                 }
             } else {
@@ -318,7 +320,7 @@ class Image
                 }
             }
         }
-        return [$tag_conditions, $img_conditions];
+        return [$tag_conditions, $img_conditions, $order];
     }
 
     /*
@@ -834,12 +836,14 @@ class Image
      * #param string[] $terms
      */
     private static function build_search_querylet(
-        array $tags,
-        ?string $order=null,
+        array $terms,
         ?int $limit=null,
         ?int $offset=null
     ): Querylet {
-        list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
+        global $config;
+
+        list($tag_conditions, $img_conditions, $order) = self::terms_to_conditions($terms);
+        $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
 
         $positive_tag_count = 0;
         $negative_tag_count = 0;

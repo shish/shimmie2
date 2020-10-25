@@ -272,8 +272,7 @@ class NumericScore extends Extension
         } elseif (preg_match("/^order[=|:](?:numeric_)?(score)(?:_(desc|asc))?$/i", $event->term, $matches)) {
             $default_order_for_column = "DESC";
             $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
-            Image::$order_sql = "images.numeric_score $sort";
-            $event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
+            $event->order = "images.numeric_score $sort";
         }
     }
 

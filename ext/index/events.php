@@ -8,12 +8,14 @@ class SearchTermParseEvent extends Event
 {
     /** @var int */
     public $id = 0;
-    /** @var null|string  */
+    /** @var null|string */
     public $term = null;
     /** @var string[] */
     public $context = [];
     /** @var Querylet[] */
     public $querylets = [];
+    /** @var null|string  */
+    public $order = null;
 
     public function __construct(int $id, string $term=null, array $context=[])
     {
@@ -21,16 +23,6 @@ class SearchTermParseEvent extends Event
         $this->id = $id;
         $this->term = $term;
         $this->context = $context;
-    }
-
-    public function is_querylet_set(): bool
-    {
-        return (count($this->querylets) > 0);
-    }
-
-    public function get_querylets(): array
-    {
-        return $this->querylets;
     }
 
     public function add_querylet(Querylet $q)
