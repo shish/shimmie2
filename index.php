@@ -101,6 +101,7 @@ try {
     if (TRACE_FILE) {
         if (
             empty($_SERVER["REQUEST_URI"])
+            || (@$_GET["trace"] == "on")
             || (
                 (microtime(true) - $_shm_load_start) > TRACE_THRESHOLD
                 && ($_SERVER["REQUEST_URI"] ?? "") != "/upload"

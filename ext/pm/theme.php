@@ -6,6 +6,8 @@ class PrivMsgTheme extends Themelet
     {
         global $user;
 
+        $user_cache = [];
+
         $html = "
 			<table id='pms' class='zebra'>
 				<thead><tr><th>R?</th><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr></thead>
@@ -15,13 +17,18 @@ class PrivMsgTheme extends Themelet
             if (strlen(trim($h_subject)) == 0) {
                 $h_subject = "(No subject)";
             }
-            $from = User::by_id($pm->from_id);
+            if (!array_key_exists($pm->from_id, $user_cache)) {
+                $from = User::by_id($pm->from_id);
+                $user_cache[$pm->from_id] = $from;
+            } else {
+                $from = $user_cache[$pm->from_id];
+            }
             $from_name = $from->name;
             $h_from = html_escape($from_name);
             $from_url = make_link("user/".url_escape($from_name));
             $pm_url = make_link("pm/read/".$pm->id);
             $del_url = make_link("pm/delete");
-            $h_date = html_escape($pm->sent_date);
+            $h_date = substr(html_escape($pm->sent_date), 0, 16);
             $readYN = "Y";
             if (!$pm->is_read) {
                 $h_subject = "<b>$h_subject</b>";
@@ -31,7 +38,8 @@ class PrivMsgTheme extends Themelet
             $html .= "<tr class='$hb'>
 			<td>$readYN</td>
 			<td><a href='$pm_url'>$h_subject</a></td>
-			<td><a href='$from_url'>$h_from</a></td><td>$h_date</td>
+			<td><a href='$from_url'>$h_from</a></td>
+			<td>$h_date</td>
 			<td><form action='$del_url' method='POST'>
 				<input type='hidden' name='pm_id' value='{$pm->id}'>
 				".$user->get_auth_html()."
