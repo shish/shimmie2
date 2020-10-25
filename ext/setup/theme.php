@@ -52,7 +52,7 @@ class SetupTheme extends Themelet
             $h_value = html_escape((string)$value);
 
             $h_box = "";
-            if (is_string($value) && strpos($value, "\n") > 0) {
+            if (is_string($value) && str_contains($value, "\n")) {
                 $h_box .= "<textarea cols='50' rows='4' name='_config_$h_name'>$h_value</textarea>";
             } else {
                 $h_box .= "<input type='text' name='_config_$h_name' value='$h_value'>";

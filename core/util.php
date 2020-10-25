@@ -53,11 +53,11 @@ function contact_link(): ?string
         return $text;
     }
 
-    if (strpos($text, "@")) {
+    if (str_contains($text, "@")) {
         return "mailto:$text";
     }
 
-    if (strpos($text, "/")) {
+    if (str_contains($text, "/")) {
         return "http://$text";
     }
 
@@ -348,7 +348,7 @@ function path_to_tags(string $path): string
                 // which is for inheriting to tags on the subfolder
                 $category_to_inherit = $tag;
             } else {
-                if ($category!=""&&strpos($tag, ":") === false) {
+                if ($category!="" && !str_contains($tag, ":")) {
                     // This indicates that category inheritance is active,
                     // and we've encountered a tag that does not specify a category.
                     // So we attach the inherited category to the tag.

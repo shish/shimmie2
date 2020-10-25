@@ -118,7 +118,7 @@ class User
         $my_user = User::by_name($name);
 
         // If user tried to log in as "foo bar" and failed, try "foo_bar"
-        if (!$my_user && strpos($name, " ") !== false) {
+        if (!$my_user && str_contains($name, " ")) {
             $my_user = User::by_name(str_replace(" ", "_", $name));
         }
 

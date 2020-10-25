@@ -7,8 +7,8 @@ use function MicroHTML\A;
 
 if ( // kill these glitched requests immediately
     !empty($_SERVER["REQUEST_URI"])
-    && strpos(@$_SERVER["REQUEST_URI"], "/http") !== false
-    && strpos(@$_SERVER["REQUEST_URI"], "paheal.net") !== false
+    && str_contains(@$_SERVER["REQUEST_URI"], "/http")
+    && str_contains(@$_SERVER["REQUEST_URI"], "paheal.net")
 ) {
     die("No");
 }

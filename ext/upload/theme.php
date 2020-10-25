@@ -205,7 +205,7 @@ class UploadTheme extends Themelet
     public function display_upload_error(Page $page, string $title, string $message)
     {
         // this message has intentional HTML in it...
-        $message = strpos($message, "already has hash") ? $message : html_escape($message);
+        $message = str_contains($message, "already has hash") ? $message : html_escape($message);
         $page->add_block(new Block($title, $message));
     }
 

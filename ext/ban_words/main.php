@@ -87,7 +87,7 @@ xanax
                 }
             } else {
                 // other words are literal
-                if (strpos($comment, $word) !== false) {
+                if (str_contains($comment, $word)) {
                     throw $ex;
                 }
             }

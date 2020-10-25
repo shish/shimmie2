@@ -533,7 +533,7 @@ class Image
         $image_link = $config->get_string($template);
 
         if (!empty($image_link)) {
-            if (!(strpos($image_link, "://") > 0) && !str_starts_with($image_link, "/")) {
+            if (!str_contains($image_link, "://") && !str_starts_with($image_link, "/")) {
                 $image_link = make_link($image_link);
             }
             $chosen = $image_link;

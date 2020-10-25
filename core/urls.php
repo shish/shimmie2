@@ -79,7 +79,7 @@ function modify_url(string $url, array $changes): string
  */
 function make_http(string $link): string
 {
-    if (strpos($link, "://") > 0) {
+    if (str_contains($link, "://")) {
         return $link;
     }
 
@@ -105,7 +105,7 @@ function referer_or(string $dest, ?array $blacklist=null): string
     }
     if ($blacklist) {
         foreach ($blacklist as $b) {
-            if (strstr($_SERVER['HTTP_REFERER'], $b)) {
+            if (str_contains($_SERVER['HTTP_REFERER'], $b)) {
                 return $dest;
             }
         }

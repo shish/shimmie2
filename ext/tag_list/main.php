@@ -198,8 +198,8 @@ class TagList extends Extension
                 $i++;
                 $arg = "tag$i";
                 $args[$arg] = Tag::sqlify($tag);
-                if (strpos($tag, '*') === false
-                    && strpos($tag, '?') === false) {
+                if (!str_contains($tag, '*')
+                    && !str_contains($tag, '?')) {
                     $where[] = " tag = :$arg ";
                 } else {
                     $where[] = " tag LIKE :$arg ";
@@ -587,7 +587,7 @@ class TagList extends Extension
             $starting_tags = [];
             $tags_ok = true;
             foreach ($wild_tags as $tag) {
-                if ($tag[0] == "-" || strpos($tag, "tagme")===0) {
+                if ($tag[0] == "-" || str_starts_with($tag, "tagme")) {
                     continue;
                 }
                 $tag = Tag::sqlify($tag);

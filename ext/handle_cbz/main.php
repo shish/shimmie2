@@ -55,7 +55,7 @@ class CBZFileHandler extends DataHandlerExtension
         sort($names);
         $cover = $names[0];
         foreach ($names as $name) {
-            if (strpos(strtolower($name), "cover") !== false) {
+            if (str_contains(strtolower($name), "cover")) {
                 $cover = $name;
                 break;
             }

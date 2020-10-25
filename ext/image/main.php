@@ -301,7 +301,7 @@ class ImageIO extends Extension
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
     {
         $fname = $event->image->get_filename();
-        $base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
+        $base_fname = str_contains($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
 
         $event->replace('$id', (string)$event->image->id);
         $event->replace('$hash_ab', substr($event->image->hash, 0, 2));

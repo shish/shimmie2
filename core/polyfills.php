@@ -345,15 +345,21 @@ function unparse_url($parsed_url)
 if (!function_exists('str_starts_with')) {
     function str_starts_with(string $haystack, string $needle): bool
     {
-        $length = strlen($needle);
-        return (substr($haystack, 0, $length) === $needle);
+        return \strncmp($haystack, $needle, \strlen($needle)) === 0;
     }
+}
 
+if (!function_exists('str_ends_with')) {
     function str_ends_with(string $haystack, string $needle): bool
     {
-        $length = strlen($needle);
-        $start = $length * -1; //negative
-        return (substr($haystack, $start) === $needle);
+        return $needle === '' || $needle === \substr($haystack, - \strlen($needle));
+    }
+}
+
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return '' === $needle || false !== strpos($haystack, $needle);
     }
 }
 

@@ -68,7 +68,7 @@ class TagSetEvent extends Event
         $this->metatags = [];
 
         foreach ($tags as $tag) {
-            if ((strpos($tag, ':') === false) && (strpos($tag, '=') === false)) {
+            if ((!str_contains($tag, ':')) && (!str_contains($tag, '='))) {
                 //Tag doesn't contain : or =, meaning it can't possibly be a metatag.
                 //This should help speed wise, as it avoids running every single tag through a bunch of preg_match instead.
                 array_push($this->tags, $tag);

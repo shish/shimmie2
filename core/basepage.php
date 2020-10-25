@@ -298,7 +298,7 @@ class BasePage
 
                 if (isset($_SERVER['HTTP_RANGE'])) {
                     list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-                    if (strpos($range, ',') !== false) {
+                    if (str_contains($range, ',')) {
                         header('HTTP/1.1 416 Requested Range Not Satisfiable');
                         header("Content-Range: bytes $start-$end/$size");
                         break;
@@ -335,7 +335,7 @@ class BasePage
                 break;
             case PageMode::REDIRECT:
                 if ($this->flash) {
-                    $this->redirect .= (strpos($this->redirect, "?") === false) ? "?" : "&";
+                    $this->redirect .= str_contains($this->redirect, "?") ? "&" : "?";
                     $this->redirect .= "flash=" . url_escape(implode("\n", $this->flash));
                 }
                 header('Location: ' . $this->redirect);

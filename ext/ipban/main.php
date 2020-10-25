@@ -113,7 +113,7 @@ class IPBan extends Extension
             $ips = []; # "0.0.0.0" => 123;
             $networks = []; # "0.0.0.0/32" => 456;
             foreach ($rows as $ip => $id) {
-                if (strstr($ip, '/')) {
+                if (str_contains($ip, '/')) {
                     $networks[$ip] = $id;
                 } else {
                     $ips[$ip] = $id;

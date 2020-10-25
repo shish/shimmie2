@@ -46,10 +46,10 @@ class Index extends Extension
                 if (
                     SPEED_HAX
                     && (
-                        strstr($ua, "Googlebot") !== false
-                        || strstr($ua, "YandexBot") !== false
-                        || strstr($ua, "bingbot") !== false
-                        || strstr($ua, "msnbot") !== false
+                        str_contains($ua, "Googlebot")
+                        || str_contains($ua, "YandexBot")
+                        || str_contains($ua, "bingbot")
+                        || str_contains($ua, "msnbot")
                     )
                     && (
                         $count_search_terms > 1

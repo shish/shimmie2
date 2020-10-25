@@ -553,7 +553,7 @@ class Artists extends Extension
         $urlsAsString = $inputs["urls"];
         $urlsIDsAsString = $inputs["urlsIDs"];
 
-        if (strpos($name, " ")) {
+        if (str_contains($name, " ")) {
             return;
         }
 
@@ -695,7 +695,7 @@ class Artists extends Extension
         ]);
 
         $name = $inputs["name"];
-        if (strpos($name, " ")) {
+        if (str_contains($name, " ")) {
             return -1;
         }
 
