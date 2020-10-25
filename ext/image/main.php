@@ -311,6 +311,7 @@ class ImageIO extends Extension
         $event->replace('$filename', $base_fname);
         $event->replace('$ext', $event->image->get_ext());
         $event->replace('$date', autodate($event->image->posted, false));
+        $event->replace("\\n", "\n");
     }
 
     private function send_file(int $image_id, string $type)
