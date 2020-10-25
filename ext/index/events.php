@@ -6,6 +6,8 @@
  */
 class SearchTermParseEvent extends Event
 {
+    /** @var int */
+    public $id = 0;
     /** @var null|string  */
     public $term = null;
     /** @var string[] */
@@ -13,9 +15,10 @@ class SearchTermParseEvent extends Event
     /** @var Querylet[] */
     public $querylets = [];
 
-    public function __construct(string $term=null, array $context=[])
+    public function __construct(int $id, string $term=null, array $context=[])
     {
         parent::__construct();
+        $this->id = $id;
         $this->term = $term;
         $this->context = $context;
     }

@@ -5,9 +5,6 @@ require_once "events.php";
 
 class Index extends Extension
 {
-    /** @var int */
-    private $stpen = 0;  // search term parse event number
-
     /** @var IndexTheme */
     protected $theme;
 
@@ -194,13 +191,13 @@ class Index extends Extension
             );
         } elseif (preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
             $cmp = preg_replace('/^:/', '=', $matches[1]);
-            $args = ["width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3])];
-            $event->add_querylet(new Querylet("width / :width{$this->stpen} $cmp height / :height{$this->stpen}", $args));
+            $args = ["width{$event->id}"=>int_escape($matches[2]), "height{$event->id}"=>int_escape($matches[3])];
+            $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
         } elseif (preg_match("/^(filesize|id)([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+[kmg]?b?)$/i", $event->term, $matches)) {
             $col = $matches[1];
             $cmp = ltrim($matches[2], ":") ?: "=";
             $val = parse_shorthand_int($matches[3]);
-            $event->add_querylet(new Querylet("images.$col $cmp :val{$this->stpen}", ["val{$this->stpen}"=>$val]));
+            $event->add_querylet(new Querylet("images.$col $cmp :val{$event->id}", ["val{$event->id}"=>$val]));
         } elseif (preg_match("/^(hash|md5)[=|:]([0-9a-fA-F]*)$/i", $event->term, $matches)) {
             $hash = strtolower($matches[2]);
             $event->add_querylet(new Querylet('images.hash = :hash', ["hash" => $hash]));
@@ -209,7 +206,7 @@ class Index extends Extension
             $event->add_querylet(new Querylet('images.phash = :phash', ["phash" => $phash]));
         } elseif (preg_match("/^(filename|name)[=|:](.+)$/i", $event->term, $matches)) {
             $filename = strtolower($matches[2]);
-            $event->add_querylet(new Querylet("lower(images.filename) LIKE :filename{$this->stpen}", ["filename{$this->stpen}"=>"%$filename%"]));
+            $event->add_querylet(new Querylet("lower(images.filename) LIKE :filename{$event->id}", ["filename{$event->id}"=>"%$filename%"]));
         } elseif (preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
             $source = strtolower($matches[2]);
 
@@ -223,17 +220,17 @@ class Index extends Extension
             // TODO Make this able to search = without needing a time component.
             $cmp = ltrim($matches[1], ":") ?: "=";
             $val = $matches[2];
-            $event->add_querylet(new Querylet("images.posted $cmp :posted{$this->stpen}", ["posted{$this->stpen}"=>$val]));
+            $event->add_querylet(new Querylet("images.posted $cmp :posted{$event->id}", ["posted{$event->id}"=>$val]));
         } elseif (preg_match("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
-            $args = ["width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3])];
-            $event->add_querylet(new Querylet("width $cmp :width{$this->stpen} AND height $cmp :height{$this->stpen}", $args));
+            $args = ["width{$event->id}"=>int_escape($matches[2]), "height{$event->id}"=>int_escape($matches[3])];
+            $event->add_querylet(new Querylet("width $cmp :width{$event->id} AND height $cmp :height{$event->id}", $args));
         } elseif (preg_match("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("width $cmp :width{$this->stpen}", ["width{$this->stpen}"=>int_escape($matches[2])]));
+            $event->add_querylet(new Querylet("width $cmp :width{$event->id}", ["width{$event->id}"=>int_escape($matches[2])]));
         } elseif (preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("height $cmp :height{$this->stpen}", ["height{$this->stpen}"=>int_escape($matches[2])]));
+            $event->add_querylet(new Querylet("height $cmp :height{$event->id}", ["height{$event->id}"=>int_escape($matches[2])]));
         } elseif (preg_match("/^order[=|:](id|width|height|length|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)) {
             $ord = strtolower($matches[1]);
             $default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
@@ -254,7 +251,5 @@ class Index extends Extension
             Image::$order_sql = "RAND($seed)";
             $event->add_querylet(new Querylet("1=1"));
         }
-
-        $this->stpen++;
     }
 }

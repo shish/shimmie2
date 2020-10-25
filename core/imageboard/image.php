@@ -283,12 +283,13 @@ class Image
     {
         $tag_conditions = [];
         $img_conditions = [];
+        $stpen = 0;  // search term parse event number
 
         /*
          * Turn a bunch of strings into a bunch of TagCondition
          * and ImgCondition objects
          */
-        $stpe = send_event(new SearchTermParseEvent(null, $terms));
+        $stpe = send_event(new SearchTermParseEvent($stpen++, null, $terms));
         if ($stpe->is_querylet_set()) {
             foreach ($stpe->get_querylets() as $querylet) {
                 $img_conditions[] = new ImgCondition($querylet, true);
@@ -305,7 +306,7 @@ class Image
                 continue;
             }
 
-            $stpe = send_event(new SearchTermParseEvent($term, $terms));
+            $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
             if ($stpe->is_querylet_set()) {
                 foreach ($stpe->get_querylets() as $querylet) {
                     $img_conditions[] = new ImgCondition($querylet, $positive);
