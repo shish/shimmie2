@@ -15,9 +15,9 @@ class AdminPageInfo extends ExtensionInfo
   <p>Lowercase all tags:
   <br>Set all tags to lowercase for consistency
   <p>Recount tag use:
-  <br>If the counts of images per tag get messed up somehow, this will reset them, and remove any unused tags
+  <br>If the counts of posts per tag get messed up somehow, this will reset them, and remove any unused tags
   <p>Database dump:
   <br>Download the contents of the database in plain text format, useful for backups.
-  <p>Image dump:
-  <br>Download all the images as a .zip file (Requires ZipArchive)";
+  <p>Post dump:
+  <br>Download all the posts as a .zip file (Requires ZipArchive)";
 }
