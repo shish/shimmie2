@@ -356,7 +356,7 @@ class Database
         return $this->db;
     }
 
-    public function standardise_boolean(string $table, string $column, boolean $include_postgres=false): void
+    public function standardise_boolean(string $table, string $column, bool $include_postgres=false): void
     {
         $d = $this->get_driver_name();
         if ($d == DatabaseDriver::MYSQL) {
