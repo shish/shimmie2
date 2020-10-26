@@ -60,7 +60,7 @@ class VideoFileHandlerTheme extends Themelet
 
                 $html .= "
 					<video controls class='shm-main-image' id='main_image' alt='main image' poster='$thumb_url' {$autoplay} {$loop} {$mute}
-					style='height: $height; width: $width; max-width: 100%; object-fit: contain;'>
+					style='height: $height; width: $width; max-width: 100%; object-fit: contain; background-color: black;'>
 						<source src='{$ilink}' type='{$mime}'>
 
 						<!-- If browser doesn't support filetype, fallback to flash -->
