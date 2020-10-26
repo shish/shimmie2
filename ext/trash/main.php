@@ -92,12 +92,12 @@ class Trash extends Extension
     const SEARCH_REGEXP = "/^in:trash$/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        global $user, $database;
+        global $user;
 
         $matches = [];
 
         if (is_null($event->term) && $this->no_trash_query($event->context)) {
-            $event->add_querylet(new Querylet($database->scoreql_to_sql("trash = SCORE_BOOL_N ")));
+            $event->add_querylet(new Querylet("trash = :false", ["false"=>false]));
         }
 
         if (is_null($event->term)) {
@@ -105,7 +105,7 @@ class Trash extends Extension
         }
         if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
             if ($user->can(Permissions::VIEW_TRASH)) {
-                $event->add_querylet(new Querylet($database->scoreql_to_sql("trash = SCORE_BOOL_Y ")));
+                $event->add_querylet(new Querylet("trash = :true", ["true"=>true]));
             }
         }
     }
@@ -133,13 +133,13 @@ class Trash extends Extension
         return true;
     }
 
-    public static function set_trash($image_id, $trash)
+    public static function set_trash(int $image_id, bool $trash)
     {
         global $database;
 
         $database->execute(
             "UPDATE images SET trash = :trash WHERE id = :id",
-            ["trash"=>$database->scoresql_value_prepare($trash),"id"=>$image_id]
+            ["trash"=>$trash,"id"=>$image_id]
         );
     }
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
@@ -182,11 +182,13 @@ class Trash extends Extension
         global $database;
 
         if ($this->get_version(TrashConfig::VERSION) < 1) {
-            $database->execute($database->scoreql_to_sql(
-                "ALTER TABLE images ADD COLUMN trash SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
-            ));
+            $database->execute("ALTER TABLE images ADD COLUMN trash BOOLEAN NOT NULL DEFAULT FALSE");
             $database->execute("CREATE INDEX images_trash_idx ON images(trash)");
-            $this->set_version(TrashConfig::VERSION, 1);
+            $this->set_version(TrashConfig::VERSION, 2);
+        }
+        if ($this->get_version(TrashConfig::VERSION) < 2) {
+            $database->standardise_boolean("images", "trash");
+            $this->set_version(TrashConfig::VERSION, 2);
         }
     }
 }
