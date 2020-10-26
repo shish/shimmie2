@@ -155,8 +155,8 @@ class Wiki extends Extension
                 $database->execute("ALTER TABLE wiki_pages SET locked = (locked IN ('Y', 1))");
             }
             if ($d == DatabaseDriver::PGSQL) {
-                $database->execute("ALTER TABLE wiki_pages ADD COLUMN locked_b BOOLEAN DEFAULT FALSE NOT NULL AFTER locked");
-                $database->execute("UPDATE wiki_pages SET locked_b = (locked IN ('Y', 1))");
+                $database->execute("ALTER TABLE wiki_pages ADD COLUMN locked_b BOOLEAN DEFAULT FALSE NOT NULL");
+                $database->execute("UPDATE wiki_pages SET locked_b = (locked = 'Y')");
                 $database->execute("ALTER TABLE wiki_pages DROP COLUMN locked");
                 $database->execute("ALTER TABLE wiki_pages RENAME COLUMN locked_b TO locked");
             }
