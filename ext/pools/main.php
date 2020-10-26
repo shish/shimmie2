@@ -132,7 +132,7 @@ class Pools extends Extension
             $database->create_table("pools", "
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
-					public SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+					public BOOLEAN NOT NULL DEFAULT FALSE,
 					title VARCHAR(255) NOT NULL,
 					description TEXT,
 					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -167,6 +167,10 @@ class Pools extends Extension
             $database->execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
 
             $this->set_version("ext_pools_version", 3); // skip 2
+        }
+        if ($this->get_version("ext_pools_version") < 4) {
+            $database->standardise_boolean("pools", "public");
+            $this->set_version("ext_pools_version", 4);
         }
     }
 
@@ -236,7 +240,7 @@ class Pools extends Extension
                         $event = new PoolCreationEvent(
                             $title,
                             $user,
-                            $_POST["public"] === "Y",
+                            bool_escape($_POST["public"]),
                             $_POST["description"]
                         );
 
