@@ -74,12 +74,12 @@ class PrivMsg extends Extension
 				sent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				subject VARCHAR(64) NOT NULL,
 				message TEXT NOT NULL,
-				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+				is_read BOOLEAN NOT NULL DEFAULT FALSE,
 				FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
             $database->execute("CREATE INDEX private_message__to_id ON private_message(to_id)");
-            $config->set_int("pm_version", 2);
+            $config->set_int("pm_version", 3);
             log_info("pm", "extension installed");
         }
 
@@ -91,7 +91,14 @@ class PrivMsg extends Extension
 			ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 			ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
             $config->set_int("pm_version", 2);
-            log_info("pm", "extension installed");
+            log_info("pm", "extension upgraded");
+        }
+
+        if ($config->get_int("pm_version") < 3) {
+            log_info("pm", "Updating is_read boolean");
+            $database->standardise_boolean("private_message", "is_read");
+            $config->set_int("pm_version", 3);
+            log_info("pm", "extension upgraded");
         }
     }
 
@@ -146,7 +153,7 @@ class PrivMsg extends Extension
                         } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
                             $from_user = User::by_id((int)$pm["from_id"]);
                             if ($pm["to_id"] == $user->id) {
-                                $database->execute("UPDATE private_message SET is_read='Y' WHERE id = :id", ["id" => $pm_id]);
+                                $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
                                 $cache->delete("pm-count-{$user->id}");
                             }
                             $this->theme->display_message($page, $from_user, $user, new PM($pm));
@@ -241,7 +248,7 @@ class PrivMsg extends Extension
 					FROM private_message
 					WHERE to_id = :to_id
 					AND is_read = :is_read
-			", ["to_id" => $user->id, "is_read" => "N"]);
+			", ["to_id" => $user->id, "is_read" => false]);
             $cache->set("pm-count:{$user->id}", $count, 600);
         }
         return $count;
