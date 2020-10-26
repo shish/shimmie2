@@ -68,7 +68,7 @@ class TagEditTheme extends Themelet
         $h_owner = html_escape($image->get_owner()->name);
         $h_av = $image->get_owner()->get_avatar_html();
         $h_date = autodate($image->posted);
-        $h_ip = $user->can(Permissions::VIEW_IP) ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
+        $h_ip = $user->can(Permissions::VIEW_IP) ? " (".show_ip($image->owner_ip, "Post posted {$image->posted}").")" : "";
         return "
 			<tr>
 				<th>Uploader</th>
