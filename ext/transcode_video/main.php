@@ -111,7 +111,7 @@ class TranscodeVideo extends Extension
             }
             $image_obj = Image::by_id($image_id);
             if (is_null($image_obj)) {
-                $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
+                $this->theme->display_error(404, "Post not found", "No post in the database has the ID #$image_id");
             } else {
                 if (isset($_POST['transcode_format'])) {
                     try {
@@ -231,7 +231,7 @@ class TranscodeVideo extends Extension
             /* Move the new image into the main storage location */
             $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
             if (!@copy($tmp_filename, $target)) {
-                throw new VideoTranscodeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
+                throw new VideoTranscodeException("Failed to copy new post file from temporary location ({$tmp_filename}) to archive ($target)");
             }
 
             send_event(new ImageReplaceEvent($image->id, $new_image));
