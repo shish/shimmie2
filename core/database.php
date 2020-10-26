@@ -355,4 +355,23 @@ class Database
     {
         return $this->db;
     }
+
+    public function standardise_boolean(string $table, string $column): void
+    {
+        $d = $this->get_driver_name();
+        if ($d == DatabaseDriver::MYSQL) {
+            # In mysql, ENUM('Y', 'N') is secretly INTEGER where Y=1 and N=2.
+            # BOOLEAN is secretly TINYINT where true=1 and false=0.
+            # So we can cast directly from ENUM to BOOLEAN which gives us a
+            # column of values 'true' and 'invalid but who cares lol', which
+            # we can then UPDATE to be 'true' and 'false'.
+            $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");
+            $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");
+        }
+        if ($d == DatabaseDriver::SQLITE) {
+            # SQLite doesn't care about column types at all, everything is
+            # text, so we can in-place replace a char with a bool
+            $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");
+        }
+    }
 }
