@@ -29,7 +29,7 @@ class Eokm extends Extension
                 // all ok
             } elseif ($return == "true") {
                 log_warning("eokm", "User tried to upload banned image {$event->image->hash}");
-                throw new UploadException("Image banned");
+                throw new UploadException("Post banned");
             } else {
                 log_warning("eokm", "Unexpected return from EOKM: $return");
             }
