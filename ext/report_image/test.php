@@ -15,12 +15,12 @@ class ReportImageTest extends ShimmiePHPUnitTestCase
         // Check that the report exists
         $config->set_bool("report_image_show_thumbs", true);
         $this->get_page("image_report/list");
-        $this->assert_title("Reported Images");
+        $this->assert_title("Reported Posts");
         $this->assert_text("report details");
 
         $config->set_bool("report_image_show_thumbs", false);
         $this->get_page("image_report/list");
-        $this->assert_title("Reported Images");
+        $this->assert_title("Reported Posts");
         $this->assert_text("report details");
         $this->assert_text("$image_id");
 
@@ -30,7 +30,7 @@ class ReportImageTest extends ShimmiePHPUnitTestCase
 
         // Check that the report is gone
         $this->get_page("image_report/list");
-        $this->assert_title("Reported Images");
+        $this->assert_title("Reported Posts");
         $this->assert_no_text("report details");
 
         # FIXME: test delete image from report screen
