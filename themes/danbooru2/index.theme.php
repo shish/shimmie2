@@ -17,7 +17,7 @@ class CustomIndexTheme extends IndexTheme
         if (count($images) > 0) {
             $this->display_page_images($page, $images);
         } else {
-            $this->display_error(404, "No Images Found", "No images were found to match the search criteria");
+            $this->display_error(404, "No Posts Found", "No images were found to match the search criteria");
         }
     }
 
