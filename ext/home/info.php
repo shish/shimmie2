@@ -9,7 +9,7 @@ class HomeInfo extends ExtensionInfo
     public $authors =["Bzchan"=>"bzchan@animemahou.com"];
     public $license = self::LICENSE_GPLV2;
     public $visibility = self::VISIBLE_ADMIN;
-    public $description = "Displays a front page with logo, search box and image count";
+    public $description = "Displays a front page with logo, search box and post count";
     public $documentation =
 "Once enabled, the page will show up at the URL \"home\", so if you want
 this to be the front page of your site, you should go to \"Board Config\"
