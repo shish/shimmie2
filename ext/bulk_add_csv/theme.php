@@ -9,8 +9,8 @@ class BulkAddCSVTheme extends Themelet
      */
     public function display_upload_results(Page $page)
     {
-        $page->set_title("Adding images from csv");
-        $page->set_heading("Adding images from csv");
+        $page->set_title("Adding posts from csv");
+        $page->set_heading("Adding posts from csv");
         $page->add_block(new NavBlock());
         foreach ($this->messages as $block) {
             $page->add_block($block);
@@ -26,8 +26,8 @@ class BulkAddCSVTheme extends Themelet
     {
         global $page;
         $html = "
-			Add images from a csv. Images will be tagged and have their
-			source and rating set (if \"Image Ratings\" is enabled)
+			Add posts from a csv. Posts will be tagged and have their
+			source and rating set (if \"Post Ratings\" is enabled)
 			<br>Specify the absolute or relative path to a local .csv file. Check <a href=\"" . make_link("ext_doc/bulk_add_csv") . "\">here</a> for the expected format.
 
 			<p>".make_form(make_link("bulk_add_csv"))."
