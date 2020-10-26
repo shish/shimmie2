@@ -147,11 +147,13 @@ class Tips extends Extension
         $data_href = get_base_href();
         $url = $data_href."/ext/tips/images/";
 
-        $tip = $database->get_row("SELECT * ".
-                "FROM tips ".
-                "WHERE enable = true ".
-                "ORDER BY RAND() ".
-                "LIMIT 1");
+        $tip = $database->get_row("
+            SELECT *
+            FROM tips
+            WHERE enable = :true
+            ORDER BY RAND()
+            LIMIT 1
+        ", ["true"=>true]);
 
         if ($tip) {
             $this->theme->showTip($url, $tip);
