@@ -784,7 +784,7 @@ class Pools extends Extension
             $query .= "AND i.rating IN (".Ratings::privs_to_sql(Ratings::get_user_class_privs($user)).")";
         }
         if (Extension::is_enabled(TrashInfo::KEY)) {
-            $query .= $database->scoreql_to_sql(" AND trash != :true", ["true"=>true]);
+            $query .= " AND trash != :true";
         }
 
         $result = $database->get_all(
@@ -793,12 +793,17 @@ class Pools extends Extension
 					$query
 					ORDER BY p.image_order ASC
 					LIMIT :l OFFSET :o",
-            ["pid" => $poolID, "l" => $imagesPerPage, "o" => $pageNumber * $imagesPerPage]
+            [
+                "pid" => $poolID,
+                "l" => $imagesPerPage,
+                "o" => $pageNumber * $imagesPerPage,
+                "true"=>true
+            ]
         );
 
         $totalPages = (int)ceil((int)$database->get_one(
             "SELECT COUNT(*) FROM pool_images p $query",
-            ["pid" => $poolID]
+            ["pid" => $poolID, "true"=>true]
         ) / $imagesPerPage);
 
         $images = [];
