@@ -36,7 +36,7 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
 
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test1");
         $this->get_page("post/view/$image_id"); # check that the tag has been replaced
-        $this->assert_title("Image $image_id: test2");
+        $this->assert_title("Post $image_id: test2");
         $this->get_page("post/list/test1/1"); # searching for an alias should find the master tag
         $this->assert_response(302);
         $this->get_page("post/list/test2/1"); # check that searching for the main tag still works
@@ -67,13 +67,13 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "onetag");
         $this->get_page("post/list/onetag/1"); # searching for an aliased tag should find its aliases
         $this->assert_title("multi tag");
-        $this->assert_no_text("No Images Found");
+        $this->assert_no_text("No Posts Found");
         $this->get_page("post/list/multi/1");
         $this->assert_title("multi");
-        $this->assert_no_text("No Images Found");
+        $this->assert_no_text("No Posts Found");
         $this->get_page("post/list/multi tag/1");
         $this->assert_title("multi tag");
-        $this->assert_no_text("No Images Found");
+        $this->assert_no_text("No Posts Found");
         $this->delete_image($image_id_1);
         $this->delete_image($image_id_2);
 
