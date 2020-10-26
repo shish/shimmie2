@@ -11,10 +11,10 @@ class RSSImages extends Extension
         if (count($event->search_terms) > 0) {
             $search = url_escape(Tag::caret(Tag::implode($event->search_terms)));
             $page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-                "title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
+                "title=\"$title - Posts with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
         } else {
             $page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-                "title=\"$title - Images\" href=\"".make_link("rss/images/1")."\" />");
+                "title=\"$title - Posts\" href=\"".make_link("rss/images/1")."\" />");
         }
     }
 
