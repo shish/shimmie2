@@ -105,6 +105,13 @@ class PolyfillsTest extends TestCase
         $this->assertEquals("1y 213d 16h 53m 20s", format_milliseconds(50000000000));
     }
 
+    public function test_parse_to_milliseconds()
+    {
+        $this->assertEquals(10, parse_to_milliseconds("10"));
+        $this->assertEquals(5000, parse_to_milliseconds("5s"));
+        $this->assertEquals(50000000000, parse_to_milliseconds("1y 213d 16h 53m 20s"));
+    }
+
     public function test_autodate()
     {
         $this->assertEquals(

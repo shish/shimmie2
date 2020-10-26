@@ -47,7 +47,7 @@ and of course start organising your images :-)
         if (count($images) > 0) {
             $this->display_page_images($page, $images);
         } else {
-            $this->display_error(404, "No Images Found", "No images were found to match the search criteria");
+            $this->display_error(404, "No posts Found", "No posts were found to match the search criteria");
         }
     }
 
@@ -181,94 +181,94 @@ and of course start organising your images :-)
 
     public function get_help_html()
     {
-        return '<p>Searching is largely based on tags, with a number of special keywords available that allow searching based on properties of the images.</p>
+        return '<p>Searching is largely based on tags, with a number of special keywords available that allow searching based on properties of the posts.</p>
 
         <div class="command_example">
         <pre>tagname</pre>
-        <p>Returns images that are tagged with "tagname".</p>
+        <p>Returns posts that are tagged with "tagname".</p>
         </div>
 
         <div class="command_example">
         <pre>tagname othertagname</pre>
-        <p>Returns images that are tagged with "tagname" and "othertagname".</p>
+        <p>Returns posts that are tagged with "tagname" and "othertagname".</p>
         </div>
 
-        <p>Most tags and keywords can be prefaced with a negative sign (-) to indicate that you want to search for images that do not match something.</p>
+        <p>Most tags and keywords can be prefaced with a negative sign (-) to indicate that you want to search for posts that do not match something.</p>
 
         <div class="command_example">
         <pre>-tagname</pre>
-        <p>Returns images that are not tagged with "tagname".</p>
+        <p>Returns posts that are not tagged with "tagname".</p>
         </div>
 
         <div class="command_example">
         <pre>-tagname -othertagname</pre>
-        <p>Returns images that are not tagged with "tagname" and "othertagname". This is different than without the negative sign, as images with "tagname" or "othertagname" can still be returned as long as the other one is not present.</p>
+        <p>Returns posts that are not tagged with "tagname" and "othertagname". This is different than without the negative sign, as posts with "tagname" or "othertagname" can still be returned as long as the other one is not present.</p>
         </div>
 
         <div class="command_example">
         <pre>tagname -othertagname</pre>
-        <p>Returns images that are tagged with "tagname", but are not tagged with "othertagname".</p>
+        <p>Returns posts that are tagged with "tagname", but are not tagged with "othertagname".</p>
         </div>
 
         <p>Wildcard searches are possible as well using * for "any one, more, or none" and ? for "any one".</p>
 
         <div class="command_example">
         <pre>tagn*</pre>
-        <p>Returns images that are tagged with "tagname", "tagnot", or anything else that starts with "tagn".</p>
+        <p>Returns posts that are tagged with "tagname", "tagnot", or anything else that starts with "tagn".</p>
         </div>
 
         <div class="command_example">
         <pre>tagn?me</pre>
-        <p>Returns images that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", has one character, and ends with "me".</p>
+        <p>Returns posts that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", has one character, and ends with "me".</p>
         </div>
 
         <div class="command_example">
         <pre>tags=1</pre>
-        <p>Returns images with exactly 1 tag.</p>
+        <p>Returns posts with exactly 1 tag.</p>
         </div>
 
         <div class="command_example">
         <pre>tags>0</pre>
-        <p>Returns images with 1 or more tags. </p>
+        <p>Returns posts with 1 or more tags. </p>
         </div>
 
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
 
         <hr/>
 
-        <p>Search for images by aspect ratio</p>
+        <p>Search for posts by aspect ratio</p>
 
         <div class="command_example">
         <pre>ratio=4:3</pre>
-        <p>Returns images with an aspect ratio of 4:3.</p>
+        <p>Returns posts with an aspect ratio of 4:3.</p>
         </div>
 
         <div class="command_example">
         <pre>ratio>16:9</pre>
-        <p>Returns images with an aspect ratio greater than 16:9. </p>
+        <p>Returns posts with an aspect ratio greater than 16:9. </p>
         </div>
 
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. The relation is calculated by dividing width by height.</p>
 
         <hr/>
 
-        <p>Search for images by file size</p>
+        <p>Search for posts by file size</p>
 
         <div class="command_example">
         <pre>filesize=1</pre>
-        <p>Returns images exactly 1 byte in size.</p>
+        <p>Returns posts exactly 1 byte in size.</p>
         </div>
 
         <div class="command_example">
         <pre>filesize>100mb</pre>
-        <p>Returns images greater than 100 megabytes in size. </p>
+        <p>Returns posts greater than 100 megabytes in size. </p>
         </div>
 
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Supported suffixes are kb, mb, and gb. Uses multiples of 1024.</p>
 
         <hr/>
 
-        <p>Search for images by MD5 hash</p>
+        <p>Search for posts by MD5 hash</p>
 
         <div class="command_example">
         <pre>hash=0D3512CAA964B2BA5D7851AF5951F33B</pre>
@@ -277,65 +277,86 @@ and of course start organising your images :-)
 
         <hr/>
 
-        <p>Search for images by file name</p>
+        <p>Search for posts by file name</p>
 
         <div class="command_example">
         <pre>filename=picasso.jpg</pre>
-        <p>Returns images that are named "picasso.jpg".</p>
+        <p>Returns posts that are named "picasso.jpg".</p>
         </div>
 
         <hr/>
 
-        <p>Search for images by source</p>
+        <p>Search for posts by source</p>
 
         <div class="command_example">
         <pre>source=http://google.com/</pre>
-        <p>Returns images with a source of "http://google.com/".</p>
+        <p>Returns posts with a source of "http://google.com/".</p>
         </div>
 
         <div class="command_example">
         <pre>source=any</pre>
-        <p>Returns images with a source set.</p>
+        <p>Returns posts with a source set.</p>
         </div>
 
         <div class="command_example">
         <pre>source=none</pre>
-        <p>Returns images without a source set.</p>
+        <p>Returns posts without a source set.</p>
         </div>
 
         <hr/>
 
-        <p>Search for images by date posted.</p>
+        <p>Search for posts by date posted.</p>
 
         <div class="command_example">
         <pre>posted>=07-19-2019</pre>
-        <p>Returns images posted on or after 07-19-2019.</p>
+        <p>Returns posts posted on or after 07-19-2019.</p>
         </div>
 
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Date format is mm-dd-yyyy. Date posted includes time component, so = will not work unless the time is exact.</p>
 
         <hr/>
 
-        <p>Search for images by image dimensions</p>
+        <p>Search for posts by length.</p>
+
+        <div class="command_example">
+        <pre>length>=1h</pre>
+        <p>Returns posts that are longer than an hour.</p>
+        </div>
+
+        <div class="command_example">
+        <pre>length<=10h15m</pre>
+        <p>Returns posts that are shorter than 10 hours and 15 minutes.</p>
+        </div>
+
+        <div class="command_example">
+        <pre>length>=10000</pre>
+        <p>Returns posts that are longer than 10,000 milliseconds, or 10 seconds.</p>
+        </div>
+
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Available suffixes are ms, s, m, h, d, and y. A number by itself will be interpreted as milliseconds. Searches using = are not likely to work unless time is specified down to the millisecond.</p>
+
+        <hr/>
+
+        <p>Search for posts by dimensions</p>
 
         <div class="command_example">
         <pre>size=640x480</pre>
-        <p>Returns images exactly 640 pixels wide by 480 pixels high.</p>
+        <p>Returns posts exactly 640 pixels wide by 480 pixels high.</p>
         </div>
 
         <div class="command_example">
         <pre>size>1920x1080</pre>
-        <p>Returns images with a width larger than 1920 and a height larger than 1080.</p>
+        <p>Returns posts with a width larger than 1920 and a height larger than 1080.</p>
         </div>
 
         <div class="command_example">
         <pre>width=1000</pre>
-        <p>Returns images exactly 1000 pixels wide.</p>
+        <p>Returns posts exactly 1000 pixels wide.</p>
         </div>
 
         <div class="command_example">
         <pre>height=1000</pre>
-        <p>Returns images exactly 1000 pixels high.</p>
+        <p>Returns posts exactly 1000 pixels high.</p>
         </div>
 
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
@@ -346,12 +367,12 @@ and of course start organising your images :-)
 
         <div class="command_example">
         <pre>order:id_asc</pre>
-        <p>Returns images sorted by ID, smallest first.</p>
+        <p>Returns posts sorted by ID, smallest first.</p>
         </div>
 
         <div class="command_example">
         <pre>order:width_desc</pre>
-        <p>Returns images sorted by width, largest first.</p>
+        <p>Returns posts sorted by width, largest first.</p>
         </div>
 
         <p>These fields are supported:
