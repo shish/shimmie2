@@ -57,7 +57,7 @@ class ReportImage extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/$image_id"));
                 } else {
-                    $this->theme->display_error(500, "Missing input", "Missing image ID or report reason");
+                    $this->theme->display_error(500, "Missing input", "Missing post ID or report reason");
                 }
             } elseif ($event->get_arg(0) == "remove") {
                 if (!empty($_POST['id'])) {
@@ -67,7 +67,7 @@ class ReportImage extends Extension
                         $page->set_redirect(make_link("image_report/list"));
                     }
                 } else {
-                    $this->theme->display_error(500, "Missing input", "Missing image ID");
+                    $this->theme->display_error(500, "Missing input", "Missing post ID");
                 }
             } elseif ($event->get_arg(0) == "remove_reports_by" && $user->check_auth_token()) {
                 if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
@@ -128,7 +128,7 @@ class ReportImage extends Extension
                 $count = $this->count_reported_images();
                 $h_count = $count > 0 ? " ($count)" : "";
 
-                $event->add_nav_link("image_report", new Link('image_report/list'), "Reported Images$h_count");
+                $event->add_nav_link("image_report", new Link('image_report/list'), "Reported Posts$h_count");
             }
         }
     }
@@ -139,7 +139,7 @@ class ReportImage extends Extension
         if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
             $count = $this->count_reported_images();
             $h_count = $count > 0 ? " ($count)" : "";
-            $event->add_link("Reported Images$h_count", make_link("image_report/list"));
+            $event->add_link("Reported Posts$h_count", make_link("image_report/list"));
         }
     }
 
@@ -157,7 +157,7 @@ class ReportImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Image Reports");
+        $sb = new SetupBlock("Post Reports");
 
         $opts = [
             "Reporter Only" => "user",
