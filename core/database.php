@@ -373,7 +373,7 @@ class Database
             # text, so we can in-place replace a char with a bool
             $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");
         }
-        if ($d == DatabaseDriver::PGSQL) {
+        if ($d == DatabaseDriver::PGSQL && $include_postgres) {
             $this->execute("ALTER TABLE $table ADD COLUMN ${column}_b BOOLEAN DEFAULT FALSE NOT NULL");
             $this->execute("UPDATE $table SET ${column}_b = ($column = 'Y')");
             $this->execute("ALTER TABLE $table DROP COLUMN $column");
