@@ -8,10 +8,10 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         $this->log_out();
 
         $page = $this->get_page("random_image/view");
-        $this->assertEquals("Image $image_id: test", $page->title);
+        $this->assertEquals("Post $image_id: test", $page->title);
 
         $page = $this->get_page("random_image/view/test");
-        $this->assertEquals("Image $image_id: test", $page->title);
+        $this->assertEquals("Post $image_id: test", $page->title);
 
         $page = $this->get_page("random_image/download");
         $this->assertNotNull($page->data);
@@ -27,21 +27,21 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         # enabled, no image = no text
         $config->set_bool("show_random_block", true);
         $page = $this->get_page("post/list");
-        $this->assertNull($page->find_block("Random Image"));
+        $this->assertNull($page->find_block("Random Post"));
 
         # enabled, image = text
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
         $page = $this->get_page("post/list");
-        $this->assertNotNull($page->find_block("Random Image"));
+        $this->assertNotNull($page->find_block("Random Post"));
 
         # disabled, image = no text
         $config->set_bool("show_random_block", false);
         $page = $this->get_page("post/list");
-        $this->assertNull($page->find_block("Random Image"));
+        $this->assertNull($page->find_block("Random Post"));
 
         # disabled, no image = no image
         $this->delete_image($image_id);
         $page = $this->get_page("post/list");
-        $this->assertNull($page->find_block("Random Image"));
+        $this->assertNull($page->find_block("Random Post"));
     }
 }
