@@ -190,9 +190,7 @@ class Upgrade extends Extension
         if ($this->get_version("db_version") < 19) {
             log_info("upgrade", "Adding MIME type column");
 
-            $database->execute($database->scoreql_to_sql(
-                "ALTER TABLE images ADD COLUMN mime varchar(512) NULL"
-            ));
+            $database->execute("ALTER TABLE images ADD COLUMN mime varchar(512) NULL");
             // Column is primed in mime extension
             log_info("upgrade", "Setting index for mime column");
             $database->execute('CREATE INDEX images_mime_idx ON images(mime)');
