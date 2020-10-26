@@ -206,7 +206,7 @@ class Relationships extends Extension
         $database->execute(
             "UPDATE images
             SET has_children = :has_children WHERE id = :pid",
-            ["has_children"=>($children>0), "pid"=>$parent_id]
+            ["has_children"=>$database->scoresql_value_prepare($children>0), "pid"=>$parent_id]
         );
     }
 }

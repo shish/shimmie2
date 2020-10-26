@@ -99,7 +99,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         global $database;
         $database->execute(
             "UPDATE images SET parent_id=NULL, has_children=:false",
-            ["false"=>false]
+            ["false"=>$database->scoresql_value_prepare(false)]
         );
         // FIXME: send_event(new ImageRelationshipSetEvent($image_2->id, null));
 
