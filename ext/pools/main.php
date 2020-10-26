@@ -157,7 +157,7 @@ class Pools extends Extension
 					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
-            $this->set_version("ext_pools_version", 3);
+            $this->set_version("ext_pools_version", 4);
 
             log_info("pools", "extension installed");
         }
