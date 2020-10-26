@@ -15,31 +15,26 @@ class Blotter extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config;
-        $version = $config->get_int("blotter_version", 0);
-        /**
-         * If this version is less than "1", it's time to install.
-         *
-         * REMINDER: If I change the database tables, I must change up version by 1.
-         */
-        if ($version < 1) {
-            /**
-             * Installer
-             */
-            global $database, $config;
+        global $config, $database;
+
+        if ($config->get_int("blotter_version", 0) < 1) {
             $database->create_table("blotter", "
-					id SCORE_AIPK,
-					entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					entry_text TEXT NOT NULL,
-					important SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N
-					");
+                id SCORE_AIPK,
+                entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                entry_text TEXT NOT NULL,
+                important BOOLEAN NOT NULL DEFAULT FALSE
+            ");
             // Insert sample data:
             $database->execute(
                 "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
-                ["text"=>"Installed the blotter extension!", "important"=>"Y"]
+                ["text"=>"Installed the blotter extension!", "important"=>true]
             );
             log_info("blotter", "Installed tables for blotter extension.");
-            $config->set_int("blotter_version", 1);
+            $config->set_int("blotter_version", 2);
+        }
+        if ($config->get_int("blotter_version", 0) < 2) {
+            $database->standardise_boolean("blotter", "important");
+            $config->set_int("blotter_version", 2);
         }
     }
 
@@ -98,11 +93,7 @@ class Blotter extends Extension
                         if ($entry_text == "") {
                             die("No entry message!");
                         }
-                        if (isset($_POST['important'])) {
-                            $important = 'Y';
-                        } else {
-                            $important = 'N';
-                        }
+                        $important = isset($_POST['important']);
                         // Now insert into db:
                         $database->execute(
                             "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
