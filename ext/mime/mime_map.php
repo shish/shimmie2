@@ -144,6 +144,11 @@ class MimeMap
             self::MAP_EXT => [FileExtension::PNG],
             self::MAP_MIME => [MimeType::PNG],
         ],
+        MimeType::PPM => [
+            self::MAP_NAME => "Portable Pixel Map",
+            self::MAP_EXT => [FileExtension::PPM],
+            self::MAP_MIME => [MimeType::PPM],
+        ],
         MimeType::PSD => [
             self::MAP_NAME => "PSD",
             self::MAP_EXT => [FileExtension::PSD],

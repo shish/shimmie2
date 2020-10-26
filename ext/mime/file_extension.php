@@ -46,6 +46,7 @@ class FileExtension
     public const PHP5 = 'php5';
     public const PNG = 'png';
     public const PSD = 'psd';
+    public const PPM = 'ppm';
     public const MOV = 'mov';
     public const RSS = 'rss';
     public const SVG = 'svg';
