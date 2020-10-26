@@ -777,6 +777,7 @@ class Pools extends Extension
             INNER JOIN images AS i ON i.id = p.image_id
             WHERE p.pool_id = :pid
         ";
+        $params = [];
 
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
@@ -785,6 +786,7 @@ class Pools extends Extension
         }
         if (Extension::is_enabled(TrashInfo::KEY)) {
             $query .= " AND trash != :true";
+            $params["true"] = true;
         }
 
         $result = $database->get_all(
@@ -797,13 +799,12 @@ class Pools extends Extension
                 "pid" => $poolID,
                 "l" => $imagesPerPage,
                 "o" => $pageNumber * $imagesPerPage,
-                "true"=>true
-            ]
+            ] + $params
         );
 
         $totalPages = (int)ceil((int)$database->get_one(
             "SELECT COUNT(*) FROM pool_images p $query",
-            ["pid" => $poolID, "true"=>true]
+            ["pid" => $poolID] + $params
         ) / $imagesPerPage);
 
         $images = [];
