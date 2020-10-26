@@ -133,7 +133,7 @@ class Wiki extends Extension
 				date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				title VARCHAR(255) NOT NULL,
 				revision INTEGER NOT NULL DEFAULT 1,
-				locked BOOLEAN NOT NULL DEFAULT (1=0),
+				locked BOOLEAN NOT NULL DEFAULT FALSE,
 				body TEXT NOT NULL,
 				UNIQUE (title, revision),
 				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT

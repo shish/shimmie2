@@ -97,7 +97,7 @@ class Trash extends Extension
         $matches = [];
 
         if (is_null($event->term) && $this->no_trash_query($event->context)) {
-            $event->add_querylet(new Querylet("trash = :false", ["false"=>false]));
+            $event->add_querylet(new Querylet("trash != :true", ["true"=>true]));
         }
 
         if (is_null($event->term)) {
@@ -182,7 +182,7 @@ class Trash extends Extension
         global $database;
 
         if ($this->get_version(TrashConfig::VERSION) < 1) {
-            $database->execute("ALTER TABLE images ADD COLUMN trash BOOLEAN NOT NULL DEFAULT (1=0)");
+            $database->execute("ALTER TABLE images ADD COLUMN trash BOOLEAN NOT NULL DEFAULT FALSE");
             $database->execute("CREATE INDEX images_trash_idx ON images(trash)");
             $this->set_version(TrashConfig::VERSION, 2);
         }

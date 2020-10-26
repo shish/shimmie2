@@ -36,7 +36,7 @@ class Tips extends Extension
         if ($this->get_version("ext_tips_version") < 1) {
             $database->create_table("tips", "
                 id SCORE_AIPK,
-                enable BOOLEAN NOT NULL DEFAULT (1=0),
+                enable BOOLEAN NOT NULL DEFAULT FALSE,
                 image TEXT NOT NULL,
                 text TEXT NOT NULL,
             ");

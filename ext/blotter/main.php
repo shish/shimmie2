@@ -22,7 +22,7 @@ class Blotter extends Extension
                 id SCORE_AIPK,
                 entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 entry_text TEXT NOT NULL,
-                important BOOLEAN NOT NULL DEFAULT (1=0)
+                important BOOLEAN NOT NULL DEFAULT FALSE
             ");
             // Insert sample data:
             $database->execute(
