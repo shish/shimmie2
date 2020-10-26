@@ -50,27 +50,27 @@ class RelationshipsTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images that have parent/child relationships.</p>
+        return '<p>Search for posts that have parent/child relationships.</p>
         <div class="command_example">
         <pre>parent=any</pre>
-        <p>Returns images that have a parent.</p>
-        </div> 
+        <p>Returns posts that have a parent.</p>
+        </div>
         <div class="command_example">
         <pre>parent=none</pre>
-        <p>Returns images that have no parent.</p>
-        </div> 
+        <p>Returns posts that have no parent.</p>
+        </div>
         <div class="command_example">
         <pre>parent=123</pre>
-        <p>Returns images that have image 123 set as parent.</p>
-        </div> 
+        <p>Returns posts that have image 123 set as parent.</p>
+        </div>
         <div class="command_example">
         <pre>child=any</pre>
-        <p>Returns images that have at least 1 child.</p>
-        </div> 
+        <p>Returns posts that have at least 1 child.</p>
+        </div>
         <div class="command_example">
         <pre>child=none</pre>
-        <p>Returns images that have no children.</p>
-        </div> 
+        <p>Returns posts that have no children.</p>
+        </div>
         ';
     }
 }
