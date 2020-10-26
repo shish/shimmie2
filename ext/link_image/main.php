@@ -13,7 +13,7 @@ class LinkImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Link to Image");
+        $sb = new SetupBlock("Link to Post");
         $sb->add_text_option("ext_link-img_text-link_format", "Text Link Format: ");
         $event->panel->add_block($sb);
     }

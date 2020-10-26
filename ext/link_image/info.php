@@ -5,7 +5,7 @@ class LinkImageInfo extends ExtensionInfo
     public const KEY = "link_image";
 
     public $key = self::KEY;
-    public $name = "Link to Image";
+    public $name = "Link to Post";
     public $authors = ["Artanis"=>"artanis.00@gmail.com"];
     public $description = "Show various forms of link to each image, for copy & paste";
     public $license = self::LICENSE_GPLV2;
@@ -25,9 +25,9 @@ It takes the following arguments as well as plain text.
 || \$title       || The site title as set in Config. ||
 </pre>
 
-<p>Link to Image will default this option to '\$title - \$id (\$ext \$size \$filesize)'.
+<p>Link to Post will default this option to '\$title - \$id (\$ext \$size \$filesize)'.
 
-<p>To reset to the default, simply clear the current setting. Link to Image
+<p>To reset to the default, simply clear the current setting. Link to Post
 will then fill in the default value after the save.
 
 <p>To leave the setting blank for any reason, leave a space (' ') in it.";
