@@ -57,12 +57,12 @@ class RotateImage extends Extension
                 $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
             }
             if (empty($image_id)) {
-                throw new ImageRotateException("Can not rotate Image: No valid Image ID given.");
+                throw new ImageRotateException("Can not rotate Image: No valid Post ID given.");
             }
 
             $image = Image::by_id($image_id);
             if (is_null($image)) {
-                $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
+                $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
 
                 /* Check if options were given to rotate an image. */
@@ -104,7 +104,7 @@ class RotateImage extends Extension
         $image_obj = Image::by_id($image_id);
         $hash = $image_obj->hash;
         if (is_null($hash)) {
-            throw new ImageRotateException("Image does not have a hash associated with it.");
+            throw new ImageRotateException("Post does not have a hash associated with it.");
         }
 
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
