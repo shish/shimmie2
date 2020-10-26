@@ -96,7 +96,7 @@ class PrivMsg extends Extension
 
         if ($config->get_int("pm_version") < 3) {
             log_info("pm", "Updating is_read boolean");
-            $database->standardise_boolean("private_message", "is_read");
+            $database->standardise_boolean("private_message", "is_read", true);
             $config->set_int("pm_version", 3);
             log_info("pm", "extension upgraded");
         }
@@ -113,7 +113,6 @@ class PrivMsg extends Extension
             }
         }
     }
-
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {

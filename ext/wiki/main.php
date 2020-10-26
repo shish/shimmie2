@@ -146,20 +146,7 @@ class Wiki extends Extension
             $this->set_version("ext_wiki_version", 2);
         }
         if ($this->get_version("ext_wiki_version") < 3) {
-            $d = $database->get_driver_name();
-            if ($d == DatabaseDriver::MYSQL) {
-                $database->execute("ALTER TABLE wiki_pages MODIFY COLUMN locked BOOLEAN;");
-                $database->execute("UPDATE wiki_pages SET locked=0 WHERE locked=2;");
-            }
-            if ($d == DatabaseDriver::SQLITE) {
-                $database->execute("UPDATE wiki_pages SET locked = (locked IN ('Y', 1))");
-            }
-            if ($d == DatabaseDriver::PGSQL) {
-                $database->execute("ALTER TABLE wiki_pages ADD COLUMN locked_b BOOLEAN DEFAULT FALSE NOT NULL");
-                $database->execute("UPDATE wiki_pages SET locked_b = (locked = 'Y')");
-                $database->execute("ALTER TABLE wiki_pages DROP COLUMN locked");
-                $database->execute("ALTER TABLE wiki_pages RENAME COLUMN locked_b TO locked");
-            }
+            $database->standardise_boolean("wiki_pages", "locked", true);
             $this->set_version("ext_wiki_version", 3);
         }
     }
