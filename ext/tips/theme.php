@@ -4,7 +4,7 @@ class TipsTheme extends Themelet
     public function manageTips($url, $images)
     {
         global $page;
-        $select = "<select name='image'><option value=''>- Select Image -</option>";
+        $select = "<select name='image'><option value=''>- Select Post -</option>";
 
         foreach ($images as $image) {
             $select .= "<option style='background-image:url(".$url.$image."); background-repeat:no-repeat; padding-left:20px;'  value=\"".$image."\">".$image."</option>\n";
@@ -20,7 +20,7 @@ class TipsTheme extends Themelet
     <td><input name='enable' type='checkbox' value='Y' checked/></td>
   </tr>
   <tr>
-    <td>Image:</td>
+    <td>Post:</td>
     <td>{$select}</td>
   </tr>
   <tr>
@@ -60,7 +60,7 @@ class TipsTheme extends Themelet
             "<thead><tr>".
             "<th>ID</th>".
             "<th>Enabled</th>".
-            "<th>Image</th>".
+            "<th>Post</th>".
             "<th>Text</th>";
 
         if ($user->can(Permissions::TIPS_ADMIN)) {
