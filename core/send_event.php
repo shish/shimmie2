@@ -35,7 +35,7 @@ function _set_event_listeners(): void
     global $_shm_event_listeners;
     $_shm_event_listeners = [];
 
-    foreach (getSubclassesOf("Extension") as $class) {
+    foreach (get_subclasses_of("Extension") as $class) {
         /** @var Extension $extension */
         $extension = new $class();
 
@@ -61,7 +61,7 @@ function _dump_event_listeners(array $event_listeners, string $path): void
 {
     $p = "<"."?php\n";
 
-    foreach (getSubclassesOf("Extension") as $class) {
+    foreach (get_subclasses_of("Extension") as $class) {
         $p .= "\$$class = new $class(); ";
     }
 

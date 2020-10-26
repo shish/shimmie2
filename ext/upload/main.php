@@ -418,7 +418,7 @@ class Upload extends Extension
         // transload() returns Array or Bool, depending on the transload_engine.
         $headers = transload($url, $tmp_filename);
 
-        $s_filename = is_array($headers) ? findHeader($headers, 'Content-Disposition') : null;
+        $s_filename = is_array($headers) ? find_header($headers, 'Content-Disposition') : null;
         $h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
         $filename = $h_filename ?: basename($url);
 

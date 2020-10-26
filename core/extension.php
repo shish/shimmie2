@@ -243,7 +243,7 @@ abstract class ExtensionInfo
 
     public static function load_all_extension_info()
     {
-        foreach (getSubclassesOf("ExtensionInfo") as $class) {
+        foreach (get_subclasses_of("ExtensionInfo") as $class) {
             $extension_info = new $class();
             if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
                 throw new ScoreException("Extension Info $class with key $extension_info->key has already been loaded");
@@ -439,7 +439,7 @@ abstract class DataHandlerExtension extends Extension
     public static function get_all_supported_mimes(): array
     {
         $arr = [];
-        foreach (getSubclassesOf("DataHandlerExtension") as $handler) {
+        foreach (get_subclasses_of("DataHandlerExtension") as $handler) {
             $handler = (new $handler());
             $arr = array_merge($arr, $handler->SUPPORTED_MIME);
         }

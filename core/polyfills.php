@@ -222,7 +222,7 @@ if (!function_exists('http_parse_headers')) {
  * HTTP Headers can sometimes be lowercase which will cause issues.
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
  */
-function findHeader(array $headers, string $name): ?string
+function find_header(array $headers, string $name): ?string
 {
     if (!is_array($headers)) {
         return null;
@@ -260,7 +260,7 @@ if (!function_exists('mb_strlen')) {
 }
 
 /** @noinspection PhpUnhandledExceptionInspection */
-function getSubclassesOf(string $parent)
+function get_subclasses_of(string $parent)
 {
     $result = [];
     foreach (get_declared_classes() as $class) {

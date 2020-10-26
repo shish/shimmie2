@@ -20,13 +20,6 @@ use function MicroHTML\TD;
 const DATA_DIR = "data";
 
 
-function mtimefile(string $file): string
-{
-    $data_href = get_base_href();
-    $mtime = filemtime($file);
-    return "$data_href/$file?$mtime";
-}
-
 function get_theme(): string
 {
     global $config;
