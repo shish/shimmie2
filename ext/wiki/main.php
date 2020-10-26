@@ -152,7 +152,7 @@ class Wiki extends Extension
                 $database->execute("UPDATE wiki_pages SET locked=0 WHERE locked=2;");
             }
             if ($d == DatabaseDriver::SQLITE) {
-                $database->execute("ALTER TABLE wiki_pages SET locked = (locked IN ('Y', 1))");
+                $database->execute("UPDATE wiki_pages SET locked = (locked IN ('Y', 1))");
             }
             if ($d == DatabaseDriver::PGSQL) {
                 $database->execute("ALTER TABLE wiki_pages ADD COLUMN locked_b BOOLEAN DEFAULT FALSE NOT NULL");
