@@ -17,9 +17,9 @@ class RandomListTheme extends Themelet
      */
     public function display_page(Page $page, array $images)
     {
-        $page->title = "Random Images";
+        $page->title = "Random Posts";
 
-        $html = "<b>Refresh the page to view more images</b>";
+        $html = "<b>Refresh the page to view more posts</b>";
         if (count($images)) {
             $html .= "<div class='shm-image-list'>";
 
@@ -29,10 +29,10 @@ class RandomListTheme extends Themelet
 
             $html .= "</div>";
         } else {
-            $html .= "<br/><br/>No images were found to match the search criteria";
+            $html .= "<br/><br/>No posts were found to match the search criteria";
         }
 
-        $page->add_block(new Block("Random Images", $html));
+        $page->add_block(new Block("Random Posts", $html));
 
         $nav = $this->build_navigation($this->search_terms);
         $page->add_block(new Block("Navigation", $nav, "left", 0));
