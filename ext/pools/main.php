@@ -784,7 +784,7 @@ class Pools extends Extension
             $query .= "AND i.rating IN (".Ratings::privs_to_sql(Ratings::get_user_class_privs($user)).")";
         }
         if (Extension::is_enabled(TrashInfo::KEY)) {
-            $query .= $database->scoreql_to_sql(" AND trash = SCORE_BOOL_N ");
+            $query .= $database->scoreql_to_sql(" AND trash != :true", ["true"=>true]);
         }
 
         $result = $database->get_all(
