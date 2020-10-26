@@ -16,7 +16,7 @@ class CustomViewImageTheme extends ViewImageTheme
     public function display_admin_block(Page $page, $parts)
     {
         if (count($parts) > 0) {
-            $page->add_block(new Block("Image Controls", join("<br>", $parts), "drawer", 50));
+            $page->add_block(new Block("Post Controls", join("<br>", $parts), "drawer", 50));
         }
     }
 
@@ -41,7 +41,7 @@ class CustomViewImageTheme extends ViewImageTheme
         global $user;
 
         if (count($editor_parts) == 0) {
-            return ($image->is_locked() ? "<br>[Image Locked]" : "");
+            return ($image->is_locked() ? "<br>[Post Locked]" : "");
         }
 
         $html = make_form(make_link("post/set"))."
