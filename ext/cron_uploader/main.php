@@ -419,10 +419,10 @@ class CronUploader extends Extension
         if ($corrupt) {
             // Move to corrupt dir
             $newDir = join_path($this->get_failed_dir(), $output_subdir, $relativeDir);
-            $info = "ERROR: Image was not uploaded. ";
+            $info = "ERROR: Post was not uploaded. ";
         } else {
             $newDir = join_path($this->get_uploaded_dir(), $output_subdir, $relativeDir);
-            $info = "Image successfully uploaded. ";
+            $info = "Post successfully uploaded. ";
         }
         $newDir = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $newDir);
 
@@ -434,7 +434,7 @@ class CronUploader extends Extension
         // move file to correct dir
         rename($path, $newFile);
 
-        $this->log_message(SCORE_LOG_INFO, $info . "Image \"$filename\" moved from queue to \"$newDir\".");
+        $this->log_message(SCORE_LOG_INFO, $info . "Post \"$filename\" moved from queue to \"$newDir\".");
     }
 
     /**
@@ -462,14 +462,14 @@ class CronUploader extends Extension
 
         // Generate info message
         if ($event->image_id == -1) {
-            if(array_key_exists("mime",$event->metadata)) {
+            if (array_key_exists("mime", $event->metadata)) {
                 throw new UploadException("File type not recognised (".$event->metadata["mime"]."). Filename: {$filename}");
             }
             throw new UploadException("File type not recognised. Filename: {$filename}");
         } elseif ($event->merged === true) {
-            $infomsg = "Image merged. ID: {$event->image_id} - Filename: {$filename}";
+            $infomsg = "Post merged. ID: {$event->image_id} - Filename: {$filename}";
         } else {
-            $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename}";
+            $infomsg = "Post uploaded. ID: {$event->image_id} - Filename: {$filename}";
         }
         $this->log_message(SCORE_LOG_INFO, $infomsg);
 
@@ -511,7 +511,7 @@ class CronUploader extends Extension
         $base = $this->get_queue_dir();
 
         if (!is_dir($base)) {
-            $this->log_message(SCORE_LOG_WARNING, "Image Queue Directory could not be found at \"$base\".");
+            $this->log_message(SCORE_LOG_WARNING, "Post Queue Directory could not be found at \"$base\".");
             return;
         }
 

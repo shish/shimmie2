@@ -54,7 +54,7 @@ class CronUploaderTheme extends Themelet
 			    <li>Create a cron job or something else that can open a url on specified times.
                     <br/>cron is a service that runs commands over and over again on a a schedule. You can set up cron (or any similar tool) to run the command above to trigger the import on whatever schedule you desire.
 			        <br />If you're not sure how to do this, you can give the command to your web host and you can ask them to create the cron job for you.
-			        <br />When you create the cron job, you choose when to upload new images.</li>
+			        <br />When you create the cron job, you choose when to upload new posts.</li>
             </ol>";
 
 
