@@ -9,6 +9,6 @@ class PMTriggerInfo extends ExtensionInfo
     public $url = self::SHIMMIE_URL;
     public $authors = self::SHISH_AUTHOR;
     public $license = self::LICENSE_GPLV2;
-    public $description = "Send PMs in response to certain events (eg image deletion)";
+    public $description = "Send PMs in response to certain events (eg post deletion)";
     public $beta = true;
 }
