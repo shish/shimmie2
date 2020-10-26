@@ -313,17 +313,17 @@ abstract class DataHandlerExtension extends Extension
                 $existing = Image::by_id($event->replace_id);
 
                 if (is_null($existing)) {
-                    throw new UploadException("Image to replace does not exist!");
+                    throw new UploadException("Post to replace does not exist!");
                 }
                 if ($existing->hash === $event->metadata['hash']) {
-                    throw new UploadException("The uploaded image is the same as the one to replace.");
+                    throw new UploadException("The uploaded post is the same as the one to replace.");
                 }
 
                 // even more hax..
                 $event->metadata['tags'] = $existing->get_tag_list();
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->metadata['hash']), $event->metadata);
                 if (is_null($image)) {
-                    throw new UploadException("Data handler failed to create image object from data");
+                    throw new UploadException("Data handler failed to create post object from data");
                 }
                 if (empty($image->get_mime())) {
                     throw new UploadException("Unable to determine MIME for ". $event->tmpname);
@@ -339,7 +339,7 @@ abstract class DataHandlerExtension extends Extension
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 if (is_null($image)) {
-                    throw new UploadException("Data handler failed to create image object from data");
+                    throw new UploadException("Data handler failed to create post object from data");
                 }
                 if (empty($image->get_mime())) {
                     throw new UploadException("Unable to determine MIME for ". $event->tmpname);
