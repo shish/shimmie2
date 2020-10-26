@@ -462,7 +462,7 @@ class CronUploader extends Extension
 
         // Generate info message
         if ($event->image_id == -1) {
-            if(array_key_exists("mime",$event->metadata)) {
+            if (array_key_exists("mime", $event->metadata)) {
                 throw new UploadException("File type not recognised (".$event->metadata["mime"]."). Filename: {$filename}");
             }
             throw new UploadException("File type not recognised. Filename: {$filename}");

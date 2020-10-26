@@ -81,6 +81,7 @@ class AdminPage extends Extension
         }
         if ($event->cmd == "get-page") {
             global $page;
+            $_SERVER['REQUEST_URI'] = $event->args[0] . "?" . $event->args[1];
             if (isset($event->args[1])) {
                 parse_str($event->args[1], $_GET);
             }
