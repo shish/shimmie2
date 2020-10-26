@@ -165,7 +165,7 @@ class Ratings extends Extension
             $options[$rating->name] = $rating->code;
         }
 
-        $sb = new SetupBlock("Image Ratings");
+        $sb = new SetupBlock("Post Ratings");
         $sb->start_table();
         foreach (array_keys($_shm_user_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {

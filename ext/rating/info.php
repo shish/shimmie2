@@ -5,7 +5,7 @@ class RatingsInfo extends ExtensionInfo
     public const KEY = "rating";
 
     public $key = self::KEY;
-    public $name = "Image Ratings";
+    public $name = "Post Ratings";
     public $url = self::SHIMMIE_URL;
     public $authors = self::SHISH_AUTHOR;
     public $license = self::LICENSE_GPLV2;

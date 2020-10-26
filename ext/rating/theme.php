@@ -63,20 +63,20 @@ class RatingsTheme extends Themelet
 
     public function get_help_html(array $ratings)
     {
-        $output =  '<p>Search for images with one or more possible ratings.</p>
+        $output =  '<p>Search for posts with one or more possible ratings.</p>
         <div class="command_example">
         <pre>rating:'.$ratings[0]->search_term.'</pre>
-        <p>Returns images with the '.$ratings[0]->name.' rating.</p>
+        <p>Returns posts with the '.$ratings[0]->name.' rating.</p>
         </div>
         <p>Ratings can be abbreviated to a single letter as well</p>
         <div class="command_example">
         <pre>rating:'.$ratings[0]->code.'</pre>
-        <p>Returns images with the '.$ratings[0]->name.' rating.</p>
+        <p>Returns posts with the '.$ratings[0]->name.' rating.</p>
         </div>
         <p>If abbreviations are used, multiple ratings can be searched for.</p>
         <div class="command_example">
         <pre>rating:'.$ratings[0]->code.$ratings[1]->code.'</pre>
-        <p>Returns images with the '.$ratings[0]->name.' or '.$ratings[1]->name.' rating.</p>
+        <p>Returns posts with the '.$ratings[0]->name.' or '.$ratings[1]->name.' rating.</p>
         </div>
         <p>Available ratings:</p>
         <table>
