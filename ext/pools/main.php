@@ -175,7 +175,7 @@ class Pools extends Extension
     {
         $sb = new SetupBlock("Pools");
         $sb->add_int_option(PoolsConfig::MAX_IMPORT_RESULTS, "Max results on import: ");
-        $sb->add_int_option(PoolsConfig::IMAGES_PER_PAGE, "<br>Images per page: ");
+        $sb->add_int_option(PoolsConfig::IMAGES_PER_PAGE, "<br>Posts per page: ");
         $sb->add_int_option(PoolsConfig::LISTS_PER_PAGE, "<br>Index list items per page: ");
         $sb->add_int_option(PoolsConfig::UPDATED_PER_PAGE, "<br>Updated list items per page: ");
         $sb->add_bool_option(PoolsConfig::INFO_ON_VIEW_IMAGE, "<br>Show pool info on image: ");
