@@ -31,7 +31,7 @@ class CustomIndexTheme extends IndexTheme
         } else {
             $this->display_error(
                 404,
-                "No Images Found",
+                "No Posts Found",
                 "No images were found to match the search criteria. Try looking up a character/series/artist by another name if they go by more than one. Remember to use underscores in place of spaces and not to use commas. If you came to this page by following a link, try using the search box directly instead. See the FAQ for more information."
             );
         }
