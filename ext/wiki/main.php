@@ -80,7 +80,7 @@ class WikiPage
             $this->date = $row['date'];
             $this->title = $row['title'];
             $this->revision = (int)$row['revision'];
-            $this->locked = ($row['locked'] == 'Y');
+            $this->locked = bool_escape($row['locked']);
             $this->body = $row['body'];
         }
     }
@@ -133,17 +133,34 @@ class Wiki extends Extension
 				date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				title VARCHAR(255) NOT NULL,
 				revision INTEGER NOT NULL DEFAULT 1,
-				locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+				locked BOOLEAN NOT NULL DEFAULT FALSE,
 				body TEXT NOT NULL,
 				UNIQUE (title, revision),
 				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 			");
-            $this->set_version("ext_wiki_version", 2);
+            $this->set_version("ext_wiki_version", 3);
         }
         if ($this->get_version("ext_wiki_version") < 2) {
             $database->execute("ALTER TABLE wiki_pages ADD COLUMN
 				locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION");
             $this->set_version("ext_wiki_version", 2);
+        }
+        if ($this->get_version("ext_wiki_version") < 3) {
+            $d = $database->get_driver_name();
+            if ($d == DatabaseDriver::MYSQL) {
+                $database->execute("ALTER TABLE wiki_pages MODIFY COLUMN locked BOOLEAN;");
+                $database->execute("UPDATE wiki_pages SET locked=0 WHERE locked=2;");
+            }
+            if ($d == DatabaseDriver::SQLITE) {
+                $database->execute("ALTER TABLE wiki_pages SET locked = (locked IN ('Y', 1))");
+            }
+            if ($d == DatabaseDriver::PGSQL) {
+                $database->execute("ALTER TABLE wiki_pages ADD COLUMN locked_b BOOLEAN DEFAULT FALSE NOT NULL AFTER locked");
+                $database->execute("UPDATE wiki_pages SET locked_b = (locked IN ('Y', 1))");
+                $database->execute("ALTER TABLE wiki_pages DROP COLUMN locked");
+                $database->execute("ALTER TABLE wiki_pages RENAME COLUMN locked_b TO locked");
+            }
+            $this->set_version("ext_wiki_version", 3);
         }
     }
 
@@ -233,7 +250,7 @@ class Wiki extends Extension
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
 				VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
                 ["owner_id"=>$event->user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'],
-                "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked?'Y':'N', "body"=>$wpage->body]
+                "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked, "body"=>$wpage->body]
             );
         } catch (Exception $e) {
             throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
