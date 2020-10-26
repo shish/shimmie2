@@ -17,7 +17,7 @@ class TagListConfig
     public const TYPE_TAGS= "tags";
 
     public const TYPE_CHOICES = [
-        "Image's tags only" => TagListConfig::TYPE_TAGS,
+        "Post's tags only" => TagListConfig::TYPE_TAGS,
         "Show related" => TagListConfig::TYPE_RELATED
     ];
 

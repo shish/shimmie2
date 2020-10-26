@@ -143,7 +143,7 @@ class TagList extends Extension
         $sb->add_choice_option(
             TagListConfig::IMAGE_TYPE,
             TagListConfig::TYPE_CHOICES,
-            "Image tag list",
+            "Post tag list",
             true
         );
         $sb->add_choice_option(
