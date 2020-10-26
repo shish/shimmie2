@@ -32,7 +32,7 @@ class Blotter extends Extension
             log_info("blotter", "Installed tables for blotter extension.");
             $config->set_int("blotter_version", 2);
         }
-        if ($config->get_int("blotter_version", 0) < 2) {
+        if ($config->get_int("blotter_version") < 2) {
             $database->standardise_boolean("blotter", "important");
             $config->set_int("blotter_version", 2);
         }
