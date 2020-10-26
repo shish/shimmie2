@@ -97,7 +97,7 @@ class Trash extends Extension
         $matches = [];
 
         if (is_null($event->term) && $this->no_trash_query($event->context)) {
-            $event->add_querylet(new Querylet("trash = :false", ["false"=>false]));
+            $event->add_querylet(new Querylet("trash != :true", ["true"=>true]));
         }
 
         if (is_null($event->term)) {

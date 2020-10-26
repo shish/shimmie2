@@ -217,7 +217,6 @@ class SQLite extends DBEngine
         $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
         $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
         $data = str_replace(SCORE::BOOL, "CHAR(1)", $data);
-        $data = str_replace("DEFAULT FALSE", "DEFAULT 0", $data);
         return $data;
     }
 

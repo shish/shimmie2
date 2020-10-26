@@ -133,13 +133,13 @@ class PrivateImage extends Extension
             if ($show_private) {
                 $event->add_querylet(
                     new Querylet(
-                        "private = :false OR owner_id = :private_owner_id",
-                        ["private_owner_id"=>$user->id, "false"=>false]
+                        "private != :true OR owner_id = :private_owner_id",
+                        ["private_owner_id"=>$user->id, "true"=>true]
                     )
                 );
             } else {
                 $event->add_querylet(
-                    new Querylet("private = :false", ["false"=>false])
+                    new Querylet("private != :true", ["true"=>true])
                 );
             }
         }
@@ -153,8 +153,8 @@ class PrivateImage extends Extension
             $query = "";
             switch ($matches[1]) {
                 case "no":
-                    $query .= "private = :false";
-                    $params["false"] = false;
+                    $query .= "private != :true";
+                    $params["true"] = true;
                     break;
                 case "yes":
                     $query .= "private = :true";
@@ -168,8 +168,8 @@ class PrivateImage extends Extension
                     }
                     break;
                 case "any":
-                    $query .= "private = :false OR owner_id = :private_owner_id";
-                    $params["false"] = false;
+                    $query .= "private != :true OR owner_id = :private_owner_id";
+                    $params["true"] = true;
                     $params["private_owner_id"] = $user->id;
                     break;
             }
