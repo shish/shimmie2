@@ -35,7 +35,8 @@ class Relationships extends Extension
             $database->execute("ALTER TABLE images ADD parent_id INT");
             $database->execute("ALTER TABLE images ADD has_children BOOLEAN DEFAULT FALSE NOT NULL");
             $database->execute("CREATE INDEX images__parent_id ON images(parent_id)");
-            $this->set_version("ext_relationships_version", 1);
+            $database->execute("CREATE INDEX images__has_children ON images(has_children)");
+            $this->set_version("ext_relationships_version", 3);
         }
         if ($this->get_version("ext_relationships_version") < 2) {
             $database->execute("CREATE INDEX images__has_children ON images(has_children)");
