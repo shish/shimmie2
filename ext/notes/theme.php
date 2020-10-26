@@ -186,7 +186,7 @@ class NotesTheme extends Themelet
 
         $html = "<table id='poolsList' class='zebra'>".
                 "<thead><tr>".
-                "<th>Image</th>".
+                "<th>Post</th>".
                 "<th>Note</th>".
                 "<th>Body</th>".
                 "<th>Updater</th>".
@@ -250,23 +250,23 @@ class NotesTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images with notes.</p>
+        return '<p>Search for posts with notes.</p>
         <div class="command_example">
         <pre>note=noted</pre>
-        <p>Returns images with a note matching "noted".</p>
+        <p>Returns posts with a note matching "noted".</p>
         </div>
         <div class="command_example">
         <pre>notes>0</pre>
-        <p>Returns images with 1 or more notes.</p>
+        <p>Returns posts with 1 or more notes.</p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <div class="command_example">
         <pre>notes_by=username</pre>
-        <p>Returns images with note(s) by "username".</p>
+        <p>Returns posts with note(s) by "username".</p>
         </div>
         <div class="command_example">
         <pre>notes_by_user_id=123</pre>
-        <p>Returns images with note(s) by user 123.</p>
+        <p>Returns posts with note(s) by user 123.</p>
         </div>
         ';
     }
