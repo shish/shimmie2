@@ -16,10 +16,9 @@ class WordFilter extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Word Filter");
+        $sb = $event->panel->create_new_block("Word Filter");
         $sb->add_longtext_option("word_filter");
         $sb->add_label("<br>(each line should be search term and replace term, separated by a comma)");
-        $event->panel->add_block($sb);
     }
 
     private function filter(string $text): string

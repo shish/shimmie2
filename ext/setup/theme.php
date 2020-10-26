@@ -8,7 +8,7 @@ class SetupTheme extends Themelet
      * $panel = the container of the blocks
      * $panel->blocks the blocks to be displayed, unsorted
      *
-     * It's recommented that the theme sort the blocks before doing anything
+     * It's recommended that the theme sort the blocks before doing anything
      * else, using:  usort($panel->blocks, "blockcmp");
      *
      * The page should wrap all the options in a form which links to setup_save

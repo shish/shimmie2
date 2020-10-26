@@ -97,13 +97,12 @@ class TagList extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Tag Map Options");
+        $sb = $event->panel->create_new_block("Tag Map Options");
         $sb->add_int_option(TagListConfig::TAGS_MIN, "Only show tags used at least ");
         $sb->add_label(" times");
         $sb->add_bool_option(TagListConfig::PAGES, "<br>Paged tag lists: ");
-        $event->panel->add_block($sb);
 
-        $sb = new SetupBlock("Popular / Related Tag List");
+        $sb = $event->panel->create_new_block("Popular / Related Tag List");
         $sb->add_int_option(TagListConfig::LENGTH, "Show top ");
         $sb->add_label(" related tags");
         $sb->add_int_option(TagListConfig::POPULAR_TAG_LIST_LENGTH, "<br>Show top ");
@@ -131,7 +130,6 @@ class TagList extends Extension
         );
         $sb->add_bool_option("tag_list_numbers", "Show tag counts", true);
         $sb->end_table();
-        $event->panel->add_block($sb);
     }
 
     /**

@@ -157,7 +157,7 @@ class ReportImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Post Reports");
+        $sb = $event->panel->create_new_block("Post Reports");
 
         $opts = [
             "Reporter Only" => "user",
@@ -166,8 +166,6 @@ class ReportImage extends Extension
             "None" => "none",
         ];
         $sb->add_choice_option("report_image_publicity", $opts, "Show publicly: ");
-
-        $event->panel->add_block($sb);
     }
 
     public function delete_reports_by(int $user_id)

@@ -100,6 +100,7 @@ new UserClass("user", "base", [
     Permissions::READ_PM => true,
     Permissions::SET_PRIVATE_IMAGE => true,
     Permissions::BULK_DOWNLOAD => true,
+    Permissions::CHANGE_USER_SETTING => true
 ]);
 
 new UserClass("hellbanned", "user", [
@@ -108,6 +109,8 @@ new UserClass("hellbanned", "user", [
 
 new UserClass("admin", "base", [
     Permissions::CHANGE_SETTING => true,
+    Permissions::CHANGE_USER_SETTING => true,
+    Permissions::CHANGE_OTHER_USER_SETTING => true,
     Permissions::OVERRIDE_CONFIG => true,
     Permissions::BIG_SEARCH => true,
 

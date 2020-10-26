@@ -62,13 +62,12 @@ class Forum extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Forum");
+        $sb = $event->panel->create_new_block("Forum");
         $sb->add_int_option("forumTitleSubString", "Title max long: ");
         $sb->add_int_option("forumThreadsPerPage", "<br>Threads per page: ");
         $sb->add_int_option("forumPostsPerPage", "<br>Posts per page: ");
 
         $sb->add_int_option("forumMaxCharsPerPost", "<br>Max chars per post: ");
-        $event->panel->add_block($sb);
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event)

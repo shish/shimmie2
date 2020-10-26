@@ -43,9 +43,8 @@ class RandomImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Random Post");
+        $sb = $event->panel->create_new_block("Random Post");
         $sb->add_bool_option("show_random_block", "Show Random Block: ");
-        $event->panel->add_block($sb);
     }
 
     public function onPostListBuilding(PostListBuildingEvent $event)

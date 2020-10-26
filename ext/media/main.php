@@ -79,7 +79,7 @@ class Media extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Media Engines");
+        $sb = $event->panel->create_new_block("Media Engines");
 
 //        if (self::imagick_available()) {
 //            try {
@@ -101,8 +101,6 @@ class Media extends Extension
 
         $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "Mem limit", true);
         $sb->end_table();
-
-        $event->panel->add_block($sb);
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)

@@ -4,9 +4,8 @@ class LiveFeed extends Extension
 {
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Live Feed");
+        $sb = $event->panel->create_new_block("Live Feed");
         $sb->add_text_option("livefeed_host", "IP:port to send events to: ");
-        $event->panel->add_block($sb);
     }
 
     public function onUserCreation(UserCreationEvent $event)

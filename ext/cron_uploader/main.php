@@ -55,7 +55,7 @@ class CronUploader extends Extension
 
         $users = $database->get_pairs("SELECT name, id FROM users UNION ALL SELECT '', null order by name");
 
-        $sb = new SetupBlock("Cron Uploader");
+        $sb = $event->panel->create_new_block("Cron Uploader");
         $sb->start_table();
         $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
         $sb->add_text_option(CronUploaderConfig::KEY, "Key", true);
@@ -71,8 +71,6 @@ class CronUploader extends Extension
         $sb->add_bool_option(CronUploaderConfig::INCLUDE_ALL_LOGS, "Include All Logs", true);
         $sb->end_table();
         $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
-
-        $event->panel->add_block($sb);
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)

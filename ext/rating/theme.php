@@ -96,7 +96,7 @@ class RatingsTheme extends Themelet
                     <input type='hidden' name='id' value='$user->id'>
                     <table style='width: 300px;'>
                         <thead>
-                            <tr><th colspan='2'>Default Rating Filter</th></tr>
+                            <tr><th colspan='2'></th></tr>
                         </thead>
                         <tbody>
                         <tr><td>This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.</td></tr>

@@ -240,10 +240,11 @@ class UserPage extends Extension
 
         if (!$user->is_anonymous()) {
             if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
-                $uobe = new UserOptionsBuildingEvent();
-                send_event($uobe);
+                $user_config = UserConfig::get_for_user($event->display_user->id);
 
-                $page->add_block(new Block("Options", $this->theme->build_options($event->display_user, $uobe), "main", 60));
+                $uobe = new UserOperationsBuildingEvent($event->display_user, $user_config);
+                send_event($uobe);
+                $page->add_block(new Block("Operations", $this->theme->build_operations($event->display_user, $uobe), "main", 60));
             }
         }
 
@@ -275,7 +276,7 @@ class UserPage extends Extension
             "Gravatar" => "gravatar"
         ];
 
-        $sb = new SetupBlock("User Options");
+        $sb = $event->panel->create_new_block("User Options");
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
         $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
@@ -316,8 +317,6 @@ class UserPage extends Extension
             );
         }
         $sb->end_table();
-
-        $event->panel->add_block($sb);
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
@@ -361,8 +360,8 @@ class UserPage extends Extension
         }
     }
 
-    public const USER_SEARCH_REGEX = "/^(?:poster|user)[=|:](.*)$/i";
-    public const USER_ID_SEARCH_REGEX = "/^(?:poster|user)_id[=|:]([0-9]+)$/i";
+    public const USER_SEARCH_REGEX = "/^(?:poster|user)(!?)[=|:](.*)$/i";
+    public const USER_ID_SEARCH_REGEX = "/^(?:poster|user)_id(!?)[=|:]([0-9]+)$/i";
 
     public static function has_user_query(array $context): bool
     {
@@ -385,11 +384,11 @@ class UserPage extends Extension
 
         $matches = [];
         if (preg_match(self::USER_SEARCH_REGEX, $event->term, $matches)) {
-            $user_id = User::name_to_id($matches[1]);
-            $event->add_querylet(new Querylet("images.owner_id = $user_id"));
+            $user_id = User::name_to_id($matches[2]);
+            $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= $user_id"));
         } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
-            $user_id = int_escape($matches[1]);
-            $event->add_querylet(new Querylet("images.owner_id = $user_id"));
+            $user_id = int_escape($matches[2]);
+            $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= $user_id"));
         } elseif ($user->can(Permissions::VIEW_IP) && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
             $user_ip = $matches[1]; // FIXME: ip_escape?
             $event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));

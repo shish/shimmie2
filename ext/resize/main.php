@@ -50,7 +50,7 @@ class ResizeImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Image Resize");
+        $sb = $event->panel->create_new_block("Image Resize");
         $sb->start_table();
         $sb->add_choice_option(ResizeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
         $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images", true);
@@ -67,7 +67,6 @@ class ResizeImage extends Extension
         $sb->add_label("</td><td>px</td></tr>");
         $sb->add_label("<tr><td></td><td>(enter 0 for no default)</td></tr>");
         $sb->end_table();
-        $event->panel->add_block($sb);
     }
 
     public function onDataUpload(DataUploadEvent $event)

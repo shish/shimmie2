@@ -38,13 +38,11 @@ class Eokm extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("EOKM Filter");
+        $sb = $event->panel->create_new_block("EOKM Filter");
 
         $sb->start_table();
         $sb->add_text_option("eokm_username", "Username", true);
         $sb->add_text_option("eokm_password", "Password", true);
         $sb->end_table();
-
-        $event->panel->add_block($sb);
     }
 }
