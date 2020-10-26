@@ -21,7 +21,7 @@ class Forum extends Extension
         if ($config->get_int("forum_version") < 1) {
             $database->create_table("forum_threads", "
 					id SCORE_AIPK,
-					sticky BOOLEAN NOT NULL DEFAULT FALSE,
+					sticky BOOLEAN NOT NULL DEFAULT (1=0),
 					title VARCHAR(255) NOT NULL,
 					user_id INTEGER NOT NULL,
 					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

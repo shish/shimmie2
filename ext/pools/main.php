@@ -132,7 +132,7 @@ class Pools extends Extension
             $database->create_table("pools", "
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
-					public BOOLEAN NOT NULL DEFAULT FALSE,
+					public BOOLEAN NOT NULL DEFAULT (1=0),
 					title VARCHAR(255) NOT NULL,
 					description TEXT,
 					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

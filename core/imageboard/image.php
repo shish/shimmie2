@@ -456,11 +456,11 @@ class Image
                 "id" => $this->id,
                 "width" => $this->width ?? 0,
                 "height" => $this->height ?? 0,
-                "lossless" => $database->scoresql_value_prepare($this->lossless),
-                "video" => $database->scoresql_value_prepare($this->video),
-                "video_codec" => $database->scoresql_value_prepare($this->video_codec),
-                "image" => $database->scoresql_value_prepare($this->image),
-                "audio" => $database->scoresql_value_prepare($this->audio),
+                "lossless" => $this->lossless,
+                "video" => $this->video,
+                "video_codec" => $this->video_codec,
+                "image" => $this->image,
+                "audio" => $this->audio,
                 "length" => $this->length
             ]
         );

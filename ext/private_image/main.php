@@ -133,13 +133,13 @@ class PrivateImage extends Extension
             if ($show_private) {
                 $event->add_querylet(
                     new Querylet(
-                        "private != :true OR owner_id = :private_owner_id",
-                        ["private_owner_id"=>$user->id, "true"=>true]
+                        "private = :false OR owner_id = :private_owner_id",
+                        ["private_owner_id"=>$user->id, "false"=>false]
                     )
                 );
             } else {
                 $event->add_querylet(
-                    new Querylet("private != :true", ["true"=>true])
+                    new Querylet("private = :false", ["false"=>false])
                 );
             }
         }
@@ -153,8 +153,8 @@ class PrivateImage extends Extension
             $query = "";
             switch ($matches[1]) {
                 case "no":
-                    $query .= "private != :true";
-                    $params["true"] = true;
+                    $query .= "private = :false";
+                    $params["false"] = false;
                     break;
                 case "yes":
                     $query .= "private = :true";
@@ -168,8 +168,8 @@ class PrivateImage extends Extension
                     }
                     break;
                 case "any":
-                    $query .= "private != :true OR owner_id = :private_owner_id";
-                    $params["true"] = true;
+                    $query .= "private = :false OR owner_id = :private_owner_id";
+                    $params["false"] = false;
                     $params["private_owner_id"] = $user->id;
                     break;
             }
@@ -280,7 +280,7 @@ class PrivateImage extends Extension
         global $database;
 
         if ($this->get_version(PrivateImageConfig::VERSION) < 1) {
-            $database->execute("ALTER TABLE images ADD COLUMN private BOOLEAN NOT NULL DEFAULT FALSE");
+            $database->execute("ALTER TABLE images ADD COLUMN private BOOLEAN NOT NULL DEFAULT (1=0)");
             $database->execute("CREATE INDEX images_private_idx ON images(private)");
             $this->set_version(PrivateImageConfig::VERSION, 2);
         }

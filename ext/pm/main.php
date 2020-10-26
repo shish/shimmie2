@@ -74,7 +74,7 @@ class PrivMsg extends Extension
 				sent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				subject VARCHAR(64) NOT NULL,
 				message TEXT NOT NULL,
-				is_read BOOLEAN NOT NULL DEFAULT FALSE,
+				is_read BOOLEAN NOT NULL DEFAULT (1=0),
 				FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
