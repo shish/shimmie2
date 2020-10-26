@@ -34,23 +34,23 @@ class FavoritesTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images that have been favorited a certain number of times, or favorited by a particular individual.</p>
+        return '<p>Search for posts that have been favorited a certain number of times, or favorited by a particular individual.</p>
         <div class="command_example">
         <pre>favorites=1</pre>
-        <p>Returns images that have been favorited once.</p>
+        <p>Returns posts that have been favorited once.</p>
         </div>
         <div class="command_example">
         <pre>favorites>0</pre>
-        <p>Returns images that have been favorited 1 or more times</p>
+        <p>Returns posts that have been favorited 1 or more times</p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <div class="command_example">
         <pre>favorited_by:username</pre>
-        <p>Returns images that have been favorited by "username". </p>
+        <p>Returns posts that have been favorited by "username". </p>
         </div>
         <div class="command_example">
         <pre>favorited_by_userno:123</pre>
-        <p>Returns images that have been favorited by user 123. </p>
+        <p>Returns posts that have been favorited by user 123. </p>
         </div>
         ';
     }
