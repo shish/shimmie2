@@ -14,8 +14,6 @@ class PrivateImage extends Extension
 
     public function onInitExt(InitExtEvent $event)
     {
-        global $config;
-
         Image::$bool_props[] = "private ";
     }
 
@@ -114,7 +112,7 @@ class PrivateImage extends Extension
     }
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $user, $page, $config;
+        global $user, $page;
 
         if ($event->image->private===true && $event->image->owner_id!=$user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
             $page->set_mode(PageMode::REDIRECT);
@@ -135,15 +133,13 @@ class PrivateImage extends Extension
             if ($show_private) {
                 $event->add_querylet(
                     new Querylet(
-                        $database->scoreql_to_sql("private = SCORE_BOOL_N OR owner_id = :private_owner_id"),
-                        ["private_owner_id"=>$user->id]
+                        "private != :true OR owner_id = :private_owner_id",
+                        ["private_owner_id"=>$user->id, "true"=>true]
                     )
                 );
             } else {
                 $event->add_querylet(
-                    new Querylet(
-                        $database->scoreql_to_sql("private = SCORE_BOOL_N")
-                    )
+                    new Querylet("private != :true", ["true"=>true])
                 );
             }
         }
@@ -157,10 +153,12 @@ class PrivateImage extends Extension
             $query = "";
             switch ($matches[1]) {
                 case "no":
-                    $query .= "private = SCORE_BOOL_N";
+                    $query .= "private != :true";
+                    $params["true"] = true;
                     break;
                 case "yes":
-                    $query .= "private = SCORE_BOOL_Y";
+                    $query .= "private = :true";
+                    $params["true"] = true;
 
                     // Admins can view others private images, but they have to specify the user
                     if (!$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES) ||
@@ -170,11 +168,12 @@ class PrivateImage extends Extension
                     }
                     break;
                 case "any":
-                    $query .= "private = SCORE_BOOL_N OR owner_id = :private_owner_id";
+                    $query .= "private != :true OR owner_id = :private_owner_id";
+                    $params["true"] = true;
                     $params["private_owner_id"] = $user->id;
                     break;
             }
-            $event->add_querylet(new Querylet($database->scoreql_to_sql($query), $params));
+            $event->add_querylet(new Querylet($query, $params));
         }
     }
 
@@ -205,7 +204,7 @@ class PrivateImage extends Extension
 
         $database->execute(
             "UPDATE images SET private = :true WHERE id = :id AND private = :false",
-            ["id"=>$image_id, "true"=>true, "false"=>$database->scoresql_value_prepare(false)]
+            ["id"=>$image_id, "true"=>true, "false"=>false]
         );
     }
 
@@ -215,7 +214,7 @@ class PrivateImage extends Extension
 
         $database->execute(
             "UPDATE images SET private = :false WHERE id = :id AND private = :true",
-            ["id"=>$image_id, "true"=>true, "false"=>$database->scoresql_value_prepare(false)]
+            ["id"=>$image_id, "true"=>true, "false"=>false]
         );
     }
 
@@ -281,12 +280,13 @@ class PrivateImage extends Extension
         global $database;
 
         if ($this->get_version(PrivateImageConfig::VERSION) < 1) {
-            $database->execute($database->scoreql_to_sql(
-                "ALTER TABLE images ADD COLUMN private SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
-            ));
-
+            $database->execute("ALTER TABLE images ADD COLUMN private BOOLEAN NOT NULL DEFAULT FALSE");
             $database->execute("CREATE INDEX images_private_idx ON images(private)");
-            $this->set_version(PrivateImageConfig::VERSION, 1);
+            $this->set_version(PrivateImageConfig::VERSION, 2);
+        }
+        if ($this->get_version(PrivateImageConfig::VERSION) < 2) {
+            $database->standardise_boolean("images", "private");
+            $this->set_version(PrivateImageConfig::VERSION, 2);
         }
     }
 }
