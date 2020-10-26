@@ -49,11 +49,11 @@ class PrivateImage extends Extension
                 $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
             }
             if (empty($image_id)) {
-                throw new SCoreException("Can not make image private: No valid Image ID given.");
+                throw new SCoreException("Can not make image private: No valid Post ID given.");
             }
             $image = Image::by_id($image_id);
             if ($image==null) {
-                throw new SCoreException("Image not found.");
+                throw new SCoreException("Post not found.");
             }
             if ($image->owner_id!=$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new SCoreException("Cannot set another user's image to private.");
@@ -71,11 +71,11 @@ class PrivateImage extends Extension
                 $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
             }
             if (empty($image_id)) {
-                throw new SCoreException("Can not make image public: No valid Image ID given.");
+                throw new SCoreException("Can not make image public: No valid Post ID given.");
             }
             $image = Image::by_id($image_id);
             if ($image==null) {
-                throw new SCoreException("Image not found.");
+                throw new SCoreException("Post not found.");
             }
             if ($image->owner_id!=$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new SCoreException("Cannot set another user's image to private.");
@@ -182,7 +182,7 @@ class PrivateImage extends Extension
     {
         if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
-            $block->header = "Private Images";
+            $block->header = "Private Posts";
             $block->body = $this->theme->get_help_html();
             $event->add_block($block);
         }
