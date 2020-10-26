@@ -13,12 +13,12 @@ class NotATagTest extends ShimmiePHPUnitTestCase
 
         // Original
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: pbx");
+        $this->assert_title("Post $image_id: pbx");
 
         // Modified OK
         send_event(new TagSetEvent($image, ["two"]));
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: two");
+        $this->assert_title("Post $image_id: two");
 
         // Modified Bad as user - redirect
         try {
@@ -28,12 +28,12 @@ class NotATagTest extends ShimmiePHPUnitTestCase
             $this->assertTrue(true);
         }
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: two");
+        $this->assert_title("Post $image_id: two");
 
         // Modified Bad as admin - ignore (should warn?)
         $this->log_in_as_admin();
         send_event(new TagSetEvent($image, ["four", "face"]));
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: four");
+        $this->assert_title("Post $image_id: four");
     }
 }
