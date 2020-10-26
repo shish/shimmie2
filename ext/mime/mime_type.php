@@ -38,6 +38,7 @@ class MimeType
     public const PDF = 'application/pdf';
     public const PHP = 'text/x-php';
     public const PNG = 'image/png';
+    public const PPM = 'image/x-portable-pixmap';
     public const PSD = 'image/vnd.adobe.photoshop';
     public const QUICKTIME = 'video/quicktime';
     public const RSS = 'application/rss+xml';
@@ -241,6 +242,9 @@ class MimeType
                 switch ($ext) {
                     case FileExtension::ANI:
                         $output = MimeType::ANI;
+                        break;
+                    case FileExtension::PPM:
+                        $output = MimeType::PPM;
                         break;
 // TODO: There is no uniquely defined Mime type for the cursor format. Need to figure this out.
 //                    case FileExtension::CUR:

@@ -18,7 +18,7 @@ class FeaturedTest extends ShimmiePHPUnitTestCase
         $config->set_int("featured_id", $image_id);
 
         $this->get_page("post/list");
-        $this->assert_text("Featured Image");
+        $this->assert_text("Featured Post");
 
         # FIXME: test changing from one feature to another
 
@@ -31,6 +31,6 @@ class FeaturedTest extends ShimmiePHPUnitTestCase
         // after deletion, there should be no feature
         $this->delete_image($image_id);
         $this->get_page("post/list");
-        $this->assert_no_text("Featured Image");
+        $this->assert_no_text("Featured Post");
     }
 }

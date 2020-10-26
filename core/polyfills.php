@@ -556,17 +556,41 @@ function to_shorthand_int(int $int): string
         return (string)$int;
     }
 }
-
-const TIME_UNITS = ["s"=>60,"m"=>60,"h"=>24,"d"=>365,"y"=>PHP_INT_MAX];
-function format_milliseconds(int $input): string
+abstract class TIME_UNITS
+{
+    public const MILLISECONDS = "ms";
+    public const SECONDS = "s";
+    public const MINUTES = "m";
+    public const HOURS = "h";
+    public const DAYS = "d";
+    public const YEARS = "y";
+    public const CONVERSION = [
+        self::MILLISECONDS=>1000,
+        self::SECONDS=>60,
+        self::MINUTES=>60,
+        self::HOURS=>24,
+        self::DAYS=>365,
+        self::YEARS=>PHP_INT_MAX
+    ];
+}
+function format_milliseconds(int $input, string $min_unit = TIME_UNITS::SECONDS): string
 {
     $output = "";
 
-    $remainder = floor($input / 1000);
+    $remainder = $input;
 
-    foreach (TIME_UNITS as $unit=>$conversion) {
+    $found = false;
+
+    foreach (TIME_UNITS::CONVERSION as $unit=>$conversion) {
         $count = $remainder % $conversion;
         $remainder = floor($remainder / $conversion);
+
+        if ($found||$unit==$min_unit) {
+            $found = true;
+        } else {
+            continue;
+        }
+
         if ($count==0&&$remainder<1) {
             break;
         }
@@ -574,6 +598,32 @@ function format_milliseconds(int $input): string
     }
 
     return trim($output);
+}
+function parse_to_milliseconds(string $input): int
+{
+    $output = 0;
+    $current_multiplier = 1;
+
+    if (preg_match('/^([0-9]+)$/i', $input, $match)) {
+        // If just a number, then we treat it as milliseconds
+        $length = $match[0];
+        if (is_numeric($length)) {
+            $length = floatval($length);
+            $output += $length;
+        }
+    } else {
+        foreach (TIME_UNITS::CONVERSION as $unit=>$conversion) {
+            if (preg_match('/([0-9]+)'.$unit.'/i', $input, $match)) {
+                $length = $match[1];
+                if (is_numeric($length)) {
+                    $length = floatval($length);
+                    $output += $length * $current_multiplier;
+                }
+            }
+            $current_multiplier *= $conversion;
+        }
+    }
+    return intval($output);
 }
 
 /**

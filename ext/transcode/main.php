@@ -22,6 +22,7 @@ class TranscodeImage extends Extension
         "ICO" => MimeType::ICO,
         "JPG" => MimeType::JPEG,
         "PNG" => MimeType::PNG,
+        "PPM" => MimeType::PPM,
         "PSD" => MimeType::PSD,
         "TIFF" => MimeType::TIFF,
         "WEBP" => MimeType::WEBP

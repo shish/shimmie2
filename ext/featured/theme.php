@@ -8,7 +8,7 @@ class FeaturedTheme extends Themelet
 {
     public function display_featured(Page $page, Image $image): void
     {
-        $page->add_block(new Block("Featured Image", $this->build_featured_html($image), "left", 3));
+        $page->add_block(new Block("Featured Post", $this->build_featured_html($image), "left", 3));
     }
 
     public function get_buttons_html(int $image_id): string

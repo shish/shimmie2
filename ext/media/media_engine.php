@@ -55,6 +55,7 @@ abstract class MediaEngine
             MimeType::GIF,
             MimeType::JPEG,
             MimeType::PNG,
+            MimeType::PPM,
             MimeType::PSD,
             MimeType::TIFF,
             MimeType::WEBP,

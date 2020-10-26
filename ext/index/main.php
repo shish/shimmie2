@@ -231,6 +231,10 @@ class Index extends Extension
         } elseif (preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $event->add_querylet(new Querylet("height $cmp :height{$event->id}", ["height{$event->id}"=>int_escape($matches[2])]));
+        } elseif (preg_match("/^length([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(.+)$/i", $event->term, $matches)) {
+            $value = parse_to_milliseconds($matches[2]);
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $event->add_querylet(new Querylet("length $cmp :length{$event->id}", ["length{$event->id}"=>$value]));
         } elseif (preg_match("/^order[=|:](id|width|height|length|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)) {
             $ord = strtolower($matches[1]);
             $default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
