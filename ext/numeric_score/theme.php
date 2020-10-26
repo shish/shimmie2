@@ -51,7 +51,7 @@ class NumericScoreTheme extends Themelet
 			</div>
 			";
         }
-        $page->add_block(new Block("Image Score", $html, "left", 20));
+        $page->add_block(new Block("Post Score", $html, "left", 20));
     }
 
     public function get_nuller(User $duser)
@@ -96,32 +96,32 @@ class NumericScoreTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images that have received numeric scores by the score or by the scorer.</p>
+        return '<p>Search for posts that have received numeric scores by the score or by the scorer.</p>
         <div class="command_example">
         <pre>score=1</pre>
-        <p>Returns images with a score of 1.</p>
+        <p>Returns posts with a score of 1.</p>
         </div>
         <div class="command_example">
         <pre>score>0</pre>
-        <p>Returns images with a score of 1 or more.</p>
+        <p>Returns posts with a score of 1 or more.</p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
 
         <div class="command_example">
         <pre>upvoted_by=username</pre>
-        <p>Returns images upvoted by "username".</p>
+        <p>Returns posts upvoted by "username".</p>
         </div>
         <div class="command_example">
         <pre>upvoted_by_id=123</pre>
-        <p>Returns images upvoted by user 123.</p>
+        <p>Returns posts upvoted by user 123.</p>
         </div>
         <div class="command_example">
         <pre>downvoted_by=username</pre>
-        <p>Returns images downvoted by "username".</p>
+        <p>Returns posts downvoted by "username".</p>
         </div>
         <div class="command_example">
         <pre>downvoted_by_id=123</pre>
-        <p>Returns images downvoted by user 123.</p>
+        <p>Returns posts downvoted by user 123.</p>
         </div>
 
         <div class="command_example">
