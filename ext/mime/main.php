@@ -26,7 +26,7 @@ class MimeSystem extends Extension
         // adjustment needs to be made to the mime types.
 
         if ($this->get_version(self::VERSION) < 1) {
-            if ($database->transaction) {
+            if ($database->is_transaction_open()) {
                 // Each of these commands could hit a lot of data, combining
                 // them into one big transaction would not be a good idea.
                 $database->commit();

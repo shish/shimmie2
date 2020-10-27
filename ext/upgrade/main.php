@@ -186,7 +186,7 @@ class Upgrade extends Extension
 
         if ($this->get_version("db_version") < 21) {
             log_info("upgrade", "Setting predictable media values for known file types");
-            if ($database->transaction) {
+            if ($database->is_transaction_open()) {
                 // Each of these commands could hit a lot of data, combining
                 // them into one big transaction would not be a good idea.
                 $database->commit();
