@@ -42,8 +42,11 @@ class ViewImageTest extends ShimmiePHPUnitTestCase
         $this->assertEquals("/test/post/view/$image_id_2", $page->redirect);
 
         // When searching, we skip the middle
-        $page = $this->get_page("post/prev/$image_id_1?search=test");
-        $this->assertEquals("/test/post/view/$image_id_2", $page->redirect);
+        $page = $this->get_page("post/prev/$image_id_1", ["search"=>"test"]);
+        $this->assertEquals("/test/post/view/$image_id_3", $page->redirect);
+
+        $page = $this->get_page("post/next/$image_id_3", ["search"=>"test"]);
+        $this->assertEquals("/test/post/view/$image_id_1", $page->redirect);
 
         // Middle image: has next and prev
         $page = $this->get_page("post/next/$image_id_2");

@@ -101,16 +101,31 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         }
     }
 
-    protected static function get_page($page_name, $args=null): Page
+    private static function check_args(?array $args): array {
+        if(!$args) return [];
+        foreach ($args as $k=>$v) {
+            if (is_array($v)) {
+                $args[$k] = $v;
+            } else {
+                $args[$k] = (string)$v;
+            }
+        }
+        return $args;
+    }
+
+    protected static function request($page_name, $get_args=null, $post_args=null): Page
     {
         // use a fresh page
         global $page;
-        if (!$args) {
-            $args = [];
+        $get_args = self::check_args($get_args);
+        $post_args = self::check_args($post_args);
+
+        if (str_contains($page_name, "?")) {
+            throw new RuntimeException("Query string included in page name");
         }
-        $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($args));
-        $_GET = $args;
-        $_POST = [];
+        $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($get_args));
+        $_GET = $get_args;
+        $_POST = $post_args;
         $page = new Page();
         send_event(new PageRequestEvent($page_name));
         if ($page->mode == PageMode::REDIRECT) {
@@ -119,29 +134,14 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         return $page;
     }
 
+    protected static function get_page($page_name, $args=null): Page
+    {
+        return self::request($page_name, $args, null);
+    }
+
     protected static function post_page($page_name, $args=null): Page
     {
-        // use a fresh page
-        global $page;
-        if (!$args) {
-            $args = [];
-        }
-        $_SERVER['REQUEST_URI'] = make_link($page_name);
-        foreach ($args as $k=>$v) {
-            if (is_array($v)) {
-                $args[$k] = $v;
-            } else {
-                $args[$k] = (string)$v;
-            }
-        }
-        $_GET = [];
-        $_POST = $args;
-        $page = new Page();
-        send_event(new PageRequestEvent($page_name));
-        if ($page->mode == PageMode::REDIRECT) {
-            $page->code = 302;
-        }
-        return $page;
+        return self::request($page_name, null, $args);
     }
 
     // page things
