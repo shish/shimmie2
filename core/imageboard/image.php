@@ -357,8 +357,9 @@ class Image
 			');
         } else {
             $tags[] = 'id'. $gtlt . $this->id;
+            $tags[] = 'order:id_'. strtolower($dir);
             $querylet = Image::build_search_querylet($tags);
-            $querylet->append_sql(' ORDER BY images.id '.$dir.' LIMIT 1');
+            $querylet->append_sql(' LIMIT 1');
             $row = $database->get_row($querylet->sql, $querylet->variables);
         }
 
