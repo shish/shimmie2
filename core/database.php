@@ -34,14 +34,6 @@ class Database
     private $engine = null;
 
     /**
-     * A boolean flag to track if we already have an active transaction.
-     * (ie: True if beginTransaction() already called)
-     *
-     * @var bool
-     */
-    public $transaction = false;
-
-    /**
      * How many queries this DB object has run
      */
     public $query_count = 0;
@@ -53,13 +45,9 @@ class Database
 
     private function connect_db(): void
     {
-        $this->db = new PDO($this->dsn, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        ]);
-
+        $this->db = new PDO($this->dsn);
         $this->connect_engine();
         $this->engine->init($this->db);
-
         $this->begin_transaction();
     }
 
@@ -87,21 +75,19 @@ class Database
 
     public function begin_transaction(): void
     {
-        if ($this->transaction === false) {
+        if ($this->is_transaction_open() === false) {
             $this->db->beginTransaction();
-            $this->transaction = true;
         }
     }
 
     public function is_transaction_open(): bool
     {
-        return !is_null($this->db) && $this->transaction === true;
+        return !is_null($this->db) && $this->db->inTransaction();
     }
 
     public function commit(): bool
     {
         if ($this->is_transaction_open()) {
-            $this->transaction = false;
             return $this->db->commit();
         } else {
             throw new SCoreException("Unable to call commit() as there is no transaction currently open.");
@@ -111,7 +97,6 @@ class Database
     public function rollback(): bool
     {
         if ($this->is_transaction_open()) {
-            $this->transaction = false;
             return $this->db->rollback();
         } else {
             throw new SCoreException("Unable to call rollback() as there is no transaction currently open.");
