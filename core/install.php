@@ -255,7 +255,7 @@ function create_tables(Database $db)
 			width INTEGER NOT NULL,
 			height INTEGER NOT NULL,
 			posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+			locked BOOLEAN NOT NULL DEFAULT FALSE,
 			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 		");
         $db->execute("CREATE INDEX images_owner_id_idx ON images(owner_id)", []);

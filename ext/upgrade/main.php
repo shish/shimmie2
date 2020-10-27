@@ -32,9 +32,9 @@ class Upgrade extends Extension
         // now done again as v9 with PDO
 
         if ($this->get_version("db_version") < 8) {
-            $database->execute($database->scoreql_to_sql(
-                "ALTER TABLE images ADD COLUMN locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
-            ));
+            $database->execute(
+                "ALTER TABLE images ADD COLUMN locked BOOLEAN NOT NULL DEFAULT FALSE"
+            );
 
             $this->set_version("db_version", 8);
         }

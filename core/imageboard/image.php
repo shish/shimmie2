@@ -659,16 +659,12 @@ class Image
         return $this->locked;
     }
 
-    public function set_locked(bool $tf): void
+    public function set_locked(bool $locked): void
     {
         global $database;
-        $ln = $tf ? "Y" : "N";
-        $sln = $database->scoreql_to_sql('SCORE_BOOL_'.$ln);
-        $sln = str_replace("'", "", $sln);
-        $sln = str_replace('"', "", $sln);
-        if (bool_escape($sln) !== $this->locked) {
-            $database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn"=>$sln, "id"=>$this->id]);
-            log_info("core_image", "Setting Image #{$this->id} lock to: $ln");
+        if ($locked !== $this->locked) {
+            $database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn"=>$locked, "id"=>$this->id]);
+            log_info("core_image", "Setting Image #{$this->id} lock to: $locked");
         }
     }
 
