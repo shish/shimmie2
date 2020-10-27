@@ -26,7 +26,7 @@ class TagEditInfo extends ExtensionInfo
    <ul>
      <li>Numeric Score
        <ul>
-         <li>vote=(up, down, remove) -- vote, or remove your vote on an image
+         <li>vote=(up, down, remove) -- vote, or remove your vote on a post
        </ul>
      <li>Pools
        <ul>

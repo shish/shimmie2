@@ -32,7 +32,7 @@ class Trash extends Extension
             } elseif (isset($_POST['image_id'])) {
                 $image_id = $_POST['image_id'];
             } else {
-                throw new SCoreException("Can not restore image: No valid Image ID given.");
+                throw new SCoreException("Can not restore post: No valid Post ID given.");
             }
 
             self::set_trash($image_id, false);

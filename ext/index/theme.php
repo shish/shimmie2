@@ -171,10 +171,10 @@ and of course start organising your images :-)
                 $page->add_html_header('<meta name="robots" content="noindex, nofollow">');
             }
             $query = url_escape(Tag::caret(Tag::implode($this->search_terms)));
-            $page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
+            $page->add_block(new Block("Posts", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
             $this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, true);
         } else {
-            $page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
+            $page->add_block(new Block("Posts", $this->build_table($images, null), "main", 10, "image-list"));
             $this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages, true);
         }
     }
@@ -272,7 +272,7 @@ and of course start organising your images :-)
 
         <div class="command_example">
         <pre>hash=0D3512CAA964B2BA5D7851AF5951F33B</pre>
-        <p>Returns image with an MD5 hash 0D3512CAA964B2BA5D7851AF5951F33B.</p>
+        <p>Returns post with an MD5 hash 0D3512CAA964B2BA5D7851AF5951F33B.</p>
         </div>
 
         <hr/>

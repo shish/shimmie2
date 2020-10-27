@@ -20,7 +20,7 @@ class ViewImageTheme extends Themelet
     public function display_page(Image $image, $editor_parts)
     {
         global $page;
-        $page->set_title("Image {$image->id}: ".$image->get_tag_list());
+        $page->set_title("Post {$image->id}: ".$image->get_tag_list());
         $page->set_heading(html_escape($image->get_tag_list()));
         $page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 20));
@@ -34,7 +34,7 @@ class ViewImageTheme extends Themelet
     public function display_admin_block(Page $page, $parts)
     {
         if (count($parts) > 0) {
-            $page->add_block(new Block("Image Controls", join("<br>", $parts), "left", 50));
+            $page->add_block(new Block("Post Controls", join("<br>", $parts), "left", 50));
         }
     }
 
@@ -77,7 +77,7 @@ class ViewImageTheme extends Themelet
         global $user;
 
         if (count($editor_parts) == 0) {
-            return ($image->is_locked() ? "<br>[Image Locked]" : "");
+            return ($image->is_locked() ? "<br>[Post Locked]" : "");
         }
 
         $html = make_form(make_link("post/set"))."

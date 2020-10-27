@@ -9,8 +9,8 @@ class RandomListInfo extends ExtensionInfo
     public $url = "http://www.drudexsoftware.com";
     public $authors = ["Drudex Software"=>"support@drudexsoftware.com"];
     public $license = self::LICENSE_GPLV2;
-    public $description = "Allows displaying a page with random images";
+    public $description = "Allows displaying a page with random posts";
     public $documentation =
-"Random image list can be accessed through www.yoursite.com/random
+"Random post list can be accessed through www.yoursite.com/random
 It is recommended that you create a link to this page so users know it exists.";
 }

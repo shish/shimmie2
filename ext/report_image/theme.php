@@ -40,15 +40,15 @@ class ReportImageTheme extends Themelet
         $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH);
         $html = "
 			<table id='reportedimage' class='zebra'>
-				<thead><td width='$thumb_width'>Image</td><td>Reason</td><td width='128'>Action</td></thead>
+				<thead><td width='$thumb_width'>Post</td><td>Reason</td><td width='128'>Action</td></thead>
 				$h_reportedimages
 			</table>
 		";
 
-        $page->set_title("Reported Images");
-        $page->set_heading("Reported Images");
+        $page->set_title("Reported Posts");
+        $page->set_heading("Reported Posts");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Reported Images", $html));
+        $page->add_block(new Block("Reported Posts", $html));
     }
 
     /**
@@ -84,7 +84,7 @@ class ReportImageTheme extends Themelet
 				<input type='submit' value='Report'>
 			</form>
 		";
-        $page->add_block(new Block("Report Image", $html, "left"));
+        $page->add_block(new Block("Report Post", $html, "left"));
     }
 
     public function get_nuller(User $duser)

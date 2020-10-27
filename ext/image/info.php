@@ -5,7 +5,7 @@ class ImageIOInfo extends ExtensionInfo
     public const KEY = "image";
 
     public $key = self::KEY;
-    public $name = "Image Manager";
+    public $name = "Post Manager";
     public $url = self::SHIMMIE_URL;
     public $authors = [self::SHISH_NAME=> self::SHISH_EMAIL, "jgen"=>"jgen.tech@gmail.com"];
     public $license = self::LICENSE_GPLV2;

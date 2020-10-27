@@ -36,7 +36,7 @@ class BulkImportExport extends DataHandlerExtension
                         $image = Image::by_hash($item->hash);
                         if ($image!=null) {
                             $skipped++;
-                            log_info(BulkImportExportInfo::KEY, "Image $item->hash already present, skipping");
+                            log_info(BulkImportExportInfo::KEY, "Post $item->hash already present, skipping");
                             $database->commit();
                             continue;
                         }

@@ -27,19 +27,19 @@ class ArtistsTheme extends Themelet
 						<input type='submit' name='edit' id='edit' value='New Artist'/>
 					</form>";
         }
-        
+
         if ($mode == "editor") {
             $html = "<form method='post' action='".make_link("artist/new_artist")."'>
 						".$user->get_auth_html()."
 						<input type='submit' name='edit' value='New Artist'/>
 					</form>
-					
+
 					<form method='post' action='".make_link("artist/edit_artist")."'>
 						".$user->get_auth_html()."
 						<input type='submit' name='edit' value='Edit Artist'/>
 						<input type='hidden' name='artist_id' value='".$artistID."'>
 					</form>";
-                    
+
             if ($is_admin) {
                 $html .= "<form method='post' action='".make_link("artist/nuke_artist")."'>
 							".$user->get_auth_html()."
@@ -47,19 +47,19 @@ class ArtistsTheme extends Themelet
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>";
             }
-            
+
             $html .= "<form method='post' action='".make_link("artist/add_alias")."'>
 							".$user->get_auth_html()."
 							<input type='submit' name='edit' value='Add Alias'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>
-						
+
 						<form method='post' action='".make_link("artist/add_member")."'>
 							".$user->get_auth_html()."
 							<input type='submit' name='edit' value='Add Member'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>
-						
+
 						<form method='post' action='".make_link("artist/add_url")."'>
 							".$user->get_auth_html()."
 							<input type='submit' name='edit' value='Add Url'/>
@@ -131,7 +131,7 @@ class ArtistsTheme extends Themelet
         global $page;
         $page->add_block(new Block("Edit artist", $html, "main", 10));
     }
-    
+
     public function new_artist_composer()
     {
         global $page, $user;
@@ -152,7 +152,7 @@ class ArtistsTheme extends Themelet
         $page->set_heading("Artists");
         $page->add_block(new Block("Artists", $html, "main", 10));
     }
-    
+
     public function list_artists($artists, $pageNumber, $totalPages)
     {
         global $user, $page;
@@ -167,7 +167,7 @@ class ArtistsTheme extends Themelet
         if (!$user->is_anonymous()) {
             $html .= "<th colspan='2'>Action</th>";
         } // space for edit link
-            
+
         $html .= "</tr></thead>";
 
         $deletionLinkActionArray = [
@@ -244,7 +244,7 @@ class ArtistsTheme extends Themelet
 										   <input type="hidden" name="artistID" value='.$artistID.' /></td></tr>
 					<tr><td colspan="2"><input type="submit" value="Submit" /></td></tr>
 				</table>
-			</form>		
+			</form>
 		';
 
         global $page;
@@ -354,7 +354,7 @@ class ArtistsTheme extends Themelet
 						<tr>
 							<th></th>
 							<th></th>";
-            
+
         if ($userIsLogged) {
             $html .= "<th></th>";
         }
@@ -402,13 +402,13 @@ class ArtistsTheme extends Themelet
         $artist_images = "";
         foreach ($images as $image) {
             $thumb_html = $this->build_thumb_html($image);
-                
+
             $artist_images .= '<span class="thumb">'.
                 '<a href="$image_link">'.$thumb_html.'</a>'.
                 '</span>';
         }
-            
-        $page->add_block(new Block("Artist Images", $artist_images, "main", 20));
+
+        $page->add_block(new Block("Artist Posts", $artist_images, "main", 20));
     }
 
     private function render_aliases(array $aliases, bool $userIsLogged, bool $userIsAdmin): string
@@ -548,11 +548,11 @@ class ArtistsTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images with a particular artist.</p>
+        return '<p>Search for posts with a particular artist.</p>
         <div class="command_example">
         <pre>artist=leonardo</pre>
-        <p>Returns images with the artist "leonardo".</p>
-        </div> 
+        <p>Returns posts with the artist "leonardo".</p>
+        </div>
         ';
     }
 }

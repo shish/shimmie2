@@ -194,7 +194,7 @@ class Upload extends Extension
                 $this->theme->display_permission_denied();
             } else {
                 if ($this->is_full) {
-                    throw new UploadException("Can not replace Image: disk nearly full");
+                    throw new UploadException("Can not replace Post: disk nearly full");
                 }
 
                 // Try to get the image ID
@@ -203,12 +203,12 @@ class Upload extends Extension
                 } elseif (isset($_POST['image_id'])) {
                     $image_id = int_escape($_POST['image_id']);
                 } else {
-                    throw new UploadException("Can not replace Image: No valid Image ID given.");
+                    throw new UploadException("Can not replace Post: No valid Post ID given.");
                 }
 
                 $image_old = Image::by_id($image_id);
                 if (is_null($image_old)) {
-                    throw new UploadException("Can not replace Image: No image with ID $image_id");
+                    throw new UploadException("Can not replace Post: No post with ID $image_id");
                 }
 
                 $source = $_POST['source'] ?? null;
@@ -370,7 +370,7 @@ class Upload extends Extension
                         if ($event->image_id == -1) {
                             throw new UploadException("MIME type not supported: " . $metadata['mime']);
                         }
-                        $page->add_http_header("X-Shimmie-Image-ID: " . $event->image_id);
+                        $page->add_http_header("X-Shimmie-Post-ID: " . $event->image_id);
                     } catch (UploadException $ex) {
                         $this->theme->display_upload_error(
                             $page,

@@ -22,7 +22,7 @@ class RandomImage extends Extension
             $image = Image::by_random($search_terms);
             if (!$image) {
                 throw new SCoreException(
-                    "Couldn't find any images randomly",
+                    "Couldn't find any posts randomly",
                     Tag::implode($search_terms)
                 );
             }
@@ -43,7 +43,7 @@ class RandomImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Random Image");
+        $sb = new SetupBlock("Random Post");
         $sb->add_bool_option("show_random_block", "Show Random Block: ");
         $event->panel->add_block($sb);
     }
@@ -62,7 +62,7 @@ class RandomImage extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         if ($event->parent=="posts") {
-            $event->add_nav_link("posts_random", new Link('random_image/view'), "Random Image");
+            $event->add_nav_link("posts_random", new Link('random_image/view'), "Random Post");
         }
     }
 }

@@ -17,7 +17,7 @@ class ImageIO extends Extension
 
     const ON_DELETE_OPTIONS = [
         'Return to post list'=>ImageConfig::ON_DELETE_LIST,
-        'Go to next image'=>ImageConfig::ON_DELETE_NEXT
+        'Go to next post'=>ImageConfig::ON_DELETE_NEXT
     ];
 
     const EXIF_READ_FUNCTION = "exif_read_data";
@@ -100,7 +100,7 @@ class ImageIO extends Extension
                     $page->set_redirect(make_link('upload/replace/'.$image->id));
                 } else {
                     /* Invalid image ID */
-                    throw new ImageReplaceException("Image to replace does not exist.");
+                    throw new ImageReplaceException("Post to replace does not exist.");
                 }
             }
         } elseif ($event->page_matches("image")) {
@@ -158,7 +158,7 @@ class ImageIO extends Extension
                     $event->image = Image::by_id($existing->id);
                     return;
                 } else {
-                    $error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
+                    $error = "Post <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
                         "already has hash {$image->hash}:<p>".$this->theme->build_thumb_html($existing);
                     throw new ImageAdditionException($error);
                 }
@@ -205,12 +205,12 @@ class ImageIO extends Extension
             $existing = Image::by_id($id);
 
             if (is_null($existing)) {
-                throw new ImageReplaceException("Image to replace does not exist!");
+                throw new ImageReplaceException("Post to replace does not exist!");
             }
 
             $duplicate = Image::by_hash($image->hash);
             if (!is_null($duplicate) && $duplicate->id!=$id) {
-                $error = "Image <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
+                $error = "Post <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
                     "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
                 throw new ImageReplaceException($error);
             }
@@ -249,21 +249,21 @@ class ImageIO extends Extension
         $i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
         $images_link = make_link("post/list/user=$u_name/1");
-        $event->add_stats("<a href='$images_link'>Images uploaded</a>: $i_image_count, $h_image_rate per day");
+        $event->add_stats("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         global $config;
 
-        $sb = new SetupBlock("Image Options");
+        $sb = new SetupBlock("Post Options");
         $sb->start_table();
         $sb->position = 30;
         // advanced only
         //$sb->add_text_option(ImageConfig::ILINK, "Image link: ");
         //$sb->add_text_option(ImageConfig::TLINK, "<br>Thumbnail link: ");
-        $sb->add_text_option(ImageConfig::TIP, "Image tooltip", true);
-        $sb->add_text_option(ImageConfig::INFO, "Image info", true);
+        $sb->add_text_option(ImageConfig::TIP, "Post tooltip", true);
+        $sb->add_text_option(ImageConfig::INFO, "Post info", true);
         $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "Upload collision handler", true);
         $sb->add_choice_option(ImageConfig::ON_DELETE, self::ON_DELETE_OPTIONS, "On Delete", true);
         if (function_exists(self::EXIF_READ_FUNCTION)) {
@@ -369,7 +369,7 @@ class ImageIO extends Extension
             $page->set_heading("Not Found");
             $page->add_block(new Block("Navigation", "<a href='" . make_link() . "'>Index</a>", "left", 0));
             $page->add_block(new Block(
-                "Image not in database",
+                "Post not in database",
                 "The requested image was not found in the database"
             ));
         }

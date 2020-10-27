@@ -201,11 +201,11 @@ class TranscodeImage extends Extension
             } elseif (isset($_POST['image_id'])) {
                 $image_id =  int_escape($_POST['image_id']);
             } else {
-                throw new ImageTranscodeException("Can not resize Image: No valid Image ID given.");
+                throw new ImageTranscodeException("Can not resize Image: No valid Post ID given.");
             }
             $image_obj = Image::by_id($image_id);
             if (is_null($image_obj)) {
-                $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
+                $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
                 if (isset($_POST['transcode_mime'])) {
                     try {

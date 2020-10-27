@@ -9,7 +9,7 @@ class FavoritesTest extends ShimmiePHPUnitTestCase
 
         # No favourites
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: test");
+        $this->assert_title("Post $image_id: test");
         $this->assert_no_text("Favorited By");
 
         # Add a favourite
@@ -17,7 +17,7 @@ class FavoritesTest extends ShimmiePHPUnitTestCase
 
         # Favourite shown on page
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: test");
+        $this->assert_title("Post $image_id: test");
         $this->assert_text("Favorited By");
 
         # Favourite shown on index
@@ -26,14 +26,14 @@ class FavoritesTest extends ShimmiePHPUnitTestCase
 
         # Favourite shown on user page
         $this->get_page("user/test");
-        $this->assert_text("Images favorited</a>: 1");
+        $this->assert_text("Posts favorited</a>: 1");
 
         # Delete a favourite
         send_event(new FavoriteSetEvent($image_id, $user, false));
 
         # No favourites
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: test");
+        $this->assert_title("Post $image_id: test");
         $this->assert_no_text("Favorited By");
     }
 }

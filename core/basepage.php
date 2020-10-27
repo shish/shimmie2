@@ -560,7 +560,7 @@ EOD;
         $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
 
         return "
-			Images &copy; their respective owners,
+			Media &copy; their respective owners,
 			<a href=\"https://code.shishnet.org/shimmie2/\">Shimmie</a> &copy;
 			<a href=\"https://www.shishnet.org/\">Shish</a> &amp;
 			<a href=\"https://github.com/shish/shimmie2/graphs/contributors\">The Team</a>

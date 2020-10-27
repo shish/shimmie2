@@ -56,7 +56,7 @@ class UploadTheme extends Themelet
 				<tr>
 					<td colspan='2'>Files</td>
 					<td colspan='2'>URLs</td>
-					<td colspan='2'>Image-Specific Tags</td>
+					<td colspan='2'>Post-Specific Tags</td>
 				</tr>
 			";
 
@@ -73,7 +73,7 @@ class UploadTheme extends Themelet
             $upload_list .= "
 				<tr>
 					<td colspan='4'>Files</td>
-					<td colspan='2'>Image-Specific Tags</td>
+					<td colspan='2'>Post-Specific Tags</td>
 				</tr>
 			";
 
@@ -122,7 +122,7 @@ class UploadTheme extends Themelet
 			}
 		)();';
         $html .= '<a href=\''.$js.'\'>Upload to '.$title.'</a>';
-        $html .= ' (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
+        $html .= ' (Drag &amp; drop onto your bookmarks toolbar, then click when looking at a post)';
 
         // Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
         $supported_ext = join(" ", DataHandlerExtension::get_all_supported_exts());
@@ -135,7 +135,7 @@ class UploadTheme extends Themelet
 			var maxsize=&quot;'.$max_kb.'&quot;;
 			var CA=0;
 			void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(get_base_href())."/ext/upload/bookmarklet.js".'&quot;)
-		">'. $title . '</a> (Click when looking at an image page. Works on sites running Shimmie / Danbooru / Gelbooru. (This also grabs the tags / rating / source!))';
+		">'. $title . '</a> (Click when looking at a post page. Works on sites running Shimmie / Danbooru / Gelbooru. (This also grabs the tags / rating / source!))';
 
         return $html;
     }
@@ -171,7 +171,7 @@ class UploadTheme extends Themelet
         $thumbnail = $this->build_thumb_html($image);
 
         $html = "
-				<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"
+				<p>Replacing Post ID ".$image_id."<br>Please note: You will have to refresh the post page, or empty your browser cache.</p>"
                 .$thumbnail."<br>"
                 .make_form(make_link("upload/replace/".$image_id), "POST", $multipart=true)."
 				<input type='hidden' name='image_id' value='$image_id'>
@@ -184,10 +184,10 @@ class UploadTheme extends Themelet
 			<small>(Max file size is $max_kb)</small>
 		";
 
-        $page->set_title("Replace Image");
-        $page->set_heading("Replace Image");
+        $page->set_title("Replace Post");
+        $page->set_heading("Replace Post");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Upload Replacement Image", $html, "main", 20));
+        $page->add_block(new Block("Upload Replacement Post", $html, "main", 20));
     }
 
     public function display_upload_status(Page $page, bool $ok)

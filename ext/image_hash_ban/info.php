@@ -5,7 +5,7 @@ class ImageBanInfo extends ExtensionInfo
     public const KEY = "image_hash_ban";
 
     public $key = self::KEY;
-    public $name = "Image Hash Ban";
+    public $name = "Post Hash Ban";
     public $url = "http://atravelinggeek.com/";
     public $authors = ["ATravelingGeek"=>"atg@atravelinggeek.com"];
     public $license = self::LICENSE_GPLV2;

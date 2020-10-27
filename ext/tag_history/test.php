@@ -9,7 +9,7 @@ class TagHistoryTest extends ShimmiePHPUnitTestCase
 
         // Original
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: old_tag");
+        $this->assert_title("Post $image_id: old_tag");
 
         // Modified
         send_event(new TagSetEvent($image, ["new_tag"]));

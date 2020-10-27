@@ -28,14 +28,14 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
 
         // Validate problem
         $page = $this->get_page("post/view/$image_id_1");
-        $this->assertEquals("Image $image_id_1: TeStCase$ts", $page->title);
+        $this->assertEquals("Post $image_id_1: TeStCase$ts", $page->title);
 
         // Fix
         send_event(new AdminActionEvent('lowercase_all_tags'));
 
         // Validate fix
         $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Image $image_id_1: testcase$ts");
+        $this->assert_title("Post $image_id_1: testcase$ts");
 
         // Change
         $_POST["tag"] = "TestCase$ts";
@@ -43,7 +43,7 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
 
         // Validate change
         $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Image $image_id_1: TestCase$ts");
+        $this->assert_title("Post $image_id_1: TestCase$ts");
     }
 
     # FIXME: make sure the admin tools actually work

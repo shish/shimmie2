@@ -13,7 +13,7 @@ class ViewImageTest extends ShimmiePHPUnitTestCase
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
 
         $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Image $image_id_1: test");
+        $this->assert_title("Post $image_id_1: test");
     }
 
     public function testViewInfo()
@@ -68,9 +68,9 @@ class ViewImageTest extends ShimmiePHPUnitTestCase
         $idp1 = $image_id_1 + 1;
 
         $this->get_page("post/view/$idp1");
-        $this->assert_title('Image not found');
+        $this->assert_title('Post not found');
 
         $this->get_page('post/view/-1');
-        $this->assert_title('Image not found');
+        $this->assert_title('Post not found');
     }
 }

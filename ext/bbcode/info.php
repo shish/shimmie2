@@ -27,6 +27,6 @@ class BBCodeInfo extends ExtensionInfo
      <li>[[wiki article|with some text]]
      <li>[quote]text[/quote]
      <li>[quote=Username]text[/quote]
-     <li>&gt;&gt;123 (link to image #123)
+     <li>&gt;&gt;123 (link to post #123)
    </ul>";
 }

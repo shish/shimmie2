@@ -126,12 +126,12 @@ class ResizeImage extends Extension
                 $image_id = isset($_POST['image_id']) ? int_escape($_POST['image_id']) : null;
             }
             if (empty($image_id)) {
-                throw new ImageResizeException("Can not resize Image: No valid Image ID given.");
+                throw new ImageResizeException("Can not resize Image: No valid Post ID given.");
             }
 
             $image = Image::by_id($image_id);
             if (is_null($image)) {
-                $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
+                $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
 
                 /* Check if options were given to resize an image. */

@@ -101,14 +101,14 @@ class TagCategoriesTheme extends Themelet
 
     public function get_help_html()
     {
-        return '<p>Search for images containing a certain number of tags with the specified tag category.</p>
+        return '<p>Search for posts containing a certain number of tags with the specified tag category.</p>
         <div class="command_example">
         <pre>persontags=1</pre>
-        <p>Returns images with exactly 1 tag with the tag category "person".</p>
+        <p>Returns posts with exactly 1 tag with the tag category "person".</p>
         </div>
         <div class="command_example">
         <pre>cattags>0</pre>
-        <p>Returns images with 1 or more tags with the tag category "cat". </p>
+        <p>Returns posts with 1 or more tags with the tag category "cat". </p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <p>Category name is not case sensitive, category must exist for search to work.</p>

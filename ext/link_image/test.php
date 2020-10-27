@@ -11,6 +11,6 @@ class LinkImageTest extends ShimmiePHPUnitTestCase
         preg_match("#value='https?://.*/(post/view/[0-9]+)'#", $this->page_to_text(), $matches);
         $this->assertTrue(count($matches) > 0);
         $page = $this->get_page($matches[1]);
-        $this->assertEquals("Image $image_id: pie", $page->title);
+        $this->assertEquals("Post $image_id: pie", $page->title);
     }
 }

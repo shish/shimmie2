@@ -39,7 +39,7 @@ class Rule34 extends Extension
         $html = (string)TR(
             TH("Links"),
             TD(
-                A(["href"=>$url0], "Image Only"),
+                A(["href"=>$url0], "File Only"),
                 " (",
                 A(["href"=>$url1], "Backup Server"),
                 ")"

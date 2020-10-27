@@ -147,7 +147,7 @@ class NotATag extends Extension
                         "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",
                         ["tag"=>$input['d_tag']]
                     );
-                    $page->flash("Image ban removed");
+                    $page->flash("Post ban removed");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(referer_or(make_link()));
                 } elseif ($event->get_arg(0) == "list") {

@@ -320,20 +320,20 @@ class UserPageTheme extends Themelet
     public function get_help_html()
     {
         global $user;
-        $output = emptyHTML(P("Search for images posted by particular individuals."));
+        $output = emptyHTML(P("Search for posts posted by particular individuals."));
         $output->appendChild(SHM_COMMAND_EXAMPLE(
             "poster=username",
-            'Returns images posted by "username".'
+            'Returns posts posted by "username".'
         ));
         $output->appendChild(SHM_COMMAND_EXAMPLE(
             "poster_id=123",
-            'Returns images posted by user 123.'
+            'Returns posts posted by user 123.'
         ));
 
         if ($user->can(Permissions::VIEW_IP)) {
             $output->appendChild(SHM_COMMAND_EXAMPLE(
                 "poster_ip=127.0.0.1",
-                "Returns images posted from IP 127.0.0.1."
+                "Returns posts posted from IP 127.0.0.1."
             ));
         }
         return $output;

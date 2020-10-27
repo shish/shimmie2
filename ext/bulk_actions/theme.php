@@ -8,7 +8,7 @@ class BulkActionsTheme extends Themelet
 				<input id='bulk_selector_activate' type='button' onclick='activate_bulk_selector();' value='Activate (M)anual Select' accesskey='m'/>
 				<div id='bulk_selector_controls' style='display: none;'>
 					<input id='bulk_selector_deactivate' type='button' onclick='deactivate_bulk_selector();' value='Deactivate (M)anual Select' accesskey='m'/>
-					Click on images to mark them.
+					Click on posts to mark them.
 					<br />
 					<table><tr><td>
 					<input id='bulk_selector_select_all' type='button'

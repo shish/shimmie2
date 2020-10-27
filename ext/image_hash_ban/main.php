@@ -78,7 +78,7 @@ class ImageBan extends Extension
         $row = $database->get_row("SELECT * FROM image_bans WHERE hash = :hash", ["hash"=>$event->hash]);
         if ($row) {
             log_info("image_hash_ban", "Attempted to upload a blocked image ({$event->hash} - {$row['reason']})");
-            throw new UploadException("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
+            throw new UploadException("Post ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
         }
     }
 
@@ -97,11 +97,11 @@ class ImageBan extends Extension
 
                     if ($hash) {
                         send_event(new AddImageHashBanEvent($hash, $reason));
-                        $page->flash("Image ban added");
+                        $page->flash("Post ban added");
 
                         if ($image) {
                             send_event(new ImageDeletionEvent($image));
-                            $page->flash("Image deleted");
+                            $page->flash("Post deleted");
                         }
 
                         $page->set_mode(PageMode::REDIRECT);
@@ -111,7 +111,7 @@ class ImageBan extends Extension
                     $user->ensure_authed();
                     $input = validate_input(["d_hash"=>"string"]);
                     send_event(new RemoveImageHashBanEvent($input['d_hash']));
-                    $page->flash("Image ban removed");
+                    $page->flash("Post ban removed");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(referer_or(make_link()));
                 } elseif ($event->get_arg(0) == "list") {
@@ -129,7 +129,7 @@ class ImageBan extends Extension
         global $user;
         if ($event->parent==="system") {
             if ($user->can(Permissions::BAN_IMAGE)) {
-                $event->add_nav_link("image_bans", new Link('image_hash_ban/list/1'), "Image Bans", NavLink::is_active(["image_hash_ban"]));
+                $event->add_nav_link("image_bans", new Link('image_hash_ban/list/1'), "Post Bans", NavLink::is_active(["image_hash_ban"]));
             }
         }
     }
@@ -138,7 +138,7 @@ class ImageBan extends Extension
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
-            $event->add_link("Image Bans", make_link("image_hash_ban/list/1"));
+            $event->add_link("Post Bans", make_link("image_hash_ban/list/1"));
         }
     }
 

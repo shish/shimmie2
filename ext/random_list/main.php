@@ -35,7 +35,7 @@ class RandomList extends Extension
             $images_per_page = $config->get_int("random_images_list_count", 12);
             $random_images = [];
 
-            // generate random images
+            // generate random posts
             for ($i = 0; $i < $images_per_page; $i++) {
                 $random_image = Image::by_random($search_terms);
                 if (!$random_image) {
@@ -57,12 +57,12 @@ class RandomList extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Random Images List");
+        $sb = new SetupBlock("Random Posts List");
 
         // custom headers
         $sb->add_int_option(
             "random_images_list_count",
-            "Amount of Random images to display "
+            "Amount of Random posts to display "
         );
 
         $event->panel->add_block($sb);

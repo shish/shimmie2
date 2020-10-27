@@ -10,7 +10,7 @@ class LinkImageTheme extends Themelet
 
 
         $page->add_block(new Block(
-            "Link to Image",
+            "Link to Post",
             "
 			<table><tr>
 
@@ -20,7 +20,7 @@ class LinkImageTheme extends Themelet
 				".
                     $this->link_code("Link", $this->url($post_link, $text_link, "ubb"), "ubb_text-link").
                     $this->link_code("Thumb", $this->url($post_link, $this->img($thumb_src, "ubb"), "ubb"), "ubb_thumb-link").
-                    $this->link_code("Image", $this->img($image_src, "ubb"), "ubb_full-img").
+                    $this->link_code("File", $this->img($image_src, "ubb"), "ubb_full-img").
                 "
 				</table>
 			</fieldset></td>
@@ -31,7 +31,7 @@ class LinkImageTheme extends Themelet
 				".
                     $this->link_code("Link", $this->url($post_link, $text_link, "html"), "html_text-link").
                     $this->link_code("Thumb", $this->url($post_link, $this->img($thumb_src, "html"), "html"), "html_thumb-link").
-                    $this->link_code("Image", $this->img($image_src, "html"), "html_full-image").
+                    $this->link_code("File", $this->img($image_src, "html"), "html_full-image").
                 "
 				</table>
 			</fieldset></td>
@@ -42,7 +42,7 @@ class LinkImageTheme extends Themelet
 				".
                     $this->link_code("Link", $post_link, "text_post-link").
                     $this->link_code("Thumb", $thumb_src, "text_thumb-url").
-                    $this->link_code("Image", $image_src, "text_image-src").
+                    $this->link_code("File", $image_src, "text_image-src").
                 "
 				</table>
 			</fieldset></td>

@@ -9,12 +9,12 @@ class TagEditTest extends ShimmiePHPUnitTestCase
 
         // Original
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: pbx");
+        $this->assert_title("Post $image_id: pbx");
 
         // Modified
         send_event(new TagSetEvent($image, ["new"]));
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: new");
+        $this->assert_title("Post $image_id: new");
     }
 
     public function testInvalidChange()
@@ -36,7 +36,7 @@ class TagEditTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", str_repeat("a", 500));
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Image $image_id: tagme");
+        $this->assert_title("Post $image_id: tagme");
     }
 
     public function testSourceEdit()

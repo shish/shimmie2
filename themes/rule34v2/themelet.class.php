@@ -27,7 +27,7 @@ class Themelet extends BaseThemelet
 
         $html = "<div class='shm-thumb thumb' data-ext=\"$h_ext\" data-tags=\"$h_tags\" data-post-id=\"$i_id\"><a class='shm-thumb-link' href='$h_view_link'>".
                '<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'" loading="lazy"></a>'.
-               '<br><a href="'.$h_image_link.'">Image Only</a>'.
+               '<br><a href="'.$h_image_link.'">File Only</a>'.
                "<span class='need-del'> - <a href='#' onclick='image_hash_ban($i_id); return false;'>Ban</a></span>".
                "</div>\n";
 

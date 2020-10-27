@@ -13,8 +13,8 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         //$this->assert_response(302);
-        $this->assert_no_text("Image too large");
-        $this->assert_no_text("Image too small");
+        $this->assert_no_text("Post too large");
+        $this->assert_no_text("Post too small");
         $this->assert_no_text("ratio");
     }
 
@@ -32,7 +32,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
             $this->assertTrue(false, "Invalid-size image was allowed");
         } catch (UploadException $e) {
-            $this->assertEquals("Image too small", $e->getMessage());
+            $this->assertEquals("Post too small", $e->getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
             $this->assertTrue(false, "Invalid-size image was allowed");
         } catch (UploadException $e) {
-            $this->assertEquals("Image too large", $e->getMessage());
+            $this->assertEquals("Post too large", $e->getMessage());
         }
     }
 
@@ -66,7 +66,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
             $this->assertTrue(false, "Invalid-size image was allowed");
         } catch (UploadException $e) {
-            $this->assertEquals("Image needs to be in one of these ratios: 16:9", $e->getMessage());
+            $this->assertEquals("Post needs to be in one of these ratios: 16:9", $e->getMessage());
         }
     }
 
