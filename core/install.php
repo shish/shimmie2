@@ -287,7 +287,9 @@ function create_tables(Database $db)
             "PDO Error:",
             "<p>An error occurred while trying to create the database tables necessary for Shimmie.</p>
 		    <p>Please check and ensure that the database configuration options are all correct.</p>
-		    <p>{$e->getMessage()}</p>",
+		    <p>{$e->getMessage()}</p>
+		    <!-- {$e->getTraceAsString()} -->
+		    ",
             3
         );
     }
