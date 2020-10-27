@@ -64,9 +64,6 @@ jobs:
     - name: Install PHP dependencies
       run: composer update && composer install --prefer-dist --no-progress
 
-    - name: Install shimmie
-      run: php index.php
-
     - name: Run test suite
       run: |
         if [[ "${{ matrix.database }}" == "pgsql" ]]; then
