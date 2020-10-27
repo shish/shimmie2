@@ -413,7 +413,7 @@ abstract class DataHandlerExtension extends Extension
 
         $image->filesize = $metadata['size'];
         $image->hash = $metadata['hash'];
-        $image->filename = ($pos = strpos($metadata['filename'], '?')) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
+        $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
 
         if (array_key_exists("extension", $metadata)) {
             $image->set_mime(MimeType::get_for_file($filename, $metadata["extension"]));
