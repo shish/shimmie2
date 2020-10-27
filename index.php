@@ -83,7 +83,7 @@ try {
         $page->display();
     }
 
-    if ($database->transaction===true) {
+    if ($database->is_transaction_open()) {
         $database->commit();
     }
 
@@ -92,7 +92,7 @@ try {
         fastcgi_finish_request();
     }
 } catch (Exception $e) {
-    if ($database && $database->transaction===true) {
+    if ($database && $database->is_transaction_open()) {
         $database->rollback();
     }
     _fatal_error($e);

@@ -281,14 +281,18 @@ function create_tables(Database $db)
         $db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", []);
 
         $db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
-        $db->commit();
+
+        // mysql auto-commits when creating a table, so the transaction
+        // is closed; other databases need to commit
+        if($db->is_transaction_open()) {
+            $db->commit();
+        }
     } catch (PDOException $e) {
         throw new InstallerException(
             "PDO Error:",
             "<p>An error occurred while trying to create the database tables necessary for Shimmie.</p>
 		    <p>Please check and ensure that the database configuration options are all correct.</p>
 		    <p>{$e->getMessage()}</p>
-		    <!-- {$e->getTraceAsString()} -->
 		    ",
             3
         );
