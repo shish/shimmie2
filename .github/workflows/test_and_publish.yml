@@ -25,7 +25,7 @@ jobs:
       with:
         path: |
           vendor
-        key: vendor-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+        key: vendor-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
 
     - name: Set up PHP
       uses: shivammathur/setup-php@master
