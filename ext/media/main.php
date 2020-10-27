@@ -248,7 +248,7 @@ class Media extends Extension
             if ($field==="unknown") {
                 $event->add_querylet(new Querylet("video IS NULL OR audio IS NULL OR image IS NULL"));
             } else {
-                $event->add_querylet(new Querylet($database->scoreql_to_sql("$field = SCORE_BOOL_Y")));
+                $event->add_querylet(new Querylet("$field = :true", ["true"=>true]));
             }
         }
     }
