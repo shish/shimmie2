@@ -214,6 +214,7 @@ function create_tables(Database $db)
             );
         }
 
+        $db->begin_transaction();
         $db->create_table("aliases", "
 			oldtag VARCHAR(128) NOT NULL,
 			newtag VARCHAR(128) NOT NULL,
