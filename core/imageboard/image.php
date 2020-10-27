@@ -459,7 +459,7 @@ class Image
                 "lossless" => $database->scoresql_value_prepare($this->lossless),
                 "video" => $database->scoresql_value_prepare($this->video),
                 "video_codec" => $this->video_codec,
-                "image" => $database->scoresql_value_prepare($this->image),
+                "image" => $this->image,
                 "audio" => $database->scoresql_value_prepare($this->audio),
                 "length" => $this->length
             ]

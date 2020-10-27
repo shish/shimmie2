@@ -918,9 +918,7 @@ class Media extends Extension
         }
 
         if ($this->get_version(MediaConfig::VERSION) < 2) {
-            $database->execute($database->scoreql_to_sql(
-                "ALTER TABLE images ADD COLUMN image SCORE_BOOL NULL"
-            ));
+            $database->execute("ALTER TABLE images ADD COLUMN image BOOLEAN NULL");
 
             switch ($database->get_driver_name()) {
                 case DatabaseDriver::PGSQL:
@@ -932,23 +930,23 @@ class Media extends Extension
                     break;
             }
 
-            $database->set_timeout(300000); // These updates can take a little bit
-
-            if ($database->transaction === true) {
-                $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
-            }
-            log_info("upgrade", "Setting predictable media values for known file types");
-            $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_N WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')"));
-            $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_Y WHERE ext IN ('jpg','jpeg','ico','cur','png')"));
-
             $this->set_version(MediaConfig::VERSION, 2);
-
-            $database->begin_transaction();
         }
 
         if ($this->get_version(MediaConfig::VERSION) < 3) {
             $database->execute("ALTER TABLE images ADD COLUMN video_codec varchar(512) NULL");
             $this->set_version(MediaConfig::VERSION, 3);
+        }
+
+        if ($this->get_version(MediaConfig::VERSION) < 4) {
+            $database->standardise_boolean("images", "image");
+            $this->set_version(MediaConfig::VERSION, 4);
+        }
+
+        if ($this->get_version(MediaConfig::VERSION) < 5) {
+            $database->execute("UPDATE images SET image = :f WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')", ["f"=>false]);
+            $database->execute("UPDATE images SET image = :t WHERE ext IN ('jpg','jpeg','ico','cur','png')", ["t"=>true]);
+            $this->set_version(MediaConfig::VERSION, 5);
         }
     }
 
