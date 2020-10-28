@@ -9,11 +9,74 @@ class UploadTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Upload");
     }
 
+    // Because $this->post_image() sends the event directly
+    public function testRawUpload()
+    {
+        global $database;
+
+        $this->log_in_as_user();
+        $_FILES = [
+            'data0' => [
+                'name' => ['puppy-hugs.jpg'],
+                'type' => ['image/jpeg'],
+                'tmp_name' => ['tests/bedroom_workshop.jpg'],
+                'error' => [0],
+                'size' => [271386],
+            ],
+            'data1' => [
+                'name' => ['cat-hugs-2.jpg', 'cat-hugs-3.jpg', 'cat-hugs.jpg'],
+                'type' => ['image/png', 'image/jpeg', 'image/svg'],
+                'tmp_name' => ['tests/favicon.png', 'tests/pbx_screenshot.jpg', 'tests/test.svg'],
+                'error' => [0, 0, 0],
+                'size' => [110361, 64021, 421410],
+            ],
+            'data2' => [
+                'name' => [''],
+                'type' => [''],
+                'tmp_name' => [''],
+                'error' => [4],
+                'size' => [0],
+            ]
+        ];
+        $page = $this->post_page("upload", ["tags0"=>"foo bar"]);
+        $this->assert_response(302);
+        $this->assertStringStartsWith("/test/post/list/uploaded_by=test/1", $page->redirect);
+
+        $this->assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
+    }
+
+    public function testRawReplace()
+    {
+        global $database;
+
+        $this->log_in_as_admin();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+
+        $_FILES = [
+            'data' => [
+                'name' => ['puppy-hugs.jpg'],
+                'type' => ['image/jpeg'],
+                'tmp_name' => ['tests/bedroom_workshop.jpg'],
+                'error' => [0],
+                'size' => [271386],
+            ]
+        ];
+
+        $page = $this->post_page("upload/replace", ["image_id"=>$image_id]);
+        $this->assert_response(302);
+        $this->assertEquals("/test/post/view/$image_id", $page->redirect);
+
+        $this->assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
+    }
+
     public function testUpload()
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         $this->assertGreaterThan(0, $image_id);
+
+        $this->get_page("post/view/$image_id");
+        $this->assert_title("Post $image_id: computer pbx screenshot");
     }
 
     public function testRejectDupe()

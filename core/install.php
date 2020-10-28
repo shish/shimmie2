@@ -284,7 +284,7 @@ function create_tables(Database $db)
 
         // mysql auto-commits when creating a table, so the transaction
         // is closed; other databases need to commit
-        if($db->is_transaction_open()) {
+        if ($db->is_transaction_open()) {
             $db->commit();
         }
     } catch (PDOException $e) {

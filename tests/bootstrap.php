@@ -101,8 +101,11 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         }
     }
 
-    private static function check_args(?array $args): array {
-        if(!$args) return [];
+    private static function check_args(?array $args): array
+    {
+        if (!$args) {
+            return [];
+        }
         foreach ($args as $k=>$v) {
             if (is_array($v)) {
                 $args[$k] = $v;

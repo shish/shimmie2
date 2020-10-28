@@ -2,6 +2,8 @@
 
 class UploadTheme extends Themelet
 {
+    protected $has_errors = false;
+
     public function display_block(Page $page)
     {
         $b = new Block("Upload", $this->build_upload_block(), "left", 20);
@@ -190,15 +192,26 @@ class UploadTheme extends Themelet
         $page->add_block(new Block("Upload Replacement Post", $html, "main", 20));
     }
 
-    public function display_upload_status(Page $page, bool $ok)
+    public function display_upload_status(Page $page, array $image_ids)
     {
-        if ($ok) {
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
-        } else {
+        global $user;
+
+        if ($this->has_errors) {
             $page->set_title("Upload Status");
             $page->set_heading("Upload Status");
             $page->add_block(new NavBlock());
+        } else {
+            if (count($image_ids) < 1) {
+                $page->set_title("No images uploaded");
+                $page->set_heading("No images uploaded");
+                $page->add_block(new NavBlock());
+            } elseif (count($image_ids) == 1) {
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("post/view/{$image_ids[0]}"));
+            } else {
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("post/list/uploaded_by={$user->name}/1"));
+            }
         }
     }
 
@@ -207,6 +220,7 @@ class UploadTheme extends Themelet
         // this message has intentional HTML in it...
         $message = str_contains($message, "already has hash") ? $message : html_escape($message);
         $page->add_block(new Block($title, $message));
+        $this->has_errors = true;
     }
 
     protected function build_upload_block(): string

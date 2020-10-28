@@ -66,7 +66,7 @@ class Update extends Extension
         $filename = "./data/update_{$commitSHA}.zip";
 
         log_info("update", "Attempting to download Shimmie commit:  ".$commitSHA);
-        if ($headers = transload($url, $filename)) {
+        if ($headers = fetch_url($url, $filename)) {
             if (($headers['Content-Type'] !== MimeType::ZIP) || ((int) $headers['Content-Length'] !== filesize($filename))) {
                 unlink("./data/update_{$commitSHA}.zip");
                 log_warning("update", "Download failed: not zip / not same size as remote file.");

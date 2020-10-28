@@ -252,7 +252,7 @@ function load_balance_url(string $tmpl, string $hash, int $n=0): string
     return $tmpl;
 }
 
-function transload(string $url, string $mfile): ?array
+function fetch_url(string $url, string $mfile): ?array
 {
     global $config;
 
@@ -269,8 +269,7 @@ function transload(string $url, string $mfile): ?array
 
         $response = curl_exec($ch);
         if ($response === false) {
-            log_warning("core-util", "Failed to transload $url");
-            throw new SCoreException("Failed to fetch $url");
+            return null;
         }
 
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
