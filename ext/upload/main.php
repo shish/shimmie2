@@ -332,7 +332,7 @@ class Upload extends Extension
 
         // blank file boxes cause empty uploads, no need for error message
         if (!empty($file['name'])) {
-            $size = sizeof($file['name']);
+            $size = count($file['name']);
             $limit = $config->get_int(UploadConfig::COUNT);
             try {
                 if ($size > $limit) {

@@ -152,7 +152,7 @@ class UploadTheme extends Themelet
         $upload_list = "
 			<tr>
 				<td>File</td>
-				<td><input name='data' type='file' accept='$accept'></td>
+				<td><input name='data[]' type='file' accept='$accept'></td>
 			</tr>
 		";
         if ($tl_enabled) {
