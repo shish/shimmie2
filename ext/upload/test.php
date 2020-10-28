@@ -40,7 +40,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
         ];
         $page = $this->post_page("upload", ["tags0"=>"foo bar"]);
         $this->assert_response(302);
-        $this->assertStringStartsWith("/test/post/list/uploaded_by=test/1", $page->redirect);
+        $this->assertStringStartsWith("/test/post/list/poster=test/1", $page->redirect);
 
         $this->assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
     }

@@ -210,7 +210,7 @@ class UploadTheme extends Themelet
                 $page->set_redirect(make_link("post/view/{$image_ids[0]}"));
             } else {
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/list/uploaded_by={$user->name}/1"));
+                $page->set_redirect(make_link("post/list/poster={$user->name}/1"));
             }
         }
     }
