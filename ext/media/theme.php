@@ -1,11 +1,5 @@
 <?php declare(strict_types=1);
 use function MicroHTML\INPUT;
-use function MicroHTML\TABLE;
-use function MicroHTML\TR;
-use function MicroHTML\TH;
-use function MicroHTML\TD;
-use function MicroHTML\SELECT;
-use function MicroHTML\OPTION;
 
 class MediaTheme extends Themelet
 {

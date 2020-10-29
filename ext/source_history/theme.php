@@ -1,14 +1,8 @@
 <?php declare(strict_types=1);
-use function MicroHTML\UL;
 use function MicroHTML\LI;
 use function MicroHTML\A;
 use function MicroHTML\INPUT;
-use function MicroHTML\FORM;
-use function MicroHTML\DIV;
 use function MicroHTML\LABEL;
-use function MicroHTML\P;
-use function MicroHTML\B;
-use function MicroHTML\SPAN;
 use function MicroHTML\rawHTML;
 
 class SourceHistoryTheme extends Themelet

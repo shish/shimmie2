@@ -124,7 +124,7 @@ class PrivateImage extends Extension
     const SEARCH_REGEXP = "/^private:(yes|no|any)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        global $user, $database, $user_config;
+        global $user, $user_config;
         $show_private = $user_config->get_bool(PrivateImageConfig::USER_VIEW_DEFAULT);
 
         $matches = [];
@@ -200,7 +200,7 @@ class PrivateImage extends Extension
 
     public static function privatize_image($image_id)
     {
-        global $database, $user;
+        global $database;
 
         $database->execute(
             "UPDATE images SET private = :true WHERE id = :id AND private = :false",
@@ -220,7 +220,7 @@ class PrivateImage extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
-        global $user, $config;
+        global $user;
         if ($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id==$event->image->owner_id) {
             $event->add_part($this->theme->get_image_admin_html($event->image));
         }
@@ -236,7 +236,7 @@ class PrivateImage extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
-        global $user, $config;
+        global $user;
 
         if ($user->can(Permissions::SET_PRIVATE_IMAGE)) {
             $event->add_action("bulk_privatize_image", "Make Private");

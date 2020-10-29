@@ -227,7 +227,6 @@ class UploadTheme extends Themelet
     {
         global $config;
 
-        $upload_count = $config->get_int(UploadConfig::COUNT);
         $accept = $this->get_accept();
 
         $max_size = $config->get_int(UploadConfig::SIZE);

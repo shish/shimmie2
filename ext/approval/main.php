@@ -121,7 +121,7 @@ class Approval extends Extension
     const SEARCH_REGEXP = "/^approved:(yes|no)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        global $user, $database, $config;
+        global $user, $config;
 
         if ($config->get_bool(ApprovalConfig::IMAGES)) {
             $matches = [];

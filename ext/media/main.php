@@ -230,14 +230,10 @@ class Media extends Extension
 //        }
     }
 
-
     const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio)|(image)|(unknown))$/i";
-
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        global $database;
-
         if (is_null($event->term)) {
             return;
         }
@@ -323,10 +319,11 @@ class Media extends Extension
         global $config;
 
         $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
-        if ($ffmpeg == null || $ffmpeg == "") {
-            throw new MediaException("ffmpeg command configured");
+        if (empty($ffmpeg)) {
+            throw new MediaException("ffmpeg command not configured");
         }
 
+        $ok = false;
         $inname = warehouse_path(Image::IMAGE_DIR, $hash);
         $tmpname = tempnam(sys_get_temp_dir(), "shimmie_ffmpeg_thumb");
         try {
@@ -334,18 +331,6 @@ class Media extends Extension
 
             $orig_size = self::video_size($inname);
             $scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1], true);
-
-            $codec = "mjpeg";
-            $quality = $config->get_int(ImageConfig::THUMB_QUALITY);
-            if ($config->get_string(ImageConfig::THUMB_MIME) == MimeType::WEBP) {
-                $codec = "libwebp";
-            } else {
-                // mjpeg quality ranges from 2-31, with 2 being the best quality.
-                $quality = floor(31 - (31 * ($quality / 100)));
-                if ($quality < 2) {
-                    $quality = 2;
-                }
-            }
 
             $args = [
                 escapeshellarg($ffmpeg),
@@ -363,18 +348,15 @@ class Media extends Extension
 
             if ((int)$ret === (int)0) {
                 log_debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
-
                 create_scaled_image($tmpname, $outname, $scaled_size, MimeType::PNG);
-
-
-                return true;
+                $ok = true;
             } else {
                 log_error('media', "Generating thumbnail with command `$cmd`, returns $ret");
-                return false;
             }
         } finally {
             @unlink($tmpname);
         }
+        return $ok;
     }
 
 

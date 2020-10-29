@@ -100,7 +100,7 @@ class BulkImportExport extends DataHandlerExtension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
-        global $user, $config;
+        global $user;
 
         if ($user->can(Permissions::BULK_EXPORT)) {
             $event->add_action(self::EXPORT_ACTION_NAME, "Export");
@@ -167,7 +167,6 @@ class BulkImportExport extends DataHandlerExtension
     private function get_export_data(ZipArchive $zip): ?array
     {
         $info = $zip->getStream(self::EXPORT_INFO_FILE_NAME);
-        $json_data = [];
         if ($info !== false) {
             try {
                 $json_string = stream_get_contents($info);

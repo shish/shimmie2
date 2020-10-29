@@ -42,7 +42,7 @@ class TranscodeVideo extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
-        global $user, $config;
+        global $user;
 
         if ($event->image->video===true && $user->can(Permissions::EDIT_FILES)) {
             $options = self::get_output_options($event->image->get_mime(), $event->image->video_codec);
@@ -54,8 +54,6 @@ class TranscodeVideo extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        global $config;
-
         $sb = new SetupBlock("Video Transcode");
         $sb->start_table();
         $sb->add_bool_option(TranscodeVideoConfig::ENABLED, "Allow transcoding images: ", true);
@@ -126,10 +124,9 @@ class TranscodeVideo extends Extension
         }
     }
 
-
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
-        global $user, $config;
+        global $user;
 
         if ($user->can(Permissions::EDIT_FILES)) {
             $event->add_action(

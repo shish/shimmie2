@@ -314,14 +314,10 @@ class AutoTagger extends Extension
             $tags_mixed = array_merge($tags_mixed, $new_tags);
         }
 
-        $results = array_intersect_key(
+        return array_intersect_key(
             $tags_mixed,
             array_unique(array_map('strtolower', $tags_mixed))
         );
-
-
-
-        return $results;
     }
 
     /**

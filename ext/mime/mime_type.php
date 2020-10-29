@@ -219,8 +219,6 @@ class MimeType
 
         $output = self::OCTET_STREAM;
 
-        $type = false;
-
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         try {
             $type = finfo_file($finfo, $file);

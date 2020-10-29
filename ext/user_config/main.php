@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-/** @var $user_config Config */
+/** @var Config */
 global $user_config;
 
 

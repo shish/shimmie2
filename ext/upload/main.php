@@ -32,7 +32,6 @@ class DataUploadEvent extends Event
     public function __construct(string $tmpname, array $metadata)
     {
         parent::__construct();
-        global $config;
 
         assert(file_exists($tmpname));
         assert(is_string($metadata["filename"]));
