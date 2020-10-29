@@ -35,17 +35,16 @@ class ETServer extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
         // shortcut to latest
-        if ($config->get_int("et_server_version") < 1) {
+        if ($this->get_version("et_server_version") < 1) {
             $database->create_table("registration", "
 				id SCORE_AIPK,
 				responded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				data TEXT NOT NULL,
 			");
-            $config->set_int("et_server_version", 1);
-            log_info("et_server", "extension installed");
+            $this->set_version("et_server_version", 1);
         }
     }
 }

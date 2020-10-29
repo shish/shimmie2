@@ -15,9 +15,9 @@ class Blotter extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
-        if ($config->get_int("blotter_version", 0) < 1) {
+        if ($this->get_version("blotter_version") < 1) {
             $database->create_table("blotter", "
                 id SCORE_AIPK,
                 entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -30,11 +30,11 @@ class Blotter extends Extension
                 ["text"=>"Installed the blotter extension!", "important"=>true]
             );
             log_info("blotter", "Installed tables for blotter extension.");
-            $config->set_int("blotter_version", 2);
+            $this->set_version("blotter_version", 2);
         }
-        if ($config->get_int("blotter_version") < 2) {
+        if ($this->get_version("blotter_version") < 2) {
             $database->standardise_boolean("blotter", "important");
-            $config->set_int("blotter_version", 2);
+            $this->set_version("blotter_version", 2);
         }
     }
 

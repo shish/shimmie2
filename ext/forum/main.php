@@ -18,7 +18,7 @@ class Forum extends Extension
 
         // shortcut to latest
 
-        if ($config->get_int("forum_version") < 1) {
+        if ($this->get_version("forum_version") < 1) {
             $database->create_table("forum_threads", "
 					id SCORE_AIPK,
 					sticky BOOLEAN NOT NULL DEFAULT FALSE,
@@ -47,17 +47,16 @@ class Forum extends Extension
 
             $config->set_int("forumMaxCharsPerPost", 512);
 
-            $config->set_int("forum_version", 3);
-            log_info("forum", "extension installed");
+            $this->set_version("forum_version", 3);
         }
-        if ($config->get_int("forum_version") < 2) {
+        if ($this->get_version("forum_version") < 2) {
             $database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
             $database->execute("ALTER TABLE forum_posts ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
-            $config->set_int("forum_version", 2);
+            $this->set_version("forum_version", 2);
         }
-        if ($config->get_int("forum_version") < 3) {
+        if ($this->get_version("forum_version") < 3) {
             $database->standardise_boolean("forum_threads", "sticky");
-            $config->set_int("forum_version", 3);
+            $this->set_version("forum_version", 3);
         }
     }
 

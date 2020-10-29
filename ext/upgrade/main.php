@@ -24,7 +24,7 @@ class Upgrade extends Extension
             file_put_contents("data/index.php", "<?php\n// Silence is golden...\n");
         }
 
-        if ($config->get_int("db_version") < 1) {
+        if ($this->get_version("db_version") < 1) {
             $this->set_version("db_version", 2);
         }
 

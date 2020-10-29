@@ -62,10 +62,10 @@ class PrivMsg extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
         // shortcut to latest
-        if ($config->get_int("pm_version") < 1) {
+        if ($this->get_version("pm_version") < 1) {
             $database->create_table("private_message", "
 				id SCORE_AIPK,
 				from_id INTEGER NOT NULL,
@@ -79,26 +79,22 @@ class PrivMsg extends Extension
 				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
             $database->execute("CREATE INDEX private_message__to_id ON private_message(to_id)");
-            $config->set_int("pm_version", 3);
-            log_info("pm", "extension installed");
+            $this->set_version("pm_version", 3);
         }
 
-        if ($config->get_int("pm_version") < 2) {
+        if ($this->get_version("pm_version") < 2) {
             log_info("pm", "Adding foreign keys to private messages");
             $database->execute("delete from private_message where to_id not in (select id from users);");
             $database->execute("delete from private_message where from_id not in (select id from users);");
             $database->execute("ALTER TABLE private_message
 			ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 			ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
-            $config->set_int("pm_version", 2);
-            log_info("pm", "extension upgraded");
+            $this->set_version("pm_version", 2);
         }
 
-        if ($config->get_int("pm_version") < 3) {
-            log_info("pm", "Updating is_read boolean");
+        if ($this->get_version("pm_version") < 3) {
             $database->standardise_boolean("private_message", "is_read", true);
-            $config->set_int("pm_version", 3);
-            log_info("pm", "extension upgraded");
+            $this->set_version("pm_version", 3);
         }
     }
 
