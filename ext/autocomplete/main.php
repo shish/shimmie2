@@ -28,7 +28,8 @@ class AutoComplete extends Extension
         $this->theme->build_autocomplete($page);
     }
 
-    private function complete(string $search, int $limit): array {
+    private function complete(string $search, int $limit): array
+    {
         global $cache, $database;
 
         if (!$search) {
@@ -58,7 +59,8 @@ class AutoComplete extends Extension
 
         $res = $cache->get($cache_key);
         if (!$res) {
-            $res = $database->get_pairs("
+            $res = $database->get_pairs(
+                "
                 SELECT tag, count
                 FROM tags
                 WHERE LOWER(tag) LIKE LOWER(:search)
