@@ -48,37 +48,6 @@ class TagList extends Extension
                     break;
             }
             $this->theme->display_page($page);
-        } elseif ($event->page_matches("api/internal/tag_list/complete")) {
-            if (!isset($_GET["s"]) || $_GET["s"] == "" || $_GET["s"] == "_") {
-                return;
-            }
-
-            //$limit = 0;
-            $cache_key = "autocomplete-" . strtolower($_GET["s"]);
-            $limitSQL = "";
-            $SQLarr = ["search"=>$_GET["s"]."%"];
-            if (isset($_GET["limit"]) && $_GET["limit"] !== 0) {
-                $limitSQL = "LIMIT :limit";
-                $SQLarr['limit'] = $_GET["limit"];
-                $cache_key .= "-" . $_GET["limit"];
-            }
-
-            $res = null;
-            $cache->get($cache_key);
-            if (!$res) {
-                $res = $database->get_col("
-					SELECT tag
-					FROM tags
-					WHERE LOWER(tag) LIKE LOWER(:search)
-						AND count > 0
-					$limitSQL
-				", $SQLarr);
-                $cache->set($cache_key, $res, 600);
-            }
-
-            $page->set_mode(PageMode::DATA);
-            $page->set_mime(MimeType::TEXT);
-            $page->set_data(implode("\n", $res));
         }
     }
 
