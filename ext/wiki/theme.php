@@ -73,7 +73,7 @@ class WikiTheme extends Themelet
 
     protected function create_display_html(WikiPage $page)
     {
-        global $user, $database, $config;
+        global $user;
 
         $owner = $page->get_owner();
 
