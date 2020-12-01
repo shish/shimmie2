@@ -98,6 +98,8 @@ class WikiPage
 
 abstract class WikiConfig
 {
+    const TAG_PAGE_TEMPLATE = "wiki_tag_page_template";
+    const EMPTY_TAGINFO = "wiki_empty_taginfo";
     const TAG_SHORTWIKIS = "shortwikis_on_tags";
 }
 
@@ -109,6 +111,12 @@ class Wiki extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
+        $config->set_default_string(WikiConfig::TAG_PAGE_TEMPLATE,
+"{body}
+
+[b]Aliases: [/b][i]{aliases}[/i]
+[b]Auto tags: [/b][i]{autotags}[/i]");
+        $config->set_default_string(WikiConfig::EMPTY_TAGINFO, "none");
         $config->set_default_bool(WikiConfig::TAG_SHORTWIKIS, false);
     }
 
@@ -116,6 +124,12 @@ class Wiki extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Wiki");
+
+        $sb->start_table();
+        $sb->add_longtext_option(WikiConfig::TAG_PAGE_TEMPLATE, "Tag page template", true);
+        $sb->add_text_option(WikiConfig::EMPTY_TAGINFO, "Empty list text", true);
+        $sb->end_table();
+
         $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "Show shortwiki entry when searching for a single tag: ");
 
         $event->panel->add_block($sb);
@@ -332,6 +346,78 @@ class Wiki extends Extension
         return new WikiPage($row);
     }
 
+    public static function format_tag_wiki_page(WikiPage $page) {
+        global $database, $config;
+        
+        $row = $database->get_row("
+                SELECT *
+                FROM tags
+                WHERE tag = :title
+                    ", ["title"=>$page->title]);
+        
+        if (!empty($row)) {
+            $template = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
+            
+            //CATEGORIES
+            if (class_exists("TagCategories")) {
+                $tagcategories = new TagCategories;
+                $tag_category_dict = $tagcategories->getKeyedDict();
+            }
+            
+            //ALIASES
+            $aliases = $database->get_col("
+                SELECT oldtag
+                FROM aliases
+                WHERE newtag = :title
+                ORDER BY oldtag ASC
+                    ", ["title"=>$row["tag"]]);
+            
+            if (!empty($aliases)) {
+                $template = str_replace("{aliases}", implode(", ", $aliases), $template);
+            } else {
+                $template = str_replace("{aliases}", $config->get_string(WikiConfig::EMPTY_TAGINFO), $template);
+            }
+            
+            //Things before this line will be passed through html_escape.
+            $template = format_text($template);
+            //Things after this line will NOT be escaped!!! Be careful what you add.
+            
+            if (class_exists("AutoTagger")) {
+                $auto_tags = $database->get_one("
+                    SELECT additional_tags
+                    FROM auto_tag
+                    WHERE tag = :title
+                        ", ["title"=>$row["tag"]]);
+                
+                if (!empty($auto_tags)) {
+                    $auto_tags = Tag::explode($auto_tags);
+                    $f_auto_tags = [];
+                    
+                    $tag_list_t = new TagListTheme;
+                    
+                    foreach ($auto_tags as $a_tag) {
+                        $a_row = $database->get_row("
+                            SELECT *
+                            FROM tags
+                            WHERE tag = :title
+                                ", ["title"=>$a_tag]);
+                        
+                        $tag_html = $tag_list_t->return_tag($a_row, $tag_category_dict ?? []);
+                        array_push($f_auto_tags, $tag_html[1]);
+                    }
+                    
+                    $template = str_replace("{autotags}", implode(", ", $f_auto_tags), $template);
+                } else {
+                    $template = str_replace("{autotags}", format_text($config->get_string(WikiConfig::EMPTY_TAGINFO)), $template);
+                }
+            }
+        }
+        
+        //Insert page body AT LAST to avoid replacing its contents with the actions above.
+        $formatted = str_replace("{body}", format_text($page->body), $template ?? "{body}");
+        return $formatted;
+    }
+    
     /**
         Diff implemented in pure php, written from scratch.
         Copyright (C) 2003  Daniel Unterberger <diff.phpnet@holomind.de>
