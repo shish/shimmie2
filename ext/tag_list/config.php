@@ -14,11 +14,13 @@ class TagListConfig
     public const OMIT_TAGS = "tag_list_omit_tags";
 
     public const TYPE_RELATED = "related";
-    public const TYPE_TAGS= "tags";
+    public const TYPE_TAGS = "tags";
+    public const TYPE_BOTH = "both";
 
     public const TYPE_CHOICES = [
         "Post's tags only" => TagListConfig::TYPE_TAGS,
-        "Show related" => TagListConfig::TYPE_RELATED
+        "Related tags only" => TagListConfig::TYPE_RELATED,
+        "Both" => TagListConfig::TYPE_BOTH
     ];
 
     public const SORT_ALPHABETICAL = "alphabetical";

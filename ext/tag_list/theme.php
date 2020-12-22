@@ -118,11 +118,7 @@ class TagListTheme extends Themelet
         }
 
         if ($main_html != null) {
-            if ($config->get_string(TagListConfig::IMAGE_TYPE)==TagListConfig::TYPE_TAGS) {
-                $page->add_block(new Block("Tags", $main_html, "left", 10));
-            } else {
-                $page->add_block(new Block("Related Tags", $main_html, "left", 10));
-            }
+            $page->add_block(new Block("Tags", $main_html, "left", 10));
         }
     }
 
@@ -164,7 +160,7 @@ class TagListTheme extends Themelet
      *                 ...
      *              )
      */
-    public function display_related_block(Page $page, $tag_infos)
+    public function display_related_block(Page $page, $tag_infos, $block_name)
     {
         global $config;
 
@@ -173,11 +169,7 @@ class TagListTheme extends Themelet
             $config->get_string(TagListConfig::RELATED_SORT)
         );
 
-        if ($config->get_string(TagListConfig::IMAGE_TYPE)==TagListConfig::TYPE_TAGS) {
-            $page->add_block(new Block("Tags", $main_html, "left", 10));
-        } else {
-            $page->add_block(new Block("Related Tags", $main_html, "left", 10));
-        }
+        $page->add_block(new Block($block_name, $main_html, "left", 10));
     }
 
 

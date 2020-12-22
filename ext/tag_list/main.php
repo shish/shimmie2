@@ -81,14 +81,16 @@ class TagList extends Extension
     {
         global $config, $page;
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
-            if ($config->get_string(TagListConfig::IMAGE_TYPE) == TagListConfig::TYPE_RELATED) {
-                $this->add_related_block($page, $event->image);
-            } else {
+            $type = $config->get_string(TagListConfig::IMAGE_TYPE);
+            if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
                 if (class_exists("TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                     $this->add_split_tags_block($page, $event->image);
                 } else {
                     $this->add_tags_block($page, $event->image);
                 }
+            }
+            if ($type == TagListConfig::TYPE_RELATED || $type == TagListConfig::TYPE_BOTH) {
+                $this->add_related_block($page, $event->image);
             }
         }
     }
@@ -441,7 +443,7 @@ class TagList extends Extension
 
         $tags = $database->get_all($query, $args);
         if (count($tags) > 0) {
-            $this->theme->display_related_block($page, $tags);
+            $this->theme->display_related_block($page, $tags, "Related Tags");
         }
     }
 
@@ -479,7 +481,7 @@ class TagList extends Extension
 
         $tags = $database->get_all($query, $args);
         if (count($tags) > 0) {
-            $this->theme->display_related_block($page, $tags);
+            $this->theme->display_related_block($page, $tags, "Tags");
         }
     }
 
