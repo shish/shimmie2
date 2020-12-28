@@ -99,6 +99,7 @@ class WikiPage
 abstract class WikiConfig
 {
     const TAG_SHORTWIKIS = "shortwikis_on_tags";
+    const ENABLE_REVISIONS = "wiki_revisions";
 }
 
 class Wiki extends Extension
@@ -110,12 +111,14 @@ class Wiki extends Extension
     {
         global $config;
         $config->set_default_bool(WikiConfig::TAG_SHORTWIKIS, false);
+        $config->set_default_bool(WikiConfig::ENABLE_REVISIONS, true);
     }
 
     // Add a block to the Board Config / Setup
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Wiki");
+        $sb->add_bool_option(WikiConfig::ENABLE_REVISIONS, "Enable wiki revisions: ");
         $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "Show shortwiki entry when searching for a single tag: ");
 
         $event->panel->add_block($sb);
@@ -229,16 +232,29 @@ class Wiki extends Extension
 
     public function onWikiUpdate(WikiUpdateEvent $event)
     {
-        global $database;
+        global $database, $config;
         $wpage = $event->wikipage;
+
+        $exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title"=>$wpage->title]);
+
         try {
-            $database->execute(
-                "
-				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
-				VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
-                ["owner_id"=>$event->user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'],
-                "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked, "body"=>$wpage->body]
-            );
+            if ($config->get_bool(WikiConfig::ENABLE_REVISIONS) || ! $exists) {
+                $database->execute(
+                    "
+                                INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
+                                VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
+                    ["owner_id"=>$event->user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'],
+                    "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked, "body"=>$wpage->body]
+                );
+            } else {
+                $database->execute(
+                    "
+                                UPDATE wiki_pages SET owner_id=:owner_id, owner_ip=:owner_ip, date=now(), locked=:locked, body=:body
+                                WHERE title = :title ORDER BY revision DESC LIMIT 1",
+                    ["owner_id"=>$event->user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'],
+                    "title"=>$wpage->title, "locked"=>$wpage->locked, "body"=>$wpage->body]
+                );
+            }
         } catch (Exception $e) {
             throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
         }
