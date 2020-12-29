@@ -119,18 +119,21 @@ class CronUploader extends Extension
     public function onLog(LogEvent $event)
     {
         global $user_config;
-        $all = $user_config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
-        if (self::$IMPORT_RUNNING &&
-            $event->priority >= $user_config->get_int(CronUploaderConfig::LOG_LEVEL) &&
-            ($event->section==self::NAME || $all)
-        ) {
-            $output =  "[" . date('Y-m-d H:i:s') . "] " . ($all ? '['. $event->section .'] ' :'') . "[" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message  ;
 
-            echo $output . "\r\n";
-            flush_output();
+        if (self::$IMPORT_RUNNING) {
+            $all = $user_config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
+            if($event->priority >= $user_config->get_int(CronUploaderConfig::LOG_LEVEL) &&
+                ($event->section==self::NAME || $all)) {
 
-            $log_path = $this->get_log_file();
-            file_put_contents($log_path, $output);
+
+                $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message;
+
+                echo $output . "\r\n";
+                flush_output();
+
+                $log_path = $this->get_log_file();
+                file_put_contents($log_path, $output);
+            }
         }
     }
 
