@@ -365,6 +365,9 @@ class CronUploader extends Extension
                 $execution_time = microtime(true) - $_shm_load_start;
                 if ($execution_time>$max_time) {
                     break;
+                } else {
+                    $remaining = $max_time - $execution_time;
+                    $this->log_message(SCORE_LOG_DEBUG, "Max run time remaining: $remaining");
                 }
                 try {
                     $database->begin_transaction();
