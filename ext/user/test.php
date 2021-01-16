@@ -5,12 +5,12 @@ class UserPageTest extends ShimmiePHPUnitTestCase
     {
         $this->get_page('user');
         $this->assert_title("Not Logged In");
-        $this->assert_no_text("Options");
-        $this->assert_no_text("More Options");
+        $this->assert_no_text("Stats");
 
         $this->get_page('user/demo');
         $this->assert_title("demo's Page");
         $this->assert_text("Joined:");
+        $this->assert_no_text("Operations");
 
         $this->get_page('user/MauMau');
         $this->assert_title("No Such User");
@@ -19,7 +19,7 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         // should be on the user page
         $this->get_page('user/test');
         $this->assert_title("test's Page");
-        $this->assert_text("Options");
+        $this->assert_text("Operations");
         // FIXME: check class
         //$this->assert_no_text("Admin:");
         $this->log_out();
@@ -28,7 +28,7 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         // should be on the user page
         $this->get_page('user/demo');
         $this->assert_title("demo's Page");
-        $this->assert_text("Options");
+        $this->assert_text("Operations");
         // FIXME: check class
         //$this->assert_text("Admin:");
         $this->log_out();
