@@ -44,6 +44,7 @@ class MimeType
     public const RSS = 'application/rss+xml';
     public const SVG = 'image/svg+xml';
     public const TAR = 'application/x-tar';
+    public const TGA = 'image/x-tga';
     public const TEXT = 'text/plain';
     public const TIFF = 'image/tiff';
     public const WAV = 'audio/x-wav';

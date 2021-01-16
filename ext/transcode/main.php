@@ -25,7 +25,8 @@ class TranscodeImage extends Extension
         "PPM" => MimeType::PPM,
         "PSD" => MimeType::PSD,
         "TIFF" => MimeType::TIFF,
-        "WEBP" => MimeType::WEBP
+        "WEBP" => MimeType::WEBP,
+        "TGA" => MimeType::TGA
     ];
 
     const OUTPUT_MIMES = [
