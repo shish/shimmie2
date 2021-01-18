@@ -83,7 +83,7 @@ class ViewImage extends Extension
                 } else {
                     $query = null;
                 }
-                $page->set_redirect(make_link("post/view/$image_id", null, $query)); 
+                $page->set_redirect(make_link("post/view/$image_id", null, $query));
             } else {
                 $this->theme->display_error(403, "Post Locked", "An admin has locked this post");
             }

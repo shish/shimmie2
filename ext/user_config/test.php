@@ -13,6 +13,5 @@ class UserConfigTest extends ShimmiePHPUnitTestCase
         $this->get_page('user_config');
         $this->assert_title(self::OPTIONS_BLOCK_TITLE);
         $this->log_out();
-
     }
 }

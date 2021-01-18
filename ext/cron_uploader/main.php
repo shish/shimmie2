@@ -122,10 +122,8 @@ class CronUploader extends Extension
 
         if (self::$IMPORT_RUNNING) {
             $all = $user_config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
-            if($event->priority >= $user_config->get_int(CronUploaderConfig::LOG_LEVEL) &&
+            if ($event->priority >= $user_config->get_int(CronUploaderConfig::LOG_LEVEL) &&
                 ($event->section==self::NAME || $all)) {
-
-
                 $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message;
 
                 echo $output . "\r\n";
