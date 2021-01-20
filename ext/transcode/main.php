@@ -25,7 +25,8 @@ class TranscodeImage extends Extension
         "PPM" => MimeType::PPM,
         "PSD" => MimeType::PSD,
         "TIFF" => MimeType::TIFF,
-        "WEBP" => MimeType::WEBP
+        "WEBP" => MimeType::WEBP,
+        "TGA" => MimeType::TGA
     ];
 
     const OUTPUT_MIMES = [
@@ -141,7 +142,7 @@ class TranscodeImage extends Extension
         $engine = $config->get_string(TranscodeConfig::ENGINE);
 
 
-        $sb = new SetupBlock("Image Transcode");
+        $sb = $event->panel->create_new_block("Image Transcode");
         $sb->start_table();
         $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images", true);
         $sb->add_bool_option(TranscodeConfig::GET_ENABLED, "Enable GET args", true);
@@ -156,7 +157,6 @@ class TranscodeImage extends Extension
         $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality", true);
         $sb->add_color_option(TranscodeConfig::ALPHA_COLOR, "Alpha Conversion Color", true);
         $sb->end_table();
-        $event->panel->add_block($sb);
     }
 
     public function onDataUpload(DataUploadEvent $event)

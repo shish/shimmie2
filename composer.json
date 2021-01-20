@@ -53,9 +53,9 @@
     },
 
 	"require-dev" : {
-		"phpunit/phpunit" : "^9.0"
+		"phpunit/phpunit" : "^9.0",
+		"friendsofphp/php-cs-fixer" : "*"		
 	},
-
 	"suggest": {
 		"ext-memcache": "memcache caching",
 		"ext-memcached": "memcached caching",

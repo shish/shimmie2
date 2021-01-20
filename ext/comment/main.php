@@ -379,7 +379,7 @@ class CommentList extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Comment Options");
+        $sb = $event->panel->create_new_block("Comment Options");
         $sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments: ");
         $sb->add_label("<br>Limit to ");
         $sb->add_int_option("comment_limit");
@@ -394,7 +394,6 @@ class CommentList extends Extension
         $sb->add_label(" comments per image on the list");
         $sb->add_label("<br>Make samefags public ");
         $sb->add_bool_option("comment_samefags_public");
-        $event->panel->add_block($sb);
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event)

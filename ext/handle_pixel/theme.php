@@ -30,7 +30,7 @@ class PixelFileHandlerTheme extends Themelet
         }
 
         $html = "<img alt='main image' class='shm-main-image' id='main_image' src='$u_ilink' ".
-            "data-width='{$image->width}' data-height='{$image->height}'>";
+            "data-width='{$image->width}' data-height='{$image->height} data-mime='{$image->get_mime()}'>";
         $page->add_block(new Block("Image", $html, "main", 10));
     }
 }

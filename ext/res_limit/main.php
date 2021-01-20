@@ -58,7 +58,7 @@ class ResolutionLimit extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Resolution Limits");
+        $sb = $event->panel->create_new_block("Resolution Limits");
 
         $sb->add_label("Min ");
         $sb->add_int_option("upload_min_width");
@@ -77,7 +77,5 @@ class ResolutionLimit extends Extension
         $sb->add_label("<br>Ratios ");
         $sb->add_text_option("upload_ratios");
         $sb->add_label("<br>(eg. '4:3 16:9', blank for no limit)");
-
-        $event->panel->add_block($sb);
     }
 }

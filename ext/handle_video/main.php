@@ -46,14 +46,13 @@ class VideoFileHandler extends DataHandlerExtension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Video Options");
+        $sb = $event->panel->create_new_block("Video Options");
         $sb->start_table();
         $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, "Autoplay", true);
         $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_LOOP, "Loop", true);
         $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_MUTE, "Mute", true);
         $sb->add_multichoice_option(VideoFileHandlerConfig::ENABLED_FORMATS, $this->get_options(), "Enabled Formats", true);
         $sb->end_table();
-        $event->panel->add_block($sb);
     }
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void

@@ -184,6 +184,11 @@ class MimeMap
             self::MAP_EXT => [FileExtension::TAR],
             self::MAP_MIME => [MimeType::TAR],
         ],
+        MimeType::TGA => [
+            self::MAP_NAME => "TGA",
+            self::MAP_EXT => [FileExtension::TGA],
+            self::MAP_MIME => [MimeType::TGA, 'image/x-targa'],
+        ],
         MimeType::TEXT => [
             self::MAP_NAME => "Text",
             self::MAP_EXT => [FileExtension::TEXT, FileExtension::ASC],

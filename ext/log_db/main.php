@@ -235,7 +235,7 @@ class LogDatabase extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Logging (Database)");
+        $sb = $event->panel->create_new_block("Logging (Database)");
         $sb->add_choice_option("log_db_priority", [
             LOGGING_LEVEL_NAMES[SCORE_LOG_DEBUG] => SCORE_LOG_DEBUG,
             LOGGING_LEVEL_NAMES[SCORE_LOG_INFO] => SCORE_LOG_INFO,
@@ -243,7 +243,6 @@ class LogDatabase extends Extension
             LOGGING_LEVEL_NAMES[SCORE_LOG_ERROR] => SCORE_LOG_ERROR,
             LOGGING_LEVEL_NAMES[SCORE_LOG_CRITICAL] => SCORE_LOG_CRITICAL,
         ], "Debug Level: ");
-        $event->panel->add_block($sb);
     }
 
     public function onPageRequest(PageRequestEvent $event)

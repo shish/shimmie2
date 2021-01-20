@@ -51,6 +51,7 @@ class FileExtension
     public const RSS = 'rss';
     public const SVG = 'svg';
     public const TAR = 'tar';
+    public const TGA = 'tga';
     public const TEXT = 'txt';
     public const TIFF = 'tiff';
     public const TIF = 'tif';
