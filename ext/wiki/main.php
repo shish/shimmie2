@@ -117,11 +117,9 @@ class Wiki extends Extension
     // Add a block to the Board Config / Setup
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Wiki");
+        $sb = $event->panel->create_new_block("Wiki");
         $sb->add_bool_option(WikiConfig::ENABLE_REVISIONS, "Enable wiki revisions: ");
         $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "Show shortwiki entry when searching for a single tag: ");
-
-        $event->panel->add_block($sb);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)

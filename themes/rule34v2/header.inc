@@ -1,7 +1,7 @@
 <table class="headbox">
 	<tr>
 		<td colspan="4" id="big-logo">
-			<a class="vis-desktop" href="//rule34.paheal.net/post/list"><img alt="logo" src="//rule34.paheal.net/themes/rule34v2/rule34_logo_top.png" style="width: 240px; height: 104px;"/></a>
+			<a class="vis-desktop" href="//rule34.paheal.net/post/list"><img alt="logo" src="//rule34.paheal.net/themes/rule34v2/rule34_logo_top.png" style="height: 104px;"/></a>
 		</td>
 	</tr>
 

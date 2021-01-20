@@ -483,6 +483,7 @@ class Image
 				WHERE image_id=:id
 				ORDER BY tag
 			", ["id"=>$this->id]);
+            sort($this->tag_array);
         }
         return $this->tag_array;
     }

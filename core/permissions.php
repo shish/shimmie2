@@ -7,6 +7,9 @@ abstract class Permissions
 {
     public const CHANGE_SETTING = "change_setting";  # modify web-level settings, eg the config table
     public const OVERRIDE_CONFIG = "override_config"; # modify sys-level settings, eg shimmie.conf.php
+    public const CHANGE_USER_SETTING = "change_user_setting"; # modify own user-level settings
+    public const CHANGE_OTHER_USER_SETTING = "change_other_user_setting"; # modify own user-level settings
+
     public const BIG_SEARCH = "big_search";      # search for more than 3 tags at once (speed mode only)
 
     public const MANAGE_EXTENSION_LIST = "manage_extension_list";
@@ -100,6 +103,7 @@ abstract class Permissions
     public const SET_PRIVATE_IMAGE = "set_private_image";
     public const SET_OTHERS_PRIVATE_IMAGES = "set_others_private_images";
 
+    public const CRON_RUN = "cron_run";
     public const BULK_IMPORT = "bulk_import";
     public const BULK_EXPORT = "bulk_export";
     public const BULK_DOWNLOAD = "bulk_download";

@@ -61,12 +61,11 @@ class SourceHistory extends Extension
     // so let's default to -1 and the user can go advanced if
     // they /really/ want to
     public function onSetupBuilding(SetupBuildingEvent $event) {
-        $sb = new SetupBlock("Source History");
+        $sb = $event->panel->create_new_block("Source History");
         $sb->add_label("Limit to ");
         $sb->add_int_option("history_limit");
         $sb->add_label(" entires per image");
         $sb->add_label("<br>(-1 for unlimited)");
-        $event->panel->add_block($sb);
     }
     */
 

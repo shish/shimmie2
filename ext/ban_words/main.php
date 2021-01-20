@@ -55,7 +55,7 @@ xanax
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Banned Phrases");
+        $sb = $event->panel->create_new_block("Banned Phrases");
         $sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
         $sb->add_longtext_option("banned_words");
         $failed = [];
@@ -69,7 +69,6 @@ xanax
         if ($failed) {
             $sb->add_label("Failed regexes: ".join(", ", $failed));
         }
-        $event->panel->add_block($sb);
     }
 
     /**

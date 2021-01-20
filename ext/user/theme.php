@@ -229,7 +229,8 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
     }
 
-    public function build_options(User $duser, UserOptionsBuildingEvent $event): string
+
+    public function build_operations(User $duser, UserOperationsBuildingEvent $event): string
     {
         global $config, $user;
         $html = emptyHTML();

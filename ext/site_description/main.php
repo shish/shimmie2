@@ -17,9 +17,8 @@ class SiteDescription extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Site Description");
+        $sb = $event->panel->create_new_block("Site Description");
         $sb->add_text_option("site_description", "Description: ");
         $sb->add_text_option("site_keywords", "<br>Keywords: ");
-        $event->panel->add_block($sb);
     }
 }

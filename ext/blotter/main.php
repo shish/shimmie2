@@ -40,11 +40,10 @@ class Blotter extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Blotter");
+        $sb = $event->panel->create_new_block("Blotter");
         $sb->add_int_option("blotter_recent", "<br />Number of recent entries to display: ");
         $sb->add_text_option("blotter_color", "<br />Color of important updates: (ABCDEF format) ");
         $sb->add_choice_option("blotter_position", ["Top of page" => "subheading", "In navigation bar" => "left"], "<br>Position: ");
-        $event->panel->add_block($sb);
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)

@@ -9,11 +9,11 @@ class ImageIOTheme extends Themelet
      */
     public function get_deleter_html(int $image_id): string
     {
-        return (string)SHM_SIMPLE_FORM(
+        return (string)"<span id='image_delete_form'>".SHM_SIMPLE_FORM(
             "image/delete",
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
-            INPUT(["type"=>'submit', "value"=>'Delete', "onclick"=>'return confirm("Delete the image?");']),
-        );
+            INPUT(["type"=>'submit', "value"=>'Delete', "onclick"=>'return confirm("Delete the image?");', "id"=>"image_delete_button"]),
+        )."</span>";
     }
 
     /**

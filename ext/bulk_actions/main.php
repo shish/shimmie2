@@ -127,8 +127,8 @@ class BulkActions extends Extension
         switch ($event->action) {
             case "bulk_delete":
                 if ($user->can(Permissions::DELETE_IMAGE)) {
-                    $i = $this->delete_items($event->items);
-                    $page->flash("Deleted $i items");
+                    $i = $this->delete_posts($event->items);
+                    $page->flash("Deleted $i[0] items, totaling ".human_filesize($i[1]));
                 }
                 break;
             case "bulk_tag":
@@ -227,25 +227,27 @@ class BulkActions extends Extension
         return $a["position"] - $b["position"];
     }
 
-    private function delete_items(iterable $items): int
+    private function delete_posts(iterable $posts): array
     {
         global $page;
         $total = 0;
-        foreach ($items as $image) {
+        $size = 0;
+        foreach ($posts as $post) {
             try {
                 if (class_exists("ImageBan") && isset($_POST['bulk_ban_reason'])) {
                     $reason = $_POST['bulk_ban_reason'];
                     if ($reason) {
-                        send_event(new AddImageHashBanEvent($image->hash, $reason));
+                        send_event(new AddImageHashBanEvent($post->hash, $reason));
                     }
                 }
-                send_event(new ImageDeletionEvent($image));
+                send_event(new ImageDeletionEvent($post));
                 $total++;
+                $size += $post->filesize;
             } catch (Exception $e) {
-                $page->flash("Error while removing {$image->id}: " . $e->getMessage());
+                $page->flash("Error while removing {$post->id}: " . $e->getMessage());
             }
         }
-        return $total;
+        return [$total, $size];
     }
 
     private function tag_items(iterable $items, string $tags, bool $replace): int
