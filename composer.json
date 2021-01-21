@@ -5,6 +5,12 @@
 	"license" : "GPL-2.0-or-later",
 	"minimum-stability" : "dev",
 
+	"config": {
+		"platform": {
+			"php": "7.3.0"
+		}
+	},
+
 	"repositories" : [
 		{
 			"type": "composer",
@@ -47,9 +53,9 @@
     },
 
 	"require-dev" : {
-		"phpunit/phpunit" : "^9.0"
+		"phpunit/phpunit" : "^9.0",
+		"friendsofphp/php-cs-fixer" : "*"		
 	},
-
 	"suggest": {
 		"ext-memcache": "memcache caching",
 		"ext-memcached": "memcached caching",

@@ -5,6 +5,14 @@ class ImageViewCounter extends Extension
     protected $theme;
     private $view_interval = 3600; # allows views to be added each hour
 
+    # Add Setup Block with options for view counter
+    public function onSetupBuilding(SetupBuildingEvent $event)
+    {
+        $sb = $event->panel->create_new_block("Post View Counter");
+        $sb->add_bool_option("image_viewcounter_adminonly", "Display view counter only to admin");
+    }
+
+    # Adds view to database if needed
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $database, $user;

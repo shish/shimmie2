@@ -13,9 +13,8 @@ class Holiday extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Holiday Theme");
+        $sb = $event->panel->create_new_block("Holiday Theme");
         $sb->add_bool_option("holiday_aprilfools", "Enable April Fools");
-        $event->panel->add_block($sb);
     }
 
     public function onPageRequest(PageRequestEvent $event)

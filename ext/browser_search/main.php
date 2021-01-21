@@ -78,8 +78,7 @@ class BrowserSearch extends Extension
         $sort_by['Tag Count'] = 't';
         $sort_by['Disabled'] = 'n';
 
-        $sb = new SetupBlock("Browser Search");
+        $sb = $event->panel->create_new_block("Browser Search");
         $sb->add_choice_option("search_suggestions_results_order", $sort_by, "Sort the suggestions by:");
-        $event->panel->add_block($sb);
     }
 }

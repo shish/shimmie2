@@ -143,15 +143,19 @@ class Ratings extends Extension
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
     {
-        global $user;
+        global $user, $_shm_ratings;
 
-        $event->add_html(
-            $this->theme->get_user_options(
-                $user,
-                self::get_user_default_ratings($user),
-                self::get_user_class_privs($user)
-            )
-        );
+        $levels = self::get_user_class_privs($user);
+        $options = [];
+        foreach ($levels as $level) {
+            $options[$_shm_ratings[$level]->name] = $level;
+        }
+
+        $sb = $event->panel->create_new_block("Default Rating Filter");
+        $sb->start_table();
+        $sb->add_multichoice_option(RatingsConfig::USER_DEFAULTS, $options, "Output Log Level: ", true);
+        $sb->end_table();
+        $sb->add_label("This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.");
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
@@ -165,7 +169,7 @@ class Ratings extends Extension
             $options[$rating->name] = $rating->code;
         }
 
-        $sb = new SetupBlock("Post Ratings");
+        $sb = $event->panel->create_new_block("Post Ratings");
         $sb->start_table();
         foreach (array_keys($_shm_user_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {
@@ -174,8 +178,6 @@ class Ratings extends Extension
             $sb->add_multichoice_option("ext_rating_" . $key . "_privs", $options, $key, true);
         }
         $sb->end_table();
-
-        $event->panel->add_block($sb);
     }
 
     public function onDisplayingImage(DisplayingImageEvent $event)
@@ -417,33 +419,6 @@ class Ratings extends Extension
                 $page->set_redirect(make_link("post/list"));
             }
         }
-
-        if ($event->page_matches("user_admin")) {
-            if (!$user->check_auth_token()) {
-                return;
-            }
-            switch ($event->get_arg(0)) {
-                case "default_ratings":
-                    if (!array_key_exists("id", $_POST) || empty($_POST["id"])) {
-                        return;
-                    }
-                    if (!array_key_exists("rating", $_POST) || empty($_POST["rating"])) {
-                        return;
-                    }
-                    $id = intval($_POST["id"]);
-                    if ($id != $user->id) {
-                        throw new SCoreException("Cannot change another user's settings");
-                    }
-                    $ratings = $_POST["rating"];
-
-                    $user_config->set_array(RatingsConfig::USER_DEFAULTS, $ratings);
-
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("user"));
-
-                    break;
-            }
-        }
     }
 
     public static function get_sorted_ratings(): array
@@ -464,9 +439,9 @@ class Ratings extends Extension
         return $config->get_array("ext_rating_".$user->class->name."_privs");
     }
 
-    public static function get_user_default_ratings(User $user): array
+    public static function get_user_default_ratings(): array
     {
-        global $user_config;
+        global $user_config, $user;
 
         $available = self::get_user_class_privs($user);
         $selected = $user_config->get_array(RatingsConfig::USER_DEFAULTS);

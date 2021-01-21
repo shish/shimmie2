@@ -28,13 +28,11 @@ class XMLSitemap extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Sitemap");
+        $sb = $event->panel->create_new_block("Sitemap");
 
         $sb->add_bool_option("sitemap_generatefull", "Generate full sitemap");
         $sb->add_label("<br>(Enabled: every image and tag in sitemap, generation takes longer)");
         $sb->add_label("<br>(Disabled: only display the last 50 uploads in the sitemap)");
-
-        $event->panel->add_block($sb);
     }
 
     // sitemap with only the latest 50 images

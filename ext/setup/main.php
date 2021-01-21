@@ -40,10 +40,19 @@ class SetupPanel
 {
     /** @var SetupBlock[]  */
     public $blocks = [];
+    /** @var BaseConfig  */
+    public $config;
 
-    public function add_block(SetupBlock $block)
+    public function __construct(BaseConfig $config)
     {
+        $this->config = $config;
+    }
+
+    public function create_new_block(string $title): SetupBlock
+    {
+        $block = new SetupBlock($title, $this->config);
         $this->blocks[] = $block;
+        return $block;
     }
 }
 
@@ -53,10 +62,13 @@ class SetupBlock extends Block
     public $header;
     /** @var string  */
     public $body;
+    /** @var BaseConfig  */
+    public $config;
 
-    public function __construct(string $title)
+    public function __construct(string $title, BaseConfig $config)
     {
         parent::__construct($title, "", "main", 50);
+        $this->config = $config;
     }
 
     public function add_label(string $text)
@@ -166,8 +178,7 @@ class SetupBlock extends Block
 
     public function add_text_option(string $name, string $label=null, bool $table_row = false)
     {
-        global $config;
-        $val = html_escape($config->get_string($name));
+        $val = html_escape($this->config->get_string($name));
 
         $html = "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
         $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
@@ -177,8 +188,7 @@ class SetupBlock extends Block
 
     public function add_longtext_option(string $name, string $label=null, bool $table_row = false)
     {
-        global $config;
-        $val = html_escape($config->get_string($name));
+        $val = html_escape($this->config->get_string($name));
 
         $rows = max(3, min(10, count(explode("\n", $val))));
         $html = "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
@@ -189,8 +199,7 @@ class SetupBlock extends Block
 
     public function add_bool_option(string $name, string $label=null, bool $table_row = false)
     {
-        global $config;
-        $checked = $config->get_bool($name) ? " checked" : "";
+        $checked = $this->config->get_bool($name) ? " checked" : "";
 
         $html = "";
         if (!$table_row&&!is_null($label)) {
@@ -215,8 +224,7 @@ class SetupBlock extends Block
 
     public function add_int_option(string $name, string $label=null, bool $table_row = false)
     {
-        global $config;
-        $val = $config->get_int($name);
+        $val = $this->config->get_int($name);
 
         $html = "<input type='number' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;' step='1' />\n";
         $html .= "<input type='hidden' name='_type_$name' value='int' />\n";
@@ -226,8 +234,7 @@ class SetupBlock extends Block
 
     public function add_shorthand_int_option(string $name, string $label=null, bool $table_row = false)
     {
-        global $config;
-        $val = to_shorthand_int($config->get_int($name));
+        $val = to_shorthand_int($this->config->get_int($name));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
@@ -236,11 +243,10 @@ class SetupBlock extends Block
 
     public function add_choice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
-        global $config;
         if (is_int(array_values($options)[0])) {
-            $current = $config->get_int($name);
+            $current = $this->config->get_int($name);
         } else {
-            $current = $config->get_string($name);
+            $current = $this->config->get_string($name);
         }
 
         $html = "<select id='$name' name='_config_$name'>";
@@ -260,8 +266,7 @@ class SetupBlock extends Block
 
     public function add_multichoice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
-        global $config;
-        $current = $config->get_array($name);
+        $current = $this->config->get_array($name);
 
         $html = "<select id='$name' name='_config_{$name}[]' multiple size='5'>";
         foreach ($options as $optname => $optval) {
@@ -281,8 +286,7 @@ class SetupBlock extends Block
 
     public function add_color_option(string $name, string $label=null, bool $table_row = false)
     {
-        global $config;
-        $val = html_escape($config->get_string($name));
+        $val = html_escape($this->config->get_string($name));
 
         $html = "<input type='color' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
         $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
@@ -320,7 +324,7 @@ class Setup extends Extension
                 $this->theme->display_permission_denied();
             } else {
                 if ($event->count_args() == 0) {
-                    $panel = new SetupPanel();
+                    $panel = new SetupPanel($config);
                     send_event(new SetupBuildingEvent($panel));
                     $this->theme->display_page($page, $panel);
                 } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
@@ -370,7 +374,7 @@ class Setup extends Extension
 				}
 			});
 		</script>";
-        $sb = new SetupBlock("General");
+        $sb = $event->panel->create_new_block("General");
         $sb->position = 0;
         $sb->add_text_option(SetupConfig::TITLE, "Site title: ");
         $sb->add_text_option(SetupConfig::FRONT_PAGE, "<br>Front page: ");
@@ -380,20 +384,18 @@ class Setup extends Extension
         //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
         $sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
         $sb->add_label("<span title='$test_url' id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
-        $event->panel->add_block($sb);
 
-        $sb = new SetupBlock("Remote API Integration");
+        $sb = $event->panel->create_new_block("Remote API Integration");
         $sb->add_label("<a href='https://akismet.com/'>Akismet</a>");
         $sb->add_text_option("comment_wordpress_key", "<br>API key: ");
         $sb->add_label("<br>&nbsp;<br><a href='https://www.google.com/recaptcha/admin'>ReCAPTCHA</a>");
         $sb->add_text_option("api_recaptcha_privkey", "<br>Secret key: ");
         $sb->add_text_option("api_recaptcha_pubkey", "<br>Site key: ");
-        $event->panel->add_block($sb);
     }
 
     public function onConfigSave(ConfigSaveEvent $event)
     {
-        global $config;
+        $config = $event->config;
         foreach ($_POST as $_name => $junk) {
             if (substr($_name, 0, 6) == "_type_") {
                 $name = substr($_name, 6);

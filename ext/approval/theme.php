@@ -41,9 +41,8 @@ class ApprovalTheme extends Themelet
 
     public function display_admin_block(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Approval");
+        $sb = $event->panel->create_new_block("Approval");
         $sb->add_bool_option(ApprovalConfig::IMAGES, "Posts: ");
-        $event->panel->add_block($sb);
     }
 
     public function display_admin_form()
