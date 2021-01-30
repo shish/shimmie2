@@ -77,8 +77,7 @@ class WikiTheme extends Themelet
 
         $owner = $page->get_owner();
 
-        $tfe = new TextFormattingEvent($page->body);
-        send_event($tfe);
+        $formatted_body = Wiki::format_tag_wiki_page($page);
 
         $edit = "<table><tr>";
         $edit .= Wiki::can_edit($user, $page) ?
@@ -107,7 +106,7 @@ class WikiTheme extends Themelet
 
         return "
 			<div class='wiki-page'>
-			$tfe->formatted
+			$formatted_body
 			<hr>
 			<p class='wiki-footer'>
 				Revision {$page->revision}
