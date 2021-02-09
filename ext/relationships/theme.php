@@ -8,7 +8,7 @@ class RelationshipsTheme extends Themelet
 
         if ($image->parent_id !== null) {
             $a = "<a href='".make_link("post/view/".$image->parent_id)."'>parent post</a>";
-            $page->add_block(new Block(null, "This post belongs to a $a.", "main", 5));
+            $page->add_block(new Block(null, "This post belongs to a $a.", "main", 5, "ImageRelationships"));
         }
 
         if (bool_escape($image->has_children)) {

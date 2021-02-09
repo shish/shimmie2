@@ -23,7 +23,7 @@ class ViewImageTheme extends Themelet
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());
         $page->set_heading(html_escape($image->get_tag_list()));
         $page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
-        $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 20));
+        $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 20, "ImageInfo"));
         //$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 
         $query = $this->get_query();
