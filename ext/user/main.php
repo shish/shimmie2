@@ -718,10 +718,12 @@ class UserPage extends Extension
                 "You need to specify the account number to edit"
             ));
         } else {
-            log_warning("user", "Deleting user #{$_POST['id']}");
+            $uid = int_escape($_POST['id']);
+            $duser = User::by_id($uid);
+            log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
 
             if ($with_images) {
-                log_warning("user", "Deleting user #{$_POST['id']}'s uploads");
+                log_warning("user", "Deleting user #{$_POST['id']} (@{$duser->name})'s uploads");
                 $rows = $database->get_all("SELECT * FROM images WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
                 foreach ($rows as $key => $value) {
                     $image = Image::by_id($value['id']);
@@ -737,7 +739,7 @@ class UserPage extends Extension
             }
 
             if ($with_comments) {
-                log_warning("user", "Deleting user #{$_POST['id']}'s comments");
+                log_warning("user", "Deleting user #{$_POST['id']} (@{$duser->name})'s comments");
                 $database->execute("DELETE FROM comments WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
             } else {
                 $database->execute(
@@ -746,7 +748,7 @@ class UserPage extends Extension
                 );
             }
 
-            send_event(new UserDeletionEvent((int)$_POST['id']));
+            send_event(new UserDeletionEvent($uid));
 
             $database->execute(
                 "DELETE FROM users WHERE id = :id",
