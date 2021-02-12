@@ -71,7 +71,7 @@ class Rule34 extends Extension
     {
         global $database, $user;
         if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
-            $database->notify("shm_image_bans", $event->hash);
+            #$database->notify("shm_image_bans", $event->hash);
         }
     }
 
