@@ -112,11 +112,13 @@ class Wiki extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_string(WikiConfig::TAG_PAGE_TEMPLATE,
-"{body}
+        $config->set_default_string(
+            WikiConfig::TAG_PAGE_TEMPLATE,
+            "{body}
 
 [b]Aliases: [/b][i]{aliases}[/i]
-[b]Auto tags: [/b][i]{autotags}[/i]");
+[b]Auto tags: [/b][i]{autotags}[/i]"
+        );
         $config->set_default_string(WikiConfig::EMPTY_TAGINFO, "none");
         $config->set_default_bool(WikiConfig::TAG_SHORTWIKIS, false);
         $config->set_default_bool(WikiConfig::ENABLE_REVISIONS, true);
@@ -356,7 +358,8 @@ class Wiki extends Extension
         return new WikiPage($row);
     }
 
-    public static function format_tag_wiki_page(WikiPage $page) {
+    public static function format_tag_wiki_page(WikiPage $page)
+    {
         global $database, $config;
         
         $row = $database->get_row("
