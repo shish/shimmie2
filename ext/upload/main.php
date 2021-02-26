@@ -188,7 +188,7 @@ class Upload extends Extension
 
         if ($event->page_matches("upload/replace")) {
             if (!$user->can(Permissions::REPLACE_IMAGE)) {
-                $this->theme->display_error(403, "Error", "You don't have permission to replace images");
+                $this->theme->display_error(403, "Error", "{$user->name} doesn't have permission to replace images");
                 return;
             }
             if ($this->is_full) {
@@ -228,7 +228,7 @@ class Upload extends Extension
             }
         } elseif ($event->page_matches("upload")) {
             if (!$user->can(Permissions::CREATE_IMAGE)) {
-                $this->theme->display_error(403, "Error", "You don't have permission to upload images");
+                $this->theme->display_error(403, "Error", "{$user->name} doesn't have permission to upload images");
                 return;
             }
             if ($this->is_full) {
