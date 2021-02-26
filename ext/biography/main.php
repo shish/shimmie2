@@ -14,22 +14,21 @@ class Biography extends Extension
 
         if ($user->id == $duser->id) {
             $this->theme->display_composer($page, $bio);
-		}
-		else {
+        } else {
             $this->theme->display_biography($page, $bio);
-		}
+        }
     }
 
     public function onPageRequest(PageRequestEvent $event)
     {
         global $cache, $database, $page, $user, $user_config;
         if ($event->page_matches("biography")) {
-			if ($user->check_auth_token()) {
+            if ($user->check_auth_token()) {
                 $user_config->set_string("biography", $_POST['biography']);
-				$page->flash("Bio Updated");
-				$page->set_mode(PageMode::REDIRECT);
-				$page->set_redirect(referer_or(make_link()));
-			}
+                $page->flash("Bio Updated");
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(referer_or(make_link()));
+            }
         }
     }
 }
