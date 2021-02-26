@@ -188,10 +188,12 @@ class Upload extends Extension
 
         if ($event->page_matches("upload/replace")) {
             if (!$user->can(Permissions::REPLACE_IMAGE)) {
-                throw new UploadException("You don't have permission to replace images");
+                $this->theme->display_error(403, "Error", "You don't have permission to replace images");
+                return;
             }
             if ($this->is_full) {
-                throw new UploadException("Can not replace Post: disk nearly full");
+                $this->theme->display_error(507, "Error", "Can't replace images: disk nearly full");
+                return;
             }
 
             // Try to get the image ID
@@ -226,10 +228,12 @@ class Upload extends Extension
             }
         } elseif ($event->page_matches("upload")) {
             if (!$user->can(Permissions::CREATE_IMAGE)) {
-                throw new UploadException("You don't have permission to replace images");
+                $this->theme->display_error(403, "Error", "You don't have permission to upload images");
+                return;
             }
             if ($this->is_full) {
-                throw new UploadException("Can not replace Post: disk nearly full");
+                $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
+                return;
             }
 
             /* Regular Upload Image */
