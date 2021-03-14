@@ -363,6 +363,22 @@ and of course start organising your images :-)
 
         <hr/>
 
+        <p>Search for posts by ID</p>
+
+        <div class="command_example">
+        <pre>id=1234</pre>
+        <p>Find the 1234th thing uploaded.</p>
+        </div>
+
+        <div class="command_example">
+        <pre>id>1234</pre>
+        <p>Find more recently posted things</p>
+        </div>
+
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
+
+        <hr/>
+
         <p>Sorting search results can be done using the pattern order:field_direction. _direction can be either _asc or _desc, indicating ascending (123) or descending (321) order.</p>
 
         <div class="command_example">
