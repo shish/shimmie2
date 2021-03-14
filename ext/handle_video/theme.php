@@ -31,11 +31,11 @@ class VideoFileHandlerTheme extends Themelet
                 $html .= "<!--[if IE]><p>To view webm files with IE, please <a href='https://tools.google.com/dlpage/webmmf/' target='_blank'>download this plugin</a>.</p><![endif]-->";
             }
 
-			$autoplay = ($autoplay ? ' autoplay' : '');
-			$loop     = ($loop ? ' loop' : '');
-			$mute     = ($mute ? ' muted' : '');
+            $autoplay = ($autoplay ? ' autoplay' : '');
+            $loop     = ($loop ? ' loop' : '');
+            $mute     = ($mute ? ' muted' : '');
 
-			$html .= "
+            $html .= "
 				<video controls class='shm-main-image' id='main_image' alt='main image' poster='$thumb_url' {$autoplay} {$loop} {$mute}
 				style='height: $height; width: $width; max-width: 100%; object-fit: contain; background-color: black;'>
 					<source src='{$ilink}' type='{$mime}'>
