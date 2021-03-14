@@ -22,7 +22,7 @@ class ETTheme extends Themelet
         $page->add_block(new Block("Information:", $this->build_data_form($yaml)));
     }
 
-    protected function build_data_form($yaml)
+    protected function build_data_form($yaml): string
     {
         return (string)FORM(
             ["action"=>"https://shimmie.shishnet.org/register.php", "method"=>"POST"],

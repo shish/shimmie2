@@ -4,11 +4,11 @@ class MimeSystemInfo extends ExtensionInfo
 {
     public const KEY = "mime";
 
-    public $key = self::KEY;
-    public $name = "MIME";
-    public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
-    public $license = self::LICENSE_WTFPL;
-    public $description = "Provides system mime-related functionality";
-    public $core = true;
-    public $visibility = self::VISIBLE_HIDDEN;
+    public string $key = self::KEY;
+    public string $name = "MIME";
+    public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public string $license = self::LICENSE_WTFPL;
+    public string $description = "Provides system mime-related functionality";
+    public bool $core = true;
+    public string $visibility = self::VISIBLE_HIDDEN;
 }

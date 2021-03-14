@@ -27,12 +27,12 @@ class RegenThumbTheme extends Themelet
         $page->add_block(new Block("Thumbnail", $this->build_thumb_html($image)));
     }
 
-    public function bulk_html()
+    public function bulk_html(): string
     {
         return "<label><input type='checkbox' name='bulk_regen_thumb_missing_only' id='bulk_regen_thumb_missing_only' style='width:13px' value='true' />Only missing thumbs</label>";
     }
 
-    public function display_admin_block()
+    public function display_admin_block(): void
     {
         global $page, $database;
 

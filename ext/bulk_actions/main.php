@@ -5,10 +5,8 @@ class BulkActionException extends SCoreException
 }
 class BulkActionBlockBuildingEvent extends Event
 {
-    /** @var array  */
-    public $actions = [];
-
-    public $search_terms = [];
+    public array $actions = [];
+    public array $search_terms = [];
 
     public function add_action(String $action, string $button_text, string $access_key = null, String $confirmation_message = "", String $block = "", int $position = 40)
     {
@@ -38,12 +36,9 @@ class BulkActionBlockBuildingEvent extends Event
 
 class BulkActionEvent extends Event
 {
-    /** @var string  */
-    public $action;
-    /** @var array  */
-    public $items;
-    /** @var bool  */
-    public $redirect = true;
+    public string $action;
+    public Generator $items;
+    public bool $redirect = true;
 
     public function __construct(String $action, Generator $items)
     {
@@ -56,7 +51,7 @@ class BulkActionEvent extends Event
 class BulkActions extends Extension
 {
     /** @var BulkActionsTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {

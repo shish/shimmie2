@@ -5,7 +5,7 @@ require_once "config.php";
 class CronUploader extends Extension
 {
     /** @var CronUploaderTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public const NAME = "cron_uploader";
 
@@ -15,7 +15,7 @@ class CronUploader extends Extension
     const UPLOADED_DIR = "uploaded";
     const FAILED_DIR = "failed_to_upload";
 
-    private static $IMPORT_RUNNING = false;
+    private static bool $IMPORT_RUNNING = false;
 
     public function onInitUserConfig(InitUserConfigEvent $event)
     {
@@ -201,7 +201,7 @@ class CronUploader extends Extension
     }
 
 
-    private function get_cron_url()
+    private function get_cron_url(): string
     {
         global $user_config;
 
@@ -210,12 +210,12 @@ class CronUploader extends Extension
         return make_http(make_link("/cron_upload/run", "api_key=".urlencode($user_api_key)));
     }
 
-    private function get_cron_cmd()
+    private function get_cron_cmd(): string
     {
         return "curl --silent " . $this->get_cron_url();
     }
 
-    private function display_documentation()
+    private function display_documentation(): void
     {
         global $database;
 
@@ -261,7 +261,7 @@ class CronUploader extends Extension
         );
     }
 
-    public function get_queue_dir()
+    public function get_queue_dir(): string
     {
         global $user_config;
 
@@ -269,7 +269,7 @@ class CronUploader extends Extension
         return join_path($dir, self::QUEUE_DIR);
     }
 
-    public function get_uploaded_dir()
+    public function get_uploaded_dir(): string
     {
         global $user_config;
 
@@ -277,7 +277,7 @@ class CronUploader extends Extension
         return join_path($dir, self::UPLOADED_DIR);
     }
 
-    public function get_failed_dir()
+    public function get_failed_dir(): string
     {
         global $user_config;
 
@@ -499,7 +499,7 @@ class CronUploader extends Extension
     private const SKIPPABLE_FILES = ['.ds_store','thumbs.db'];
     private const SKIPPABLE_DIRECTORIES = ['__macosx'];
 
-    private function is_skippable_dir(string $path)
+    private function is_skippable_dir(string $path): bool
     {
         $info = pathinfo($path);
 
@@ -510,7 +510,7 @@ class CronUploader extends Extension
         return false;
     }
 
-    private function is_skippable_file(string $path)
+    private function is_skippable_file(string $path): bool
     {
         $info = pathinfo($path);
 

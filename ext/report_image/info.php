@@ -4,11 +4,11 @@ class ReportImageInfo extends ExtensionInfo
 {
     public const KEY = "report_image";
 
-    public $key = self::KEY;
-    public $name = "Report Posts";
-    public $url = "http://atravelinggeek.com/";
-    public $authors = ["ATravelingGeek"=>"atg@atravelinggeek.com"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Report posts as dupes/illegal/etc";
-    public $version = "0.3a";
+    public string $key = self::KEY;
+    public string $name = "Report Posts";
+    public string $url = "http://atravelinggeek.com/";
+    public array $authors = ["ATravelingGeek"=>"atg@atravelinggeek.com"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Report posts as dupes/illegal/etc";
+    public ?string $version = "0.3a";
 }

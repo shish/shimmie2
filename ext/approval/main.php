@@ -10,7 +10,7 @@ abstract class ApprovalConfig
 class Approval extends Extension
 {
     /** @var ApprovalTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

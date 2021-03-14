@@ -28,10 +28,8 @@ class AutoTaggerTable extends Table
 
 class AddAutoTagEvent extends Event
 {
-    /** @var string  */
-    public $tag;
-    /** @var string  */
-    public $additional_tags;
+    public string $tag;
+    public string $additional_tags;
 
     public function __construct(string $tag, string $additional_tags)
     {
@@ -43,7 +41,7 @@ class AddAutoTagEvent extends Event
 
 class DeleteAutoTagEvent extends Event
 {
-    public $tag;
+    public string $tag;
 
     public function __construct(string $tag)
     {
@@ -63,7 +61,7 @@ class AddAutoTagException extends SCoreException
 class AutoTagger extends Extension
 {
     /** @var AutoTaggerTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

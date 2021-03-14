@@ -62,7 +62,7 @@ class UserConfigTheme extends Themelet
         $page->set_mode(PageMode::PAGE);
     }
 
-    protected function sb_to_html(SetupBlock $block)
+    protected function sb_to_html(SetupBlock $block): string
     {
         $h = $block->header;
         $b = $block->body;

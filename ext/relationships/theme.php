@@ -48,7 +48,7 @@ class RelationshipsTheme extends Themelet
     }
 
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts that have parent/child relationships.</p>
         <div class="command_example">

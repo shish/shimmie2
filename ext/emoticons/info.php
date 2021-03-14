@@ -4,14 +4,14 @@ class EmoticonsInfo extends ExtensionInfo
 {
     public const KEY = "emoticons";
 
-    public $key = self::KEY;
-    public $name = "Emoticon Filter";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $dependencies = [EmoticonListInfo::KEY];
-    public $description = "Lets users use graphical smilies";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Emoticon Filter";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public array $dependencies = [EmoticonListInfo::KEY];
+    public string $description = "Lets users use graphical smilies";
+    public ?string $documentation =
 "This extension will turn colon-something-colon into a link
 to an image with that something as the name, eg :smile:
 becomes a link to smile.gif

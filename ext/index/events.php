@@ -6,16 +6,13 @@
  */
 class SearchTermParseEvent extends Event
 {
-    /** @var int */
-    public $id = 0;
-    /** @var null|string */
-    public $term = null;
+    public int $id = 0;
+    public ?string $term = null;
     /** @var string[] */
-    public $context = [];
+    public array $context = [];
     /** @var Querylet[] */
-    public $querylets = [];
-    /** @var null|string  */
-    public $order = null;
+    public array $querylets = [];
+    public ?string $order = null;
 
     public function __construct(int $id, string $term=null, array $context=[])
     {
@@ -37,11 +34,8 @@ class SearchTermParseException extends SCoreException
 
 class PostListBuildingEvent extends Event
 {
-    /** @var array */
-    public $search_terms = [];
-
-    /** @var array */
-    public $parts = [];
+    public array $search_terms = [];
+    public array $parts = [];
 
     /**
      * #param string[] $search

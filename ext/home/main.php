@@ -3,7 +3,7 @@
 class Home extends Extension
 {
     /** @var HomeTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -34,7 +34,7 @@ class Home extends Extension
     }
 
 
-    private function get_body()
+    private function get_body(): string
     {
         // returns just the contents of the body
         global $config;

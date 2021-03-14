@@ -57,7 +57,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     }
 
     // base case
-    public function testUpload()
+    public function testUpload(): array
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "thing computer screenshot pbx phone");

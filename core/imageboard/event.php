@@ -5,13 +5,9 @@
  */
 class ImageAdditionEvent extends Event
 {
-    /** @var User */
-    public $user;
-
-    /** @var Image */
-    public $image;
-
-    public $merged = false;
+    public User $user;
+    public Image $image;
+    public bool $merged = false;
 
     /**
      * Inserts a new image into the database with its associated
@@ -34,11 +30,8 @@ class ImageAdditionException extends SCoreException
  */
 class ImageDeletionEvent extends Event
 {
-    /** @var Image */
-    public $image;
-
-    /** @var bool */
-    public $force = false;
+    public Image $image;
+    public bool $force = false;
 
     /**
      * Deletes an image.
@@ -59,10 +52,8 @@ class ImageDeletionEvent extends Event
  */
 class ImageReplaceEvent extends Event
 {
-    /** @var int */
-    public $id;
-    /** @var Image */
-    public $image;
+    public int $id;
+    public Image $image;
 
     /**
      * Replaces an image.
@@ -88,15 +79,10 @@ class ImageReplaceException extends SCoreException
  */
 class ThumbnailGenerationEvent extends Event
 {
-    /** @var string */
-    public $hash;
-    /** @var string */
-    public $mime;
-    /** @var bool */
-    public $force;
-
-    /** @var bool */
-    public $generated;
+    public string $hash;
+    public string $mime;
+    public bool $force;
+    public bool $generated;
 
     /**
      * Request a thumbnail be made for an image object
@@ -121,14 +107,10 @@ class ThumbnailGenerationEvent extends Event
  */
 class ParseLinkTemplateEvent extends Event
 {
-    /** @var string */
-    public $link;
-    /** @var string */
-    public $text;
-    /** @var string */
-    public $original;
-    /** @var Image */
-    public $image;
+    public string $link;
+    public string $text;
+    public string $original;
+    public Image $image;
 
     public function __construct(string $link, Image $image)
     {

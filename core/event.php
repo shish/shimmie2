@@ -6,13 +6,13 @@
  */
 abstract class Event
 {
-    public $stop_processing = false;
+    public bool $stop_processing = false;
 
     public function __construct()
     {
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return var_export($this, true);
     }
@@ -42,19 +42,11 @@ class InitExtEvent extends Event
 class PageRequestEvent extends Event
 {
     /**
-     * @var array
+     * @var string[]
      */
     public $args;
-
-    /**
-     * @var int
-     */
-    public $arg_count;
-
-    /**
-     * @var int
-     */
-    public $part_count;
+    public int $arg_count;
+    public int $part_count;
 
     public function __construct(string $path)
     {
@@ -179,15 +171,12 @@ class PageRequestEvent extends Event
  */
 class CommandEvent extends Event
 {
-    /**
-     * @var string
-     */
-    public $cmd = "help";
+    public string $cmd = "help";
 
     /**
-     * @var array
+     * @var string[]
      */
-    public $args = [];
+    public array $args = [];
 
     /**
      * #param string[] $args
@@ -256,24 +245,18 @@ class TextFormattingEvent extends Event
 {
     /**
      * For reference
-     *
-     * @var string
      */
-    public $original;
+    public string $original;
 
     /**
      * with formatting applied
-     *
-     * @var string
      */
-    public $formatted;
+    public string $formatted;
 
     /**
      * with formatting removed
-     *
-     * @var string
      */
-    public $stripped;
+    public string $stripped;
 
     public function __construct(string $text)
     {
@@ -296,38 +279,30 @@ class LogEvent extends Event
 {
     /**
      * a category, normally the extension name
-     *
-     * @var string
      */
-    public $section;
+    public string $section;
 
     /**
      * See python...
-     *
-     * @var int
      */
-    public $priority = 0;
+    public int $priority = 0;
 
     /**
      * Free text to be logged
-     *
-     * @var string
      */
-    public $message;
+    public string $message;
 
     /**
      * The time that the event was created
-     *
-     * @var int
      */
-    public $time;
+    public int $time;
 
     /**
      * Extra data to be held separate
      *
-     * @var array
+     * @var string[]
      */
-    public $args;
+    public array $args;
 
     public function __construct(string $section, int $priority, string $message)
     {

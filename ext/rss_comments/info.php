@@ -4,10 +4,10 @@ class RSSCommentsInfo extends ExtensionInfo
 {
     public const KEY = "rss_comments";
 
-    public $key = self::KEY;
-    public $name = "RSS for Comments";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Self explanatory";
+    public string $key = self::KEY;
+    public string $name = "RSS for Comments";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Self explanatory";
 }

@@ -3,7 +3,7 @@
 class Notes extends Extension
 {
     /** @var NotesTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

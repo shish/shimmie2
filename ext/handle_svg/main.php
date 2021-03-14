@@ -3,10 +3,10 @@ use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MimeType::SVG];
+    protected array $SUPPORTED_MIME = [MimeType::SVG];
 
     /** @var SVGFileHandlerTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -48,14 +48,14 @@ class SVGFileHandler extends DataHandlerExtension
         file_put_contents(warehouse_path(Image::IMAGE_DIR, $event->hash), $cleanSVG);
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         try {
             // Normally we require imagemagick, but for unit tests we can use a no-op engine
             if (defined('UNITTEST')) {
-                create_image_thumb($hash, $type);
+                create_image_thumb($hash, $mime);
             } else {
-                create_image_thumb($hash, $type, MediaEngine::IMAGICK);
+                create_image_thumb($hash, $mime, MediaEngine::IMAGICK);
             }
             return true;
         } catch (MediaException $e) {
@@ -65,28 +65,23 @@ class SVGFileHandler extends DataHandlerExtension
         }
     }
 
-    protected function check_contents(string $file): bool
+    protected function check_contents(string $tmpname): bool
     {
-        if (MimeType::get_for_file($file)!==MimeType::SVG) {
+        if (MimeType::get_for_file($tmpname)!==MimeType::SVG) {
             return false;
         }
 
-        $msp = new MiniSVGParser($file);
+        $msp = new MiniSVGParser($tmpname);
         return bool_escape($msp->valid);
     }
 }
 
 class MiniSVGParser
 {
-    /** @var bool */
-    public $valid=false;
-    /** @var int */
-    public $width=0;
-    /** @var int */
-    public $height=0;
-
-    /** @var int */
-    private $xml_depth=0;
+    public bool $valid = false;
+    public int $width=0;
+    public int $height=0;
+    private int $xml_depth=0;
 
     public function __construct(string $file)
     {

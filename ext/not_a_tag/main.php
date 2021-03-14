@@ -29,7 +29,7 @@ class NotATagTable extends Table
 class NotATag extends Extension
 {
     /** @var NotATagTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function get_priority(): int
     {

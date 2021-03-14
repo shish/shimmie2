@@ -6,7 +6,7 @@
 class EmoticonList extends Extension
 {
     /** @var EmoticonListTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

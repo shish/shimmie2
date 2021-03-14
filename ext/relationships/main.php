@@ -2,8 +2,8 @@
 
 class ImageRelationshipSetEvent extends Event
 {
-    public $child_id;
-    public $parent_id;
+    public int $child_id;
+    public int $parent_id;
 
     public function __construct(int $child_id, int $parent_id)
     {
@@ -17,7 +17,7 @@ class ImageRelationshipSetEvent extends Event
 class Relationships extends Extension
 {
     /** @var RelationshipsTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public const NAME = "Relationships";
 

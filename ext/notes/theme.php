@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 class NotesTheme extends Themelet
 {
-    public function note_button($image_id)
+    public function note_button(int $image_id): string
     {
         return '
 			<!-- <a href="#" id="addnotelink" >Add a note</a> -->
@@ -11,7 +11,7 @@ class NotesTheme extends Themelet
 			</form>
 		';
     }
-    public function request_button($image_id)
+    public function request_button(int $image_id): string
     {
         return make_form(make_link("note/add_request")) . '
 						<input id="noterequest" type="submit" value="Add Note Request">
@@ -19,7 +19,7 @@ class NotesTheme extends Themelet
 						</form>
 					';
     }
-    public function nuke_notes_button($image_id)
+    public function nuke_notes_button(int $image_id): string
     {
         return make_form(make_link("note/nuke_notes")) . '
 							<input id="noterequest" type="submit" value="Nuke Notes" onclick="return confirm_action(\'Are you sure?\')">
@@ -27,7 +27,7 @@ class NotesTheme extends Themelet
 							</form>
 				';
     }
-    public function nuke_requests_button($image_id)
+    public function nuke_requests_button(int $image_id): string
     {
         return make_form(make_link("note/nuke_requests")) . '
 							<input id="noterequest" type="submit" value="Nuke Requests" onclick="return confirm_action()">
@@ -36,7 +36,7 @@ class NotesTheme extends Themelet
 						';
     }
 
-    public function search_notes_page(Page $page)
+    public function search_notes_page(Page $page): void
     { //IN DEVELOPMENT, NOT FULLY WORKING
         $html = '<form method="GET" action="'.make_link("post/list/note=").'">
 		<input placeholder="Search Notes" type="text" name="search"/>
@@ -49,7 +49,7 @@ class NotesTheme extends Themelet
     }
 
     // check action POST on form
-    public function display_note_system(Page $page, $image_id, $recovered_notes, $adminOptions)
+    public function display_note_system(Page $page, int $image_id, array $recovered_notes, bool $adminOptions): void
     {
         $base_href = get_base_href();
 
@@ -180,7 +180,7 @@ class NotesTheme extends Themelet
         $page->add_block(new Block("Note Requests", $pool_images, "main", 20));
     }
 
-    private function get_history($histories)
+    private function get_history(array $histories): string
     {
         global $user;
 
@@ -248,7 +248,7 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts with notes.</p>
         <div class="command_example">

@@ -4,9 +4,9 @@ class NotesInfo extends ExtensionInfo
 {
     public const KEY = "notes";
 
-    public $key = self::KEY;
-    public $name = "Notes";
-    public $authors = ["Sein Kraft"=>"mail@seinkraft.info"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Annotate images";
+    public string $key = self::KEY;
+    public string $name = "Notes";
+    public array $authors = ["Sein Kraft"=>"mail@seinkraft.info"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Annotate images";
 }

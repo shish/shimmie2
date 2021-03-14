@@ -4,9 +4,9 @@ class PostTitlesInfo extends ExtensionInfo
 {
     public const KEY = "post_titles";
 
-    public $key = self::KEY;
-    public $name = "Post Titles";
-    public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
-    public $license = self::LICENSE_WTFPL;
-    public $description = "Add titles to media posts";
+    public string $key = self::KEY;
+    public string $name = "Post Titles";
+    public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public string $license = self::LICENSE_WTFPL;
+    public string $description = "Add titles to media posts";
 }

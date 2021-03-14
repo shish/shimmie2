@@ -3,7 +3,7 @@
 class Blotter extends Extension
 {
     /** @var BlotterTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

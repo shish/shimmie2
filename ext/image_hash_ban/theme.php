@@ -6,7 +6,7 @@ class ImageBanTheme extends Themelet
     /*
      * Show all the bans
      */
-    public function display_bans(Page $page, $table, $paginator)
+    public function display_bans(Page $page, $table, $paginator): void
     {
         $page->set_title("Post Bans");
         $page->set_heading("Post Bans");
@@ -17,7 +17,7 @@ class ImageBanTheme extends Themelet
     /*
      * Display a link to delete an image
      */
-    public function get_buttons_html(Image $image)
+    public function get_buttons_html(Image $image): string
     {
         return (string)SHM_SIMPLE_FORM(
             "image_hash_ban/add",

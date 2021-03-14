@@ -10,10 +10,10 @@ class ResizeImageInfo extends ExtensionInfo
 {
     public const KEY = "resize";
 
-    public $key = self::KEY;
-    public $name = "Resize Post";
-    public $authors = ["jgen"=>"jgen.tech@gmail.com"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "This extension allows admins to resize images.";
-    public $version = "0.1";
+    public string $key = self::KEY;
+    public string $name = "Resize Post";
+    public array $authors = ["jgen"=>"jgen.tech@gmail.com"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "This extension allows admins to resize images.";
+    public ?string $version = "0.1";
 }

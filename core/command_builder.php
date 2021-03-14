@@ -5,9 +5,9 @@
 // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
 class CommandBuilder
 {
-    private $executable;
-    private $args = [];
-    public $output;
+    private string $executable;
+    private array $args = [];
+    public array $output;
 
     public function __construct(String $executable)
     {

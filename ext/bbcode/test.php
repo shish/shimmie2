@@ -96,13 +96,13 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    private function filter($in)
+    private function filter($in): string
     {
         $bb = new BBCode();
         return $bb->format($in);
     }
 
-    private function strip($in)
+    private function strip($in): string
     {
         $bb = new BBCode();
         return $bb->strip($in);

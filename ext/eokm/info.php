@@ -4,10 +4,10 @@ class EokmInfo extends ExtensionInfo
 {
     public const KEY = "eokm";
 
-    public $key = self::KEY;
-    public $name = "EOKM Filter";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Check uploads against the EOKM blocklist";
+    public string $key = self::KEY;
+    public string $name = "EOKM Filter";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Check uploads against the EOKM blocklist";
 }

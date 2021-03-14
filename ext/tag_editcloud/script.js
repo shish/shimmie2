@@ -2,7 +2,7 @@
 
 Array.prototype.editcloud_contains = function (ele) {
     for (var i = 0; i < this.length; i++) {
-        if (this[i] == ele) {
+        if (this[i] === ele) {
             return true;
         }
     }
@@ -12,7 +12,7 @@ Array.prototype.editcloud_remove = function (ele) {
     var arr = [];
     var count = 0;
     for (var i = 0; i < this.length; i++) {
-        if (this[i] != ele) {
+        if (this[i] !== ele) {
             arr[count] = this[i];
             count++;
         }

@@ -173,7 +173,7 @@ class ForumTheme extends Themelet
 
 
 
-    private function make_thread_list($threads, $showAdminOptions)
+    private function make_thread_list($threads, $showAdminOptions): string
     {
         $html = "<table id='threadList' class='zebra'>".
             "<thead><tr>".
@@ -187,7 +187,6 @@ class ForumTheme extends Themelet
         }
 
         $html .= "</tr></thead><tbody>";
-
 
         $current_post = 0;
         foreach ($threads as $thread) {

@@ -3,7 +3,7 @@
 class Downtime extends Extension
 {
     /** @var DowntimeTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function get_priority(): int
     {
@@ -35,7 +35,7 @@ class Downtime extends Extension
         }
     }
 
-    private function is_safe_page(PageRequestEvent $event)
+    private function is_safe_page(PageRequestEvent $event): bool
     {
         if ($event->page_matches("user_admin/login")) {
             return true;

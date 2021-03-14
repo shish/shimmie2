@@ -35,7 +35,7 @@ class TaggerXML extends Extension
         }
     }
 
-    private function match_tag_list(string $s)
+    private function match_tag_list(string $s): string
     {
         global $database, $config;
 
@@ -83,7 +83,7 @@ class TaggerXML extends Extension
         return $this->list_to_xml($tags, "search", $s, $count);
     }
 
-    private function image_tag_list(int $image_id)
+    private function image_tag_list(int $image_id): string
     {
         global $database;
         $tags = $database->execute("

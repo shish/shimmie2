@@ -2,10 +2,9 @@
 
 class UserBlockBuildingEvent extends Event
 {
-    /** @var array  */
-    public $parts = [];
+    public array $parts = [];
 
-    public function add_link(string $name, string $link, int $position=50)
+    public function add_link(string $name, string $link, int $position=50): void
     {
         while (isset($this->parts[$position])) {
             $position++;
@@ -16,12 +15,9 @@ class UserBlockBuildingEvent extends Event
 
 class UserOperationsBuildingEvent extends Event
 {
-    /** @var array  */
-    public $parts = [];
-    /** @var User  */
-    public $user = [];
-    /** @var BaseConfig  */
-    public $user_config = [];
+    public array $parts = [];
+    public User $user;
+    public BaseConfig $user_config;
 
     public function __construct(User $user, BaseConfig $user_config)
     {
@@ -30,7 +26,7 @@ class UserOperationsBuildingEvent extends Event
         $this->user_config = $user_config;
     }
 
-    public function add_html(string $html)
+    public function add_html(string $html): void
     {
         $this->parts[] = $html;
     }
@@ -38,10 +34,8 @@ class UserOperationsBuildingEvent extends Event
 
 class UserPageBuildingEvent extends Event
 {
-    /** @var User */
-    public $display_user;
-    /** @var array  */
-    public $stats = [];
+    public User $display_user;
+    public array $stats = [];
 
     public function __construct(User $display_user)
     {
@@ -60,14 +54,10 @@ class UserPageBuildingEvent extends Event
 
 class UserCreationEvent extends Event
 {
-    /** @var  string */
-    public $username;
-    /** @var  string */
-    public $password;
-    /** @var  string */
-    public $email;
-    /** @var bool */
-    public $login;
+    public string $username;
+    public string $password;
+    public string $email;
+    public bool $login;
 
     public function __construct(string $name, string $pass, string $email, bool $login)
     {
@@ -81,7 +71,7 @@ class UserCreationEvent extends Event
 
 class UserLoginEvent extends Event
 {
-    public $user;
+    public User $user;
     public function __construct(User $user)
     {
         parent::__construct();
@@ -91,8 +81,7 @@ class UserLoginEvent extends Event
 
 class UserDeletionEvent extends Event
 {
-    /** @var  int */
-    public $id;
+    public int $id;
 
     public function __construct(int $id)
     {

@@ -3,7 +3,7 @@ use function MicroHTML\INPUT;
 
 class PrivateImageTheme extends Themelet
 {
-    public function get_image_admin_html(Image $image)
+    public function get_image_admin_html(Image $image): string
     {
         if ($image->private===false) {
             $html = SHM_SIMPLE_FORM(
@@ -22,8 +22,7 @@ class PrivateImageTheme extends Themelet
         return (string)$html;
     }
 
-
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts that are private/public.</p>
         <div class="command_example">

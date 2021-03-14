@@ -4,7 +4,7 @@
 class RegenThumb extends Extension
 {
     /** @var RegenThumbTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
@@ -160,7 +160,7 @@ class RegenThumb extends Extension
         }
     }
 
-    public function get_images(String $mime = null)
+    public function get_images(string $mime = null): array
     {
         global $database;
 

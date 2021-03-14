@@ -2,8 +2,8 @@
 interface CacheEngine
 {
     public function get(string $key);
-    public function set(string $key, $val, int $time=0);
-    public function delete(string $key);
+    public function set(string $key, $val, int $time=0): void;
+    public function delete(string $key): void;
 }
 
 class NoCache implements CacheEngine
@@ -12,18 +12,17 @@ class NoCache implements CacheEngine
     {
         return false;
     }
-    public function set(string $key, $val, int $time=0)
+    public function set(string $key, $val, int $time=0): void
     {
     }
-    public function delete(string $key)
+    public function delete(string $key): void
     {
     }
 }
 
 class MemcachedCache implements CacheEngine
 {
-    /** @var ?Memcached */
-    public $memcache=null;
+    public ?Memcached $memcache=null;
 
     public function __construct(string $args)
     {
@@ -52,7 +51,7 @@ class MemcachedCache implements CacheEngine
         }
     }
 
-    public function set(string $key, $val, int $time=0)
+    public function set(string $key, $val, int $time=0): void
     {
         $key = urlencode($key);
 
@@ -63,7 +62,7 @@ class MemcachedCache implements CacheEngine
         }
     }
 
-    public function delete(string $key)
+    public function delete(string $key): void
     {
         $key = urlencode($key);
 
@@ -87,12 +86,12 @@ class APCCache implements CacheEngine
         return apc_fetch($key);
     }
 
-    public function set(string $key, $val, int $time=0)
+    public function set(string $key, $val, int $time=0): void
     {
         apc_store($key, $val, $time);
     }
 
-    public function delete(string $key)
+    public function delete(string $key): void
     {
         apc_delete($key);
     }
@@ -100,7 +99,7 @@ class APCCache implements CacheEngine
 
 class RedisCache implements CacheEngine
 {
-    private $redis=null;
+    private Redis $redis;
 
     public function __construct(string $args)
     {
@@ -116,7 +115,7 @@ class RedisCache implements CacheEngine
         return $this->redis->get($key);
     }
 
-    public function set(string $key, $val, int $time=0)
+    public function set(string $key, $val, int $time=0): void
     {
         if ($time > 0) {
             $this->redis->setEx($key, $time, $val);
@@ -125,7 +124,7 @@ class RedisCache implements CacheEngine
         }
     }
 
-    public function delete(string $key)
+    public function delete(string $key): void
     {
         $this->redis->del($key);
     }
@@ -134,9 +133,9 @@ class RedisCache implements CacheEngine
 class Cache
 {
     public $engine;
-    public $hits=0;
-    public $misses=0;
-    public $time=0;
+    public int $hits=0;
+    public int $misses=0;
+    public int $time=0;
 
     public function __construct(?string $dsn)
     {

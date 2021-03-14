@@ -15,7 +15,7 @@ class ImageRotateException extends SCoreException
 class RotateImage extends Extension
 {
     /** @var RotateImageTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 

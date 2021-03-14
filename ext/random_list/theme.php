@@ -2,7 +2,7 @@
 
 class RandomListTheme extends Themelet
 {
-    protected $search_terms;
+    protected array $search_terms;
 
     /**
      * #param string[] $search_terms

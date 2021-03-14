@@ -546,7 +546,7 @@ class ArtistsTheme extends Themelet
         return $html;
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts with a particular artist.</p>
         <div class="command_example">

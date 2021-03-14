@@ -3,7 +3,7 @@
 class QRImage extends Extension
 {
     /** @var QRImageTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {

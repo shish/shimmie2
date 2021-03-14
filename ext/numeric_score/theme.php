@@ -94,7 +94,7 @@ class NumericScoreTheme extends Themelet
     }
 
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts that have received numeric scores by the score or by the scorer.</p>
         <div class="command_example">

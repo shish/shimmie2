@@ -7,22 +7,14 @@ require_once "config.php";
  */
 class DataUploadEvent extends Event
 {
-    /** @var string */
-    public $tmpname;
-    /** @var array */
-    public $metadata;
-    /** @var string */
-    public $hash;
-    /** @var string */
-    public $mime = "";
-    /** @var int */
-    public $image_id = -1;
-    /** @var int */
-    public $replace_id = null;
-    /** @var bool */
-    public $handled = false;
-    /** @var bool */
-    public $merged = false;
+    public string $tmpname;
+    public array $metadata;
+    public string $hash;
+    public string $mime = "";
+    public int $image_id = -1;
+    public ?int $replace_id = null;
+    public bool $handled = false;
+    public bool $merged = false;
 
     /**
      * Some data is being uploaded.
@@ -86,10 +78,8 @@ class UploadException extends SCoreException
 class Upload extends Extension
 {
     /** @var UploadTheme */
-    protected $theme;
-
-    /** @var bool */
-    public $is_full;
+    protected ?Themelet $theme;
+    public bool $is_full;
 
     /**
      * Early, so it can stop the DataUploadEvent before any data handlers see it.

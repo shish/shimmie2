@@ -4,8 +4,8 @@ class AutoCompleteInfo extends ExtensionInfo
 {
     public const KEY = "autocomplete";
 
-    public $key = self::KEY;
-    public $name = "Autocomplete";
-    public $authors = ["Daku"=>"admin@codeanimu.net"];
-    public $description = "Adds autocomplete to search & tagging.";
+    public string $key = self::KEY;
+    public string $name = "Autocomplete";
+    public array $authors = ["Daku"=>"admin@codeanimu.net"];
+    public string $description = "Adds autocomplete to search & tagging.";
 }

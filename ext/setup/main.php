@@ -8,8 +8,7 @@ include_once "config.php";
  */
 class ConfigSaveEvent extends Event
 {
-    /** @var Config */
-    public $config;
+    public Config $config;
 
     public function __construct(Config $config)
     {
@@ -23,11 +22,8 @@ class ConfigSaveEvent extends Event
  */
 class SetupBuildingEvent extends Event
 {
-    /** @var SetupTheme */
-    protected $theme;
-
-    /** @var SetupPanel */
-    public $panel;
+    protected SetupTheme $theme;
+    public SetupPanel $panel;
 
     public function __construct(SetupPanel $panel)
     {
@@ -39,9 +35,8 @@ class SetupBuildingEvent extends Event
 class SetupPanel
 {
     /** @var SetupBlock[]  */
-    public $blocks = [];
-    /** @var BaseConfig  */
-    public $config;
+    public array $blocks = [];
+    public BaseConfig $config;
 
     public function __construct(BaseConfig $config)
     {
@@ -58,12 +53,9 @@ class SetupPanel
 
 class SetupBlock extends Block
 {
-    /** @var string  */
-    public $header;
-    /** @var string  */
-    public $body;
-    /** @var BaseConfig  */
-    public $config;
+    public ?string $header;
+    public ?string $body;
+    public BaseConfig $config;
 
     public function __construct(string $title, BaseConfig $config)
     {
@@ -298,7 +290,7 @@ class SetupBlock extends Block
 class Setup extends Extension
 {
     /** @var SetupTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

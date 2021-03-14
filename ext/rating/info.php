@@ -4,13 +4,13 @@ class RatingsInfo extends ExtensionInfo
 {
     public const KEY = "rating";
 
-    public $key = self::KEY;
-    public $name = "Post Ratings";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Allow users to rate images \"safe\", \"questionable\" or \"explicit\"";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Post Ratings";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Allow users to rate images \"safe\", \"questionable\" or \"explicit\"";
+    public ?string $documentation =
 "This shimmie extension provides filter:
 <ul>
   <li>rating = (safe|questionable|explicit|unknown)

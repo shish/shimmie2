@@ -20,7 +20,7 @@ class BlotterTheme extends Themelet
         $page->add_block(new Block("Blotter Entries", $html, "main", 10));
     }
 
-    public function display_blotter($entries)
+    public function display_blotter(array $entries): void
     {
         global $page, $config;
         $html = $this->get_html_for_blotter($entries);
@@ -28,7 +28,7 @@ class BlotterTheme extends Themelet
         $page->add_block(new Block(null, $html, $position, 20));
     }
 
-    private function get_html_for_blotter_editor($entries)
+    private function get_html_for_blotter_editor(array $entries): string
     {
         global $user;
 
@@ -99,7 +99,7 @@ class BlotterTheme extends Themelet
         return $html;
     }
 
-    private function get_html_for_blotter_page($entries)
+    private function get_html_for_blotter_page(array $entries): string
     {
         /**
          * This one displays a list of all blotter entries.
@@ -130,7 +130,7 @@ class BlotterTheme extends Themelet
         return $html;
     }
 
-    private function get_html_for_blotter($entries)
+    private function get_html_for_blotter(array $entries): string
     {
         global $config;
         $i_color = $config->get_string("blotter_color", "#FF0000");

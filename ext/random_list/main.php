@@ -3,7 +3,7 @@
 class RandomList extends Extension
 {
     /** @var RandomListTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

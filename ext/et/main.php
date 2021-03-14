@@ -3,7 +3,7 @@
 class ET extends Extension
 {
     /** @var ETTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -116,7 +116,7 @@ class ET extends Extension
         return $info;
     }
 
-    private function to_yaml($info)
+    private function to_yaml(array $info): string
     {
         $data = "";
         foreach ($info as $title => $section) {

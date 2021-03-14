@@ -10,8 +10,6 @@ use function MicroHTML\TD;
 use function MicroHTML\INPUT;
 use function MicroHTML\rawHTML;
 use function MicroHTML\emptyHTML;
-use function MicroHTML\SELECT;
-use function MicroHTML\OPTION;
 
 class CronUploaderTheme extends Themelet
 {
@@ -33,7 +31,6 @@ class CronUploaderTheme extends Themelet
 
         if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
             $info_html .= "<b style='color:red'>THIS EXTENSION REQUIRES USER API KEYS TO BE ENABLED IN <a href=''>BOARD ADMIN</a></b>";
-        } else {
         }
 
         $info_html .= "<b>Information</b>

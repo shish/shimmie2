@@ -16,7 +16,7 @@ if ( // kill these glitched requests immediately
 class Rule34 extends Extension
 {
     /** @var Rule34Theme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {
@@ -69,10 +69,10 @@ class Rule34 extends Extension
 
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
     {
-        global $database, $user;
-        if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
-            #$database->notify("shm_image_bans", $event->hash);
-        }
+        # global $database, $user;
+        # if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
+        #     $database->notify("shm_image_bans", $event->hash);
+        # }
     }
 
     public function onCommand(CommandEvent $event)

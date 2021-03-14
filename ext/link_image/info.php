@@ -4,12 +4,12 @@ class LinkImageInfo extends ExtensionInfo
 {
     public const KEY = "link_image";
 
-    public $key = self::KEY;
-    public $name = "Link to Post";
-    public $authors = ["Artanis"=>"artanis.00@gmail.com"];
-    public $description = "Show various forms of link to each image, for copy & paste";
-    public $license = self::LICENSE_GPLV2;
-    public $documentation = "There is one option in Board Config: Text Link Format.
+    public string $key = self::KEY;
+    public string $name = "Link to Post";
+    public array $authors = ["Artanis"=>"artanis.00@gmail.com"];
+    public string $description = "Show various forms of link to each image, for copy & paste";
+    public string $license = self::LICENSE_GPLV2;
+    public ?string $documentation = "There is one option in Board Config: Text Link Format.
 It takes the following arguments as well as plain text.
 
 <pre>

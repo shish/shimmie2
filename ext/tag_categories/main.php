@@ -6,7 +6,7 @@ require_once "config.php";
 class TagCategories extends Extension
 {
     /** @var TagCategoriesTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -106,13 +106,13 @@ class TagCategories extends Extension
         }
     }
 
-    public function getDict()
+    public function getDict(): array
     {
         global $database;
         return $database->get_all('SELECT * FROM image_tag_categories;');
     }
 
-    public function getKeyedDict($key_with = 'category')
+    public function getKeyedDict($key_with = 'category'): array
     {
         $tc_dict = $this->getDict();
         $tc_keyed_dict = [];
@@ -125,7 +125,7 @@ class TagCategories extends Extension
         return $tc_keyed_dict;
     }
 
-    public function getTagHtml(string $h_tag, $tag_category_dict, string $extra_text = '')
+    public function getTagHtml(string $h_tag, $tag_category_dict, string $extra_text = ''): string
     {
         $h_tag_no_underscores = str_replace("_", " ", $h_tag);
 

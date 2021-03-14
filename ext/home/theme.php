@@ -2,7 +2,7 @@
 
 class HomeTheme extends Themelet
 {
-    public function display_page(Page $page, $sitename, $base_href, $theme_name, $body)
+    public function display_page(Page $page, string $sitename, string $base_href, string $theme_name, string $body): void
     {
         $page->set_mode(PageMode::DATA);
         $page->add_auto_html_headers();
@@ -25,7 +25,7 @@ EOD
         );
     }
 
-    public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text)
+    public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text): string
     {
         $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
         $message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";

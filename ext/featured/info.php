@@ -4,13 +4,13 @@ class FeaturedInfo extends ExtensionInfo
 {
     public const KEY = "featured";
 
-    public $key = self::KEY;
-    public $name = "Featured Post";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Bring a specific image to the users' attentions";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Featured Post";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Bring a specific image to the users' attentions";
+    public ?string $documentation =
 "Once enabled, a new \"feature this\" button will appear next
 to the other post control buttons (delete, rotate, etc).
 Clicking it will set the image as the site's current feature,

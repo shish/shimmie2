@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		var keyCode = e.keyCode || e.which;
 
 		//Stop tags containing space.
-		if(keyCode == 32) {
+		if(keyCode === 32) {
 			e.preventDefault();
 
 			$('.autocomplete_tags').tagit('createTag', $(this).val());
 			$(this).autocomplete('close');
-		} else if (keyCode == 9) {
+		} else if (keyCode === 9) {
 			e.preventDefault();
 
 			var tag = $('.tagit-autocomplete[style*=\"display: block\"] > li:focus, .tagit-autocomplete[style*=\"display: block\"] > li:first').first();

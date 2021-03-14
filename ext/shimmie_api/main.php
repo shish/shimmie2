@@ -2,21 +2,23 @@
 
 class _SafeImage
 {
-    public $id;
-    public $height;
-    public $width;
-    public $hash;
-    public $filesize;
-    public $ext;
-    public $mime;
-    public $posted;
-    public $source;
-    public $owner_id;
-    public $tags;
+    public int $id;
+    public int $height;
+    public int $width;
+    public string $hash;
+    public int $filesize;
+    public string $ext;
+    public ?string $mime;
+    public int $posted;
+    public ?string $source;
+    public int $owner_id;
+    public array $tags;
 
     public function __construct(Image $img)
     {
-        $this->id       = $img->id;
+        $_id = $img->id;
+        assert($_id != null);
+        $this->id       = $_id;
         $this->height   = $img->height;
         $this->width    = $img->width;
         $this->hash     = $img->hash;

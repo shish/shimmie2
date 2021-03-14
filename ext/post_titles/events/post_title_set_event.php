@@ -2,10 +2,10 @@
 
 class PostTitleSetEvent extends Event
 {
-    public $image;
-    public $title;
+    public Image $image;
+    public string $title;
 
-    public function __construct(Image $image, String $title)
+    public function __construct(Image $image, string $title)
     {
         parent::__construct();
         $this->image = $image;

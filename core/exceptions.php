@@ -7,11 +7,8 @@
  */
 class SCoreException extends RuntimeException
 {
-    /** @var string|null */
-    public $query;
-
-    /** @var string */
-    public $error;
+    public ?string $query;
+    public string $error;
 
     public function __construct(string $msg, ?string $query=null)
     {
@@ -23,21 +20,16 @@ class SCoreException extends RuntimeException
 
 class InstallerException extends RuntimeException
 {
-    /** @var string */
-    public $title;
+    public string $title;
+    public string $body;
+    public int $exit_code;
 
-    /** @var string */
-    public $body;
-
-    /** @var int */
-    public $code;
-
-    public function __construct(string $title, string $body, int $code)
+    public function __construct(string $title, string $body, int $exit_code)
     {
         parent::__construct($body);
         $this->title = $title;
         $this->body = $body;
-        $this->code = $code;
+        $this->exit_code = $exit_code;
     }
 }
 

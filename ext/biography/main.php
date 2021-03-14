@@ -3,11 +3,11 @@
 class Biography extends Extension
 {
     /** @var BiographyTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {
-        global $database, $page, $user;
+        global $page, $user;
         $duser = $event->display_user;
         $duser_config = UserConfig::get_for_user($event->display_user->id);
         $bio = $duser_config->get_string("biography", "");
@@ -21,7 +21,7 @@ class Biography extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $cache, $database, $page, $user, $user_config;
+        global $page, $user, $user_config;
         if ($event->page_matches("biography")) {
             if ($user->check_auth_token()) {
                 $user_config->set_string("biography", $_POST['biography']);

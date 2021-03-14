@@ -3,11 +3,9 @@
 class ImageAdminBlockBuildingEvent extends Event
 {
     /** @var string[] */
-    public $parts = [];
-    /** @var Image  */
-    public $image = null;
-    /** @var User  */
-    public $user = null;
+    public array $parts = [];
+    public Image $image;
+    public User $user;
 
     public function __construct(Image $image, User $user)
     {

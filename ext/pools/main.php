@@ -21,9 +21,8 @@ class PoolCreationException extends SCoreException
 
 class PoolAddPostsEvent extends Event
 {
-    public $pool_id;
-
-    public $posts = [];
+    public int $pool_id;
+    public array $posts = [];
 
     public function __construct(int $pool_id, array $posts)
     {
@@ -35,12 +34,11 @@ class PoolAddPostsEvent extends Event
 
 class PoolCreationEvent extends Event
 {
-    public $title;
-    public $user;
-    public $public;
-    public $description;
-
-    public $new_id = -1;
+    public string $title;
+    public User $user;
+    public bool $public;
+    public string $description;
+    public int $new_id = -1;
 
     public function __construct(
         string $title,
@@ -60,7 +58,7 @@ class PoolCreationEvent extends Event
 
 class PoolDeletionEvent extends Event
 {
-    public $pool_id;
+    public int $pool_id;
 
     public function __construct(int $pool_id)
     {
@@ -71,14 +69,14 @@ class PoolDeletionEvent extends Event
 
 class Pool
 {
-    public $id;
-    public $user_id;
-    public $user_name;
-    public $public;
-    public $title;
-    public $description;
-    public $date;
-    public $posts;
+    public int $id;
+    public int $user_id;
+    public ?string $user_name;
+    public bool $public;
+    public string $title;
+    public string $description;
+    public string $date;
+    public int $posts;
 
     public function __construct(array $row)
     {
@@ -106,7 +104,7 @@ function _image_to_id(Image $image): int
 class Pools extends Extension
 {
     /** @var PoolsTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

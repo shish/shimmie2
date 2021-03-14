@@ -8,7 +8,8 @@ class HellBanInfo extends ExtensionInfo
 {
     public const KEY = "hellban";
 
-    public $key = self::KEY;
-    public $name = "Hellban";
-    public $beta = true;
+    public string $key = self::KEY;
+    public string $name = "Hellban";
+    public bool $beta = true;
+    public string $description = "Make some users only visible to themselves";
 }

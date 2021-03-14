@@ -5,7 +5,7 @@
 
 class MP3FileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MimeType::MP3];
+    protected array $SUPPORTED_MIME = [MimeType::MP3];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -18,7 +18,7 @@ class MP3FileHandler extends DataHandlerExtension
         // TODO: ->length = ???
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         copy("ext/handle_mp3/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
         return true;

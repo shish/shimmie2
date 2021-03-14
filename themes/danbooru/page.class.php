@@ -43,8 +43,7 @@ Tips
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 class Page extends BasePage
 {
-    /** @var bool */
-    public $left_enabled = true;
+    public bool $left_enabled = true;
 
     public function disable_left()
     {

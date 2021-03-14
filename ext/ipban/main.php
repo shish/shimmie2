@@ -48,7 +48,7 @@ class IPBanTable extends Table
 
 class RemoveIPBanEvent extends Event
 {
-    public $id;
+    public int $id;
 
     public function __construct(int $id)
     {
@@ -59,10 +59,10 @@ class RemoveIPBanEvent extends Event
 
 class AddIPBanEvent extends Event
 {
-    public $ip;
-    public $mode;
-    public $reason;
-    public $expires;
+    public string $ip;
+    public string $mode;
+    public string $reason;
+    public ?string $expires;
 
     public function __construct(string $ip, string $mode, string $reason, ?string $expires)
     {
@@ -77,7 +77,7 @@ class AddIPBanEvent extends Event
 class IPBan extends Extension
 {
     /** @var IPBanTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function get_priority(): int
     {

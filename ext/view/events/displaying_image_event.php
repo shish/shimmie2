@@ -11,8 +11,7 @@
  */
 class DisplayingImageEvent extends Event
 {
-    /** @var Image  */
-    public $image;
+    public Image $image;
 
     public function __construct(Image $image)
     {

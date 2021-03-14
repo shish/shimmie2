@@ -4,11 +4,11 @@ class ArtistsInfo extends ExtensionInfo
 {
     public const KEY = "artists";
 
-    public $key = self::KEY;
-    public $name = "Artists System";
-    public $url = self::SHIMMIE_URL;
-    public $authors = ["Sein Kraft"=>"mail@seinkraft.info","Alpha"=>"alpha@furries.com.ar"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Simple artists extension";
-    public $beta = true;
+    public string $key = self::KEY;
+    public string $name = "Artists System";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = ["Sein Kraft"=>"mail@seinkraft.info","Alpha"=>"alpha@furries.com.ar"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Simple artists extension";
+    public bool $beta = true;
 }

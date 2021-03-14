@@ -17,7 +17,7 @@ class FourOhFour extends Extension
         }
     }
 
-    private function count_main($blocks)
+    private function count_main($blocks): int
     {
         $n = 0;
         foreach ($blocks as $block) {

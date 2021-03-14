@@ -6,162 +6,45 @@ class _SafeOuroborosImage
     /**
      * Author
      */
-
-    /**
-     * Post author
-     * @var string
-     */
-    public $author = '';
-    /**
-     * Post author user ID
-     * @var integer
-     */
-    public $creator_id = null;
-
-    /**
-     * Image
-     */
-
-    /**
-     * Image height
-     * @var integer
-     */
-    public $height = null;
-    /**
-     * Image width
-     * @var integer
-     */
-    public $width = null;
-    /**
-     * File extension
-     * @var string
-     */
-    public $file_ext = '';
-    /**
-     * File Size in bytes
-     * @var integer
-     */
-    public $file_size = null;
-    /**
-     * URL to the static file
-     * @var string
-     */
-    public $file_url = '';
-    /**
-     * File MD5 hash
-     * @var string
-     */
-    public $md5 = '';
+    public string $author = '';
+    public ?int $creator_id = null;
+    public ?int $height = null;
+    public ?int $width = null;
+    public string $file_ext = '';
+    public ?int $file_size = null;
+    public string $file_url = '';
+    public string $md5 = '';
 
     /**
      * Post Meta
      */
-
-    /**
-     * (Unknown) Change
-     * @var integer
-     */
-    public $change = null;
-    /**
-     * Timestamp for post creation
-     * @var integer
-     */
-    public $created_at = null;
-    /**
-     * Post ID
-     * @var integer
-     */
-    public $id = null;
-    /**
-     * Parent post ID
-     * @var integer
-     */
-    public $parent_id = null;
-    /**
-     * Post content rating
-     * @var string
-     */
-    public $rating = 'q';
-    /**
-     * Post score
-     * @var integer
-     */
-    public $score = 1;
-    /**
-     * Post source
-     * @var string
-     */
-    public $source = '';
-    /**
-     * Post status
-     * @var string
-     */
-    public $status = '';
-    /**
-     * Post tags
-     * @var string
-     */
-    public $tags = 'tagme';
-    /**
-     * Flag if the post has child posts
-     * @var bool
-     */
-    public $has_children = false;
-    /**
-     * Flag if the post has comments
-     * @var bool
-     */
-    public $has_comments = false;
-    /**
-     * Flag if the post has notes
-     * @var bool
-     */
-    public $has_notes = false;
-    /**
-     * Post description
-     * @var string
-     */
-    public $description = '';
+    public ?int $change = null;
+    public ?array $created_at = null;
+    public ?int $id = null;
+    public ?int $parent_id = null;
+    public string $rating = 'q';
+    public int $score = 1;
+    public ?string $source = '';
+    public string $status = '';
+    public string $tags = 'tagme';
+    public bool $has_children = false;
+    public bool $has_comments = false;
+    public bool $has_notes = false;
+    public string $description = '';
 
     /**
      * Thumbnail
      */
-
-    /**
-     * Thumbnail Height
-     * @var integer
-     */
-    public $preview_height = null;
-    /**
-     * Thumbnail URL
-     * @var string
-     */
-    public $preview_url = '';
-    /**
-     * Thumbnail Width
-     * @var integer
-     */
-    public $preview_width = null;
+    public ?int $preview_height = null;
+    public string $preview_url = '';
+    public ?int $preview_width = null;
 
     /**
      * Downscaled Image
      */
-
-    /**
-     * Downscaled image height
-     * @var integer
-     */
-    public $sample_height = null;
-    /**
-     * Downscaled image
-     * @var string
-     */
-    public $sample_url = '';
-    /**
-     * Downscaled image
-     * @var integer
-     */
-    public $sample_width = null;
+    public ?int $sample_height = null;
+    public string $sample_url = '';
+    public ?int $sample_width = null;
 
     public function __construct(Image $img)
     {
@@ -217,24 +100,9 @@ class _SafeOuroborosImage
 
 class OuroborosPost extends _SafeOuroborosImage
 {
-    /**
-     * Multipart File
-     * @var array
-     */
-    public $file = [];
-
-    /**
-     * Create with rating locked
-     * @var bool
-     */
-    public $is_rating_locked = false;
-
-    /**
-     * Create with notes locked
-     * @var bool
-     */
-    public $is_note_locked = false;
-
+    public array $file = [];
+    public bool $is_rating_locked = false;
+    public bool $is_note_locked = false;
 
     /**
      * Initialize an OuroborosPost for creation
@@ -310,11 +178,11 @@ class OuroborosPost extends _SafeOuroborosImage
 
 class _SafeOuroborosTag
 {
-    public $ambiguous = false;
-    public $count = 0;
-    public $id = 0;
-    public $name = '';
-    public $type = 0;
+    public bool $ambiguous = false;
+    public int $count = 0;
+    public int $id = 0;
+    public string $name = '';
+    public int $type = 0;
 
     public function __construct(array $tag)
     {
@@ -326,8 +194,8 @@ class _SafeOuroborosTag
 
 class OuroborosAPI extends Extension
 {
-    private $event;
-    private $type;
+    private ?PageRequestEvent $event;
+    private ?string $type;
 
     const HEADER_HTTP_200 = 'OK';
     const MSG_HTTP_200 = 'Request was successful';
@@ -701,7 +569,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    private function createItemXML(XMLWriter &$xml, string $type, $item)
+    private function createItemXML(XMLWriter $xml, string $type, $item)
     {
         $xml->startElement($type);
         foreach ($item as $key => $val) {

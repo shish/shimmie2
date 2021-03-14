@@ -4,9 +4,9 @@ class ForumInfo extends ExtensionInfo
 {
     public const KEY = "forum";
 
-    public $key = self::KEY;
-    public $name = "Forum";
-    public $authors = ["Sein Kraft"=>"mail@seinkraft.info","Alpha"=>"alpha@furries.com.ar"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Rough forum extension";
+    public string $key = self::KEY;
+    public string $name = "Forum";
+    public array $authors = ["Sein Kraft"=>"mail@seinkraft.info","Alpha"=>"alpha@furries.com.ar"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Rough forum extension";
 }

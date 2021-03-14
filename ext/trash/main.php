@@ -8,7 +8,7 @@ abstract class TrashConfig
 class Trash extends Extension
 {
     /** @var TrashTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function get_priority(): int
     {

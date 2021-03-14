@@ -20,7 +20,7 @@ class CustomViewImageTheme extends ViewImageTheme
         }
     }
 
-    protected function build_pin(Image $image)
+    protected function build_pin(Image $image): string
     {
         if (isset($_GET['search'])) {
             $query = "search=".url_escape($_GET['search']);
@@ -36,7 +36,7 @@ class CustomViewImageTheme extends ViewImageTheme
     }
 
 
-    protected function build_info(Image $image, $editor_parts)
+    protected function build_info(Image $image, $editor_parts): string
     {
         global $user;
 

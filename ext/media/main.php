@@ -15,7 +15,7 @@ class MediaException extends SCoreException
 class Media extends Extension
 {
     /** @var MediaTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     private const LOSSLESS_FORMATS = [
         MimeType::WEBP_LOSSLESS,
@@ -506,7 +506,7 @@ class Media extends Extension
 //        }
 //    }
 
-    public static function is_lossless(string $filename, string $mime)
+    public static function is_lossless(string $filename, string $mime): bool
     {
         if (in_array($mime, self::LOSSLESS_FORMATS)) {
             return true;
@@ -514,7 +514,6 @@ class Media extends Extension
         switch ($mime) {
             case MimeType::WEBP:
                 return MimeType::is_lossless_webp($filename);
-                break;
         }
         return false;
     }

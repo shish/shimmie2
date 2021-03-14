@@ -68,7 +68,7 @@ function do_install($dsn)
         create_tables(new Database($dsn));
         write_config($dsn);
     } catch (InstallerException $e) {
-        die_nicely($e->title, $e->body, $e->code);
+        die_nicely($e->title, $e->body, $e->exit_code);
     }
 }
 

@@ -4,12 +4,12 @@ class ImageIOInfo extends ExtensionInfo
 {
     public const KEY = "image";
 
-    public $key = self::KEY;
-    public $name = "Post Manager";
-    public $url = self::SHIMMIE_URL;
-    public $authors = [self::SHISH_NAME=> self::SHISH_EMAIL, "jgen"=>"jgen.tech@gmail.com"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Handle the image database";
-    public $visibility = self::VISIBLE_HIDDEN;
-    public $core = true;
+    public string $key = self::KEY;
+    public string $name = "Post Manager";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = [self::SHISH_NAME=> self::SHISH_EMAIL, "jgen"=>"jgen.tech@gmail.com"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Handle the image database";
+    public string $visibility = self::VISIBLE_HIDDEN;
+    public bool $core = true;
 }

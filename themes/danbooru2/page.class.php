@@ -44,7 +44,7 @@ Tips
 
 class Page extends BasePage
 {
-    public $left_enabled = true;
+    public bool $left_enabled = true;
     public function disable_left()
     {
         $this->left_enabled = false;

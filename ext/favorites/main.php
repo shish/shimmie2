@@ -2,12 +2,9 @@
 
 class FavoriteSetEvent extends Event
 {
-    /** @var int */
-    public $image_id;
-    /** @var User */
-    public $user;
-    /** @var bool */
-    public $do_set;
+    public int $image_id;
+    public User $user;
+    public bool $do_set;
 
     public function __construct(int $image_id, User $user, bool $do_set)
     {
@@ -24,7 +21,7 @@ class FavoriteSetEvent extends Event
 class Favorites extends Extension
 {
     /** @var FavoritesTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {

@@ -130,7 +130,7 @@ interface Config
  */
 abstract class BaseConfig implements Config
 {
-    public $values = [];
+    public array $values = [];
 
     public function set_int(string $name, ?int $value): void
     {
@@ -256,12 +256,10 @@ abstract class BaseConfig implements Config
  */
 class DatabaseConfig extends BaseConfig
 {
-    /** @var Database  */
-    private $database = null;
-
-    private $table_name;
-    private $sub_column;
-    private $sub_value;
+    private Database $database;
+    private string $table_name;
+    private ?string $sub_column;
+    private ?string $sub_value;
 
     public function __construct(
         Database $database,

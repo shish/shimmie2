@@ -4,14 +4,14 @@ class BBCodeInfo extends ExtensionInfo
 {
     public const KEY = "bbcode";
 
-    public $key = self::KEY;
-    public $name = "BBCode";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $core = true;
-    public $description = "Turns BBCode into HTML";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "BBCode";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public bool $core = true;
+    public string $description = "Turns BBCode into HTML";
+    public ?string $documentation =
 "  Basic formatting tags:
    <ul>
      <li>[b]<b>bold</b>[/b]

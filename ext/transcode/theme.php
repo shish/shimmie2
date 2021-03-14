@@ -5,7 +5,7 @@ class TranscodeImageTheme extends Themelet
     /*
      * Display a link to resize an image
      */
-    public function get_transcode_html(Image $image, array $options)
+    public function get_transcode_html(Image $image, array $options): string
     {
         $html = "
 			".make_form(
@@ -25,7 +25,7 @@ class TranscodeImageTheme extends Themelet
         return $html;
     }
 
-    public function get_transcode_picker_html(array $options)
+    public function get_transcode_picker_html(array $options): string
     {
         $html = "<select id='transcode_mime'  name='transcode_mime' required='required' >";
         foreach ($options as $display=>$value) {
@@ -35,7 +35,7 @@ class TranscodeImageTheme extends Themelet
         return $html."</select>";
     }
 
-    public function display_transcode_error(Page $page, string $title, string $message)
+    public function display_transcode_error(Page $page, string $title, string $message): void
     {
         $page->set_title("Transcode Image");
         $page->set_heading("Transcode Image");

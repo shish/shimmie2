@@ -15,22 +15,12 @@ function _new_user(array $row): User
  */
 class User
 {
-    /** @var int */
-    public $id;
-
-    /** @var string */
-    public $name;
-
-    /** @var string */
-    public $email;
-
-    public $join_date;
-
-    /** @var string */
-    public $passhash;
-
-    /** @var UserClass */
-    public $class;
+    public int $id;
+    public string $name;
+    public ?string $email;
+    public string $join_date;
+    public ?string $passhash;
+    public UserClass $class;
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     * Initialisation                                               *

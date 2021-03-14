@@ -4,12 +4,12 @@ class OuroborosAPIInfo extends ExtensionInfo
 {
     public const KEY = "ouroboros_api";
 
-    public $key = self::KEY;
-    public $name = "Ouroboros API";
-    public $authors = ["Diftraku"=>"diftraku[at]derpy.me"];
-    public $description = "Ouroboros-like API for Shimmie";
-    public $version = "0.2";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Ouroboros API";
+    public array $authors = ["Diftraku"=>"diftraku[at]derpy.me"];
+    public string $description = "Ouroboros-like API for Shimmie";
+    public ?string $version = "0.2";
+    public ?string $documentation =
 "Currently working features
  <ul>
    <li>Post:

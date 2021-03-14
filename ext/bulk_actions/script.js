@@ -8,13 +8,13 @@ function validate_selections(form, confirmationMessage) {
     var queryOnly = false;
     if(bulk_selector_active) {
         var data = get_selected_items();
-        if(data.length==0) {
+        if(data.length===0) {
             return false;
         }
     } else {
         var query = $(form).find('input[name="bulk_query"]').val();
 
-        if (query == null || query == "") {
+        if (query == null || query === "") {
             return false;
         } else {
             queryOnly = true;
@@ -22,7 +22,7 @@ function validate_selections(form, confirmationMessage) {
     }
 
 
-    if(confirmationMessage!=null&&confirmationMessage!="") {
+    if(confirmationMessage!=null&&confirmationMessage!=="") {
         return confirm(confirmationMessage);
     } else if(queryOnly) {
         var action = $(form).find('input[name="submit_button"]').val();
@@ -59,7 +59,7 @@ function deactivate_bulk_selector() {
 
 function get_selected_items() {
     var data = $('#bulk_selected_ids').val();
-    if(data==""||data==null) {
+    if(data===""||data==null) {
         data = [];
     } else {
         data = JSON.parse(data);
@@ -97,11 +97,11 @@ function toggle_selection( id ) {
     var data = get_selected_items();
     if(data.includes(id)) {
         data.splice(data.indexOf(id),1);
-        set_selected_items(data);            
+        set_selected_items(data);
         return false;
     } else {
         data.push(id);
-        set_selected_items(data);            
+        set_selected_items(data);
         return true;
     }
 }
@@ -116,7 +116,7 @@ function select_all() {
             items.push(id);
         }
     );
-    set_selected_items(items);            
+    set_selected_items(items);
 }
 
 function select_invert() {
@@ -131,11 +131,11 @@ function select_invert() {
             }
         }
     );
-    set_selected_items(items);            
+    set_selected_items(items);
 }
 
 function select_none() {
-    set_selected_items([]);            
+    set_selected_items([]);
 }
 
 function select_range(start, end) {
@@ -145,7 +145,7 @@ function select_range(start, end) {
         function ( index, block ) {
             block = $(block);
             var id = block.data("post-id");
-            if(id==start)
+            if(id===start)
                 selecting = true;
 
             if(selecting) {
@@ -153,7 +153,7 @@ function select_range(start, end) {
                     data.push(id);
             }
 
-            if(id==end) {
+            if(id===end) {
                 selecting = false;
             }
         }
@@ -163,14 +163,14 @@ function select_range(start, end) {
 
 var last_clicked_item;
 
-function add_selector_button($block) {	
+function add_selector_button($block) {
     var c = function(e) {
         if(!bulk_selector_active)
             return true;
 
         e.preventDefault();
         e.stopPropagation();
-       
+
         var id = $block.data("post-id");
         if(e.shiftKey) {
             if(last_clicked_item<id) {
@@ -182,7 +182,7 @@ function add_selector_button($block) {
             last_clicked_item = id;
             toggle_selection(id);
         }
-        return false; 
+        return false;
     };
 
     $block.find("A").click(c);

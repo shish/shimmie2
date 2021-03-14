@@ -4,12 +4,9 @@ require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
 class CommentPostingEvent extends Event
 {
-    /** @var  int */
-    public $image_id;
-    /** @var User */
-    public $user;
-    /** @var string  */
-    public $comment;
+    public int $image_id;
+    public User $user;
+    public string $comment;
 
     public function __construct(int $image_id, User $user, string $comment)
     {
@@ -27,8 +24,7 @@ class CommentPostingEvent extends Event
  */
 class CommentDeletionEvent extends Event
 {
-    /** @var  int */
-    public $comment_id;
+    public int $comment_id;
 
     public function __construct(int $comment_id)
     {
@@ -43,46 +39,27 @@ class CommentPostingException extends SCoreException
 
 class Comment
 {
-    /** @var User */
-    public $owner;
-
-    /** @var int */
-    public $owner_id;
-
-    /** @var string */
-    public $owner_name;
-
-    /** @var string */
-    public $owner_email;
-
-    /** @var string */
-    public $owner_class;
-
-    /** @var string */
-    public $comment;
-
-    /** @var int */
-    public $comment_id;
-
-    /** @var int */
-    public $image_id;
-
-    /** @var string */
-    public $poster_ip;
-
-    /** @var string */
-    public $posted;
+    public ?User $owner;
+    public int $owner_id;
+    public string $owner_name;
+    public ?string $owner_email;
+    public string $owner_class;
+    public string $comment;
+    public int $comment_id;
+    public int $image_id;
+    public string $poster_ip;
+    public string $posted;
 
     public function __construct($row)
     {
         $this->owner = null;
-        $this->owner_id = $row['user_id'];
+        $this->owner_id = (int)$row['user_id'];
         $this->owner_name = $row['user_name'];
         $this->owner_email = $row['user_email']; // deprecated
         $this->owner_class = $row['user_class'];
         $this->comment =  $row['comment'];
-        $this->comment_id =  $row['comment_id'];
-        $this->image_id =  $row['image_id'];
+        $this->comment_id =  (int)$row['comment_id'];
+        $this->image_id =  (int)$row['image_id'];
         $this->poster_ip =  $row['poster_ip'];
         $this->posted =  $row['posted'];
     }
@@ -109,7 +86,7 @@ class Comment
 class CommentList extends Extension
 {
     /** @var CommentListTheme $theme */
-    public $theme;
+    public ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

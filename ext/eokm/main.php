@@ -25,6 +25,7 @@ class Eokm extends Extension
             $return = curl_exec($ch);
             curl_close($ch);
 
+            /** @noinspection PhpStatementHasEmptyBodyInspection */
             if ($return == "false") {
                 // all ok
             } elseif ($return == "true") {

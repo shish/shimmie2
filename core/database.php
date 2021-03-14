@@ -13,30 +13,23 @@ abstract class DatabaseDriver
  */
 class Database
 {
-    /** @var string */
-    private $dsn;
+    private string $dsn;
 
     /**
      * The PDO database connection object, for anyone who wants direct access.
-     * @var null|PDO
      */
-    private $db = null;
-
-    /**
-     * @var float
-     */
-    public $dbtime = 0.0;
+    private ?PDO $db = null;
+    public float $dbtime = 0.0;
 
     /**
      * Meta info about the database engine.
-     * @var DBEngine|null
      */
-    private $engine = null;
+    private ?DBEngine $engine = null;
 
     /**
      * How many queries this DB object has run
      */
-    public $query_count = 0;
+    public int $query_count = 0;
 
     public function __construct(string $dsn)
     {

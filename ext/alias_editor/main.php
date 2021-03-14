@@ -26,10 +26,8 @@ class AliasTable extends Table
 
 class AddAliasEvent extends Event
 {
-    /** @var string  */
-    public $oldtag;
-    /** @var string  */
-    public $newtag;
+    public string $oldtag;
+    public string $newtag;
 
     public function __construct(string $oldtag, string $newtag)
     {
@@ -41,7 +39,7 @@ class AddAliasEvent extends Event
 
 class DeleteAliasEvent extends Event
 {
-    public $oldtag;
+    public string $oldtag;
 
     public function __construct(string $oldtag)
     {
@@ -57,7 +55,7 @@ class AddAliasException extends SCoreException
 class AliasEditor extends Extension
 {
     /** @var AliasEditorTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

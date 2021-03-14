@@ -3,7 +3,7 @@
 class Blocks extends Extension
 {
     /** @var BlocksTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

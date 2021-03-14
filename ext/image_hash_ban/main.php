@@ -31,7 +31,7 @@ class HashBanTable extends Table
 
 class RemoveImageHashBanEvent extends Event
 {
-    public $hash;
+    public string $hash;
 
     public function __construct(string $hash)
     {
@@ -42,8 +42,8 @@ class RemoveImageHashBanEvent extends Event
 
 class AddImageHashBanEvent extends Event
 {
-    public $hash;
-    public $reason;
+    public string $hash;
+    public string $reason;
 
     public function __construct(string $hash, string $reason)
     {
@@ -56,7 +56,7 @@ class AddImageHashBanEvent extends Event
 class ImageBan extends Extension
 {
     /** @var ImageBanTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

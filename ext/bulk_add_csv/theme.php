@@ -2,7 +2,7 @@
 
 class BulkAddCSVTheme extends Themelet
 {
-    private $messages = [];
+    private array $messages = [];
 
     /*
      * Show a standard page for results to be put into

@@ -20,7 +20,7 @@ class VideoFileHandler extends DataHandlerExtension
         MimeType::QUICKTIME,
         MimeType::WEBM,
     ];
-    protected $SUPPORTED_MIME = self::SUPPORTED_MIME;
+    protected array $SUPPORTED_MIME = self::SUPPORTED_MIME;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -65,7 +65,7 @@ class VideoFileHandler extends DataHandlerExtension
             if (is_array($data)) {
                 if (array_key_exists("streams", $data)) {
                     $video = false;
-                    $audio = true;
+                    $audio = false;
                     $video_codec = null;
                     $streams = $data["streams"];
                     if (is_array($streams)) {
@@ -107,7 +107,7 @@ class VideoFileHandler extends DataHandlerExtension
                 if (array_key_exists("format", $data)&& is_array($data["format"])) {
                     $format = $data["format"];
                     if (array_key_exists("duration", $format) && is_numeric($format["duration"])) {
-                        $event->image->length = floor(floatval($format["duration"]) * 1000);
+                        $event->image->length = (int)floor(floatval($format["duration"]) * 1000);
                     }
                 }
             }
@@ -125,7 +125,7 @@ class VideoFileHandler extends DataHandlerExtension
         return MimeType::matches_array($mime, $enabled_formats, true);
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         return Media::create_thumbnail_ffmpeg($hash);
     }

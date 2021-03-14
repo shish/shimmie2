@@ -13,16 +13,11 @@
  */
 abstract class Extension
 {
-    /** @var string */
-    public $key;
+    public string $key;
+    protected ?Themelet $theme;
+    public ?ExtensionInfo $info;
 
-    /** @var Themelet */
-    protected $theme;
-
-    /** @var ExtensionInfo */
-    public $info;
-
-    private static $enabled_extensions = [];
+    private static array $enabled_extensions = [];
 
     public function __construct($class = null)
     {
@@ -122,35 +117,31 @@ abstract class ExtensionInfo
     public const LICENSE_MIT = "MIT";
     public const LICENSE_WTFPL = "WTFPL";
 
+    public const VISIBLE_DEFAULT = "default";
     public const VISIBLE_ADMIN = "admin";
     public const VISIBLE_HIDDEN = "hidden";
-    private const VALID_VISIBILITY = [self::VISIBLE_ADMIN, self::VISIBLE_HIDDEN];
+    private const VALID_VISIBILITY = [self::VISIBLE_DEFAULT, self::VISIBLE_ADMIN, self::VISIBLE_HIDDEN];
 
-    public $key;
+    public string $key;
 
-    public $core = false;
+    public bool $core = false;
+    public bool $beta = false;
 
-    public $beta = false;
+    public string $name;
+    public string $license;
+    public string $description;
+    public array $authors = [];
+    public array $dependencies = [];
+    public array $conflicts = [];
+    public string $visibility = self::VISIBLE_DEFAULT;
+    public ?string $link = null;
+    public ?string $version = null;
+    public ?string $documentation = null;
 
-    public $name;
-    public $authors = [];
-    public $link;
-    public $license;
-    public $version;
-    public $dependencies = [];
-    public $conflicts = [];
-    public $visibility;
-    public $description;
-    public $documentation;
-
-    /** @var array which DBs this ext supports (blank for 'all') */
-    public $db_support = [];
-
-    /** @var bool */
-    private $supported = null;
-
-    /** @var string */
-    private $support_info = null;
+    /** @var string[] which DBs this ext supports (blank for 'all') */
+    public array $db_support = [];
+    private ?bool $supported = null;
+    private ?string $support_info = null;
 
     public function is_supported(): bool
     {
@@ -168,9 +159,9 @@ abstract class ExtensionInfo
         return $this->support_info;
     }
 
-    private static $all_info_by_key = [];
-    private static $all_info_by_class = [];
-    private static $core_extensions = [];
+    private static array $all_info_by_key = [];
+    private static array $all_info_by_class = [];
+    private static array $core_extensions = [];
 
     protected function __construct()
     {
@@ -283,7 +274,7 @@ abstract class FormatterExtension extends Extension
  */
 abstract class DataHandlerExtension extends Extension
 {
-    protected $SUPPORTED_MIME = [];
+    protected array $SUPPORTED_MIME = [];
 
     protected function move_upload_to_archive(DataUploadEvent $event)
     {
@@ -335,7 +326,9 @@ abstract class DataHandlerExtension extends Extension
                 }
 
                 send_event(new ImageReplaceEvent($event->replace_id, $image));
-                $event->image_id = $event->replace_id;
+                $_id = $event->replace_id;
+                assert(!is_null($_id));
+                $event->image_id = $_id;
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 if (is_null($image)) {

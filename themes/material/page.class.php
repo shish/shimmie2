@@ -187,7 +187,7 @@ class Page extends BasePage
 EOD;
     }
 
-    public function rework_navigation(Block $block)
+    public function rework_navigation(Block $block): string
     {
         // $h = $block->header;
         $b = $block->body;

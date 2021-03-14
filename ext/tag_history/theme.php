@@ -8,7 +8,7 @@ use function MicroHTML\rawHTML;
 
 class TagHistoryTheme extends Themelet
 {
-    private $messages = [];
+    private array $messages = [];
 
     public function display_history_page(Page $page, int $image_id, array $history)
     {
@@ -70,7 +70,7 @@ class TagHistoryTheme extends Themelet
     public function display_revert_ip_results()
     {
         global $page;
-        $html = implode($this->messages, "\n");
+        $html = implode("\n", $this->messages);
         $page->add_block(new Block("Bulk Revert Results", $html));
     }
 

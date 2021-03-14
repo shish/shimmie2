@@ -2,10 +2,8 @@
 
 class WikiUpdateEvent extends Event
 {
-    /** @var User  */
-    public $user;
-    /** @var WikiPage  */
-    public $wikipage;
+    public User $user;
+    public WikiPage $wikipage;
 
     public function __construct(User $user, WikiPage $wikipage)
     {
@@ -17,10 +15,10 @@ class WikiUpdateEvent extends Event
 
 class WikiDeleteRevisionEvent extends Event
 {
-    public $title;
-    public $revision;
+    public string $title;
+    public int $revision;
 
-    public function __construct($title, $revision)
+    public function __construct(string $title, int $revision)
     {
         parent::__construct();
         $this->title = $title;
@@ -30,9 +28,9 @@ class WikiDeleteRevisionEvent extends Event
 
 class WikiDeletePageEvent extends Event
 {
-    public $title;
+    public string $title;
 
-    public function __construct($title)
+    public function __construct(string $title)
     {
         parent::__construct();
         $this->title = $title;
@@ -45,29 +43,14 @@ class WikiUpdateException extends SCoreException
 
 class WikiPage
 {
-    /** @var int|string */
-    public $id;
-
-    /** @var int */
-    public $owner_id;
-
-    /** @var string */
-    public $owner_ip;
-
-    /** @var string */
-    public $date;
-
-    /** @var string */
-    public $title;
-
-    /** @var int */
-    public $revision;
-
-    /** @var bool */
-    public $locked;
-
-    /** @var string */
-    public $body;
+    public int $id;
+    public int $owner_id;
+    public string $owner_ip;
+    public string $date;
+    public string $title;
+    public int $revision;
+    public bool $locked;
+    public string $body;
 
     public function __construct(array $row=null)
     {
@@ -107,7 +90,7 @@ abstract class WikiConfig
 class Wiki extends Extension
 {
     /** @var WikiTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -210,7 +193,7 @@ class Wiki extends Extension
             }
         } elseif ($event->page_matches("wiki_admin/delete_revision")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
-                send_event(new WikiDeleteRevisionEvent($_POST["title"], $_POST["revision"]));
+                send_event(new WikiDeleteRevisionEvent($_POST["title"], (int)$_POST["revision"]));
                 $u_title = url_escape($_POST["title"]);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
@@ -361,22 +344,22 @@ class Wiki extends Extension
     public static function format_tag_wiki_page(WikiPage $page)
     {
         global $database, $config;
-        
+
         $row = $database->get_row("
                 SELECT *
                 FROM tags
                 WHERE tag = :title
                     ", ["title"=>$page->title]);
-        
+
         if (!empty($row)) {
             $template = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
-            
+
             //CATEGORIES
             if (class_exists("TagCategories")) {
                 $tagcategories = new TagCategories;
                 $tag_category_dict = $tagcategories->getKeyedDict();
             }
-            
+
             //ALIASES
             $aliases = $database->get_col("
                 SELECT oldtag
@@ -384,53 +367,52 @@ class Wiki extends Extension
                 WHERE newtag = :title
                 ORDER BY oldtag ASC
                     ", ["title"=>$row["tag"]]);
-            
+
             if (!empty($aliases)) {
                 $template = str_replace("{aliases}", implode(", ", $aliases), $template);
             } else {
                 $template = str_replace("{aliases}", $config->get_string(WikiConfig::EMPTY_TAGINFO), $template);
             }
-            
+
             //Things before this line will be passed through html_escape.
             $template = format_text($template);
             //Things after this line will NOT be escaped!!! Be careful what you add.
-            
+
             if (class_exists("AutoTagger")) {
                 $auto_tags = $database->get_one("
                     SELECT additional_tags
                     FROM auto_tag
                     WHERE tag = :title
                         ", ["title"=>$row["tag"]]);
-                
+
                 if (!empty($auto_tags)) {
                     $auto_tags = Tag::explode($auto_tags);
                     $f_auto_tags = [];
-                    
+
                     $tag_list_t = new TagListTheme;
-                    
+
                     foreach ($auto_tags as $a_tag) {
                         $a_row = $database->get_row("
                             SELECT *
                             FROM tags
                             WHERE tag = :title
                                 ", ["title"=>$a_tag]);
-                        
+
                         $tag_html = $tag_list_t->return_tag($a_row, $tag_category_dict ?? []);
                         array_push($f_auto_tags, $tag_html[1]);
                     }
-                    
+
                     $template = str_replace("{autotags}", implode(", ", $f_auto_tags), $template);
                 } else {
                     $template = str_replace("{autotags}", format_text($config->get_string(WikiConfig::EMPTY_TAGINFO)), $template);
                 }
             }
         }
-        
+
         //Insert page body AT LAST to avoid replacing its contents with the actions above.
-        $formatted = str_replace("{body}", format_text($page->body), $template ?? "{body}");
-        return $formatted;
+        return str_replace("{body}", format_text($page->body), $template ?? "{body}");
     }
-    
+
     /**
         Diff implemented in pure php, written from scratch.
         Copyright (C) 2003  Daniel Unterberger <diff.phpnet@holomind.de>
@@ -462,7 +444,7 @@ class Wiki extends Extension
         Contact: d.u.diff@holomind.de <daniel unterberger>
     **/
 
-    private function arr_diff($f1, $f2, $show_equal = 0)
+    private function arr_diff(array $f1, array $f2, int $show_equal = 0): string
     {
         $c1         = 0 ;                   # current line of left
         $c2         = 0 ;                   # current line of right
@@ -641,7 +623,7 @@ class Wiki extends Extension
     /**
      *   callback function to format the diffence-lines with your 'style'
      */
-    private function formatline(int $nr1, int $nr2, string $stat, &$value): string
+    private function formatline(int $nr1, int $nr2, string $stat, $value): string
     { #change to $value if problems
         if (trim($value) == "") {
             return "";
@@ -651,17 +633,14 @@ class Wiki extends Extension
             case "=":
                 // return $nr1. " : $nr2 : = ".htmlentities( $value )  ."<br>";
                 return "$value\n";
-                break;
 
             case "+":
                 //return $nr1. " : $nr2 : + <font color='blue' >".htmlentities( $value )  ."</font><br>";
                 return "+++ $value\n";
-                break;
 
             case "-":
                 //return $nr1. " : $nr2 : - <font color='red' >".htmlentities( $value )  ."</font><br>";
                 return "--- $value\n";
-                break;
 
             default:
                 throw new RuntimeException("stat needs to be =, + or -");

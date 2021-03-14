@@ -9,7 +9,7 @@ function dstat($name, $val)
 
 class StatsDInterface extends Extension
 {
-    public static $stats = [];
+    public static array $stats = [];
 
     private function _stats(string $type)
     {

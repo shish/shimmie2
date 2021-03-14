@@ -3,7 +3,7 @@
 class SourceHistory extends Extension
 {
     /** @var SourceHistoryTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     // in before source are actually set, so that "get current source" works
     public function get_priority(): int

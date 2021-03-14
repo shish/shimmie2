@@ -2,7 +2,7 @@
 
 class IcoFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
+    protected array $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -36,9 +36,9 @@ class IcoFileHandler extends DataHandlerExtension
         }
     }
 
-    protected function check_contents(string $file): bool
+    protected function check_contents(string $tmpname): bool
     {
-        $fp = fopen($file, "r");
+        $fp = fopen($tmpname, "r");
         $header = unpack("Snull/Stype/Scount", fread($fp, 6));
         fclose($fp);
         return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));

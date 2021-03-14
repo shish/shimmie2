@@ -10,9 +10,9 @@ class RotateImageInfo extends ExtensionInfo
 {
     public const KEY = "rotate";
 
-    public $key = self::KEY;
-    public $name = "Rotate Image";
-    public $authors = ["jgen"=>"jgen.tech@gmail.com","Agasa"=>"hiroshiagasa@gmail.com"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Allows admins to rotate images.";
+    public string $key = self::KEY;
+    public string $name = "Rotate Image";
+    public array $authors = ["jgen"=>"jgen.tech@gmail.com","Agasa"=>"hiroshiagasa@gmail.com"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Allows admins to rotate images.";
 }

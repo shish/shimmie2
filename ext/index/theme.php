@@ -2,9 +2,9 @@
 
 class IndexTheme extends Themelet
 {
-    protected $page_number;
-    protected $total_pages;
-    protected $search_terms;
+    protected int $page_number;
+    protected int $total_pages;
+    protected array $search_terms;
 
     public function set_page(int $page_number, int $total_pages, array $search_terms)
     {
@@ -179,7 +179,7 @@ and of course start organising your images :-)
         }
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Searching is largely based on tags, with a number of special keywords available that allow searching based on properties of the posts.</p>
 

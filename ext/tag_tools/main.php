@@ -4,7 +4,7 @@ declare(strict_types=1);
 class TagTools extends Extension
 {
     /** @var TagToolsTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onAdminBuilding(AdminBuildingEvent $event)
     {
@@ -19,7 +19,7 @@ class TagTools extends Extension
         }
     }
 
-    private function set_tag_case()
+    private function set_tag_case(): bool
     {
         global $database;
         $database->execute(
@@ -30,7 +30,7 @@ class TagTools extends Extension
         return true;
     }
 
-    private function lowercase_all_tags()
+    private function lowercase_all_tags(): bool
     {
         global $database;
         $database->execute("UPDATE tags SET tag=lower(tag)");
@@ -38,7 +38,7 @@ class TagTools extends Extension
         return true;
     }
 
-    private function recount_tag_use()
+    private function recount_tag_use(): bool
     {
         global $database;
         $database->execute("

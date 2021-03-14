@@ -246,21 +246,22 @@ function find_header(array $headers, string $name): ?string
 
 if (!function_exists('mb_strlen')) {
     // TODO: we should warn the admin that they are missing multibyte support
-    function mb_strlen($str, $encoding)
+    /** @noinspection PhpUnusedParameterInspection */
+    function mb_strlen($str, $encoding): int
     {
         return strlen($str);
     }
-    function mb_internal_encoding($encoding)
+    function mb_internal_encoding($encoding): void
     {
     }
-    function mb_strtolower($str)
+    function mb_strtolower($str): string
     {
         return strtolower($str);
     }
 }
 
 /** @noinspection PhpUnhandledExceptionInspection */
-function get_subclasses_of(string $parent)
+function get_subclasses_of(string $parent): array
 {
     $result = [];
     foreach (get_declared_classes() as $class) {
@@ -327,7 +328,7 @@ function get_base_href(): string
 /**
  * The opposite of the standard library's parse_url
  */
-function unparse_url($parsed_url)
+function unparse_url(array $parsed_url): string
 {
     $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
     $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
@@ -345,14 +346,14 @@ function unparse_url($parsed_url)
 if (!function_exists('str_starts_with')) {
     function str_starts_with(string $haystack, string $needle): bool
     {
-        return \strncmp($haystack, $needle, \strlen($needle)) === 0;
+        return strncmp($haystack, $needle, strlen($needle)) === 0;
     }
 }
 
 if (!function_exists('str_ends_with')) {
     function str_ends_with(string $haystack, string $needle): bool
     {
-        return $needle === '' || $needle === \substr($haystack, - \strlen($needle));
+        return $needle === '' || $needle === substr($haystack, - strlen($needle));
     }
 }
 
@@ -520,13 +521,9 @@ function parse_shorthand_int(string $limit): int
                 /** @noinspection PhpMissingBreakStatementInspection */
                 case 't': $value *= 1024;  // fall through
                 /** @noinspection PhpMissingBreakStatementInspection */
-                // no break
                 case 'g': $value *= 1024;  // fall through
                 /** @noinspection PhpMissingBreakStatementInspection */
-                // no break
                 case 'm': $value *= 1024;  // fall through
-                /** @noinspection PhpMissingBreakStatementInspection */
-                // no break
                 case 'k': $value *= 1024; break;
                 default: $value = -1;
             }
@@ -800,7 +797,7 @@ function iterator_map_to_array(callable $callback, iterator $iter): array
     return iterator_to_array(iterator_map($callback, $iter));
 }
 
-function stringer($s)
+function stringer($s): string
 {
     if (is_array($s)) {
         if (isset($s[0])) {

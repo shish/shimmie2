@@ -9,49 +9,37 @@ class Block
 {
     /**
      * The block's title.
-     *
-     * @var string
      */
-    public $header;
+    public ?string $header;
 
     /**
      * The content of the block.
-     *
-     * @var string
      */
-    public $body;
+    public ?string $body;
 
     /**
      * Where the block should be placed. The default theme supports
      * "main" and "left", other themes can add their own areas.
-     *
-     * @var string
      */
-    public $section;
+    public string $section;
 
     /**
      * How far down the section the block should appear, higher
      * numbers appear lower. The scale is 0-100 by convention,
      * though any number will work.
-     *
-     * @var int
      */
-    public $position;
+    public int $position;
 
     /**
      * A unique ID for the block.
-     *
-     * @var string
      */
-    public $id;
+    public string $id;
 
     /**
      * Should this block count as content for the sake of
      * the 404 handler
-     *
-     * @var boolean
      */
-    public $is_content = true;
+    public bool $is_content = true;
 
     public function __construct(string $header=null, string $body=null, string $section="main", int $position=50, string $id=null)
     {
@@ -63,7 +51,9 @@ class Block
         if (is_null($id)) {
             $id = (empty($header) ? md5($body ?? '') : $header) . $section;
         }
-        $this->id = preg_replace('/[^\w-]/', '', str_replace(' ', '_', $id));
+        $str_id = preg_replace('/[^\w-]/', '', str_replace(' ', '_', $id));
+        assert(is_string($str_id));
+        $this->id = $str_id;
     }
 
     /**

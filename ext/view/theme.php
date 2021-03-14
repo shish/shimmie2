@@ -38,7 +38,7 @@ class ViewImageTheme extends Themelet
         }
     }
 
-    protected function get_query()
+    protected function get_query(): ?string
     {
         if (isset($_GET['search'])) {
             $query = "search=".url_escape(Tag::caret($_GET['search']));
@@ -48,7 +48,7 @@ class ViewImageTheme extends Themelet
         return $query;
     }
 
-    protected function build_pin(Image $image)
+    protected function build_pin(Image $image): string
     {
         $query = $this->get_query();
         $h_prev = "<a id='prevlink' href='".make_link("post/prev/{$image->id}", $query)."'>Prev</a>";
@@ -72,7 +72,7 @@ class ViewImageTheme extends Themelet
         return "$h_pin<br>$h_search";
     }
 
-    protected function build_info(Image $image, $editor_parts)
+    protected function build_info(Image $image, $editor_parts): string
     {
         global $user;
 

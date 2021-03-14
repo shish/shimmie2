@@ -1,13 +1,11 @@
-<?php /** @noinspection PhpUnusedPrivateMethodInspection */
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /**
  * Sent when the admin page is ready to be added to
  */
 class AdminBuildingEvent extends Event
 {
-    /** @var Page */
-    public $page;
+    public Page $page;
 
     public function __construct(Page $page)
     {
@@ -18,10 +16,8 @@ class AdminBuildingEvent extends Event
 
 class AdminActionEvent extends Event
 {
-    /** @var string */
-    public $action;
-    /** @var bool */
-    public $redirect = true;
+    public string $action;
+    public bool $redirect = true;
 
     public function __construct(string $action)
     {
@@ -33,7 +29,7 @@ class AdminActionEvent extends Event
 class AdminPage extends Extension
 {
     /** @var AdminPageTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

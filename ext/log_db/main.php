@@ -8,6 +8,7 @@ use function MicroHTML\BR;
 use function MicroHTML\SELECT;
 use function MicroHTML\OPTION;
 use function MicroHTML\rawHTML;
+use MicroHTML\HTMLElement;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\Column;
 use MicroCRUD\DateTimeColumn;
@@ -72,7 +73,7 @@ class ActorColumn extends Column
         );
     }
 
-    public function modify_input_for_read($input)
+    public function modify_input_for_read($input): array
     {
         list($un, $ip) = $input;
         if (empty($un)) {
@@ -84,7 +85,7 @@ class ActorColumn extends Column
         return [$un, $ip];
     }
 
-    public function display($row)
+    public function display($row): HTMLElement
     {
         $ret = emptyHTML();
         if ($row['username'] != "Anonymous") {
@@ -206,7 +207,7 @@ class LogTable extends Table
 class LogDatabase extends Extension
 {
     /** @var LogDatabaseTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

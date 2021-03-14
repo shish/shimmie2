@@ -8,17 +8,10 @@ $_shm_ratings = [];
 
 class ImageRating
 {
-    /** @var string */
-    public $name = null;
-
-    /** @var string */
-    public $code = null;
-
-    /** @var string */
-    public $search_term = null;
-
-    /** @var int */
-    public $order = 0;
+    public string $name;
+    public string $code;
+    public string $search_term;
+    public int $order = 0;
 
     public function __construct(string $code, string $name, string $search_term, int $order)
     {
@@ -63,10 +56,8 @@ add_rating(new ImageRating("e", "Explicit", "explicit", 1000));
 
 class RatingSetEvent extends Event
 {
-    /** @var Image */
-    public $image;
-    /** @var string  */
-    public $rating;
+    public Image $image;
+    public string $rating;
 
     public function __construct(Image $image, string $rating)
     {
@@ -89,11 +80,11 @@ abstract class RatingsConfig
 class Ratings extends Extension
 {
     /** @var RatingsTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public const UNRATED_KEYWORDS = ["unknown", "unrated"];
 
-    private $search_regexp;
+    private string $search_regexp;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -263,7 +254,7 @@ class Ratings extends Extension
 
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {
-            $set = Ratings::privs_to_sql(Ratings::get_user_default_ratings($user));
+            $set = Ratings::privs_to_sql(Ratings::get_user_default_ratings());
             $event->add_querylet(new Querylet("rating IN ($set)"));
         }
 
@@ -390,7 +381,7 @@ class Ratings extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $user, $page, $user_config;
+        global $user, $page;
 
         if ($event->page_matches("admin/bulk_rate")) {
             if (!$user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {

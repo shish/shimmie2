@@ -5,7 +5,7 @@ class ResizeImageTheme extends Themelet
     /*
      * Display a link to resize an image
      */
-    public function get_resize_html(Image $image)
+    public function get_resize_html(Image $image): string
     {
         global $config;
 
@@ -18,7 +18,7 @@ class ResizeImageTheme extends Themelet
         if (!$default_height) {
             $default_height = $image->height;
         }
-        
+
         $html = "
 			".make_form(make_link("resize/{$image->id}"), 'POST')."
 				<input type='hidden' name='image_id' value='{$image->id}'>
@@ -30,10 +30,10 @@ class ResizeImageTheme extends Themelet
 				<br><input id='resizebutton' type='submit' value='Resize'>
 			</form>
 		";
-        
+
         return $html;
     }
-    
+
     public function display_resize_error(Page $page, string $title, string $message)
     {
         $page->set_title("Resize Image");

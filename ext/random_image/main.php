@@ -3,7 +3,7 @@
 class RandomImage extends Extension
 {
     /** @var RandomImageTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -28,9 +28,7 @@ class RandomImage extends Extension
             }
 
             if ($action === "download") {
-                if (!is_null($image)) {
-                    send_event(new ImageDownloadingEvent($image, $image->get_image_filename(), $image->get_mime()));
-                }
+                send_event(new ImageDownloadingEvent($image, $image->get_image_filename(), $image->get_mime()));
             } elseif ($action === "view") {
                 send_event(new DisplayingImageEvent($image));
             } elseif ($action === "widget") {

@@ -4,13 +4,13 @@ class DowntimeInfo extends ExtensionInfo
 {
     public const KEY = "downtime";
 
-    public $key = self::KEY;
-    public $name = "Downtime";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Show a \"down for maintenance\" page";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Downtime";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Show a \"down for maintenance\" page";
+    public ?string $documentation =
 "Once installed there will be some more options on the config page --
 Ticking \"disable non-admin access\" will mean that regular and anonymous
 users will be blocked from accessing the site, only able to view the

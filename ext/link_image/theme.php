@@ -54,7 +54,7 @@ class LinkImageTheme extends Themelet
         ));
     }
 
-    protected function url(string $url, string $content, string $type)
+    protected function url(string $url, string $content, string $type): string
     {
         if ($content == null) {
             $content=$url;
@@ -73,7 +73,7 @@ class LinkImageTheme extends Themelet
         return $text;
     }
 
-    protected function img(string $src, string $type)
+    protected function img(string $src, string $type): string
     {
         switch ($type) {
             case "html":
@@ -88,7 +88,7 @@ class LinkImageTheme extends Themelet
         return $text;
     }
 
-    protected function link_code(string $label, string $content, $id=null)
+    protected function link_code(string $label, string $content, $id=null): string
     {
         return	"
 			<tr>

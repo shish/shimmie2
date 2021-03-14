@@ -48,7 +48,7 @@ class WikiTheme extends Themelet
         $page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
     }
 
-    protected function create_edit_html(WikiPage $page)
+    protected function create_edit_html(WikiPage $page): string
     {
         $h_title = html_escape($page->title);
         $i_revision = $page->revision + 1;
@@ -71,7 +71,7 @@ class WikiTheme extends Themelet
 		";
     }
 
-    protected function create_display_html(WikiPage $page)
+    protected function create_display_html(WikiPage $page): string
     {
         global $user;
 

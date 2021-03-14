@@ -4,13 +4,13 @@ class TagEditInfo extends ExtensionInfo
 {
     public const KEY = "tag_edit";
 
-    public $key = self::KEY;
-    public $name = "Tag Editor";
-    public $core = true;
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $description = "Allow images to have tags assigned to them";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Tag Editor";
+    public bool $core = true;
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $description = "Allow images to have tags assigned to them";
+    public ?string $documentation =
 "  Here is a list of the tagging metatags available out of the box;
    Shimmie extensions may provide other metatags:
    <ul>

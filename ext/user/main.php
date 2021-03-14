@@ -3,6 +3,7 @@
 require_once "events.php";
 
 use function MicroHTML\A;
+use MicroHTML\HTMLElement;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\EnumColumn;
 use MicroCRUD\IntegerColumn;
@@ -12,7 +13,7 @@ use MicroCRUD\Table;
 
 class UserNameColumn extends TextColumn
 {
-    public function display(array $row)
+    public function display(array $row): HTMLElement
     {
         return A(["href"=>make_link("user/{$row[$this->name]}")], $row[$this->name]);
     }
@@ -22,11 +23,11 @@ class UserActionColumn extends ActionColumn
 {
     public function __construct()
     {
-        parent::__construct("id", "User Links");
+        parent::__construct("id");
         $this->sortable = false;
     }
 
-    public function display(array $row)
+    public function display(array $row): HTMLElement
     {
         return A(["href"=>make_link("post/list/user={$row['name']}/1")], "Posts");
     }
@@ -72,7 +73,7 @@ class NullUserException extends SCoreException
 class UserPage extends Extension
 {
     /** @var UserPageTheme $theme */
-    public $theme;
+    public ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -231,7 +232,7 @@ class UserPage extends Extension
         }
     }
 
-    private function display_stats(UserPageBuildingEvent $event)
+    private function display_stats(UserPageBuildingEvent $event): void
     {
         global $user, $page, $config;
 
@@ -294,7 +295,7 @@ class UserPage extends Extension
         if ($config->get_string("avatar_host") == "gravatar") {
             $sb->start_table_row();
             $sb->start_table_cell(2);
-            $sb->add_label("<div style='text-align: center'><b>Gravatar Options</b></div>", );
+            $sb->add_label("<div style='text-align: center'><b>Gravatar Options</b></div>");
             $sb->end_table_cell();
             $sb->end_table_row();
 
@@ -400,12 +401,12 @@ class UserPage extends Extension
         if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Users";
-            $block->body = $this->theme->get_help_html();
+            $block->body = (string)$this->theme->get_help_html();
             $event->add_block($block);
         }
     }
 
-    private function show_user_info()
+    private function show_user_info(): void
     {
         global $user, $page;
         // user info is shown on all pages
@@ -419,7 +420,7 @@ class UserPage extends Extension
         }
     }
 
-    private function page_login($name, $pass)
+    private function page_login(string $name, string $pass): void
     {
         global $config, $page;
 
@@ -445,7 +446,7 @@ class UserPage extends Extension
         }
     }
 
-    private function page_logout()
+    private function page_logout(): void
     {
         global $page, $config;
         $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int('login_memory'), "/");
@@ -465,7 +466,7 @@ class UserPage extends Extension
         }
     }
 
-    private function page_recover(string $username)
+    private function page_recover(string $username): void
     {
         $my_user = User::by_name($username);
         if (is_null($my_user)) {
@@ -477,7 +478,7 @@ class UserPage extends Extension
         }
     }
 
-    private function page_create()
+    private function page_create(): void
     {
         global $config, $page, $user;
         if (!$user->can(Permissions::CREATE_USER)) {
@@ -508,7 +509,7 @@ class UserPage extends Extension
         }
     }
 
-    private function check_user_creation(UserCreationEvent $event)
+    private function check_user_creation(UserCreationEvent $event): void
     {
         $name = $event->username;
         //$pass = $event->password;
@@ -549,7 +550,7 @@ class UserPage extends Extension
         return $user;
     }
 
-    private function set_login_cookie(string $name, string $pass)
+    private function set_login_cookie(string $name, string $pass): void
     {
         global $config, $page;
 
@@ -589,7 +590,7 @@ class UserPage extends Extension
         }
     }
 
-    private function redirect_to_user(User $duser)
+    private function redirect_to_user(User $duser): void
     {
         global $page, $user;
 
@@ -602,7 +603,7 @@ class UserPage extends Extension
         }
     }
 
-    private function change_name_wrapper(User $duser, $name)
+    private function change_name_wrapper(User $duser, string $name): void
     {
         global $page, $user;
 
@@ -616,7 +617,7 @@ class UserPage extends Extension
         }
     }
 
-    private function change_password_wrapper(User $duser, string $pass1, string $pass2)
+    private function change_password_wrapper(User $duser, string $pass1, string $pass2): void
     {
         global $page, $user;
 
@@ -637,7 +638,7 @@ class UserPage extends Extension
         }
     }
 
-    private function change_email_wrapper(User $duser, string $address)
+    private function change_email_wrapper(User $duser, string $address): void
     {
         global $page, $user;
 
@@ -649,7 +650,7 @@ class UserPage extends Extension
         }
     }
 
-    private function change_class_wrapper(User $duser, string $class)
+    private function change_class_wrapper(User $duser, string $class): void
     {
         global $page, $user;
 
@@ -702,7 +703,7 @@ class UserPage extends Extension
 				ORDER BY MAX(date_sent) DESC", ["username"=>$duser->name]);
     }
 
-    private function delete_user(Page $page, bool $with_images=false, bool $with_comments=false)
+    private function delete_user(Page $page, bool $with_images=false, bool $with_comments=false): void
     {
         global $user, $config, $database;
 

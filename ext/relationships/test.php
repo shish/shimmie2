@@ -5,7 +5,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     // Set by box
     //=================================================================
 
-    public function testNoParent()
+    public function testNoParent(): array
     {
         $this->log_in_as_user();
 
@@ -30,7 +30,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     /**
      * @depends testNoParent
      */
-    public function testSetParent($imgs)
+    public function testSetParent($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testNoParent();
 
@@ -54,7 +54,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     /**
      * @depends testSetParent
      */
-    public function testChangeParent($imgs)
+    public function testChangeParent($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testSetParent(null);
         send_event(new ImageRelationshipSetEvent($image_2->id, $image_3->id));
@@ -120,7 +120,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     // Set by tag
     //=================================================================
 
-    public function testSetParentByTagBase()
+    public function testSetParentByTagBase(): array
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -144,7 +144,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     /**
      * @depends testSetParentByTagBase
      */
-    public function testSetParentByTag($imgs)
+    public function testSetParentByTag($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testSetParentByTagBase();
 
@@ -169,7 +169,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     /**
      * @depends testSetParentByTag
      */
-    public function testSetChildByTag($imgs)
+    public function testSetChildByTag($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testSetParentByTag(null);
 

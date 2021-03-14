@@ -4,9 +4,9 @@ class CBZFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_cbz";
 
-    public $key = self::KEY;
-    public $name = "Handle CBZ";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $description = "Handle CBZ Comic Archives.";
+    public string $key = self::KEY;
+    public string $name = "Handle CBZ";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $description = "Handle CBZ Comic Archives.";
 }

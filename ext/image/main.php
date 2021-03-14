@@ -8,7 +8,7 @@ require_once "config.php";
 class ImageIO extends Extension
 {
     /** @var ImageIOTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     const COLLISION_OPTIONS = [
         'Error'=>ImageConfig::COLLISION_ERROR,
@@ -155,7 +155,9 @@ class ImageIO extends Extension
                         send_event(new SourceSetEvent($existing, $_GET['source']));
                     }
                     $event->merged = true;
-                    $event->image = Image::by_id($existing->id);
+                    $im = Image::by_id($existing->id);
+                    assert(!is_null($image));
+                    $event->image = $im;
                     return;
                 } else {
                     $error = "Post <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".

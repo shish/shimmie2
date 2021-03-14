@@ -3,7 +3,7 @@
 class AutoComplete extends Extension
 {
     /** @var AutoCompleteTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function get_priority(): int
     {

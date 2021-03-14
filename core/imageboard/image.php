@@ -13,68 +13,31 @@ class Image
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
-    /** @var null|int */
-    public $id = null;
-
-    /** @var int */
-    public $height;
-
-    /** @var int */
-    public $width;
-
-    /** @var string */
-    public $hash;
-
-    /** @var int */
-    public $filesize;
-
-    /** @var string */
-    public $filename;
-
-    /** @var string */
-    private $ext;
-
-    /** @var string */
-    private $mime;
+    public ?int $id = null;
+    public int $height;
+    public int $width;
+    public string $hash;
+    public int $filesize;
+    public string $filename;
+    private string $ext;
+    private string $mime;
 
     /** @var string[]|null */
-    public $tag_array;
+    public ?array $tag_array;
+    public int $owner_id;
+    public string $owner_ip;
+    public string $posted;
+    public ?string $source;
+    public bool $locked = false;
+    public ?bool $lossless = null;
+    public ?bool $video = null;
+    public ?string $video_codec = null;
+    public ?bool $image = null;
+    public ?bool $audio = null;
+    public ?int $length = null;
 
-    /** @var int */
-    public $owner_id;
-
-    /** @var string */
-    public $owner_ip;
-
-    /** @var string */
-    public $posted;
-
-    /** @var string */
-    public $source;
-
-    /** @var boolean */
-    public $locked = false;
-
-    /** @var boolean */
-    public $lossless = null;
-
-    /** @var boolean */
-    public $video = null;
-
-    /** @var string */
-    public $video_codec = null;
-
-    /** @var boolean */
-    public $image = null;
-
-    /** @var boolean */
-    public $audio = null;
-
-    /** @var int */
-    public $length = null;
-
-    public static $bool_props = ["locked", "lossless", "video", "audio"];
-    public static $int_props = ["id", "owner_id", "height", "width", "filesize", "length"];
+    public static array $bool_props = ["locked", "lossless", "video", "audio", "image"];
+    public static array $int_props = ["id", "owner_id", "height", "width", "filesize", "length"];
 
     /**
      * One will very rarely construct an image directly, more common
@@ -145,7 +108,7 @@ class Image
 
     private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags=[]): iterable
     {
-        global $database, $user, $config;
+        global $database, $user;
 
         if ($start < 0) {
             $start = 0;
@@ -161,9 +124,7 @@ class Image
         }
 
         $querylet = Image::build_search_querylet($tags, $limit, $start);
-        $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
-
-        return $result;
+        return $database->get_all_iterable($querylet->sql, $querylet->variables);
     }
 
     /**
@@ -625,7 +586,9 @@ class Image
     public function set_mime($mime): void
     {
         $this->mime = $mime;
-        $this->ext = FileExtension::get_for_mime($this->get_mime());
+        $ext = FileExtension::get_for_mime($this->get_mime());
+        assert($ext != null);
+        $this->ext = $ext;
     }
 
 

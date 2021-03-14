@@ -4,11 +4,11 @@ class UpgradeInfo extends ExtensionInfo
 {
     public const KEY = "upgrade";
 
-    public $key = self::KEY;
-    public $name = "Database Upgrader";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $description = "Keeps things happy behind the scenes";
-    public $visibility = self::VISIBLE_HIDDEN;
-    public $core = true;
+    public string $key = self::KEY;
+    public string $name = "Database Upgrader";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $description = "Keeps things happy behind the scenes";
+    public string $visibility = self::VISIBLE_HIDDEN;
+    public bool $core = true;
 }

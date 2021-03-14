@@ -4,8 +4,8 @@ class TagEditCloudInfo extends ExtensionInfo
 {
     public const KEY = "tag_editcloud";
 
-    public $key = self::KEY;
-    public $name = "Tag EditCloud";
-    public $authors = ["AtomicDryad", "LaureeGrd"];
-    public $description = "Add or remove tags to the editor via clicking.";
+    public string $key = self::KEY;
+    public string $name = "Tag EditCloud";
+    public array $authors = ["AtomicDryad", "LaureeGrd"];
+    public string $description = "Add or remove tags to the editor via clicking.";
 }

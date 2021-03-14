@@ -13,12 +13,12 @@ class CronUploaderInfo extends ExtensionInfo
 {
     public const KEY = "cron_uploader";
 
-    public $key = self::KEY;
-    public $name = "Cron Uploader";
-    public $url = self::SHIMMIE_URL;
-    public $authors = ["YaoiFox"=>"admin@yaoifox.com", "Matthew Barbour"=>"matthew@darkholme.net"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Uploads images automatically using Cron Jobs";
+    public string $key = self::KEY;
+    public string $name = "Cron Uploader";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = ["YaoiFox"=>"admin@yaoifox.com", "Matthew Barbour"=>"matthew@darkholme.net"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Uploads images automatically using Cron Jobs";
 
     public function __construct()
     {

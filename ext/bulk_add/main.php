@@ -2,8 +2,8 @@
 
 class BulkAddEvent extends Event
 {
-    public $dir;
-    public $results;
+    public string $dir;
+    public array $results;
 
     public function __construct(string $dir)
     {
@@ -16,7 +16,7 @@ class BulkAddEvent extends Event
 class BulkAdd extends Extension
 {
     /** @var BulkAddTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

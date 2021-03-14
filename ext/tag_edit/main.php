@@ -8,10 +8,8 @@
  */
 class OwnerSetEvent extends Event
 {
-    /** @var Image  */
-    public $image;
-    /** @var User  */
-    public $owner;
+    public Image $image;
+    public User $owner;
 
     public function __construct(Image $image, User $owner)
     {
@@ -24,10 +22,8 @@ class OwnerSetEvent extends Event
 
 class SourceSetEvent extends Event
 {
-    /** @var Image */
-    public $image;
-    /** @var string */
-    public $source;
+    public Image $image;
+    public ?string $source;
 
     public function __construct(Image $image, string $source=null)
     {
@@ -40,7 +36,7 @@ class SourceSetEvent extends Event
 
 class TagSetException extends SCoreException
 {
-    public $redirect;
+    public ?string $redirect;
 
     public function __construct(string $msg, ?string $redirect = null)
     {
@@ -51,10 +47,9 @@ class TagSetException extends SCoreException
 
 class TagSetEvent extends Event
 {
-    /** @var Image */
-    public $image;
-    public $tags;
-    public $metatags;
+    public Image $image;
+    public array $tags;
+    public array $metatags;
 
     /**
      * #param string[] $tags
@@ -90,10 +85,8 @@ class TagSetEvent extends Event
 
 class LockSetEvent extends Event
 {
-    /** @var Image */
-    public $image;
-    /** @var bool */
-    public $locked;
+    public Image $image;
+    public bool $locked;
 
     public function __construct(Image $image, bool $locked)
     {
@@ -108,9 +101,8 @@ class LockSetEvent extends Event
  */
 class TagTermCheckEvent extends Event
 {
-    public $term = null; //tag
-    /** @var bool */
-    public $metatag = false;
+    public string $term;
+    public bool $metatag = false;
 
     public function __construct(string $term)
     {
@@ -124,8 +116,8 @@ class TagTermCheckEvent extends Event
  */
 class TagTermParseEvent extends Event
 {
-    public $term = null;
-    public $image_id = null;
+    public string $term;
+    public int $image_id;
 
     public function __construct(string $term, int $image_id)
     {
@@ -138,7 +130,7 @@ class TagTermParseEvent extends Event
 class TagEdit extends Extension
 {
     /** @var TagEditTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

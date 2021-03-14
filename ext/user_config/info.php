@@ -4,11 +4,11 @@ class UserConfigInfo extends ExtensionInfo
 {
     public const KEY = "user_config";
 
-    public $key = self::KEY;
-    public $name = "User-specific settings";
-    public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
-    public $license = self::LICENSE_WTFPL;
-    public $description = "Provides system-wide support for user-specific settings";
-    public $visibility = self::VISIBLE_HIDDEN;
-    public $core = true;
+    public string $key = self::KEY;
+    public string $name = "User-specific settings";
+    public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public string $license = self::LICENSE_WTFPL;
+    public string $description = "Provides system-wide support for user-specific settings";
+    public string $visibility = self::VISIBLE_HIDDEN;
+    public bool $core = true;
 }

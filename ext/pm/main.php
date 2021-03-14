@@ -2,7 +2,7 @@
 
 class SendPMEvent extends Event
 {
-    public $pm;
+    public PM $pm;
 
     public function __construct(PM $pm)
     {
@@ -13,22 +13,15 @@ class SendPMEvent extends Event
 
 class PM
 {
-    /** @var int */
-    public $id;
-    /** @var int */
-    public $from_id;
-    /** @var string */
-    public $from_ip;
-    /** @var int */
-    public $to_id;
+    public int $id;
+    public int $from_id;
+    public string $from_ip;
+    public int $to_id;
     /** @var mixed */
     public $sent_date;
-    /** @var string */
-    public $subject;
-    /** @var string */
-    public $message;
-    /** @var bool */
-    public $is_read;
+    public string $subject;
+    public string $message;
+    public bool $is_read;
 
     public function __construct($from_id=0, string $from_ip="0.0.0.0", int $to_id=0, string $subject="A Message", string $message="Some Text", bool $read=false)
     {
@@ -58,7 +51,7 @@ class PM
 class PrivMsg extends Extension
 {
     /** @var PrivMsgTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
@@ -212,7 +205,7 @@ class PrivMsg extends Extension
     }
 
 
-    private function get_pms(User $user)
+    private function get_pms(User $user): array
     {
         global $database;
 

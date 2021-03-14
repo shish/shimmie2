@@ -3,7 +3,7 @@
 class BulkAddCSV extends Extension
 {
     /** @var BulkAddCSVTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

@@ -4,13 +4,13 @@ class HomeInfo extends ExtensionInfo
 {
     public const KEY = "home";
 
-    public $key = self::KEY;
-    public $name = "Home Page";
-    public $authors =["Bzchan"=>"bzchan@animemahou.com"];
-    public $license = self::LICENSE_GPLV2;
-    public $visibility = self::VISIBLE_ADMIN;
-    public $description = "Displays a front page with logo, search box and post count";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Home Page";
+    public array $authors =["Bzchan"=>"bzchan@animemahou.com"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $visibility = self::VISIBLE_ADMIN;
+    public string $description = "Displays a front page with logo, search box and post count";
+    public ?string $documentation =
 "Once enabled, the page will show up at the URL \"home\", so if you want
 this to be the front page of your site, you should go to \"Board Config\"
 and set \"Front Page\" to \"home\".

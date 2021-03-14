@@ -16,7 +16,7 @@ abstract class ResizeConfig
 class ResizeImage extends Extension
 {
     /** @var ResizeImageTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     /**
      * Needs to be after the data processing extensions

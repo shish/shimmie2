@@ -4,9 +4,9 @@ class TaggerXMLInfo extends ExtensionInfo
 {
     public const KEY = "tagger_xml";
 
-    public $key = self::KEY;
-    public $name = "Tagger AJAX backend";
-    public $authors = ["Artanis (Erik Youngren)"=>"artanis.00@gmail.com"];
-    public $visibility = self::VISIBLE_HIDDEN;
-    public $description = "Advanced Tagging v2 AJAX backend";
+    public string $key = self::KEY;
+    public string $name = "Tagger AJAX backend";
+    public array $authors = ["Artanis (Erik Youngren)"=>"artanis.00@gmail.com"];
+    public string $visibility = self::VISIBLE_HIDDEN;
+    public string $description = "Advanced Tagging v2 AJAX backend";
 }

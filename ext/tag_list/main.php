@@ -5,7 +5,7 @@ require_once "config.php";
 class TagList extends Extension
 {
     /** @var TagListTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -23,7 +23,7 @@ class TagList extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $cache, $page, $database;
+        global $page;
 
         if ($event->page_matches("tags")) {
             $this->theme->set_navigation($this->build_navigation());

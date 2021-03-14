@@ -2,7 +2,7 @@
 
 class HelpPageListBuildingEvent extends Event
 {
-    public $pages = [];
+    public array $pages = [];
 
     public function add_page(string $key, string $name)
     {
@@ -12,8 +12,8 @@ class HelpPageListBuildingEvent extends Event
 
 class HelpPageBuildingEvent extends Event
 {
-    public $key;
-    public $blocks = [];
+    public string $key;
+    public array $blocks = [];
 
     public function __construct(string $key)
     {
@@ -33,11 +33,9 @@ class HelpPageBuildingEvent extends Event
 class HelpPages extends Extension
 {
     /** @var HelpPagesTheme */
-    protected $theme;
-
+    protected ?Themelet $theme;
     public const SEARCH = "search";
-
-    private $pages;
+    private ?array $pages = null;
 
     private function get_pages(): array
     {

@@ -1,10 +1,8 @@
 <?php declare(strict_types=1);
 class Querylet
 {
-    /** @var string */
-    public $sql;
-    /** @var array */
-    public $variables;
+    public string $sql;
+    public array $variables;
 
     public function __construct(string $sql, array $variables=[])
     {
@@ -31,10 +29,8 @@ class Querylet
 
 class TagCondition
 {
-    /** @var string  */
-    public $tag;
-    /** @var bool  */
-    public $positive;
+    public string $tag;
+    public bool $positive;
 
     public function __construct(string $tag, bool $positive)
     {
@@ -45,10 +41,8 @@ class TagCondition
 
 class ImgCondition
 {
-    /** @var Querylet */
-    public $qlet;
-    /** @var bool */
-    public $positive;
+    public Querylet $qlet;
+    public bool $positive;
 
     public function __construct(Querylet $qlet, bool $positive)
     {

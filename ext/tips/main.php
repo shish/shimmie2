@@ -2,9 +2,10 @@
 
 class CreateTipEvent extends Event
 {
-    public $enable;
-    public $image;
-    public $text;
+    public bool $enable;
+    public string $image;
+    public string $text;
+
     public function __construct(bool $enable, string $image, string $text)
     {
         parent::__construct();
@@ -16,7 +17,7 @@ class CreateTipEvent extends Event
 
 class DeleteTipEvent extends Event
 {
-    public $tip_id;
+    public int $tip_id;
     public function __construct(int $tip_id)
     {
         parent::__construct();
@@ -27,7 +28,7 @@ class DeleteTipEvent extends Event
 class Tips extends Extension
 {
     /** @var TipsTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

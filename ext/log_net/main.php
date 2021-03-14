@@ -2,7 +2,7 @@
 
 class LogNet extends Extension
 {
-    private $count = 0;
+    private int $count = 0;
 
     public function onLog(LogEvent $event)
     {

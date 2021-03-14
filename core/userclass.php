@@ -10,21 +10,9 @@ $_shm_user_classes = [];
  */
 class UserClass
 {
-
-    /**
-     * @var ?string
-     */
-    public $name = null;
-
-    /**
-     * @var ?UserClass
-     */
-    public $parent = null;
-
-    /**
-     * @var array
-     */
-    public $abilities = [];
+    public ?string $name = null;
+    public ?UserClass $parent = null;
+    public array $abilities = [];
 
     public function __construct(string $name, string $parent = null, array $abilities = [])
     {

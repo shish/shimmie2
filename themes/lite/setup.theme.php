@@ -8,13 +8,13 @@
  */
 class CustomSetupTheme extends SetupTheme
 {
-    protected function sb_to_html(SetupBlock $block)
+    protected function sb_to_html(SetupBlock $block): string
     {
         $h = $block->header;
         $b = $block->body;
         $i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
         $html = "
-			<script type='text/javascript'><!--
+			<script type='text/javascript'>
 			document.addEventListener('DOMContentLoaded', () => {
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\", function() {
@@ -30,7 +30,7 @@ class CustomSetupTheme extends SetupTheme
 					$(\"#$i\").hide();
 				}
 			});
-			//--></script>
+			</script>
 			<div class='setupblock'>
 				<b id='$i-toggle'>$h</b>
 				<br><div id='$i'>$b</div>

@@ -24,7 +24,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Error");
     }
 
-    public function testCreate()
+    public function testCreate(): array
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -111,7 +111,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     /** @depends testCreate */
-    public function testRemovePosts($args)
+    public function testRemovePosts($args): array
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -137,7 +137,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     /** @depends testCreate */
-    public function testEditDescription($args)
+    public function testEditDescription($args): array
     {
         [$pool_id, $image_ids] = $this->testCreate();
 

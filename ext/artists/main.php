@@ -2,12 +2,9 @@
 
 class AuthorSetEvent extends Event
 {
-    /** @var Image  */
-    public $image;
-    /** @var User  */
-    public $user;
-    /** @var string */
-    public $author;
+    public Image $image;
+    public User $user;
+    public string $author;
 
     public function __construct(Image $image, User $user, string $author)
     {
@@ -21,7 +18,7 @@ class AuthorSetEvent extends Event
 class Artists extends Extension
 {
     /** @var ArtistsTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
@@ -683,7 +680,7 @@ class Artists extends Extension
         );
     }
 
-    private function add_artist()
+    private function add_artist(): int
     {
         global $user;
         $inputs = validate_input([

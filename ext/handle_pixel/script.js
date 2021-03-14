@@ -1,28 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
 	function zoom(zoom_type, save_cookie) {
 		save_cookie = save_cookie === undefined ? true : save_cookie;
-		
+
 		var img = $('.shm-main-image');
-		
-		if(zoom_type == "full") {
+
+		if(zoom_type === "full") {
 			img.css('max-width', img.data('width') + 'px');
 			img.css('max-height', img.data('height') + 'px');
 		}
-		if(zoom_type == "width") {
+		if(zoom_type === "width") {
 			img.css('max-width', '95%');
 			img.css('max-height', img.data('height') + 'px');
 		}
-		if(zoom_type == "height") {
+		if(zoom_type === "height") {
 			img.css('max-width', img.data('width') + 'px');
 			img.css('max-height', (window.innerHeight * 0.95) + 'px');
 		}
-		if(zoom_type == "both") {
+		if(zoom_type === "both") {
 			img.css('max-width', '95%');
 			img.css('max-height', (window.innerHeight * 0.95) + 'px');
 		}
-		
+
 		$(".shm-zoomer").val(zoom_type);
-		
+
 		if (save_cookie) {
 			Cookies.set("ui-image-zoom", zoom_type, {expires: 365});
 		}

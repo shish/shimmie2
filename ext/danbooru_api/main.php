@@ -2,19 +2,19 @@
 
 use \MicroHTML\HTMLElement;
 
-function TAGS(...$args)
+function TAGS(...$args): HTMLElement
 {
     return new HTMLElement("tags", $args);
 }
-function TAG(...$args)
+function TAG(...$args): HTMLElement
 {
     return new HTMLElement("tag", $args);
 }
-function POSTS(...$args)
+function POSTS(...$args): HTMLElement
 {
     return new HTMLElement("posts", $args);
 }
-function POST(...$args)
+function POST(...$args): HTMLElement
 {
     return new HTMLElement("post", $args);
 }
@@ -114,11 +114,14 @@ class DanbooruApi extends Extension
             }
         }
         // Currently disabled to maintain identical functionality to danbooru 1.0's own "broken" find_tags
-        elseif (false && isset($_GET['tags'])) {
+        /*
+        elseif (isset($_GET['tags'])) {
             $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
             $tags = Tag::explode($_GET['tags']);
             assert(!is_null($start) && !is_null($tags));
-        } else {
+        }
+        */
+        else {
             $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
             $sqlresult = $database->get_all(
                 "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= :id ORDER BY id DESC",

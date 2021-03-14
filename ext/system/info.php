@@ -4,11 +4,11 @@ class SystemInfo extends ExtensionInfo
 {
     public const KEY = "system";
 
-    public $key = self::KEY;
-    public $name = "System";
-    public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
-    public $license = self::LICENSE_WTFPL;
-    public $description = "Provides system screen";
-    public $core = true;
-    public $visibility = self::VISIBLE_HIDDEN;
+    public string $key = self::KEY;
+    public string $name = "System";
+    public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public string $license = self::LICENSE_WTFPL;
+    public string $description = "Provides system screen";
+    public bool $core = true;
+    public string $visibility = self::VISIBLE_HIDDEN;
 }

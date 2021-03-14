@@ -4,9 +4,9 @@ class SVGFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_svg";
 
-    public $key = self::KEY;
-    public $name = "Handle SVG";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $description = "Handle static SVG files.";
+    public string $key = self::KEY;
+    public string $name = "Handle SVG";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $description = "Handle static SVG files.";
 }

@@ -15,6 +15,7 @@ use function \MicroHTML\BR;
 use function \MicroHTML\P;
 use function \MicroHTML\SELECT;
 use function \MicroHTML\OPTION;
+use \MicroHTML\HTMLElement;
 
 class UserPageTheme extends Themelet
 {
@@ -184,7 +185,7 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Login", (string)$html, "left", 90));
     }
 
-    private function _ip_list(string $name, array $ips)
+    private function _ip_list(string $name, array $ips): HTMLElement
     {
         $td = TD("$name: ");
         $n = 0;
@@ -318,7 +319,7 @@ class UserPageTheme extends Themelet
         return (string)$html;
     }
 
-    public function get_help_html()
+    public function get_help_html(): HTMLElement
     {
         global $user;
         $output = emptyHTML(P("Search for posts posted by particular individuals."));

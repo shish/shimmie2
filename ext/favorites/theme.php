@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 use function MicroHTML\INPUT;
+use MicroHTML\HTMLElement;
 
 class FavoritesTheme extends Themelet
 {
-    public function get_voter_html(Image $image, $is_favorited)
+    public function get_voter_html(Image $image, bool $is_favorited): HTMLElement
     {
         $name  = $is_favorited ? "unset" : "set";
         $label = $is_favorited ? "Un-Favorite" : "Favorite";
@@ -15,7 +16,7 @@ class FavoritesTheme extends Themelet
         );
     }
 
-    public function display_people($username_array)
+    public function display_people(array $username_array): void
     {
         global $page;
 
@@ -32,7 +33,7 @@ class FavoritesTheme extends Themelet
         $page->add_block(new Block("Favorited By", $html, "left", 25));
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts that have been favorited a certain number of times, or favorited by a particular individual.</p>
         <div class="command_example">

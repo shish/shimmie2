@@ -17,7 +17,7 @@ class ImageViewCounterTheme extends Themelet
         $page->add_block(new Block(null, $pop_images, "main", 30));
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts that have received views by users.</p>';
     }

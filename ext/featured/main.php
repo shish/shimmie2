@@ -3,7 +3,7 @@
 class Featured extends Extension
 {
     /** @var FeaturedTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

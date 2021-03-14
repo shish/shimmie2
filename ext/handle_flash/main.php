@@ -2,7 +2,7 @@
 
 class FlashFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MimeType::FLASH];
+    protected array $SUPPORTED_MIME = [MimeType::FLASH];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -17,7 +17,7 @@ class FlashFileHandler extends DataHandlerExtension
         }
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         if (!Media::create_thumbnail_ffmpeg($hash)) {
             copy("ext/handle_flash/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));

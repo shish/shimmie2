@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 class CommentListTheme extends Themelet
 {
-    private $show_anon_id = false;
-    private $anon_id = 1;
-    private $anon_map = [];
+    private bool $show_anon_id = false;
+    private int $anon_id = 1;
+    private array $anon_map = [];
 
     /**
      * Display a page with a list of images, and for each image, the image's comments.
@@ -86,7 +86,6 @@ class CommentListTheme extends Themelet
         }
     }
 
-
     public function display_admin_block()
     {
         global $page;
@@ -104,7 +103,6 @@ class CommentListTheme extends Themelet
         $page->add_block(new Block("Mass Comment Delete", $html));
     }
 
-
     /**
      * Add some comments to the page, probably in a sidebar.
      *
@@ -121,7 +119,6 @@ class CommentListTheme extends Themelet
         $html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
         $page->add_block(new Block("Comments", $html, "left", 50, "comment-list-recent"));
     }
-
 
     /**
      * Show comments for an image.
@@ -141,7 +138,6 @@ class CommentListTheme extends Themelet
         }
         $page->add_block(new Block("Comments", $html, "main", 30, "comment-list-image"));
     }
-
 
     /**
      * Show comments made by a user.
@@ -287,7 +283,7 @@ class CommentListTheme extends Themelet
 		';
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts containing a certain number of comments, or comments by a particular individual.</p>
         <div class="command_example">

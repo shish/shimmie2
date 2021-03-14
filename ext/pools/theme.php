@@ -380,7 +380,7 @@ class PoolsTheme extends Themelet
         $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
     }
 
-    public function get_bulk_pool_selector(array $pools)
+    public function get_bulk_pool_selector(array $pools): string
     {
         $output = "<select name='bulk_pool_select' required='required'><option></option>";
         foreach ($pools as $pool) {
@@ -389,12 +389,12 @@ class PoolsTheme extends Themelet
         return $output . "</select>";
     }
 
-    public function get_bulk_pool_input(array $search_terms)
+    public function get_bulk_pool_input(array $search_terms): string
     {
         return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' value='".(implode(" ", $search_terms))."' />";
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts that are in a pool.</p>
         <div class="command_example">

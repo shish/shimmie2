@@ -2,7 +2,7 @@
 
 class ArchiveFileHandler extends DataHandlerExtension
 {
-    protected $SUPPORTED_MIME = [MimeType::ZIP];
+    protected array $SUPPORTED_MIME = [MimeType::ZIP];
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -56,7 +56,7 @@ class ArchiveFileHandler extends DataHandlerExtension
         return false;
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         return false;
     }

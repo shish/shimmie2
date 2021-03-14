@@ -3,7 +3,7 @@
 class Update extends Extension
 {
     /** @var UpdateTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

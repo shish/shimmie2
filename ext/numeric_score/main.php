@@ -2,9 +2,9 @@
 
 class NumericScoreSetEvent extends Event
 {
-    public $image_id;
-    public $user;
-    public $score;
+    public int $image_id;
+    public User $user;
+    public int $score;
 
     public function __construct(int $image_id, User $user, int $score)
     {
@@ -18,7 +18,7 @@ class NumericScoreSetEvent extends Event
 class NumericScore extends Extension
 {
     /** @var NumericScoreTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {

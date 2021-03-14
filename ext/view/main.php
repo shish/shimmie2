@@ -12,7 +12,7 @@ use function MicroHTML\TD;
 class ViewImage extends Extension
 {
     /** @var ViewImageTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

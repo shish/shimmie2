@@ -2,21 +2,21 @@
 
 class MediaResizeEvent extends Event
 {
-    public $engine;
-    public $input_path;
-    public $input_mime;
-    public $output_path;
-    public $target_mime;
-    public $target_width;
-    public $target_height;
-    public $target_quality;
-    public $alpha_color;
-    public $minimize;
-    public $allow_upscale;
-    public $resize_type;
+    public string $engine;
+    public string $input_path;
+    public string $input_mime;
+    public string $output_path;
+    public ?string $target_mime;
+    public int $target_width;
+    public int $target_height;
+    public int $target_quality;
+    public string $alpha_color;
+    public bool $minimize;
+    public bool $allow_upscale;
+    public string $resize_type;
 
     public function __construct(
-        String $engine,
+        string $engine,
         string $input_path,
         string $input_mime,
         string $output_path,
@@ -51,9 +51,9 @@ class MediaResizeEvent extends Event
 
 class MediaCheckPropertiesEvent extends Event
 {
-    public $image;
-    public $file_name;
-    public $mime;
+    public Image $image;
+    public string $file_name;
+    public string $mime;
 
     public function __construct(Image $image)
     {

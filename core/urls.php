@@ -2,8 +2,8 @@
 
 class Link
 {
-    public $page;
-    public $query;
+    public ?string $page;
+    public ?string $query;
 
     public function __construct(?string $page=null, ?string $query=null)
     {

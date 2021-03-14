@@ -99,7 +99,7 @@ class TagCategoriesTheme extends Themelet
         $page->add_block(new Block("Editing", $html, "main", 10));
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts containing a certain number of tags with the specified tag category.</p>
         <div class="command_example">

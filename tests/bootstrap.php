@@ -41,10 +41,10 @@ $_tracer->end();
 
 abstract class ShimmiePHPUnitTestCase extends TestCase
 {
-    protected static $anon_name = "anonymous";
-    protected static $admin_name = "demo";
-    protected static $user_name = "test";
-    protected $wipe_time = "test";
+    protected static string $anon_name = "anonymous";
+    protected static string $admin_name = "demo";
+    protected static string $user_name = "test";
+    protected string $wipe_time = "test";
 
     public static function setUpBeforeClass(): void
     {
@@ -92,7 +92,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         $_tracer->end();  # get_called_class()
     }
 
-    protected static function create_user(string $name)
+    protected static function create_user(string $name): void
     {
         if (is_null(User::by_name($name))) {
             $userPage = new UserPage();
@@ -148,31 +148,31 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     }
 
     // page things
-    protected function assert_title(string $title)
+    protected function assert_title(string $title): void
     {
         global $page;
         $this->assertStringContainsString($title, $page->title);
     }
 
-    protected function assert_title_matches($title)
+    protected function assert_title_matches($title): void
     {
         global $page;
         $this->assertStringMatchesFormat($title, $page->title);
     }
 
-    protected function assert_no_title(string $title)
+    protected function assert_no_title(string $title): void
     {
         global $page;
         $this->assertStringNotContainsString($title, $page->title);
     }
 
-    protected function assert_response(int $code)
+    protected function assert_response(int $code): void
     {
         global $page;
         $this->assertEquals($code, $page->code);
     }
 
-    protected function page_to_text(string $section=null)
+    protected function page_to_text(string $section=null): string
     {
         global $page;
         if ($page->mode == PageMode::PAGE) {
@@ -188,32 +188,33 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
             return $page->data;
         } else {
             $this->assertTrue(false, "Page mode is not PAGE or DATA");
+            return "";
         }
     }
 
-    protected function assert_text(string $text, string $section=null)
+    protected function assert_text(string $text, string $section=null): void
     {
         $this->assertStringContainsString($text, $this->page_to_text($section));
     }
 
-    protected function assert_no_text(string $text, string $section=null)
+    protected function assert_no_text(string $text, string $section=null): void
     {
         $this->assertStringNotContainsString($text, $this->page_to_text($section));
     }
 
-    protected function assert_content(string $content)
+    protected function assert_content(string $content): void
     {
         global $page;
         $this->assertStringContainsString($content, $page->data);
     }
 
-    protected function assert_no_content(string $content)
+    protected function assert_no_content(string $content): void
     {
         global $page;
         $this->assertStringNotContainsString($content, $page->data);
     }
 
-    protected function assert_search_results($tags, $results)
+    protected function assert_search_results($tags, $results): void
     {
         $images = Image::find_images(0, null, $tags);
         $ids = [];
@@ -224,17 +225,17 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     }
 
     // user things
-    protected static function log_in_as_admin()
+    protected static function log_in_as_admin(): void
     {
         send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
     }
 
-    protected static function log_in_as_user()
+    protected static function log_in_as_user(): void
     {
         send_event(new UserLoginEvent(User::by_name(self::$user_name)));
     }
 
-    protected static function log_out()
+    protected static function log_out(): void
     {
         global $config;
         send_event(new UserLoginEvent(User::by_id($config->get_int("anon_id", 0))));
@@ -253,7 +254,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         return $dae->image_id;
     }
 
-    protected function delete_image(int $image_id)
+    protected function delete_image(int $image_id): void
     {
         $img = Image::by_id($image_id);
         if ($img) {

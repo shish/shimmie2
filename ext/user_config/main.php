@@ -8,8 +8,8 @@ global $user_config;
 // so we can't reliably access this data until then. This event is triggered by the system after all of that is done.
 class InitUserConfigEvent extends Event
 {
-    public $user;
-    public $user_config;
+    public User $user;
+    public Config $user_config;
 
     public function __construct(User $user, Config $user_config)
     {
@@ -22,14 +22,9 @@ class InitUserConfigEvent extends Event
 
 class UserOptionsBuildingEvent extends Event
 {
-    /** @var SetupTheme */
-    protected $theme;
-
-    /** @var SetupPanel */
-    public $panel;
-
-    /** @var User  */
-    public $user = [];
+    protected SetupTheme $theme;
+    public SetupPanel $panel;
+    public User $user;
 
 
     public function __construct(User $user, SetupPanel $panel)
@@ -43,7 +38,7 @@ class UserOptionsBuildingEvent extends Event
 class UserConfig extends Extension
 {
     /** @var UserConfigTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public const VERSION = "ext_user_config_version";
     public const ENABLE_API_KEYS = "ext_user_config_enable_api_keys";

@@ -4,12 +4,12 @@ class BlotterInfo extends ExtensionInfo
 {
     public const KEY = "blotter";
 
-    public $key = self::KEY;
-    public $name = "Blotter";
-    public $url = "http://seemslegit.com/";
-    public $authors = ["Zach Hall"=>"zach@sosguy.net"];
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Displays brief updates about whatever you want on every page.
+    public string $key = self::KEY;
+    public string $name = "Blotter";
+    public string $url = "http://seemslegit.com/";
+    public array $authors = ["Zach Hall"=>"zach@sosguy.net"];
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Displays brief updates about whatever you want on every page.
 Colors and positioning can be configured to match your site's design.
 
 Development TODO at https://github.com/zshall/shimmie2/issues";

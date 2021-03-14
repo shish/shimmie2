@@ -4,11 +4,11 @@ class DanbooruApiInfo extends ExtensionInfo
 {
     public const KEY = "danbooru_api";
 
-    public $key = self::KEY;
-    public $name = "Danbooru Client API";
-    public $authors = ["JJS"=>"jsutinen@gmail.com"];
-    public $description = "Allow Danbooru apps like Danbooru Uploader for Firefox to communicate with Shimmie";
-    public $documentation =
+    public string $key = self::KEY;
+    public string $name = "Danbooru Client API";
+    public array $authors = ["JJS"=>"jsutinen@gmail.com"];
+    public string $description = "Allow Danbooru apps like Danbooru Uploader for Firefox to communicate with Shimmie";
+    public ?string $documentation =
 "<p>Notes:
  <br>danbooru API based on documentation from danbooru 1.0 -
  http://attachr.com/7569

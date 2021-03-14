@@ -1,21 +1,13 @@
 <?php declare(strict_types=1);
 class HolidayTheme extends Themelet
 {
-    public function display_holiday($date)
+    public function display_holiday(?string $holiday)
     {
         global $page;
-        if ($date) {
-            $csssheet = "<link rel='stylesheet' href='".get_base_href()."/contrib/holiday/stylesheets/";
-
-            // April Fools
-            // Flips the entire page upside down!
-            // TODO: Make it possible for the user to turn this off!
-            if (date('d/m') == '01/04') {
-                $csssheet .= "aprilfools.css";
-            }
-
-            $csssheet .= "' type='text/css'>";
-            $page->add_html_header("$csssheet");
+        if ($holiday) {
+            $page->add_html_header(
+                "<link rel='stylesheet' href='".get_base_href()."/contrib/holiday/stylesheets/$holiday.css' type='text/css'>"
+            );
         }
     }
 }

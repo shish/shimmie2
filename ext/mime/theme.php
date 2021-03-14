@@ -2,7 +2,7 @@
 
 class MimeSystemTheme extends Themelet
 {
-    public function get_help_html()
+    public function get_help_html(): string
     {
         $mimes = DataHandlerExtension::get_all_supported_mimes();
         sort($mimes);

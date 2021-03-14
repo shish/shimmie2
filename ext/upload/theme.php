@@ -2,7 +2,7 @@
 
 class UploadTheme extends Themelet
 {
-    protected $has_errors = false;
+    protected bool $has_errors = false;
 
     public function display_block(Page $page)
     {

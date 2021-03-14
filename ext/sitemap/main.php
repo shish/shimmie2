@@ -3,8 +3,8 @@
 
 class XMLSitemap extends Extension
 {
-    private $sitemap_queue = "";
-    private $sitemap_filepath = ""; // set onPageRequest
+    private string $sitemap_queue = "";
+    private string $sitemap_filepath = ""; // set onPageRequest
 
     public function onPageRequest(PageRequestEvent $event)
     {

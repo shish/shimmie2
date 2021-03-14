@@ -5,7 +5,7 @@ class BulkImportExport extends DataHandlerExtension
 {
     const EXPORT_ACTION_NAME = "bulk_export";
     const EXPORT_INFO_FILE_NAME = "export.json";
-    protected $SUPPORTED_MIME = [MimeType::ZIP];
+    protected array $SUPPORTED_MIME = [MimeType::ZIP];
 
 
     public function onDataUpload(DataUploadEvent $event)
@@ -159,7 +159,7 @@ class BulkImportExport extends DataHandlerExtension
         return false;
     }
 
-    protected function create_thumb(string $hash, string $type): bool
+    protected function create_thumb(string $hash, string $mime): bool
     {
         return false;
     }

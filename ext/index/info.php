@@ -4,14 +4,14 @@ class IndexInfo extends ExtensionInfo
 {
     public const KEY = "index";
 
-    public $key = self::KEY;
-    public $name = "Post List";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $license = self::LICENSE_GPLV2;
-    public $description = "Show a list of uploaded posts";
-    public $core = true;
-    public $documentation = "Here is a list of the search methods available out of the box;
+    public string $key = self::KEY;
+    public string $name = "Post List";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $license = self::LICENSE_GPLV2;
+    public string $description = "Show a list of uploaded posts";
+    public bool $core = true;
+    public ?string $documentation = "Here is a list of the search methods available out of the box;
 Shimmie extensions may provide other filters:
 <ul>
   <li>by tag, eg

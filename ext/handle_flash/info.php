@@ -4,9 +4,9 @@ class FlashFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_flash";
 
-    public $key = self::KEY;
-    public $name = "Handle Flash";
-    public $url = self::SHIMMIE_URL;
-    public $authors = self::SHISH_AUTHOR;
-    public $description = "Handle Flash files.";
+    public string $key = self::KEY;
+    public string $name = "Handle Flash";
+    public string $url = self::SHIMMIE_URL;
+    public array $authors = self::SHISH_AUTHOR;
+    public string $description = "Handle Flash files.";
 }

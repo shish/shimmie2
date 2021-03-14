@@ -2,8 +2,8 @@
 
 class ImageViewCounter extends Extension
 {
-    protected $theme;
-    private $view_interval = 3600; # allows views to be added each hour
+    protected ?Themelet $theme;
+    private int $view_interval = 3600; # allows views to be added each hour
 
     # Add Setup Block with options for view counter
     public function onSetupBuilding(SetupBuildingEvent $event)

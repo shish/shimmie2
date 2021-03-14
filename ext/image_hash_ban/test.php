@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 class ImageBanTest extends ShimmiePHPUnitTestCase
 {
-    private $hash = "feb01bab5698a11dd87416724c7a89e3";
+    private string $hash = "feb01bab5698a11dd87416724c7a89e3";
 
     public function testPages()
     {

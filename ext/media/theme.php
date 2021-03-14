@@ -12,7 +12,7 @@ class MediaTheme extends Themelet
         );
     }
 
-    public function get_help_html()
+    public function get_help_html(): string
     {
         return '<p>Search for posts based on the type of media.</p>
         <div class="command_example">

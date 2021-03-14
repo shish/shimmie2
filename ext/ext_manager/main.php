@@ -21,8 +21,8 @@ function __extman_extactive(ExtensionInfo $a): bool
 
 class ExtensionAuthor
 {
-    public $name;
-    public $email;
+    public string $name;
+    public ?string $email;
 
     public function __construct(string $name, ?string $email)
     {
@@ -34,7 +34,7 @@ class ExtensionAuthor
 class ExtManager extends Extension
 {
     /** @var ExtManagerTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

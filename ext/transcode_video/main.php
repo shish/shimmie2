@@ -12,7 +12,7 @@ class VideoTranscodeException extends SCoreException
 class TranscodeVideo extends Extension
 {
     /** @var TranscodeVideoTheme */
-    protected $theme;
+    protected ?Themelet $theme;
 
     const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
 
@@ -54,8 +54,6 @@ class TranscodeVideo extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        global $config;
-
         $sb = $event->panel->create_new_block("Video Transcode");
         $sb->start_table();
         $sb->add_bool_option(TranscodeVideoConfig::ENABLED, "Allow transcoding images: ", true);
@@ -256,8 +254,6 @@ class TranscodeVideo extends Extension
             throw new VideoTranscodeException("ffmpeg path not configured");
         }
 
-        $ext = Media::determine_ext($target_mime);
-
         $command = new CommandBuilder($ffmpeg);
         $command->add_flag("-y"); // Bypass y/n prompts
         $command->add_flag("-i");
@@ -273,8 +269,6 @@ class TranscodeVideo extends Extension
 
         $command->add_flag("-map"); // Copies all streams
         $command->add_flag("0");
-
-        $file_extension = FileExtension::get_for_mime($target_mime);
 
         $command->add_flag("-f");
         $format = self::FORMAT_NAMES[$target_mime];

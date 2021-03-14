@@ -77,7 +77,7 @@ class SetupTheme extends Themelet
         $page->add_block(new Block("Setup", $table));
     }
 
-    protected function build_navigation()
+    protected function build_navigation(): string
     {
         return "
 			<a href='".make_link()."'>Index</a>
@@ -86,7 +86,7 @@ class SetupTheme extends Themelet
 		";
     }
 
-    protected function sb_to_html(SetupBlock $block)
+    protected function sb_to_html(SetupBlock $block): string
     {
         $h = $block->header;
         $b = $block->body;
