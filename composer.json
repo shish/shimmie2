@@ -48,13 +48,12 @@
 
 		"bower-asset/jquery"         : "^1.12",
 		"bower-asset/jquery-timeago" : "^1.5",
-		"bower-asset/mediaelement"   : "^2.21",
 		"bower-asset/js-cookie"      : "^2.1"
     },
 
 	"require-dev" : {
 		"phpunit/phpunit" : "^9.0",
-		"friendsofphp/php-cs-fixer" : "*"		
+		"friendsofphp/php-cs-fixer" : "*"
 	},
 	"suggest": {
 		"ext-memcache": "memcache caching",
