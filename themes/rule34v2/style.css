@@ -78,6 +78,11 @@ UL {
 	text-align: left;
 }
 
+.ad1{
+	display:flex;
+	justify-content:center;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *             the navigation bar, and all its blocks             *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
