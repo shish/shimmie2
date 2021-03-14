@@ -521,9 +521,12 @@ function parse_shorthand_int(string $limit): int
                 /** @noinspection PhpMissingBreakStatementInspection */
                 case 't': $value *= 1024;  // fall through
                 /** @noinspection PhpMissingBreakStatementInspection */
+                // no break
                 case 'g': $value *= 1024;  // fall through
                 /** @noinspection PhpMissingBreakStatementInspection */
+                // no break
                 case 'm': $value *= 1024;  // fall through
+                // no break
                 case 'k': $value *= 1024; break;
                 default: $value = -1;
             }
