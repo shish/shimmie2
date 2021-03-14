@@ -4,13 +4,21 @@
 }
 
 .command_example pre {
-	padding:4pt;
-	border: dashed 2px black;
-    display: table-cell;
-    width: 256px;
+    padding:4pt;
+    border: dashed 2px black;
 }
 
 .command_example p {
-	padding-left: 16pt;
-    display: table-cell;
+    padding-left: 16pt;
+}
+
+@media (min-width: 750px) {
+    .command_example pre {
+        display: table-cell;
+        width: 256px;
+    }
+
+    .command_example p {
+        display: table-cell;
+    }
 }
