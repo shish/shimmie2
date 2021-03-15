@@ -33,7 +33,7 @@ jobs:
         php-version: 7.4
 
     - name: Check format
-      run: ./vendor/bin/php-cs-fixer --dry-run
+      run: ./vendor/bin/php-cs-fixer fix --dry-run
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
