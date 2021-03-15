@@ -14,8 +14,26 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Set Up Cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          vendor
+        key: php-cs-fixer-${{ hashFiles('composer.lock') }}
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install PHP dependencies
+      run: composer update && composer install --prefer-dist --no-progress
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: 7.4
+
     - name: Check format
-      uses: zalexki/php-cs-fixer-action@master
+      run: ./vendor/bin/php-cs-fixer --dry-run
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
