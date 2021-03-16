@@ -14,8 +14,8 @@ class Image
     public const THUMBNAIL_DIR = "thumbs";
 
     public ?int $id = null;
-    public int $height;
-    public int $width;
+    public int $height = 0;
+    public int $width = 0;
     public string $hash;
     public int $filesize;
     public string $filename;
