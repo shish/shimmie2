@@ -70,7 +70,7 @@ class Featured extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can(Permissions::EDIT_FEATURE)) {
+        if ($user->can(Permissions::EDIT_FEATURE) && $event->context == "view") {
             $event->add_part($this->theme->get_buttons_html($event->image->id));
         }
     }

@@ -102,7 +102,7 @@ class ViewImage extends Extension
         ksort($iibbe->parts);
         $this->theme->display_page($image, $iibbe->parts);
 
-        $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
+        $iabbe = new ImageAdminBlockBuildingEvent($image, $user, "view");
         send_event($iabbe);
         ksort($iabbe->parts);
         $this->theme->display_admin_block($page, $iabbe->parts);

@@ -16,7 +16,7 @@ class ReportImageTheme extends Themelet
             $reporter_name = html_escape($report['reporter_name']);
             $userlink = "<a href='".make_link("user/$reporter_name")."'>$reporter_name</a>";
 
-            $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
+            $iabbe = new ImageAdminBlockBuildingEvent($image, $user, "report");
             send_event($iabbe);
             ksort($iabbe->parts);
             $actions = join("<br>", $iabbe->parts);
