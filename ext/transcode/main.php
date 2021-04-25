@@ -126,7 +126,7 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        if ($user->can(Permissions::EDIT_FILES)) {
+        if ($user->can(Permissions::EDIT_FILES) && $event->context != "report") {
             $engine = $config->get_string(TranscodeConfig::ENGINE);
             if ($this->can_convert_mime($engine, $event->image->get_mime())) {
                 $options = $this->get_supported_output_mimes($engine, $event->image->get_mime());
