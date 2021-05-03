@@ -99,4 +99,36 @@ class SetupTheme extends Themelet
 		";
         return $html;
     }
+
+    public function format_option(string $name, $html, ?string $label, bool $table_row, bool $label_row = false): string
+    {
+        $output = "";
+        if ($table_row) {
+            $output .= "<tr><th colspan='".($label_row ? 2 : 1)."' style='text-align: ".($label_row ? 'center' : 'right')."'>";
+        }
+        if (!is_null($label)) {
+            $output .= "<label for='{$name}'>{$label}</label>";
+        }
+
+        if ($table_row) {
+            $output .= "</th>";
+        }
+
+        if ($table_row && $label_row) {
+            $output .= "</tr><tr>";
+        }
+
+        if ($table_row) {
+            $output .= "<td colspan='".($label_row ? 2 : 1)."'>";
+        }
+        $output .= $html;
+        if ($table_row) {
+            $output .= "</td>";
+        }
+        if ($table_row) {
+            $output .= "</tr>";
+        }
+
+        return $output;
+    }
 }

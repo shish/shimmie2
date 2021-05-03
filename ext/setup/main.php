@@ -37,15 +37,17 @@ class SetupPanel
     /** @var SetupBlock[]  */
     public array $blocks = [];
     public BaseConfig $config;
+    public SetupTheme $theme;
 
-    public function __construct(BaseConfig $config)
+    public function __construct(BaseConfig $config, SetupTheme $theme)
     {
         $this->config = $config;
+        $this->theme = $theme;
     }
 
     public function create_new_block(string $title): SetupBlock
     {
-        $block = new SetupBlock($title, $this->config);
+        $block = new SetupBlock($title, $this->config, $this->theme);
         $this->blocks[] = $block;
         return $block;
     }
@@ -56,11 +58,13 @@ class SetupBlock extends Block
     public ?string $header;
     public ?string $body;
     public BaseConfig $config;
+    public SetupTheme $theme;
 
-    public function __construct(string $title, BaseConfig $config)
+    public function __construct(string $title, BaseConfig $config, SetupTheme $theme)
     {
         parent::__construct($title, "", "main", 50);
         $this->config = $config;
+        $this->theme = $theme;
     }
 
     public function add_label(string $text)
@@ -130,44 +134,6 @@ class SetupBlock extends Block
         $this->end_table_header_cell();
     }
 
-    private function format_option(
-        string $name,
-        $html,
-        ?string $label,
-        bool $table_row,
-        bool $label_row = false
-    ) {
-        if ($table_row) {
-            $this->start_table_row();
-        }
-        if ($table_row) {
-            $this->start_table_header_cell($label_row ? 2 : 1, $label_row ? 'center' : 'right');
-        }
-        if (!is_null($label)) {
-            $this->body .= "<label for='{$name}'>{$label}</label>";
-        }
-
-        if ($table_row) {
-            $this->end_table_header_cell();
-        }
-
-        if ($table_row && $label_row) {
-            $this->end_table_row();
-            $this->start_table_row();
-        }
-
-        if ($table_row) {
-            $this->start_table_cell($label_row ? 2 : 1);
-        }
-        $this->body .= $html;
-        if ($table_row) {
-            $this->end_table_cell();
-        }
-        if ($table_row) {
-            $this->end_table_row();
-        }
-    }
-
     public function add_text_option(string $name, string $label=null, bool $table_row = false)
     {
         $val = html_escape($this->config->get_string($name));
@@ -175,7 +141,7 @@ class SetupBlock extends Block
         $html = "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
         $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
     }
 
     public function add_longtext_option(string $name, string $label=null, bool $table_row = false)
@@ -186,7 +152,7 @@ class SetupBlock extends Block
         $html = "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
         $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
-        $this->format_option($name, $html, $label, $table_row, true);
+        $this->body .= $this->theme->format_option($name, $html, $label, $table_row, true);
     }
 
     public function add_bool_option(string $name, string $label=null, bool $table_row = false)
@@ -205,7 +171,7 @@ class SetupBlock extends Block
 
         $html .= "<input type='hidden' name='_type_$name' value='bool'>\n";
 
-        $this->format_option($name, $html, null, $table_row);
+        $this->body .= $this->theme->format_option($name, $html, null, $table_row);
     }
 
     //	public function add_hidden_option($name, $label=null) {
@@ -221,7 +187,7 @@ class SetupBlock extends Block
         $html = "<input type='number' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;' step='1' />\n";
         $html .= "<input type='hidden' name='_type_$name' value='int' />\n";
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
     }
 
     public function add_shorthand_int_option(string $name, string $label=null, bool $table_row = false)
@@ -230,7 +196,7 @@ class SetupBlock extends Block
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
     }
 
     public function add_choice_option(string $name, array $options, string $label=null, bool $table_row = false)
@@ -240,6 +206,9 @@ class SetupBlock extends Block
         } else {
             $current = $this->config->get_string($name);
         }
+
+        // Not on this branch yet. Also requires build_selector to be public since we're accesing it from a block, not a theme.
+        // $html = $this->theme->build_selector("_config_".$name, array_flip($options), "id='".$name."'", false, [$current]);
 
         $html = "<select id='$name' name='_config_$name'>";
         foreach ($options as $optname => $optval) {
@@ -253,7 +222,7 @@ class SetupBlock extends Block
         $html .= "</select>";
         $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
     }
 
     public function add_multichoice_option(string $name, array $options, string $label=null, bool $table_row = false)
@@ -273,7 +242,7 @@ class SetupBlock extends Block
         $html .= "<input type='hidden' name='_type_$name' value='array'>\n";
         $html .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
     }
 
     public function add_color_option(string $name, string $label=null, bool $table_row = false)
@@ -283,7 +252,7 @@ class SetupBlock extends Block
         $html = "<input type='color' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
         $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
     }
 }
 
@@ -316,7 +285,7 @@ class Setup extends Extension
                 $this->theme->display_permission_denied();
             } else {
                 if ($event->count_args() == 0) {
-                    $panel = new SetupPanel($config);
+                    $panel = new SetupPanel($config, $this->theme);
                     send_event(new SetupBuildingEvent($panel));
                     $this->theme->display_page($page, $panel);
                 } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
