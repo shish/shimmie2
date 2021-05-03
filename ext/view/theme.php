@@ -86,13 +86,16 @@ class ViewImageTheme extends Themelet
 		";
         foreach ($editor_parts as $part) {
             // This could be using something like MicroHTML? but the contents need to allow HTML anyway.
-            // TODO: Let parts decide if they should be wrapped.
-            $html .= "
-                <tr>
-                    <th>{$part->header}</th>
-                    <td>{$part->body}</td>
-                </tr>
-            ";
+            if ($part->raw) {
+                $html .= $part->header . $part->body;
+            } else {
+                $html .= "
+                    <tr>
+                        <th>{$part->header}</th>
+                        <td>{$part->body}</td>
+                    </tr>
+                ";
+            }
         }
         if (
             (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
