@@ -63,10 +63,7 @@ class ImageViewCounter extends Extension
                 ["image_id" => $event->image->id]
             );
 
-            $event->add_part(
-                "<tr><th>Views:</th><td>$view_count</td></tr>",
-                38
-            );
+            $event->add_part($view_count, 38, "Views:");
         }
     }
 

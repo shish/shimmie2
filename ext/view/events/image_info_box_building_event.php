@@ -1,5 +1,19 @@
 <?php declare(strict_types=1);
 
+class ImageInfoBoxPart
+{
+    public string $header = "";
+    public string $body = "";
+    public int $order = 50;
+
+    public function __construct(string $header, string $body, int $order)
+    {
+        $this->header = $header;
+        $this->body = $body;
+        $this->order = $order;
+    }
+}
+
 class ImageInfoBoxBuildingEvent extends Event
 {
     public array $parts = [];
@@ -13,11 +27,16 @@ class ImageInfoBoxBuildingEvent extends Event
         $this->user = $user;
     }
 
-    public function add_part(string $html, int $position=50)
+    public function add_part(string $html, int $position=50, string $header="")
     {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = $html;
+        array_push($this->parts, new ImageInfoBoxPart($header, $html, $position));
+    }
+
+    public function get_sorted_parts()
+    {
+        $parts = $this->parts;
+        usort($parts, function($a, $b) {
+            return $a->order <=> $b->order;
+        });
     }
 }

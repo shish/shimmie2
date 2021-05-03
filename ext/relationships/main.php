@@ -125,7 +125,7 @@ class Relationships extends Extension
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
     {
-        $event->add_part($this->theme->get_parent_editor_html($event->image), 45);
+        $event->add_part($this->theme->get_parent_editor_html($event->image), 45, "Parent");
     }
 
     public function onImageDeletion(ImageDeletionEvent $event)

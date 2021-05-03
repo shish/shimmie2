@@ -13,7 +13,7 @@ class TagEditCloud extends Extension
         if (!$config->get_bool("tageditcloud_disable") && $this->can_tag($event->image)) {
             $html = $this->build_tag_map($event->image);
             if (!is_null($html)) {
-                $event->add_part($html, 40);
+                $event->add_part($html, 40); //TODO: Tell the event this should not be wrapped in tables for build_info to act accordingly.
             }
         }
     }

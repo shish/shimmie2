@@ -85,7 +85,14 @@ class ViewImageTheme extends Themelet
 					<table style='width: 500px; max-width: 100%;' class='image_info form'>
 		";
         foreach ($editor_parts as $part) {
-            $html .= $part;
+            // This could be using something like MicroHTML? but the contents need to allow HTML anyway.
+            // TODO: Let parts decide if they should be wrapped.
+            $html .= "
+                <tr>
+                    <th>{$part->header}</th>
+                    <td>{$part->body}</td>
+                </tr>
+            ";
         }
         if (
             (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&

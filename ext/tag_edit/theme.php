@@ -47,19 +47,12 @@ class TagEditTheme extends Themelet
         $h_tag_links = Tag::implode($tag_links);
         $h_tags = html_escape($image->get_tag_list());
 
-        return "
-			<tr>
-				<th width='50px'>Tags</th>
-				<td>
-		".($user->can(Permissions::EDIT_IMAGE_TAG) ? "
+        return ($user->can(Permissions::EDIT_IMAGE_TAG) ? "
 					<span class='view'>$h_tag_links</span>
 					<input class='edit autocomplete_tags' type='text' name='tag_edit__tags' value='$h_tags' id='tag_editor' autocomplete='off'>
 		" : "
 					$h_tag_links
-		")."
-				</td>
-			</tr>
-		";
+		");
     }
 
     public function get_user_editor_html(Image $image): string
@@ -69,20 +62,12 @@ class TagEditTheme extends Themelet
         $h_av = $image->get_owner()->get_avatar_html();
         $h_date = autodate($image->posted);
         $h_ip = $user->can(Permissions::VIEW_IP) ? " (".show_ip($image->owner_ip, "Post posted {$image->posted}").")" : "";
-        return "
-			<tr>
-				<th>Uploader</th>
-				<td>
-		".($user->can(Permissions::EDIT_IMAGE_OWNER) ? "
+        return ($user->can(Permissions::EDIT_IMAGE_OWNER) ? "
 					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date</span>
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
 		" : "
 					<a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date
-		")."
-				</td>
-				<td width='80px' rowspan='4'>$h_av</td>
-			</tr>
-		";
+		"); //TODO: Implement removed <td width='80px' rowspan='4'>$h_av</td>
     }
 
     public function get_source_editor_html(Image $image): string
@@ -91,19 +76,12 @@ class TagEditTheme extends Themelet
         $h_source = html_escape($image->get_source());
         $f_source = $this->format_source($image->get_source());
         $style = "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;";
-        return "
-			<tr>
-				<th>Source</th>
-				<td>
-		".($user->can(Permissions::EDIT_IMAGE_SOURCE) ? "
+        return ($user->can(Permissions::EDIT_IMAGE_SOURCE) ? "
 					<div class='view' style='$style'>$f_source</div>
 					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
 		" : "
 					<div style='$style'>$f_source</div>
-		")."
-				</td>
-			</tr>
-		";
+		");
     }
 
     protected function format_source(string $source=null): string
@@ -128,18 +106,11 @@ class TagEditTheme extends Themelet
         global $user;
         $b_locked = $image->is_locked() ? "Yes (Only admins may edit these details)" : "No";
         $h_locked = $image->is_locked() ? " checked" : "";
-        return "
-			<tr>
-				<th>Locked</th>
-				<td>
-		".($user->can(Permissions::EDIT_IMAGE_LOCK) ? "
+        return ($user->can(Permissions::EDIT_IMAGE_LOCK) ? "
 					<span class='view'>$b_locked</span>
 					<input class='edit' type='checkbox' name='tag_edit__locked'$h_locked>
 		" : "
 					$b_locked
-		")."
-				</td>
-			</tr>
-		";
+		");
     }
 }

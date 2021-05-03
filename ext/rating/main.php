@@ -215,7 +215,8 @@ class Ratings extends Extension
                 $event->image->rating,
                 $user->can(Permissions::EDIT_IMAGE_RATING)
             ),
-            80
+            80,
+            "Rating"
         );
     }
 
