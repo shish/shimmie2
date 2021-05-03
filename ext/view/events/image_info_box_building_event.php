@@ -40,5 +40,6 @@ class ImageInfoBoxBuildingEvent extends Event
         usort($parts, function($a, $b) {
             return $a->order <=> $b->order;
         });
+        return $parts;
     }
 }
