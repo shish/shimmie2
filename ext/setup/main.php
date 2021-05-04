@@ -67,7 +67,7 @@ class SetupBlock extends Block
         $this->theme = $theme;
     }
 
-    public function add_label(string $text)
+    public function add_label(string $text, bool $is_header=false)
     {
         $this->body .= $text;
     }
@@ -76,62 +76,28 @@ class SetupBlock extends Block
     {
         $this->body .= "<table class='form'>";
     }
+
     public function end_table()
     {
         $this->body .= "</table>";
     }
-    public function start_table_row()
-    {
-        $this->body .= "<tr>";
-    }
-    public function end_table_row()
-    {
-        $this->body .= "</tr>";
-    }
-    public function start_table_head()
-    {
-        $this->body .= "<thead>";
-    }
-    public function end_table_head()
-    {
-        $this->body .= "</thead>";
-    }
+
     public function add_table_header($content, int $colspan = 2)
     {
-        $this->start_table_head();
-        $this->start_table_row();
-        $this->add_table_header_cell($content, $colspan);
-        $this->end_table_row();
-        $this->end_table_head();
+        $this->body .= "<thead>";
+        $this->body .= "<tr>";
+        $this->body .= "<th colspan='$colspan' style='text-align: right'>";
+        $this->body .= $content;
+        $this->body .= "</th>";
+        $this->body .= "</tr>";
+        $this->body .= "</thead>";
     }
 
-    public function start_table_cell(int $colspan = 1)
-    {
-        $this->body .= "<td colspan='$colspan'>";
-    }
-    public function end_table_cell()
-    {
-        $this->body .= "</td>";
-    }
-    public function add_table_cell($content, int $colspan = 1)
-    {
-        $this->start_table_cell($colspan);
-        $this->body .= $content;
-        $this->end_table_cell();
-    }
-    public function start_table_header_cell(int $colspan = 1, string $align = 'right')
-    {
-        $this->body .= "<th colspan='$colspan' style='text-align: $align'>";
-    }
-    public function end_table_header_cell()
-    {
-        $this->body .= "</th>";
-    }
     public function add_table_header_cell($content, int $colspan = 1)
     {
-        $this->start_table_header_cell($colspan);
+        $this->body .= "<th colspan='$colspan' style='text-align: right'>";
         $this->body .= $content;
-        $this->end_table_header_cell();
+        $this->body .= "</th>";
     }
 
     public function add_text_option(string $name, string $label=null, bool $table_row = false)

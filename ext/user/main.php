@@ -293,11 +293,7 @@ class UserPage extends Extension
         $sb->add_choice_option("avatar_host", $hosts, "Avatars", true);
 
         if ($config->get_string("avatar_host") == "gravatar") {
-            $sb->start_table_row();
-            $sb->start_table_cell(2);
-            $sb->add_label("<div style='text-align: center'><b>Gravatar Options</b></div>");
-            $sb->end_table_cell();
-            $sb->end_table_row();
+            $sb->add_table_header_cell("<div style='text-align: center'><b>Gravatar Options</b></div>", 2);
 
             $sb->add_choice_option(
                 "avatar_gravatar_type",
