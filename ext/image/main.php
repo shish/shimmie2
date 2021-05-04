@@ -290,7 +290,6 @@ class ImageIO extends Extension
         if ($config->get_string(ImageConfig::THUMB_MIME)===MimeType::JPEG) {
             $sb->add_color_option(ImageConfig::THUMB_ALPHA_COLOR, "Alpha Conversion Color");
         }
-
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event)

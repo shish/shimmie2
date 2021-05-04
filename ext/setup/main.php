@@ -72,11 +72,13 @@ class SetupBlock extends Block
         $this->body .= $this->theme->format_item($text, null, null, false, $full_width);
     }
 
-    public function add_header(string $text) {
+    public function add_header(string $text)
+    {
         $this->body .= $this->theme->format_item($text, null, null, true);
     }
 
-    protected function add_option(?string $label, ?string $html, ?string $name, bool $label_is_header=false, bool $full_width=false) {
+    protected function add_option(?string $label, ?string $html, ?string $name, bool $label_is_header=false, bool $full_width=false)
+    {
         $this->body .= $this->theme->format_item($label, $html, $name, $label_is_header, $full_width);
     }
 
@@ -290,8 +292,11 @@ class Setup extends Extension
         $sb->add_text_option("contact_link", "Contact URL: ");
         $sb->add_choice_option(SetupConfig::THEME, $themes, "Theme: ");
         //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "Test Array: ");
-        $sb->add_bool_option("nice_urls", "Nice URLs: ",
-            "<span title='$test_url' id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
+        $sb->add_bool_option(
+            "nice_urls",
+            "Nice URLs: ",
+            "<span title='$test_url' id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript"
+        );
 
         $sb = $event->panel->create_new_block("Remote API Integration");
         $sb->add_label("<a href='https://akismet.com/'>Akismet</a>", true);

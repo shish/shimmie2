@@ -98,7 +98,7 @@ class ViewImageTheme extends Themelet
                 $html .= $part->header . implode("", $part->items); //TODO: Use all items.
             } else {
                 $items = $part->items;
-                array_walk($items, function(&$item, $index, $part) {
+                array_walk($items, function (&$item, $index, $part) {
                     $item = $this->build_item($part->attributes[$index] ?? [], $item);
                 }, $part);
                 $html .= $this->build_part($items, $part->header);

@@ -33,12 +33,12 @@ class RelationshipsTheme extends Themelet
         $s_parent_id = $h_parent_id ?: "None";
 
         $html = (
-                    !$user->is_anonymous() ?
+            !$user->is_anonymous() ?
                     "		<span class='view' style='overflow: hidden; white-space: nowrap;'>{$s_parent_id}</span>\n".
                     "		<input class='edit' type='number' name='tag_edit__parent' type='number' value='{$h_parent_id}'>\n"
                 :
                     $s_parent_id
-                );
+        );
         return $html;
     }
 

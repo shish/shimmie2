@@ -44,7 +44,7 @@ class ImageInfoBoxBuildingEvent extends Event
     public function get_sorted_parts()
     {
         $parts = $this->parts;
-        usort($parts, function($a, $b) {
+        usort($parts, function ($a, $b) {
             return $a->order <=> $b->order;
         });
         return $parts;
