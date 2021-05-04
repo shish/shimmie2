@@ -38,7 +38,7 @@ class Rule34 extends Extension
         $url1 = $event->image->parse_link_template($image_link, 1);
         $html = (string)A(["href"=>$url0], "File Only")." (".
                 A(["href"=>$url1], "Backup Server").")";
-        $event->add_part($html, 90, "Links");
+        $event->add_part([$html], 90, "Links");
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)

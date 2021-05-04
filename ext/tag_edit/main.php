@@ -258,10 +258,14 @@ class TagEdit extends Extension
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
     {
-        $event->add_part($this->theme->get_user_editor_html($event->image), 39, "Uploader");
-        $event->add_part($this->theme->get_tag_editor_html($event->image), 40, "Tags");
-        $event->add_part($this->theme->get_source_editor_html($event->image), 41, "Source");
-        $event->add_part($this->theme->get_lock_editor_html($event->image), 42, "Locked");
+        $user_editor = $this->theme->get_user_editor_html($event->image);
+        $avatar = $event->image->get_owner()->get_avatar_html();
+        $attributes = [[], ["rowspan"=>'4', "width"=>'80px']];
+        $event->add_part([$user_editor, $avatar], 39, "Uploader", false, $attributes);
+
+        $event->add_part([$this->theme->get_tag_editor_html($event->image)], 40, "Tags");
+        $event->add_part([$this->theme->get_source_editor_html($event->image)], 41, "Source");
+        $event->add_part([$this->theme->get_lock_editor_html($event->image)], 42, "Locked");
     }
 
     public function onTagTermCheck(TagTermCheckEvent $event)

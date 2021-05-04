@@ -33,7 +33,7 @@ class Artists extends Extension
         global $user;
         $artistName = $this->get_artistName_by_imageID($event->image->id);
         if (!$user->is_anonymous()) {
-            $event->add_part($this->theme->get_author_editor_html($artistName), 42, "Author");
+            $event->add_part([$this->theme->get_author_editor_html($artistName)], 42, "Author");
         }
     }
 

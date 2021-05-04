@@ -1,5 +1,10 @@
 <?php declare(strict_types=1);
 
+use function MicroHTML\rawHTML;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+
 class ViewImageTheme extends Themelet
 {
     public function display_meta_headers(Image $image)
@@ -72,6 +77,38 @@ class ViewImageTheme extends Themelet
         return "$h_pin<br>$h_search";
     }
 
+    protected function build_item(array $attributes, string $html): MicroHTML\HTMLElement
+    {
+        return TD($attributes, rawHTML($html));
+    }
+    
+    protected function build_part(array $items, string $header=""): string
+    {
+        return (string)TR(
+            (!empty($header) ? TH(rawHTML($header)) : null),
+            ...$items
+        );
+    }
+
+    protected function build_info_parts(array $editor_parts): string
+    {
+        $html = "";
+        foreach ($editor_parts as $part) {
+            if ($part->raw) {
+                $html .= $part->header . implode("", $part->items); //TODO: Use all items.
+            } else {
+                $items = $part->items;
+                array_walk($items, function(&$item, $index, $part) {
+                    $item = $this->build_item($part->attributes[$index] ?? [], $item);
+                }, $part);
+                $html .= $this->build_part($items, $part->header);
+            }
+        }
+        
+        return $html;
+    }
+
+    //TODO: Don't enforce the use of a table in this function.
     protected function build_info(Image $image, $editor_parts): string
     {
         global $user;
@@ -84,29 +121,17 @@ class ViewImageTheme extends Themelet
 					<input type='hidden' name='image_id' value='{$image->id}'>
 					<table style='width: 500px; max-width: 100%;' class='image_info form'>
 		";
-        foreach ($editor_parts as $part) {
-            // This could be using something like MicroHTML? but the contents need to allow HTML anyway.
-            if ($part->raw) {
-                $html .= $part->header . $part->body;
-            } else {
-                $html .= "
-                    <tr>
-                        <th>{$part->header}</th>
-                        <td>{$part->body}</td>
-                    </tr>
-                ";
-            }
-        }
+        $html .= $this->build_info_parts($editor_parts);
         if (
             (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
             $user->can(Permissions::EDIT_IMAGE_TAG)
         ) {
-            $html .= "
-						<tr><td colspan='4'>
-							<input class='view' type='button' value='Edit' onclick='$(\".view\").hide(); $(\".edit\").show();'>
-							<input class='edit' type='submit' value='Set'>
-						</td></tr>
-			";
+            $buttons = "
+                <input class='view' type='button' value='Edit' onclick='$(\".view\").hide(); $(\".edit\").show();'>
+                <input class='edit' type='submit' value='Set'>
+            ";
+            $buttons = $this->build_item(["colspan"=>"4"], $buttons);
+            $html .= $this->build_part([$buttons]);
         }
         $html .= "
 					</table>

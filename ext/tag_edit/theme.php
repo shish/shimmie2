@@ -67,7 +67,7 @@ class TagEditTheme extends Themelet
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
 		" : "
 					<a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date
-		"); //TODO: Implement removed <td width='80px' rowspan='4'>$h_av</td>
+		");
     }
 
     public function get_source_editor_html(Image $image): string

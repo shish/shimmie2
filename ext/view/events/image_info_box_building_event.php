@@ -2,15 +2,17 @@
 
 class ImageInfoBoxPart
 {
+    public array $items = [];
+    public array $attributes = [];
     public string $header = "";
-    public string $body = "";
     public int $order = 50;
     public bool $raw = false;
 
-    public function __construct(string $header, string $body, int $order, bool $raw)
+    public function __construct(string $header, array $items, int $order, bool $raw, array $attributes)
     {
         $this->header = $header;
-        $this->body = $body;
+        $this->items = $items;
+        $this->attributes = $attributes;
         $this->order = $order;
         $this->raw = $raw;
     }
@@ -29,9 +31,14 @@ class ImageInfoBoxBuildingEvent extends Event
         $this->user = $user;
     }
 
-    public function add_part(string $html, int $position=50, string $header="", bool $raw=false)
+    /* public function add_part(string $html, int $order=50, string $header="", bool $raw=false, array $attributes=[])
     {
-        array_push($this->parts, new ImageInfoBoxPart($header, $html, $position, $raw));
+        $this->parts[] = new ImageInfoBoxPart($header, [$html], $order, $raw, $attributes);
+    } */
+
+    public function add_part(array $html, int $order=50, string $header="", bool $raw=false, array $attributes=[])
+    {
+        $this->parts[] = new ImageInfoBoxPart($header, $html, $order, $raw, $attributes);
     }
 
     public function get_sorted_parts()
