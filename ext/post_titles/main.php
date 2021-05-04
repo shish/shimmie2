@@ -65,10 +65,8 @@ class PostTitles extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = $event->panel->create_new_block("Post Titles");
-        $sb->start_table();
-        $sb->add_bool_option(PostTitlesConfig::DEFAULT_TO_FILENAME, "Default to filename", true);
-        $sb->add_bool_option(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, "Show in window title", true);
-        $sb->end_table();
+        $sb->add_bool_option(PostTitlesConfig::DEFAULT_TO_FILENAME, "Default to filename");
+        $sb->add_bool_option(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, "Show in window title");
     }
 
     public function onBulkExport(BulkExportEvent $event)

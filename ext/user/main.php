@@ -278,22 +278,20 @@ class UserPage extends Extension
         ];
 
         $sb = $event->panel->create_new_block("User Options");
-        $sb->start_table();
-        $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
-        $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
-        $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
+        $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys");
+        $sb->add_bool_option("login_signup_enabled", "Allow new signups");
+        $sb->add_longtext_option("login_tac", "Terms &amp; Conditions");
         $sb->add_choice_option(
             "user_loginshowprofile",
             [
                 "return to previous page" => 0, // 0 is default
                 "send to user profile" => 1],
-            "On log in/out",
-            true
+            "On log in/out"
         );
-        $sb->add_choice_option("avatar_host", $hosts, "Avatars", true);
+        $sb->add_choice_option("avatar_host", $hosts, "Avatars");
 
         if ($config->get_string("avatar_host") == "gravatar") {
-            $sb->add_table_header_cell("<div style='text-align: center'><b>Gravatar Options</b></div>", 2);
+            $sb->add_header("<div style='text-align: center'><b>Gravatar Options</b></div>");
 
             $sb->add_choice_option(
                 "avatar_gravatar_type",
@@ -303,17 +301,14 @@ class UserPage extends Extension
                     'Monster ID'=>'monsterid',
                     'Identicon'=>'identicon'
                 ],
-                "Type",
-                true
+                "Type"
             );
             $sb->add_choice_option(
                 "avatar_gravatar_rating",
                 ['G'=>'g', 'PG'=>'pg', 'R'=>'r', 'X'=>'x'],
-                "Rating",
-                true
+                "Rating"
             );
         }
-        $sb->end_table();
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)

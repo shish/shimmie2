@@ -64,10 +64,10 @@ class Forum extends Extension
     {
         $sb = $event->panel->create_new_block("Forum");
         $sb->add_int_option("forumTitleSubString", "Title max long: ");
-        $sb->add_int_option("forumThreadsPerPage", "<br>Threads per page: ");
-        $sb->add_int_option("forumPostsPerPage", "<br>Posts per page: ");
+        $sb->add_int_option("forumThreadsPerPage", "Threads per page: ");
+        $sb->add_int_option("forumPostsPerPage", "Posts per page: ");
 
-        $sb->add_int_option("forumMaxCharsPerPost", "<br>Max chars per post: ");
+        $sb->add_int_option("forumMaxCharsPerPost", "Max chars per post: ");
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event)

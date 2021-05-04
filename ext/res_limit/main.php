@@ -60,22 +60,18 @@ class ResolutionLimit extends Extension
     {
         $sb = $event->panel->create_new_block("Resolution Limits");
 
-        $sb->add_label("Min ");
-        $sb->add_int_option("upload_min_width");
-        $sb->add_label(" x ");
-        $sb->add_int_option("upload_min_height");
-        $sb->add_label(" px");
+        //TODO: Allow two fields in one row.
+        $sb->add_header("Minimum Resolution");
+        $sb->add_int_option("upload_min_width", "Min Width", " px");
+        $sb->add_int_option("upload_min_height", "Min Height", " px");
+        $sb->add_label("(-1 for no limit)", true);
 
-        $sb->add_label("<br>Max ");
-        $sb->add_int_option("upload_max_width");
-        $sb->add_label(" x ");
-        $sb->add_int_option("upload_max_height");
-        $sb->add_label(" px");
+        $sb->add_header("Maximum Resolution");
+        $sb->add_int_option("upload_max_width", "Max Width", " px");
+        $sb->add_int_option("upload_max_height", "Max Height", " px");
 
-        $sb->add_label("<br>(-1 for no limit)");
+        $sb->add_label("(-1 for no limit)", true);
 
-        $sb->add_label("<br>Ratios ");
-        $sb->add_text_option("upload_ratios");
-        $sb->add_label("<br>(eg. '4:3 16:9', blank for no limit)");
+        $sb->add_text_option("upload_ratios", "Ratios", "(eg. '4:3 16:9', blank for no limit)");
     }
 }

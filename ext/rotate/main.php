@@ -40,9 +40,7 @@ class RotateImage extends Extension
     {
         $sb = $event->panel->create_new_block("Image Rotate");
         $sb->add_bool_option("rotate_enabled", "Allow rotating images: ");
-        $sb->add_label("<br>Default Orientation: ");
-        $sb->add_int_option("rotate_default_deg");
-        $sb->add_label(" deg");
+        $sb->add_int_option("rotate_default_deg", "Default Orientation: ", " deg");
     }
 
     public function onPageRequest(PageRequestEvent $event)

@@ -19,6 +19,6 @@ class SiteDescription extends Extension
     {
         $sb = $event->panel->create_new_block("Site Description");
         $sb->add_text_option("site_description", "Description: ");
-        $sb->add_text_option("site_keywords", "<br>Keywords: ");
+        $sb->add_text_option("site_keywords", "Keywords: ");
     }
 }

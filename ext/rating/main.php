@@ -143,10 +143,8 @@ class Ratings extends Extension
         }
 
         $sb = $event->panel->create_new_block("Default Rating Filter");
-        $sb->start_table();
-        $sb->add_multichoice_option(RatingsConfig::USER_DEFAULTS, $options, "Output Log Level: ", true);
-        $sb->end_table();
-        $sb->add_label("This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.");
+        $sb->add_multichoice_option(RatingsConfig::USER_DEFAULTS, $options, "Output Log Level: ");
+        $sb->add_label("This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.", true);
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
@@ -161,14 +159,12 @@ class Ratings extends Extension
         }
 
         $sb = $event->panel->create_new_block("Post Ratings");
-        $sb->start_table();
         foreach (array_keys($_shm_user_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {
                 continue;
             }
-            $sb->add_multichoice_option("ext_rating_" . $key . "_privs", $options, $key, true);
+            $sb->add_multichoice_option("ext_rating_" . $key . "_privs", $options, $key);
         }
-        $sb->end_table();
     }
 
     public function onDisplayingImage(DisplayingImageEvent $event)

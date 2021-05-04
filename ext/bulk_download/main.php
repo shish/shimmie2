@@ -32,9 +32,7 @@ class BulkDownload extends Extension
     {
         $sb = $event->panel->create_new_block("Bulk Download");
 
-        $sb->start_table();
-        $sb->add_shorthand_int_option(BulkDownloadConfig::SIZE_LIMIT, "Size Limit", true);
-        $sb->end_table();
+        $sb->add_shorthand_int_option(BulkDownloadConfig::SIZE_LIMIT, "Size Limit");
     }
 
     public function onBulkAction(BulkActionEvent $event)

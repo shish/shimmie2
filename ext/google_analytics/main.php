@@ -6,8 +6,7 @@ class GoogleAnalytics extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = $event->panel->create_new_block("Google Analytics");
-        $sb->add_text_option("google_analytics_id", "Analytics ID: ");
-        $sb->add_label("<br>(eg. UA-xxxxxxxx-x)");
+        $sb->add_text_option("google_analytics_id", "Analytics ID: ", "(eg. UA-xxxxxxxx-x)");
     }
 
     # Load Analytics tracking code on page request

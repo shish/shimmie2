@@ -36,17 +36,15 @@ class TagEditCloud extends Extension
 
         $sb = $event->panel->create_new_block("Tag Edit Cloud");
         $sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
-        $sb->add_choice_option("tageditcloud_sort", $sort_by, "<br>Sort the tags by:");
-        $sb->add_bool_option("tageditcloud_usedfirst", "<br>Always show used tags first: ");
-        $sb->add_label("<br><b>Alpha sort</b>:<br>Only show tags used at least ");
-        $sb->add_int_option("tageditcloud_minusage");
-        $sb->add_label(" times.<br><b>Popularity/Relevance sort</b>:<br>Show ");
-        $sb->add_int_option("tageditcloud_defcount");
-        $sb->add_label(" tags by default.<br>Show a maximum of ");
-        $sb->add_int_option("tageditcloud_maxcount");
-        $sb->add_label(" tags.");
-        $sb->add_label("<br><b>Relevance sort</b>:<br>Ignore tags (space separated): ");
-        $sb->add_text_option("tageditcloud_ignoretags");
+        $sb->add_choice_option("tageditcloud_sort", $sort_by, "Sort the tags by:");
+        $sb->add_bool_option("tageditcloud_usedfirst", "Always show used tags first: ");
+        $sb->add_header("Alpha sort");
+        $sb->add_int_option("tageditcloud_minusage", "Only show tags used at least ", " times.");
+        $sb->add_header("Popularity/Relevance sort");
+        $sb->add_int_option("tageditcloud_defcount", "Show ", " tags by default.");
+        $sb->add_int_option("tageditcloud_maxcount", "Show a maximum of ", " tags.");
+        $sb->add_header("Relevance sort");
+        $sb->add_text_option("tageditcloud_ignoretags", "Ignore tags (space separated): ");
     }
 
     private function build_tag_map(Image $image): ?string

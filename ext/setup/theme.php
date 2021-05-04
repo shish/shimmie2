@@ -89,7 +89,7 @@ class SetupTheme extends Themelet
     protected function sb_to_html(SetupBlock $block): string
     {
         $h = $block->header;
-        $b = $block->body;
+        $b = $this->build_setup_chunk($block->body);
         $i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
         $html = "
 			<section class='setupblock'>
@@ -100,35 +100,55 @@ class SetupTheme extends Themelet
         return $html;
     }
 
-    public function format_option(string $name, $html, ?string $label, bool $table_row, bool $label_row = false): string
+    protected function build_setup_chunk(string $html): string
     {
-        $output = "";
-        if ($table_row) {
-            $output .= "<tr><th colspan='".($label_row ? 2 : 1)."' style='text-align: ".($label_row ? 'center' : 'right')."'>";
+        return "<table class='form'>$html</table>";
+    }
+
+    protected function build_setup_row(string $html): string
+    {
+        return "<tr>$html</tr>";
+    }
+
+    protected function build_setup_cell(string $html, bool $is_header=false, bool $full_width=false): string
+    {
+        $colspan = ($is_header || $full_width ? 2 : 1);
+        if ($is_header) {
+            return $this->build_setup_row("<th colspan='$colspan'>$html</th>");
+        } else {
+            if ($full_width) {
+                return $this->build_setup_row("<td colspan='$colspan'>$html</td>");
+            } else {
+                return "<td colspan='$colspan'>$html</td>";
+            }
         }
-        if (!is_null($label)) {
-            $output .= "<label for='{$name}'>{$label}</label>";
+    }
+
+    public function format_item(?string $label, ?string $html, ?string $config_name, bool $label_is_header=false, bool $full_width=false): string
+    {
+        if (empty($label) && empty($html)) {
+            return "";
         }
 
-        if ($table_row) {
-            $output .= "</th>";
+        if (!empty($label)) {
+            if (!empty($config_name)) {
+                $label = "<label for='{$config_name}'>{$label}</label>";
+            }
+            $label = $this->build_setup_cell($label, $label_is_header, $full_width);
+        } else {
+            $label = "";
         }
 
-        if ($table_row && $label_row) {
-            $output .= "</tr><tr>";
+        if (!empty($html)) {
+            $html = $this->build_setup_cell($html, $label_is_header, $full_width);
+        } else {
+            $html = "";
         }
 
-        if ($table_row) {
-            $output .= "<td colspan='".($label_row ? 2 : 1)."'>";
+        if ($label_is_header) {
+            return $label . $this->build_setup_row($html);
         }
-        $output .= $html;
-        if ($table_row) {
-            $output .= "</td>";
-        }
-        if ($table_row) {
-            $output .= "</tr>";
-        }
-
-        return $output;
+        
+        return $this->build_setup_row($label . $html);
     }
 }

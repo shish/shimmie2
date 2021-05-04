@@ -259,42 +259,38 @@ class ImageIO extends Extension
         global $config;
 
         $sb = $event->panel->create_new_block("Post Options");
-        $sb->start_table();
         $sb->position = 30;
         // advanced only
         //$sb->add_text_option(ImageConfig::ILINK, "Image link: ");
         //$sb->add_text_option(ImageConfig::TLINK, "<br>Thumbnail link: ");
-        $sb->add_text_option(ImageConfig::TIP, "Post tooltip", true);
-        $sb->add_text_option(ImageConfig::INFO, "Post info", true);
-        $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "Upload collision handler", true);
-        $sb->add_choice_option(ImageConfig::ON_DELETE, self::ON_DELETE_OPTIONS, "On Delete", true);
+        $sb->add_text_option(ImageConfig::TIP, "Post tooltip");
+        $sb->add_text_option(ImageConfig::INFO, "Post info");
+        $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "Upload collision handler");
+        $sb->add_choice_option(ImageConfig::ON_DELETE, self::ON_DELETE_OPTIONS, "On Delete");
         if (function_exists(self::EXIF_READ_FUNCTION)) {
-            $sb->add_bool_option(ImageConfig::SHOW_META, "Show metadata", true);
+            $sb->add_bool_option(ImageConfig::SHOW_META, "Show metadata");
         }
-        $sb->end_table();
 
         $sb = $event->panel->create_new_block("Thumbnailing");
-        $sb->start_table();
-        $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine", true);
-        $sb->add_choice_option(ImageConfig::THUMB_MIME, self::THUMBNAIL_TYPES, "Filetype", true);
+        $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine");
+        $sb->add_choice_option(ImageConfig::THUMB_MIME, self::THUMBNAIL_TYPES, "Filetype");
 
-        $sb->add_int_option(ImageConfig::THUMB_WIDTH, "Max Width", true);
-        $sb->add_int_option(ImageConfig::THUMB_HEIGHT, "Max Height", true);
+        $sb->add_int_option(ImageConfig::THUMB_WIDTH, "Max Width");
+        $sb->add_int_option(ImageConfig::THUMB_HEIGHT, "Max Height");
 
         $options = [];
         foreach (MediaEngine::RESIZE_TYPE_SUPPORT[$config->get_string(ImageConfig::THUMB_ENGINE)] as $type) {
             $options[$type] = $type;
         }
 
-        $sb->add_choice_option(ImageConfig::THUMB_FIT, $options, "Fit", true);
+        $sb->add_choice_option(ImageConfig::THUMB_FIT, $options, "Fit");
 
-        $sb->add_int_option(ImageConfig::THUMB_QUALITY, "Quality", true);
-        $sb->add_int_option(ImageConfig::THUMB_SCALING, "High-DPI Scale %", true);
+        $sb->add_int_option(ImageConfig::THUMB_QUALITY, "Quality");
+        $sb->add_int_option(ImageConfig::THUMB_SCALING, "High-DPI Scale %");
         if ($config->get_string(ImageConfig::THUMB_MIME)===MimeType::JPEG) {
-            $sb->add_color_option(ImageConfig::THUMB_ALPHA_COLOR, "Alpha Conversion Color", true);
+            $sb->add_color_option(ImageConfig::THUMB_ALPHA_COLOR, "Alpha Conversion Color");
         }
 
-        $sb->end_table();
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event)

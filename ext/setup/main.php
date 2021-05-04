@@ -67,50 +67,32 @@ class SetupBlock extends Block
         $this->theme = $theme;
     }
 
-    public function add_label(string $text, bool $is_header=false)
+    public function add_label(string $text, bool $full_width=false)
     {
-        $this->body .= $text;
+        $this->body .= $this->theme->format_item($text, null, null, false, $full_width);
     }
 
-    public function start_table()
-    {
-        $this->body .= "<table class='form'>";
+    public function add_header(string $text) {
+        $this->body .= $this->theme->format_item($text, null, null, true);
     }
 
-    public function end_table()
-    {
-        $this->body .= "</table>";
+    protected function add_option(?string $label, ?string $html, ?string $name, bool $label_is_header=false, bool $full_width=false) {
+        $this->body .= $this->theme->format_item($label, $html, $name, $label_is_header, $full_width);
     }
 
-    public function add_table_header($content, int $colspan = 2)
-    {
-        $this->body .= "<thead>";
-        $this->body .= "<tr>";
-        $this->body .= "<th colspan='$colspan' style='text-align: right'>";
-        $this->body .= $content;
-        $this->body .= "</th>";
-        $this->body .= "</tr>";
-        $this->body .= "</thead>";
-    }
-
-    public function add_table_header_cell($content, int $colspan = 1)
-    {
-        $this->body .= "<th colspan='$colspan' style='text-align: right'>";
-        $this->body .= $content;
-        $this->body .= "</th>";
-    }
-
-    public function add_text_option(string $name, string $label=null, bool $table_row = false)
+    public function add_text_option(string $name, string $label=null, string $tooltip="")
     {
         $val = html_escape($this->config->get_string($name));
 
         $html = "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
         $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
 
-        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
+        $html .= $tooltip;
+
+        $this->add_option($label, $html, $name, false);
     }
 
-    public function add_longtext_option(string $name, string $label=null, bool $table_row = false)
+    public function add_longtext_option(string $name, string $label=null)
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -118,26 +100,21 @@ class SetupBlock extends Block
         $html = "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
         $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
-        $this->body .= $this->theme->format_option($name, $html, $label, $table_row, true);
+        $this->add_option($label, $html, $name, false, true);
     }
 
-    public function add_bool_option(string $name, string $label=null, bool $table_row = false)
+    public function add_bool_option(string $name, string $label=null, string $tooltip="")
     {
         $checked = $this->config->get_bool($name) ? " checked" : "";
 
         $html = "";
-        if (!$table_row&&!is_null($label)) {
-            $html .= "<label for='{$name}'>{$label}</label>";
-        }
 
         $html .= "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
-        if ($table_row && !is_null($label)) {
-            $html .= "<label for='{$name}'>{$label}</label>";
-        }
-
         $html .= "<input type='hidden' name='_type_$name' value='bool'>\n";
 
-        $this->body .= $this->theme->format_option($name, $html, null, $table_row);
+        $html .= $tooltip;
+
+        $this->add_option($label, $html, $name, false);
     }
 
     //	public function add_hidden_option($name, $label=null) {
@@ -146,26 +123,30 @@ class SetupBlock extends Block
     //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
     //	}
 
-    public function add_int_option(string $name, string $label=null, bool $table_row = false)
+    public function add_int_option(string $name, string $label=null, string $tooltip="")
     {
         $val = $this->config->get_int($name);
 
         $html = "<input type='number' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;' step='1' />\n";
         $html .= "<input type='hidden' name='_type_$name' value='int' />\n";
 
-        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
+        $html .= $tooltip;
+
+        $this->add_option($label, $html, $name, false);
     }
 
-    public function add_shorthand_int_option(string $name, string $label=null, bool $table_row = false)
+    public function add_shorthand_int_option(string $name, string $label=null, string $tooltip="")
     {
         $val = to_shorthand_int($this->config->get_int($name));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
-        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
+        $html .= $tooltip;
+
+        $this->add_option($label, $html, $name, false);
     }
 
-    public function add_choice_option(string $name, array $options, string $label=null, bool $table_row = false)
+    public function add_choice_option(string $name, array $options, string $label=null)
     {
         if (is_int(array_values($options)[0])) {
             $current = $this->config->get_int($name);
@@ -188,10 +169,10 @@ class SetupBlock extends Block
         $html .= "</select>";
         $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
-        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
+        $this->add_option($label, $html, $name, false);
     }
 
-    public function add_multichoice_option(string $name, array $options, string $label=null, bool $table_row = false)
+    public function add_multichoice_option(string $name, array $options, string $label=null)
     {
         $current = $this->config->get_array($name);
 
@@ -208,17 +189,17 @@ class SetupBlock extends Block
         $html .= "<input type='hidden' name='_type_$name' value='array'>\n";
         $html .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
 
-        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
+        $this->add_option($label, $html, $name, false);
     }
 
-    public function add_color_option(string $name, string $label=null, bool $table_row = false)
+    public function add_color_option(string $name, string $label=null)
     {
         $val = html_escape($this->config->get_string($name));
 
         $html = "<input type='color' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
         $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
 
-        $this->body .= $this->theme->format_option($name, $html, $label, $table_row);
+        $this->add_option($label, $html, $name, false);
     }
 }
 
@@ -304,20 +285,20 @@ class Setup extends Extension
         $sb = $event->panel->create_new_block("General");
         $sb->position = 0;
         $sb->add_text_option(SetupConfig::TITLE, "Site title: ");
-        $sb->add_text_option(SetupConfig::FRONT_PAGE, "<br>Front page: ");
-        $sb->add_text_option(SetupConfig::MAIN_PAGE, "<br>Main page: ");
-        $sb->add_text_option("contact_link", "<br>Contact URL: ");
-        $sb->add_choice_option(SetupConfig::THEME, $themes, "<br>Theme: ");
-        //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
-        $sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
-        $sb->add_label("<span title='$test_url' id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
+        $sb->add_text_option(SetupConfig::FRONT_PAGE, "Front page: ");
+        $sb->add_text_option(SetupConfig::MAIN_PAGE, "Main page: ");
+        $sb->add_text_option("contact_link", "Contact URL: ");
+        $sb->add_choice_option(SetupConfig::THEME, $themes, "Theme: ");
+        //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "Test Array: ");
+        $sb->add_bool_option("nice_urls", "Nice URLs: ",
+            "<span title='$test_url' id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
 
         $sb = $event->panel->create_new_block("Remote API Integration");
-        $sb->add_label("<a href='https://akismet.com/'>Akismet</a>");
-        $sb->add_text_option("comment_wordpress_key", "<br>API key: ");
-        $sb->add_label("<br>&nbsp;<br><a href='https://www.google.com/recaptcha/admin'>ReCAPTCHA</a>");
-        $sb->add_text_option("api_recaptcha_privkey", "<br>Secret key: ");
-        $sb->add_text_option("api_recaptcha_pubkey", "<br>Site key: ");
+        $sb->add_label("<a href='https://akismet.com/'>Akismet</a>", true);
+        $sb->add_text_option("comment_wordpress_key", "API key: ");
+        $sb->add_label("&nbsp;<a href='https://www.google.com/recaptcha/admin'>ReCAPTCHA</a>", true);
+        $sb->add_text_option("api_recaptcha_privkey", "Secret key: ");
+        $sb->add_text_option("api_recaptcha_pubkey", "Site key: ");
     }
 
     public function onConfigSave(ConfigSaveEvent $event)
