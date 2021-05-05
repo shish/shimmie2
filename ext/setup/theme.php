@@ -140,15 +140,15 @@ class SetupTheme extends Themelet
         }
 
         if (!empty($html)) {
-            $html = $this->build_setup_cell($html, $label_is_header, $full_width);
+            $html = $this->build_setup_cell($html, false, $full_width);
         } else {
             $html = "";
         }
 
-        if ($label_is_header) {
-            return $label . $this->build_setup_row($html);
+        if ($label_is_header || $full_width) {
+            return $label . $html;
         }
-        
+
         return $this->build_setup_row($label . $html);
     }
 }
