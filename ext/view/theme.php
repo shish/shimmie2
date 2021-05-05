@@ -95,11 +95,11 @@ class ViewImageTheme extends Themelet
         $html = "";
         foreach ($editor_parts as $part) {
             if ($part->raw) {
-                $html .= $part->header . implode("", $part->items); //TODO: Use all items.
+                $html .= $part->header . implode("", $part->items);
             } else {
                 $items = $part->items;
                 array_walk($items, function (&$item, $index, $part) {
-                    $item = $this->build_item($part->attributes[$index] ?? [], $item);
+                    $item = $this->build_item($part->attributes[$index] ?? [], (string)$item);
                 }, $part);
                 $html .= $this->build_part($items, $part->header);
             }
