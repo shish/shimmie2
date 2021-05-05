@@ -1,5 +1,10 @@
 <?php declare(strict_types=1);
 
+use function MicroHTML\rawHTML;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+
 class SetupTheme extends Themelet
 {
     /*
@@ -107,20 +112,23 @@ class SetupTheme extends Themelet
 
     protected function build_setup_row(string $html): string
     {
-        return "<tr>$html</tr>";
+        return (string)TR(rawHTML($html));
     }
 
     protected function build_setup_cell(string $html, bool $is_header=false, bool $full_width=false): string
     {
-        $colspan = ($is_header || $full_width ? 2 : 1);
+        $attr = ["colspan"=>($is_header || $full_width ? '2' : '1')];
+        $cell = null;
         if ($is_header) {
-            return $this->build_setup_row("<th colspan='$colspan'>$html</th>");
+            $cell = TH($attr, rawHTML($html));
         } else {
-            if ($full_width) {
-                return $this->build_setup_row("<td colspan='$colspan'>$html</td>");
-            } else {
-                return "<td colspan='$colspan'>$html</td>";
-            }
+            $cell = TD($attr, rawHTML($html));
+        }
+
+        if ($is_header || $full_width) {
+            return $this->build_setup_row((string)$cell);
+        } else {
+            return (string)$cell;
         }
     }
 
