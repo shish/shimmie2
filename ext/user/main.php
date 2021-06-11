@@ -355,9 +355,9 @@ class UserPage extends Extension
     public function onUserCreation(UserCreationEvent $event)
     {
         $this->check_user_creation($event);
-        $user = $this->create_user($event);
+        $new_user = $this->create_user($event);
         if ($event->login) {
-            send_event(new UserLoginEvent($user));
+            send_event(new UserLoginEvent($new_user));
         }
     }
 
@@ -529,7 +529,7 @@ class UserPage extends Extension
 
     private function create_user(UserCreationEvent $event): User
     {
-        global $database, $user;
+        global $database;
 
         $email = (!empty($event->email)) ? $event->email : null;
 
@@ -542,12 +542,12 @@ class UserPage extends Extension
             ["username"=>$event->username, "hash"=>'', "email"=>$email, "class"=>$class]
         );
         $uid = $database->get_last_insert_id('users_id_seq');
-        $user = User::by_name($event->username);
-        $user->set_password($event->password);
+        $new_user = User::by_name($event->username);
+        $new_user->set_password($event->password);
 
         log_info("user", "Created User #$uid ({$event->username})");
 
-        return $user;
+        return $new_user;
     }
 
     private function set_login_cookie(string $name, string $pass): void
