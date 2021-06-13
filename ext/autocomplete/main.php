@@ -28,6 +28,16 @@ class AutoComplete extends Extension
         $this->theme->build_autocomplete($page);
     }
 
+    public function onApiRequest(ApiRequestEvent $event)
+    {
+        if ($event->method == "autocomplete") {
+            $event->result = $this->complete(
+                $event->params->search ?? "",
+                $event->params->limit ?? 0,
+            );
+        }
+    }
+
     private function complete(string $search, int $limit): array
     {
         global $cache, $database;
