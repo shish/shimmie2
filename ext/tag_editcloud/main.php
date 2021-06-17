@@ -102,7 +102,7 @@ class TagEditCloud extends Extension
                                         SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
                                         FROM tags
                                         WHERE count >= :tag_min2
-                                        ORDER BY CASE
+                                        ORDER BY SUM(count) OVER (PARTITION BY SUBSTRING_INDEX(tag, ':', 1)) DESC, CASE 
                                             WHEN tag LIKE '%:%' THEN 1
                                             ELSE 2
                                         END, tag
