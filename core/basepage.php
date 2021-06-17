@@ -337,8 +337,6 @@ class BasePage
      * Why do this? Two reasons:
      *  1. Reduces the number of files the user's browser needs to download.
      *  2. Allows these cached files to be compressed/minified by the admin.
-     *
-     * TODO: This should really be configurable somehow...
      */
     public function add_auto_html_headers(): void
     {
@@ -363,7 +361,7 @@ class BasePage
         $css_latest = $config_latest;
         $css_files = array_merge(
             zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.css"),
-            zglob("themes/$theme_name/style.css")
+            zglob("themes/$theme_name/{" . implode(",", $this->get_theme_stylesheets()) . "}")
         );
         foreach ($css_files as $css) {
             $css_latest = max($css_latest, filemtime($css));
@@ -393,7 +391,7 @@ class BasePage
                 "ext/static_files/modernizr-3.3.1.custom.js",
             ],
             zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/script.js"),
-            zglob("themes/$theme_name/script.js")
+            zglob("themes/$theme_name/{" . implode(",", $this->get_theme_scripts()) . "}")
         );
         foreach ($js_files as $js) {
             $js_latest = max($js_latest, filemtime($js));
@@ -408,6 +406,24 @@ class BasePage
             file_put_contents($js_cache_file, $js_data);
         }
         $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
+    }
+
+
+    /**
+     * @return array A list of stylesheets relative to the theme root.
+     */
+    protected function get_theme_stylesheets(): array
+    {
+        return ["style.css"];
+    }
+
+
+    /**
+     * @return array A list of script files relative to the theme root.
+     */
+    protected function get_theme_scripts(): array
+    {
+        return ["script.js"];
     }
 
     protected function get_nav_links(): array
