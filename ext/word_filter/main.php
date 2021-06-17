@@ -18,7 +18,7 @@ class WordFilter extends Extension
     {
         $sb = $event->panel->create_new_block("Word Filter");
         $sb->add_longtext_option("word_filter");
-        $sb->add_label("<br>(each line should be search term and replace term, separated by a comma)");
+        $sb->add_label("(each line should be search term and replace term, separated by a comma)", true);
     }
 
     private function filter(string $text): string

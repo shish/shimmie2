@@ -210,13 +210,14 @@ class IPBan extends Extension
         global $config;
 
         $sb = $event->panel->create_new_block("IP Ban");
-        $sb->add_longtext_option("ipban_message", 'Message to show to banned users:<br>(with $IP, $DATE, $ADMIN, $REASON, and $CONTACT)');
+        $sb->add_longtext_option("ipban_message", 'Message to show to banned users:');
         if ($config->get_string("ipban_message_ghost")) {
             $sb->add_longtext_option("ipban_message_ghost", 'Message to show to ghost users:');
         }
         if ($config->get_string("ipban_message_anon-ghost")) {
             $sb->add_longtext_option("ipban_message_anon-ghost", 'Message to show to ghost anons:');
         }
+        $sb->add_label('Flags: $IP, $DATE, $ADMIN, $REASON, $CONTACT', true);
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)

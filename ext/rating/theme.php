@@ -5,21 +5,14 @@ class RatingsTheme extends Themelet
     public function get_rater_html(int $image_id, string $rating, bool $can_rate): string
     {
         $human_rating = Ratings::rating_to_human($rating);
-        $html = "
-			<tr>
-				<th>Rating</th>
-				<td>
-		".($can_rate ? "
+        $html = ($can_rate ? "
 					<span class='view'>$human_rating</span>
 					<span class='edit'>
 						".$this->get_selection_rater_html([$rating])."
 					</span>
 		" : "
 					$human_rating
-		")."
-				</td>
-			</tr>
-		";
+		");
         return $html;
     }
 

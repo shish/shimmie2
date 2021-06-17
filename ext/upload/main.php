@@ -125,12 +125,10 @@ class Upload extends Extension
         $sb = $event->panel->create_new_block("Upload");
         $sb->position = 10;
         // Output the limits from PHP so the user has an idea of what they can set.
-        $sb->add_int_option(UploadConfig::COUNT, "Max uploads: ");
-        $sb->add_label("<i>PHP Limit = " . ini_get('max_file_uploads') . "</i>");
-        $sb->add_shorthand_int_option(UploadConfig::SIZE, "<br/>Max size per file: ");
-        $sb->add_label("<i>PHP Limit = " . ini_get('upload_max_filesize') . "</i>");
-        $sb->add_choice_option(UploadConfig::TRANSLOAD_ENGINE, $tes, "<br/>Transload: ");
-        $sb->add_bool_option(UploadConfig::TLSOURCE, "<br/>Use transloaded URL as source if none is provided: ");
+        $sb->add_int_option(UploadConfig::COUNT, "Max uploads: ", "<i>PHP Limit = " . ini_get('max_file_uploads') . "</i>");
+        $sb->add_shorthand_int_option(UploadConfig::SIZE, "Max size per file: ", "<i>PHP Limit = " . ini_get('upload_max_filesize') . "</i>");
+        $sb->add_choice_option(UploadConfig::TRANSLOAD_ENGINE, $tes, "Transload: ");
+        $sb->add_bool_option(UploadConfig::TLSOURCE, "Use transloaded URL as source if none is provided: ");
     }
 
 

@@ -55,10 +55,8 @@ class TranscodeVideo extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = $event->panel->create_new_block("Video Transcode");
-        $sb->start_table();
-        $sb->add_bool_option(TranscodeVideoConfig::ENABLED, "Allow transcoding images: ", true);
-        $sb->add_bool_option(TranscodeVideoConfig::UPLOAD_TO_NATIVE_CONTAINER, "Convert videos using MPEG-4 or WEBM to their native containers:", true);
-        $sb->end_table();
+        $sb->add_bool_option(TranscodeVideoConfig::ENABLED, "Allow transcoding images: ");
+        $sb->add_bool_option(TranscodeVideoConfig::UPLOAD_TO_NATIVE_CONTAINER, "Convert videos using MPEG-4 or WEBM to their native containers:");
     }
 
     public function onDataUpload(DataUploadEvent $event)

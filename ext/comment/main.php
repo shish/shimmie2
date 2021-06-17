@@ -358,19 +358,14 @@ class CommentList extends Extension
     {
         $sb = $event->panel->create_new_block("Comment Options");
         $sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments: ");
-        $sb->add_label("<br>Limit to ");
-        $sb->add_int_option("comment_limit");
-        $sb->add_label(" comments per ");
-        $sb->add_int_option("comment_window");
-        $sb->add_label(" minutes");
-        $sb->add_label("<br>Show ");
-        $sb->add_int_option("comment_count");
-        $sb->add_label(" recent comments on the index");
-        $sb->add_label("<br>Show ");
-        $sb->add_int_option("comment_list_count");
-        $sb->add_label(" comments per image on the list");
-        $sb->add_label("<br>Make samefags public ");
-        $sb->add_bool_option("comment_samefags_public");
+
+        $sb->add_int_option("comment_limit", "Limit to ", " comments");
+        $sb->add_int_option("comment_window", "per", " minutes.");
+
+        $sb->add_int_option("comment_count", "Show ", "recent comments on the index.");
+        $sb->add_int_option("comment_list_count", "Show ", " comments per image on the list.");
+
+        $sb->add_bool_option("comment_samefags_public", "Make samefags public ");
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event)

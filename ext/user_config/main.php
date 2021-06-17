@@ -141,7 +141,7 @@ class UserConfig extends Extension
                         return;
                     }
 
-                    $uobe = new UserOptionsBuildingEvent($display_user, new SetupPanel($user_config));
+                    $uobe = new UserOptionsBuildingEvent($display_user, new SetupPanel($user_config, new SetupTheme));
                     send_event($uobe);
 
                     $this->theme->display_user_config_page($page, $uobe->user, $uobe->panel);

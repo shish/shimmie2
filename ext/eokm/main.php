@@ -41,9 +41,7 @@ class Eokm extends Extension
     {
         $sb = $event->panel->create_new_block("EOKM Filter");
 
-        $sb->start_table();
-        $sb->add_text_option("eokm_username", "Username", true);
-        $sb->add_text_option("eokm_password", "Password", true);
-        $sb->end_table();
+        $sb->add_text_option("eokm_username", "Username");
+        $sb->add_text_option("eokm_password", "Password");
     }
 }

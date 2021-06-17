@@ -51,22 +51,15 @@ class ResizeImage extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = $event->panel->create_new_block("Image Resize");
-        $sb->start_table();
-        $sb->add_choice_option(ResizeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
-        $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images", true);
-        $sb->add_bool_option(ResizeConfig::GET_ENABLED, "Allow GET args", true);
-        $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload", true);
-        $sb->end_table();
-        $sb->start_table();
-        $sb->add_table_header("Preset/Default Dimensions");
-        $sb->add_label("<tr><th>Width</th><td>");
-        $sb->add_int_option(ResizeConfig::DEFAULT_WIDTH);
-        $sb->add_label("</td><td>px</td></tr>");
-        $sb->add_label("<tr><th>Height</th><td>");
-        $sb->add_int_option(ResizeConfig::DEFAULT_HEIGHT);
-        $sb->add_label("</td><td>px</td></tr>");
-        $sb->add_label("<tr><td></td><td>(enter 0 for no default)</td></tr>");
-        $sb->end_table();
+        $sb->add_choice_option(ResizeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine");
+        $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images");
+        $sb->add_bool_option(ResizeConfig::GET_ENABLED, "Allow GET args");
+        $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload");
+
+        $sb->add_header("Preset/Default Dimensions");
+        $sb->add_int_option(ResizeConfig::DEFAULT_WIDTH, "Width: ", " px");
+        $sb->add_int_option(ResizeConfig::DEFAULT_HEIGHT, "Height: ", " px");
+        $sb->add_label("(enter 0 for no default)", true);
     }
 
     public function onDataUpload(DataUploadEvent $event)

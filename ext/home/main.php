@@ -29,8 +29,8 @@ class Home extends Extension
 
         $sb = $event->panel->create_new_block("Home Page");
         $sb->add_longtext_option("home_links", 'Page Links (Use BBCode, leave blank for defaults)');
-        $sb->add_longtext_option("home_text", "<br>Page Text:<br>");
-        $sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
+        $sb->add_longtext_option("home_text", "Page Text:");
+        $sb->add_choice_option("home_counter", $counters, "Counter: ");
     }
 
 

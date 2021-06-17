@@ -123,9 +123,7 @@ class Index extends Extension
         $sb = $event->panel->create_new_block("Index Options");
         $sb->position = 20;
 
-        $sb->add_label("Show ");
-        $sb->add_int_option(IndexConfig::IMAGES);
-        $sb->add_label(" images on the post list");
+        $sb->add_int_option(IndexConfig::IMAGES, "Show ", " images on the post list");
     }
 
     public function onPageNavBuilding(PageNavBuildingEvent $event)

@@ -143,20 +143,18 @@ class TranscodeImage extends Extension
 
 
         $sb = $event->panel->create_new_block("Image Transcode");
-        $sb->start_table();
-        $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images", true);
-        $sb->add_bool_option(TranscodeConfig::GET_ENABLED, "Enable GET args", true);
-        $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
+        $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images");
+        $sb->add_bool_option(TranscodeConfig::GET_ENABLED, "Enable GET args");
+        $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload");
+        $sb->add_choice_option(TranscodeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine");
         foreach (self::INPUT_MIMES as $display=> $mime) {
             if (MediaEngine::is_input_supported($engine, $mime)) {
                 $outputs = $this->get_supported_output_mimes($engine, $mime);
-                $sb->add_choice_option(self::get_mapping_name($mime), $outputs, "$display", true);
+                $sb->add_choice_option(self::get_mapping_name($mime), $outputs, "$display");
             }
         }
-        $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality", true);
-        $sb->add_color_option(TranscodeConfig::ALPHA_COLOR, "Alpha Conversion Color", true);
-        $sb->end_table();
+        $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality");
+        $sb->add_color_option(TranscodeConfig::ALPHA_COLOR, "Alpha Conversion Color");
     }
 
     public function onDataUpload(DataUploadEvent $event)

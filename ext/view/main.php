@@ -99,8 +99,7 @@ class ViewImage extends Extension
 
         $iibbe = new ImageInfoBoxBuildingEvent($image, $user);
         send_event($iibbe);
-        ksort($iibbe->parts);
-        $this->theme->display_page($image, $iibbe->parts);
+        $this->theme->display_page($image, $iibbe->get_sorted_parts());
 
         $iabbe = new ImageAdminBlockBuildingEvent($image, $user, "view");
         send_event($iabbe);
@@ -113,11 +112,7 @@ class ViewImage extends Extension
         global $config;
         $image_info = $config->get_string(ImageConfig::INFO);
         if ($image_info) {
-            $html = (string)TR(
-                TH("Info"),
-                TD($event->image->get_info())
-            );
-            $event->add_part($html, 85);
+            $event->add_part([html_escape($event->image->get_info())], 85, "Info");
         }
     }
 }

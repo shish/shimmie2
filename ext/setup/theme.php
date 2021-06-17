@@ -1,5 +1,10 @@
 <?php declare(strict_types=1);
 
+use function MicroHTML\rawHTML;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+
 class SetupTheme extends Themelet
 {
     /*
@@ -89,7 +94,7 @@ class SetupTheme extends Themelet
     protected function sb_to_html(SetupBlock $block): string
     {
         $h = $block->header;
-        $b = $block->body;
+        $b = $this->build_setup_chunk($block->body);
         $i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
         $html = "
 			<section class='setupblock'>
@@ -98,5 +103,60 @@ class SetupTheme extends Themelet
 			</section>
 		";
         return $html;
+    }
+
+    protected function build_setup_chunk(string $html): string
+    {
+        return "<table class='form'>$html</table>";
+    }
+
+    protected function build_setup_row(string $html): string
+    {
+        return (string)TR(rawHTML($html));
+    }
+
+    protected function build_setup_cell(string $html, bool $is_header=false, bool $full_width=false): string
+    {
+        $attr = ["colspan"=>($is_header || $full_width ? '2' : '1')];
+        $cell = null;
+        if ($is_header) {
+            $cell = TH($attr, rawHTML($html));
+        } else {
+            $cell = TD($attr, rawHTML($html));
+        }
+
+        if ($is_header || $full_width) {
+            return $this->build_setup_row((string)$cell);
+        } else {
+            return (string)$cell;
+        }
+    }
+
+    public function format_item(?string $label, ?string $html, ?string $config_name, bool $label_is_header=false, bool $full_width=false): string
+    {
+        if (empty($label) && empty($html)) {
+            return "";
+        }
+
+        if (!empty($label)) {
+            if (!empty($config_name)) {
+                $label = "<label for='{$config_name}'>{$label}</label>";
+            }
+            $label = $this->build_setup_cell($label, $label_is_header, $full_width);
+        } else {
+            $label = "";
+        }
+
+        if (!empty($html)) {
+            $html = $this->build_setup_cell($html, false, $full_width);
+        } else {
+            $html = "";
+        }
+
+        if ($label_is_header || $full_width) {
+            return $label . $html;
+        }
+
+        return $this->build_setup_row($label . $html);
     }
 }

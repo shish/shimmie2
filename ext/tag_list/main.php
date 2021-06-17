@@ -98,38 +98,30 @@ class TagList extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = $event->panel->create_new_block("Tag Map Options");
-        $sb->add_int_option(TagListConfig::TAGS_MIN, "Only show tags used at least ");
-        $sb->add_label(" times");
-        $sb->add_bool_option(TagListConfig::PAGES, "<br>Paged tag lists: ");
+        $sb->add_int_option(TagListConfig::TAGS_MIN, "Only show tags used at least ", " times");
+        $sb->add_bool_option(TagListConfig::PAGES, "Paged tag lists: ");
 
         $sb = $event->panel->create_new_block("Popular / Related Tag List");
-        $sb->add_int_option(TagListConfig::LENGTH, "Show top ");
-        $sb->add_label(" related tags");
-        $sb->add_int_option(TagListConfig::POPULAR_TAG_LIST_LENGTH, "<br>Show top ");
-        $sb->add_label(" popular tags");
-        $sb->start_table();
-        $sb->add_text_option(TagListConfig::INFO_LINK, "Tag info link", true);
-        $sb->add_text_option(TagListConfig::OMIT_TAGS, "Omit tags", true);
+        $sb->add_int_option(TagListConfig::LENGTH, "Show top ", " related tags");
+        $sb->add_int_option(TagListConfig::POPULAR_TAG_LIST_LENGTH, "<br>Show top ", " popular tags");
+        $sb->add_text_option(TagListConfig::INFO_LINK, "Tag info link");
+        $sb->add_text_option(TagListConfig::OMIT_TAGS, "Omit tags");
         $sb->add_choice_option(
             TagListConfig::IMAGE_TYPE,
             TagListConfig::TYPE_CHOICES,
-            "Post tag list",
-            true
+            "Post tag list"
         );
         $sb->add_choice_option(
             TagListConfig::RELATED_SORT,
             TagListConfig::SORT_CHOICES,
-            "Sort related list by",
-            true
+            "Sort related list by"
         );
         $sb->add_choice_option(
             TagListConfig::POPULAR_SORT,
             TagListConfig::SORT_CHOICES,
-            "Sort popular list by",
-            true
+            "Sort popular list by"
         );
-        $sb->add_bool_option("tag_list_numbers", "Show tag counts", true);
-        $sb->end_table();
+        $sb->add_bool_option("tag_list_numbers", "Show tag counts");
     }
 
     /**
