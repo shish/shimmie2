@@ -380,13 +380,9 @@ class PoolsTheme extends Themelet
         $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
     }
 
-    public function get_bulk_pool_selector(array $pools): string
+    public function get_bulk_pool_selector(array $options): string
     {
-        $output = "<select name='bulk_pool_select' required='required'><option></option>";
-        foreach ($pools as $pool) {
-            $output .= "<option value='" . $pool->id . "' >" . $pool->title . "</option>";
-        }
-        return $output . "</select>";
+        return $this->build_selector("bulk_pool_select", $options, "required", true);
     }
 
     public function get_bulk_pool_input(array $search_terms): string

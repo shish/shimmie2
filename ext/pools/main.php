@@ -524,10 +524,7 @@ class Pools extends Extension
     {
         global $database;
 
-        $pools = array_map(
-            [Pool::class, "makePool"],
-            $database->get_all("SELECT * FROM pools ORDER BY title ")
-        );
+        $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
         $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", $this->theme->get_bulk_pool_selector($pools));
         $event->add_action("bulk_pool_add_new", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms));
@@ -789,7 +786,7 @@ class Pools extends Extension
             "
 					SELECT p.image_id FROM pool_images p
 					$query
-					ORDER BY p.image_order ASC
+					ORDER BY p.image_order ASC, p.image_id ASC
 					LIMIT :l OFFSET :o",
             [
                 "pid" => $poolID,
