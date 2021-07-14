@@ -54,6 +54,13 @@ class TagCategories extends Extension
             );
         }
     }
+    
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if ($event->parent=="tags") {
+            $event->add_nav_link("tag_categories", new Link('tags/categories'), "Tag Categories", NavLink::is_active(["tag_categories"]));
+        }
+    }
 
     public function onPageRequest(PageRequestEvent $event)
     {
