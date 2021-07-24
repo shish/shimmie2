@@ -35,7 +35,7 @@ RUN  curl -k -o /usr/local/bin/su-exec.c https://raw.githubusercontent.com/ncopa
 # Actually run shimmie
 FROM debian:testing-slim
 EXPOSE 8000
-HEALTHCHECK --interval=5m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
+HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
 ENV UID=1000 \
     GID=1000
 RUN apt update && apt install -y curl \
