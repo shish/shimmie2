@@ -80,7 +80,7 @@ $header_html
 			xhr.open("GET", "/stat.txt?" + new URLSearchParams(ob).toString(), true);
 			xhr.send();
 		}
-		setTimeout(function(){
+		function logTimes() {
 			var t = window.performance.timing;
 			stat({
 				"v": 1,
@@ -93,7 +93,8 @@ $header_html
 				"domInteractive": t.domInteractive - t.fetchStart,
 				"domComplete": t.domComplete - t.fetchStart,
 			})
-		}, 3000);
+		}
+		// setTimeout(logTimes, 3000);
 		</script>
 	</head>
 
