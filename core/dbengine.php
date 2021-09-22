@@ -23,7 +23,7 @@ abstract class DBEngine
         return 'CREATE TABLE '.$name.' ('.$data.')';
     }
 
-    abstract public function set_timeout(PDO $db, int $time);
+    abstract public function set_timeout(PDO $db, ?int $time);
 
     abstract public function get_version(PDO $db): string;
 
@@ -53,7 +53,7 @@ class MySQL extends DBEngine
         return 'CREATE TABLE '.$name.' ('.$data.') '.$ctes;
     }
 
-    public function set_timeout(PDO $db, int $time): void
+    public function set_timeout(PDO $db, ?int $time): void
     {
         // These only apply to read-only queries, which appears to be the best we can to mysql-wise
         // $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
@@ -98,8 +98,9 @@ class PostgreSQL extends DBEngine
         return "CREATE TABLE $name ($data)";
     }
 
-    public function set_timeout(PDO $db, int $time): void
+    public function set_timeout(PDO $db, ?int $time): void
     {
+		if(is_null($time)) $time = 0;
         $db->exec("SET statement_timeout TO ".$time.";");
     }
 
@@ -210,7 +211,7 @@ class SQLite extends DBEngine
         return "CREATE TABLE $name ($cols_redone); $extras";
     }
 
-    public function set_timeout(PDO $db, int $time): void
+    public function set_timeout(PDO $db, ?int $time): void
     {
         // There doesn't seem to be such a thing for SQLite, so it does nothing
     }

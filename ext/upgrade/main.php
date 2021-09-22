@@ -11,7 +11,7 @@ class Upgrade extends Extension
         if ($event->cmd == "db-upgrade") {
             print("Running DB Upgrade\n");
             global $database;
-            $database->set_timeout(300000); // These updates can take a little bit
+            $database->set_timeout(null); // These updates can take a little bit
             send_event(new DatabaseUpgradeEvent());
         }
     }
@@ -156,7 +156,7 @@ class Upgrade extends Extension
                     break;
             }
 
-            $database->set_timeout(300000); // These updates can take a little bit
+            $database->set_timeout(null); // These updates can take a little bit
 
             log_info("upgrade", "Setting index for ext column");
             $database->execute('CREATE INDEX images_ext_idx ON images(ext)');

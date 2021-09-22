@@ -77,14 +77,14 @@ class Approval extends Extension
             $approval_action = $_POST["approval_action"];
             switch ($approval_action) {
                 case "approve_all":
-                    $database->set_timeout(300000); // These updates can take a little bit
+                    $database->set_timeout(null); // These updates can take a little bit
                     $database->execute(
                         "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE approved = :false",
                         ["approved_by_id"=>$user->id, "true"=>true, "false"=>false]
                     );
                     break;
                 case "disapprove_all":
-                    $database->set_timeout(300000); // These updates can take a little bit
+                    $database->set_timeout(null); // These updates can take a little bit
                     $database->execute(
                         "UPDATE images SET approved = :false, approved_by_id = NULL WHERE approved = :true",
                         ["true"=>true, "false"=>false]

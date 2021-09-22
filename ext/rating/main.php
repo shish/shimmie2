@@ -534,7 +534,7 @@ class Ratings extends Extension
                     break;
             }
 
-            $database->set_timeout(300000); // These updates can take a little bit
+            $database->set_timeout(null); // These updates can take a little bit
 
             $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>'?', "old"=>'u' ]);
 

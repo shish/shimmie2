@@ -129,7 +129,7 @@ class Database
         $this->dbtime += $dur;
     }
 
-    public function set_timeout(int $time): void
+    public function set_timeout(?int $time): void
     {
         $this->engine->set_timeout($this->db, $time);
     }

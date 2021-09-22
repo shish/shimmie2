@@ -31,7 +31,7 @@ class MimeSystem extends Extension
                 // them into one big transaction would not be a good idea.
                 $database->commit();
             }
-            $database->set_timeout(300000); // These updates can take a little bit
+            $database->set_timeout(null); // These updates can take a little bit
 
             $extensions = $database->get_col_iterable("SELECT DISTINCT ext FROM images");
 

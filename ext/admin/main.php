@@ -48,7 +48,7 @@ class AdminPage extends Extension
                     if ($user->check_auth_token()) {
                         log_info("admin", "Util: $action");
                         set_time_limit(0);
-                        $database->set_timeout(300000);
+                        $database->set_timeout(null);
                         send_event($aae);
                     }
 
