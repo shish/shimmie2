@@ -100,7 +100,9 @@ class PostgreSQL extends DBEngine
 
     public function set_timeout(PDO $db, ?int $time): void
     {
-		if(is_null($time)) $time = 0;
+        if (is_null($time)) {
+            $time = 0;
+        }
         $db->exec("SET statement_timeout TO ".$time.";");
     }
 
