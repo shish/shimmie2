@@ -631,7 +631,7 @@ class Media extends Extension
      * @param int $new_width
      * @param int $new_height
      * @param string $output_filename
-     * @param string|null $output_mime If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
+     * @param ?string $output_mime If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
      * @param int $output_quality Defaults to 80.
      * @throws MediaException
      * @throws InsufficientMemoryException if the estimated memory usage exceeds the memory limit.
@@ -642,7 +642,7 @@ class Media extends Extension
         int $new_width,
         int $new_height,
         string $output_filename,
-        string $output_mime = null,
+        ?string $output_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,

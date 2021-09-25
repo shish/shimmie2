@@ -22,7 +22,7 @@ class Image
     private string $ext;
     private string $mime;
 
-    /** @var string[]|null */
+    /** @var ?string[] */
     public ?array $tag_array;
     public int $owner_id;
     public string $owner_ip;
