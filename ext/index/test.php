@@ -205,6 +205,12 @@ class IndexTest extends ShimmiePHPUnitTestCase
 
         // negative tag alone, should work
         $this->assert_search_results(["-pbx"], [$image_ids[1]]);
+
+        // negative that doesn't exist
+        $this->assert_search_results(["-not_a_tag"], [$image_ids[1], $image_ids[0]]);
+
+        // multiple negative tags that don't exist
+        $this->assert_search_results(["-not_a_tag", "-also_not_a_tag"], [$image_ids[1], $image_ids[0]]);
     }
 
     // This isn't really an index thing, we just want to test this from
