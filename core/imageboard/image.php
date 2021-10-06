@@ -882,12 +882,14 @@ class Image
             $positive_tag_id_array = [];
             $positive_wildcard_id_array = [];
             $negative_tag_id_array = [];
+            $all_nonexistent_negatives = true;
 
             foreach ($tag_conditions as $tq) {
                 $tag_ids = self::tag_or_wildcard_to_ids($tq->tag);
                 $tag_count = count($tag_ids);
 
                 if ($tq->positive) {
+                    $all_nonexistent_negatives = false;
                     if ($tag_count== 0) {
                         # one of the positive tags had zero results, therefor there
                         # can be no results; "where 1=0" should shortcut things
@@ -901,14 +903,20 @@ class Image
                         $positive_wildcard_id_array[] = $tag_ids;
                     }
                 } else {
-                    // Unlike positive criteria, negative criteria are all handled in an OR fashion,
-                    // so we can just compile them all into a single sub-query.
-                    $negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
+                    if ($tag_count > 0) {
+                        $all_nonexistent_negatives = false;
+                        // Unlike positive criteria, negative criteria are all handled in an OR fashion,
+                        // so we can just compile them all into a single sub-query.
+                        $negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
+                    }
                 }
             }
 
-            assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array, @$_GET['q']);
-            if (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
+            assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array || $all_nonexistent_negatives, @$_GET['q']);
+
+            if ($all_nonexistent_negatives) {
+                $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
+            } elseif (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
                 $inner_joins = [];
                 if (!empty($positive_tag_id_array)) {
                     foreach ($positive_tag_id_array as $tag) {
