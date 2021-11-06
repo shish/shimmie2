@@ -616,6 +616,7 @@ function _fatal_error(Exception $e): void
         print("Version: $version (on $phpver)\n");
     } else {
         $q = $query ? "" : "<p><b>Query:</b> " . html_escape($query);
+        error_log("Shimmie Error: $message // $query // {$e->getTraceAsString()}");
         header("HTTP/1.0 500 Internal Error");
         echo '
 <!doctype html>
