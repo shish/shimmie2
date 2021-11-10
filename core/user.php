@@ -97,7 +97,7 @@ class User
     {
         $u = User::by_name($name);
         if (is_null($u)) {
-            throw new ScoreException("Can't find any user named $name");
+            throw new UserDoesNotExist("Can't find any user named $name");
         } else {
             return $u->id;
         }

@@ -91,8 +91,12 @@ class Index extends Extension
                 if (!$images) {
                     $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
                 }
+            } catch (PermissionDeniedException $pde) {
+                $this->theme->display_error(403, "Permission denied", $pde->error);
+                $total_pages = 0;
+                $images = [];
             } catch (SearchTermParseException $stpe) {
-                // FIXME: display the error somewhere
+                $this->theme->display_error(400, "Malformed search query", $stpe->error);
                 $total_pages = 0;
                 $images = [];
             }

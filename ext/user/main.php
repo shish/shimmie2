@@ -385,8 +385,12 @@ class UserPage extends Extension
 
         $matches = [];
         if (preg_match(self::USER_SEARCH_REGEX, $event->term, $matches)) {
-            $user_id = User::name_to_id($matches[2]);
-            $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= $user_id"));
+            try {
+                $user_id = User::name_to_id($matches[2]);
+                $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= $user_id"));
+            } catch (UserDoesNotExist $e) {
+                $event->add_querylet(new Querylet("1=0"));
+            }
         } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
             $user_id = int_escape($matches[2]);
             $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= $user_id"));

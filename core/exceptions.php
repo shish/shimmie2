@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 /**
- * Class SCoreException
- *
  * A base exception to be caught by the upper levels.
  */
 class SCoreException extends RuntimeException
@@ -34,8 +32,6 @@ class InstallerException extends RuntimeException
 }
 
 /**
- * Class PermissionDeniedException
- *
  * A fairly common, generic exception.
  */
 class PermissionDeniedException extends SCoreException
@@ -43,13 +39,16 @@ class PermissionDeniedException extends SCoreException
 }
 
 /**
- * Class ImageDoesNotExist
- *
  * This exception is used when an Image cannot be found by ID.
- *
- * Example: Image::by_id(-1) returns null
  */
 class ImageDoesNotExist extends SCoreException
+{
+}
+
+/**
+ * This exception is used when a User cannot be found by some criteria.
+ */
+class UserDoesNotExist extends SCoreException
 {
 }
 
