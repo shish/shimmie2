@@ -30,6 +30,8 @@ class RSSImages extends Extension
             try {
                 $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
                 $this->do_rss($images, $search_terms, $page_number);
+            } catch (SearchTermParseException $stpe) {
+                $this->theme->display_error(400, "Search parse error", $pde->error);
             } catch (PermissionDeniedException $pde) {
                 $this->theme->display_error(403, "Permission denied", $pde->error);
             }
