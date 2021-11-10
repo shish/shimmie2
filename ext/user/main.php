@@ -385,10 +385,10 @@ class UserPage extends Extension
 
         $matches = [];
         if (preg_match(self::USER_SEARCH_REGEX, $event->term, $matches)) {
-            $duser = User::by_name($matches[1]);
+            $duser = User::by_name($matches[2]);
             if (is_null($duser)) {
                 throw new SearchTermParseException(
-                    "Can't find the user named ".html_escape($matches[1])
+                    "Can't find the user named ".html_escape($matches[2])
                 );
             }
             $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= {$duser->id}"));
