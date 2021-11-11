@@ -107,7 +107,7 @@ class ExtManagerTheme extends Themelet
         $html = DIV(
             ["style"=>'margin: auto; text-align: left; width: 512px;'],
             $author,
-            ($info->version ? emptyHTML(BR(), B("Version"), $info->version) : null),
+            ($info->version ? emptyHTML(BR(), B("Version: "), $info->version) : null),
             ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href"=>$info->link], "Link")) : null),
             P(rawHTML($info->documentation ?? "(This extension has no documentation)")),
             // <hr>,
