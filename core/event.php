@@ -101,7 +101,7 @@ class PageRequestEvent extends Event
             return $this->args[$offset];
         } else {
             $nm1 = $this->arg_count - 1;
-            throw new SCoreException("Requested an invalid page argument {$offset} / {$nm1}");
+            throw new UserErrorException("Requested an invalid page argument {$offset} / {$nm1}");
         }
     }
 
