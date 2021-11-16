@@ -7,6 +7,7 @@ class SCoreException extends RuntimeException
 {
     public ?string $query;
     public string $error;
+    public int $http_code = 500;
 
     public function __construct(string $msg, ?string $query=null)
     {
@@ -31,44 +32,58 @@ class InstallerException extends RuntimeException
     }
 }
 
+class UserErrorException extends SCoreException
+{
+    public int $http_code = 400;
+}
+
+class ServerErrorException extends SCoreException
+{
+    public int $http_code = 500;
+}
+
 /**
  * A fairly common, generic exception.
  */
-class PermissionDeniedException extends SCoreException
+class PermissionDeniedException extends UserErrorException
 {
+    public int $http_code = 403;
 }
 
 /**
  * This exception is used when an Image cannot be found by ID.
  */
-class ImageDoesNotExist extends SCoreException
+class ImageDoesNotExist extends UserErrorException
 {
+    public int $http_code = 404;
 }
 
 /**
  * This exception is used when a User cannot be found by some criteria.
  */
-class UserDoesNotExist extends SCoreException
+class UserDoesNotExist extends UserErrorException
 {
+    public int $http_code = 404;
 }
 
 /*
  * For validate_input()
  */
-class InvalidInput extends SCoreException
+class InvalidInput extends UserErrorException
 {
+    public int $http_code = 402;
 }
 
 /*
  * This is used by the image resizing code when there is not enough memory to perform a resize.
  */
-class InsufficientMemoryException extends SCoreException
+class InsufficientMemoryException extends ServerErrorException
 {
 }
 
 /*
  * This is used by the image resizing code when there is an error while resizing
  */
-class ImageResizeException extends SCoreException
+class ImageResizeException extends ServerErrorException
 {
 }

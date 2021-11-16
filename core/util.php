@@ -592,6 +592,7 @@ function _fatal_error(Exception $e): void
     $message = $e->getMessage();
     $phpver = phpversion();
     $query = is_subclass_of($e, "SCoreException") ? $e->query : null;
+    $code = is_subclass_of($e, "SCoreException") ? $e->http_code : 500;
 
     //$hash = exec("git rev-parse HEAD");
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
@@ -616,8 +617,10 @@ function _fatal_error(Exception $e): void
         print("Version: $version (on $phpver)\n");
     } else {
         $q = $query ? "" : "<p><b>Query:</b> " . html_escape($query);
-        error_log("Shimmie Error: $message (Query: $query)\n{$e->getTraceAsString()}");
-        header("HTTP/1.0 500 Internal Error");
+        if ($code >= 500) {
+            error_log("Shimmie Error: $message (Query: $query)\n{$e->getTraceAsString()}");
+        }
+        header("HTTP/1.0 $code Error");
         echo '
 <!doctype html>
 <html lang="en">
