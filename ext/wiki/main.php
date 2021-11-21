@@ -50,11 +50,13 @@ class WikiPage
     public string $title;
     public int $revision;
     public bool $locked;
+    public bool $exists;
     public string $body;
 
     public function __construct(array $row=null)
     {
         //assert(!empty($row));
+        global $database;
 
         if (!is_null($row)) {
             $this->id = (int)$row['id'];
@@ -64,6 +66,7 @@ class WikiPage
             $this->title = $row['title'];
             $this->revision = (int)$row['revision'];
             $this->locked = bool_escape($row['locked']);
+            $this->exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title"=>$this->title]);
             $this->body = $row['body'];
         }
     }
@@ -77,6 +80,11 @@ class WikiPage
     {
         return $this->locked;
     }
+
+    public function exists(): bool
+    {
+        return $this->exists;
+    }
 }
 
 abstract class WikiConfig
@@ -85,6 +93,7 @@ abstract class WikiConfig
     const EMPTY_TAGINFO = "wiki_empty_taginfo";
     const TAG_SHORTWIKIS = "shortwikis_on_tags";
     const ENABLE_REVISIONS = "wiki_revisions";
+    const RETURN_NOT_FOUND = "wiki_return_not_found";
 }
 
 class Wiki extends Extension
@@ -105,6 +114,7 @@ class Wiki extends Extension
         $config->set_default_string(WikiConfig::EMPTY_TAGINFO, "none");
         $config->set_default_bool(WikiConfig::TAG_SHORTWIKIS, false);
         $config->set_default_bool(WikiConfig::ENABLE_REVISIONS, true);
+        $config->set_default_bool(WikiConfig::RETURN_NOT_FOUND, false);
     }
 
     // Add a block to the Board Config / Setup
@@ -115,6 +125,7 @@ class Wiki extends Extension
         $sb->add_longtext_option(WikiConfig::TAG_PAGE_TEMPLATE, "Tag page template: ");
         $sb->add_text_option(WikiConfig::EMPTY_TAGINFO, "Empty list text: ");
         $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "Show shortwiki entry when searching for a single tag: ");
+        $sb->add_bool_option(WikiConfig::RETURN_NOT_FOUND, "<br>Return '404 Not Found' code for wiki pages that don't exist: ");
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
