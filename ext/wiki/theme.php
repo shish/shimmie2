@@ -10,7 +10,7 @@ class WikiTheme extends Themelet
      */
     public function display_page(Page $page, WikiPage $wiki_page, ?WikiPage $nav_page=null)
     {
-        global $user;
+        global $config, $user;
 
         if (is_null($nav_page)) {
             $nav_page = new WikiPage();
