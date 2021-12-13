@@ -730,9 +730,9 @@ class UserPage extends Extension
 
             if ($with_images) {
                 log_warning("user", "Deleting user #{$_POST['id']} (@{$duser->name})'s uploads");
-                $rows = $database->get_all("SELECT * FROM images WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
-                foreach ($rows as $key => $value) {
-                    $image = Image::by_id($value['id']);
+                $image_ids = $database->get_col("SELECT id FROM images WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
+                foreach ($image_ids as $image_id) {
+                    $image = Image::by_id((int)$image_id);
                     if ($image) {
                         send_event(new ImageDeletionEvent($image));
                     }
