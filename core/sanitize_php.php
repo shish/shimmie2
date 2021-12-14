@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /*
  * A small number of PHP-sanity things (eg don't silently ignore errors) to
  * be included right at the very start of index.php and tests/bootstrap.php

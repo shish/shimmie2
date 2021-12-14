@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "config.php";
 
@@ -11,9 +13,9 @@ class CronUploader extends Extension
 
     // TODO: Checkbox option to only allow localhost + a list of additional IP addresses that can be set in /cron_upload
 
-    const QUEUE_DIR = "queue";
-    const UPLOADED_DIR = "uploaded";
-    const FAILED_DIR = "failed_to_upload";
+    public const QUEUE_DIR = "queue";
+    public const UPLOADED_DIR = "uploaded";
+    public const FAILED_DIR = "failed_to_upload";
 
     private static bool $IMPORT_RUNNING = false;
 

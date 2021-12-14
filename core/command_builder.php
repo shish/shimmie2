@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 // Provides mechanisms for cleanly executing command-line applications
 // Was created to try to centralize a solution for whatever caused this:

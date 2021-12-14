@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "mime_map.php";
 require_once "file_extension.php";
@@ -9,7 +11,7 @@ class MimeSystem extends Extension
     /** @var MimeSystemTheme */
     protected ?Themelet $theme;
 
-    const VERSION = "ext_mime_version";
+    public const VERSION = "ext_mime_version";
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
     {

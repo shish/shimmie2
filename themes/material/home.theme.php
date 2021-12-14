@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class CustomHomeTheme extends HomeTheme
 {
@@ -30,8 +32,8 @@ EOD
 
     public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text): string
     {
-        $message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
-        $counter_html = empty($counter_text)  ? "" : "<div class='mdl-typography--text-center' id='counter'>$counter_text</div>";
+        $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";
+        $counter_html = empty($counter_text) ? "" : "<div class='mdl-typography--text-center' id='counter'>$counter_text</div>";
         $contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> -";
         $main_links_html = empty($main_links) ? "" : preg_replace('data-clink-sel="" ', '', preg_replace('/shm-clink/', 'mdl-navigation__link', $main_links));
         $search_html = "

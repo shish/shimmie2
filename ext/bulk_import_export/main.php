@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 
 class BulkImportExport extends DataHandlerExtension
 {
-    const EXPORT_ACTION_NAME = "bulk_export";
-    const EXPORT_INFO_FILE_NAME = "export.json";
+    public const EXPORT_ACTION_NAME = "bulk_export";
+    public const EXPORT_INFO_FILE_NAME = "export.json";
     protected array $SUPPORTED_MIME = [MimeType::ZIP];
 
 
@@ -14,7 +16,7 @@ class BulkImportExport extends DataHandlerExtension
 
         if ($this->supported_mime($event->mime) &&
             $user->can(Permissions::BULK_IMPORT)) {
-            $zip = new ZipArchive;
+            $zip = new ZipArchive();
 
             if ($zip->open($event->tmpname) === true) {
                 $json_data = $this->get_export_data($zip);
@@ -115,7 +117,7 @@ class BulkImportExport extends DataHandlerExtension
             ($event->action == self::EXPORT_ACTION_NAME)) {
             $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = tempnam(sys_get_temp_dir(), "shimmie_bulk_export");
-            $zip = new ZipArchive;
+            $zip = new ZipArchive();
 
             $json_data = [];
 

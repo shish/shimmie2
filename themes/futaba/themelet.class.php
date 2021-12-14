@@ -1,7 +1,8 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class Themelet extends BaseThemelet
 {
-
     /**
      * Add a generic paginator.
      */
@@ -46,9 +47,9 @@ class Themelet extends BaseThemelet
         $at_end = ($current_page >= $total_pages);
 
         //$first_html   = $at_start ? "First" : $this->futaba_gen_page_link($base_url, $query, 1,            "First");
-        $prev_html      = $at_start ? "Prev"  : $this->futaba_gen_page_link($base_url, $query, $prev, "Prev");
+        $prev_html      = $at_start ? "Prev" : $this->futaba_gen_page_link($base_url, $query, $prev, "Prev");
         //$random_html  =                       $this->futaba_gen_page_link($base_url, $query, $rand,        "Random");
-        $next_html      = $at_end   ? "Next"  : $this->futaba_gen_page_link($base_url, $query, $next, "Next");
+        $next_html      = $at_end ? "Next" : $this->futaba_gen_page_link($base_url, $query, $next, "Next");
         //$last_html    = $at_end   ? "Last"  : $this->futaba_gen_page_link($base_url, $query, $total_pages, "Last");
 
         $start = $current_page-5 > 1 ? $current_page-5 : 1;

@@ -1,13 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 require_once "core/event.php";
 
 abstract class PageMode
 {
-    const REDIRECT = 'redirect';
-    const DATA = 'data';
-    const PAGE = 'page';
-    const FILE = 'file';
-    const MANUAL = 'manual';
+    public const REDIRECT = 'redirect';
+    public const DATA = 'data';
+    public const PAGE = 'page';
+    public const FILE = 'file';
+    public const MANUAL = 'manual';
 }
 
 /**

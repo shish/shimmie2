@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 abstract class ApprovalConfig
 {
-    const VERSION = "ext_approval_version";
-    const IMAGES = "approve_images";
-    const COMMENTS = "approve_comments";
+    public const VERSION = "ext_approval_version";
+    public const IMAGES = "approve_images";
+    public const COMMENTS = "approve_comments";
 }
 
 class Approval extends Extension
@@ -118,7 +120,7 @@ class Approval extends Extension
     }
 
 
-    const SEARCH_REGEXP = "/^approved:(yes|no)/";
+    public const SEARCH_REGEXP = "/^approved:(yes|no)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         global $user, $config;

@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 abstract class PrivateImageConfig
 {
-    const VERSION = "ext_private_image_version";
-    const USER_SET_DEFAULT = "user_private_image_set_default";
-    const USER_VIEW_DEFAULT = "user_private_image_view_default";
+    public const VERSION = "ext_private_image_version";
+    public const USER_SET_DEFAULT = "user_private_image_set_default";
+    public const USER_VIEW_DEFAULT = "user_private_image_view_default";
 }
 
 class PrivateImage extends Extension
@@ -117,7 +119,7 @@ class PrivateImage extends Extension
     }
 
 
-    const SEARCH_REGEXP = "/^private:(yes|no|any)/";
+    public const SEARCH_REGEXP = "/^private:(yes|no|any)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         global $user, $user_config;

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class WikiUpdateEvent extends Event
 {
@@ -81,10 +83,10 @@ class WikiPage
 
 abstract class WikiConfig
 {
-    const TAG_PAGE_TEMPLATE = "wiki_tag_page_template";
-    const EMPTY_TAGINFO = "wiki_empty_taginfo";
-    const TAG_SHORTWIKIS = "shortwikis_on_tags";
-    const ENABLE_REVISIONS = "wiki_revisions";
+    public const TAG_PAGE_TEMPLATE = "wiki_tag_page_template";
+    public const EMPTY_TAGINFO = "wiki_empty_taginfo";
+    public const TAG_SHORTWIKIS = "shortwikis_on_tags";
+    public const ENABLE_REVISIONS = "wiki_revisions";
 }
 
 class Wiki extends Extension
@@ -356,7 +358,7 @@ class Wiki extends Extension
 
             //CATEGORIES
             if (class_exists("TagCategories")) {
-                $tagcategories = new TagCategories;
+                $tagcategories = new TagCategories();
                 $tag_category_dict = $tagcategories->getKeyedDict();
             }
 
@@ -389,7 +391,7 @@ class Wiki extends Extension
                     $auto_tags = Tag::explode($auto_tags);
                     $f_auto_tags = [];
 
-                    $tag_list_t = new TagListTheme;
+                    $tag_list_t = new TagListTheme();
 
                     foreach ($auto_tags as $a_tag) {
                         $a_row = $database->get_row("
@@ -474,7 +476,7 @@ class Wiki extends Extension
                 *   add to output-string, if "show_equal" is enabled
                 */
                 $out    .= ($show_equal==1)
-                         ?  $this->formatline(($c1), ($c2), "=", $f1[ $c1 ])
+                         ? $this->formatline(($c1), ($c2), "=", $f1[ $c1 ])
                          : "" ;
                 /**
                 *   increase the out-putcounter, if "show_equal" is enabled

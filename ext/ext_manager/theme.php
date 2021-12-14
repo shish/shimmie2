@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use function MicroHTML\LABEL;
 use function MicroHTML\A;
@@ -60,7 +62,7 @@ class ExtManagerTheme extends Themelet
                 TD(LABEL(
                     ["for"=>"ext_{$extension->key}"],
                     (
-                        ($extension->beta===true ? "[BETA] ":"").
+                        ($extension->beta===true ? "[BETA] " : "").
                         (empty($extension->name) ? $extension->key : $extension->name)
                     )
                 )),

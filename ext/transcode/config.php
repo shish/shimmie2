@@ -1,13 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class TranscodeConfig
 {
-    const VERSION = "ext_transcode_version";
-    const ENGINE = "transcode_engine";
-    const ENABLED = "transcode_enabled";
-    const GET_ENABLED = "transcode_get_enabled";
-    const UPLOAD = "transcode_upload";
-    const UPLOAD_PREFIX = "transcode_upload_";
-    const QUALITY = "transcode_quality";
-    const ALPHA_COLOR = "transcode_alpha_color";
+    public const VERSION = "ext_transcode_version";
+    public const ENGINE = "transcode_engine";
+    public const ENABLED = "transcode_enabled";
+    public const GET_ENABLED = "transcode_get_enabled";
+    public const UPLOAD = "transcode_upload";
+    public const UPLOAD_PREFIX = "transcode_upload_";
+    public const QUALITY = "transcode_quality";
+    public const ALPHA_COLOR = "transcode_alpha_color";
 }

@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+use MicroHTML\HTMLElement;
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 use function MicroHTML\FORM;
@@ -12,7 +15,6 @@ use function MicroHTML\TFOOT;
 use function MicroHTML\TR;
 use function MicroHTML\TH;
 use function MicroHTML\TD;
-use MicroHTML\HTMLElement;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
@@ -659,7 +661,7 @@ function _get_user(): User
 
 function _get_query(): string
 {
-    return (@$_POST["q"]?:@$_GET["q"])?:"/";
+    return (@$_POST["q"] ?: @$_GET["q"]) ?: "/";
 }
 
 

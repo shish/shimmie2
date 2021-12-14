@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 abstract class TrashConfig
 {
-    const VERSION = "ext_trash_version";
+    public const VERSION = "ext_trash_version";
 }
 
 class Trash extends Extension
@@ -89,7 +91,7 @@ class Trash extends Extension
         }
     }
 
-    const SEARCH_REGEXP = "/^in:trash$/";
+    public const SEARCH_REGEXP = "/^in:trash$/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         global $user;

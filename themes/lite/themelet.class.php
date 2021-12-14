@@ -1,11 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Class Themelet
  */
 class Themelet extends BaseThemelet
 {
-
     /**
      * Put something in a rounded rectangle box; specific to the default theme.
      */
@@ -56,7 +57,7 @@ class Themelet extends BaseThemelet
         $at_end = ($current_page >= $total_pages);
 
         $first_html  = $at_start ? "<span class='tab'>First</span>" : $this->litetheme_gen_page_link($base_url, $query, 1, "First");
-        $prev_html   = $at_start ? "<span class='tab'>Prev</span>"  : $this->litetheme_gen_page_link($base_url, $query, $prev, "Prev");
+        $prev_html   = $at_start ? "<span class='tab'>Prev</span>" : $this->litetheme_gen_page_link($base_url, $query, $prev, "Prev");
 
         $random_html = "";
         if ($show_random) {
@@ -64,8 +65,8 @@ class Themelet extends BaseThemelet
             $random_html =                                            $this->litetheme_gen_page_link($base_url, $query, $rand, "Random");
         }
 
-        $next_html   = $at_end   ? "<span class='tab'>Next</span>"  : $this->litetheme_gen_page_link($base_url, $query, $next, "Next");
-        $last_html   = $at_end   ? "<span class='tab'>Last</span>"  : $this->litetheme_gen_page_link($base_url, $query, $total_pages, "Last");
+        $next_html   = $at_end ? "<span class='tab'>Next</span>" : $this->litetheme_gen_page_link($base_url, $query, $next, "Next");
+        $last_html   = $at_end ? "<span class='tab'>Last</span>" : $this->litetheme_gen_page_link($base_url, $query, $total_pages, "Last");
 
         $start = $current_page-5 > 1 ? $current_page-5 : 1;
         $end = $start+10 < $total_pages ? $start+10 : $total_pages;

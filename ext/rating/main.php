@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
  /**
  * @global ImageRating[] $_shm_ratings
@@ -73,8 +75,8 @@ class RatingSetEvent extends Event
 
 abstract class RatingsConfig
 {
-    const VERSION = "ext_ratings2_version";
-    const USER_DEFAULTS = "ratings_default";
+    public const VERSION = "ext_ratings2_version";
+    public const USER_DEFAULTS = "ratings_default";
 }
 
 class Ratings extends Extension

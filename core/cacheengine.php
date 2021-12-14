@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 interface CacheEngine
 {
     public function get(string $key);
@@ -27,7 +29,7 @@ class MemcachedCache implements CacheEngine
     public function __construct(string $args)
     {
         $hp = explode(":", $args);
-        $this->memcache = new Memcached;
+        $this->memcache = new Memcached();
         #$this->memcache->setOption(Memcached::OPT_COMPRESSION, False);
         #$this->memcache->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_PHP);
         #$this->memcache->setOption(Memcached::OPT_PREFIX_KEY, phpversion());

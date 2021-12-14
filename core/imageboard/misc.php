@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc functions                                                            *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -110,7 +112,7 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
     }
 }
 
-function get_scaled_by_aspect_ratio(int $original_width, int $original_height, int $max_width, int $max_height) : array
+function get_scaled_by_aspect_ratio(int $original_width, int $original_height, int $max_width, int $max_height): array
 {
     $xscale = ($max_width/ $original_width);
     $yscale = ($max_height/ $original_height);

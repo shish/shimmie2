@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class RatingsTheme extends Themelet
 {
@@ -55,7 +57,7 @@ class RatingsTheme extends Themelet
             }
 
             $output .= "<option value='".$option->code."' ".
-                (in_array($option->code, $selected_options) ? "selected='selected'": "")
+                (in_array($option->code, $selected_options) ? "selected='selected'" : "")
                 .">".$option->name."</option>";
         }
         return $output."</select>";

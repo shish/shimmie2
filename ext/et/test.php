@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class ETTest extends ShimmiePHPUnitTestCase
 {
     public function testET()

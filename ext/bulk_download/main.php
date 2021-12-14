@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class BulkDownloadConfig
 {
@@ -45,7 +47,7 @@ class BulkDownload extends Extension
             ($event->action == BulkDownload::DOWNLOAD_ACTION_NAME)) {
             $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = tempnam(sys_get_temp_dir(), "shimmie_bulk_download");
-            $zip = new ZipArchive;
+            $zip = new ZipArchive();
             $size_total = 0;
             $max_size = $config->get_int(BulkDownloadConfig::SIZE_LIMIT);
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "config.php";
 
@@ -261,7 +263,7 @@ class TagList extends Extension
             $html .= $this->build_az();
         }
         if (class_exists('TagCategories')) {
-            $this->tagcategories = new TagCategories;
+            $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
         foreach ($tag_data as $row) {
@@ -330,7 +332,7 @@ class TagList extends Extension
         mb_internal_encoding('UTF-8');
 
         if (class_exists('TagCategories')) {
-            $this->tagcategories = new TagCategories;
+            $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
 

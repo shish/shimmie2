@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "events.php";
 
-use function MicroHTML\A;
 use MicroHTML\HTMLElement;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\EnumColumn;
@@ -10,6 +11,7 @@ use MicroCRUD\IntegerColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
+use function MicroHTML\A;
 
 class UserNameColumn extends TextColumn
 {

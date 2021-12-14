@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class TagListTheme extends Themelet
 {
@@ -70,7 +72,7 @@ class TagListTheme extends Themelet
         }
 
         if (class_exists('TagCategories')) {
-            $this->tagcategories = new TagCategories;
+            $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         } else {
             $tag_category_dict = [];
@@ -132,7 +134,7 @@ class TagListTheme extends Themelet
         }
 
         if (class_exists('TagCategories')) {
-            $this->tagcategories = new TagCategories;
+            $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         } else {
             $tag_category_dict = [];

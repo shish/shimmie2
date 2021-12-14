@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 abstract class MediaEngine
 {
@@ -7,7 +9,7 @@ abstract class MediaEngine
     public const FFMPEG = "ffmpeg";
     public const STATIC = "static";
 
-    const IMAGE_ENGINES = [
+    public const IMAGE_ENGINES = [
         "GD" => MediaEngine::GD,
         "ImageMagick" => MediaEngine::IMAGICK,
     ];

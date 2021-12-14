@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class UserPageTest extends ShimmiePHPUnitTestCase
 {
     public function testUserPage()

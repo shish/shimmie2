@@ -1,5 +1,13 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
+
+use MicroHTML\HTMLElement;
+use MicroCRUD\ActionColumn;
+use MicroCRUD\Column;
+use MicroCRUD\DateTimeColumn;
+use MicroCRUD\TextColumn;
+use MicroCRUD\Table;
 use function MicroHTML\A;
 use function MicroHTML\SPAN;
 use function MicroHTML\emptyHTML;
@@ -8,12 +16,6 @@ use function MicroHTML\BR;
 use function MicroHTML\SELECT;
 use function MicroHTML\OPTION;
 use function MicroHTML\rawHTML;
-use MicroHTML\HTMLElement;
-use MicroCRUD\ActionColumn;
-use MicroCRUD\Column;
-use MicroCRUD\DateTimeColumn;
-use MicroCRUD\TextColumn;
-use MicroCRUD\Table;
 
 class ShortDateTimeColumn extends DateTimeColumn
 {

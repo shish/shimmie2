@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 // TODO: Add support for generating an icon from embedded cover art
 // TODO: MORE AUDIO FORMATS

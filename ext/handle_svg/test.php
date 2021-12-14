@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testSVGHander()

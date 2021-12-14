@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 // TODO Add warning that rotate doesn't support lossless webp output
 
@@ -17,7 +19,7 @@ class RotateImage extends Extension
     /** @var RotateImageTheme */
     protected ?Themelet $theme;
 
-    const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
+    public const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 
     public function onInitExt(InitExtEvent $event)
     {

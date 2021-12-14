@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "config.php";
  /*
@@ -14,9 +16,9 @@ class TranscodeImage extends Extension
     /** @var TranscodeImageTheme */
     protected ?Themelet $theme;
 
-    const ACTION_BULK_TRANSCODE = "bulk_transcode";
+    public const ACTION_BULK_TRANSCODE = "bulk_transcode";
 
-    const INPUT_MIMES = [
+    public const INPUT_MIMES = [
         "BMP" => MimeType::BMP,
         "GIF" => MimeType::GIF,
         "ICO" => MimeType::ICO,
@@ -29,7 +31,7 @@ class TranscodeImage extends Extension
         "TGA" => MimeType::TGA
     ];
 
-    const OUTPUT_MIMES = [
+    public const OUTPUT_MIMES = [
         "" => "",
         "JPEG (lossy)" => MimeType::JPEG,
         "PNG (lossless)" => MimeType::PNG,

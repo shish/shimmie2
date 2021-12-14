@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class IndexTheme extends Themelet
 {
@@ -124,7 +126,7 @@ and of course start organising your images :-)
                 }
                 $wikiLink = make_link("wiki/$st");
                 if (class_exists('TagCategories')) {
-                    $this->tagcategories = new TagCategories;
+                    $this->tagcategories = new TagCategories();
                     $tag_category_dict = $this->tagcategories->getKeyedDict();
                     $st = $this->tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
                 }

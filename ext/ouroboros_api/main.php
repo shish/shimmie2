@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 
 class _SafeOuroborosImage
@@ -197,42 +199,42 @@ class OuroborosAPI extends Extension
     private ?PageRequestEvent $event;
     private ?string $type;
 
-    const HEADER_HTTP_200 = 'OK';
-    const MSG_HTTP_200 = 'Request was successful';
+    public const HEADER_HTTP_200 = 'OK';
+    public const MSG_HTTP_200 = 'Request was successful';
 
-    const HEADER_HTTP_403 = 'Forbidden';
-    const MSG_HTTP_403 = 'Access denied';
+    public const HEADER_HTTP_403 = 'Forbidden';
+    public const MSG_HTTP_403 = 'Access denied';
 
-    const HEADER_HTTP_404 = 'Not found';
-    const MSG_HTTP_404 = 'Not found';
+    public const HEADER_HTTP_404 = 'Not found';
+    public const MSG_HTTP_404 = 'Not found';
 
-    const HEADER_HTTP_418 = 'I\'m a teapot';
-    const MSG_HTTP_418 = 'Short and stout';
+    public const HEADER_HTTP_418 = 'I\'m a teapot';
+    public const MSG_HTTP_418 = 'Short and stout';
 
-    const HEADER_HTTP_420 = 'Invalid Record';
-    const MSG_HTTP_420 = 'Record could not be saved';
+    public const HEADER_HTTP_420 = 'Invalid Record';
+    public const MSG_HTTP_420 = 'Record could not be saved';
 
-    const HEADER_HTTP_421 = 'User Throttled';
-    const MSG_HTTP_421 = 'User is throttled, try again later';
+    public const HEADER_HTTP_421 = 'User Throttled';
+    public const MSG_HTTP_421 = 'User is throttled, try again later';
 
-    const HEADER_HTTP_422 = 'Locked';
-    const MSG_HTTP_422 = 'The resource is locked and cannot be modified';
+    public const HEADER_HTTP_422 = 'Locked';
+    public const MSG_HTTP_422 = 'The resource is locked and cannot be modified';
 
-    const HEADER_HTTP_423 = 'Already Exists';
-    const MSG_HTTP_423 = 'Resource already exists';
+    public const HEADER_HTTP_423 = 'Already Exists';
+    public const MSG_HTTP_423 = 'Resource already exists';
 
-    const HEADER_HTTP_424 = 'Invalid Parameters';
-    const MSG_HTTP_424 = 'The given parameters were invalid';
+    public const HEADER_HTTP_424 = 'Invalid Parameters';
+    public const MSG_HTTP_424 = 'The given parameters were invalid';
 
-    const HEADER_HTTP_500 = 'Internal Server Error';
-    const MSG_HTTP_500 = 'Some unknown error occurred on the server';
+    public const HEADER_HTTP_500 = 'Internal Server Error';
+    public const MSG_HTTP_500 = 'Some unknown error occurred on the server';
 
-    const HEADER_HTTP_503 = 'Service Unavailable';
-    const MSG_HTTP_503 = 'Server cannot currently handle the request, try again later';
+    public const HEADER_HTTP_503 = 'Service Unavailable';
+    public const MSG_HTTP_503 = 'Server cannot currently handle the request, try again later';
 
-    const ERROR_POST_CREATE_MD5 = 'MD5 mismatch';
-    const ERROR_POST_CREATE_DUPE = 'Duplicate';
-    const OK_POST_CREATE_UPDATE = 'Updated';
+    public const ERROR_POST_CREATE_MD5 = 'MD5 mismatch';
+    public const ERROR_POST_CREATE_DUPE = 'Duplicate';
+    public const OK_POST_CREATE_UPDATE = 'Updated';
 
     public function onPageRequest(PageRequestEvent $event)
     {

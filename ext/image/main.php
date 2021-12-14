@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "config.php";
 
@@ -10,24 +12,24 @@ class ImageIO extends Extension
     /** @var ImageIOTheme */
     protected ?Themelet $theme;
 
-    const COLLISION_OPTIONS = [
+    public const COLLISION_OPTIONS = [
         'Error'=>ImageConfig::COLLISION_ERROR,
         'Merge'=>ImageConfig::COLLISION_MERGE
     ];
 
-    const ON_DELETE_OPTIONS = [
+    public const ON_DELETE_OPTIONS = [
         'Return to post list'=>ImageConfig::ON_DELETE_LIST,
         'Go to next post'=>ImageConfig::ON_DELETE_NEXT
     ];
 
-    const EXIF_READ_FUNCTION = "exif_read_data";
+    public const EXIF_READ_FUNCTION = "exif_read_data";
 
-    const THUMBNAIL_ENGINES = [
+    public const THUMBNAIL_ENGINES = [
         'Built-in GD' => MediaEngine::GD,
         'ImageMagick' => MediaEngine::IMAGICK
     ];
 
-    const THUMBNAIL_TYPES = [
+    public const THUMBNAIL_TYPES = [
         'JPEG' => MimeType::JPEG,
         'WEBP (Not IE/Safari compatible)' => MimeType::WEBP
     ];

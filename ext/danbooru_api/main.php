@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-use \MicroHTML\HTMLElement;
+declare(strict_types=1);
+
+use MicroHTML\HTMLElement;
 
 function TAGS(...$args): HTMLElement
 {

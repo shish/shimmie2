@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "config.php";
 require_once "events.php";
@@ -228,7 +230,7 @@ class Media extends Extension
 //        }
     }
 
-    const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio)|(image)|(unknown))$/i";
+    public const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio)|(image)|(unknown))$/i";
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {

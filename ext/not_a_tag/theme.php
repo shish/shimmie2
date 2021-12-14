@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class NotATagTheme extends Themelet
 {
     public function display_untags(Page $page, $table, $paginator)

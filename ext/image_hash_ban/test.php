@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class ImageBanTest extends ShimmiePHPUnitTestCase
 {
     private string $hash = "feb01bab5698a11dd87416724c7a89e3";

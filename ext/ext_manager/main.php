@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 
 function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b): int

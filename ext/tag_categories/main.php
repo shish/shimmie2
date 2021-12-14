@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 
 require_once "config.php";
@@ -54,7 +56,7 @@ class TagCategories extends Extension
             );
         }
     }
-    
+
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         if ($event->parent=="tags") {

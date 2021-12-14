@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 abstract class SCORE
 {
-    const AIPK      = "SCORE_AIPK";
-    const INET      = "SCORE_INET";
+    public const AIPK      = "SCORE_AIPK";
+    public const INET      = "SCORE_INET";
 }
 
 abstract class DBEngine

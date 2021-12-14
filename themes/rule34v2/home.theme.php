@@ -39,8 +39,8 @@ EOD
     public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text): string
     {
         $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
-        $message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
-        $counter_html = empty($counter_text)  ? "" : "<div class='space' id='counter'>$counter_text</div>";
+        $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";
+        $counter_html = empty($counter_text) ? "" : "<div class='space' id='counter'>$counter_text</div>";
         $contact_link = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a> &ndash;";
         $search_html = "
 			<div class='space' id='search'>

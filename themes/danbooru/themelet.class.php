@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class Themelet extends BaseThemelet
 {
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false)
@@ -37,8 +39,8 @@ class Themelet extends BaseThemelet
 
         $first_html  = $at_start ? "" : $this->gen_page_link($base_url, $query, 1, "1");
         $prev_html   = $at_start ? "" : $this->gen_page_link($base_url, $query, $prev, "&lt;&lt;");
-        $next_html   = $at_end   ? "" : $this->gen_page_link($base_url, $query, $next, "&gt;&gt;");
-        $last_html   = $at_end   ? "" : $this->gen_page_link($base_url, $query, $total_pages, "$total_pages");
+        $next_html   = $at_end ? "" : $this->gen_page_link($base_url, $query, $next, "&gt;&gt;");
+        $last_html   = $at_end ? "" : $this->gen_page_link($base_url, $query, $total_pages, "$total_pages");
 
         $start = $current_page-2 > 1 ? $current_page-2 : 1;
         $end   = $current_page+2 <= $total_pages ? $current_page+2 : $total_pages;

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 require_once "config.php";
  /*
@@ -14,9 +16,9 @@ class TranscodeVideo extends Extension
     /** @var TranscodeVideoTheme */
     protected ?Themelet $theme;
 
-    const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
+    public const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
 
-    const FORMAT_NAMES = [
+    public const FORMAT_NAMES = [
       VideoContainers::MKV => "matroska",
       VideoContainers::WEBM => "webm",
         VideoContainers::OGG => "ogg",

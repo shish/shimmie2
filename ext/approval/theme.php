@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 use function MicroHTML\BR;
 use function MicroHTML\BUTTON;
 use function MicroHTML\INPUT;

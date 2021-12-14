@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 class UserConfigTest extends ShimmiePHPUnitTestCase
 {
     private const OPTIONS_BLOCK_TITLE = "User Options";
