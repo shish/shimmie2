@@ -1,19 +1,22 @@
 <?php
 
+use MicroHTML\HTMLElement;
+use function MicroHTML\A;
+
 class CustomUploadTheme extends UploadTheme
 {
-    public function display_block(Page $page)
+    public function display_block(Page $page): void
     {
         $page->add_block(new Block("Upload", $this->build_upload_block(), "head", 20));
         $page->add_block(new Block("Upload", $this->build_upload_block(), "left", 20));
     }
 
-    public function display_full(Page $page)
+    public function display_full(Page $page): void
     {
         $page->add_block(new Block("Upload", "Disk nearly full, uploads disabled", "head", 20));
     }
 
-    public function display_page(Page $page)
+    public function display_page(Page $page): void
     {
         parent::display_page($page);
         $html = "
@@ -22,9 +25,8 @@ class CustomUploadTheme extends UploadTheme
         $page->add_block(new Block(null, $html, "main", 19));
     }
 
-    protected function build_upload_block(): string
+    protected function build_upload_block(): HTMLElement
     {
-        $url = make_link("upload");
-        return "<a href='$url' style='font-size: 2em; display: block;'>Upload</a>";
+        return A(["href"=>make_link("upload"), "style"=>'font-size: 2em; display: block;'], "Upload");
     }
 }
