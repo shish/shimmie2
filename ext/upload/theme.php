@@ -42,7 +42,7 @@ class UploadTheme extends Themelet
         $max_kb = to_shorthand_int($max_size);
         $upload_list = $this->h_upload_list_1();
 
-        $form = SHM_FORM(make_link("upload"), "POST", true, "file_upload");
+        $form = SHM_FORM("upload", "POST", true, "file_upload");
         $form->appendChild(
             TABLE(
                 ["id"=>"large_upload_form", "class"=>"vert"],
@@ -189,7 +189,7 @@ class UploadTheme extends Themelet
         $image = Image::by_id($image_id);
         $thumbnail = $this->build_thumb_html($image);
 
-        $form = SHM_FORM(make_link("upload/replace/".$image_id), "POST", true);
+        $form = SHM_FORM("upload/replace/".$image_id, "POST", true);
         $form->appendChild(emptyHTML(
             INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image_id]),
             TABLE(
@@ -259,7 +259,7 @@ class UploadTheme extends Themelet
         $max_kb = to_shorthand_int($max_size);
 
         // <input type='hidden' name='max_file_size' value='$max_size' />
-        $form = SHM_FORM(make_link("upload"), "POST", true);
+        $form = SHM_FORM("upload", "POST", true);
         $form->appendChild(
             emptyHTML(
                 INPUT(["id"=>"data[]", "name"=>"data[]", "size"=>"16", "type"=>"file", "accept"=>$accept, "multiple"=>true]),
