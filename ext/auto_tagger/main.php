@@ -269,6 +269,7 @@ class AutoTagger extends Extension
         if (!empty($tag_id)) {
             $image_ids = $database->get_col_iterable("SELECT image_id FROM  image_tags WHERE tag_id = :tag_id", ["tag_id"=>$tag_id]);
             foreach ($image_ids as $image_id) {
+				$image_id = (int)$image_id;
                 $image = Image::by_id($image_id);
                 $event = new TagSetEvent($image, $image->get_tag_array());
                 send_event($event);
