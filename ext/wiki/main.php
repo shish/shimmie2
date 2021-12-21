@@ -198,6 +198,9 @@ class Wiki extends Extension
             } else {
                 $this->theme->display_permission_denied();
             }
+        } elseif ($event->page_matches("wiki_admin/history")) {
+            $history = $this->get_history($_GET['title']);
+            $this->theme->display_page_history($page, $_GET['title'], $history);
         } elseif ($event->page_matches("wiki_admin/delete_revision")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
                 send_event(new WikiDeleteRevisionEvent($_POST["title"], (int)$_POST["revision"]));
@@ -301,6 +304,20 @@ class Wiki extends Extension
         return false;
     }
 
+    public static function get_history(string $title): array
+    {
+        global $database;
+        // first try and get the actual page
+        return $database->get_all(
+            "
+				SELECT revision, date
+				FROM wiki_pages
+				WHERE LOWER(title) LIKE LOWER(:title)
+				ORDER BY revision DESC
+			",
+            ["title"=>$title]
+        );
+    }
     public static function get_page(string $title, int $revision=-1): WikiPage
     {
         global $database;

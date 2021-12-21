@@ -42,6 +42,20 @@ class WikiTheme extends Themelet
         $page->add_block(new Block($title_html, $this->create_display_html($wiki_page)));
     }
 
+    public function display_page_history(Page $page, string $title, array $history)
+    {
+        $html = "<table class='zebra'>";
+        foreach ($history as $row) {
+            $rev = $row['revision'];
+            $html .= "<tr><td><a href='".make_link("wiki/$title", "revision=$rev")."'>{$rev}</a></td><td>{$row['date']}</td></tr>";
+        }
+        $html .= "</table>";
+        $page->set_title(html_escape($title));
+        $page->set_heading(html_escape($title));
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block(html_escape($title), $html));
+    }
+
     public function display_page_editor(Page $page, WikiPage $wiki_page)
     {
         $page->set_title(html_escape($wiki_page->title));
@@ -111,7 +125,7 @@ class WikiTheme extends Themelet
 			$formatted_body
 			<hr>
 			<p class='wiki-footer'>
-				Revision {$page->revision}
+				Revision <a href='".make_link("wiki_admin/history", "title={$page->title}")."'>{$page->revision}</a>
 				by <a href='".make_link("user/{$owner->name}")."'>{$owner->name}</a>
 				at {$page->date}
 				$edit
