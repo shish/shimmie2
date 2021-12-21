@@ -125,7 +125,7 @@ class WikiTheme extends Themelet
 			$formatted_body
 			<hr>
 			<p class='wiki-footer'>
-				Revision <a href='".make_link("wiki_admin/history", "title={$page->title}")."'>{$page->revision}</a>
+				<a href='".make_link("wiki_admin/history", "title={$page->title}")."'>Revision {$page->revision}</a>
 				by <a href='".make_link("user/{$owner->name}")."'>{$owner->name}</a>
 				at {$page->date}
 				$edit
