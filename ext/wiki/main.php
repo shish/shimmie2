@@ -159,7 +159,12 @@ class Wiki extends Extension
                 $title = $event->get_arg(0);
             }
 
-            $content = $this->get_page($title);
+            $revision = -1;
+            if (isset($_GET['revision'])) {
+                $revision = int_escape($_GET['revision']);
+            }
+
+            $content = $this->get_page($title, $revision);
             $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
         } elseif ($event->page_matches("wiki_admin/edit")) {
             $content = $this->get_page($_POST['title']);
@@ -305,9 +310,10 @@ class Wiki extends Extension
 				SELECT *
 				FROM wiki_pages
 				WHERE LOWER(title) LIKE LOWER(:title)
+				AND (:revision = -1 OR revision = :revision)
 				ORDER BY revision DESC
 			",
-            ["title"=>$title]
+            ["title"=>$title, "revision"=>$revision]
         );
 
         // fall back to wiki:default
