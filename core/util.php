@@ -63,6 +63,10 @@ function contact_link(): ?string
  */
 function is_https_enabled(): bool
 {
+    // check forwarded protocol
+    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        $_SERVER['HTTPS']='on';
+    }
     return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 }
 
