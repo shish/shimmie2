@@ -279,7 +279,7 @@ class CommentList extends Extension
                 Extension::is_enabled(ApprovalInfo::KEY) && !is_null($image) &&
                 $image->approved!==true
             ) {
-               $image = null;
+                $image = null;
             }
             if (!is_null($image)) {
                 $comments = $this->get_comments($image->id);
