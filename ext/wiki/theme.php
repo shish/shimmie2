@@ -10,7 +10,7 @@ class WikiTheme extends Themelet
      */
     public function display_page(Page $page, WikiPage $wiki_page, ?WikiPage $nav_page=null)
     {
-        global $config, $user;
+        global $user;
 
         if (is_null($nav_page)) {
             $nav_page = new WikiPage();
@@ -33,7 +33,7 @@ class WikiTheme extends Themelet
             $title_html = $this->tagcategories->getTagHtml($title_html, $tag_category_dict);
         }
 
-        if ($config->get_bool(WikiConfig::RETURN_NOT_FOUND) && !$wiki_page->exists) {
+        if (!$wiki_page->exists) {
             $page->set_code(404);
         }
 

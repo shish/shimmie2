@@ -93,7 +93,6 @@ abstract class WikiConfig
     const EMPTY_TAGINFO = "wiki_empty_taginfo";
     const TAG_SHORTWIKIS = "shortwikis_on_tags";
     const ENABLE_REVISIONS = "wiki_revisions";
-    const RETURN_NOT_FOUND = "wiki_return_not_found";
 }
 
 class Wiki extends Extension
@@ -114,7 +113,6 @@ class Wiki extends Extension
         $config->set_default_string(WikiConfig::EMPTY_TAGINFO, "none");
         $config->set_default_bool(WikiConfig::TAG_SHORTWIKIS, false);
         $config->set_default_bool(WikiConfig::ENABLE_REVISIONS, true);
-        $config->set_default_bool(WikiConfig::RETURN_NOT_FOUND, false);
     }
 
     // Add a block to the Board Config / Setup
@@ -125,7 +123,6 @@ class Wiki extends Extension
         $sb->add_longtext_option(WikiConfig::TAG_PAGE_TEMPLATE, "Tag page template: ");
         $sb->add_text_option(WikiConfig::EMPTY_TAGINFO, "Empty list text: ");
         $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "Show shortwiki entry when searching for a single tag: ");
-        $sb->add_bool_option(WikiConfig::RETURN_NOT_FOUND, "<br>Return '404 Not Found' code for wiki pages that don't exist: ");
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
