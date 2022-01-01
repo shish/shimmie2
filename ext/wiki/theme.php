@@ -35,6 +35,10 @@ class WikiTheme extends Themelet
             $title_html = $this->tagcategories->getTagHtml($title_html, $tag_category_dict);
         }
 
+        if (!$wiki_page->exists) {
+            $page->set_code(404);
+        }
+
         $page->set_title(html_escape($wiki_page->title));
         $page->set_heading(html_escape($wiki_page->title));
         $page->add_block(new NavBlock());

@@ -52,11 +52,13 @@ class WikiPage
     public string $title;
     public int $revision;
     public bool $locked;
+    public bool $exists;
     public string $body;
 
     public function __construct(array $row=null)
     {
         //assert(!empty($row));
+        global $database;
 
         if (!is_null($row)) {
             $this->id = (int)$row['id'];
@@ -66,6 +68,7 @@ class WikiPage
             $this->title = $row['title'];
             $this->revision = (int)$row['revision'];
             $this->locked = bool_escape($row['locked']);
+            $this->exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title"=>$this->title]);
             $this->body = $row['body'];
         }
     }
@@ -78,6 +81,11 @@ class WikiPage
     public function is_locked(): bool
     {
         return $this->locked;
+    }
+
+    public function exists(): bool
+    {
+        return $this->exists;
     }
 }
 
