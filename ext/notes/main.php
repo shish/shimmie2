@@ -257,7 +257,7 @@ class Notes extends Extension
             "
 				INSERT INTO notes (enable, image_id, user_id, user_ip, date, x1, y1, height, width, note)
 				VALUES (:enable, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)",
-            ['enable'=>1, 'image_id'=>$imageID, 'user_id'=>$user_id, 'user_ip'=>$_SERVER['REMOTE_ADDR'], 'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
+            ['enable'=>1, 'image_id'=>$imageID, 'user_id'=>$user_id, 'user_ip'=>get_real_ip(), 'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
         );
 
         $noteID = $database->get_last_insert_id('notes_id_seq');
@@ -423,7 +423,7 @@ class Notes extends Extension
 				INSERT INTO note_histories (note_enable, note_id, review_id, image_id, user_id, user_ip, date, x1, y1, height, width, note)
 				VALUES (:note_enable, :note_id, :review_id, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)
 			",
-            ['note_enable'=>$noteEnable, 'note_id'=>$noteID, 'review_id'=>$reviewID, 'image_id'=>$imageID, 'user_id'=>$user->id, 'user_ip'=>$_SERVER['REMOTE_ADDR'],
+            ['note_enable'=>$noteEnable, 'note_id'=>$noteID, 'review_id'=>$reviewID, 'image_id'=>$imageID, 'user_id'=>$user->id, 'user_ip'=>get_real_ip(),
             'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
         );
     }

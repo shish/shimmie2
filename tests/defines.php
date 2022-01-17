@@ -17,3 +17,4 @@ define("TIMEZONE", 'UTC');
 define("BASE_HREF", "/test");
 define("CLI_LOG_LEVEL", 50);
 define("STATSD_HOST", null);
+define("REVERSE_PROXY_X_HEADERS", false);

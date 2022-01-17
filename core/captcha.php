@@ -11,7 +11,7 @@ function captcha_get_html(): string
 {
     global $config, $user;
 
-    if (DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) {
+    if (DEBUG && ip_in_range(get_real_ip(), "127.0.0.0/8")) {
         return "";
     }
 
@@ -34,7 +34,7 @@ function captcha_check(): bool
 {
     global $config, $user;
 
-    if (DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) {
+    if (DEBUG && ip_in_range(get_real_ip(), "127.0.0.0/8")) {
         return true;
     }
 
@@ -42,7 +42,7 @@ function captcha_check(): bool
         $r_privatekey = $config->get_string('api_recaptcha_privkey');
         if (!empty($r_privatekey)) {
             $recaptcha = new ReCaptcha($r_privatekey);
-            $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", $_SERVER['REMOTE_ADDR']);
+            $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", get_real_ip());
 
             if (!$resp->isSuccess()) {
                 log_info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));

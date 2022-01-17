@@ -128,8 +128,7 @@ class IPBan extends Extension
 
         // Check if our current IP is in either of the ban lists
         $active_ban_id = (
-            $this->find_active_ban($ips, $_SERVER['REMOTE_ADDR'], $networks) ??
-            $this->find_active_ban($ips, @$_SERVER['HTTP_X_FORWARDED_FOR'], $networks)
+            $this->find_active_ban($ips, get_real_ip(), $networks)
         );
 
         // If an active ban is found, act on it
@@ -139,10 +138,12 @@ class IPBan extends Extension
                 return;
             }
 
+            $row_banner_id_int = intval($row['banner_id']);
+
             $msg = $config->get_string("ipban_message_{$row['mode']}") ?? $config->get_string("ipban_message");
             $msg = str_replace('$IP', $row["ip"], $msg);
             $msg = str_replace('$DATE', $row['expires'] ?? 'the end of time', $msg);
-            $msg = str_replace('$ADMIN', User::by_id($row['banner_id'])->name, $msg);
+            $msg = str_replace('$ADMIN', User::by_id($row_banner_id_int)->name, $msg);
             $msg = str_replace('$REASON', $row['reason'], $msg);
             $contact_link = contact_link();
             if (!empty($contact_link)) {

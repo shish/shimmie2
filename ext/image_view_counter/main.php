@@ -29,7 +29,7 @@ class ImageViewCounter extends Extension
 				WHERE ipaddress=:ipaddress AND timestamp >:lasthour AND image_id =:image_id
 			",
             [
-                "ipaddress" => $_SERVER['REMOTE_ADDR'],
+                "ipaddress" => get_real_ip(),
                 "lasthour" => time() - $this->view_interval,
                 "image_id" => $imgid
             ]
@@ -50,7 +50,7 @@ class ImageViewCounter extends Extension
                 "image_id" => $imgid,
                 "user_id" => $user->id,
                 "timestamp" => time(),
-                "ipaddress" => $_SERVER['REMOTE_ADDR'],
+                "ipaddress" => get_real_ip(),
             ]
         );
     }

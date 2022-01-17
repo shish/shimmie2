@@ -21,7 +21,7 @@ class LogLogstash extends Extension
                 #"@request" => $_SERVER,
                 "@request" => [
                     "UID" => get_request_id(),
-                    "REMOTE_ADDR" => $_SERVER['REMOTE_ADDR'],
+                    "REMOTE_ADDR" => get_real_ip(),
                 ],
             ];
 

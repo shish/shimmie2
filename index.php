@@ -63,7 +63,7 @@ try {
         $_SERVER["REQUEST_URI"] ?? "No Request",
         [
             "user"=>$_COOKIE["shm_user"] ?? "No User",
-            "ip"=>$_SERVER['REMOTE_ADDR'] ?? "No IP",
+            "ip"=>get_real_ip() ?? "No IP",
             "user_agent"=>$_SERVER['HTTP_USER_AGENT'] ?? "No UA",
         ]
     );

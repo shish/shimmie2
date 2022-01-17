@@ -382,7 +382,7 @@ class SourceHistory extends Extension
             "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (:image_id, :source, :user_id, :user_ip, now())",
-            ["image_id"=>$image->id, "source"=>$new_source, "user_id"=>$user->id, "user_ip"=>$_SERVER['REMOTE_ADDR']]
+            ["image_id"=>$image->id, "source"=>$new_source, "user_id"=>$user->id, "user_ip"=>get_real_ip()]
         );
         $entries++;
 

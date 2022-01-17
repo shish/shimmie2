@@ -66,7 +66,7 @@ function contact_link(): ?string
 function is_https_enabled(): bool
 {
     // check forwarded protocol
-    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+    if (REVERSE_PROXY_X_HEADERS && !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
         $_SERVER['HTTPS']='on';
     }
     return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
@@ -161,13 +161,36 @@ function check_im_version(): int
 }
 
 /**
+ * Get request IP
+ */
+
+function get_remote_addr() {
+  return $_SERVER['REMOTE_ADDR'];
+}
+/**
+ * Get real IP if behind a reverse proxy
+ */
+
+function get_real_ip() {
+  $ip = get_remote_addr();
+  if (REVERSE_PROXY_X_HEADERS && isset($_SERVER['HTTP_X_REAL_IP'])) {
+    $ip = $_SERVER['HTTP_X_REAL_IP'];
+    if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+      $ip = "0.0.0.0";
+    }
+  }
+  
+  return $ip;
+}
+
+/**
  * Get the currently active IP, masked to make it not change when the last
  * octet or two change, for use in session cookies and such
  */
 function get_session_ip(Config $config): string
 {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
-    $addr = $_SERVER['REMOTE_ADDR'];
+    $addr = get_real_ip(); 
     $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
     return $addr;
 }
@@ -799,3 +822,4 @@ function generate_key(int $length = 20): string
 
     return $randomString;
 }
+
