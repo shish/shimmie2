@@ -28,7 +28,7 @@ class Image
     public ?array $tag_array;
     public int $owner_id;
     public string $owner_ip;
-    public string $posted;
+    public ?string $posted = null;
     public ?string $source;
     public bool $locked = false;
     public ?bool $lossless = null;
@@ -368,6 +368,10 @@ class Image
         global $database, $user;
         $cut_name = substr($this->filename, 0, 255);
 
+        if (is_null($this->posted) || $this->posted == "") {
+            $this->posted = date('c', time());
+        }
+
         if (is_null($this->id)) {
             $database->execute(
                 "INSERT INTO images(
@@ -382,13 +386,14 @@ class Image
 				    :filename, :filesize,
 					:hash, :mime, :ext,
 				    0, 0,
-				    now(), :source
+				    :posted, :source
 				)",
                 [
                     "owner_id" => $user->id, "owner_ip" => $_SERVER['REMOTE_ADDR'],
                     "filename" => $cut_name, "filesize" => $this->filesize,
                     "hash" => $this->hash, "mime" => strtolower($this->mime),
-                    "ext" => strtolower($this->ext), "source" => $this->source
+                    "ext" => strtolower($this->ext),
+                    "posted" => $this->posted, "source" => $this->source
                 ]
             );
             $this->id = $database->get_last_insert_id('images_id_seq');
@@ -396,7 +401,8 @@ class Image
             $database->execute(
                 "UPDATE images SET ".
                 "filename = :filename, filesize = :filesize, hash = :hash, ".
-                "mime = :mime, ext = :ext, width = 0, height = 0, source = :source ".
+                "mime = :mime, ext = :ext, width = 0, height = 0, ".
+                "posted = :posted, source = :source ".
                 "WHERE id = :id",
                 [
                     "filename" => $cut_name,
@@ -404,6 +410,7 @@ class Image
                     "hash" => $this->hash,
                     "mime" => strtolower($this->mime),
                     "ext" => strtolower($this->ext),
+                    "posted" => $this->posted,
                     "source" => $this->source,
                     "id" => $this->id,
                 ]
