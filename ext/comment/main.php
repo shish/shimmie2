@@ -371,8 +371,6 @@ class CommentList extends Extension
         $sb->add_label("<br>Show ");
         $sb->add_int_option("comment_list_count");
         $sb->add_label(" comments per image on the list");
-        $sb->add_label("<br>Make samefags public ");
-        $sb->add_bool_option("comment_samefags_public");
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event)

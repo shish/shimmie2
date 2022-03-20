@@ -215,7 +215,7 @@ class CommentListTheme extends Themelet
                 }
                 #if($user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-                if ($user->can(Permissions::VIEW_IP) || $config->get_bool("comment_samefags_public", false)) {
+                if ($user->can(Permissions::VIEW_IP)) {
                     if ($this->anon_map[$comment->poster_ip] != $this->anon_id) {
                         $anoncode2 = '<sup>('.$this->anon_map[$comment->poster_ip].')</sup>';
                     }
