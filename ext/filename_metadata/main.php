@@ -17,7 +17,7 @@ class FilenameMetadata extends Extension
             if (!is_array($event->image->tag_array)) {
                 $event->image->tag_array = [];
             }
-            $event->image->tag_array[] = $matches["username"]."_(uploader)";
+            $event->image->tag_array[] = "photographer:".$matches["username"];
 
             $event->image->posted = $matches["date"];
             $event->image->filename = $matches["filename"];
