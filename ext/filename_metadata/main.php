@@ -9,7 +9,7 @@ class FilenameMetadata extends Extension
         return 40;
     }
 
-    const FILENAME_REGEX = '/\[(?<username>\w+)-(?<date>[\w-]+)\]-(?<discord_id>\w+)-(?<filename>.+)/';
+    const FILENAME_REGEX = '/\[(?<username>\w+)-(?<date>[\w:\.-]+)\]-(?<discord_id>\w+)-(?<filename>.+)/';
 
     public function onImageAddition(ImageAdditionEvent $event)
     {
