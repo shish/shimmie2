@@ -29,14 +29,14 @@ color: #FF3333;
 font-weight: bold;
 }
 HEADER ul#navbar li a.current-page {
-background-color:#EEEEFF;
+background-color: rgba(114, 114, 122, 0.37);
 border-radius:0.2rem 0.2rem 0 0;
 font-weight:bold;
 }
 HEADER ul#subnavbar {
 margin:0 0 0.5rem;
 padding:0 1rem 0 2rem;
-background-color:#EEEEFF;
+background-color: rgba(114, 114, 122, 0.37);
 }
 HEADER ul#subnavbar li {
 display:inline-block;
@@ -215,7 +215,7 @@ padding:4px 8px;
 border:1px solid #EEEEEE;
 }
 div#paginator a:hover {
-border:1px solid #EEEEEE;
+border:1px solid currentColor;
 background:blue none repeat scroll 0 0;
 color:white;
 -moz-background-clip:border;
