@@ -47,8 +47,6 @@ class Image
      */
     public function __construct(?array $row=null)
     {
-        global $user;
-
         if (!is_null($row)) {
             foreach ($row as $name => $value) {
                 if (is_numeric($name)) {
@@ -69,10 +67,6 @@ class Image
                     $this->$name = $value;
                 }
             }
-        }
-
-        if (!property_exists($this, 'owner_id')) {
-            $this->owner_id = $user->id;
         }
     }
 
@@ -371,8 +365,12 @@ class Image
 
     public function save_to_db()
     {
-        global $database;
+        global $database, $user;
         $cut_name = substr($this->filename, 0, 255);
+
+        if (!isset($this->owner_id)) {
+            $this->owner_id = $user->id;
+        }
 
         if (is_null($this->posted) || $this->posted == "") {
             $this->posted = date('c', time());
