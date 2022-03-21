@@ -174,6 +174,7 @@ class RotateImage extends Extension
         $new_image->filename = 'rotated-'.$image_obj->filename;
         $new_image->width = $new_width;
         $new_image->height = $new_height;
+        $new_image->posted = $image_obj->posted;
 
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
