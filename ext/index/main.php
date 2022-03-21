@@ -239,7 +239,7 @@ class Index extends Extension
             $value = parse_to_milliseconds($matches[2]);
             $cmp = ltrim($matches[1], ":") ?: "=";
             $event->add_querylet(new Querylet("length $cmp :length{$event->id}", ["length{$event->id}"=>$value]));
-        } elseif (preg_match("/^order[=|:](id|width|height|length|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)) {
+        } elseif (preg_match("/^order[=|:](id|width|height|length|filesize|filename|posted)[_]?(desc|asc)?$/i", $event->term, $matches)) {
             $ord = strtolower($matches[1]);
             $default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
             $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
