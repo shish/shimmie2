@@ -90,11 +90,11 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type"=>'email', "name"=>'email']))
                     ),
                     TR(
-                        TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
-                    ),
-                    TR(
                         TH(rawHTML("Invite code")),
                         TD(INPUT(["type"=>'text', "name"=>'invite', "required"=>true]))
+                    ),
+                    TR(
+                        TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
                     ),
                 ),
                 TFOOT(
