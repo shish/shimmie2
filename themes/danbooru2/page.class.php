@@ -155,6 +155,12 @@ class Page extends BasePage
 EOD;
     }
 
+    public function add_auto_html_headers(): void
+    {
+        parent::add_auto_html_headers();
+        $this->add_html_header('<meta name="color-scheme" content="dark light">', 0);
+    }
+
     public function navlinks(Link $link, string $desc, bool $active): ?string
     {
         $html = null;
