@@ -145,9 +145,10 @@ class TagCategories extends Extension
             $h_tag = $h_tag_split[1];
             $tag_category_css = ' tag_category_'.$category;
             $tag_category_style = 'style="color:'.html_escape($tag_category_dict[$category]['color']).';" ';
+            $h_tag_title = $h_tag_no_underscores;
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
 
-            $h_tag_no_underscores = '<span class="'.$tag_category_css.'" '.$tag_category_style.'>'.$h_tag_no_underscores.$extra_text.'</span>';
+            $h_tag_no_underscores = '<span class="'.$tag_category_css.'" title="'.$h_tag_title.'" '.$tag_category_style.'>'.$h_tag_no_underscores.$extra_text.'</span>';
         } else {
             $h_tag_no_underscores .= $extra_text;
         }
