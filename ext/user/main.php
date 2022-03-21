@@ -493,12 +493,14 @@ class UserPage extends Extension
             return;
         }
 
-        if (!$config->get_bool("login_signup_enabled") || $_GET['invite'] != "XXXXXX") {
+        if (!$config->get_bool("login_signup_enabled")) {
             $this->theme->display_signups_disabled($page);
         } elseif (!isset($_POST['name'])) {
             $this->theme->display_signup_page($page);
         } elseif ($_POST['pass1'] != $_POST['pass2']) {
             $this->theme->display_error(400, "Password Mismatch", "Passwords don't match");
+        } elseif ($_POST['invite'] != "XXXXXX") {
+            $this->theme->display_error(400, "Invalid Invite Code", "You must have a valid invite code to register");
         } else {
             try {
                 if (!captcha_check()) {

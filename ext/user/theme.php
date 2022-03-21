@@ -92,6 +92,10 @@ class UserPageTheme extends Themelet
                     TR(
                         TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
                     ),
+                    TR(
+                        TH(rawHTML("Invite code")),
+                        TD(INPUT(["type"=>'text', "name"=>'invite', "required"=>true]))
+                    ),
                 ),
                 TFOOT(
                     TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
