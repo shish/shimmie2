@@ -81,6 +81,7 @@ class UserPage extends Extension
     {
         global $config;
         $config->set_default_bool("login_signup_enabled", true);
+        $config->set_default_string("login_signup_code", "");
         $config->set_default_int("login_memory", 365);
         $config->set_default_string("avatar_host", "none");
         $config->set_default_int("avatar_gravatar_size", 80);
@@ -283,6 +284,7 @@ class UserPage extends Extension
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
         $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
+        $sb->add_text_option("login_signup_code", "Require code for signups (leave empty to disable)", true);
         $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
         $sb->add_choice_option(
             "user_loginshowprofile",
@@ -499,7 +501,7 @@ class UserPage extends Extension
             $this->theme->display_signup_page($page);
         } elseif ($_POST['pass1'] != $_POST['pass2']) {
             $this->theme->display_error(400, "Password Mismatch", "Passwords don't match");
-        } elseif ($_POST['invite'] != "XXXXXX") {
+        } elseif ($config->get_bool("login_signup_code") ?? $_POST['invite'] != $config->get_bool("login_signup_code")) {
             $this->theme->display_error(400, "Invalid Invite Code", "You must have a valid invite code to register");
         } else {
             try {
