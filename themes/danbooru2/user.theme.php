@@ -79,7 +79,7 @@ class CustomUserPageTheme extends UserPageTheme
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
 				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
-                <tr><td>Invite Code</td><td><input type='text' name='invite' value='".htmentities($_GET['invite'])."'></td></tr>
+                <tr><td>Invite Code</td><td><input type='text' name='invite' value='".htmlentities($_GET['invite'])."'></td></tr>
 				$reca;
 				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
 			</table>
