@@ -499,6 +499,8 @@ class UserPage extends Extension
             $this->theme->display_signup_page($page);
         } elseif ($_POST['pass1'] != $_POST['pass2']) {
             $this->theme->display_error(400, "Password Mismatch", "Passwords don't match");
+        } elseif ($_POST['invite'] != "XXXXXX") {
+            $this->theme->display_error(400, "Invalid Invite Code", "You must have a valid invite code to register");
         } else {
             try {
                 if (!captcha_check()) {
