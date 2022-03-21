@@ -284,7 +284,7 @@ class UserPage extends Extension
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
         $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
-        $sb->add_text_option("login_signup_code", "Require code for signups (leave empty to disable)", true);
+        $sb->add_text_option("login_signup_code", "Signup code:<br/>", true);
         $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
         $sb->add_choice_option(
             "user_loginshowprofile",
