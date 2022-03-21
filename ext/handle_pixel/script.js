@@ -46,5 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	if(Cookies.get("ui-image-zoom")) {
 		zoom(Cookies.get("ui-image-zoom"));
+	} else {
+		zoom("both")
 	}
 });

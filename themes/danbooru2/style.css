@@ -47,7 +47,6 @@ HEADER ul#subnavbar li:first-child {
 margin-left: -0.6rem;
 }
 body {
-background-color:#FFFFFF;
 font-weight:normal;
 font-style:normal;
 font-variant:normal;
@@ -108,10 +107,10 @@ padding-bottom:0.2em;
 }
 FOOTER {
 clear:both;
-border-top:solid 1px #E7E7F7;
+border-top:solid 1px rgba(117, 117, 117, 0.69);
 margin-top:1rem;
 text-align:center;
-color:#555555;
+color:rgba(117, 117, 117, 0.69);
 font-size:0.8rem;
 }
 FOOTER > DIV {
