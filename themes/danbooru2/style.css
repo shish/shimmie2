@@ -10,6 +10,8 @@ padding:0.6rem 2rem 0.25rem;
 HEADER ul#navbar, HEADER ul#subnavbar {
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 font-size:110%;
+white-space:nowrap;
+overflow-x:auto;
 }
 HEADER ul#navbar {
 margin:0;
@@ -190,8 +192,10 @@ color: gray;
 .comment TD {
 text-align: left;
 }
+@media (min-width: 800px) {
 .withleft {
 margin-left:14.5rem;
+}
 }
 div#paginator {
 display:block;
@@ -223,11 +227,19 @@ color:white;
 -moz-background-origin:padding;
 }
 span.thumb {
-display:inline-block;
+display:flex;
+align-items:center;
+justify-items:space-around;
 float:left;
 width:220px;
 height:220px;
 text-align:center;
+max-width:44vw;
+max-height:44vw;
+}
+span.thumb IMG {
+max-width:100%;
+height:auto;
 }
 #pagelist {
 margin-top:32px;
@@ -355,6 +367,7 @@ text-align:center;
 border-radius:0.5rem;
 }
 ARTICLE {
+margin-left:1rem;
 margin-right:1rem;
 }
 ARTICLE section + section {
