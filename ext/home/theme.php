@@ -31,7 +31,8 @@ EOD
     {
         $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
         $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";
-        $counter_html = empty($counter_text) ? "" : "<div class='space' id='counter'>$counter_text</div>";
+        $counter_digits = strlen(filter_var($num_comma, FILTER_SANITIZE_NUMBER_INT));
+		$counter_html = empty($counter_text) ? "" : "<div class='space' id='counter' data-digits='$counter_digits'>$counter_text</div>";
         $contact_link = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a> &ndash;";
         $search_html = "
 			<div class='space' id='search'>

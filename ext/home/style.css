@@ -4,11 +4,14 @@ div#front-page {text-align:center;}
 div#front-page div#links a {margin: 0 0.5em;}
 div#front-page li {list-style-type: none; margin: 0;}
 @media (max-width: 800px) {
-	div#front-page h1 {font-size: 3em; margin-top: 0.5em; margin-bottom: 0.5em;}
-	#counter {display: none;}
+	div#front-page h1 {font-size: 3em; margin-bottom: 0.5em;}
 }
+#counter[data-digits="3"] > img { max-width: 33.3% }
+#counter[data-digits="4"] > img { max-width: 25% }
+#counter[data-digits="5"] > img { max-width: 20% }
+#counter[data-digits="6"] > img { max-width: 16.6% }
 #counter > img {
-	image-rendering: pixelated;
+    image-rendering: pixelated;
 }
 
 div#front-page > #search > form { margin: 0 auto; }
