@@ -51,7 +51,8 @@ class WikiTheme extends Themelet
         $html = "<table class='zebra'>";
         foreach ($history as $row) {
             $rev = $row['revision'];
-            $html .= "<tr><td><a href='".make_link("wiki/$row['title']", "revision=$rev")."'>{$rev}</a></td><td>{$row['date']}</td></tr>";
+            $row_title = $row['title'];
+            $html .= "<tr><td><a href='".make_link("wiki/$row_title", "revision=$rev")."'>{$rev}</a></td><td>{$row['date']}</td></tr>";
         }
         $html .= "</table>";
         $page->set_title(html_escape($title));
