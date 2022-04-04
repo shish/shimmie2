@@ -207,8 +207,13 @@ class Wiki extends Extension
                 $this->theme->display_permission_denied();
             }
         } elseif ($event->page_matches("wiki_admin/history")) {
-            $history = $this->get_history($_GET['title']);
-            $this->theme->display_page_history($page, $_GET['title'], $history);
+            if (isset($_GET['title'])) {
+                $history = $this->get_history($_GET['title']);
+                $this->theme->display_page_history($page, $_GET['title'], $history);
+            } elseif ($user->can(Permissions::WIKI_ADMIN)) {
+                $history = $this->get_all_history();
+                $this->theme->display_page_history($page, "All History", $history);
+            }
         } elseif ($event->page_matches("wiki_admin/delete_revision")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
                 send_event(new WikiDeleteRevisionEvent($_POST["title"], (int)$_POST["revision"]));
@@ -235,9 +240,15 @@ class Wiki extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
+        global $user;
+
         if ($event->parent=="wiki") {
             $event->add_nav_link("wiki_rules", new Link('wiki/rules'), "Rules");
             $event->add_nav_link("wiki_help", new Link('ext_doc/wiki'), "Help");
+        }
+
+        if ($event->parent=="system" && $user->can(Permissions::WIKI_ADMIN)) {
+            $event->add_nav_link("wiki_history", new Link('wiki_admin/history'), "Wiki Changes");
         }
     }
 
@@ -325,6 +336,20 @@ class Wiki extends Extension
             ["title"=>$title]
         );
     }
+
+
+    public static function get_all_history(): array
+    {
+        global $database;
+        return $database->get_all(
+            "
+                SELECT title, revision, date, owner_id
+                FROM wiki_pages
+                ORDER BY revision DESC
+            "
+        );
+    }
+
     public static function get_page(string $title, int $revision=-1): WikiPage
     {
         global $database;
