@@ -315,10 +315,9 @@ class Wiki extends Extension
     public static function get_history(string $title): array
     {
         global $database;
-        // first try and get the actual page
         return $database->get_all(
             "
-				SELECT revision, date
+				SELECT title, revision, date, owner_id
 				FROM wiki_pages
 				WHERE LOWER(title) LIKE LOWER(:title)
 				ORDER BY revision DESC
