@@ -345,7 +345,7 @@ class Wiki extends Extension
             "
                 SELECT title, revision, date, owner_id
                 FROM wiki_pages
-                ORDER BY revision DESC
+                ORDER BY date DESC
             "
         );
     }
