@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	});
 
-	$('#tag_editor').tagit({
+	$('#tag_editor,[name="bulk_tags"]').tagit({
 		singleFieldDelimiter: ' ',
 		autocomplete : ({
 			source: function (request, response) {
