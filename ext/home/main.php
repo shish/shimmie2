@@ -52,11 +52,26 @@ class Home extends Extension
         $strtotal = "$total";
         $num_comma = number_format($total);
 
+        $digits = array_unique(str_split($strtotal));
+        $digits_str = implode($digits);
+        $digit_images = [];
+        $digit_usages = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+        foreach (glob("ext/home/counters/$counter_dir/[$digits_str]*") as $counter_image) {
+            $name = str_replace("ext/home/counters/$counter_dir/", "", $counter_image);
+            if (is_null($digit_images[$name[0]])) {
+                $digit_images[$name[0]] = [];
+            }
+            array_push($digit_images[$name[0]], $name);
+        }
+
         $counter_text = "";
         $length = strlen($strtotal);
         for ($n=0; $n<$length; $n++) {
             $cur = $strtotal[$n];
-            $counter_text .= "<img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />";
+            $digit_image_index = $total + $n + $digit_usages[$cur]++;
+            $image = $digit_images[$cur][$digit_image_index % count($digit_images[$cur])];
+            $counter_text .= "<img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$image' />";
         }
 
         // get the homelinks and process them
