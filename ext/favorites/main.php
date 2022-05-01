@@ -133,6 +133,10 @@ class Favorites extends Extension
         } elseif (preg_match("/^favorited_by_userno[=|:](\d+)$/i", $event->term, $matches)) {
             $user_id = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
+        } elseif (preg_match("/^order[=|:](favorites)(?:_(desc|asc))?$/i", $event->term, $matches)) {
+            $default_order_for_column = "DESC";
+            $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
+            $event->order = "images.favorites $sort";
         }
     }
 
