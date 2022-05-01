@@ -497,7 +497,7 @@ class CommentList extends Extension
 			SELECT *
 			FROM comments
 			WHERE owner_ip = :remote_ip AND posted > now() - $window_sql
-		", ["remote_ip"=>$_SERVER['REMOTE_ADDR']]);
+		", ["remote_ip"=>get_real_ip()]);
 
         return (count($result) >= $max);
     }
@@ -516,7 +516,7 @@ class CommentList extends Extension
      */
     public static function get_hash(): string
     {
-        return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
+        return md5(get_real_ip() . date("%Y%m%d"));
     }
 
     private function is_spam_akismet(string $text): bool
@@ -576,7 +576,7 @@ class CommentList extends Extension
         $database->execute(
             "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
                 "VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
-            ["image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment]
+            ["image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>get_real_ip(), "comment"=>$comment]
         );
         $cid = $database->get_last_insert_id('comments_id_seq');
         $snippet = substr($comment, 0, 100);

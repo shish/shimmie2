@@ -18,7 +18,7 @@ class PMTrigger extends Extension
         global $user;
         send_event(new SendPMEvent(new PM(
             $user->id,
-            $_SERVER["REMOTE_ADDR"],
+            get_real_ip(),
             $to_id,
             $subject,
             $body

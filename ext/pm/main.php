@@ -176,7 +176,7 @@ class PrivMsg extends Extension
                             $from_id = $user->id;
                             $subject = $_POST["subject"];
                             $message = $_POST["message"];
-                            send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
+                            send_event(new SendPMEvent(new PM($from_id, get_real_ip(), $to_id, $subject, $message)));
                             $page->flash("PM sent");
                             $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(referer_or(make_link()));

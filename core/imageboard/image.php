@@ -389,7 +389,7 @@ class Image
 				    :posted, :source
 				)",
                 [
-                    "owner_id" => $user->id, "owner_ip" => $_SERVER['REMOTE_ADDR'],
+                    "owner_id" => $user->id, "owner_ip" => get_real_ip(),
                     "filename" => $cut_name, "filesize" => $this->filesize,
                     "hash" => $this->hash, "mime" => strtolower($this->mime),
                     "ext" => strtolower($this->ext),
