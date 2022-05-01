@@ -335,7 +335,7 @@ class Media extends Extension
             $args = [
                 escapeshellarg($ffmpeg),
                 "-y", "-i", escapeshellarg($inname),
-                "-vf", "thumbnail",
+                "-vf", "scale=$scaled_size[0]:$scaled_size[1],thumbnail",
                 "-f", "image2",
                 "-vframes", "1",
                 "-c:v", "png",
@@ -343,6 +343,8 @@ class Media extends Extension
             ];
 
             $cmd = escapeshellcmd(implode(" ", $args));
+
+            log_debug('media', "Generating thumbnail with command `$cmd`...");
 
             exec($cmd, $output, $ret);
 
