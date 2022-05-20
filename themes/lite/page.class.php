@@ -48,16 +48,16 @@ class Page extends BasePage
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html .= $this->block_to_html($block, true, "left");
+                    $left_block_html .= $this->block_to_html($block, true);
                     break;
                 case "main":
-                    $main_block_html .= $this->block_to_html($block, false, "main");
+                    $main_block_html .= $this->block_to_html($block, false);
                     break;
                 case "user":
                     $user_block_html .= $block->body;
                     break;
                 case "subheading":
-                    $sub_block_html .= $this->block_to_html($block, false, "main");
+                    $sub_block_html .= $this->block_to_html($block, false);
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -107,11 +107,11 @@ class Page extends BasePage
 EOD;
     } /* end of function display_page() */
 
-    public function block_to_html(Block $block, bool $hidable=false, string $salt=""): string
+    public function block_to_html(Block $block, bool $hidable=false): string
     {
         $h = $block->header;
         $b = $block->body;
-        $i = str_replace(' ', '_', $h) . $salt;
+        $i = $block->id;
         $html = "<section id='{$i}'>";
         if (!is_null($h)) {
             if ($salt == "main") {
