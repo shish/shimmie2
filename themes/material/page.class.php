@@ -69,7 +69,7 @@ class Page extends BasePage
                     $main_block_html .= $this->get_html($block, "main", true, "");
                     break;
                 case "subheading":
-                    // $sub_block_html .= $block->body; // $this->block_to_html($block, true);
+                    // $sub_block_html .= $block->body;
                     $sub_block_html .= $this->get_html($block, "third", true, "nav-card");
                     break;
                 default:
