@@ -193,7 +193,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($config->get_bool(ApprovalConfig::IMAGES) && $image->approved===false && !$user->can(Permissions::APPROVE_IMAGE)) {
+        if ($config->get_bool(ApprovalConfig::IMAGES) && $image->approved===false && !$user->can(Permissions::APPROVE_IMAGE) && $user->id!==$image->owner_id) {
             return false;
         }
         return true;

@@ -277,6 +277,12 @@ class CommentList extends Extension
             ) {
                 $image = null; // this is "clever", I may live to regret it
             }
+            if (
+                Extension::is_enabled(ApprovalInfo::KEY) && !is_null($image) &&
+                $image->approved!==true
+            ) {
+                $image = null;
+            }
             if (!is_null($image)) {
                 $comments = $this->get_comments($image->id);
                 $images[] = [$image, $comments];
