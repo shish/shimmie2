@@ -59,6 +59,34 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	});
 
+	$('#tag_editor,[name="bulk_tags"]').tagit({
+		singleFieldDelimiter: ' ',
+		autocomplete : ({
+			source: function (request, response) {
+				$.ajax({
+					url: base_href + '/api/internal/autocomplete',
+					data: {'s': request.term},
+					dataType : 'json',
+					type : 'GET',
+					success : function (data) {
+						response(
+							$.map(data, function (count, item) {
+								return {
+									label : item + ' ('+count+')',
+									value : item
+								};
+							})
+						);
+					},
+					error : function (request, status, error) {
+						console.log(error);
+					}
+				});
+			},
+			minLength: 1
+		})
+	});
+
 	$('.ui-autocomplete-input').keydown(function(e) {
 		var keyCode = e.keyCode || e.which;
 
