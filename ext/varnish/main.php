@@ -6,10 +6,10 @@ class VarnishPurger extends Extension
 {
     public function onInitExt(InitExtEvent $event)
     {
-      global $config;
-      $config->set_default_string('varnish_host', '127.0.0.1');
-      $config->set_default_int('varnish_port', 80);
-      $config->set_default_string('varnish_protocol', 'http');
+        global $config;
+        $config->set_default_string('varnish_host', '127.0.0.1');
+        $config->set_default_int('varnish_port', 80);
+        $config->set_default_string('varnish_protocol', 'http');
     }
 
     private function curl_purge($path)
@@ -20,7 +20,7 @@ class VarnishPurger extends Extension
         }
 
         global $config;
-        $host = $config->get_string('varnish_host'); 
+        $host = $config->get_string('varnish_host');
         $port = $config->get_int('varnish_port');
         $protocol = $config->get_string('varnish_protocol');
         $url = $protocol . '://'. $host . '/' . $path;
@@ -32,7 +32,7 @@ class VarnishPurger extends Extension
         $result = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpCode != 200) {
-          throw new SCoreException('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
+            throw new SCoreException('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
         }
         curl_close($ch);
         assert(!is_null($result) && !is_null($httpCode));

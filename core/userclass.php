@@ -89,7 +89,7 @@ new UserClass("user", "base", [
     Permissions::SEND_PM => true,
     Permissions::READ_PM => true,
     Permissions::SET_PRIVATE_IMAGE => true,
-	Permissions::PERFORM_BULK_ACTIONS => true,
+    Permissions::PERFORM_BULK_ACTIONS => true,
     Permissions::BULK_DOWNLOAD => true,
     Permissions::CHANGE_USER_SETTING => true
 ]);

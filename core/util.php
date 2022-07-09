@@ -164,23 +164,25 @@ function check_im_version(): int
  * Get request IP
  */
 
-function get_remote_addr() {
-  return $_SERVER['REMOTE_ADDR'];
+function get_remote_addr()
+{
+    return $_SERVER['REMOTE_ADDR'];
 }
 /**
  * Get real IP if behind a reverse proxy
  */
 
-function get_real_ip() {
-  $ip = get_remote_addr();
-  if (REVERSE_PROXY_X_HEADERS && isset($_SERVER['HTTP_X_REAL_IP'])) {
-    $ip = $_SERVER['HTTP_X_REAL_IP'];
-    if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-      $ip = "0.0.0.0";
+function get_real_ip()
+{
+    $ip = get_remote_addr();
+    if (REVERSE_PROXY_X_HEADERS && isset($_SERVER['HTTP_X_REAL_IP'])) {
+        $ip = $_SERVER['HTTP_X_REAL_IP'];
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            $ip = "0.0.0.0";
+        }
     }
-  }
-  
-  return $ip;
+
+    return $ip;
 }
 
 /**
@@ -190,7 +192,7 @@ function get_real_ip() {
 function get_session_ip(Config $config): string
 {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
-    $addr = get_real_ip(); 
+    $addr = get_real_ip();
     $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
     return $addr;
 }
@@ -822,4 +824,3 @@ function generate_key(int $length = 20): string
 
     return $randomString;
 }
-
