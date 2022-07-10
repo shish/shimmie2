@@ -239,7 +239,7 @@ class CommentList extends Extension
 
     private function onPageRequest_list(PageRequestEvent $event)
     {
-        global $cache, $database, $user;
+        global $cache, $config, $database, $user;
 
         $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 
@@ -279,6 +279,7 @@ class CommentList extends Extension
             }
             if (
                 Extension::is_enabled(ApprovalInfo::KEY) && !is_null($image) &&
+                $config->get_bool(ApprovalConfig::IMAGES) &&
                 $image->approved!==true
             ) {
                 $image = null;
