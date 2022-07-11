@@ -95,7 +95,9 @@ class UploadTheme extends Themelet
                 TR(
                     TD(["colspan"=>$tl_enabled ? 2 : 4], INPUT(["type"=>"file", "name"=>"data${i}[]", "accept"=>$accept, "multiple"=>true])),
                     $tl_enabled ? TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"url${i}"])) : emptyHTML(),
-                    TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"tags${i}", "class"=>"autocomplete_tags", "autocomplete"=>"off"])),
+                    DIV(["class"=>'edit'],
+                        TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"tags${i}", "id"=>"tag_editor", "class"=>"autocomplete_tags", "autocomplete"=>"off"])),
+                    )
                 )
             );
         }
