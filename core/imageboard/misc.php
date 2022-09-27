@@ -20,6 +20,8 @@ function add_dir(string $base): array
         $filename = basename($full_path);
 
         $tags = path_to_tags($short_path);
+		if ($tags[0] == "\\")
+			$tags = "";
         $result = "$short_path (".str_replace(" ", ", ", $tags).")... ";
         try {
             add_image($full_path, $filename, $tags);
