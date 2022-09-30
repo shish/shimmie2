@@ -29,7 +29,7 @@ class ReportImageTheme extends Themelet
             $h_reportedimages .= "
 				<tr>
 					<td>{$image_link}</td>
-					<td>Report by $userlink: $h_reason</td>
+					<td class='reason'>Report by $userlink: $h_reason</td>
 					<td class='formstretch'>
 						".make_form(make_link("image_report/remove"))."
 							<input type='hidden' name='id' value='{$report['id']}'>
