@@ -206,7 +206,6 @@ class Pools extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $database, $page, $user;
-
         if ($event->page_matches("pool")) {
             $pool_id = 0;
             $pool = [];
@@ -326,7 +325,37 @@ class Pools extends Extension
                         }
                     }
                     break;
-
+				case "reverse":
+					if ($this->have_permission($user, $pool)) {
+						$result = $database->execute(
+                                "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order DESC",
+                                ["pid" => $pool_id]
+                            );
+						$image_order = 1;
+						try {
+							$database->begin_transaction();
+							while ($row = $result->fetch()) {
+								$database->execute(
+										"
+										UPDATE pool_images 
+										SET image_order=:ord 
+										WHERE pool_id = :pid AND image_id = :iid",
+										["ord" => $image_order, "pid" => $pool_id, "iid" => (int)$row['image_id']]
+									);
+									$image_order = $image_order + 1;
+							}
+							$database->commit();
+						}
+						catch (Exception $e) {
+							$database->rollback();
+						}
+						$page->set_mode(PageMode::REDIRECT);
+						$page->set_redirect(make_link("pool/view/" . $pool_id));
+					}
+					else {
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
+					}
+					break;
                 case "import":
                     if ($this->have_permission($user, $pool)) {
                         $images = Image::find_images(

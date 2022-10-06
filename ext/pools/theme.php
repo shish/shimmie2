@@ -192,6 +192,11 @@ class PoolsTheme extends Themelet
 				<input type="hidden" name="order_view" value="yes">
 				<input type="hidden" name="pool_id" value="' . $pool->id . '">
 			</form>
+			' . make_form(make_link('pool/reverse')) . '
+				<input type="submit" name="edit" id="reverse_pool_order_btn" value="Reverse Order"/>
+				<input type="hidden" name="reverse_view" value="yes">
+				<input type="hidden" name="pool_id" value="' . $pool->id . '">
+			</form>
 			';
 
         if ($user->id == $pool->user_id || $user->can(Permissions::POOLS_ADMIN)) {
