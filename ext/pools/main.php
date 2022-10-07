@@ -518,7 +518,11 @@ class Pools extends Extension
                 $poolID = $pool->id;
             }
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
+        } elseif (preg_match("/^pool_id[=|:](.*)$/i", $event->term, $matches)) {
+            $poolID = str_replace("_", " ", $matches[1]);
+            $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
         }
+		
     }
 
     public function onTagTermCheck(TagTermCheckEvent $event)
