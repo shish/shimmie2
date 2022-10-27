@@ -396,14 +396,18 @@ class Setup extends Extension
                 $type = $_POST["_type_$name"];
                 $value = isset($_POST["_config_$name"]) ? $_POST["_config_$name"] : null;
                 switch ($type) {
-                    case "string": $config->set_string($name, $value);
-                    break;
-                    case "int":    $config->set_int($name, parse_shorthand_int((string)$value));
-                    break;
-                    case "bool":   $config->set_bool($name, bool_escape($value));
-                    break;
-                    case "array":  $config->set_array($name, $value);
-                    break;
+                    case "string":
+                        $config->set_string($name, $value);
+                        break;
+                    case "int":
+                        $config->set_int($name, parse_shorthand_int((string)$value));
+                        break;
+                    case "bool":
+                        $config->set_bool($name, bool_escape($value));
+                        break;
+                    case "array":
+                        $config->set_array($name, $value);
+                        break;
                 }
             }
         }

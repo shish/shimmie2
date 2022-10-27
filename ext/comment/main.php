@@ -171,16 +171,21 @@ class CommentList extends Extension
     {
         if ($event->page_matches("comment")) {
             switch ($event->get_arg(0)) {
-                case "add": $this->onPageRequest_add();
-                break;
-                case "delete": $this->onPageRequest_delete($event);
-                break;
-                case "bulk_delete": $this->onPageRequest_bulk_delete();
-                break;
-                case "list": $this->onPageRequest_list($event);
-                break;
-                case "beta-search": $this->onPageRequest_beta_search($event);
-                break;
+                case "add":
+                    $this->onPageRequest_add();
+                    break;
+                case "delete":
+                    $this->onPageRequest_delete($event);
+                    break;
+                case "bulk_delete":
+                    $this->onPageRequest_bulk_delete();
+                    break;
+                case "list":
+                    $this->onPageRequest_list($event);
+                    break;
+                case "beta-search":
+                    $this->onPageRequest_beta_search($event);
+                    break;
             }
         }
     }

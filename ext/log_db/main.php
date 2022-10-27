@@ -162,16 +162,21 @@ class MessageColumn extends Column
     {
         $c = "#000";
         switch ($row['priority']) {
-            case SCORE_LOG_DEBUG: $c = "#999";
-            break;
-            case SCORE_LOG_INFO: $c = "#000";
-            break;
-            case SCORE_LOG_WARNING: $c = "#800";
-            break;
-            case SCORE_LOG_ERROR: $c = "#C00";
-            break;
-            case SCORE_LOG_CRITICAL: $c = "#F00";
-            break;
+            case SCORE_LOG_DEBUG:
+                $c = "#999";
+                break;
+            case SCORE_LOG_INFO:
+                $c = "#000";
+                break;
+            case SCORE_LOG_WARNING:
+                $c = "#800";
+                break;
+            case SCORE_LOG_ERROR:
+                $c = "#C00";
+                break;
+            case SCORE_LOG_CRITICAL:
+                $c = "#F00";
+                break;
         }
         return SPAN(["style"=>"color: $c"], rawHTML($this->scan_entities($row[$this->name])));
     }
