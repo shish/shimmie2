@@ -85,4 +85,44 @@ class UtilTest extends TestCase
             load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash, 1)
         );
     }
+
+    public function test_path_to_tags()
+    {
+        $this->assertEquals(
+            "",
+            path_to_tags("nope.jpg")
+        );
+        $this->assertEquals(
+            "",
+            path_to_tags("\\")
+        );
+        $this->assertEquals(
+            "",
+            path_to_tags("/")
+        );
+        $this->assertEquals(
+            "",
+            path_to_tags("C:\\")
+        );
+        $this->assertEquals(
+            "test tag",
+            path_to_tags("123 - test tag.jpg")
+        );
+        $this->assertEquals(
+            "foo bar",
+            path_to_tags("/foo/bar/baz.jpg")
+        );
+        $this->assertEquals(
+            "cake pie foo bar",
+            path_to_tags("/foo/bar/123 - cake pie.jpg")
+        );
+        $this->assertEquals(
+            "bacon lemon",
+            path_to_tags("\\bacon\\lemon\\baz.jpg")
+        );
+        $this->assertEquals(
+            "category:tag",
+            path_to_tags("/category:/tag/baz.jpg")
+        );
+    }
 }

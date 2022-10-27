@@ -354,10 +354,13 @@ function path_to_tags(string $path): string
         $tags = explode(" ", $matches[1]);
     }
 
-    $path = dirname($path);
+    $path = str_replace("\\", "/", $path);
     $path = str_replace(";", ":", $path);
     $path = str_replace("__", " ", $path);
-
+    $path = dirname($path);
+    if ($path == "\\" || $path == "/" || $path == ".") {
+        $path = "";
+    }
 
     $category = "";
     foreach (explode("/", $path) as $dir) {
