@@ -207,7 +207,7 @@ class CronUploader extends Extension
     {
         global $user_config;
 
-        $user_api_key = $user_config->get_string(UserConfig::API_KEY);
+        $user_api_key = $user_config->get_string(UserConfig::API_KEY, "API_KEY");
 
         return make_http(make_link("/cron_upload/run", "api_key=".urlencode($user_api_key)));
     }
@@ -328,7 +328,7 @@ class CronUploader extends Extension
         $this->set_headers();
 
         if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
-            throw new SCoreException("User API keys are note enabled. Please enable them for the cron upload functionality to work.");
+            throw new SCoreException("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 
         if ($user->is_anonymous()) {
