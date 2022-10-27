@@ -30,7 +30,10 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@master
       with:
-        php-version: 7.4
+        php-version: 8.1
+
+    - name: Log Versions
+      run: ./vendor/bin/php-cs-fixer --version
 
     - name: Check format
       run: ./vendor/bin/php-cs-fixer fix --dry-run
