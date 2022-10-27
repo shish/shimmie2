@@ -210,23 +210,23 @@ class AutoTagger extends Extension
     private function add_auto_tag(string $tag, string $additional_tags)
     {
         global $database;
-		$existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
-        if (!is_null($existing_tags)) { 
-			// Auto Tags already exist, so we will append new tags to the existing one
-			$tag = Tag::sanitize($tag);
+        $existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
+        if (!is_null($existing_tags)) {
+            // Auto Tags already exist, so we will append new tags to the existing one
+            $tag = Tag::sanitize($tag);
             $additional_tags = Tag::explode($additional_tags);
-			$existing_tags = Tag::explode($existing_tags);
-			foreach ($additional_tags as $t) {
-				if (!in_array(strtolower($t), $existing_tags)) {
-					array_push($existing_tags, strtolower($t));
-				}
-			}
-			
-			$database->execute(
+            $existing_tags = Tag::explode($existing_tags);
+            foreach ($additional_tags as $t) {
+                if (!in_array(strtolower($t), $existing_tags)) {
+                    array_push($existing_tags, strtolower($t));
+                }
+            }
+
+            $database->execute(
                 "UPDATE auto_tag set additional_tags=:existing_tags where tag=:tag",
                 ["tag"=>$tag, "existing_tags"=>Tag::implode($existing_tags)]
             );
-			log_info(
+            log_info(
                 AutoTaggerInfo::KEY,
                 "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
@@ -244,8 +244,8 @@ class AutoTagger extends Extension
                 "Added auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
         }
-		// Now we apply it to existing items
-		$this->apply_new_auto_tag($tag);
+        // Now we apply it to existing items
+        $this->apply_new_auto_tag($tag);
     }
 
     private function update_auto_tag(string $tag, string $additional_tags): bool

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
- /**
- * @global ImageRating[] $_shm_ratings
- */
+/**
+* @global ImageRating[] $_shm_ratings
+*/
 global $_shm_ratings;
 $_shm_ratings = [];
 

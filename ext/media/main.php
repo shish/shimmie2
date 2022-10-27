@@ -790,8 +790,7 @@ class Media extends Extension
 
                     imagedestroy($image_resized);
                     $image_resized = $new_image;
-                break;
-
+                    break;
             }
 
             switch ($output_mime) {

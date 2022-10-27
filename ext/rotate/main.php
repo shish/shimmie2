@@ -65,10 +65,8 @@ class RotateImage extends Extension
             if (is_null($image)) {
                 $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
-
                 /* Check if options were given to rotate an image. */
                 if (isset($_POST['rotate_deg'])) {
-
                     /* get options */
 
                     $deg = 0;
@@ -153,13 +151,18 @@ class RotateImage extends Extension
 
         /* Output to the same format as the original image */
         switch ($info[2]) {
-          case IMAGETYPE_GIF:   $result = imagegif($image_rotated, $tmp_filename);      break;
-          case IMAGETYPE_JPEG:  $result = imagejpeg($image_rotated, $tmp_filename);     break;
-          case IMAGETYPE_PNG:   $result = imagepng($image_rotated, $tmp_filename, 9);    break;
-          case IMAGETYPE_WEBP:  $result = imagewebp($image_rotated, $tmp_filename);     break;
-          case IMAGETYPE_BMP:   $result = imagebmp($image_rotated, $tmp_filename, true); break;
-          default:
-            throw new ImageRotateException("Unsupported image type.");
+            case IMAGETYPE_GIF:   $result = imagegif($image_rotated, $tmp_filename);
+            break;
+            case IMAGETYPE_JPEG:  $result = imagejpeg($image_rotated, $tmp_filename);
+            break;
+            case IMAGETYPE_PNG:   $result = imagepng($image_rotated, $tmp_filename, 9);
+            break;
+            case IMAGETYPE_WEBP:  $result = imagewebp($image_rotated, $tmp_filename);
+            break;
+            case IMAGETYPE_BMP:   $result = imagebmp($image_rotated, $tmp_filename, true);
+            break;
+            default:
+                throw new ImageRotateException("Unsupported image type.");
         }
 
         if ($result===false) {

@@ -247,7 +247,7 @@ class MimeType
                     case FileExtension::PPM:
                         $output = MimeType::PPM;
                         break;
-// TODO: There is no uniquely defined Mime type for the cursor format. Need to figure this out.
+                        // TODO: There is no uniquely defined Mime type for the cursor format. Need to figure this out.
 //                    case FileExtension::CUR:
 //                        $output = MimeType::CUR;
 //                        break;

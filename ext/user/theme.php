@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 use function MicroHTML\TABLE;

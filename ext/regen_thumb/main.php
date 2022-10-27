@@ -101,7 +101,7 @@ class RegenThumb extends Extension
         global $page;
         switch ($event->action) {
             case "regen_thumbs":
-            $event->redirect = true;
+                $event->redirect = true;
                 $force = false;
                 if (isset($_POST["regen_thumb_force"])&&$_POST["regen_thumb_force"]=="true") {
                     $force=true;

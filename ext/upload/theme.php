@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\TABLE;
 use function MicroHTML\TR;
 use function MicroHTML\TD;

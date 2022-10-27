@@ -1,6 +1,7 @@
 <?php
 
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\A;
 
 class CustomUploadTheme extends UploadTheme

@@ -96,7 +96,7 @@ class TagEditCloud extends Extension
                     ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count, "relevant_tags"=>$relevant_tags]
                 );
                 break;
-            /** @noinspection PhpMissingBreakStatementInspection */
+                /** @noinspection PhpMissingBreakStatementInspection */
             case 'c':
                 if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                     $tag_data = $database->get_all(

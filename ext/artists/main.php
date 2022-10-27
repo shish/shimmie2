@@ -163,256 +163,256 @@ class Artists extends Extension
             switch ($event->get_arg(0)) {
                 //*************ARTIST SECTION**************
                 case "list":
-                {
-                    $this->get_listing($page, $event);
-                    $this->theme->sidebar_options("neutral");
-                    break;
-                }
+                    {
+                        $this->get_listing($page, $event);
+                        $this->theme->sidebar_options("neutral");
+                        break;
+                    }
                 case "new":
-                {
-                    if (!$user->is_anonymous()) {
-                        $this->theme->new_artist_composer();
-                    } else {
-                        $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
-                    }
-                    break;
-                }
-                case "new_artist":
-                {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("artist/new"));
-                    break;
-                }
-                case "create":
-                {
-                    if (!$user->is_anonymous()) {
-                        $newArtistID = $this->add_artist();
-                        if ($newArtistID == -1) {
-                            $this->theme->display_error(400, "Error", "Error when entering artist data.");
+                    {
+                        if (!$user->is_anonymous()) {
+                            $this->theme->new_artist_composer();
                         } else {
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$newArtistID));
+                            $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
                         }
-                    } else {
-                        $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
+                        break;
                     }
-                    break;
-                }
+                case "new_artist":
+                    {
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("artist/new"));
+                        break;
+                    }
+                case "create":
+                    {
+                        if (!$user->is_anonymous()) {
+                            $newArtistID = $this->add_artist();
+                            if ($newArtistID == -1) {
+                                $this->theme->display_error(400, "Error", "Error when entering artist data.");
+                            } else {
+                                $page->set_mode(PageMode::REDIRECT);
+                                $page->set_redirect(make_link("artist/view/".$newArtistID));
+                            }
+                        } else {
+                            $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
+                        }
+                        break;
+                    }
 
                 case "view":
-                {
-                    $artistID = int_escape($event->get_arg(1));
-                    $artist = $this->get_artist($artistID);
-                    $aliases = $this->get_alias($artist['id']);
-                    $members = $this->get_members($artist['id']);
-                    $urls = $this->get_urls($artist['id']);
+                    {
+                        $artistID = int_escape($event->get_arg(1));
+                        $artist = $this->get_artist($artistID);
+                        $aliases = $this->get_alias($artist['id']);
+                        $members = $this->get_members($artist['id']);
+                        $urls = $this->get_urls($artist['id']);
 
-                    $userIsLogged = !$user->is_anonymous();
-                    $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
+                        $userIsLogged = !$user->is_anonymous();
+                        $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
 
-                    $images = Image::find_images(0, 4, Tag::explode($artist['name']));
+                        $images = Image::find_images(0, 4, Tag::explode($artist['name']));
 
-                    $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
-                    /*
-                    if ($userIsLogged) {
-                        $this->theme->show_new_alias_composer($artistID);
-                        $this->theme->show_new_member_composer($artistID);
-                        $this->theme->show_new_url_composer($artistID);
+                        $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
+                        /*
+                        if ($userIsLogged) {
+                            $this->theme->show_new_alias_composer($artistID);
+                            $this->theme->show_new_member_composer($artistID);
+                            $this->theme->show_new_url_composer($artistID);
+                        }
+                        */
+
+                        $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
+
+                        break;
                     }
-                    */
-
-                    $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-
-                    break;
-                }
 
                 case "edit":
-                {
-                    $artistID = int_escape($event->get_arg(1));
-                    $artist = $this->get_artist($artistID);
-                    $aliases = $this->get_alias($artistID);
-                    $members = $this->get_members($artistID);
-                    $urls = $this->get_urls($artistID);
+                    {
+                        $artistID = int_escape($event->get_arg(1));
+                        $artist = $this->get_artist($artistID);
+                        $aliases = $this->get_alias($artistID);
+                        $members = $this->get_members($artistID);
+                        $urls = $this->get_urls($artistID);
 
-                    if (!$user->is_anonymous()) {
-                        $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
+                        if (!$user->is_anonymous()) {
+                            $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
 
-                        $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
-                        $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-                    } else {
-                        $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");
+                            $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
+                            $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
+                        } else {
+                            $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");
+                        }
+                        break;
                     }
-                    break;
-                }
                 case "edit_artist":
-                {
-                    $artistID = $_POST['artist_id'];
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("artist/edit/".$artistID));
-                    break;
-                }
+                    {
+                        $artistID = $_POST['artist_id'];
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("artist/edit/".$artistID));
+                        break;
+                    }
                 case "edited":
-                {
-                    $artistID = int_escape($_POST['id']);
-                    $this->update_artist();
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("artist/view/".$artistID));
-                    break;
-                }
+                    {
+                        $artistID = int_escape($_POST['id']);
+                        $this->update_artist();
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("artist/view/".$artistID));
+                        break;
+                    }
                 case "nuke_artist":
-                {
-                    $artistID = $_POST['artist_id'];
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("artist/nuke/".$artistID));
-                    break;
-                }
+                    {
+                        $artistID = $_POST['artist_id'];
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("artist/nuke/".$artistID));
+                        break;
+                    }
                 case "nuke":
-                {
-                    $artistID = int_escape($event->get_arg(1));
-                    $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("artist/list"));
-                    break;
-                }
+                    {
+                        $artistID = int_escape($event->get_arg(1));
+                        $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("artist/list"));
+                        break;
+                    }
                 case "add_alias":
-                {
-                    $artistID = $_POST['artist_id'];
-                    $this->theme->show_new_alias_composer($artistID);
-                    break;
-                }
+                    {
+                        $artistID = $_POST['artist_id'];
+                        $this->theme->show_new_alias_composer($artistID);
+                        break;
+                    }
                 case "add_member":
-                {
-                    $artistID = $_POST['artist_id'];
-                    $this->theme->show_new_member_composer($artistID);
-                    break;
-                }
+                    {
+                        $artistID = $_POST['artist_id'];
+                        $this->theme->show_new_member_composer($artistID);
+                        break;
+                    }
                 case "add_url":
-                {
-                    $artistID = $_POST['artist_id'];
-                    $this->theme->show_new_url_composer($artistID);
-                    break;
-                }
-                //***********ALIAS SECTION ***********************
+                    {
+                        $artistID = $_POST['artist_id'];
+                        $this->theme->show_new_url_composer($artistID);
+                        break;
+                    }
+                    //***********ALIAS SECTION ***********************
                 case "alias":
-                {
-                    switch ($event->get_arg(1)) {
-                        case "add":
-                        {
-                            $artistID = $_POST['artistID'];
-                            $this->add_alias();
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
+                    {
+                        switch ($event->get_arg(1)) {
+                            case "add":
+                                {
+                                    $artistID = $_POST['artistID'];
+                                    $this->add_alias();
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
+                            case "delete":
+                                {
+                                    $aliasID = int_escape($event->get_arg(2));
+                                    $artistID = $this->get_artistID_by_aliasID($aliasID);
+                                    $this->delete_alias($aliasID);
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
+                            case "edit":
+                                {
+                                    $aliasID = int_escape($event->get_arg(2));
+                                    $alias = $this->get_alias_by_id($aliasID);
+                                    $this->theme->show_alias_editor($alias);
+                                    break;
+                                }
+                            case "edited":
+                                {
+                                    $this->update_alias();
+                                    $aliasID = int_escape($_POST['aliasID']);
+                                    $artistID = $this->get_artistID_by_aliasID($aliasID);
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
                         }
-                        case "delete":
-                        {
-                            $aliasID = int_escape($event->get_arg(2));
-                            $artistID = $this->get_artistID_by_aliasID($aliasID);
-                            $this->delete_alias($aliasID);
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
-                        }
-                        case "edit":
-                        {
-                            $aliasID = int_escape($event->get_arg(2));
-                            $alias = $this->get_alias_by_id($aliasID);
-                            $this->theme->show_alias_editor($alias);
-                            break;
-                        }
-                        case "edited":
-                        {
-                            $this->update_alias();
-                            $aliasID = int_escape($_POST['aliasID']);
-                            $artistID = $this->get_artistID_by_aliasID($aliasID);
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
-                        }
+                        break; // case: alias
                     }
-                    break; // case: alias
-                }
 
-                //**************** URLS SECTION **********************
+                    //**************** URLS SECTION **********************
                 case "url":
-                {
-                    switch ($event->get_arg(1)) {
-                        case "add":
-                        {
-                            $artistID = $_POST['artistID'];
-                            $this->add_urls();
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
+                    {
+                        switch ($event->get_arg(1)) {
+                            case "add":
+                                {
+                                    $artistID = $_POST['artistID'];
+                                    $this->add_urls();
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
+                            case "delete":
+                                {
+                                    $urlID = int_escape($event->get_arg(2));
+                                    $artistID = $this->get_artistID_by_urlID($urlID);
+                                    $this->delete_url($urlID);
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
+                            case "edit":
+                                {
+                                    $urlID = int_escape($event->get_arg(2));
+                                    $url = $this->get_url_by_id($urlID);
+                                    $this->theme->show_url_editor($url);
+                                    break;
+                                }
+                            case "edited":
+                                {
+                                    $this->update_url();
+                                    $urlID = int_escape($_POST['urlID']);
+                                    $artistID = $this->get_artistID_by_urlID($urlID);
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
                         }
-                        case "delete":
-                        {
-                            $urlID = int_escape($event->get_arg(2));
-                            $artistID = $this->get_artistID_by_urlID($urlID);
-                            $this->delete_url($urlID);
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
-                        }
-                        case "edit":
-                        {
-                            $urlID = int_escape($event->get_arg(2));
-                            $url = $this->get_url_by_id($urlID);
-                            $this->theme->show_url_editor($url);
-                            break;
-                        }
-                        case "edited":
-                        {
-                            $this->update_url();
-                            $urlID = int_escape($_POST['urlID']);
-                            $artistID = $this->get_artistID_by_urlID($urlID);
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
-                        }
+                        break; // case: urls
                     }
-                    break; // case: urls
-                }
-                //******************* MEMBERS SECTION *********************
+                    //******************* MEMBERS SECTION *********************
                 case "member":
-                {
-                    switch ($event->get_arg(1)) {
-                        case "add":
-                        {
-                            $artistID = $_POST['artistID'];
-                            $this->add_members();
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
+                    {
+                        switch ($event->get_arg(1)) {
+                            case "add":
+                                {
+                                    $artistID = $_POST['artistID'];
+                                    $this->add_members();
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
+                            case "delete":
+                                {
+                                    $memberID = int_escape($event->get_arg(2));
+                                    $artistID = $this->get_artistID_by_memberID($memberID);
+                                    $this->delete_member($memberID);
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
+                            case "edit":
+                                {
+                                    $memberID = int_escape($event->get_arg(2));
+                                    $member = $this->get_member_by_id($memberID);
+                                    $this->theme->show_member_editor($member);
+                                    break;
+                                }
+                            case "edited":
+                                {
+                                    $this->update_member();
+                                    $memberID = int_escape($_POST['memberID']);
+                                    $artistID = $this->get_artistID_by_memberID($memberID);
+                                    $page->set_mode(PageMode::REDIRECT);
+                                    $page->set_redirect(make_link("artist/view/".$artistID));
+                                    break;
+                                }
                         }
-                        case "delete":
-                        {
-                            $memberID = int_escape($event->get_arg(2));
-                            $artistID = $this->get_artistID_by_memberID($memberID);
-                            $this->delete_member($memberID);
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
-                        }
-                        case "edit":
-                        {
-                            $memberID = int_escape($event->get_arg(2));
-                            $member = $this->get_member_by_id($memberID);
-                            $this->theme->show_member_editor($member);
-                            break;
-                        }
-                        case "edited":
-                        {
-                            $this->update_member();
-                            $memberID = int_escape($_POST['memberID']);
-                            $artistID = $this->get_artistID_by_memberID($memberID);
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("artist/view/".$artistID));
-                            break;
-                        }
+                        break; //case: members
                     }
-                    break; //case: members
-                }
             }
         }
     }

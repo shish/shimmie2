@@ -134,10 +134,8 @@ class ResizeImage extends Extension
             if (is_null($image)) {
                 $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
-
                 /* Check if options were given to resize an image. */
                 if (isset($_POST['resize_width']) || isset($_POST['resize_height'])) {
-
                     /* get options */
 
                     $width = $height = 0;

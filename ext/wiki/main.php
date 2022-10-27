@@ -490,14 +490,14 @@ class Wiki extends Extension
         $out        = "";
 
         while (
-                $c1 < $max1                 # have next line in left
-                and
-                $c2 < $max2                 # have next line in right
-                and
-                ($stop++) < 1000            # don-t have more then 1000 ( loop-stopper )
-                and
-                $outcount < 20              # output count is less then 20
-              ) {
+            $c1 < $max1                 # have next line in left
+            and
+            $c2 < $max2                 # have next line in right
+            and
+            ($stop++) < 1000            # don-t have more then 1000 ( loop-stopper )
+            and
+            $outcount < 20              # output count is less then 20
+        ) {
             /**
             *   is the trimmed line of the current left and current right line
             *   the same ? then this is a hit (no difference)
@@ -544,15 +544,14 @@ class Wiki extends Extension
 
                 #fast search in on both sides for next match.
                 while (
-                        $found == 0             # search until we find a pair
-                        and
-                        ($c1 + $s1 <= $max1)  # and we are inside of the left lines
-                        and
-                        ($c2 + $s2 <= $max2)  # and we are inside of the right lines
-                        and
-                        $fstop++  < 10          # and the distance is lower than 10 lines
-                      ) {
-
+                    $found == 0             # search until we find a pair
+                    and
+                    ($c1 + $s1 <= $max1)  # and we are inside of the left lines
+                    and
+                    ($c2 + $s2 <= $max2)  # and we are inside of the right lines
+                    and
+                    $fstop++  < 10          # and the distance is lower than 10 lines
+                ) {
                     /**
                     *   test the left side for a hit
                     *
