@@ -369,7 +369,7 @@ class Image
         $cut_name = substr($this->filename, 0, 255);
 
         if (is_null($this->posted) || $this->posted == "") {
-            $this->posted = date('c', time());
+            $this->posted = date('Y-m-d H:i:s', time());
         }
 
         if (is_null($this->id)) {
