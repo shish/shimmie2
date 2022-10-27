@@ -35,8 +35,11 @@ jobs:
     - name: Log Versions
       run: ./vendor/bin/php-cs-fixer --version
 
-    - name: Check format
-      run: ./vendor/bin/php-cs-fixer fix --dry-run
+    - name: Format
+      run: ./vendor/bin/php-cs-fixer fix
+
+    - name: Log Diff
+      run: git diff --exit-code
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
