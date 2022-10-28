@@ -142,7 +142,7 @@ class AutoTagger extends Extension
                     additional_tags VARCHAR(2000) NOT NULL
                 ");
 
-            if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
+            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute('CREATE INDEX auto_tag_lower_tag_idx ON auto_tag ((lower(tag)))');
             }
             $this->set_version(AutoTaggerConfig::VERSION, 1);

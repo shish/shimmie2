@@ -501,11 +501,11 @@ class Ratings extends Extension
 
         if ($this->get_version(RatingsConfig::VERSION) < 3) {
             $database->execute("UPDATE images SET rating = 'u' WHERE rating is null");
-            switch ($database->get_driver_name()) {
-                case DatabaseDriver::MYSQL:
+            switch ($database->get_driver_id()) {
+                case DatabaseDriverID::MYSQL:
                     $database->execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
                     break;
-                case DatabaseDriver::PGSQL:
+                case DatabaseDriverID::PGSQL:
                     $database->execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
                     $database->execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
@@ -527,11 +527,11 @@ class Ratings extends Extension
                 $config->set_array("ext_rating_admin_privs", str_split($value));
             }
 
-            switch ($database->get_driver_name()) {
-                case DatabaseDriver::MYSQL:
+            switch ($database->get_driver_id()) {
+                case DatabaseDriverID::MYSQL:
                     $database->execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT '?'");
                     break;
-                case DatabaseDriver::PGSQL:
+                case DatabaseDriverID::PGSQL:
                     $database->execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT '?'");
                     break;
             }

@@ -121,7 +121,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
             "pool_id" => $pool_id,
             "check" => [(string)($image_ids[0]), (string)($image_ids[1])]
         ]);
-        $this->assertEquals("redirect", $page->mode);
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
         return [$pool_id, $image_ids];
     }
@@ -135,7 +135,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
             "pool_id" => $pool_id,
             "check" => [(string)($image_ids[0]), (string)($image_ids[1])]
         ]);
-        $this->assertEquals("redirect", $page->mode);
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
     }
 
     /** @depends testCreate */
@@ -147,7 +147,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
             "pool_id" => $pool_id,
             "description" => "Updated description"
         ]);
-        $this->assertEquals("redirect", $page->mode);
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
         return [$pool_id, $image_ids];
     }
@@ -173,6 +173,6 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $page = $this->post_page("pool/nuke", [
             "pool_id" => "$pool_id",
         ]);
-        $this->assertEquals("redirect", $page->mode);
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
     }
 }

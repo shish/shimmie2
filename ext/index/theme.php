@@ -291,8 +291,8 @@ and of course start organising your images :-)
         <p>Search for posts by source</p>
 
         <div class="command_example">
-        <pre>source=http://google.com/</pre>
-        <p>Returns posts with a source of "http://google.com/".</p>
+        <pre>source=https:///google.com/</pre>
+        <p>Returns posts with a source of "https://google.com/".</p>
         </div>
 
         <div class="command_example">

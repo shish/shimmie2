@@ -24,9 +24,9 @@ class ETTheme extends Themelet
         $page->add_block(new Block("Information:", $this->build_data_form($yaml)));
     }
 
-    protected function build_data_form($yaml): string
+    protected function build_data_form($yaml): \MicroHTML\HTMLElement
     {
-        return (string)FORM(
+        return FORM(
             ["action"=>"https://shimmie.shishnet.org/register.php", "method"=>"POST"],
             INPUT(["type"=>"hidden", "name"=>"registration_api", "value"=>"2"]),
             P(

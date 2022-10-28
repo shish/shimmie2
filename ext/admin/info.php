@@ -13,5 +13,5 @@ class AdminPageInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Provides a base for various small admin functions";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

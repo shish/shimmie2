@@ -11,7 +11,7 @@ class StatsDInterfaceInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
-    public string $visibility = self::VISIBLE_ADMIN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public string $description = "Sends Shimmie stats to a StatsD server";
     public ?string $documentation = "define('STATSD_HOST', 'my.server.com:8125'); in shimmie.conf.php to set the host";
 }

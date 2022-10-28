@@ -10,5 +10,5 @@ class DownloadInfo extends ExtensionInfo
     public string $license = self::LICENSE_WTFPL;
     public string $description = "System-wide download functions";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

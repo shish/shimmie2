@@ -45,8 +45,8 @@ class ExtManagerTheme extends Themelet
         );
 
         foreach ($extensions as $extension) {
-            if ((!$editable && $extension->visibility === ExtensionInfo::VISIBLE_ADMIN)
-                    || $extension->visibility === ExtensionInfo::VISIBLE_HIDDEN) {
+            if ((!$editable && $extension->visibility === ExtensionVisibility::ADMIN)
+                    || $extension->visibility === ExtensionVisibility::HIDDEN) {
                 continue;
             }
 
@@ -87,7 +87,7 @@ class ExtManagerTheme extends Themelet
         $page->set_title("Extensions");
         $page->set_heading("Extensions");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Extension Manager", (string)$form));
+        $page->add_block(new Block("Extension Manager", $form));
     }
 
     public function display_doc(Page $page, ExtensionInfo $info)
@@ -119,6 +119,6 @@ class ExtManagerTheme extends Themelet
         $page->set_title("Documentation for " . html_escape($info->name));
         $page->set_heading(html_escape($info->name));
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Documentation", (string)$html));
+        $page->add_block(new Block("Documentation", $html));
     }
 }

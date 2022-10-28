@@ -902,9 +902,9 @@ class Media extends Extension
         if ($this->get_version(MediaConfig::VERSION) < 2) {
             $database->execute("ALTER TABLE images ADD COLUMN image BOOLEAN NULL");
 
-            switch ($database->get_driver_name()) {
-                case DatabaseDriver::PGSQL:
-                case DatabaseDriver::SQLITE:
+            switch ($database->get_driver_id()) {
+                case DatabaseDriverID::PGSQL:
+                case DatabaseDriverID::SQLITE:
                     $database->execute('CREATE INDEX images_image_idx ON images(image) WHERE image IS NOT NULL');
                     break;
                 default:

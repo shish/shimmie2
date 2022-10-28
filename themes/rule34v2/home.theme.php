@@ -53,7 +53,7 @@ EOD
 		";
         return "
 		<div id='front-page'>
-			<h1><a style='text-decoration: none;' href='".make_link()."'><span>$sitename</span></a></h1>
+			<h1><a style='text-decoration: none;' href='".make_link(). "'><span>$sitename</span></a></h1>
 			$main_links_html
 			$search_html
 			$message_html
@@ -68,7 +68,7 @@ EOD
 
 				<small><small>
 				$contact_link Serving $num_comma posts &ndash;
-				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie2</a>
+				Running <a href='https://code.shishnet.org/shimmie2/'>Shimmie2</a>
 				</small></small>
 			</div>
 		</div>";

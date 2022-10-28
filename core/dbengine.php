@@ -9,7 +9,7 @@ abstract class SCORE
 
 abstract class DBEngine
 {
-    public ?string $name = null;
+    public DatabaseDriverID $id;
 
     public function init(PDO $db)
     {
@@ -34,7 +34,7 @@ abstract class DBEngine
 
 class MySQL extends DBEngine
 {
-    public ?string $name = DatabaseDriver::MYSQL;
+    public DatabaseDriverID $id = DatabaseDriverID::MYSQL;
 
     public function init(PDO $db)
     {
@@ -73,7 +73,7 @@ class MySQL extends DBEngine
 
 class PostgreSQL extends DBEngine
 {
-    public ?string $name = DatabaseDriver::PGSQL;
+    public DatabaseDriverID $id = DatabaseDriverID::PGSQL;
 
     public function init(PDO $db)
     {
@@ -171,7 +171,7 @@ function _ln($n): float
 
 class SQLite extends DBEngine
 {
-    public ?string $name = DatabaseDriver::SQLITE;
+    public DatabaseDriverID $id = DatabaseDriverID::SQLITE;
 
     public function init(PDO $db)
     {

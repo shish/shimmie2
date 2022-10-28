@@ -12,5 +12,5 @@ class SystemInfo extends ExtensionInfo
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Provides system screen";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

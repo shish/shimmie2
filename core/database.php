@@ -3,11 +3,11 @@
 declare(strict_types=1);
 use FFSPHP\PDO;
 
-abstract class DatabaseDriver
+enum DatabaseDriverID: string
 {
-    public const MYSQL = "mysql";
-    public const PGSQL = "pgsql";
-    public const SQLITE = "sqlite";
+    case MYSQL = "mysql";
+    case PGSQL = "pgsql";
+    case SQLITE = "sqlite";
 }
 
 /**
@@ -54,11 +54,11 @@ class Database
             throw new SCoreException("Can't figure out database engine");
         }
 
-        if ($db_proto === DatabaseDriver::MYSQL) {
+        if ($db_proto === DatabaseDriverID::MYSQL->value) {
             $this->engine = new MySQL();
-        } elseif ($db_proto === DatabaseDriver::PGSQL) {
+        } elseif ($db_proto === DatabaseDriverID::PGSQL->value) {
             $this->engine = new PostgreSQL();
-        } elseif ($db_proto === DatabaseDriver::SQLITE) {
+        } elseif ($db_proto === DatabaseDriverID::SQLITE->value) {
             $this->engine = new SQLite();
         } else {
             die_nicely(
@@ -106,12 +106,12 @@ class Database
         return $this->engine->scoreql_to_sql($input);
     }
 
-    public function get_driver_name(): string
+    public function get_driver_id(): DatabaseDriverID
     {
         if (is_null($this->engine)) {
             $this->connect_engine();
         }
-        return $this->engine->name;
+        return $this->engine->id;
     }
 
     public function get_version(): string
@@ -269,7 +269,7 @@ class Database
      */
     public function get_last_insert_id(string $seq): int
     {
-        if ($this->engine->name == DatabaseDriver::PGSQL) {
+        if ($this->engine->id == DatabaseDriverID::PGSQL) {
             $id = $this->db->lastInsertId($seq);
         } else {
             $id = $this->db->lastInsertId();
@@ -301,20 +301,20 @@ class Database
             $this->connect_db();
         }
 
-        if ($this->engine->name === DatabaseDriver::MYSQL) {
+        if ($this->engine->id === DatabaseDriverID::MYSQL) {
             return count(
                 $this->get_all("SHOW TABLES")
             );
-        } elseif ($this->engine->name === DatabaseDriver::PGSQL) {
+        } elseif ($this->engine->id === DatabaseDriverID::PGSQL) {
             return count(
                 $this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
             );
-        } elseif ($this->engine->name === DatabaseDriver::SQLITE) {
+        } elseif ($this->engine->id === DatabaseDriverID::SQLITE) {
             return count(
                 $this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
             );
         } else {
-            throw new SCoreException("Can't count tables for database type {$this->engine->name}");
+            throw new SCoreException("Can't count tables for database type {$this->engine->id}");
         }
     }
 
@@ -325,8 +325,8 @@ class Database
 
     public function standardise_boolean(string $table, string $column, bool $include_postgres=false): void
     {
-        $d = $this->get_driver_name();
-        if ($d == DatabaseDriver::MYSQL) {
+        $d = $this->get_driver_id();
+        if ($d == DatabaseDriverID::MYSQL) {
             # In mysql, ENUM('Y', 'N') is secretly INTEGER where Y=1 and N=2.
             # BOOLEAN is secretly TINYINT where true=1 and false=0.
             # So we can cast directly from ENUM to BOOLEAN which gives us a
@@ -335,12 +335,12 @@ class Database
             $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");
             $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");
         }
-        if ($d == DatabaseDriver::SQLITE) {
+        if ($d == DatabaseDriverID::SQLITE) {
             # SQLite doesn't care about column types at all, everything is
             # text, so we can in-place replace a char with a bool
             $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");
         }
-        if ($d == DatabaseDriver::PGSQL && $include_postgres) {
+        if ($d == DatabaseDriverID::PGSQL && $include_postgres) {
             $this->execute("ALTER TABLE $table ADD COLUMN ${column}_b BOOLEAN DEFAULT FALSE NOT NULL");
             $this->execute("UPDATE $table SET ${column}_b = ($column = 'Y')");
             $this->execute("ALTER TABLE $table DROP COLUMN $column");

@@ -22,11 +22,11 @@ class FeaturedTheme extends Themelet
         );
     }
 
-    public function build_featured_html(Image $image, ?string $query=null): string
+    public function build_featured_html(Image $image, ?string $query=null): \MicroHTML\HTMLElement
     {
         $tsize = get_thumbnail_size($image->width, $image->height);
 
-        return (string)DIV(
+        return DIV(
             ["style"=>"text-align: center;"],
             A(
                 ["href"=>make_link("post/view/{$image->id}", $query)],

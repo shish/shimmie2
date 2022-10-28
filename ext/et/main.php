@@ -71,7 +71,7 @@ class ET extends Extension
                 'shimmie' => VERSION,
                 'schema'  => $config->get_int("db_version"),
                 'php'     => phpversion(),
-                'db'      => $database->get_driver_name() . " " . $database->get_version(),
+                'db'      => $database->get_driver_id()->value . " " . $database->get_version(),
                 'os'      => php_uname(),
                 'server'  =>  $_SERVER["SERVER_SOFTWARE"] ?? 'unknown',
             ],

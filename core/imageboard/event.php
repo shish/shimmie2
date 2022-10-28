@@ -8,7 +8,6 @@ declare(strict_types=1);
 class ImageAdditionEvent extends Event
 {
     public User $user;
-    public Image $image;
     public bool $merged = false;
 
     /**
@@ -16,10 +15,10 @@ class ImageAdditionEvent extends Event
      * information. Also calls TagSetEvent to set the tags for
      * this new image.
      */
-    public function __construct(Image $image)
-    {
+    public function __construct(
+        public Image $image,
+    ) {
         parent::__construct();
-        $this->image = $image;
     }
 }
 
@@ -32,20 +31,17 @@ class ImageAdditionException extends SCoreException
  */
 class ImageDeletionEvent extends Event
 {
-    public Image $image;
-    public bool $force = false;
-
     /**
      * Deletes an image.
      *
      * Used by things like tags and comments handlers to
      * clean out related rows in their tables.
      */
-    public function __construct(Image $image, bool $force = false)
-    {
+    public function __construct(
+        public Image $image,
+        public bool $force = false,
+    ) {
         parent::__construct();
-        $this->image = $image;
-        $this->force = $force;
     }
 }
 
@@ -54,9 +50,6 @@ class ImageDeletionEvent extends Event
  */
 class ImageReplaceEvent extends Event
 {
-    public int $id;
-    public Image $image;
-
     /**
      * Replaces an image.
      *
@@ -64,11 +57,11 @@ class ImageReplaceEvent extends Event
      * file, leaving the tags and such unchanged. Also removes
      * the old image file and thumbnail from the disk.
      */
-    public function __construct(int $id, Image $image)
-    {
+    public function __construct(
+        public int $id,
+        public Image $image
+    ) {
         parent::__construct();
-        $this->id = $id;
-        $this->image = $image;
     }
 }
 
@@ -81,20 +74,17 @@ class ImageReplaceException extends SCoreException
  */
 class ThumbnailGenerationEvent extends Event
 {
-    public string $hash;
-    public string $mime;
-    public bool $force;
     public bool $generated;
 
     /**
      * Request a thumbnail be made for an image object
      */
-    public function __construct(string $hash, string $mime, bool $force=false)
-    {
+    public function __construct(
+        public string $hash,
+        public string $mime,
+        public bool $force=false
+    ) {
         parent::__construct();
-        $this->hash = $hash;
-        $this->mime = $mime;
-        $this->force = $force;
         $this->generated = false;
     }
 }

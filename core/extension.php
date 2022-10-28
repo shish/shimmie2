@@ -107,6 +107,12 @@ abstract class Extension
     }
 }
 
+enum ExtensionVisibility {
+    case DEFAULT;
+    case ADMIN;
+    case HIDDEN;
+}
+
 abstract class ExtensionInfo
 {
     // Every credit you get costs us RAM. It stops now.
@@ -119,11 +125,6 @@ abstract class ExtensionInfo
     public const LICENSE_MIT = "MIT";
     public const LICENSE_WTFPL = "WTFPL";
 
-    public const VISIBLE_DEFAULT = "default";
-    public const VISIBLE_ADMIN = "admin";
-    public const VISIBLE_HIDDEN = "hidden";
-    private const VALID_VISIBILITY = [self::VISIBLE_DEFAULT, self::VISIBLE_ADMIN, self::VISIBLE_HIDDEN];
-
     public string $key;
 
     public bool $core = false;
@@ -135,12 +136,12 @@ abstract class ExtensionInfo
     public array $authors = [];
     public array $dependencies = [];
     public array $conflicts = [];
-    public string $visibility = self::VISIBLE_DEFAULT;
+    public ExtensionVisibility $visibility = ExtensionVisibility::DEFAULT;
     public ?string $link = null;
     public ?string $version = null;
     public ?string $documentation = null;
 
-    /** @var string[] which DBs this ext supports (blank for 'all') */
+    /** @var DatabaseDriverID[] which DBs this ext supports (blank for 'all') */
     public array $db_support = [];
     private ?bool $supported = null;
     private ?string $support_info = null;
@@ -169,7 +170,6 @@ abstract class ExtensionInfo
     {
         assert(!empty($this->key), "key field is required");
         assert(!empty($this->name), "name field is required for extension $this->key");
-        assert(empty($this->visibility) || in_array($this->visibility, self::VALID_VISIBILITY), "Invalid visibility for extension $this->key");
         assert(is_array($this->db_support), "db_support has to be an array for extension $this->key");
         assert(is_array($this->authors), "authors has to be an array for extension $this->key");
         assert(is_array($this->dependencies), "dependencies has to be an array for extension $this->key");
@@ -184,7 +184,7 @@ abstract class ExtensionInfo
     {
         global $database;
         $this->support_info  = "";
-        if (!empty($this->db_support) && !in_array($database->get_driver_name(), $this->db_support)) {
+        if (!empty($this->db_support) && !in_array($database->get_driver_id(), $this->db_support)) {
             $this->support_info .= "Database not supported. ";
         }
         if (!empty($this->conflicts)) {

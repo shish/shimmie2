@@ -90,7 +90,7 @@ class Tag
     public static function sanitize(string $tag): string
     {
         $tag = preg_replace("/\s/", "", $tag);                # whitespace
-        $tag = preg_replace('/\x20[\x0e\x0f]/', '', $tag);   # unicode RTL
+        $tag = preg_replace('/\x20[\x0e\x0f]/', '', $tag);    # unicode RTL
         $tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
         $tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
         $tag = trim($tag, ", \t\n\r\0\x0B");
@@ -159,7 +159,7 @@ class Tag
     public static function sqlify(string $term): string
     {
         global $database;
-        if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
             $term = str_replace('\\', '\\\\', $term);
         }
         $term = str_replace('_', '\_', $term);

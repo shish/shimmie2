@@ -3,13 +3,13 @@
 declare(strict_types=1);
 require_once "core/event.php";
 
-abstract class PageMode
+enum PageMode: string
 {
-    public const REDIRECT = 'redirect';
-    public const DATA = 'data';
-    public const PAGE = 'page';
-    public const FILE = 'file';
-    public const MANUAL = 'manual';
+    case REDIRECT = 'redirect';
+    case DATA = 'data';
+    case PAGE = 'page';
+    case FILE = 'file';
+    case MANUAL = 'manual';
 }
 
 /**
@@ -22,13 +22,13 @@ abstract class PageMode
  */
 class BasePage
 {
-    public string $mode = PageMode::PAGE;
+    public PageMode $mode = PageMode::PAGE;
     private string $mime;
 
     /**
      * Set what this page should do; "page", "data", or "redirect".
      */
-    public function set_mode(string $mode): void
+    public function set_mode(PageMode $mode): void
     {
         $this->mode = $mode;
     }

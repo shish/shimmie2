@@ -11,5 +11,5 @@ class UserPageInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $description = "Allows people to sign up to the website";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

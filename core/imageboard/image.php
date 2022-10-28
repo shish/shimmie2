@@ -650,7 +650,7 @@ class Image
     public function delete_tags_from_image(): void
     {
         global $database;
-        if ($database->get_driver_name() == DatabaseDriver::MYSQL) {
+        if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
             //mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
             $database->execute(
                 "
@@ -796,7 +796,7 @@ class Image
     {
         global $database;
         $sq = "SELECT id FROM tags WHERE LOWER(tag) LIKE LOWER(:tag)";
-        if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
             $sq .= "ESCAPE '\\'";
         }
         return $database->get_col($sq, ["tag" => Tag::sqlify($tag)]);

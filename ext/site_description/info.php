@@ -11,7 +11,7 @@ class SiteDescriptionInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
-    public string $visibility = self::VISIBLE_ADMIN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public string $description = "A description for search engines";
     public ?string $documentation =
 "This extension sets the \"description\" meta tag in the header of pages so that search engines can pick it up";

@@ -337,8 +337,8 @@ class Pools extends Extension
                             while ($row = $result->fetch()) {
                                 $database->execute(
                                     "
-										UPDATE pool_images 
-										SET image_order=:ord 
+										UPDATE pool_images
+										SET image_order=:ord
 										WHERE pool_id = :pid AND image_id = :iid",
                                     ["ord" => $image_order, "pid" => $pool_id, "iid" => (int)$row['image_id']]
                                 );
@@ -916,9 +916,8 @@ class Pools extends Extension
 
             if ($entry['action'] == 0) {
                 // READ ENTRIES
-                foreach ($images as $image) {
-                    $imageID = $image;
-                    $this->add_post($poolID, $imageID);
+                foreach ($images as $imageID) {
+                    $this->add_post($poolID, int_escape($imageID));
 
                     $imageArray .= " " . $imageID;
                     $newAction = 1;

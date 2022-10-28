@@ -551,8 +551,8 @@ class OuroborosAPI extends Extension
             if (array_key_exists(0, $data)) {
                 $xml->startElement($type . 's');
                 if ($type == 'post') {
-                    $xml->writeAttribute('count', count($data));
-                    $xml->writeAttribute('offset', $offset);
+                    $xml->writeAttribute('count', (string)count($data));
+                    $xml->writeAttribute('offset', (string)$offset);
                 }
                 if ($type == 'tag') {
                     $xml->writeAttribute('type', 'array');
