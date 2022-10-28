@@ -107,7 +107,8 @@ abstract class Extension
     }
 }
 
-enum ExtensionVisibility {
+enum ExtensionVisibility
+{
     case DEFAULT;
     case ADMIN;
     case HIDDEN;
