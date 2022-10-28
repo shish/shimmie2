@@ -108,5 +108,4 @@ jobs:
     - name: Upload coverage
       if: matrix.php == '8.1'
       run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover data/coverage.clover
+          vendor/bin/ocular code-coverage:upload --format=php-clover data/coverage.clover
