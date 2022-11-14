@@ -144,7 +144,7 @@ class Cache
         $matches = [];
         $c = null;
         if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {
-            if ($matches[1] == "memcached") {
+            if ($matches[1] == "memcached" || $matches[1] == "memcache") {
                 $c = new MemcachedCache($matches[2]);
             } elseif ($matches[1] == "apc") {
                 $c = new APCCache($matches[2]);
