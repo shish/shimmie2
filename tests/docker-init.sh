@@ -8,5 +8,5 @@ exec /usr/local/bin/su-exec shimmie:shimmie \
   /usr/bin/php \
     -d upload_max_filesize=50M \
     -d post_max_size=50M \
-    -S 0.0.0.0:8000 \
+    -S 0.0.0.0:8000 -q \
     tests/router.php
