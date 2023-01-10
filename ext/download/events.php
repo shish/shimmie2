@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class ImageDownloadingEvent extends Event
 {
     public Image $image;

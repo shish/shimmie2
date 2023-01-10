@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class Themelet extends BaseThemelet
 {
     public function build_thumb_html(Image $image): string

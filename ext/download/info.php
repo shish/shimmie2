@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class DownloadInfo extends ExtensionInfo
 {
     public const KEY = "download";

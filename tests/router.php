@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // custom routing for stand-alone mode, basically
 // .htaccess for the built-in php web server
 if (PHP_SAPI !== 'cli-server') {

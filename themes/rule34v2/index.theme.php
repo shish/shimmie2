@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class CustomIndexTheme extends IndexTheme
 {
     protected function build_table(array $images, ?string $query): string

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 class CustomHomeTheme extends HomeTheme
 {
     public function display_page(Page $page, string $sitename, string $base_href, string $theme_name, string $body): void
     {
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->add_auto_html_headers();
         $hh = $page->get_all_html_headers();
         $page->set_data(
