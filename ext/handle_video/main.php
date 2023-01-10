@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class VideoFileHandlerConfig
 {
     public const PLAYBACK_AUTOPLAY = "video_playback_autoplay";

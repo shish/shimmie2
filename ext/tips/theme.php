@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class TipsTheme extends Themelet
 {
     public function manageTips($url, $images)

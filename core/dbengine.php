@@ -1,6 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
+use FFSPHP\PDO;
+
 abstract class SCORE
 {
     public const AIPK      = "SCORE_AIPK";
@@ -177,16 +182,16 @@ class SQLite extends DBEngine
     {
         ini_set('sqlite.assoc_case', '0');
         $db->exec("PRAGMA foreign_keys = ON;");
-        $db->sqliteCreateFunction('UNIX_TIMESTAMP', '_unix_timestamp', 1);
-        $db->sqliteCreateFunction('now', '_now', 0);
-        $db->sqliteCreateFunction('floor', '_floor', 1);
-        $db->sqliteCreateFunction('log', '_log');
-        $db->sqliteCreateFunction('isnull', '_isnull', 1);
-        $db->sqliteCreateFunction('md5', '_md5', 1);
-        $db->sqliteCreateFunction('concat', '_concat', 2);
-        $db->sqliteCreateFunction('lower', '_lower', 1);
-        $db->sqliteCreateFunction('rand', '_rand', 0);
-        $db->sqliteCreateFunction('ln', '_ln', 1);
+        $db->sqliteCreateFunction('UNIX_TIMESTAMP', 'Shimmie2\_unix_timestamp', 1);
+        $db->sqliteCreateFunction('now', 'Shimmie2\_now', 0);
+        $db->sqliteCreateFunction('floor', 'Shimmie2\_floor', 1);
+        $db->sqliteCreateFunction('log', 'Shimmie2\_log');
+        $db->sqliteCreateFunction('isnull', 'Shimmie2\_isnull', 1);
+        $db->sqliteCreateFunction('md5', 'Shimmie2\_md5', 1);
+        $db->sqliteCreateFunction('concat', 'Shimmie2\_concat', 2);
+        $db->sqliteCreateFunction('lower', 'Shimmie2\_lower', 1);
+        $db->sqliteCreateFunction('rand', 'Shimmie2\_rand', 0);
+        $db->sqliteCreateFunction('ln', 'Shimmie2\_ln', 1);
     }
 
     public function scoreql_to_sql(string $data): string

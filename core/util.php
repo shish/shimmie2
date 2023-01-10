@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
@@ -259,7 +262,7 @@ function load_balance_url(string $tmpl, string $hash, int $n=0): string
         if (isset($flexihashes[$opts])) {
             $flexihash = $flexihashes[$opts];
         } else {
-            $flexihash = new Flexihash\Flexihash();
+            $flexihash = new \Flexihash\Flexihash();
             foreach (explode(",", $opts) as $opt) {
                 $parts = explode("=", $opt);
                 $parts_count = count($parts);
@@ -490,18 +493,18 @@ function scan_dir(string $path): array
     $bytestotal = 0;
     $nbfiles = 0;
 
-    $ite = new RecursiveDirectoryIterator(
+    $ite = new \RecursiveDirectoryIterator(
         $path,
-        FilesystemIterator::KEY_AS_PATHNAME |
-        FilesystemIterator::CURRENT_AS_FILEINFO |
-        FilesystemIterator::SKIP_DOTS
+        \FilesystemIterator::KEY_AS_PATHNAME |
+        \FilesystemIterator::CURRENT_AS_FILEINFO |
+        \FilesystemIterator::SKIP_DOTS
     );
-    foreach (new RecursiveIteratorIterator($ite) as $filename => $cur) {
+    foreach (new \RecursiveIteratorIterator($ite) as $filename => $cur) {
         try {
             $filesize = $cur->getSize();
             $bytestotal += $filesize;
             $nbfiles++;
-        } catch (RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             // This usually just means that the file got eaten by the import
             continue;
         }
@@ -579,7 +582,9 @@ function _load_core_files()
 
 function _load_theme_files()
 {
-    require_all(_get_themelet_files(get_theme()));
+    $theme = get_theme();
+    $files = _get_themelet_files($theme);
+    require_all($files);
 }
 
 function _set_up_shimmie_environment(): void
@@ -621,13 +626,13 @@ function _get_themelet_files(string $_theme): array
 /**
  * Used to display fatal errors to the web user.
  */
-function _fatal_error(Exception $e): void
+function _fatal_error(\Exception $e): void
 {
     $version = VERSION;
     $message = $e->getMessage();
     $phpver = phpversion();
-    $query = is_subclass_of($e, "SCoreException") ? $e->query : null;
-    $code = is_subclass_of($e, "SCoreException") ? $e->http_code : 500;
+    $query = is_subclass_of($e, "Shimmie2\SCoreException") ? $e->query : null;
+    $code = is_subclass_of($e, "Shimmie2\SCoreException") ? $e->http_code : 500;
 
     //$hash = exec("git rev-parse HEAD");
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";

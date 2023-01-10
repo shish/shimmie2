@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 _d("STATSD_HOST", null);
 
 function dstat($name, $val)

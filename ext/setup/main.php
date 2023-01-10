@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-include_once "config.php";
+namespace Shimmie2;
+
+require_once "config.php";
 
 /*
  * Sent when the setup screen's 'set' button has been

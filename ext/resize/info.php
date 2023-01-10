@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /*
  * Notice:
  *  The image resize and resample code is based off of the "smart_resize_image"

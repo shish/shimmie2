@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 use function MicroHTML\TABLE;

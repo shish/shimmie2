@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "events.php";
 
 use MicroHTML\HTMLElement;
@@ -697,7 +699,7 @@ class UserPage extends Extension
 
     private function count_log_ips(User $duser): array
     {
-        if (!class_exists('LogDatabase')) {
+        if (!class_exists('Shimmie2\LogDatabase')) {
             return [];
         }
         global $database;

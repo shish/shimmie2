@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use function MicroHTML\TR;
 use function MicroHTML\TH;
 use function MicroHTML\TD;

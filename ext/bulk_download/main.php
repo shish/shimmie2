@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BulkDownloadConfig
 {
     public const SIZE_LIMIT = "bulk_download_size_limit";

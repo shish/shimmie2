@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use function MicroHTML\LABEL;
 use function MicroHTML\TABLE;
 use function MicroHTML\TBODY;

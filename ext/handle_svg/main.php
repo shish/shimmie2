@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension

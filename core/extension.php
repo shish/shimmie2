@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /**
  * Class Extension
  *
@@ -17,7 +20,7 @@ abstract class Extension
 {
     public string $key;
     protected ?Themelet $theme;
-    public ?ExtensionInfo $info;
+    public ExtensionInfo $info;
 
     private static array $enabled_extensions = [];
 
@@ -26,9 +29,6 @@ abstract class Extension
         $class = $class ?? get_called_class();
         $this->theme = $this->get_theme_object($class);
         $this->info = ExtensionInfo::get_for_extension_class($class);
-        if ($this->info===null) {
-            throw new ScoreException("Info class not found for extension $class");
-        }
         $this->key = $this->info->key;
     }
 
@@ -37,8 +37,9 @@ abstract class Extension
      */
     private function get_theme_object(string $base): ?Themelet
     {
-        $custom = 'Custom'.$base.'Theme';
-        $normal = $base.'Theme';
+        $base = str_replace("Shimmie2\\", "", $base);
+        $custom = "Shimmie2\Custom{$base}Theme";
+        $normal = "Shimmie2\\{$base}Theme";
 
         if (class_exists($custom)) {
             return new $custom();
@@ -224,20 +225,21 @@ abstract class ExtensionInfo
         }
     }
 
-    public static function get_for_extension_class(string $base): ?ExtensionInfo
+    public static function get_for_extension_class(string $base): ExtensionInfo
     {
-        $normal = $base.'Info';
+        $normal = "{$base}Info";
 
         if (array_key_exists($normal, self::$all_info_by_class)) {
             return self::$all_info_by_class[$normal];
         } else {
-            return null;
+            $infos = print_r(array_keys(self::$all_info_by_class), true);
+            throw new ScoreException("$normal not found in {$infos}");
         }
     }
 
     public static function load_all_extension_info()
     {
-        foreach (get_subclasses_of("ExtensionInfo") as $class) {
+        foreach (get_subclasses_of("Shimmie2\ExtensionInfo") as $class) {
             $extension_info = new $class();
             if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
                 throw new ScoreException("Extension Info $class with key $extension_info->key has already been loaded");
@@ -435,13 +437,13 @@ abstract class DataHandlerExtension extends Extension
     public static function get_all_supported_mimes(): array
     {
         $arr = [];
-        foreach (get_subclasses_of("DataHandlerExtension") as $handler) {
+        foreach (get_subclasses_of("Shimmie2\DataHandlerExtension") as $handler) {
             $handler = (new $handler());
             $arr = array_merge($arr, $handler->SUPPORTED_MIME);
         }
 
         // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class
-        if (class_exists("TranscodeImage")) {
+        if (class_exists("Shimmie2\TranscodeImage")) {
             $arr = array_merge($arr, TranscodeImage::get_enabled_mimes());
         }
 

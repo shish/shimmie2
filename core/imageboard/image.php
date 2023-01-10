@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /**
  * Class Image
  *
@@ -149,7 +152,7 @@ class Image
     /**
      * Search for an array of images, returning a iterable object of Image
      */
-    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags=[]): Generator
+    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags=[]): \Generator
     {
         $result = self::find_images_internal($start, $limit, $tags);
         foreach ($result as $row) {

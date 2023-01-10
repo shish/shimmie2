@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class PixelFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_pixel";

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class RSSComments extends Extension
 {
     public function onPostListBuilding(PostListBuildingEvent $event)

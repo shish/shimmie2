@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomViewImageTheme extends ViewImageTheme
 {
     public function display_page(Image $image, $editor_parts)

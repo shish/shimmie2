@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class PoolsTheme extends Themelet
 {
     /**
@@ -361,7 +363,7 @@ class PoolsTheme extends Themelet
             } elseif ($history['action'] == 0) {
                 $prefix = "-";
             } else {
-                throw new RuntimeException("history['action'] not in {0, 1}");
+                throw new \RuntimeException("history['action'] not in {0, 1}");
             }
 
             $images = trim($history['images']);

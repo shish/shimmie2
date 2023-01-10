@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /**
  * Name: Lite Theme
  * Author: Zach Hall <zach@sosguy.net>

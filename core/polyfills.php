@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Things which should be in the core API                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -267,7 +270,7 @@ function get_subclasses_of(string $parent): array
 {
     $result = [];
     foreach (get_declared_classes() as $class) {
-        $rclass = new ReflectionClass($class);
+        $rclass = new \ReflectionClass($class);
         if (!$rclass->isAbstract() && is_subclass_of($class, $parent)) {
             $result[] = $class;
         }
@@ -771,7 +774,7 @@ function join_path(string ...$paths): string
 /**
  * Perform callback on each item returned by an iterator.
  */
-function iterator_map(callable $callback, iterator $iter): Generator
+function iterator_map(callable $callback, \iterator $iter): \Generator
 {
     foreach ($iter as $i) {
         yield call_user_func($callback, $i);
@@ -781,7 +784,7 @@ function iterator_map(callable $callback, iterator $iter): Generator
 /**
  * Perform callback on each item returned by an iterator and combine the result into an array.
  */
-function iterator_map_to_array(callable $callback, iterator $iter): array
+function iterator_map_to_array(callable $callback, \iterator $iter): array
 {
     return iterator_to_array(iterator_map($callback, $iter));
 }
@@ -790,7 +793,7 @@ function stringer($s): string
 {
     if (is_array($s)) {
         if (isset($s[0])) {
-            return "[" . implode(", ", array_map("stringer", $s)) . "]";
+            return "[" . implode(", ", array_map("Shimmie2\stringer", $s)) . "]";
         } else {
             $pairs = [];
             foreach ($s as $k=>$v) {

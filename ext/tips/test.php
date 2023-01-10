@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class TipsTest extends ShimmiePHPUnitTestCase
 {
     public function setUp(): void

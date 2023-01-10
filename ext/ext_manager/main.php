@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
 
 function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b): int
 {
@@ -115,9 +116,9 @@ class ExtManager extends Extension
     {
         $extensions = ExtensionInfo::get_all();
         if (!$all) {
-            $extensions = array_filter($extensions, "__extman_extactive");
+            $extensions = array_filter($extensions, "Shimmie2\__extman_extactive");
         }
-        usort($extensions, "__extman_extcmp");
+        usort($extensions, "Shimmie2\__extman_extcmp");
         return $extensions;
     }
 

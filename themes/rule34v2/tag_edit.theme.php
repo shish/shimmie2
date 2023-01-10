@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomTagEditTheme extends TagEditTheme
 {
     public function get_tag_editor_html(Image $image): string

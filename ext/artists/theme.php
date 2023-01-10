@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class ArtistsTheme extends Themelet
 {
     public function get_author_editor_html(string $author): string

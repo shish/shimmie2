@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class PrivateImageInfo extends ExtensionInfo
 {
     public const KEY = "private_image";

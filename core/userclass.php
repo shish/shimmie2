@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /**
  * @global UserClass[] $_shm_user_classes
  */
@@ -58,7 +61,7 @@ class UserClass
 }
 
 $_all_false = [];
-foreach ((new ReflectionClass('Permissions'))->getConstants() as $k => $v) {
+foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
     $_all_false[$v] = false;
 }
 new UserClass("base", null, $_all_false);

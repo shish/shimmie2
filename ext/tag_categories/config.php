@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class TagCategoriesConfig
 {
     public const VERSION = "ext_tag_categories_version";

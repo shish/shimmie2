@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class PoolsConfig
 {
     public const MAX_IMPORT_RESULTS = "poolsMaxImportResults";

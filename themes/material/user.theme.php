@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomUserPageTheme extends UserPageTheme
 {
     public function display_user_block(Page $page, User $user, $parts)

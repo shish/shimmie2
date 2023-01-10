@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
 
 class CronUploader extends Extension
@@ -382,12 +384,12 @@ class CronUploader extends Extension
                     } else {
                         $added++;
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     try {
                         if ($database->is_transaction_open()) {
                             $database->rollback();
                         }
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                     }
 
                     $failed++;
@@ -527,7 +529,7 @@ class CronUploader extends Extension
         return false;
     }
 
-    private function generate_image_queue(string $root_dir, ?int $limit = null): Generator
+    private function generate_image_queue(string $root_dir, ?int $limit = null): \Generator
     {
         $base = $this->get_queue_dir();
 
@@ -536,8 +538,8 @@ class CronUploader extends Extension
             return;
         }
 
-        $ite = new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS);
-        foreach (new RecursiveIteratorIterator($ite) as $fullpath => $cur) {
+        $ite = new \RecursiveDirectoryIterator($base, \FilesystemIterator::SKIP_DOTS);
+        foreach (new \RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath) && !$this->is_skippable_file($fullpath)) {
                 $pathinfo = pathinfo($fullpath);
 

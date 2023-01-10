@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /**
  * Class Tag
  *
@@ -144,7 +147,7 @@ class Tag
         foreach ($tags as $tag) {
             try {
                 $tag = Tag::sanitize($tag);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $page->flash($e->getMessage());
                 continue;
             }

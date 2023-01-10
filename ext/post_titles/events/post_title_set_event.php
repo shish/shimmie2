@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class PostTitleSetEvent extends Event
 {
     public Image $image;

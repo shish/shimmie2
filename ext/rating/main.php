@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /**
 * @global ImageRating[] $_shm_ratings
 */
@@ -41,10 +43,10 @@ function add_rating(ImageRating $rating)
 {
     global $_shm_ratings;
     if ($rating->code == "?" && array_key_exists("?", $_shm_ratings)) {
-        throw new RuntimeException("? is a reserved rating code that cannot be overridden");
+        throw new \RuntimeException("? is a reserved rating code that cannot be overridden");
     }
     if ($rating->code != "?" && in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
-        throw new RuntimeException("$rating->search_term is a reserved search term");
+        throw new \RuntimeException("$rating->search_term is a reserved search term");
     }
     $_shm_ratings[$rating->code] = $rating;
 }

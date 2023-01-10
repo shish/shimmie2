@@ -1,7 +1,10 @@
 <?php
 
 declare(strict_types=1);
-use FFSPHP\PDO;
+
+namespace Shimmie2;
+
+use FFSPHP\PDO, FFSPHP\PDOStatement;
 
 enum DatabaseDriverID: string
 {
@@ -204,7 +207,7 @@ class Database
     /**
      * Execute an SQL query and return the first column of each row as a single iterable object.
      */
-    public function get_col_iterable(string $query, array $args = []): Generator
+    public function get_col_iterable(string $query, array $args = []): \Generator
     {
         $_start = microtime(true);
         $stmt = $this->execute($query, $args);
@@ -229,7 +232,7 @@ class Database
     /**
      * Execute an SQL query and return the the first column => the second column as an iterable object.
      */
-    public function get_pairs_iterable(string $query, array $args = []): Generator
+    public function get_pairs_iterable(string $query, array $args = []): \Generator
     {
         $_start = microtime(true);
         $stmt = $this->execute($query, $args);

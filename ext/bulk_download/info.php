@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
 
 class BulkDownloadInfo extends ExtensionInfo
 {

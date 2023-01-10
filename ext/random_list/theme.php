@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class RandomListTheme extends Themelet
 {
     protected array $search_terms;

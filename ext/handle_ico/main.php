@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class IcoFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];

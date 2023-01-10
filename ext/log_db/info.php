@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class LogDatabaseInfo extends ExtensionInfo
 {
     public const KEY = "log_db";

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class LogLogstash extends Extension
 {
     public function onLog(LogEvent $event)

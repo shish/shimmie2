@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class System extends Extension
 {
     public function onPageRequest(PageRequestEvent $event)
@@ -11,7 +13,7 @@ class System extends Extension
         if ($event->page_matches("system")) {
             $e = new PageSubNavBuildingEvent("system");
             send_event($e);
-            usort($e->links, "sort_nav_links");
+            usort($e->links, "Shimmie2\sort_nav_links");
             $link = $e->links[0]->link;
 
             $page->set_redirect($link->make_link());

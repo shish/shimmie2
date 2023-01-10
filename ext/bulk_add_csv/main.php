@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BulkAddCSV extends Extension
 {
     /** @var BulkAddCSVTheme */
@@ -62,7 +64,7 @@ class BulkAddCSV extends Extension
         if ($event->image_id == -1) {
             throw new UploadException("File type not recognised");
         } else {
-            if (class_exists("RatingSetEvent") && in_array($rating, ["s", "q", "e"])) {
+            if (class_exists("Shimmie2\RatingSetEvent") && in_array($rating, ["s", "q", "e"])) {
                 send_event(new RatingSetEvent(Image::by_id($event->image_id), $rating));
             }
             if (file_exists($thumbfile)) {

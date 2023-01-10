@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class IndexTheme extends Themelet
 {
     protected int $page_number;
@@ -110,7 +112,7 @@ and of course start organising your images :-)
     {
         global $config;
 
-        if (class_exists('Wiki') && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
+        if (class_exists('Shimmie2\Wiki') && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) == 1) {
                 $st = Tag::implode($this->search_terms);
 
@@ -125,7 +127,7 @@ and of course start organising your images :-)
                     $short_wiki_description = $tfe->formatted;
                 }
                 $wikiLink = make_link("wiki/$st");
-                if (class_exists('TagCategories')) {
+                if (class_exists('Shimmie2\TagCategories')) {
                     $this->tagcategories = new TagCategories();
                     $tag_category_dict = $this->tagcategories->getKeyedDict();
                     $st = $this->tagcategories->getTagHtml(html_escape($st), $tag_category_dict);

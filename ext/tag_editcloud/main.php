@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /* Todo:
  * 	usepref(todo2: port userpref)
  *	theme junk

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CBZFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::COMIC_ZIP];

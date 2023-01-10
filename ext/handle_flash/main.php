@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class FlashFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::FLASH];

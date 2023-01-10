@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class LiveFeed extends Extension
 {
     public function onSetupBuilding(SetupBuildingEvent $event)

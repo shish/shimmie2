@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class AutoCompleteTheme extends Themelet
 {
     public function build_autocomplete(Page $page)

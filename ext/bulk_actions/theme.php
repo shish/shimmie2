@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BulkActionsTheme extends Themelet
 {
     public function display_selector(Page $page, array $actions, string $query)
@@ -49,7 +51,7 @@ class BulkActionsTheme extends Themelet
 
     public function render_ban_reason_input(): string
     {
-        if (class_exists("ImageBan")) {
+        if (class_exists("Shimmie2\ImageBan")) {
             return "<input type='text' name='bulk_ban_reason' placeholder='Ban reason (leave blank to not ban)' />";
         } else {
             return "";

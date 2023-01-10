@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class ETInfo extends ExtensionInfo
 {
     public const KEY = "et";

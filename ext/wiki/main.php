@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class WikiUpdateEvent extends Event
 {
     public User $user;
@@ -266,7 +268,7 @@ class Wiki extends Extension
                     "title"=>$wpage->title, "locked"=>$wpage->locked, "body"=>$wpage->body]
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
         }
     }
@@ -388,7 +390,7 @@ class Wiki extends Extension
             $template = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
 
             //CATEGORIES
-            if (class_exists("TagCategories")) {
+            if (class_exists("Shimmie2\TagCategories")) {
                 $tagcategories = new TagCategories();
                 $tag_category_dict = $tagcategories->getKeyedDict();
             }
@@ -411,7 +413,7 @@ class Wiki extends Extension
             $template = format_text($template);
             //Things after this line will NOT be escaped!!! Be careful what you add.
 
-            if (class_exists("AutoTagger")) {
+            if (class_exists("Shimmie2\AutoTagger")) {
                 $auto_tags = $database->get_one("
                     SELECT additional_tags
                     FROM auto_tag
@@ -675,7 +677,7 @@ class Wiki extends Extension
                 return "--- $value\n";
 
             default:
-                throw new RuntimeException("stat needs to be =, + or -");
+                throw new \RuntimeException("stat needs to be =, + or -");
         }
     }
 }

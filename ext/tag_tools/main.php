@@ -3,6 +3,8 @@
 /** @noinspection PhpUnusedPrivateMethodInspection */
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class TagTools extends Extension
 {
     /** @var TagToolsTheme */

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 // action_object_attribute
 // action = create / view / edit / delete
 // object = image / user / tag / setting

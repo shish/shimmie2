@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 // TODO Add warning that rotate doesn't support lossless webp output
 
 /**

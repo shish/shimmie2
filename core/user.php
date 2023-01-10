@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 function _new_user(array $row): User
 {
     return new User($row);

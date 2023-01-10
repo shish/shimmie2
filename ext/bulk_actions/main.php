@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BulkActionException extends SCoreException
 {
 }
@@ -39,10 +41,10 @@ class BulkActionBlockBuildingEvent extends Event
 class BulkActionEvent extends Event
 {
     public string $action;
-    public Generator $items;
+    public \Generator $items;
     public bool $redirect = true;
 
-    public function __construct(String $action, Generator $items)
+    public function __construct(String $action, \Generator $items)
     {
         parent::__construct();
         $this->action = $action;
@@ -201,7 +203,7 @@ class BulkActions extends Extension
         }
     }
 
-    private function yield_items(array $data): Generator
+    private function yield_items(array $data): \Generator
     {
         foreach ($data as $id) {
             if (is_numeric($id)) {
@@ -213,7 +215,7 @@ class BulkActions extends Extension
         }
     }
 
-    private function yield_search_results(string $query): Generator
+    private function yield_search_results(string $query): \Generator
     {
         $tags = Tag::explode($query);
         return Image::find_images_iterable(0, null, $tags);
@@ -231,7 +233,7 @@ class BulkActions extends Extension
         $size = 0;
         foreach ($posts as $post) {
             try {
-                if (class_exists("ImageBan") && isset($_POST['bulk_ban_reason'])) {
+                if (class_exists("Shimmie2\ImageBan") && isset($_POST['bulk_ban_reason'])) {
                     $reason = $_POST['bulk_ban_reason'];
                     if ($reason) {
                         send_event(new AddImageHashBanEvent($post->hash, $reason));
@@ -240,7 +242,7 @@ class BulkActions extends Extension
                 send_event(new ImageDeletionEvent($post));
                 $total++;
                 $size += $post->filesize;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $page->flash("Error while removing {$post->id}: " . $e->getMessage());
             }
         }

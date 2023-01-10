@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
 class CommentPostingEvent extends Event

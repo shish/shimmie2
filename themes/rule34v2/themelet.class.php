@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class Themelet extends BaseThemelet
 {
     public function build_thumb_html(Image $image): string

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class TagCategoriesTheme extends Themelet
 {
     public function show_tag_categories(Page $page, $tc_dict)

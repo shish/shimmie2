@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class RandomListInfo extends ExtensionInfo
 {
     public const KEY = "random_list";

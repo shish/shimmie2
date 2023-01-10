@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class TranscodeConfig
 {
     public const VERSION = "ext_transcode_version";

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /**
  * Class BaseThemelet
  *
@@ -64,7 +66,7 @@ class BaseThemelet
         }
 
         $custom_classes = "";
-        if (class_exists("Relationships")) {
+        if (class_exists("Shimmie2\Relationships")) {
             if (property_exists($image, 'parent_id') && $image->parent_id !== null) {
                 $custom_classes .= "shm-thumb-has_parent ";
             }

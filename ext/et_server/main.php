@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use function MicroHTML\{PRE};
 
 class ETServer extends Extension

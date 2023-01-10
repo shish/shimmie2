@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class IcoFileHandlerTheme extends Themelet
 {
     public function display_image(Page $page, Image $image)
