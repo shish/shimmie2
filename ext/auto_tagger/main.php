@@ -112,7 +112,7 @@ class AutoTagger extends Extension
                     if (count($_FILES) > 0) {
                         $tmp = $_FILES['auto_tag_file']['tmp_name'];
                         $contents = file_get_contents($tmp);
-                        $count = $this->add_auto_tag_csv($database, $contents);
+                        $count = $this->add_auto_tag_csv($contents);
                         log_info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("auto_tag/list"));
@@ -191,7 +191,7 @@ class AutoTagger extends Extension
         return $csv;
     }
 
-    private function add_auto_tag_csv(Database $database, string $csv): int
+    private function add_auto_tag_csv(string $csv): int
     {
         $csv = str_replace("\r", "\n", $csv);
         $i = 0;
@@ -250,37 +250,6 @@ class AutoTagger extends Extension
         $this->apply_new_auto_tag($tag);
     }
 
-    private function update_auto_tag(string $tag, string $additional_tags): bool
-    {
-        global $database;
-        $result = $database->get_row("SELECT * FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
-
-        if ($result===null) {
-            throw new AutoTaggerException("Auto-tag not set for $tag, can't update");
-        } else {
-            $additional_tags = Tag::explode($additional_tags);
-            $current_additional_tags = Tag::explode($result["additional_tags"]);
-
-            if (!Tag::compare($additional_tags, $current_additional_tags)) {
-                $database->execute(
-                    "UPDATE auto_tag SET additional_tags = :additional_tags WHERE LOWER(tag)=LOWER(:tag)",
-                    ["tag"=>$tag, "additional_tags"=>Tag::implode($additional_tags)]
-                );
-
-                log_info(
-                    AutoTaggerInfo::KEY,
-                    "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}",
-                    "Updated Auto-Tag"
-                );
-
-                // Now we apply it to existing items
-                $this->apply_new_auto_tag($tag);
-                return true;
-            }
-        }
-        return false;
-    }
-
     private function apply_new_auto_tag(string $tag)
     {
         global $database;
@@ -295,8 +264,6 @@ class AutoTagger extends Extension
             }
         }
     }
-
-
 
     private function remove_auto_tag(String $tag)
     {

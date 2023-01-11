@@ -560,7 +560,7 @@ class UserPage extends Extension
         return $new_user;
     }
 
-    private function set_login_cookie(string $name, string $pass): void
+    private function set_login_cookie(string $name): void
     {
         global $config, $page;
 
@@ -639,7 +639,7 @@ class UserPage extends Extension
                 $duser->set_password($pass1);
 
                 if ($duser->id == $user->id) {
-                    $this->set_login_cookie($duser->name, $pass1);
+                    $this->set_login_cookie($duser->name);
                 }
 
                 $page->flash("Password changed");

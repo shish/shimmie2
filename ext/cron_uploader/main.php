@@ -353,7 +353,7 @@ class CronUploader extends Extension
             //set_time_limit(0);
 
             $output_subdir = date('Ymd-His', time());
-            $image_queue = $this->generate_image_queue($user_config->get_string(CronUploaderConfig::DIR));
+            $image_queue = $this->generate_image_queue();
 
             // Randomize Images
             //shuffle($this->image_queue);
@@ -502,18 +502,6 @@ class CronUploader extends Extension
 
     private const PARTIAL_DOWNLOAD_EXTENSIONS = ['crdownload','part'];
     private const SKIPPABLE_FILES = ['.ds_store','thumbs.db'];
-    private const SKIPPABLE_DIRECTORIES = ['__macosx'];
-
-    private function is_skippable_dir(string $path): bool
-    {
-        $info = pathinfo($path);
-
-        if (array_key_exists("basename", $info) && in_array(strtolower($info['basename']), self::SKIPPABLE_DIRECTORIES)) {
-            return true;
-        }
-
-        return false;
-    }
 
     private function is_skippable_file(string $path): bool
     {
@@ -530,7 +518,7 @@ class CronUploader extends Extension
         return false;
     }
 
-    private function generate_image_queue(string $root_dir, ?int $limit = null): \Generator
+    private function generate_image_queue(): \Generator
     {
         $base = $this->get_queue_dir();
 
