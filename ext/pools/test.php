@@ -79,8 +79,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     /** @depends testCreate */
     public function testList($args)
     {
-        [$pool_id, $image_ids] = $this->testCreate();
-
+        $this->testCreate();
         $this->get_page("pool/list");
         $this->assert_text("Pool");
     }

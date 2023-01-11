@@ -174,10 +174,10 @@ class BulkImportExport extends DataHandlerExtension
             try {
                 $json_string = stream_get_contents($info);
                 $json_data = json_decode($json_string);
+                return $json_data;
             } finally {
                 fclose($info);
             }
-            return $json_data;
         } else {
             return null;
         }
