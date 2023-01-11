@@ -154,16 +154,17 @@ class MimeType
     private static function compare_file_bytes(string $file_name, array $comparison): bool
     {
         $size = filesize($file_name);
-        if ($size < count($comparison)) {
+        $cc = count($comparison);
+        if ($size < $cc) {
             // Can't match because it's too small
             return false;
         }
 
         if (($fh = @fopen($file_name, 'rb'))) {
             try {
-                $chunk = unpack("C*", fread($fh, count($comparison)));
+                $chunk = unpack("C*", fread($fh, $cc));
 
-                for ($i = 0; $i < count($comparison); $i++) {
+                for ($i = 0; $i < $cc; $i++) {
                     $byte = $comparison[$i];
                     if ($byte == null) {
                         continue;

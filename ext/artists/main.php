@@ -1050,7 +1050,8 @@ class Artists extends Extension
             ORDER BY alias ASC
         ", ['artist_id'=>$artistID]);
 
-        for ($i = 0 ; $i < count($result) ; $i++) {
+        $rc = count($result);
+        for ($i = 0 ; $i < $rc ; $i++) {
             $result[$i]["alias_name"] = stripslashes($result[$i]["alias_name"]);
         }
         return $result;

@@ -116,15 +116,10 @@ class Tag
 
         $tags1 = array_map("strtolower", $tags1);
         $tags2 = array_map("strtolower", $tags2);
-        natcasesort($tags1);
-        natcasesort($tags2);
+        sort($tags1);
+        sort($tags2);
 
-        for ($i = 0; $i < count($tags1); $i++) {
-            if ($tags1[$i]!==$tags2[$i]) {
-                return false;
-            }
-        }
-        return true;
+        return $tags1 == $tags2;
     }
 
     public static function get_diff_tags(array $source, array $remove): array
