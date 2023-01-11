@@ -207,8 +207,9 @@ function get_session_ip(Config $config): string
  */
 function format_text(string $string): string
 {
-    $tfe = send_event(new TextFormattingEvent($string));
-    return $tfe->formatted;
+    $event = new TextFormattingEvent($string);
+    send_event($event);
+    return $event->formatted;
 }
 
 /**
@@ -395,18 +396,6 @@ function path_to_tags(string $path): string
     }
 
     return implode(" ", $tags);
-}
-
-
-function join_url(string $base, string ...$paths): string
-{
-    $output = $base;
-    foreach ($paths as $path) {
-        $output = rtrim($output, "/");
-        $path = ltrim($path, "/");
-        $output .= "/".$path;
-    }
-    return $output;
 }
 
 function get_dir_contents(string $dir): array

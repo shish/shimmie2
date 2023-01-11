@@ -10,6 +10,41 @@ require_once "core/util.php";
 
 class UtilTest extends TestCase
 {
+    public function test_get_theme()
+    {
+        $this->assertEquals("default", get_theme());
+    }
+
+    public function test_get_memory_limit()
+    {
+        get_memory_limit();
+        $this->assertTrue(true);
+    }
+
+    public function test_check_gd_version()
+    {
+        check_gd_version();
+        $this->assertTrue(true);
+    }
+
+    public function test_check_im_version()
+    {
+        check_im_version();
+        $this->assertTrue(true);
+    }
+
+    public function test_human_filesize()
+    {
+        $this->assertEquals("123.00B", human_filesize(123));
+        $this->assertEquals("123B", human_filesize(123, 0));
+        $this->assertEquals("120.56KB", human_filesize(123456));
+    }
+
+    public function test_generate_key()
+    {
+        $this->assertEquals(20, strlen(generate_key()));
+    }
+
     public function test_warehouse_path()
     {
         $hash = "7ac19c10d6859415";

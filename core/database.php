@@ -102,7 +102,8 @@ class Database
         }
     }
 
-    private function get_engine(): DBEngine {
+    private function get_engine(): DBEngine
+    {
         if (is_null($this->engine)) {
             $this->connect_engine();
         }
