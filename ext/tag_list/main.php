@@ -334,6 +334,7 @@ class TagList extends Extension
         */
         mb_internal_encoding('UTF-8');
 
+        $tag_category_dict = [];
         if (class_exists('Shimmie2\TagCategories')) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
