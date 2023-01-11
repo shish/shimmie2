@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use FFSPHP\PDO, FFSPHP\PDOStatement;
+use FFSPHP\PDO;
+use FFSPHP\PDOStatement;
 
 enum DatabaseDriverID: string
 {

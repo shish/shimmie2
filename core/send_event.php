@@ -62,7 +62,8 @@ function _set_event_listeners(): void
     }
 }
 
-function _namespaced_class_name(string $class): string {
+function _namespaced_class_name(string $class): string
+{
     return str_replace("Shimmie2\\", "", $class);
 }
 
