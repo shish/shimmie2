@@ -156,7 +156,7 @@ class Database
                 $query,
                 $args
             );
-            if($ret === false) {
+            if ($ret === false) {
                 throw new SCoreException("Query failed", $query);
             }
             /** @noinspection PhpIncompatibleReturnTypeInspection */
