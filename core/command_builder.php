@@ -16,7 +16,7 @@ class CommandBuilder
     public function __construct(String $executable)
     {
         if (empty($executable)) {
-            throw new InvalidArgumentException("executable cannot be empty");
+            throw new \InvalidArgumentException("executable cannot be empty");
         }
 
         $this->executable = $executable;

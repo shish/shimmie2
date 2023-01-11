@@ -198,7 +198,7 @@ EOD;
         $b = $block->body;
         $i = $block->id;
 
-        $dom = new DomDocument();
+        $dom = new \DomDocument();
         $dom->loadHTML($b);
         // $output = [];
         $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";

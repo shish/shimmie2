@@ -113,7 +113,7 @@ class ET extends Extension
                     'branch' => $commitBranch,
                     'origin' => $commitOrigin,
                 ];
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
             }
         }
 

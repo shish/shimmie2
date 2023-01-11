@@ -347,7 +347,7 @@ class Pools extends Extension
                                 $image_order = $image_order + 1;
                             }
                             $database->commit();
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                             $database->rollback();
                         }
                         $page->set_mode(PageMode::REDIRECT);
@@ -581,7 +581,7 @@ class Pools extends Extension
 
                 if ($this->have_permission($user, $pool)) {
                     send_event(
-                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("_image_to_id", $event->items))
+                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items))
                     );
                 }
                 break;
@@ -592,7 +592,7 @@ class Pools extends Extension
                 $new_pool_title = $_POST['bulk_pool_new'];
                 $pce = new PoolCreationEvent($new_pool_title);
                 send_event($pce);
-                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("_image_to_id", $event->items)));
+                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items)));
                 break;
         }
     }

@@ -560,10 +560,6 @@ function get_debug_info(): string
 * Request initialisation stuff                                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/** @privatesection
- * @noinspection PhpIncludeInspection
- */
-
 function require_all(array $files): void
 {
     foreach ($files as $filename) {

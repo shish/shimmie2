@@ -166,11 +166,11 @@ class TranscodeVideo extends Extension
                             if ($output_image!=$image) {
                                 $total++;
                             }
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                             log_error("transcode_video", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
                             try {
                                 $database->rollback();
-                            } catch (Exception $e) {
+                            } catch (\Exception $e) {
                                 // is this safe? o.o
                             }
                         }

@@ -220,7 +220,7 @@ class AutoTagger extends Extension
             $existing_tags = Tag::explode($existing_tags);
             foreach ($additional_tags as $t) {
                 if (!in_array(strtolower($t), $existing_tags)) {
-                    array_push($existing_tags, strtolower($t));
+                    $existing_tags[] = strtolower($t);
                 }
             }
 

@@ -44,7 +44,7 @@ class RegenThumbTheme extends Themelet
         $mimes = [];
         $results = $database->get_all("SELECT mime, count(*) count FROM images group by mime");
         foreach ($results as $result) {
-            array_push($mimes, "<option value='".$result["mime"]."'>".$result["mime"]." (".$result["count"].")</option>");
+            $mimes[] = "<option value='" . $result["mime"] . "'>" . $result["mime"] . " (" . $result["count"] . ")</option>";
         }
 
         $html = "

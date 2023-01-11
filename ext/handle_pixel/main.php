@@ -53,7 +53,7 @@ class PixelFileHandler extends DataHandlerExtension
             log_warning("handle_pixel", "Insufficient memory while creating thumbnail: ".$e->getMessage());
             imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             log_error("handle_pixel", "Error while creating thumbnail: ".$e->getMessage());
             return false;
         }

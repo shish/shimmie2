@@ -521,7 +521,7 @@ class OuroborosAPI extends Extension
             $response = json_encode($response);
         } elseif ($this->type == 'xml') {
             // Seriously, XML sucks...
-            $xml = new XMLWriter();
+            $xml = new \XMLWriter();
             $xml->openMemory();
             $xml->startDocument('1.0', 'utf-8');
             $xml->startElement('response');
@@ -546,7 +546,7 @@ class OuroborosAPI extends Extension
         if ($this->type == 'json') {
             $response = json_encode($data);
         } elseif ($this->type == 'xml') {
-            $xml = new XMLWriter();
+            $xml = new \XMLWriter();
             $xml->openMemory();
             $xml->startDocument('1.0', 'utf-8');
             if (array_key_exists(0, $data)) {
@@ -572,7 +572,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    private function createItemXML(XMLWriter $xml, string $type, $item)
+    private function createItemXML(\XMLWriter $xml, string $type, $item)
     {
         $xml->startElement($type);
         foreach ($item as $key => $val) {

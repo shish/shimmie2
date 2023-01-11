@@ -70,7 +70,7 @@ class TagSetEvent extends Event
             if ((!str_contains($tag, ':')) && (!str_contains($tag, '='))) {
                 //Tag doesn't contain : or =, meaning it can't possibly be a metatag.
                 //This should help speed wise, as it avoids running every single tag through a bunch of preg_match instead.
-                array_push($this->tags, $tag);
+                $this->tags[] = $tag;
                 continue;
             }
 
@@ -79,9 +79,9 @@ class TagSetEvent extends Event
 
             //seperate tags from metatags
             if (!$ttpe->metatag) {
-                array_push($this->tags, $tag);
+                $this->tags[] = $tag;
             } else {
-                array_push($this->metatags, $tag);
+                $this->metatags[] = $tag;
             }
         }
     }
@@ -287,7 +287,7 @@ class TagEdit extends Extension
     {
         $tags = $event->image->get_tag_list();
         $tags = str_replace("/", "", $tags);
-        $tags = preg_replace("/^\.+/", "", $tags);
+        $tags = ltrim($tags, ".");
         $event->replace('$tags', $tags);
     }
 

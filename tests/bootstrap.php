@@ -191,8 +191,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         } elseif ($page->mode == PageMode::DATA) {
             return $page->data;
         } else {
-            $this->assertTrue(false, "Page mode is not PAGE or DATA");
-            return "";
+            $this->fail("Page mode is not PAGE or DATA");
         }
     }
 

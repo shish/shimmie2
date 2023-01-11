@@ -27,15 +27,15 @@ class NoCache implements CacheEngine
 
 class MemcachedCache implements CacheEngine
 {
-    public ?Memcached $memcache=null;
+    public ?\Memcached $memcache=null;
 
     public function __construct(string $args)
     {
         $hp = explode(":", $args);
-        $this->memcache = new Memcached();
-        #$this->memcache->setOption(Memcached::OPT_COMPRESSION, False);
-        #$this->memcache->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_PHP);
-        #$this->memcache->setOption(Memcached::OPT_PREFIX_KEY, phpversion());
+        $this->memcache = new \Memcached();
+        #$this->memcache->setOption(\Memcached::OPT_COMPRESSION, False);
+        #$this->memcache->setOption(\Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_PHP);
+        #$this->memcache->setOption(\Memcached::OPT_PREFIX_KEY, phpversion());
         $this->memcache->addServer($hp[0], (int)$hp[1]);
     }
 
@@ -46,9 +46,9 @@ class MemcachedCache implements CacheEngine
         $val = $this->memcache->get($key);
         $res = $this->memcache->getResultCode();
 
-        if ($res == Memcached::RES_SUCCESS) {
+        if ($res == \Memcached::RES_SUCCESS) {
             return $val;
-        } elseif ($res == Memcached::RES_NOTFOUND) {
+        } elseif ($res == \Memcached::RES_NOTFOUND) {
             return false;
         } else {
             error_log("Memcached error during get($key): $res");
@@ -62,7 +62,7 @@ class MemcachedCache implements CacheEngine
 
         $this->memcache->set($key, $val, $time);
         $res = $this->memcache->getResultCode();
-        if ($res != Memcached::RES_SUCCESS) {
+        if ($res != \Memcached::RES_SUCCESS) {
             error_log("Memcached error during set($key): $res");
         }
     }
@@ -73,7 +73,7 @@ class MemcachedCache implements CacheEngine
 
         $this->memcache->delete($key);
         $res = $this->memcache->getResultCode();
-        if ($res != Memcached::RES_SUCCESS && $res != Memcached::RES_NOTFOUND) {
+        if ($res != \Memcached::RES_SUCCESS && $res != \Memcached::RES_NOTFOUND) {
             error_log("Memcached error during delete($key): $res");
         }
     }
@@ -104,15 +104,15 @@ class APCCache implements CacheEngine
 
 class RedisCache implements CacheEngine
 {
-    private Redis $redis;
+    private \Redis $redis;
 
     public function __construct(string $args)
     {
-        $this->redis = new Redis();
+        $this->redis = new \Redis();
         $hp = explode(":", $args);
         $this->redis->pconnect($hp[0], (int)$hp[1]);
-        $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
-        $this->redis->setOption(Redis::OPT_PREFIX, 'shm:');
+        $this->redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+        $this->redis->setOption(\Redis::OPT_PREFIX, 'shm:');
     }
 
     public function get(string $key)

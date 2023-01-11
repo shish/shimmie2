@@ -35,7 +35,7 @@ class ImageBanTest extends ShimmiePHPUnitTestCase
         // Can't repost
         try {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-            $this->assertTrue(false);
+            $this->fail();
         } catch (UploadException $e) {
             $this->assertTrue(true);
         }

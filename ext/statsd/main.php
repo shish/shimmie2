@@ -6,11 +6,6 @@ namespace Shimmie2;
 
 _d("STATSD_HOST", null);
 
-function dstat($name, $val)
-{
-    StatsDInterface::$stats["shimmie.$name"] = $val;
-}
-
 class StatsDInterface extends Extension
 {
     public static array $stats = [];
@@ -115,7 +110,7 @@ class StatsDInterface extends Extension
                 fwrite($fp, "$stat:$value");
             }
             fclose($fp);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // ignore any failures.
         }
     }

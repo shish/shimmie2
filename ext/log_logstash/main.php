@@ -28,7 +28,7 @@ class LogLogstash extends Extension
             ];
 
             $this->send_data($data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // we can't log that logging is broken
         }
     }
@@ -52,7 +52,7 @@ class LogLogstash extends Extension
             }
             fwrite($fp, json_encode($data));
             fclose($fp);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // we can't log that logging is broken
         }
     }

@@ -151,12 +151,17 @@ class Database
             if (is_null($this->db)) {
                 $this->connect_db();
             }
-            return $this->db->execute(
+            $ret = $this->db->execute(
                 "-- " . str_replace("%2F", "/", urlencode($_GET['q'] ?? '')). "\n" .
                 $query,
                 $args
             );
-        } catch (PDOException $pdoe) {
+            if($ret === false) {
+                throw new SCoreException("Query failed", $query);
+            }
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            return $ret;
+        } catch (\PDOException $pdoe) {
             throw new SCoreException($pdoe->getMessage(), $query);
         }
     }

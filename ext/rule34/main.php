@@ -108,7 +108,7 @@ class Rule34 extends Extension
         $database->set_timeout(DATABASE_TIMEOUT+15000); // deleting users can take a while
 
         if (function_exists("sd_notify_watchdog")) {
-            sd_notify_watchdog();
+            \sd_notify_watchdog();
         }
 
         if ($event->page_matches("rule34/comic_admin")) {

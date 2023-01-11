@@ -30,7 +30,7 @@ class TagEditTest extends ShimmiePHPUnitTestCase
 
         try {
             send_event(new TagSetEvent($image, []));
-            $this->assertTrue(false);
+            $this->fail();
         } catch (SCoreException $e) {
             $this->assertEquals("Tried to set zero tags", $e->error);
         }

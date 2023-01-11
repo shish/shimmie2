@@ -112,7 +112,7 @@ class BulkAddCSV extends Extension
                 try {
                     $this->add_image($fullpath, $pathinfo["basename"], $tags, $source, $rating, $thumbfile);
                     $list .= "ok\n";
-                } catch (Exception $ex) {
+                } catch (\Exception $ex) {
                     $list .= "failed:<br>". $ex->getMessage();
                 }
             } else {

@@ -81,7 +81,7 @@ class PostTitles extends Extension
     }
     public function onBulkImport(BulkImportEvent $event)
     {
-        if (property_exists($event->fields, "title") && $event->fields->title!=null) {
+        if (array_key_exists("title", $event->fields) && $event->fields->title!=null) {
             $this->set_title($event->image->id, $event->fields->title);
         }
     }

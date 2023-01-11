@@ -297,7 +297,7 @@ class BulkActions extends Extension
             try {
                 send_event(new SourceSetEvent($image, $source));
                 $total++;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $page->flash("Error while setting source for {$image->id}: " . $e->getMessage());
             }
         }

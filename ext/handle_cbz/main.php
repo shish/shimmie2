@@ -49,7 +49,7 @@ class CBZFileHandler extends DataHandlerExtension
     {
         $out = "data/comic-cover-FIXME.jpg";  // TODO: random
 
-        $za = new ZipArchive();
+        $za = new \ZipArchive();
         $za->open($archive);
         $names = [];
         for ($i=0; $i<$za->numFiles;$i++) {

@@ -9,6 +9,9 @@ namespace Shimmie2;
  * be included right at the very start of index.php and tests/bootstrap.php
  */
 
+use JetBrains\PhpStorm\NoReturn;
+
+#[NoReturn]
 function die_nicely($title, $body, $code=0)
 {
     print("<!DOCTYPE html>
@@ -48,7 +51,7 @@ set_error_handler(function ($errNo, $errStr) {
     // Should we turn ALL notices into errors? PHP allows a lot of
     // terrible things to happen by default...
     if (str_starts_with($errStr, 'Use of undefined constant ')) {
-        throw new Exception("PHP Error#$errNo: $errStr");
+        throw new \Exception("PHP Error#$errNo: $errStr");
     } else {
         return false;
     }

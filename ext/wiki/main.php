@@ -376,7 +376,7 @@ class Wiki extends Extension
         return new WikiPage($row);
     }
 
-    public static function format_tag_wiki_page(WikiPage $page)
+    public static function format_tag_wiki_page(WikiPage $page): string
     {
         global $database, $config;
 
@@ -434,7 +434,7 @@ class Wiki extends Extension
                                 ", ["title"=>$a_tag]);
 
                         $tag_html = $tag_list_t->return_tag($a_row, $tag_category_dict ?? []);
-                        array_push($f_auto_tags, $tag_html[1]);
+                        $f_auto_tags[] = $tag_html[1];
                     }
 
                     $template = str_replace("{autotags}", implode(", ", $f_auto_tags), $template);

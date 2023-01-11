@@ -746,7 +746,7 @@ class Image
                         VALUES(:iid, :tid)
                     ", ["iid"=>$this->id, "tid"=>$id]);
 
-                    array_push($written_tags, $id);
+                    $written_tags[] = $id;
                 }
                 $database->execute(
                     "

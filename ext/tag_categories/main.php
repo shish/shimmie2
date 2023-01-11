@@ -156,7 +156,7 @@ class TagCategories extends Extension
         return $h_tag_no_underscores;
     }
 
-    public function page_update()
+    public function page_update(): bool
     {
         global $user, $database;
 

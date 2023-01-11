@@ -147,7 +147,7 @@ class NumericScore extends Extension
                 $dte = [$totaldate, $year, "\\y\\e\\a\\r\=Y", "year"];
             } else {
                 // this should never happen due to the fact that the page event is already matched against earlier.
-                throw new UnexpectedValueException("Error: Invalid page event.");
+                throw new \UnexpectedValueException("Error: Invalid page event.");
             }
             $sql .= " AND NOT numeric_score=0 ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
 
