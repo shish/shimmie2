@@ -117,7 +117,7 @@ class AdminPage extends Extension
             $key = $event->args[1];
             switch ($cmd) {
                 case "get":
-                    var_dump($cache->get($key));
+                    print_r($cache->get($key));
                     break;
                 case "set":
                     $cache->set($key, $event->args[2], 60);

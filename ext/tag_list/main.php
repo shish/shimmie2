@@ -264,6 +264,7 @@ class TagList extends Extension
         if ($config->get_bool(TagListConfig::PAGES)) {
             $html .= $this->build_az();
         }
+        $tag_category_dict = [];
         if (class_exists('Shimmie2\TagCategories')) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
