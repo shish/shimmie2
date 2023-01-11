@@ -114,6 +114,7 @@ class ET extends Extension
                     'origin' => $commitOrigin,
                 ];
             } catch (\Exception $e) {
+                // If we can't get git data, just skip it
             }
         }
 

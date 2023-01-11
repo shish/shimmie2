@@ -77,7 +77,7 @@ class Page extends BasePage
             $custom_sublinks .= "</div>";
         }
 
-        if ($this->left_enabled == false) {
+        if (!$this->left_enabled) {
             $left_block_html = "";
             $main_block_html = "<article id='body_noleft'>{$main_block_html}</article>";
         } else {

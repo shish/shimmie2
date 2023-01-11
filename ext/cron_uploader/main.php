@@ -390,6 +390,7 @@ class CronUploader extends Extension
                             $database->rollback();
                         }
                     } catch (\Exception $e) {
+                        // rollback failed, let's just log things and die
                     }
 
                     $failed++;
