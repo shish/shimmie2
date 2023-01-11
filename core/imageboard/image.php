@@ -76,10 +76,10 @@ class Image
     public static function by_id(int $id): ?Image
     {
         global $database;
-		if($id > 2**32) {
-			// for some reason bots query huge numbers and pollute the DB error logs...
-			return null;
-		}
+        if ($id > 2**32) {
+            // for some reason bots query huge numbers and pollute the DB error logs...
+            return null;
+        }
         $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id"=>$id]);
         return ($row ? new Image($row) : null);
     }
