@@ -442,7 +442,7 @@ class UserPage extends Extension
         $duser = User::by_name_and_pass($name, $pass);
         if (!is_null($duser)) {
             send_event(new UserLoginEvent($duser));
-            $this->set_login_cookie($duser->name, $pass);
+            $this->set_login_cookie($duser->name);
             $page->set_mode(PageMode::REDIRECT);
 
             // Try returning to previous page
@@ -510,7 +510,7 @@ class UserPage extends Extension
 
                 $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], true);
                 send_event($uce);
-                $this->set_login_cookie($uce->username, $uce->password);
+                $this->set_login_cookie($uce->username);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
             } catch (UserCreationException $ex) {
