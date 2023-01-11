@@ -516,14 +516,20 @@ function scan_dir(string $path): array
 }
 
 
+/**
+ * because microtime() returns string|float, and we only ever want float
+ */
+function ftime(): float
+{
+    return (float)microtime(true);
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Debugging functions                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// SHIT by default this returns the time as a string. And it's not even a
-// string representation of a number, it's two numbers separated by a space.
-// What the fuck were the PHP developers smoking.
-$_shm_load_start = microtime(true);
+$_shm_load_start = ftime();
 
 /**
  * Collects some debug information (execution time, memory usage, queries, etc)
@@ -540,7 +546,7 @@ function get_debug_info(): string
     } else {
         $commit = " (".$config->get_string("commit_hash").")";
     }
-    $time = sprintf("%.2f", microtime(true) - $_shm_load_start);
+    $time = sprintf("%.2f", ftime() - $_shm_load_start);
     $dbtime = sprintf("%.2f", $database->dbtime);
     $i_files = count(get_included_files());
     $hits = $cache->get_hits();

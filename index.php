@@ -107,7 +107,7 @@ try {
             empty($_SERVER["REQUEST_URI"])
             || (@$_GET["trace"] == "on")
             || (
-                (microtime(true) - $_shm_load_start) > TRACE_THRESHOLD
+                (ftime() - $_shm_load_start) > TRACE_THRESHOLD
                 && ($_SERVER["REQUEST_URI"] ?? "") != "/upload"
             )
         ) {

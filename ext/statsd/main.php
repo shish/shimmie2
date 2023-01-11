@@ -13,7 +13,7 @@ class StatsDInterface extends Extension
     private function _stats(string $type)
     {
         global $_shm_event_count, $cache, $database, $_shm_load_start;
-        $time = microtime(true) - $_shm_load_start;
+        $time = ftime() - $_shm_load_start;
         StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
         StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
         StatsDInterface::$stats["shimmie.$type.time-db"] = "{$database->dbtime}|ms";

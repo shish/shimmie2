@@ -364,7 +364,7 @@ class CronUploader extends Extension
 
             // Upload the file(s)
             foreach ($image_queue as $img) {
-                $execution_time = microtime(true) - $_shm_load_start;
+                $execution_time = ftime() - $_shm_load_start;
                 if ($execution_time>$max_time) {
                     break;
                 } else {
