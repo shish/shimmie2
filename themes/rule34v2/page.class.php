@@ -125,8 +125,7 @@ EOD;
 
 		<article>
 			$flash_html
-			<!-- <h2>Database reboot will be happening in a bit, expect a few minutes of downtime~</h2>
- -->
+			<!-- <h2>Server hardware upgrades will be happening today, expect some downtime while reboots happen~</h2> -->
 			$main_block_html
 		</article>
 

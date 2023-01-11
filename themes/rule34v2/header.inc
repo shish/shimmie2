@@ -11,7 +11,7 @@
 				<a style="font-size: 2em;" onclick="toggleNav();">&nbsp;Sidebar&nbsp;</a>
 			</td>
 			<td id="mini-logo">
-				<a class="vis-mobile" href="//rule34.paheal.net/post/list"><img alt="logo" src="//rule34.paheal.net/themes/rule34v2/rule34_logo_top.png" style="height: 34px;"/></a>
+				<a class="vis-mobile" href="//rule34.paheal.net/post/list"><img alt="logo" src="//rule34.paheal.net/themes/rule34v2/rule34_logo_christ.png" style="height: 34px;"/></a>
 			</td>
 			<td>
 				<input name='search' size="45" type='text' placeholder='Search' autocomplete='off' class='autocomplete_tags' value="<?=$query;?>"/>
@@ -37,22 +37,22 @@
 		</ul>
 		</li>
 	</ul>
-
-    <!--<ul class="header-sites">
+    
+    <!--<ul class="header-sites">	
 		<li><a href="#" class="top_parent">Sites</a>
 		<ul>
 			<li><a href="//rule34.paheal.net/" class="sub_option">Rule #34</a></li>
-			<li><a href="//rule63.paheal.net/" class="sub_option">Rule #63</a></li>
-			<li><a href="//cosplay.paheal.net/" class="sub_option">Cosplay</a></li>
+			<li><a href="http://rule63.paheal.net/" class="sub_option">Rule #63</a></li>
+			<li><a href="http://cosplay.paheal.net/" class="sub_option">Cosplay</a></li>
 			<li><a href="//rule34c.paheal.net/" class="sub_option">Rule #34c</a></li>
 		</ul>
 		</li>
 	</ul>-->
-
+    
 	<ul>
 		<li><a href="#" class="top_parent">Community &#9660;</a>
 		<ul>
-			<!--<li><a href="//forum.paheal.net" class="sub_option">Forum</a></li>-->
+			<!--<li><a href="http://forum.paheal.net" class="sub_option">Forum</a></li>-->
 			<li><a href="//rule34.paheal.net/wiki/friends" class="parent">Friends of paheal</a>
 			<li><a href="//rule34.paheal.net/wiki/DNP" class="parent">DNP List</a>
 			<li><a href="#" class="parent">Chat</a>
@@ -81,15 +81,15 @@
 		</ul>
 		</li>
 	</ul>
-
+	
 	<ul>
 		<li><a class="menu top_parent" href="//rule34.paheal.net/wiki/Notes">ANNOUNCEMENTS</a></li>
 	</ul>
 
 	<ul>
-		<li><a class="menu top_parent" href="https://s.zlink2.com/splash.php?idzone=3832265&return_url=" target="_blank" style="color: red;">Cunt Empire!</a></li>
+		<li><a href="https://s.zlinkb.com/d.php?z=3832265" target="_blank">[Check out our partners!]</a></li>
 	</ul>
-
+	
 </div>
 </div>
 

@@ -31,6 +31,7 @@ class CustomHomeTheme extends HomeTheme
 				#counter {display: none;}
 			}
 		</style>
+	<meta name="juicyads-site-verification" content="20d309e193510e130c3f8a632f281335">
 	</head>
 	<body>
 		$body
@@ -69,6 +70,20 @@ EOD
 <ins id='825625' data-width='908' data-height='270'></ins>
 <script type='text/javascript' data-cfasync='false' async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':825625});</script>
 <!--JuicyAds END-->
+
+<script type='application/javascript' src='https://a.realsrv.com/video-slider.js'></script>
+<script type='application/javascript'>
+var adConfig = {
+    'idzone': 3465907,
+    'frequency_period': 720,
+    'close_after': 0,
+    'on_complete': 'hide',
+    'branding_enabled': 1,
+    'screen_density': 25,
+    'cta_enabled': 0
+};
+ExoVideoSlider.init(adConfig);
+</script>
 
 				<small><small>
 				$contact_link Serving $num_comma posts &ndash;

@@ -38,7 +38,7 @@ class SourceSetEvent extends Event
 }
 
 
-class TagSetException extends SCoreException
+class TagSetException extends UserErrorException
 {
     public ?string $redirect;
 
