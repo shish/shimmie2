@@ -11,7 +11,7 @@
 				<a style="font-size: 2em;" onclick="toggleNav();">&nbsp;Sidebar&nbsp;</a>
 			</td>
 			<td id="mini-logo">
-				<a class="vis-mobile" href="//rule34.paheal.net/post/list"><img alt="logo" src="//rule34.paheal.net/themes/rule34v2/rule34_logo_christ.png" style="height: 34px;"/></a>
+				<a class="vis-mobile" href="//rule34.paheal.net/post/list"><img alt="logo" src="//rule34.paheal.net/themes/rule34v2/rule34_logo_top.png" style="height: 34px;"/></a>
 			</td>
 			<td>
 				<input name='search' size="45" type='text' placeholder='Search' autocomplete='off' class='autocomplete_tags' value="<?=$query;?>"/>
