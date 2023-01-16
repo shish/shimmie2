@@ -14,7 +14,7 @@ class CustomHtmlHeaders extends Extension
         // custom headers
         $sb->add_longtext_option(
             "custom_html_headers",
-            "HTML Code to place within &lt;head&gt;&lt;/head&gt; on all pages<br>"
+            "HTML Code to place within &lt;head&gt;&lt;/head&gt; on all pages"
         );
 
         // modified title
@@ -22,7 +22,7 @@ class CustomHtmlHeaders extends Extension
             "none" => "none",
             "as prefix" => "prefix",
             "as suffix" => "suffix"
-        ], "<br>Add website name in title");
+        ], "Add website name in title");
     }
 
     public function onInitExt(InitExtEvent $event)
