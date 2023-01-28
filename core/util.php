@@ -526,28 +526,39 @@ $_shm_load_start = ftime();
  */
 function get_debug_info(): string
 {
-    global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
+    $d = get_debug_info_arr();
 
-    $i_mem = sprintf("%5.2f", ((memory_get_peak_usage(true)+512)/1024)/1024);
+    $debug = "<br>Took {$d['time']} seconds (db:{$d['dbtime']}) and {$d['mem_mb']}MB of RAM";
+    $debug .= "; Used {$d['files']} files and {$d['query_count']} queries";
+    $debug .= "; Sent {$d['event_count']} events";
+    $debug .= "; {$d['cache_hits']} cache hits and {$d['cache_misses']} misses";
+    $debug .= "; Shimmie version {$d['version']}";
+
+    return $debug;
+}
+
+function get_debug_info_arr(): array
+{
+    global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
 
     if ($config->get_string("commit_hash", "unknown") == "unknown") {
         $commit = "";
     } else {
         $commit = " (".$config->get_string("commit_hash").")";
     }
-    $time = sprintf("%.2f", ftime() - $_shm_load_start);
-    $dbtime = sprintf("%.2f", $database->dbtime);
-    $i_files = count(get_included_files());
-    $hits = $cache->get_hits();
-    $miss = $cache->get_misses();
 
-    $debug = "<br>Took $time seconds (db:$dbtime) and {$i_mem}MB of RAM";
-    $debug .= "; Used $i_files files and {$database->query_count} queries";
-    $debug .= "; Sent $_shm_event_count events";
-    $debug .= "; $hits cache hits and $miss misses";
-    $debug .= "; Shimmie version ". VERSION . $commit;
-
-    return $debug;
+    return [
+        "time" => round(ftime() - $_shm_load_start, 2),
+        "dbtime" => round($database->dbtime, 2),
+        "mem_mb" => round(((memory_get_peak_usage(true)+512)/1024)/1024, 2),
+        "files" => count(get_included_files()),
+        "query_count" => $database->query_count,
+        // "query_log" => $database->queries,
+        "event_count" => $_shm_event_count,
+        "cache_hits" => $cache->get_hits(),
+        "cache_misses" => $cache->get_misses(),
+        "version" => VERSION . $commit,
+    ];
 }
 
 

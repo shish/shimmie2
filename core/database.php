@@ -36,6 +36,7 @@ class Database
      * How many queries this DB object has run
      */
     public int $query_count = 0;
+    public array $queries = [];
 
     public function __construct(string $dsn)
     {
@@ -129,10 +130,11 @@ class Database
     {
         global $_tracer, $tracer_enabled;
         $dur = ftime() - $start;
+        $query = trim(preg_replace('/^[\n\t ]+/m', '', $query));  // trim whitespace
         if ($tracer_enabled) {
-            $query = trim(preg_replace('/^[\t ]+/m', '', $query));  // trim leading whitespace
             $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
         }
+        $this->queries[] = $query;
         $this->query_count++;
         $this->dbtime += $dur;
     }
