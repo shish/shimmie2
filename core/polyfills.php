@@ -808,6 +808,9 @@ function stringer($s): string
     if (is_string($s)) {
         return "\"$s\"";  // FIXME: handle escaping quotes
     }
+    if (is_numeric($s)) {
+        return "$s";
+    }
     if (method_exists($s, "__toString")) {
         return $s->__toString();
     }
