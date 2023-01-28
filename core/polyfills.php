@@ -802,8 +802,14 @@ function stringer($s): string
             return "[" . implode(", ", $pairs) . "]";
         }
     }
+    if (is_null($s)) {
+        return "null";
+    }
     if (is_string($s)) {
         return "\"$s\"";  // FIXME: handle escaping quotes
     }
-    return (string)$s;
+    if (method_exists($s, "__toString")) {
+        return $s->__toString();
+    }
+    return "<Unstringable>";
 }
