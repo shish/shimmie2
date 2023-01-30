@@ -20,6 +20,13 @@ class Page extends BasePage
         $head_block_html = "";
         $sub_block_html = "";
 
+        $main_headings = 0;
+        foreach ($this->blocks as $block) {
+            if ($block->section == "main" && !is_null($block->header) && $block->header != "Comments") {
+                $main_headings++;
+            }
+        }
+
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
@@ -32,6 +39,9 @@ class Page extends BasePage
                     $head_block_html .= "<td class='headcol'>".$block->get_html(false)."</td>";
                     break;
                 case "main":
+                    if ($main_headings == 1) {
+                        $block->header = null;
+                    }
                     $main_block_html .= $block->get_html(false);
                     break;
                 case "subheading":
