@@ -69,6 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	});
 
+	/** setup copyable things */
+	$(".shm-clicktocopy").each(function(idx, elm) {
+		$(elm).click(function(e) {
+			navigator.clipboard.writeText($(elm).text());
+		});
+	});
+
 	/** setup arrow key bindings **/
     document.addEventListener("keyup", function(e) {
         if ($(e.target).is('input,textarea')) { return; }
