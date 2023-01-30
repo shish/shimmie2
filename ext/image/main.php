@@ -183,10 +183,7 @@ class ImageIO extends Extension
             $tags_to_set = $image->get_tag_array();
             $image->tag_array = [];
             send_event(new TagSetEvent($image, $tags_to_set));
-
-            if ($image->source !== null) {
-                log_info("core-image", "Source for >>{$image->id} set to: {$image->source}");
-            }
+            send_event(new SourceSetEvent($image, $image->source));
         } catch (ImageAdditionException $e) {
             throw new UploadException($e->error);
         }
