@@ -1,8 +1,8 @@
 #!/bin/sh
-groupadd -g $GID shimmie
+groupadd -g $GID shimmie || true
 useradd -ms /bin/bash -u $UID -g $GID shimmie
-mkdir /app/data
-chown shimmie:shimmie /app/data
+mkdir -p /app/data
+chown $UID:$GID /app/data
 export PHP_CLI_SERVER_WORKERS=8
 exec /usr/local/bin/su-exec shimmie:shimmie \
   /usr/bin/php \
