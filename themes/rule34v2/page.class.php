@@ -22,7 +22,7 @@ class Page extends BasePage
 
         $main_headings = 0;
         foreach ($this->blocks as $block) {
-            if ($block->section == "main" && !is_null($block->header) && $block->header != "Comments") {
+            if ($block->section == "main" && !empty($block->header) && $block->header != "Comments") {
                 $main_headings++;
             }
         }
