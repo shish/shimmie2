@@ -66,6 +66,6 @@ class BulkActionsTheme extends Themelet
 
     public function render_source_input(): string
     {
-        return "<input type='text' name='bulk_source' required='required' placeholder='Enter source here' />";
+        return "<input type='text' name='bulk_source' placeholder='Enter source here' />";
     }
 }
