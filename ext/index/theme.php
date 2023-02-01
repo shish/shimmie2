@@ -312,11 +312,11 @@ and of course start organising your images :-)
         <p>Search for posts by date posted.</p>
 
         <div class="command_example">
-        <pre>posted>=07-19-2019</pre>
-        <p>Returns posts posted on or after 07-19-2019.</p>
+        <pre>posted>=2019-07-19</pre>
+        <p>Returns posts posted on or after 2019-07-19.</p>
         </div>
 
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Date format is mm-dd-yyyy. Date posted includes time component, so = will not work unless the time is exact.</p>
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Date format is yyyy-mm-dd. Date posted includes time component, so = will not work unless the time is exact.</p>
 
         <hr/>
 
