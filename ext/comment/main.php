@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use GQLA\Expose;
+
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
 class CommentPostingEvent extends Event
@@ -41,6 +43,7 @@ class CommentPostingException extends SCoreException
 {
 }
 
+#[Expose(name: "Comment")]
 class Comment
 {
     public ?User $owner;
@@ -48,10 +51,12 @@ class Comment
     public string $owner_name;
     public ?string $owner_email;
     public string $owner_class;
+    #[Expose]
     public string $comment;
     public int $comment_id;
     public int $image_id;
     public string $poster_ip;
+    #[Expose]
     public string $posted;
 
     public function __construct($row)
@@ -78,12 +83,25 @@ class Comment
 		", ["owner_id"=>$user->id]);
     }
 
+    #[Expose(name: "owner")]
     public function get_owner(): User
     {
         if (empty($this->owner)) {
             $this->owner = User::by_id($this->owner_id);
         }
         return $this->owner;
+    }
+
+    #[Expose(extends: "Post", name: "comments", type: "[Comment]")]
+    public function get_comments(Image $post): array {
+        return CommentList::get_comments($post->id);
+    }
+
+    #[Expose(extends: "Mutation", name: "create_comment")]
+    public function create_comment(int $post_id, string $comment): bool {
+        global $user;
+        send_event(new CommentPostingEvent($post_id, $user, $comment));
+        return true;
     }
 }
 
@@ -427,7 +445,7 @@ class CommentList extends Extension
     /**
      * #return Comment[]
      */
-    private function get_generic_comments(string $query, array $args): array
+    private static function get_generic_comments(string $query, array $args): array
     {
         global $database;
         $rows = $database->get_all($query, $args);
@@ -441,9 +459,9 @@ class CommentList extends Extension
     /**
      * #return Comment[]
      */
-    private function get_recent_comments(int $count): array
+    private static function get_recent_comments(int $count): array
     {
-        return $this->get_generic_comments("
+        return CommentList::get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
 				comments.comment as comment, comments.id as comment_id,
@@ -459,9 +477,9 @@ class CommentList extends Extension
     /**
      * #return Comment[]
      */
-    private function get_user_comments(int $user_id, int $count, int $offset=0): array
+    private static function get_user_comments(int $user_id, int $count, int $offset=0): array
     {
-        return $this->get_generic_comments("
+        return CommentList::get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
 				comments.comment as comment, comments.id as comment_id,
@@ -476,11 +494,12 @@ class CommentList extends Extension
     }
 
     /**
+     * public just for Image::get_comments()
      * #return Comment[]
      */
-    private function get_comments(int $image_id): array
+    public static function get_comments(int $image_id): array
     {
-        return $this->get_generic_comments("
+        return CommentList::get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
 				comments.comment as comment, comments.id as comment_id,

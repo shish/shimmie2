@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use GQLA\Expose;
+
 function _new_user(array $row): User
 {
     return new User($row);
@@ -17,9 +19,12 @@ function _new_user(array $row): User
  *
  * The currently logged in user will always be accessible via the global variable $user.
  */
+#[Expose(name: "User")]
 class User
 {
+    #[Expose]
     public int $id;
+    #[Expose]
     public string $name;
     public ?string $email;
     public string $join_date;
@@ -56,6 +61,13 @@ class User
         } else {
             throw new SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");
         }
+    }
+
+    #[Expose(extends: "Query")]
+    public static function me(): User
+    {
+        global $user;
+        return $user;
     }
 
     public static function by_session(string $name, string $session): ?User
