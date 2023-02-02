@@ -28,13 +28,15 @@ class EventTracingCache implements CacheInterface
             return $this->misses;
         }
 
+        $sentinel = "__etc_sentinel";
         $this->tracer->begin("Cache Query", ["key"=>$key]);
-        $val = $this->engine->get($key, $default);
-        if ($val != $default) {
+        $val = $this->engine->get($key, $sentinel);
+        if ($val != $sentinel) {
             $res = "hit";
             $this->hits++;
         } else {
             $res = "miss";
+            $val = $default;
             $this->misses++;
         }
         $this->tracer->end(null, ["result"=>$res]);
