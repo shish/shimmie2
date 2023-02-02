@@ -21,8 +21,8 @@ class StatsDInterface extends Extension
         StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
         StatsDInterface::$stats["shimmie.$type.queries"] = $database->query_count."|c";
         StatsDInterface::$stats["shimmie.$type.events"] = $_shm_event_count."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-hits"] = $cache->get_hits()."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get_misses()."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-hits"] = $cache->get("__etc_cache_hits", -1)."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get("__etc_cache_misses", -1)."|c";
     }
 
     public function onPageRequest(PageRequestEvent $event)

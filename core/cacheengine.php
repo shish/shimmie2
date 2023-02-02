@@ -4,238 +4,116 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-interface CacheEngine
+use Psr\SimpleCache\CacheInterface;
+
+class EventTracingCache implements CacheInterface
 {
-    public function get(string $key);
-    public function set(string $key, $val, int $time=0): void;
-    public function delete(string $key): void;
-}
+    private CacheInterface $engine;
+    private \EventTracer $tracer;
+    private int $hits=0;
+    private int $misses=0;
 
-class NoCache implements CacheEngine
-{
-    public function get(string $key)
+    public function __construct(CacheInterface $engine, \EventTracer $tracer)
     {
-        return false;
-    }
-    public function set(string $key, $val, int $time=0): void
-    {
-    }
-    public function delete(string $key): void
-    {
-    }
-}
-
-class MemcachedCache implements CacheEngine
-{
-    public ?\Memcached $memcache=null;
-
-    public function __construct(string $args)
-    {
-        $hp = explode(":", $args);
-        $this->memcache = new \Memcached();
-        #$this->memcache->setOption(\Memcached::OPT_COMPRESSION, False);
-        #$this->memcache->setOption(\Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_PHP);
-        #$this->memcache->setOption(\Memcached::OPT_PREFIX_KEY, phpversion());
-        $this->memcache->addServer($hp[0], (int)$hp[1]);
+        $this->engine = $engine;
+        $this->tracer = $tracer;
     }
 
-    public function get(string $key)
+    public function get($key, $default=null)
     {
-        $key = urlencode($key);
+        if($key === "__etc_cache_hits") return $this->hits;
+        if($key === "__etc_cache_misses") return $this->misses;
 
-        $val = $this->memcache->get($key);
-        $res = $this->memcache->getResultCode();
-
-        if ($res == \Memcached::RES_SUCCESS) {
-            return $val;
-        } elseif ($res == \Memcached::RES_NOTFOUND) {
-            return false;
-        } else {
-            error_log("Memcached error during get($key): $res");
-            return false;
-        }
-    }
-
-    public function set(string $key, $val, int $time=0): void
-    {
-        $key = urlencode($key);
-
-        $this->memcache->set($key, $val, $time);
-        $res = $this->memcache->getResultCode();
-        if ($res != \Memcached::RES_SUCCESS) {
-            error_log("Memcached error during set($key): $res");
-        }
-    }
-
-    public function delete(string $key): void
-    {
-        $key = urlencode($key);
-
-        $this->memcache->delete($key);
-        $res = $this->memcache->getResultCode();
-        if ($res != \Memcached::RES_SUCCESS && $res != \Memcached::RES_NOTFOUND) {
-            error_log("Memcached error during delete($key): $res");
-        }
-    }
-}
-
-class APCCache implements CacheEngine
-{
-    public function __construct(string $args)
-    {
-        // $args is not used, but is passed in when APC cache is created.
-    }
-
-    public function get(string $key)
-    {
-        return apc_fetch($key);
-    }
-
-    public function set(string $key, $val, int $time=0): void
-    {
-        apc_store($key, $val, $time);
-    }
-
-    public function delete(string $key): void
-    {
-        apc_delete($key);
-    }
-}
-
-class RedisCache implements CacheEngine
-{
-    private \Redis $redis;
-
-    public function __construct(string $args)
-    {
-        $this->redis = new \Redis();
-        $hp = explode(":", $args);
-        $this->redis->pconnect($hp[0], (int)$hp[1]);
-        $this->redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
-        $this->redis->setOption(\Redis::OPT_PREFIX, 'shm:');
-    }
-
-    public function get(string $key)
-    {
-        return $this->redis->get($key);
-    }
-
-    public function set(string $key, $val, int $time=0): void
-    {
-        if ($time > 0) {
-            $this->redis->setEx($key, $time, $val);
-        } else {
-            $this->redis->set($key, $val);
-        }
-    }
-
-    public function delete(string $key): void
-    {
-        $this->redis->del($key);
-    }
-}
-
-class CacheWithStats implements \Psr\SimpleCache\CacheInterface
-{
-    public $engine;
-    public int $hits=0;
-    public int $misses=0;
-    public int $time=0;
-
-    public function __construct(CacheEngine $c)
-    {
-        $this->engine = $c;
-    }
-
-    public function get(string $key, mixed $default=null): mixed
-    {
-        global $_tracer;
-        $_tracer->begin("Cache Query", ["key"=>$key]);
-        $val = $this->engine->get($key);
-        if ($val !== false) {
+        $this->tracer->begin("Cache Query", ["key"=>$key]);
+        $val = $this->engine->get($key, $default);
+        if ($val != $default) {
             $res = "hit";
             $this->hits++;
         } else {
             $res = "miss";
-            $val = $default;
             $this->misses++;
         }
-        $_tracer->end(null, ["result"=>$res]);
+        $this->tracer->end(null, ["result"=>$res]);
         return $val;
     }
 
-    public function set(string $key, mixed $value, \DateInterval|int|null $ttl = null): bool
+    public function set($key, $value, $ttl = null)
     {
-        global $_tracer;
-        $_tracer->begin("Cache Set", ["key"=>$key, "ttl"=>$ttl]);
-        $this->engine->set($key, $value, $ttl ?? 0);
-        $_tracer->end();
-        return true;
+        $this->tracer->begin("Cache Set", ["key"=>$key, "ttl"=>$ttl]);
+        $val = $this->engine->set($key, $value, $ttl);
+        $this->tracer->end();
+        return $val;
     }
 
-    public function delete(string $key): bool
+    public function delete($key)
     {
-        global $_tracer;
-        $_tracer->begin("Cache Delete", ["key"=>$key]);
-        $this->engine->delete($key);
-        $_tracer->end();
-        return true;
+        $this->tracer->begin("Cache Delete", ["key"=>$key]);
+        $val = $this->engine->delete($key);
+        $this->tracer->end();
+        return $val;
     }
 
-    public function clear(): bool
+    public function clear()
     {
-        throw new Exception("Not implemented");
+        $this->tracer->begin("Cache Clear");
+        $val = $this->engine->clear();
+        $this->tracer->end();
+        return $val;
     }
 
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple($keys, $default = null)
     {
-        $results = [];
-        foreach($keys as $key) {
-            $results[$key] = $this->get($key, $default);
-        }
-        return $results;
+        $this->tracer->begin("Cache Get Multiple");
+        $val = $this->engine->getMultiple($values, $default);
+        $this->tracer->end();
+        return $val;
     }
 
-    public function setMultiple(iterable $values, \DateInterval|int|null $ttl = null): bool {
-        foreach($values as $key => $value) {
-            $this->set($key, $value, $ttl);
-        }
-        return true;
+    public function setMultiple($values, $ttl = null) {
+        $this->tracer->begin("Cache Set Multiple");
+        $val = $this->engine->setMultiple($values, $ttl);
+        $this->tracer->end();
+        return $val;
     }
 
-    public function deleteMultiple(iterable $keys): bool {
-        foreach($keys as $key) {
-            $this->delete($key);
-        }
-    }
-    public function has(string $key): bool {
-        $sentinel = 4345345735673;
-        return $this->get($key, $sentinel) != $sentinel;
+    public function deleteMultiple($keys) {
+        $this->tracer->begin("Cache Delete Multiple");
+        $val = $this->engine->deleteMultiple($keys);
+        $this->tracer->end();
+        return $val;
     }
 
-    public function get_hits(): int
-    {
-        return $this->hits;
-    }
-    public function get_misses(): int
-    {
-        return $this->misses;
+    public function has($key) {
+        $this->tracer->begin("Cache Has", ["key"=>$key]);
+        $val = $this->engine->has($key);
+        $this->tracer->end(null, ["exists"=>$val]);
+        return $val;
     }
 }
 
-function loadCache(?string $dsn): CacheWithStats {
+function loadCache(?string $dsn): CacheInterface {
     $matches = [];
     $c = null;
     if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {
         if ($matches[1] == "memcached" || $matches[1] == "memcache") {
-            $c = new MemcachedCache($matches[2]);
+            $hp = explode(":", $matches[2]);
+            $memcache = new \Memcached();
+            $memcache->addServer($hp[0], (int)$hp[1]);
+            $c = new \Sabre\Cache\Memcached($memcached);
         } elseif ($matches[1] == "apc") {
-            $c = new APCCache($matches[2]);
+            $c = new \Sabre\Cache\Apcu();
         } elseif ($matches[1] == "redis") {
-            $c = new RedisCache($matches[2]);
+            $hp = explode(":", $matches[2]);
+            $redis = new \Predis\Client([
+                'scheme' => 'tcp',
+                'host' => $hp[0],
+                'port' => (int)$hp[1]
+            ], ['prefix' => 'shm:']);
+            $c = new \Naroga\RedisCache\Redis($redis);
         }
     } else {
-        $c = new NoCache();
+        $c = new \Sabre\Cache\Memory();
     }
-    return new CacheWithStats($c);
+    global $_tracer;
+    return new EventTracingCache($c, $_tracer);
 }

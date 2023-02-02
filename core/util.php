@@ -555,8 +555,8 @@ function get_debug_info_arr(): array
         "query_count" => $database->query_count,
         // "query_log" => $database->queries,
         "event_count" => $_shm_event_count,
-        "cache_hits" => $cache->get_hits(),
-        "cache_misses" => $cache->get_misses(),
+        "cache_hits" => $cache->get("__etc_cache_hits"),
+        "cache_misses" => $cache->get("__etc_cache_misses"),
         "version" => VERSION . $commit,
     ];
 }
