@@ -107,7 +107,7 @@ class IPBan extends Extension
         // Get lists of banned IPs and banned networks
         $ips = $cache->get("ip_bans");
         $networks = $cache->get("network_bans");
-        if ($ips === false || $networks === false) {
+        if (is_null($ips) || is_null($networks)) {
             $rows = $database->get_pairs("
 				SELECT ip, id
 				FROM bans

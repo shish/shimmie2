@@ -49,7 +49,7 @@ class Blocks extends Extension
         global $cache, $database, $page, $user;
 
         $blocks = $cache->get("blocks");
-        if ($blocks === false) {
+        if (is_null($blocks)) {
             $blocks = $database->get_all("SELECT * FROM blocks");
             $cache->set("blocks", $blocks, 600);
         }

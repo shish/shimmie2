@@ -284,7 +284,7 @@ class DatabaseConfig extends BaseConfig
         }
 
         $cached = $cache->get($cache_name);
-        if ($cached) {
+        if (!is_null($cached)) {
             $this->values = $cached;
         } else {
             $this->values = [];

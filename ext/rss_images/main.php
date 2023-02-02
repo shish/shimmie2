@@ -97,7 +97,7 @@ class RSSImages extends Extension
         global $cache;
 
         $cached = $cache->get("rss-item-image:{$image->id}");
-        if ($cached) {
+        if (!is_null($cached)) {
             return $cached;
         }
 

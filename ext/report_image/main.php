@@ -243,7 +243,7 @@ class ReportImage extends Extension
         global $cache, $database;
 
         $count = $cache->get("image-report-count");
-        if (is_null($count) || $count === false) {
+        if (is_null($count)) {
             $count = $database->get_one("SELECT count(*) FROM image_reports");
             $cache->set("image-report-count", $count, 600);
         }

@@ -49,7 +49,7 @@ class TagUsage {
         }
 
         $res = $cache->get($cache_key);
-        if (!$res) {
+        if (is_null($res)) {
             $res = $database->get_pairs(
                 "
                 SELECT tag, count

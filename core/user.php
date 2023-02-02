@@ -74,7 +74,7 @@ class User
     {
         global $cache, $config, $database;
         $row = $cache->get("user-session:$name-$session");
-        if (!$row) {
+        if (is_null($row)) {
             if ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
             } else {
@@ -91,7 +91,7 @@ class User
         global $cache, $database;
         if ($id === 1) {
             $cached = $cache->get('user-id:'.$id);
-            if ($cached) {
+            if (!is_null($cached)) {
                 return new User($cached);
             }
         }

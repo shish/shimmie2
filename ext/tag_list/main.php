@@ -157,7 +157,7 @@ class TagList extends Extension
 
         $results = $cache->get("tag_list_omitted_tags:".$tags_config);
 
-        if ($results==null) {
+        if (is_null($results)) {
             $tags = explode(" ", $tags_config);
 
             if (empty($tags)) {
@@ -494,7 +494,7 @@ class TagList extends Extension
         global $cache, $database, $config;
 
         $tags = $cache->get("popular_tags");
-        if (empty($tags)) {
+        if (is_null($tags)) {
             $omitted_tags = self::get_omitted_tags();
 
             if (empty($omitted_tags)) {
@@ -556,7 +556,7 @@ class TagList extends Extension
         $str_search = Tag::implode($search);
         $related_tags = $cache->get("related_tags:$str_search");
 
-        if (empty($related_tags)) {
+        if (is_null($related_tags)) {
             // $search_tags = array();
 
             $starting_tags = [];

@@ -274,7 +274,7 @@ class CommentList extends Extension
         $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 
         $total_pages = $cache->get("comment_pages");
-        if (empty($total_pages)) {
+        if (is_null($total_pages)) {
             $total_pages = (int)ceil($database->get_one("
 				SELECT COUNT(c1)
 				FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1
@@ -346,7 +346,7 @@ class CommentList extends Extension
         $cc = $config->get_int("comment_count");
         if ($cc > 0) {
             $recent = $cache->get("recent_comments");
-            if (empty($recent)) {
+            if (is_null($recent)) {
                 $recent = $this->get_recent_comments($cc);
                 $cache->set("recent_comments", $recent, 60);
             }

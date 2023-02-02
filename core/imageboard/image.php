@@ -185,7 +185,7 @@ class Image
     {
         global $cache, $database;
         $total = $cache->get("image-count");
-        if (!$total) {
+        if (is_null($total)) {
             $total = (int)$database->get_one("SELECT COUNT(*) FROM images");
             $cache->set("image-count", $total, 600);
         }
@@ -227,7 +227,7 @@ class Image
             // implode(tags) can be too long for memcache...
             $cache_key = "image-count:" . md5(Tag::implode($tags));
             $total = $cache->get($cache_key);
-            if (!$total) {
+            if (is_null($total)) {
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
                     $tags[] = "rating:*";
                 }

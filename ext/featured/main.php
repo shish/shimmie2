@@ -53,7 +53,7 @@ class Featured extends Extension
         $fid = $config->get_int("featured_id");
         if ($fid > 0) {
             $image = $cache->get("featured_image_object:$fid");
-            if ($image === false) {
+            if (is_null($image)) {
                 $image = Image::by_id($fid);
                 if ($image) { // make sure the object is fully populated before saving
                     $image->get_tag_array();

@@ -46,7 +46,7 @@ _set_up_shimmie_environment();
 $_tracer = new \EventTracer();
 $_tracer->begin("Bootstrap");
 _load_core_files();
-$cache = new Cache(CACHE_DSN);
+$cache = loadCache(CACHE_DSN);
 $database = new Database(DATABASE_DSN);
 $config = new DatabaseConfig($database);
 ExtensionInfo::load_all_extension_info();

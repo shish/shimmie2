@@ -135,32 +135,19 @@ class RedisCache implements CacheEngine
     }
 }
 
-class Cache
+class CacheWithStats implements \Psr\SimpleCache\CacheInterface
 {
     public $engine;
     public int $hits=0;
     public int $misses=0;
     public int $time=0;
 
-    public function __construct(?string $dsn)
+    public function __construct(CacheEngine $c)
     {
-        $matches = [];
-        $c = null;
-        if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {
-            if ($matches[1] == "memcached" || $matches[1] == "memcache") {
-                $c = new MemcachedCache($matches[2]);
-            } elseif ($matches[1] == "apc") {
-                $c = new APCCache($matches[2]);
-            } elseif ($matches[1] == "redis") {
-                $c = new RedisCache($matches[2]);
-            }
-        } else {
-            $c = new NoCache();
-        }
         $this->engine = $c;
     }
 
-    public function get(string $key)
+    public function get(string $key, mixed $default=null): mixed
     {
         global $_tracer;
         $_tracer->begin("Cache Query", ["key"=>$key]);
@@ -170,26 +157,60 @@ class Cache
             $this->hits++;
         } else {
             $res = "miss";
+            $val = $default;
             $this->misses++;
         }
         $_tracer->end(null, ["result"=>$res]);
         return $val;
     }
 
-    public function set(string $key, $val, int $time=0)
+    public function set(string $key, mixed $value, \DateInterval|int|null $ttl = null): bool
     {
         global $_tracer;
-        $_tracer->begin("Cache Set", ["key"=>$key, "time"=>$time]);
-        $this->engine->set($key, $val, $time);
+        $_tracer->begin("Cache Set", ["key"=>$key, "ttl"=>$ttl]);
+        $this->engine->set($key, $value, $ttl ?? 0);
         $_tracer->end();
+        return true;
     }
 
-    public function delete(string $key)
+    public function delete(string $key): bool
     {
         global $_tracer;
         $_tracer->begin("Cache Delete", ["key"=>$key]);
         $this->engine->delete($key);
         $_tracer->end();
+        return true;
+    }
+
+    public function clear(): bool
+    {
+        throw new Exception("Not implemented");
+    }
+
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    {
+        $results = [];
+        foreach($keys as $key) {
+            $results[$key] = $this->get($key, $default);
+        }
+        return $results;
+    }
+
+    public function setMultiple(iterable $values, \DateInterval|int|null $ttl = null): bool {
+        foreach($values as $key => $value) {
+            $this->set($key, $value, $ttl);
+        }
+        return true;
+    }
+
+    public function deleteMultiple(iterable $keys): bool {
+        foreach($keys as $key) {
+            $this->delete($key);
+        }
+    }
+    public function has(string $key): bool {
+        $sentinel = 4345345735673;
+        return $this->get($key, $sentinel) != $sentinel;
     }
 
     public function get_hits(): int
@@ -200,4 +221,21 @@ class Cache
     {
         return $this->misses;
     }
+}
+
+function loadCache(?string $dsn): CacheWithStats {
+    $matches = [];
+    $c = null;
+    if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {
+        if ($matches[1] == "memcached" || $matches[1] == "memcache") {
+            $c = new MemcachedCache($matches[2]);
+        } elseif ($matches[1] == "apc") {
+            $c = new APCCache($matches[2]);
+        } elseif ($matches[1] == "redis") {
+            $c = new RedisCache($matches[2]);
+        }
+    } else {
+        $c = new NoCache();
+    }
+    return new CacheWithStats($c);
 }

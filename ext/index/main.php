@@ -85,7 +85,7 @@ class Index extends Extension
                     if ($count_search_terms === 0 && ($page_number < 10)) {
                         // extra caching for the first few post/list pages
                         $images = $cache->get("post-list:$page_number");
-                        if (!$images) {
+                        if (is_null($images)) {
                             $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
                             $cache->set("post-list:$page_number", $images, 60);
                         }

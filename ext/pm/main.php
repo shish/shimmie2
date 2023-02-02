@@ -241,7 +241,7 @@ class PrivMsg extends Extension
         global $cache, $database;
 
         $count = $cache->get("pm-count:{$user->id}");
-        if (is_null($count) || $count === false) {
+        if (is_null($count)) {
             $count = $database->get_one("
 					SELECT count(*)
 					FROM private_message
