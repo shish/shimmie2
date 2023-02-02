@@ -10,5 +10,6 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
     {
         $schema = \GQLA\genSchema();
         $schema->assertValid();
+        $this->assertTrue(true);
     }
 }
