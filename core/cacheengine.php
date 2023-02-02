@@ -21,8 +21,12 @@ class EventTracingCache implements CacheInterface
 
     public function get($key, $default=null)
     {
-        if($key === "__etc_cache_hits") return $this->hits;
-        if($key === "__etc_cache_misses") return $this->misses;
+        if ($key === "__etc_cache_hits") {
+            return $this->hits;
+        }
+        if ($key === "__etc_cache_misses") {
+            return $this->misses;
+        }
 
         $this->tracer->begin("Cache Query", ["key"=>$key]);
         $val = $this->engine->get($key, $default);
@@ -69,21 +73,24 @@ class EventTracingCache implements CacheInterface
         return $val;
     }
 
-    public function setMultiple($values, $ttl = null) {
+    public function setMultiple($values, $ttl = null)
+    {
         $this->tracer->begin("Cache Set Multiple");
         $val = $this->engine->setMultiple($values, $ttl);
         $this->tracer->end();
         return $val;
     }
 
-    public function deleteMultiple($keys) {
+    public function deleteMultiple($keys)
+    {
         $this->tracer->begin("Cache Delete Multiple");
         $val = $this->engine->deleteMultiple($keys);
         $this->tracer->end();
         return $val;
     }
 
-    public function has($key) {
+    public function has($key)
+    {
         $this->tracer->begin("Cache Has", ["key"=>$key]);
         $val = $this->engine->has($key);
         $this->tracer->end(null, ["exists"=>$val]);
@@ -91,7 +98,8 @@ class EventTracingCache implements CacheInterface
     }
 }
 
-function loadCache(?string $dsn): CacheInterface {
+function loadCache(?string $dsn): CacheInterface
+{
     $matches = [];
     $c = null;
     if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {

@@ -74,7 +74,7 @@ class Featured extends Extension
     public function onImageDeletion(ImageDeletionEvent $event)
     {
         global $config;
-        if($event->image->id == $config->get_int("featured_id")) {
+        if ($event->image->id == $config->get_int("featured_id")) {
             $config->set_int("featured_id", 0);
             $config->save();
         }

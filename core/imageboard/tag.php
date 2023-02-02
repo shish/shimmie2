@@ -7,7 +7,8 @@ namespace Shimmie2;
 use GQLA\Expose;
 
 #[Expose(name: "TagUsage")]
-class TagUsage {
+class TagUsage
+{
     #[Expose]
     public string $tag;
     #[Expose]
@@ -20,7 +21,8 @@ class TagUsage {
     }
 
     #[Expose(extends: "Query", name: "tags", type: '[TagUsage]')]
-    public static function tags(string $search, int $limit=10): array {
+    public static function tags(string $search, int $limit=10): array
+    {
         global $cache, $database;
 
         if (!$search) {
@@ -66,11 +68,11 @@ class TagUsage {
         }
 
         $counts = [];
-        foreach($res as $k => $v) {
+        foreach ($res as $k => $v) {
             $counts[] = new TagUsage($k, $v);
         }
         return $counts;
-    }    
+    }
 }
 
 /**

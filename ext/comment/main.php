@@ -93,12 +93,14 @@ class Comment
     }
 
     #[Expose(extends: "Post", name: "comments", type: "[Comment]")]
-    public function get_comments(Image $post): array {
+    public function get_comments(Image $post): array
+    {
         return CommentList::get_comments($post->id);
     }
 
     #[Expose(extends: "Mutation", name: "create_comment")]
-    public function create_comment(int $post_id, string $comment): bool {
+    public function create_comment(int $post_id, string $comment): bool
+    {
         global $user;
         send_event(new CommentPostingEvent($post_id, $user, $comment));
         return true;

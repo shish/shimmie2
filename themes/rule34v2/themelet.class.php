@@ -11,7 +11,7 @@ class Themelet extends BaseThemelet
         global $cache, $config;
 
         $cached = $cache->get("thumb-block:{$image->id}");
-        if(!is_null($cached)) {
+        if (!is_null($cached)) {
             return $cached;
         }
 

@@ -14,7 +14,7 @@ class GraphQL extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page;
-        if($event->page_matches("graphql")) {
+        if ($event->page_matches("graphql")) {
             $t1 = ftime();
             $server = new StandardServer([
                 'schema' => \GQLA\genSchema(),
