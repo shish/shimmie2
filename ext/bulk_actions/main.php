@@ -175,7 +175,7 @@ class BulkActions extends Extension
                     if (empty($data)) {
                         throw new BulkActionException("No ids specified in bulk_selected_ids");
                     }
-                    if (is_array($data) && !empty($data)) {
+                    if (is_array($data)) {
                         $items = $this->yield_items($data);
                     }
                 } elseif (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {

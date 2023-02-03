@@ -162,7 +162,7 @@ class TagList extends Extension
         if (is_null($results)) {
             $tags = explode(" ", $tags_config);
 
-            if (empty($tags)) {
+            if (count($tags) == 0) {
                 return [];
             }
 

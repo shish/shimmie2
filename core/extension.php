@@ -62,9 +62,11 @@ abstract class Extension
     public static function determine_enabled_extensions(): void
     {
         self::$enabled_extensions = [];
+        $extras = defined("EXTRA_EXTS") ? explode(",", EXTRA_EXTS) : [];
+
         foreach (array_merge(
             ExtensionInfo::get_core_extensions(),
-            explode(",", EXTRA_EXTS)
+            $extras
         ) as $key) {
             $ext = ExtensionInfo::get_by_key($key);
             if ($ext===null || !$ext->is_supported()) {
@@ -361,7 +363,7 @@ abstract class DataHandlerExtension extends Extension
                 // Locked Stuff.
                 if (!empty($event->metadata['locked'])) {
                     $locked = $event->metadata['locked'];
-                    send_event(new LockSetEvent($image, !empty($locked)));
+                    send_event(new LockSetEvent($image, $locked));
                 }
             }
         } elseif ($supported_mime && !$check_contents) {

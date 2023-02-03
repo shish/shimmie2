@@ -115,9 +115,6 @@ class Blotter extends Extension
                         $this->theme->display_permission_denied();
                     } else {
                         $id = int_escape($_POST['id']);
-                        if (!isset($id)) {
-                            die("No ID!");
-                        }
                         $database->execute("DELETE FROM blotter WHERE id=:id", ["id"=>$id]);
                         log_info("blotter", "Removed Entry #$id");
                         $page->set_mode(PageMode::REDIRECT);
