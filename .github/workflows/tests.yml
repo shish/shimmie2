@@ -46,7 +46,7 @@ jobs:
     - name: PHPStan
       uses: php-actions/phpstan@v3
       with:
-        contfiguration: tests/phpstan.neon
+        configuration: tests/phpstan.neon
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
