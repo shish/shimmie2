@@ -47,6 +47,7 @@ jobs:
       uses: php-actions/phpstan@v3
       with:
         configuration: tests/phpstan.neon
+        memory_limit: 1G
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
