@@ -395,7 +395,7 @@ abstract class DataHandlerExtension extends Extension
     {
         global $page;
         if ($this->supported_mime($event->image->get_mime())) {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+            // @phpstan-ignore-next-line
             $this->theme->display_image($page, $event->image);
         }
     }

@@ -1,5 +1,5 @@
 parameters:
-  level: 1
+  level: 2
   paths:
     - ../core
     - ../ext
@@ -7,3 +7,4 @@ parameters:
     - ../themes/default
   ignoreErrors:
     - '#Attribute class GQLA\\Expose#'
+    - '#Access to an undefined property Shimmie2\\Image::\$#'

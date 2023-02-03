@@ -441,8 +441,6 @@ class Pools extends Extension
      * When displaying an image, optionally list all the pools that the
      * image is currently a member of on a side panel, as well as a link
      * to the Next image in the pool.
-     *
-     * @var DisplayingImageEvent $event
      */
     public function onDisplayingImage(DisplayingImageEvent $event)
     {

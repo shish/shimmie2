@@ -268,7 +268,6 @@ class Image
          * Turn a bunch of strings into a bunch of TagCondition
          * and ImgCondition objects
          */
-        /** @var $stpe SearchTermParseEvent */
         $stpe = send_event(new SearchTermParseEvent($stpen++, null, $terms));
         if ($stpe->order) {
             $order = $stpe->order;
@@ -288,7 +287,6 @@ class Image
                 continue;
             }
 
-            /** @var $stpe SearchTermParseEvent */
             $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
             if ($stpe->order) {
                 $order = $stpe->order;

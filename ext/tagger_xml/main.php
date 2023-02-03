@@ -99,6 +99,7 @@ class TaggerXML extends Extension
 
     private function list_to_xml(\FFSPHP\PDOStatement $tags, string $type, string $query, ?array$misc=null): string
     {
+        // @phpstan-ignore-next-line
         $r = $tags->_numOfRows;
 
         $s_misc = "";

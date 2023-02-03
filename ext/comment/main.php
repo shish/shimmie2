@@ -580,9 +580,11 @@ class CommentList extends Extension
                 $comment
             );
 
+            // @phpstan-ignore-next-line
             if ($akismet->errorsExist()) {
                 return false;
             } else {
+                // @phpstan-ignore-next-line
                 return $akismet->isSpam();
             }
         }

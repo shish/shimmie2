@@ -96,6 +96,10 @@ $_shm_event_count = 0;
 
 /**
  * Send an event to all registered Extensions.
+ * 
+ * @template T of Event
+ * @param T $event
+ * @return T
  */
 function send_event(Event $event): Event
 {

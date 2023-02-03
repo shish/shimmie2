@@ -39,7 +39,7 @@ function ip_in_range(string $IP, string $CIDR): bool
     list($net, $mask) = explode("/", $CIDR);
 
     $ip_net = ip2long($net);
-    $ip_mask = ~((1 << (32 - $mask)) - 1);
+    $ip_mask = ~((1 << (32 - (int)$mask)) - 1);
 
     $ip_ip = ip2long($IP);
 
@@ -499,7 +499,7 @@ function truncate(string $string, int $limit, string $break=" ", string $pad="..
 function parse_shorthand_int(string $limit): int
 {
     if (preg_match('/^([\d\.]+)([tgmk])?b?$/i', (string)$limit, $m)) {
-        $value = $m[1];
+        $value = (float)$m[1];
         if (isset($m[2])) {
             switch (strtolower($m[2])) {
                 /** @noinspection PhpMissingBreakStatementInspection */
