@@ -573,6 +573,7 @@ class CommentList extends Extension
                 'user_agent'   => $_SERVER['HTTP_USER_AGENT'] ?? 'none',
             ];
 
+            // @phpstan-ignore-next-line
             $akismet = new \Akismet(
                 $_SERVER['SERVER_NAME'],
                 $config->get_string('comment_wordpress_key'),

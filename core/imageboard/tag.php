@@ -174,7 +174,7 @@ class Tag
         }  // hard-code one bad case...
 
         if (mb_strlen($tag, 'UTF-8') > 255) {
-            throw new ScoreException("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
+            throw new SCoreException("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
         }
         return $tag;
     }

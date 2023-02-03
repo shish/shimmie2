@@ -11,6 +11,8 @@ class TagList extends Extension
     /** @var TagListTheme */
     protected ?Themelet $theme;
 
+    private $tagcategories = null;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

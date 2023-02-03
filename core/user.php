@@ -177,7 +177,7 @@ class User
     {
         global $database;
         if (User::by_name($name)) {
-            throw new ScoreException("Desired username is already in use");
+            throw new SCoreException("Desired username is already in use");
         }
         $old_name = $this->name;
         $this->name = $name;

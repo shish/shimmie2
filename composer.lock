@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7d482b23052d4e764a4f2c076865bc5",
+    "content-hash": "d010608b1d82774bd3444615496f254f",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -2263,6 +2263,66 @@
                 "source": "https://github.com/phpstan/phpdoc-parser/tree/1.16.0"
             },
             "time": "2023-01-29T14:41:23+00:00"
+        },
+        {
+            "name": "phpstan/phpstan",
+            "version": "1.10.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "f9f7d4a0714c8356ebe3a14e328a0a6dc778d454"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f9f7d4a0714c8356ebe3a14e328a0a6dc778d454",
+                "reference": "f9f7d4a0714c8356ebe3a14e328a0a6dc778d454",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
+            },
+            "default-branch": true,
+            "bin": [
+                "phpstan",
+                "phpstan.phar"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "keywords": [
+                "dev",
+                "static analysis"
+            ],
+            "support": {
+                "issues": "https://github.com/phpstan/phpstan/issues",
+                "source": "https://github.com/phpstan/phpstan/tree/1.10.x"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/phpstan",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-02-02T16:02:59+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -5483,7 +5543,8 @@
     "stability-flags": {
         "shish/gqla": 20,
         "naroga/redis-cache": 20,
-        "scrutinizer/ocular": 20
+        "scrutinizer/ocular": 20,
+        "phpstan/phpstan": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

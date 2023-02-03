@@ -70,7 +70,7 @@ class EventTracingCache implements CacheInterface
     public function getMultiple($keys, $default = null)
     {
         $this->tracer->begin("Cache Get Multiple");
-        $val = $this->engine->getMultiple($values, $default);
+        $val = $this->engine->getMultiple($keys, $default);
         $this->tracer->end();
         return $val;
     }
@@ -109,7 +109,7 @@ function loadCache(?string $dsn): CacheInterface
             $hp = explode(":", $matches[2]);
             $memcache = new \Memcached();
             $memcache->addServer($hp[0], (int)$hp[1]);
-            $c = new \Sabre\Cache\Memcached($memcached);
+            $c = new \Sabre\Cache\Memcached($memcache);
         } elseif ($matches[1] == "apc") {
             $c = new \Sabre\Cache\Apcu();
         } elseif ($matches[1] == "redis") {

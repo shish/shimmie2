@@ -1,0 +1,9 @@
+parameters:
+  level: 0
+  paths:
+    - ../core
+    - ../ext
+    - ../tests
+    - ../themes/default
+  ignoreErrors:
+    - '#Attribute class GQLA\\Expose#'

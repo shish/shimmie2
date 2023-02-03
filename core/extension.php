@@ -233,7 +233,7 @@ abstract class ExtensionInfo
             return self::$all_info_by_class[$normal];
         } else {
             $infos = print_r(array_keys(self::$all_info_by_class), true);
-            throw new ScoreException("$normal not found in {$infos}");
+            throw new SCoreException("$normal not found in {$infos}");
         }
     }
 
@@ -242,7 +242,7 @@ abstract class ExtensionInfo
         foreach (get_subclasses_of("Shimmie2\ExtensionInfo") as $class) {
             $extension_info = new $class();
             if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
-                throw new ScoreException("Extension Info $class with key $extension_info->key has already been loaded");
+                throw new SCoreException("Extension Info $class with key $extension_info->key has already been loaded");
             }
 
             self::$all_info_by_key[$extension_info->key] = $extension_info;

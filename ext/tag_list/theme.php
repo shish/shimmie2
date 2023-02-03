@@ -9,6 +9,7 @@ class TagListTheme extends Themelet
     public string $heading = "";
     public string $list = "";
     public ?string $navigation;
+    private $tagcategories = null;
 
     public function set_heading(string $text)
     {

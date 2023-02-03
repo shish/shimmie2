@@ -128,9 +128,9 @@ and of course start organising your images :-)
                 }
                 $wikiLink = make_link("wiki/$st");
                 if (class_exists('Shimmie2\TagCategories')) {
-                    $this->tagcategories = new TagCategories();
-                    $tag_category_dict = $this->tagcategories->getKeyedDict();
-                    $st = $this->tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
+                    $tagcategories = new TagCategories();
+                    $tag_category_dict = $tagcategories->getKeyedDict();
+                    $st = $tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
                 }
                 $short_wiki_description = '<h2>'.$st.'&nbsp;<a href="'.$wikiLink.'"><sup>ⓘ</sup></a></h2>'.$short_wiki_description;
                 $page->add_block(new Block(null, $short_wiki_description, "main", 0, "short-wiki-description"));

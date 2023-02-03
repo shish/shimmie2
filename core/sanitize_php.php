@@ -9,9 +9,6 @@ namespace Shimmie2;
  * be included right at the very start of index.php and tests/bootstrap.php
  */
 
-use JetBrains\PhpStorm\NoReturn;
-
-#[NoReturn]
 function die_nicely($title, $body, $code=0)
 {
     print("<!DOCTYPE html>

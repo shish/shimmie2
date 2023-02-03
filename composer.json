@@ -58,7 +58,8 @@
 	"require-dev" : {
 		"phpunit/phpunit" : "^9.0",
 		"friendsofphp/php-cs-fixer" : "^3.12",
-		"scrutinizer/ocular": "dev-master"
+		"scrutinizer/ocular": "dev-master",
+		"phpstan/phpstan": "1.10.x-dev"
 	},
 	"suggest": {
 		"ext-memcache": "memcache caching",

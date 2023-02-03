@@ -264,6 +264,7 @@ class DatabaseConfig extends BaseConfig
     private string $table_name;
     private ?string $sub_column;
     private ?string $sub_value;
+    private string $cache_name;
 
     public function __construct(
         Database $database,
