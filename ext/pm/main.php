@@ -96,7 +96,7 @@ class PM
         return $pms;
     }
 
-    #[Mutation("create_private_message")]
+    #[Mutation(name: "create_private_message")]
     public static function send_pm(int $to_id, string $subject, string $message): bool
     {
         global $user;

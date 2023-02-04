@@ -7,17 +7,27 @@ namespace Shimmie2;
 use GraphQL\GraphQL as GQL;
 use GraphQL\Server\StandardServer;
 use GraphQL\Error\DebugFlag;
+use GraphQL\Type\Schema;
 use GraphQL\Utils\SchemaPrinter;
 
 class GraphQL extends Extension
 {
+    public static function get_schema(): Schema
+    {
+        global $_tracer;
+        $_tracer->begin("Create Schema");
+        $schema = \GQLA\genSchema();
+        $_tracer->end(null);
+        return $schema;
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page;
         if ($event->page_matches("graphql")) {
             $t1 = ftime();
             $server = new StandardServer([
-                'schema' => \GQLA\genSchema(),
+                'schema' => $this->get_schema(),
             ]);
             $t2 = ftime();
             $resp = $server->executeRequest();
@@ -36,13 +46,13 @@ class GraphQL extends Extension
     {
         if ($event->cmd == "help") {
             print "\tgraphql <query string>\n";
-            print "\t\teg 'graphql \"{ post_by_id(id: 18) { id, hash } }\"'\n\n";
+            print "\t\teg 'graphql \"{ post(id: 18) { id, hash } }\"'\n\n";
             print "\tgraphql-schema\n";
             print "\t\tdump the schema\n\n";
         }
         if ($event->cmd == "graphql") {
             $t1 = ftime();
-            $schema = \GQLA\genSchema();
+            $schema = $this->get_schema();
             $t2 = ftime();
             $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
             $body = GQL::executeQuery($schema, $event->args[0])->toArray($debug);
@@ -53,7 +63,7 @@ class GraphQL extends Extension
             echo \json_encode($body, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
         }
         if ($event->cmd == "graphql-schema") {
-            $schema = \GQLA\genSchema();
+            $schema = $this->get_schema();
             echo(SchemaPrinter::doPrint($schema));
         }
     }

@@ -86,7 +86,7 @@ class Image
         }
     }
 
-    #[Query(name: "post_by_id")]
+    #[Query(name: "post")]
     public static function by_id(int $id): ?Image
     {
         global $database;
