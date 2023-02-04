@@ -14,7 +14,8 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase
             User::by_name(self::$admin_name)->id,
             "0.0.0.0",
             User::by_name(self::$user_name)->id,
-            "message demo to test"
+            "message demo to test",
+            "test body"
         )));
 
         // Check that user can see own messages
@@ -44,7 +45,8 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase
             User::by_name(self::$admin_name)->id,
             "0.0.0.0",
             User::by_name(self::$user_name)->id,
-            "message demo to test"
+            "message demo to test",
+            "test body"
         )));
 
         // Check that admin can see user's messages
