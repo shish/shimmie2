@@ -95,7 +95,7 @@ class Comment
         return $this->owner;
     }
 
-    #[Field(extends: "Post", name: "comments", type: "[Comment]")]
+    #[Field(extends: "Post", name: "comments", type: "[Comment!]!")]
     public function get_comments(Image $post): array
     {
         return CommentList::get_comments($post->id);
