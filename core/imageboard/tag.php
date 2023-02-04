@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Expose;
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
 
-#[Expose(name: "TagUsage")]
+#[Type(name: "TagUsage")]
 class TagUsage
 {
-    #[Expose]
+    #[Field]
     public string $tag;
-    #[Expose]
+    #[Field]
     public int $uses;
 
     public function __construct(string $tag, int $uses)
@@ -20,7 +22,7 @@ class TagUsage
         $this->uses = $uses;
     }
 
-    #[Expose(extends: "Query", name: "tags", type: '[TagUsage]')]
+    #[Query(name: "tags", type: '[TagUsage]')]
     public static function tags(string $search, int $limit=10): array
     {
         global $cache, $database;

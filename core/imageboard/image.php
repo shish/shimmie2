@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Expose;
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
 
 /**
  * Class Image
@@ -15,27 +17,27 @@ use GQLA\Expose;
  * image per se, but could be a video, sound file, or any
  * other supported upload type.
  */
-#[Expose(name: "Post")]
+#[Type(name: "Post")]
 class Image
 {
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
-    #[Expose]
+    #[Field]
     public ?int $id = null;
-    #[Expose]
+    #[Field]
     public int $height = 0;
-    #[Expose]
+    #[Field]
     public int $width = 0;
-    #[Expose]
+    #[Field]
     public string $hash;
-    #[Expose]
+    #[Field]
     public int $filesize;
-    #[Expose]
+    #[Field]
     public string $filename;
-    #[Expose]
+    #[Field]
     private string $ext;
-    #[Expose]
+    #[Field]
     private string $mime;
 
     /** @var ?string[] */
@@ -84,7 +86,7 @@ class Image
         }
     }
 
-    #[Expose(extends: "Query", name: "post_by_id")]
+    #[Query(name: "post_by_id")]
     public static function by_id(int $id): ?Image
     {
         global $database;
@@ -154,7 +156,7 @@ class Image
      * #param string[] $tags
      * #return Image[]
      */
-    #[Expose(extends: "Query", name: "posts", type: "[Post]", args: ["tags" => "[string]"])]
+    #[Query(name: "posts", type: "[Post]", args: ["tags" => "[string]"])]
     public static function find_images(?int $start = 0, ?int $limit = null, array $tags=[]): array
     {
         $result = self::find_images_internal($start, $limit, $tags);
@@ -360,7 +362,7 @@ class Image
     /**
      * Find the User who owns this Image
      */
-    #[Expose(name: "owner")]
+    #[Field(name: "owner")]
     public function get_owner(): User
     {
         return User::by_id($this->owner_id);
@@ -459,9 +461,9 @@ class Image
     /**
      * Get this image's tags as an array.
      *
-     * #return string[]
+     * @return String[]
      */
-    #[Expose(name: "tags", type: "[string]")]
+    #[Field(name: "tags", type: "[string]")]
     public function get_tag_array(): array
     {
         global $database;
@@ -489,7 +491,7 @@ class Image
     /**
      * Get the URL for the full size image
      */
-    #[Expose(name: "image_link")]
+    #[Field(name: "image_link")]
     public function get_image_link(): string
     {
         return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
@@ -498,7 +500,7 @@ class Image
     /**
      * Get the nicely formatted version of the file name
      */
-    #[Expose(name: "nice_name")]
+    #[Field(name: "nice_name")]
     public function get_nice_image_name(): string
     {
         $plte = new ParseLinkTemplateEvent('$id - $tags.$ext', $this);
@@ -509,7 +511,7 @@ class Image
     /**
      * Get the URL for the thumbnail
      */
-    #[Expose(name: "thumb_link")]
+    #[Field(name: "thumb_link")]
     public function get_thumb_link(): string
     {
         global $config;
@@ -544,7 +546,7 @@ class Image
      * Get the tooltip for this image, formatted according to the
      * configured template.
      */
-    #[Expose(name: "tooltip")]
+    #[Field(name: "tooltip")]
     public function get_tooltip(): string
     {
         global $config;
@@ -557,7 +559,7 @@ class Image
      * Get the info for this image, formatted according to the
      * configured template.
      */
-    #[Expose(name: "info")]
+    #[Field(name: "info")]
     public function get_info(): string
     {
         global $config;

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Expose;
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+use GQLA\Mutation;
 
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
@@ -43,7 +46,7 @@ class CommentPostingException extends SCoreException
 {
 }
 
-#[Expose(name: "Comment")]
+#[Type(name: "Comment")]
 class Comment
 {
     public ?User $owner;
@@ -51,12 +54,12 @@ class Comment
     public string $owner_name;
     public ?string $owner_email;
     public string $owner_class;
-    #[Expose]
+    #[Field]
     public string $comment;
     public int $comment_id;
     public int $image_id;
     public string $poster_ip;
-    #[Expose]
+    #[Field]
     public string $posted;
 
     public function __construct($row)
@@ -83,7 +86,7 @@ class Comment
 		", ["owner_id"=>$user->id]);
     }
 
-    #[Expose(name: "owner")]
+    #[Field(name: "owner")]
     public function get_owner(): User
     {
         if (empty($this->owner)) {
@@ -92,13 +95,13 @@ class Comment
         return $this->owner;
     }
 
-    #[Expose(extends: "Post", name: "comments", type: "[Comment]")]
+    #[Field(extends: "Post", name: "comments", type: "[Comment]")]
     public function get_comments(Image $post): array
     {
         return CommentList::get_comments($post->id);
     }
 
-    #[Expose(extends: "Mutation", name: "create_comment")]
+    #[Mutation(name: "create_comment")]
     public function create_comment(int $post_id, string $comment): bool
     {
         global $user;

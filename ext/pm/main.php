@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Expose;
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
 
 class SendPMEvent extends Event
 {
@@ -17,21 +19,20 @@ class SendPMEvent extends Event
     }
 }
 
-#[Expose]
+#[Type]
 class PM
 {
-    #[Expose]
+    #[Field]
     public int $id;
     public int $from_id;
     public string $from_ip;
     public int $to_id;
-    /** @var mixed */
-    public $sent_date;
-    #[Expose]
+    public mixed $sent_date;
+    #[Field]
     public string $subject;
-    #[Expose]
+    #[Field]
     public string $message;
-    #[Expose]
+    #[Field]
     public bool $is_read;
 
     public function __construct($from_id=0, string $from_ip="0.0.0.0", int $to_id=0, string $subject="A Message", string $message="Some Text", bool $read=false)

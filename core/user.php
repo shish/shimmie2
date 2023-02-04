@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Expose;
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
 
 function _new_user(array $row): User
 {
@@ -19,12 +21,12 @@ function _new_user(array $row): User
  *
  * The currently logged in user will always be accessible via the global variable $user.
  */
-#[Expose(name: "User")]
+#[Type(name: "User")]
 class User
 {
-    #[Expose]
+    #[Field]
     public int $id;
-    #[Expose]
+    #[Field]
     public string $name;
     public ?string $email;
     public string $join_date;
@@ -63,7 +65,7 @@ class User
         }
     }
 
-    #[Expose(extends: "Query")]
+    #[Query]
     public static function me(): User
     {
         global $user;
