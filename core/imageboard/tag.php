@@ -22,6 +22,9 @@ class TagUsage
         $this->uses = $uses;
     }
 
+    /**
+     * @return TagUsage[]
+     */
     #[Query(name: "tags", type: '[TagUsage]')]
     public static function tags(string $search, int $limit=10): array
     {
