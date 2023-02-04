@@ -74,8 +74,7 @@ class TagSetEvent extends Event
                 continue;
             }
 
-            $ttpe = new TagTermCheckEvent($tag);
-            send_event($ttpe);
+            $ttpe = send_event(new TagTermCheckEvent($tag));
 
             //seperate tags from metatags
             if (!$ttpe->metatag) {

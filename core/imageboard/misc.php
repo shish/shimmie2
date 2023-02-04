@@ -53,9 +53,7 @@ function add_image(string $tmpname, string $filename, string $tags): int
     $metadata['tags'] = Tag::explode($tags);
     $metadata['source'] = null;
 
-    $due = new DataUploadEvent($tmpname, $metadata);
-    send_event($due);
-
+    $due = send_event(new DataUploadEvent($tmpname, $metadata));
     return $due->image_id;
 }
 

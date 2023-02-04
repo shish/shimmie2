@@ -207,8 +207,7 @@ function get_session_ip(Config $config): string
  */
 function format_text(string $string): string
 {
-    $event = new TextFormattingEvent($string);
-    send_event($event);
+    $event = send_event(new TextFormattingEvent($string));
     return $event->formatted;
 }
 

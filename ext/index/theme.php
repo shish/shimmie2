@@ -122,8 +122,7 @@ and of course start organising your images :-)
                     // only show first line of wiki
                     $short_wiki_description = explode("\n", $wikiPage->body, 2)[0];
 
-                    $tfe = new TextFormattingEvent($short_wiki_description);
-                    send_event($tfe);
+                    $tfe = send_event(new TextFormattingEvent($short_wiki_description));
                     $short_wiki_description = $tfe->formatted;
                 }
                 $wikiLink = make_link("wiki/$st");

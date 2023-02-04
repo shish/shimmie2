@@ -259,8 +259,7 @@ class AutoTagger extends Extension
             foreach ($image_ids as $image_id) {
                 $image_id = (int) $image_id;
                 $image = Image::by_id($image_id);
-                $event = new TagSetEvent($image, $image->get_tag_array());
-                send_event($event);
+                send_event(new TagSetEvent($image, $image->get_tag_array()));
             }
         }
     }

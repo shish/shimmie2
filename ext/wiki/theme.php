@@ -21,8 +21,7 @@ class WikiTheme extends Themelet
             $nav_page->body = "";
         }
 
-        $tfe = new TextFormattingEvent($nav_page->body);
-        send_event($tfe);
+        $tfe = send_event(new TextFormattingEvent($nav_page->body));
 
         // only the admin can edit the sidebar
         if ($user->can(Permissions::WIKI_ADMIN)) {

@@ -11,8 +11,7 @@ class System extends Extension
         global $page;
 
         if ($event->page_matches("system")) {
-            $e = new PageSubNavBuildingEvent("system");
-            send_event($e);
+            $e = send_event(new PageSubNavBuildingEvent("system"));
             usort($e->links, "Shimmie2\sort_nav_links");
             $link = $e->links[0]->link;
 

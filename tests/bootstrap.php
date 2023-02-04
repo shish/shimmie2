@@ -247,13 +247,12 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     // post things
     protected function post_image(string $filename, string $tags): int
     {
-        $dae = new DataUploadEvent($filename, [
+        $dae = send_event(new DataUploadEvent($filename, [
             "filename" => $filename,
             "extension" => pathinfo($filename, PATHINFO_EXTENSION),
             "tags" => Tag::explode($tags),
             "source" => null,
-        ]);
-        send_event($dae);
+        ]));
         // if($dae->image_id == -1) throw new \Exception("Upload failed :(");
         return $dae->image_id;
     }
@@ -262,8 +261,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     {
         $img = Image::by_id($image_id);
         if ($img) {
-            $ide = new ImageDeletionEvent($img, true);
-            send_event($ide);
+            send_event(new ImageDeletionEvent($img, true));
         }
     }
 }

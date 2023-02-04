@@ -614,12 +614,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/gqla.git",
-                "reference": "6b30c17214389013314cc3441e0db766fee8119c"
+                "reference": "3b9d2973c0587f10f3b57990585fbdb7588ce54f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/gqla/zipball/6b30c17214389013314cc3441e0db766fee8119c",
-                "reference": "6b30c17214389013314cc3441e0db766fee8119c",
+                "url": "https://api.github.com/repos/shish/gqla/zipball/3b9d2973c0587f10f3b57990585fbdb7588ce54f",
+                "reference": "3b9d2973c0587f10f3b57990585fbdb7588ce54f",
                 "shasum": ""
             },
             "require": {
@@ -659,7 +659,7 @@
                 "issues": "https://github.com/shish/gqla/issues",
                 "source": "https://github.com/shish/gqla/tree/main"
             },
-            "time": "2023-02-04T12:47:18+00:00"
+            "time": "2023-02-04T20:10:44+00:00"
         },
         {
             "name": "shish/microcrud",
@@ -770,16 +770,16 @@
         },
         {
             "name": "webonyx/graphql-php",
-            "version": "v15.0.3",
+            "version": "v15.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webonyx/graphql-php.git",
-                "reference": "bfa78b44a93c00ebc9a1bc92497bc170a0e3b656"
+                "reference": "c58c08f3e2d6c43a8e0bb4bcc61ecb2a3e4f85df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/bfa78b44a93c00ebc9a1bc92497bc170a0e3b656",
-                "reference": "bfa78b44a93c00ebc9a1bc92497bc170a0e3b656",
+                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/c58c08f3e2d6c43a8e0bb4bcc61ecb2a3e4f85df",
+                "reference": "c58c08f3e2d6c43a8e0bb4bcc61ecb2a3e4f85df",
                 "shasum": ""
             },
             "require": {
@@ -828,7 +828,7 @@
             ],
             "support": {
                 "issues": "https://github.com/webonyx/graphql-php/issues",
-                "source": "https://github.com/webonyx/graphql-php/tree/v15.0.3"
+                "source": "https://github.com/webonyx/graphql-php/tree/v15.1.0"
             },
             "funding": [
                 {
@@ -836,7 +836,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2023-02-02T21:59:56+00:00"
+            "time": "2023-02-04T15:00:26+00:00"
         }
     ],
     "packages-dev": [
@@ -2657,12 +2657,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8072151d4782529eca00770db6dccbb49ce4cdb1"
+                "reference": "e7b1615e3e887d6c719121c6d4a44b0ab9645555"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8072151d4782529eca00770db6dccbb49ce4cdb1",
-                "reference": "8072151d4782529eca00770db6dccbb49ce4cdb1",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e7b1615e3e887d6c719121c6d4a44b0ab9645555",
+                "reference": "e7b1615e3e887d6c719121c6d4a44b0ab9645555",
                 "shasum": ""
             },
             "require": {
@@ -2735,7 +2735,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.3"
             },
             "funding": [
                 {
@@ -2751,7 +2751,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-04T08:53:49+00:00"
+            "time": "2023-02-04T13:37:15+00:00"
         },
         {
             "name": "psr/cache",

@@ -295,8 +295,7 @@ class Ratings extends Extension
             $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs($user));
             $rating = $ratings[0];
             $image = Image::by_id($event->image_id);
-            $re = new RatingSetEvent($image, $rating);
-            send_event($re);
+            send_event(new RatingSetEvent($image, $rating));
         }
     }
 

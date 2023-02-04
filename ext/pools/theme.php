@@ -144,8 +144,7 @@ class PoolsTheme extends Themelet
                     $this->sidebar_options($page, $pool, $check_all);
                 }
             }
-            $tfe = new TextFormattingEvent($pool->description);
-            send_event($tfe);
+            $tfe = send_event(new TextFormattingEvent($pool->description));
             $page->add_block(new Block(html_escape($pool->title), $tfe->formatted, "main", 10));
         }
     }

@@ -101,13 +101,11 @@ class ViewImage extends Extension
 
         $this->theme->display_meta_headers($image);
 
-        $iibbe = new ImageInfoBoxBuildingEvent($image, $user);
-        send_event($iibbe);
+        $iibbe = send_event(new ImageInfoBoxBuildingEvent($image, $user));
         ksort($iibbe->parts);
         $this->theme->display_page($image, $iibbe->parts);
 
-        $iabbe = new ImageAdminBlockBuildingEvent($image, $user, "view");
-        send_event($iabbe);
+        $iabbe = send_event(new ImageAdminBlockBuildingEvent($image, $user, "view"));
         ksort($iabbe->parts);
         $this->theme->display_admin_block($page, $iabbe->parts);
     }

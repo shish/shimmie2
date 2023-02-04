@@ -503,9 +503,7 @@ class Image
     #[Field(name: "nice_name")]
     public function get_nice_image_name(): string
     {
-        $plte = new ParseLinkTemplateEvent('$id - $tags.$ext', $this);
-        send_event($plte);
-        return $plte->text;
+        return send_event(new ParseLinkTemplateEvent('$id - $tags.$ext', $this))->text;
     }
 
     /**
@@ -550,9 +548,7 @@ class Image
     public function get_tooltip(): string
     {
         global $config;
-        $plte = new ParseLinkTemplateEvent($config->get_string(ImageConfig::TIP), $this);
-        send_event($plte);
-        return $plte->text;
+        return send_event(new ParseLinkTemplateEvent($config->get_string(ImageConfig::TIP), $this))->text;
     }
 
     /**
@@ -563,9 +559,7 @@ class Image
     public function get_info(): string
     {
         global $config;
-        $plte = new ParseLinkTemplateEvent($config->get_string(ImageConfig::INFO), $this);
-        send_event($plte);
-        return $plte->text;
+        return send_event(new ParseLinkTemplateEvent($config->get_string(ImageConfig::INFO), $this))->text;
     }
 
 

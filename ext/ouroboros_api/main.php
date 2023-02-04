@@ -171,10 +171,7 @@ class OuroborosPost extends _SafeOuroborosImage
             $this->is_note_locked = $post['is_note_locked'];
         }
         if (array_key_exists('parent_id', $post)) {
-            $this->parent_id = filter_var(
-                $post['parent_id'],
-                FILTER_SANITIZE_NUMBER_INT
-            );
+            $this->parent_id = int_escape($post['parent_id']);
         }
     }
 }
@@ -386,8 +383,7 @@ class OuroborosAPI extends Extension
         }
         $meta['extension'] = pathinfo($meta['filename'], PATHINFO_EXTENSION);
         try {
-            $upload = new DataUploadEvent($meta['file'], $meta);
-            send_event($upload);
+            send_event(new DataUploadEvent($meta['file'], $meta));
             $image = Image::by_hash($meta['hash']);
             if (!is_null($image)) {
                 $this->sendResponse(200, make_link('post/view/' . $image->id), true);

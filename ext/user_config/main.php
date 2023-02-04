@@ -138,16 +138,7 @@ class UserConfig extends Extension
                 $this->theme->display_permission_denied();
             } else {
                 if ($event->count_args() == 0) {
-                    $display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
-
-                    if ($user->id!=$display_user->id && !$user->can(Permissions::CHANGE_OTHER_USER_SETTING)) {
-                        $this->theme->display_permission_denied();
-                        return;
-                    }
-
-                    $uobe = new UserOptionsBuildingEvent($display_user, new SetupPanel($user_config));
-                    send_event($uobe);
-
+                    $uobe = send_event(new UserOptionsBuildingEvent($user, new SetupPanel($user_config)));
                     $this->theme->display_user_config_page($page, $uobe->user, $uobe->panel);
                 } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
                     $input = validate_input([

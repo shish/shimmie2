@@ -106,10 +106,7 @@ class ForumTheme extends Themelet
             $current_post++;
             $message = $post["message"];
 
-            $tfe = new TextFormattingEvent($message);
-            send_event($tfe);
-            $message = $tfe->formatted;
-
+            $message = send_event(new TextFormattingEvent($message))->formatted;
             $message = str_replace('\n\r', '<br>', $message);
             $message = str_replace('\r\n', '<br>', $message);
             $message = str_replace('\n', '<br>', $message);

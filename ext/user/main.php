@@ -116,8 +116,7 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "create") {
                 $this->page_create();
             } elseif ($event->get_arg(0) == "create_other") {
-                $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], false);
-                send_event($uce);
+                send_event(new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], false));
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("admin"));
                 $page->flash("Created new user");
@@ -180,8 +179,7 @@ class UserPage extends Extension
                     "You aren't logged in. First do that, then you can see your stats."
                 );
             } elseif (!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
-                $e = new UserPageBuildingEvent($display_user);
-                send_event($e);
+                $e = send_event(new UserPageBuildingEvent($display_user));
                 $this->display_stats($e);
             } else {
                 $this->theme->display_error(
@@ -248,15 +246,13 @@ class UserPage extends Extension
             if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
                 $user_config = UserConfig::get_for_user($event->display_user->id);
 
-                $uobe = new UserOperationsBuildingEvent($event->display_user, $user_config);
-                send_event($uobe);
+                $uobe = send_event(new UserOperationsBuildingEvent($event->display_user, $user_config));
                 $page->add_block(new Block("Operations", $this->theme->build_operations($event->display_user, $uobe), "main", 60));
             }
         }
 
         if ($user->id == $event->display_user->id) {
-            $ubbe = new UserBlockBuildingEvent();
-            send_event($ubbe);
+            $ubbe = send_event(new UserBlockBuildingEvent());
             ksort($ubbe->parts);
             $this->theme->display_user_links($page, $user, $ubbe->parts);
         }
@@ -423,8 +419,7 @@ class UserPage extends Extension
         if ($user->is_anonymous()) {
             $this->theme->display_login_block($page);
         } else {
-            $ubbe = new UserBlockBuildingEvent();
-            send_event($ubbe);
+            $ubbe = send_event(new UserBlockBuildingEvent());
             ksort($ubbe->parts);
             $this->theme->display_user_block($page, $user, $ubbe->parts);
         }
@@ -508,8 +503,7 @@ class UserPage extends Extension
                     throw new UserCreationException("Error in captcha");
                 }
 
-                $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], true);
-                send_event($uce);
+                $uce = send_event(new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], true));
                 $this->set_login_cookie($uce->username);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));

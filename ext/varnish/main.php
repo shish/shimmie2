@@ -37,8 +37,6 @@ class VarnishPurger extends Extension
             throw new SCoreException('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
         }
         curl_close($ch);
-        assert(!is_null($result) && !is_null($httpCode));
-        //return $result;
     }
 
     public function onCommentPosting(CommentPostingEvent $event)

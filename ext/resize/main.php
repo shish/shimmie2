@@ -192,15 +192,14 @@ class ResizeImage extends Extension
                     throw new ImageResizeException("Unable to save temporary image file.");
                 }
 
-                $mre = new MediaResizeEvent(
+                send_event(new MediaResizeEvent(
                     $config->get_string(ResizeConfig::ENGINE),
                     $event->path,
                     $event->mime,
                     $tmp_filename,
                     $new_width,
                     $new_height
-                );
-                send_event($mre);
+                ));
 
                 if ($event->file_modified===true&&$event->path!=$event->image->get_image_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up

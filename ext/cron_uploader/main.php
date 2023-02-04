@@ -481,8 +481,7 @@ class CronUploader extends Extension
         }
         $metadata ['tags'] = $tagArray;
         $metadata ['source'] = null;
-        $event = new DataUploadEvent($tmpname, $metadata);
-        send_event($event);
+        $event = send_event(new DataUploadEvent($tmpname, $metadata));
 
         // Generate info message
         if ($event->image_id == -1) {

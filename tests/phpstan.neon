@@ -6,5 +6,4 @@ parameters:
     - ../tests
     - ../themes/default
   ignoreErrors:
-    - '#Attribute class GQLA\\#'
     - '#Access to an undefined property Shimmie2\\Image::\$#'

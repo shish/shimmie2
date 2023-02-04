@@ -114,8 +114,7 @@ class Index extends Extension
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link('post/view/'.$images[0]->id));
             } else {
-                $plbe = new PostListBuildingEvent($search_terms);
-                send_event($plbe);
+                $plbe = send_event(new PostListBuildingEvent($search_terms));
 
                 $this->theme->set_page($page_number, $total_pages, $search_terms);
                 $this->theme->display_page($page, $images);

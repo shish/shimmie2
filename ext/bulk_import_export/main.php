@@ -126,8 +126,7 @@ class BulkImportExport extends DataHandlerExtension
                 foreach ($event->items as $image) {
                     $img_loc = warehouse_path(Image::IMAGE_DIR, $image->hash, false);
 
-                    $export_event = new BulkExportEvent($image);
-                    send_event($export_event);
+                    $export_event = send_event(new BulkExportEvent($image));
                     $data = $export_event->fields;
                     $data["hash"] = $image->hash;
                     $data["tags"] = $image->get_tag_array();

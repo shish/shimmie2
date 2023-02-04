@@ -236,14 +236,12 @@ class Pools extends Extension
                 case "create": // ADD _POST
                     try {
                         $title = $_POST["title"];
-                        $event = new PoolCreationEvent(
+                        $event = send_event(new PoolCreationEvent(
                             $title,
                             $user,
                             bool_escape($_POST["public"]),
                             $_POST["description"]
-                        );
-
-                        send_event($event);
+                        ));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $event->new_id));
                     } catch (PoolCreationException $e) {
@@ -588,8 +586,7 @@ class Pools extends Extension
                     return;
                 }
                 $new_pool_title = $_POST['bulk_pool_new'];
-                $pce = new PoolCreationEvent($new_pool_title);
-                send_event($pce);
+                $pce = send_event(new PoolCreationEvent($new_pool_title));
                 send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items)));
                 break;
         }
