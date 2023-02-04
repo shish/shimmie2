@@ -153,8 +153,8 @@ class Image
     /**
      * Search for an array of images
      *
-     * #param string[] $tags
-     * #return Image[]
+     * @param String[] $tags
+     * @return Image[]
      */
     #[Query(name: "posts", type: "[Post]", args: ["tags" => "[string]"])]
     public static function find_images(?int $start = 0, ?int $limit = null, array $tags=[]): array
@@ -206,7 +206,7 @@ class Image
     /**
      * Count the number of image results for a given search
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public static function count_images(array $tags=[]): int
     {
@@ -251,7 +251,7 @@ class Image
     /**
      * Count the number of pages for a given search
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public static function count_pages(array $tags=[]): int
     {
@@ -316,7 +316,7 @@ class Image
      * Rather than simply $this_id + 1, one must take into account
      * deleted images and search queries
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public function get_next(array $tags=[], bool $next=true): ?Image
     {
@@ -352,7 +352,7 @@ class Image
     /**
      * The reverse of get_next
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public function get_prev(array $tags=[]): ?Image
     {
@@ -830,7 +830,7 @@ class Image
     }
 
     /**
-     * #param string[] $terms
+     * @param String[] $terms
      */
     private static function build_search_querylet(
         array $terms,
