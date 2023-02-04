@@ -29,7 +29,7 @@ class EventTracingCache implements CacheInterface
         }
 
         $sentinel = "__etc_sentinel";
-        $this->tracer->begin("Cache Query", ["key"=>$key]);
+        $this->tracer->begin("Cache Get", ["key"=>$key]);
         $val = $this->engine->get($key, $sentinel);
         if ($val != $sentinel) {
             $res = "hit";
@@ -69,7 +69,7 @@ class EventTracingCache implements CacheInterface
 
     public function getMultiple($keys, $default = null)
     {
-        $this->tracer->begin("Cache Get Multiple");
+        $this->tracer->begin("Cache Get Multiple", ["keys" => $keys]);
         $val = $this->engine->getMultiple($keys, $default);
         $this->tracer->end();
         return $val;
@@ -77,7 +77,7 @@ class EventTracingCache implements CacheInterface
 
     public function setMultiple($values, $ttl = null)
     {
-        $this->tracer->begin("Cache Set Multiple");
+        $this->tracer->begin("Cache Set Multiple", ["keys" => array_keys($values)]);
         $val = $this->engine->setMultiple($values, $ttl);
         $this->tracer->end();
         return $val;
@@ -85,7 +85,7 @@ class EventTracingCache implements CacheInterface
 
     public function deleteMultiple($keys)
     {
-        $this->tracer->begin("Cache Delete Multiple");
+        $this->tracer->begin("Cache Delete Multiple", ["keys" => $keys]);
         $val = $this->engine->deleteMultiple($keys);
         $this->tracer->end();
         return $val;
