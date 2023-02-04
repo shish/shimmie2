@@ -4,6 +4,76 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Mutation;
+
+#[Type(name: "NumericScoreVote")]
+class NumericScoreVote
+{
+    public int $image_id;
+    public int $user_id;
+
+    #[Field]
+    public int $score;
+
+    #[Field]
+    public function post(): Image
+    {
+        return Image::by_id($this->image_id);
+    }
+
+    #[Field]
+    public function user(): User
+    {
+        return User::by_id($this->user_id);
+    }
+
+    #[Field(extends: "Post")]
+    public static function score(Image $post): int
+    {
+        global $database;
+        if ($post->score ?? null) {
+            return $post->score;
+        }
+        return $database->get_one(
+            "SELECT sum(score) FROM numeric_score_votes WHERE image_id=:image_id",
+            ['image_id'=>$post->id]
+        ) ?? 0;
+    }
+
+    #[Field(extends: "Post", type: "[NumericScoreVote!]!")]
+    public static function votes(Image $post): array
+    {
+        global $database;
+        $rows = $database->get_all(
+            "SELECT * FROM numeric_score_votes WHERE image_id=:image_id",
+            ['image_id'=>$post->id]
+        );
+        $votes = [];
+        foreach ($rows as $row) {
+            $nsv = new NumericScoreVote();
+            $nsv->image_id = $row["image_id"];
+            $nsv->user_id = $row["user_id"];
+            $nsv->score = $row["score"];
+            $votes[] = $nsv;
+        }
+        return $votes;
+    }
+
+    #[Mutation]
+    public static function create_vote(int $post_id, int $score): bool
+    {
+        global $user;
+        if (!$user->is_anonymous()) {
+            assert($score == 0 || $score == -1 || $score == 1);
+            send_event(new NumericScoreSetEvent($post_id, $user, $score));
+            return true;
+        }
+        return false;
+    }
+}
+
 class NumericScoreSetEvent extends Event
 {
     public int $image_id;
@@ -72,16 +142,8 @@ class NumericScore extends Extension
         } elseif ($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
             if (!$user->is_anonymous()) {
                 $image_id = int_escape($_POST['image_id']);
-                $char = $_POST['vote'];
-                $score = null;
-                if ($char == "up") {
-                    $score = 1;
-                } elseif ($char == "null") {
-                    $score = 0;
-                } elseif ($char == "down") {
-                    $score = -1;
-                }
-                if (!is_null($score) && $image_id>0) {
+                $score = int_escape($_POST['vote']);
+                if (($score == -1 || $score == 0 || $score == 1) && $image_id>0) {
                     send_event(new NumericScoreSetEvent($image_id, $user, $score));
                 }
                 $page->set_mode(PageMode::REDIRECT);
