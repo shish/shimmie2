@@ -614,12 +614,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/gqla.git",
-                "reference": "3b9d2973c0587f10f3b57990585fbdb7588ce54f"
+                "reference": "92d57cf38bc8a171efa23a7539e41246612476a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/gqla/zipball/3b9d2973c0587f10f3b57990585fbdb7588ce54f",
-                "reference": "3b9d2973c0587f10f3b57990585fbdb7588ce54f",
+                "url": "https://api.github.com/repos/shish/gqla/zipball/92d57cf38bc8a171efa23a7539e41246612476a3",
+                "reference": "92d57cf38bc8a171efa23a7539e41246612476a3",
                 "shasum": ""
             },
             "require": {
@@ -634,9 +634,9 @@
             "default-branch": true,
             "type": "library",
             "autoload": {
-                "files": [
-                    "src/gqla.php"
-                ]
+                "psr-4": {
+                    "GQLA\\": "src"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -659,7 +659,7 @@
                 "issues": "https://github.com/shish/gqla/issues",
                 "source": "https://github.com/shish/gqla/tree/main"
             },
-            "time": "2023-02-04T20:10:44+00:00"
+            "time": "2023-02-05T15:33:56+00:00"
         },
         {
             "name": "shish/microcrud",

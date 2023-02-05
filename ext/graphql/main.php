@@ -16,7 +16,7 @@ class GraphQL extends Extension
     {
         global $_tracer;
         $_tracer->begin("Create Schema");
-        $schema = \GQLA\genSchema();
+        $schema = new \GQLA\Schema();
         $_tracer->end(null);
         return $schema;
     }
