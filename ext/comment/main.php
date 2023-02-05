@@ -87,13 +87,18 @@ class Comment
 		", ["owner_id" => $user->id]);
     }
 
-    #[Field(name: "owner")]
     public function get_owner(): User
     {
         if (empty($this->owner)) {
             $this->owner = User::by_id($this->owner_id);
         }
         return $this->owner;
+    }
+
+    #[Field(name: "owner", type: "User")]
+    public function graphql_owner(): DataLoader
+    {
+        return new DataLoader($this->owner_id, "\\Shimmie2\\userIDsToUsers");
     }
 
     #[Field(extends: "Post", name: "comments", type: "[Comment!]!")]

@@ -8,6 +8,73 @@ use GQLA\Type;
 use GQLA\Field;
 use GQLA\Query;
 
+function userIDsToUsers($ids)
+{
+    global $database;
+    $in = implode(",", $ids);
+    $rows = $database->get_all("SELECT * FROM users WHERE id IN ($in)");
+    $results = [];
+    foreach ($rows as $row) {
+        $results[$row["id"]] = new User($row);
+    }
+    return $results;
+}
+
+function postIDsToPostTags($ids)
+{
+    global $database;
+    $in = implode(",", $ids);
+    $rows = $database->get_all("
+        SELECT image_id, tag
+        FROM image_tags
+        JOIN tags ON image_tags.tag_id = tags.id
+        WHERE image_id IN ($in)
+        ORDER BY tag
+    ");
+    $res = [];
+    foreach ($rows as $row) {
+        $res[$row["image_id"]][] = $row["tag"];
+    }
+    return $res;
+}
+
+class DataLoader extends \GraphQL\Deferred
+{
+    public static array $ids = [];
+    public static array $res = [];
+
+    private string $type;
+
+    public function __construct(
+        private int $id,
+        private $loader
+    ) {
+        parent::__construct(fn () => $this->load());
+        $this->type = (string)$loader;
+        if (!isset(self::$ids[$this->type])) {
+            self::$ids[$this->type] = [];
+        }
+        if (!isset(self::$res[$this->type])) {
+            self::$res[$this->type] = [];
+        }
+        if (!in_array($id, self::$ids[$this->type])) {
+            self::$ids[$this->type][] = $id;
+        }
+    }
+
+    public function load()
+    {
+        if (!isset(self::$res[$this->type][$this->id])) {
+            $r = ($this->loader)(self::$ids[$this->type]);
+            foreach ($r as $id => $obj) {
+                self::$res[$this->type][$id] = $obj;
+            }
+            self::$ids[$this->type] = [];
+        }
+        return self::$res[$this->type][$this->id];
+    }
+}
+
 /**
  * Class Image
  *
@@ -185,7 +252,6 @@ class Image
     /**
      * Find the User who owns this Image
      */
-    #[Field(name: "owner")]
     public function get_owner(): User
     {
         return User::by_id($this->owner_id);
@@ -286,7 +352,6 @@ class Image
      *
      * @return string[]
      */
-    #[Field(name: "tags", type: "[string!]!")]
     public function get_tag_array(): array
     {
         global $database;
@@ -301,6 +366,18 @@ class Image
             sort($this->tag_array);
         }
         return $this->tag_array;
+    }
+
+    #[Field(name: "owner", type: "User")]
+    public function graphql_owner(): DataLoader
+    {
+        return new DataLoader($this->owner_id, "\\Shimmie2\\userIDsToUsers");
+    }
+
+    #[Field(name: "tags", type: "[string]")]
+    public function graphql_tags(): DataLoader
+    {
+        return new DataLoader($this->id, "\\Shimmie2\\postIDsToPostTags");
     }
 
     /**
