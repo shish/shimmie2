@@ -31,6 +31,7 @@ class User
     public ?string $email;
     public string $join_date;
     public ?string $passhash;
+    #[Field]
     public UserClass $class;
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

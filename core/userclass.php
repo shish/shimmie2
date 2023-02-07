@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+
 /**
  * @global UserClass[] $_shm_user_classes
  */
@@ -13,8 +17,10 @@ $_shm_user_classes = [];
 /**
  * Class UserClass
  */
+#[Type(name: "UserClass")]
 class UserClass
 {
+    #[Field]
     public ?string $name = null;
     public ?UserClass $parent = null;
     public array $abilities = [];
@@ -31,6 +37,19 @@ class UserClass
         }
 
         $_shm_user_classes[$name] = $this;
+    }
+
+    #[Field(type: "[String!]!")]
+    public function permissions(): array
+    {
+        global $_all_false;
+        $perms = [];
+        foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
+            if ($this->can($v)) {
+                $perms[] = $v;
+            }
+        }
+        return $perms;
     }
 
     /**
