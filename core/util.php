@@ -684,11 +684,17 @@ function _get_user(): User
 {
     global $config, $page;
     $my_user = null;
-    if ($page->get_cookie("user") && $page->get_cookie("session")) {
-        $tmp_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
-        if (!is_null($tmp_user)) {
-            $my_user = $tmp_user;
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        $parts = explode(" ", $_SERVER['HTTP_AUTHORIZATION'], 2);
+        if (count($parts) == 2 && $parts[0] == "Bearer") {
+            $parts = explode(":", $parts[1], 2);
+            if (count($parts) == 2) {
+                $my_user = User::by_session($parts[0], $parts[1]);
+            }
         }
+    }
+    if ($page->get_cookie("user") && $page->get_cookie("session")) {
+        $my_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
     }
     if (is_null($my_user)) {
         $my_user = User::by_id($config->get_int("anon_id", 0));
