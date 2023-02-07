@@ -44,8 +44,11 @@ class Image
     public ?array $tag_array;
     public int $owner_id;
     public string $owner_ip;
+    #[Field]
     public ?string $posted = null;
+    #[Field]
     public ?string $source;
+    #[Field]
     public bool $locked = false;
     public ?bool $lossless = null;
     public ?bool $video = null;
