@@ -811,6 +811,9 @@ function stringer($s): string
     if (is_numeric($s)) {
         return "$s";
     }
+    if (is_bool($s)) {
+        return $s ? "true" : "false";
+    }
     if (method_exists($s, "__toString")) {
         return $s->__toString();
     }
