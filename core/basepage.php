@@ -230,7 +230,7 @@ class BasePage
     public function send_headers(): void
     {
         if (!headers_sent()) {
-            header("HTTP/1.0 {$this->code} Shimmie");
+            header("HTTP/1.1 {$this->code} Shimmie");
             header("Content-type: " . $this->mime);
             header("X-Powered-By: Shimmie-" . VERSION);
 

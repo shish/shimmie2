@@ -30,7 +30,7 @@ class Downtime extends Extension
                 $msg = $config->get_string("downtime_message");
                 $this->theme->display_message($msg);
                 if (!defined("UNITTEST")) {  // hax D:
-                    header("HTTP/1.0 {$page->code} Downtime");
+                    header("HTTP/1.1 {$page->code} Downtime");
                     print($page->data);
                     exit;
                 }
