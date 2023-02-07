@@ -96,6 +96,24 @@ class PM
         return $pms;
     }
 
+    #[Field(extends: "User", name: "private_message_unread_count")]
+    public static function count_unread_pms(User $duser): ?int
+    {
+        global $database, $user;
+
+        if (!$user->can(Permissions::READ_PM)) {
+            return null;
+        }
+        if (($duser->id != $user->id) && !$user->can(Permissions::VIEW_OTHER_PMS)) {
+            return null;
+        }
+
+        return (int)$database->get_one(
+            "SELECT COUNT(*) FROM private_message WHERE to_id = :to_id AND is_read = :is_read",
+            ["is_read" => false, "to_id" => $duser->id]
+        );
+    }
+
     #[Mutation(name: "create_private_message")]
     public static function send_pm(int $to_id, string $subject, string $message): bool
     {

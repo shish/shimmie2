@@ -6,6 +6,10 @@ namespace Shimmie2;
 
 require_once "events.php";
 
+use GQLA\Field;
+use GQLA\Type;
+use GQLA\Mutation;
+
 use MicroHTML\HTMLElement;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\EnumColumn;
@@ -75,6 +79,40 @@ class NullUserException extends SCoreException
 {
 }
 
+#[Type(name: "LoginResult")]
+class LoginResult
+{
+    public function __construct(
+        #[Field]
+        public User $user,
+        #[Field]
+        public ?string $session = null,
+        #[Field]
+        public ?string $error = null,
+    ) {
+    }
+
+    #[Mutation(name: "login")]
+    public static function login(string $name, string $pass): LoginResult
+    {
+        global $config;
+        $duser = User::by_name_and_pass($name, $pass);
+        if (!is_null($duser)) {
+            return new LoginResult(
+                $duser,
+                UserPage::get_session_id($duser->name),
+                null
+            );
+        } else {
+            $anon = User::by_id($config->get_int("anon_id", 0));
+            return new LoginResult(
+                $anon,
+                null,
+                "No user found"
+            );
+        }
+    }
+}
 class UserPage extends Extension
 {
     /** @var UserPageTheme $theme */
@@ -554,12 +592,18 @@ class UserPage extends Extension
         return $new_user;
     }
 
+    public static function get_session_id(string $name): string
+    {
+        global $config;
+        $addr = get_session_ip($config);
+        $hash = User::by_name($name)->passhash;
+        return md5($hash.$addr);
+    }
+
     private function set_login_cookie(string $name): void
     {
         global $config, $page;
 
-        $addr = get_session_ip($config);
-        $hash = User::by_name($name)->passhash;
 
         $page->add_cookie(
             "user",
@@ -569,7 +613,7 @@ class UserPage extends Extension
         );
         $page->add_cookie(
             "session",
-            md5($hash.$addr),
+            $this->get_session_id($name),
             time()+60*60*24*$config->get_int('login_memory'),
             '/'
         );

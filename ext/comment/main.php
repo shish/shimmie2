@@ -56,6 +56,7 @@ class Comment
     public string $owner_class;
     #[Field]
     public string $comment;
+    #[Field]
     public int $comment_id;
     public int $image_id;
     public string $poster_ip;
@@ -96,7 +97,7 @@ class Comment
     }
 
     #[Field(extends: "Post", name: "comments", type: "[Comment!]!")]
-    public function get_comments(Image $post): array
+    public static function get_comments(Image $post): array
     {
         return CommentList::get_comments($post->id);
     }
