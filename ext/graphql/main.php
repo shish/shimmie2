@@ -21,17 +21,54 @@ class GraphQL extends Extension
         return $schema;
     }
 
+    private function cors(): void
+    {
+        global $config;
+        $pat = $config->get_string("graphql_cors_pattern");
+
+        if ($pat && isset($_SERVER['HTTP_ORIGIN'])) {
+            if (preg_match("#$pat#", $_SERVER['HTTP_ORIGIN'])) {
+                header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+                header('Access-Control-Allow-Credentials: true');
+                header('Access-Control-Max-Age: 86400');
+            }
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+                header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+            }
+            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+                header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+            }
+            exit(0);
+        }
+    }
+
+    public function onInitExt(InitExtEvent $event)
+    {
+        global $config;
+        $config->set_default_string('graphql_cors_pattern', "");
+        $config->set_default_bool('graphql_debug', false);
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page;
+        global $config, $page;
         if ($event->page_matches("graphql")) {
+            $this->cors();
             $t1 = ftime();
             $server = new StandardServer([
                 'schema' => $this->get_schema(),
             ]);
             $t2 = ftime();
             $resp = $server->executeRequest();
-            $body = $resp->toArray();
+            if ($config->get_bool("graphql_debug")) {
+                $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
+                $body = $resp->toArray($debug);
+            } else {
+                $body = $resp->toArray();
+            }
             $t3 = ftime();
             $body['stats'] = get_debug_info_arr();
             $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);
