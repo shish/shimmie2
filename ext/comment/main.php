@@ -103,7 +103,7 @@ class Comment
     }
 
     #[Mutation(name: "create_comment")]
-    public function create_comment(int $post_id, string $comment): bool
+    public static function create_comment(int $post_id, string $comment): bool
     {
         global $user;
         send_event(new CommentPostingEvent($post_id, $user, $comment));
