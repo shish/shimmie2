@@ -11,7 +11,7 @@
             "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
@@ -614,12 +614,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/gqla.git",
-                "reference": "92d57cf38bc8a171efa23a7539e41246612476a3"
+                "reference": "7531c0aff4d8ab2352b7e36c9b38aa2f37c61a73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/gqla/zipball/92d57cf38bc8a171efa23a7539e41246612476a3",
-                "reference": "92d57cf38bc8a171efa23a7539e41246612476a3",
+                "url": "https://api.github.com/repos/shish/gqla/zipball/7531c0aff4d8ab2352b7e36c9b38aa2f37c61a73",
+                "reference": "7531c0aff4d8ab2352b7e36c9b38aa2f37c61a73",
                 "shasum": ""
             },
             "require": {
@@ -659,7 +659,7 @@
                 "issues": "https://github.com/shish/gqla/issues",
                 "source": "https://github.com/shish/gqla/tree/main"
             },
-            "time": "2023-02-05T15:33:56+00:00"
+            "time": "2023-02-06T15:33:10+00:00"
         },
         {
             "name": "shish/microcrud",
@@ -2279,12 +2279,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f9f7d4a0714c8356ebe3a14e328a0a6dc778d454"
+                "reference": "18a5fd412cc794d8216d50344a7dbf7fde6466f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f9f7d4a0714c8356ebe3a14e328a0a6dc778d454",
-                "reference": "f9f7d4a0714c8356ebe3a14e328a0a6dc778d454",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/18a5fd412cc794d8216d50344a7dbf7fde6466f1",
+                "reference": "18a5fd412cc794d8216d50344a7dbf7fde6466f1",
                 "shasum": ""
             },
             "require": {
@@ -2331,7 +2331,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-02T16:02:59+00:00"
+            "time": "2023-02-06T13:52:20+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
