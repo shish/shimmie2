@@ -50,7 +50,8 @@ class AutoComplete extends Extension
             return [];
         }
 
-        $cache_key = "autocomplete-$search";
+        # temporary workaround for https://github.com/sabre-io/cache/issues/48
+        $cache_key = str_replace(' ', '+', "autocomplete-$search");
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
         $search = str_replace('%', '\%', $search);
