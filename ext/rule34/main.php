@@ -105,7 +105,8 @@ class Rule34 extends Extension
     {
         global $database, $page, $user;
 
-        $database->set_timeout(DATABASE_TIMEOUT+15000); // deleting users can take a while
+		# Database might not be connected at this point...
+        #$database->set_timeout(DATABASE_TIMEOUT+15000); // deleting users can take a while
 
         if (function_exists("sd_notify_watchdog")) {
             \sd_notify_watchdog();
