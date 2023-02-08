@@ -214,6 +214,16 @@ class User
      */
     public function get_avatar_html(): string
     {
+        $url = $this->get_avatar_url();
+        if (!empty($url)) {
+            return "<img alt='avatar' class=\"avatar gravatar\" src=\"$url\">";
+        }
+        return "";
+    }
+
+    #[Field(name: "avatar_url")]
+    public function get_avatar_url(): ?string
+    {
         // FIXME: configurable
         global $config;
         if ($config->get_string("avatar_host") === "gravatar") {
@@ -223,10 +233,10 @@ class User
                 $d = urlencode($config->get_string("avatar_gravatar_default"));
                 $r = $config->get_string("avatar_gravatar_rating");
                 $cb = date("Y-m-d");
-                return "<img alt='avatar' class=\"avatar gravatar\" src=\"https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb\">";
+                return "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
             }
         }
-        return "";
+        return null;
     }
 
     /**
