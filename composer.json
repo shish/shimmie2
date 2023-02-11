@@ -46,6 +46,7 @@
 		"shish/microhtml"           : "^2.0",
 		"shish/gqla"                : "dev-main",
 		"enshrined/svg-sanitize"    : "^0.15",
+		"geoip2/geoip2"             : "^2.0",
 
 		"bower-asset/jquery"         : "^1.12",
 		"bower-asset/jquery-timeago" : "^1.5",
