@@ -159,7 +159,7 @@ class Image
      * @param String[] $tags
      * @return Image[]
      */
-    #[Query(name: "posts", type: "[Post]", args: ["tags" => "[string]"])]
+    #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
     public static function find_images(?int $start = 0, ?int $limit = null, array $tags=[]): array
     {
         $result = self::find_images_internal($start, $limit, $tags);
@@ -466,7 +466,7 @@ class Image
      *
      * @return String[]
      */
-    #[Field(name: "tags", type: "[string]")]
+    #[Field(name: "tags", type: "[string!]!")]
     public function get_tag_array(): array
     {
         global $database;

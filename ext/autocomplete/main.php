@@ -50,7 +50,7 @@ class AutoComplete extends Extension
             return [];
         }
 
-        # temporary workaround for https://github.com/sabre-io/cache/issues/48
+        # memcache keys can't contain spaces
         $cache_key = str_replace(' ', '+', "autocomplete-$search");
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
