@@ -61,6 +61,16 @@ class NumericScoreVote
         return $votes;
     }
 
+    #[Field(extends: "Post", type: "Int!")]
+    public static function my_vote(Image $post): int
+    {
+        global $database, $user;
+        return $database->get_one(
+            "SELECT score FROM numeric_score_votes WHERE image_id=:image_id AND user_id=:user_id",
+            ['image_id'=>$post->id, "user_id"=>$user->id]
+        ) ?? 0;
+    }
+
     #[Mutation]
     public static function create_vote(int $post_id, int $score): bool
     {
