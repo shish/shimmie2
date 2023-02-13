@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+use GQLA\Mutation;
+
 class WikiUpdateEvent extends Event
 {
     public User $user;
@@ -45,16 +50,21 @@ class WikiUpdateException extends SCoreException
 {
 }
 
+#[Type(name: "WikiPage")]
 class WikiPage
 {
     public int $id;
     public int $owner_id;
     public string $owner_ip;
+    #[Field]
     public string $date;
+    #[Field]
     public string $title;
+    #[Field]
     public int $revision;
     public bool $locked;
     public bool $exists;
+    #[Field]
     public string $body;
 
     public function __construct(array $row=null)
@@ -75,6 +85,7 @@ class WikiPage
         }
     }
 
+    #[Field(name: "owner")]
     public function get_owner(): User
     {
         return User::by_id($this->owner_id);
@@ -328,7 +339,9 @@ class Wiki extends Extension
             ["title"=>$title]
         );
     }
-    public static function get_page(string $title, int $revision=-1): WikiPage
+
+    #[Query(name: "wiki")]
+    public static function get_page(string $title, ?int $revision=null): WikiPage
     {
         global $database;
         // first try and get the actual page
@@ -340,7 +353,7 @@ class Wiki extends Extension
 				AND (:revision = -1 OR revision = :revision)
 				ORDER BY revision DESC
 			",
-            ["title"=>$title, "revision"=>$revision]
+            ["title"=>$title, "revision"=>$revision ?? -1]
         );
 
         // fall back to wiki:default

@@ -25,10 +25,10 @@ function captcha_get_html(): string
             $captcha = "
 				<div class=\"g-recaptcha\" data-sitekey=\"{$r_publickey}\"></div>
 				<script type=\"text/javascript\" src=\"https://www.google.com/recaptcha/api.js\"></script>";
-        } else {
+        } /*else {
             session_start();
             $captcha = \Securimage::getCaptchaHtml(['securimage_path' => './vendor/dapphp/securimage/']);
-        }
+        }*/
     }
     return $captcha;
 }
@@ -51,14 +51,14 @@ function captcha_check(): bool
                 log_info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));
                 return false;
             }
-        } else {
+        } /*else {
             session_start();
             $securimg = new \Securimage();
             if ($securimg->check($_POST['captcha_code']) === false) {
                 log_info("core", "Captcha failed (Securimage)");
                 return false;
             }
-        }
+        }*/
     }
 
     return true;

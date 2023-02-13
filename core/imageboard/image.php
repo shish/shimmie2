@@ -23,7 +23,6 @@ class Image
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
-    #[Field]
     public ?int $id = null;
     #[Field]
     public int $height = 0;
@@ -89,15 +88,26 @@ class Image
         }
     }
 
+    #[Field(name: "post_id")]
+    public function graphql_oid(): int
+    {
+        return $this->id;
+    }
+    #[Field(name: "id")]
+    public function graphql_guid(): string
+    {
+        return "post:{$this->id}";
+    }
+
     #[Query(name: "post")]
-    public static function by_id(int $id): ?Image
+    public static function by_id(int $post_id): ?Image
     {
         global $database;
-        if ($id > 2**32) {
+        if ($post_id > 2**32) {
             // for some reason bots query huge numbers and pollute the DB error logs...
             return null;
         }
-        $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id"=>$id]);
+        $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id"=>$post_id]);
         return ($row ? new Image($row) : null);
     }
 

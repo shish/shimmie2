@@ -39,7 +39,6 @@
 		"flexihash/flexihash"       : "^2.0",
 		"ifixit/php-akismet"        : "^1.0",
 		"google/recaptcha"          : "^1.1",
-		"dapphp/securimage"         : "^3.6",
 		"shish/eventtracer-php"     : "^2.0",
 		"shish/ffsphp"              : "^1.0",
 		"shish/microcrud"           : "^2.0",

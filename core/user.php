@@ -24,7 +24,6 @@ function _new_user(array $row): User
 #[Type(name: "User")]
 class User
 {
-    #[Field]
     public int $id;
     #[Field]
     public string $name;
@@ -73,6 +72,18 @@ class User
         return $user;
     }
 
+    #[Field(name: "user_id")]
+    public function graphql_oid(): int
+    {
+        return $this->id;
+    }
+    #[Field(name: "id")]
+    public function graphql_guid(): string
+    {
+        return "user:{$this->id}";
+    }
+
+
     public static function by_session(string $name, string $session): ?User
     {
         global $cache, $config, $database;
@@ -105,6 +116,7 @@ class User
         return is_null($row) ? null : new User($row);
     }
 
+    #[Query(name: "user")]
     public static function by_name(string $name): ?User
     {
         global $database;

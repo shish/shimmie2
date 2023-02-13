@@ -23,7 +23,6 @@ class SendPMEvent extends Event
 #[Type(name: "PrivateMessage")]
 class PM
 {
-    #[Field]
     public int $id = -1;
     public int $from_id;
     public string $from_ip;
@@ -40,6 +39,17 @@ class PM
     public function from(): User
     {
         return User::by_id($this->from_id);
+    }
+
+    #[Field(name: "pm_id")]
+    public function graphql_oid(): int
+    {
+        return $this->id;
+    }
+    #[Field(name: "id")]
+    public function graphql_guid(): string
+    {
+        return "pm:{$this->id}";
     }
 
     public function __construct(
@@ -115,13 +125,13 @@ class PM
     }
 
     #[Mutation(name: "create_private_message")]
-    public static function send_pm(int $to_id, string $subject, string $message): bool
+    public static function send_pm(int $to_user_id, string $subject, string $message): bool
     {
         global $user;
         if (!$user->can(Permissions::SEND_PM)) {
             return false;
         }
-        send_event(new SendPMEvent(new PM($user->id, get_real_ip(), $to_id, $subject, $message)));
+        send_event(new SendPMEvent(new PM($user->id, get_real_ip(), $to_user_id, $subject, $message)));
         return true;
     }
 }
