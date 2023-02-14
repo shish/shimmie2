@@ -51,7 +51,7 @@ class AutoComplete extends Extension
         }
 
         # memcache keys can't contain spaces
-        $cache_key = str_replace(' ', '+', "autocomplete-$search");
+        $cache_key = "autocomplete:" . md5($search);
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
         $search = str_replace('%', '\%', $search);

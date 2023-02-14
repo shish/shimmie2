@@ -555,8 +555,8 @@ class TagList extends Extension
 
 
         $wild_tags = $search;
-        $str_search = str_replace(" ", "+", Tag::implode($search));
-        $related_tags = $cache->get("related_tags:$str_search");
+        $cache_key = "related_tags:" . md5(Tag::implode($search));
+        $related_tags = $cache->get($cache_key);
 
         if (is_null($related_tags)) {
             // $search_tags = array();
@@ -610,7 +610,7 @@ class TagList extends Extension
             } else {
                 $related_tags = [];
             }
-            $cache->set("related_tags:$str_search", $related_tags, 60 * 60);
+            $cache->set($cache_key, $related_tags, 60 * 60);
         }
         return $related_tags;
     }
