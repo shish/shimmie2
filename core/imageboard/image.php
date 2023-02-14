@@ -36,7 +36,6 @@ class Image
     public string $filename;
     #[Field]
     private string $ext;
-    #[Field]
     private string $mime;
 
     /** @var ?string[] */
@@ -595,6 +594,7 @@ class Image
     /**
      * Get the original filename.
      */
+    #[Field(name: "filename")]
     public function get_filename(): string
     {
         return $this->filename;
@@ -603,6 +603,7 @@ class Image
     /**
      * Get the image's extension.
      */
+    #[Field(name: "ext")]
     public function get_ext(): string
     {
         return $this->ext;
@@ -611,6 +612,7 @@ class Image
     /**
      * Get the image's mime type.
      */
+    #[Field(name: "mime")]
     public function get_mime(): ?string
     {
         if ($this->mime===MimeType::WEBP&&$this->lossless) {
