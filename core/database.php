@@ -336,6 +336,9 @@ class Database
 
     public function raw_db(): PDO
     {
+        if (is_null($this->db)) {
+            $this->connect_db();
+        }
         return $this->db;
     }
 
