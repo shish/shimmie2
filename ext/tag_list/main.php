@@ -555,7 +555,7 @@ class TagList extends Extension
 
 
         $wild_tags = $search;
-        $str_search = Tag::implode($search);
+        $str_search = str_replace(" ", "+", Tag::implode($search));
         $related_tags = $cache->get("related_tags:$str_search");
 
         if (is_null($related_tags)) {
@@ -607,13 +607,11 @@ class TagList extends Extension
                 $args = ["limit" => $limit];
 
                 $related_tags = $database->get_all($query, $args);
-                $cache->set("related_tags:$str_search", $related_tags, 60 * 60);
+            } else {
+                $related_tags = [];
             }
+            $cache->set("related_tags:$str_search", $related_tags, 60 * 60);
         }
-        if ($related_tags === false) {
-            return [];
-        } else {
-            return $related_tags;
-        }
+        return $related_tags;
     }
 }
