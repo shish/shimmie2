@@ -370,7 +370,7 @@ class Wiki extends Extension
                 $row = [
                     "id" => -1,
                     "owner_ip" => "0.0.0.0",
-                    "date" => "",
+                    "date" => "1970-01-01 00:00:00",
                     "revision" => 0,
                     "locked" => false,
                     "body" => "This is a default page for when a page is empty, ".
