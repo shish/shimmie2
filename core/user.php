@@ -28,6 +28,7 @@ class User
     #[Field]
     public string $name;
     public ?string $email;
+    #[Field]
     public string $join_date;
     public ?string $passhash;
     #[Field]
