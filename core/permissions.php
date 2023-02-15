@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use GQLA\Enum;
+
 // action_object_attribute
 // action = create / view / edit / delete
 // object = image / user / tag / setting
+#[Enum(name: "Permission")]
 abstract class Permissions
 {
     public const CHANGE_SETTING = "change_setting";  # modify web-level settings, eg the config table

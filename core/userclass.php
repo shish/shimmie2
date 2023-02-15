@@ -39,7 +39,7 @@ class UserClass
         $_shm_user_classes[$name] = $this;
     }
 
-    #[Field(type: "[String!]!")]
+    #[Field(type: "[Permission!]!")]
     public function permissions(): array
     {
         global $_all_false;
