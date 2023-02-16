@@ -80,7 +80,7 @@ class LogConsole extends Extension
         } else {
             $str = "$str\n";
         }
-        if (!defined("UNITTEST") && PHP_SAPI !== 'cli' || PHP_SAPI !== 'phpdbg') {
+        if (!defined("UNITTEST") && PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
             $fp = fopen("/dev/tty", "w");
             fwrite($fp, $str);
             fclose($fp);
