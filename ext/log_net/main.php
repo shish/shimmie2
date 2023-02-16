@@ -8,6 +8,12 @@ class LogNet extends Extension
 {
     private int $count = 0;
 
+    public function onInitExt(InitExtEvent $event)
+    {
+        global $config;
+        $config->set_default_string("log_net_host", "127.0.0.1:35353");
+    }
+
     public function onLog(LogEvent $event)
     {
         global $user;
@@ -28,7 +34,7 @@ class LogNet extends Extension
     private function msg($data)
     {
         global $config;
-        $host = $config->get_string("log_net_host", "127.0.0.1:35353");
+        $host = $config->get_string("log_net_host");
 
         if (!$host) {
             return;
