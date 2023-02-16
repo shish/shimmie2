@@ -563,12 +563,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/gqla.git",
-                "reference": "3ca4998cf6938124155e7736cce1ba6d819f7f57"
+                "reference": "f3c02ec9bcb6b43cc4963c6d0529bf3334f4684a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/gqla/zipball/3ca4998cf6938124155e7736cce1ba6d819f7f57",
-                "reference": "3ca4998cf6938124155e7736cce1ba6d819f7f57",
+                "url": "https://api.github.com/repos/shish/gqla/zipball/f3c02ec9bcb6b43cc4963c6d0529bf3334f4684a",
+                "reference": "f3c02ec9bcb6b43cc4963c6d0529bf3334f4684a",
                 "shasum": ""
             },
             "require": {
@@ -608,7 +608,7 @@
                 "issues": "https://github.com/shish/gqla/issues",
                 "source": "https://github.com/shish/gqla/tree/main"
             },
-            "time": "2023-02-15T22:06:07+00:00"
+            "time": "2023-02-16T01:02:40+00:00"
         },
         {
             "name": "shish/microcrud",
