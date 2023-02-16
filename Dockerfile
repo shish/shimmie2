@@ -46,7 +46,7 @@ ENV UID=1000 \
 RUN apt update && apt upgrade -y && apt install -y \
     php${PHP_VERSION}-cli php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
-    curl imagemagick zip unzip && \
+    curl imagemagick ffmpeg zip unzip && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=app /app /app
 COPY --from=suexec /usr/local/bin/su-exec /usr/local/bin/su-exec
