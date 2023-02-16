@@ -30,6 +30,7 @@ class LogConsole extends Extension
             ));
         }
 
+        /*
         if ($event->page_matches("log_test")) {
             log_debug("log_console", "Hello debug!");
             log_info("log_console", "Hello info!");
@@ -37,6 +38,7 @@ class LogConsole extends Extension
             $page->set_mode(PageMode::DATA);
             $page->set_data("You should see something in the log\n");
         }
+        */
     }
 
     public function onLog(LogEvent $event)
@@ -78,8 +80,10 @@ class LogConsole extends Extension
         } else {
             $str = "$str\n";
         }
-        $fp = fopen("/dev/tty", "w");
-        fwrite($fp, $str);
-        fclose($fp);
+        if (!defined("UNITTEST") && PHP_SAPI !== 'cli' || PHP_SAPI !== 'phpdbg') {
+            $fp = fopen("/dev/tty", "w");
+            fwrite($fp, $str);
+            fclose($fp);
+        }
     }
 }
