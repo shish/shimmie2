@@ -82,8 +82,10 @@ class LogConsole extends Extension
         }
         if (!defined("UNITTEST") && PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
             $fp = fopen("/dev/tty", "w");
-            fwrite($fp, $str);
-            fclose($fp);
+            if($fp) {
+                fwrite($fp, $str);
+                fclose($fp);
+            }
         }
     }
 }
