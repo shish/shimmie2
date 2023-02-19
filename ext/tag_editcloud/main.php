@@ -165,13 +165,13 @@ class TagEditCloud extends Extension
                         $precloud .= "</span><span class='tag-category'>\n";
                     }
                     $last_used_cat = $current_cat;
-                    $precloud .= "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
+                    $precloud .= "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: {$size}em$color' title='{$row['count']}'>{$h_tag}</span>&nbsp;\n";
                     continue;
                 } else {
-                    $entry = "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
+                    $entry = "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: {$size}em$color' title='{$row['count']}'>{$h_tag}</span>&nbsp;\n";
                 }
             } else {
-                $entry = "&nbsp;<span onclick='{$js}' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
+                $entry = "&nbsp;<span onclick='{$js}' style='font-size: {$size}em$color' title='{$row['count']}'>{$h_tag}</span>&nbsp;\n";
             }
 
             if ($counter++ <= $def_count) {

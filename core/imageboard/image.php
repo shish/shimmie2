@@ -17,6 +17,7 @@ use GQLA\Query;
  * image per se, but could be a video, sound file, or any
  * other supported upload type.
  */
+#[\AllowDynamicProperties]
 #[Type(name: "Post")]
 class Image
 {

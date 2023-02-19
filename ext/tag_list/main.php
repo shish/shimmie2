@@ -282,7 +282,7 @@ class TagList extends Extension
             if (class_exists('Shimmie2\TagCategories')) {
                 $h_tag_no_underscores = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict);
             }
-            $html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
+            $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
 
         if (SPEED_HAX) {

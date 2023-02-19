@@ -96,9 +96,9 @@ class UploadTheme extends Themelet
         for ($i=0; $i<$upload_count; $i++) {
             $upload_list->appendChild(
                 TR(
-                    TD(["colspan"=>$tl_enabled ? 2 : 4], INPUT(["type"=>"file", "name"=>"data${i}[]", "accept"=>$accept, "multiple"=>true])),
-                    $tl_enabled ? TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"url${i}"])) : emptyHTML(),
-                    TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"tags${i}", "class"=>"autocomplete_tags", "autocomplete"=>"off"])),
+                    TD(["colspan"=>$tl_enabled ? 2 : 4], INPUT(["type"=>"file", "name"=>"data{$i}[]", "accept"=>$accept, "multiple"=>true])),
+                    $tl_enabled ? TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"url{$i}"])) : emptyHTML(),
+                    TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"tags{$i}", "class"=>"autocomplete_tags", "autocomplete"=>"off"])),
                 )
             );
         }

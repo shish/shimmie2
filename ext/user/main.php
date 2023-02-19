@@ -430,10 +430,10 @@ class UserPage extends Extension
                     "Can't find the user named ".html_escape($matches[2])
                 );
             }
-            $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= {$duser->id}"));
+            $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= {$duser->id}"));
         } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
             $user_id = int_escape($matches[2]);
-            $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= $user_id"));
+            $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= $user_id"));
         } elseif ($user->can(Permissions::VIEW_IP) && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
             $user_ip = $matches[1]; // FIXME: ip_escape?
             $event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
