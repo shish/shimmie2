@@ -25,7 +25,7 @@ class DataUploadEvent extends Event
      * This should be caught by a file handler.
      * $metadata should contain at least "filename", "extension", "tags" and "source".
      */
-    public function __construct(string $tmpname, array $metadata)
+    public function __construct(string $tmpname, array $metadata, ?int $replace_id = null)
     {
         parent::__construct();
 
@@ -38,6 +38,7 @@ class DataUploadEvent extends Event
         $metadata['filename'] = substr($metadata['filename'], 0, 255);
 
         $this->metadata = $metadata;
+        $this->replace_id = $replace_id;
 
         $this->set_tmpname($tmpname);
 
@@ -354,8 +355,7 @@ class Upload extends Extension
                     $metadata['tags'] = $tags;
                     $metadata['source'] = $source;
 
-                    $event = new DataUploadEvent($file['tmp_name'][$i], $metadata);
-                    $event->replace_id = $replace_id;
+                    $event = new DataUploadEvent($file['tmp_name'][$i], $metadata, $replace_id);
                     send_event($event);
                     if ($event->image_id == -1) {
                         throw new UploadException("MIME type not supported: " . $metadata['mime']);
@@ -419,8 +419,7 @@ class Upload extends Extension
             }
 
             // Upload file
-            $event = new DataUploadEvent($tmp_filename, $metadata);
-            $event->replace_id = $replace_id;
+            $event = new DataUploadEvent($tmp_filename, $metadata, $replace_id);
             send_event($event);
             if ($event->image_id == -1) {
                 throw new UploadException("File type not supported: " . $metadata['extension']);
