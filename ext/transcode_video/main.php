@@ -85,8 +85,7 @@ class TranscodeVideo extends Extension
 //                }
 //                try {
 //                    $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-//                    $event->set_mime(Media::determine_ext($target_format));
-//                    $event->set_tmpname($new_image);
+//                    $event->set_tmpname($new_image, Media::determine_ext($target_format));
 //                } catch (Exception $e) {
 //                    log_error("transcode_video", "Error while performing upload transcode: ".$e->getMessage());
 //                    // We don't want to interfere with the upload process,

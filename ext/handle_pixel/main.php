@@ -10,14 +10,17 @@ class PixelFileHandler extends DataHandlerExtension
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        $event->image->lossless = Media::is_lossless($event->file_name, $event->mime);
+        $filename = $event->image->get_image_filename();
+        $mime = $event->image->get_mime();
+
+        $event->image->lossless = Media::is_lossless($filename, $mime);
         $event->image->audio = false;
-        switch ($event->mime) {
+        switch ($mime) {
             case MimeType::GIF:
-                $event->image->video = MimeType::is_animated_gif($event->file_name);
+                $event->image->video = MimeType::is_animated_gif($filename);
                 break;
             case MimeType::WEBP:
-                $event->image->video = MimeType::is_animated_webp($event->file_name);
+                $event->image->video = MimeType::is_animated_webp($filename);
                 break;
             default:
                 $event->image->video = false;
@@ -25,7 +28,7 @@ class PixelFileHandler extends DataHandlerExtension
         }
         $event->image->image = !$event->image->video;
 
-        $info = getimagesize($event->file_name);
+        $info = getimagesize($event->image->get_image_filename());
         if ($info) {
             $event->image->width = $info[0];
             $event->image->height = $info[1];

@@ -55,15 +55,8 @@ class MediaResizeEvent extends Event
 
 class MediaCheckPropertiesEvent extends Event
 {
-    public Image $image;
-    public string $file_name;
-    public string $mime;
-
-    public function __construct(Image $image)
+    public function __construct(public Image $image)
     {
         parent::__construct();
-        $this->image = $image;
-        $this->file_name = warehouse_path(Image::IMAGE_DIR, $image->hash);
-        $this->mime = strtolower($image->get_mime());
     }
 }

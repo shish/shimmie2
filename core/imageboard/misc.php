@@ -39,22 +39,18 @@ function add_dir(string $base): array
 /**
  * Sends a DataUploadEvent for a file.
  */
-function add_image(string $tmpname, string $filename, string $tags): int
+function add_image(string $tmpname, string $filename, string $tags, ?string $source=null): DataUploadEvent
 {
-    assert(file_exists($tmpname));
+    return send_event(new DataUploadEvent($tmpname, [
+        'filename' => pathinfo($filename, PATHINFO_BASENAME),
+        'tags' => Tag::explode($tags),
+        'source' => $source,
+    ]));
+}
 
-    $pathinfo = pathinfo($filename);
-    $metadata = [];
-    $metadata['filename'] = $pathinfo['basename'];
-    if (array_key_exists('extension', $pathinfo)) {
-        $metadata['extension'] = $pathinfo['extension'];
-    }
-
-    $metadata['tags'] = Tag::explode($tags);
-    $metadata['source'] = null;
-
-    $due = send_event(new DataUploadEvent($tmpname, $metadata));
-    return $due->image_id;
+function get_file_ext(string $filename): ?string
+{
+    return pathinfo($filename)['extension'] ?? null;
 }
 
 /**

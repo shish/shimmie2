@@ -313,43 +313,20 @@ abstract class DataHandlerExtension extends Extension
                 if (is_null($existing)) {
                     throw new UploadException("Post to replace does not exist!");
                 }
-                if ($existing->hash === $event->metadata['hash']) {
+                if ($existing->hash === $event->hash) {
                     throw new UploadException("The uploaded post is the same as the one to replace.");
                 }
 
                 // even more hax..
                 $event->metadata['tags'] = $existing->get_tag_list();
-                $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->metadata['hash']), $event->metadata);
-                if (is_null($image)) {
-                    throw new UploadException("Data handler failed to create post object from data");
-                }
-                if (empty($image->get_mime())) {
-                    throw new UploadException("Unable to determine MIME for ". $event->tmpname);
-                }
-                try {
-                    send_event(new MediaCheckPropertiesEvent($image));
-                } catch (MediaException $e) {
-                    throw new UploadException("Unable to scan media properties: ".$e->getMessage());
-                }
 
+                $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 send_event(new ImageReplaceEvent($event->replace_id, $image));
                 $_id = $event->replace_id;
                 assert(!is_null($_id));
                 $event->image_id = $_id;
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
-                if (is_null($image)) {
-                    throw new UploadException("Data handler failed to create post object from data");
-                }
-                if (empty($image->get_mime())) {
-                    throw new UploadException("Unable to determine MIME for ". $event->tmpname);
-                }
-                try {
-                    send_event(new MediaCheckPropertiesEvent($image));
-                } catch (MediaException $e) {
-                    throw new UploadException("Unable to scan media properties: ".$e->getMessage());
-                }
-
                 $iae = send_event(new ImageAdditionEvent($image));
                 $event->image_id = $iae->image->id;
                 $event->merged = $iae->merged;
@@ -402,7 +379,7 @@ abstract class DataHandlerExtension extends Extension
 
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
-        if ($this->supported_mime($event->mime)) {
+        if ($this->supported_mime($event->image->get_mime())) {
             $this->media_check_properties($event);
         }
     }
@@ -411,18 +388,22 @@ abstract class DataHandlerExtension extends Extension
     {
         $image = new Image();
 
-        $image->filesize = $metadata['size'];
-        $image->hash = $metadata['hash'];
+        assert(is_readable($filename));
+        $image->filesize = filesize($filename);
+        $image->hash = md5_file($filename);
         $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
-
-        if (array_key_exists("extension", $metadata)) {
-            $image->set_mime(MimeType::get_for_file($filename, $metadata["extension"]));
-        } else {
-            $image->set_mime(MimeType::get_for_file($filename));
-        }
-
+        $image->set_mime(MimeType::get_for_file($filename, get_file_ext($metadata["filename"]) ?? null));
         $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
         $image->source = $metadata['source'];
+
+        if (empty($image->get_mime())) {
+            throw new UploadException("Unable to determine MIME for $filename");
+        }
+        try {
+            send_event(new MediaCheckPropertiesEvent($image));
+        } catch (MediaException $e) {
+            throw new UploadException("Unable to scan media properties $filename / $image->filename / $image->hash: ".$e->getMessage());
+        }
 
         return $image;
     }

@@ -15,7 +15,7 @@ class CBZFileHandler extends DataHandlerExtension
         $event->image->audio = false;
         $event->image->image = false;
 
-        $tmp = $this->get_representative_image($event->file_name);
+        $tmp = $this->get_representative_image($event->image->get_image_filename());
         $info = getimagesize($tmp);
         if ($info) {
             $event->image->width = $info[0];

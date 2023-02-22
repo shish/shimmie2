@@ -14,7 +14,7 @@ class FlashFileHandler extends DataHandlerExtension
         $event->image->video = true;
         $event->image->image = false;
 
-        $info = getimagesize($event->file_name);
+        $info = getimagesize($event->image->get_image_filename());
         if ($info) {
             $event->image->width = $info[0];
             $event->image->height = $info[1];

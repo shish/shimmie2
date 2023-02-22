@@ -336,22 +336,13 @@ class DanbooruApi extends Extension
             return;
         }
 
-        // Fire off an event which should process the new file and add it to the db
-        $fileinfo = pathinfo($filename);
-        $metadata = [];
-        $metadata['filename'] = $fileinfo['basename'];
-        if (array_key_exists('extension', $fileinfo)) {
-            $metadata['extension'] = $fileinfo['extension'];
-        }
-        $metadata['tags'] = $posttags;
-        $metadata['source'] = $source;
         //log_debug("danbooru_api","========== NEW($filename) =========");
         //log_debug("danbooru_api", "upload($filename): fileinfo(".var_export($fileinfo,TRUE)."), metadata(".var_export($metadata,TRUE).")...");
 
         try {
-            $nevent = new DataUploadEvent($file, $metadata);
+            // Fire off an event which should process the new file and add it to the db
+            $nevent = add_image($file, $filename, $posttags, $source);
             //log_debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
-            send_event($nevent);
             // If it went ok, grab the id for the newly uploaded image and pass it in the header
             $newimg = Image::by_hash($hash);        // FIXME: Unsupported file doesn't throw an error?
             $newid = make_link("post/view/" . $newimg->id);

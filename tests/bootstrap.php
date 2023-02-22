@@ -250,7 +250,6 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     {
         $dae = send_event(new DataUploadEvent($filename, [
             "filename" => $filename,
-            "extension" => pathinfo($filename, PATHINFO_EXTENSION),
             "tags" => Tag::explode($tags),
             "source" => null,
         ]));

@@ -39,7 +39,7 @@ class SVGFileHandler extends DataHandlerExtension
         $event->image->audio = false;
         $event->image->image = true;
 
-        $msp = new MiniSVGParser($event->file_name);
+        $msp = new MiniSVGParser($event->image->get_image_filename());
         $event->image->width = $msp->width;
         $event->image->height = $msp->height;
     }
@@ -50,6 +50,7 @@ class SVGFileHandler extends DataHandlerExtension
         $sanitizer->removeRemoteReferences(true);
         $dirtySVG = file_get_contents($event->tmpname);
         $cleanSVG = $sanitizer->sanitize($dirtySVG);
+        $event->hash = md5($cleanSVG);
         file_put_contents(warehouse_path(Image::IMAGE_DIR, $event->hash), $cleanSVG);
     }
 

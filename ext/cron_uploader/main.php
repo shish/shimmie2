@@ -466,29 +466,11 @@ class CronUploader extends Extension
      */
     private function add_image(string $tmpname, string $filename, string $tags): DataUploadEvent
     {
-        assert(file_exists($tmpname));
-
-        $tagArray = Tag::explode($tags);
-        if (count($tagArray) == 0) {
-            $tagArray[] = "tagme";
-        }
-
-        $pathinfo = pathinfo($filename);
-        $metadata = [];
-        $metadata ['filename'] = $pathinfo ['basename'];
-        if (array_key_exists('extension', $pathinfo)) {
-            $metadata ['extension'] = $pathinfo ['extension'];
-        }
-        $metadata ['tags'] = $tagArray;
-        $metadata ['source'] = null;
-        $event = send_event(new DataUploadEvent($tmpname, $metadata));
+        $event = add_image($tmpname, $filename, $tags, null);
 
         // Generate info message
         if ($event->image_id == -1) {
-            if (array_key_exists("mime", $event->metadata)) {
-                throw new UploadException("File type not recognised (".$event->metadata["mime"]."). Filename: {$filename}");
-            }
-            throw new UploadException("File type not recognised. Filename: {$filename}");
+            throw new UploadException("File type not recognised (".$event->mime."). Filename: {$filename}");
         } elseif ($event->merged === true) {
             $infomsg = "Post merged. ID: {$event->image_id} - Filename: {$filename}";
         } else {
@@ -529,14 +511,12 @@ class CronUploader extends Extension
         $ite = new \RecursiveDirectoryIterator($base, \FilesystemIterator::SKIP_DOTS);
         foreach (new \RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath) && !$this->is_skippable_file($fullpath)) {
-                $pathinfo = pathinfo($fullpath);
-
                 $relativePath = substr($fullpath, strlen($base));
                 $tags = path_to_tags($relativePath);
 
                 yield [
                     0 => $fullpath,
-                    1 => $pathinfo ["basename"],
+                    1 => pathinfo($fullpath, PATHINFO_BASENAME),
                     2 => $tags
                 ];
             }

@@ -13,9 +13,9 @@ class IcoFileHandler extends DataHandlerExtension
         $event->image->lossless = true;
         $event->image->video = false;
         $event->image->audio = false;
-        $event->image->image = ($event->mime!= MimeType::ANI);
+        $event->image->image = ($event->image->get_mime() != MimeType::ANI);
 
-        $fp = fopen($event->file_name, "r");
+        $fp = fopen($event->image->get_image_filename(), "r");
         try {
             unpack("Snull/Stype/Scount", fread($fp, 6));
             $subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));

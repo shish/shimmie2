@@ -18,7 +18,7 @@ class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         # FIXME: test that it gets displayed properly
     }
 
-    public function testAbuiveSVG()
+    public function testAbusiveSVG()
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/alert.svg", "something");
