@@ -77,6 +77,74 @@ class GraphQL extends Extension
             $page->set_mime("application/json");
             $page->set_data(\json_encode($body, JSON_UNESCAPED_UNICODE));
         }
+        if ($event->page_matches("graphql_upload")) {
+            $this->cors();
+            $page->set_mode(PageMode::DATA);
+            $page->set_mime("application/json");
+            $page->set_data(\json_encode(self::handle_uploads()));
+        }
+    }
+
+    private static function handle_uploads(): array
+    {
+        global $user;
+
+        if (!$user->can(Permissions::CREATE_IMAGE)) {
+            return ["error" => "User cannot create posts"];
+        }
+
+        $common_tags = $_POST['common_tags'];
+        $common_source = $_POST['common_source'];
+
+        $results = [];
+        for ($n=0; $n<100; $n++) {
+            if (empty($_POST["url$n"]) && empty($_FILES["data$n"])) {
+                break;
+            }
+            if (isset($_FILES["data$n"]) && ($_FILES["data$n"]["size"] == 0 || $_FILES["data$n"]["error"] == UPLOAD_ERR_NO_FILE)) {
+                break;
+            }
+            try {
+                $results[] = self::handle_upload($n, $common_tags, $common_source);
+            } catch(\Exception $e) {
+                $results[] = ["error" => $e->getMessage()];
+            }
+        }
+        return ["results" => $results];
+    }
+
+    private static function handle_upload(int $n, string $common_tags, string $common_source): array
+    {
+        if (!empty($_POST["url$n"])) {
+            return ["error" => "URLs not handled yet"];
+            $tmpname = "...";
+            $filename = "...";
+        } else {
+            $ec = $_FILES["data$n"]["error"];
+            switch($ec) {
+                case UPLOAD_ERR_OK:
+                    $tmpname = $_FILES["data$n"]["tmp_name"];
+                    $filename = $_FILES["data$n"]["name"];
+                    break;
+                case UPLOAD_ERR_INI_SIZE:
+                    return ["error" => "File larger than PHP can handle"];
+                default:
+                    return ["error" => "Mystery error: $ec"];
+            }
+        }
+
+        $tags = trim($common_tags . " " . $_POST["tags$n"]);
+        $source = $common_source;
+        if (!empty($_POST["source$n"])) {
+            $source = $_POST["source$n"];
+        }
+        $event = send_event(new DataUploadEvent($tmpname, [
+            'filename' => $filename,
+            'tags' => Tag::explode($tags),
+            'source' => $source,
+        ]));
+
+        return ["image_id" => $event->image_id];
     }
 
     public function onCommand(CommandEvent $event)
