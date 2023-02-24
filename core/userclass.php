@@ -108,6 +108,7 @@ new UserClass("user", "base", [
     Permissions::CREATE_IMAGE_REPORT => true,
     Permissions::EDIT_IMAGE_RATING => true,
     Permissions::EDIT_FAVOURITES => true,
+    Permissions::CREATE_VOTE => true,
     Permissions::SEND_PM => true,
     Permissions::READ_PM => true,
     Permissions::SET_PRIVATE_IMAGE => true,

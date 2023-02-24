@@ -75,7 +75,7 @@ class NumericScoreVote
     public static function create_vote(int $post_id, int $score): bool
     {
         global $user;
-        if (!$user->is_anonymous()) {
+        if ($user->can(Permissions::CREATE_VOTE)) {
             assert($score == 0 || $score == -1 || $score == 1);
             send_event(new NumericScoreSetEvent($post_id, $user, $score));
             return true;
@@ -107,7 +107,7 @@ class NumericScore extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user;
-        if (!$user->is_anonymous()) {
+        if ($user->can(Permissions::CREATE_VOTE)) {
             $this->theme->get_voter($event->image);
         }
     }
@@ -150,7 +150,7 @@ class NumericScore extends Extension
             }
             die($html);
         } elseif ($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
-            if (!$user->is_anonymous()) {
+            if ($user->can(Permissions::CREATE_VOTE)) {
                 $image_id = int_escape($_POST['image_id']);
                 $score = int_escape($_POST['vote']);
                 if (($score == -1 || $score == 0 || $score == 1) && $image_id>0) {
@@ -366,7 +366,7 @@ class NumericScore extends Extension
         if (preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
             global $user;
             $score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
-            if (!$user->is_anonymous()) {
+            if ($user->can(Permissions::CREATE_VOTE)) {
                 send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
             }
         }

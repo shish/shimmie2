@@ -72,9 +72,13 @@ abstract class Permissions
     public const SEND_PM = "send_pm";
     public const READ_PM = "read_pm";
     public const VIEW_OTHER_PMS = "view_other_pms";
+
     public const EDIT_FEATURE = "edit_feature";
+
+    public const CREATE_VOTE = "create_vote";
     public const BULK_EDIT_VOTE = "bulk_edit_vote";
     public const EDIT_OTHER_VOTE = "edit_other_vote";
+
     public const VIEW_SYSINTO = "view_sysinfo";
 
     public const HELLBANNED = "hellbanned";
