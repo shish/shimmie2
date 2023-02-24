@@ -41,6 +41,7 @@ $config->set_string("thumb_engine", "static");  # GD has less overhead per-call
 $config->set_bool("nice_urls", true);
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
+$user = User::by_id($config->get_int("anon_id", 0));
 $_tracer->end();
 
 abstract class ShimmiePHPUnitTestCase extends TestCase
@@ -100,7 +101,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     {
         if (is_null(User::by_name($name))) {
             $userPage = new UserPage();
-            $userPage->onUserCreation(new UserCreationEvent($name, $name, "", false));
+            $userPage->onUserCreation(new UserCreationEvent($name, $name, $name, "", false));
             assert(!is_null(User::by_name($name)), "Creation of user $name failed");
         }
     }
