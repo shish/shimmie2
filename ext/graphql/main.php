@@ -10,6 +10,31 @@ use GraphQL\Error\DebugFlag;
 use GraphQL\Type\Schema;
 use GraphQL\Utils\SchemaPrinter;
 
+#[\GQLA\InputObjectType]
+class MetadataInput
+{
+    public function __construct(
+        #[\GQLA\Field]
+        public string $tags,
+        #[\GQLA\Field]
+        public string $source,
+    ) {
+    }
+
+    #[\GQLA\Mutation]
+    public static function update_post_metadata(int $post_id, MetadataInput $metadata): Image
+    {
+        global $user;
+        $_POST['tag_edit__tags'] = $metadata->tags;
+        $_POST['tag_edit__source'] = $metadata->source;
+        $image = Image::by_id($post_id);
+        if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
+            send_event(new ImageInfoSetEvent($image));
+        }
+        return Image::by_id($post_id);
+    }
+}
+
 class GraphQL extends Extension
 {
     public static function get_schema(): Schema
@@ -73,6 +98,7 @@ class GraphQL extends Extension
             $body['stats'] = get_debug_info_arr();
             $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);
             $body['stats']['graphql_execute_time'] = round($t3 - $t2, 2);
+            // sleep(1);
             $page->set_mode(PageMode::DATA);
             $page->set_mime("application/json");
             $page->set_data(\json_encode($body, JSON_UNESCAPED_UNICODE));
