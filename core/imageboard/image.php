@@ -170,9 +170,9 @@ class Image
      * @return Image[]
      */
     #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
-    public static function find_images(?int $start = 0, ?int $limit = null, array $tags=[]): array
+    public static function find_images(?int $offset = 0, ?int $limit = null, array $tags=[]): array
     {
-        $result = self::find_images_internal($start, $limit, $tags);
+        $result = self::find_images_internal($offset, $limit, $tags);
 
         $images = [];
         foreach ($result as $row) {
