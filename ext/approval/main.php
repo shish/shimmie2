@@ -121,6 +121,13 @@ class Approval extends Extension
         }
     }
 
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::APPROVE_IMAGE)) {
+            $event->add_link("Pending Approval", make_link("/post/list/approved%3Ano/1"), 60);
+        }
+    }
 
     public const SEARCH_REGEXP = "/^approved:(yes|no)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
