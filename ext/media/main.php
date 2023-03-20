@@ -83,7 +83,7 @@ class Media extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = $event->panel->create_new_block("Media Engines");
+        $sb = $event->panel->create_new_block("Media Engine Commands");
 
 //        if (self::imagick_available()) {
 //            try {
@@ -95,7 +95,6 @@ class Media extends Extension
 //            }
 //        } else {
         $sb->start_table();
-        $sb->add_table_header("Commands");
 
         $sb->add_text_option(MediaConfig::CONVERT_PATH, "convert", true);
 //        }

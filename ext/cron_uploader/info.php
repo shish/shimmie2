@@ -26,7 +26,7 @@ class CronUploaderInfo extends ExtensionInfo
 
     public function __construct()
     {
-        $this->documentation = "Installation guide: activate this extension and navigate to System Config screen.</a>";
+        $this->documentation = "Installation guide: activate this extension and navigate to Board Config screen.</a>";
         parent::__construct();
     }
 }
