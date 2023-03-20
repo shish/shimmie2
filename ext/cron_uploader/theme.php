@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use function MicroHTML\LABEL;
 use function MicroHTML\TABLE;
 use function MicroHTML\TBODY;
@@ -32,10 +34,10 @@ class CronUploaderTheme extends Themelet
         $page->set_heading("Cron Uploader");
 
         if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
-            $info_html .= "<b style='color:red'>THIS EXTENSION REQUIRES USER API KEYS TO BE ENABLED IN <a href='admin'>BOARD ADMIN</a></b>";
+            $info_html .= "<b style='color:red'>THIS EXTENSION REQUIRES USER API KEYS TO BE ENABLED IN <a href=''>BOARD ADMIN</a></b>";
         }
 
-        $info_html .= "<br><b>Information</b>
+        $info_html .= "<b>Information</b>
 			<br>
 			<table style='width:470px;'>
 			" . ($running ? "<tr><td colspan='4'><b style='color:red'>Cron upload is currently running</b></td></tr>" : "") . "
@@ -123,7 +125,7 @@ class CronUploaderTheme extends Themelet
         }
     }
 
-    public function get_user_options(string $dir, bool $stop_on_error, int $log_level, bool $all_logs): string
+    public function get_user_options(): string
     {
         $form = SHM_SIMPLE_FORM(
             "user_admin/cron_uploader",
