@@ -93,6 +93,14 @@ class Trash extends Extension
         }
     }
 
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::VIEW_TRASH)) {
+            $event->add_link("Trash", make_link("/post/list/in%3Atrash/1"), 60);
+        }
+    }
+
     public const SEARCH_REGEXP = "/^in:trash$/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {

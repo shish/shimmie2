@@ -29,5 +29,6 @@ class HelpPagesTheme extends Themelet
 
         $page->set_title("Help - $title");
         $page->set_heading("Help - $title");
+        $page->add_block(new NavBlock());
     }
 }

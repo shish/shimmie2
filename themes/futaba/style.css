@@ -32,16 +32,23 @@ A, A:visited {text-decoration: none; color: #0000EE;}
 A:hover {text-decoration: underline; color: #DD0000;}
 HR {border: none; border-top: 1px solid #D9BFB7; height: 0; clear: both;}
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*             the navigation bar, and all its blocks             *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 NAV {
-	width: 150px;
+	width: 200px;
 	float: left;
-	text-align:left;
+	text-align: center;
+	margin-left: 16px;
+}
+NAV .blockbody {
+	font-size: 0.85em;
+	text-align: center;
+	overflow: hidden;
 }
 NAV TABLE {
-	width: 150px;
-}
-NAV TD {
-	vertical-align: middle;
+	width: 100%;
 }
 NAV INPUT {
 	width: 100%;
@@ -51,14 +58,34 @@ NAV SELECT {
 	width: 100%;
 	padding: 0;
 }
+
 NAV H3 {
-	text-align: left;
+	text-align: center;
 }
 .withleft {
 	margin-left: 160px;
 }
-TD {
-	vertical-align: top;
+
+#paginator .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                 the main part of each page                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ARTICLE {
+	margin-left: 226px;
+	margin-right: 16px;
+	margin-top: 16px;
+	text-align: center;
+	height: 1%;
+}
+ARTICLE TABLE {
+	width: 90%;
+	margin: auto;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

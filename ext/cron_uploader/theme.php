@@ -74,10 +74,10 @@ class CronUploaderTheme extends Themelet
         $install_html = "
 			This cron uploader is fairly easy to use but has to be configured first.
 			<ol>
-			    <li>Install & activate this plugin.</li>
-			    <li>Go to the <a href='".make_link("setup")."'>Board Config</a> and change any settings to match your preference.</li>
-			    <li>Copy the cron command above.</li>
-			    <li>Create a cron job or something else that can open a url on specified times.
+			    <li style='text-align: left;'>Install & activate this plugin.</li>
+			    <li style='text-align: left;'>Go to the <a href='".make_link("setup")."'>Board Config</a> and change any settings to match your preference.</li>
+			    <li style='text-align: left;'>Copy the cron command above.</li>
+			    <li style='text-align: left;'>Create a cron job or something else that can open a url on specified times.
                     <br/>cron is a service that runs commands over and over again on a a schedule. You can set up cron (or any similar tool) to run the command above to trigger the import on whatever schedule you desire.
 			        <br />If you're not sure how to do this, you can give the command to your web host and you can ask them to create the cron job for you.
 			        <br />When you create the cron job, you choose when to upload new posts.</li>
@@ -89,11 +89,11 @@ class CronUploaderTheme extends Themelet
         $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means.
 <br />(<b>{$queue_dirinfo['path']}</b>)
                     <ol>
-                        <li>Any sub-folders will be turned into tags.</li>
-                        <li>If the file name matches \"## - tag1 tag2.png\" the tags will be used.</li>
-                        <li>If both are found, they will all be used.</li>
-                        <li>The character \";\" will be changed into \":\" in any tags.</li>
-                        <li>You can inherit categories by creating a folder that ends with \";\". For instance category;\\tag1 would result in the tag category:tag1. This allows creating a category folder, then creating many subfolders that will use that category.</li>
+                        <li style='text-align: left;'>Any sub-folders will be turned into tags.</li>
+                        <li style='text-align: left;'>If the file name matches \"## - tag1 tag2.png\" the tags will be used.</li>
+                        <li style='text-align: left;'>If both are found, they will all be used.</li>
+                        <li style='text-align: left;'>The character \";\" will be changed into \":\" in any tags.</li>
+                        <li style='text-align: left;'>You can inherit categories by creating a folder that ends with \";\". For instance category;\\tag1 would result in the tag category:tag1. This allows creating a category folder, then creating many subfolders that will use that category.</li>
                     </ol>
                     The cron uploader works by importing files from the queue folder whenever this url is visited:
                 <br/><pre><a href='$cron_url'>$cron_url</a></pre>

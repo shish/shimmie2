@@ -98,6 +98,14 @@ class UserConfig extends Extension
         }
     }
 
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if (!$user->is_anonymous()) {
+            $event->add_link("User Options", make_link("user_config"), 40);
+        }
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $user, $database, $config, $page, $user_config;
