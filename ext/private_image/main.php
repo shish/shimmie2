@@ -231,7 +231,7 @@ class PrivateImage extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event)
     {
-        global $user_config;
+        global $user, $user_config;
         if ($user_config->get_bool(PrivateImageConfig::USER_SET_DEFAULT) && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
             self::privatize_image($event->image->id);
         }
