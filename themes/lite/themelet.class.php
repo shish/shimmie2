@@ -27,7 +27,7 @@ class Themelet extends BaseThemelet
             $total_pages = 1;
         }
         $body = $this->litetheme_build_paginator($page_number, $total_pages, $base, $query, $show_random);
-        $page->add_block(new Block(null, $body, "main", 90));
+        $page->add_block(new Block("Paginator", $body, "main", 90));
     }
 
     public function litetheme_gen_page_link(string $base_url, ?string $query, int $page, string $name, ?string $link_class=null): string
@@ -64,7 +64,7 @@ class Themelet extends BaseThemelet
         $random_html = "";
         if ($show_random) {
             $rand = mt_rand(1, $total_pages);
-            $random_html =                                            $this->litetheme_gen_page_link($base_url, $query, $rand, "Random");
+            $random_html = $this->litetheme_gen_page_link($base_url, $query, $rand, "Random");
         }
 
         $next_html   = $at_end ? "<span class='tab'>Next</span>" : $this->litetheme_gen_page_link($base_url, $query, $next, "Next");
