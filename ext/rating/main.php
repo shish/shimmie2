@@ -153,7 +153,7 @@ class Ratings extends Extension
             $options[$rating->name] = $rating->code;
         }
 
-        $sb = $event->panel->create_new_block("Post Ratings");
+        $sb = $event->panel->create_new_block("Post Rating Visibility");
         $sb->start_table();
         foreach (array_keys($_shm_user_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {

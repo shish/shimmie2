@@ -345,8 +345,8 @@ class UserPage extends Extension
         $sb->add_choice_option(
             "user_loginshowprofile",
             [
-                "return to previous page" => 0, // 0 is default
-                "send to user profile" => 1],
+                "Return to previous page" => 0, // 0 is default
+                "Send to user profile" => 1],
             "On log in/out",
             true
         );
