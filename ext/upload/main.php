@@ -98,6 +98,12 @@ class Upload extends Extension
                 }
             }
         }
+
+        $config->set_default_bool(UploadConfig::MIME_CHECK_ENABLED, false);
+        $config->set_default_array(
+            UploadConfig::ALLOWED_MIME_STRINGS,
+            DataHandlerExtension::get_all_supported_mimes()
+        );
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
@@ -119,8 +125,21 @@ class Upload extends Extension
         $sb->add_label("<i>PHP Limit = " . ini_get('upload_max_filesize') . "</i>");
         $sb->add_choice_option(UploadConfig::TRANSLOAD_ENGINE, $tes, "<br/>Transload: ");
         $sb->add_bool_option(UploadConfig::TLSOURCE, "<br/>Use transloaded URL as source if none is provided: ");
+
+        $sb->start_table();
+        $sb->add_bool_option(UploadConfig::MIME_CHECK_ENABLED, "Enable upload MIME checks", true);
+        $sb->add_multichoice_option(UploadConfig::ALLOWED_MIME_STRINGS, $this->get_mime_options(), "Allowed MIME uploads", true);
+        $sb->end_table();
     }
 
+    private function get_mime_options(): array
+    {
+        $output = [];
+        foreach (DataHandlerExtension::get_all_supported_mimes() as $mime) {
+            $output[MimeMap::get_name_for_mime($mime)] = $mime;
+        }
+        return $output;
+    }
 
     public function onPageNavBuilding(PageNavBuildingEvent $event)
     {
