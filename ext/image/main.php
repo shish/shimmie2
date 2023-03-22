@@ -33,7 +33,7 @@ class ImageIO extends Extension
 
     public const THUMBNAIL_TYPES = [
         'JPEG' => MimeType::JPEG,
-        'WEBP (Not IE/Safari compatible)' => MimeType::WEBP
+        'WEBP (Not IE compatible)' => MimeType::WEBP
     ];
 
     public function onInitExt(InitExtEvent $event)
