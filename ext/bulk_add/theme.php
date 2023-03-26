@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BulkAddTheme extends Themelet
 {
     private array $messages = [];

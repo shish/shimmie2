@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Shimmie2;
+
 class CustomHomeTheme extends HomeTheme
 {
     public function display_page(Page $page, string $sitename, string $base_href, string $theme_name, string $body): void
     {
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->add_auto_html_headers();
         $hh = $page->get_all_html_headers();
         $page->set_data(
@@ -27,6 +31,7 @@ class CustomHomeTheme extends HomeTheme
 				#counter {display: none;}
 			}
 		</style>
+	<meta name="juicyads-site-verification" content="20d309e193510e130c3f8a632f281335">
 	</head>
 	<body>
 		$body
@@ -53,7 +58,7 @@ EOD
 		";
         return "
 		<div id='front-page'>
-			<h1><a style='text-decoration: none;' href='".make_link()."'><span>$sitename</span></a></h1>
+			<h1><a style='text-decoration: none;' href='".make_link(). "'><span>$sitename</span></a></h1>
 			$main_links_html
 			$search_html
 			$message_html
@@ -66,9 +71,23 @@ EOD
 <script type='text/javascript' data-cfasync='false' async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':825625});</script>
 <!--JuicyAds END-->
 
+<script type='application/javascript' src='https://a.realsrv.com/video-slider.js'></script>
+<script type='application/javascript'>
+var adConfig = {
+    'idzone': 3465907,
+    'frequency_period': 720,
+    'close_after': 0,
+    'on_complete': 'hide',
+    'branding_enabled': 1,
+    'screen_density': 25,
+    'cta_enabled': 0
+};
+ExoVideoSlider.init(adConfig);
+</script>
+
 				<small><small>
 				$contact_link Serving $num_comma posts &ndash;
-				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie2</a>
+				Running <a href='https://code.shishnet.org/shimmie2/'>Shimmie2</a>
 				</small></small>
 			</div>
 		</div>";

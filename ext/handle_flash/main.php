@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class FlashFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::FLASH];
@@ -12,7 +14,7 @@ class FlashFileHandler extends DataHandlerExtension
         $event->image->video = true;
         $event->image->image = false;
 
-        $info = getimagesize($event->file_name);
+        $info = getimagesize($event->image->get_image_filename());
         if ($info) {
             $event->image->width = $info[0];
             $event->image->height = $info[1];

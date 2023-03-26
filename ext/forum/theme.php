@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class ForumTheme extends Themelet
 {
     public function display_thread_list(Page $page, $threads, $showAdminOptions, $pageNumber, $totalPages)
@@ -103,10 +106,7 @@ class ForumTheme extends Themelet
             $current_post++;
             $message = $post["message"];
 
-            $tfe = new TextFormattingEvent($message);
-            send_event($tfe);
-            $message = $tfe->formatted;
-
+            $message = send_event(new TextFormattingEvent($message))->formatted;
             $message = str_replace('\n\r', '<br>', $message);
             $message = str_replace('\r\n', '<br>', $message);
             $message = str_replace('\n', '<br>', $message);

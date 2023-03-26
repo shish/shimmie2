@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class HelpPagesTheme extends Themelet
 {
     public function display_list_page(array $pages)

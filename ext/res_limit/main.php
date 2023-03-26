@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class ResolutionLimit extends Extension
 {
     public function get_priority(): int
@@ -42,8 +44,8 @@ class ResolutionLimit extends Extension
                     continue;
                 }
                 $valids++;
-                $width = $parts[0];
-                $height = $parts[1];
+                $width = (int)$parts[0];
+                $height = (int)$parts[1];
                 if ($image->width / $width == $image->height / $height) {
                     $ok = true;
                     break;

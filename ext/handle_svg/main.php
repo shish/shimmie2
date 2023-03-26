@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension
@@ -36,7 +39,7 @@ class SVGFileHandler extends DataHandlerExtension
         $event->image->audio = false;
         $event->image->image = true;
 
-        $msp = new MiniSVGParser($event->file_name);
+        $msp = new MiniSVGParser($event->image->get_image_filename());
         $event->image->width = $msp->width;
         $event->image->height = $msp->height;
     }
@@ -47,6 +50,7 @@ class SVGFileHandler extends DataHandlerExtension
         $sanitizer->removeRemoteReferences(true);
         $dirtySVG = file_get_contents($event->tmpname);
         $cleanSVG = $sanitizer->sanitize($dirtySVG);
+        $event->hash = md5($cleanSVG);
         file_put_contents(warehouse_path(Image::IMAGE_DIR, $event->hash), $cleanSVG);
     }
 
@@ -93,7 +97,7 @@ class MiniSVGParser
         xml_parser_free($xml_parser);
     }
 
-    public function startElement($parser, $name, $attrs)
+    public function startElement($parser, $name, $attrs): void
     {
         if ($name == "SVG" && $this->xml_depth == 0) {
             $this->width = int_escape($attrs["WIDTH"]);
@@ -102,7 +106,7 @@ class MiniSVGParser
         $this->xml_depth++;
     }
 
-    public function endElement($parser, $name)
+    public function endElement($parser, $name): void
     {
         $this->xml_depth--;
     }

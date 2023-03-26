@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Shimmie2;
+
 require_once "events.php";
 
 class Download extends Extension

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /*
  * SearchTermParseEvent:
  * Signal that a search term needs parsing

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
@@ -104,7 +106,7 @@ class AliasEditor extends Extension
                     if (count($_FILES) > 0) {
                         $tmp = $_FILES['alias_file']['tmp_name'];
                         $contents = file_get_contents($tmp);
-                        $this->add_alias_csv($database, $contents);
+                        $this->add_alias_csv($contents);
                         log_info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("alias/list"));
@@ -177,7 +179,7 @@ class AliasEditor extends Extension
         return $csv;
     }
 
-    private function add_alias_csv(Database $database, string $csv): int
+    private function add_alias_csv(string $csv): int
     {
         $csv = str_replace("\r", "\n", $csv);
         $i = 0;

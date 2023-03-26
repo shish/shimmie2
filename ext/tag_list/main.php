@@ -2,12 +2,16 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
 
 class TagList extends Extension
 {
     /** @var TagListTheme */
     protected ?Themelet $theme;
+
+    private $tagcategories = null;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -85,7 +89,7 @@ class TagList extends Extension
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
             $type = $config->get_string(TagListConfig::IMAGE_TYPE);
             if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
-                if (class_exists("TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
+                if (class_exists("Shimmie2\TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                     $this->add_split_tags_block($page, $event->image);
                 } else {
                     $this->add_tags_block($page, $event->image);
@@ -155,10 +159,10 @@ class TagList extends Extension
 
         $results = $cache->get("tag_list_omitted_tags:".$tags_config);
 
-        if ($results==null) {
+        if (is_null($results)) {
             $tags = explode(" ", $tags_config);
 
-            if (empty($tags)) {
+            if (count($tags) == 0) {
                 return [];
             }
 
@@ -262,7 +266,8 @@ class TagList extends Extension
         if ($config->get_bool(TagListConfig::PAGES)) {
             $html .= $this->build_az();
         }
-        if (class_exists('TagCategories')) {
+        $tag_category_dict = [];
+        if (class_exists('Shimmie2\TagCategories')) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
@@ -274,10 +279,10 @@ class TagList extends Extension
                 $size = 0.5;
             }
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
-            if (class_exists('TagCategories')) {
+            if (class_exists('Shimmie2\TagCategories')) {
                 $h_tag_no_underscores = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict);
             }
-            $html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
+            $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
 
         if (SPEED_HAX) {
@@ -331,7 +336,8 @@ class TagList extends Extension
         */
         mb_internal_encoding('UTF-8');
 
-        if (class_exists('TagCategories')) {
+        $tag_category_dict = [];
+        if (class_exists('Shimmie2\TagCategories')) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
@@ -350,7 +356,7 @@ class TagList extends Extension
             }
             $link = $this->theme->tag_link($tag);
             $h_tag = html_escape($tag);
-            if (class_exists('TagCategories')) {
+            if (class_exists('Shimmie2\TagCategories')) {
                 $h_tag = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict, "&nbsp;($count)");
             }
             $html .= "<a href='$link'>$h_tag</a>\n";
@@ -490,7 +496,7 @@ class TagList extends Extension
         global $cache, $database, $config;
 
         $tags = $cache->get("popular_tags");
-        if (empty($tags)) {
+        if (is_null($tags)) {
             $omitted_tags = self::get_omitted_tags();
 
             if (empty($omitted_tags)) {
@@ -549,10 +555,10 @@ class TagList extends Extension
 
 
         $wild_tags = $search;
-        $str_search = Tag::implode($search);
-        $related_tags = $cache->get("related_tags:$str_search");
+        $cache_key = "related_tags:" . md5(Tag::implode($search));
+        $related_tags = $cache->get($cache_key);
 
-        if (empty($related_tags)) {
+        if (is_null($related_tags)) {
             // $search_tags = array();
 
             $starting_tags = [];
@@ -601,13 +607,11 @@ class TagList extends Extension
                 $args = ["limit" => $limit];
 
                 $related_tags = $database->get_all($query, $args);
-                $cache->set("related_tags:$str_search", $related_tags, 60 * 60);
+            } else {
+                $related_tags = [];
             }
+            $cache->set($cache_key, $related_tags, 60 * 60);
         }
-        if ($related_tags === false) {
-            return [];
-        } else {
-            return $related_tags;
-        }
+        return $related_tags;
     }
 }

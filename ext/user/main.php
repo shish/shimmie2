@@ -2,7 +2,13 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "events.php";
+
+use GQLA\Field;
+use GQLA\Type;
+use GQLA\Mutation;
 
 use MicroHTML\HTMLElement;
 use MicroCRUD\ActionColumn;
@@ -11,6 +17,7 @@ use MicroCRUD\IntegerColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
+
 use function MicroHTML\A;
 
 class UserNameColumn extends TextColumn
@@ -72,6 +79,61 @@ class NullUserException extends SCoreException
 {
 }
 
+#[Type]
+class LoginResult
+{
+    public function __construct(
+        #[Field]
+        public User $user,
+        #[Field]
+        public ?string $session = null,
+        #[Field]
+        public ?string $error = null,
+    ) {
+    }
+
+    #[Mutation]
+    public static function login(string $username, string $password): LoginResult
+    {
+        global $config;
+        $duser = User::by_name_and_pass($username, $password);
+        if (!is_null($duser)) {
+            return new LoginResult(
+                $duser,
+                UserPage::get_session_id($duser->name),
+                null
+            );
+        } else {
+            $anon = User::by_id($config->get_int("anon_id", 0));
+            return new LoginResult(
+                $anon,
+                null,
+                "No user found"
+            );
+        }
+    }
+
+    #[Mutation]
+    public static function create_user(string $username, string $password1, string $password2, string $email): LoginResult
+    {
+        global $config;
+        try {
+            $uce = send_event(new UserCreationEvent($username, $password1, $password2, $email, true));
+            return new LoginResult(
+                User::by_name($username),
+                UserPage::get_session_id($username),
+                null
+            );
+        } catch (UserCreationException $ex) {
+            return new LoginResult(
+                User::by_id($config->get_int("anon_id", 0)),
+                null,
+                $ex->getMessage()
+            );
+        }
+    }
+}
+
 class UserPage extends Extension
 {
     /** @var UserPageTheme $theme */
@@ -113,8 +175,7 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "create") {
                 $this->page_create();
             } elseif ($event->get_arg(0) == "create_other") {
-                $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], false);
-                send_event($uce);
+                send_event(new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['pass1'], $_POST['email'], false));
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("admin"));
                 $page->flash("Created new user");
@@ -177,8 +238,7 @@ class UserPage extends Extension
                     "You aren't logged in. First do that, then you can see your stats."
                 );
             } elseif (!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
-                $e = new UserPageBuildingEvent($display_user);
-                send_event($e);
+                $e = send_event(new UserPageBuildingEvent($display_user));
                 $this->display_stats($e);
             } else {
                 $this->theme->display_error(
@@ -245,15 +305,13 @@ class UserPage extends Extension
             if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
                 $user_config = UserConfig::get_for_user($event->display_user->id);
 
-                $uobe = new UserOperationsBuildingEvent($event->display_user, $user_config);
-                send_event($uobe);
+                $uobe = send_event(new UserOperationsBuildingEvent($event->display_user, $user_config));
                 $page->add_block(new Block("Operations", $this->theme->build_operations($event->display_user, $uobe), "main", 60));
             }
         }
 
         if ($user->id == $event->display_user->id) {
-            $ubbe = new UserBlockBuildingEvent();
-            send_event($ubbe);
+            $ubbe = send_event(new UserBlockBuildingEvent());
             ksort($ubbe->parts);
             $this->theme->display_user_links($page, $user, $ubbe->parts);
         }
@@ -356,7 +414,36 @@ class UserPage extends Extension
 
     public function onUserCreation(UserCreationEvent $event)
     {
-        $this->check_user_creation($event);
+        $name = $event->username;
+        //$pass = $event->password;
+        //$email = $event->email;
+
+        global $config, $page, $user;
+        if (!$user->can(Permissions::CREATE_USER)) {
+            throw new UserCreationException("Account creation is currently disabled");
+        }
+        if (!$config->get_bool("login_signup_enabled")) {
+            throw new UserCreationException("Account creation is currently disabled");
+        }
+        if (strlen($name) < 1) {
+            throw new UserCreationException("Username must be at least 1 character");
+        }
+        if (!preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
+            throw new UserCreationException(
+                "Username contains invalid characters. Allowed characters are ".
+                    "letters, numbers, dash, and underscore"
+            );
+        }
+        if (User::by_name($name)) {
+            throw new UserCreationException("That username is already taken");
+        }
+        if (!captcha_check()) {
+            throw new UserCreationException("Error in captcha");
+        }
+        if ($event->password != $event->password2) {
+            throw new UserCreationException("Passwords don't match");
+        }
+
         $new_user = $this->create_user($event);
         if ($event->login) {
             send_event(new UserLoginEvent($new_user));
@@ -393,10 +480,10 @@ class UserPage extends Extension
                     "Can't find the user named ".html_escape($matches[2])
                 );
             }
-            $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= {$duser->id}"));
+            $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= {$duser->id}"));
         } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
             $user_id = int_escape($matches[2]);
-            $event->add_querylet(new Querylet("images.owner_id ${matches[1]}= $user_id"));
+            $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= $user_id"));
         } elseif ($user->can(Permissions::VIEW_IP) && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
             $user_ip = $matches[1]; // FIXME: ip_escape?
             $event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
@@ -420,8 +507,7 @@ class UserPage extends Extension
         if ($user->is_anonymous()) {
             $this->theme->display_login_block($page);
         } else {
-            $ubbe = new UserBlockBuildingEvent();
-            send_event($ubbe);
+            $ubbe = send_event(new UserBlockBuildingEvent());
             ksort($ubbe->parts);
             $this->theme->display_user_block($page, $user, $ubbe->parts);
         }
@@ -439,7 +525,7 @@ class UserPage extends Extension
         $duser = User::by_name_and_pass($name, $pass);
         if (!is_null($duser)) {
             send_event(new UserLoginEvent($duser));
-            $this->set_login_cookie($duser->name, $pass);
+            $this->set_login_cookie($duser->name);
             $page->set_mode(PageMode::REDIRECT);
 
             // Try returning to previous page
@@ -497,40 +583,15 @@ class UserPage extends Extension
             $this->theme->display_signups_disabled($page);
         } elseif (!isset($_POST['name'])) {
             $this->theme->display_signup_page($page);
-        } elseif ($_POST['pass1'] != $_POST['pass2']) {
-            $this->theme->display_error(400, "Password Mismatch", "Passwords don't match");
         } else {
             try {
-                if (!captcha_check()) {
-                    throw new UserCreationException("Error in captcha");
-                }
-
-                $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email'], true);
-                send_event($uce);
-                $this->set_login_cookie($uce->username, $uce->password);
+                $uce = send_event(new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['pass2'], $_POST['email'], true));
+                $this->set_login_cookie($uce->username);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
             } catch (UserCreationException $ex) {
                 $this->theme->display_error(400, "User Creation Error", $ex->getMessage());
             }
-        }
-    }
-
-    private function check_user_creation(UserCreationEvent $event): void
-    {
-        $name = $event->username;
-        //$pass = $event->password;
-        //$email = $event->email;
-
-        if (strlen($name) < 1) {
-            throw new UserCreationException("Username must be at least 1 character");
-        } elseif (!preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
-            throw new UserCreationException(
-                "Username contains invalid characters. Allowed characters are ".
-                    "letters, numbers, dash, and underscore"
-            );
-        } elseif (User::by_name($name)) {
-            throw new UserCreationException("That username is already taken");
         }
     }
 
@@ -557,12 +618,18 @@ class UserPage extends Extension
         return $new_user;
     }
 
-    private function set_login_cookie(string $name, string $pass): void
+    public static function get_session_id(string $name): string
+    {
+        global $config;
+        $addr = get_session_ip($config);
+        $hash = User::by_name($name)->passhash;
+        return md5($hash.$addr);
+    }
+
+    private function set_login_cookie(string $name): void
     {
         global $config, $page;
 
-        $addr = get_session_ip($config);
-        $hash = User::by_name($name)->passhash;
 
         $page->add_cookie(
             "user",
@@ -572,7 +639,7 @@ class UserPage extends Extension
         );
         $page->add_cookie(
             "session",
-            md5($hash.$addr),
+            $this->get_session_id($name),
             time()+60*60*24*$config->get_int('login_memory'),
             '/'
         );
@@ -636,7 +703,7 @@ class UserPage extends Extension
                 $duser->set_password($pass1);
 
                 if ($duser->id == $user->id) {
-                    $this->set_login_cookie($duser->name, $pass1);
+                    $this->set_login_cookie($duser->name);
                 }
 
                 $page->flash("Password changed");
@@ -696,7 +763,7 @@ class UserPage extends Extension
 
     private function count_log_ips(User $duser): array
     {
-        if (!class_exists('LogDatabase')) {
+        if (!class_exists('Shimmie2\LogDatabase')) {
             return [];
         }
         global $database;

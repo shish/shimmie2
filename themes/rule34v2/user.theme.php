@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 use function MicroHTML\TABLE;
@@ -61,9 +64,7 @@ class CustomUserPageTheme extends UserPageTheme
         $tac = $config->get_string("login_tac", "");
 
         if ($config->get_bool("login_tac_bbcode")) {
-            $tfe = new TextFormattingEvent($tac);
-            send_event($tfe);
-            $tac = $tfe->formatted;
+            $tac = send_event(new TextFormattingEvent($tac))->formatted;
         }
 
         $form = SHM_SIMPLE_FORM(

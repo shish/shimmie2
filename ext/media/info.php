@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class MediaInfo extends ExtensionInfo
 {
     public const KEY = "media";
@@ -13,5 +15,5 @@ class MediaInfo extends ExtensionInfo
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Provides common functions and settings used for media operations.";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

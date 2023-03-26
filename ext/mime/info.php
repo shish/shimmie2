@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class MimeSystemInfo extends ExtensionInfo
 {
     public const KEY = "mime";
@@ -12,5 +14,5 @@ class MimeSystemInfo extends ExtensionInfo
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Provides system mime-related functionality";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

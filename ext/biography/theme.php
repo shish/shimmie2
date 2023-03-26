@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use function MicroHTML\TEXTAREA;
 
 class BiographyTheme extends Themelet
@@ -12,16 +15,12 @@ class BiographyTheme extends Themelet
 
     public function display_composer(Page $page, string $bio)
     {
-        global $user;
-        $post_url = make_link("biography");
-        $auth = $user->get_auth_html();
-
         $html = SHM_SIMPLE_FORM(
-            $post_url,
+            make_link("biography"),
             TEXTAREA(["style"=>"width: 100%", "rows"=>"6", "name"=>"biography"], $bio),
             SHM_SUBMIT("Save")
         );
 
-        $page->add_block(new Block("About Me", (string)$html, "main", 30));
+        $page->add_block(new Block("About Me", $html, "main", 30));
     }
 }

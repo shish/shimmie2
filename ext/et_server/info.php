@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class ETServerInfo extends ExtensionInfo
 {
     public const KEY = "et_server";
@@ -13,5 +15,5 @@ class ETServerInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Keep track of shimmie registrations";
     public ?string $documentation = "For internal use";
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

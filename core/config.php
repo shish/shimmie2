@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /**
  * Interface Config
  *
@@ -262,6 +264,7 @@ class DatabaseConfig extends BaseConfig
     private string $table_name;
     private ?string $sub_column;
     private ?string $sub_value;
+    private string $cache_name;
 
     public function __construct(
         Database $database,
@@ -275,14 +278,10 @@ class DatabaseConfig extends BaseConfig
         $this->table_name = $table_name;
         $this->sub_value = $sub_value;
         $this->sub_column = $sub_column;
+        $this->cache_name = empty($sub_value) ? "config" : "config_{$sub_value}";
 
-        $cache_name = "config";
-        if (!empty($sub_value)) {
-            $cache_name .= "_".$sub_value;
-        }
-
-        $cached = $cache->get($cache_name);
-        if ($cached) {
+        $cached = $cache->get($this->cache_name);
+        if (!is_null($cached)) {
             $this->values = $cached;
         } else {
             $this->values = [];
@@ -298,7 +297,7 @@ class DatabaseConfig extends BaseConfig
             foreach ($this->database->get_all($query, $args) as $row) {
                 $this->values[$row["name"]] = $row["value"];
             }
-            $cache->set($cache_name, $this->values);
+            $cache->set($this->cache_name, $this->values);
         }
     }
 
@@ -333,7 +332,7 @@ class DatabaseConfig extends BaseConfig
         }
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here
-        $cache->set("config", $this->values);
-        $this->database->notify("config");
+        $cache->set($this->cache_name, $this->values);
+        $this->database->notify($this->cache_name);
     }
 }

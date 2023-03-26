@@ -87,7 +87,7 @@
 	</ul>
 
 	<ul>
-		<li><a class="menu top_parent" href="https://s.zlink2.com/splash.php?idzone=3832265&return_url=" target="_blank" style="color: red;">Cunt Empire!</a></li>
+		<li><a href="https://s.zlinkb.com/d.php?z=3832265" target="_blank">[Check out our partners!]</a></li>
 	</ul>
 	
 </div>

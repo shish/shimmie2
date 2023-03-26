@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class RegenThumbInfo extends ExtensionInfo
 {
     public const KEY = "regen_thumb";

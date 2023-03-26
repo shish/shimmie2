@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomHomeTheme extends HomeTheme
 {
     public function display_page(Page $page, string $sitename, string $base_href, string $theme_name, string $body): void
@@ -35,7 +37,7 @@ EOD
         $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";
         $counter_html = empty($counter_text) ? "" : "<div class='mdl-typography--text-center' id='counter'>$counter_text</div>";
         $contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> -";
-        $main_links_html = empty($main_links) ? "" : preg_replace('data-clink-sel="" ', '', preg_replace('/shm-clink/', 'mdl-navigation__link', $main_links));
+        $main_links_html = empty($main_links) ? "" : preg_replace('/data-clink-sel="" /', '', preg_replace('/shm-clink/', 'mdl-navigation__link', $main_links));
         $search_html = "
 			<div class='mdl-grid'>
 				<div class='mdl-layout-spacer'></div>

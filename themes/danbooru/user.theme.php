@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomUserPageTheme extends UserPageTheme
 {
     public function display_login_page(Page $page)
@@ -60,9 +62,7 @@ class CustomUserPageTheme extends UserPageTheme
         global $config;
         $tac = $config->get_string("login_tac", "");
 
-        $tfe = new TextFormattingEvent($tac);
-        send_event($tfe);
-        $tac = $tfe->formatted;
+        $tac = send_event(new TextFormattingEvent($tac))->formatted;
 
         $reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 

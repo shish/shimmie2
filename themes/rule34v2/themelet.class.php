@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Shimmie2;
+
 class Themelet extends BaseThemelet
 {
     public function build_thumb_html(Image $image): string
@@ -7,7 +11,7 @@ class Themelet extends BaseThemelet
         global $cache, $config;
 
         $cached = $cache->get("thumb-block:{$image->id}");
-        if ($cached) {
+        if (!is_null($cached)) {
             return $cached;
         }
 

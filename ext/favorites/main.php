@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class FavoriteSetEvent extends Event
 {
     public int $image_id;
@@ -143,7 +145,7 @@ class Favorites extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $event->add_block(new Block("Favorites", (string)$this->theme->get_help_html()));
+            $event->add_block(new Block("Favorites", $this->theme->get_help_html()));
         }
     }
 

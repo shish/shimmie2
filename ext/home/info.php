@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class HomeInfo extends ExtensionInfo
 {
     public const KEY = "home";
@@ -10,7 +12,7 @@ class HomeInfo extends ExtensionInfo
     public string $name = "Home Page";
     public array $authors =["Bzchan"=>"bzchan@animemahou.com"];
     public string $license = self::LICENSE_GPLV2;
-    public string $visibility = self::VISIBLE_ADMIN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public string $description = "Displays a front page with logo, search box and post count";
     public ?string $documentation =
 "Once enabled, the page will show up at the URL \"home\", so if you want

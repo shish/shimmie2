@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class LogLogstashInfo extends ExtensionInfo
 {
     public const KEY = "log_logstash";
@@ -11,5 +13,5 @@ class LogLogstashInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $description = "Send log events to a network port.";
-    public string $visibility = self::VISIBLE_ADMIN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
 }

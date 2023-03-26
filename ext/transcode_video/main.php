@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
- /*
- * This is used by the image transcoding code when there is an error while transcoding
- */
+/*
+* This is used by the image transcoding code when there is an error while transcoding
+*/
 class VideoTranscodeException extends SCoreException
 {
 }
@@ -83,8 +85,7 @@ class TranscodeVideo extends Extension
 //                }
 //                try {
 //                    $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-//                    $event->set_mime(Media::determine_ext($target_format));
-//                    $event->set_tmpname($new_image);
+//                    $event->set_tmpname($new_image, Media::determine_ext($target_format));
 //                } catch (Exception $e) {
 //                    log_error("transcode_video", "Error while performing upload transcode: ".$e->getMessage());
 //                    // We don't want to interfere with the upload process,
@@ -164,11 +165,11 @@ class TranscodeVideo extends Extension
                             if ($output_image!=$image) {
                                 $total++;
                             }
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                             log_error("transcode_video", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
                             try {
                                 $database->rollback();
-                            } catch (Exception $e) {
+                            } catch (\Exception $e) {
                                 // is this safe? o.o
                             }
                         }

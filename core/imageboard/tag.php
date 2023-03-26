@@ -1,6 +1,85 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+
+#[Type(name: "TagUsage")]
+class TagUsage
+{
+    #[Field]
+    public string $tag;
+    #[Field]
+    public int $uses;
+
+    public function __construct(string $tag, int $uses)
+    {
+        $this->tag = $tag;
+        $this->uses = $uses;
+    }
+
+    /**
+     * @return TagUsage[]
+     */
+    #[Query(name: "tags", type: '[TagUsage!]!')]
+    public static function tags(string $search, int $limit=10): array
+    {
+        global $cache, $database;
+
+        if (!$search) {
+            return [];
+        }
+
+        $search = strtolower($search);
+        if (
+            $search == '' ||
+            $search[0] == '_' ||
+            $search[0] == '%' ||
+            strlen($search) > 32
+        ) {
+            return [];
+        }
+
+        $cache_key = "tagusage-$search";
+        $limitSQL = "";
+        $search = str_replace('_', '\_', $search);
+        $search = str_replace('%', '\%', $search);
+        $SQLarr = ["search"=>"$search%"]; #, "cat_search"=>"%:$search%"];
+        if ($limit !== 0) {
+            $limitSQL = "LIMIT :limit";
+            $SQLarr['limit'] = $limit;
+            $cache_key .= "-" . $limit;
+        }
+
+        $res = $cache->get($cache_key);
+        if (is_null($res)) {
+            $res = $database->get_pairs(
+                "
+                SELECT tag, count
+                FROM tags
+                WHERE LOWER(tag) LIKE LOWER(:search)
+                -- OR LOWER(tag) LIKE LOWER(:cat_search)
+                AND count > 0
+                ORDER BY count DESC
+                $limitSQL
+                ",
+                $SQLarr
+            );
+            $cache->set($cache_key, $res, 600);
+        }
+
+        $counts = [];
+        foreach ($res as $k => $v) {
+            $counts[] = new TagUsage($k, $v);
+        }
+        return $counts;
+    }
+}
+
 /**
  * Class Tag
  *
@@ -90,7 +169,7 @@ class Tag
     public static function sanitize(string $tag): string
     {
         $tag = preg_replace("/\s/", "", $tag);                # whitespace
-        $tag = preg_replace('/\x20[\x0e\x0f]/', '', $tag);   # unicode RTL
+        $tag = preg_replace('/\x20[\x0e\x0f]/', '', $tag);    # unicode RTL
         $tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
         $tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
         $tag = trim($tag, ", \t\n\r\0\x0B");
@@ -100,7 +179,7 @@ class Tag
         }  // hard-code one bad case...
 
         if (mb_strlen($tag, 'UTF-8') > 255) {
-            throw new ScoreException("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
+            throw new SCoreException("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
         }
         return $tag;
     }
@@ -113,15 +192,10 @@ class Tag
 
         $tags1 = array_map("strtolower", $tags1);
         $tags2 = array_map("strtolower", $tags2);
-        natcasesort($tags1);
-        natcasesort($tags2);
+        sort($tags1);
+        sort($tags2);
 
-        for ($i = 0; $i < count($tags1); $i++) {
-            if ($tags1[$i]!==$tags2[$i]) {
-                return false;
-            }
-        }
-        return true;
+        return $tags1 == $tags2;
     }
 
     public static function get_diff_tags(array $source, array $remove): array
@@ -144,7 +218,7 @@ class Tag
         foreach ($tags as $tag) {
             try {
                 $tag = Tag::sanitize($tag);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $page->flash($e->getMessage());
                 continue;
             }
@@ -159,7 +233,7 @@ class Tag
     public static function sqlify(string $term): string
     {
         global $database;
-        if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
             $term = str_replace('\\', '\\\\', $term);
         }
         $term = str_replace('_', '\_', $term);

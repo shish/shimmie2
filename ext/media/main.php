@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
 require_once "events.php";
 require_once "media_engine.php";
@@ -270,12 +272,12 @@ class Media extends Extension
     {
         if ($event->image->width && $event->image->height && $event->image->length) {
             $s = ((int)($event->image->length / 100))/10;
-            $event->replace('$size', "{$event->image->width}x{$event->image->height}, ${s}s");
+            $event->replace('$size', "{$event->image->width}x{$event->image->height}, {$s}s");
         } elseif ($event->image->width && $event->image->height) {
             $event->replace('$size', "{$event->image->width}x{$event->image->height}");
         } elseif ($event->image->length) {
             $s = ((int)($event->image->length / 100))/10;
-            $event->replace('$size', "${s}s");
+            $event->replace('$size', "{$s}s");
         }
     }
 
@@ -573,7 +575,7 @@ class Media extends Extension
 
         $input_ext = self::determine_ext($input_mime);
 
-        $file_arg = "${input_ext}:\"${input_path}[0]\"";
+        $file_arg = "{$input_ext}:\"{$input_path}[0]\"";
 
         if ($resize_type===Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
             if ($new_height>$new_width) {
@@ -586,16 +588,16 @@ class Media extends Extension
         switch ($resize_type) {
             case Media::RESIZE_TYPE_FIT:
             case Media::RESIZE_TYPE_STRETCH:
-                $args .= "${file_arg} ${resize_arg} ${new_width}x${new_height}${resize_suffix} -background ${bg} -flatten ";
+                $args .= "{$file_arg} {$resize_arg} {$new_width}x{$new_height}{$resize_suffix} -background {$bg} -flatten ";
                 break;
             case Media::RESIZE_TYPE_FILL:
-                $args .= "${file_arg} ${resize_arg} ${new_width}x${new_height}\^ -background ${bg} -flatten -gravity center -extent ${new_width}x${new_height} ";
+                $args .= "{$file_arg} {$resize_arg} {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -extent {$new_width}x{$new_height} ";
                 break;
             case Media::RESIZE_TYPE_FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
-                $args .= "${file_arg} ".
-                    "\( -clone 0 -auto-orient -resize ${new_width}x${new_height}\^ -background ${bg} -flatten -gravity center -fill black -colorize 50% -extent ${new_width}x${new_height} -blur 0x${blur_size} \) ".
-                    "\( -clone 0 -auto-orient -resize ${new_width}x${new_height} \) ".
+                $args .= "{$file_arg} ".
+                    "\( -clone 0 -auto-orient -resize {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -fill black -colorize 50% -extent {$new_width}x{$new_height} -blur 0x{$blur_size} \) ".
+                    "\( -clone 0 -auto-orient -resize {$new_width}x{$new_height} \) ".
                     "-delete 0 -gravity center -compose over -composite";
                 break;
         }
@@ -611,7 +613,7 @@ class Media extends Extension
         }
 
 
-        $args .= " -quality ${output_quality} ";
+        $args .= " -quality {$output_quality} ";
 
 
         $output_ext = self::determine_ext($output_mime);
@@ -790,8 +792,7 @@ class Media extends Extension
 
                     imagedestroy($image_resized);
                     $image_resized = $new_image;
-                break;
-
+                    break;
             }
 
             switch ($output_mime) {
@@ -903,9 +904,9 @@ class Media extends Extension
         if ($this->get_version(MediaConfig::VERSION) < 2) {
             $database->execute("ALTER TABLE images ADD COLUMN image BOOLEAN NULL");
 
-            switch ($database->get_driver_name()) {
-                case DatabaseDriver::PGSQL:
-                case DatabaseDriver::SQLITE:
+            switch ($database->get_driver_id()) {
+                case DatabaseDriverID::PGSQL:
+                case DatabaseDriverID::SQLITE:
                     $database->execute('CREATE INDEX images_image_idx ON images(image) WHERE image IS NOT NULL');
                     break;
                 default:

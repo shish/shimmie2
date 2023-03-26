@@ -1,4 +1,9 @@
 <?php
+
+declare(strict_types=1);
+
+namespace Shimmie2;
+
 /**
  * Shimmie Installer
  *
@@ -29,7 +34,7 @@ function install()
     // Pull in necessary files
     require_once "vendor/autoload.php";
     global $_tracer;
-    $_tracer = new EventTracer();
+    $_tracer = new \EventTracer();
 
     require_once "core/exceptions.php";
     require_once "core/cacheengine.php";
@@ -49,7 +54,7 @@ function get_dsn()
 {
     if (getenv("INSTALL_DSN")) {
         $dsn = getenv("INSTALL_DSN");
-    } elseif (@$_POST["database_type"] == DatabaseDriver::SQLITE) {
+    } elseif (@$_POST["database_type"] == DatabaseDriverID::SQLITE->value) {
         /** @noinspection PhpUnhandledExceptionInspection */
         $id = bin2hex(random_bytes(5));
         $dsn = "sqlite:data/shimmie.{$id}.sqlite";
@@ -97,11 +102,11 @@ function ask_questions()
 		";
     }
 
-    $drivers = PDO::getAvailableDrivers();
+    $drivers = \PDO::getAvailableDrivers();
     if (
-        !in_array(DatabaseDriver::MYSQL, $drivers) &&
-        !in_array(DatabaseDriver::PGSQL, $drivers) &&
-        !in_array(DatabaseDriver::SQLITE, $drivers)
+        !in_array(DatabaseDriverID::MYSQL->value, $drivers) &&
+        !in_array(DatabaseDriverID::PGSQL->value, $drivers) &&
+        !in_array(DatabaseDriverID::SQLITE->value, $drivers)
     ) {
         $errors[] = "
 			No database connection library could be found; shimmie needs
@@ -109,9 +114,9 @@ function ask_questions()
 		";
     }
 
-    $db_m = in_array(DatabaseDriver::MYSQL, $drivers) ? '<option value="'. DatabaseDriver::MYSQL .'">MySQL</option>' : "";
-    $db_p = in_array(DatabaseDriver::PGSQL, $drivers) ? '<option value="'. DatabaseDriver::PGSQL .'">PostgreSQL</option>' : "";
-    $db_s = in_array(DatabaseDriver::SQLITE, $drivers) ? '<option value="'. DatabaseDriver::SQLITE .'">SQLite</option>' : "";
+    $db_m = in_array(DatabaseDriverID::MYSQL->value, $drivers) ? '<option value="'. DatabaseDriverID::MYSQL->value .'">MySQL</option>' : "";
+    $db_p = in_array(DatabaseDriverID::PGSQL->value, $drivers) ? '<option value="'. DatabaseDriverID::PGSQL->value .'">PostgreSQL</option>' : "";
+    $db_s = in_array(DatabaseDriverID::SQLITE->value, $drivers) ? '<option value="'. DatabaseDriverID::SQLITE->value .'">SQLite</option>' : "";
 
     $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
     $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
@@ -287,7 +292,7 @@ function create_tables(Database $db)
         if ($db->is_transaction_open()) {
             $db->commit();
         }
-    } catch (PDOException $e) {
+    } catch (\PDOException $e) {
         throw new InstallerException(
             "PDO Error:",
             "<p>An error occurred while trying to create the database tables necessary for Shimmie.</p>

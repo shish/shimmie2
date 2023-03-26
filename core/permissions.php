@@ -2,9 +2,14 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
+use GQLA\Enum;
+
 // action_object_attribute
 // action = create / view / edit / delete
 // object = image / user / tag / setting
+#[Enum(name: "Permission")]
 abstract class Permissions
 {
     public const CHANGE_SETTING = "change_setting";  # modify web-level settings, eg the config table
@@ -67,9 +72,13 @@ abstract class Permissions
     public const SEND_PM = "send_pm";
     public const READ_PM = "read_pm";
     public const VIEW_OTHER_PMS = "view_other_pms";
+
     public const EDIT_FEATURE = "edit_feature";
+
+    public const CREATE_VOTE = "create_vote";
     public const BULK_EDIT_VOTE = "bulk_edit_vote";
     public const EDIT_OTHER_VOTE = "edit_other_vote";
+
     public const VIEW_SYSINTO = "view_sysinfo";
 
     public const HELLBANNED = "hellbanned";

@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class Page extends BasePage
 {
     public function render()
@@ -17,6 +20,13 @@ class Page extends BasePage
         $head_block_html = "";
         $sub_block_html = "";
 
+        $main_headings = 0;
+        foreach ($this->blocks as $block) {
+            if ($block->section == "main" && !empty($block->header) && $block->header != "Comments") {
+                $main_headings++;
+            }
+        }
+
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
@@ -29,6 +39,9 @@ class Page extends BasePage
                     $head_block_html .= "<td class='headcol'>".$block->get_html(false)."</td>";
                     break;
                 case "main":
+                    if ($main_headings == 1) {
+                        $block->header = null;
+                    }
                     $main_block_html .= $block->get_html(false);
                     break;
                 case "subheading":
@@ -122,8 +135,7 @@ EOD;
 
 		<article>
 			$flash_html
-			<!-- <h2>Database reboot will be happening in a bit, expect a few minutes of downtime~</h2>
- -->
+			<!-- <h2>Server hardware upgrades will be happening today, expect some downtime while reboots happen~</h2> -->
 			$main_block_html
 		</article>
 

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class Update extends Extension
 {
     /** @var UpdateTheme */
@@ -93,7 +95,7 @@ class Update extends Extension
         /** TODO: Backup all folders (except /data, /images, /thumbs) before attempting this?
                   Either that or point to https://github.com/shish/shimmie2/blob/master/README.txt -> Upgrade from 2.3.X **/
 
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         if ($zip->open("./data/update_$commitSHA.zip") === true) {
             for ($i = 1; $i < $zip->numFiles; $i++) {
                 $filename = $zip->getNameIndex($i);

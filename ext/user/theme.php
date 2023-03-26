@@ -1,7 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 use function MicroHTML\TABLE;
@@ -63,8 +67,7 @@ class UserPageTheme extends Themelet
         $tac = $config->get_string("login_tac", "");
 
         if ($config->get_bool("login_tac_bbcode")) {
-            $tfe = new TextFormattingEvent($tac);
-            send_event($tfe);
+            $tfe = send_event(new TextFormattingEvent($tac));
             $tac = $tfe->formatted;
         }
 

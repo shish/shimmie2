@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class MimeSystemTheme extends Themelet
 {
     public function get_help_html(): string

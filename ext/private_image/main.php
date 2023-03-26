@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class PrivateImageConfig
 {
     public const VERSION = "ext_private_image_version";
@@ -74,7 +76,7 @@ class PrivateImage extends Extension
                 throw new SCoreException("Post not found.");
             }
             if ($image->owner_id!=$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
-                throw new SCoreException("Cannot set another user's image to private.");
+                throw new SCoreException("Cannot set another user's image to public.");
             }
 
             self::publicize_image($image_id);
@@ -112,7 +114,7 @@ class PrivateImage extends Extension
     {
         global $user, $page;
 
-        if ($event->image->private===true && $event->image->owner_id!=$user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ($event->image->private==true && $event->image->owner_id!=$user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
@@ -219,7 +221,7 @@ class PrivateImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id==$event->image->owner_id) {
+        if (($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id==$event->image->owner_id) || $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
             $event->add_part($this->theme->get_image_admin_html($event->image));
         }
     }

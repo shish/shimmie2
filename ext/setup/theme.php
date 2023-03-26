@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class SetupTheme extends Themelet
 {
     /*
@@ -17,7 +19,7 @@ class SetupTheme extends Themelet
      */
     public function display_page(Page $page, SetupPanel $panel)
     {
-        usort($panel->blocks, "blockcmp");
+        usort($panel->blocks, "Shimmie2\blockcmp");
 
         /*
          * Try and keep the two columns even; count the line breaks in

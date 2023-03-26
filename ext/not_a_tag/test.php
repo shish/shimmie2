@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class NotATagTest extends ShimmiePHPUnitTestCase
 {
     public function testUntags()
@@ -25,7 +28,7 @@ class NotATagTest extends ShimmiePHPUnitTestCase
         // Modified Bad as user - redirect
         try {
             send_event(new TagSetEvent($image, ["three", "face"]));
-            $this->assertTrue(false, "Should've had an exception");
+            $this->fail("Should've had an exception");
         } catch (TagSetException $e) {
             $this->assertTrue(true);
         }

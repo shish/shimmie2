@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class ArtistsTheme extends Themelet
 {
     public function get_author_editor_html(string $author): string
@@ -436,7 +439,8 @@ class ArtistsTheme extends Themelet
             $html .= "</tr>";
 
             if (count($aliases) > 1) {
-                for ($i = 1; $i < count($aliases); $i++) {
+                $ac = count($aliases);
+                for ($i = 1; $i < $ac; $i++) {
                     $aliasViewLink = str_replace("_", " ", $aliases[$i]['alias_name']); // no link anymore
                     $aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[$i]['alias_id']) . "'>Edit</a>";
                     $aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[$i]['alias_id']) . "'>Delete</a>";
@@ -479,7 +483,8 @@ class ArtistsTheme extends Themelet
             $html .= "</tr>";
 
             if (count($members) > 1) {
-                for ($i = 1; $i < count($members); $i++) {
+                $mc = count($members);
+                for ($i = 1; $i < $mc; $i++) {
                     $memberViewLink = str_replace("_", " ", $members[$i]['name']); // no link anymore
                     $memberEditLink = "<a href='" . make_link("artist/member/edit/" . $members[$i]['id']) . "'>Edit</a>";
                     $memberDeleteLink = "<a href='" . make_link("artist/member/delete/" . $members[$i]['id']) . "'>Delete</a>";
@@ -524,7 +529,8 @@ class ArtistsTheme extends Themelet
             $html .= "</tr>";
 
             if (count($urls) > 1) {
-                for ($i = 1; $i < count($urls); $i++) {
+                $uc = count($urls);
+                for ($i = 1; $i < $uc; $i++) {
                     $urlViewLink = "<a href='" . str_replace("_", " ", $urls[$i]['url']) . "' target='_blank'>" . str_replace("_", " ", $urls[$i]['url']) . "</a>";
                     $urlEditLink = "<a href='" . make_link("artist/url/edit/" . $urls[$i]['id']) . "'>Edit</a>";
                     $urlDeleteLink = "<a href='" . make_link("artist/url/delete/" . $urls[$i]['id']) . "'>Delete</a>";

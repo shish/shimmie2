@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomUserPageTheme extends UserPageTheme
 {
     public function display_login_page(Page $page)

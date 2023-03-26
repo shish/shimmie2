@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class PoolsConfig
 {
     public const MAX_IMPORT_RESULTS = "poolsMaxImportResults";
@@ -234,14 +236,12 @@ class Pools extends Extension
                 case "create": // ADD _POST
                     try {
                         $title = $_POST["title"];
-                        $event = new PoolCreationEvent(
+                        $event = send_event(new PoolCreationEvent(
                             $title,
                             $user,
                             bool_escape($_POST["public"]),
                             $_POST["description"]
-                        );
-
-                        send_event($event);
+                        ));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $event->new_id));
                     } catch (PoolCreationException $e) {
@@ -325,37 +325,35 @@ class Pools extends Extension
                         }
                     }
                     break;
-				case "reverse":
-					if ($this->have_permission($user, $pool)) {
-						$result = $database->execute(
-                                "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order DESC",
-                                ["pid" => $pool_id]
-                            );
-						$image_order = 1;
-						try {
-							$database->begin_transaction();
-							while ($row = $result->fetch()) {
-								$database->execute(
-										"
-										UPDATE pool_images 
-										SET image_order=:ord 
+                case "reverse":
+                    if ($this->have_permission($user, $pool)) {
+                        $result = $database->execute(
+                            "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order DESC",
+                            ["pid" => $pool_id]
+                        );
+                        $image_order = 1;
+                        try {
+                            $database->begin_transaction();
+                            while ($row = $result->fetch()) {
+                                $database->execute(
+                                    "
+										UPDATE pool_images
+										SET image_order=:ord
 										WHERE pool_id = :pid AND image_id = :iid",
-										["ord" => $image_order, "pid" => $pool_id, "iid" => (int)$row['image_id']]
-									);
-									$image_order = $image_order + 1;
-							}
-							$database->commit();
-						}
-						catch (Exception $e) {
-							$database->rollback();
-						}
-						$page->set_mode(PageMode::REDIRECT);
-						$page->set_redirect(make_link("pool/view/" . $pool_id));
-					}
-					else {
-						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
-					}
-					break;
+                                    ["ord" => $image_order, "pid" => $pool_id, "iid" => (int)$row['image_id']]
+                                );
+                                $image_order = $image_order + 1;
+                            }
+                            $database->commit();
+                        } catch (\Exception $e) {
+                            $database->rollback();
+                        }
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("pool/view/" . $pool_id));
+                    } else {
+                        $this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
+                    }
+                    break;
                 case "import":
                     if ($this->have_permission($user, $pool)) {
                         $images = Image::find_images(
@@ -441,8 +439,6 @@ class Pools extends Extension
      * When displaying an image, optionally list all the pools that the
      * image is currently a member of on a side panel, as well as a link
      * to the Next image in the pool.
-     *
-     * @var DisplayingImageEvent $event
      */
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
@@ -522,7 +518,6 @@ class Pools extends Extension
             $poolID = str_replace("_", " ", $matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
         }
-		
     }
 
     public function onTagTermCheck(TagTermCheckEvent $event)
@@ -582,7 +577,7 @@ class Pools extends Extension
 
                 if ($this->have_permission($user, $pool)) {
                     send_event(
-                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("_image_to_id", $event->items))
+                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items))
                     );
                 }
                 break;
@@ -591,9 +586,8 @@ class Pools extends Extension
                     return;
                 }
                 $new_pool_title = $_POST['bulk_pool_new'];
-                $pce = new PoolCreationEvent($new_pool_title);
-                send_event($pce);
-                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("_image_to_id", $event->items)));
+                $pce = send_event(new PoolCreationEvent($new_pool_title));
+                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items)));
                 break;
         }
     }
@@ -919,9 +913,8 @@ class Pools extends Extension
 
             if ($entry['action'] == 0) {
                 // READ ENTRIES
-                foreach ($images as $image) {
-                    $imageID = $image;
-                    $this->add_post($poolID, $imageID);
+                foreach ($images as $imageID) {
+                    $this->add_post($poolID, int_escape($imageID));
 
                     $imageArray .= " " . $imageID;
                     $newAction = 1;

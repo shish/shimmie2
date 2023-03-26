@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class PoolsTheme extends Themelet
 {
     /**
@@ -142,8 +144,7 @@ class PoolsTheme extends Themelet
                     $this->sidebar_options($page, $pool, $check_all);
                 }
             }
-            $tfe = new TextFormattingEvent($pool->description);
-            send_event($tfe);
+            $tfe = send_event(new TextFormattingEvent($pool->description));
             $page->add_block(new Block(html_escape($pool->title), $tfe->formatted, "main", 10));
         }
     }
@@ -361,7 +362,7 @@ class PoolsTheme extends Themelet
             } elseif ($history['action'] == 0) {
                 $prefix = "-";
             } else {
-                throw new RuntimeException("history['action'] not in {0, 1}");
+                throw new \RuntimeException("history['action'] not in {0, 1}");
             }
 
             $images = trim($history['images']);

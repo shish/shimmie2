@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class Featured extends Extension
 {
     /** @var FeaturedTheme */
@@ -51,7 +53,7 @@ class Featured extends Extension
         $fid = $config->get_int("featured_id");
         if ($fid > 0) {
             $image = $cache->get("featured_image_object:$fid");
-            if ($image === false) {
+            if (is_null($image)) {
                 $image = Image::by_id($fid);
                 if ($image) { // make sure the object is fully populated before saving
                     $image->get_tag_array();
@@ -66,6 +68,15 @@ class Featured extends Extension
                 }
                 $this->theme->display_featured($page, $image);
             }
+        }
+    }
+
+    public function onImageDeletion(ImageDeletionEvent $event)
+    {
+        global $config;
+        if ($event->image->id == $config->get_int("featured_id")) {
+            $config->set_int("featured_id", 0);
+            $config->save();
         }
     }
 

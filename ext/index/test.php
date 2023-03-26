@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class IndexTest extends ShimmiePHPUnitTestCase
 {
     public function testIndexPage()
@@ -79,7 +82,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testTagSearchNoResults($image_ids)
     {
-        $image_ids = $this->testUpload();
+        $this->testUpload();
         $this->assert_search_results(["maumaumau"], []);
     }
 
@@ -103,7 +106,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMultiTagSearchNoResults($image_ids)
     {
-        $image_ids = $this->testUpload();
+        $this->testUpload();
         # multiple tags, one of which doesn't exist
         # (test the "one tag doesn't exist = no hits" path)
         $this->assert_search_results(["computer", "asdfasdfwaffle"], []);
@@ -129,7 +132,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testMetaSearchNoResults($image_ids)
     {
-        $image_ids = $this->testUpload();
+        $this->testUpload();
         $this->assert_search_results(["hash=1234567890"], []);
         $this->assert_search_results(["ratio=42:12345"], []);
     }
@@ -159,7 +162,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /** @depends testUpload */
     public function testWildSearchNoResults($image_ids)
     {
-        $image_ids = $this->testUpload();
+        $this->testUpload();
         $this->assert_search_results(["asdfasdf*"], []);
     }
 

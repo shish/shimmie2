@@ -2,8 +2,16 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class LogLogstash extends Extension
 {
+    public function onInitExt(InitExtEvent $event)
+    {
+        global $config;
+        $config->set_default_string("log_logstash_host", "127.0.0.1:1234");
+    }
+
     public function onLog(LogEvent $event)
     {
         global $user;
@@ -26,7 +34,7 @@ class LogLogstash extends Extension
             ];
 
             $this->send_data($data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // we can't log that logging is broken
         }
     }
@@ -50,7 +58,7 @@ class LogLogstash extends Extension
             }
             fwrite($fp, json_encode($data));
             fclose($fp);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // we can't log that logging is broken
         }
     }

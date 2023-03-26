@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class ImageConfig
 {
     public const VERSION =          'ext_image_version';

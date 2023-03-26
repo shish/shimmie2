@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class SetupInfo extends ExtensionInfo
 {
     public const KEY = "setup";
@@ -12,5 +14,5 @@ class SetupInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $description = "Allows the site admin to configure the board to his or her taste";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

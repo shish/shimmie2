@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+
 function _new_user(array $row): User
 {
     return new User($row);
@@ -15,13 +21,17 @@ function _new_user(array $row): User
  *
  * The currently logged in user will always be accessible via the global variable $user.
  */
+#[Type(name: "User")]
 class User
 {
     public int $id;
+    #[Field]
     public string $name;
     public ?string $email;
+    #[Field]
     public string $join_date;
     public ?string $passhash;
+    #[Field]
     public UserClass $class;
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -56,12 +66,31 @@ class User
         }
     }
 
+    #[Query]
+    public static function me(): User
+    {
+        global $user;
+        return $user;
+    }
+
+    #[Field(name: "user_id")]
+    public function graphql_oid(): int
+    {
+        return $this->id;
+    }
+    #[Field(name: "id")]
+    public function graphql_guid(): string
+    {
+        return "user:{$this->id}";
+    }
+
+
     public static function by_session(string $name, string $session): ?User
     {
         global $cache, $config, $database;
         $row = $cache->get("user-session:$name-$session");
-        if (!$row) {
-            if ($database->get_driver_name() === DatabaseDriver::MYSQL) {
+        if (is_null($row)) {
+            if ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
             } else {
                 $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
@@ -77,7 +106,7 @@ class User
         global $cache, $database;
         if ($id === 1) {
             $cached = $cache->get('user-id:'.$id);
-            if ($cached) {
+            if (!is_null($cached)) {
                 return new User($cached);
             }
         }
@@ -88,6 +117,7 @@ class User
         return is_null($row) ? null : new User($row);
     }
 
+    #[Query(name: "user")]
     public static function by_name(string $name): ?User
     {
         global $database;
@@ -163,7 +193,7 @@ class User
     {
         global $database;
         if (User::by_name($name)) {
-            throw new ScoreException("Desired username is already in use");
+            throw new SCoreException("Desired username is already in use");
         }
         $old_name = $this->name;
         $this->name = $name;
@@ -197,6 +227,16 @@ class User
      */
     public function get_avatar_html(): string
     {
+        $url = $this->get_avatar_url();
+        if (!empty($url)) {
+            return "<img alt='avatar' class=\"avatar gravatar\" src=\"$url\">";
+        }
+        return "";
+    }
+
+    #[Field(name: "avatar_url")]
+    public function get_avatar_url(): ?string
+    {
         // FIXME: configurable
         global $config;
         if ($config->get_string("avatar_host") === "gravatar") {
@@ -206,10 +246,10 @@ class User
                 $d = urlencode($config->get_string("avatar_gravatar_default"));
                 $r = $config->get_string("avatar_gravatar_rating");
                 $cb = date("Y-m-d");
-                return "<img alt='avatar' class=\"avatar gravatar\" src=\"https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb\">";
+                return "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
             }
         }
-        return "";
+        return null;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class ViewImageInfo extends ExtensionInfo
 {
     public const KEY = "view";
@@ -12,5 +14,5 @@ class ViewImageInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $description = "Allows users to see uploaded posts";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

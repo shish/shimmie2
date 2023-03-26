@@ -12,44 +12,63 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v3
     - name: Set Up Cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           vendor
         key: php-cs-fixer-${{ hashFiles('composer.lock') }}
-
     - name: Validate composer.json and composer.lock
       run: composer validate
-
     - name: Install PHP dependencies
-      run: composer update && composer install --prefer-dist --no-progress
-
+      run: composer install --prefer-dist --no-progress
     - name: Set up PHP
       uses: shivammathur/setup-php@master
       with:
-        php-version: 7.4
+        php-version: 8.1
+    - name: Format
+      run: ./vendor/bin/php-cs-fixer fix && git diff --exit-code
 
-    - name: Check format
-      run: ./vendor/bin/php-cs-fixer fix --dry-run
+  static:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+    - name: Set Up Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          vendor
+        key: phpstan-${{ hashFiles('composer.lock') }}
+    - name: Install PHP dependencies
+      run: composer install --prefer-dist --no-progress
+    - name: PHPStan
+      uses: php-actions/phpstan@v3
+      with:
+        configuration: tests/phpstan.neon
+        memory_limit: 1G
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0']
+        php: ['8.1', '8.2']
         database: ['pgsql', 'mysql', 'sqlite']
 
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     - name: Set Up Cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           vendor
@@ -106,7 +125,6 @@ jobs:
         vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
 
     - name: Upload coverage
-      if: matrix.php == '7.4'
+      if: matrix.php == '8.1'
       run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover data/coverage.clover
+          vendor/bin/ocular code-coverage:upload --format=php-clover data/coverage.clover

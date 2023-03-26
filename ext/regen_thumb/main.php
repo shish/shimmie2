@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
 
 class RegenThumb extends Extension
 {
@@ -11,8 +12,7 @@ class RegenThumb extends Extension
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
         global $cache;
-        $event = new ThumbnailGenerationEvent($image->hash, $image->get_mime(), $force);
-        send_event($event);
+        $event = send_event(new ThumbnailGenerationEvent($image->hash, $image->get_mime(), $force));
         $cache->delete("thumb-block:{$image->id}");
         return $event->generated;
     }
@@ -101,7 +101,7 @@ class RegenThumb extends Extension
         global $page;
         switch ($event->action) {
             case "regen_thumbs":
-            $event->redirect = true;
+                $event->redirect = true;
                 $force = false;
                 if (isset($_POST["regen_thumb_force"])&&$_POST["regen_thumb_force"]=="true") {
                     $force=true;
@@ -125,8 +125,7 @@ class RegenThumb extends Extension
                             continue;
                         }
                     }
-                    $event = new ThumbnailGenerationEvent($image["hash"], $image["mime"], $force);
-                    send_event($event);
+                    $event = send_event(new ThumbnailGenerationEvent($image["hash"], $image["mime"], $force));
                     if ($event->generated) {
                         $i++;
                     }

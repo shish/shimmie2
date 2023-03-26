@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class ET extends Extension
 {
     /** @var ETTheme */
@@ -71,7 +73,7 @@ class ET extends Extension
                 'shimmie' => VERSION,
                 'schema'  => $config->get_int("db_version"),
                 'php'     => phpversion(),
-                'db'      => $database->get_driver_name() . " " . $database->get_version(),
+                'db'      => $database->get_driver_id()->value . " " . $database->get_version(),
                 'os'      => php_uname(),
                 'server'  =>  $_SERVER["SERVER_SOFTWARE"] ?? 'unknown',
             ],
@@ -111,7 +113,8 @@ class ET extends Extension
                     'branch' => $commitBranch,
                     'origin' => $commitOrigin,
                 ];
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
+                // If we can't get git data, just skip it
             }
         }
 

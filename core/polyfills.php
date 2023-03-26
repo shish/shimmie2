@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Things which should be in the core API                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -36,7 +39,7 @@ function ip_in_range(string $IP, string $CIDR): bool
     list($net, $mask) = explode("/", $CIDR);
 
     $ip_net = ip2long($net);
-    $ip_mask = ~((1 << (32 - $mask)) - 1);
+    $ip_mask = ~((1 << (32 - (int)$mask)) - 1);
 
     $ip_ip = ip2long($IP);
 
@@ -267,7 +270,7 @@ function get_subclasses_of(string $parent): array
 {
     $result = [];
     foreach (get_declared_classes() as $class) {
-        $rclass = new ReflectionClass($class);
+        $rclass = new \ReflectionClass($class);
         if (!$rclass->isAbstract() && is_subclass_of($class, $parent)) {
             $result[] = $class;
         }
@@ -333,38 +336,17 @@ function get_base_href(): string
 function unparse_url(array $parsed_url): string
 {
     $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
-    $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+    $host     = $parsed_url['host'] ?? '';
     $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
-    $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+    $user     = $parsed_url['user'] ?? '';
     $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass'] : '';
     $pass     = ($user || $pass) ? "$pass@" : '';
-    $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+    $path     = $parsed_url['path'] ?? '';
     $query    = !empty($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
     $fragment = !empty($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
     return "$scheme$user$pass$host$port$path$query$fragment";
 }
 
-# finally in the core library starting from php8
-if (!function_exists('str_starts_with')) {
-    function str_starts_with(string $haystack, string $needle): bool
-    {
-        return strncmp($haystack, $needle, strlen($needle)) === 0;
-    }
-}
-
-if (!function_exists('str_ends_with')) {
-    function str_ends_with(string $haystack, string $needle): bool
-    {
-        return $needle === '' || $needle === substr($haystack, - strlen($needle));
-    }
-}
-
-if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool
-    {
-        return '' === $needle || false !== strpos($haystack, $needle);
-    }
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
@@ -517,19 +499,24 @@ function truncate(string $string, int $limit, string $break=" ", string $pad="..
 function parse_shorthand_int(string $limit): int
 {
     if (preg_match('/^([\d\.]+)([tgmk])?b?$/i', (string)$limit, $m)) {
-        $value = $m[1];
+        $value = (float)$m[1];
         if (isset($m[2])) {
             switch (strtolower($m[2])) {
                 /** @noinspection PhpMissingBreakStatementInspection */
-                case 't': $value *= 1024;  // fall through
-                /** @noinspection PhpMissingBreakStatementInspection */
-                // no break
-                case 'g': $value *= 1024;  // fall through
-                /** @noinspection PhpMissingBreakStatementInspection */
-                // no break
-                case 'm': $value *= 1024;  // fall through
-                // no break
-                case 'k': $value *= 1024; break;
+                case 't':
+                    $value *= 1024;  // fall through
+                    /** @noinspection PhpMissingBreakStatementInspection */
+                    // no break
+                case 'g':
+                    $value *= 1024;  // fall through
+                    /** @noinspection PhpMissingBreakStatementInspection */
+                    // no break
+                case 'm':
+                    $value *= 1024;  // fall through
+                    // no break
+                case 'k':
+                    $value *= 1024;
+                    break;
                 default: $value = -1;
             }
         }
@@ -787,7 +774,7 @@ function join_path(string ...$paths): string
 /**
  * Perform callback on each item returned by an iterator.
  */
-function iterator_map(callable $callback, iterator $iter): Generator
+function iterator_map(callable $callback, \iterator $iter): \Generator
 {
     foreach ($iter as $i) {
         yield call_user_func($callback, $i);
@@ -797,7 +784,7 @@ function iterator_map(callable $callback, iterator $iter): Generator
 /**
  * Perform callback on each item returned by an iterator and combine the result into an array.
  */
-function iterator_map_to_array(callable $callback, iterator $iter): array
+function iterator_map_to_array(callable $callback, \iterator $iter): array
 {
     return iterator_to_array(iterator_map($callback, $iter));
 }
@@ -806,7 +793,7 @@ function stringer($s): string
 {
     if (is_array($s)) {
         if (isset($s[0])) {
-            return "[" . implode(", ", array_map("stringer", $s)) . "]";
+            return "[" . implode(", ", array_map("Shimmie2\stringer", $s)) . "]";
         } else {
             $pairs = [];
             foreach ($s as $k=>$v) {
@@ -815,8 +802,20 @@ function stringer($s): string
             return "[" . implode(", ", $pairs) . "]";
         }
     }
+    if (is_null($s)) {
+        return "null";
+    }
     if (is_string($s)) {
         return "\"$s\"";  // FIXME: handle escaping quotes
     }
-    return (string)$s;
+    if (is_numeric($s)) {
+        return "$s";
+    }
+    if (is_bool($s)) {
+        return $s ? "true" : "false";
+    }
+    if (method_exists($s, "__toString")) {
+        return $s->__toString();
+    }
+    return "<Unstringable>";
 }

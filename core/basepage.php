@@ -1,15 +1,18 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 require_once "core/event.php";
 
-abstract class PageMode
+enum PageMode: string
 {
-    public const REDIRECT = 'redirect';
-    public const DATA = 'data';
-    public const PAGE = 'page';
-    public const FILE = 'file';
-    public const MANUAL = 'manual';
+    case REDIRECT = 'redirect';
+    case DATA = 'data';
+    case PAGE = 'page';
+    case FILE = 'file';
+    case MANUAL = 'manual';
 }
 
 /**
@@ -22,13 +25,13 @@ abstract class PageMode
  */
 class BasePage
 {
-    public string $mode = PageMode::PAGE;
+    public PageMode $mode = PageMode::PAGE;
     private string $mime;
 
     /**
      * Set what this page should do; "page", "data", or "redirect".
      */
-    public function set_mode(string $mode): void
+    public function set_mode(PageMode $mode): void
     {
         $this->mode = $mode;
     }
@@ -227,7 +230,7 @@ class BasePage
     public function send_headers(): void
     {
         if (!headers_sent()) {
-            header("HTTP/1.0 {$this->code} Shimmie");
+            header("HTTP/1.1 {$this->code} Shimmie");
             header("Content-type: " . $this->mime);
             header("X-Powered-By: Shimmie-" . VERSION);
 
@@ -255,7 +258,7 @@ class BasePage
             case PageMode::MANUAL:
                 break;
             case PageMode::PAGE:
-                usort($this->blocks, "blockcmp");
+                usort($this->blocks, "Shimmie2\blockcmp");
                 $this->add_auto_html_headers();
                 $this->render();
                 break;
@@ -270,6 +273,7 @@ class BasePage
                 if (!is_null($this->filename)) {
                     header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
                 }
+                assert($this->file, "file should not be null with PageMode::FILE");
 
                 // https://gist.github.com/codler/3906826
                 $size = filesize($this->file); // File size
@@ -468,8 +472,8 @@ class BasePage
         }
 
         $sub_links = $sub_links??[];
-        usort($nav_links, "sort_nav_links");
-        usort($sub_links, "sort_nav_links");
+        usort($nav_links, "Shimmie2\sort_nav_links");
+        usort($sub_links, "Shimmie2\sort_nav_links");
 
         return [$nav_links, $sub_links];
     }

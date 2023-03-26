@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class Notes extends Extension
 {
     /** @var NotesTheme */
@@ -303,7 +305,7 @@ class Notes extends Extension
         ];
 
         // validate parameters
-        if (array_search(null, $note)|| strlen($note['noteText']) == 0) {
+        if (empty($note['note'])) {
             return;
         }
 

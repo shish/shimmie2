@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class ResizeConfig
 {
     public const ENABLED = 'resize_enabled';
@@ -134,10 +136,8 @@ class ResizeImage extends Extension
             if (is_null($image)) {
                 $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
-
                 /* Check if options were given to resize an image. */
                 if (isset($_POST['resize_width']) || isset($_POST['resize_height'])) {
-
                     /* get options */
 
                     $width = $height = 0;
@@ -192,15 +192,14 @@ class ResizeImage extends Extension
                     throw new ImageResizeException("Unable to save temporary image file.");
                 }
 
-                $mre = new MediaResizeEvent(
+                send_event(new MediaResizeEvent(
                     $config->get_string(ResizeConfig::ENGINE),
                     $event->path,
                     $event->mime,
                     $tmp_filename,
                     $new_width,
                     $new_height
-                );
-                send_event($mre);
+                ));
 
                 if ($event->file_modified===true&&$event->path!=$event->image->get_image_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up

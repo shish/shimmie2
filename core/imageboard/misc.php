@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc functions                                                            *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -20,8 +23,6 @@ function add_dir(string $base): array
         $filename = basename($full_path);
 
         $tags = path_to_tags($short_path);
-		if ($tags[0] == "\\")
-			$tags = "";
         $result = "$short_path (".str_replace(" ", ", ", $tags).")... ";
         try {
             add_image($full_path, $filename, $tags);
@@ -38,24 +39,18 @@ function add_dir(string $base): array
 /**
  * Sends a DataUploadEvent for a file.
  */
-function add_image(string $tmpname, string $filename, string $tags): int
+function add_image(string $tmpname, string $filename, string $tags, ?string $source=null): DataUploadEvent
 {
-    assert(file_exists($tmpname));
+    return send_event(new DataUploadEvent($tmpname, [
+        'filename' => pathinfo($filename, PATHINFO_BASENAME),
+        'tags' => Tag::explode($tags),
+        'source' => $source,
+    ]));
+}
 
-    $pathinfo = pathinfo($filename);
-    $metadata = [];
-    $metadata['filename'] = $pathinfo['basename'];
-    if (array_key_exists('extension', $pathinfo)) {
-        $metadata['extension'] = $pathinfo['extension'];
-    }
-
-    $metadata['tags'] = Tag::explode($tags);
-    $metadata['source'] = null;
-
-    $due = new DataUploadEvent($tmpname, $metadata);
-    send_event($due);
-
-    return $due->image_id;
+function get_file_ext(string $filename): ?string
+{
+    return pathinfo($filename)['extension'] ?? null;
 }
 
 /**

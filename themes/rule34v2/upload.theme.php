@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Shimmie2;
+
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\A;
 
 class CustomUploadTheme extends UploadTheme

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Shimmie2;
+
 class CustomIndexTheme extends IndexTheme
 {
     protected function build_table(array $images, ?string $query): string

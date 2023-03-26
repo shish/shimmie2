@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class HelpPageListBuildingEvent extends Event
 {
     public array $pages = [];
@@ -42,9 +44,7 @@ class HelpPages extends Extension
     private function get_pages(): array
     {
         if ($this->pages==null) {
-            $e = new HelpPageListBuildingEvent();
-            send_event($e);
-            $this->pages = $e->pages;
+            $this->pages = send_event(new HelpPageListBuildingEvent())->pages;
         }
         return $this->pages;
     }
@@ -72,8 +72,7 @@ class HelpPages extends Extension
 
                 $this->theme->display_help_page($title);
 
-                $hpbe = new HelpPageBuildingEvent($name);
-                send_event($hpbe);
+                $hpbe = send_event(new HelpPageBuildingEvent($name));
                 asort($hpbe->blocks);
 
                 foreach ($hpbe->blocks as $key=>$value) {

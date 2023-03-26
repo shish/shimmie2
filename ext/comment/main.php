@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+use GQLA\Mutation;
+
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
 class CommentPostingEvent extends Event
@@ -39,6 +46,7 @@ class CommentPostingException extends SCoreException
 {
 }
 
+#[Type(name: "Comment")]
 class Comment
 {
     public ?User $owner;
@@ -46,10 +54,13 @@ class Comment
     public string $owner_name;
     public ?string $owner_email;
     public string $owner_class;
+    #[Field]
     public string $comment;
+    #[Field]
     public int $comment_id;
     public int $image_id;
     public string $poster_ip;
+    #[Field]
     public string $posted;
 
     public function __construct($row)
@@ -76,12 +87,27 @@ class Comment
 		", ["owner_id"=>$user->id]);
     }
 
+    #[Field(name: "owner")]
     public function get_owner(): User
     {
         if (empty($this->owner)) {
             $this->owner = User::by_id($this->owner_id);
         }
         return $this->owner;
+    }
+
+    #[Field(extends: "Post", name: "comments", type: "[Comment!]!")]
+    public static function get_comments(Image $post): array
+    {
+        return CommentList::get_comments($post->id);
+    }
+
+    #[Mutation(name: "create_comment")]
+    public static function create_comment(int $post_id, string $comment): bool
+    {
+        global $user;
+        send_event(new CommentPostingEvent($post_id, $user, $comment));
+        return true;
     }
 }
 
@@ -171,11 +197,21 @@ class CommentList extends Extension
     {
         if ($event->page_matches("comment")) {
             switch ($event->get_arg(0)) {
-                case "add": $this->onPageRequest_add(); break;
-                case "delete": $this->onPageRequest_delete($event); break;
-                case "bulk_delete": $this->onPageRequest_bulk_delete(); break;
-                case "list": $this->onPageRequest_list($event); break;
-                case "beta-search": $this->onPageRequest_beta_search($event); break;
+                case "add":
+                    $this->onPageRequest_add();
+                    break;
+                case "delete":
+                    $this->onPageRequest_delete($event);
+                    break;
+                case "bulk_delete":
+                    $this->onPageRequest_bulk_delete();
+                    break;
+                case "list":
+                    $this->onPageRequest_list($event);
+                    break;
+                case "beta-search":
+                    $this->onPageRequest_beta_search($event);
+                    break;
             }
         }
     }
@@ -186,8 +222,7 @@ class CommentList extends Extension
         if (isset($_POST['image_id']) && isset($_POST['comment'])) {
             try {
                 $i_iid = int_escape($_POST['image_id']);
-                $cpe = new CommentPostingEvent(int_escape($_POST['image_id']), $user, $_POST['comment']);
-                send_event($cpe);
+                send_event(new CommentPostingEvent(int_escape($_POST['image_id']), $user, $_POST['comment']));
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
             } catch (CommentPostingException $ex) {
@@ -244,7 +279,7 @@ class CommentList extends Extension
         $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 
         $total_pages = $cache->get("comment_pages");
-        if (empty($total_pages)) {
+        if (is_null($total_pages)) {
             $total_pages = (int)ceil($database->get_one("
 				SELECT COUNT(c1)
 				FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1
@@ -316,7 +351,7 @@ class CommentList extends Extension
         $cc = $config->get_int("comment_count");
         if ($cc > 0) {
             $recent = $cache->get("recent_comments");
-            if (empty($recent)) {
+            if (is_null($recent)) {
                 $recent = $this->get_recent_comments($cc);
                 $cache->set("recent_comments", $recent, 60);
             }
@@ -415,7 +450,7 @@ class CommentList extends Extension
     /**
      * #return Comment[]
      */
-    private function get_generic_comments(string $query, array $args): array
+    private static function get_generic_comments(string $query, array $args): array
     {
         global $database;
         $rows = $database->get_all($query, $args);
@@ -429,9 +464,9 @@ class CommentList extends Extension
     /**
      * #return Comment[]
      */
-    private function get_recent_comments(int $count): array
+    private static function get_recent_comments(int $count): array
     {
-        return $this->get_generic_comments("
+        return CommentList::get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
 				comments.comment as comment, comments.id as comment_id,
@@ -447,9 +482,9 @@ class CommentList extends Extension
     /**
      * #return Comment[]
      */
-    private function get_user_comments(int $user_id, int $count, int $offset=0): array
+    private static function get_user_comments(int $user_id, int $count, int $offset=0): array
     {
-        return $this->get_generic_comments("
+        return CommentList::get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
 				comments.comment as comment, comments.id as comment_id,
@@ -464,11 +499,12 @@ class CommentList extends Extension
     }
 
     /**
+     * public just for Image::get_comments()
      * #return Comment[]
      */
-    private function get_comments(int $image_id): array
+    public static function get_comments(int $image_id): array
     {
-        return $this->get_generic_comments("
+        return CommentList::get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
 				comments.comment as comment, comments.id as comment_id,
@@ -486,14 +522,14 @@ class CommentList extends Extension
         global $config, $database;
 
         // sqlite fails at intervals
-        if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
             return false;
         }
 
         $window = $config->get_int('comment_window');
         $max = $config->get_int('comment_limit');
 
-        if ($database->get_driver_name() == DatabaseDriver::MYSQL) {
+        if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
             $window_sql = "interval $window minute";
         } else {
             $window_sql = "interval '$window minute'";
@@ -540,15 +576,18 @@ class CommentList extends Extension
                 'user_agent'   => $_SERVER['HTTP_USER_AGENT'] ?? 'none',
             ];
 
-            $akismet = new Akismet(
+            // @phpstan-ignore-next-line
+            $akismet = new \Akismet(
                 $_SERVER['SERVER_NAME'],
                 $config->get_string('comment_wordpress_key'),
                 $comment
             );
 
+            // @phpstan-ignore-next-line
             if ($akismet->errorsExist()) {
                 return false;
             } else {
+                // @phpstan-ignore-next-line
                 return $akismet->isSpam();
             }
         }

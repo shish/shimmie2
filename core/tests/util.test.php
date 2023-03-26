@@ -2,12 +2,49 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use PHPUnit\Framework\TestCase;
 
 require_once "core/util.php";
 
 class UtilTest extends TestCase
 {
+    public function test_get_theme()
+    {
+        $this->assertEquals("default", get_theme());
+    }
+
+    public function test_get_memory_limit()
+    {
+        get_memory_limit();
+        $this->assertTrue(true);
+    }
+
+    public function test_check_gd_version()
+    {
+        check_gd_version();
+        $this->assertTrue(true);
+    }
+
+    public function test_check_im_version()
+    {
+        check_im_version();
+        $this->assertTrue(true);
+    }
+
+    public function test_human_filesize()
+    {
+        $this->assertEquals("123.00B", human_filesize(123));
+        $this->assertEquals("123B", human_filesize(123, 0));
+        $this->assertEquals("120.56KB", human_filesize(123456));
+    }
+
+    public function test_generate_key()
+    {
+        $this->assertEquals(20, strlen(generate_key()));
+    }
+
     public function test_warehouse_path()
     {
         $hash = "7ac19c10d6859415";
@@ -83,6 +120,46 @@ class UtilTest extends TestCase
         $this->assertNotEquals(
             load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash, 0),
             load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash, 1)
+        );
+    }
+
+    public function test_path_to_tags()
+    {
+        $this->assertEquals(
+            "",
+            path_to_tags("nope.jpg")
+        );
+        $this->assertEquals(
+            "",
+            path_to_tags("\\")
+        );
+        $this->assertEquals(
+            "",
+            path_to_tags("/")
+        );
+        $this->assertEquals(
+            "",
+            path_to_tags("C:\\")
+        );
+        $this->assertEquals(
+            "test tag",
+            path_to_tags("123 - test tag.jpg")
+        );
+        $this->assertEquals(
+            "foo bar",
+            path_to_tags("/foo/bar/baz.jpg")
+        );
+        $this->assertEquals(
+            "cake pie foo bar",
+            path_to_tags("/foo/bar/123 - cake pie.jpg")
+        );
+        $this->assertEquals(
+            "bacon lemon",
+            path_to_tags("\\bacon\\lemon\\baz.jpg")
+        );
+        $this->assertEquals(
+            "category:tag",
+            path_to_tags("/category:/tag/baz.jpg")
         );
     }
 }

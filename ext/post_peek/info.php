@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class PostPeekInfo extends ExtensionInfo
 {
     public const KEY = "post_peek";

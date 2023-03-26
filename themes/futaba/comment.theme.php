@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomCommentListTheme extends CommentListTheme
 {
     public int $inner_id = 0;
@@ -67,8 +69,7 @@ class CustomCommentListTheme extends CommentListTheme
         $inner_id = $this->inner_id; // because custom themes can't add params, because PHP
         global $user;
 
-        $tfe = new TextFormattingEvent($comment->comment);
-        send_event($tfe);
+        $tfe = send_event(new TextFormattingEvent($comment->comment));
 
         //$i_uid = $comment->owner_id;
         $h_name = html_escape($comment->owner_name);

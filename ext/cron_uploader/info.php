@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /*
  * Name: Cron Uploader
  * Authors: YaoiFox <admin@yaoifox.com>, Matthew Barbour <matthew@darkholme.net>

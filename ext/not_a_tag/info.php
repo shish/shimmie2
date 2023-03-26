@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class NotATagInfo extends ExtensionInfo
 {
     public const KEY = "not_a_tag";

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /**
  * Class BaseThemelet
  *
@@ -64,7 +66,7 @@ class BaseThemelet
         }
 
         $custom_classes = "";
-        if (class_exists("Relationships")) {
+        if (class_exists("Shimmie2\Relationships")) {
             if (property_exists($image, 'parent_id') && $image->parent_id !== null) {
                 $custom_classes .= "shm-thumb-has_parent ";
             }
@@ -136,8 +138,8 @@ class BaseThemelet
         $next_html   = $at_end ? "Next" : $this->gen_page_link($base_url, $query, $next, "Next");
         $last_html   = $at_end ? "Last" : $this->gen_page_link($base_url, $query, $total_pages, "Last");
 
-        $start = $current_page-5 > 1 ? $current_page-5 : 1;
-        $end = $start+10 < $total_pages ? $start+10 : $total_pages;
+        $start = max($current_page - 5, 1);
+        $end = min($start + 10, $total_pages);
 
         $pages = [];
         foreach (range($start, $end) as $i) {

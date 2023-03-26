@@ -1,4 +1,9 @@
+// Disable things that get in the way of smooth admin'ing
+document.addEventListener('DOMContentLoaded', () => {
+	document.querySelectorAll("input[type='date']").forEach(e => e.setAttribute('type', 'text'));
+});
 
+// Navbar controls
 var navHidden = false;
 function toggleNav() {
 	if(navHidden) {
@@ -18,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 });
 
-
+// Desktop mode toggle
 var forceDesktop = false;
 function toggleDesktop() {
 	if(forceDesktop) {

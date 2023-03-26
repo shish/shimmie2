@@ -1,13 +1,17 @@
 <?php
 
 declare(strict_types=1);
-use FFSPHP\PDO;
 
-abstract class DatabaseDriver
+namespace Shimmie2;
+
+use FFSPHP\PDO;
+use FFSPHP\PDOStatement;
+
+enum DatabaseDriverID: string
 {
-    public const MYSQL = "mysql";
-    public const PGSQL = "pgsql";
-    public const SQLITE = "sqlite";
+    case MYSQL = "mysql";
+    case PGSQL = "pgsql";
+    case SQLITE = "sqlite";
 }
 
 /**
@@ -32,6 +36,7 @@ class Database
      * How many queries this DB object has run
      */
     public int $query_count = 0;
+    public array $queries = [];
 
     public function __construct(string $dsn)
     {
@@ -42,7 +47,7 @@ class Database
     {
         $this->db = new PDO($this->dsn);
         $this->connect_engine();
-        $this->engine->init($this->db);
+        $this->get_engine()->init($this->db);
         $this->begin_transaction();
     }
 
@@ -54,11 +59,11 @@ class Database
             throw new SCoreException("Can't figure out database engine");
         }
 
-        if ($db_proto === DatabaseDriver::MYSQL) {
+        if ($db_proto === DatabaseDriverID::MYSQL->value) {
             $this->engine = new MySQL();
-        } elseif ($db_proto === DatabaseDriver::PGSQL) {
+        } elseif ($db_proto === DatabaseDriverID::PGSQL->value) {
             $this->engine = new PostgreSQL();
-        } elseif ($db_proto === DatabaseDriver::SQLITE) {
+        } elseif ($db_proto === DatabaseDriverID::SQLITE->value) {
             $this->engine = new SQLite();
         } else {
             die_nicely(
@@ -98,47 +103,53 @@ class Database
         }
     }
 
-    public function scoreql_to_sql(string $input): string
+    private function get_engine(): DBEngine
     {
         if (is_null($this->engine)) {
             $this->connect_engine();
         }
-        return $this->engine->scoreql_to_sql($input);
+        return $this->engine;
     }
 
-    public function get_driver_name(): string
+    public function scoreql_to_sql(string $input): string
     {
-        if (is_null($this->engine)) {
-            $this->connect_engine();
-        }
-        return $this->engine->name;
+        return $this->get_engine()->scoreql_to_sql($input);
+    }
+
+    public function get_driver_id(): DatabaseDriverID
+    {
+        return $this->get_engine()->id;
     }
 
     public function get_version(): string
     {
-        return $this->engine->get_version($this->db);
+        return $this->get_engine()->get_version($this->db);
     }
 
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
         global $_tracer, $tracer_enabled;
-        $dur = microtime(true) - $start;
+        $dur = ftime() - $start;
+        // trim whitespace
+        $query = preg_replace('/[\n\t ]/m', ' ', $query);
+        $query = preg_replace('/  +/m', ' ', $query);
+        $query = trim($query);
         if ($tracer_enabled) {
-            $query = trim(preg_replace('/^[\t ]+/m', '', $query));  // trim leading whitespace
             $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
         }
+        $this->queries[] = $query;
         $this->query_count++;
         $this->dbtime += $dur;
     }
 
     public function set_timeout(?int $time): void
     {
-        $this->engine->set_timeout($this->db, $time);
+        $this->get_engine()->set_timeout($this->db, $time);
     }
 
     public function notify(string $channel, ?string $data=null): void
     {
-        $this->engine->notify($this->db, $channel, $data);
+        $this->get_engine()->notify($this->db, $channel, $data);
     }
 
     public function execute(string $query, array $args = []): PDOStatement
@@ -147,12 +158,17 @@ class Database
             if (is_null($this->db)) {
                 $this->connect_db();
             }
-            return $this->db->execute(
+            $ret = $this->db->execute(
                 "-- " . str_replace("%2F", "/", urlencode($_GET['q'] ?? '')). "\n" .
                 $query,
                 $args
             );
-        } catch (PDOException $pdoe) {
+            if ($ret === false) {
+                throw new SCoreException("Query failed", $query);
+            }
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
+            return $ret;
+        } catch (\PDOException $pdoe) {
             throw new SCoreException($pdoe->getMessage(), $query);
         }
     }
@@ -162,7 +178,7 @@ class Database
      */
     public function get_all(string $query, array $args = []): array
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $data = $this->execute($query, $args)->fetchAll();
         $this->count_time("get_all", $_start, $query, $args);
         return $data;
@@ -173,7 +189,7 @@ class Database
      */
     public function get_all_iterable(string $query, array $args = []): PDOStatement
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $data = $this->execute($query, $args);
         $this->count_time("get_all_iterable", $_start, $query, $args);
         return $data;
@@ -184,7 +200,7 @@ class Database
      */
     public function get_row(string $query, array $args = []): ?array
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $row = $this->execute($query, $args)->fetch();
         $this->count_time("get_row", $_start, $query, $args);
         return $row ? $row : null;
@@ -195,7 +211,7 @@ class Database
      */
     public function get_col(string $query, array $args = []): array
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
         return $res;
@@ -204,9 +220,9 @@ class Database
     /**
      * Execute an SQL query and return the first column of each row as a single iterable object.
      */
-    public function get_col_iterable(string $query, array $args = []): Generator
+    public function get_col_iterable(string $query, array $args = []): \Generator
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $stmt = $this->execute($query, $args);
         $this->count_time("get_col_iterable", $_start, $query, $args);
         foreach ($stmt as $row) {
@@ -219,7 +235,7 @@ class Database
      */
     public function get_pairs(string $query, array $args = []): array
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_KEY_PAIR);
         $this->count_time("get_pairs", $_start, $query, $args);
         return $res;
@@ -229,9 +245,9 @@ class Database
     /**
      * Execute an SQL query and return the the first column => the second column as an iterable object.
      */
-    public function get_pairs_iterable(string $query, array $args = []): Generator
+    public function get_pairs_iterable(string $query, array $args = []): \Generator
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $stmt = $this->execute($query, $args);
         $this->count_time("get_pairs_iterable", $_start, $query, $args);
         foreach ($stmt as $row) {
@@ -244,7 +260,7 @@ class Database
      */
     public function get_one(string $query, array $args = [])
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $row = $this->execute($query, $args)->fetch();
         $this->count_time("get_one", $_start, $query, $args);
         return $row ? $row[0] : null;
@@ -255,7 +271,7 @@ class Database
      */
     public function exists(string $query, array $args = []): bool
     {
-        $_start = microtime(true);
+        $_start = ftime();
         $row = $this->execute($query, $args)->fetch();
         $this->count_time("exists", $_start, $query, $args);
         if ($row==null) {
@@ -269,7 +285,7 @@ class Database
      */
     public function get_last_insert_id(string $seq): int
     {
-        if ($this->engine->name == DatabaseDriver::PGSQL) {
+        if ($this->get_engine()->id == DatabaseDriverID::PGSQL) {
             $id = $this->db->lastInsertId($seq);
         } else {
             $id = $this->db->lastInsertId();
@@ -287,7 +303,7 @@ class Database
             $this->connect_engine();
         }
         $data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
-        $this->execute($this->engine->create_table_sql($name, $data));
+        $this->execute($this->get_engine()->create_table_sql($name, $data));
     }
 
     /**
@@ -301,32 +317,35 @@ class Database
             $this->connect_db();
         }
 
-        if ($this->engine->name === DatabaseDriver::MYSQL) {
+        if ($this->get_engine()->id === DatabaseDriverID::MYSQL) {
             return count(
                 $this->get_all("SHOW TABLES")
             );
-        } elseif ($this->engine->name === DatabaseDriver::PGSQL) {
+        } elseif ($this->get_engine()->id === DatabaseDriverID::PGSQL) {
             return count(
                 $this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
             );
-        } elseif ($this->engine->name === DatabaseDriver::SQLITE) {
+        } elseif ($this->get_engine()->id === DatabaseDriverID::SQLITE) {
             return count(
                 $this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
             );
         } else {
-            throw new SCoreException("Can't count tables for database type {$this->engine->name}");
+            throw new SCoreException("Can't count tables for database type {$this->get_engine()->id}");
         }
     }
 
     public function raw_db(): PDO
     {
+        if (is_null($this->db)) {
+            $this->connect_db();
+        }
         return $this->db;
     }
 
     public function standardise_boolean(string $table, string $column, bool $include_postgres=false): void
     {
-        $d = $this->get_driver_name();
-        if ($d == DatabaseDriver::MYSQL) {
+        $d = $this->get_driver_id();
+        if ($d == DatabaseDriverID::MYSQL) {
             # In mysql, ENUM('Y', 'N') is secretly INTEGER where Y=1 and N=2.
             # BOOLEAN is secretly TINYINT where true=1 and false=0.
             # So we can cast directly from ENUM to BOOLEAN which gives us a
@@ -335,16 +354,16 @@ class Database
             $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");
             $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");
         }
-        if ($d == DatabaseDriver::SQLITE) {
+        if ($d == DatabaseDriverID::SQLITE) {
             # SQLite doesn't care about column types at all, everything is
             # text, so we can in-place replace a char with a bool
             $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");
         }
-        if ($d == DatabaseDriver::PGSQL && $include_postgres) {
-            $this->execute("ALTER TABLE $table ADD COLUMN ${column}_b BOOLEAN DEFAULT FALSE NOT NULL");
-            $this->execute("UPDATE $table SET ${column}_b = ($column = 'Y')");
+        if ($d == DatabaseDriverID::PGSQL && $include_postgres) {
+            $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");
+            $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");
             $this->execute("ALTER TABLE $table DROP COLUMN $column");
-            $this->execute("ALTER TABLE $table RENAME COLUMN ${column}_b TO $column");
+            $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");
         }
     }
 }

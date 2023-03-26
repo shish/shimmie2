@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use PHPUnit\Framework\TestCase;
 
 chdir(dirname(dirname(__FILE__)));
@@ -20,10 +22,10 @@ if (file_exists("tests/trace.json")) {
 global $cache, $config, $database, $user, $page, $_tracer;
 _set_up_shimmie_environment();
 $tracer_enabled = true;
-$_tracer = new EventTracer();
+$_tracer = new \EventTracer();
 $_tracer->begin("bootstrap");
 _load_core_files();
-$cache = new Cache(CACHE_DSN);
+$cache = loadCache(CACHE_DSN);
 $dsn = getenv("TEST_DSN");
 $database = new Database($dsn ? $dsn : "sqlite::memory:");
 create_dirs();
@@ -39,6 +41,7 @@ $config->set_string("thumb_engine", "static");  # GD has less overhead per-call
 $config->set_bool("nice_urls", true);
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
+$user = User::by_id($config->get_int("anon_id", 0));
 $_tracer->end();
 
 abstract class ShimmiePHPUnitTestCase extends TestCase
@@ -98,7 +101,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     {
         if (is_null(User::by_name($name))) {
             $userPage = new UserPage();
-            $userPage->onUserCreation(new UserCreationEvent($name, $name, "", false));
+            $userPage->onUserCreation(new UserCreationEvent($name, $name, $name, "", false));
             assert(!is_null(User::by_name($name)), "Creation of user $name failed");
         }
     }
@@ -126,7 +129,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         $post_args = self::check_args($post_args);
 
         if (str_contains($page_name, "?")) {
-            throw new RuntimeException("Query string included in page name");
+            throw new \RuntimeException("Query string included in page name");
         }
         $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($get_args));
         $_GET = $get_args;
@@ -189,8 +192,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         } elseif ($page->mode == PageMode::DATA) {
             return $page->data;
         } else {
-            $this->assertTrue(false, "Page mode is not PAGE or DATA");
-            return "";
+            $this->fail("Page mode is not PAGE or DATA");
         }
     }
 
@@ -246,13 +248,12 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     // post things
     protected function post_image(string $filename, string $tags): int
     {
-        $dae = new DataUploadEvent($filename, [
+        $dae = send_event(new DataUploadEvent($filename, [
             "filename" => $filename,
-            "extension" => pathinfo($filename, PATHINFO_EXTENSION),
             "tags" => Tag::explode($tags),
             "source" => null,
-        ]);
-        send_event($dae);
+        ]));
+        // if($dae->image_id == -1) throw new \Exception("Upload failed :(");
         return $dae->image_id;
     }
 
@@ -260,8 +261,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     {
         $img = Image::by_id($image_id);
         if ($img) {
-            $ide = new ImageDeletionEvent($img, true);
-            send_event($ide);
+            send_event(new ImageDeletionEvent($img, true));
         }
     }
 }

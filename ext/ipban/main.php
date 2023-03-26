@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 use MicroCRUD\ActionColumn;
 use MicroCRUD\InetColumn;
 use MicroCRUD\StringColumn;
@@ -105,7 +107,7 @@ class IPBan extends Extension
         // Get lists of banned IPs and banned networks
         $ips = $cache->get("ip_bans");
         $networks = $cache->get("network_bans");
-        if ($ips === false || $networks === false) {
+        if (is_null($ips) || is_null($networks)) {
             $rows = $database->get_pairs("
 				SELECT ip, id
 				FROM bans
@@ -168,7 +170,7 @@ class IPBan extends Extension
                     $event->user->class = $_shm_user_classes["ghost"];
                 }
             } else {
-                header("HTTP/1.0 403 Forbidden");
+                header("HTTP/1.1 403 Forbidden");
                 print "$msg";
                 exit;
             }

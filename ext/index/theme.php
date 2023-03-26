@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class IndexTheme extends Themelet
 {
     protected int $page_number;
@@ -110,7 +112,7 @@ and of course start organising your images :-)
     {
         global $config;
 
-        if (class_exists('Wiki') && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
+        if (class_exists('Shimmie2\Wiki') && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) == 1) {
                 $st = Tag::implode($this->search_terms);
 
@@ -120,15 +122,14 @@ and of course start organising your images :-)
                     // only show first line of wiki
                     $short_wiki_description = explode("\n", $wikiPage->body, 2)[0];
 
-                    $tfe = new TextFormattingEvent($short_wiki_description);
-                    send_event($tfe);
+                    $tfe = send_event(new TextFormattingEvent($short_wiki_description));
                     $short_wiki_description = $tfe->formatted;
                 }
                 $wikiLink = make_link("wiki/$st");
-                if (class_exists('TagCategories')) {
-                    $this->tagcategories = new TagCategories();
-                    $tag_category_dict = $this->tagcategories->getKeyedDict();
-                    $st = $this->tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
+                if (class_exists('Shimmie2\TagCategories')) {
+                    $tagcategories = new TagCategories();
+                    $tag_category_dict = $tagcategories->getKeyedDict();
+                    $st = $tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
                 }
                 $short_wiki_description = '<h2>'.$st.'&nbsp;<a href="'.$wikiLink.'"><sup>ⓘ</sup></a></h2>'.$short_wiki_description;
                 $page->add_block(new Block(null, $short_wiki_description, "main", 0, "short-wiki-description"));
@@ -291,8 +292,8 @@ and of course start organising your images :-)
         <p>Search for posts by source</p>
 
         <div class="command_example">
-        <pre>source=http://google.com/</pre>
-        <p>Returns posts with a source of "http://google.com/".</p>
+        <pre>source=https:///google.com/</pre>
+        <p>Returns posts with a source of "https://google.com/".</p>
         </div>
 
         <div class="command_example">
@@ -310,11 +311,11 @@ and of course start organising your images :-)
         <p>Search for posts by date posted.</p>
 
         <div class="command_example">
-        <pre>posted>=07-19-2019</pre>
-        <p>Returns posts posted on or after 07-19-2019.</p>
+        <pre>posted>=2019-07-19</pre>
+        <p>Returns posts posted on or after 2019-07-19.</p>
         </div>
 
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Date format is mm-dd-yyyy. Date posted includes time component, so = will not work unless the time is exact.</p>
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Date format is yyyy-mm-dd. Date posted includes time component, so = will not work unless the time is exact.</p>
 
         <hr/>
 

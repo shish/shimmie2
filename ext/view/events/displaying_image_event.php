@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /*
  * DisplayingImageEvent:
  *   $image -- the image being displayed

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class IcoFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
@@ -11,20 +13,19 @@ class IcoFileHandler extends DataHandlerExtension
         $event->image->lossless = true;
         $event->image->video = false;
         $event->image->audio = false;
-        $event->image->image = ($event->mime!= MimeType::ANI);
+        $event->image->image = ($event->image->get_mime() != MimeType::ANI);
 
-        $fp = fopen($event->file_name, "r");
+        $fp = fopen($event->image->get_image_filename(), "r");
         try {
             unpack("Snull/Stype/Scount", fread($fp, 6));
             $subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
+            $width = $subheader['width'];
+            $height = $subheader['height'];
+            $event->image->width = $width == 0 ? 256 : $width;
+            $event->image->height = $height == 0 ? 256 : $height;
         } finally {
             fclose($fp);
         }
-
-        $width = $subheader['width'];
-        $height = $subheader['height'];
-        $event->image->width = $width == 0 ? 256 : $width;
-        $event->image->height = $height == 0 ? 256 : $height;
     }
 
     protected function create_thumb(string $hash, string $mime): bool

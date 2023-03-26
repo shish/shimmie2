@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class HelpPagesInfo extends ExtensionInfo
 {
     public const KEY = "help_pages";
@@ -11,6 +13,6 @@ class HelpPagesInfo extends ExtensionInfo
     public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Provides documentation screens";
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
     public bool $core = true;
 }

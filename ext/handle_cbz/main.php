@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CBZFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::COMIC_ZIP];
@@ -13,7 +15,7 @@ class CBZFileHandler extends DataHandlerExtension
         $event->image->audio = false;
         $event->image->image = false;
 
-        $tmp = $this->get_representative_image($event->file_name);
+        $tmp = $this->get_representative_image($event->image->get_image_filename());
         $info = getimagesize($tmp);
         if ($info) {
             $event->image->width = $info[0];
@@ -47,7 +49,7 @@ class CBZFileHandler extends DataHandlerExtension
     {
         $out = "data/comic-cover-FIXME.jpg";  // TODO: random
 
-        $za = new ZipArchive();
+        $za = new \ZipArchive();
         $za->open($archive);
         $names = [];
         for ($i=0; $i<$za->numFiles;$i++) {

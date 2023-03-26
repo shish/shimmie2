@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 // Provides mechanisms for cleanly executing command-line applications
 // Was created to try to centralize a solution for whatever caused this:
 // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
@@ -14,7 +16,7 @@ class CommandBuilder
     public function __construct(String $executable)
     {
         if (empty($executable)) {
-            throw new InvalidArgumentException("executable cannot be empty");
+            throw new \InvalidArgumentException("executable cannot be empty");
         }
 
         $this->executable = $executable;

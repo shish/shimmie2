@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+use GQLA\Mutation;
+
 class WikiUpdateEvent extends Event
 {
     public User $user;
@@ -43,16 +50,21 @@ class WikiUpdateException extends SCoreException
 {
 }
 
+#[Type(name: "WikiPage")]
 class WikiPage
 {
     public int $id;
     public int $owner_id;
     public string $owner_ip;
+    #[Field]
     public string $date;
+    #[Field]
     public string $title;
+    #[Field]
     public int $revision;
     public bool $locked;
     public bool $exists;
+    #[Field]
     public string $body;
 
     public function __construct(array $row=null)
@@ -73,6 +85,7 @@ class WikiPage
         }
     }
 
+    #[Field(name: "owner")]
     public function get_owner(): User
     {
         return User::by_id($this->owner_id);
@@ -266,7 +279,7 @@ class Wiki extends Extension
                     "title"=>$wpage->title, "locked"=>$wpage->locked, "body"=>$wpage->body]
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
         }
     }
@@ -326,7 +339,9 @@ class Wiki extends Extension
             ["title"=>$title]
         );
     }
-    public static function get_page(string $title, int $revision=-1): WikiPage
+
+    #[Query(name: "wiki")]
+    public static function get_page(string $title, ?int $revision=null): WikiPage
     {
         global $database;
         // first try and get the actual page
@@ -338,7 +353,7 @@ class Wiki extends Extension
 				AND (:revision = -1 OR revision = :revision)
 				ORDER BY revision DESC
 			",
-            ["title"=>$title, "revision"=>$revision]
+            ["title"=>$title, "revision"=>$revision ?? -1]
         );
 
         // fall back to wiki:default
@@ -355,7 +370,7 @@ class Wiki extends Extension
                 $row = [
                     "id" => -1,
                     "owner_ip" => "0.0.0.0",
-                    "date" => "",
+                    "date" => "1970-01-01 00:00:00",
                     "revision" => 0,
                     "locked" => false,
                     "body" => "This is a default page for when a page is empty, ".
@@ -374,7 +389,7 @@ class Wiki extends Extension
         return new WikiPage($row);
     }
 
-    public static function format_tag_wiki_page(WikiPage $page)
+    public static function format_tag_wiki_page(WikiPage $page): string
     {
         global $database, $config;
 
@@ -388,7 +403,7 @@ class Wiki extends Extension
             $template = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
 
             //CATEGORIES
-            if (class_exists("TagCategories")) {
+            if (class_exists("Shimmie2\TagCategories")) {
                 $tagcategories = new TagCategories();
                 $tag_category_dict = $tagcategories->getKeyedDict();
             }
@@ -411,7 +426,7 @@ class Wiki extends Extension
             $template = format_text($template);
             //Things after this line will NOT be escaped!!! Be careful what you add.
 
-            if (class_exists("AutoTagger")) {
+            if (class_exists("Shimmie2\AutoTagger")) {
                 $auto_tags = $database->get_one("
                     SELECT additional_tags
                     FROM auto_tag
@@ -432,7 +447,7 @@ class Wiki extends Extension
                                 ", ["title"=>$a_tag]);
 
                         $tag_html = $tag_list_t->return_tag($a_row, $tag_category_dict ?? []);
-                        array_push($f_auto_tags, $tag_html[1]);
+                        $f_auto_tags[] = $tag_html[1];
                     }
 
                     $template = str_replace("{autotags}", implode(", ", $f_auto_tags), $template);
@@ -490,14 +505,14 @@ class Wiki extends Extension
         $out        = "";
 
         while (
-                $c1 < $max1                 # have next line in left
-                and
-                $c2 < $max2                 # have next line in right
-                and
-                ($stop++) < 1000            # don-t have more then 1000 ( loop-stopper )
-                and
-                $outcount < 20              # output count is less then 20
-              ) {
+            $c1 < $max1                 # have next line in left
+            and
+            $c2 < $max2                 # have next line in right
+            and
+            ($stop++) < 1000            # don-t have more then 1000 ( loop-stopper )
+            and
+            $outcount < 20              # output count is less then 20
+        ) {
             /**
             *   is the trimmed line of the current left and current right line
             *   the same ? then this is a hit (no difference)
@@ -544,15 +559,14 @@ class Wiki extends Extension
 
                 #fast search in on both sides for next match.
                 while (
-                        $found == 0             # search until we find a pair
-                        and
-                        ($c1 + $s1 <= $max1)  # and we are inside of the left lines
-                        and
-                        ($c2 + $s2 <= $max2)  # and we are inside of the right lines
-                        and
-                        $fstop++  < 10          # and the distance is lower than 10 lines
-                      ) {
-
+                    $found == 0             # search until we find a pair
+                    and
+                    ($c1 + $s1 <= $max1)  # and we are inside of the left lines
+                    and
+                    ($c2 + $s2 <= $max2)  # and we are inside of the right lines
+                    and
+                    $fstop++  < 10          # and the distance is lower than 10 lines
+                ) {
                     /**
                     *   test the left side for a hit
                     *
@@ -676,7 +690,7 @@ class Wiki extends Extension
                 return "--- $value\n";
 
             default:
-                throw new RuntimeException("stat needs to be =, + or -");
+                throw new \RuntimeException("stat needs to be =, + or -");
         }
     }
 }

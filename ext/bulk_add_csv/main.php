@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BulkAddCSV extends Extension
 {
     /** @var BulkAddCSVTheme */
@@ -48,21 +50,11 @@ class BulkAddCSV extends Extension
      */
     private function add_image(string $tmpname, string $filename, string $tags, string $source, string $rating, string $thumbfile)
     {
-        assert(file_exists($tmpname));
-
-        $pathinfo = pathinfo($filename);
-        $metadata = [];
-        $metadata['filename'] = $pathinfo['basename'];
-        if (array_key_exists('extension', $pathinfo)) {
-            $metadata['extension'] = $pathinfo['extension'];
-        }
-        $metadata['tags'] = Tag::explode($tags);
-        $metadata['source'] = $source;
-        $event = send_event(new DataUploadEvent($tmpname, $metadata));
+        $event = add_image($tmpname, $filename, $tags, $source);
         if ($event->image_id == -1) {
             throw new UploadException("File type not recognised");
         } else {
-            if (class_exists("RatingSetEvent") && in_array($rating, ["s", "q", "e"])) {
+            if (class_exists("Shimmie2\RatingSetEvent") && in_array($rating, ["s", "q", "e"])) {
                 send_event(new RatingSetEvent(Image::by_id($event->image_id), $rating));
             }
             if (file_exists($thumbfile)) {
@@ -103,14 +95,13 @@ class BulkAddCSV extends Extension
             $source = $csvdata[2];
             $rating = $csvdata[3];
             $thumbfile = $csvdata[4];
-            $pathinfo = pathinfo($fullpath);
-            $shortpath = $pathinfo["basename"];
+            $shortpath = pathinfo($fullpath, PATHINFO_BASENAME);
             $list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
             if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
                 try {
-                    $this->add_image($fullpath, $pathinfo["basename"], $tags, $source, $rating, $thumbfile);
+                    $this->add_image($fullpath, $shortpath, $tags, $source, $rating, $thumbfile);
                     $list .= "ok\n";
-                } catch (Exception $ex) {
+                } catch (\Exception $ex) {
                     $list .= "failed:<br>". $ex->getMessage();
                 }
             } else {

@@ -2,6 +2,88 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Mutation;
+
+#[Type(name: "NumericScoreVote")]
+class NumericScoreVote
+{
+    public int $image_id;
+    public int $user_id;
+
+    #[Field]
+    public int $score;
+
+    #[Field]
+    public function post(): Image
+    {
+        return Image::by_id($this->image_id);
+    }
+
+    #[Field]
+    public function user(): User
+    {
+        return User::by_id($this->user_id);
+    }
+
+    #[Field(extends: "Post")]
+    public static function score(Image $post): int
+    {
+        global $database;
+        if ($post->score ?? null) {
+            return $post->score;
+        }
+        return $database->get_one(
+            "SELECT sum(score) FROM numeric_score_votes WHERE image_id=:image_id",
+            ['image_id'=>$post->id]
+        ) ?? 0;
+    }
+
+    #[Field(extends: "Post", type: "[NumericScoreVote!]!")]
+    public static function votes(Image $post): array
+    {
+        global $database;
+        $rows = $database->get_all(
+            "SELECT * FROM numeric_score_votes WHERE image_id=:image_id",
+            ['image_id'=>$post->id]
+        );
+        $votes = [];
+        foreach ($rows as $row) {
+            $nsv = new NumericScoreVote();
+            $nsv->image_id = $row["image_id"];
+            $nsv->user_id = $row["user_id"];
+            $nsv->score = $row["score"];
+            $votes[] = $nsv;
+        }
+        return $votes;
+    }
+
+    #[Field(extends: "Post", type: "Int!")]
+    public static function my_vote(Image $post): int
+    {
+        global $database, $user;
+        return $database->get_one(
+            "SELECT score FROM numeric_score_votes WHERE image_id=:image_id AND user_id=:user_id",
+            ['image_id'=>$post->id, "user_id"=>$user->id]
+        ) ?? 0;
+    }
+
+    #[Mutation]
+    public static function create_vote(int $post_id, int $score): bool
+    {
+        global $user;
+        if ($user->can(Permissions::CREATE_VOTE)) {
+            assert($score == 0 || $score == -1 || $score == 1);
+            send_event(new NumericScoreSetEvent($post_id, $user, $score));
+            return true;
+        }
+        return false;
+    }
+}
+
 class NumericScoreSetEvent extends Event
 {
     public int $image_id;
@@ -25,7 +107,7 @@ class NumericScore extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user;
-        if (!$user->is_anonymous()) {
+        if ($user->can(Permissions::CREATE_VOTE)) {
             $this->theme->get_voter($event->image);
         }
     }
@@ -68,18 +150,10 @@ class NumericScore extends Extension
             }
             die($html);
         } elseif ($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
-            if (!$user->is_anonymous()) {
+            if ($user->can(Permissions::CREATE_VOTE)) {
                 $image_id = int_escape($_POST['image_id']);
-                $char = $_POST['vote'];
-                $score = null;
-                if ($char == "up") {
-                    $score = 1;
-                } elseif ($char == "null") {
-                    $score = 0;
-                } elseif ($char == "down") {
-                    $score = -1;
-                }
-                if (!is_null($score) && $image_id>0) {
+                $score = int_escape($_POST['vote']);
+                if (($score == -1 || $score == 0 || $score == 1) && $image_id>0) {
                     send_event(new NumericScoreSetEvent($image_id, $user, $score));
                 }
                 $page->set_mode(PageMode::REDIRECT);
@@ -145,7 +219,7 @@ class NumericScore extends Extension
                 $dte = [$totaldate, $year, "\\y\\e\\a\\r\=Y", "year"];
             } else {
                 // this should never happen due to the fact that the page event is already matched against earlier.
-                throw new UnexpectedValueException("Error: Invalid page event.");
+                throw new \UnexpectedValueException("Error: Invalid page event.");
             }
             $sql .= " AND NOT numeric_score=0 ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
 
@@ -292,7 +366,7 @@ class NumericScore extends Extension
         if (preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
             global $user;
             $score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
-            if (!$user->is_anonymous()) {
+            if ($user->can(Permissions::CREATE_VOTE)) {
                 send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
             }
         }

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class ExtManagerInfo extends ExtensionInfo
 {
     public const KEY = "ext_manager";
@@ -11,7 +13,7 @@ class ExtManagerInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
-    public string $visibility = self::VISIBLE_ADMIN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public string $description = "A thing for point & click extension management";
     public ?string $documentation = "Allows the admin to view a list of all extensions and enable or disable them; also allows users to view the list of activated extensions and read their documentation";
     public bool $core = true;

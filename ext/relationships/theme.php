@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class RelationshipsTheme extends Themelet
 {
     public function relationship_info(Image $image)

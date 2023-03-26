@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 // Tagger AJAX back-end
 class TaggerXML extends Extension
 {
@@ -70,7 +72,7 @@ class TaggerXML extends Extension
             $count = ["max"=>$count];
         } else {
             $q_from = "FROM `tags`";
-            $count = null;
+            $count = [];
         }
 
         $tags = $database->execute(
@@ -95,32 +97,26 @@ class TaggerXML extends Extension
         return $this->list_to_xml($tags, "image", (string)$image_id);
     }
 
-    private function list_to_xml(PDOStatement $tags, string $type, string $query, ?array$misc=null): string
+    private function list_to_xml(\FFSPHP\PDOStatement $tags, string $type, string $query, ?array $misc=[]): string
     {
-        $r = $tags->_numOfRows;
-
-        $s_misc = "";
+        $props = [
+            "id"=>$type,
+            "query"=>$query,
+            // @phpstan-ignore-next-line
+            "rows"=>$tags->_numOfRows
+        ];
         if (!is_null($misc)) {
             foreach ($misc as $attr => $val) {
-                $s_misc .= " ".$attr."=\"".$val."\"";
+                $props[$attr] = $val;
             }
         }
 
-        $result = "<list id=\"$type\" query=\"$query\" rows=\"$r\"{$s_misc}>";
+        $list = new \MicroHTML\HTMLElement("list", [$props]);
         foreach ($tags as $tag) {
-            $result .= $this->tag_to_xml($tag);
+            $list->appendChild(new \MicroHTML\HTMLElement("tag", [["id"=>$tag["id"], "count"=>$tag["count"]], $tag["tag"]]));
         }
-        return $result."</list>";
-    }
 
-    private function tag_to_xml(PDORow $tag): string
-    {
-        return
-            "<tag  ".
-                "id=\"".$tag['id']."\" ".
-                "count=\"".$tag['count']."\">".
-                html_escape($tag['tag']).
-                "</tag>";
+        return (string)($list);
     }
 
     private function count(string $query, $values)

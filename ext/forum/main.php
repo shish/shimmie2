@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /*
 Todo:
 *Quote buttons on posts
@@ -349,23 +352,6 @@ class Forum extends Extension
         log_info("forum", "Post {$postID} created by {$user->name}");
 
         $database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=:id", ['id'=>$threadID]);
-    }
-
-    private function retrieve_posts(int $threadID, int $pageNumber): array
-    {
-        global $database, $config;
-        $postsPerPage = $config->get_int('forumPostsPerPage', 15);
-
-        return $database->get_all(
-            "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
-                "FROM forum_posts AS p ".
-                "INNER JOIN users AS u ".
-                "ON p.user_id = u.id ".
-                "WHERE thread_id = :thread_id ".
-                "ORDER BY p.date ASC ".
-                "LIMIT :limit OFFSET :offset ",
-            ["thread_id"=>$threadID, "offset"=>($pageNumber - 1) * $postsPerPage, "limit"=>$postsPerPage]
-        );
     }
 
     private function delete_thread(int $threadID): void

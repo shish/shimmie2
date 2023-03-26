@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class TagListInfo extends ExtensionInfo
 {
     public const KEY = "tag_list";
@@ -12,5 +14,5 @@ class TagListInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $description = "Show the tags in various ways";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

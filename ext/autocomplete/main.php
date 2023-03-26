@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class AutoComplete extends Extension
 {
     /** @var AutoCompleteTheme */
@@ -48,7 +50,8 @@ class AutoComplete extends Extension
             return [];
         }
 
-        $cache_key = "autocomplete-$search";
+        # memcache keys can't contain spaces
+        $cache_key = "autocomplete:" . md5($search);
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
         $search = str_replace('%', '\%', $search);
@@ -60,7 +63,7 @@ class AutoComplete extends Extension
         }
 
         $res = $cache->get($cache_key);
-        if (!$res) {
+        if (is_null($res)) {
             $res = $database->get_pairs(
                 "
                 SELECT tag, count

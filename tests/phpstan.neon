@@ -1,0 +1,9 @@
+parameters:
+  level: 2
+  paths:
+    - ../core
+    - ../ext
+    - ../tests
+    - ../themes/default
+  ignoreErrors:
+    - '#Access to an undefined property Shimmie2\\Image::\$#'

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "file_extension.php";
 
 class MimeType
@@ -152,16 +154,17 @@ class MimeType
     private static function compare_file_bytes(string $file_name, array $comparison): bool
     {
         $size = filesize($file_name);
-        if ($size < count($comparison)) {
+        $cc = count($comparison);
+        if ($size < $cc) {
             // Can't match because it's too small
             return false;
         }
 
         if (($fh = @fopen($file_name, 'rb'))) {
             try {
-                $chunk = unpack("C*", fread($fh, count($comparison)));
+                $chunk = unpack("C*", fread($fh, $cc));
 
-                for ($i = 0; $i < count($comparison); $i++) {
+                for ($i = 0; $i < $cc; $i++) {
                     $byte = $comparison[$i];
                     if ($byte == null) {
                         continue;
@@ -247,7 +250,7 @@ class MimeType
                     case FileExtension::PPM:
                         $output = MimeType::PPM;
                         break;
-// TODO: There is no uniquely defined Mime type for the cursor format. Need to figure this out.
+                        // TODO: There is no uniquely defined Mime type for the cursor format. Need to figure this out.
 //                    case FileExtension::CUR:
 //                        $output = MimeType::CUR;
 //                        break;

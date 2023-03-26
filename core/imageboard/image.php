@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+
 /**
  * Class Image
  *
@@ -10,17 +17,25 @@ declare(strict_types=1);
  * image per se, but could be a video, sound file, or any
  * other supported upload type.
  */
+#[\AllowDynamicProperties]
+#[Type(name: "Post")]
 class Image
 {
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
     public ?int $id = null;
+    #[Field]
     public int $height = 0;
+    #[Field]
     public int $width = 0;
+    #[Field]
     public string $hash;
+    #[Field]
     public int $filesize;
+    #[Field]
     public string $filename;
+    #[Field]
     private string $ext;
     private string $mime;
 
@@ -28,8 +43,11 @@ class Image
     public ?array $tag_array;
     public int $owner_id;
     public string $owner_ip;
+    #[Field]
     public ?string $posted = null;
+    #[Field]
     public ?string $source;
+    #[Field]
     public bool $locked = false;
     public ?bool $lossless = null;
     public ?bool $video = null;
@@ -70,10 +88,26 @@ class Image
         }
     }
 
-    public static function by_id(int $id): ?Image
+    #[Field(name: "post_id")]
+    public function graphql_oid(): int
+    {
+        return $this->id;
+    }
+    #[Field(name: "id")]
+    public function graphql_guid(): string
+    {
+        return "post:{$this->id}";
+    }
+
+    #[Query(name: "post")]
+    public static function by_id(int $post_id): ?Image
     {
         global $database;
-        $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id"=>$id]);
+        if ($post_id > 2**32) {
+            // for some reason bots query huge numbers and pollute the DB error logs...
+            return null;
+        }
+        $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id"=>$post_id]);
         return ($row ? new Image($row) : null);
     }
 
@@ -132,12 +166,13 @@ class Image
     /**
      * Search for an array of images
      *
-     * #param string[] $tags
-     * #return Image[]
+     * @param String[] $tags
+     * @return Image[]
      */
-    public static function find_images(int $start, ?int $limit = null, array $tags=[]): array
+    #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
+    public static function find_images(?int $offset = 0, ?int $limit = null, array $tags=[]): array
     {
-        $result = self::find_images_internal($start, $limit, $tags);
+        $result = self::find_images_internal($offset, $limit, $tags);
 
         $images = [];
         foreach ($result as $row) {
@@ -149,7 +184,7 @@ class Image
     /**
      * Search for an array of images, returning a iterable object of Image
      */
-    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags=[]): Generator
+    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags=[]): \Generator
     {
         $result = self::find_images_internal($start, $limit, $tags);
         foreach ($result as $row) {
@@ -165,7 +200,7 @@ class Image
     {
         global $cache, $database;
         $total = $cache->get("image-count");
-        if (!$total) {
+        if (is_null($total)) {
             $total = (int)$database->get_one("SELECT COUNT(*) FROM images");
             $cache->set("image-count", $total, 600);
         }
@@ -184,7 +219,7 @@ class Image
     /**
      * Count the number of image results for a given search
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public static function count_images(array $tags=[]): int
     {
@@ -207,7 +242,7 @@ class Image
             // implode(tags) can be too long for memcache...
             $cache_key = "image-count:" . md5(Tag::implode($tags));
             $total = $cache->get($cache_key);
-            if (!$total) {
+            if (is_null($total)) {
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
                     $tags[] = "rating:*";
                 }
@@ -229,7 +264,7 @@ class Image
     /**
      * Count the number of pages for a given search
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public static function count_pages(array $tags=[]): int
     {
@@ -248,7 +283,6 @@ class Image
          * Turn a bunch of strings into a bunch of TagCondition
          * and ImgCondition objects
          */
-        /** @var $stpe SearchTermParseEvent */
         $stpe = send_event(new SearchTermParseEvent($stpen++, null, $terms));
         if ($stpe->order) {
             $order = $stpe->order;
@@ -268,7 +302,6 @@ class Image
                 continue;
             }
 
-            /** @var $stpe SearchTermParseEvent */
             $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
             if ($stpe->order) {
                 $order = $stpe->order;
@@ -296,7 +329,7 @@ class Image
      * Rather than simply $this_id + 1, one must take into account
      * deleted images and search queries
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public function get_next(array $tags=[], bool $next=true): ?Image
     {
@@ -332,7 +365,7 @@ class Image
     /**
      * The reverse of get_next
      *
-     * #param string[] $tags
+     * @param String[] $tags
      */
     public function get_prev(array $tags=[]): ?Image
     {
@@ -342,6 +375,7 @@ class Image
     /**
      * Find the User who owns this Image
      */
+    #[Field(name: "owner")]
     public function get_owner(): User
     {
         return User::by_id($this->owner_id);
@@ -369,7 +403,7 @@ class Image
         $cut_name = substr($this->filename, 0, 255);
 
         if (is_null($this->posted) || $this->posted == "") {
-            $this->posted = date('c', time());
+            $this->posted = date('Y-m-d H:i:s', time());
         }
 
         if (is_null($this->id)) {
@@ -440,8 +474,9 @@ class Image
     /**
      * Get this image's tags as an array.
      *
-     * #return string[]
+     * @return String[]
      */
+    #[Field(name: "tags", type: "[string!]!")]
     public function get_tag_array(): array
     {
         global $database;
@@ -469,6 +504,7 @@ class Image
     /**
      * Get the URL for the full size image
      */
+    #[Field(name: "image_link")]
     public function get_image_link(): string
     {
         return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
@@ -477,16 +513,16 @@ class Image
     /**
      * Get the nicely formatted version of the file name
      */
+    #[Field(name: "nice_name")]
     public function get_nice_image_name(): string
     {
-        $plte = new ParseLinkTemplateEvent('$id - $tags.$ext', $this);
-        send_event($plte);
-        return $plte->text;
+        return send_event(new ParseLinkTemplateEvent('$id - $tags.$ext', $this))->text;
     }
 
     /**
      * Get the URL for the thumbnail
      */
+    #[Field(name: "thumb_link")]
     public function get_thumb_link(): string
     {
         global $config;
@@ -521,24 +557,22 @@ class Image
      * Get the tooltip for this image, formatted according to the
      * configured template.
      */
+    #[Field(name: "tooltip")]
     public function get_tooltip(): string
     {
         global $config;
-        $plte = new ParseLinkTemplateEvent($config->get_string(ImageConfig::TIP), $this);
-        send_event($plte);
-        return $plte->text;
+        return send_event(new ParseLinkTemplateEvent($config->get_string(ImageConfig::TIP), $this))->text;
     }
 
     /**
      * Get the info for this image, formatted according to the
      * configured template.
      */
+    #[Field(name: "info")]
     public function get_info(): string
     {
         global $config;
-        $plte = new ParseLinkTemplateEvent($config->get_string(ImageConfig::INFO), $this);
-        send_event($plte);
-        return $plte->text;
+        return send_event(new ParseLinkTemplateEvent($config->get_string(ImageConfig::INFO), $this))->text;
     }
 
 
@@ -561,6 +595,7 @@ class Image
     /**
      * Get the original filename.
      */
+    #[Field(name: "filename")]
     public function get_filename(): string
     {
         return $this->filename;
@@ -569,6 +604,7 @@ class Image
     /**
      * Get the image's extension.
      */
+    #[Field(name: "ext")]
     public function get_ext(): string
     {
         return $this->ext;
@@ -577,6 +613,7 @@ class Image
     /**
      * Get the image's mime type.
      */
+    #[Field(name: "mime")]
     public function get_mime(): ?string
     {
         if ($this->mime===MimeType::WEBP&&$this->lossless) {
@@ -650,7 +687,7 @@ class Image
     public function delete_tags_from_image(): void
     {
         global $database;
-        if ($database->get_driver_name() == DatabaseDriver::MYSQL) {
+        if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
             //mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
             $database->execute(
                 "
@@ -743,7 +780,7 @@ class Image
                         VALUES(:iid, :tid)
                     ", ["iid"=>$this->id, "tid"=>$id]);
 
-                    array_push($written_tags, $id);
+                    $written_tags[] = $id;
                 }
                 $database->execute(
                     "
@@ -796,14 +833,14 @@ class Image
     {
         global $database;
         $sq = "SELECT id FROM tags WHERE LOWER(tag) LIKE LOWER(:tag)";
-        if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
             $sq .= "ESCAPE '\\'";
         }
         return $database->get_col($sq, ["tag" => Tag::sqlify($tag)]);
     }
 
     /**
-     * #param string[] $terms
+     * @param String[] $terms
      */
     private static function build_search_querylet(
         array $terms,

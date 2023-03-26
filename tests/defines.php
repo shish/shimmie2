@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Shimmie2;
+
 define("UNITTEST", true);
 define("EXTRA_EXTS", str_replace("ext/", "", implode(',', glob('ext/*'))));
 

@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use function MicroHTML\INPUT;
 
 class ReportImageTheme extends Themelet
@@ -18,15 +21,14 @@ class ReportImageTheme extends Themelet
             $reporter_name = html_escape($report['reporter_name']);
             $userlink = "<a href='".make_link("user/$reporter_name")."'>$reporter_name</a>";
 
-            $iabbe = new ImageAdminBlockBuildingEvent($image, $user, "report");
-            send_event($iabbe);
+            $iabbe = send_event(new ImageAdminBlockBuildingEvent($image, $user, "report"));
             ksort($iabbe->parts);
             $actions = join("<br>", $iabbe->parts);
 
             $h_reportedimages .= "
 				<tr>
 					<td>{$image_link}</td>
-					<td>Report by $userlink: $h_reason</td>
+					<td class='reason'>Report by $userlink: $h_reason</td>
 					<td class='formstretch'>
 						".make_form(make_link("image_report/remove"))."
 							<input type='hidden' name='id' value='{$report['id']}'>

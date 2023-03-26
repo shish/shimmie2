@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class UploadInfo extends ExtensionInfo
 {
     public const KEY = "upload";
@@ -12,5 +14,5 @@ class UploadInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $description = "Allows people to upload files to the website";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

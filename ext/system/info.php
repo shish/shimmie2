@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class SystemInfo extends ExtensionInfo
 {
     public const KEY = "system";
@@ -12,5 +14,5 @@ class SystemInfo extends ExtensionInfo
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Provides system screen";
     public bool $core = true;
-    public string $visibility = self::VISIBLE_HIDDEN;
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }

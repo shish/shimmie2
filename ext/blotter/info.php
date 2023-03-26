@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BlotterInfo extends ExtensionInfo
 {
     public const KEY = "blotter";

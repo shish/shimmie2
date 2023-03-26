@@ -1,7 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 use function MicroHTML\FORM;
@@ -203,8 +207,8 @@ function get_session_ip(Config $config): string
  */
 function format_text(string $string): string
 {
-    $tfe = send_event(new TextFormattingEvent($string));
-    return $tfe->formatted;
+    $event = send_event(new TextFormattingEvent($string));
+    return $event->formatted;
 }
 
 /**
@@ -258,7 +262,7 @@ function load_balance_url(string $tmpl, string $hash, int $n=0): string
         if (isset($flexihashes[$opts])) {
             $flexihash = $flexihashes[$opts];
         } else {
-            $flexihash = new Flexihash\Flexihash();
+            $flexihash = new \Flexihash\Flexihash();
             foreach (explode(",", $opts) as $opt) {
                 $parts = explode("=", $opt);
                 $parts_count = count($parts);
@@ -354,10 +358,13 @@ function path_to_tags(string $path): string
         $tags = explode(" ", $matches[1]);
     }
 
-    $path = dirname($path);
+    $path = str_replace("\\", "/", $path);
     $path = str_replace(";", ":", $path);
     $path = str_replace("__", " ", $path);
-
+    $path = dirname($path);
+    if ($path == "\\" || $path == "/" || $path == ".") {
+        $path = "";
+    }
 
     $category = "";
     foreach (explode("/", $path) as $dir) {
@@ -388,18 +395,6 @@ function path_to_tags(string $path): string
     }
 
     return implode(" ", $tags);
-}
-
-
-function join_url(string $base, string ...$paths): string
-{
-    $output = $base;
-    foreach ($paths as $path) {
-        $output = rtrim($output, "/");
-        $path = ltrim($path, "/");
-        $output .= "/".$path;
-    }
-    return $output;
 }
 
 function get_dir_contents(string $dir): array
@@ -486,18 +481,18 @@ function scan_dir(string $path): array
     $bytestotal = 0;
     $nbfiles = 0;
 
-    $ite = new RecursiveDirectoryIterator(
+    $ite = new \RecursiveDirectoryIterator(
         $path,
-        FilesystemIterator::KEY_AS_PATHNAME |
-        FilesystemIterator::CURRENT_AS_FILEINFO |
-        FilesystemIterator::SKIP_DOTS
+        \FilesystemIterator::KEY_AS_PATHNAME |
+        \FilesystemIterator::CURRENT_AS_FILEINFO |
+        \FilesystemIterator::SKIP_DOTS
     );
-    foreach (new RecursiveIteratorIterator($ite) as $filename => $cur) {
+    foreach (new \RecursiveIteratorIterator($ite) as $filename => $cur) {
         try {
             $filesize = $cur->getSize();
             $bytestotal += $filesize;
             $nbfiles++;
-        } catch (RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             // This usually just means that the file got eaten by the import
             continue;
         }
@@ -509,14 +504,20 @@ function scan_dir(string $path): array
 }
 
 
+/**
+ * because microtime() returns string|float, and we only ever want float
+ */
+function ftime(): float
+{
+    return (float)microtime(true);
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Debugging functions                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// SHIT by default this returns the time as a string. And it's not even a
-// string representation of a number, it's two numbers separated by a space.
-// What the fuck were the PHP developers smoking.
-$_shm_load_start = microtime(true);
+$_shm_load_start = ftime();
 
 /**
  * Collects some debug information (execution time, memory usage, queries, etc)
@@ -524,38 +525,45 @@ $_shm_load_start = microtime(true);
  */
 function get_debug_info(): string
 {
-    global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
+    $d = get_debug_info_arr();
 
-    $i_mem = sprintf("%5.2f", ((memory_get_peak_usage(true)+512)/1024)/1024);
+    $debug = "<br>Took {$d['time']} seconds (db:{$d['dbtime']}) and {$d['mem_mb']}MB of RAM";
+    $debug .= "; Used {$d['files']} files and {$d['query_count']} queries";
+    $debug .= "; Sent {$d['event_count']} events";
+    $debug .= "; {$d['cache_hits']} cache hits and {$d['cache_misses']} misses";
+    $debug .= "; Shimmie version {$d['version']}";
+
+    return $debug;
+}
+
+function get_debug_info_arr(): array
+{
+    global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
 
     if ($config->get_string("commit_hash", "unknown") == "unknown") {
         $commit = "";
     } else {
         $commit = " (".$config->get_string("commit_hash").")";
     }
-    $time = sprintf("%.2f", microtime(true) - $_shm_load_start);
-    $dbtime = sprintf("%.2f", $database->dbtime);
-    $i_files = count(get_included_files());
-    $hits = $cache->get_hits();
-    $miss = $cache->get_misses();
 
-    $debug = "<br>Took $time seconds (db:$dbtime) and {$i_mem}MB of RAM";
-    $debug .= "; Used $i_files files and {$database->query_count} queries";
-    $debug .= "; Sent $_shm_event_count events";
-    $debug .= "; $hits cache hits and $miss misses";
-    $debug .= "; Shimmie version ". VERSION . $commit;
-
-    return $debug;
+    return [
+        "time" => round(ftime() - $_shm_load_start, 2),
+        "dbtime" => round($database->dbtime, 2),
+        "mem_mb" => round(((memory_get_peak_usage(true)+512)/1024)/1024, 2),
+        "files" => count(get_included_files()),
+        "query_count" => $database->query_count,
+        // "query_log" => $database->queries,
+        "event_count" => $_shm_event_count,
+        "cache_hits" => $cache->get("__etc_cache_hits"),
+        "cache_misses" => $cache->get("__etc_cache_misses"),
+        "version" => VERSION . $commit,
+    ];
 }
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/** @privatesection
- * @noinspection PhpIncludeInspection
- */
 
 function require_all(array $files): void
 {
@@ -575,7 +583,9 @@ function _load_core_files()
 
 function _load_theme_files()
 {
-    require_all(_get_themelet_files(get_theme()));
+    $theme = get_theme();
+    $files = _get_themelet_files($theme);
+    require_all($files);
 }
 
 function _set_up_shimmie_environment(): void
@@ -617,13 +627,13 @@ function _get_themelet_files(string $_theme): array
 /**
  * Used to display fatal errors to the web user.
  */
-function _fatal_error(Exception $e): void
+function _fatal_error(\Exception $e): void
 {
     $version = VERSION;
     $message = $e->getMessage();
     $phpver = phpversion();
-    $query = is_subclass_of($e, "SCoreException") ? $e->query : null;
-    $code = is_subclass_of($e, "SCoreException") ? $e->http_code : 500;
+    $query = is_subclass_of($e, "Shimmie2\SCoreException") ? $e->query : null;
+    $code = is_subclass_of($e, "Shimmie2\SCoreException") ? $e->http_code : 500;
 
     //$hash = exec("git rev-parse HEAD");
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
@@ -635,7 +645,7 @@ function _fatal_error(Exception $e): void
         foreach ($t as $n => $f) {
             $c = $f['class'] ?? '';
             $t = $f['type'] ?? '';
-            $a = implode(", ", array_map("stringer", $f['args']));
+            $a = implode(", ", array_map("Shimmie2\stringer", $f['args']));
             print("$n: {$f['file']}({$f['line']}): {$c}{$t}{$f['function']}({$a})\n");
         }
 
@@ -674,11 +684,17 @@ function _get_user(): User
 {
     global $config, $page;
     $my_user = null;
-    if ($page->get_cookie("user") && $page->get_cookie("session")) {
-        $tmp_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
-        if (!is_null($tmp_user)) {
-            $my_user = $tmp_user;
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        $parts = explode(" ", $_SERVER['HTTP_AUTHORIZATION'], 2);
+        if (count($parts) == 2 && $parts[0] == "Bearer") {
+            $parts = explode(":", $parts[1], 2);
+            if (count($parts) == 2) {
+                $my_user = User::by_session($parts[0], $parts[1]);
+            }
         }
+    }
+    if ($page->get_cookie("user") && $page->get_cookie("session")) {
+        $my_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
     }
     if (is_null($my_user)) {
         $my_user = User::by_id($config->get_int("anon_id", 0));

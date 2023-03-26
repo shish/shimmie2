@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class CustomCommentListTheme extends CommentListTheme
 {
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post)
@@ -94,8 +96,7 @@ class CustomCommentListTheme extends CommentListTheme
     {
         global $user;
 
-        $tfe = new TextFormattingEvent($comment->comment);
-        send_event($tfe);
+        $tfe = send_event(new TextFormattingEvent($comment->comment));
 
         //$i_uid = $comment->owner_id;
         $h_name = html_escape($comment->owner_name);

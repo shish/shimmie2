@@ -1,7 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\INPUT;
 
 class FavoritesTheme extends Themelet

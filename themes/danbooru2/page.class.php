@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 /**
  * Name: Danbooru 2 Theme
  * Author: Bzchan <bzchan@animemahou.com>, updated by Daniel Oaks <daniel@danieloaks.net>

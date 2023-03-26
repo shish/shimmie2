@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class IPBanTest extends ShimmiePHPUnitTestCase
 {
     # FIXME: test that the IP is actually banned

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class TipsInfo extends ExtensionInfo
 {
     public const KEY = "tips";
@@ -12,5 +14,5 @@ class TipsInfo extends ExtensionInfo
     public string $license = "GPLv2";
     public string $description = "Show a random line of text in the subheader space";
     public ?string $documentation = "Formatting is done with HTML";
-    public array $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // rand() ?
+    public array $db_support = [DatabaseDriverID::MYSQL, DatabaseDriverID::SQLITE];  // rand() ?
 }

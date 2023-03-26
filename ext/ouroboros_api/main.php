@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
 
 class _SafeOuroborosImage
 {
@@ -111,7 +112,7 @@ class OuroborosPost extends _SafeOuroborosImage
      * Mainly just acts as a wrapper and validation layer
      * @noinspection PhpMissingParentConstructorInspection
      */
-    public function __construct(array $post, string $md5 = '')
+    public function __construct(array $post)
     {
         if (array_key_exists('tags', $post)) {
             // implode(explode()) to resolve aliases and sanitise
@@ -170,10 +171,7 @@ class OuroborosPost extends _SafeOuroborosImage
             $this->is_note_locked = $post['is_note_locked'];
         }
         if (array_key_exists('parent_id', $post)) {
-            $this->parent_id = filter_var(
-                $post['parent_id'],
-                FILTER_SANITIZE_NUMBER_INT
-            );
+            $this->parent_id = int_escape($post['parent_id']);
         }
     }
 }
@@ -385,8 +383,7 @@ class OuroborosAPI extends Extension
         }
         $meta['extension'] = pathinfo($meta['filename'], PATHINFO_EXTENSION);
         try {
-            $upload = new DataUploadEvent($meta['file'], $meta);
-            send_event($upload);
+            send_event(new DataUploadEvent($meta['file'], $meta));
             $image = Image::by_hash($meta['hash']);
             if (!is_null($image)) {
                 $this->sendResponse(200, make_link('post/view/' . $image->id), true);
@@ -520,7 +517,7 @@ class OuroborosAPI extends Extension
             $response = json_encode($response);
         } elseif ($this->type == 'xml') {
             // Seriously, XML sucks...
-            $xml = new XMLWriter();
+            $xml = new \XMLWriter();
             $xml->openMemory();
             $xml->startDocument('1.0', 'utf-8');
             $xml->startElement('response');
@@ -545,14 +542,14 @@ class OuroborosAPI extends Extension
         if ($this->type == 'json') {
             $response = json_encode($data);
         } elseif ($this->type == 'xml') {
-            $xml = new XMLWriter();
+            $xml = new \XMLWriter();
             $xml->openMemory();
             $xml->startDocument('1.0', 'utf-8');
             if (array_key_exists(0, $data)) {
                 $xml->startElement($type . 's');
                 if ($type == 'post') {
-                    $xml->writeAttribute('count', count($data));
-                    $xml->writeAttribute('offset', $offset);
+                    $xml->writeAttribute('count', (string)count($data));
+                    $xml->writeAttribute('offset', (string)$offset);
                 }
                 if ($type == 'tag') {
                     $xml->writeAttribute('type', 'array');
@@ -571,7 +568,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    private function createItemXML(XMLWriter $xml, string $type, $item)
+    private function createItemXML(\XMLWriter $xml, string $type, $item)
     {
         $xml->startElement($type);
         foreach ($item as $key => $val) {

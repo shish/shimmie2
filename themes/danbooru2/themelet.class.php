@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class Themelet extends BaseThemelet
 {
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false)

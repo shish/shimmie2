@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once 'config.php';
 
 use MicroCRUD\ActionColumn;
@@ -110,7 +112,7 @@ class AutoTagger extends Extension
                     if (count($_FILES) > 0) {
                         $tmp = $_FILES['auto_tag_file']['tmp_name'];
                         $contents = file_get_contents($tmp);
-                        $count = $this->add_auto_tag_csv($database, $contents);
+                        $count = $this->add_auto_tag_csv($contents);
                         log_info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("auto_tag/list"));
@@ -142,7 +144,7 @@ class AutoTagger extends Extension
                     additional_tags VARCHAR(2000) NOT NULL
                 ");
 
-            if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
+            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute('CREATE INDEX auto_tag_lower_tag_idx ON auto_tag ((lower(tag)))');
             }
             $this->set_version(AutoTaggerConfig::VERSION, 1);
@@ -189,7 +191,7 @@ class AutoTagger extends Extension
         return $csv;
     }
 
-    private function add_auto_tag_csv(Database $database, string $csv): int
+    private function add_auto_tag_csv(string $csv): int
     {
         $csv = str_replace("\r", "\n", $csv);
         $i = 0;
@@ -210,23 +212,23 @@ class AutoTagger extends Extension
     private function add_auto_tag(string $tag, string $additional_tags)
     {
         global $database;
-		$existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
-        if (!is_null($existing_tags)) { 
-			// Auto Tags already exist, so we will append new tags to the existing one
-			$tag = Tag::sanitize($tag);
+        $existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
+        if (!is_null($existing_tags)) {
+            // Auto Tags already exist, so we will append new tags to the existing one
+            $tag = Tag::sanitize($tag);
             $additional_tags = Tag::explode($additional_tags);
-			$existing_tags = Tag::explode($existing_tags);
-			foreach ($additional_tags as $t) {
-				if (!in_array(strtolower($t), $existing_tags)) {
-					array_push($existing_tags, strtolower($t));
-				}
-			}
-			
-			$database->execute(
+            $existing_tags = Tag::explode($existing_tags);
+            foreach ($additional_tags as $t) {
+                if (!in_array(strtolower($t), $existing_tags)) {
+                    $existing_tags[] = strtolower($t);
+                }
+            }
+
+            $database->execute(
                 "UPDATE auto_tag set additional_tags=:existing_tags where tag=:tag",
                 ["tag"=>$tag, "existing_tags"=>Tag::implode($existing_tags)]
             );
-			log_info(
+            log_info(
                 AutoTaggerInfo::KEY,
                 "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
@@ -244,39 +246,8 @@ class AutoTagger extends Extension
                 "Added auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
         }
-		// Now we apply it to existing items
-		$this->apply_new_auto_tag($tag);
-    }
-
-    private function update_auto_tag(string $tag, string $additional_tags): bool
-    {
-        global $database;
-        $result = $database->get_row("SELECT * FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
-
-        if ($result===null) {
-            throw new AutoTaggerException("Auto-tag not set for $tag, can't update");
-        } else {
-            $additional_tags = Tag::explode($additional_tags);
-            $current_additional_tags = Tag::explode($result["additional_tags"]);
-
-            if (!Tag::compare($additional_tags, $current_additional_tags)) {
-                $database->execute(
-                    "UPDATE auto_tag SET additional_tags = :additional_tags WHERE LOWER(tag)=LOWER(:tag)",
-                    ["tag"=>$tag, "additional_tags"=>Tag::implode($additional_tags)]
-                );
-
-                log_info(
-                    AutoTaggerInfo::KEY,
-                    "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}",
-                    "Updated Auto-Tag"
-                );
-
-                // Now we apply it to existing items
-                $this->apply_new_auto_tag($tag);
-                return true;
-            }
-        }
-        return false;
+        // Now we apply it to existing items
+        $this->apply_new_auto_tag($tag);
     }
 
     private function apply_new_auto_tag(string $tag)
@@ -288,13 +259,10 @@ class AutoTagger extends Extension
             foreach ($image_ids as $image_id) {
                 $image_id = (int) $image_id;
                 $image = Image::by_id($image_id);
-                $event = new TagSetEvent($image, $image->get_tag_array());
-                send_event($event);
+                send_event(new TagSetEvent($image, $image->get_tag_array()));
             }
         }
     }
-
-
 
     private function remove_auto_tag(String $tag)
     {

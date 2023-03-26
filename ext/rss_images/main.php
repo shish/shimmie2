@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
 
 class RSSImages extends Extension
 {
@@ -96,7 +97,7 @@ class RSSImages extends Extension
         global $cache;
 
         $cached = $cache->get("rss-item-image:{$image->id}");
-        if ($cached) {
+        if (!is_null($cached)) {
             return $cached;
         }
 

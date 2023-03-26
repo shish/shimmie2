@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class NumericScoreTheme extends Themelet
 {
     public function get_voter(Image $image)
@@ -19,21 +21,21 @@ class NumericScoreTheme extends Themelet
 			<p><form action='".make_link("numeric_score_vote")."' method='POST'>
 			".$user->get_auth_html()."
 			<input type='hidden' name='image_id' value='$i_image_id'>
-			<input type='hidden' name='vote' value='up'>
+			<input type='hidden' name='vote' value='1'>
 			<input type='submit' value='Vote Up'>
 			</form>
 
 			<form action='".make_link("numeric_score_vote")."' method='POST'>
 			".$user->get_auth_html()."
 			<input type='hidden' name='image_id' value='$i_image_id'>
-			<input type='hidden' name='vote' value='null'>
+			<input type='hidden' name='vote' value='0'>
 			<input type='submit' value='Remove Vote'>
 			</form>
 
 			<form action='".make_link("numeric_score_vote")."' method='POST'>
 			".$user->get_auth_html()."
 			<input type='hidden' name='image_id' value='$i_image_id'>
-			<input type='hidden' name='vote' value='down'>
+			<input type='hidden' name='vote' value='-1'>
 			<input type='submit' value='Vote Down'>
 			</form>
 		";

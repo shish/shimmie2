@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
- /**
- * @global ImageRating[] $_shm_ratings
- */
+namespace Shimmie2;
+
+/**
+* @global ImageRating[] $_shm_ratings
+*/
 global $_shm_ratings;
 $_shm_ratings = [];
 
@@ -26,25 +28,14 @@ class ImageRating
     }
 }
 
-function clear_ratings()
-{
-    global $_shm_ratings;
-    $keys = array_keys($_shm_ratings);
-    foreach ($keys as $key) {
-        if ($key != "?") {
-            unset($_shm_ratings[$key]);
-        }
-    }
-}
-
-function add_rating(ImageRating $rating)
+function add_rating(ImageRating $rating): void
 {
     global $_shm_ratings;
     if ($rating->code == "?" && array_key_exists("?", $_shm_ratings)) {
-        throw new RuntimeException("? is a reserved rating code that cannot be overridden");
+        throw new \RuntimeException("? is a reserved rating code that cannot be overridden");
     }
     if ($rating->code != "?" && in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
-        throw new RuntimeException("$rating->search_term is a reserved search term");
+        throw new \RuntimeException("$rating->search_term is a reserved search term");
     }
     $_shm_ratings[$rating->code] = $rating;
 }
@@ -95,7 +86,7 @@ class Ratings extends Extension
         $codes = implode("", array_keys($_shm_ratings));
         $search_terms = [];
         foreach ($_shm_ratings as $key => $rating) {
-            array_push($search_terms, $rating->search_term);
+            $search_terms[] = $rating->search_term;
         }
         $this->search_regexp = "/^rating[=|:](?:(\*|[" . $codes . "]+)|(" .
             implode("|", $search_terms) . "|".implode("|", self::UNRATED_KEYWORDS)."))$/D";
@@ -191,10 +182,10 @@ class Ratings extends Extension
     }
     public function onBulkImport(BulkImportEvent $event)
     {
-        if (property_exists($event->fields, "rating")
-            && $event->fields->rating != null
-            && Ratings::rating_is_valid($event->fields->rating)) {
-            $this->set_rating($event->image->id, $event->fields->rating, "");
+        if (array_key_exists("rating", $event->fields)
+            && $event->fields['rating'] != null
+            && Ratings::rating_is_valid($event->fields['rating'])) {
+            $this->set_rating($event->image->id, $event->fields['rating'], "");
         }
     }
 
@@ -304,8 +295,7 @@ class Ratings extends Extension
             $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs($user));
             $rating = $ratings[0];
             $image = Image::by_id($event->image_id);
-            $re = new RatingSetEvent($image, $rating);
-            send_event($re);
+            send_event(new RatingSetEvent($image, $rating));
         }
     }
 
@@ -501,11 +491,11 @@ class Ratings extends Extension
 
         if ($this->get_version(RatingsConfig::VERSION) < 3) {
             $database->execute("UPDATE images SET rating = 'u' WHERE rating is null");
-            switch ($database->get_driver_name()) {
-                case DatabaseDriver::MYSQL:
+            switch ($database->get_driver_id()) {
+                case DatabaseDriverID::MYSQL:
                     $database->execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
                     break;
-                case DatabaseDriver::PGSQL:
+                case DatabaseDriverID::PGSQL:
                     $database->execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
                     $database->execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
@@ -527,11 +517,11 @@ class Ratings extends Extension
                 $config->set_array("ext_rating_admin_privs", str_split($value));
             }
 
-            switch ($database->get_driver_name()) {
-                case DatabaseDriver::MYSQL:
+            switch ($database->get_driver_id()) {
+                case DatabaseDriverID::MYSQL:
                     $database->execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT '?'");
                     break;
-                case DatabaseDriver::PGSQL:
+                case DatabaseDriverID::PGSQL:
                     $database->execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT '?'");
                     break;
             }

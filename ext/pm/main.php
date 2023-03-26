@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+use GQLA\Mutation;
+
 class SendPMEvent extends Event
 {
     public PM $pm;
@@ -13,40 +20,119 @@ class SendPMEvent extends Event
     }
 }
 
+#[Type(name: "PrivateMessage")]
 class PM
 {
-    public int $id;
+    public int $id = -1;
     public int $from_id;
     public string $from_ip;
     public int $to_id;
-    /** @var mixed */
-    public $sent_date;
+    public mixed $sent_date;
+    #[Field]
     public string $subject;
+    #[Field]
     public string $message;
+    #[Field]
     public bool $is_read;
 
-    public function __construct($from_id=0, string $from_ip="0.0.0.0", int $to_id=0, string $subject="A Message", string $message="Some Text", bool $read=false)
+    #[Field]
+    public function from(): User
     {
-        # PHP: the P stands for "really", the H stands for "awful" and the other P stands for "language"
-        if (is_array($from_id)) {
-            $a = $from_id;
-            $this->id      = (int)$a["id"];
-            $this->from_id = (int)$a["from_id"];
-            $this->from_ip = $a["from_ip"];
-            $this->to_id   = (int)$a["to_id"];
-            $this->sent_date = $a["sent_date"];
-            $this->subject = $a["subject"];
-            $this->message = $a["message"];
-            $this->is_read = bool_escape($a["is_read"]);
-        } else {
-            $this->id      = -1;
-            $this->from_id = $from_id;
-            $this->from_ip = $from_ip;
-            $this->to_id   = $to_id;
-            $this->subject = $subject;
-            $this->message = $message;
-            $this->is_read = $read;
+        return User::by_id($this->from_id);
+    }
+
+    #[Field(name: "pm_id")]
+    public function graphql_oid(): int
+    {
+        return $this->id;
+    }
+    #[Field(name: "id")]
+    public function graphql_guid(): string
+    {
+        return "pm:{$this->id}";
+    }
+
+    public function __construct(
+        int $from_id,
+        string $from_ip,
+        int $to_id,
+        string $subject,
+        string $message,
+        bool $is_read = false
+    ) {
+        $this->from_id = $from_id;
+        $this->from_ip = $from_ip;
+        $this->to_id   = $to_id;
+        $this->subject = $subject;
+        $this->message = $message;
+        $this->is_read = $is_read;
+    }
+
+    public static function from_row(array $row): PM
+    {
+        $pm = new PM(
+            (int)$row["from_id"],
+            $row["from_ip"],
+            (int)$row["to_id"],
+            $row["subject"],
+            $row["message"],
+            bool_escape($row["is_read"]),
+        );
+        $pm->id = (int)$row["id"];
+        $pm->sent_date = $row["sent_date"];
+        return $pm;
+    }
+
+    #[Field(extends: "User", name: "private_messages", type: "[PrivateMessage!]")]
+    public static function get_pms(User $duser): ?array
+    {
+        global $database, $user;
+
+        if (!$user->can(Permissions::READ_PM)) {
+            return null;
         }
+        if (($duser->id != $user->id) && !$user->can(Permissions::VIEW_OTHER_PMS)) {
+            return null;
+        }
+
+        $pms = [];
+        $arr = $database->get_all(
+            "SELECT * FROM private_message WHERE to_id = :to_id ORDER BY sent_date DESC",
+            ["to_id" => $duser->id]
+        );
+        foreach ($arr as $pm) {
+            $pms[] = PM::from_row($pm);
+        }
+        return $pms;
+    }
+
+    #[Field(extends: "User", name: "private_message_unread_count")]
+    public static function count_unread_pms(User $duser): ?int
+    {
+        global $database, $user;
+
+        if (!$user->can(Permissions::READ_PM)) {
+            return null;
+        }
+        if (($duser->id != $user->id) && !$user->can(Permissions::VIEW_OTHER_PMS)) {
+            return null;
+        }
+
+        return (int)$database->get_one(
+            "SELECT COUNT(*) FROM private_message WHERE to_id = :to_id AND is_read = :is_read",
+            ["is_read" => false, "to_id" => $duser->id]
+        );
+    }
+
+    #[Mutation(name: "create_private_message")]
+    public static function send_pm(int $to_user_id, string $subject, string $message): bool
+    {
+        global $user;
+        if (!$user->can(Permissions::SEND_PM)) {
+            return false;
+        }
+        send_event(new SendPMEvent(new PM($user->id, get_real_ip(), $to_user_id, $subject, $message)));
+        return true;
     }
 }
 
@@ -120,8 +206,9 @@ class PrivMsg extends Extension
         global $page, $user;
         $duser = $event->display_user;
         if (!$user->is_anonymous() && !$duser->is_anonymous()) {
-            if (($user->id == $duser->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
-                $this->theme->display_pms($page, $this->get_pms($duser));
+            $pms = PM::get_pms($duser);
+            if (!is_null($pms)) {
+                $this->theme->display_pms($page, $pms);
             }
             if ($user->id != $duser->id) {
                 $this->theme->display_composer($page, $user, $duser);
@@ -146,7 +233,7 @@ class PrivMsg extends Extension
                                 $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
                                 $cache->delete("pm-count-{$user->id}");
                             }
-                            $this->theme->display_message($page, $from_user, $user, new PM($pm));
+                            $this->theme->display_message($page, $from_user, $user, PM::from_row($pm));
                         } else {
                             $this->theme->display_permission_denied();
                         }
@@ -206,33 +293,12 @@ class PrivMsg extends Extension
         log_info("pm", "Sent PM to User #{$event->pm->to_id}");
     }
 
-
-    private function get_pms(User $user): array
-    {
-        global $database;
-
-        $arr = $database->get_all(
-            "
-				SELECT private_message.*,user_from.name AS from_name
-				FROM private_message
-				JOIN users AS user_from ON user_from.id=from_id
-				WHERE to_id = :toid
-				ORDER BY sent_date DESC",
-            ["toid" => $user->id]
-        );
-        $pms = [];
-        foreach ($arr as $pm) {
-            $pms[] = new PM($pm);
-        }
-        return $pms;
-    }
-
     private function count_pms(User $user)
     {
         global $cache, $database;
 
         $count = $cache->get("pm-count:{$user->id}");
-        if (is_null($count) || $count === false) {
+        if (is_null($count)) {
             $count = $database->get_one("
 					SELECT count(*)
 					FROM private_message

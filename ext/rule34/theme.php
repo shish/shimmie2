@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 use function MicroHTML\INPUT;
 use function MicroHTML\LABEL;
 use function MicroHTML\BR;

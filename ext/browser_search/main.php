@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BrowserSearch extends Extension
 {
     public function onInitExt(InitExtEvent $event)

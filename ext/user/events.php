@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class UserBlockBuildingEvent extends Event
 {
     public array $parts = [];
@@ -18,14 +20,10 @@ class UserBlockBuildingEvent extends Event
 class UserOperationsBuildingEvent extends Event
 {
     public array $parts = [];
-    public User $user;
-    public BaseConfig $user_config;
 
-    public function __construct(User $user, BaseConfig $user_config)
+    public function __construct(public User $user, public BaseConfig $user_config)
     {
         parent::__construct();
-        $this->user = $user;
-        $this->user_config = $user_config;
     }
 
     public function add_html(string $html): void
@@ -36,13 +34,11 @@ class UserOperationsBuildingEvent extends Event
 
 class UserPageBuildingEvent extends Event
 {
-    public User $display_user;
     public array $stats = [];
 
-    public function __construct(User $display_user)
+    public function __construct(public User $display_user)
     {
         parent::__construct();
-        $this->display_user = $display_user;
     }
 
     public function add_stats(string $html, int $position=50)
@@ -56,38 +52,29 @@ class UserPageBuildingEvent extends Event
 
 class UserCreationEvent extends Event
 {
-    public string $username;
-    public string $password;
-    public string $email;
-    public bool $login;
-
-    public function __construct(string $name, string $pass, string $email, bool $login)
-    {
+    public function __construct(
+        public string $username,
+        public string $password,
+        public string $password2,
+        public string $email,
+        public bool $login
+    ) {
         parent::__construct();
-        $this->username = $name;
-        $this->password = $pass;
-        $this->email = $email;
-        $this->login = $login;
     }
 }
 
 class UserLoginEvent extends Event
 {
-    public User $user;
-    public function __construct(User $user)
+    public function __construct(public User $user)
     {
         parent::__construct();
-        $this->user = $user;
     }
 }
 
 class UserDeletionEvent extends Event
 {
-    public int $id;
-
-    public function __construct(int $id)
+    public function __construct(public int $id)
     {
         parent::__construct();
-        $this->id = $id;
     }
 }

@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-_d("STATSD_HOST", null);
+namespace Shimmie2;
 
-function dstat($name, $val)
-{
-    StatsDInterface::$stats["shimmie.$name"] = $val;
-}
+_d("STATSD_HOST", null);
 
 class StatsDInterface extends Extension
 {
@@ -16,7 +13,7 @@ class StatsDInterface extends Extension
     private function _stats(string $type)
     {
         global $_shm_event_count, $cache, $database, $_shm_load_start;
-        $time = microtime(true) - $_shm_load_start;
+        $time = ftime() - $_shm_load_start;
         StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
         StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
         StatsDInterface::$stats["shimmie.$type.time-db"] = "{$database->dbtime}|ms";
@@ -24,8 +21,8 @@ class StatsDInterface extends Extension
         StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
         StatsDInterface::$stats["shimmie.$type.queries"] = $database->query_count."|c";
         StatsDInterface::$stats["shimmie.$type.events"] = $_shm_event_count."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-hits"] = $cache->get_hits()."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get_misses()."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-hits"] = $cache->get("__etc_cache_hits", -1)."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get("__etc_cache_misses", -1)."|c";
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -113,7 +110,7 @@ class StatsDInterface extends Extension
                 fwrite($fp, "$stat:$value");
             }
             fclose($fp);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // ignore any failures.
         }
     }

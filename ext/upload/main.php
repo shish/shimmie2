@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
 
 /**
@@ -9,62 +11,46 @@ require_once "config.php";
  */
 class DataUploadEvent extends Event
 {
-    public string $tmpname;
-    public array $metadata;
     public string $hash;
-    public string $mime = "";
+    public string $mime;
+    public int $size;
+
     public int $image_id = -1;
-    public ?int $replace_id = null;
     public bool $handled = false;
     public bool $merged = false;
 
     /**
      * Some data is being uploaded.
      * This should be caught by a file handler.
-     * $metadata should contain at least "filename", "extension", "tags" and "source".
      */
-    public function __construct(string $tmpname, array $metadata)
-    {
+    public function __construct(
+        public string $tmpname,
+        public array $metadata,
+        public ?int $replace_id = null
+    ) {
         parent::__construct();
 
-        assert(file_exists($tmpname));
+        $this->set_tmpname($tmpname);
         assert(is_string($metadata["filename"]));
         assert(is_array($metadata["tags"]));
         assert(is_string($metadata["source"]) || is_null($metadata["source"]));
 
         // DB limits to 255 char filenames
         $metadata['filename'] = substr($metadata['filename'], 0, 255);
-
-        $this->metadata = $metadata;
-
-        $this->set_tmpname($tmpname);
-
-        if (array_key_exists("extension", $metadata)) {
-            $mime = MimeType::get_for_file($tmpname, $metadata["extension"]);
-        } else {
-            $mime = MimeType::get_for_file($tmpname);
-        }
-
-        if (empty($mime)) {
-            throw new UploadException("Could not determine mime type for file " . $metadata["filename"]);
-        }
-
-        $this->set_mime($mime);
     }
 
-    public function set_mime(String $mime)
+    public function set_tmpname(string $tmpname, ?string $mime=null)
     {
-        $this->mime = strtolower($mime);
-        $this->metadata["mime"] = $this->mime;
-    }
-
-    public function set_tmpname(String $tmpname)
-    {
+        assert(is_readable($tmpname));
         $this->tmpname = $tmpname;
-        $this->metadata['hash'] = md5_file($tmpname);
-        $this->metadata['size'] = filesize($tmpname);
-        // useful for most file handlers, so pull directly into fields
-        $this->hash = $this->metadata['hash'];
+        $this->hash = md5_file($tmpname);
+        $this->size = filesize($tmpname);
+        $mime = $mime ?? MimeType::get_for_file($tmpname, get_file_ext($this->metadata["filename"]) ?? null);
+        if (empty($mime)) {
+            throw new UploadException("Could not determine mime type");
+        }
+
+        $this->mime = strtolower($mime);
     }
 }
 
@@ -147,7 +133,7 @@ class Upload extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         if ($event->parent=="upload") {
-            if (class_exists("Wiki")) {
+            if (class_exists("Shimmie2\Wiki")) {
                 $event->add_nav_link("upload_guidelines", new Link('wiki/upload_guidelines'), "Guidelines");
             }
         }
@@ -159,8 +145,8 @@ class Upload extends Extension
         if ($this->is_full) {
             throw new UploadException("Upload failed; disk nearly full");
         }
-        if (filesize($event->tmpname) > $config->get_int(UploadConfig::SIZE)) {
-            $size = to_shorthand_int(filesize($event->tmpname));
+        if ($event->size > $config->get_int(UploadConfig::SIZE)) {
+            $size = to_shorthand_int($event->size);
             $limit = to_shorthand_int($config->get_int(UploadConfig::SIZE));
             throw new UploadException("File too large ($size > $limit)");
         }
@@ -340,23 +326,15 @@ class Upload extends Extension
                         throw new UploadException($this->upload_error_message($file['error'][$i]));
                     }
 
-                    $pathinfo = pathinfo($file['name'][$i]);
                     $metadata = [];
-                    $metadata['filename'] = $pathinfo['basename'];
-                    $metadata['extension'] = $pathinfo['extension'] ?? "";
-                    $metadata['mime'] = MimeType::get_for_file($file['tmp_name'][$i], $metadata['extension']);
-                    if (empty($metadata['mime'])) {
-                        throw new UploadException("Unable to determine MIME for file " . $metadata['filename']);
-                    }
-
+                    $metadata['filename'] = pathinfo($file['name'][$i], PATHINFO_BASENAME);
                     $metadata['tags'] = $tags;
                     $metadata['source'] = $source;
 
-                    $event = new DataUploadEvent($file['tmp_name'][$i], $metadata);
-                    $event->replace_id = $replace_id;
+                    $event = new DataUploadEvent($file['tmp_name'][$i], $metadata, $replace_id);
                     send_event($event);
                     if ($event->image_id == -1) {
-                        throw new UploadException("MIME type not supported: " . $metadata['mime']);
+                        throw new UploadException("MIME type not supported: " . $event->mime);
                     }
                     $image_ids[] = $event->image_id;
                     $page->add_http_header("X-Shimmie-Post-ID: " . $event->image_id);
@@ -402,12 +380,10 @@ class Upload extends Extension
             $h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
             $filename = $h_filename ?: basename($url);
 
-            $pathinfo = pathinfo($url);
             $metadata = [];
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
             $metadata['source'] = (($url == $source) && !$config->get_bool(UploadConfig::TLSOURCE) ? "" : $source);
-            $metadata['extension'] = $pathinfo['extension'] ?? "";
             if ($user->can(Permissions::EDIT_IMAGE_LOCK) && !empty($_GET['locked'])) {
                 $metadata['locked'] = bool_escape($_GET['locked']) ? "on" : "";
             }
@@ -417,11 +393,10 @@ class Upload extends Extension
             }
 
             // Upload file
-            $event = new DataUploadEvent($tmp_filename, $metadata);
-            $event->replace_id = $replace_id;
+            $event = new DataUploadEvent($tmp_filename, $metadata, $replace_id);
             send_event($event);
             if ($event->image_id == -1) {
-                throw new UploadException("File type not supported: " . $metadata['extension']);
+                throw new UploadException("File type not supported: " . $event->mime);
             }
             $image_ids[] = $event->image_id;
         } catch (UploadException $ex) {

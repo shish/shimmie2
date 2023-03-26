@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
 
 class CronUploader extends Extension
@@ -207,7 +209,7 @@ class CronUploader extends Extension
     {
         global $user_config;
 
-        $user_api_key = $user_config->get_string(UserConfig::API_KEY);
+        $user_api_key = $user_config->get_string(UserConfig::API_KEY, "API_KEY");
 
         return make_http(make_link("/cron_upload/run", "api_key=".urlencode($user_api_key)));
     }
@@ -328,7 +330,7 @@ class CronUploader extends Extension
         $this->set_headers();
 
         if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
-            throw new SCoreException("User API keys are note enabled. Please enable them for the cron upload functionality to work.");
+            throw new SCoreException("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 
         if ($user->is_anonymous()) {
@@ -351,7 +353,7 @@ class CronUploader extends Extension
             //set_time_limit(0);
 
             $output_subdir = date('Ymd-His', time());
-            $image_queue = $this->generate_image_queue($user_config->get_string(CronUploaderConfig::DIR));
+            $image_queue = $this->generate_image_queue();
 
             // Randomize Images
             //shuffle($this->image_queue);
@@ -362,7 +364,7 @@ class CronUploader extends Extension
 
             // Upload the file(s)
             foreach ($image_queue as $img) {
-                $execution_time = microtime(true) - $_shm_load_start;
+                $execution_time = ftime() - $_shm_load_start;
                 if ($execution_time>$max_time) {
                     break;
                 } else {
@@ -382,12 +384,13 @@ class CronUploader extends Extension
                     } else {
                         $added++;
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     try {
                         if ($database->is_transaction_open()) {
                             $database->rollback();
                         }
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
+                        // rollback failed, let's just log things and die
                     }
 
                     $failed++;
@@ -463,30 +466,11 @@ class CronUploader extends Extension
      */
     private function add_image(string $tmpname, string $filename, string $tags): DataUploadEvent
     {
-        assert(file_exists($tmpname));
-
-        $tagArray = Tag::explode($tags);
-        if (count($tagArray) == 0) {
-            $tagArray[] = "tagme";
-        }
-
-        $pathinfo = pathinfo($filename);
-        $metadata = [];
-        $metadata ['filename'] = $pathinfo ['basename'];
-        if (array_key_exists('extension', $pathinfo)) {
-            $metadata ['extension'] = $pathinfo ['extension'];
-        }
-        $metadata ['tags'] = $tagArray;
-        $metadata ['source'] = null;
-        $event = new DataUploadEvent($tmpname, $metadata);
-        send_event($event);
+        $event = add_image($tmpname, $filename, $tags, null);
 
         // Generate info message
         if ($event->image_id == -1) {
-            if (array_key_exists("mime", $event->metadata)) {
-                throw new UploadException("File type not recognised (".$event->metadata["mime"]."). Filename: {$filename}");
-            }
-            throw new UploadException("File type not recognised. Filename: {$filename}");
+            throw new UploadException("File type not recognised (".$event->mime."). Filename: {$filename}");
         } elseif ($event->merged === true) {
             $infomsg = "Post merged. ID: {$event->image_id} - Filename: {$filename}";
         } else {
@@ -499,18 +483,6 @@ class CronUploader extends Extension
 
     private const PARTIAL_DOWNLOAD_EXTENSIONS = ['crdownload','part'];
     private const SKIPPABLE_FILES = ['.ds_store','thumbs.db'];
-    private const SKIPPABLE_DIRECTORIES = ['__macosx'];
-
-    private function is_skippable_dir(string $path): bool
-    {
-        $info = pathinfo($path);
-
-        if (array_key_exists("basename", $info) && in_array(strtolower($info['basename']), self::SKIPPABLE_DIRECTORIES)) {
-            return true;
-        }
-
-        return false;
-    }
 
     private function is_skippable_file(string $path): bool
     {
@@ -527,7 +499,7 @@ class CronUploader extends Extension
         return false;
     }
 
-    private function generate_image_queue(string $root_dir, ?int $limit = null): Generator
+    private function generate_image_queue(): \Generator
     {
         $base = $this->get_queue_dir();
 
@@ -536,17 +508,15 @@ class CronUploader extends Extension
             return;
         }
 
-        $ite = new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS);
-        foreach (new RecursiveIteratorIterator($ite) as $fullpath => $cur) {
+        $ite = new \RecursiveDirectoryIterator($base, \FilesystemIterator::SKIP_DOTS);
+        foreach (new \RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath) && !$this->is_skippable_file($fullpath)) {
-                $pathinfo = pathinfo($fullpath);
-
                 $relativePath = substr($fullpath, strlen($base));
                 $tags = path_to_tags($relativePath);
 
                 yield [
                     0 => $fullpath,
-                    1 => $pathinfo ["basename"],
+                    1 => pathinfo($fullpath, PATHINFO_BASENAME),
                     2 => $tags
                 ];
             }

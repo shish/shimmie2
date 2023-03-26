@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class WikiTheme extends Themelet
 {
     /**
@@ -19,8 +21,7 @@ class WikiTheme extends Themelet
             $nav_page->body = "";
         }
 
-        $tfe = new TextFormattingEvent($nav_page->body);
-        send_event($tfe);
+        $tfe = send_event(new TextFormattingEvent($nav_page->body));
 
         // only the admin can edit the sidebar
         if ($user->can(Permissions::WIKI_ADMIN)) {
@@ -29,10 +30,10 @@ class WikiTheme extends Themelet
 
         // see if title is a category'd tag
         $title_html = html_escape($wiki_page->title);
-        if (class_exists('TagCategories')) {
-            $this->tagcategories = new TagCategories();
-            $tag_category_dict = $this->tagcategories->getKeyedDict();
-            $title_html = $this->tagcategories->getTagHtml($title_html, $tag_category_dict);
+        if (class_exists('Shimmie2\TagCategories')) {
+            $tagcategories = new TagCategories();
+            $tag_category_dict = $tagcategories->getKeyedDict();
+            $title_html = $tagcategories->getTagHtml($title_html, $tag_category_dict);
         }
 
         if (!$wiki_page->exists) {

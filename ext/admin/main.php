@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 /**
  * Sent when the admin page is ready to be added to
  */
@@ -115,7 +117,7 @@ class AdminPage extends Extension
             $key = $event->args[1];
             switch ($cmd) {
                 case "get":
-                    var_dump($cache->get($key));
+                    var_export($cache->get($key));
                     break;
                 case "set":
                     $cache->set($key, $event->args[2], 60);

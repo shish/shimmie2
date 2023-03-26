@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
+use GQLA\Type;
+use GQLA\Field;
+use GQLA\Query;
+
 /**
  * @global UserClass[] $_shm_user_classes
  */
@@ -10,8 +17,10 @@ $_shm_user_classes = [];
 /**
  * Class UserClass
  */
+#[Type(name: "UserClass")]
 class UserClass
 {
+    #[Field]
     public ?string $name = null;
     public ?UserClass $parent = null;
     public array $abilities = [];
@@ -28,6 +37,19 @@ class UserClass
         }
 
         $_shm_user_classes[$name] = $this;
+    }
+
+    #[Field(type: "[Permission!]!")]
+    public function permissions(): array
+    {
+        global $_all_false;
+        $perms = [];
+        foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
+            if ($this->can($v)) {
+                $perms[] = $v;
+            }
+        }
+        return $perms;
     }
 
     /**
@@ -58,7 +80,7 @@ class UserClass
 }
 
 $_all_false = [];
-foreach ((new ReflectionClass('Permissions'))->getConstants() as $k => $v) {
+foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
     $_all_false[$v] = false;
 }
 new UserClass("base", null, $_all_false);
@@ -86,6 +108,7 @@ new UserClass("user", "base", [
     Permissions::CREATE_IMAGE_REPORT => true,
     Permissions::EDIT_IMAGE_RATING => true,
     Permissions::EDIT_FAVOURITES => true,
+    Permissions::CREATE_VOTE => true,
     Permissions::SEND_PM => true,
     Permissions::READ_PM => true,
     Permissions::SET_PRIVATE_IMAGE => true,
@@ -161,6 +184,7 @@ new UserClass("admin", "base", [
     Permissions::EDIT_FEATURE => true,
     Permissions::BULK_EDIT_VOTE => true,
     Permissions::EDIT_OTHER_VOTE => true,
+    Permissions::CREATE_VOTE => true,
     Permissions::VIEW_SYSINTO => true,
 
     Permissions::HELLBANNED => false,

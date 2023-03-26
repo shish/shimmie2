@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
- /*
- * This is used by the image transcoding code when there is an error while transcoding
- */
+/*
+* This is used by the image transcoding code when there is an error while transcoding
+*/
 class ImageTranscodeException extends SCoreException
 {
 }
@@ -166,21 +168,19 @@ class TranscodeImage extends Extension
         global $config;
 
         if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
-            $mime = strtolower($event->mime);
-            if ($mime===MimeType::GIF&&MimeType::is_animated_gif($event->tmpname)) {
+            if ($event->mime === MimeType::GIF&&MimeType::is_animated_gif($event->tmpname)) {
                 return;
             }
 
-            if (in_array($mime, array_values(self::INPUT_MIMES))) {
-                $target_mime = self::get_mapping($mime);
+            if (in_array($event->mime, array_values(self::INPUT_MIMES))) {
+                $target_mime = self::get_mapping($event->mime);
                 if (empty($target_mime)) {
                     return;
                 }
                 try {
-                    $new_image = $this->transcode_image($event->tmpname, $mime, $target_mime);
-                    $event->set_mime($target_mime);
-                    $event->set_tmpname($new_image);
-                } catch (Exception $e) {
+                    $new_image = $this->transcode_image($event->tmpname, $event->mime, $target_mime);
+                    $event->set_tmpname($new_image, $target_mime);
+                } catch (\Exception $e) {
                     log_error("transcode", "Error while performing upload transcode: ".$e->getMessage());
                     // We don't want to interfere with the upload process,
                     // so if something goes wrong the untranscoded image jsut continues
@@ -293,11 +293,11 @@ class TranscodeImage extends Extension
                             $database->commit();
                             $total++;
                             $size_difference += ($before_size - $new_image->filesize);
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                             log_error("transcode", "Error while bulk transcode on item {$image->id} to $mime: ".$e->getMessage());
                             try {
                                 $database->rollback();
-                            } catch (Exception $e) {
+                            } catch (\Exception $e) {
                                 // is this safe? o.o
                             }
                         }

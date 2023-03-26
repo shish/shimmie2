@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class FavoritesTest extends ShimmiePHPUnitTestCase
 {
     public function testFavorites()

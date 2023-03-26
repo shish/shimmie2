@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 require_once "config.php";
 require_once "events/post_title_set_event.php";
 
@@ -79,8 +81,8 @@ class PostTitles extends Extension
     }
     public function onBulkImport(BulkImportEvent $event)
     {
-        if (property_exists($event->fields, "title") && $event->fields->title!=null) {
-            $this->set_title($event->image->id, $event->fields->title);
+        if (array_key_exists("title", $event->fields) && $event->fields['title']!=null) {
+            $this->set_title($event->image->id, $event->fields['title']);
         }
     }
 

@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Shimmie2;
+
 class ImageIOTest extends ShimmiePHPUnitTestCase
 {
     public function testUserStats()
@@ -39,6 +42,6 @@ class ImageIOTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
         $_POST['image_id'] = "$image_id";
         send_event(new PageRequestEvent("image/replace"));
-        $this->assertEquals("redirect", $page->mode);
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
     }
 }

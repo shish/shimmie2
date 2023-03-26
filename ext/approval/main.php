@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 abstract class ApprovalConfig
 {
     public const VERSION = "ext_approval_version";
