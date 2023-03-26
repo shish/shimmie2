@@ -6,5 +6,6 @@
 	box-shadow: none;
 	margin: 0px;
 	padding: 0px;
-	text-align: justify;
+	text-align: left;
+	margin: 0 10px 10px 0;
 }
