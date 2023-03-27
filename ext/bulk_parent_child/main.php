@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shimmie2;
+
 class BulkParentChildConfig
 {
 }
@@ -13,11 +15,6 @@ class BulkParentChild extends Extension
 {
     private const PARENT_CHILD_ACTION_NAME = "bulk_parent_child";
 
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config;
-    }
-
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
         global $user;
@@ -25,13 +22,6 @@ class BulkParentChild extends Extension
         if ($user->can(Permissions::BULK_PARENT_CHILD)) {
             $event->add_action(BulkParentChild::PARENT_CHILD_ACTION_NAME, "Set Parent Child");
         }
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event)
-    {
-        $sb = $event->panel->create_new_block("Bulk Parent Child");
-        $sb->start_table();
-        $sb->end_table();
     }
 
     public function onBulkAction(BulkActionEvent $event)
