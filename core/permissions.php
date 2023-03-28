@@ -118,4 +118,5 @@ abstract class Permissions
     public const BULK_IMPORT = "bulk_import";
     public const BULK_EXPORT = "bulk_export";
     public const BULK_DOWNLOAD = "bulk_download";
+	public const BULK_PARENT_CHILD = "bulk_parent_child";
 }
