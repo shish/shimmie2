@@ -33,7 +33,7 @@ class SourceSetEvent extends Event
     {
         parent::__construct();
         $this->image = $image;
-        $this->source = $source;
+        $this->source = trim($source);
     }
 }
 
