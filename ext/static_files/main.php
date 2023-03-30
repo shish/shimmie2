@@ -28,6 +28,7 @@ class StaticFiles extends Extension
         if ($event->page_matches("robots.txt")) {
             $rbe = send_event(new RobotsBuildingEvent());
             $page->set_mode(PageMode::DATA);
+            $page->set_mime("text/plain");
             $page->set_data(join("\n", $rbe->parts));
         }
 
