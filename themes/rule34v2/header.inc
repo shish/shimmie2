@@ -87,7 +87,7 @@
 	</ul>
 
 	<ul>
-		<li><a href="https://s.zlinkb.com/d.php?z=3832265" target="_blank">[Check out our partners!]</a></li>
+		<li><a href="https://s.zlinkb.com/d.php?z=3832265" target="_blank">Adult games! &#127918;</a></li>
 	</ul>
 	
 </div>
