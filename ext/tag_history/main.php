@@ -51,6 +51,11 @@ class TagHistory extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        $event->add_disallow("tag_history");
+    }
+
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         $event->add_part("

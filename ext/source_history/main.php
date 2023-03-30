@@ -51,6 +51,11 @@ class SourceHistory extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        $event->add_disallow("source_history");
+    }
+
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         $event->add_part("
