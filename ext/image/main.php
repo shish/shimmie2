@@ -196,6 +196,19 @@ class ImageIO extends Extension
         $event->image->delete();
     }
 
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tdelete <post id>\n";
+            print "\t\tdelete a specific post\n\n";
+        }
+        if ($event->cmd == "delete") {
+            $post_id = (int)$event->args[0];
+            $image = Image::by_id($post_id);
+            send_event(new ImageDeletionEvent($image));
+        }
+    }
+
     public function onImageReplace(ImageReplaceEvent $event)
     {
         try {
