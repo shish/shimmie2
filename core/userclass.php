@@ -223,7 +223,7 @@ new UserClass("admin", "base", [
     Permissions::BULK_IMPORT =>true,
     Permissions::BULK_EXPORT =>true,
     Permissions::BULK_DOWNLOAD => true,
-	Permissions::BULK_PARENT_CHILD => true,
+    Permissions::BULK_PARENT_CHILD => true,
 
     Permissions::SET_PRIVATE_IMAGE => true,
     Permissions::SET_OTHERS_PRIVATE_IMAGES => true,
