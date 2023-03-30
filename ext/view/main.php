@@ -94,6 +94,14 @@ class ViewImage extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        // next and prev are just CPU-heavier ways of getting
+        // to the same images that the index shows
+        $event->add_disallow("post/next");
+        $event->add_disallow("post/prev");
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $page, $user;

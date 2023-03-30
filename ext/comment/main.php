@@ -216,6 +216,13 @@ class CommentList extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        // comment lists change all the time, crawlers should
+        // index individual image's comments
+        $event->add_disallow("comment");
+    }
+
     private function onPageRequest_add()
     {
         global $user, $page;

@@ -101,6 +101,14 @@ class Rule34 extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        // robots should only check the canonical site, not mirrors
+        if ($_SERVER['HTTP_HOST'] != "rule34.paheal.net") {
+            $event->add_disallow("");
+        }
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $database, $page, $user;
