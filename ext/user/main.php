@@ -422,7 +422,7 @@ class UserPage extends Extension
         if (!$user->can(Permissions::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (!$config->get_bool("login_signup_enabled")) {
+        if (!$config->get_bool("login_signup_enabled") && !$user->can(Permissions::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
         if (strlen($name) < 1) {
