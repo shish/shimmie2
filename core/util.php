@@ -645,7 +645,7 @@ function _fatal_error(\Exception $e): void
         foreach ($t as $n => $f) {
             $c = $f['class'] ?? '';
             $t = $f['type'] ?? '';
-            $a = implode(", ", array_map("Shimmie2\stringer", $f['args']));
+            $a = implode(", ", array_map("Shimmie2\stringer", $f['args'] ?? []));
             print("$n: {$f['file']}({$f['line']}): {$c}{$t}{$f['function']}({$a})\n");
         }
 
