@@ -9,6 +9,19 @@ use GQLA\Field;
 use GQLA\Query;
 
 /**
+ * placed here until it finds a better home
+ *
+ * something seems to be special about core extensions? (at least
+ * in regards to loading the config from a non-core extension). Maybe
+ * it's just execution ordering. (and I would guess it's core before ext)
+ */
+class HideTagsConfig
+{
+    public const ENABLED = "hide_tags_enabled";
+    public const VERSION = "hide_tags_version";
+}
+
+/**
  * Class Image
  *
  * An object representing an entry in the images table.
@@ -274,6 +287,8 @@ class Image
 
     private static function terms_to_conditions(array $terms): array
     {
+        global $config;
+
         $tag_conditions = [];
         $img_conditions = [];
         $stpen = 0;  // search term parse event number
@@ -289,6 +304,15 @@ class Image
         } elseif (!empty($stpe->querylets)) {
             foreach ($stpe->querylets as $querylet) {
                 $img_conditions[] = new ImgCondition($querylet, true);
+            }
+        }
+
+        if ($config->get_bool(HideTagsConfig::ENABLED)) {
+            if (in_array('show_hidden', $terms)) {
+                $key = array_search('show_hidden', $terms);
+                unset($terms[$key]);
+            } else {
+                array_push($terms, '-hidden');
             }
         }
 
