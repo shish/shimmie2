@@ -85,20 +85,20 @@ class Media extends Extension
     {
         $sb = $event->panel->create_new_block("Media Engines");
 
-//        if (self::imagick_available()) {
-//            try {
-//                $image = new Imagick(realpath('tests/favicon.png'));
-//                $image->clear();
-//                $sb->add_label("ImageMagick detected");
-//            } catch (ImagickException $e) {
-//                $sb->add_label("<b style='color:red'>ImageMagick not detected</b>");
-//            }
-//        } else {
+        //        if (self::imagick_available()) {
+        //            try {
+        //                $image = new Imagick(realpath('tests/favicon.png'));
+        //                $image->clear();
+        //                $sb->add_label("ImageMagick detected");
+        //            } catch (ImagickException $e) {
+        //                $sb->add_label("<b style='color:red'>ImageMagick not detected</b>");
+        //            }
+        //        } else {
         $sb->start_table();
         $sb->add_table_header("Commands");
 
         $sb->add_text_option(MediaConfig::CONVERT_PATH, "convert", true);
-//        }
+        //        }
 
         $sb->add_text_option(MediaConfig::FFMPEG_PATH, "ffmpeg", true);
         $sb->add_text_option(MediaConfig::FFPROBE_PATH, "ffprobe", true);
@@ -202,8 +202,8 @@ class Media extends Extension
 
                 break;
             case MediaEngine::IMAGICK:
-//                if (self::imagick_available()) {
-//                } else {
+                //                if (self::imagick_available()) {
+                //                } else {
                 self::image_resize_convert(
                     $event->input_path,
                     $event->input_mime,
@@ -227,9 +227,9 @@ class Media extends Extension
         }
 
         // TODO: Get output optimization tools working better
-//        if ($config->get_bool("thumb_optim", false)) {
-//            exec("jpegoptim $outname", $output, $ret);
-//        }
+        //        if ($config->get_bool("thumb_optim", false)) {
+        //            exec("jpegoptim $outname", $output, $ret);
+        //        }
     }
 
     public const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio)|(image)|(unknown))$/i";
