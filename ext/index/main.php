@@ -257,5 +257,16 @@ class Index extends Extension
             $seed = date("Ymd");
             $event->order = "RAND($seed)";
         }
+
+        // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
+        if ($event->order == null && $event->img_conditions == [] && $event->tag_conditions == []) {
+            $event->add_tag_condition(new TagCondition($event->term, $event->positive));
+        }
+    }
+
+    public function get_priority(): int
+    {
+        // we want to turn a search term into a TagCondition only if nobody did anything else with that term
+        return 95;
     }
 }
