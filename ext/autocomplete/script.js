@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	var metatags = ['order:id', 'order:width', 'order:height', 'order:filesize', 'order:filename', 'order:favorites'];
 
-	$('[name="search"]').tagit({
+	$('.autocomplete_tags').tagit({
 		singleFieldDelimiter: ' ',
 		beforeTagAdded: function(event, ui) {
 			if(metatags.indexOf(ui.tagLabel) !== -1) {
