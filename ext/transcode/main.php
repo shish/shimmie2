@@ -167,6 +167,18 @@ class TranscodeImage extends Extension
     {
         global $config;
 
+        // this onDataUpload happens earlier (or could happen earlier) than handle_pixel.onDataUpload
+        // it mutates the image such that the incorrect mime type is not checked (checking against
+        // the post-transcode mime type instead). This is to  give user feedback on what the mime type
+        // was before potential transcoding (the original) at the time of upload, and that it failed if not allowed.
+        // does it break bulk image importing? ZIP? SVG? there are a few flows that are untested!
+        if ($config->get_bool(UploadConfig::MIME_CHECK_ENABLED) == true) {
+            $allowed_mimes = $config->get_array(UploadConfig::ALLOWED_MIME_STRINGS);
+            if (!MimeType::matches_array($event->mime, $allowed_mimes)) {
+                throw new UploadException("MIME type not supported: " . $event->mime);
+            }
+        }
+
         if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
             if ($event->mime === MimeType::GIF&&MimeType::is_animated_gif($event->tmpname)) {
                 return;
