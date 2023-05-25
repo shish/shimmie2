@@ -272,26 +272,6 @@ class Image
         return (int)ceil(Image::count_images($tags) / $config->get_int(IndexConfig::IMAGES));
     }
 
-    private static function terms_to_conditions(array $terms): array
-    {
-        $tag_conditions = [];
-        $img_conditions = [];
-        $stpen = 0;  // search term parse event number
-        $order = null;
-
-        /*
-         * Turn a bunch of strings into a bunch of TagCondition
-         * and ImgCondition objects
-         */
-        foreach (array_merge([null], $terms) as $term) {
-            $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
-            $order ??= $stpe->order;
-            $img_conditions = array_merge($img_conditions, $stpe->img_conditions);
-            $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
-        }
-        return [$tag_conditions, $img_conditions, $order];
-    }
-
     /*
      * Accessors & mutators
      */
@@ -822,18 +802,23 @@ class Image
     ): Querylet {
         global $config;
 
-        list($tag_conditions, $img_conditions, $order) = self::terms_to_conditions($terms);
-        $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
+        $tag_conditions = [];
+        $img_conditions = [];
+        $order = null;
 
-        $positive_tag_count = 0;
-        $negative_tag_count = 0;
-        foreach ($tag_conditions as $tq) {
-            if ($tq->positive) {
-                $positive_tag_count++;
-            } else {
-                $negative_tag_count++;
-            }
+        /*
+         * Turn a bunch of strings into a bunch of TagCondition
+         * and ImgCondition objects
+         */
+        $stpen = 0;  // search term parse event number
+        foreach (array_merge([null], $terms) as $term) {
+            $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
+            $order ??= $stpe->order;
+            $img_conditions = array_merge($img_conditions, $stpe->img_conditions);
+            $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
         }
+
+        $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
 
         /*
          * Turn a bunch of Querylet objects into a base query
@@ -848,7 +833,7 @@ class Image
          */
 
         // no tags, do a simple search
-        if ($positive_tag_count === 0 && $negative_tag_count === 0) {
+        if (count($tag_conditions) === 0) {
             $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
         }
 
@@ -856,21 +841,20 @@ class Image
         // and do the offset / limit there, which is 10x faster than fetching
         // all the image_tags and doing the offset / limit on the result.
         elseif (
-            (
-                ($positive_tag_count === 1 && $negative_tag_count === 0)
-                || ($positive_tag_count === 0 && $negative_tag_count === 1)
-            )
+            count($tag_conditions) === 1
             && empty($img_conditions)
             && ($order == "id DESC" || $order == "images.id DESC")
             && !is_null($offset)
             && !is_null($limit)
         ) {
-            $in = $positive_tag_count === 1 ? "IN" : "NOT IN";
+            $tc = $tag_conditions[0];
+            $in = $tc->positive ? "IN" : "NOT IN";
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
-            $tag_array = self::tag_or_wildcard_to_ids($tag_conditions[0]->tag);
+            $tag_array = self::tag_or_wildcard_to_ids($tc->tag);
             if (count($tag_array) == 0) {
-                if ($positive_tag_count == 1) {
+                // if wildcard expanded to nothing, take a shortcut
+                if ($tc->positive) {
                     $query = new Querylet("SELECT images.* FROM images WHERE 1=0");
                 } else {
                     $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
@@ -896,7 +880,7 @@ class Image
             }
         }
 
-        // more than one positive tag, or more than zero negative tags
+        // more than one tag, or more than zero other conditions, or a non-default sort order
         else {
             $positive_tag_id_array = [];
             $positive_wildcard_id_array = [];
