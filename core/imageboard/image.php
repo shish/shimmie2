@@ -283,38 +283,11 @@ class Image
          * Turn a bunch of strings into a bunch of TagCondition
          * and ImgCondition objects
          */
-        $stpe = send_event(new SearchTermParseEvent($stpen++, null, $terms));
-        if ($stpe->order) {
-            $order = $stpe->order;
-        } elseif (!empty($stpe->querylets)) {
-            foreach ($stpe->querylets as $querylet) {
-                $img_conditions[] = new ImgCondition($querylet, true);
-            }
-        }
-
-        foreach ($terms as $term) {
-            $positive = true;
-            if (is_string($term) && !empty($term) && ($term[0] == '-')) {
-                $positive = false;
-                $term = substr($term, 1);
-            }
-            if (strlen($term) === 0) {
-                continue;
-            }
-
+        foreach (array_merge([null], $terms) as $term) {
             $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
-            if ($stpe->order) {
-                $order = $stpe->order;
-            } elseif (!empty($stpe->querylets)) {
-                foreach ($stpe->querylets as $querylet) {
-                    $img_conditions[] = new ImgCondition($querylet, $positive);
-                }
-            } else {
-                // if the whole match is wild, skip this
-                if (str_replace("*", "", $term) != "") {
-                    $tag_conditions[] = new TagCondition($term, $positive);
-                }
-            }
+            $order ??= $stpe->order;
+            $img_conditions = array_merge($img_conditions, $stpe->img_conditions);
+            $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
         }
         return [$tag_conditions, $img_conditions, $order];
     }
