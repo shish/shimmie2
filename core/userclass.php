@@ -217,6 +217,7 @@ new UserClass("admin", "base", [
 
     Permissions::APPROVE_IMAGE => true,
     Permissions::APPROVE_COMMENT => true,
+    Permissions::BYPASS_IMAGE_APPROVAL => true,
 
     Permissions::CRON_RUN =>true,
 

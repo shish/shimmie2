@@ -47,6 +47,7 @@ class ApprovalTheme extends Themelet
     {
         $sb = $event->panel->create_new_block("Approval");
         $sb->add_bool_option(ApprovalConfig::IMAGES, "Posts: ");
+        $sb->add_bool_option(ApprovalConfig::BYPASS, "<br>Enable Bypass (if user has permission): ");
     }
 
     public function display_admin_form()

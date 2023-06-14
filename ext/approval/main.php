@@ -9,6 +9,7 @@ abstract class ApprovalConfig
     public const VERSION = "ext_approval_version";
     public const IMAGES = "approve_images";
     public const COMMENTS = "approve_comments";
+    public const BYPASS = "approval_bypass";
 }
 
 class Approval extends Extension
@@ -22,8 +23,17 @@ class Approval extends Extension
 
         $config->set_default_bool(ApprovalConfig::IMAGES, false);
         $config->set_default_bool(ApprovalConfig::COMMENTS, false);
+        $config->set_default_bool(ApprovalConfig::BYPASS, false);
 
         Image::$bool_props[] = "approved";
+    }
+
+    public function onImageAddition(ImageAdditionEvent $event) {
+        global $user, $config;
+
+        if ($config->get_bool(ApprovalConfig::IMAGES) && $config->get_bool(ApprovalConfig::BYPASS) && $user->can(Permissions::BYPASS_IMAGE_APPROVAL)) {
+            self::approve_image($event->image->id);
+        }
     }
 
     public function onPageRequest(PageRequestEvent $event)
