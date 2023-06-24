@@ -193,7 +193,7 @@ class UserPage extends Extension
                 $this->theme->display_user_classes(
                     $page,
                     $_shm_user_classes,
-                    (new \ReflectionClass('\Shimmie2\Permissions'))->getConstants()
+                    (new \ReflectionClass('\Shimmie2\Permissions'))->getReflectionConstants()
                 );
             } elseif ($event->get_arg(0) == "logout") {
                 $this->page_logout();

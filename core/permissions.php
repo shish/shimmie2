@@ -12,32 +12,40 @@ use GQLA\Enum;
 #[Enum(name: "Permission")]
 abstract class Permissions
 {
-    public const CHANGE_SETTING = "change_setting";  # modify web-level settings, eg the config table
-    public const OVERRIDE_CONFIG = "override_config"; # modify sys-level settings, eg shimmie.conf.php
-    public const CHANGE_USER_SETTING = "change_user_setting"; # modify own user-level settings
-    public const CHANGE_OTHER_USER_SETTING = "change_other_user_setting"; # modify own user-level settings
+    /** modify web-level settings, eg the config table */
+    public const CHANGE_SETTING = "change_setting";
+    /** modify sys-level settings, eg shimmie.conf.php */
+    public const OVERRIDE_CONFIG = "override_config";
+    /** modify own user-level settings */
+    public const CHANGE_USER_SETTING = "change_user_setting";
+    public const CHANGE_OTHER_USER_SETTING = "change_other_user_setting";
 
-    public const BIG_SEARCH = "big_search";      # search for more than 3 tags at once (speed mode only)
+    /** search for more than 3 tags at once (only applies if SPEED_HAX is active) */
+    public const BIG_SEARCH = "big_search";
 
+    /** enable or disable extensions */
     public const MANAGE_EXTENSION_LIST = "manage_extension_list";
     public const MANAGE_ALIAS_LIST = "manage_alias_list";
     public const MANAGE_AUTO_TAG = "manage_auto_tag";
     public const MASS_TAG_EDIT = "mass_tag_edit";
 
-    public const VIEW_IP = "view_ip";         # view IP addresses associated with things
+    /** View which IP address posted a comment / image / etc */
+    public const VIEW_IP = "view_ip";
     public const BAN_IP = "ban_ip";
 
     public const CREATE_USER = "create_user";
     public const CREATE_OTHER_USER = "create_other_user";
     public const EDIT_USER_NAME = "edit_user_name";
     public const EDIT_USER_PASSWORD = "edit_user_password";
-    public const EDIT_USER_INFO = "edit_user_info";  # email address, etc
+    /** Edit metadata about a user (eg email address) */
+    public const EDIT_USER_INFO = "edit_user_info";
     public const EDIT_USER_CLASS = "edit_user_class";
     public const DELETE_USER = "delete_user";
 
     public const CREATE_COMMENT = "create_comment";
     public const DELETE_COMMENT = "delete_comment";
-    public const BYPASS_COMMENT_CHECKS = "bypass_comment_checks";  # spam etc
+    /** Allow a user to make comments even if the spam-detector disapproves */
+    public const BYPASS_COMMENT_CHECKS = "bypass_comment_checks";
 
     public const REPLACE_IMAGE = "replace_image";
     public const CREATE_IMAGE = "create_image";
@@ -59,7 +67,8 @@ abstract class Permissions
     public const VIEW_REGISTRATIONS = "view_registrations";
 
     public const CREATE_IMAGE_REPORT = "create_image_report";
-    public const VIEW_IMAGE_REPORT = "view_image_report";  # deal with reported images
+    /** deal with reported images */
+    public const VIEW_IMAGE_REPORT = "view_image_report";
 
     public const WIKI_ADMIN = "wiki_admin";
     public const EDIT_WIKI_PAGE = "edit_wiki_page";
@@ -84,7 +93,8 @@ abstract class Permissions
     public const HELLBANNED = "hellbanned";
     public const VIEW_HELLBANNED = "view_hellbanned";
 
-    public const PROTECTED = "protected";          # only admins can modify protected users (stops a moderator changing an admin's password)
+    /** only admins can modify protected users (stops a moderator from changing an admin's password) */
+    public const PROTECTED = "protected";
 
     public const EDIT_IMAGE_RATING = "edit_image_rating";
     public const BULK_EDIT_IMAGE_RATING = "bulk_edit_image_rating";

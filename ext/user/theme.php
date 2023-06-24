@@ -346,28 +346,44 @@ class UserPageTheme extends Themelet
         return $output;
     }
 
+    /**
+     * @param Page $page
+     * @param UserClass[] $classes
+     * @param \ReflectionClassConstant[] $permissions
+     */
     public function display_user_classes(Page $page, array $classes, array $permissions): void
     {
-        $table = TABLE();
+        $table = TABLE(["class"=>"zebra"]);
 
         $row = TR();
-        $row->appendChild(TH(""));
+        $row->appendChild(TH("Permission"));
         foreach ($classes as $class) {
             $row->appendChild(TH($class->name));
         }
+        $row->appendChild(TH("Description"));
         $table->appendChild($row);
 
-        foreach ($permissions as $k => $perm) {
+        foreach ($permissions as $perm) {
             $row = TR();
-            $row->appendChild(TH($perm));
+            $row->appendChild(TH($perm->getName()));
+
             foreach ($classes as $class) {
-                if($class->can($perm)) {
+                if($class->can($perm->getValue())) {
                     $cell = TD(["style"=>"color: green;"], "✔");
                 } else {
                     $cell = TD(["style"=>"color: red;"], "✘");
                 }
                 $row->appendChild($cell);
             }
+
+            $doc = $perm->getDocComment();
+            if($doc) {
+                $doc = preg_replace('/\/\*\*|\n\s*\*\s*|\*\//', '', $doc);
+                $row->appendChild(TD(["style"=>"text-align: left;"], $doc));
+            } else {
+                $row->appendChild(TD(""));
+            }
+
             $table->appendChild($row);
         }
 
