@@ -358,7 +358,11 @@ class UserPageTheme extends Themelet
         $row = TR();
         $row->appendChild(TH("Permission"));
         foreach ($classes as $class) {
-            $row->appendChild(TH($class->name));
+            $n = $class->name;
+            if($class->parent) {
+                $n .= " ({$class->parent->name})";
+            }
+            $row->appendChild(TH($n));
         }
         $row->appendChild(TH("Description"));
         $table->appendChild($row);
@@ -368,10 +372,11 @@ class UserPageTheme extends Themelet
             $row->appendChild(TH($perm->getName()));
 
             foreach ($classes as $class) {
+                $opacity = array_key_exists($perm->getValue(), $class->abilities) ? 1 : 0.2;
                 if($class->can($perm->getValue())) {
-                    $cell = TD(["style"=>"color: green;"], "✔");
+                    $cell = TD(["style"=>"color: green; opacity: $opacity;"], "✔");
                 } else {
-                    $cell = TD(["style"=>"color: red;"], "✘");
+                    $cell = TD(["style"=>"color: red; opacity: $opacity;"], "✘");
                 }
                 $row->appendChild($cell);
             }
