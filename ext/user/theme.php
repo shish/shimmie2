@@ -345,4 +345,35 @@ class UserPageTheme extends Themelet
         }
         return $output;
     }
+
+    public function display_user_classes(Page $page, array $classes, array $permissions): void {
+        $table = TABLE();
+
+        $row = TR();
+        $row->appendChild(TH(""));
+        foreach ($classes as $class) {
+            $row->appendChild(TH($class->name));
+        }
+        $table->appendChild($row);
+
+        foreach ($permissions as $k => $perm) {
+            $row = TR();
+            $row->appendChild(TH($perm));
+            foreach ($classes as $class) {
+                if($class->can($perm)) {
+                    $cell = TD(["style"=>"color: green;"], "✔");
+                }
+                else {
+                    $cell = TD(["style"=>"color: red;"], "✘");
+                }
+                $row->appendChild($cell);
+            }
+            $table->appendChild($row);
+        }
+
+        $page->set_title("User Classes");
+        $page->set_heading("User Classes");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Classes", $table, "main", 10));
+    }
 }
