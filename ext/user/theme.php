@@ -346,7 +346,8 @@ class UserPageTheme extends Themelet
         return $output;
     }
 
-    public function display_user_classes(Page $page, array $classes, array $permissions): void {
+    public function display_user_classes(Page $page, array $classes, array $permissions): void
+    {
         $table = TABLE();
 
         $row = TR();
@@ -362,8 +363,7 @@ class UserPageTheme extends Themelet
             foreach ($classes as $class) {
                 if($class->can($perm)) {
                     $cell = TD(["style"=>"color: green;"], "✔");
-                }
-                else {
+                } else {
                     $cell = TD(["style"=>"color: red;"], "✘");
                 }
                 $row->appendChild($cell);
