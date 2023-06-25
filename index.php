@@ -46,8 +46,6 @@ _set_up_shimmie_environment();
 $_tracer = new \EventTracer();
 $_tracer->begin("Bootstrap");
 _load_core_files();
-$_shm_timeout = new \Timeout();
-$_shm_timeout->set(((int)ini_get('max_execution_time')) || 30);
 $cache = loadCache(CACHE_DSN);
 $database = new Database(DATABASE_DSN);
 $config = new DatabaseConfig($database);

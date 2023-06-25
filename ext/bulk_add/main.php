@@ -24,10 +24,10 @@ class BulkAdd extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page, $user, $_shm_timeout;
+        global $page, $user;
         if ($event->page_matches("bulk_add")) {
             if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['dir'])) {
-                $_shm_timeout->clear();
+                shm_set_timeout(null);
                 $bae = send_event(new BulkAddEvent($_POST['dir']));
                 foreach ($bae->results as $result) {
                     $this->theme->add_status("Adding files", $result);

@@ -350,7 +350,7 @@ class CronUploader extends Extension
 
         self::$IMPORT_RUNNING = true;
         try {
-            //$_shm_timeout->clear();
+            //shm_set_timeout(null);
 
             $output_subdir = date('Ymd-His', time());
             $image_queue = $this->generate_image_queue();
