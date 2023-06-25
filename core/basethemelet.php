@@ -210,7 +210,7 @@ class BaseThemelet
         }
 
         foreach ($options as $value => $op) {
-            if (isset($selected_options) &&  in_array($value, $selected_options)) {
+            if (in_array($value, $selected_options)) {
                 $output .= "<option value='" . $value . "' selected>" . $op . "</option>";
             } else {
                 $output .= "<option value='" . $value . "' >" . $op . "</option>";
