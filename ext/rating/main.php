@@ -313,7 +313,7 @@ class Ratings extends Extension
             }
         }
 
-        $this->theme->display_form($original_values, self::get_sorted_ratings());
+        $this->theme->display_form($original_values);
     }
 
     public function onAdminAction(AdminActionEvent $event)
@@ -413,6 +413,21 @@ class Ratings extends Extension
             return $a->order <=> $b->order;
         });
         return $ratings;
+    }
+
+    public static function get_ratings_dict(array $ratings=null): array
+    {
+        if (!isset($ratings)) {
+            $ratings = self::get_sorted_ratings();
+        }
+        return array_combine(
+            array_map(function ($o) {
+                return $o->code;
+            }, $ratings),
+            array_map(function ($o) {
+                return $o->name;
+            }, $ratings)
+        );
     }
 
     public static function get_user_class_privs(User $user): array
