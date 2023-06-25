@@ -26,6 +26,15 @@ class Approval extends Extension
         Image::$bool_props[] = "approved";
     }
 
+    public function onImageAddition(ImageAdditionEvent $event)
+    {
+        global $user, $config;
+
+        if ($config->get_bool(ApprovalConfig::IMAGES) && $user->can(Permissions::BYPASS_IMAGE_APPROVAL)) {
+            self::approve_image($event->image->id);
+        }
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
