@@ -683,7 +683,7 @@ class Image
             throw new SCoreException('Tried to set zero tags');
         }
 
-        if (Tag::implode($tags) != $this->get_tag_list()) {
+        if (strtolower(Tag::implode($tags)) != strtolower($this->get_tag_list())) {
             // delete old
             $this->delete_tags_from_image();
 
