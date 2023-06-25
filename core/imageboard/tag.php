@@ -95,7 +95,7 @@ class Tag
     public static function get_or_create_id(string $tag): int
     {
         global $database;
-        if(in_array($tag, self::$tag_id_cache)) {
+        if(array_key_exists($tag, self::$tag_id_cache)) {
             return self::$tag_id_cache[$tag];
         }
 
