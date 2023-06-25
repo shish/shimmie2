@@ -343,6 +343,7 @@ class TagEdit extends Extension
             }
             if($commit) {
                 $database->commit();
+                $database->begin_transaction();
             }
             if ($tracer_enabled) {
                 $_tracer->end();
