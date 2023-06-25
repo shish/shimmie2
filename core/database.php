@@ -152,7 +152,7 @@ class Database
         $this->get_engine()->notify($this->db, $channel, $data);
     }
 
-    public function execute(string $query, array $args = []): PDOStatement
+    public function _execute(string $query, array $args = []): PDOStatement
     {
         try {
             if (is_null($this->db)) {
@@ -174,12 +174,23 @@ class Database
     }
 
     /**
+     * Execute an SQL query with no return
+     */
+    public function execute(string $query, array $args = []): PDOStatement
+    {
+        $_start = ftime();
+        $st = $this->_execute($query, $args);
+        $this->count_time("execute", $_start, $query, $args);
+        return $st;
+    }
+
+    /**
      * Execute an SQL query and return a 2D array.
      */
     public function get_all(string $query, array $args = []): array
     {
         $_start = ftime();
-        $data = $this->execute($query, $args)->fetchAll();
+        $data = $this->_execute($query, $args)->fetchAll();
         $this->count_time("get_all", $_start, $query, $args);
         return $data;
     }
@@ -190,7 +201,7 @@ class Database
     public function get_all_iterable(string $query, array $args = []): PDOStatement
     {
         $_start = ftime();
-        $data = $this->execute($query, $args);
+        $data = $this->_execute($query, $args);
         $this->count_time("get_all_iterable", $_start, $query, $args);
         return $data;
     }
@@ -201,7 +212,7 @@ class Database
     public function get_row(string $query, array $args = []): ?array
     {
         $_start = ftime();
-        $row = $this->execute($query, $args)->fetch();
+        $row = $this->_execute($query, $args)->fetch();
         $this->count_time("get_row", $_start, $query, $args);
         return $row ? $row : null;
     }
@@ -212,7 +223,7 @@ class Database
     public function get_col(string $query, array $args = []): array
     {
         $_start = ftime();
-        $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
+        $res = $this->_execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
         return $res;
     }
@@ -223,7 +234,7 @@ class Database
     public function get_col_iterable(string $query, array $args = []): \Generator
     {
         $_start = ftime();
-        $stmt = $this->execute($query, $args);
+        $stmt = $this->_execute($query, $args);
         $this->count_time("get_col_iterable", $_start, $query, $args);
         foreach ($stmt as $row) {
             yield $row[0];
@@ -236,7 +247,7 @@ class Database
     public function get_pairs(string $query, array $args = []): array
     {
         $_start = ftime();
-        $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_KEY_PAIR);
+        $res = $this->_execute($query, $args)->fetchAll(PDO::FETCH_KEY_PAIR);
         $this->count_time("get_pairs", $_start, $query, $args);
         return $res;
     }
@@ -248,7 +259,7 @@ class Database
     public function get_pairs_iterable(string $query, array $args = []): \Generator
     {
         $_start = ftime();
-        $stmt = $this->execute($query, $args);
+        $stmt = $this->_execute($query, $args);
         $this->count_time("get_pairs_iterable", $_start, $query, $args);
         foreach ($stmt as $row) {
             yield $row[0] => $row[1];
@@ -261,7 +272,7 @@ class Database
     public function get_one(string $query, array $args = [])
     {
         $_start = ftime();
-        $row = $this->execute($query, $args)->fetch();
+        $row = $this->_execute($query, $args)->fetch();
         $this->count_time("get_one", $_start, $query, $args);
         return $row ? $row[0] : null;
     }
@@ -272,7 +283,7 @@ class Database
     public function exists(string $query, array $args = []): bool
     {
         $_start = ftime();
-        $row = $this->execute($query, $args)->fetch();
+        $row = $this->_execute($query, $args)->fetch();
         $this->count_time("exists", $_start, $query, $args);
         if ($row==null) {
             return false;
