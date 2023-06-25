@@ -173,7 +173,6 @@ function stream_file(string $file, int $start, int $end): void
 {
     $fp = fopen($file, 'r');
     try {
-        set_time_limit(0);
         fseek($fp, $start);
         $buffer = 1024 * 1024;
         while (!feof($fp) && ($p = ftell($fp)) <= $end) {

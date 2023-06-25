@@ -178,6 +178,8 @@ class TagHistory extends Extension
 
     protected function process_bulk_revert_request()
     {
+        global $_shm_timeout;
+
         if (isset($_POST['revert_name']) && !empty($_POST['revert_name'])) {
             $revert_name = $_POST['revert_name'];
         } else {
@@ -207,7 +209,7 @@ class TagHistory extends Extension
             $revert_date = null;
         }
 
-        set_time_limit(0); // reverting changes can take a long time, disable php's timelimit if possible.
+        $_shm_timeout->clear(); // reverting changes can take a long time, disable php's timelimit if possible.
 
         // Call the revert function.
         $this->process_revert_all_changes($revert_name, $revert_ip, $revert_date);

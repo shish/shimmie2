@@ -37,7 +37,7 @@ class AdminPage extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $user;
+        global $database, $page, $user, $_shm_timeout;
 
         if ($event->page_matches("admin")) {
             if (!$user->can(Permissions::MANAGE_ADMINTOOLS)) {
@@ -51,7 +51,7 @@ class AdminPage extends Extension
 
                     if ($user->check_auth_token()) {
                         log_info("admin", "Util: $action");
-                        set_time_limit(0);
+                        $_shm_timeout->clear();
                         $database->set_timeout(null);
                         send_event($aae);
                     }

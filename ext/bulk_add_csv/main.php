@@ -11,10 +11,10 @@ class BulkAddCSV extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page, $user;
+        global $page, $user, $_shm_timeout;
         if ($event->page_matches("bulk_add_csv")) {
             if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['csv'])) {
-                set_time_limit(0);
+                $_shm_timeout->clear();
                 $this->add_csv($_POST['csv']);
                 $this->theme->display_upload_results($page);
             }
