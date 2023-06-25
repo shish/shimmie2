@@ -335,23 +335,8 @@ class TagEdit extends Extension
             }
 
             foreach ($images as $image) {
-                // remove the search'ed tags
                 $before = array_map('strtolower', $image->get_tag_array());
-                $after = [];
-                foreach ($before as $tag) {
-                    if (!in_array($tag, $search_set)) {
-                        $after[] = $tag;
-                    }
-                }
-
-                // add the replace'd tags
-                foreach ($replace_set as $tag) {
-                    $after[] = $tag;
-                }
-
-                // replace'd tag may already exist in tag set, so remove dupes to avoid integrity constraint violations.
-                $after = array_unique($after);
-
+                $after = array_merge(array_diff($before, $search_set), $replace_set);
                 $image->set_tags($after);
 
                 $last_id = $image->id;
