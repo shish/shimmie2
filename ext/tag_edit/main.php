@@ -292,7 +292,7 @@ class TagEdit extends Extension
 
     private function mass_tag_edit(string $search, string $replace)
     {
-        global $database;
+        global $database, $tracer_enabled, $_tracer;
 
         $search_set = Tag::explode(strtolower($search), false);
         $replace_set = Tag::explode(strtolower($replace), false);
@@ -317,6 +317,9 @@ class TagEdit extends Extension
 
         $last_id = -1;
         while (true) {
+            if ($tracer_enabled) {
+                $_tracer->begin("Batch starting with $last_id");
+            }
             // make sure we don't look at the same images twice.
             // search returns high-ids first, so we want to look
             // at images with lower IDs than the previous.
@@ -352,6 +355,9 @@ class TagEdit extends Extension
                 $image->set_tags($after);
 
                 $last_id = $image->id;
+            }
+            if ($tracer_enabled) {
+                $_tracer->end();
             }
         }
     }

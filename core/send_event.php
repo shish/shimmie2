@@ -107,7 +107,7 @@ function shm_set_timeout(?int $timeout=null): void
     set_time_limit(is_null($timeout) ? 0 : $timeout);
 }
 
-if(ini_get('max_execution_time')) {
+if (ini_get('max_execution_time')) {
     shm_set_timeout((int)ini_get('max_execution_time') - 3);
 }
 
@@ -139,8 +139,8 @@ function send_event(Event $event): Event
     ksort($my_event_listeners);
 
     foreach ($my_event_listeners as $listener) {
-        if($_shm_timeout && ftime() > $_shm_timeout) {
-            throw new TimeoutException();
+        if ($_shm_timeout && ftime() > $_shm_timeout) {
+            throw new TimeoutException("Timeout while sending $event_name");
         }
         if ($tracer_enabled) {
             $_tracer->begin(get_class($listener));
