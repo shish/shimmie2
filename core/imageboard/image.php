@@ -640,27 +640,15 @@ class Image
     public function delete_tags_from_image(): void
     {
         global $database;
-        if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
-            //mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
-            $database->execute(
-                "
-				UPDATE tags t
-				INNER JOIN image_tags it ON t.id = it.tag_id
-				SET count = count - 1
-				WHERE it.image_id = :id",
-                ["id"=>$this->id]
-            );
-        } else {
-            $database->execute("
-				UPDATE tags
-				SET count = count - 1
-				WHERE id IN (
-					SELECT tag_id
-					FROM image_tags
-					WHERE image_id = :id
-				)
-			", ["id"=>$this->id]);
-        }
+        $database->execute("
+            UPDATE tags
+            SET count = count - 1
+            WHERE id IN (
+                SELECT tag_id
+                FROM image_tags
+                WHERE image_id = :id
+            )
+        ", ["id"=>$this->id]);
         $database->execute("
 			DELETE
 			FROM image_tags
@@ -699,51 +687,23 @@ class Image
             // delete old
             $this->delete_tags_from_image();
 
-            $written_tags = [];
-
             // insert each new tags
             foreach ($tags as $tag) {
-                $id = $database->get_one(
-                    "
-						SELECT id
-						FROM tags
-						WHERE LOWER(tag) = LOWER(:tag)
-					",
-                    ["tag"=>$tag]
-                );
-                if (empty($id)) {
-                    // a new tag
-                    $database->execute(
-                        "INSERT INTO tags(tag) VALUES (:tag)",
-                        ["tag"=>$tag]
-                    );
-                    $database->execute(
-                        "INSERT INTO image_tags(image_id, tag_id)
-							VALUES(:id, (SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)))",
-                        ["id"=>$this->id, "tag"=>$tag]
-                    );
-                } else {
-                    // check if tag has already been written
-                    if (in_array($id, $written_tags)) {
-                        continue;
-                    }
-
-                    $database->execute("
-                        INSERT INTO image_tags(image_id, tag_id)
-                        VALUES(:iid, :tid)
-                    ", ["iid"=>$this->id, "tid"=>$id]);
-
-                    $written_tags[] = $id;
-                }
-                $database->execute(
-                    "
-						UPDATE tags
-						SET count = count + 1
-						WHERE LOWER(tag) = LOWER(:tag)
-					",
-                    ["tag"=>$tag]
-                );
+                $id = Tag::get_or_create_id($tag);
+                $database->execute("
+                    INSERT INTO image_tags(image_id, tag_id)
+                    VALUES(:iid, :tid)
+                ", ["iid"=>$this->id, "tid"=>$id]);
             }
+            $database->execute("
+                UPDATE tags
+                SET count = count + 1
+                WHERE id IN (
+                    SELECT tag_id
+                    FROM image_tags
+                    WHERE image_id = :id
+                )
+            ", ["id"=>$this->id]);
 
             log_info("core_image", "Tags for Post #{$this->id} set to: ".Tag::implode($tags));
             $cache->delete("image-{$this->id}-tags");

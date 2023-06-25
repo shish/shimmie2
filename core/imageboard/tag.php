@@ -90,6 +90,35 @@ class TagUsage
  */
 class Tag
 {
+    private static $tag_id_cache = [];
+
+    public static function get_or_create_id(string $tag): int
+    {
+        global $database;
+        if(in_array($tag, self::$tag_id_cache)) {
+            return self::$tag_id_cache[$tag];
+        }
+
+        $id = $database->get_one(
+            "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
+            ["tag"=>$tag]
+        );
+        if (empty($id)) {
+            // a new tag
+            $database->execute(
+                "INSERT INTO tags(tag) VALUES (:tag)",
+                ["tag"=>$tag]
+            );
+            $id = $database->get_one(
+                "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
+                ["tag"=>$tag]
+            );
+        }
+
+        self::$tag_id_cache[$tag] = $id;
+        return $id;
+    }
+
     public static function implode(array $tags): string
     {
         sort($tags);
