@@ -626,12 +626,12 @@ class CommentList extends Extension
         if ($user->is_anonymous()) {
             $page->add_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
         }
-        $database->execute(
-            "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
-                "VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
+        $cid = $database->get_one(
+            "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment)
+            VALUES(:image_id, :user_id, :remote_addr, now(), :comment)
+            RETURNING id",
             ["image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>get_real_ip(), "comment"=>$comment]
         );
-        $cid = $database->get_last_insert_id('comments_id_seq');
         $snippet = substr($comment, 0, 100);
         $snippet = str_replace("\n", " ", $snippet);
         $snippet = str_replace("\r", " ", $snippet);

@@ -316,16 +316,16 @@ class Forum extends Extension
         $sticky = !empty($_POST["sticky"]);
 
         global $database;
-        $database->execute(
+        $threadID = $database->get_one(
             "
 				INSERT INTO forum_threads
 				(title, sticky, user_id, date, uptodate)
 				VALUES
-				(:title, :sticky, :user_id, now(), now())",
+				(:title, :sticky, :user_id, now(), now())
+                RETURNING id
+            ",
             ['title'=>$title, 'sticky'=>$sticky, 'user_id'=>$user->id]
         );
-
-        $threadID = $database->get_last_insert_id("forum_threads_id_seq");
 
         log_info("forum", "Thread {$threadID} created by {$user->name}");
 
@@ -342,12 +342,11 @@ class Forum extends Extension
         $message = substr($message, 0, $max_characters);
 
         global $database;
-        $database->execute("
+        $postID = $database->get_one("
 			INSERT INTO forum_posts (thread_id, user_id, date, message)
 			VALUES (:thread_id, :user_id, now(), :message)
+            RETURNING id
 		", ['thread_id'=>$threadID, 'user_id'=>$userID, 'message'=>$message]);
-
-        $postID = $database->get_last_insert_id("forum_posts_id_seq");
 
         log_info("forum", "Post {$postID} created by {$user->name}");
 

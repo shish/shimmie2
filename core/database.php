@@ -281,20 +281,6 @@ class Database
     }
 
     /**
-     * Get the ID of the last inserted row.
-     */
-    public function get_last_insert_id(string $seq): int
-    {
-        if ($this->get_engine()->id == DatabaseDriverID::PGSQL) {
-            $id = $this->db->lastInsertId($seq);
-        } else {
-            $id = $this->db->lastInsertId();
-        }
-        assert(is_numeric($id));
-        return (int)$id;
-    }
-
-    /**
      * Create a table from pseudo-SQL.
      */
     public function create_table(string $name, string $data): void

@@ -65,11 +65,12 @@ class Blocks extends Extension
         if ($event->page_matches("blocks") && $user->can(Permissions::MANAGE_BLOCKS)) {
             if ($event->get_arg(0) == "add") {
                 if ($user->check_auth_token()) {
-                    $database->execute("
+                    $blockID = $database->get_one("
 						INSERT INTO blocks (pages, title, area, priority, content)
 						VALUES (:pages, :title, :area, :priority, :content)
+                        RETURNING id
 					", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content']]);
-                    log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
+                    log_info("blocks", "Added Block #$blockID (".$_POST['title'].")");
                     $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("blocks/list"));

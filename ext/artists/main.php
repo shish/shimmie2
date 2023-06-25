@@ -753,11 +753,11 @@ class Artists extends Extension
     private function save_new_artist(string $name, string $notes): int
     {
         global $database, $user;
-        $database->execute("
+        return $database->get_one("
             INSERT INTO artists (user_id, name, notes, created, updated)
             VALUES (:user_id, :name, :notes, now(), now())
+            RETURNING id
         ", ['user_id'=>$user->id, 'name'=>$name, 'notes'=>$notes]);
-        return $database->get_last_insert_id('artists_id_seq');
     }
 
     private function artist_exists(string $name): bool

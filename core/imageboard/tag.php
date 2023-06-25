@@ -105,12 +105,8 @@ class Tag
         );
         if (empty($id)) {
             // a new tag
-            $database->execute(
-                "INSERT INTO tags(tag) VALUES (:tag)",
-                ["tag"=>$tag]
-            );
             $id = $database->get_one(
-                "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
+                "INSERT INTO tags(tag) VALUES (:tag) RETURNING id",
                 ["tag"=>$tag]
             );
         }

@@ -614,11 +614,12 @@ class UserPage extends Extension
         $need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
         $class = $need_admin ? 'admin' : 'user';
 
-        $database->execute(
-            "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
+        $uid = $database->get_one(
+            "INSERT INTO users (name, pass, joindate, email, class)
+            VALUES (:username, :hash, now(), :email, :class)
+            RETURNING id",
             ["username"=>$event->username, "hash"=>'', "email"=>$email, "class"=>$class]
         );
-        $uid = $database->get_last_insert_id('users_id_seq');
         $new_user = User::by_name($event->username);
         $new_user->set_password($event->password);
 
