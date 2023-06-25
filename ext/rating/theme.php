@@ -27,42 +27,24 @@ class RatingsTheme extends Themelet
         return $html;
     }
 
-    public function display_form(array $current_ratings, array $available_ratings)
+    public function display_form(array $current_ratings)
     {
         global $page;
 
-        $html = make_form(make_link("admin/update_ratings"))."<table class='form'><tr>
-        <th>Change</th><td><select name='rating_old' required='required'><option></option>";
-        foreach ($current_ratings as $key=>$value) {
-            $html .= "<option value='$key'>$value</option>";
-        }
-        $html .= "</select></td></tr>
-        <tr><th>To</th><td><select name='rating_new'  required='required'><option></option>";
-        foreach ($available_ratings as $value) {
-            $html .= "<option value='$value->code'>$value->name</option>";
-        }
-        $html .= "</select></td></tr>
-        <tr><td colspan='2'><input type='submit' value='Update'></td></tr></table>
+        $html = make_form(make_link("admin/update_ratings"))."<table class='form'>";
+
+        $html .= "<tr><th>Change</th><td>".$this->build_selector("rating_old", $current_ratings, "required", true)."</td></tr>";
+        $html .= "<tr><th>To</th><td>".$this->build_selector("rating_new", Ratings::get_ratings_dict(), "required", true)."</td></tr>";
+
+        $html .= "<tr><td colspan='2'><input type='submit' value='Update'></td></tr></table>
         </form>\n";
+
         $page->add_block(new Block("Update Ratings", $html));
     }
 
-    public function get_selection_rater_html(array $selected_options, bool $multiple = false, array $available_options = null): string
+    public function get_selection_rater_html(array $selected_options, bool $multiple = false): string
     {
-        $output = "<select name='rating".($multiple ? "[]' multiple='multiple'" : "' ")." >";
-
-        $options = Ratings::get_sorted_ratings();
-
-        foreach ($options as $option) {
-            if ($available_options!=null && !in_array($option->code, $available_options)) {
-                continue;
-            }
-
-            $output .= "<option value='".$option->code."' ".
-                (in_array($option->code, $selected_options) ? "selected='selected'" : "")
-                .">".$option->name."</option>";
-        }
-        return $output."</select>";
+        return $this->build_selector($multiple ? "rating[]" : "rating", Ratings::get_ratings_dict(), ($multiple ? "multiple" : ""), false, $selected_options);
     }
 
     public function get_help_html(array $ratings): string
@@ -93,7 +75,9 @@ class RatingsTheme extends Themelet
         return $output;
     }
 
-    public function get_user_options(User $user, array $selected_ratings, array $available_ratings): string
+    // This wasn't being used at all
+
+    /* public function get_user_options(User $user, array $selected_ratings, array $available_ratings): string
     {
         $html = "
                 <p>".make_form(make_link("user_admin/default_ratings"))."
@@ -115,5 +99,5 @@ class RatingsTheme extends Themelet
                 </form>
             ";
         return $html;
-    }
+    } */
 }
