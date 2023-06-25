@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function select_blocked_tags() {
-	var blocked_tags = prompt("Enter tags to ignore", Cookies.get("ui-blocked-tags") || "My_Little_Pony");
+	var blocked_tags = prompt("Enter tags to ignore", Cookies.get("ui-blocked-tags") || "AI-generated");
 	if(blocked_tags !== null) {
 		Cookies.set("ui-blocked-tags", blocked_tags.toLowerCase(), {expires: 365});
 		location.reload(true);
