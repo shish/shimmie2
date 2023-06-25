@@ -470,7 +470,7 @@ class Pools extends Extension
             if ($user->can(Permissions::POOLS_ADMIN)) {
                 $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
             } else {
-                $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title WHERE user_id=:id", ["id" => $user->id]);
+                $pools = $database->get_pairs("SELECT id,title FROM pools WHERE user_id=:id ORDER BY title", ["id" => $user->id]);
             }
             if (count($pools) > 0) {
                 $event->add_part($this->theme->get_adder_html($event->image, $pools));
