@@ -201,7 +201,7 @@ class BaseThemelet
      * @param bool $empty_option Whether the first option should be an empty one.
      * @param array $selected_options The values of options that should be pre-selected.
      */
-    protected function build_selector(string $name, array $options, string $attributes, bool $empty_option=false, array $selected_options=[]): string
+    protected function build_selector(string $name, array $options, string $attributes="", bool $empty_option=false, array $selected_options=[]): string
     {
         $output = "<select name='" . $name . "' " . $attributes . ">";
 
@@ -211,9 +211,9 @@ class BaseThemelet
 
         foreach ($options as $value => $op) {
             if (in_array($value, $selected_options)) {
-                $output .= "<option value='" . $value . "' selected>" . $op . "</option>";
+                $output .= "<option value='" . $value . "' selected>" . html_escape($op) . "</option>";
             } else {
-                $output .= "<option value='" . $value . "' >" . $op . "</option>";
+                $output .= "<option value='" . $value . "' >" . html_escape($op) . "</option>";
             }
         }
 
