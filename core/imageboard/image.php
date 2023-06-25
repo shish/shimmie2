@@ -688,13 +688,9 @@ class Image
             $this->delete_tags_from_image();
 
             // insert each new tags
-            foreach ($tags as $tag) {
-                $id = Tag::get_or_create_id($tag);
-                $database->execute("
-                    INSERT INTO image_tags(image_id, tag_id)
-                    VALUES(:iid, :tid)
-                ", ["iid"=>$this->id, "tid"=>$id]);
-            }
+            $ids = array_map(fn ($tag) => Tag::get_or_create_id($tag), $tags);
+            $values = implode(", ", array_map(fn ($id) => "({$this->id}, $id)", $ids));
+            $database->execute("INSERT INTO image_tags(image_id, tag_id) VALUES $values");
             $database->execute("
                 UPDATE tags
                 SET count = count + 1
