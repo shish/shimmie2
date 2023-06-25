@@ -255,14 +255,14 @@ class Notes extends Extension
         $noteWidth  = int_escape($_POST["note_width"]);
         $noteText   = html_escape($_POST["note_text"]);
 
-        $noteID = $database->get_one(
+        $database->execute(
             "
 				INSERT INTO notes (enable, image_id, user_id, user_ip, date, x1, y1, height, width, note)
-				VALUES (:enable, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)
-                RETURNING id
-            ",
+				VALUES (:enable, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)",
             ['enable'=>1, 'image_id'=>$imageID, 'user_id'=>$user_id, 'user_ip'=>get_real_ip(), 'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
         );
+
+        $noteID = $database->get_last_insert_id('notes_id_seq');
 
         log_info("notes", "Note added {$noteID} by {$user->name}");
 
@@ -278,14 +278,14 @@ class Notes extends Extension
         $image_id = int_escape($_POST["image_id"]);
         $user_id = $user->id;
 
-        $resultID = $database->get_one(
+        $database->execute(
             "
 				INSERT INTO note_request (image_id, user_id, date)
-				VALUES (:image_id, :user_id, now())
-                RETURNING id
-            ",
+				VALUES (:image_id, :user_id, now())",
             ['image_id'=>$image_id, 'user_id'=>$user_id]
         );
+
+        $resultID = $database->get_last_insert_id('note_request_id_seq');
 
         log_info("notes", "Note requested {$resultID} by {$user->name}");
     }

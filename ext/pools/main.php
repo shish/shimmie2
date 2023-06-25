@@ -659,14 +659,14 @@ class Pools extends Extension
             throw new PoolCreationException("A pool using this title already exists.");
         }
 
-        $poolID = $database->get_one(
+        $database->execute(
             "
 				INSERT INTO pools (user_id, public, title, description, date)
-				VALUES (:uid, :public, :title, :desc, now())
-                RETURNING id
-            ",
+				VALUES (:uid, :public, :title, :desc, now())",
             ["uid" => $event->user->id, "public" => $event->public, "title" => $event->title, "desc" => $event->description]
         );
+
+        $poolID = $database->get_last_insert_id('pools_id_seq');
         log_info("pools", "Pool {$poolID} created by {$user->name}");
 
         $event->new_id = $poolID;

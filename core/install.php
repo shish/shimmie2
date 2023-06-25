@@ -241,20 +241,11 @@ function create_tables(Database $db)
 		");
         $db->execute("CREATE INDEX users_name_idx ON users(name)", []);
 
-        $anon_id = $db->get_one(
-            "INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class) RETURNING id",
-            ["name" => 'Anonymous', "pass" => null, "class" => 'anonymous']
-        );
-        $db->execute(
-            "INSERT INTO config(name, value) VALUES(:name, :value)",
-            ["name" => 'anon_id', "value" => $anon_id]
-        );
+        $db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", ["name" => 'Anonymous', "pass" => null, "class" => 'anonymous']);
+        $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')]);
 
         if (check_im_version() > 0) {
-            $db->execute(
-                "INSERT INTO config(name, value) VALUES(:name, :value)",
-                ["name" => 'thumb_engine', "value" => 'convert']
-            );
+            $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'thumb_engine', "value" => 'convert']);
         }
 
         $db->create_table("images", "
