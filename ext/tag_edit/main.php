@@ -143,7 +143,7 @@ class TagEdit extends Extension
                 if ($user->can(Permissions::MASS_TAG_EDIT) && isset($_POST['search']) && isset($_POST['replace'])) {
                     $search = $_POST['search'];
                     $replace = $_POST['replace'];
-                    $this->mass_tag_edit($search, $replace);
+                    $this->mass_tag_edit($search, $replace, true);
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("admin"));
                 }
@@ -256,7 +256,7 @@ class TagEdit extends Extension
      */
     public function onAddAlias(AddAliasEvent $event)
     {
-        $this->mass_tag_edit($event->oldtag, $event->newtag);
+        $this->mass_tag_edit($event->oldtag, $event->newtag, false);
     }
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
@@ -290,7 +290,7 @@ class TagEdit extends Extension
         $event->replace('$tags', $tags);
     }
 
-    private function mass_tag_edit(string $search, string $replace)
+    private function mass_tag_edit(string $search, string $replace, bool $commit)
     {
         global $database, $tracer_enabled, $_tracer;
 
@@ -340,6 +340,9 @@ class TagEdit extends Extension
                 $image->set_tags($after);
 
                 $last_id = $image->id;
+            }
+            if($commit) {
+                $database->commit();
             }
             if ($tracer_enabled) {
                 $_tracer->end();
