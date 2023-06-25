@@ -95,7 +95,10 @@ class Tag
     public static function get_or_create_id(string $tag): int
     {
         global $database;
-        if(array_key_exists($tag, self::$tag_id_cache)) {
+
+        // don't cache in unit tests, because the test suite doesn't
+        // reset static variables but it does reset the database
+        if(!UNITTEST && array_key_exists($tag, self::$tag_id_cache)) {
             return self::$tag_id_cache[$tag];
         }
 
