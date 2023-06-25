@@ -124,10 +124,8 @@ class Tag
 
     public static function implode(array $tags): string
     {
-        sort($tags);
-        $tags = implode(' ', $tags);
-
-        return $tags;
+        sort($tags, SORT_FLAG_CASE|SORT_STRING);
+        return implode(' ', $tags);
     }
 
     /**
