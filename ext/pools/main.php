@@ -466,13 +466,13 @@ class Pools extends Extension
     {
         global $config, $database, $user;
         if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && !$user->is_anonymous()) {
+            $pools = [];
             if ($user->can(Permissions::POOLS_ADMIN)) {
-                $rows = $database->get_all("SELECT * FROM pools");
+                $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
             } else {
-                $rows = $database->get_all("SELECT * FROM pools WHERE user_id=:id", ["id" => $user->id]);
+                $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title WHERE user_id=:id", ["id" => $user->id]);
             }
-            if (count($rows) > 0) {
-                $pools = array_map([Pool::class, "makePool"], $rows);
+            if (count($pools) > 0) {
                 $event->add_part($this->theme->get_adder_html($event->image, $pools));
             }
         }
