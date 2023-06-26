@@ -20,13 +20,13 @@ class Blocks extends Extension
 				area VARCHAR(16) NOT NULL,
 				priority INTEGER NOT NULL,
 				content TEXT NOT NULL,
-                userclass TEXT NOT NULL DEFAULT ''
+                userclass TEXT
 			");
             $database->execute("CREATE INDEX blocks_pages_idx ON blocks(pages)", []);
             $this->set_version("ext_blocks_version", 2);
         }
         if ($this->get_version("ext_blocks_version") < 2) {
-            $database->execute("ALTER TABLE blocks ADD COLUMN userclass TEXT NOT NULL DEFAULT ''");
+            $database->execute("ALTER TABLE blocks ADD COLUMN userclass TEXT");
             $this->set_version("ext_blocks_version", 2);
         }
     }
@@ -65,7 +65,7 @@ class Blocks extends Extension
                 $b->is_content = false;
 
                 # Split by comma, trimming whitespaces, and not allowing empty elements.
-                $userclasses = preg_split('/\s*,+\s*/', strtolower($block['userclass']), 0, PREG_SPLIT_NO_EMPTY);
+                $userclasses = preg_split('/\s*,+\s*/', strtolower($block['userclass'] ?? ""), 0, PREG_SPLIT_NO_EMPTY);
                 if (empty($userclasses) || in_array(strtolower($user->class->name), $userclasses)) {
                     $page->add_block($b);
                 }
