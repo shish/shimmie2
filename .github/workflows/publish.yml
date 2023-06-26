@@ -22,3 +22,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         cache: ${{ github.event_name != 'schedule' }}
         buildoptions: "--build-arg RUN_TESTS=false"
+        tag_semver: true
