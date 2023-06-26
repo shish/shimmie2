@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A,B,BR,IMG,emptyHTML};
+use function MicroHTML\{A,B,BR,IMG,OPTION,SELECT,emptyHTML};
 
 /**
  * Class BaseThemelet
@@ -201,22 +201,32 @@ class BaseThemelet
      * @param bool $empty_option Whether the first option should be an empty one.
      * @param array $selected_options The values of options that should be pre-selected.
      */
-    protected function build_selector(string $name, array $options, string $attributes="", bool $empty_option=false, array $selected_options=[]): string
+    protected function build_selector(string $name, array $options, bool $required=false, bool $multiple=false, bool $empty_option=false, array $selected_options=[]): string
     {
-        $output = "<select name='" . $name . "' " . $attributes . ">";
+        $attrs = [];
+        if ($required) {
+            $attrs["required"] = "";
+        }
+        if ($multiple) {
+            $name = $name . "[]";
+            $attrs["multiple"] = "";
+        }
+        $attrs["name"] = $name;
+
+        $s = SELECT($attrs);
 
         if ($empty_option) {
-            $output .= "<option></option>";
+            $s->appendChild(OPTION());
         }
 
         foreach ($options as $value => $op) {
             if (in_array($value, $selected_options)) {
-                $output .= "<option value='" . $value . "' selected>" . html_escape($op) . "</option>";
+                $s->appendChild(OPTION(["value"=>$value, "selected"=>""], $op));
             } else {
-                $output .= "<option value='" . $value . "' >" . html_escape($op) . "</option>";
+                $s->appendChild(OPTION(["value"=>$value], $op));
             }
         }
 
-        return $output . "</select>";
+        return (string)$s;
     }
 }
