@@ -20,13 +20,13 @@ class Blocks extends Extension
 				area VARCHAR(16) NOT NULL,
 				priority INTEGER NOT NULL,
 				content TEXT NOT NULL,
-                userclass TEXT NOT NULL
+                userclass TEXT NOT NULL DEFAULT ''
 			");
             $database->execute("CREATE INDEX blocks_pages_idx ON blocks(pages)", []);
             $this->set_version("ext_blocks_version", 2);
         }
         if ($this->get_version("ext_blocks_version") < 2) {
-            $database->execute("ALTER TABLE blocks ADD COLUMN userclass TEXT NOT NULL");
+            $database->execute("ALTER TABLE blocks ADD COLUMN userclass TEXT NOT NULL DEFAULT ''");
             $this->set_version("ext_blocks_version", 2);
         }
     }
