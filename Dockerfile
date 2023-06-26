@@ -2,7 +2,7 @@ ARG PHP_VERSION=8.2
 
 # "Build" shimmie (composer install - done in its own stage so that we don't
 # need to include all the composer fluff in the final image)
-FROM debian:unstable AS app
+FROM debian:bookworm AS app
 RUN apt update && apt upgrade -y
 RUN apt install -y composer php${PHP_VERSION}-gd php${PHP_VERSION}-xml php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-xdebug imagemagick
 COPY composer.json composer.lock /app/
@@ -13,7 +13,7 @@ COPY . /app/
 # Tests in their own image. Really we should inherit from app and then
 # `composer install` phpunit on top of that; but for some reason
 # `composer install --no-dev && composer install` doesn't install dev
-FROM debian:unstable AS tests
+FROM debian:bookworm AS tests
 RUN apt update && apt upgrade -y
 RUN apt install -y composer php${PHP_VERSION}-gd php${PHP_VERSION}-xml php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-xdebug imagemagick
 COPY composer.json composer.lock /app/
@@ -29,7 +29,7 @@ RUN [ $RUN_TESTS = false ] || (\
     echo '=== Cleaning ===' && rm -rf data)
 
 # Build su-exec so that our final image can be nicer
-FROM debian:unstable AS suexec
+FROM debian:bookworm AS suexec
 RUN apt update && apt upgrade -y
 RUN apt install -y --no-install-recommends gcc libc-dev curl
 RUN curl -k -o /usr/local/bin/su-exec.c https://raw.githubusercontent.com/ncopa/su-exec/master/su-exec.c; \
@@ -38,7 +38,7 @@ RUN curl -k -o /usr/local/bin/su-exec.c https://raw.githubusercontent.com/ncopa/
     chmod 0755 /usr/local/bin/su-exec;
 
 # Actually run shimmie
-FROM debian:unstable
+FROM debian:bookworm
 EXPOSE 8000
 HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
 ENV UID=1000 \
