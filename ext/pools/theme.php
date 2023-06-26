@@ -388,7 +388,7 @@ class PoolsTheme extends Themelet
 
     public function get_bulk_pool_selector(array $options): string
     {
-        return $this->build_selector("bulk_pool_select", $options, "required", true);
+        return $this->build_selector("bulk_pool_select", $options, required: true, empty_option: true);
     }
 
     public function get_bulk_pool_input(array $search_terms): string
