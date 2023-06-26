@@ -19,10 +19,15 @@ class Blocks extends Extension
 				title VARCHAR(128) NOT NULL,
 				area VARCHAR(16) NOT NULL,
 				priority INTEGER NOT NULL,
-				content TEXT NOT NULL
+				content TEXT NOT NULL,
+                userclass TEXT NOT NULL
 			");
             $database->execute("CREATE INDEX blocks_pages_idx ON blocks(pages)", []);
-            $this->set_version("ext_blocks_version", 1);
+            $this->set_version("ext_blocks_version", 2);
+        }
+        if ($this->get_version("ext_blocks_version") < 2) {
+            $database->execute("ALTER TABLE blocks ADD COLUMN userclass TEXT NOT NULL");
+            $this->set_version("ext_blocks_version", 2);
         }
     }
 
@@ -58,7 +63,12 @@ class Blocks extends Extension
             if (strlen($path) < 4000 && fnmatch($block['pages'], $path)) {
                 $b = new Block($block['title'], $block['content'], $block['area'], (int)$block['priority']);
                 $b->is_content = false;
-                $page->add_block($b);
+
+                # Split by comma, trimming whitespaces, and not allowing empty elements.
+                $userclasses = preg_split('/\s*,+\s*/', strtolower($block['userclass']), 0, PREG_SPLIT_NO_EMPTY);
+                if (empty($userclasses) || in_array(strtolower($user->class->name), $userclasses)) {
+                    $page->add_block($b);
+                }
             }
         }
 
@@ -66,9 +76,9 @@ class Blocks extends Extension
             if ($event->get_arg(0) == "add") {
                 if ($user->check_auth_token()) {
                     $database->execute("
-						INSERT INTO blocks (pages, title, area, priority, content)
-						VALUES (:pages, :title, :area, :priority, :content)
-					", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content']]);
+						INSERT INTO blocks (pages, title, area, priority, content, userclass)
+						VALUES (:pages, :title, :area, :priority, :content, :userclass)
+					", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content'], 'userclass'=>$_POST['userclass']]);
                     log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
                     $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);
@@ -85,9 +95,9 @@ class Blocks extends Extension
                         log_info("blocks", "Deleted Block #".$_POST['id']);
                     } else {
                         $database->execute("
-							UPDATE blocks SET pages=:pages, title=:title, area=:area, priority=:priority, content=:content
+							UPDATE blocks SET pages=:pages, title=:title, area=:area, priority=:priority, content=:content, userclass=:userclass
 							WHERE id=:id
-						", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content'], 'id'=>$_POST['id']]);
+						", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content'], 'userclass'=>$_POST['userclass'], 'id'=>$_POST['id']]);
                         log_info("blocks", "Updated Block #".$_POST['id']." (".$_POST['title'].")");
                     }
                     $cache->delete("blocks");

@@ -32,6 +32,8 @@ class BlocksTheme extends Themelet
                     TD(INPUT(["type"=>"text", "name"=>"area", "value"=>$block['area']])),
                     TH("Priority"),
                     TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>$block['priority']])),
+                    TH("User Class"),
+                    TD(INPUT(["type"=>"text", "name"=>"userclass", "value"=>$block['userclass']])),
                     TH("Pages"),
                     TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>$block['pages']])),
                     TH("Delete"),
@@ -39,10 +41,10 @@ class BlocksTheme extends Themelet
                     TD(INPUT(["type"=>"submit", "value"=>"Save"]))
                 ),
                 TR(
-                    TD(["colspan"=>"11"], TEXTAREA(["rows"=>"5", "name"=>"content"], $block['content']))
+                    TD(["colspan"=>"13"], TEXTAREA(["rows"=>"5", "name"=>"content"], $block['content']))
                 ),
                 TR(
-                    TD(["colspan"=>"11"], rawHTML("&nbsp;"))
+                    TD(["colspan"=>"13"], rawHTML("&nbsp;"))
                 ),
             ));
         }
@@ -56,12 +58,14 @@ class BlocksTheme extends Themelet
                 TD(SELECT(["name"=>"area"], OPTION("left"), OPTION("main"))),
                 TH("Priority"),
                 TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>'50'])),
+                TH("User Class"),
+                TD(INPUT(["type"=>"text", "name"=>"userclass", "value"=>""])),
                 TH("Pages"),
                 TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>'post/list*'])),
                 TD(["colspan"=>'3'], INPUT(["type"=>"submit", "value"=>"Add"]))
             ),
             TR(
-                TD(["colspan"=>"11"], TEXTAREA(["rows"=>"5", "name"=>"content"]))
+                TD(["colspan"=>"13"], TEXTAREA(["rows"=>"5", "name"=>"content"]))
             ),
         ));
 
