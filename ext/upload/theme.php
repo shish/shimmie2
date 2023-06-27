@@ -264,7 +264,7 @@ class UploadTheme extends Themelet
             )
         ));
 
-        $html = html_entity_decode((string)emptyHTML(
+        $html = emptyHTML(
             P(
                 "Replacing Post ID $image_id",
                 BR(),
@@ -274,12 +274,12 @@ class UploadTheme extends Themelet
             BR(),
             $form,
             SMALL("(Max file size is $max_kb)"),
-        ));
+        );
 
         $page->set_title("Replace Post");
         $page->set_heading("Replace Post");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Upload Replacement Post", (string)$html, "main", 20));
+        $page->add_block(new Block("Upload Replacement Post", $html, "main", 20));
     }
 
     public function display_upload_status(Page $page, array $image_ids): void
