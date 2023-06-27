@@ -8,5 +8,5 @@ exec /usr/local/bin/su-exec shimmie:shimmie \
   /usr/bin/php \
     -d upload_max_filesize=$UPLOAD_MAX_FILESIZE \
     -d post_max_size=$UPLOAD_MAX_FILESIZE \
-    -S 0.0.0.0:8000 -q \
-    tests/router.php
+    -S 0.0.0.0:8000 \
+    tests/router.php | grep --line-buffered -v " (Accepted|Closing)"
