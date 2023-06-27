@@ -183,7 +183,7 @@ class Ratings extends Extension
     public function onBulkImport(BulkImportEvent $event)
     {
         if (array_key_exists("rating", $event->fields)
-            && $event->fields['rating'] != null
+            && $event->fields['rating'] !== null
             && Ratings::rating_is_valid($event->fields['rating'])) {
             $this->set_rating($event->image->id, $event->fields['rating'], "");
         }

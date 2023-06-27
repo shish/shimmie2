@@ -368,8 +368,8 @@ class Media extends Extension
         global $config;
 
         $ffprobe = $config->get_string(MediaConfig::FFPROBE_PATH);
-        if ($ffprobe == null || $ffprobe == "") {
-            throw new MediaException("ffprobe command configured");
+        if (empty($ffprobe)) {
+            throw new MediaException("ffprobe command not configured");
         }
 
         $args = [
@@ -656,7 +656,7 @@ class Media extends Extension
         $width = $info[0];
         $height = $info[1];
 
-        if ($output_mime == null) {
+        if ($output_mime === null) {
             /* If not specified, output to the same format as the original image */
             switch ($info[2]) {
                 case IMAGETYPE_GIF:

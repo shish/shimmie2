@@ -26,7 +26,7 @@ class BulkActionsTheme extends Themelet
 					</td></tr></table>
 		";
 
-        $hasQuery = ($query != null && $query != "");
+        $hasQuery = !empty($query);
 
         if ($hasQuery) {
             $body .= "</div>";

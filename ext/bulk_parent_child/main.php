@@ -31,7 +31,7 @@ class BulkParentChild extends Extension
             ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)) {
             $prev_id = null;
             foreach ($event->items as $image) {
-                if ($prev_id != null) {
+                if ($prev_id !== null) {
                     send_event(new ImageRelationshipSetEvent($image->id, $prev_id));
                 }
                 $prev_id = $image->id;

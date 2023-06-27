@@ -52,7 +52,7 @@ class CustomViewImageTheme extends ViewImageTheme
         }
 
         if (Extension::is_enabled(RatingsInfo::KEY)) {
-            if ($image->rating == null || $image->rating == "?") {
+            if ($image->rating === null || $image->rating == "?") {
                 $image->rating = "?";
             }
             if (Extension::is_enabled(RatingsInfo::KEY)) {

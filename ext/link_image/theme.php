@@ -61,7 +61,7 @@ class LinkImageTheme extends Themelet
 
     protected function url(string $url, string $content, string $type): string
     {
-        if ($content == null) {
+        if (empty($content)) {
             $content=$url;
         }
 

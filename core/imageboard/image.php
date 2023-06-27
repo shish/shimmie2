@@ -586,7 +586,7 @@ class Image
     {
         $this->mime = $mime;
         $ext = FileExtension::get_for_mime($this->get_mime());
-        assert($ext != null);
+        assert($ext !== null);
         $this->ext = $ext;
     }
 

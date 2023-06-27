@@ -166,7 +166,7 @@ class MimeType
 
                 for ($i = 0; $i < $cc; $i++) {
                     $byte = $comparison[$i];
-                    if ($byte == null) {
+                    if ($byte === null) {
                         continue;
                     } else {
                         $fileByte = $chunk[$i + 1];

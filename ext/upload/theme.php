@@ -190,7 +190,7 @@ class UploadTheme extends Themelet
                 }
                 else {
                     var tags = prompt("Please enter tags", "tagme");
-                    if(tags != "" && tags != null) {
+                    if(tags !== "" && tags !== null) {
                         var link = "'. $link . $delimiter .'url="+location.href+"&tags="+tags;
                         var w = window.open(link, "_blank");
                     }

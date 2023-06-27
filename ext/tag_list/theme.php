@@ -119,7 +119,7 @@ class TagListTheme extends Themelet
             $page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", 9));
         }
 
-        if ($main_html != null) {
+        if ($main_html !== null) {
             $page->add_block(new Block("Tags", $main_html, "left", 10));
         }
     }
