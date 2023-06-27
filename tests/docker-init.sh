@@ -9,4 +9,4 @@ exec gosu shimmie:shimmie \
     -d upload_max_filesize=$UPLOAD_MAX_FILESIZE \
     -d post_max_size=$UPLOAD_MAX_FILESIZE \
     -S 0.0.0.0:8000 \
-    tests/router.php | grep --line-buffered -v " (Accepted|Closing)"
+    tests/router.php 2>&1 | grep --line-buffered -vE " (Accepted|Closing)"
