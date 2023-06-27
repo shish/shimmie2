@@ -357,9 +357,8 @@ class Pools extends Extension
                 case "import":
                     if ($this->have_permission($user, $pool)) {
                         $images = Image::find_images(
-                            0,
-                            $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
-                            Tag::explode($_POST["pool_tag"])
+                            limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
+                            tags: Tag::explode($_POST["pool_tag"])
                         );
                         $this->theme->pool_result($page, $images, $pool);
                     } else {

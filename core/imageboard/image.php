@@ -149,7 +149,7 @@ class Image
         if ($start < 0) {
             $start = 0;
         }
-        if ($limit!=null && $limit < 1) {
+        if ($limit !== null && $limit < 1) {
             $limit = 1;
         }
 
@@ -166,11 +166,11 @@ class Image
     /**
      * Search for an array of images
      *
-     * @param String[] $tags
+     * @param string[] $tags
      * @return Image[]
      */
     #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
-    public static function find_images(?int $offset = 0, ?int $limit = null, array $tags=[]): array
+    public static function find_images(int $offset = 0, ?int $limit = null, array $tags=[]): array
     {
         $result = self::find_images_internal($offset, $limit, $tags);
 
