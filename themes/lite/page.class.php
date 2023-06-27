@@ -116,7 +116,7 @@ EOD;
         $b = $block->body;
         $i = $block->id;
         $html = $b;
-        if ($h != "Paginator"){
+        if ($h != "Paginator") {
             $html = "<section id='{$i}'>";
             if (!is_null($h)) {
                 $html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#{$i}'>{$h}</div>";

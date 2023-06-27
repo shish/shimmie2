@@ -157,7 +157,7 @@ class UploadTheme extends Themelet
         for ($i=0; $i<$upload_count; $i++) {
             $upload_list->appendChild(
                 TR(
-                    TD(["colspan"=>$tl_enabled ? 2 : 4], DIV(["name"=>"canceldata{$i}[]","style"=>"display:inline;margin-right:5px;font-size:15px;visibility:hidden;","onclick"=>"$(\"input[name='data{$i}[]']\")[0].value='';updateTracker();"],"✖"), INPUT(["type"=>"file", "name"=>"data{$i}[]", "accept"=>$accept, "multiple"=>true])),
+                    TD(["colspan"=>$tl_enabled ? 2 : 4], DIV(["name"=>"canceldata{$i}[]","style"=>"display:inline;margin-right:5px;font-size:15px;visibility:hidden;","onclick"=>"$(\"input[name='data{$i}[]']\")[0].value='';updateTracker();"], "✖"), INPUT(["type"=>"file", "name"=>"data{$i}[]", "accept"=>$accept, "multiple"=>true])),
                     $tl_enabled ? TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"url{$i}"])) : emptyHTML(),
                     TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"tags{$i}", "class"=>"autocomplete_tags", "autocomplete"=>"off"])),
                 )
@@ -338,7 +338,7 @@ class UploadTheme extends Themelet
             ["class"=>'mini_upload'],
             $form,
             SMALL("(Max file size is $max_kb)"),
-            SMALL(BR(),"(Max total size is $max_total_kb)"),
+            SMALL(BR(), "(Max total size is $max_total_kb)"),
             NOSCRIPT(BR(), A(["href"=>make_link("upload")], "Larger Form"))
         );
     }

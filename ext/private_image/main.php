@@ -32,7 +32,7 @@ class PrivateImage extends Extension
         global $user;
         $sb = $event->panel->create_new_block("Private Posts");
         $sb->start_table();
-        if ($user->can(Permissions::SET_PRIVATE_IMAGE)){
+        if ($user->can(Permissions::SET_PRIVATE_IMAGE)) {
             $sb->add_bool_option(PrivateImageConfig::USER_SET_DEFAULT, "Mark posts private by default", true);
         }
         $sb->add_bool_option(PrivateImageConfig::USER_VIEW_DEFAULT, "View private posts by default", true);
