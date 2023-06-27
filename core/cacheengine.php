@@ -121,7 +121,8 @@ function loadCache(?string $dsn): CacheInterface
             ], ['prefix' => 'shm:']);
             $c = new \Naroga\RedisCache\Redis($redis);
         }
-    } else {
+    }
+    if(is_null($c)) {
         $c = new \Sabre\Cache\Memory();
     }
     global $_tracer;
