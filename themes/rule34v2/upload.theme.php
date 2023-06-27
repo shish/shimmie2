@@ -67,7 +67,7 @@ class CustomUploadTheme extends UploadTheme
         $page->set_title("Upload");
         $page->set_heading("Upload");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Upload", (string)$html, "main", 20));
+        $page->add_block(new Block("Upload", $html, "main", 20));
         if ($tl_enabled) {
             $page->add_block(new Block("Bookmarklets", (string)$this->h_bookmarklets(), "left", 20));
         }

@@ -106,7 +106,7 @@ class CustomUserPageTheme extends UserPageTheme
         $page->set_title("Create Account");
         $page->set_heading("Create Account");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Signup", (string)$html));
+        $page->add_block(new Block("Signup", $html));
     }
 
     public function display_user_creator()

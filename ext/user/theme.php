@@ -56,7 +56,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(BR());
             $html->appendChild(A(["href"=>$part["link"]], $part["name"]));
         }
-        $b = new Block("User Links", (string)$html, "left", 90);
+        $b = new Block("User Links", $html, "left", 90);
         $b->is_content = false;
         $page->add_block($b);
     }
@@ -110,7 +110,7 @@ class UserPageTheme extends Themelet
         $page->set_title("Create Account");
         $page->set_heading("Create Account");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Signup", (string)$html));
+        $page->add_block(new Block("Signup", $html));
     }
 
     public function display_user_creator()
@@ -187,7 +187,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(SMALL(A(["href"=>make_link("user_admin/create")], "Create Account")));
         }
 
-        $page->add_block(new Block("Login", (string)$html, "left", 90));
+        $page->add_block(new Block("Login", $html, "left", 90));
     }
 
     private function _ip_list(string $name, array $ips): HTMLElement
@@ -220,7 +220,7 @@ class UserPageTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block("IPs", (string)$html, "main", 70));
+        $page->add_block(new Block("IPs", $html, "main", 70));
     }
 
     public function display_user_page(User $duser, $stats)

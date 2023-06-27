@@ -72,6 +72,6 @@ class BlocksTheme extends Themelet
         $page->set_title("Blocks");
         $page->set_heading("Blocks");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Block Editor", (string)$html));
+        $page->add_block(new Block("Block Editor", $html));
     }
 }
