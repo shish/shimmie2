@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{A,B,BR,IMG,emptyHTML};
+
 /**
  * Class BaseThemelet
  *
@@ -46,15 +50,15 @@ class BaseThemelet
      * Generic thumbnail code; returns HTML rather than adding
      * a block since thumbs tend to go inside blocks...
      */
-    public function build_thumb_html(Image $image): string
+    public function build_thumb_html(Image $image): HTMLElement
     {
         global $config;
 
-        $i_id = (int) $image->id;
-        $h_view_link = make_link('post/view/'.$i_id);
-        $h_thumb_link = $image->get_thumb_link();
-        $h_tip = html_escape($image->get_tooltip());
-        $h_tags = html_escape(strtolower($image->get_tag_list()));
+        $id = $image->id;
+        $view_link = make_link('post/view/'.$id);
+        $thumb_link = $image->get_thumb_link();
+        $tip = $image->get_tooltip();
+        $tags = strtolower($image->get_tag_list());
 
         // TODO: Set up a function for fetching what kind of files are currently thumbnailable
         $mimeArr = array_flip([MimeType::MP3]); //List of thumbless filetypes
@@ -75,9 +79,27 @@ class BaseThemelet
             }
         }
 
-        return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link {$custom_classes}' data-tags='$h_tags' data-height='$image->height' data-width='$image->width' data-mime='{$image->get_mime()}' data-post-id='$i_id'>".
-                "<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'>".
-                "</a>\n";
+        return A(
+            [
+                "href"=>$view_link,
+                "class"=>"thumb shm-thumb shm-thumb-link $custom_classes",
+                "data-tags"=>$tags,
+                "data-height"=>$image->height,
+                "data-width"=>$image->width,
+                "data-mime"=>$image->get_mime(),
+                "data-post-id"=>$id,
+            ],
+            IMG(
+                [
+                    "id"=>"thumb_$id",
+                    "title"=>$tip,
+                    "alt"=>$tip,
+                    "height"=>$tsize[1],
+                    "width"=>$tsize[0],
+                    "src"=>$thumb_link,
+                ]
+            )
+        );
     }
 
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false)
@@ -99,26 +121,34 @@ class BaseThemelet
         $page->add_html_header("<link rel='last' href='".make_http(make_link($base.'/'.$total_pages, $query))."'>");
     }
 
-    private function gen_page_link(string $base_url, ?string $query, int $page, string $name): string
+    private function gen_page_link(string $base_url, ?string $query, int $page, string $name): HTMLElement
     {
-        $link = make_link($base_url.'/'.$page, $query);
-        return '<a href="'.$link.'">'.$name.'</a>';
+        return A(["href"=>make_link($base_url.'/'.$page, $query)], $name);
     }
 
-    private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): string
+    private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): HTMLElement
     {
-        $paginator = "";
+        $paginator = $this->gen_page_link($base_url, $query, $page, $name);
         if ($page == $current_page) {
-            $paginator .= "<b>";
-        }
-        $paginator .= $this->gen_page_link($base_url, $query, $page, $name);
-        if ($page == $current_page) {
-            $paginator .= "</b>";
+            $paginator = B($paginator);
         }
         return $paginator;
     }
 
-    private function build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query, bool $show_random): string
+    protected function implode(string|HTMLElement $glue, array $pieces): HTMLElement
+    {
+        $out = emptyHTML();
+        $n = 0;
+        foreach ($pieces as $piece) {
+            if($n++ > 0) {
+                $out->appendChild($glue);
+            }
+            $out->appendChild($piece);
+        }
+        return $out;
+    }
+
+    private function build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query, bool $show_random): HTMLElement
     {
         $next = $current_page + 1;
         $prev = $current_page - 1;
@@ -145,9 +175,20 @@ class BaseThemelet
         foreach (range($start, $end) as $i) {
             $pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, (string)$i);
         }
-        $pages_html = implode(" | ", $pages);
+        $pages_html = $this->implode(" | ", $pages);
 
-        return $first_html.' | '.$prev_html.' | '.$random_html.' | '.$next_html.' | '.$last_html
-                .'<br>&lt;&lt; '.$pages_html.' &gt;&gt;';
+        return emptyHTML(
+            $this->implode(" | ", [
+                $first_html,
+                $prev_html,
+                $random_html,
+                $next_html,
+                $last_html,
+            ]),
+            BR(),
+            '<< ',
+            $pages_html,
+            ' >>'
+        );
     }
 }
