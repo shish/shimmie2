@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Holiday extends Extension
 {
     /** @var HolidayTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

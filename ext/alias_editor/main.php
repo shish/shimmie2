@@ -59,7 +59,7 @@ class AddAliasException extends SCoreException
 class AliasEditor extends Extension
 {
     /** @var AliasEditorTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

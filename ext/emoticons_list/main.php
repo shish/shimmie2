@@ -10,7 +10,7 @@ namespace Shimmie2;
 class EmoticonList extends Extension
 {
     /** @var EmoticonListTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

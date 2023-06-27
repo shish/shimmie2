@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Home extends Extension
 {
     /** @var HomeTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

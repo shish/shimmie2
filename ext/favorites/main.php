@@ -25,7 +25,7 @@ class FavoriteSetEvent extends Event
 class Favorites extends Extension
 {
     /** @var FavoritesTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {

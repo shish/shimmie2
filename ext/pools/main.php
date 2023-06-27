@@ -108,7 +108,7 @@ function _image_to_id(Image $image): int
 class Pools extends Extension
 {
     /** @var PoolsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

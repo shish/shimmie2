@@ -222,7 +222,7 @@ class LogTable extends Table
 class LogDatabase extends Extension
 {
     /** @var LogDatabaseTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

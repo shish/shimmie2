@@ -16,7 +16,7 @@ use function MicroHTML\TD;
 class ViewImage extends Extension
 {
     /** @var ViewImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

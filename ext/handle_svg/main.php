@@ -11,7 +11,7 @@ class SVGFileHandler extends DataHandlerExtension
     protected array $SUPPORTED_MIME = [MimeType::SVG];
 
     /** @var SVGFileHandlerTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

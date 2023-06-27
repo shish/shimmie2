@@ -11,7 +11,7 @@ require_once "mime_type.php";
 class MimeSystem extends Extension
 {
     /** @var MimeSystemTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const VERSION = "ext_mime_version";
 

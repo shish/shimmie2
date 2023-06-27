@@ -20,7 +20,7 @@ if ( // kill these glitched requests immediately
 class Rule34 extends Extension
 {
     /** @var Rule34Theme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {

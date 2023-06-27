@@ -19,7 +19,7 @@ namespace Shimmie2;
 abstract class Extension
 {
     public string $key;
-    protected ?Themelet $theme;
+    protected Themelet $theme;
     public ExtensionInfo $info;
 
     private static array $enabled_extensions = [];
@@ -35,7 +35,7 @@ abstract class Extension
     /**
      * Find the theme object for a given extension.
      */
-    private function get_theme_object(string $base): ?Themelet
+    private function get_theme_object(string $base): Themelet
     {
         $base = str_replace("Shimmie2\\", "", $base);
         $custom = "Shimmie2\Custom{$base}Theme";
@@ -46,7 +46,7 @@ abstract class Extension
         } elseif (class_exists($normal)) {
             return new $normal();
         } else {
-            return null;
+            return new Themelet();
         }
     }
 

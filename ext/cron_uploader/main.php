@@ -9,7 +9,7 @@ require_once "config.php";
 class CronUploader extends Extension
 {
     /** @var CronUploaderTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const NAME = "cron_uploader";
 

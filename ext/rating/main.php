@@ -73,7 +73,7 @@ abstract class RatingsConfig
 class Ratings extends Extension
 {
     /** @var RatingsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const UNRATED_KEYWORDS = ["unknown", "unrated"];
 

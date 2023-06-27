@@ -14,7 +14,7 @@ abstract class PrivateImageConfig
 class PrivateImage extends Extension
 {
     /** @var PrivateImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

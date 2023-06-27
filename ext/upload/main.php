@@ -66,7 +66,7 @@ class UploadException extends SCoreException
 class Upload extends Extension
 {
     /** @var UploadTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
     public bool $is_full;
 
     /**

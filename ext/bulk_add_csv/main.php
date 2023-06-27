@@ -7,7 +7,7 @@ namespace Shimmie2;
 class BulkAddCSV extends Extension
 {
     /** @var BulkAddCSVTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

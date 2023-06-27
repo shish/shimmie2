@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Blotter extends Extension
 {
     /** @var BlotterTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

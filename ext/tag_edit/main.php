@@ -133,7 +133,7 @@ class TagTermParseEvent extends Event
 class TagEdit extends Extension
 {
     /** @var TagEditTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

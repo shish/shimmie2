@@ -33,7 +33,7 @@ class AdminActionEvent extends Event
 class AdminPage extends Extension
 {
     /** @var AdminPageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

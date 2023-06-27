@@ -55,7 +55,7 @@ class BulkActionEvent extends Event
 class BulkActions extends Extension
 {
     /** @var BulkActionsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {

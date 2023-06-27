@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Blocks extends Extension
 {
     /** @var BlocksTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

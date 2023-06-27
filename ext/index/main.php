@@ -10,7 +10,7 @@ require_once "events.php";
 class Index extends Extension
 {
     /** @var IndexTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

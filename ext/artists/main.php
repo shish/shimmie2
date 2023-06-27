@@ -22,7 +22,7 @@ class AuthorSetEvent extends Event
 class Artists extends Extension
 {
     /** @var ArtistsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {

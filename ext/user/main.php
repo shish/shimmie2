@@ -137,7 +137,7 @@ class LoginResult
 class UserPage extends Extension
 {
     /** @var UserPageTheme $theme */
-    public ?Themelet $theme;
+    public Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

@@ -7,7 +7,7 @@ namespace Shimmie2;
 class TagHistory extends Extension
 {
     /** @var TagHistoryTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     // in before tags are actually set, so that "get current tags" works
     public function get_priority(): int

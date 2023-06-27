@@ -113,7 +113,7 @@ abstract class WikiConfig
 class Wiki extends Extension
 {
     /** @var WikiTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

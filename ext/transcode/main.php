@@ -16,7 +16,7 @@ class ImageTranscodeException extends SCoreException
 class TranscodeImage extends Extension
 {
     /** @var TranscodeImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const ACTION_BULK_TRANSCODE = "bulk_transcode";
 

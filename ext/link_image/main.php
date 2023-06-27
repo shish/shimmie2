@@ -7,7 +7,7 @@ namespace Shimmie2;
 class LinkImage extends Extension
 {
     /** @var LinkImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {

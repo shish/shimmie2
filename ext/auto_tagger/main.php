@@ -65,7 +65,7 @@ class AddAutoTagException extends SCoreException
 class AutoTagger extends Extension
 {
     /** @var AutoTaggerTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

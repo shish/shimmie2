@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Notes extends Extension
 {
     /** @var NotesTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

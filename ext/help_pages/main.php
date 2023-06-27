@@ -37,7 +37,7 @@ class HelpPageBuildingEvent extends Event
 class HelpPages extends Extension
 {
     /** @var HelpPagesTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
     public const SEARCH = "search";
     private ?array $pages = null;
 

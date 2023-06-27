@@ -16,7 +16,7 @@ class VideoTranscodeException extends SCoreException
 class TranscodeVideo extends Extension
 {
     /** @var TranscodeVideoTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
 

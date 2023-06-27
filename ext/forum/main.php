@@ -15,7 +15,7 @@ Todo:
 class Forum extends Extension
 {
     /** @var ForumTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

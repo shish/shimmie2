@@ -139,7 +139,7 @@ class PM
 class PrivMsg extends Extension
 {
     /** @var PrivMsgTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

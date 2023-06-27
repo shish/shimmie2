@@ -12,7 +12,7 @@ require_once "config.php";
 class ImageIO extends Extension
 {
     /** @var ImageIOTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const COLLISION_OPTIONS = [
         'Error'=>ImageConfig::COLLISION_ERROR,

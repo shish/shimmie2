@@ -42,7 +42,7 @@ class UserOptionsBuildingEvent extends Event
 class UserConfig extends Extension
 {
     /** @var UserConfigTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const VERSION = "ext_user_config_version";
     public const ENABLE_API_KEYS = "ext_user_config_enable_api_keys";

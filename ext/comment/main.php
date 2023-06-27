@@ -114,7 +114,7 @@ class Comment
 class CommentList extends Extension
 {
     /** @var CommentListTheme $theme */
-    public ?Themelet $theme;
+    public Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

@@ -294,7 +294,7 @@ class SetupBlock extends Block
 class Setup extends Extension
 {
     /** @var SetupTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

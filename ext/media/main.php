@@ -19,7 +19,7 @@ class MediaException extends SCoreException
 class Media extends Extension
 {
     /** @var MediaTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     private const LOSSLESS_FORMATS = [
         MimeType::WEBP_LOSSLESS,

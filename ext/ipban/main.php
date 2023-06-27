@@ -81,7 +81,7 @@ class AddIPBanEvent extends Event
 class IPBan extends Extension
 {
     /** @var IPBanTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function get_priority(): int
     {

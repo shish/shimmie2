@@ -7,7 +7,7 @@ namespace Shimmie2;
 class RegenThumb extends Extension
 {
     /** @var RegenThumbTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
