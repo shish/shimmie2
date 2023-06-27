@@ -270,7 +270,7 @@ function load_balance_url(string $tmpl, string $hash, int $n=0): string
                 $opt_weight = 0;
                 if ($parts_count === 2) {
                     $opt_val = $parts[0];
-                    $opt_weight = $parts[1];
+                    $opt_weight = (int)$parts[1];
                 } elseif ($parts_count === 1) {
                     $opt_val = $parts[0];
                     $opt_weight = 1;
