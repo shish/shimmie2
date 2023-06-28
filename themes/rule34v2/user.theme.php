@@ -28,6 +28,9 @@ class CustomUserPageTheme extends UserPageTheme
         $h_name = html_escape($user->name);
         $lines = [];
         foreach ($parts as $part) {
+            if ($part["name"] == "User Options") {
+                continue;
+            }
             $lines[] = "<a href='{$part["link"]}'>{$part["name"]}</a>";
         }
         if (count($lines) < 6) {
