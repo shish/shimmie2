@@ -103,7 +103,11 @@ $_shm_timeout = null;
 function shm_set_timeout(?int $timeout=null): void
 {
     global $_shm_timeout;
-    $_shm_timeout = ftime() + $timeout;
+    if ($timeout) {
+        $_shm_timeout = ftime() + $timeout;
+    } else {
+        $_shm_timeout = null;
+    }
     set_time_limit(is_null($timeout) ? 0 : $timeout);
 }
 
