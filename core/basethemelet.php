@@ -202,7 +202,7 @@ class BaseThemelet
      * @param bool $empty_option Whether the first option should be an empty one.
      * @param array $selected_options The values of options that should be pre-selected.
      */
-    protected function build_selector(string $name, array $options, bool $required=false, bool $multiple=false, bool $empty_option=false, array $selected_options=[]): string
+    protected function build_selector(string $name, array $options, bool $required=false, bool $multiple=false, bool $empty_option=false, array $selected_options=[]): HTMLElement
     {
         $attrs = [];
         if ($required) {
@@ -228,6 +228,6 @@ class BaseThemelet
             }
         }
 
-        return (string)$s;
+        return $s;
     }
 }

@@ -33,8 +33,8 @@ class RatingsTheme extends Themelet
 
         $html = make_form(make_link("admin/update_ratings"))."<table class='form'>";
 
-        $html .= "<tr><th>Change</th><td>".$this->build_selector("rating_old", $current_ratings, required: true)."</td></tr>";
-        $html .= "<tr><th>To</th><td>".$this->build_selector("rating_new", Ratings::get_ratings_dict(), required: true)."</td></tr>";
+        $html .= "<tr><th>Change</th><td>" . $this->build_selector("rating_old", $current_ratings, required: true) . "</td></tr>";
+        $html .= "<tr><th>To</th><td>" . $this->build_selector("rating_new", Ratings::get_ratings_dict(), required: true) . "</td></tr>";
 
         $html .= "<tr><td colspan='2'><input type='submit' value='Update'></td></tr></table>
         </form>\n";
@@ -44,7 +44,7 @@ class RatingsTheme extends Themelet
 
     public function get_selection_rater_html(array $selected_options, bool $multiple = false): string
     {
-        return $this->build_selector("rating", Ratings::get_ratings_dict(), multiple: $multiple, empty_option: false, selected_options: $selected_options);
+        return (string)$this->build_selector("rating", Ratings::get_ratings_dict(), multiple: $multiple, empty_option: false, selected_options: $selected_options);
     }
 
     public function get_help_html(array $ratings): string
