@@ -41,8 +41,7 @@ class PoolsTheme extends Themelet
     public function get_adder_html(Image $image, array $pools): string
     {
         $selector = $this->build_selector("pool_id", $pools);
-        return "\n" . make_form(make_link("pool/add_post")) . "
-            $selector
+        return "\n" . make_form(make_link("pool/add_post")) . $selector . "
             <input type='hidden' name='image_id' value='{$image->id}'>
             <input type='submit' value='Add Post to Pool'>
             </form>
@@ -388,7 +387,7 @@ class PoolsTheme extends Themelet
 
     public function get_bulk_pool_selector(array $options): string
     {
-        return $this->build_selector("bulk_pool_select", $options, required: true, empty_option: true);
+        return (string)$this->build_selector("bulk_pool_select", $options, required: true, empty_option: true);
     }
 
     public function get_bulk_pool_input(array $search_terms): string
