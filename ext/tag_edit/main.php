@@ -341,7 +341,7 @@ class TagEdit extends Extension
 
                 $last_id = $image->id;
             }
-            if($commit) {
+            if ($commit) {
                 $database->commit();
                 $database->begin_transaction();
             }

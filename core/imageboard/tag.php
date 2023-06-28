@@ -98,7 +98,7 @@ class Tag
 
         // don't cache in unit tests, because the test suite doesn't
         // reset static variables but it does reset the database
-        if(!defined("UNITTEST") && array_key_exists($tag, self::$tag_id_cache)) {
+        if (!defined("UNITTEST") && array_key_exists($tag, self::$tag_id_cache)) {
             return self::$tag_id_cache[$tag];
         }
 

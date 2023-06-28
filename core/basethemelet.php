@@ -140,7 +140,7 @@ class BaseThemelet
         $out = emptyHTML();
         $n = 0;
         foreach ($pieces as $piece) {
-            if($n++ > 0) {
+            if ($n++ > 0) {
                 $out->appendChild($glue);
             }
             $out->appendChild($piece);
