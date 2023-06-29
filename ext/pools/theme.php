@@ -42,14 +42,15 @@ class PoolsTheme extends Themelet
         }
     }
 
-    public function get_adder_html(Image $image, array $pools): string
+    public function get_adder_html(Image $image, array $pools): HTMLElement
     {
-        $selector = $this->build_selector("pool_id", $pools);
-        return "\n" . make_form(make_link("pool/add_post")) . $selector . "
-            <input type='hidden' name='image_id' value='{$image->id}'>
-            <input type='submit' value='Add Post to Pool'>
-            </form>
-        ";
+        $form = make_form_microhtml(make_link("pool/add_post"));
+
+        $form->appendChild($this->build_selector("pool_id", $pools));
+        $form->appendChild(INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image->id]));
+        $form->appendChild(INPUT(["type"=>"submit", "value"=>"Add Post to Pool"]));
+
+        return $form;
     }
 
     /**
