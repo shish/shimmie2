@@ -203,7 +203,7 @@ class Ratings extends Extension
     {
         global $user;
         $event->add_part(
-            $this->theme->get_rater_html(
+            (string)$this->theme->get_rater_html(
                 $event->image->id,
                 $event->image->rating,
                 $user->can(Permissions::EDIT_IMAGE_RATING)
@@ -345,7 +345,7 @@ class Ratings extends Extension
         global $user;
 
         if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-            $event->add_action("bulk_rate", "Set (R)ating", "r", "", $this->theme->get_selection_rater_html(["?"]));
+            $event->add_action("bulk_rate", "Set (R)ating", "r", "", (string)$this->theme->get_selection_rater_html(selected_options: ["?"]));
         }
     }
 

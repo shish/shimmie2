@@ -555,8 +555,9 @@ class Pools extends Extension
 
         $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
-        $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", $this->theme->get_bulk_pool_selector($options));
-        $event->add_action("bulk_pool_add_new", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms));
+        // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.
+        $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", (string)$this->theme->get_bulk_pool_selector($options));
+        $event->add_action("bulk_pool_add_new", "Create Pool", "", "", (string)$this->theme->get_bulk_pool_input($event->search_terms));
     }
 
     public function onBulkAction(BulkActionEvent $event)

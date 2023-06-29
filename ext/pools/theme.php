@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\INPUT;
+
 class PoolsTheme extends Themelet
 {
     /**
@@ -385,14 +389,22 @@ class PoolsTheme extends Themelet
         $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
     }
 
-    public function get_bulk_pool_selector(array $options): string
+    public function get_bulk_pool_selector(array $options): HTMLElement
     {
-        return (string)$this->build_selector("bulk_pool_select", $options, required: true, empty_option: true);
+        return $this->build_selector("bulk_pool_select", $options, required: true, empty_option: true);
     }
 
-    public function get_bulk_pool_input(array $search_terms): string
+    public function get_bulk_pool_input(array $search_terms): HTMLElement
     {
-        return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' value='".(implode(" ", $search_terms))."' />";
+        return INPUT(
+            [
+                "type"=>"text",
+                "name"=>"bulk_pool_new",
+                "placeholder"=>"New Pool",
+                "required"=>"",
+                "value"=>implode(" ", $search_terms)
+            ]
+        );
     }
 
     public function get_help_html(): string

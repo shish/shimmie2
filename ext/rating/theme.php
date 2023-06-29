@@ -4,26 +4,34 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{TR,TH,TD,SPAN,INPUT};
+
 class RatingsTheme extends Themelet
 {
-    public function get_rater_html(int $image_id, string $rating, bool $can_rate): string
+    public function get_selection_rater_html(string $name = "rating", array $ratings = [], array $selected_options = []): HTMLElement
+    {
+        return $this->build_selector($name, !empty($ratings) ? $ratings : Ratings::get_ratings_dict(), required: true, selected_options: $selected_options);
+    }
+
+    public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
     {
         $human_rating = Ratings::rating_to_human($rating);
-        $html = "
-			<tr>
-				<th>Rating</th>
-				<td>
-		".($can_rate ? "
-					<span class='view'>$human_rating</span>
-					<span class='edit'>
-						".$this->get_selection_rater_html([$rating])."
-					</span>
-		" : "
-					$human_rating
-		")."
-				</td>
-			</tr>
-		";
+
+        $html = TR(TH("Rating"));
+
+        if ($can_rate) {
+            $selector = $this->get_selection_rater_html(selected_options: [$rating]);
+
+            $html->appendChild(TD(
+                SPAN(["class"=>"view"], $human_rating),
+                SPAN(["class"=>"edit"], $selector)
+            ));
+        } else {
+            $html->appendChild(TD($human_rating));
+        }
+
         return $html;
     }
 
@@ -33,18 +41,13 @@ class RatingsTheme extends Themelet
 
         $html = make_form(make_link("admin/update_ratings"))."<table class='form'>";
 
-        $html .= "<tr><th>Change</th><td>" . $this->build_selector("rating_old", $current_ratings, required: true) . "</td></tr>";
-        $html .= "<tr><th>To</th><td>" . $this->build_selector("rating_new", Ratings::get_ratings_dict(), required: true) . "</td></tr>";
+        $html .= TR(TH("Change"), TD($this->get_selection_rater_html("rating_old", $current_ratings)));
+        $html .= TR(TH("To"), TD($this->get_selection_rater_html("rating_new")));
 
-        $html .= "<tr><td colspan='2'><input type='submit' value='Update'></td></tr></table>
-        </form>\n";
+        $html .= TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Update"])));
+        $html .= "</table></form>\n";
 
         $page->add_block(new Block("Update Ratings", $html));
-    }
-
-    public function get_selection_rater_html(array $selected_options, bool $multiple = false): string
-    {
-        return (string)$this->build_selector("rating", Ratings::get_ratings_dict(), multiple: $multiple, empty_option: false, selected_options: $selected_options);
     }
 
     public function get_help_html(array $ratings): string
@@ -89,7 +92,7 @@ class RatingsTheme extends Themelet
                         <tbody>
                         <tr><td>This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.</td></tr>
                             <tr><td>
-                                ".$this->get_selection_rater_html($selected_ratings, true, $available_ratings)."
+                                ".$this->build_selector("ratings", selected_options: $selected_ratings, multiple: true, options: $available_ratings)."
                             </td></tr>
                         </tbody>
                         <tfoot>
