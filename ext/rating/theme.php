@@ -76,10 +76,10 @@ class RatingsTheme extends Themelet
             P("Available ratings:")
         );
 
-        $table = TABLE(TR(TH("Name"),TH("Search Term"),TH("Abbreviation")));
+        $table = TABLE(TR(TH("Name"), TH("Search Term"), TH("Abbreviation")));
 
         foreach ($ratings as $rating) {
-            $table->appendChild(TR(TD($rating->name),TD($rating->search_term),TD($rating->code)));
+            $table->appendChild(TR(TD($rating->name), TD($rating->search_term), TD($rating->code)));
         }
 
         $output->appendChild($table);
