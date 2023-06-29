@@ -231,13 +231,8 @@ class Ratings extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Ratings";
-
             $ratings = self::get_sorted_ratings();
-
-            $block->body = $this->theme->get_help_html($ratings);
-            $event->add_block($block);
+            $event->add_block(new Block("Ratings", $this->theme->get_help_html($ratings)));
         }
     }
 
