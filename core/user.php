@@ -7,6 +7,9 @@ namespace Shimmie2;
 use GQLA\Type;
 use GQLA\Field;
 use GQLA\Query;
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\INPUT;
 
 function _new_user(array $row): User
 {
@@ -275,6 +278,13 @@ class User
     {
         $at = $this->get_auth_token();
         return '<input type="hidden" name="auth_token" value="'.$at.'">';
+    }
+
+    // Temporary? This should eventually become get_auth_html (probably with a different name?).
+    public function get_auth_microhtml(): HTMLElement
+    {
+        $at = $this->get_auth_token();
+        return INPUT(["type"=>"hidden", "name"=>"auth_token", "value"=>$at]);
     }
 
     public function check_auth_token(): bool

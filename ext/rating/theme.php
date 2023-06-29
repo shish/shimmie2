@@ -6,7 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TR,TH,TD,SPAN,INPUT};
+use function MicroHTML\emptyHTML;
+use function MicroHTML\{DIV,INPUT,P,PRE,SPAN,TABLE,TD,TH,TR};
 
 class RatingsTheme extends Themelet
 {
@@ -39,42 +40,50 @@ class RatingsTheme extends Themelet
     {
         global $page;
 
-        $html = make_form(make_link("admin/update_ratings"))."<table class='form'>";
+        $html = make_form_microhtml(make_link("admin/update_ratings"));
 
-        $html .= TR(TH("Change"), TD($this->get_selection_rater_html("rating_old", $current_ratings)));
-        $html .= TR(TH("To"), TD($this->get_selection_rater_html("rating_new")));
-
-        $html .= TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Update"])));
-        $html .= "</table></form>\n";
+        $html->appendChild(TABLE(
+            ["class"=>"form"],
+            TR(TH("Change"), TD($this->get_selection_rater_html("rating_old", $current_ratings))),
+            TR(TH("To"), TD($this->get_selection_rater_html("rating_new"))),
+            TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Update"])))
+        ));
 
         $page->add_block(new Block("Update Ratings", $html));
     }
 
-    public function get_help_html(array $ratings): string
+    public function get_help_html(array $ratings): HTMLElement
     {
-        $output =  '<p>Search for posts with one or more possible ratings.</p>
-        <div class="command_example">
-        <pre>rating:'.$ratings[0]->search_term.'</pre>
-        <p>Returns posts with the '.$ratings[0]->name.' rating.</p>
-        </div>
-        <p>Ratings can be abbreviated to a single letter as well</p>
-        <div class="command_example">
-        <pre>rating:'.$ratings[0]->code.'</pre>
-        <p>Returns posts with the '.$ratings[0]->name.' rating.</p>
-        </div>
-        <p>If abbreviations are used, multiple ratings can be searched for.</p>
-        <div class="command_example">
-        <pre>rating:'.$ratings[0]->code.$ratings[1]->code.'</pre>
-        <p>Returns posts with the '.$ratings[0]->name.' or '.$ratings[1]->name.' rating.</p>
-        </div>
-        <p>Available ratings:</p>
-        <table>
-        <tr><th>Name</th><th>Search Term</th><th>Abbreviation</th></tr>
-        ';
+        $output = emptyHTML(
+            P("Search for posts with one or more possible ratings."),
+            DIV(
+                ["class"=>"command_example"],
+                PRE("rating:" . $ratings[0]->search_term),
+                P("Returns posts with the " . $ratings[0]->name . " rating.")
+            ),
+            P("Ratings can be abbreviated to a single letter as well."),
+            DIV(
+                ["class"=>"command_example"],
+                PRE("rating:" . $ratings[0]->code),
+                P("Returns posts with the " . $ratings[0]->name . " rating.")
+            ),
+            P("If abbreviations are used, multiple ratings can be searched for."),
+            DIV(
+                ["class"=>"command_example"],
+                PRE("rating:" . $ratings[0]->code . $ratings[1]->code),
+                P("Returns posts with the " . $ratings[0]->name . " or " . $ratings[1]->name . " rating.")
+            ),
+            P("Available ratings:")
+        );
+
+        $table = TABLE(TR(TH("Name"),TH("Search Term"),TH("Abbreviation")));
+
         foreach ($ratings as $rating) {
-            $output .= "<tr><td>{$rating->name}</td><td>{$rating->search_term}</td><td>{$rating->code}</td></tr>";
+            $table->appendChild(TR(TD($rating->name),TD($rating->search_term),TD($rating->code)));
         }
-        $output .= "</table>";
+
+        $output->appendChild($table);
+
         return $output;
     }
 

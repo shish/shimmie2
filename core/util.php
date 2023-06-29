@@ -754,6 +754,30 @@ function make_form(string $target, string $method="POST", bool $multipart=false,
     return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
 }
 
+// Temporary? This should eventually become make_form.
+function make_form_microhtml(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit=""): HTMLElement
+{
+    global $user;
+
+    if ($method == "GET") {
+        $extra_inputs = INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]);
+        $target = make_link($target);
+    } else {
+        $extra_inputs = $user->get_auth_microhtml();
+    }
+
+    $args = ["action"=>$target, "method"=>$method];
+
+    if ($multipart) {
+        $args["enctype"] = "multipart/form-data";
+    }
+    if ($onsubmit) {
+        $args["onsubmit"] = $onsubmit;
+    }
+
+    return FORM($args, $extra_inputs);
+}
+
 function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit=""): HTMLElement
 {
     global $user;
