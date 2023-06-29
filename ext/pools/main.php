@@ -473,7 +473,7 @@ class Pools extends Extension
                 $pools = $database->get_pairs("SELECT id,title FROM pools WHERE user_id=:id ORDER BY title", ["id" => $user->id]);
             }
             if (count($pools) > 0) {
-                $event->add_part($this->theme->get_adder_html($event->image, $pools));
+                $event->add_part((string)$this->theme->get_adder_html($event->image, $pools));
             }
         }
     }
