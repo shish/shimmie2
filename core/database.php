@@ -43,12 +43,15 @@ class Database
         $this->dsn = $dsn;
     }
 
-    private function connect_db(): void
+    private function get_db(): PDO
     {
-        $this->db = new PDO($this->dsn);
-        $this->connect_engine();
-        $this->get_engine()->init($this->db);
-        $this->begin_transaction();
+        if(is_null($this->db)) {
+            $this->db = new PDO($this->dsn);
+            $this->connect_engine();
+            $this->get_engine()->init($this->db);
+            $this->begin_transaction();
+        }
+        return $this->db;
     }
 
     private function connect_engine(): void
@@ -76,7 +79,7 @@ class Database
     public function begin_transaction(): void
     {
         if ($this->is_transaction_open() === false) {
-            $this->db->beginTransaction();
+            $this->get_db()->beginTransaction();
         }
     }
 
@@ -88,7 +91,7 @@ class Database
     public function commit(): bool
     {
         if ($this->is_transaction_open()) {
-            return $this->db->commit();
+            return $this->get_db()->commit();
         } else {
             throw new SCoreException("Unable to call commit() as there is no transaction currently open.");
         }
@@ -97,7 +100,7 @@ class Database
     public function rollback(): bool
     {
         if ($this->is_transaction_open()) {
-            return $this->db->rollback();
+            return $this->get_db()->rollback();
         } else {
             throw new SCoreException("Unable to call rollback() as there is no transaction currently open.");
         }
@@ -123,7 +126,7 @@ class Database
 
     public function get_version(): string
     {
-        return $this->get_engine()->get_version($this->db);
+        return $this->get_engine()->get_version($this->get_db());
     }
 
     private function count_time(string $method, float $start, string $query, ?array $args): void
@@ -144,21 +147,18 @@ class Database
 
     public function set_timeout(?int $time): void
     {
-        $this->get_engine()->set_timeout($this->db, $time);
+        $this->get_engine()->set_timeout($this->get_db(), $time);
     }
 
     public function notify(string $channel, ?string $data=null): void
     {
-        $this->get_engine()->notify($this->db, $channel, $data);
+        $this->get_engine()->notify($this->get_db(), $channel, $data);
     }
 
     public function _execute(string $query, array $args = []): PDOStatement
     {
         try {
-            if (is_null($this->db)) {
-                $this->connect_db();
-            }
-            $ret = $this->db->execute(
+            $ret = $this->get_db()->execute(
                 "-- " . str_replace("%2F", "/", urlencode($_GET['q'] ?? '')). "\n" .
                 $query,
                 $args
@@ -297,9 +297,9 @@ class Database
     public function get_last_insert_id(string $seq): int
     {
         if ($this->get_engine()->id == DatabaseDriverID::PGSQL) {
-            $id = $this->db->lastInsertId($seq);
+            $id = $this->get_db()->lastInsertId($seq);
         } else {
-            $id = $this->db->lastInsertId();
+            $id = $this->get_db()->lastInsertId();
         }
         assert(is_numeric($id));
         return (int)$id;
@@ -324,10 +324,6 @@ class Database
      */
     public function count_tables(): int
     {
-        if (is_null($this->db) || is_null($this->engine)) {
-            $this->connect_db();
-        }
-
         if ($this->get_engine()->id === DatabaseDriverID::MYSQL) {
             return count(
                 $this->get_all("SHOW TABLES")
@@ -347,10 +343,7 @@ class Database
 
     public function raw_db(): PDO
     {
-        if (is_null($this->db)) {
-            $this->connect_db();
-        }
-        return $this->db;
+        return $this->get_db();
     }
 
     public function standardise_boolean(string $table, string $column, bool $include_postgres=false): void
