@@ -80,6 +80,12 @@ class BasePage
      */
     public function set_filename(string $filename, string $disposition = "attachment"): void
     {
+        $max_len = 250;
+        if(strlen($filename) > $max_len) {
+            // remove extension, truncate filename, apply extension
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $filename = substr($filename, 0, $max_len - strlen($ext) - 1) . '.' . $ext;
+        }
         $this->filename = $filename;
         $this->disposition = $disposition;
     }
