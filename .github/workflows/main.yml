@@ -22,5 +22,5 @@ jobs:
           git fetch --unshallow
           git checkout main
           git pull
-          git merge master -m "Auto-merge master to main"
+          git merge --ff origin/master -m "Auto-merge master to main"
           git push
