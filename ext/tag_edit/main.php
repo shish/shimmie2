@@ -337,8 +337,7 @@ class TagEdit extends Extension
             foreach ($images as $image) {
                 $before = array_map('strtolower', $image->get_tag_array());
                 $after = array_merge(array_diff($before, $search_set), $replace_set);
-                $image->set_tags($after);
-
+                send_event(new TagSetEvent($image, $after));
                 $last_id = $image->id;
             }
             if ($commit) {
@@ -371,7 +370,7 @@ class TagEdit extends Extension
             }
 
             foreach ($images as $image) {
-                $image->set_source($source);
+                send_event(new SourceSetEvent($image, $source));
                 $last_id = $image->id;
             }
         }
