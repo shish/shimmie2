@@ -3,7 +3,7 @@ name: Publish
 on:
   workflow_run:
     workflows: Tests
-    branches: master
+    branches: main
     types: completed
   workflow_dispatch:
   push:
