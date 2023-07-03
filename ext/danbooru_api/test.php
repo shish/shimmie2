@@ -15,6 +15,7 @@ class DanbooruApiTest extends ShimmiePHPUnitTestCase
         $this->get_page("api/danbooru/find_posts");
         $this->get_page("api/danbooru/find_posts", ["id"=>$image_id]);
         $this->get_page("api/danbooru/find_posts", ["md5"=>"17fc89f372ed3636e28bd25cc7f3bac1"]);
+        $this->get_page("api/danbooru/find_posts", ["tags"=>"*"]);
 
         $this->get_page("api/danbooru/find_tags");
         $this->get_page("api/danbooru/find_tags", ["id"=>1]);
