@@ -6,6 +6,21 @@ namespace Shimmie2;
 
 class CustomTagEditTheme extends TagEditTheme
 {
+    public function display_mass_editor()
+    {
+        global $page;
+        $html = "
+		".make_form(make_link("tag_edit/replace"))."
+			<table class='form'>
+				<tr><th>Search</th><td><input type='text' name='search' autocomplete='off'></tr>
+				<tr><th>Replace</th><td><input type='text' name='replace' autocomplete='off'></td></tr>
+				<tr><td colspan='2'><input type='submit' value='Replace'></td></tr>
+			</table>
+		</form>
+		";
+        $page->add_block(new Block("Mass Tag Edit", $html));
+    }
+
     public function get_tag_editor_html(Image $image): string
     {
         $h_tags = html_escape($image->get_tag_list());
