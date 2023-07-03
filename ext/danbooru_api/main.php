@@ -195,6 +195,10 @@ class DanbooruApi extends Extension
             }
 
             $tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : [];
+            // danbooru API clients often set tags=*
+            $tags = array_filter($tags, static function ($element) {
+                return $element !== "*";
+            });
             $count = Image::count_images($tags);
             $results = Image::find_images(max($start, 0), min($limit, 100), $tags);
         }
