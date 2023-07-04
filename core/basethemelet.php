@@ -191,43 +191,4 @@ class BaseThemelet
             ' >>'
         );
     }
-
-    /**
-     * Generates a <select> HTML template and sets up the given options.
-     *
-     * @param string $name The name attribute of <select>.
-     * @param array $options An array of pairs of parameters for <option> tags. First one is value, second one is text. Example: ('optionA', 'Choose Option A').
-     * @param bool $required Wether the <select> element is required.
-     * @param bool $multiple Wether the <select> element is multiple-choice.
-     * @param bool $empty_option Whether the first option should be an empty one.
-     * @param array $selected_options The values of options that should be pre-selected.
-     */
-    protected function build_selector(string $name, array $options, bool $required=false, bool $multiple=false, bool $empty_option=false, array $selected_options=[]): HTMLElement
-    {
-        $attrs = [];
-        if ($required) {
-            $attrs["required"] = "";
-        }
-        if ($multiple) {
-            $name = $name . "[]";
-            $attrs["multiple"] = "";
-        }
-        $attrs["name"] = $name;
-
-        $s = SELECT($attrs);
-
-        if ($empty_option) {
-            $s->appendChild(OPTION());
-        }
-
-        foreach ($options as $value => $op) {
-            if (in_array($value, $selected_options)) {
-                $s->appendChild(OPTION(["value"=>$value, "selected"=>""], $op));
-            } else {
-                $s->appendChild(OPTION(["value"=>$value], $op));
-            }
-        }
-
-        return $s;
-    }
 }

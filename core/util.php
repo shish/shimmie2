@@ -11,8 +11,10 @@ use function MicroHTML\rawHTML;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
 use function MicroHTML\DIV;
+use function MicroHTML\OPTION;
 use function MicroHTML\PRE;
 use function MicroHTML\P;
+use function MicroHTML\SELECT;
 use function MicroHTML\TABLE;
 use function MicroHTML\THEAD;
 use function MicroHTML\TFOOT;
@@ -754,30 +756,6 @@ function make_form(string $target, string $method="POST", bool $multipart=false,
     return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
 }
 
-// Temporary? This should eventually become make_form.
-function make_form_microhtml(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit=""): HTMLElement
-{
-    global $user;
-
-    if ($method == "GET") {
-        $extra_inputs = INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]);
-        $target = make_link($target);
-    } else {
-        $extra_inputs = $user->get_auth_microhtml();
-    }
-
-    $args = ["action"=>$target, "method"=>$method];
-
-    if ($multipart) {
-        $args["enctype"] = "multipart/form-data";
-    }
-    if ($onsubmit) {
-        $args["onsubmit"] = $onsubmit;
-    }
-
-    return FORM($args, $extra_inputs);
-}
-
 function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit=""): HTMLElement
 {
     global $user;
@@ -799,7 +777,7 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     return FORM(
         $attrs,
         INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]),
-        $method == "GET" ? "" : rawHTML($user->get_auth_html())
+        $method == "GET" ? "" : $user->get_auth_microhtml()
     );
 }
 
@@ -841,6 +819,53 @@ function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
             )
         )
     );
+}
+
+/**
+ * Generates a <select> element and sets up the given options.
+ *
+ * @param string $name The name attribute of <select>.
+ * @param array $options An array of pairs of parameters for <option> tags. First one is value, second one is text. Example: ('optionA', 'Choose Option A').
+ * @param array $selected_options The values of options that should be pre-selected.
+ * @param bool $required Wether the <select> element is required.
+ * @param bool $multiple Wether the <select> element is multiple-choice.
+ * @param bool $empty_option Whether the first option should be an empty one.
+ */
+function SHM_SELECT(string $name, array $options, array $selected_options=[], bool $required=false, bool $multiple=false, bool $empty_option=false): HTMLElement
+{
+    $attrs = [];
+
+    if ($required) {
+        $attrs["required"] = "";
+    }
+    if ($multiple) {
+        if (!str_ends_with($name, "[]")) {
+            $name = $name . "[]";
+        }
+        $attrs["multiple"] = "";
+    }
+
+    $attrs["name"] = $name;
+
+    $_options = [];
+    if ($empty_option) {
+        $_options[] = OPTION();
+    }
+
+    foreach ($options as $value => $text) {
+        $_options[] = SHM_OPTION((string)$value, (string)$text, in_array($value, $selected_options));
+    }
+
+    return SELECT($attrs, ...$_options);
+}
+
+function SHM_OPTION(string $value, string $text, bool $selected=false): HTMLElement
+{
+    if ($selected) {
+        return OPTION(["value"=>$value, "selected"=>""], $text);
+    }
+
+    return OPTION(["value"=>$value], $text);
 }
 
 const BYTE_DENOMINATIONS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
