@@ -13,7 +13,7 @@ class RatingsTheme extends Themelet
 {
     public function get_selection_rater_html(string $name = "rating", array $ratings = [], array $selected_options = []): HTMLElement
     {
-        return $this->build_selector($name, !empty($ratings) ? $ratings : Ratings::get_ratings_dict(), required: true, selected_options: $selected_options);
+        return SHM_SELECT($name, !empty($ratings) ? $ratings : Ratings::get_ratings_dict(), required: true, selected_options: $selected_options);
     }
 
     public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
@@ -40,51 +40,42 @@ class RatingsTheme extends Themelet
     {
         global $page;
 
-        $html = make_form_microhtml(make_link("admin/update_ratings"));
-
-        $html->appendChild(TABLE(
+        $table = TABLE(
             ["class"=>"form"],
             TR(TH("Change"), TD($this->get_selection_rater_html("rating_old", $current_ratings))),
             TR(TH("To"), TD($this->get_selection_rater_html("rating_new"))),
-            TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Update"])))
-        ));
+            TR(TD(["colspan"=>"2"], SHM_SUBMIT("Update")))
+        );
 
-        $page->add_block(new Block("Update Ratings", $html));
+        $page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM("admin/update_ratings", $table)));
     }
 
     public function get_help_html(array $ratings): HTMLElement
     {
-        $output = emptyHTML(
-            P("Search for posts with one or more possible ratings."),
-            DIV(
-                ["class"=>"command_example"],
-                PRE("rating:" . $ratings[0]->search_term),
-                P("Returns posts with the " . $ratings[0]->name . " rating.")
-            ),
-            P("Ratings can be abbreviated to a single letter as well."),
-            DIV(
-                ["class"=>"command_example"],
-                PRE("rating:" . $ratings[0]->code),
-                P("Returns posts with the " . $ratings[0]->name . " rating.")
-            ),
-            P("If abbreviations are used, multiple ratings can be searched for."),
-            DIV(
-                ["class"=>"command_example"],
-                PRE("rating:" . $ratings[0]->code . $ratings[1]->code),
-                P("Returns posts with the " . $ratings[0]->name . " or " . $ratings[1]->name . " rating.")
-            ),
-            P("Available ratings:")
-        );
-
-        $table = TABLE(TR(TH("Name"), TH("Search Term"), TH("Abbreviation")));
-
+        $rating_rows = [TR(TH("Name"), TH("Search Term"), TH("Abbreviation"))];
         foreach ($ratings as $rating) {
-            $table->appendChild(TR(TD($rating->name), TD($rating->search_term), TD($rating->code)));
+            $rating_rows[] = TR(TD($rating->name), TD($rating->search_term), TD($rating->code));
         }
 
-        $output->appendChild($table);
-
-        return $output;
+        return emptyHTML(
+            P("Search for posts with one or more possible ratings."),
+            SHM_COMMAND_EXAMPLE(
+                "rating:" . $ratings[0]->search_term,
+                "Returns posts with the " . $ratings[0]->name . " rating."
+            ),
+            P("Ratings can be abbreviated to a single letter as well."),
+            SHM_COMMAND_EXAMPLE(
+                "rating:" . $ratings[0]->code,
+                "Returns posts with the " . $ratings[0]->name . " rating."
+            ),
+            P("If abbreviations are used, multiple ratings can be searched for."),
+            SHM_COMMAND_EXAMPLE(
+                "rating:" . $ratings[0]->code . $ratings[1]->code,
+                "Returns posts with the " . $ratings[0]->name . " or " . $ratings[1]->name . " rating."
+            ),
+            P("Available ratings:"),
+            TABLE(...$rating_rows)
+        );
     }
 
     // This wasn't being used at all
@@ -101,7 +92,7 @@ class RatingsTheme extends Themelet
                         <tbody>
                         <tr><td>This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.</td></tr>
                             <tr><td>
-                                ".$this->build_selector("ratings", selected_options: $selected_ratings, multiple: true, options: $available_ratings)."
+                                ".SHM_SELECT("ratings", selected_options: $selected_ratings, multiple: true, options: $available_ratings)."
                             </td></tr>
                         </tbody>
                         <tfoot>

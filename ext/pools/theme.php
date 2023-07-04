@@ -44,13 +44,12 @@ class PoolsTheme extends Themelet
 
     public function get_adder_html(Image $image, array $pools): HTMLElement
     {
-        $form = make_form_microhtml(make_link("pool/add_post"));
-
-        $form->appendChild($this->build_selector("pool_id", $pools));
-        $form->appendChild(INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image->id]));
-        $form->appendChild(INPUT(["type"=>"submit", "value"=>"Add Post to Pool"]));
-
-        return $form;
+        return SHM_SIMPLE_FORM(
+            "pool/add_post",
+            SHM_SELECT("pool_id", $pools),
+            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image->id]),
+            SHM_SUBMIT("Add Post to Pool")
+        );
     }
 
     /**
@@ -392,7 +391,7 @@ class PoolsTheme extends Themelet
 
     public function get_bulk_pool_selector(array $options): HTMLElement
     {
-        return $this->build_selector("bulk_pool_select", $options, required: true, empty_option: true);
+        return SHM_SELECT("bulk_pool_select", $options, required: true, empty_option: true);
     }
 
     public function get_bulk_pool_input(array $search_terms): HTMLElement
