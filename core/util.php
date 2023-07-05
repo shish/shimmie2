@@ -756,7 +756,7 @@ function make_form(string $target, string $method="POST", bool $multipart=false,
     return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
 }
 
-function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit=""): HTMLElement
+function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit="", string $name=""): HTMLElement
 {
     global $user;
 
@@ -774,6 +774,9 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     if ($onsubmit) {
         $attrs["onsubmit"] = $onsubmit;
     }
+    if ($name) {
+        $attrs["name"] = $name;
+    }
     return FORM(
         $attrs,
         INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]),
@@ -788,9 +791,11 @@ function SHM_SIMPLE_FORM($target, ...$children): HTMLElement
     return $form;
 }
 
-function SHM_SUBMIT(string $text): HTMLElement
+function SHM_SUBMIT(string $text, array $args=[]): HTMLElement
 {
-    return INPUT(["type"=>"submit", "value"=>$text]);
+    $args["type"] = "submit";
+    $args["value"] = $text;
+    return INPUT($args);
 }
 
 function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement
@@ -830,11 +835,10 @@ function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
  * @param bool $required Wether the <select> element is required.
  * @param bool $multiple Wether the <select> element is multiple-choice.
  * @param bool $empty_option Whether the first option should be an empty one.
+ * @param array $attrs Additional attributes dict for <select>. Example: ["id"=>"some_id", "class"=>"some_class"].
  */
-function SHM_SELECT(string $name, array $options, array $selected_options=[], bool $required=false, bool $multiple=false, bool $empty_option=false): HTMLElement
+function SHM_SELECT(string $name, array $options, array $selected_options=[], bool $required=false, bool $multiple=false, bool $empty_option=false, array $attrs=[]): HTMLElement
 {
-    $attrs = [];
-
     if ($required) {
         $attrs["required"] = "";
     }
