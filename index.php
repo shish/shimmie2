@@ -40,6 +40,7 @@ require_once "vendor/autoload.php";
 @include_once "data/config/extensions.conf.php";
 require_once "core/sys_config.php";
 require_once "core/util.php";
+require_once "core/microhtml.php";
 
 global $cache, $config, $database, $user, $page, $_tracer;
 _set_up_shimmie_environment();
