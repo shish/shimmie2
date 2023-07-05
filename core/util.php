@@ -7,7 +7,7 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
+use function MicroHTML\A;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
 use function MicroHTML\DIV;
@@ -796,6 +796,20 @@ function SHM_SUBMIT(string $text, array $args=[]): HTMLElement
     $args["type"] = "submit";
     $args["value"] = $text;
     return INPUT($args);
+}
+
+function SHM_A(string $href, string|HTMLElement $text, string $id="", string $class="", array $args=[]): HTMLElement
+{
+    $args["href"] = make_link($href);
+
+    if ($id) {
+        $args["id"] = $id;
+    }
+    if ($class) {
+        $args["class"] = $class;
+    }
+
+    return A($args, $text);
 }
 
 function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement

@@ -23,14 +23,14 @@ class PoolsTheme extends Themelet
         //TODO: Use a 3 column table?
         $linksPools = emptyHTML();
         foreach ($navIDs as $poolID => $poolInfo) {
-            $div = DIV(A(["href"=>make_link("pool/view/" . $poolID)], $poolInfo["info"]->title));
+            $div = DIV(SHM_A("pool/view/" . $poolID, $poolInfo["info"]->title));
 
             if (!empty($poolInfo["nav"])) {
                 if (!empty($poolInfo["nav"]["prev"])) {
-                    $div->appendChild(A(["href"=>make_link("post/view/" . $poolInfo["nav"]["prev"]), "class"=>"pools_prev_img"], "Prev"));
+                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
                 }
                 if (!empty($poolInfo["nav"]["next"])) {
-                    $div->appendChild(A(["href"=>make_link("post/view/" . $poolInfo["nav"]["next"]), "class"=>"pools_next_img"], "Next"));
+                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["next"], "Next", class: "pools_next_img"));
                 }
             }
 
@@ -60,8 +60,8 @@ class PoolsTheme extends Themelet
         // Build up the list of pools.
         $pool_rows = [];
         foreach ($pools as $pool) {
-            $pool_link = A(["href"=>make_link("pool/view/" . $pool->id)], $pool->title);
-            $user_link = A(["href"=>make_link("user/" . url_escape($pool->user_name))], $pool->user_name);
+            $pool_link = SHM_A("pool/view/" . $pool->id, $pool->title);
+            $user_link = SHM_A("user/" . url_escape($pool->user_name), $pool->user_name);
 
             $pool_rows[] = TR(
                 TD(["class"=>"left"], $pool_link),
@@ -113,11 +113,11 @@ class PoolsTheme extends Themelet
         $page->set_heading($heading);
 
         $poolnav = emptyHTML(
-            A(["href"=>make_link("pool/list")], "Pool Index"),
+            SHM_A("pool/list", "Pool Index"),
             BR(),
-            A(["href"=>make_link("pool/new")], "Create Pool"),
+            SHM_A("pool/new", "Create Pool"),
             BR(),
-            A(["href"=>make_link("pool/updated")], "Pool Changes")
+            SHM_A("pool/updated", "Pool Changes")
         );
 
         $page->add_block(new NavBlock());
@@ -349,9 +349,9 @@ class PoolsTheme extends Themelet
 
         $body = [];
         foreach ($histories as $history) {
-            $pool_link = A(["href"=>make_link("pool/view/" . $history["pool_id"])], $history["title"]);
-            $user_link = A(["href"=>make_link("user/" . url_escape($history["user_name"]))], $history["user_name"]);
-            $revert_link = A(["href"=>make_link("pool/revert/" . $history["id"])], "Revert");
+            $pool_link = SHM_A("pool/view/" . $history["pool_id"], $history["title"]);
+            $user_link = SHM_A("user/" . url_escape($history["user_name"]), $history["user_name"]);
+            $revert_link = SHM_A(("pool/revert/" . $history["id"]), "Revert");
 
             if ($history['action'] == 1) {
                 $prefix = "+";
@@ -366,7 +366,7 @@ class PoolsTheme extends Themelet
 
             $image_links = emptyHTML();
             foreach ($images as $image) {
-                $image_links->appendChild(" ", A(["href"=>make_link("post/view/" . $image)], $prefix . $image));
+                $image_links->appendChild(" ", SHM_A("post/view/" . $image, $prefix . $image));
             }
 
             $body[] = TR(
