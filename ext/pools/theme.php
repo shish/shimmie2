@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
-use function MicroHTML\{A,BR,INPUT,P,SCRIPT,TABLE,THEAD,TBODY,TR,TH,TD,TEXTAREA,SPAN};
+use function MicroHTML\{A,BR,DIV,INPUT,P,SCRIPT,SPAN,TABLE,TBODY,TD,TEXTAREA,TH,THEAD,TR};
 
 class PoolsTheme extends Themelet
 {
@@ -20,27 +20,25 @@ class PoolsTheme extends Themelet
     {
         global $page;
 
-        $linksPools = [];
+        //TODO: Use a 3 column table?
+        $linksPools = emptyHTML();
         foreach ($navIDs as $poolID => $poolInfo) {
-            $linksPools[] = "<a href='" . make_link("pool/view/" . $poolID) . "'>" . html_escape($poolInfo['info']->title) . "</a>";
+            $div = DIV(A(["href"=>make_link("pool/view/" . $poolID)], $poolInfo["info"]->title));
 
-            if (!empty($poolInfo['nav'])) {
-                $navlinks = "";
-                if (!empty($poolInfo['nav']['prev'])) {
-                    $navlinks .= '<a href="' . make_link('post/view/' . $poolInfo['nav']['prev']) . '" class="pools_prev_img">Prev</a>';
+            if (!empty($poolInfo["nav"])) {
+                if (!empty($poolInfo["nav"]["prev"])) {
+                    $div->appendChild(A(["href"=>make_link("post/view/" . $poolInfo["nav"]["prev"]), "class"=>"pools_prev_img"], "Prev"));
                 }
-                if (!empty($poolInfo['nav']['next'])) {
-                    $navlinks .= '<a href="' . make_link('post/view/' . $poolInfo['nav']['next']) . '" class="pools_next_img">Next</a>';
-                }
-                if (!empty($navlinks)) {
-                    $navlinks .= "<div style='height: 5px'></div>";
-                    $linksPools[] = $navlinks;
+                if (!empty($poolInfo["nav"]["next"])) {
+                    $div->appendChild(A(["href"=>make_link("post/view/" . $poolInfo["nav"]["next"]), "class"=>"pools_next_img"], "Next"));
                 }
             }
+
+            $linksPools->appendChild($div);
         }
 
-        if (count($linksPools) > 0) {
-            $page->add_block(new Block("Pools", implode("<br>", $linksPools), "left"));
+        if (!empty($navIDs)) {
+            $page->add_block(new Block("Pools", $linksPools, "left"));
         }
     }
 
@@ -280,23 +278,22 @@ class PoolsTheme extends Themelet
     {
         $this->display_top($pool, "Sorting Pool");
 
-        $pool_images = "\n<form action='" . make_link("pool/order") . "' method='POST' name='checks'>";
-        $i = 0;
-        foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
-            $pool_images .= '<span class="thumb">' . "\n" . $thumb_html . "\n" .
-                '<br><input name="imgs[' . $i . '][]" type="number" style="max-width:50px;" value="' . $image->image_order . '" />' .
-                '<input name="imgs[' . $i . '][]" type="hidden" value="' . $image->id . '" />' .
-                '</span>';
-            $i++;
+        $form = SHM_FORM("pool/order", name: "checks");
+        foreach ($images as $i=>$image) {
+            $form->appendChild(SPAN(
+                ["class"=>"thumb"],
+                $this->build_thumb_html($image),
+                INPUT(["type"=>"number", "name"=>"imgs[$i][]", "value"=>$image->image_order, "style"=>"max-width: 50px;"]),
+                INPUT(["type"=>"hidden", "name"=>"imgs[$i][]", "value"=>$image->id])
+            ));
         }
 
-        $pool_images .= "<br>" .
-            "<input type='submit' name='edit' id='edit_pool_order' value='Order'/>" .
-            "<input type='hidden' name='pool_id' value='" . $pool->id . "'>" .
-            "</form>";
+        $form->appendChild(
+            INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id]),
+            SHM_SUBMIT("Order", ["name"=>"edit", "id"=>"edit_pool_order"])
+        );
 
-        $page->add_block(new Block("Sorting Posts", $pool_images, "main", 30));
+        $page->add_block(new Block("Sorting Posts", $form, position: 30));
     }
 
     /**
@@ -307,35 +304,35 @@ class PoolsTheme extends Themelet
      */
     public function edit_pool(Page $page, Pool $pool, array $images)
     {
-        /* EDIT POOL DESCRIPTION */
-        $desc_html = "
-			" . make_form(make_link("pool/edit_description")) . "
-					<textarea name='description'>" . $pool->description . "</textarea><br />
-					<input type='hidden' name='pool_id' value='" . $pool->id . "'>
-					<input type='submit' value='Change Description' />
-			</form>
-		";
+        $_input_id = INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id]);
 
-        /* REMOVE POOLS */
-        $pool_images = "\n<form action='" . make_link("pool/remove_posts") . "' method='POST' name='checks'>";
+        $desc_form = SHM_SIMPLE_FORM(
+            "pool/edit/description",
+            TEXTAREA(["name"=>"description"], $pool->description),
+            BR(),
+            $_input_id,
+            SHM_SUBMIT("Change Description")
+        );
 
+        $images_form = SHM_FORM("pool/remove_posts", name: "checks");
         foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
-
-            $pool_images .= '<span class="thumb">' . "\n" . $thumb_html . "\n" .
-                '<br><input name="check[]" type="checkbox" value="' . $image->id . '" />' .
-                '</span>';
+            $images_form->appendChild(SPAN(
+                ["class"=>"thumb"],
+                $this->build_thumb_html($image),
+                INPUT(["type"=>"checkbox", "name"=>"check[]", "value"=>$image->id])
+            ));
         }
 
-        $pool_images .= "<br>" .
-            "<input type='submit' name='edit' id='edit_pool_remove_sel' value='Remove Selected'/>" .
-            "<input type='hidden' name='pool_id' value='" . $pool->id . "'>" .
-            "</form>";
+        $images_form->appendChild(
+            BR(),
+            $_input_id,
+            SHM_SUBMIT("Remove Selected", ["name"=>"edit", "id"=>"edit_pool_remove_sel"])
+        );
 
         $pool->description = ""; //This is a rough fix to avoid showing the description twice.
         $this->display_top($pool, "Editing Pool", true);
-        $page->add_block(new Block("Editing Description", $desc_html, "main", 28));
-        $page->add_block(new Block("Editing Posts", $pool_images, "main", 30));
+        $page->add_block(new Block("Editing Description", $desc_form, position: 28));
+        $page->add_block(new Block("Editing Posts", $images_form, position: 30));
     }
 
     /**
@@ -344,21 +341,17 @@ class PoolsTheme extends Themelet
     public function show_history(array $histories, int $pageNumber, int $totalPages)
     {
         global $page;
-        $html = '
-			<table id="poolsList" class="zebra">
-				<thead><tr>
-					<th>Pool</th>
-					<th>Post Count</th>
-					<th>Changes</th>
-					<th>Updater</th>
-					<th>Date</th>
-					<th>Action</th>
-				</tr></thead><tbody>';
 
+        $table = TABLE(
+            ["id"=>"poolsList", "class"=>"zebra"],
+            THEAD(TR(TH("Pool"), TH("Post Count"), TH("Changes"), TH("Updater"), TH("Date"), TH("Action")))
+        );
+
+        $body = [];
         foreach ($histories as $history) {
-            $pool_link = "<a href='" . make_link("pool/view/" . $history['pool_id']) . "'>" . html_escape($history['title']) . "</a>";
-            $user_link = "<a href='" . make_link("user/" . url_escape($history['user_name'])) . "'>" . html_escape($history['user_name']) . "</a>";
-            $revert_link = "<a href='" . make_link("pool/revert/" . $history['id']) . "'>Revert</a>";
+            $pool_link = A(["href"=>make_link("pool/view/" . $history["pool_id"])], $history["title"]);
+            $user_link = A(["href"=>make_link("user/" . url_escape($history["user_name"]))], $history["user_name"]);
+            $revert_link = A(["href"=>make_link("pool/revert/" . $history["id"])], "Revert");
 
             if ($history['action'] == 1) {
                 $prefix = "+";
@@ -368,28 +361,28 @@ class PoolsTheme extends Themelet
                 throw new \RuntimeException("history['action'] not in {0, 1}");
             }
 
-            $images = trim($history['images']);
+            $images = trim($history["images"]);
             $images = explode(" ", $images);
 
-            $image_link = "";
+            $image_links = emptyHTML();
             foreach ($images as $image) {
-                $image_link .= "<a href='" . make_link("post/view/" . $image) . "'>" . $prefix . $image . " </a>";
+                $image_links->appendChild(" ", A(["href"=>make_link("post/view/" . $image)], $prefix . $image));
             }
 
-            $html .= "<tr>" .
-                "<td class='left'>" . $pool_link . "</td>" .
-                "<td>" . $history['count'] . "</td>" .
-                "<td>" . $image_link . "</td>" .
-                "<td>" . $user_link . "</td>" .
-                "<td>" . $history['date'] . "</td>" .
-                "<td>" . $revert_link . "</td>" .
-                "</tr>";
+            $body[] = TR(
+                TD(["class"=>"left"], $pool_link),
+                TD($history["count"]),
+                TD($image_links),
+                TD($user_link),
+                TD($history["date"]),
+                TD($revert_link)
+            );
         }
 
-        $html .= "</tbody></table>";
+        $table->appendChild(TBODY(...$body));
 
         $this->display_top(null, "Recent Changes");
-        $page->add_block(new Block("Recent Changes", $html, "main", 10));
+        $page->add_block(new Block("Recent Changes", $table, position: 10));
 
         $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
     }
