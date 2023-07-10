@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+use function MicroHTML\{INPUT,P,SPAN,TD,TH,TR};
+
 class ArtistsTheme extends Themelet
 {
     public function get_author_editor_html(string $author): string
     {
         $h_author = html_escape($author);
-        return "
-			<tr>
-				<th>Author</th>
-				<td>
-					<span class='view'>$h_author</span>
-					<input class='edit' type='text' name='tag_edit__author' value='$h_author'>
-				</td>
-			</tr>
-		";
+        return (string)TR(TH("Author", TD(
+            SPAN(["class"=>"view"], $h_author),
+            INPUT(["class"=>"edit", "type"=>"text", "name"=>"tag_edit__author", "value"=>$h_author])
+        )));
     }
 
     public function sidebar_options(string $mode, ?int $artistID=null, $is_admin=false): void
@@ -554,13 +554,11 @@ class ArtistsTheme extends Themelet
         return $html;
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts with a particular artist.</p>
-        <div class="command_example">
-        <pre>artist=leonardo</pre>
-        <p>Returns posts with the artist "leonardo".</p>
-        </div>
-        ';
+        return emptyHTML(
+            P("Search for posts with a particular artist."),
+            SHM_COMMAND_EXAMPLE("artist=leonardo", "Returns posts with the artist \"leonardo\".")
+        );
     }
 }
