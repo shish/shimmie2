@@ -7,7 +7,7 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\{DIV,INPUT,P,PRE,SPAN,TABLE,TD,TH,TR};
+use function MicroHTML\{P,SPAN,TABLE,TD,TH,TR};
 
 class RatingsTheme extends Themelet
 {

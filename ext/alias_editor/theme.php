@@ -4,36 +4,35 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+use function MicroHTML\{BR,INPUT};
+
 class AliasEditorTheme extends Themelet
 {
     /**
      * Show a page of aliases.
-     *
-     * Note: $can_manage = whether things like "add new alias" should be shown
      */
-    public function display_aliases($table, $paginator): void
+    public function display_aliases(HTMLElement $table, HTMLElement $paginator): void
     {
         global $page, $user;
 
-        $can_manage = $user->can(Permissions::MANAGE_ALIAS_LIST);
-        $html = "
-            $table
-            $paginator
-			<p><a href='".make_link("alias/export/aliases.csv")."' download='aliases.csv'>Download as CSV</a></p>
-		";
+        $html = emptyHTML($table, BR(), $paginator, BR(), SHM_A("alias/export/aliases.csv", "Download as CSV", args: ["download"=>"aliases.csv"]));
 
-        $bulk_html = "
-			".make_form(make_link("alias/import"), 'post', true)."
-				<input type='file' name='alias_file'>
-				<input type='submit' value='Upload List'>
-			</form>
-		";
+        $bulk_form = SHM_FORM("alias/import", multipart: true);
+        $bulk_form->appendChild(
+            INPUT(["type"=>"file", "name"=>"alias_file"]),
+            SHM_SUBMIT("Upload List")
+        );
+        $bulk_html = emptyHTML($bulk_form);
 
         $page->set_title("Alias List");
         $page->set_heading("Alias List");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Aliases", $html));
-        if ($can_manage) {
+
+        if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
             $page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
         }
     }

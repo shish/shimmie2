@@ -168,10 +168,7 @@ class Approval extends Extension
         global $user, $config;
         if ($event->key===HelpPages::SEARCH) {
             if ($user->can(Permissions::APPROVE_IMAGE) &&  $config->get_bool(ApprovalConfig::IMAGES)) {
-                $block = new Block();
-                $block->header = "Approval";
-                $block->body = $this->theme->get_help_html();
-                $event->add_block($block);
+                $event->add_block(new Block("Approval", $this->theme->get_help_html()));
             }
         }
     }
@@ -231,7 +228,7 @@ class Approval extends Extension
     {
         global $user, $config;
         if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
-            $event->add_part($this->theme->get_image_admin_html($event->image));
+            $event->add_part((string)$this->theme->get_image_admin_html($event->image));
         }
     }
 
