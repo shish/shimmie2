@@ -150,10 +150,7 @@ class Index extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "General";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block, 0);
+            $event->add_block(new Block("General", $this->theme->get_help_html()), 0);
         }
     }
 
