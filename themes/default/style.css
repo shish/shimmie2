@@ -23,17 +23,17 @@
 	:root {
 		--page: #222;
 		--text: #CCC;
-		--link-default: #AAE;
-		--link-visited: #DAE;
+		--link-default: #BBF;
+		--link-visited: #EAF;
 			
-		--title: #222;
-		--title-border: #444;
+		--title: #333;
+		--title-border: #555;
 		
-		--header: #333;
-		--header-border: #555;
+		--header: #444;
+		--header-border: #666;
 		
-		--block: #444;
-		--block-border: #666;
+		--block: #555;
+		--block-border: #777;
 	
 		--zebra-border: #777;
 		--zebra-header: #444;
