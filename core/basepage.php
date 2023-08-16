@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 require_once "core/event.php";
 
 enum PageMode: string
@@ -604,7 +606,7 @@ class PageSubNavBuildingEvent extends Event
         $this->parent= $parent;
     }
 
-    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
+    public function add_nav_link(string $name, Link $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50)
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
     }
@@ -614,11 +616,11 @@ class NavLink
 {
     public string $name;
     public Link $link;
-    public string $description;
+    public string|HTMLElement $description;
     public int $order;
     public bool $active = false;
 
-    public function __construct(String $name, Link $link, String $description, ?bool $active = null, int $order = 50)
+    public function __construct(string $name, Link $link, string|HTMLElement $description, ?bool $active = null, int $order = 50)
     {
         global $config;
 

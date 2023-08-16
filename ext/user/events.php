@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 class UserBlockBuildingEvent extends Event
 {
     public array $parts = [];
 
-    public function add_link(string $name, string $link, int $position=50): void
+    public function add_link(string|HTMLElement $name, string $link, int $position=50): void
     {
         while (isset($this->parts[$position])) {
             $position++;
