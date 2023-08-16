@@ -250,6 +250,11 @@ function data_path(string $filename, bool $create = true): string
     return $filename;
 }
 
+function shimmie_path(): string
+{
+    return dirname(dirname(__FILE__));
+}
+
 function load_balance_url(string $tmpl, string $hash, int $n=0): string
 {
     static $flexihashes = [];

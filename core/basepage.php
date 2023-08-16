@@ -372,7 +372,7 @@ class BasePage
         /*** Generate CSS cache files ***/
         $css_latest = $config_latest;
         $css_files = array_merge(
-            zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.css"),
+            zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.{s,}css"),
             zglob("themes/$theme_name/{" . implode(",", $this->get_theme_stylesheets()) . "}")
         );
         foreach ($css_files as $css) {
@@ -380,16 +380,51 @@ class BasePage
         }
         $css_md5 = md5(serialize($css_files));
         $css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
+        $css_map_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.map");
         if (!file_exists($css_cache_file)) {
             $css_data = "";
             foreach ($css_files as $file) {
-                $file_data = file_get_contents($file);
-                $pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-                $replace = 'url("../../../' . dirname($file) . '/$1")';
-                $file_data = preg_replace($pattern, $replace, $file_data);
-                $css_data .= $file_data . "\n";
+                $css_data .= "@import '$file';\n";
             }
-            file_put_contents($css_cache_file, $css_data);
+            $compiler = new \ScssPhp\ScssPhp\Compiler();
+            $compiler->addImportPath(function ($path) {
+                if (\ScssPhp\ScssPhp\Compiler::isCssImport($path)) {
+                    // Default SCSS behaviour is for @import 'blah.css'
+                    // to be included verbatim (as an import statement) -
+                    // by commenting this out, we included it inline.
+                    // If we wanted to rename all .css files to .scss,
+                    // we could get rid of this.
+                    // return null;
+                }
+
+                if (!file_exists($path)) {
+                    return null;
+                }
+
+                return $path;
+            });
+            $compiler->setSourceMap(\ScssPhp\ScssPhp\Compiler::SOURCE_MAP_FILE);
+            $compiler->setSourceMapOptions([
+                'sourceMapURL' => "./{$theme_name}.{$css_latest}.{$css_md5}.map",
+                'sourceMapBasepath' => dirname(__DIR__),
+            ]);
+            //$compiler->setOutputStyle(\ScssPhp\ScssPhp\OutputStyle::COMPRESSED);
+            $compiler->registerFunction(
+                'url',
+                function ($args) use ($compiler) {
+                    $source_dir = dirname(str_replace(shimmie_path() . "/", "", $compiler->getSourcePosition()[0]));
+                    $arg = $compiler->assertString($args[0], 'path');
+                    $path = $arg[2][0];
+                    if(is_array($path)) {
+                        $path = $path[2][0];
+                    }
+                    return "url(\"../../../$source_dir/$path\")";
+                },
+                ['path']
+            );
+            $result = $compiler->compileString($css_data, "index.php");
+            file_put_contents($css_cache_file, $result->getCss());
+            file_put_contents($css_map_file, $result->getSourceMap());
         }
         $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
 
@@ -426,7 +461,7 @@ class BasePage
      */
     protected function get_theme_stylesheets(): array
     {
-        return ["style.css"];
+        return ["style.css", "style.scss"];
     }
 
 

@@ -51,7 +51,8 @@
 		"bower-asset/js-cookie"      : "^2.1",
 		"psr/simple-cache"           : "^1.0",
 		"sabre/cache"                : "^2.0.1",
-		"naroga/redis-cache": "dev-master"
+		"naroga/redis-cache": "dev-master",
+		"scssphp/scssphp": "^1.11"
     },
 
 	"require-dev" : {
