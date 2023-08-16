@@ -1,42 +1,83 @@
+:root {
+	--page: #EEE;
+	--text: #000;
+	--link-default: #0000EE;
+	--link-visited: #551A8B;
+	
+	--title: #BBB;
+	--title-border: #AAA;
+	
+	--header: #CCC;
+	--header-border: #BBB;
+	
+	--block: #DDD;
+	--block-border: #CCC;
+
+	--zebra-border: #CCC;
+	--zebra-header: #DDD;
+	--zebra-odd: #EFEFEF;
+	--zebra-even: #E0E0E0;
+}
+  
+@media (prefers-color-scheme: dark) {
+	:root {
+		--page: #222;
+		--text: #CCC;
+		--link-default: #AAE;
+		--link-visited: #DAE;
+			
+		--title: #222;
+		--title-border: #444;
+		
+		--header: #333;
+		--header-border: #555;
+		
+		--block: #444;
+		--block-border: #666;
+	
+		--zebra-border: #777;
+		--zebra-header: #444;
+		--zebra-odd: #555;
+		--zebra-even: #666;
+	}	
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 BODY {
-	background: #EEE;
+	background: var(--page);
+	color: var(--text);
 	font-family: sans-serif;
 	font-size: 14px;
 	margin: 0;
 }
 H1 {
-	background: #BBB;
+	background: var(--title);
+	border: 1px solid var(--title-border);
 	text-align: center;
-	border: 1px solid #AAA;
 }
 H1 A {
-	color: black;
+	color: var(--text);
 }
 H3 {
 	text-align: center;
 	margin: 0;
 }
 SECTION>H3 {
-	background: #CCC;
-	border: 1px solid #BBB;
+	background: var(--header);
+	border: 1px solid var(--header-border);
 }
 SECTION>.blockbody, .comment, .setupblock {
-	background: #DDD;
-	border: 1px solid #CCC;
+	background: var(--block);
+	border: 1px solid var(--block-border);
 }
 SECTION>.blockbody, H1, SECTION>H3, FOOTER, .comment, .setupblock {
 	margin: 8px;
 	padding: 8px;
-	border-radius: 12px; /* standard, webkit, opera */
-	-moz-border-radius: 12px; /* mozilla haven't committed yet */
-	box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* standard, opera */
-	-webkit-box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* webkit haven't committed yet */
-	-moz-box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* mozilla haven't committed yet */
+	border-radius: 12px;
+	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
 THEAD {
 	font-weight: bold;
@@ -46,24 +87,32 @@ TD {
 	text-align: center;
 }
 
-TABLE.zebra {border-spacing: 0; border: 2px solid #CCC;}
+TABLE.zebra {border-spacing: 0; border: 2px solid var(--zebra-border);}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
-TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #CCC;}
-TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #CCC;}
-TABLE.zebra TR TD {border-bottom: 1px solid #DDD;}
-TABLE.zebra TR:nth-child(odd) {background: #EFEFEF;}
-TABLE.zebra TR:nth-child(even) {background: #E0E0E0;}
+TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid var(--zebra-border);}
+TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid var(--zebra-border);}
+TABLE.zebra TR TD {border-bottom: 1px solid var(--zebra-header);}
+TABLE.zebra TR:nth-child(odd) {background: var(--zebra-odd);}
+TABLE.zebra TR:nth-child(even) {background: var(--zebra-even);}
 
 FOOTER {
 	clear: both;
 	font-size: 0.7em;
 	text-align: center;
-	background: #BBB;
-	border: 1px solid #AAA;
+	background: var(--title);
+	border: 1px solid var(--title-border);
 }
 
-A {text-decoration: none;}
-A:hover {text-decoration: underline;}
+A {
+	text-decoration: none;
+	color: var(--link-default);
+}
+A:hover {
+	text-decoration: underline;
+}
+A:visited {
+	color: var(--link-visited);
+}
 
 UL {
 	text-align: left;
@@ -162,19 +211,14 @@ ARTICLE TABLE {
 .thumb {
 	width: 226px;
 	display: inline-block;
-	zoom: 1; /* ie6 */
-	*display: inline; /* ie6 */
 	text-align: center;
 	margin-bottom: 8px;
 }
 .thumb IMG {
-	border: 1px solid #CCC;
-	background: #DDD;
+	border: 1px solid var(--block-border);
+	background: var(--block);
 	padding: 8px;
-	border-radius: 12px; /* standard, webkit, opera */
-	-moz-border-radius: 12px; /* mozilla haven't committed yet */
-	box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* standard, opera */
-	-webkit-box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* webkit haven't committed yet */
-	-moz-box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* mozilla haven't committed yet */
+	border-radius: 12px;
+	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
 
