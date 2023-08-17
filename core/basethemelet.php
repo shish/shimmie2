@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A,B,BR,IMG,emptyHTML};
+use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML};
 
 /**
  * Class BaseThemelet
@@ -135,19 +135,6 @@ class BaseThemelet
         return $paginator;
     }
 
-    protected function implode(string|HTMLElement $glue, array $pieces): HTMLElement
-    {
-        $out = emptyHTML();
-        $n = 0;
-        foreach ($pieces as $piece) {
-            if ($n++ > 0) {
-                $out->appendChild($glue);
-            }
-            $out->appendChild($piece);
-        }
-        return $out;
-    }
-
     private function build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query, bool $show_random): HTMLElement
     {
         $next = $current_page + 1;
@@ -175,10 +162,10 @@ class BaseThemelet
         foreach (range($start, $end) as $i) {
             $pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, (string)$i);
         }
-        $pages_html = $this->implode(" | ", $pages);
+        $pages_html = joinHTML(" | ", $pages);
 
         return emptyHTML(
-            $this->implode(" | ", [
+            joinHTML(" | ", [
                 $first_html,
                 $prev_html,
                 $random_html,

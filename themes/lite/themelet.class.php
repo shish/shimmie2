@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A,DIV,SPAN};
+use function MicroHTML\{A,DIV,SPAN,joinHTML};
 
 /**
  * Class Themelet
@@ -83,7 +83,7 @@ class Themelet extends BaseThemelet
             $prev_html,
             $random_html,
             "<< ",
-            $this->implode(" ", $pages),
+            joinHTML(" ", $pages),
             " >>",
             $next_html,
             $last_html
