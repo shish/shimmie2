@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e4d47676467ba492d3be2d43d3950b9d",
+    "content-hash": "b945fc1a992b5b1a449f5fe7612af514",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -729,16 +729,16 @@
         },
         {
             "name": "shish/microhtml",
-            "version": "v2.1.0",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "afef3aac229b514ed5b4afbfb2d970d1419313c8"
+                "reference": "824d8541c7f0662e26d03d65d865d8f13ea57a72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/afef3aac229b514ed5b4afbfb2d970d1419313c8",
-                "reference": "afef3aac229b514ed5b4afbfb2d970d1419313c8",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/824d8541c7f0662e26d03d65d865d8f13ea57a72",
+                "reference": "824d8541c7f0662e26d03d65d865d8f13ea57a72",
                 "shasum": ""
             },
             "require": {
@@ -775,9 +775,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microhtml/issues",
-                "source": "https://github.com/shish/microhtml/tree/v2.1.0"
+                "source": "https://github.com/shish/microhtml/tree/v2.2.1"
             },
-            "time": "2023-02-04T13:02:26+00:00"
+            "time": "2023-08-17T16:39:06+00:00"
         },
         {
             "name": "webonyx/graphql-php",

@@ -42,7 +42,7 @@
 		"shish/eventtracer-php"     : "^2.0",
 		"shish/ffsphp"              : "^1.0",
 		"shish/microcrud"           : "^2.0",
-		"shish/microhtml"           : "^2.0",
+		"shish/microhtml"           : "^2.2",
 		"shish/gqla"                : "dev-main",
 		"enshrined/svg-sanitize"    : "^0.16",
 
