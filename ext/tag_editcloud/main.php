@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\rawHTML;
+
 /* Todo:
  * 	usepref(todo2: port userpref)
  *	theme junk
@@ -53,7 +57,7 @@ class TagEditCloud extends Extension
         $sb->add_text_option("tageditcloud_ignoretags");
     }
 
-    private function build_tag_map(Image $image): ?string
+    private function build_tag_map(Image $image): ?HTMLElement
     {
         global $database, $config;
 
@@ -204,7 +208,7 @@ class TagEditCloud extends Extension
             $html .= "</div><br>[<span onclick='tageditcloud_toggle_extra(this);' style='color: #0000EF; font-weight:bold;'>show {$rem} more tags</span>]";
         }
 
-        return "<div id='tageditcloud' class='tageditcloud'>{$html}</div>"; // FIXME: stupidasallhell
+        return rawHTML("<div id='tageditcloud' class='tageditcloud'>{$html}</div>"); // FIXME: stupidasallhell
     }
 
     private function can_tag(Image $image): bool

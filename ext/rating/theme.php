@@ -18,22 +18,12 @@ class RatingsTheme extends Themelet
 
     public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
     {
-        $human_rating = Ratings::rating_to_human($rating);
-
-        $html = TR(TH("Rating"));
-
-        if ($can_rate) {
-            $selector = $this->get_selection_rater_html(selected_options: [$rating]);
-
-            $html->appendChild(TD(
-                SPAN(["class"=>"view"], $human_rating),
-                SPAN(["class"=>"edit"], $selector)
-            ));
-        } else {
-            $html->appendChild(TD($human_rating));
-        }
-
-        return $html;
+        return SHM_POST_INFO(
+            "Rating",
+            $can_rate,
+            Ratings::rating_to_human($rating),
+            $this->get_selection_rater_html("rating", selected_options: [$rating])
+        );
     }
 
     public function display_form(array $current_ratings)

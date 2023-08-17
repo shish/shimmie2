@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{TD,TH,TR};
+
 class ImageViewCounter extends Extension
 {
     /** @var ImageViewCounterTheme */
@@ -63,15 +65,12 @@ class ImageViewCounter extends Extension
         global $user, $database;
 
         if ($user->can(Permissions::SEE_IMAGE_VIEW_COUNTS)) {
-            $view_count = (int)$database->get_one(
+            $view_count = (string)$database->get_one(
                 "SELECT COUNT(*) FROM image_views WHERE image_id =:image_id",
                 ["image_id" => $event->image->id]
             );
 
-            $event->add_part(
-                "<tr><th>Views:</th><td>$view_count</td></tr>",
-                38
-            );
+            $event->add_part(SHM_POST_INFO("Views", false, $view_count, ""), 38);
         }
     }
 
