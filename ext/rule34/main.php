@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\TR;
-use function MicroHTML\TH;
-use function MicroHTML\TD;
-use function MicroHTML\A;
+use function MicroHTML\{emptyHTML, A};
 
-if ( // kill these glitched requests immediately
+if (
+    // kill these glitched requests immediately
     !empty($_SERVER["REQUEST_URI"])
     && str_contains(@$_SERVER["REQUEST_URI"], "/http")
     && str_contains(@$_SERVER["REQUEST_URI"], "paheal.net")
@@ -40,16 +38,19 @@ class Rule34 extends Extension
         $image_link = $config->get_string(ImageConfig::ILINK);
         $url0 = $event->image->parse_link_template($image_link, 0);
         $url1 = $event->image->parse_link_template($image_link, 1);
-        $html = (string)TR(
-            TH("Links"),
-            TD(
-                A(["href"=>$url0], "File Only"),
-                " (",
-                A(["href"=>$url1], "Backup Server"),
-                ")"
-            )
+        $event->add_part(
+            SHM_POST_INFO(
+                "Links",
+                false,
+                emptyHTML(
+                    A(["href" => $url0], "File Only"),
+                    " (",
+                    A(["href" => $url1], "Backup Server"),
+                    ")"
+                )
+            ),
+            90
         );
-        $event->add_part($html, 90);
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)
@@ -66,7 +67,7 @@ class Rule34 extends Extension
     {
         global $database, $user, $config;
         if ($user->can(Permissions::CHANGE_SETTING) && $config->get_bool('r34_comic_integration')) {
-            $current_state = bool_escape($database->get_one("SELECT comic_admin FROM users WHERE id=:id", ['id'=>$event->display_user->id]));
+            $current_state = bool_escape($database->get_one("SELECT comic_admin FROM users WHERE id=:id", ['id' => $event->display_user->id]));
             $this->theme->show_comic_changer($event->display_user, $current_state);
         }
     }
@@ -128,7 +129,7 @@ class Rule34 extends Extension
                 ]);
                 $database->execute(
                     'UPDATE users SET comic_admin=:is_admin WHERE id=:id',
-                    ['is_admin'=>$input['is_admin'] ? 't' : 'f', 'id'=>$input['user_id']]
+                    ['is_admin' => $input['is_admin'] ? 't' : 'f', 'id' => $input['user_id']]
                 );
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(referer_or(make_link()));

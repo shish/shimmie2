@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 class ImageInfoBoxBuildingEvent extends Event
 {
     public array $parts = [];
@@ -17,7 +19,7 @@ class ImageInfoBoxBuildingEvent extends Event
         $this->user = $user;
     }
 
-    public function add_part(string $html, int $position=50)
+    public function add_part(HTMLElement $html, int $position=50)
     {
         while (isset($this->parts[$position])) {
             $position++;

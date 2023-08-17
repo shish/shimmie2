@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{INPUT};
+
 class PostTitlesTheme extends Themelet
 {
-    public function get_title_set_html(string $title, bool $can_set): string
+    public function get_title_set_html(string $title, bool $can_set): HTMLElement
     {
-        $html = "
-			<tr>
-				<th>Title</th>
-				<td>
-		".($can_set ? "
-					<span class='view'>".html_escape($title)."</span>
-						<input class='edit'  type='text' name='post_title' value='".html_escape($title)."' />
-		" : html_escape("
-					 $title
-		"))."
-				</td>
-			</tr>
-		";
-        return $html;
+        return SHM_POST_INFO(
+            "Title",
+            $can_set,
+            $title,
+            INPUT(["type" => "text", "name" => "post_title", "value" => $title])
+        );
     }
 }

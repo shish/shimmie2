@@ -7,17 +7,18 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\{INPUT,P,SPAN,TD,TH,TR};
+use function MicroHTML\{INPUT,P};
 
 class ArtistsTheme extends Themelet
 {
-    public function get_author_editor_html(string $author): string
+    public function get_author_editor_html(string $author): HTMLElement
     {
-        $h_author = html_escape($author);
-        return (string)TR(TH("Author", TD(
-            SPAN(["class"=>"view"], $h_author),
-            INPUT(["class"=>"edit", "type"=>"text", "name"=>"tag_edit__author", "value"=>$h_author])
-        )));
+        return SHM_POST_INFO(
+            "Author",
+            true,
+            $author,
+            INPUT(["type"=>"text", "name"=>"tag_edit__author", "value"=>$author])
+        );
     }
 
     public function sidebar_options(string $mode, ?int $artistID=null, $is_admin=false): void
