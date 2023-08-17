@@ -13,7 +13,7 @@ class CommandBuilder
     private array $args = [];
     public array $output;
 
-    public function __construct(String $executable)
+    public function __construct(string $executable)
     {
         if (empty($executable)) {
             throw new \InvalidArgumentException("executable cannot be empty");

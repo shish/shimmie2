@@ -83,7 +83,7 @@ class MimeType
         return preg_match(self::REGEX_MIME_TYPE, $value)===1;
     }
 
-    public static function add_parameters(String $mime, String...$parameters): string
+    public static function add_parameters(string $mime, string ...$parameters): string
     {
         if (empty($parameters)) {
             return $mime;
@@ -128,7 +128,7 @@ class MimeType
     /**
      * Determines if a file is an animated gif.
      *
-     * @param String $image_filename The path of the file to check.
+     * @param string $image_filename The path of the file to check.
      * @return bool true if the file is an animated gif, false if it is not.
      */
     public static function is_animated_gif(string $image_filename): bool
@@ -214,8 +214,8 @@ class MimeType
 
     /**
      * Returns the mimetype for the specified file via file inspection
-     * @param String $file
-     * @return String The mimetype that was found. Returns generic octet binary mimetype if not found.
+     * @param string $file
+     * @return string The mimetype that was found. Returns generic octet binary mimetype if not found.
      */
     public static function get_for_file(string $file, ?string $ext = null): string
     {
