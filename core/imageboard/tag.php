@@ -122,6 +122,7 @@ class Tag
         return $id;
     }
 
+    /** @param string[] $tags */
     public static function implode(array $tags): string
     {
         sort($tags, SORT_FLAG_CASE|SORT_STRING);

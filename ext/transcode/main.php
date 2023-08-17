@@ -72,12 +72,12 @@ class TranscodeImage extends Extension
         return TranscodeConfig::UPLOAD_PREFIX.$mime;
     }
 
-    private static function get_mapping(String $mime): ?string
+    private static function get_mapping(string $mime): ?string
     {
         global $config;
         return $config->get_string(self::get_mapping_name($mime));
     }
-    private static function set_mapping(String $from_mime, ?String $to_mime): void
+    private static function set_mapping(string $from_mime, ?string $to_mime): void
     {
         global $config;
         $config->set_string(self::get_mapping_name($from_mime), $to_mime);
@@ -333,7 +333,7 @@ class TranscodeImage extends Extension
     }
 
 
-    private function get_supported_output_mimes($engine, ?String $omit_mime = null): array
+    private function get_supported_output_mimes($engine, ?string $omit_mime = null): array
     {
         $output = [];
 
@@ -353,7 +353,7 @@ class TranscodeImage extends Extension
 
 
 
-    private function transcode_and_replace_image(Image $image_obj, String $target_mime): Image
+    private function transcode_and_replace_image(Image $image_obj, string $target_mime): Image
     {
         $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
 
@@ -381,7 +381,7 @@ class TranscodeImage extends Extension
     }
 
 
-    private function transcode_image(String $source_name, String $source_mime, string $target_mime): string
+    private function transcode_image(string $source_name, string $source_mime, string $target_mime): string
     {
         global $config;
 
@@ -410,7 +410,7 @@ class TranscodeImage extends Extension
         }
     }
 
-    private function transcode_image_gd(String $source_name, String $source_mime, string $target_mime): string
+    private function transcode_image_gd(string $source_name, string $source_mime, string $target_mime): string
     {
         global $config;
 
@@ -462,7 +462,7 @@ class TranscodeImage extends Extension
         return $tmp_name;
     }
 
-    private function transcode_image_convert(String $source_name, String $source_mime, string $target_mime): string
+    private function transcode_image_convert(string $source_name, string $source_mime, string $target_mime): string
     {
         global $config;
 

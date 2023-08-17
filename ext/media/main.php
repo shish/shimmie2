@@ -457,8 +457,8 @@ class Media extends Extension
 //    }
 
 //    public static function image_resize_imagick(
-//        String $input_path,
-//        String $input_type,
+//        string $input_path,
+//        string $input_type,
 //        int $new_width,
 //        int $new_height,
 //        string $output_filename,
@@ -631,7 +631,7 @@ class Media extends Extension
     /**
      * Performs a resize operation on an image file using GD.
      *
-     * @param String $image_filename The source file to be resized.
+     * @param string $image_filename The source file to be resized.
      * @param array $info The output of getimagesize() for the source file.
      * @param int $new_width
      * @param int $new_height
