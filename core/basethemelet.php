@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A,B,BR,IMG,OPTION,SELECT,emptyHTML};
+use function MicroHTML\{A,B,BR,IMG,emptyHTML};
 
 /**
  * Class BaseThemelet
