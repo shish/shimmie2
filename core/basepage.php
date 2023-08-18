@@ -371,7 +371,15 @@ class BasePage
             $config_latest = max($config_latest, filemtime($conf));
         }
 
-        /*** Generate CSS cache files ***/
+        $css_cache_file = $this->get_css_cache_file($theme_name, $config_latest);
+        $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
+
+        $js_cache_file = $this->get_js_cache_file($theme_name, $config_latest);
+        $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
+    }
+
+    private function get_css_cache_file(string $theme_name, int $config_latest): string
+    {
         $css_latest = $config_latest;
         $css_files = array_merge(
             zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.css"),
@@ -393,9 +401,12 @@ class BasePage
             }
             file_put_contents($css_cache_file, $css_data);
         }
-        $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
 
-        /*** Generate JS cache files ***/
+        return $css_cache_file;
+    }
+
+    private function get_js_cache_file(string $theme_name, int $config_latest): string
+    {
         $js_latest = $config_latest;
         $js_files = array_merge(
             [
@@ -419,7 +430,8 @@ class BasePage
             }
             file_put_contents($js_cache_file, $js_data);
         }
-        $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
+
+        return $js_cache_file;
     }
 
 
