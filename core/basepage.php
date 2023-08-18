@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
+use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
 
 require_once "core/event.php";
 
@@ -391,15 +393,22 @@ class BasePage
         $css_md5 = md5(serialize($css_files));
         $css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
         if (!file_exists($css_cache_file)) {
-            $css_data = "";
-            foreach ($css_files as $file) {
-                $file_data = file_get_contents($file);
-                $pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-                $replace = 'url("../../../' . dirname($file) . '/$1")';
-                $file_data = preg_replace($pattern, $replace, $file_data);
-                $css_data .= $file_data . "\n";
+            $parser = new Parser();
+            foreach($css_files as $file) {
+                $parser->append($file);
             }
-            file_put_contents($css_cache_file, $css_data);
+            $element = $parser->parse();
+
+            // minified output
+            $renderer = new Renderer([
+                'compress' => true,
+                'convert_color' => 'hex',
+                'css_level' => 3,
+                'sourcemap' => true,
+                'allow_duplicate_declarations' => false,
+                'legacy_rendering' => true,  // turn nested CSS into regular
+            ]);
+            $renderer->save($element, $css_cache_file);
         }
 
         return $css_cache_file;
