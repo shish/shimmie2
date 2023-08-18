@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "54f37280f2cb7439ab7715d0827ad49d",
+    "content-hash": "88e93ac9426438e6dc11301eb9faeed1",
     "packages": [
         {
             "name": "axy/backtrace",
@@ -1039,16 +1039,16 @@
         },
         {
             "name": "tbela99/css",
-            "version": "dev-relative-url",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/php-css.git",
-                "reference": "60ea6f7190782752b18ee646d06097fb666c1213"
+                "reference": "d851161c33bcd8b3809d16c08c285f27123c79b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/php-css/zipball/60ea6f7190782752b18ee646d06097fb666c1213",
-                "reference": "60ea6f7190782752b18ee646d06097fb666c1213",
+                "url": "https://api.github.com/repos/shish/php-css/zipball/d851161c33bcd8b3809d16c08c285f27123c79b6",
+                "reference": "d851161c33bcd8b3809d16c08c285f27123c79b6",
                 "shasum": ""
             },
             "require": {
@@ -1066,6 +1066,7 @@
                 "ext-pcntl": "*",
                 "ext-sockets": "*"
             },
+            "default-branch": true,
             "bin": [
                 "cli/css-parser"
             ],
@@ -1114,9 +1115,9 @@
                 "stylesheet"
             ],
             "support": {
-                "source": "https://github.com/shish/php-css/tree/relative-url"
+                "source": "https://github.com/shish/php-css/tree/master"
             },
-            "time": "2023-08-18T14:13:00+00:00"
+            "time": "2023-08-18T15:28:52+00:00"
         },
         {
             "name": "webonyx/graphql-php",
