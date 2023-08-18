@@ -27,7 +27,7 @@ class Link
  * Figure out the correct way to link to a page, taking into account
  * things like the nice URLs setting.
  *
- * eg make_link("post/list") becomes "/v2/index.php?q=post/list"
+ * eg make_link("foo/bar") becomes "/v2/index.php?q=foo/bar"
  */
 function make_link(?string $page=null, ?string $query=null, ?string $fragment=null): string
 {

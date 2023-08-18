@@ -91,7 +91,7 @@ class ImageIO extends Extension
                         redirect_to_next_image($image);
                     } else {
                         $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(referer_or(make_link("post/list"), ['post/view']));
+                        $page->set_redirect(referer_or(make_link(), ['post/view']));
                     }
                 }
             }
