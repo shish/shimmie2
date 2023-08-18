@@ -404,7 +404,7 @@ class BasePage
                 'compress' => true,
                 'convert_color' => 'hex',
                 'css_level' => 3,
-                'sourcemap' => DEBUG,
+                'sourcemap' => true,
                 'allow_duplicate_declarations' => false,
                 'legacy_rendering' => true,  // turn nested CSS into regular
             ]);
