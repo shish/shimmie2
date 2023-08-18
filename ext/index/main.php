@@ -25,15 +25,8 @@ class Index extends Extension
         global $cache, $page, $user;
         if ($event->page_matches("post/list")) {
             if (isset($_GET['search'])) {
-                // implode(explode()) to resolve aliases and sanitise
-                $search = url_escape(Tag::caret(Tag::implode(Tag::explode($_GET['search'], false))));
-                if (empty($search)) {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/list/1"));
-                } else {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link('post/list/'.$search.'/1'));
-                }
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(search_link(Tag::explode($_GET['search'], false)));
                 return;
             }
 

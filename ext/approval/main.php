@@ -134,7 +134,7 @@ class Approval extends Extension
     {
         global $user;
         if ($user->can(Permissions::APPROVE_IMAGE)) {
-            $event->add_link("Pending Approval", make_link("/post/list/approved%3Ano/1"), 60);
+            $event->add_link("Pending Approval", search_link(["approved:no"]), 60);
         }
     }
 

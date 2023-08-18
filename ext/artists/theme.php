@@ -353,7 +353,7 @@ class ArtistsTheme extends Themelet
     {
         global $page;
 
-        $artist_link = "<a href='".make_link("post/list/".$artist['name']."/1")."'>".str_replace("_", " ", $artist['name'])."</a>";
+        $artist_link = "<a href='".search_link([$artist['name']])."'>".str_replace("_", " ", $artist['name'])."</a>";
 
         $html = "<table id='poolsList' class='zebra'>
 					<thead>

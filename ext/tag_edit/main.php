@@ -152,7 +152,7 @@ class TagEdit extends Extension
                 if ($user->can(Permissions::MASS_TAG_EDIT) && isset($_POST['tags']) && isset($_POST['source'])) {
                     $this->mass_source_edit($_POST['tags'], $_POST['source']);
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/list"));
+                    $page->set_redirect(search_link());
                 }
             }
         }

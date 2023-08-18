@@ -38,7 +38,7 @@ class UserActionColumn extends ActionColumn
 
     public function display(array $row): HTMLElement
     {
-        return A(["href"=>make_link("post/list/user={$row['name']}/1")], "Posts");
+        return A(["href"=>search_link(["user={$row['name']}"])], "Posts");
     }
 }
 

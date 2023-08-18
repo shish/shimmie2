@@ -75,7 +75,7 @@ class Favorites extends Extension
         $i_favorites_count = Image::count_images(["favorited_by={$event->display_user->name}"]);
         $i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_favorites_rate = sprintf("%.1f", ($i_favorites_count / $i_days_old));
-        $favorites_link = make_link("post/list/favorited_by={$event->display_user->name}/1");
+        $favorites_link = search_link(["favorited_by={$event->display_user->name}"]);
         $event->add_stats("<a href='$favorites_link'>Posts favorited</a>: $i_favorites_count, $h_favorites_rate per day");
     }
 
@@ -115,7 +115,7 @@ class Favorites extends Extension
         global $user;
 
         $username = url_escape($user->name);
-        $event->add_link("My Favorites", make_link("post/list/favorited_by=$username/1"), 20);
+        $event->add_link("My Favorites", search_link(["favorited_by=$username"]), 20);
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event)

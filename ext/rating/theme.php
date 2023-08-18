@@ -18,11 +18,10 @@ class RatingsTheme extends Themelet
 
     public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
     {
-        $u_rating = url_escape(Tag::caret($rating));
         return SHM_POST_INFO(
             "Rating",
             $can_rate,
-            A(["href"=>make_link("post/list/rating=$u_rating/1")], Ratings::rating_to_human($rating)),
+            A(["href"=>search_link(["rating=$rating"])], Ratings::rating_to_human($rating)),
             $this->get_selection_rater_html("rating", selected_options: [$rating])
         );
     }
