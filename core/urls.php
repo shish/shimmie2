@@ -24,6 +24,20 @@ class Link
 }
 
 /**
+ * Build a link to a search page for given terms,
+ * with all the appropriate escaping
+ */
+function search_link(array $terms = [], int $page = 1): string
+{
+    if($terms) {
+        $q = urlencode(Tag::caret(Tag::implode($terms)));
+        return make_link("post/list/$q/$page");
+    } else {
+        return make_link("post/list/$page");
+    }
+}
+
+/**
  * Figure out the correct way to link to a page, taking into account
  * things like the nice URLs setting.
  *

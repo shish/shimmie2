@@ -47,9 +47,8 @@ class TagEditTheme extends Themelet
 
         $tag_links = [];
         foreach ($image->get_tag_array() as $tag) {
-            $u_tag = url_escape($tag);
             $tag_links[] = A([
-                "href" => make_link("post/list/$u_tag/1"),
+                "href" => search_link([$tag]),
                 "class" => "tag",
                 "title" => "View all posts tagged $tag"
             ], $tag);
