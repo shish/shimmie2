@@ -393,6 +393,9 @@ class BasePage
         $css_md5 = md5(serialize($css_files));
         $css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
         if (!file_exists($css_cache_file)) {
+            // the CSS minifier causes a bunch of deprecation warnings,
+            // so we turn off error reporting while it runs
+            $old_error_level = error_reporting(0);
             $parser = new Parser();
             foreach($css_files as $file) {
                 $parser->append($file);
@@ -409,6 +412,7 @@ class BasePage
                 'legacy_rendering' => true,  // turn nested CSS into regular
             ]);
             $renderer->save($element, $css_cache_file);
+            error_reporting($old_error_level);
         }
 
         return $css_cache_file;
