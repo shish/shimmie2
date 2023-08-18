@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 /**
  * Name: Danbooru 2 Theme
  * Author: Bzchan <bzchan@animemahou.com>, updated by Daniel Oaks <daniel@danieloaks.net>
@@ -158,7 +160,7 @@ class Page extends BasePage
 EOD;
     }
 
-    public function navlinks(Link $link, string $desc, bool $active): ?string
+    public function navlinks(Link $link, HTMLElement|string $desc, bool $active): ?string
     {
         $html = null;
         if ($active) {
