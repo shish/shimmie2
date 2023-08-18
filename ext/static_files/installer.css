@@ -1,0 +1,39 @@
+#installer {
+	background: #EEE;
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	width: 512px;
+	margin: 16px auto auto;
+	border: 1px solid black;
+	border-radius: 16px;
+}
+#installer P {
+	padding: 5px;
+}
+#installer A {
+	text-decoration: none;
+}
+#installer A:hover {
+	text-decoration: underline;
+}
+#installer H1, #installer H3 {
+	background: #DDD;
+	text-align: center;
+	margin: 0;
+	padding: 2px;
+}
+#installer H1 {
+	border-radius: 16px 16px 0 0;
+}
+#installer H3 {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+#installer TH {
+	text-align: right;
+}
+#installer INPUT,
+#installer SELECT {
+	width: 100%;
+	box-sizing: border-box;
+}
