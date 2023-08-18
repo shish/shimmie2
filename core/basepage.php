@@ -395,7 +395,7 @@ class BasePage
         if (!file_exists($css_cache_file)) {
             // the CSS minifier causes a bunch of deprecation warnings,
             // so we turn off error reporting while it runs
-            $old_error_level = error_reporting(0);
+            $old_error_level = error_reporting(error_reporting(null) & ~E_DEPRECATED);
             $parser = new Parser();
             foreach($css_files as $file) {
                 $parser->append($file);
