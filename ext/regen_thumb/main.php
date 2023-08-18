@@ -37,7 +37,7 @@ class RegenThumb extends Extension
             }
 
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/list"));
+            $page->set_redirect(make_link());
         }
     }
 
