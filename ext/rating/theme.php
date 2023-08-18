@@ -7,7 +7,7 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\{P,SPAN,TABLE,TD,TH,TR};
+use function MicroHTML\{A,P,TABLE,TD,TH,TR};
 
 class RatingsTheme extends Themelet
 {
@@ -18,10 +18,11 @@ class RatingsTheme extends Themelet
 
     public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
     {
+        $u_rating = url_escape(Tag::caret($rating));
         return SHM_POST_INFO(
             "Rating",
             $can_rate,
-            Ratings::rating_to_human($rating),
+            A(["href"=>make_link("post/list/rating=$u_rating/1")], Ratings::rating_to_human($rating)),
             $this->get_selection_rater_html("rating", selected_options: [$rating])
         );
     }
