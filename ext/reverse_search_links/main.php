@@ -36,7 +36,6 @@ class ReverseSearchLinks extends Extension
      */
     protected array $SERVICES = [
         'SauceNAO',
-        'IQDB',
         'TinEye',
         'trace.moe',
         'ascii2d',
@@ -79,7 +78,7 @@ class ReverseSearchLinks extends Extension
         $config->set_default_string(ReverseSearchLinksConfig::POSITION, "main");
         $config->set_default_array(
             ReverseSearchLinksConfig::ENABLED_SERVICES,
-            ['SauceNAO', 'IQDB', 'TinEye', 'trace.moe', 'ascii2d', 'Yandex']
+            ['SauceNAO', 'TinEye', 'trace.moe', 'ascii2d', 'Yandex']
         );
     }
 }
