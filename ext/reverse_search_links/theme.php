@@ -25,7 +25,7 @@ class ReverseSearchLinksTheme extends Themelet
         foreach($links as $name => $link) {
             if (in_array($name, $enabled_services)) {
                 $icon_link = make_link("/ext/reverse_search_links/icons/" . strtolower($name) . ".ico");
-                $html .= "<a href='$link' rel='nofollow'><img title='Search with $name' src='$icon_link' alt='$name icon'></a>";
+                $html .= "<a href='$link' class='reverse_image_link' rel='nofollow'><img title='Search with $name' src='$icon_link' alt='$name icon'></a>";
             }
         }
 
