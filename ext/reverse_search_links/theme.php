@@ -29,9 +29,6 @@ class ReverseSearchLinksTheme extends Themelet
             }
         }
 
-        $position = $config->get_string(ReverseSearchLinksConfig::POSITION) ?? "main";
-        $priority = $config->get_int(ReverseSearchLinksConfig::PRIORITY) ?? 20;
-
-        $page->add_block(new Block("Reverse Image Search", $html, $position, $priority));
+        $page->add_block(new Block("Reverse Image Search", $html, "main", 20));
     }
 }
