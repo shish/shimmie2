@@ -6,8 +6,6 @@ namespace Shimmie2;
 
 abstract class ReverseSearchLinksConfig
 {
-    public const PRIORITY = "ext_reverse_search_links_priority";
-    public const POSITION = "ext_reverse_search_links_position";
     public const ENABLED_SERVICES = "ext_reverse_search_links_enabled_services";
 }
 
@@ -56,26 +54,11 @@ class ReverseSearchLinks extends Extension
     }
 
     /**
-     * Generate the settings block
-     */
-    public function onSetupBuilding(SetupBuildingEvent $event)
-    {
-        $sb = $event->panel->create_new_block("Reverse Search Links");
-        $sb->start_table();
-        $sb->add_int_option("ext_reverse_search_links_priority", "Priority:");
-        $sb->add_choice_option("ext_reverse_search_links_position", ["Main page" => "main", "In navigation bar" => "left"], "<br>Position: ");
-        $sb->add_multichoice_option("ext_reverse_search_links_enabled_services", $this->get_options(), "Enabled Services", true);
-        $sb->end_table();
-    }
-
-    /**
      * Set default config values
      */
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_int(ReverseSearchLinksConfig::PRIORITY, 20);
-        $config->set_default_string(ReverseSearchLinksConfig::POSITION, "main");
         $config->set_default_array(
             ReverseSearchLinksConfig::ENABLED_SERVICES,
             ['SauceNAO', 'TinEye', 'trace.moe', 'ascii2d', 'Yandex']
