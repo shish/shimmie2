@@ -7,18 +7,17 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\{INPUT,P};
+use function MicroHTML\{INPUT,P,SPAN,TD,TH,TR};
 
 class ArtistsTheme extends Themelet
 {
-    public function get_author_editor_html(string $author): HTMLElement
+    public function get_author_editor_html(string $author): string
     {
-        return SHM_POST_INFO(
-            "Author",
-            true,
-            $author,
-            INPUT(["type"=>"text", "name"=>"tag_edit__author", "value"=>$author])
-        );
+        $h_author = html_escape($author);
+        return (string)TR(TH("Author", TD(
+            SPAN(["class"=>"view"], $h_author),
+            INPUT(["class"=>"edit", "type"=>"text", "name"=>"tag_edit__author", "value"=>$h_author])
+        )));
     }
 
     public function sidebar_options(string $mode, ?int $artistID=null, $is_admin=false): void
@@ -353,7 +352,7 @@ class ArtistsTheme extends Themelet
     {
         global $page;
 
-        $artist_link = "<a href='".search_link([$artist['name']])."'>".str_replace("_", " ", $artist['name'])."</a>";
+        $artist_link = "<a href='".make_link("post/list/".$artist['name']."/1")."'>".str_replace("_", " ", $artist['name'])."</a>";
 
         $html = "<table id='poolsList' class='zebra'>
 					<thead>

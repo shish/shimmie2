@@ -79,13 +79,15 @@ and of course start organising your images :-)
         $next = $page_number + 1;
 
         $u_tags = url_escape(Tag::implode($search_terms));
+        $query = empty($u_tags) ? "" : '/'.$u_tags;
 
-        $h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.search_link($search_terms, $prev).'">Prev</a>';
+
+        $h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.make_link('post/list'.$query.'/'.$prev).'">Prev</a>';
         $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.search_link($search_terms, $next).'">Next</a>';
+        $h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.make_link('post/list'.$query.'/'.$next).'">Next</a>';
 
         $h_search_string = html_escape(Tag::implode($search_terms));
-        $h_search_link = search_link();
+        $h_search_link = make_link("post/list");
         $h_search = "
 			<p><form action='$h_search_link' method='GET'>
 				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' autocomplete='off' />

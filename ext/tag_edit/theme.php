@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\{TR, TH, TD, emptyHTML, rawHTML, joinHTML, DIV, INPUT, A};
-
 class TagEditTheme extends Themelet
 {
     /*
@@ -18,7 +14,7 @@ class TagEditTheme extends Themelet
     {
         global $page;
         $html = "
-		" . make_form(make_link("tag_edit/replace")) . "
+		".make_form(make_link("tag_edit/replace"))."
 			<table class='form'>
 				<tr><th>Search</th><td><input type='text' name='search' class='autocomplete_tags' autocomplete='off'></tr>
 				<tr><th>Replace</th><td><input type='text' name='replace' class='autocomplete_tags' autocomplete='off'></td></tr>
@@ -41,95 +37,115 @@ class TagEditTheme extends Themelet
         return $html;
     }
 
-    public function get_tag_editor_html(Image $image): HTMLElement
+    public function get_tag_editor_html(Image $image): string
     {
         global $user;
 
         $tag_links = [];
         foreach ($image->get_tag_array() as $tag) {
-            $tag_links[] = A([
-                "href" => search_link([$tag]),
-                "class" => "tag",
-                "title" => "View all posts tagged $tag"
-            ], $tag);
+            $h_tag = html_escape($tag);
+            $u_tag = url_escape($tag);
+            $h_link = make_link("post/list/$u_tag/1");
+            $tag_links[] = "<a href='$h_link'>$h_tag</a>";
         }
+        $h_tag_links = Tag::implode($tag_links);
+        $h_tags = html_escape($image->get_tag_list());
 
-        return SHM_POST_INFO(
-            "Tags",
-            $user->can(Permissions::EDIT_IMAGE_TAG),
-            joinHTML(", ", $tag_links),
-            INPUT([
-                "class" => "autocomplete_tags",
-                "type" => "text",
-                "name" => "tag_edit__tags",
-                "value" => $image->get_tag_list(),
-                "id"=>"tag_editor",
-                "autocomplete" => "off"
-            ])
-        );
+        return "
+			<tr>
+				<th width='50px'>Tags</th>
+				<td>
+		".($user->can(Permissions::EDIT_IMAGE_TAG) ? "
+					<span class='view'>$h_tag_links</span>
+					<div class='edit'>
+						<input class='autocomplete_tags' type='text' name='tag_edit__tags' value='$h_tags' id='tag_editor' autocomplete='off'>
+					</div>
+		" : "
+					$h_tag_links
+		")."
+				</td>
+			</tr>
+		";
     }
 
-    public function get_user_editor_html(Image $image): HTMLElement
+    public function get_user_editor_html(Image $image): string
     {
         global $user;
-        $owner = $image->get_owner()->name;
-        $date = rawHTML(autodate($image->posted));
-        $ip = $user->can(Permissions::VIEW_IP) ? rawHTML(" (" . show_ip($image->owner_ip, "Post posted {$image->posted}") . ")") : "";
-        $info = SHM_POST_INFO(
-            "Uploader",
-            $user->can(Permissions::EDIT_IMAGE_OWNER),
-            emptyHTML(A(["class" => "username", "href" => make_link("user/$owner")], $owner), $ip, ", ", $date),
-            INPUT(["type" => "text", "name" => "tag_edit__owner", "value" => $owner])
-        );
-        // SHM_POST_INFO returns a TR, let's sneakily append
-        // a TD with the avatar in it
-        $info->appendChild(
-            TD(
-                ["width" => "80px", "rowspan" => "4"],
-                rawHTML($image->get_owner()->get_avatar_html())
-            )
-        );
-        return $info;
+        $h_owner = html_escape($image->get_owner()->name);
+        $h_av = $image->get_owner()->get_avatar_html();
+        $h_date = autodate($image->posted);
+        $h_ip = $user->can(Permissions::VIEW_IP) ? " (".show_ip($image->owner_ip, "Post posted {$image->posted}").")" : "";
+        return "
+			<tr>
+				<th>Uploader</th>
+				<td>
+		".($user->can(Permissions::EDIT_IMAGE_OWNER) ? "
+					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date</span>
+					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
+		" : "
+					<a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date
+		")."
+				</td>
+				<td width='80px' rowspan='4'>$h_av</td>
+			</tr>
+		";
     }
 
-    public function get_source_editor_html(Image $image): HTMLElement
+    public function get_source_editor_html(Image $image): string
     {
         global $user;
-        return SHM_POST_INFO(
-            "Source",
-            $user->can(Permissions::EDIT_IMAGE_SOURCE),
-            DIV(
-                ["style" => "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;"],
-                $this->format_source($image->get_source())
-            ),
-            INPUT(["type" => "text", "name" => "tag_edit__source", "value" => $image->get_source()])
-        );
+        $h_source = html_escape($image->get_source());
+        $f_source = $this->format_source($image->get_source());
+        $style = "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;";
+        return "
+			<tr>
+				<th>Source</th>
+				<td>
+		".($user->can(Permissions::EDIT_IMAGE_SOURCE) ? "
+					<div class='view' style='$style'>$f_source</div>
+					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
+		" : "
+					<div style='$style'>$f_source</div>
+		")."
+				</td>
+			</tr>
+		";
     }
 
-    protected function format_source(string $source = null): HTMLElement
+    protected function format_source(string $source=null): string
     {
         if (!empty($source)) {
             if (!str_starts_with($source, "http://") && !str_starts_with($source, "https://")) {
                 $source = "http://" . $source;
             }
             $proto_domain = explode("://", $source);
-            $h_source = $proto_domain[1];
+            $h_source = html_escape($proto_domain[1]);
+            $u_source = html_escape($source);
             if (str_ends_with($h_source, "/")) {
                 $h_source = substr($h_source, 0, -1);
             }
-            return A(["href"=>$source], $h_source);
+            return "<a href='$u_source'>$h_source</a>";
         }
-        return rawHTML("Unknown");
+        return "Unknown";
     }
 
-    public function get_lock_editor_html(Image $image): HTMLElement
+    public function get_lock_editor_html(Image $image): string
     {
         global $user;
-        return SHM_POST_INFO(
-            "Locked",
-            $user->can(Permissions::EDIT_IMAGE_LOCK),
-            $image->is_locked() ? "Yes (Only admins may edit these details)" : "No",
-            INPUT(["type" => "checkbox", "name" => "tag_edit__locked", "checked" => $image->is_locked()])
-        );
+        $b_locked = $image->is_locked() ? "Yes (Only admins may edit these details)" : "No";
+        $h_locked = $image->is_locked() ? " checked" : "";
+        return "
+			<tr>
+				<th>Locked</th>
+				<td>
+		".($user->can(Permissions::EDIT_IMAGE_LOCK) ? "
+					<span class='view'>$b_locked</span>
+					<input class='edit' type='checkbox' name='tag_edit__locked'$h_locked>
+		" : "
+					$b_locked
+		")."
+				</td>
+			</tr>
+		";
     }
 }

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, B, DIV, joinHTML};
+use function MicroHTML\{A, B, DIV};
 
 class Themelet extends BaseThemelet
 {
@@ -54,7 +54,7 @@ class Themelet extends BaseThemelet
         foreach (range($start, $end) as $i) {
             $pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, (string)$i);
         }
-        $pages_html = joinHTML(" ", $pages);
+        $pages_html = $this->implode(" ", $pages);
 
         if ($first_html) {
             $pdots = "...";
@@ -68,6 +68,6 @@ class Themelet extends BaseThemelet
             $ndots = "";
         }
 
-        return DIV(["id"=>'paginator'], joinHTML(" ", [$prev_html, $first_html, $pdots, $pages_html, $ndots, $last_html, $next_html]));
+        return DIV(["id"=>'paginator'], $this->implode(" ", [$prev_html, $first_html, $pdots, $pages_html, $ndots, $last_html, $next_html]));
     }
 }

@@ -298,6 +298,7 @@ class TagListTheme extends Themelet
 
     public function tag_link(string $tag): string
     {
-        return search_link([$tag]);
+        $u_tag = url_escape(Tag::caret($tag));
+        return make_link("post/list/$u_tag/1");
     }
 }

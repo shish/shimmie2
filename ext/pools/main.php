@@ -135,10 +135,9 @@ class Pools extends Extension
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
 					public BOOLEAN NOT NULL DEFAULT FALSE,
-					title VARCHAR(255) NOT NULL UNIQUE,
+					title VARCHAR(255) NOT NULL,
 					description TEXT,
 					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-					lastupdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					posts INTEGER NOT NULL DEFAULT 0,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -165,6 +164,12 @@ class Pools extends Extension
             log_info("pools", "extension installed");
         }
 
+        if ($this->get_version("ext_pools_version") < 2) {
+            $database->execute("ALTER TABLE pools ADD UNIQUE INDEX (title);");
+            $database->execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
+
+            $this->set_version("ext_pools_version", 3); // skip 2
+        }
         if ($this->get_version("ext_pools_version") < 4) {
             $database->standardise_boolean("pools", "public");
             $this->set_version("ext_pools_version", 4);
@@ -398,7 +403,7 @@ class Pools extends Extension
                 case "edit_description":
                     if ($this->have_permission($user, $pool)) {
                         $database->execute(
-                            "UPDATE pools SET description=:dsc,lastupdated=CURRENT_TIMESTAMP WHERE id=:pid",
+                            "UPDATE pools SET description=:dsc WHERE id=:pid",
                             ["dsc" => $_POST['description'], "pid" => $pool_id]
                         );
                         $page->set_mode(PageMode::REDIRECT);
@@ -978,7 +983,7 @@ class Pools extends Extension
     {
         global $database;
         $database->execute(
-            "UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid),lastupdated=CURRENT_TIMESTAMP WHERE id=:pid",
+            "UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid) WHERE id=:pid",
             ["pid" => $pool_id]
         );
     }

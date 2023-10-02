@@ -71,7 +71,7 @@ class Trash extends Extension
 
         if (!$this->check_permissions(($event->image))) {
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            $page->set_redirect(make_link("post/list"));
         }
     }
 
@@ -97,7 +97,7 @@ class Trash extends Extension
     {
         global $user;
         if ($user->can(Permissions::VIEW_TRASH)) {
-            $event->add_link("Trash", search_link(["in:trash"]), 60);
+            $event->add_link("Trash", make_link("/post/list/in%3Atrash/1"), 60);
         }
     }
 

@@ -27,10 +27,6 @@
 					"reference" : "fd4ff50eb577457c1b7b887401663e91e77625ae"
 				}
 			}
-		},
-		{
-			"type" : "vcs",
-			"url"  : "https://github.com/shish/php-css.git"
 		}
 	],
 
@@ -46,7 +42,7 @@
 		"shish/eventtracer-php"     : "^2.0",
 		"shish/ffsphp"              : "^1.0",
 		"shish/microcrud"           : "^2.0",
-		"shish/microhtml"           : "^2.2",
+		"shish/microhtml"           : "^2.0",
 		"shish/gqla"                : "dev-main",
 		"enshrined/svg-sanitize"    : "^0.16",
 
@@ -55,8 +51,7 @@
 		"bower-asset/js-cookie"      : "^2.1",
 		"psr/simple-cache"           : "^1.0",
 		"sabre/cache"                : "^2.0.1",
-		"naroga/redis-cache": "dev-master",
-		"tbela99/css": "dev-master"
+		"naroga/redis-cache": "dev-master"
     },
 
 	"require-dev" : {

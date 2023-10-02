@@ -119,7 +119,7 @@ class TagHistoryTheme extends Themelet
         $current_tags = Tag::explode($current_tags);
         $taglinks = SPAN();
         foreach ($current_tags as $tag) {
-            $taglinks->appendChild(A(["href"=>search_link([$tag])], $tag));
+            $taglinks->appendChild(A(["href"=>make_link("post/list/$tag/1")], $tag));
             $taglinks->appendChild(" ");
         }
 

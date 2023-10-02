@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
 /**
  * Name: Lite Theme
  * Author: Zach Hall <zach@sosguy.net>
@@ -131,7 +129,7 @@ EOD;
         return $html;
     }
 
-    public function navlinks(Link $link, HTMLElement|string $desc, bool $active): ?string
+    public function navlinks(Link $link, string $desc, bool $active): ?string
     {
         $html = null;
         if ($active) {

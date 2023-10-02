@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
-use TBela\CSS\Parser;
-use TBela\CSS\Renderer;
 
 require_once "core/event.php";
 
@@ -373,15 +371,7 @@ class BasePage
             $config_latest = max($config_latest, filemtime($conf));
         }
 
-        $css_cache_file = $this->get_css_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
-
-        $js_cache_file = $this->get_js_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
-    }
-
-    private function get_css_cache_file(string $theme_name, int $config_latest): string
-    {
+        /*** Generate CSS cache files ***/
         $css_latest = $config_latest;
         $css_files = array_merge(
             zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.css"),
@@ -393,33 +383,19 @@ class BasePage
         $css_md5 = md5(serialize($css_files));
         $css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
         if (!file_exists($css_cache_file)) {
-            // the CSS minifier causes a bunch of deprecation warnings,
-            // so we turn off error reporting while it runs
-            $old_error_level = error_reporting(error_reporting(null) & ~E_DEPRECATED);
-            $parser = new Parser();
-            foreach($css_files as $file) {
-                $parser->append($file);
+            $css_data = "";
+            foreach ($css_files as $file) {
+                $file_data = file_get_contents($file);
+                $pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
+                $replace = 'url("../../../' . dirname($file) . '/$1")';
+                $file_data = preg_replace($pattern, $replace, $file_data);
+                $css_data .= $file_data . "\n";
             }
-            $element = $parser->parse();
-
-            // minified output
-            $renderer = new Renderer([
-                'compress' => true,
-                'convert_color' => 'hex',
-                'css_level' => 3,
-                'sourcemap' => true,
-                'allow_duplicate_declarations' => false,
-                'legacy_rendering' => true,  // turn nested CSS into regular
-            ]);
-            $renderer->save($element, $css_cache_file);
-            error_reporting($old_error_level);
+            file_put_contents($css_cache_file, $css_data);
         }
+        $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
 
-        return $css_cache_file;
-    }
-
-    private function get_js_cache_file(string $theme_name, int $config_latest): string
-    {
+        /*** Generate JS cache files ***/
         $js_latest = $config_latest;
         $js_files = array_merge(
             [
@@ -443,8 +419,7 @@ class BasePage
             }
             file_put_contents($js_cache_file, $js_data);
         }
-
-        return $js_cache_file;
+        $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
     }
 
 

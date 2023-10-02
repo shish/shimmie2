@@ -116,7 +116,7 @@ class Approval extends Extension
 
         if (!$this->check_permissions(($event->image))) {
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            $page->set_redirect(make_link("post/list"));
         }
     }
 
@@ -134,7 +134,7 @@ class Approval extends Extension
     {
         global $user;
         if ($user->can(Permissions::APPROVE_IMAGE)) {
-            $event->add_link("Pending Approval", search_link(["approved:no"]), 60);
+            $event->add_link("Pending Approval", make_link("/post/list/approved%3Ano/1"), 60);
         }
     }
 

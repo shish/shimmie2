@@ -264,7 +264,7 @@ class AutoTagger extends Extension
         }
     }
 
-    private function remove_auto_tag(string $tag)
+    private function remove_auto_tag(String $tag)
     {
         global $database;
 

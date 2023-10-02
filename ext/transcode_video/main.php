@@ -180,7 +180,7 @@ class TranscodeVideo extends Extension
         }
     }
 
-    private static function get_output_options(?string $starting_container = null, ?string $starting_codec = null): array
+    private static function get_output_options(?String $starting_container = null, ?String $starting_codec = null): array
     {
         $output = ["" => ""];
 
@@ -199,7 +199,7 @@ class TranscodeVideo extends Extension
         return $output;
     }
 
-    private function transcode_and_replace_video(Image $image, string $target_mime): Image
+    private function transcode_and_replace_video(Image $image, String $target_mime): Image
     {
         if ($image->get_mime()==$target_mime) {
             return $image;
@@ -243,7 +243,7 @@ class TranscodeVideo extends Extension
     }
 
 
-    private function transcode_video(string $source_file, string $source_video_codec, string $target_mime, string $target_file): string
+    private function transcode_video(String $source_file, String $source_video_codec, String $target_mime, string $target_file): string
     {
         global $config;
 

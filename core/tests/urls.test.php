@@ -10,18 +10,6 @@ require_once "core/urls.php";
 
 class UrlsTest extends TestCase
 {
-    public function test_search_link()
-    {
-        $this->assertEquals(
-            "/test/post/list/bar+foo/1",
-            search_link(["foo", "bar"])
-        );
-        $this->assertEquals(
-            "/test/post/list/cat%2A+rating%3D%5Eq/1",
-            search_link(["rating=?", "cat*"])
-        );
-    }
-
     public function test_make_link()
     {
         // basic

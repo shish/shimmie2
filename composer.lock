@@ -4,200 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "88e93ac9426438e6dc11301eb9faeed1",
+    "content-hash": "e4d47676467ba492d3be2d43d3950b9d",
     "packages": [
-        {
-            "name": "axy/backtrace",
-            "version": "1.0.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/axypro/backtrace.git",
-                "reference": "c6c7d0f3497a07ae934f9e8511cbc2286db311c5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/axypro/backtrace/zipball/c6c7d0f3497a07ae934f9e8511cbc2286db311c5",
-                "reference": "c6c7d0f3497a07ae934f9e8511cbc2286db311c5",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "axy\\backtrace\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Oleg Grigoriev",
-                    "email": "go.vasac@gmail.com"
-                }
-            ],
-            "description": "Tracing in PHP",
-            "homepage": "https://github.com/axypro/backtrace",
-            "keywords": [
-                "Backtrace",
-                "debug",
-                "exception",
-                "trace"
-            ],
-            "support": {
-                "issues": "https://github.com/axypro/backtrace/issues",
-                "source": "https://github.com/axypro/backtrace/tree/1.0.7"
-            },
-            "time": "2019-02-02T15:52:44+00:00"
-        },
-        {
-            "name": "axy/codecs-base64vlq",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/axypro/codecs-base64vlq.git",
-                "reference": "53a1957f2cb773c6533ac615b3f1ac59e40e13cc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/axypro/codecs-base64vlq/zipball/53a1957f2cb773c6533ac615b3f1ac59e40e13cc",
-                "reference": "53a1957f2cb773c6533ac615b3f1ac59e40e13cc",
-                "shasum": ""
-            },
-            "require": {
-                "axy/errors": "~1.0.1",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "axy\\codecs\\base64vlq\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Oleg Grigoriev",
-                    "email": "go.vasac@gmail.com"
-                }
-            ],
-            "description": "Codec for VLQ (variable-length quantity) Base64 algorithm",
-            "homepage": "https://github.com/axypro/codecs-base64vlq",
-            "keywords": [
-                "Source map",
-                "VLQ",
-                "Variable length quantity",
-                "base64",
-                "codec"
-            ],
-            "support": {
-                "issues": "https://github.com/axypro/codecs-base64vlq/issues",
-                "source": "https://github.com/axypro/codecs-base64vlq/tree/master"
-            },
-            "time": "2015-11-23T07:08:52+00:00"
-        },
-        {
-            "name": "axy/errors",
-            "version": "1.0.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/axypro/errors.git",
-                "reference": "2c64374ae2b9ca51304c09b6b6acc275557fc34f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/axypro/errors/zipball/2c64374ae2b9ca51304c09b6b6acc275557fc34f",
-                "reference": "2c64374ae2b9ca51304c09b6b6acc275557fc34f",
-                "shasum": ""
-            },
-            "require": {
-                "axy/backtrace": "~1.0.2",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "axy\\errors\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Oleg Grigoriev",
-                    "email": "go.vasac@gmail.com"
-                }
-            ],
-            "description": "Exceptions in PHP",
-            "homepage": "https://github.com/axypro/errors",
-            "keywords": [
-                "error",
-                "exception"
-            ],
-            "support": {
-                "issues": "https://github.com/axypro/errors/issues",
-                "source": "https://github.com/axypro/errors/tree/1.0.5"
-            },
-            "time": "2019-02-02T18:26:18+00:00"
-        },
-        {
-            "name": "axy/sourcemap",
-            "version": "0.1.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/axypro/sourcemap.git",
-                "reference": "95a52df5a08c3a011031dae2e79390134e28467c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/axypro/sourcemap/zipball/95a52df5a08c3a011031dae2e79390134e28467c",
-                "reference": "95a52df5a08c3a011031dae2e79390134e28467c",
-                "shasum": ""
-            },
-            "require": {
-                "axy/codecs-base64vlq": "~1.0.0",
-                "axy/errors": "~1.0.1",
-                "ext-json": "*",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "axy\\sourcemap\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Oleg Grigoriev",
-                    "email": "go.vasac@gmail.com"
-                }
-            ],
-            "description": "Work with JavaScript/CSS Source Map",
-            "homepage": "https://github.com/axypro/sourcemap",
-            "keywords": [
-                "Source map",
-                "css",
-                "javascript",
-                "sourcemap"
-            ],
-            "support": {
-                "issues": "https://github.com/axypro/sourcemap/issues",
-                "source": "https://github.com/axypro/sourcemap/tree/0.1.5"
-            },
-            "time": "2020-08-20T09:49:44+00:00"
-        },
         {
             "name": "bower-asset/jquery",
             "version": "1.12.4",
@@ -529,72 +337,6 @@
                 "source": "https://github.com/naroga/redis-cache/tree/1.2"
             },
             "time": "2021-01-25T13:15:08+00:00"
-        },
-        {
-            "name": "opis/closure",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/opis/closure.git",
-                "reference": "3d81e4309d2a927abbe66df935f4bb60082805ad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/opis/closure/zipball/3d81e4309d2a927abbe66df935f4bb60082805ad",
-                "reference": "3d81e4309d2a927abbe66df935f4bb60082805ad",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.4 || ^7.0 || ^8.0"
-            },
-            "require-dev": {
-                "jeremeamia/superclosure": "^2.0",
-                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.6.x-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "functions.php"
-                ],
-                "psr-4": {
-                    "Opis\\Closure\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marius Sarca",
-                    "email": "marius.sarca@gmail.com"
-                },
-                {
-                    "name": "Sorin Sarca",
-                    "email": "sarca_sorin@hotmail.com"
-                }
-            ],
-            "description": "A library that can be used to serialize closures (anonymous functions) and arbitrary objects.",
-            "homepage": "https://opis.io/closure",
-            "keywords": [
-                "anonymous functions",
-                "closure",
-                "function",
-                "serializable",
-                "serialization",
-                "serialize"
-            ],
-            "support": {
-                "issues": "https://github.com/opis/closure/issues",
-                "source": "https://github.com/opis/closure/tree/3.6.3"
-            },
-            "time": "2022-01-27T09:35:39+00:00"
         },
         {
             "name": "predis/predis",
@@ -987,16 +729,16 @@
         },
         {
             "name": "shish/microhtml",
-            "version": "v2.2.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "824d8541c7f0662e26d03d65d865d8f13ea57a72"
+                "reference": "afef3aac229b514ed5b4afbfb2d970d1419313c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/824d8541c7f0662e26d03d65d865d8f13ea57a72",
-                "reference": "824d8541c7f0662e26d03d65d865d8f13ea57a72",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/afef3aac229b514ed5b4afbfb2d970d1419313c8",
+                "reference": "afef3aac229b514ed5b4afbfb2d970d1419313c8",
                 "shasum": ""
             },
             "require": {
@@ -1033,91 +775,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microhtml/issues",
-                "source": "https://github.com/shish/microhtml/tree/v2.2.1"
+                "source": "https://github.com/shish/microhtml/tree/v2.1.0"
             },
-            "time": "2023-08-17T16:39:06+00:00"
-        },
-        {
-            "name": "tbela99/css",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shish/php-css.git",
-                "reference": "bc343fe231a4c0fea6ef7405228f010956a5cd07"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shish/php-css/zipball/bc343fe231a4c0fea6ef7405228f010956a5cd07",
-                "reference": "bc343fe231a4c0fea6ef7405228f010956a5cd07",
-                "shasum": ""
-            },
-            "require": {
-                "axy/sourcemap": "^0.1.5",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "opis/closure": "^3.6",
-                "php": ">=8.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.5"
-            },
-            "suggest": {
-                "ext-curl": "*",
-                "ext-pcntl": "*",
-                "ext-sockets": "*"
-            },
-            "default-branch": true,
-            "bin": [
-                "cli/css-parser"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "TBela\\CSS\\": "src"
-                }
-            },
-            "archive": {
-                "exclude": [
-                    "*.sh",
-                    "*.phar",
-                    "test/",
-                    "tool/",
-                    "docs/",
-                    "bin/"
-                ]
-            },
-            "scripts": {
-                "test": [
-                    "./bin/runtest.sh"
-                ]
-            },
-            "license": [
-                "MIT",
-                "LGPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Thierry Bela",
-                    "homepage": "https://tbela.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A CSS parser and minifier written in PHP",
-            "homepage": "https://github.com/tbela99/css",
-            "keywords": [
-                "Ast",
-                "CSS",
-                "PHP",
-                "beautifier",
-                "css-parser",
-                "minifier",
-                "parser",
-                "stylesheet"
-            ],
-            "support": {
-                "source": "https://github.com/shish/php-css/tree/master"
-            },
-            "time": "2023-08-18T18:26:28+00:00"
+            "time": "2023-02-04T13:02:26+00:00"
         },
         {
             "name": "webonyx/graphql-php",
@@ -5892,7 +5552,6 @@
     "stability-flags": {
         "shish/gqla": 20,
         "naroga/redis-cache": 20,
-        "tbela99/css": 20,
         "scrutinizer/ocular": 20,
         "phpstan/phpstan": 20
     },

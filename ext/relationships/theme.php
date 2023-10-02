@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\{TR, TH, TD, emptyHTML, DIV, INPUT};
-
 class RelationshipsTheme extends Themelet
 {
     public function relationship_info(Image $image)
@@ -22,7 +18,7 @@ class RelationshipsTheme extends Themelet
         if (bool_escape($image->has_children)) {
             $ids = $database->get_col("SELECT id FROM images WHERE parent_id = :iid", ["iid"=>$image->id]);
 
-            $html = "This post has <a href='".search_link(['parent='.$image->id])."'>".(count($ids) > 1 ? "child posts" : "a child post")."</a>";
+            $html = "This post has <a href='".make_link('post/list/parent='.$image->id.'/1')."'>".(count($ids) > 1 ? "child posts" : "a child post")."</a>";
             $html .= " (post ";
             foreach ($ids as $id) {
                 $html .= "#<a href='".make_link('post/view/'.$id)."'>{$id}</a>, ";
@@ -33,16 +29,26 @@ class RelationshipsTheme extends Themelet
         }
     }
 
-    public function get_parent_editor_html(Image $image): HTMLElement
+    public function get_parent_editor_html(Image $image): string
     {
         global $user;
 
-        return SHM_POST_INFO(
-            "Parent",
-            !$user->is_anonymous(),
-            $image->parent_id ?: "None",
-            INPUT(["type"=>"number", "name"=>"tag_edit__parent", "value"=>$image->parent_id])
-        );
+        $h_parent_id = $image->parent_id;
+        $s_parent_id = $h_parent_id ?: "None";
+
+        $html = "<tr>\n".
+                "	<th>Parent</th>\n".
+                "	<td>\n".
+                (
+                    !$user->is_anonymous() ?
+                    "		<span class='view' style='overflow: hidden; white-space: nowrap;'>{$s_parent_id}</span>\n".
+                    "		<input class='edit' type='number' name='tag_edit__parent' type='number' value='{$h_parent_id}'>\n"
+                :
+                    $s_parent_id
+                ).
+                "	<td>\n".
+                "</tr>\n";
+        return $html;
     }
 
 

@@ -43,7 +43,7 @@ class NotesTheme extends Themelet
 
     public function search_notes_page(Page $page): void
     { //IN DEVELOPMENT, NOT FULLY WORKING
-        $html = '<form method="GET" action="'.search_link(["note="]).'">
+        $html = '<form method="GET" action="'.make_link("post/list/note=").'">
 		<input placeholder="Search Notes" type="text" name="search"/>
 		<input type="submit" style="display: none;" value="Find"/>
 		</form>';

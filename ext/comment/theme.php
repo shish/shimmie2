@@ -29,7 +29,7 @@ class CommentListTheme extends Themelet
 
         $h_prev = ($page_number <= 1) ? "Prev" :
             '<a href="'.make_link('comment/list/'.$prev).'">Prev</a>';
-        $h_index = "<a href='".make_link()."'>Index</a>";
+        $h_index = "<a href='".make_link("post/list")."'>Index</a>";
         $h_next = ($page_number >= $total_pages) ? "Next" :
             '<a href="'.make_link('comment/list/'.$next).'">Next</a>';
 
@@ -186,7 +186,7 @@ class CommentListTheme extends Themelet
         //$query = empty($u_tags) ? "" : '/'.$u_tags;
 
         $h_prev = ($page_number <= 1) ? "Prev" : "<a href='$prev'>Prev</a>";
-        $h_index = "<a href='".make_link()."'>Index</a>";
+        $h_index = "<a href='".make_link("post/list")."'>Index</a>";
         $h_next = ($page_number >= $total_pages) ? "Next" : "<a href='$next'>Next</a>";
 
         $page->set_title(html_escape($user->name)."'s comments");

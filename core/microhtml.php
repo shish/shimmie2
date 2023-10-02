@@ -151,20 +151,3 @@ function SHM_OPTION(string $value, string $text, bool $selected=false): HTMLElem
 
     return OPTION(["value"=>$value], $text);
 }
-
-function SHM_POST_INFO(
-    HTMLElement|string $title,
-    bool $can_edit,
-    HTMLElement|string $view,
-    HTMLElement|string $edit = "",
-): HTMLElement {
-    return TR(
-        TH(["width"=>"50px"], $title),
-        $can_edit ?
-            emptyHTML(
-                TD(["class"=>"view"], $view),
-                TD(["class"=>"edit"], $edit),
-            ) :
-            TD($view)
-    );
-}

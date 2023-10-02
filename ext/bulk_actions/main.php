@@ -12,7 +12,7 @@ class BulkActionBlockBuildingEvent extends Event
     public array $actions = [];
     public array $search_terms = [];
 
-    public function add_action(string $action, string $button_text, string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40)
+    public function add_action(String $action, string $button_text, string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40)
     {
         if (!empty($access_key)) {
             assert(strlen($access_key)==1);
@@ -40,7 +40,7 @@ class BulkActionEvent extends Event
     public \Generator $items;
     public bool $redirect = true;
 
-    public function __construct(string $action, \Generator $items)
+    public function __construct(String $action, \Generator $items)
     {
         parent::__construct();
         $this->action = $action;
@@ -285,7 +285,7 @@ class BulkActions extends Extension
         return $total;
     }
 
-    private function set_source(iterable $items, string $source): int
+    private function set_source(iterable $items, String $source): int
     {
         global $page;
         $total = 0;

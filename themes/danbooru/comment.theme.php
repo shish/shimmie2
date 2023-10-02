@@ -45,7 +45,8 @@ class CustomCommentListTheme extends CommentListTheme
             $un = $image->get_owner()->name;
             $t = "";
             foreach ($image->get_tag_array() as $tag) {
-                $t .= "<a href='".search_link([$tag])."'>".html_escape($tag)."</a> ";
+                $u_tag = url_escape($tag);
+                $t .= "<a href='".make_link("post/list/$u_tag/1")."'>".html_escape($tag)."</a> ";
             }
             $p = autodate($image->posted);
 

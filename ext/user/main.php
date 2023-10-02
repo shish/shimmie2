@@ -38,7 +38,7 @@ class UserActionColumn extends ActionColumn
 
     public function display(array $row): HTMLElement
     {
-        return A(["href"=>search_link(["user={$row['name']}"])], "Posts");
+        return A(["href"=>make_link("post/list/user={$row['name']}/1")], "Posts");
     }
 }
 
@@ -840,7 +840,7 @@ class UserPage extends Extension
             );
 
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            $page->set_redirect(make_link("post/list"));
         }
     }
 }

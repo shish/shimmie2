@@ -91,7 +91,7 @@ class ImageIO extends Extension
                         redirect_to_next_image($image);
                     } else {
                         $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(referer_or(make_link(), ['post/view']));
+                        $page->set_redirect(referer_or(make_link("post/list"), ['post/view']));
                     }
                 }
             }
@@ -266,7 +266,7 @@ class ImageIO extends Extension
         $i_image_count = Image::count_images(["user={$event->display_user->name}"]);
         $i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
-        $images_link = search_link(["user=$u_name"]);
+        $images_link = make_link("post/list/user=$u_name/1");
         $event->add_stats("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
     }
 

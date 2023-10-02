@@ -7,7 +7,7 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\{A,P,TABLE,TD,TH,TR};
+use function MicroHTML\{P,SPAN,TABLE,TD,TH,TR};
 
 class RatingsTheme extends Themelet
 {
@@ -18,12 +18,22 @@ class RatingsTheme extends Themelet
 
     public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
     {
-        return SHM_POST_INFO(
-            "Rating",
-            $can_rate,
-            A(["href"=>search_link(["rating=$rating"])], Ratings::rating_to_human($rating)),
-            $this->get_selection_rater_html("rating", selected_options: [$rating])
-        );
+        $human_rating = Ratings::rating_to_human($rating);
+
+        $html = TR(TH("Rating"));
+
+        if ($can_rate) {
+            $selector = $this->get_selection_rater_html(selected_options: [$rating]);
+
+            $html->appendChild(TD(
+                SPAN(["class"=>"view"], $human_rating),
+                SPAN(["class"=>"edit"], $selector)
+            ));
+        } else {
+            $html->appendChild(TD($human_rating));
+        }
+
+        return $html;
     }
 
     public function display_form(array $current_ratings)

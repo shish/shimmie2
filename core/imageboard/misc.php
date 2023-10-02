@@ -197,7 +197,7 @@ function redirect_to_next_image(Image $image): void
     $target_image = $image->get_next($search_terms);
 
     if ($target_image === null) {
-        $redirect_target = referer_or(search_link(), ['post/view']);
+        $redirect_target = referer_or(make_link("post/list"), ['post/view']);
     } else {
         $redirect_target = make_link("post/view/{$target_image->id}", null, $query);
     }

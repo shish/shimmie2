@@ -172,7 +172,7 @@ class Ratings extends Extension
          **/
         if (!$this->check_permissions($event->image)) {
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            $page->set_redirect(make_link("post/list"));
         }
     }
 
@@ -203,7 +203,7 @@ class Ratings extends Extension
     {
         global $user;
         $event->add_part(
-            $this->theme->get_rater_html(
+            (string)$this->theme->get_rater_html(
                 $event->image->id,
                 $event->image->rating,
                 $user->can(Permissions::EDIT_IMAGE_RATING)
@@ -394,7 +394,7 @@ class Ratings extends Extension
                 #		on image_tags.tag_id = tags.id where tags.tag = :tag);
                 #	", ['rating'=>$_POST["rating"], 'tag'=>$_POST["tag"]]);
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link());
+                $page->set_redirect(make_link("post/list"));
             }
         }
     }

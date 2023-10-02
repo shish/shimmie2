@@ -23,7 +23,7 @@ class HelpPagesTheme extends Themelet
         $page->add_block(new Block("Help Pages", "See list of pages to left"));
     }
 
-    public function display_help_page(string $title)
+    public function display_help_page(String $title)
     {
         global $page;
 
