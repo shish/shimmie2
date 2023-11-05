@@ -9,7 +9,7 @@ require_once "config.php";
 class TagList extends Extension
 {
     /** @var TagListTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     private $tagcategories = null;
 

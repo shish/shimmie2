@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Home extends Extension
 {
     /** @var HomeTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -26,6 +26,8 @@ class Home extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $counters = [];
+        $counters["None"] = "none";
+        $counters["Text-only"] = "text-only";
         foreach (glob("ext/home/counters/*") as $counter_dirname) {
             $name = str_replace("ext/home/counters/", "", $counter_dirname);
             $counters[ucfirst($name)] = $name;
@@ -50,15 +52,20 @@ class Home extends Extension
         }
         $counter_dir = $config->get_string('home_counter', 'default');
 
-        $total = Image::count_images();
-        $strtotal = "$total";
-        $num_comma = number_format($total);
-
+        $num_comma = "";
         $counter_text = "";
-        $length = strlen($strtotal);
-        for ($n=0; $n<$length; $n++) {
-            $cur = $strtotal[$n];
-            $counter_text .= "<img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />";
+        if ($counter_dir != 'none') {
+            $total = Image::count_images();
+            $num_comma = number_format($total);
+
+            if ($counter_dir != 'text-only') {
+                $strtotal = "$total";
+                $length = strlen($strtotal);
+                for ($n=0; $n<$length; $n++) {
+                    $cur = $strtotal[$n];
+                    $counter_text .= "<img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />";
+                }
+            }
         }
 
         // get the homelinks and process them

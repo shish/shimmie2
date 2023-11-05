@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	var metatags = ['order:id', 'order:width', 'order:height', 'order:filesize', 'order:filename', 'order:favorites'];
 
-	$('[name="search"]').tagit({
+	$('.autocomplete_tags').tagit({
 		singleFieldDelimiter: ' ',
 		beforeTagAdded: function(event, ui) {
 			if(metatags.indexOf(ui.tagLabel) !== -1) {
@@ -93,8 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		//Stop tags containing space.
 		if(keyCode === 32) {
 			e.preventDefault();
+			var el = $('.ui-widget-content:focus');
 
-			$('.autocomplete_tags').tagit('createTag', $(this).val());
+			//Find the correct element in a page with multiple tagit input boxes.
+			$('.autocomplete_tags').each(function(_,n){
+				if (n.parentNode.contains(el[0])){
+					$(n.parentNode).find('.autocomplete_tags').tagit('createTag', el.val());
+				}
+			});
 			$(this).autocomplete('close');
 		} else if (keyCode === 9) {
 			e.preventDefault();

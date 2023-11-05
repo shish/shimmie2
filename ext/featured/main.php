@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Featured extends Extension
 {
     /** @var FeaturedTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

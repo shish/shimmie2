@@ -56,7 +56,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(BR());
             $html->appendChild(A(["href"=>$part["link"]], $part["name"]));
         }
-        $b = new Block("User Links", (string)$html, "left", 90);
+        $b = new Block("User Links", $html, "left", 90);
         $b->is_content = false;
         $page->add_block($b);
     }
@@ -110,7 +110,7 @@ class UserPageTheme extends Themelet
         $page->set_title("Create Account");
         $page->set_heading("Create Account");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Signup", (string)$html));
+        $page->add_block(new Block("Signup", $html));
     }
 
     public function display_user_creator()
@@ -187,7 +187,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(SMALL(A(["href"=>make_link("user_admin/create")], "Create Account")));
         }
 
-        $page->add_block(new Block("Login", (string)$html, "left", 90));
+        $page->add_block(new Block("Login", $html, "left", 90));
     }
 
     private function _ip_list(string $name, array $ips): HTMLElement
@@ -220,7 +220,7 @@ class UserPageTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block("IPs", (string)$html, "main", 70));
+        $page->add_block(new Block("IPs", $html, "main", 70));
     }
 
     public function display_user_page(User $duser, $stats)
@@ -344,5 +344,57 @@ class UserPageTheme extends Themelet
             ));
         }
         return $output;
+    }
+
+    /**
+     * @param Page $page
+     * @param UserClass[] $classes
+     * @param \ReflectionClassConstant[] $permissions
+     */
+    public function display_user_classes(Page $page, array $classes, array $permissions): void
+    {
+        $table = TABLE(["class"=>"zebra"]);
+
+        $row = TR();
+        $row->appendChild(TH("Permission"));
+        foreach ($classes as $class) {
+            $n = $class->name;
+            if ($class->parent) {
+                $n .= " ({$class->parent->name})";
+            }
+            $row->appendChild(TH($n));
+        }
+        $row->appendChild(TH("Description"));
+        $table->appendChild($row);
+
+        foreach ($permissions as $perm) {
+            $row = TR();
+            $row->appendChild(TH($perm->getName()));
+
+            foreach ($classes as $class) {
+                $opacity = array_key_exists($perm->getValue(), $class->abilities) ? 1 : 0.2;
+                if ($class->can($perm->getValue())) {
+                    $cell = TD(["style"=>"color: green; opacity: $opacity;"], "✔");
+                } else {
+                    $cell = TD(["style"=>"color: red; opacity: $opacity;"], "✘");
+                }
+                $row->appendChild($cell);
+            }
+
+            $doc = $perm->getDocComment();
+            if ($doc) {
+                $doc = preg_replace('/\/\*\*|\n\s*\*\s*|\*\//', '', $doc);
+                $row->appendChild(TD(["style"=>"text-align: left;"], $doc));
+            } else {
+                $row->appendChild(TD(""));
+            }
+
+            $table->appendChild($row);
+        }
+
+        $page->set_title("User Classes");
+        $page->set_heading("User Classes");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Classes", $table, "main", 10));
     }
 }

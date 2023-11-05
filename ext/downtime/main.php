@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Downtime extends Extension
 {
     /** @var DowntimeTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function get_priority(): int
     {

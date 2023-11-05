@@ -14,7 +14,7 @@ abstract class ApprovalConfig
 class Approval extends Extension
 {
     /** @var ApprovalTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -24,6 +24,15 @@ class Approval extends Extension
         $config->set_default_bool(ApprovalConfig::COMMENTS, false);
 
         Image::$bool_props[] = "approved";
+    }
+
+    public function onImageAddition(ImageAdditionEvent $event)
+    {
+        global $user, $config;
+
+        if ($config->get_bool(ApprovalConfig::IMAGES) && $user->can(Permissions::BYPASS_IMAGE_APPROVAL)) {
+            self::approve_image($event->image->id);
+        }
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -121,6 +130,13 @@ class Approval extends Extension
         }
     }
 
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::APPROVE_IMAGE)) {
+            $event->add_link("Pending Approval", make_link("/post/list/approved%3Ano/1"), 60);
+        }
+    }
 
     public const SEARCH_REGEXP = "/^approved:(yes|no)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
@@ -152,10 +168,7 @@ class Approval extends Extension
         global $user, $config;
         if ($event->key===HelpPages::SEARCH) {
             if ($user->can(Permissions::APPROVE_IMAGE) &&  $config->get_bool(ApprovalConfig::IMAGES)) {
-                $block = new Block();
-                $block->header = "Approval";
-                $block->body = $this->theme->get_help_html();
-                $event->add_block($block);
+                $event->add_block(new Block("Approval", $this->theme->get_help_html()));
             }
         }
     }
@@ -215,7 +228,7 @@ class Approval extends Extension
     {
         global $user, $config;
         if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
-            $event->add_part($this->theme->get_image_admin_html($event->image));
+            $event->add_part((string)$this->theme->get_image_admin_html($event->image));
         }
     }
 

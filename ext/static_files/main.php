@@ -4,11 +4,34 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+class RobotsBuildingEvent extends Event
+{
+    public array $parts = [
+        "User-agent: *",
+        // Site is rate limited to 1 request / sec,
+        // returns 503 for more than that
+        "Crawl-delay: 3",
+    ];
+
+    public function add_disallow(string $path): void
+    {
+        $this->parts[] = "Disallow: /$path";
+    }
+}
+
 class StaticFiles extends Extension
 {
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $page;
+
+        if ($event->page_matches("robots.txt")) {
+            $rbe = send_event(new RobotsBuildingEvent());
+            $page->set_mode(PageMode::DATA);
+            $page->set_mime("text/plain");
+            $page->set_data(join("\n", $rbe->parts));
+        }
+
         // hax.
         if ($page->mode == PageMode::PAGE && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
             $h_pagename = html_escape(implode('/', $event->args));

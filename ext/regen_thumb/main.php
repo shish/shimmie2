@@ -7,7 +7,7 @@ namespace Shimmie2;
 class RegenThumb extends Extension
 {
     /** @var RegenThumbTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
@@ -30,7 +30,7 @@ class RegenThumb extends Extension
         }
         if ($event->page_matches("regen_thumb/mass") && $user->can(Permissions::DELETE_IMAGE) && isset($_POST['tags'])) {
             $tags = Tag::explode(strtolower($_POST['tags']), false);
-            $images = Image::find_images(0, 10000, $tags);
+            $images = Image::find_images(limit: 10000, tags: $tags);
 
             foreach ($images as $image) {
                 $this->regenerate_thumbnail($image);

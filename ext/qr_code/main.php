@@ -7,7 +7,7 @@ namespace Shimmie2;
 class QRImage extends Extension
 {
     /** @var QRImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {

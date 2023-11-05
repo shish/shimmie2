@@ -12,7 +12,7 @@ require_once "config.php";
 class ImageIO extends Extension
 {
     /** @var ImageIOTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const COLLISION_OPTIONS = [
         'Error'=>ImageConfig::COLLISION_ERROR,
@@ -33,7 +33,7 @@ class ImageIO extends Extension
 
     public const THUMBNAIL_TYPES = [
         'JPEG' => MimeType::JPEG,
-        'WEBP (Not IE/Safari compatible)' => MimeType::WEBP
+        'WEBP (Not IE compatible)' => MimeType::WEBP
     ];
 
     public function onInitExt(InitExtEvent $event)
@@ -194,6 +194,19 @@ class ImageIO extends Extension
     public function onImageDeletion(ImageDeletionEvent $event)
     {
         $event->image->delete();
+    }
+
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tdelete <post id>\n";
+            print "\t\tdelete a specific post\n\n";
+        }
+        if ($event->cmd == "delete") {
+            $post_id = (int)$event->args[0];
+            $image = Image::by_id($post_id);
+            send_event(new ImageDeletionEvent($image));
+        }
     }
 
     public function onImageReplace(ImageReplaceEvent $event)

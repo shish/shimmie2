@@ -21,7 +21,7 @@ class _SafeImage
     public function __construct(Image $img)
     {
         $_id = $img->id;
-        assert($_id != null);
+        assert($_id !== null);
         $this->id       = $_id;
         $this->height   = $img->height;
         $this->width    = $img->width;

@@ -39,7 +39,7 @@ class TagHistoryTheme extends Themelet
         $h_next = '<a href="'.make_link('tag_history/all/'.($page_number+1)).'">Next</a>';
 
         $nav = $h_prev.' | '.$h_index.' | '.$h_next;
-        $page->add_block(new Block("Navigation", $nav, "left"));
+        $page->add_block(new Block("Navigation", $nav, "left", 0));
     }
 
     /**

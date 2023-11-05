@@ -7,7 +7,7 @@ namespace Shimmie2;
 class SourceHistory extends Extension
 {
     /** @var SourceHistoryTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     // in before source are actually set, so that "get current source" works
     public function get_priority(): int
@@ -49,6 +49,11 @@ class SourceHistory extends Extension
             $image_id = int_escape($event->get_arg(0));
             $this->theme->display_history_page($page, $image_id, $this->get_source_history_from_id($image_id));
         }
+    }
+
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        $event->add_disallow("source_history");
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
@@ -204,7 +209,7 @@ class SourceHistory extends Extension
             $revert_date = null;
         }
 
-        set_time_limit(0); // reverting changes can take a long time, disable php's timelimit if possible.
+        shm_set_timeout(null); // reverting changes can take a long time, disable php's timelimit if possible.
 
         // Call the revert function.
         $this->process_revert_all_changes($revert_name, $revert_ip, $revert_date);

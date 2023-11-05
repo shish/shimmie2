@@ -43,7 +43,7 @@ class ImageReport
 class ReportImage extends Extension
 {
     /** @var ReportImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

@@ -31,8 +31,6 @@ else {
     // website subdirectory we're installed in - if we're using router.php, then
     // let's blindly assume that we're in the root directory.
     $_SERVER["PHP_SELF"] = "/index.php";
-    $_GET['q'] = explode("?", $_SERVER["REQUEST_URI"])[0];
-    // if we use a custom handler, we need to do our own access log
-    error_log("{$_SERVER['REMOTE_ADDR']}:{$_SERVER['REMOTE_PORT']} [???]: {$_GET['q']}");
+    $_GET['q'] = urldecode(explode("?", $_SERVER["REQUEST_URI"])[0]);
     require_once "index.php";
 }

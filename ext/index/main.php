@@ -10,7 +10,7 @@ require_once "events.php";
 class Index extends Extension
 {
     /** @var IndexTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -150,10 +150,7 @@ class Index extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "General";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block, 0);
+            $event->add_block(new Block("General", $this->theme->get_help_html()), 0);
         }
     }
 
@@ -166,7 +163,7 @@ class Index extends Extension
         }
         if ($event->cmd == "search") {
             $query = count($event->args) > 0 ? Tag::explode($event->args[0]) : [];
-            $items = Image::find_images(0, 1000, $query);
+            $items = Image::find_images(limit: 1000, tags: $query);
             foreach ($items as $item) {
                 print("{$item->hash}\n");
             }
@@ -257,5 +254,16 @@ class Index extends Extension
             $seed = date("Ymd");
             $event->order = "RAND($seed)";
         }
+
+        // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
+        if ($event->order === null && $event->img_conditions == [] && $event->tag_conditions == []) {
+            $event->add_tag_condition(new TagCondition($event->term, $event->positive));
+        }
+    }
+
+    public function get_priority(): int
+    {
+        // we want to turn a search term into a TagCondition only if nobody did anything else with that term
+        return 95;
     }
 }

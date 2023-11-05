@@ -7,7 +7,7 @@ namespace Shimmie2;
 class ET extends Extension
 {
     /** @var ETTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

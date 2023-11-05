@@ -37,25 +37,15 @@ class HelpPageBuildingEvent extends Event
 class HelpPages extends Extension
 {
     /** @var HelpPagesTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
     public const SEARCH = "search";
-    private ?array $pages = null;
-
-    private function get_pages(): array
-    {
-        if ($this->pages==null) {
-            $this->pages = send_event(new HelpPageListBuildingEvent())->pages;
-        }
-        return $this->pages;
-    }
 
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page;
 
-        $pages = $this->get_pages();
-
         if ($event->page_matches("help")) {
+            $pages = send_event(new HelpPageListBuildingEvent())->pages;
             if ($event->count_args() == 0) {
                 $name = array_key_first($pages);
                 $page->set_mode(PageMode::REDIRECT);
@@ -98,7 +88,7 @@ class HelpPages extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         if ($event->parent=="help") {
-            $pages = $this->get_pages();
+            $pages = send_event(new HelpPageListBuildingEvent())->pages;
             foreach ($pages as $key=>$value) {
                 $event->add_nav_link("help_".$key, new Link('help/'.$key), $value);
             }

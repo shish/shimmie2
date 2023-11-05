@@ -3,22 +3,26 @@ name: Publish
 on:
   workflow_run:
     workflows: Tests
-    branches: master
+    branches: main
     types: completed
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
     steps:
     - uses: actions/checkout@master
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: elgohr/Publish-Docker-Github-Action@main
       with:
         name: shish2k/shimmie2
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         cache: ${{ github.event_name != 'schedule' }}
         buildoptions: "--build-arg RUN_TESTS=false"
+        tag_semver: true

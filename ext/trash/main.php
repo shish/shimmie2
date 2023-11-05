@@ -12,7 +12,7 @@ abstract class TrashConfig
 class Trash extends Extension
 {
     /** @var TrashTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function get_priority(): int
     {
@@ -90,6 +90,14 @@ class Trash extends Extension
             if ($user->can(Permissions::VIEW_TRASH)) {
                 $event->add_nav_link("posts_trash", new Link('/post/list/in%3Atrash/1'), "Trash", null, 60);
             }
+        }
+    }
+
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::VIEW_TRASH)) {
+            $event->add_link("Trash", make_link("/post/list/in%3Atrash/1"), 60);
         }
     }
 

@@ -22,7 +22,7 @@ class AuthorSetEvent extends Event
 class Artists extends Extension
 {
     /** @var ArtistsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
@@ -57,10 +57,7 @@ class Artists extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Artist";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_block(new Block("Artist", $this->theme->get_help_html()));
         }
     }
 
@@ -212,7 +209,7 @@ class Artists extends Extension
                         $userIsLogged = !$user->is_anonymous();
                         $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
 
-                        $images = Image::find_images(0, 4, Tag::explode($artist['name']));
+                        $images = Image::find_images(limit: 4, tags: Tag::explode($artist['name']));
 
                         $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
                         /*

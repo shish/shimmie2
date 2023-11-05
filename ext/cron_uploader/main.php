@@ -9,7 +9,7 @@ require_once "config.php";
 class CronUploader extends Extension
 {
     /** @var CronUploaderTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const NAME = "cron_uploader";
 
@@ -350,7 +350,7 @@ class CronUploader extends Extension
 
         self::$IMPORT_RUNNING = true;
         try {
-            //set_time_limit(0);
+            //shm_set_timeout(null);
 
             $output_subdir = date('Ymd-His', time());
             $image_queue = $this->generate_image_queue();

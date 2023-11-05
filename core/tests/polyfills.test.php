@@ -73,11 +73,14 @@ class PolyfillsTest extends TestCase
 
     public function test_clamp()
     {
-        $this->assertEquals(5, clamp(0, 5, 10));
-        $this->assertEquals(5, clamp(5, 5, 10));
-        $this->assertEquals(7, clamp(7, 5, 10));
-        $this->assertEquals(10, clamp(10, 5, 10));
-        $this->assertEquals(10, clamp(15, 5, 10));
+        $this->assertEquals(5, clamp(0, 5, 10)); // too small
+        $this->assertEquals(5, clamp(5, 5, 10)); // lower limit
+        $this->assertEquals(7, clamp(7, 5, 10)); // ok
+        $this->assertEquals(10, clamp(10, 5, 10)); // upper limit
+        $this->assertEquals(10, clamp(15, 5, 10)); // too large
+        $this->assertEquals(0, clamp(0, null, 10)); // no lower limit
+        $this->assertEquals(10, clamp(10, 0, null)); // no upper limit
+        $this->assertEquals(42, clamp(42, null, null)); // no limit
     }
 
     public function test_truncate()

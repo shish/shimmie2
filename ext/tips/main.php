@@ -32,7 +32,7 @@ class DeleteTipEvent extends Event
 class Tips extends Extension
 {
     /** @var TipsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

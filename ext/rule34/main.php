@@ -20,7 +20,7 @@ if ( // kill these glitched requests immediately
 class Rule34 extends Extension
 {
     /** @var Rule34Theme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {
@@ -101,12 +101,20 @@ class Rule34 extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        // robots should only check the canonical site, not mirrors
+        if ($_SERVER['HTTP_HOST'] != "rule34.paheal.net") {
+            $event->add_disallow("");
+        }
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $database, $page, $user;
 
         # Database might not be connected at this point...
-        #$database->set_timeout(DATABASE_TIMEOUT+15000); // deleting users can take a while
+        #$database->set_timeout(null); // deleting users can take a while
 
         if (function_exists("sd_notify_watchdog")) {
             \sd_notify_watchdog();

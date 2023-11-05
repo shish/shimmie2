@@ -7,7 +7,7 @@ namespace Shimmie2;
 class AutoComplete extends Extension
 {
     /** @var AutoCompleteTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function get_priority(): int
     {

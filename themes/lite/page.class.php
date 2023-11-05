@@ -77,15 +77,16 @@ class Page extends BasePage
             $custom_sublinks .= "</div>";
         }
 
+        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
+
         if (!$this->left_enabled) {
             $left_block_html = "";
             $main_block_html = "<article id='body_noleft'>{$main_block_html}</article>";
         } else {
             $left_block_html = "<nav>{$left_block_html}</nav>";
-            $main_block_html = "<article>{$main_block_html}</article>";
+            $main_block_html = "<article>$flash_html{$main_block_html}</article>";
         }
 
-        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
         $head_html = $this->head_html();
         $footer_html = $this->footer_html();
 
@@ -100,7 +101,6 @@ class Page extends BasePage
 			$sub_block_html
 		</header>
 		$left_block_html
-		$flash_html
 		$main_block_html
 		<footer>
 		    $footer_html
@@ -115,16 +115,17 @@ EOD;
         $h = $block->header;
         $b = $block->body;
         $i = $block->id;
-        $html = "<section id='{$i}'>";
-        if (!is_null($h)) {
-            $html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#{$i}'>{$h}</div>";
+        $html = $b;
+        if ($h != "Paginator") {
+            $html = "<section id='{$i}'>";
+            if (!is_null($h)) {
+                $html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#{$i}'>{$h}</div>";
+            }
+            if (!is_null($b)) {
+                $html .= "<div class='navside tab".($hidable ? " blockbody" : "")."'>$b</div>";
+            }
+            $html .= "</section>";
         }
-        if (!is_null($b)) {
-            $html .= "
-        		<div class='navside tab'>{$b}</div>
-		    ";
-        }
-        $html .= "</section>";
         return $html;
     }
 

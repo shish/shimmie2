@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Update extends Extension
 {
     /** @var UpdateTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+use function MicroHTML\{BR,H3,HR,P};
+
 class IndexTheme extends Themelet
 {
     protected int $page_number;
@@ -82,7 +87,7 @@ and of course start organising your images :-)
         $h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.make_link('post/list'.$query.'/'.$next).'">Next</a>';
 
         $h_search_string = html_escape(Tag::implode($search_terms));
-        $h_search_link = make_link();
+        $h_search_link = make_link("post/list");
         $h_search = "
 			<p><form action='$h_search_link' method='GET'>
 				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' autocomplete='off' />
@@ -182,227 +187,95 @@ and of course start organising your images :-)
         }
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Searching is largely based on tags, with a number of special keywords available that allow searching based on properties of the posts.</p>
-
-        <div class="command_example">
-        <pre>tagname</pre>
-        <p>Returns posts that are tagged with "tagname".</p>
-        </div>
-
-        <div class="command_example">
-        <pre>tagname othertagname</pre>
-        <p>Returns posts that are tagged with "tagname" and "othertagname".</p>
-        </div>
-
-        <p>Most tags and keywords can be prefaced with a negative sign (-) to indicate that you want to search for posts that do not match something.</p>
-
-        <div class="command_example">
-        <pre>-tagname</pre>
-        <p>Returns posts that are not tagged with "tagname".</p>
-        </div>
-
-        <div class="command_example">
-        <pre>-tagname -othertagname</pre>
-        <p>Returns posts that are not tagged with "tagname" and "othertagname". This is different than without the negative sign, as posts with "tagname" or "othertagname" can still be returned as long as the other one is not present.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>tagname -othertagname</pre>
-        <p>Returns posts that are tagged with "tagname", but are not tagged with "othertagname".</p>
-        </div>
-
-        <p>Wildcard searches are possible as well using * for "any one, more, or none" and ? for "any one".</p>
-
-        <div class="command_example">
-        <pre>tagn*</pre>
-        <p>Returns posts that are tagged with "tagname", "tagnot", or anything else that starts with "tagn".</p>
-        </div>
-
-        <div class="command_example">
-        <pre>tagn?me</pre>
-        <p>Returns posts that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", has one character, and ends with "me".</p>
-        </div>
-
-        <div class="command_example">
-        <pre>tags=1</pre>
-        <p>Returns posts with exactly 1 tag.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>tags>0</pre>
-        <p>Returns posts with 1 or more tags. </p>
-        </div>
-
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
-
-        <hr/>
-
-        <p>Search for posts by aspect ratio</p>
-
-        <div class="command_example">
-        <pre>ratio=4:3</pre>
-        <p>Returns posts with an aspect ratio of 4:3.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>ratio>16:9</pre>
-        <p>Returns posts with an aspect ratio greater than 16:9. </p>
-        </div>
-
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. The relation is calculated by dividing width by height.</p>
-
-        <hr/>
-
-        <p>Search for posts by file size</p>
-
-        <div class="command_example">
-        <pre>filesize=1</pre>
-        <p>Returns posts exactly 1 byte in size.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>filesize>100mb</pre>
-        <p>Returns posts greater than 100 megabytes in size. </p>
-        </div>
-
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Supported suffixes are kb, mb, and gb. Uses multiples of 1024.</p>
-
-        <hr/>
-
-        <p>Search for posts by MD5 hash</p>
-
-        <div class="command_example">
-        <pre>hash=0D3512CAA964B2BA5D7851AF5951F33B</pre>
-        <p>Returns post with an MD5 hash 0D3512CAA964B2BA5D7851AF5951F33B.</p>
-        </div>
-
-        <hr/>
-
-        <p>Search for posts by file name</p>
-
-        <div class="command_example">
-        <pre>filename=picasso.jpg</pre>
-        <p>Returns posts that are named "picasso.jpg".</p>
-        </div>
-
-        <hr/>
-
-        <p>Search for posts by source</p>
-
-        <div class="command_example">
-        <pre>source=https:///google.com/</pre>
-        <p>Returns posts with a source of "https://google.com/".</p>
-        </div>
-
-        <div class="command_example">
-        <pre>source=any</pre>
-        <p>Returns posts with a source set.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>source=none</pre>
-        <p>Returns posts without a source set.</p>
-        </div>
-
-        <hr/>
-
-        <p>Search for posts by date posted.</p>
-
-        <div class="command_example">
-        <pre>posted>=2019-07-19</pre>
-        <p>Returns posts posted on or after 2019-07-19.</p>
-        </div>
-
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Date format is yyyy-mm-dd. Date posted includes time component, so = will not work unless the time is exact.</p>
-
-        <hr/>
-
-        <p>Search for posts by length.</p>
-
-        <div class="command_example">
-        <pre>length>=1h</pre>
-        <p>Returns posts that are longer than an hour.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>length<=10h15m</pre>
-        <p>Returns posts that are shorter than 10 hours and 15 minutes.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>length>=10000</pre>
-        <p>Returns posts that are longer than 10,000 milliseconds, or 10 seconds.</p>
-        </div>
-
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =. Available suffixes are ms, s, m, h, d, and y. A number by itself will be interpreted as milliseconds. Searches using = are not likely to work unless time is specified down to the millisecond.</p>
-
-        <hr/>
-
-        <p>Search for posts by dimensions</p>
-
-        <div class="command_example">
-        <pre>size=640x480</pre>
-        <p>Returns posts exactly 640 pixels wide by 480 pixels high.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>size>1920x1080</pre>
-        <p>Returns posts with a width larger than 1920 and a height larger than 1080.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>width=1000</pre>
-        <p>Returns posts exactly 1000 pixels wide.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>height=1000</pre>
-        <p>Returns posts exactly 1000 pixels high.</p>
-        </div>
-
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
-
-        <hr/>
-
-        <p>Search for posts by ID</p>
-
-        <div class="command_example">
-        <pre>id=1234</pre>
-        <p>Find the 1234th thing uploaded.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>id>1234</pre>
-        <p>Find more recently posted things</p>
-        </div>
-
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
-
-        <hr/>
-
-        <p>Sorting search results can be done using the pattern order:field_direction. _direction can be either _asc or _desc, indicating ascending (123) or descending (321) order.</p>
-
-        <div class="command_example">
-        <pre>order:id_asc</pre>
-        <p>Returns posts sorted by ID, smallest first.</p>
-        </div>
-
-        <div class="command_example">
-        <pre>order:width_desc</pre>
-        <p>Returns posts sorted by width, largest first.</p>
-        </div>
-
-        <p>These fields are supported:
-            <ul>
-            <li>id</li>
-            <li>width</li>
-            <li>height</li>
-            <li>filesize</li>
-            <li>filename</li>
-            </ul>
-        </p>
-        ';
+        return emptyHTML(
+            H3("Tag Searching"),
+            P("Searching is largely based on tags, with a number of special keywords available that allow searching based on properties of the posts."),
+            SHM_COMMAND_EXAMPLE("tagname", 'Returns posts that are tagged with "tagname".'),
+            SHM_COMMAND_EXAMPLE("tagname othertagname", 'Returns posts that are tagged with "tagname" and "othertagme".'),
+            //
+            BR(),
+            P("Most tags and keywords can be prefaced with a negative sign (-) to indicate that you want to search for posts that do not match something."),
+            SHM_COMMAND_EXAMPLE("-tagname", 'Returns posts that are not tagged with "tagname".'),
+            SHM_COMMAND_EXAMPLE("-tagname -othertagname", 'Returns posts that are not tagged with "tagname" or "othertagname".'),
+            SHM_COMMAND_EXAMPLE("tagname -othertagname", 'Returns posts that are tagged with "tagname", but are not tagged with "othertagname".'),
+            //
+            BR(),
+            P('Wildcard searches are possible as well using * for "any one, more, or none" and ? for "any one".'),
+            SHM_COMMAND_EXAMPLE("tagn*", 'Returns posts that are tagged with "tagname", "tagnot", or anything else that starts with "tagn".'),
+            SHM_COMMAND_EXAMPLE("tagn?me", 'Returns posts that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", has one character, and ends with "me".'),
+            //
+            //
+            //
+            HR(),
+            H3("Comparing values (<, <=, >, >=, or =)"),
+            P("For example, you can use this to count tags."),
+            SHM_COMMAND_EXAMPLE("tags=1", "Returns posts with exactly 1 tag."),
+            SHM_COMMAND_EXAMPLE("tags>0", "Returns posts with 1 or more tags."),
+            //
+            BR(),
+            P("Searching for posts by aspect ratio."),
+            P("The relation is calculated as: width / height."),
+            SHM_COMMAND_EXAMPLE("ratio=4:3", "Returns posts with an aspect ratio of 4:3."),
+            SHM_COMMAND_EXAMPLE("ratio>16:9", "Returns posts with an aspect ratio greater than 16:9."),
+            //
+            BR(),
+            P("Searching by dimentions."),
+            SHM_COMMAND_EXAMPLE("size=640x480", "Returns posts exactly 640 pixels wide by 480 pixels high."),
+            SHM_COMMAND_EXAMPLE("size>1920x1080", "Returns posts with a width larger than 1920 and a height larger than 1080."),
+            SHM_COMMAND_EXAMPLE("width=1000", "Returns posts exactly 1000 pixels wide."),
+            SHM_COMMAND_EXAMPLE("height=1000", "Returns posts exactly 1000 pixels high."),
+            //
+            BR(),
+            P("Searching by file size."),
+            P("Supported suffixes are kb, mb, and gb. Uses multiples of 1024."),
+            SHM_COMMAND_EXAMPLE("filesize=1", "Returns posts exactly 1 byte in size"),
+            SHM_COMMAND_EXAMPLE("filesize>100mb", "Returns posts greater than 100 megabytes in size."),
+            //
+            BR(),
+            P("Searching by date posted."),
+            P("Date format is yyyy-mm-dd. Date posted includes time component, so = will not work unless the time is exact."),
+            SHM_COMMAND_EXAMPLE("posted>=2019-07-19", "Returns posts posted on or after 2019-07-19."),
+            //
+            BR(),
+            P("Searching posts by media length."),
+            P("Available suffixes are ms, s, m, h, d, and y. A number by itself will be interpreted as milliseconds. Searches using = are not likely to work unless time is specified down to the millisecond."),
+            SHM_COMMAND_EXAMPLE("length>=1h", "Returns posts that are longer than an hour."),
+            SHM_COMMAND_EXAMPLE("length<=10h15m", "Returns posts that are shorter than 10 hours and 15 minutes."),
+            SHM_COMMAND_EXAMPLE("length>=10000", "Returns posts that are longer than 10,000 milliseconds, or 10 seconds."),
+            //
+            BR(),
+            P("Searching posts by ID."),
+            SHM_COMMAND_EXAMPLE("id=1234", "Find the 1234th thing uploaded."),
+            SHM_COMMAND_EXAMPLE("id>1234", "Find more recently posted things."),
+            //
+            //
+            //
+            HR(),
+            H3("Post attributes."),
+            P("Searching by MD5 hash."),
+            SHM_COMMAND_EXAMPLE("hash=0D3512CAA964B2BA5D7851AF5951F33B", "Returns post with MD5 hash 0D3512CAA964B2BA5D7851AF5951F33B."),
+            //
+            BR(),
+            P("Searching by file name."),
+            SHM_COMMAND_EXAMPLE("filename=picasso.jpg", 'Returns posts that are named "picasso.jpg".'),
+            //
+            BR(),
+            P("Searching for posts by source."),
+            SHM_COMMAND_EXAMPLE("source=https:///google.com/", 'Returns posts with a source of "https://google.com/".'),
+            SHM_COMMAND_EXAMPLE("source=any", "Returns posts with a source set."),
+            SHM_COMMAND_EXAMPLE("source=none", "Returns posts without a source set."),
+            //
+            //
+            //
+            HR(),
+            H3("Sorting search results"),
+            P("Sorting can be done using the pattern order:field_direction."),
+            P("Supported fields: id, width, height, filesize, filename."),
+            P("Direction can be either asc or desc, indicating ascending (123) or descending (321) order."),
+            SHM_COMMAND_EXAMPLE("order:id_asc", "Returns posts sorted by ID, smallest first."),
+            SHM_COMMAND_EXAMPLE("order:width_desc", "Returns posts sorted by width, largest first."),
+        );
     }
 }

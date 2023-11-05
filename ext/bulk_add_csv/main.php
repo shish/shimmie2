@@ -7,14 +7,14 @@ namespace Shimmie2;
 class BulkAddCSV extends Extension
 {
     /** @var BulkAddCSVTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
         if ($event->page_matches("bulk_add_csv")) {
             if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['csv'])) {
-                set_time_limit(0);
+                shm_set_timeout(null);
                 $this->add_csv($_POST['csv']);
                 $this->theme->display_upload_results($page);
             }

@@ -16,7 +16,7 @@ use function MicroHTML\TD;
 class ViewImage extends Extension
 {
     /** @var ViewImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -92,6 +92,14 @@ class ViewImage extends Extension
                 $this->theme->display_error(403, "Post Locked", "An admin has locked this post");
             }
         }
+    }
+
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        // next and prev are just CPU-heavier ways of getting
+        // to the same images that the index shows
+        $event->add_disallow("post/next");
+        $event->add_disallow("post/prev");
     }
 
     public function onDisplayingImage(DisplayingImageEvent $event)

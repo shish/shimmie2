@@ -175,7 +175,7 @@ class TagEditCloud extends Extension
             }
 
             if ($counter++ <= $def_count) {
-                if ($last_cat !== $current_cat && $last_cat != null) {
+                if ($last_cat !== $current_cat && $last_cat !== null) {
                     $cloud .= "</span><span class='tag-category'>\n";
                 } //TODO: Maybe add a title for the category after the span opens?
                 $cloud .= $entry;

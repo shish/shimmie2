@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+use function MicroHTML\rawHTML;
+use function MicroHTML\{A,BR,DIV,INPUT,P,SCRIPT,SPAN,TABLE,TBODY,TD,TEXTAREA,TH,THEAD,TR};
+
 class PoolsTheme extends Themelet
 {
     /**
@@ -14,44 +20,36 @@ class PoolsTheme extends Themelet
     {
         global $page;
 
-        $linksPools = [];
+        //TODO: Use a 3 column table?
+        $linksPools = emptyHTML();
         foreach ($navIDs as $poolID => $poolInfo) {
-            $linksPools[] = "<a href='" . make_link("pool/view/" . $poolID) . "'>" . html_escape($poolInfo['info']->title) . "</a>";
+            $div = DIV(SHM_A("pool/view/" . $poolID, $poolInfo["info"]->title));
 
-            if (!empty($poolInfo['nav'])) {
-                $navlinks = "";
-                if (!empty($poolInfo['nav']['prev'])) {
-                    $navlinks .= '<a href="' . make_link('post/view/' . $poolInfo['nav']['prev']) . '" class="pools_prev_img">Prev</a>';
+            if (!empty($poolInfo["nav"])) {
+                if (!empty($poolInfo["nav"]["prev"])) {
+                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
                 }
-                if (!empty($poolInfo['nav']['next'])) {
-                    $navlinks .= '<a href="' . make_link('post/view/' . $poolInfo['nav']['next']) . '" class="pools_next_img">Next</a>';
-                }
-                if (!empty($navlinks)) {
-                    $navlinks .= "<div style='height: 5px'></div>";
-                    $linksPools[] = $navlinks;
+                if (!empty($poolInfo["nav"]["next"])) {
+                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["next"], "Next", class: "pools_next_img"));
                 }
             }
+
+            $linksPools->appendChild($div);
         }
 
-        if (count($linksPools) > 0) {
-            $page->add_block(new Block("Pools", implode("<br>", $linksPools), "left"));
+        if (!empty($navIDs)) {
+            $page->add_block(new Block("Pools", $linksPools, "left"));
         }
     }
 
-    public function get_adder_html(Image $image, array $pools): string
+    public function get_adder_html(Image $image, array $pools): HTMLElement
     {
-        $h = "";
-        foreach ($pools as $pool) {
-            $h .= "<option value='" . $pool->id . "'>" . html_escape($pool->title) . "</option>";
-        }
-        return "\n" . make_form(make_link("pool/add_post")) . "
-				<select name='pool_id'>
-					$h
-				</select>
-				<input type='hidden' name='image_id' value='{$image->id}'>
-				<input type='submit' value='Add Post to Pool'>
-			</form>
-		";
+        return SHM_SIMPLE_FORM(
+            "pool/add_post",
+            SHM_SELECT("pool_id", $pools),
+            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image->id]),
+            SHM_SUBMIT("Add Post to Pool")
+        );
     }
 
     /**
@@ -59,45 +57,34 @@ class PoolsTheme extends Themelet
      */
     public function list_pools(Page $page, array $pools, int $pageNumber, int $totalPages)
     {
-        $html = '
-				<table id="poolsList" class="zebra">
-					<thead><tr>
-						<th>Name</th>
-						<th>Creator</th>
-						<th>Posts</th>
-						<th>Public</th>
-					</tr></thead><tbody>';
-
         // Build up the list of pools.
+        $pool_rows = [];
         foreach ($pools as $pool) {
-            $pool_link = '<a href="' . make_link("pool/view/" . $pool->id) . '">' . html_escape($pool->title) . "</a>";
-            $user_link = '<a href="' . make_link("user/" . url_escape($pool->user_name)) . '">' . html_escape($pool->user_name) . "</a>";
-            $public = ($pool->public ? "Yes" : "No");
+            $pool_link = SHM_A("pool/view/" . $pool->id, $pool->title);
+            $user_link = SHM_A("user/" . url_escape($pool->user_name), $pool->user_name);
 
-            $html .= "<tr>" .
-                "<td class='left'>" . $pool_link . "</td>" .
-                "<td>" . $user_link . "</td>" .
-                "<td>" . $pool->posts . "</td>" .
-                "<td>" . $public . "</td>" .
-                "</tr>";
+            $pool_rows[] = TR(
+                TD(["class"=>"left"], $pool_link),
+                TD($user_link),
+                TD($pool->posts),
+                TD($pool->public ? "Yes" : "No")
+            );
         }
 
-        $html .= "</tbody></table>";
+        $table = TABLE(
+            ["id"=>"poolsList", "class"=>"zebra"],
+            THEAD(TR(TH("Name"), TH("Creator"), TH("Posts"), TH("Public"))),
+            TBODY(...$pool_rows)
+        );
 
-        $order_html = '<select id="order_pool">';
-        $order_selected = $page->get_cookie('ui-order-pool');
         $order_arr = ['created' => 'Recently created', 'updated' => 'Last updated', 'name' => 'Name', 'count' => 'Post Count'];
-        foreach ($order_arr as $value => $text) {
-            $selected = ($value == $order_selected ? "selected" : "");
-            $order_html .= "<option value=\"{$value}\" {$selected}>{$text}</option>\n";
-        }
-        $order_html .= '</select>';
+        $order_selected = $page->get_cookie('ui-order-pool');
+        $order_sel = SHM_SELECT("order_pool", $order_arr, selected_options: [$order_selected], attrs: ["id"=>"order_pool"]);
 
         $this->display_top(null, "Pools");
-        $page->add_block(new Block("Order By", $order_html, "left", 15));
+        $page->add_block(new Block("Order By", $order_sel, "left", 15));
 
-        $page->add_block(new Block("Pools", $html, "main", 10));
-
+        $page->add_block(new Block("Pools", $table, position: 10));
 
         $this->display_paginator($page, "pool/list", null, $pageNumber, $totalPages);
     }
@@ -107,19 +94,15 @@ class PoolsTheme extends Themelet
      */
     public function new_pool_composer(Page $page)
     {
-        $create_html = "
-			" . make_form(make_link("pool/create")) . "
-				<table>
-					<tr><td>Title:</td><td><input type='text' name='title'></td></tr>
-					<tr><td>Public?</td><td><input name='public' type='checkbox' value='Y' checked='checked'/></td></tr>
-					<tr><td>Description:</td><td><textarea name='description'></textarea></td></tr>
-					<tr><td colspan='2'><input type='submit' value='Create' /></td></tr>
-				</table>
-			</form>
-		";
+        $form = SHM_SIMPLE_FORM("pool/create", TABLE(
+            TR(TD("Title:"), TD(INPUT(["type"=>"text", "name"=>"title"]))),
+            TR(TD("Public?:"), TD(INPUT(["type"=>"checkbox", "name"=>"public", "value"=>"Y", "checked"=>"checked"]))),
+            TR(TD("Description:"), TD(TEXTAREA(["name"=>"description"]))),
+            TR(TD(["colspan"=>"2"], SHM_SUBMIT("Create")))
+        ));
 
         $this->display_top(null, "Create Pool");
-        $page->add_block(new Block("Create Pool", $create_html, "main", 20));
+        $page->add_block(new Block("Create Pool", $form, position: 20));
     }
 
     private function display_top(?Pool $pool, string $heading, bool $check_all = false)
@@ -129,14 +112,16 @@ class PoolsTheme extends Themelet
         $page->set_title($heading);
         $page->set_heading($heading);
 
-        $poolnav_html = '
-			<a href="' . make_link("pool/list") . '">Pool Index</a>
-			<br><a href="' . make_link("pool/new") . '">Create Pool</a>
-			<br><a href="' . make_link("pool/updated") . '">Pool Changes</a>
-		';
+        $poolnav = emptyHTML(
+            SHM_A("pool/list", "Pool Index"),
+            BR(),
+            SHM_A("pool/new", "Create Pool"),
+            BR(),
+            SHM_A("pool/updated", "Pool Changes")
+        );
 
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Pool Navigation", $poolnav_html, "left", 10));
+        $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
 
         if (!is_null($pool)) {
             if ($pool->public || $user->can(Permissions::POOLS_ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
@@ -158,10 +143,9 @@ class PoolsTheme extends Themelet
 
         $this->display_top($pool, "Pool: " . html_escape($pool->title));
 
-        $pool_images = '';
+        $pool_images = emptyHTML();
         foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
-            $pool_images .= "\n" . $thumb_html . "\n";
+            $pool_images->appendChild($this->build_thumb_html($image));
         }
 
         $page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));
@@ -176,63 +160,77 @@ class PoolsTheme extends Themelet
     {
         global $user;
 
-        $editor = "\n" . make_form(make_link('pool/import')) . '
-				<input type="text" name="pool_tag" id="edit_pool_tag" placeholder="Please enter a tag"/>
-				<input type="submit" name="edit" id="edit_pool_import_btn" value="Import"/>
-				<input type="hidden" name="pool_id" value="' . $pool->id . '">
-			</form>
+        // This could become a SHM_INPUT function that also accepts 'type' and other attributes.
+        $_hidden=function (string $name, $value) {
+            return INPUT(["type"=>"hidden", "name"=>$name, "value"=>$value]);
+        };
 
-			' . make_form(make_link('pool/edit')) . '
-				<input type="submit" name="edit" id="edit_pool_btn" value="Edit Pool"/>
-				<input type="hidden" name="edit_pool" value="yes">
-				<input type="hidden" name="pool_id" value="' . $pool->id . '">
-			</form>
+        $_input_id = $_hidden("pool_id", $pool->id);
 
-			' . make_form(make_link('pool/order')) . '
-				<input type="submit" name="edit" id="edit_pool_order_btn" value="Order Pool"/>
-				<input type="hidden" name="order_view" value="yes">
-				<input type="hidden" name="pool_id" value="' . $pool->id . '">
-			</form>
-			' . make_form(make_link('pool/reverse')) . '
-				<input type="submit" name="edit" id="reverse_pool_order_btn" value="Reverse Order"/>
-				<input type="hidden" name="reverse_view" value="yes">
-				<input type="hidden" name="pool_id" value="' . $pool->id . '">
-			</form>
-			' . make_form(make_link('post/list/pool_id%3A' . $pool->id . '/1')) . '
-				<input type="submit" name="edit" id="postlist_pool_btn" value="Post/List View"/>
-			</form>
-			';
+        $editor = emptyHTML(
+            SHM_SIMPLE_FORM(
+                "pool/import",
+                INPUT(["type"=>"text", "name"=>"pool_tag", "id"=>"edit_pool_tag", "placeholder"=>"Please enter a tag"]),
+                $_input_id,
+                SHM_SUBMIT("Import", ["name"=>"edit", "id"=>"edit_pool_import_btn"])
+            ),
+            SHM_SIMPLE_FORM(
+                "pool/edit",
+                $_hidden("edit_pool", "yes"),
+                $_input_id,
+                SHM_SUBMIT("Edit Pool", ["name"=>"edit", "id"=>"edit_pool_btn"]),
+            ),
+            SHM_SIMPLE_FORM(
+                "pool/order",
+                $_hidden("order_view", "yes"),
+                $_input_id,
+                SHM_SUBMIT("Order Pool", ["name"=>"edit", "id"=>"edit_pool_order_btn"])
+            ),
+            SHM_SIMPLE_FORM(
+                "pool/reverse",
+                $_hidden("reverse_view", "yes"),
+                $_input_id,
+                SHM_SUBMIT("Reverse Order", ["name"=>"edit", "id"=>"reverse_pool_order_btn"])
+            ),
+            SHM_SIMPLE_FORM(
+                "pool/list/pool_id%3A" . $pool->id . "/1",
+                SHM_SUBMIT("Post/List View", ["name"=>"edit", "id"=>"postlist_pool_btn"])
+            )
+        );
 
         if ($user->id == $pool->user_id || $user->can(Permissions::POOLS_ADMIN)) {
-            $editor .= "
-				<script type='text/javascript'>
-				<!--
-				function confirm_action() {
-					return confirm('Are you sure that you want to delete this pool?');
-				}
-				//-->
-				</script>
-
-				" . make_form(make_link("pool/nuke")) . "
-					<input type='submit' name='delete' id='delete_pool_btn' value='Delete Pool' onclick='return confirm_action()' />
-					<input type='hidden' name='pool_id' value='" . $pool->id . "'>
-				</form>
-				";
+            $editor->appendChild(
+                SCRIPT(
+                    ["type"=>"text/javascript"],
+                    rawHTML("<!--
+                    function confirm_action() {
+                        return confirm('Are you sure that you want to delete this pool?');
+                    }
+                    //-->")
+                ),
+                SHM_SIMPLE_FORM(
+                    "pool/nuke",
+                    $_input_id,
+                    SHM_SUBMIT("Delete Pool", ["name"=>"delete", "id"=>"delete_pool_btn", "onclick"=>"return confirm_action()"])
+                )
+            );
         }
 
         if ($check_all) {
-            $editor .= "
-				<script type='text/javascript'>
-				<!--
-				function setAll(value) {
-					$('[name=\"check[]\"]').attr('checked', value);
-				}
-				//-->
-				</script>
-				<br><input type='button' name='CheckAll' value='Check All' onClick='setAll(true)'>
-				<input type='button' name='UnCheckAll' value='Uncheck All' onClick='setAll(false)'>
-			";
+            $editor->appendChild(
+                SCRIPT(
+                    ["type"=>"text/javascript"],
+                    rawHTML("<!--
+                    function setAll(value) {
+                        $('[name=\"check[]\"]').attr('checked', value);
+                    }
+                    //-->")
+                ),
+                INPUT(["type"=>"button", "name"=>"CheckAll", "value"=>"Check All", "onclick"=>"setAll(true)"]),
+                INPUT(["type"=>"button", "name"=>"UnCheckAll", "value"=>"Uncheck All", "onclick"=>"setAll(false)"])
+            );
         }
+
         $page->add_block(new Block("Manage Pool", $editor, "left", 15));
     }
 
@@ -242,30 +240,33 @@ class PoolsTheme extends Themelet
     public function pool_result(Page $page, array $images, Pool $pool)
     {
         $this->display_top($pool, "Importing Posts", true);
-        $pool_images = "
-			<script type='text/javascript'>
-			function confirm_action() {
-				return confirm('Are you sure you want to add selected posts to this pool?');
-			}
-			</script>
-		";
 
-        $pool_images .= "<form action='" . make_link("pool/add_posts") . "' method='POST' name='checks'>";
+        $import = emptyHTML(
+            SCRIPT(
+                ["type"=>"text/javascript"],
+                rawHTML("
+                function confirm_action() {
+                    return confirm('Are you sure you want to add selected posts to this pool?');
+                }")
+            )
+        );
 
+        $form = SHM_FORM("pool/add_posts", name: "checks");
         foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
-
-            $pool_images .= '<span class="thumb">' . $thumb_html . '<br>' .
-                '<input name="check[]" type="checkbox" value="' . $image->id . '" />' .
-                '</span>';
+            $form->appendChild(
+                SPAN(["class"=>"thumb"], $this->build_thumb_html($image), BR(), INPUT(["type"=>"checkbox", "name"=>"check[]", "value"=>$image->id])),
+            );
         }
 
-        $pool_images .= "<br>" .
-            "<input type='submit' name='edit' id='edit_pool_add_btn' value='Add Selected' onclick='return confirm_action()'/>" .
-            "<input type='hidden' name='pool_id' value='" . $pool->id . "'>" .
-            "</form>";
+        $form->appendChild(
+            BR(),
+            SHM_SUBMIT("Add Selected", ["name"=>"edit", "id"=>"edit_pool_add_btn", "onclick"=>"return confirm_action()"]),
+            INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id])
+        );
 
-        $page->add_block(new Block("Import", $pool_images, "main", 30));
+        $import->appendChild($form);
+
+        $page->add_block(new Block("Import", $import, "main", 30));
     }
 
 
@@ -277,23 +278,22 @@ class PoolsTheme extends Themelet
     {
         $this->display_top($pool, "Sorting Pool");
 
-        $pool_images = "\n<form action='" . make_link("pool/order") . "' method='POST' name='checks'>";
-        $i = 0;
-        foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
-            $pool_images .= '<span class="thumb">' . "\n" . $thumb_html . "\n" .
-                '<br><input name="imgs[' . $i . '][]" type="number" style="max-width:50px;" value="' . $image->image_order . '" />' .
-                '<input name="imgs[' . $i . '][]" type="hidden" value="' . $image->id . '" />' .
-                '</span>';
-            $i++;
+        $form = SHM_FORM("pool/order", name: "checks");
+        foreach ($images as $i=>$image) {
+            $form->appendChild(SPAN(
+                ["class"=>"thumb"],
+                $this->build_thumb_html($image),
+                INPUT(["type"=>"number", "name"=>"imgs[$i][]", "value"=>$image->image_order, "style"=>"max-width: 50px;"]),
+                INPUT(["type"=>"hidden", "name"=>"imgs[$i][]", "value"=>$image->id])
+            ));
         }
 
-        $pool_images .= "<br>" .
-            "<input type='submit' name='edit' id='edit_pool_order' value='Order'/>" .
-            "<input type='hidden' name='pool_id' value='" . $pool->id . "'>" .
-            "</form>";
+        $form->appendChild(
+            INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id]),
+            SHM_SUBMIT("Order", ["name"=>"edit", "id"=>"edit_pool_order"])
+        );
 
-        $page->add_block(new Block("Sorting Posts", $pool_images, "main", 30));
+        $page->add_block(new Block("Sorting Posts", $form, position: 30));
     }
 
     /**
@@ -304,35 +304,35 @@ class PoolsTheme extends Themelet
      */
     public function edit_pool(Page $page, Pool $pool, array $images)
     {
-        /* EDIT POOL DESCRIPTION */
-        $desc_html = "
-			" . make_form(make_link("pool/edit_description")) . "
-					<textarea name='description'>" . $pool->description . "</textarea><br />
-					<input type='hidden' name='pool_id' value='" . $pool->id . "'>
-					<input type='submit' value='Change Description' />
-			</form>
-		";
+        $_input_id = INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id]);
 
-        /* REMOVE POOLS */
-        $pool_images = "\n<form action='" . make_link("pool/remove_posts") . "' method='POST' name='checks'>";
+        $desc_form = SHM_SIMPLE_FORM(
+            "pool/edit/description",
+            TEXTAREA(["name"=>"description"], $pool->description),
+            BR(),
+            $_input_id,
+            SHM_SUBMIT("Change Description")
+        );
 
+        $images_form = SHM_FORM("pool/remove_posts", name: "checks");
         foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
-
-            $pool_images .= '<span class="thumb">' . "\n" . $thumb_html . "\n" .
-                '<br><input name="check[]" type="checkbox" value="' . $image->id . '" />' .
-                '</span>';
+            $images_form->appendChild(SPAN(
+                ["class"=>"thumb"],
+                $this->build_thumb_html($image),
+                INPUT(["type"=>"checkbox", "name"=>"check[]", "value"=>$image->id])
+            ));
         }
 
-        $pool_images .= "<br>" .
-            "<input type='submit' name='edit' id='edit_pool_remove_sel' value='Remove Selected'/>" .
-            "<input type='hidden' name='pool_id' value='" . $pool->id . "'>" .
-            "</form>";
+        $images_form->appendChild(
+            BR(),
+            $_input_id,
+            SHM_SUBMIT("Remove Selected", ["name"=>"edit", "id"=>"edit_pool_remove_sel"])
+        );
 
         $pool->description = ""; //This is a rough fix to avoid showing the description twice.
         $this->display_top($pool, "Editing Pool", true);
-        $page->add_block(new Block("Editing Description", $desc_html, "main", 28));
-        $page->add_block(new Block("Editing Posts", $pool_images, "main", 30));
+        $page->add_block(new Block("Editing Description", $desc_form, position: 28));
+        $page->add_block(new Block("Editing Posts", $images_form, position: 30));
     }
 
     /**
@@ -341,21 +341,17 @@ class PoolsTheme extends Themelet
     public function show_history(array $histories, int $pageNumber, int $totalPages)
     {
         global $page;
-        $html = '
-			<table id="poolsList" class="zebra">
-				<thead><tr>
-					<th>Pool</th>
-					<th>Post Count</th>
-					<th>Changes</th>
-					<th>Updater</th>
-					<th>Date</th>
-					<th>Action</th>
-				</tr></thead><tbody>';
 
+        $table = TABLE(
+            ["id"=>"poolsList", "class"=>"zebra"],
+            THEAD(TR(TH("Pool"), TH("Post Count"), TH("Changes"), TH("Updater"), TH("Date"), TH("Action")))
+        );
+
+        $body = [];
         foreach ($histories as $history) {
-            $pool_link = "<a href='" . make_link("pool/view/" . $history['pool_id']) . "'>" . html_escape($history['title']) . "</a>";
-            $user_link = "<a href='" . make_link("user/" . url_escape($history['user_name'])) . "'>" . html_escape($history['user_name']) . "</a>";
-            $revert_link = "<a href='" . make_link("pool/revert/" . $history['id']) . "'>Revert</a>";
+            $pool_link = SHM_A("pool/view/" . $history["pool_id"], $history["title"]);
+            $user_link = SHM_A("user/" . url_escape($history["user_name"]), $history["user_name"]);
+            $revert_link = SHM_A(("pool/revert/" . $history["id"]), "Revert");
 
             if ($history['action'] == 1) {
                 $prefix = "+";
@@ -365,69 +361,74 @@ class PoolsTheme extends Themelet
                 throw new \RuntimeException("history['action'] not in {0, 1}");
             }
 
-            $images = trim($history['images']);
+            $images = trim($history["images"]);
             $images = explode(" ", $images);
 
-            $image_link = "";
+            $image_links = emptyHTML();
             foreach ($images as $image) {
-                $image_link .= "<a href='" . make_link("post/view/" . $image) . "'>" . $prefix . $image . " </a>";
+                $image_links->appendChild(" ", SHM_A("post/view/" . $image, $prefix . $image));
             }
 
-            $html .= "<tr>" .
-                "<td class='left'>" . $pool_link . "</td>" .
-                "<td>" . $history['count'] . "</td>" .
-                "<td>" . $image_link . "</td>" .
-                "<td>" . $user_link . "</td>" .
-                "<td>" . $history['date'] . "</td>" .
-                "<td>" . $revert_link . "</td>" .
-                "</tr>";
+            $body[] = TR(
+                TD(["class"=>"left"], $pool_link),
+                TD($history["count"]),
+                TD($image_links),
+                TD($user_link),
+                TD($history["date"]),
+                TD($revert_link)
+            );
         }
 
-        $html .= "</tbody></table>";
+        $table->appendChild(TBODY(...$body));
 
         $this->display_top(null, "Recent Changes");
-        $page->add_block(new Block("Recent Changes", $html, "main", 10));
+        $page->add_block(new Block("Recent Changes", $table, position: 10));
 
         $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
     }
 
-    public function get_bulk_pool_selector(array $pools): string
+    public function get_bulk_pool_selector(array $options): HTMLElement
     {
-        $output = "<select name='bulk_pool_select' required='required'><option></option>";
-        foreach ($pools as $pool) {
-            $output .= "<option value='" . $pool->id . "' >" . $pool->title . "</option>";
-        }
-        return $output . "</select>";
+        return SHM_SELECT("bulk_pool_select", $options, required: true, empty_option: true);
     }
 
-    public function get_bulk_pool_input(array $search_terms): string
+    public function get_bulk_pool_input(array $search_terms): HTMLElement
     {
-        return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' value='".(implode(" ", $search_terms))."' />";
+        return INPUT(
+            [
+                "type"=>"text",
+                "name"=>"bulk_pool_new",
+                "placeholder"=>"New Pool",
+                "required"=>"",
+                "value"=>implode(" ", $search_terms)
+            ]
+        );
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts that are in a pool.</p>
-        <div class="command_example">
-        <pre>pool=1</pre>
-        <p>Returns posts in pool #1.</p>
-        </div>
-        <div class="command_example">
-        <pre>pool=any</pre>
-        <p>Returns posts in any pool.</p>
-        </div>
-        <div class="command_example">
-        <pre>pool=none</pre>
-        <p>Returns posts not in any pool.</p>
-        </div>
-        <div class="command_example">
-        <pre>pool_by_name=swimming</pre>
-        <p>Returns posts in the "swimming" pool.</p>
-        </div>
-        <div class="command_example">
-        <pre>pool_by_name=swimming_pool</pre>
-        <p>Returns posts in the "swimming pool" pool. Note that the underscore becomes a space</p>
-        </div>
-        ';
+        return emptyHTML(
+            P("Search for posts that are in a pool."),
+            SHM_COMMAND_EXAMPLE(
+                "pool=1",
+                "Returns posts in pool #1."
+            ),
+            SHM_COMMAND_EXAMPLE(
+                "pool=any",
+                "Returns posts in any pool."
+            ),
+            SHM_COMMAND_EXAMPLE(
+                "pool=none",
+                "Returns posts not in any pool."
+            ),
+            SHM_COMMAND_EXAMPLE(
+                "pool_by_name=swimming",
+                "Returns posts in the \"swimming\" pool."
+            ),
+            SHM_COMMAND_EXAMPLE(
+                "pool_by_name=swimming_pool",
+                "Returns posts in the \"swimming pool\" pool. Note that the underscore becomes a space."
+            )
+        );
     }
 }

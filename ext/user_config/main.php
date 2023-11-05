@@ -42,7 +42,7 @@ class UserOptionsBuildingEvent extends Event
 class UserConfig extends Extension
 {
     /** @var UserConfigTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const VERSION = "ext_user_config_version";
     public const ENABLE_API_KEYS = "ext_user_config_enable_api_keys";
@@ -95,6 +95,14 @@ class UserConfig extends Extension
         global $user;
         if ($event->parent==="user" && !$user->is_anonymous()) {
             $event->add_nav_link("user_config", new Link('user_config'), "User Options", false, 40);
+        }
+    }
+
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    {
+        global $user;
+        if (!$user->is_anonymous()) {
+            $event->add_link("User Options", make_link("user_config"), 40);
         }
     }
 

@@ -173,7 +173,6 @@ function stream_file(string $file, int $start, int $end): void
 {
     $fp = fopen($file, 'r');
     try {
-        set_time_limit(0);
         fseek($fp, $start);
         $buffer = 1024 * 1024;
         while (!feof($fp) && ($p = ftell($fp)) <= $end) {
@@ -229,10 +228,6 @@ if (!function_exists('http_parse_headers')) {
  */
 function find_header(array $headers, string $name): ?string
 {
-    if (!is_array($headers)) {
-        return null;
-    }
-
     $header = null;
 
     if (array_key_exists($name, $headers)) {
@@ -458,9 +453,9 @@ function page_number(string $input, ?int $max=null): int
     return $pageNumber;
 }
 
-function clamp(?int $val, ?int $min=null, ?int $max=null): int
+function clamp(int $val, ?int $min=null, ?int $max=null): int
 {
-    if (!is_numeric($val) || (!is_null($min) && $val < $min)) {
+    if (!is_null($min) && $val < $min) {
         $val = $min;
     }
     if (!is_null($max) && $val > $max) {

@@ -4,43 +4,40 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\BR;
-use function MicroHTML\BUTTON;
-use function MicroHTML\INPUT;
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+
+use function MicroHTML\{BUTTON,INPUT,P};
 
 class ApprovalTheme extends Themelet
 {
-    public function get_image_admin_html(Image $image): string
+    public function get_image_admin_html(Image $image): HTMLElement
     {
         if ($image->approved===true) {
-            $html = SHM_SIMPLE_FORM(
+            $form = SHM_SIMPLE_FORM(
                 'disapprove_image/'.$image->id,
                 INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
                 SHM_SUBMIT("Disapprove")
             );
         } else {
-            $html = SHM_SIMPLE_FORM(
+            $form = SHM_SIMPLE_FORM(
                 'approve_image/'.$image->id,
                 INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
                 SHM_SUBMIT("Approve")
             );
         }
 
-        return (string)$html;
+        return $form;
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts that are approved/not approved.</p>
-        <div class="command_example">
-        <pre>approved:yes</pre>
-        <p>Returns posts that have been approved.</p>
-        </div>
-        <div class="command_example">
-        <pre>approved:no</pre>
-        <p>Returns posts that have not been approved.</p>
-        </div>
-        ';
+        return emptyHTML(
+            P("Search for posts that are approved/not approved."),
+            SHM_COMMAND_EXAMPLE("approved:yes", "Returns posts that have been approved."),
+            SHM_COMMAND_EXAMPLE("approved:no", "Returns posts that have not been approved.")
+        );
     }
 
     public function display_admin_block(SetupBuildingEvent $event)
@@ -53,12 +50,13 @@ class ApprovalTheme extends Themelet
     {
         global $page;
 
-        $html = (string)SHM_SIMPLE_FORM(
+        $form = SHM_SIMPLE_FORM(
             "admin/approval",
             BUTTON(["name"=>'approval_action', "value"=>'approve_all'], "Approve All Posts"),
-            BR(),
+            " ",
             BUTTON(["name"=>'approval_action', "value"=>'disapprove_all'], "Disapprove All Posts"),
         );
-        $page->add_block(new Block("Approval", $html));
+
+        $page->add_block(new Block("Approval", $form));
     }
 }

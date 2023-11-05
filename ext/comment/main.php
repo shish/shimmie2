@@ -114,7 +114,7 @@ class Comment
 class CommentList extends Extension
 {
     /** @var CommentListTheme $theme */
-    public ?Themelet $theme;
+    public Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -214,6 +214,13 @@ class CommentList extends Extension
                     break;
             }
         }
+    }
+
+    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    {
+        // comment lists change all the time, crawlers should
+        // index individual image's comments
+        $event->add_disallow("comment");
     }
 
     private function onPageRequest_add()

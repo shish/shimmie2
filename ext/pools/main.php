@@ -108,7 +108,7 @@ function _image_to_id(Image $image): int
 class Pools extends Extension
 {
     /** @var PoolsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -357,9 +357,8 @@ class Pools extends Extension
                 case "import":
                     if ($this->have_permission($user, $pool)) {
                         $images = Image::find_images(
-                            0,
-                            $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
-                            Tag::explode($_POST["pool_tag"])
+                            limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
+                            tags: Tag::explode($_POST["pool_tag"])
                         );
                         $this->theme->pool_result($page, $images, $pool);
                     } else {
@@ -467,14 +466,14 @@ class Pools extends Extension
     {
         global $config, $database, $user;
         if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && !$user->is_anonymous()) {
+            $pools = [];
             if ($user->can(Permissions::POOLS_ADMIN)) {
-                $rows = $database->get_all("SELECT * FROM pools");
+                $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
             } else {
-                $rows = $database->get_all("SELECT * FROM pools WHERE user_id=:id", ["id" => $user->id]);
+                $pools = $database->get_pairs("SELECT id,title FROM pools WHERE user_id=:id ORDER BY title", ["id" => $user->id]);
             }
-            if (count($rows) > 0) {
-                $pools = array_map([Pool::class, "makePool"], $rows);
-                $event->add_part($this->theme->get_adder_html($event->image, $pools));
+            if (count($pools) > 0) {
+                $event->add_part((string)$this->theme->get_adder_html($event->image, $pools));
             }
         }
     }
@@ -482,10 +481,7 @@ class Pools extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Pools";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_block(new Block("Pools", $this->theme->get_help_html()));
         }
     }
 
@@ -554,13 +550,11 @@ class Pools extends Extension
     {
         global $database;
 
-        $pools = array_map(
-            [Pool::class, "makePool"],
-            $database->get_all("SELECT * FROM pools ORDER BY title ")
-        );
+        $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
-        $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", $this->theme->get_bulk_pool_selector($pools));
-        $event->add_action("bulk_pool_add_new", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms));
+        // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.
+        $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", (string)$this->theme->get_bulk_pool_selector($options));
+        $event->add_action("bulk_pool_add_new", "Create Pool", "", "", (string)$this->theme->get_bulk_pool_input($event->search_terms));
     }
 
     public function onBulkAction(BulkActionEvent $event)

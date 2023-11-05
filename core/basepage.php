@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 require_once "core/event.php";
 
 enum PageMode: string
@@ -80,6 +82,12 @@ class BasePage
      */
     public function set_filename(string $filename, string $disposition = "attachment"): void
     {
+        $max_len = 250;
+        if(strlen($filename) > $max_len) {
+            // remove extension, truncate filename, apply extension
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $filename = substr($filename, 0, $max_len - strlen($ext) - 1) . '.' . $ext;
+        }
         $this->filename = $filename;
         $this->disposition = $disposition;
     }
@@ -568,7 +576,7 @@ EOD;
 			<a href=\"https://code.shishnet.org/shimmie2/\">Shimmie</a> &copy;
 			<a href=\"https://www.shishnet.org/\">Shish</a> &amp;
 			<a href=\"https://github.com/shish/shimmie2/graphs/contributors\">The Team</a>
-			2007-2020,
+			2007-2023,
 			based on the Danbooru concept.
 			$debug
 			$contact
@@ -598,7 +606,7 @@ class PageSubNavBuildingEvent extends Event
         $this->parent= $parent;
     }
 
-    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
+    public function add_nav_link(string $name, Link $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50)
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
     }
@@ -608,11 +616,11 @@ class NavLink
 {
     public string $name;
     public Link $link;
-    public string $description;
+    public string|HTMLElement $description;
     public int $order;
     public bool $active = false;
 
-    public function __construct(String $name, Link $link, String $description, ?bool $active = null, int $order = 50)
+    public function __construct(string $name, Link $link, string|HTMLElement $description, ?bool $active = null, int $order = 50)
     {
         global $config;
 

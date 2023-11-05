@@ -4,96 +4,83 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+use function MicroHTML\{P,SPAN,TABLE,TD,TH,TR};
+
 class RatingsTheme extends Themelet
 {
-    public function get_rater_html(int $image_id, string $rating, bool $can_rate): string
+    public function get_selection_rater_html(string $name = "rating", array $ratings = [], array $selected_options = []): HTMLElement
+    {
+        return SHM_SELECT($name, !empty($ratings) ? $ratings : Ratings::get_ratings_dict(), required: true, selected_options: $selected_options);
+    }
+
+    public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
     {
         $human_rating = Ratings::rating_to_human($rating);
-        $html = "
-			<tr>
-				<th>Rating</th>
-				<td>
-		".($can_rate ? "
-					<span class='view'>$human_rating</span>
-					<span class='edit'>
-						".$this->get_selection_rater_html([$rating])."
-					</span>
-		" : "
-					$human_rating
-		")."
-				</td>
-			</tr>
-		";
+
+        $html = TR(TH("Rating"));
+
+        if ($can_rate) {
+            $selector = $this->get_selection_rater_html(selected_options: [$rating]);
+
+            $html->appendChild(TD(
+                SPAN(["class"=>"view"], $human_rating),
+                SPAN(["class"=>"edit"], $selector)
+            ));
+        } else {
+            $html->appendChild(TD($human_rating));
+        }
+
         return $html;
     }
 
-    public function display_form(array $current_ratings, array $available_ratings)
+    public function display_form(array $current_ratings)
     {
         global $page;
 
-        $html = make_form(make_link("admin/update_ratings"))."<table class='form'><tr>
-        <th>Change</th><td><select name='rating_old' required='required'><option></option>";
-        foreach ($current_ratings as $key=>$value) {
-            $html .= "<option value='$key'>$value</option>";
-        }
-        $html .= "</select></td></tr>
-        <tr><th>To</th><td><select name='rating_new'  required='required'><option></option>";
-        foreach ($available_ratings as $value) {
-            $html .= "<option value='$value->code'>$value->name</option>";
-        }
-        $html .= "</select></td></tr>
-        <tr><td colspan='2'><input type='submit' value='Update'></td></tr></table>
-        </form>\n";
-        $page->add_block(new Block("Update Ratings", $html));
+        $table = TABLE(
+            ["class"=>"form"],
+            TR(TH("Change"), TD($this->get_selection_rater_html("rating_old", $current_ratings))),
+            TR(TH("To"), TD($this->get_selection_rater_html("rating_new"))),
+            TR(TD(["colspan"=>"2"], SHM_SUBMIT("Update")))
+        );
+
+        $page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM("admin/update_ratings", $table)));
     }
 
-    public function get_selection_rater_html(array $selected_options, bool $multiple = false, array $available_options = null): string
+    public function get_help_html(array $ratings): HTMLElement
     {
-        $output = "<select name='rating".($multiple ? "[]' multiple='multiple'" : "' ")." >";
-
-        $options = Ratings::get_sorted_ratings();
-
-        foreach ($options as $option) {
-            if ($available_options!=null && !in_array($option->code, $available_options)) {
-                continue;
-            }
-
-            $output .= "<option value='".$option->code."' ".
-                (in_array($option->code, $selected_options) ? "selected='selected'" : "")
-                .">".$option->name."</option>";
-        }
-        return $output."</select>";
-    }
-
-    public function get_help_html(array $ratings): string
-    {
-        $output =  '<p>Search for posts with one or more possible ratings.</p>
-        <div class="command_example">
-        <pre>rating:'.$ratings[0]->search_term.'</pre>
-        <p>Returns posts with the '.$ratings[0]->name.' rating.</p>
-        </div>
-        <p>Ratings can be abbreviated to a single letter as well</p>
-        <div class="command_example">
-        <pre>rating:'.$ratings[0]->code.'</pre>
-        <p>Returns posts with the '.$ratings[0]->name.' rating.</p>
-        </div>
-        <p>If abbreviations are used, multiple ratings can be searched for.</p>
-        <div class="command_example">
-        <pre>rating:'.$ratings[0]->code.$ratings[1]->code.'</pre>
-        <p>Returns posts with the '.$ratings[0]->name.' or '.$ratings[1]->name.' rating.</p>
-        </div>
-        <p>Available ratings:</p>
-        <table>
-        <tr><th>Name</th><th>Search Term</th><th>Abbreviation</th></tr>
-        ';
+        $rating_rows = [TR(TH("Name"), TH("Search Term"), TH("Abbreviation"))];
         foreach ($ratings as $rating) {
-            $output .= "<tr><td>{$rating->name}</td><td>{$rating->search_term}</td><td>{$rating->code}</td></tr>";
+            $rating_rows[] = TR(TD($rating->name), TD($rating->search_term), TD($rating->code));
         }
-        $output .= "</table>";
-        return $output;
+
+        return emptyHTML(
+            P("Search for posts with one or more possible ratings."),
+            SHM_COMMAND_EXAMPLE(
+                "rating:" . $ratings[0]->search_term,
+                "Returns posts with the " . $ratings[0]->name . " rating."
+            ),
+            P("Ratings can be abbreviated to a single letter as well."),
+            SHM_COMMAND_EXAMPLE(
+                "rating:" . $ratings[0]->code,
+                "Returns posts with the " . $ratings[0]->name . " rating."
+            ),
+            P("If abbreviations are used, multiple ratings can be searched for."),
+            SHM_COMMAND_EXAMPLE(
+                "rating:" . $ratings[0]->code . $ratings[1]->code,
+                "Returns posts with the " . $ratings[0]->name . " or " . $ratings[1]->name . " rating."
+            ),
+            P("Available ratings:"),
+            TABLE(...$rating_rows)
+        );
     }
 
-    public function get_user_options(User $user, array $selected_ratings, array $available_ratings): string
+    // This wasn't being used at all
+
+    /* public function get_user_options(User $user, array $selected_ratings, array $available_ratings): string
     {
         $html = "
                 <p>".make_form(make_link("user_admin/default_ratings"))."
@@ -105,7 +92,7 @@ class RatingsTheme extends Themelet
                         <tbody>
                         <tr><td>This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.</td></tr>
                             <tr><td>
-                                ".$this->get_selection_rater_html($selected_ratings, true, $available_ratings)."
+                                ".SHM_SELECT("ratings", selected_options: $selected_ratings, multiple: true, options: $available_ratings)."
                             </td></tr>
                         </tbody>
                         <tfoot>
@@ -115,5 +102,5 @@ class RatingsTheme extends Themelet
                 </form>
             ";
         return $html;
-    }
+    } */
 }

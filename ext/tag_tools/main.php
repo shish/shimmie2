@@ -8,7 +8,7 @@ namespace Shimmie2;
 class TagTools extends Extension
 {
     /** @var TagToolsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onAdminBuilding(AdminBuildingEvent $event)
     {

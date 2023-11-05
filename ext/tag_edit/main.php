@@ -33,7 +33,7 @@ class SourceSetEvent extends Event
     {
         parent::__construct();
         $this->image = $image;
-        $this->source = $source;
+        $this->source = trim($source);
     }
 }
 
@@ -133,7 +133,7 @@ class TagTermParseEvent extends Event
 class TagEdit extends Extension
 {
     /** @var TagEditTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -143,7 +143,7 @@ class TagEdit extends Extension
                 if ($user->can(Permissions::MASS_TAG_EDIT) && isset($_POST['search']) && isset($_POST['replace'])) {
                     $search = $_POST['search'];
                     $replace = $_POST['replace'];
-                    $this->mass_tag_edit($search, $replace);
+                    $this->mass_tag_edit($search, $replace, true);
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("admin"));
                 }
@@ -256,7 +256,7 @@ class TagEdit extends Extension
      */
     public function onAddAlias(AddAliasEvent $event)
     {
-        $this->mass_tag_edit($event->oldtag, $event->newtag);
+        $this->mass_tag_edit($event->oldtag, $event->newtag, false);
     }
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
@@ -290,9 +290,9 @@ class TagEdit extends Extension
         $event->replace('$tags', $tags);
     }
 
-    private function mass_tag_edit(string $search, string $replace)
+    private function mass_tag_edit(string $search, string $replace, bool $commit)
     {
-        global $database;
+        global $database, $tracer_enabled, $_tracer;
 
         $search_set = Tag::explode(strtolower($search), false);
         $replace_set = Tag::explode(strtolower($replace), false);
@@ -300,7 +300,7 @@ class TagEdit extends Extension
         log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
         if (count($search_set) == 1 && count($replace_set) == 1) {
-            $images = Image::find_images(0, 10, $replace_set);
+            $images = Image::find_images(limit: 10, tags: $replace_set);
             if (count($images) == 0) {
                 log_info("tag_edit", "No images found with target tag, doing in-place rename");
                 $database->execute(
@@ -317,6 +317,9 @@ class TagEdit extends Extension
 
         $last_id = -1;
         while (true) {
+            if ($tracer_enabled) {
+                $_tracer->begin("Batch starting with $last_id");
+            }
             // make sure we don't look at the same images twice.
             // search returns high-ids first, so we want to look
             // at images with lower IDs than the previous.
@@ -326,32 +329,23 @@ class TagEdit extends Extension
                 $search_forward[] = "id<$last_id";
             }
 
-            $images = Image::find_images(0, 100, $search_forward);
+            $images = Image::find_images(limit: 100, tags: $search_forward);
             if (count($images) == 0) {
                 break;
             }
 
             foreach ($images as $image) {
-                // remove the search'ed tags
                 $before = array_map('strtolower', $image->get_tag_array());
-                $after = [];
-                foreach ($before as $tag) {
-                    if (!in_array($tag, $search_set)) {
-                        $after[] = $tag;
-                    }
-                }
-
-                // add the replace'd tags
-                foreach ($replace_set as $tag) {
-                    $after[] = $tag;
-                }
-
-                // replace'd tag may already exist in tag set, so remove dupes to avoid integrity constraint violations.
-                $after = array_unique($after);
-
-                $image->set_tags($after);
-
+                $after = array_merge(array_diff($before, $search_set), $replace_set);
+                send_event(new TagSetEvent($image, $after));
                 $last_id = $image->id;
+            }
+            if ($commit) {
+                $database->commit();
+                $database->begin_transaction();
+            }
+            if ($tracer_enabled) {
+                $_tracer->end();
             }
         }
     }
@@ -370,13 +364,13 @@ class TagEdit extends Extension
                 $search_forward[] = "id<$last_id";
             }
 
-            $images = Image::find_images(0, 100, $search_forward);
+            $images = Image::find_images(limit: 100, tags: $search_forward);
             if (count($images) == 0) {
                 break;
             }
 
             foreach ($images as $image) {
-                $image->set_source($source);
+                send_event(new SourceSetEvent($image, $source));
                 $last_id = $image->id;
             }
         }

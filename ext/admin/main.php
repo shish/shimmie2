@@ -33,7 +33,7 @@ class AdminActionEvent extends Event
 class AdminPage extends Extension
 {
     /** @var AdminPageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -51,7 +51,7 @@ class AdminPage extends Extension
 
                     if ($user->check_auth_token()) {
                         log_info("admin", "Util: $action");
-                        set_time_limit(0);
+                        shm_set_timeout(null);
                         $database->set_timeout(null);
                         send_event($aae);
                     }

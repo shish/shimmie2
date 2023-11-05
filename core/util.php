@@ -4,22 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
-use function MicroHTML\FORM;
-use function MicroHTML\INPUT;
-use function MicroHTML\DIV;
-use function MicroHTML\PRE;
-use function MicroHTML\P;
-use function MicroHTML\TABLE;
-use function MicroHTML\THEAD;
-use function MicroHTML\TFOOT;
-use function MicroHTML\TR;
-use function MicroHTML\TH;
-use function MicroHTML\TD;
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -270,7 +254,7 @@ function load_balance_url(string $tmpl, string $hash, int $n=0): string
                 $opt_weight = 0;
                 if ($parts_count === 2) {
                     $opt_val = $parts[0];
-                    $opt_weight = $parts[1];
+                    $opt_weight = (int)$parts[1];
                 } elseif ($parts_count === 1) {
                     $opt_val = $parts[0];
                     $opt_weight = 1;
@@ -645,7 +629,7 @@ function _fatal_error(\Exception $e): void
         foreach ($t as $n => $f) {
             $c = $f['class'] ?? '';
             $t = $f['type'] ?? '';
-            $a = implode(", ", array_map("Shimmie2\stringer", $f['args']));
+            $a = implode(", ", array_map("Shimmie2\stringer", $f['args'] ?? []));
             print("$n: {$f['file']}({$f['line']}): {$c}{$t}{$f['function']}({$a})\n");
         }
 
@@ -752,71 +736,6 @@ function make_form(string $target, string $method="POST", bool $multipart=false,
         $extra .= ' onsubmit="'.$onsubmit.'"';
     }
     return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
-}
-
-function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit=""): HTMLElement
-{
-    global $user;
-
-    $attrs = [
-        "action"=>make_link($target),
-        "method"=>$method
-    ];
-
-    if ($form_id) {
-        $attrs["id"] = $form_id;
-    }
-    if ($multipart) {
-        $attrs["enctype"] = 'multipart/form-data';
-    }
-    if ($onsubmit) {
-        $attrs["onsubmit"] = $onsubmit;
-    }
-    return FORM(
-        $attrs,
-        INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]),
-        $method == "GET" ? "" : rawHTML($user->get_auth_html())
-    );
-}
-
-function SHM_SIMPLE_FORM($target, ...$children): HTMLElement
-{
-    $form = SHM_FORM($target);
-    $form->appendChild(emptyHTML(...$children));
-    return $form;
-}
-
-function SHM_SUBMIT(string $text): HTMLElement
-{
-    return INPUT(["type"=>"submit", "value"=>$text]);
-}
-
-function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement
-{
-    return DIV(
-        ["class"=>"command_example"],
-        PRE($ex),
-        P($desc)
-    );
-}
-
-function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot): HTMLElement
-{
-    if (is_string($foot)) {
-        $foot = TFOOT(TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>$foot]))));
-    }
-    return SHM_SIMPLE_FORM(
-        $target,
-        P(
-            INPUT(["type"=>'hidden', "name"=>'id', "value"=>$duser->id]),
-            TABLE(
-                ["class"=>"form"],
-                THEAD(TR(TH(["colspan"=>"2"], $title))),
-                $body,
-                $foot
-            )
-        )
-    );
 }
 
 const BYTE_DENOMINATIONS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];

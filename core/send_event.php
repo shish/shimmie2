@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+class TimeoutException extends \RuntimeException
+{
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -93,6 +98,22 @@ function _dump_event_listeners(array $event_listeners, string $path): void
 /** @private */
 global $_shm_event_count;
 $_shm_event_count = 0;
+$_shm_timeout = null;
+
+function shm_set_timeout(?int $timeout=null): void
+{
+    global $_shm_timeout;
+    if ($timeout) {
+        $_shm_timeout = ftime() + $timeout;
+    } else {
+        $_shm_timeout = null;
+    }
+    set_time_limit(is_null($timeout) ? 0 : $timeout);
+}
+
+if (ini_get('max_execution_time')) {
+    shm_set_timeout((int)ini_get('max_execution_time') - 3);
+}
 
 /**
  * Send an event to all registered Extensions.
@@ -105,7 +126,7 @@ function send_event(Event $event): Event
 {
     global $tracer_enabled;
 
-    global $_shm_event_listeners, $_shm_event_count, $_tracer;
+    global $_shm_event_listeners, $_shm_event_count, $_tracer, $_shm_timeout;
     $event_name = _namespaced_class_name(get_class($event));
     if (!isset($_shm_event_listeners[$event_name])) {
         return $event;
@@ -122,6 +143,9 @@ function send_event(Event $event): Event
     ksort($my_event_listeners);
 
     foreach ($my_event_listeners as $listener) {
+        if ($_shm_timeout && ftime() > $_shm_timeout) {
+            throw new TimeoutException("Timeout while sending $event_name");
+        }
         if ($tracer_enabled) {
             $_tracer->begin(get_class($listener));
         }

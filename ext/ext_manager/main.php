@@ -37,7 +37,7 @@ class ExtensionAuthor
 class ExtManager extends Extension
 {
     /** @var ExtManagerTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

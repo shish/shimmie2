@@ -62,6 +62,7 @@ class UserConfigTheme extends Themelet
 
         $page->set_title("User Options");
         $page->set_heading("User Options");
+        $page->add_block(new NavBlock());
         $page->add_block(new Block("User Options", $table));
         $page->set_mode(PageMode::PAGE);
     }

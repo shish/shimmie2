@@ -20,14 +20,14 @@ class BulkAddEvent extends Event
 class BulkAdd extends Extension
 {
     /** @var BulkAddTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
         if ($event->page_matches("bulk_add")) {
             if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['dir'])) {
-                set_time_limit(0);
+                shm_set_timeout(null);
                 $bae = send_event(new BulkAddEvent($_POST['dir']));
                 foreach ($bae->results as $result) {
                     $this->theme->add_status("Adding files", $result);

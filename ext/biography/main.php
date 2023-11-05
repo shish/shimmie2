@@ -7,7 +7,7 @@ namespace Shimmie2;
 class Biography extends Extension
 {
     /** @var BiographyTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {

@@ -166,7 +166,7 @@ class MimeType
 
                 for ($i = 0; $i < $cc; $i++) {
                     $byte = $comparison[$i];
-                    if ($byte == null) {
+                    if ($byte === null) {
                         continue;
                     } else {
                         $fileByte = $chunk[$i + 1];
@@ -251,9 +251,11 @@ class MimeType
                         $output = MimeType::PPM;
                         break;
                         // TODO: There is no uniquely defined Mime type for the cursor format. Need to figure this out.
-//                    case FileExtension::CUR:
-//                        $output = MimeType::CUR;
-//                        break;
+                        /*
+                        case FileExtension::CUR:
+                            $output = MimeType::CUR;
+                            break;
+                        */
                 }
             }
         }

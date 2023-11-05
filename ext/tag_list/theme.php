@@ -119,7 +119,7 @@ class TagListTheme extends Themelet
             $page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", 9));
         }
 
-        if ($main_html != null) {
+        if ($main_html !== null) {
             $page->add_block(new Block("Tags", $main_html, "left", 10));
         }
     }
@@ -211,7 +211,7 @@ class TagListTheme extends Themelet
         );
         $main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 
-        $page->add_block(new Block("refine Search", $main_html, "left", 60));
+        $page->add_block(new Block("Refine Search", $main_html, "left", 60));
     }
 
     public function return_tag(array $row, array $tag_category_dict): array

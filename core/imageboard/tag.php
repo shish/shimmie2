@@ -90,12 +90,42 @@ class TagUsage
  */
 class Tag
 {
+    private static $tag_id_cache = [];
+
+    public static function get_or_create_id(string $tag): int
+    {
+        global $database;
+
+        // don't cache in unit tests, because the test suite doesn't
+        // reset static variables but it does reset the database
+        if (!defined("UNITTEST") && array_key_exists($tag, self::$tag_id_cache)) {
+            return self::$tag_id_cache[$tag];
+        }
+
+        $id = $database->get_one(
+            "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
+            ["tag"=>$tag]
+        );
+        if (empty($id)) {
+            // a new tag
+            $database->execute(
+                "INSERT INTO tags(tag) VALUES (:tag)",
+                ["tag"=>$tag]
+            );
+            $id = $database->get_one(
+                "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
+                ["tag"=>$tag]
+            );
+        }
+
+        self::$tag_id_cache[$tag] = $id;
+        return $id;
+    }
+
     public static function implode(array $tags): string
     {
-        sort($tags);
-        $tags = implode(' ', $tags);
-
-        return $tags;
+        sort($tags, SORT_FLAG_CASE|SORT_STRING);
+        return implode(' ', $tags);
     }
 
     /**

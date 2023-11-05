@@ -14,7 +14,7 @@ function validate_selections(form, confirmationMessage) {
     } else {
         var query = $(form).find('input[name="bulk_query"]').val();
 
-        if (query == null || query === "") {
+        if (query === null || query === "") {
             return false;
         } else {
             queryOnly = true;

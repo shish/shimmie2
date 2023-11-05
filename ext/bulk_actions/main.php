@@ -12,12 +12,8 @@ class BulkActionBlockBuildingEvent extends Event
     public array $actions = [];
     public array $search_terms = [];
 
-    public function add_action(String $action, string $button_text, string $access_key = null, String $confirmation_message = "", String $block = "", int $position = 40)
+    public function add_action(String $action, string $button_text, string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40)
     {
-        if ($block == null) {
-            $block = "";
-        }
-
         if (!empty($access_key)) {
             assert(strlen($access_key)==1);
             foreach ($this->actions as $existing) {
@@ -55,7 +51,7 @@ class BulkActionEvent extends Event
 class BulkActions extends Extension
 {
     /** @var BulkActionsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
@@ -180,7 +176,7 @@ class BulkActions extends Extension
                     }
                 } elseif (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
                     $query = $_POST['bulk_query'];
-                    if ($query != null && $query != "") {
+                    if (!empty($query)) {
                         $items = $this->yield_search_results($query);
                     }
                 } else {

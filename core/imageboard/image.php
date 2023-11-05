@@ -149,7 +149,7 @@ class Image
         if ($start < 0) {
             $start = 0;
         }
-        if ($limit!=null && $limit < 1) {
+        if ($limit !== null && $limit < 1) {
             $limit = 1;
         }
 
@@ -166,11 +166,11 @@ class Image
     /**
      * Search for an array of images
      *
-     * @param String[] $tags
+     * @param string[] $tags
      * @return Image[]
      */
     #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
-    public static function find_images(?int $offset = 0, ?int $limit = null, array $tags=[]): array
+    public static function find_images(int $offset = 0, ?int $limit = null, array $tags=[]): array
     {
         $result = self::find_images_internal($offset, $limit, $tags);
 
@@ -270,53 +270,6 @@ class Image
     {
         global $config;
         return (int)ceil(Image::count_images($tags) / $config->get_int(IndexConfig::IMAGES));
-    }
-
-    private static function terms_to_conditions(array $terms): array
-    {
-        $tag_conditions = [];
-        $img_conditions = [];
-        $stpen = 0;  // search term parse event number
-        $order = null;
-
-        /*
-         * Turn a bunch of strings into a bunch of TagCondition
-         * and ImgCondition objects
-         */
-        $stpe = send_event(new SearchTermParseEvent($stpen++, null, $terms));
-        if ($stpe->order) {
-            $order = $stpe->order;
-        } elseif (!empty($stpe->querylets)) {
-            foreach ($stpe->querylets as $querylet) {
-                $img_conditions[] = new ImgCondition($querylet, true);
-            }
-        }
-
-        foreach ($terms as $term) {
-            $positive = true;
-            if (is_string($term) && !empty($term) && ($term[0] == '-')) {
-                $positive = false;
-                $term = substr($term, 1);
-            }
-            if (strlen($term) === 0) {
-                continue;
-            }
-
-            $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
-            if ($stpe->order) {
-                $order = $stpe->order;
-            } elseif (!empty($stpe->querylets)) {
-                foreach ($stpe->querylets as $querylet) {
-                    $img_conditions[] = new ImgCondition($querylet, $positive);
-                }
-            } else {
-                // if the whole match is wild, skip this
-                if (str_replace("*", "", $term) != "") {
-                    $tag_conditions[] = new TagCondition($term, $positive);
-                }
-            }
-        }
-        return [$tag_conditions, $img_conditions, $order];
     }
 
     /*
@@ -633,7 +586,7 @@ class Image
     {
         $this->mime = $mime;
         $ext = FileExtension::get_for_mime($this->get_mime());
-        assert($ext != null);
+        assert($ext !== null);
         $this->ext = $ext;
     }
 
@@ -687,27 +640,15 @@ class Image
     public function delete_tags_from_image(): void
     {
         global $database;
-        if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
-            //mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
-            $database->execute(
-                "
-				UPDATE tags t
-				INNER JOIN image_tags it ON t.id = it.tag_id
-				SET count = count - 1
-				WHERE it.image_id = :id",
-                ["id"=>$this->id]
-            );
-        } else {
-            $database->execute("
-				UPDATE tags
-				SET count = count - 1
-				WHERE id IN (
-					SELECT tag_id
-					FROM image_tags
-					WHERE image_id = :id
-				)
-			", ["id"=>$this->id]);
-        }
+        $database->execute("
+            UPDATE tags
+            SET count = count - 1
+            WHERE id IN (
+                SELECT tag_id
+                FROM image_tags
+                WHERE image_id = :id
+            )
+        ", ["id"=>$this->id]);
         $database->execute("
 			DELETE
 			FROM image_tags
@@ -742,55 +683,23 @@ class Image
             throw new SCoreException('Tried to set zero tags');
         }
 
-        if (Tag::implode($tags) != $this->get_tag_list()) {
+        if (strtolower(Tag::implode($tags)) != strtolower($this->get_tag_list())) {
             // delete old
             $this->delete_tags_from_image();
 
-            $written_tags = [];
-
             // insert each new tags
-            foreach ($tags as $tag) {
-                $id = $database->get_one(
-                    "
-						SELECT id
-						FROM tags
-						WHERE LOWER(tag) = LOWER(:tag)
-					",
-                    ["tag"=>$tag]
-                );
-                if (empty($id)) {
-                    // a new tag
-                    $database->execute(
-                        "INSERT INTO tags(tag) VALUES (:tag)",
-                        ["tag"=>$tag]
-                    );
-                    $database->execute(
-                        "INSERT INTO image_tags(image_id, tag_id)
-							VALUES(:id, (SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)))",
-                        ["id"=>$this->id, "tag"=>$tag]
-                    );
-                } else {
-                    // check if tag has already been written
-                    if (in_array($id, $written_tags)) {
-                        continue;
-                    }
-
-                    $database->execute("
-                        INSERT INTO image_tags(image_id, tag_id)
-                        VALUES(:iid, :tid)
-                    ", ["iid"=>$this->id, "tid"=>$id]);
-
-                    $written_tags[] = $id;
-                }
-                $database->execute(
-                    "
-						UPDATE tags
-						SET count = count + 1
-						WHERE LOWER(tag) = LOWER(:tag)
-					",
-                    ["tag"=>$tag]
-                );
-            }
+            $ids = array_map(fn ($tag) => Tag::get_or_create_id($tag), $tags);
+            $values = implode(", ", array_map(fn ($id) => "({$this->id}, $id)", $ids));
+            $database->execute("INSERT INTO image_tags(image_id, tag_id) VALUES $values");
+            $database->execute("
+                UPDATE tags
+                SET count = count + 1
+                WHERE id IN (
+                    SELECT tag_id
+                    FROM image_tags
+                    WHERE image_id = :id
+                )
+            ", ["id"=>$this->id]);
 
             log_info("core_image", "Tags for Post #{$this->id} set to: ".Tag::implode($tags));
             $cache->delete("image-{$this->id}-tags");
@@ -849,18 +758,23 @@ class Image
     ): Querylet {
         global $config;
 
-        list($tag_conditions, $img_conditions, $order) = self::terms_to_conditions($terms);
-        $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
+        $tag_conditions = [];
+        $img_conditions = [];
+        $order = null;
 
-        $positive_tag_count = 0;
-        $negative_tag_count = 0;
-        foreach ($tag_conditions as $tq) {
-            if ($tq->positive) {
-                $positive_tag_count++;
-            } else {
-                $negative_tag_count++;
-            }
+        /*
+         * Turn a bunch of strings into a bunch of TagCondition
+         * and ImgCondition objects
+         */
+        $stpen = 0;  // search term parse event number
+        foreach (array_merge([null], $terms) as $term) {
+            $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
+            $order ??= $stpe->order;
+            $img_conditions = array_merge($img_conditions, $stpe->img_conditions);
+            $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
         }
+
+        $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
 
         /*
          * Turn a bunch of Querylet objects into a base query
@@ -875,7 +789,7 @@ class Image
          */
 
         // no tags, do a simple search
-        if ($positive_tag_count === 0 && $negative_tag_count === 0) {
+        if (count($tag_conditions) === 0) {
             $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
         }
 
@@ -883,21 +797,20 @@ class Image
         // and do the offset / limit there, which is 10x faster than fetching
         // all the image_tags and doing the offset / limit on the result.
         elseif (
-            (
-                ($positive_tag_count === 1 && $negative_tag_count === 0)
-                || ($positive_tag_count === 0 && $negative_tag_count === 1)
-            )
+            count($tag_conditions) === 1
             && empty($img_conditions)
             && ($order == "id DESC" || $order == "images.id DESC")
             && !is_null($offset)
             && !is_null($limit)
         ) {
-            $in = $positive_tag_count === 1 ? "IN" : "NOT IN";
+            $tc = $tag_conditions[0];
+            $in = $tc->positive ? "IN" : "NOT IN";
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
-            $tag_array = self::tag_or_wildcard_to_ids($tag_conditions[0]->tag);
+            $tag_array = self::tag_or_wildcard_to_ids($tc->tag);
             if (count($tag_array) == 0) {
-                if ($positive_tag_count == 1) {
+                // if wildcard expanded to nothing, take a shortcut
+                if ($tc->positive) {
                     $query = new Querylet("SELECT images.* FROM images WHERE 1=0");
                 } else {
                     $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
@@ -923,7 +836,7 @@ class Image
             }
         }
 
-        // more than one positive tag, or more than zero negative tags
+        // more than one tag, or more than zero other conditions, or a non-default sort order
         else {
             $positive_tag_id_array = [];
             $positive_wildcard_id_array = [];

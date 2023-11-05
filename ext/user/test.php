@@ -37,12 +37,20 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         // FIXME: check class
         //$this->assert_text("Admin:");
         $this->log_out();
+    }
 
-        # FIXME: test user creation
-        # FIXME: test adminifying
-        # FIXME: test password reset
-
+    # FIXME: test user creation
+    # FIXME: test adminifying
+    # FIXME: test password reset
+    public function testUserList()
+    {
         $this->get_page('user_admin/list');
         $this->assert_text("demo");
+    }
+
+    public function testUserClasses()
+    {
+        $this->get_page('user_admin/classes');
+        $this->assert_text("admin");
     }
 }

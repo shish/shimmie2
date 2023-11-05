@@ -112,7 +112,13 @@ class MessageColumn extends Column
 
     public function get_sql_filter(): string
     {
-        return "({$this->name} LIKE :{$this->name}_0 AND priority >= :{$this->name}_1)";
+        $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        switch ($driver) {
+            case "pgsql":
+                return "(LOWER({$this->name}) LIKE LOWER(:{$this->name}_0) AND priority >= :{$this->name}_1)";
+            default:
+                return "({$this->name} LIKE :{$this->name}_0 AND priority >= :{$this->name}_1)";
+        }
     }
 
     public function read_input(array $inputs)
@@ -222,7 +228,7 @@ class LogTable extends Table
 class LogDatabase extends Extension
 {
     /** @var LogDatabaseTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {

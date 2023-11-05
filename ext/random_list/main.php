@@ -7,7 +7,7 @@ namespace Shimmie2;
 class RandomList extends Extension
 {
     /** @var RandomListTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
     {

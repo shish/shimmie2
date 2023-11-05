@@ -73,7 +73,7 @@ abstract class RatingsConfig
 class Ratings extends Extension
 {
     /** @var RatingsTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const UNRATED_KEYWORDS = ["unknown", "unrated"];
 
@@ -153,7 +153,7 @@ class Ratings extends Extension
             $options[$rating->name] = $rating->code;
         }
 
-        $sb = $event->panel->create_new_block("Post Ratings");
+        $sb = $event->panel->create_new_block("Post Rating Visibility");
         $sb->start_table();
         foreach (array_keys($_shm_user_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {
@@ -183,7 +183,7 @@ class Ratings extends Extension
     public function onBulkImport(BulkImportEvent $event)
     {
         if (array_key_exists("rating", $event->fields)
-            && $event->fields['rating'] != null
+            && $event->fields['rating'] !== null
             && Ratings::rating_is_valid($event->fields['rating'])) {
             $this->set_rating($event->image->id, $event->fields['rating'], "");
         }
@@ -203,7 +203,7 @@ class Ratings extends Extension
     {
         global $user;
         $event->add_part(
-            $this->theme->get_rater_html(
+            (string)$this->theme->get_rater_html(
                 $event->image->id,
                 $event->image->rating,
                 $user->can(Permissions::EDIT_IMAGE_RATING)
@@ -231,13 +231,8 @@ class Ratings extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Ratings";
-
             $ratings = self::get_sorted_ratings();
-
-            $block->body = $this->theme->get_help_html($ratings);
-            $event->add_block($block);
+            $event->add_block(new Block("Ratings", $this->theme->get_help_html($ratings)));
         }
     }
 
@@ -313,7 +308,7 @@ class Ratings extends Extension
             }
         }
 
-        $this->theme->display_form($original_values, self::get_sorted_ratings());
+        $this->theme->display_form($original_values);
     }
 
     public function onAdminAction(AdminActionEvent $event)
@@ -345,7 +340,7 @@ class Ratings extends Extension
         global $user;
 
         if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-            $event->add_action("bulk_rate", "Set (R)ating", "r", "", $this->theme->get_selection_rater_html(["?"]));
+            $event->add_action("bulk_rate", "Set (R)ating", "r", "", (string)$this->theme->get_selection_rater_html(selected_options: ["?"]));
         }
     }
 
@@ -413,6 +408,21 @@ class Ratings extends Extension
             return $a->order <=> $b->order;
         });
         return $ratings;
+    }
+
+    public static function get_ratings_dict(array $ratings=null): array
+    {
+        if (!isset($ratings)) {
+            $ratings = self::get_sorted_ratings();
+        }
+        return array_combine(
+            array_map(function ($o) {
+                return $o->code;
+            }, $ratings),
+            array_map(function ($o) {
+                return $o->name;
+            }, $ratings)
+        );
     }
 
     public static function get_user_class_privs(User $user): array

@@ -14,11 +14,11 @@ abstract class PrivateImageConfig
 class PrivateImage extends Extension
 {
     /** @var PrivateImageTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
-        Image::$bool_props[] = "private ";
+        Image::$bool_props[] = "private";
     }
 
     public function onInitUserConfig(InitUserConfigEvent $event)
@@ -29,9 +29,12 @@ class PrivateImage extends Extension
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
     {
+        global $user;
         $sb = $event->panel->create_new_block("Private Posts");
         $sb->start_table();
-        $sb->add_bool_option(PrivateImageConfig::USER_SET_DEFAULT, "Mark posts private by default", true);
+        if ($user->can(Permissions::SET_PRIVATE_IMAGE)) {
+            $sb->add_bool_option(PrivateImageConfig::USER_SET_DEFAULT, "Mark posts private by default", true);
+        }
         $sb->add_bool_option(PrivateImageConfig::USER_VIEW_DEFAULT, "View private posts by default", true);
         $sb->end_table();
     }
@@ -114,7 +117,7 @@ class PrivateImage extends Extension
     {
         global $user, $page;
 
-        if ($event->image->private==true && $event->image->owner_id!=$user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ($event->image->private===true && $event->image->owner_id!=$user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
@@ -228,8 +231,8 @@ class PrivateImage extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event)
     {
-        global $user_config;
-        if ($user_config->get_bool(PrivateImageConfig::USER_SET_DEFAULT)) {
+        global $user, $user_config;
+        if ($user_config->get_bool(PrivateImageConfig::USER_SET_DEFAULT) && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
             self::privatize_image($event->image->id);
         }
     }

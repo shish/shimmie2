@@ -137,7 +137,7 @@ class LoginResult
 class UserPage extends Extension
 {
     /** @var UserPageTheme $theme */
-    public ?Themelet $theme;
+    public Themelet $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -159,7 +159,7 @@ class UserPage extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $config, $database, $page, $user;
+        global $config, $database, $page, $user, $_shm_user_classes;
 
         $this->show_user_info();
 
@@ -189,6 +189,12 @@ class UserPage extends Extension
                     array_splice($t->columns, 2, 0, [$col]);
                 }
                 $this->theme->display_user_list($page, $t->table($t->query()), $t->paginator());
+            } elseif ($event->get_arg(0) == "classes") {
+                $this->theme->display_user_classes(
+                    $page,
+                    $_shm_user_classes,
+                    (new \ReflectionClass('\Shimmie2\Permissions'))->getReflectionConstants()
+                );
             } elseif ($event->get_arg(0) == "logout") {
                 $this->page_logout();
             }
@@ -345,8 +351,8 @@ class UserPage extends Extension
         $sb->add_choice_option(
             "user_loginshowprofile",
             [
-                "return to previous page" => 0, // 0 is default
-                "send to user profile" => 1],
+                "Return to previous page" => 0, // 0 is default
+                "Send to user profile" => 1],
             "On log in/out",
             true
         );
@@ -399,7 +405,10 @@ class UserPage extends Extension
         global $user;
         $event->add_link("My Profile", make_link("user"));
         if ($user->can(Permissions::EDIT_USER_PASSWORD)) {
-            $event->add_link("User List", make_link("user_admin/list"), 98);
+            $event->add_link("User List", make_link("user_admin/list"), 97);
+        }
+        if ($user->can(Permissions::EDIT_USER_CLASS)) {
+            $event->add_link("User Classes", make_link("user_admin/classes"), 98);
         }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
     }
@@ -422,7 +431,7 @@ class UserPage extends Extension
         if (!$user->can(Permissions::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (!$config->get_bool("login_signup_enabled")) {
+        if (!$config->get_bool("login_signup_enabled") && !$user->can(Permissions::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
         if (strlen($name) < 1) {

@@ -16,7 +16,7 @@ class VideoTranscodeException extends SCoreException
 class TranscodeVideo extends Extension
 {
     /** @var TranscodeVideoTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
 
@@ -65,37 +65,37 @@ class TranscodeVideo extends Extension
         $sb->end_table();
     }
 
+/*
     public function onDataUpload(DataUploadEvent $event)
     {
-//        global $config;
-//
-//        if ($config->get_bool(TranscodeVideoConfig::UPLOAD) == true) {
-//            $ext = strtolower($event->type);
-//
-//            $ext = Media::normalize_format($ext);
-//
-//            if ($event->type=="gif"&&Media::is_animated_gif($event->tmpname)) {
-//                return;
-//            }
-//
-//            if (in_array($ext, array_values(self::INPUT_FORMATS))) {
-//                $target_format = $config->get_string(TranscodeVideoConfig::UPLOAD_PREFIX.$ext);
-//                if (empty($target_format)) {
-//                    return;
-//                }
-//                try {
-//                    $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-//                    $event->set_tmpname($new_image, Media::determine_ext($target_format));
-//                } catch (Exception $e) {
-//                    log_error("transcode_video", "Error while performing upload transcode: ".$e->getMessage());
-//                    // We don't want to interfere with the upload process,
-//                    // so if something goes wrong the untranscoded image jsut continues
-//                }
-//            }
-//        }
+        global $config;
+
+        if ($config->get_bool(TranscodeVideoConfig::UPLOAD) == true) {
+            $ext = strtolower($event->type);
+
+            $ext = Media::normalize_format($ext);
+
+            if ($event->type=="gif"&&Media::is_animated_gif($event->tmpname)) {
+                return;
+            }
+
+            if (in_array($ext, array_values(self::INPUT_FORMATS))) {
+                $target_format = $config->get_string(TranscodeVideoConfig::UPLOAD_PREFIX.$ext);
+                if (empty($target_format)) {
+                    return;
+                }
+                try {
+                    $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
+                    $event->set_tmpname($new_image, Media::determine_ext($target_format));
+                } catch (Exception $e) {
+                    log_error("transcode_video", "Error while performing upload transcode: ".$e->getMessage());
+                    // We don't want to interfere with the upload process,
+                    // so if something goes wrong the untranscoded image jsut continues
+                }
+            }
+        }
     }
-
-
+*/
 
     public function onPageRequest(PageRequestEvent $event)
     {

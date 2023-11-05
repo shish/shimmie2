@@ -60,7 +60,7 @@ class AddImageHashBanEvent extends Event
 class ImageBan extends Extension
 {
     /** @var ImageBanTheme */
-    protected ?Themelet $theme;
+    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
