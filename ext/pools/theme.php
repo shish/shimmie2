@@ -203,8 +203,8 @@ class PoolsTheme extends Themelet
                 SHM_SUBMIT("Reverse Order", ["name"=>"edit", "id"=>"reverse_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
-                "pool/list/pool_id%3A" . $pool->id . "/1",
-                SHM_SUBMIT("Post/List View", ["name"=>"edit", "id"=>"postlist_pool_btn"])
+                "post/list/pool_id=" . $pool->id . "/1",
+                SHM_SUBMIT("Post/List View", ["name"=>"edit", "id"=>$pool->id])
             )
         );
 
