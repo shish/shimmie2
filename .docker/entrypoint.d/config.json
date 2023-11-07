@@ -1,0 +1,76 @@
+{
+    "listeners": {
+        "*:8000": {
+            "pass": "routes",
+            "forwarded": {
+                "client_ip": "X-Forwarded-For",
+                "recursive": false,
+                "source": [
+                    "172.17.0.0/16"
+                ]
+            }
+        }
+    },
+    "routes": [
+        {
+            "match": {
+                "uri": "~/_(thumbs|images)/.*"
+            },
+            "action": {
+                "share": [
+                    "`/app/data/${uri.replace(/_(thumbs|images)\\/(..)(..)(.*?)\\/.*/, '$1/$2/$3/$2$3$4')}`",
+                    "`/app/data/${uri.replace(/_(thumbs|images)\\/(..)(.*?)\\/.*/, '$1/$2/$2$3')}`"
+                ],
+                "response_headers": {
+                    "Cache-Control": "public, max-age=31556926"
+                }
+            }
+        },
+        {
+            "action": {
+                "share": [
+                    "/app/ext/static_files/static/$uri",
+                    "/app/$uri"
+                ],
+                "types": [
+                    "image/*",
+                    "application/javascript",
+                    "text/css",
+                    "!"
+                ],
+                "response_headers": {
+                    "Cache-Control": "public, max-age=31556926"
+                },
+                "fallback": {
+                    "pass": "applications/shimmie"
+                }
+            }
+        }
+    ],
+    "applications": {
+        "shimmie": {
+            "type": "php",
+            "user": "shimmie",
+            "root": "/app/",
+            "script": "index.php",
+            "working_directory": "/app/",
+            "options": {
+                "admin": {
+                    "memory_limit": "256M",
+                    "upload_max_filesize": "50M",
+                    "post_max_size": "50M"    
+                }
+            },
+            "processes": {
+                "max": 8,
+                "spare": 2,
+                "idle_timeout": 60
+            }
+        }
+    },
+    "settings": {
+        "http": {
+            "max_body_size": 104857600
+        }
+    }
+}

@@ -686,7 +686,19 @@ function _get_user(): User
 
 function _get_query(): string
 {
-    return (@$_POST["q"] ?: @$_GET["q"]) ?: "/";
+    // if query is explicitly set, use it
+    $q = @$_POST["q"] ?: @$_GET["q"];
+    if(!empty($q)) {
+        return $q;
+    }
+    // if we're just looking at index.php, use the default query
+    elseif (str_contains($_SERVER['REQUEST_URI'], "index.php")) {
+        return "/";
+    }
+    // otherwise, use the request URI
+    else {
+        return explode("?", $_SERVER['REQUEST_URI'])[0];
+    }
 }
 
 

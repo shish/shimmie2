@@ -8,6 +8,9 @@
 		"target": "devcontainer"
 	},
 
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+	"workspaceFolder": "/app",
+
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
@@ -15,8 +18,11 @@
 	"forwardPorts": [8000],
 
 	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "cd /workspaces/shimmie2 && /usr/bin/php -S 0.0.0.0:8000 tests/router.php 2>&1 | grep --line-buffered -vE \" (Accepted|Closing)\"",
-	
+	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
+	"containerEnv": {
+		"UID": "2000",
+		"GID": "2000"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
