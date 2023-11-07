@@ -55,7 +55,7 @@ class PoolsTheme extends Themelet
     /**
      * HERE WE SHOWS THE LIST OF POOLS.
      */
-    public function list_pools(Page $page, array $pools, int $pageNumber, int $totalPages)
+    public function list_pools(Page $page, array $pools, string $search, int $pageNumber, int $totalPages)
     {
         // Build up the list of pools.
         $pool_rows = [];
@@ -86,7 +86,10 @@ class PoolsTheme extends Themelet
 
         $page->add_block(new Block("Pools", $table, position: 10));
 
-        $this->display_paginator($page, "pool/list", null, $pageNumber, $totalPages);
+		if ($search != "" and !str_starts_with($search, '/')) { 
+			$search = '/'.$search; 
+		}
+        $this->display_paginator($page, "pool/list".$search, null, $pageNumber, $totalPages);
     }
 
     /*
@@ -119,9 +122,16 @@ class PoolsTheme extends Themelet
             BR(),
             SHM_A("pool/updated", "Pool Changes")
         );
+		
+		$search = "<form action='".make_link('pool/list')."' method='GET'>
+				<input name='search' type='text'  style='width:75%'>
+				<input type='submit' value='Go' style='width:20%'>
+				<input type='hidden' name='q' value='pool/list'>
+			</form>";
 
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
+		$page->add_block(new Block("Search", $search, "left", 10));
 
         if (!is_null($pool)) {
             if ($pool->public || $user->can(Permissions::POOLS_ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
@@ -193,8 +203,8 @@ class PoolsTheme extends Themelet
                 SHM_SUBMIT("Reverse Order", ["name"=>"edit", "id"=>"reverse_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
-                "pool/list/pool_id%3A" . $pool->id . "/1",
-                SHM_SUBMIT("Post/List View", ["name"=>"edit", "id"=>"postlist_pool_btn"])
+                "post/list/pool_id=" . $pool->id . "/1",
+                SHM_SUBMIT("Post/List View", ["name"=>"edit", "id"=>$pool->id])
             )
         );
 
