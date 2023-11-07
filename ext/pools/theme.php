@@ -86,9 +86,9 @@ class PoolsTheme extends Themelet
 
         $page->add_block(new Block("Pools", $table, position: 10));
 
-		if ($search != "" and !str_starts_with($search, '/')) { 
-			$search = '/'.$search; 
-		}
+        if ($search != "" and !str_starts_with($search, '/')) {
+            $search = '/'.$search;
+        }
         $this->display_paginator($page, "pool/list".$search, null, $pageNumber, $totalPages);
     }
 
@@ -122,8 +122,8 @@ class PoolsTheme extends Themelet
             BR(),
             SHM_A("pool/updated", "Pool Changes")
         );
-		
-		$search = "<form action='".make_link('pool/list')."' method='GET'>
+
+        $search = "<form action='".make_link('pool/list')."' method='GET'>
 				<input name='search' type='text'  style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
 				<input type='hidden' name='q' value='pool/list'>
@@ -131,7 +131,7 @@ class PoolsTheme extends Themelet
 
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
-		$page->add_block(new Block("Search", $search, "left", 10));
+        $page->add_block(new Block("Search", $search, "left", 10));
 
         if (!is_null($pool)) {
             if ($pool->public || $user->can(Permissions::POOLS_ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL

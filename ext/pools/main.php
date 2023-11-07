@@ -98,18 +98,17 @@ class Pool
     {
         return new Pool($row);
     }
-	
-	public static function get_pool_id_by_title($poolTitle): ?int
-	{
-		global $database;
+
+    public static function get_pool_id_by_title($poolTitle): ?int
+    {
+        global $database;
         $row = $database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
         if ($row != null) {
-			return $row['id'];
-		}
-		else {
-			return NULL;
-		}
-	}
+            return $row['id'];
+        } else {
+            return null;
+        }
+    }
 }
 
 function _image_to_id(Image $image): int
@@ -215,23 +214,21 @@ class Pools extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $database, $page, $user;
-		if ($event->page_matches("pool/list")) { //index
-			if (isset($_GET['search']) and $_GET['search'] != null) {
-				$page->set_mode(PageMode::REDIRECT);
-				$page->set_redirect(make_link('pool/list').'/'.$_GET['search'].'/'.strval($event->try_page_num(1)));
-				return;
-			}
-			if (count($event->args) >= 4) { // Assume first 2 args are search and page num
-				$search = $event->get_arg(0); // Search is based on name comparison instead of tag search
-				$page_num = $event->try_page_num(1);
-			}
-			else {
-				$search = "";
-				$page_num = $event->try_page_num(0);
-			}
-			$this->list_pools($page, $page_num, $search);
-		}
-        elseif ($event->page_matches("pool")) {
+        if ($event->page_matches("pool/list")) { //index
+            if (isset($_GET['search']) and $_GET['search'] != null) {
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link('pool/list').'/'.$_GET['search'].'/'.strval($event->try_page_num(1)));
+                return;
+            }
+            if (count($event->args) >= 4) { // Assume first 2 args are search and page num
+                $search = $event->get_arg(0); // Search is based on name comparison instead of tag search
+                $page_num = $event->try_page_num(1);
+            } else {
+                $search = "";
+                $page_num = $event->try_page_num(0);
+            }
+            $this->list_pools($page, $page_num, $search);
+        } elseif ($event->page_matches("pool")) {
             $pool_id = 0;
             $pool = [];
 
@@ -344,37 +341,35 @@ class Pools extends Extension
                         }
                     }
                     break;
-				case "reverse":
-					if ($this->have_permission($user, $pool)) {
-						$result = $database->execute(
-                                "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order DESC",
-                                ["pid" => $pool_id]
-                            );
-						$image_order = 1;
-						try {
-							$database->begin_transaction();
-							while ($row = $result->fetch()) {
-								$database->execute(
-										"
+                case "reverse":
+                    if ($this->have_permission($user, $pool)) {
+                        $result = $database->execute(
+                            "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order DESC",
+                            ["pid" => $pool_id]
+                        );
+                        $image_order = 1;
+                        try {
+                            $database->begin_transaction();
+                            while ($row = $result->fetch()) {
+                                $database->execute(
+                                    "
 										UPDATE pool_images 
 										SET image_order=:ord 
 										WHERE pool_id = :pid AND image_id = :iid",
-										["ord" => $image_order, "pid" => $pool_id, "iid" => (int)$row['image_id']]
-									);
-									$image_order = $image_order + 1;
-							}
-							$database->commit();
-						}
-						catch (Exception $e) {
-							$database->rollback();
-						}
-						$page->set_mode(PageMode::REDIRECT);
-						$page->set_redirect(make_link("pool/view/" . $pool_id));
-					}
-					else {
-						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
-					}
-					break;
+                                    ["ord" => $image_order, "pid" => $pool_id, "iid" => (int)$row['image_id']]
+                                );
+                                $image_order = $image_order + 1;
+                            }
+                            $database->commit();
+                        } catch (\Exception $e) {
+                            $database->rollback();
+                        }
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("pool/view/" . $pool_id));
+                    } else {
+                        $this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
+                    }
+                    break;
                 case "import":
                     if ($this->have_permission($user, $pool)) {
                         $images = Image::find_images(
@@ -535,7 +530,7 @@ class Pools extends Extension
             $poolID = str_replace("_", " ", $matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
         }
-		
+
     }
 
     public function onTagTermCheck(TagTermCheckEvent $event)
@@ -647,11 +642,11 @@ class Pools extends Extension
             $order_by = "ORDER BY p.posts DESC";
         }
 
-		$where_clause = "WHERE LOWER(title) like '%%'";
-		if ($search != null) {
-			$where_clause = "WHERE LOWER(title) like '%".strtolower($search)."%'";
-		}
-		
+        $where_clause = "WHERE LOWER(title) like '%%'";
+        if ($search != null) {
+            $where_clause = "WHERE LOWER(title) like '%".strtolower($search)."%'";
+        }
+
         $pools = array_map([Pool::class, "makePool"], $database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
