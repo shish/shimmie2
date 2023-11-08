@@ -32,7 +32,11 @@ class AutoTaggerTheme extends Themelet
         $page->set_title("Auto-Tag List");
         $page->set_heading("Auto-Tag List");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Auto-Tag", $html));
+		$block = new Block("Auto-Tag", $html);
+		$block->body = str_replace(array("name='c_tag'", "name='c_additional_tags'"), 
+				array("name='c_tag' class='autocomplete_tags'", "name='c_additional_tags' class='autocomplete_tags'"), 
+				$block->body);
+        $page->add_block($block);
         if ($can_manage) {
             $page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
         }

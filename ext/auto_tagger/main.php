@@ -10,8 +10,26 @@ use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+use function MicroHTML\TABLE as html_TABLE;
+use function MicroHTML\THEAD;
+use function MicroHTML\TBODY;
+use function MicroHTML\TFOOT;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+use function MicroHTML\INPUT;
+use function MicroHTML\FORM;
+use function MicroHTML\DIV;
+use function MicroHTML\A;
+use function MicroHTML\B;
+use function MicroHTML\BR;
+
 class AutoTaggerTable extends Table
 {
+	public $search_url = null;
     public function __construct(\FFSPHP\PDO $db)
     {
         parent::__construct($db);
@@ -27,6 +45,33 @@ class AutoTaggerTable extends Table
         ]);
         $this->order_by = ["tag"];
         $this->table_attrs = ["class" => "zebra"];
+    }
+	
+	public function thead(): HTMLElement
+    {
+        $thead = THEAD(["id"=>"read"]);
+		
+        $tr = TR();
+        foreach ($this->columns as $col) {
+            if ($col->sortable) {
+                $sort_name = (@$this->inputs["r__sort"] == $col->name) ? "-{$col->name}" : $col->name;
+                $sort = "?" . $this->modify_url(["r__sort"=>$sort_name]);
+                $tr->appendChild(TH(A(["href"=>$sort], $col->title)));
+            } else {
+                $tr->appendChild(TH($col->title));
+            }
+        }
+        $thead->appendChild($tr);
+		
+		if ($this->create_url) {
+            $tr = TR();
+            foreach ($this->columns as $col) {
+                $tr->appendChild(TD($col->read_input($this->inputs)));
+            }
+        }
+        $thead->appendChild(FORM(["method"=>"POST", 'action'=>$this->search_url], $tr));
+		
+        return $thead;
     }
 }
 
@@ -96,8 +141,18 @@ class AutoTagger extends Extension
                 $t = new AutoTaggerTable($database->raw_db());
                 $t->token = $user->get_auth_token();
                 $t->inputs = $_GET;
+				$input = validate_input(["r_tag"=>"string,optional", "r_additional_tags"=>"string,optional"]);
+				$tag_inputs = array();
+				if (isset($_GET["r_tag"])) {
+					$tag_inputs["r_tag"] = $_GET["r_tag"];
+				}
+				if (isset($_GET["r_additional_tags"])) {
+					$tag_inputs["r_additional_tags"] = $_GET["r_additional_tags"];
+				}
+				$t->inputs = array_merge($t->inputs, $input, $tag_inputs);
                 $t->size = $config->get_int(AutoTaggerConfig::ITEMS_PER_PAGE, 30);
                 if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
+					$t->search_url = make_link("auto_tag/list");
                     $t->create_url = make_link("auto_tag/add");
                     $t->delete_url = make_link("auto_tag/remove");
                 }
@@ -212,23 +267,23 @@ class AutoTagger extends Extension
     private function add_auto_tag(string $tag, string $additional_tags)
     {
         global $database;
-        $existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
-        if (!is_null($existing_tags)) {
-            // Auto Tags already exist, so we will append new tags to the existing one
-            $tag = Tag::sanitize($tag);
+		$existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
+        if (!is_null($existing_tags)) { 
+			// Auto Tags already exist, so we will append new tags to the existing one
+			$tag = Tag::sanitize($tag);
             $additional_tags = Tag::explode($additional_tags);
-            $existing_tags = Tag::explode($existing_tags);
-            foreach ($additional_tags as $t) {
-                if (!in_array(strtolower($t), $existing_tags)) {
-                    $existing_tags[] = strtolower($t);
-                }
-            }
-
-            $database->execute(
+			$existing_tags = Tag::explode($existing_tags);
+			foreach ($additional_tags as $t) {
+				if (!in_array(strtolower($t), $existing_tags)) {
+					array_push($existing_tags, strtolower($t));
+				}
+			}
+			
+			$database->execute(
                 "UPDATE auto_tag set additional_tags=:existing_tags where tag=:tag",
                 ["tag"=>$tag, "existing_tags"=>Tag::implode($existing_tags)]
             );
-            log_info(
+			log_info(
                 AutoTaggerInfo::KEY,
                 "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
@@ -245,6 +300,38 @@ class AutoTagger extends Extension
                 AutoTaggerInfo::KEY,
                 "Added auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
+        }
+		// Now we apply it to existing items
+		$this->apply_new_auto_tag($tag);
+    }
+
+    private function update_auto_tag(string $tag, string $additional_tags): bool
+    {
+        global $database;
+        $result = $database->get_row("SELECT * FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
+
+        if ($result===null) {
+            throw new AutoTaggerException("Auto-tag not set for $tag, can't update");
+        } else {
+            $additional_tags = Tag::explode($additional_tags);
+            $current_additional_tags = Tag::explode($result["additional_tags"]);
+
+            if (!Tag::compare($additional_tags, $current_additional_tags)) {
+                $database->execute(
+                    "UPDATE auto_tag SET additional_tags = :additional_tags WHERE LOWER(tag)=LOWER(:tag)",
+                    ["tag"=>$tag, "additional_tags"=>Tag::implode($additional_tags)]
+                );
+
+                log_info(
+                    AutoTaggerInfo::KEY,
+                    "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}",
+                    "Updated Auto-Tag"
+                );
+
+                // Now we apply it to existing items
+                $this->apply_new_auto_tag($tag);
+                return true;
+            }
         }
         // Now we apply it to existing items
         $this->apply_new_auto_tag($tag);
