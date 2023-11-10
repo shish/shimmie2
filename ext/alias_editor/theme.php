@@ -30,7 +30,13 @@ class AliasEditorTheme extends Themelet
         $page->set_title("Alias List");
         $page->set_heading("Alias List");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Aliases", $html));
+        $block = new Block("Aliases", $html);
+        $block->body = str_replace(
+            ["name='c_oldtag'", "name='c_newtag'"],
+            ["name='c_oldtag' class='autocomplete_tags'", "name='c_newtag' class='autocomplete_tags'"],
+            $block->body
+        );
+        $page->add_block($block);
 
         if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
             $page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));

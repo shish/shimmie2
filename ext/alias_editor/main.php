@@ -8,8 +8,26 @@ use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+use function MicroHTML\TABLE as html_TABLE;
+use function MicroHTML\THEAD;
+use function MicroHTML\TBODY;
+use function MicroHTML\TFOOT;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+use function MicroHTML\INPUT;
+use function MicroHTML\FORM;
+use function MicroHTML\DIV;
+use function MicroHTML\A;
+use function MicroHTML\B;
+use function MicroHTML\BR;
+
 class AliasTable extends Table
 {
+    public $search_url = null;
     public function __construct(\FFSPHP\PDO $db)
     {
         parent::__construct($db);
@@ -25,6 +43,33 @@ class AliasTable extends Table
         ]);
         $this->order_by = ["oldtag"];
         $this->table_attrs = ["class" => "zebra"];
+    }
+
+    public function thead(): HTMLElement
+    {
+        $thead = THEAD(["id"=>"read"]);
+
+        $tr = TR();
+        foreach ($this->columns as $col) {
+            if ($col->sortable) {
+                $sort_name = (@$this->inputs["r__sort"] == $col->name) ? "-{$col->name}" : $col->name;
+                $sort = "?" . $this->modify_url(["r__sort"=>$sort_name]);
+                $tr->appendChild(TH(A(["href"=>$sort], $col->title)));
+            } else {
+                $tr->appendChild(TH($col->title));
+            }
+        }
+        $thead->appendChild($tr);
+
+        if ($this->create_url) {
+            $tr = TR();
+            foreach ($this->columns as $col) {
+                $tr->appendChild(TD($col->read_input($this->inputs)));
+            }
+        }
+        $thead->appendChild(FORM(["method"=>"POST", 'action'=>$this->search_url], $tr));
+
+        return $thead;
     }
 }
 
@@ -91,7 +136,17 @@ class AliasEditor extends Extension
                 $t->token = $user->get_auth_token();
                 $t->inputs = $_GET;
                 $t->size = $config->get_int('alias_items_per_page', 30);
+                $input = validate_input(["r_oldtag"=>"string,optional", "r_newtag"=>"string,optional"]);
+                $tag_inputs = [];
+                if (isset($_GET["r_oldtag"])) {
+                    $tag_inputs["r_oldtag"] = $_GET["r_oldtag"];
+                }
+                if (isset($_GET["r_newtag"])) {
+                    $tag_inputs["r_newtag"] = $_GET["r_newtag"];
+                }
+                $t->inputs = array_merge($t->inputs, $input, $tag_inputs);
                 if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
+                    $t->search_url = make_link("alias/list");
                     $t->create_url = make_link("alias/add");
                     $t->delete_url = make_link("alias/remove");
                 }
