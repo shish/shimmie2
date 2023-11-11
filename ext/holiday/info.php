@@ -11,7 +11,7 @@ class HolidayInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "Holiday Theme";
     public string $url = "http://www.codeanimu.net";
-    public array $authors = ["DakuTree"=>"thedakutree@codeanimu.net"];
+    public array $authors = ["DakuTree" => "thedakutree@codeanimu.net"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Use an additional stylesheet on certain holidays";
 }

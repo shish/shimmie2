@@ -137,7 +137,7 @@ class AdminPage extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
                 $event->add_nav_link("admin", new Link('admin'), "Board Admin");
             }

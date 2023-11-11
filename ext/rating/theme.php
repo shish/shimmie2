@@ -21,7 +21,7 @@ class RatingsTheme extends Themelet
         return SHM_POST_INFO(
             "Rating",
             $can_rate,
-            A(["href"=>search_link(["rating=$rating"])], Ratings::rating_to_human($rating)),
+            A(["href" => search_link(["rating=$rating"])], Ratings::rating_to_human($rating)),
             $this->get_selection_rater_html("rating", selected_options: [$rating])
         );
     }
@@ -31,10 +31,10 @@ class RatingsTheme extends Themelet
         global $page;
 
         $table = TABLE(
-            ["class"=>"form"],
+            ["class" => "form"],
             TR(TH("Change"), TD($this->get_selection_rater_html("rating_old", $current_ratings))),
             TR(TH("To"), TD($this->get_selection_rater_html("rating_new"))),
-            TR(TD(["colspan"=>"2"], SHM_SUBMIT("Update")))
+            TR(TD(["colspan" => "2"], SHM_SUBMIT("Update")))
         );
 
         $page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM("admin/update_ratings", $table)));

@@ -31,7 +31,7 @@ class Blotter extends Extension
             // Insert sample data:
             $database->execute(
                 "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
-                ["text"=>"Installed the blotter extension!", "important"=>true]
+                ["text" => "Installed the blotter extension!", "important" => true]
             );
             log_info("blotter", "Installed tables for blotter extension.");
             $this->set_version("blotter_version", 2);
@@ -53,7 +53,7 @@ class Blotter extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::BLOTTER_ADMIN)) {
                 $event->add_nav_link("blotter", new Link('blotter/editor'), "Blotter Editor");
             }
@@ -100,7 +100,7 @@ class Blotter extends Extension
                         // Now insert into db:
                         $database->execute(
                             "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
-                            ["text"=>$entry_text, "important"=>$important]
+                            ["text" => $entry_text, "important" => $important]
                         );
                         log_info("blotter", "Added Message: $entry_text");
                         $page->set_mode(PageMode::REDIRECT);
@@ -115,7 +115,7 @@ class Blotter extends Extension
                         $this->theme->display_permission_denied();
                     } else {
                         $id = int_escape($_POST['id']);
-                        $database->execute("DELETE FROM blotter WHERE id=:id", ["id"=>$id]);
+                        $database->execute("DELETE FROM blotter WHERE id=:id", ["id" => $id]);
                         log_info("blotter", "Removed Entry #$id");
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("blotter/editor"));

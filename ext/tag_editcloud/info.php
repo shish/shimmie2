@@ -10,6 +10,6 @@ class TagEditCloudInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Tag EditCloud";
-    public array $authors = ["AtomicDryad", "Luana Latte"=>"luana.latte.cat@gmail.com"];
+    public array $authors = ["AtomicDryad", "Luana Latte" => "luana.latte.cat@gmail.com"];
     public string $description = "Add or remove tags to the editor via clicking.";
 }

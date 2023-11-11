@@ -20,7 +20,7 @@ class RelationshipsTheme extends Themelet
         }
 
         if (bool_escape($image->has_children)) {
-            $ids = $database->get_col("SELECT id FROM images WHERE parent_id = :iid", ["iid"=>$image->id]);
+            $ids = $database->get_col("SELECT id FROM images WHERE parent_id = :iid", ["iid" => $image->id]);
 
             $html = "This post has <a href='".search_link(['parent='.$image->id])."'>".(count($ids) > 1 ? "child posts" : "a child post")."</a>";
             $html .= " (post ";
@@ -41,7 +41,7 @@ class RelationshipsTheme extends Themelet
             "Parent",
             !$user->is_anonymous(),
             strval($image->parent_id) ?: "None",
-            INPUT(["type"=>"number", "name"=>"tag_edit__parent", "value"=>$image->parent_id])
+            INPUT(["type" => "number", "name" => "tag_edit__parent", "value" => $image->parent_id])
         );
     }
 

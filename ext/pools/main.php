@@ -203,7 +203,7 @@ class Pools extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="pool") {
+        if ($event->parent == "pool") {
             $event->add_nav_link("pool_list", new Link('pool/list'), "List");
             $event->add_nav_link("pool_new", new Link('pool/new'), "Create");
             $event->add_nav_link("pool_updated", new Link('pool/updated'), "Changes");
@@ -496,7 +496,7 @@ class Pools extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $event->add_block(new Block("Pools", $this->theme->get_help_html()));
         }
     }

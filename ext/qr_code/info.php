@@ -11,7 +11,7 @@ class QRImageInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "QR Codes";
     public string $url = "http://seemslegit.com";
-    public array $authors = ["Zach Hall"=>"zach@sosguy.net"];
+    public array $authors = ["Zach Hall" => "zach@sosguy.net"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Shows a QR Code for downloading a post to cell phones";
     public ?string $documentation =

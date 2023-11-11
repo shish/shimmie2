@@ -57,7 +57,7 @@ class CronUploader extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="system") {
+        if ($event->parent == "system") {
             $event->add_nav_link("cron_docs", new Link('cron_upload'), "Cron Upload");
         }
     }
@@ -71,7 +71,7 @@ class CronUploader extends Extension
         global $user;
 
         if ($event->page_matches("cron_upload")) {
-            if ($event->count_args() == 1 && $event->get_arg(0) =="run") {
+            if ($event->count_args() == 1 && $event->get_arg(0) == "run") {
                 $this->process_upload(); // Start upload
             } elseif ($user->can(Permissions::CRON_RUN)) {
                 $this->display_documentation();
@@ -127,7 +127,7 @@ class CronUploader extends Extension
         if (self::$IMPORT_RUNNING) {
             $all = $user_config->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
             if ($event->priority >= $user_config->get_int(CronUploaderConfig::LOG_LEVEL) &&
-                ($event->section==self::NAME || $all)) {
+                ($event->section == self::NAME || $all)) {
                 $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message;
 
                 echo $output . "\r\n";
@@ -157,7 +157,7 @@ class CronUploader extends Extension
         $results = get_files_recursively($stage_dir);
 
         if (count($results) == 0) {
-            if (remove_empty_dirs($stage_dir)===false) {
+            if (remove_empty_dirs($stage_dir) === false) {
                 $page->flash("Nothing to stage from $folder, cannot remove folder");
             } else {
                 $page->flash("Nothing to stage from $folder, removing folder");
@@ -182,15 +182,15 @@ class CronUploader extends Extension
                 mkdir($dir, 0775, true);
             }
 
-            if (rename($result, $new_path)===false) {
+            if (rename($result, $new_path) === false) {
                 $page->flash("Could not move file: " .$result);
                 $success = false;
             }
         }
 
-        if ($success===true) {
+        if ($success === true) {
             $page->flash("Re-staged $folder to queue");
-            if (remove_empty_dirs($stage_dir)===false) {
+            if (remove_empty_dirs($stage_dir) === false) {
                 $page->flash("Could not remove $folder");
             }
         }
@@ -325,7 +325,7 @@ class CronUploader extends Extension
     {
         global $database, $user, $user_config, $config, $_shm_load_start;
 
-        $max_time = intval(ini_get('max_execution_time'))*.8;
+        $max_time = intval(ini_get('max_execution_time')) * .8;
 
         $this->set_headers();
 
@@ -365,7 +365,7 @@ class CronUploader extends Extension
             // Upload the file(s)
             foreach ($image_queue as $img) {
                 $execution_time = ftime() - $_shm_load_start;
-                if ($execution_time>$max_time) {
+                if ($execution_time > $max_time) {
                     break;
                 } else {
                     $remaining = $max_time - $execution_time;
@@ -405,7 +405,7 @@ class CronUploader extends Extension
             }
 
             // Throw exception if there's nothing in the queue
-            if ($merged+$failed+$added === 0) {
+            if ($merged + $failed + $added === 0) {
                 $this->log_message(SCORE_LOG_WARNING, "Your queue is empty so nothing could be uploaded.");
                 return false;
             }
@@ -429,13 +429,13 @@ class CronUploader extends Extension
 
         $rootDir = $user_config->get_string(CronUploaderConfig::DIR);
         $rootLength = strlen($rootDir);
-        if ($rootDir[$rootLength-1]=="/"||$rootDir[$rootLength-1]=="\\") {
+        if ($rootDir[$rootLength - 1] == "/" || $rootDir[$rootLength - 1] == "\\") {
             $rootLength--;
         }
 
         $relativeDir = dirname(substr($path, $rootLength + 7));
 
-        if ($relativeDir==".") {
+        if ($relativeDir == ".") {
             $relativeDir = "";
         }
 

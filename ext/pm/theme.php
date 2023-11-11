@@ -58,7 +58,7 @@ class PrivMsgTheme extends Themelet
         $page->add_block(new Block("Private Messages", $html, "main", 40, "private-messages"));
     }
 
-    public function display_composer(Page $page, User $from, User $to, $subject="")
+    public function display_composer(Page $page, User $from, User $to, $subject = "")
     {
         global $user;
         $post_url = make_link("pm/send");

@@ -111,7 +111,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         if (!$args) {
             return [];
         }
-        foreach ($args as $k=>$v) {
+        foreach ($args as $k => $v) {
             if (is_array($v)) {
                 $args[$k] = $v;
             } else {
@@ -121,7 +121,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         return $args;
     }
 
-    protected static function request($page_name, $get_args=null, $post_args=null): Page
+    protected static function request($page_name, $get_args = null, $post_args = null): Page
     {
         // use a fresh page
         global $page;
@@ -142,12 +142,12 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         return $page;
     }
 
-    protected static function get_page($page_name, $args=null): Page
+    protected static function get_page($page_name, $args = null): Page
     {
         return self::request($page_name, $args, null);
     }
 
-    protected static function post_page($page_name, $args=null): Page
+    protected static function post_page($page_name, $args = null): Page
     {
         return self::request($page_name, null, $args);
     }
@@ -177,7 +177,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         $this->assertEquals($code, $page->code);
     }
 
-    protected function page_to_text(string $section=null): string
+    protected function page_to_text(string $section = null): string
     {
         global $page;
         if ($page->mode == PageMode::PAGE) {
@@ -196,12 +196,12 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
         }
     }
 
-    protected function assert_text(string $text, string $section=null): void
+    protected function assert_text(string $text, string $section = null): void
     {
         $this->assertStringContainsString($text, $this->page_to_text($section));
     }
 
-    protected function assert_no_text(string $text, string $section=null): void
+    protected function assert_no_text(string $text, string $section = null): void
     {
         $this->assertStringNotContainsString($text, $this->page_to_text($section));
     }

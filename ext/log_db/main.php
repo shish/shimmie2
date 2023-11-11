@@ -26,15 +26,15 @@ class ShortDateTimeColumn extends DateTimeColumn
     {
         return emptyHTML(
             INPUT([
-                "type"=>"date",
-                "name"=>"r_{$this->name}[]",
-                "value"=>@$inputs["r_{$this->name}"][0]
+                "type" => "date",
+                "name" => "r_{$this->name}[]",
+                "value" => @$inputs["r_{$this->name}"][0]
             ]),
             BR(),
             INPUT([
-                "type"=>"date",
-                "name"=>"r_{$this->name}[]",
-                "value"=>@$inputs["r_{$this->name}"][1]
+                "type" => "date",
+                "name" => "r_{$this->name}[]",
+                "value" => @$inputs["r_{$this->name}"][1]
             ])
         );
     }
@@ -94,7 +94,7 @@ class ActorColumn extends Column
     {
         $ret = emptyHTML();
         if ($row['username'] != "Anonymous") {
-            $ret->appendChild(A(["href"=>make_link("user/{$row['username']}"), "title"=>$row['address']], $row['username']));
+            $ret->appendChild(A(["href" => make_link("user/{$row['username']}"), "title" => $row['address']], $row['username']));
             $ret->appendChild(BR());
         }
         $ret->appendChild($row['address']);
@@ -125,10 +125,10 @@ class MessageColumn extends Column
     {
         $ret = emptyHTML(
             INPUT([
-                "type"=>"text",
-                "name"=>"r_{$this->name}[]",
-                "placeholder"=>$this->title,
-                "value"=>@$inputs["r_{$this->name}"][0]
+                "type" => "text",
+                "name" => "r_{$this->name}[]",
+                "placeholder" => $this->title,
+                "value" => @$inputs["r_{$this->name}"][0]
             ])
         );
 
@@ -139,10 +139,10 @@ class MessageColumn extends Column
             "Error" => SCORE_LOG_ERROR,
             "Critical" => SCORE_LOG_CRITICAL,
         ];
-        $s = SELECT(["name"=>"r_{$this->name}[]"]);
-        $s->appendChild(OPTION(["value"=>""], '-'));
+        $s = SELECT(["name" => "r_{$this->name}[]"]);
+        $s->appendChild(OPTION(["value" => ""], '-'));
         foreach ($options as $k => $v) {
-            $attrs = ["value"=>$v];
+            $attrs = ["value" => $v];
             if ($v == @$inputs["r_{$this->name}"][1]) {
                 $attrs["selected"] = true;
             }
@@ -186,7 +186,7 @@ class MessageColumn extends Column
                 $c = "#F00";
                 break;
         }
-        return SPAN(["style"=>"color: $c"], rawHTML($this->scan_entities($row[$this->name])));
+        return SPAN(["style" => "color: $c"], rawHTML($this->scan_entities($row[$this->name])));
     }
 
     protected function scan_entities(string $line)
@@ -282,7 +282,7 @@ class LogDatabase extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $event->add_nav_link("event_log", new Link('log/view'), "Event Log");
             }
@@ -313,8 +313,8 @@ class LogDatabase extends Extension
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
 				VALUES(now(), :section, :priority, :username, :address, :message)
 			", [
-                "section"=>$event->section, "priority"=>$event->priority, "username"=>$username,
-                "address"=>get_real_ip(), "message"=>$event->message
+                "section" => $event->section, "priority" => $event->priority, "username" => $username,
+                "address" => get_real_ip(), "message" => $event->message
             ]);
         }
     }

@@ -65,7 +65,7 @@ class BrowserSearch extends Extension
             }
             $tags = $database->get_col(
                 "SELECT tag FROM tags WHERE tag LIKE :tag AND count > 0 ORDER BY $order LIMIT 30",
-                ['tag'=>$tag_search."%"]
+                ['tag' => $tag_search."%"]
             );
 
             // And to do stuff with it. We want our output to look like:

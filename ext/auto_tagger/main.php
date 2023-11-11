@@ -75,7 +75,7 @@ class AutoTagger extends Extension
             if ($event->get_arg(0) == "add") {
                 if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
                     $user->ensure_authed();
-                    $input = validate_input(["c_tag"=>"string", "c_additional_tags"=>"string"]);
+                    $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
                     try {
                         send_event(new AddAutoTagEvent($input['c_tag'], $input['c_additional_tags']));
                         $page->set_mode(PageMode::REDIRECT);
@@ -87,7 +87,7 @@ class AutoTagger extends Extension
             } elseif ($event->get_arg(0) == "remove") {
                 if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
                     $user->ensure_authed();
-                    $input = validate_input(["d_tag"=>"string"]);
+                    $input = validate_input(["d_tag" => "string"]);
                     send_event(new DeleteAutoTagEvent($input['d_tag']));
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("auto_tag/list"));
@@ -128,7 +128,7 @@ class AutoTagger extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="tags") {
+        if ($event->parent == "tags") {
             $event->add_nav_link("auto_tag", new Link('auto_tag/list'), "Auto-Tag", NavLink::is_active(["auto_tag"]));
         }
     }
@@ -212,7 +212,7 @@ class AutoTagger extends Extension
     private function add_auto_tag(string $tag, string $additional_tags)
     {
         global $database;
-        $existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
+        $existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag" => $tag]);
         if (!is_null($existing_tags)) {
             // Auto Tags already exist, so we will append new tags to the existing one
             $tag = Tag::sanitize($tag);
@@ -226,7 +226,7 @@ class AutoTagger extends Extension
 
             $database->execute(
                 "UPDATE auto_tag set additional_tags=:existing_tags where tag=:tag",
-                ["tag"=>$tag, "existing_tags"=>Tag::implode($existing_tags)]
+                ["tag" => $tag, "existing_tags" => Tag::implode($existing_tags)]
             );
             log_info(
                 AutoTaggerInfo::KEY,
@@ -238,7 +238,7 @@ class AutoTagger extends Extension
 
             $database->execute(
                 "INSERT INTO auto_tag(tag, additional_tags) VALUES(:tag, :additional_tags)",
-                ["tag"=>$tag, "additional_tags"=>Tag::implode($additional_tags)]
+                ["tag" => $tag, "additional_tags" => Tag::implode($additional_tags)]
             );
 
             log_info(
@@ -253,9 +253,9 @@ class AutoTagger extends Extension
     private function apply_new_auto_tag(string $tag)
     {
         global $database;
-        $tag_id = $database->get_one("SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)", ["tag"=>$tag]);
+        $tag_id = $database->get_one("SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)", ["tag" => $tag]);
         if (!empty($tag_id)) {
-            $image_ids = $database->get_col_iterable("SELECT image_id FROM  image_tags WHERE tag_id = :tag_id", ["tag_id"=>$tag_id]);
+            $image_ids = $database->get_col_iterable("SELECT image_id FROM  image_tags WHERE tag_id = :tag_id", ["tag_id" => $tag_id]);
             foreach ($image_ids as $image_id) {
                 $image_id = (int) $image_id;
                 $image = Image::by_id($image_id);

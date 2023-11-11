@@ -35,7 +35,7 @@ class WikiTest extends ShimmiePHPUnitTestCase
                 $this->assert_text("This is a default page");
 
                 if ($allowed || $user == "admin") {
-                    $this->post_page("wiki_admin/edit", ["title"=>"test"]);
+                    $this->post_page("wiki_admin/edit", ["title" => "test"]);
                     $this->assert_text("Editor");
                 }
                 /*

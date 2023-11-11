@@ -16,12 +16,12 @@ class VideoFileHandlerTheme extends Themelet
         $loop = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_LOOP);
         $mute = $config->get_bool(VideoFileHandlerConfig::PLAYBACK_MUTE);
 
-        $width="auto";
-        if ($image->width>1) {
+        $width = "auto";
+        if ($image->width > 1) {
             $width = $image->width."px";
         }
-        $height="auto";
-        if ($image->height>1) {
+        $height = "auto";
+        if ($image->height > 1) {
             $height = $image->height."px";
         }
 

@@ -55,7 +55,7 @@ function is_https_enabled(): bool
 {
     // check forwarded protocol
     if (REVERSE_PROXY_X_HEADERS && !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-        $_SERVER['HTTPS']='on';
+        $_SERVER['HTTPS'] = 'on';
     }
     return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 }
@@ -80,10 +80,10 @@ function get_memory_limit(): int
     global $config;
 
     // thumbnail generation requires lots of memory
-    $default_limit = 8*1024*1024;	// 8 MB of memory is PHP's default.
+    $default_limit = 8 * 1024 * 1024;	// 8 MB of memory is PHP's default.
     $shimmie_limit = $config->get_int(MediaConfig::MEM_LIMIT);
 
-    if ($shimmie_limit < 3*1024*1024) {
+    if ($shimmie_limit < 3 * 1024 * 1024) {
         // we aren't going to fit, override
         $shimmie_limit = $default_limit;
     }
@@ -205,9 +205,9 @@ function format_text(string $string): string
  * @param int $splits The number of octet pairs to split the hash into. Caps out at strlen($hash)/2.
  * @return string
  */
-function warehouse_path(string $base, string $hash, bool $create=true, int $splits = WH_SPLITS): string
+function warehouse_path(string $base, string $hash, bool $create = true, int $splits = WH_SPLITS): string
 {
-    $dirs =[DATA_DIR, $base];
+    $dirs = [DATA_DIR, $base];
     $splits = min($splits, strlen($hash) / 2);
     for ($i = 0; $i < $splits; $i++) {
         $dirs[] = substr($hash, $i * 2, 2);
@@ -228,13 +228,13 @@ function warehouse_path(string $base, string $hash, bool $create=true, int $spli
 function data_path(string $filename, bool $create = true): string
 {
     $filename = join_path("data", $filename);
-    if ($create&&!file_exists(dirname($filename))) {
+    if ($create && !file_exists(dirname($filename))) {
         mkdir(dirname($filename), 0755, true);
     }
     return $filename;
 }
 
-function load_balance_url(string $tmpl, string $hash, int $n=0): string
+function load_balance_url(string $tmpl, string $hash, int $n = 0): string
 {
     static $flexihashes = [];
     $matches = [];
@@ -308,7 +308,7 @@ function fetch_url(string $url, string $mfile): ?array
         $s_mfile = escapeshellarg($mfile);
         system("wget --no-check-certificate $s_url --output-document=$s_mfile");
 
-        return file_exists($mfile) ? ["ok"=>"true"] : null;
+        return file_exists($mfile) ? ["ok" => "true"] : null;
     }
 
     if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "fopen") {
@@ -355,7 +355,7 @@ function path_to_tags(string $path): string
         $category_to_inherit = "";
         foreach (explode(" ", $dir) as $tag) {
             $tag = trim($tag);
-            if ($tag=="") {
+            if ($tag == "") {
                 continue;
             }
             if (substr_compare($tag, ":", -1) === 0) {
@@ -363,7 +363,7 @@ function path_to_tags(string $path): string
                 // which is for inheriting to tags on the subfolder
                 $category_to_inherit = $tag;
             } else {
-                if ($category!="" && !str_contains($tag, ":")) {
+                if ($category != "" && !str_contains($tag, ":")) {
                     // This indicates that category inheritance is active,
                     // and we've encountered a tag that does not specify a category.
                     // So we attach the inherited category to the tag.
@@ -420,7 +420,7 @@ function remove_empty_dirs(string $dir): bool
             $result = false;
         }
     }
-    if ($result===true) {
+    if ($result === true) {
         $result = rmdir($dir);
     }
     return $result;
@@ -533,7 +533,7 @@ function get_debug_info_arr(): array
     return [
         "time" => round(ftime() - $_shm_load_start, 2),
         "dbtime" => round($database->dbtime, 2),
-        "mem_mb" => round(((memory_get_peak_usage(true)+512)/1024)/1024, 2),
+        "mem_mb" => round(((memory_get_peak_usage(true) + 512) / 1024) / 1024, 2),
         "files" => count(get_included_files()),
         "query_count" => $database->query_count,
         // "query_log" => $database->queries,
@@ -591,7 +591,7 @@ function _set_up_shimmie_environment(): void
     // The trace system has a certain amount of memory consumption every time it is used,
     // so to prevent running out of memory during complex operations code that uses it should
     // check if tracer output is enabled before making use of it.
-    $tracer_enabled = constant('TRACE_FILE')!==null;
+    $tracer_enabled = constant('TRACE_FILE') !== null;
 }
 
 
@@ -717,7 +717,7 @@ function show_ip(string $ip, string $ban_reason): string
 /**
  * Make a form tag with relevant auth token and stuff
  */
-function make_form(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit=""): string
+function make_form(string $target, string $method = "POST", bool $multipart = false, string $form_id = "", string $onsubmit = ""): string
 {
     global $user;
     if ($method == "GET") {

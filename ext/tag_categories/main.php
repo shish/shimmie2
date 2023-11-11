@@ -45,22 +45,22 @@ class TagCategories extends Extension
         if ($number_of_db_rows == 0) {
             $database->execute(
                 'INSERT INTO image_tag_categories VALUES (:category, :single, :multiple, :color)',
-                ["category"=>"artist", "single"=>"Artist", "multiple"=>"Artists", "color"=>"#BB6666"]
+                ["category" => "artist", "single" => "Artist", "multiple" => "Artists", "color" => "#BB6666"]
             );
             $database->execute(
                 'INSERT INTO image_tag_categories VALUES (:category, :single, :multiple, :color)',
-                ["category"=>"series", "single"=>"Series", "multiple"=>"Series", "color"=>"#AA00AA"]
+                ["category" => "series", "single" => "Series", "multiple" => "Series", "color" => "#AA00AA"]
             );
             $database->execute(
                 'INSERT INTO image_tag_categories VALUES (:category, :single, :multiple, :color)',
-                ["category"=>"character", "single"=>"Character", "multiple"=>"Characters", "color"=>"#66BB66"]
+                ["category" => "character", "single" => "Character", "multiple" => "Characters", "color" => "#66BB66"]
             );
         }
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="tags") {
+        if ($event->parent == "tags") {
             $event->add_nav_link("tag_categories", new Link('tags/categories'), "Tag Categories", NavLink::is_active(["tag_categories"]));
         }
     }
@@ -108,7 +108,7 @@ class TagCategories extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Tag Categories";
             $block->body = $this->theme->get_help_html();

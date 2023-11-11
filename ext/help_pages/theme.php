@@ -14,7 +14,7 @@ class HelpPagesTheme extends Themelet
         $page->set_heading("Help Pages");
 
         $nav_block = new Block("Help", "", "left", 0);
-        foreach ($pages as $link=>$desc) {
+        foreach ($pages as $link => $desc) {
             $link = make_link("help/{$link}");
             $nav_block->body .= "<a href='{$link}'>".html_escape($desc)."</a><br/>";
         }

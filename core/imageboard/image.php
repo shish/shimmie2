@@ -63,7 +63,7 @@ class Image
      * One will very rarely construct an image directly, more common
      * would be to use Image::by_id, Image::by_hash, etc.
      */
-    public function __construct(?array $row=null)
+    public function __construct(?array $row = null)
     {
         if (!is_null($row)) {
             foreach ($row as $name => $value) {
@@ -103,11 +103,11 @@ class Image
     public static function by_id(int $post_id): ?Image
     {
         global $database;
-        if ($post_id > 2**32) {
+        if ($post_id > 2 ** 32) {
             // for some reason bots query huge numbers and pollute the DB error logs...
             return null;
         }
-        $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id"=>$post_id]);
+        $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id" => $post_id]);
         return ($row ? new Image($row) : null);
     }
 
@@ -115,7 +115,7 @@ class Image
     {
         global $database;
         $hash = strtolower($hash);
-        $row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", ["hash"=>$hash]);
+        $row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", ["hash" => $hash]);
         return ($row ? new Image($row) : null);
     }
 
@@ -124,7 +124,7 @@ class Image
         return (is_numeric($id) && strlen($id) != 32) ? Image::by_id((int)$id) : Image::by_hash($id);
     }
 
-    public static function by_random(array $tags=[], int $limit_range=0): ?Image
+    public static function by_random(array $tags = [], int $limit_range = 0): ?Image
     {
         $max = Image::count_images($tags);
         if ($max < 1) {
@@ -133,7 +133,7 @@ class Image
         if ($limit_range > 0 && $max > $limit_range) {
             $max = $limit_range;
         }
-        $rand = mt_rand(0, $max-1);
+        $rand = mt_rand(0, $max - 1);
         $set = Image::find_images($rand, 1, $tags);
         if (count($set) > 0) {
             return $set[0];
@@ -142,7 +142,7 @@ class Image
         }
     }
 
-    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags=[]): iterable
+    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): iterable
     {
         global $database, $user;
 
@@ -170,7 +170,7 @@ class Image
      * @return Image[]
      */
     #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
-    public static function find_images(int $offset = 0, ?int $limit = null, array $tags=[]): array
+    public static function find_images(int $offset = 0, ?int $limit = null, array $tags = []): array
     {
         $result = self::find_images_internal($offset, $limit, $tags);
 
@@ -184,7 +184,7 @@ class Image
     /**
      * Search for an array of images, returning a iterable object of Image
      */
-    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags=[]): \Generator
+    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags = []): \Generator
     {
         $result = self::find_images_internal($start, $limit, $tags);
         foreach ($result as $row) {
@@ -212,7 +212,7 @@ class Image
         global $database;
         return (int)$database->get_one(
             "SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
-            ["tag"=>$tag]
+            ["tag" => $tag]
         );
     }
 
@@ -221,7 +221,7 @@ class Image
      *
      * @param string[] $tags
      */
-    public static function count_images(array $tags=[]): int
+    public static function count_images(array $tags = []): int
     {
         global $cache, $database;
         $tag_count = count($tags);
@@ -266,7 +266,7 @@ class Image
      *
      * @param string[] $tags
      */
-    public static function count_pages(array $tags=[]): int
+    public static function count_pages(array $tags = []): int
     {
         global $config;
         return (int)ceil(Image::count_images($tags) / $config->get_int(IndexConfig::IMAGES));
@@ -284,7 +284,7 @@ class Image
      *
      * @param string[] $tags
      */
-    public function get_next(array $tags=[], bool $next=true): ?Image
+    public function get_next(array $tags = [], bool $next = true): ?Image
     {
         global $database;
 
@@ -320,7 +320,7 @@ class Image
      *
      * @param string[] $tags
      */
-    public function get_prev(array $tags=[]): ?Image
+    public function get_prev(array $tags = []): ?Image
     {
         return $this->get_next($tags, false);
     }
@@ -345,7 +345,7 @@ class Image
 				UPDATE images
 				SET owner_id=:owner_id
 				WHERE id=:id
-			", ["owner_id"=>$owner->id, "id"=>$this->id]);
+			", ["owner_id" => $owner->id, "id" => $this->id]);
             log_info("core_image", "Owner for Post #{$this->id} set to {$owner->name}");
         }
     }
@@ -440,7 +440,7 @@ class Image
 				JOIN tags ON image_tags.tag_id = tags.id
 				WHERE image_id=:id
 				ORDER BY tag
-			", ["id"=>$this->id]);
+			", ["id" => $this->id]);
             sort($this->tag_array);
         }
         return $this->tag_array;
@@ -569,7 +569,7 @@ class Image
     #[Field(name: "mime")]
     public function get_mime(): ?string
     {
-        if ($this->mime===MimeType::WEBP&&$this->lossless) {
+        if ($this->mime === MimeType::WEBP && $this->lossless) {
             return MimeType::WEBP_LOSSLESS;
         }
         $m = $this->mime;
@@ -610,7 +610,7 @@ class Image
             $new_source = null;
         }
         if ($new_source != $old_source) {
-            $database->execute("UPDATE images SET source=:source WHERE id=:id", ["source"=>$new_source, "id"=>$this->id]);
+            $database->execute("UPDATE images SET source=:source WHERE id=:id", ["source" => $new_source, "id" => $this->id]);
             log_info("core_image", "Source for Post #{$this->id} set to: $new_source (was $old_source)");
         }
     }
@@ -627,7 +627,7 @@ class Image
     {
         global $database;
         if ($locked !== $this->locked) {
-            $database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn"=>$locked, "id"=>$this->id]);
+            $database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn" => $locked, "id" => $this->id]);
             log_info("core_image", "Setting Post #{$this->id} lock to: $locked");
         }
     }
@@ -648,12 +648,12 @@ class Image
                 FROM image_tags
                 WHERE image_id = :id
             )
-        ", ["id"=>$this->id]);
+        ", ["id" => $this->id]);
         $database->execute("
 			DELETE
 			FROM image_tags
 			WHERE image_id=:id
-		", ["id"=>$this->id]);
+		", ["id" => $this->id]);
     }
 
     /**
@@ -699,7 +699,7 @@ class Image
                     FROM image_tags
                     WHERE image_id = :id
                 )
-            ", ["id"=>$this->id]);
+            ", ["id" => $this->id]);
 
             log_info("core_image", "Tags for Post #{$this->id} set to: ".Tag::implode($tags));
             $cache->delete("image-{$this->id}-tags");
@@ -713,7 +713,7 @@ class Image
     {
         global $database;
         $this->delete_tags_from_image();
-        $database->execute("DELETE FROM images WHERE id=:id", ["id"=>$this->id]);
+        $database->execute("DELETE FROM images WHERE id=:id", ["id" => $this->id]);
         log_info("core_image", 'Deleted Post #'.$this->id.' ('.$this->hash.')');
 
         unlink($this->get_image_filename());
@@ -731,7 +731,7 @@ class Image
         @unlink($this->get_thumb_filename());
     }
 
-    public function parse_link_template(string $tmpl, int $n=0): string
+    public function parse_link_template(string $tmpl, int $n = 0): string
     {
         $plte = send_event(new ParseLinkTemplateEvent($tmpl, $this));
         $tmpl = $plte->link;
@@ -753,8 +753,8 @@ class Image
      */
     private static function build_search_querylet(
         array $terms,
-        ?int $limit=null,
-        ?int $offset=null
+        ?int $limit = null,
+        ?int $offset = null
     ): Querylet {
         global $config;
 
@@ -827,7 +827,7 @@ class Image
                         LIMIT :limit OFFSET :offset
                     ) a on a.image_id = images.id
                     ORDER BY images.id DESC
-                ", ["limit"=>$limit, "offset"=>$offset]);
+                ", ["limit" => $limit, "offset" => $offset]);
                 // don't offset at the image level because
                 // we already offset at the image_tags level
                 $order = null;
@@ -849,11 +849,11 @@ class Image
 
                 if ($tq->positive) {
                     $all_nonexistent_negatives = false;
-                    if ($tag_count== 0) {
+                    if ($tag_count == 0) {
                         # one of the positive tags had zero results, therefor there
                         # can be no results; "where 1=0" should shortcut things
                         return new Querylet("SELECT images.* FROM images WHERE 1=0");
-                    } elseif ($tag_count==1) {
+                    } elseif ($tag_count == 1) {
                         // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
                         $positive_tag_id_array[] = $tag_ids[0];
                     } else {

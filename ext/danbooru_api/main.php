@@ -99,7 +99,7 @@ class DanbooruApi extends Extension
             foreach ($idlist as $id) {
                 $sqlresult = $database->get_all(
                     "SELECT id,tag,count FROM tags WHERE id = :id",
-                    ['id'=>$id]
+                    ['id' => $id]
                 );
                 foreach ($sqlresult as $row) {
                     $results[] = [$row['count'], $row['tag'], $row['id']];
@@ -110,7 +110,7 @@ class DanbooruApi extends Extension
             foreach ($namelist as $name) {
                 $sqlresult = $database->get_all(
                     "SELECT id,tag,count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
-                    ['tag'=>$name]
+                    ['tag' => $name]
                 );
                 foreach ($sqlresult as $row) {
                     $results[] = [$row['count'], $row['tag'], $row['id']];
@@ -129,7 +129,7 @@ class DanbooruApi extends Extension
             $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
             $sqlresult = $database->get_all(
                 "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= :id ORDER BY id DESC",
-                ['id'=>$start]
+                ['id' => $start]
             );
             foreach ($sqlresult as $row) {
                 $results[] = [$row['count'], $row['tag'], $row['id']];
@@ -205,7 +205,7 @@ class DanbooruApi extends Extension
 
         // Now we have the array $results filled with Image objects
         // Let's display them
-        $xml = POSTS(["count"=>$count, "offset"=>$start]);
+        $xml = POSTS(["count" => $count, "offset" => $start]);
         foreach ($results as $img) {
             // Sanity check to see if $img is really an image object
             // If it isn't (e.g. someone requested an invalid md5 or id), break out of the this

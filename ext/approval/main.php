@@ -86,21 +86,21 @@ class Approval extends Extension
 
         $action = $event->action;
         $event->redirect = true;
-        if ($action==="approval") {
+        if ($action === "approval") {
             $approval_action = $_POST["approval_action"];
             switch ($approval_action) {
                 case "approve_all":
                     $database->set_timeout(null); // These updates can take a little bit
                     $database->execute(
                         "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE approved = :false",
-                        ["approved_by_id"=>$user->id, "true"=>true, "false"=>false]
+                        ["approved_by_id" => $user->id, "true" => true, "false" => false]
                     );
                     break;
                 case "disapprove_all":
                     $database->set_timeout(null); // These updates can take a little bit
                     $database->execute(
                         "UPDATE images SET approved = :false, approved_by_id = NULL WHERE approved = :true",
-                        ["true"=>true, "false"=>false]
+                        ["true" => true, "false" => false]
                     );
                     break;
                 default:
@@ -123,7 +123,7 @@ class Approval extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent=="posts") {
+        if ($event->parent == "posts") {
             if ($user->can(Permissions::APPROVE_IMAGE)) {
                 $event->add_nav_link("posts_unapproved", new Link('/post/list/approved%3Ano/1'), "Pending Approval", null, 60);
             }
@@ -147,7 +147,7 @@ class Approval extends Extension
             $matches = [];
 
             if (is_null($event->term) && $this->no_approval_query($event->context)) {
-                $event->add_querylet(new Querylet("approved = :true", ["true"=>true]));
+                $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
             }
 
             if (is_null($event->term)) {
@@ -155,9 +155,9 @@ class Approval extends Extension
             }
             if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
                 if ($user->can(Permissions::APPROVE_IMAGE) && $matches[1] == "no") {
-                    $event->add_querylet(new Querylet("approved != :true", ["true"=>true]));
+                    $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
                 } else {
-                    $event->add_querylet(new Querylet("approved = :true", ["true"=>true]));
+                    $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
                 }
             }
         }
@@ -166,7 +166,7 @@ class Approval extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         global $user, $config;
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             if ($user->can(Permissions::APPROVE_IMAGE) &&  $config->get_bool(ApprovalConfig::IMAGES)) {
                 $event->add_block(new Block("Approval", $this->theme->get_help_html()));
             }
@@ -190,7 +190,7 @@ class Approval extends Extension
 
         $database->execute(
             "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE id = :id AND approved = :false",
-            ["approved_by_id"=>$user->id, "id"=>$image_id, "true"=>true, "false"=>false]
+            ["approved_by_id" => $user->id, "id" => $image_id, "true" => true, "false" => false]
         );
     }
 
@@ -200,7 +200,7 @@ class Approval extends Extension
 
         $database->execute(
             "UPDATE images SET approved = :false, approved_by_id = NULL WHERE id = :id AND approved = :true",
-            ["id"=>$image_id, "true"=>true, "false"=>false]
+            ["id" => $image_id, "true" => true, "false" => false]
         );
     }
 
@@ -208,7 +208,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($config->get_bool(ApprovalConfig::IMAGES) && $image->approved===false && !$user->can(Permissions::APPROVE_IMAGE) && $user->id!==$image->owner_id) {
+        if ($config->get_bool(ApprovalConfig::IMAGES) && $image->approved === false && !$user->can(Permissions::APPROVE_IMAGE) && $user->id !== $image->owner_id) {
             return false;
         }
         return true;
@@ -236,7 +236,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($user->can(Permissions::APPROVE_IMAGE)&& $config->get_bool(ApprovalConfig::IMAGES)) {
+        if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
             if (in_array("approved:no", $event->search_terms)) {
                 $event->add_action("bulk_approve_image", "Approve", "a");
             } else {

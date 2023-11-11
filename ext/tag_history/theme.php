@@ -34,9 +34,9 @@ class TagHistoryTheme extends Themelet
         $page->add_block(new Block("Tag History", $history_html, "main", 10));
 
         $h_prev = ($page_number <= 1) ? "Prev" :
-            '<a href="'.make_link('tag_history/all/'.($page_number-1)).'">Prev</a>';
+            '<a href="'.make_link('tag_history/all/'.($page_number - 1)).'">Prev</a>';
         $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_next = '<a href="'.make_link('tag_history/all/'.($page_number+1)).'">Next</a>';
+        $h_next = '<a href="'.make_link('tag_history/all/'.($page_number + 1)).'">Next</a>';
 
         $nav = $h_prev.' | '.$h_index.' | '.$h_next;
         $page->add_block(new Block("Navigation", $nav, "left", 0));
@@ -45,7 +45,7 @@ class TagHistoryTheme extends Themelet
     /**
      * Add a section to the admin page.
      */
-    public function display_admin_block(string $validation_msg='')
+    public function display_admin_block(string $validation_msg = '')
     {
         global $page;
 
@@ -114,21 +114,21 @@ class TagHistoryTheme extends Themelet
         $ip = $user->can(Permissions::VIEW_IP) ?
             rawHTML(" " . show_ip($fields['user_ip'], "Tagging >>$image_id as '$current_tags'"))
             : null;
-        $setter = A(["href"=>make_link("user/" . url_escape($name))], $name);
+        $setter = A(["href" => make_link("user/" . url_escape($name))], $name);
 
         $current_tags = Tag::explode($current_tags);
         $taglinks = SPAN();
         foreach ($current_tags as $tag) {
-            $taglinks->appendChild(A(["href"=>search_link([$tag])], $tag));
+            $taglinks->appendChild(A(["href" => search_link([$tag])], $tag));
             $taglinks->appendChild(" ");
         }
 
         return (string)LI(
-            INPUT(["type"=>"radio", "name"=>"revert", "id"=>"$current_id", "value"=>"$current_id", "checked"=>$selected]),
-            A(["href"=>make_link("post/view/$image_id")], $image_id),
+            INPUT(["type" => "radio", "name" => "revert", "id" => "$current_id", "value" => "$current_id", "checked" => $selected]),
+            A(["href" => make_link("post/view/$image_id")], $image_id),
             ": ",
             LABEL(
-                ["for"=>"$current_id"],
+                ["for" => "$current_id"],
                 $taglinks,
                 " - ",
                 $setter,

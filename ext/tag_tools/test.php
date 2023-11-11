@@ -43,7 +43,7 @@ class TagToolsTest extends ShimmiePHPUnitTestCase
         send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
         $database->execute(
             "INSERT INTO tags(tag, count) VALUES(:tag, :count)",
-            ["tag"=>"tes$ts", "count"=>42]
+            ["tag" => "tes$ts", "count" => 42]
         );
 
         // Fix
@@ -54,7 +54,7 @@ class TagToolsTest extends ShimmiePHPUnitTestCase
             0,
             $database->get_one(
                 "SELECT count FROM tags WHERE tag = :tag",
-                ["tag"=>"tes$ts"]
+                ["tag" => "tes$ts"]
             )
         );
     }

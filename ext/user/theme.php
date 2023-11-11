@@ -54,7 +54,7 @@ class UserPageTheme extends Themelet
         $html = emptyHTML('Logged in as ', $user->name);
         foreach ($parts as $part) {
             $html->appendChild(BR());
-            $html->appendChild(A(["href"=>$part["link"]], $part["name"]));
+            $html->appendChild(A(["href" => $part["link"]], $part["name"]));
         }
         $b = new Block("User Links", $html, "left", 90);
         $b->is_content = false;
@@ -74,30 +74,30 @@ class UserPageTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             "user_admin/create",
             TABLE(
-                ["class"=>"form"],
+                ["class" => "form"],
                 TBODY(
                     TR(
                         TH("Name"),
-                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                        TD(INPUT(["type" => 'text', "name" => 'name', "required" => true]))
                     ),
                     TR(
                         TH("Password"),
-                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Repeat&nbsp;Password")),
-                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Email&nbsp;(Optional)")),
-                        TD(INPUT(["type"=>'email', "name"=>'email']))
+                        TD(INPUT(["type" => 'email', "name" => 'email']))
                     ),
                     TR(
-                        TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
+                        TD(["colspan" => "2"], rawHTML(captcha_get_html()))
                     ),
                 ),
                 TFOOT(
-                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Create Account"])))
                 )
             )
         );
@@ -120,27 +120,27 @@ class UserPageTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             "user_admin/create_other",
             TABLE(
-                ["class"=>"form"],
+                ["class" => "form"],
                 TBODY(
                     TR(
                         TH("Name"),
-                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                        TD(INPUT(["type" => 'text', "name" => 'name', "required" => true]))
                     ),
                     TR(
                         TH("Password"),
-                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Repeat&nbsp;Password")),
-                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Email&nbsp;(Optional)")),
-                        TD(INPUT(["type"=>'email', "name"=>'email']))
+                        TD(INPUT(["type" => 'email', "name" => 'email']))
                     ),
                 ),
                 TFOOT(
-                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Create Account"])))
                 )
             )
         );
@@ -164,19 +164,19 @@ class UserPageTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             "user_admin/login",
             TABLE(
-                ["style"=>"width: 100%", "class"=>"form"],
+                ["style" => "width: 100%", "class" => "form"],
                 TBODY(
                     TR(
-                        TH(LABEL(["for"=>"user"], "Name")),
-                        TD(INPUT(["id"=>"user", "type"=>"text", "name"=>"user", "autocomplete"=>"username"]))
+                        TH(LABEL(["for" => "user"], "Name")),
+                        TD(INPUT(["id" => "user", "type" => "text", "name" => "user", "autocomplete" => "username"]))
                     ),
                     TR(
-                        TH(LABEL(["for"=>"pass"], "Password")),
-                        TD(INPUT(["id"=>"pass", "type"=>"password", "name"=>"pass", "autocomplete"=>"current-password"]))
+                        TH(LABEL(["for" => "pass"], "Password")),
+                        TD(INPUT(["id" => "pass", "type" => "password", "name" => "pass", "autocomplete" => "current-password"]))
                     )
                 ),
                 TFOOT(
-                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Log In"])))
+                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Log In"])))
                 )
             )
         );
@@ -184,7 +184,7 @@ class UserPageTheme extends Themelet
         $html = emptyHTML();
         $html->appendChild($form);
         if ($config->get_bool("login_signup_enabled") && $user->can(Permissions::CREATE_USER)) {
-            $html->appendChild(SMALL(A(["href"=>make_link("user_admin/create")], "Create Account")));
+            $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
 
         $page->add_block(new Block("Login", $html, "left", 90));
@@ -209,14 +209,14 @@ class UserPageTheme extends Themelet
     public function display_ip_list(Page $page, array $uploads, array $comments, array $events)
     {
         $html = TABLE(
-            ["id"=>"ip-history"],
+            ["id" => "ip-history"],
             TR(
                 $this->_ip_list("Uploaded from", $uploads),
                 $this->_ip_list("Commented from", $comments),
                 $this->_ip_list("Logged Events", $events)
             ),
             TR(
-                TD(["colspan"=>"3"], "(Most recent at top)")
+                TD(["colspan" => "3"], "(Most recent at top)")
             )
         );
 
@@ -250,7 +250,7 @@ class UserPageTheme extends Themelet
                     "Change Name",
                     TBODY(TR(
                         TH("New name"),
-                        TD(INPUT(["type"=>'text', "name"=>'name', "value"=>$duser->name]))
+                        TD(INPUT(["type" => 'text', "name" => 'name', "value" => $duser->name]))
                     )),
                     "Set"
                 ));
@@ -263,11 +263,11 @@ class UserPageTheme extends Themelet
                 TBODY(
                     TR(
                         TH("Password"),
-                        TD(INPUT(["type"=>'password', "name"=>'pass1', "autocomplete"=>'new-password']))
+                        TD(INPUT(["type" => 'password', "name" => 'pass1', "autocomplete" => 'new-password']))
                     ),
                     TR(
                         TH("Repeat Password"),
-                        TD(INPUT(["type"=>'password', "name"=>'pass2', "autocomplete"=>'new-password']))
+                        TD(INPUT(["type" => 'password', "name" => 'pass2', "autocomplete" => 'new-password']))
                     ),
                 ),
                 "Set"
@@ -279,17 +279,17 @@ class UserPageTheme extends Themelet
                 "Change Email",
                 TBODY(TR(
                     TH("Address"),
-                    TD(INPUT(["type"=>'text', "name"=>'address', "value"=>$duser->email, "autocomplete"=>'email', "inputmode"=>'email']))
+                    TD(INPUT(["type" => 'text', "name" => 'address', "value" => $duser->email, "autocomplete" => 'email', "inputmode" => 'email']))
                 )),
                 "Set"
             ));
 
             if ($user->can(Permissions::EDIT_USER_CLASS)) {
                 global $_shm_user_classes;
-                $select = SELECT(["name"=>"class"]);
+                $select = SELECT(["name" => "class"]);
                 foreach ($_shm_user_classes as $name => $values) {
                     $select->appendChild(
-                        OPTION(["value"=>$name, "selected"=>$name == $duser->class->name], ucwords($name))
+                        OPTION(["value" => $name, "selected" => $name == $duser->class->name], ucwords($name))
                     );
                 }
                 $html->appendChild(SHM_USER_FORM(
@@ -307,12 +307,12 @@ class UserPageTheme extends Themelet
                     "user_admin/delete_user",
                     "Delete User",
                     TBODY(
-                        TR(TD(LABEL(INPUT(["type"=>'checkbox', "name"=>'with_images']), "Delete images"))),
-                        TR(TD(LABEL(INPUT(["type"=>'checkbox', "name"=>'with_comments']), "Delete comments"))),
+                        TR(TD(LABEL(INPUT(["type" => 'checkbox', "name" => 'with_images']), "Delete images"))),
+                        TR(TD(LABEL(INPUT(["type" => 'checkbox', "name" => 'with_comments']), "Delete comments"))),
                     ),
                     TFOOT(
-                        TR(TD(INPUT(["type"=>'button', "class"=>'shm-unlocker', "data-unlock-sel"=>'.deluser', "value"=>'Unlock']))),
-                        TR(TD(INPUT(["type"=>'submit', "class"=>'deluser', "value"=>'Delete User', "disabled"=>'true']))),
+                        TR(TD(INPUT(["type" => 'button', "class" => 'shm-unlocker', "data-unlock-sel" => '.deluser', "value" => 'Unlock']))),
+                        TR(TD(INPUT(["type" => 'submit', "class" => 'deluser', "value" => 'Delete User', "disabled" => 'true']))),
                     )
                 ));
             }
@@ -353,7 +353,7 @@ class UserPageTheme extends Themelet
      */
     public function display_user_classes(Page $page, array $classes, array $permissions): void
     {
-        $table = TABLE(["class"=>"zebra"]);
+        $table = TABLE(["class" => "zebra"]);
 
         $row = TR();
         $row->appendChild(TH("Permission"));
@@ -374,9 +374,9 @@ class UserPageTheme extends Themelet
             foreach ($classes as $class) {
                 $opacity = array_key_exists($perm->getValue(), $class->abilities) ? 1 : 0.2;
                 if ($class->can($perm->getValue())) {
-                    $cell = TD(["style"=>"color: green; opacity: $opacity;"], "✔");
+                    $cell = TD(["style" => "color: green; opacity: $opacity;"], "✔");
                 } else {
-                    $cell = TD(["style"=>"color: red; opacity: $opacity;"], "✘");
+                    $cell = TD(["style" => "color: red; opacity: $opacity;"], "✘");
                 }
                 $row->appendChild($cell);
             }
@@ -384,7 +384,7 @@ class UserPageTheme extends Themelet
             $doc = $perm->getDocComment();
             if ($doc) {
                 $doc = preg_replace('/\/\*\*|\n\s*\*\s*|\*\//', '', $doc);
-                $row->appendChild(TD(["style"=>"text-align: left;"], $doc));
+                $row->appendChild(TD(["style" => "text-align: left;"], $doc));
             } else {
                 $row->appendChild(TD(""));
             }

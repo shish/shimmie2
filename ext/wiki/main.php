@@ -67,7 +67,7 @@ class WikiPage
     #[Field]
     public string $body;
 
-    public function __construct(array $row=null)
+    public function __construct(array $row = null)
     {
         //assert(!empty($row));
         global $database;
@@ -80,7 +80,7 @@ class WikiPage
             $this->title = $row['title'];
             $this->revision = (int)$row['revision'];
             $this->locked = bool_escape($row['locked']);
-            $this->exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title"=>$this->title]);
+            $this->exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title" => $this->title]);
             $this->body = $row['body'];
         }
     }
@@ -248,7 +248,7 @@ class Wiki extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="wiki") {
+        if ($event->parent == "wiki") {
             $event->add_nav_link("wiki_rules", new Link('wiki/rules'), "Rules");
             $event->add_nav_link("wiki_help", new Link('ext_doc/wiki'), "Help");
         }
@@ -259,24 +259,24 @@ class Wiki extends Extension
         global $database, $config;
         $wpage = $event->wikipage;
 
-        $exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title"=>$wpage->title]);
+        $exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title" => $wpage->title]);
 
         try {
-            if ($config->get_bool(WikiConfig::ENABLE_REVISIONS) || ! $exists) {
+            if ($config->get_bool(WikiConfig::ENABLE_REVISIONS) || !$exists) {
                 $database->execute(
                     "
                                 INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
                                 VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
-                    ["owner_id"=>$event->user->id, "owner_ip"=>get_real_ip(),
-                    "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked, "body"=>$wpage->body]
+                    ["owner_id" => $event->user->id, "owner_ip" => get_real_ip(),
+                    "title" => $wpage->title, "revision" => $wpage->revision, "locked" => $wpage->locked, "body" => $wpage->body]
                 );
             } else {
                 $database->execute(
                     "
                                 UPDATE wiki_pages SET owner_id=:owner_id, owner_ip=:owner_ip, date=now(), locked=:locked, body=:body
                                 WHERE title = :title ORDER BY revision DESC LIMIT 1",
-                    ["owner_id"=>$event->user->id, "owner_ip"=>get_real_ip(),
-                    "title"=>$wpage->title, "locked"=>$wpage->locked, "body"=>$wpage->body]
+                    ["owner_id" => $event->user->id, "owner_ip" => get_real_ip(),
+                    "title" => $wpage->title, "locked" => $wpage->locked, "body" => $wpage->body]
                 );
             }
         } catch (\Exception $e) {
@@ -289,7 +289,7 @@ class Wiki extends Extension
         global $database;
         $database->execute(
             "DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
-            ["title"=>$event->title, "rev"=>$event->revision]
+            ["title" => $event->title, "rev" => $event->revision]
         );
     }
 
@@ -336,12 +336,12 @@ class Wiki extends Extension
 				WHERE LOWER(title) LIKE LOWER(:title)
 				ORDER BY revision DESC
 			",
-            ["title"=>$title]
+            ["title" => $title]
         );
     }
 
     #[Query(name: "wiki")]
-    public static function get_page(string $title, ?int $revision=null): WikiPage
+    public static function get_page(string $title, ?int $revision = null): WikiPage
     {
         global $database;
         // first try and get the actual page
@@ -353,7 +353,7 @@ class Wiki extends Extension
 				AND (:revision = -1 OR revision = :revision)
 				ORDER BY revision DESC
 			",
-            ["title"=>$title, "revision"=>$revision ?? -1]
+            ["title" => $title, "revision" => $revision ?? -1]
         );
 
         // fall back to wiki:default
@@ -363,7 +363,7 @@ class Wiki extends Extension
                 FROM wiki_pages
                 WHERE title LIKE :title
                 ORDER BY revision DESC
-			", ["title"=>"wiki:default"]);
+			", ["title" => "wiki:default"]);
 
             // fall further back to manual
             if (empty($row)) {
@@ -397,7 +397,7 @@ class Wiki extends Extension
                 SELECT *
                 FROM tags
                 WHERE tag = :title
-                    ", ["title"=>$page->title]);
+                    ", ["title" => $page->title]);
 
         if (!empty($row)) {
             $template = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
@@ -414,7 +414,7 @@ class Wiki extends Extension
                 FROM aliases
                 WHERE newtag = :title
                 ORDER BY oldtag ASC
-                    ", ["title"=>$row["tag"]]);
+                    ", ["title" => $row["tag"]]);
 
             if (!empty($aliases)) {
                 $template = str_replace("{aliases}", implode(", ", $aliases), $template);
@@ -431,7 +431,7 @@ class Wiki extends Extension
                     SELECT additional_tags
                     FROM auto_tag
                     WHERE tag = :title
-                        ", ["title"=>$row["tag"]]);
+                        ", ["title" => $row["tag"]]);
 
                 if (!empty($auto_tags)) {
                     $auto_tags = Tag::explode($auto_tags);
@@ -444,7 +444,7 @@ class Wiki extends Extension
                             SELECT *
                             FROM tags
                             WHERE tag = :title
-                                ", ["title"=>$a_tag]);
+                                ", ["title" => $a_tag]);
 
                         $tag_html = $tag_list_t->return_tag($a_row, $tag_category_dict ?? []);
                         $f_auto_tags[] = $tag_html[1];
@@ -521,7 +521,7 @@ class Wiki extends Extension
                 /**
                 *   add to output-string, if "show_equal" is enabled
                 */
-                $out    .= ($show_equal==1)
+                $out    .= ($show_equal == 1)
                          ? $this->formatline(($c1), ($c2), "=", $f1[ $c1 ])
                          : "" ;
                 /**
@@ -535,8 +535,8 @@ class Wiki extends Extension
                 /**
                 *   move the current-pointer in the left and right side
                 */
-                $c1 ++;
-                $c2 ++;
+                $c1++;
+                $c2++;
             }
 
             /**
@@ -576,7 +576,7 @@ class Wiki extends Extension
                     *   be used, else it will be discarded later
                     */
                     #hit
-                    if (trim($f1[$c1+$s1]) == trim($f2[$c2])) {
+                    if (trim($f1[$c1 + $s1]) == trim($f2[$c2])) {
                         $found  = 1   ;     # set flag to stop further search
                         $s2     = 0   ;     # reset right side search-pointer
                         $c2--         ;     # move back the current right, so next loop hits
@@ -593,7 +593,7 @@ class Wiki extends Extension
                             /**
                             *   add current search-line to diffence-buffer
                             */
-                            $b1  .= $this->formatline(($c1 + $s1), ($c2), "-", $f1[ $c1+$s1 ]);
+                            $b1  .= $this->formatline(($c1 + $s1), ($c2), "-", $f1[ $c1 + $s1 ]);
 
                             /**
                             *   mark this line as 'searched' to prevent doubles.
@@ -609,7 +609,7 @@ class Wiki extends Extension
                     *
                     *   comparing current line with the searching line on the right
                     */
-                    if (trim($f1[$c1]) == trim($f2[$c2+$s2])) {
+                    if (trim($f1[$c1]) == trim($f2[$c2 + $s2])) {
                         $found  = 1   ;     # flag to stop search
                         $s1     = 0   ;     # reset pointer for search
                         $c1--         ;     # move current line back, so we hit next loop
@@ -622,7 +622,7 @@ class Wiki extends Extension
                             /**
                             *   add current searchline to buffer
                             */
-                            $b2   .= $this->formatline(($c1), ($c2 + $s2), "+", $f2[ $c2+$s2 ]);
+                            $b2   .= $this->formatline(($c1), ($c2 + $s2), "+", $f2[ $c2 + $s2 ]);
 
                             /**
                             *   mark current line to prevent double-hits

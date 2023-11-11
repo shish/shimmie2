@@ -44,18 +44,18 @@ class CustomUploadTheme extends UploadTheme
         $form = SHM_FORM("upload", "POST", true, "file_upload");
         $form->appendChild(
             TABLE(
-                ["id"=>"large_upload_form", "class"=>"vert"],
+                ["id" => "large_upload_form", "class" => "vert"],
                 TR(
-                    TD(["width"=>"20"], rawHTML("Common&nbsp;Tags")),
-                    TD(["colspan"=>"5"], INPUT(["name"=>"tags", "type"=>"text", "placeholder"=>"tagme", "autocomplete"=>"off"]))
+                    TD(["width" => "20"], rawHTML("Common&nbsp;Tags")),
+                    TD(["colspan" => "5"], INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "autocomplete" => "off"]))
                 ),
                 TR(
-                    TD(["width"=>"20"], rawHTML("Common&nbsp;Source")),
-                    TD(["colspan"=>"5"], INPUT(["name"=>"source", "type"=>"text"]))
+                    TD(["width" => "20"], rawHTML("Common&nbsp;Source")),
+                    TD(["colspan" => "5"], INPUT(["name" => "source", "type" => "text"]))
                 ),
                 $upload_list,
                 TR(
-                    TD(["colspan"=>"6"], INPUT(["id"=>"uploadbutton", "type"=>"submit", "value"=>"Post"]))
+                    TD(["colspan" => "6"], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))
                 ),
             )
         );
@@ -79,7 +79,7 @@ class CustomUploadTheme extends UploadTheme
 
     protected function build_upload_block(): HTMLElement
     {
-        return A(["href"=>make_link("upload"), "style"=>'font-size: 2em; display: block;'], "Upload");
+        return A(["href" => make_link("upload"), "style" => 'font-size: 2em; display: block;'], "Upload");
     }
 
     protected function h_upload_list_1(): HTMLElement
@@ -92,18 +92,18 @@ class CustomUploadTheme extends UploadTheme
 
         $upload_list->appendChild(
             TR(
-                TD(["colspan"=>$tl_enabled ? 2 : 4], "Files"),
-                $tl_enabled ? TD(["colspan"=>"2"], "URLs") : emptyHTML(),
-                TD(["colspan"=>"2"], "Post-Specific Tags"),
+                TD(["colspan" => $tl_enabled ? 2 : 4], "Files"),
+                $tl_enabled ? TD(["colspan" => "2"], "URLs") : emptyHTML(),
+                TD(["colspan" => "2"], "Post-Specific Tags"),
             )
         );
 
-        for ($i=0; $i<$upload_count; $i++) {
+        for ($i = 0; $i < $upload_count; $i++) {
             $upload_list->appendChild(
                 TR(
-                    TD(["colspan"=>$tl_enabled ? 2 : 4], INPUT(["type"=>"file", "name"=>"data{$i}[]", "accept"=>$accept, "multiple"=>true])),
-                    $tl_enabled ? TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"url{$i}"])) : emptyHTML(),
-                    TD(["colspan"=>"2"], INPUT(["type"=>"text", "name"=>"tags{$i}", "autocomplete"=>"off"])),
+                    TD(["colspan" => $tl_enabled ? 2 : 4], INPUT(["type" => "file", "name" => "data{$i}[]", "accept" => $accept, "multiple" => true])),
+                    $tl_enabled ? TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "url{$i}"])) : emptyHTML(),
+                    TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "tags{$i}", "autocomplete" => "off"])),
                 )
             );
         }

@@ -39,7 +39,7 @@ function add_dir(string $base): array
 /**
  * Sends a DataUploadEvent for a file.
  */
-function add_image(string $tmpname, string $filename, string $tags, ?string $source=null): DataUploadEvent
+function add_image(string $tmpname, string $filename, string $tags, ?string $source = null): DataUploadEvent
 {
     return send_event(new DataUploadEvent($tmpname, [
         'filename' => pathinfo($filename, PATHINFO_BASENAME),
@@ -111,12 +111,12 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
 
 function get_scaled_by_aspect_ratio(int $original_width, int $original_height, int $max_width, int $max_height): array
 {
-    $xscale = ($max_width/ $original_width);
-    $yscale = ($max_height/ $original_height);
+    $xscale = ($max_width / $original_width);
+    $yscale = ($max_height / $original_height);
 
     $scale = ($yscale < $xscale) ? $yscale : $xscale ;
 
-    return [(int)($original_width*$scale), (int)($original_height*$scale), $scale];
+    return [(int)($original_width * $scale), (int)($original_height * $scale), $scale];
 }
 
 /**
@@ -129,8 +129,8 @@ function get_thumbnail_max_size_scaled(): array
     global $config;
 
     $scaling = $config->get_int(ImageConfig::THUMB_SCALING);
-    $max_width  = $config->get_int(ImageConfig::THUMB_WIDTH) * ($scaling/100);
-    $max_height = $config->get_int(ImageConfig::THUMB_HEIGHT) * ($scaling/100);
+    $max_width  = $config->get_int(ImageConfig::THUMB_WIDTH) * ($scaling / 100);
+    $max_height = $config->get_int(ImageConfig::THUMB_HEIGHT) * ($scaling / 100);
     return [$max_width, $max_height];
 }
 

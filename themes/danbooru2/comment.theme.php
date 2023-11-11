@@ -91,7 +91,7 @@ class CustomCommentListTheme extends CommentListTheme
     }
 
 
-    protected function comment_to_html(Comment $comment, bool $trim=false): string
+    protected function comment_to_html(Comment $comment, bool $trim = false): string
     {
         global $user;
 

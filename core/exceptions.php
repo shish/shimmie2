@@ -13,7 +13,7 @@ class SCoreException extends \RuntimeException
     public string $error;
     public int $http_code = 500;
 
-    public function __construct(string $msg, ?string $query=null)
+    public function __construct(string $msg, ?string $query = null)
     {
         parent::__construct($msg);
         $this->error = $msg;

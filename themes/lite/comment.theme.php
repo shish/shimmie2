@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class CustomCommentListTheme extends CommentListTheme
 {
-    protected function comment_to_html(Comment $comment, bool $trim=false): string
+    protected function comment_to_html(Comment $comment, bool $trim = false): string
     {
         return $this->rr(parent::comment_to_html($comment, $trim));
     }

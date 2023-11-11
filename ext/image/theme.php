@@ -16,8 +16,8 @@ class ImageIOTheme extends Themelet
     {
         return (string)"<span id='image_delete_form'>".SHM_SIMPLE_FORM(
             "image/delete",
-            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
-            INPUT(["type"=>'submit', "value"=>'Delete', "onclick"=>'return confirm("Delete the image?");', "id"=>"image_delete_button"]),
+            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
+            INPUT(["type" => 'submit', "value" => 'Delete', "onclick" => 'return confirm("Delete the image?");', "id" => "image_delete_button"]),
         )."</span>";
     }
 
@@ -28,8 +28,8 @@ class ImageIOTheme extends Themelet
     {
         return (string)SHM_SIMPLE_FORM(
             "image/replace",
-            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
-            INPUT(["type"=>'submit', "value"=>'Replace']),
+            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
+            INPUT(["type" => 'submit', "value" => 'Replace']),
         );
     }
 }

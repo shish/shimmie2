@@ -56,7 +56,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
     {
         // just test it doesn't crash for now
         $this->log_in_as_admin();
-        $page = $this->get_page('ip_ban/list', ['r_all'=>'on']);
+        $page = $this->get_page('ip_ban/list', ['r_all' => 'on']);
         $this->assertEquals(200, $page->code);
     }
 }

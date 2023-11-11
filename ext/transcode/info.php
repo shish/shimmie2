@@ -10,7 +10,7 @@ class TranscodeImageInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Transcode Image";
-    public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Allows admins to automatically and manually transcode images.";
     public ?string $documentation =

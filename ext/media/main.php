@@ -242,17 +242,17 @@ class Media extends Extension
         $matches = [];
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
             $field = $matches[1];
-            if ($field==="unknown") {
+            if ($field === "unknown") {
                 $event->add_querylet(new Querylet("video IS NULL OR audio IS NULL OR image IS NULL"));
             } else {
-                $event->add_querylet(new Querylet("$field = :true", ["true"=>true]));
+                $event->add_querylet(new Querylet("$field = :true", ["true" => true]));
             }
         }
     }
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Media";
             $block->body = $this->theme->get_help_html();
@@ -270,12 +270,12 @@ class Media extends Extension
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
     {
         if ($event->image->width && $event->image->height && $event->image->length) {
-            $s = ((int)($event->image->length / 100))/10;
+            $s = ((int)($event->image->length / 100)) / 10;
             $event->replace('$size', "{$event->image->width}x{$event->image->height}, {$s}s");
         } elseif ($event->image->width && $event->image->height) {
             $event->replace('$size', "{$event->image->width}x{$event->image->height}");
         } elseif ($event->image->length) {
-            $s = ((int)($event->image->length / 100))/10;
+            $s = ((int)($event->image->length / 100)) / 10;
             $event->replace('$size', "{$s}s");
         }
     }
@@ -404,112 +404,112 @@ class Media extends Extension
         return $ext;
     }
 
-//    private static function image_save_imagick(Imagick $image, string $path, string $format, int $output_quality = 80, bool $minimize)
-//    {
-//        switch ($format) {
-//            case FileExtension::PNG:
-//                $result = $image->setOption('png:compression-level', 9);
-//                if ($result !== true) {
-//                    throw new GraphicsException("Could not set png compression option");
-//                }
-//                break;
-//            case Graphics::WEBP_LOSSLESS:
-//                $result = $image->setOption('webp:lossless', true);
-//                if ($result !== true) {
-//                    throw new GraphicsException("Could not set lossless webp option");
-//                }
-//                break;
-//            default:
-//                $result = $image->setImageCompressionQuality($output_quality);
-//                if ($result !== true) {
-//                    throw new GraphicsException("Could not set compression quality for $path to $output_quality");
-//                }
-//                break;
-//        }
-//
-//        if (self::supports_alpha($format)) {
-//            $result = $image->setImageBackgroundColor(new \ImagickPixel('transparent'));
-//        } else {
-//            $result = $image->setImageBackgroundColor(new \ImagickPixel('black'));
-//        }
-//        if ($result !== true) {
-//            throw new GraphicsException("Could not set background color");
-//        }
-//
-//
-//        if ($minimize) {
-//            $profiles = $image->getImageProfiles("icc", true);
-//            $result = $image->stripImage();
-//            if ($result !== true) {
-//                throw new GraphicsException("Could not strip information from image");
-//            }
-//            if (!empty($profiles)) {
-//                $image->profileImage("icc", $profiles['icc']);
-//            }
-//        }
-//
-//        $ext = self::determine_ext($format);
-//
-//        $result = $image->writeImage($ext . ":" . $path);
-//        if ($result !== true) {
-//            throw new GraphicsException("Could not write image to $path");
-//        }
-//    }
+    //    private static function image_save_imagick(Imagick $image, string $path, string $format, int $output_quality = 80, bool $minimize)
+    //    {
+    //        switch ($format) {
+    //            case FileExtension::PNG:
+    //                $result = $image->setOption('png:compression-level', 9);
+    //                if ($result !== true) {
+    //                    throw new GraphicsException("Could not set png compression option");
+    //                }
+    //                break;
+    //            case Graphics::WEBP_LOSSLESS:
+    //                $result = $image->setOption('webp:lossless', true);
+    //                if ($result !== true) {
+    //                    throw new GraphicsException("Could not set lossless webp option");
+    //                }
+    //                break;
+    //            default:
+    //                $result = $image->setImageCompressionQuality($output_quality);
+    //                if ($result !== true) {
+    //                    throw new GraphicsException("Could not set compression quality for $path to $output_quality");
+    //                }
+    //                break;
+    //        }
+    //
+    //        if (self::supports_alpha($format)) {
+    //            $result = $image->setImageBackgroundColor(new \ImagickPixel('transparent'));
+    //        } else {
+    //            $result = $image->setImageBackgroundColor(new \ImagickPixel('black'));
+    //        }
+    //        if ($result !== true) {
+    //            throw new GraphicsException("Could not set background color");
+    //        }
+    //
+    //
+    //        if ($minimize) {
+    //            $profiles = $image->getImageProfiles("icc", true);
+    //            $result = $image->stripImage();
+    //            if ($result !== true) {
+    //                throw new GraphicsException("Could not strip information from image");
+    //            }
+    //            if (!empty($profiles)) {
+    //                $image->profileImage("icc", $profiles['icc']);
+    //            }
+    //        }
+    //
+    //        $ext = self::determine_ext($format);
+    //
+    //        $result = $image->writeImage($ext . ":" . $path);
+    //        if ($result !== true) {
+    //            throw new GraphicsException("Could not write image to $path");
+    //        }
+    //    }
 
-//    public static function image_resize_imagick(
-//        string $input_path,
-//        string $input_type,
-//        int $new_width,
-//        int $new_height,
-//        string $output_filename,
-//        string $output_type = null,
-//        bool $ignore_aspect_ratio = false,
-//        int $output_quality = 80,
-//        bool $minimize = false,
-//        bool $allow_upscale = true
-//    ): void
-//    {
-//        global $config;
-//
-//        if (!empty($input_type)) {
-//            $input_type = self::determine_ext($input_type);
-//        }
-//
-//        try {
-//            $image = new Imagick($input_type . ":" . $input_path);
-//            try {
-//                $result = $image->flattenImages();
-//                if ($result !== true) {
-//                    throw new GraphicsException("Could not flatten image $input_path");
-//                }
-//
-//                $height = $image->getImageHeight();
-//                $width = $image->getImageWidth();
-//                if (!$allow_upscale &&
-//                    ($new_width > $width || $new_height > $height)) {
-//                    $new_height = $height;
-//                    $new_width = $width;
-//                }
-//
-//                $result = $image->resizeImage($new_width, $new_width, Imagick::FILTER_LANCZOS, 0, !$ignore_aspect_ratio);
-//                if ($result !== true) {
-//                    throw new GraphicsException("Could not perform image resize on $input_path");
-//                }
-//
-//
-//                if (empty($output_type)) {
-//                    $output_type = $input_type;
-//                }
-//
-//                self::image_save_imagick($image, $output_filename, $output_type, $output_quality);
-//
-//            } finally {
-//                $image->destroy();
-//            }
-//        } catch (ImagickException $e) {
-//            throw new GraphicsException("Error while resizing with Imagick: " . $e->getMessage(), $e->getCode(), $e);
-//        }
-//    }
+    //    public static function image_resize_imagick(
+    //        string $input_path,
+    //        string $input_type,
+    //        int $new_width,
+    //        int $new_height,
+    //        string $output_filename,
+    //        string $output_type = null,
+    //        bool $ignore_aspect_ratio = false,
+    //        int $output_quality = 80,
+    //        bool $minimize = false,
+    //        bool $allow_upscale = true
+    //    ): void
+    //    {
+    //        global $config;
+    //
+    //        if (!empty($input_type)) {
+    //            $input_type = self::determine_ext($input_type);
+    //        }
+    //
+    //        try {
+    //            $image = new Imagick($input_type . ":" . $input_path);
+    //            try {
+    //                $result = $image->flattenImages();
+    //                if ($result !== true) {
+    //                    throw new GraphicsException("Could not flatten image $input_path");
+    //                }
+    //
+    //                $height = $image->getImageHeight();
+    //                $width = $image->getImageWidth();
+    //                if (!$allow_upscale &&
+    //                    ($new_width > $width || $new_height > $height)) {
+    //                    $new_height = $height;
+    //                    $new_width = $width;
+    //                }
+    //
+    //                $result = $image->resizeImage($new_width, $new_width, Imagick::FILTER_LANCZOS, 0, !$ignore_aspect_ratio);
+    //                if ($result !== true) {
+    //                    throw new GraphicsException("Could not perform image resize on $input_path");
+    //                }
+    //
+    //
+    //                if (empty($output_type)) {
+    //                    $output_type = $input_type;
+    //                }
+    //
+    //                self::image_save_imagick($image, $output_filename, $output_type, $output_quality);
+    //
+    //            } finally {
+    //                $image->destroy();
+    //            }
+    //        } catch (ImagickException $e) {
+    //            throw new GraphicsException("Error while resizing with Imagick: " . $e->getMessage(), $e->getCode(), $e);
+    //        }
+    //    }
 
     public static function is_lossless(string $filename, string $mime): bool
     {
@@ -548,7 +548,7 @@ class Media extends Extension
             $output_mime = $input_mime;
         }
 
-        if ($output_mime==MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
+        if ($output_mime == MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
             $output_mime = MimeType::WEBP_LOSSLESS;
         }
 
@@ -561,7 +561,7 @@ class Media extends Extension
         if (!$allow_upscale) {
             $resize_suffix .= "\>";
         }
-        if ($resize_type==Media::RESIZE_TYPE_STRETCH) {
+        if ($resize_type == Media::RESIZE_TYPE_STRETCH) {
             $resize_suffix .= "\!";
         }
 
@@ -576,8 +576,8 @@ class Media extends Extension
 
         $file_arg = "{$input_ext}:\"{$input_path}[0]\"";
 
-        if ($resize_type===Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
-            if ($new_height>$new_width) {
+        if ($resize_type === Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
+            if ($new_height > $new_width) {
                 $resize_type = Media::RESIZE_TYPE_FIT_BLUR;
             } else {
                 $resize_type = Media::RESIZE_TYPE_FILL;
@@ -685,7 +685,7 @@ class Media extends Extension
             throw new InsufficientMemoryException("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
         }
 
-        if ($resize_type==Media::RESIZE_TYPE_FIT) {
+        if ($resize_type == Media::RESIZE_TYPE_FIT) {
             list($new_width, $new_height) = get_scaled_by_aspect_ratio($width, $height, $new_width, $new_height);
         }
         if (!$allow_upscale &&
@@ -774,18 +774,18 @@ class Media extends Extension
                     $width = imagesx($image_resized);
                     $height = imagesy($image_resized);
                     $new_image = imagecreatetruecolor($width, $height);
-                    if ($new_image===false) {
+                    if ($new_image === false) {
                         throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
                     }
 
                     $background_color = Media::hex_color_allocate($new_image, $alpha_color);
-                    if ($background_color===false) {
+                    if ($background_color === false) {
                         throw new ImageTranscodeException("Could not allocate background color");
                     }
-                    if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color)===false) {
+                    if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
                         throw new ImageTranscodeException("Could not fill background color");
                     }
-                    if (imagecopy($new_image, $image_resized, 0, 0, 0, 0, $width, $height)===false) {
+                    if (imagecopy($new_image, $image_resized, 0, 0, 0, 0, $width, $height) === false) {
                         throw new ImageTranscodeException("Could not copy source image to new image");
                     }
 
@@ -927,8 +927,8 @@ class Media extends Extension
         }
 
         if ($this->get_version(MediaConfig::VERSION) < 5) {
-            $database->execute("UPDATE images SET image = :f WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')", ["f"=>false]);
-            $database->execute("UPDATE images SET image = :t WHERE ext IN ('jpg','jpeg','ico','cur','png')", ["t"=>true]);
+            $database->execute("UPDATE images SET image = :f WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')", ["f" => false]);
+            $database->execute("UPDATE images SET image = :t WHERE ext IN ('jpg','jpeg','ico','cur','png')", ["t" => true]);
             $this->set_version(MediaConfig::VERSION, 5);
         }
     }

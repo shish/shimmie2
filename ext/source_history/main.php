@@ -86,7 +86,7 @@ class SourceHistory extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
                 $event->add_nav_link("source_history", new Link('source_history/all/1'), "Source Changes", NavLink::is_active(["source_history"]));
             }
@@ -224,7 +224,7 @@ class SourceHistory extends Extension
 				SELECT source_histories.*, users.name
 				FROM source_histories
 				JOIN users ON source_histories.user_id = users.id
-				WHERE source_histories.id = :id", ["id"=>$revert_id]);
+				WHERE source_histories.id = :id", ["id" => $revert_id]);
         return ($row ? $row : null);
     }
 
@@ -238,7 +238,7 @@ class SourceHistory extends Extension
 				JOIN users ON source_histories.user_id = users.id
 				WHERE image_id = :image_id
 				ORDER BY source_histories.id DESC",
-            ["image_id"=>$image_id]
+            ["image_id" => $image_id]
         );
     }
 
@@ -251,7 +251,7 @@ class SourceHistory extends Extension
 				JOIN users ON source_histories.user_id = users.id
 				ORDER BY source_histories.id DESC
 				LIMIT 100 OFFSET :offset
-		", ["offset" => ($page_id-1)*100]);
+		", ["offset" => ($page_id - 1) * 100]);
     }
 
     /**
@@ -373,13 +373,13 @@ class SourceHistory extends Extension
         }
 
         // if the image has no history, make one with the old source
-        $entries = $database->get_one("SELECT COUNT(*) FROM source_histories WHERE image_id = :image_id", ['image_id'=>$image->id]);
+        $entries = $database->get_one("SELECT COUNT(*) FROM source_histories WHERE image_id = :image_id", ['image_id' => $image->id]);
         if ($entries == 0 && !empty($old_source)) {
             $database->execute(
                 "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (:image_id, :source, :user_id, :user_ip, now())",
-                ["image_id"=>$image->id, "source"=>$old_source, "user_id"=>$config->get_int('anon_id'), "user_ip"=>'127.0.0.1']
+                ["image_id" => $image->id, "source" => $old_source, "user_id" => $config->get_int('anon_id'), "user_ip" => '127.0.0.1']
             );
             $entries++;
         }
@@ -389,7 +389,7 @@ class SourceHistory extends Extension
             "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (:image_id, :source, :user_id, :user_ip, now())",
-            ["image_id"=>$image->id, "source"=>$new_source, "user_id"=>$user->id, "user_ip"=>get_real_ip()]
+            ["image_id" => $image->id, "source" => $new_source, "user_id" => $user->id, "user_ip" => get_real_ip()]
         );
         $entries++;
 
@@ -406,8 +406,8 @@ class SourceHistory extends Extension
                 https://dev.mysql.com/doc/refman/5.1/en/subquery-restrictions.html
                 https://stackoverflow.com/questions/45494/mysql-error-1093-cant-specify-target-table-for-update-in-from-clause
             */
-            $min_id = $database->get_one("SELECT MIN(id) FROM source_histories WHERE image_id = :image_id", ["image_id"=>$image->id]);
-            $database->execute("DELETE FROM source_histories WHERE id = :id", ["id"=>$min_id]);
+            $min_id = $database->get_one("SELECT MIN(id) FROM source_histories WHERE image_id = :image_id", ["image_id" => $image->id]);
+            $database->execute("DELETE FROM source_histories WHERE id = :id", ["id" => $min_id]);
         }
     }
 }

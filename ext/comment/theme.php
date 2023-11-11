@@ -194,7 +194,7 @@ class CommentListTheme extends Themelet
         $this->display_paginator($page, "comment/beta-search/{$user->name}", null, $page_number, $total_pages);
     }
 
-    protected function comment_to_html(Comment $comment, bool $trim=false): string
+    protected function comment_to_html(Comment $comment, bool $trim = false): string
     {
         global $config, $user;
 

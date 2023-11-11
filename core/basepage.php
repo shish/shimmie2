@@ -260,7 +260,7 @@ class BasePage
      */
     public function display(): void
     {
-        if ($this->mode!=PageMode::MANUAL) {
+        if ($this->mode != PageMode::MANUAL) {
             $this->send_headers();
         }
 
@@ -474,14 +474,14 @@ class BasePage
         $active_link = null;
         // To save on event calls, we check if one of the top-level links has already been marked as active
         foreach ($nav_links as $link) {
-            if ($link->active===true) {
+            if ($link->active === true) {
                 $active_link = $link;
                 break;
             }
         }
         $sub_links = null;
         // If one is, we just query for sub-menu options under that one tab
-        if ($active_link!==null) {
+        if ($active_link !== null) {
             $psnbe = send_event(new PageSubNavBuildingEvent($active_link->name));
             $sub_links = $psnbe->links;
         } else {
@@ -491,20 +491,20 @@ class BasePage
 
                 // Now we check for a current link so we can identify the sub-links to show
                 foreach ($psnbe->links as $sub_link) {
-                    if ($sub_link->active===true) {
+                    if ($sub_link->active === true) {
                         $sub_links = $psnbe->links;
                         break;
                     }
                 }
                 // If the active link has been detected, we break out
-                if ($sub_links!==null) {
+                if ($sub_links !== null) {
                     $link->active = true;
                     break;
                 }
             }
         }
 
-        $sub_links = $sub_links??[];
+        $sub_links = $sub_links ?? [];
         usort($nav_links, "Shimmie2\sort_nav_links");
         usort($sub_links, "Shimmie2\sort_nav_links");
 
@@ -628,7 +628,7 @@ class PageSubNavBuildingEvent extends Event
     public function __construct(string $parent)
     {
         parent::__construct();
-        $this->parent= $parent;
+        $this->parent = $parent;
     }
 
     public function add_nav_link(string $name, Link $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50)
@@ -653,7 +653,7 @@ class NavLink
         $this->link = $link;
         $this->description = $description;
         $this->order = $order;
-        if ($active==null) {
+        if ($active == null) {
             $query = ltrim(_get_query(), "/");
             if ($query === "") {
                 // This indicates the front page, so we check what's set as the front page
@@ -664,7 +664,7 @@ class NavLink
                 } else {
                     $this->active = self::is_active([$link->page], $front_page);
                 }
-            } elseif ($query===$link->page) {
+            } elseif ($query === $link->page) {
                 $this->active = true;
             } else {
                 $this->active = self::is_active([$link->page]);
@@ -679,18 +679,18 @@ class NavLink
         /**
          * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
          */
-        $url = $url??ltrim(_get_query(), "/");
+        $url = $url ?? ltrim(_get_query(), "/");
 
-        $re1='.*?';
-        $re2='((?:[a-z][a-z_]+))';
+        $re1 = '.*?';
+        $re2 = '((?:[a-z][a-z_]+))';
 
         if (preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
-            $url=$matches[1][0];
+            $url = $matches[1][0];
         }
 
         $count_pages_matched = count($pages_matched);
 
-        for ($i=0; $i < $count_pages_matched; $i++) {
+        for ($i = 0; $i < $count_pages_matched; $i++) {
             if ($url == $pages_matched[$i]) {
                 return true;
             }

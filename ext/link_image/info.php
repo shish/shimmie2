@@ -10,7 +10,7 @@ class LinkImageInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Link to Post";
-    public array $authors = ["Artanis"=>"artanis.00@gmail.com"];
+    public array $authors = ["Artanis" => "artanis.00@gmail.com"];
     public string $description = "Show various forms of link to each image, for copy & paste";
     public string $license = self::LICENSE_GPLV2;
     public ?string $documentation = "There is one option in Board Config: Text Link Format.

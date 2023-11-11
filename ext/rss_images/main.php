@@ -31,7 +31,7 @@ class RSSImages extends Extension
                 return;
             }
             try {
-                $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+                $images = Image::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
                 $this->do_rss($images, $search_terms, $page_number);
             } catch (SearchTermParseException $stpe) {
                 $this->theme->display_error(400, "Search parse error", $stpe->error);
@@ -67,12 +67,12 @@ class RSSImages extends Extension
         }
 
         if ($page_number > 1) {
-            $prev_url = make_link("rss/images/$search".($page_number-1));
+            $prev_url = make_link("rss/images/$search".($page_number - 1));
             $prev_link = "<atom:link rel=\"previous\" href=\"$prev_url\" />";
         } else {
             $prev_link = "";
         }
-        $next_url = make_link("rss/images/$search".($page_number+1));
+        $next_url = make_link("rss/images/$search".($page_number + 1));
         $next_link = "<atom:link rel=\"next\" href=\"$next_url\" />"; // no end...
 
         $version = VERSION;
@@ -131,7 +131,7 @@ class RSSImages extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="posts") {
+        if ($event->parent == "posts") {
             $event->add_nav_link("posts_rss", new Link('rss/images'), "Feed");
         }
     }

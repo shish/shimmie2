@@ -29,7 +29,7 @@ class SourceSetEvent extends Event
     public Image $image;
     public ?string $source;
 
-    public function __construct(Image $image, string $source=null)
+    public function __construct(Image $image, string $source = null)
     {
         parent::__construct();
         $this->image = $image;
@@ -194,7 +194,7 @@ class TagEdit extends Extension
             }
         }
         if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            $locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
+            $locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked'] == "on";
             send_event(new LockSetEvent($event->image, $locked));
         }
     }
@@ -246,7 +246,7 @@ class TagEdit extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="tags") {
+        if ($event->parent == "tags") {
             $event->add_nav_link("tags_help", new Link('ext_doc/tag_edit'), "Help");
         }
     }

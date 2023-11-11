@@ -16,12 +16,12 @@ define("SCORE_LOG_DEBUG", 10);
 define("SCORE_LOG_NOTSET", 0);
 
 const LOGGING_LEVEL_NAMES = [
-    SCORE_LOG_NOTSET=>"Not Set",
-    SCORE_LOG_DEBUG=>"Debug",
-    SCORE_LOG_INFO=>"Info",
-    SCORE_LOG_WARNING=>"Warning",
-    SCORE_LOG_ERROR=>"Error",
-    SCORE_LOG_CRITICAL=>"Critical",
+    SCORE_LOG_NOTSET => "Not Set",
+    SCORE_LOG_DEBUG => "Debug",
+    SCORE_LOG_INFO => "Info",
+    SCORE_LOG_WARNING => "Warning",
+    SCORE_LOG_ERROR => "Error",
+    SCORE_LOG_CRITICAL => "Critical",
 ];
 
 /**
@@ -31,7 +31,7 @@ const LOGGING_LEVEL_NAMES = [
  * When taking action, a log event should be stored by the server
  * Quite often, both of these happen at once, hence log_*() having $flash
  */
-function log_msg(string $section, int $priority, string $message, ?string $flash=null)
+function log_msg(string $section, int $priority, string $message, ?string $flash = null)
 {
     global $page;
     send_event(new LogEvent($section, $priority, $message));
@@ -47,23 +47,23 @@ function log_msg(string $section, int $priority, string $message, ?string $flash
 }
 
 // More shorthand ways of logging
-function log_debug(string $section, string $message, ?string $flash=null)
+function log_debug(string $section, string $message, ?string $flash = null)
 {
     log_msg($section, SCORE_LOG_DEBUG, $message, $flash);
 }
-function log_info(string $section, string $message, ?string $flash=null)
+function log_info(string $section, string $message, ?string $flash = null)
 {
     log_msg($section, SCORE_LOG_INFO, $message, $flash);
 }
-function log_warning(string $section, string $message, ?string $flash=null)
+function log_warning(string $section, string $message, ?string $flash = null)
 {
     log_msg($section, SCORE_LOG_WARNING, $message, $flash);
 }
-function log_error(string $section, string $message, ?string $flash=null)
+function log_error(string $section, string $message, ?string $flash = null)
 {
     log_msg($section, SCORE_LOG_ERROR, $message, $flash);
 }
-function log_critical(string $section, string $message, ?string $flash=null)
+function log_critical(string $section, string $message, ?string $flash = null)
 {
     log_msg($section, SCORE_LOG_CRITICAL, $message, $flash);
 }

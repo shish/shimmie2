@@ -29,18 +29,18 @@ class ETTheme extends Themelet
     protected function build_data_form($yaml): \MicroHTML\HTMLElement
     {
         return FORM(
-            ["action"=>"https://shimmie.shishnet.org/register.php", "method"=>"POST"],
-            INPUT(["type"=>"hidden", "name"=>"registration_api", "value"=>"2"]),
+            ["action" => "https://shimmie.shishnet.org/register.php", "method" => "POST"],
+            INPUT(["type" => "hidden", "name" => "registration_api", "value" => "2"]),
             P(
                 "Your stats are useful so that I know which combinations of ".
                 "web servers / databases / etc I need to support :)"
             ),
             P(TEXTAREA(
-                ["name"=>'data', "style"=>"width: 100%; height: 20em;"],
+                ["name" => 'data', "style" => "width: 100%; height: 20em;"],
                 $yaml
             )),
             P(INPUT(
-                ["type"=>'submit', "value"=>'Click to send to Shish', "style"=>"width: 100%; padding: 1em;"]
+                ["type" => 'submit', "value" => 'Click to send to Shish', "style" => "width: 100%; padding: 1em;"]
             )),
         );
     }

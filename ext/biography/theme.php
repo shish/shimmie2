@@ -17,7 +17,7 @@ class BiographyTheme extends Themelet
     {
         $html = SHM_SIMPLE_FORM(
             make_link("biography"),
-            TEXTAREA(["style"=>"width: 100%", "rows"=>"6", "name"=>"biography"], $bio),
+            TEXTAREA(["style" => "width: 100%", "rows" => "6", "name" => "biography"], $bio),
             SHM_SUBMIT("Save")
         );
 

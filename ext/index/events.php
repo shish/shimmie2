@@ -21,7 +21,7 @@ class SearchTermParseEvent extends Event
     public array $tag_conditions = [];
     public ?string $order = null;
 
-    public function __construct(int $id, string $term=null, array $context=[])
+    public function __construct(int $id, string $term = null, array $context = [])
     {
         parent::__construct();
 
@@ -75,7 +75,7 @@ class PostListBuildingEvent extends Event
         $this->search_terms = $search;
     }
 
-    public function add_control(string $html, int $position=50)
+    public function add_control(string $html, int $position = 50)
     {
         while (isset($this->parts[$position])) {
             $position++;

@@ -99,7 +99,7 @@ class VideoFileHandler extends DataHandlerExtension
                     $event->image->video = $video;
                     $event->image->video_codec = $video_codec;
                     $event->image->audio = $audio;
-                    if ($event->image->get_mime()==MimeType::MKV &&
+                    if ($event->image->get_mime() == MimeType::MKV &&
                         VideoContainers::is_video_codec_supported(VideoContainers::WEBM, $event->image->video_codec)) {
                         // WEBMs are MKVs with the VP9 or VP8 codec
                         // For browser-friendliness, we'll just change the mime type
@@ -107,7 +107,7 @@ class VideoFileHandler extends DataHandlerExtension
                     }
                 }
             }
-            if (array_key_exists("format", $data)&& is_array($data["format"])) {
+            if (array_key_exists("format", $data) && is_array($data["format"])) {
                 $format = $data["format"];
                 if (array_key_exists("duration", $format) && is_numeric($format["duration"])) {
                     $event->image->length = (int)floor(floatval($format["duration"]) * 1000);

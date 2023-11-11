@@ -69,7 +69,7 @@ class AliasEditor extends Extension
             if ($event->get_arg(0) == "add") {
                 if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     $user->ensure_authed();
-                    $input = validate_input(["c_oldtag"=>"string", "c_newtag"=>"string"]);
+                    $input = validate_input(["c_oldtag" => "string", "c_newtag" => "string"]);
                     try {
                         send_event(new AddAliasEvent($input['c_oldtag'], $input['c_newtag']));
                         $page->set_mode(PageMode::REDIRECT);
@@ -81,7 +81,7 @@ class AliasEditor extends Extension
             } elseif ($event->get_arg(0) == "remove") {
                 if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     $user->ensure_authed();
-                    $input = validate_input(["d_oldtag"=>"string"]);
+                    $input = validate_input(["d_oldtag" => "string"]);
                     send_event(new DeleteAliasEvent($input['d_oldtag']));
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("alias/list"));
@@ -126,7 +126,7 @@ class AliasEditor extends Extension
 
         $row = $database->get_row(
             "SELECT * FROM aliases WHERE lower(oldtag)=lower(:oldtag)",
-            ["oldtag"=>$event->oldtag]
+            ["oldtag" => $event->oldtag]
         );
         if ($row) {
             throw new AddAliasException("{$row['oldtag']} is already an alias for {$row['newtag']}");
@@ -156,7 +156,7 @@ class AliasEditor extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="tags") {
+        if ($event->parent == "tags") {
             $event->add_nav_link("aliases", new Link('alias/list'), "Aliases", NavLink::is_active(["alias"]));
         }
     }

@@ -47,7 +47,7 @@ class PoolsTheme extends Themelet
         return SHM_SIMPLE_FORM(
             "pool/add_post",
             SHM_SELECT("pool_id", $pools),
-            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image->id]),
+            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image->id]),
             SHM_SUBMIT("Add Post to Pool")
         );
     }
@@ -64,7 +64,7 @@ class PoolsTheme extends Themelet
             $user_link = SHM_A("user/" . url_escape($pool->user_name), $pool->user_name);
 
             $pool_rows[] = TR(
-                TD(["class"=>"left"], $pool_link),
+                TD(["class" => "left"], $pool_link),
                 TD($user_link),
                 TD($pool->posts),
                 TD($pool->public ? "Yes" : "No")
@@ -72,14 +72,14 @@ class PoolsTheme extends Themelet
         }
 
         $table = TABLE(
-            ["id"=>"poolsList", "class"=>"zebra"],
+            ["id" => "poolsList", "class" => "zebra"],
             THEAD(TR(TH("Name"), TH("Creator"), TH("Posts"), TH("Public"))),
             TBODY(...$pool_rows)
         );
 
         $order_arr = ['created' => 'Recently created', 'updated' => 'Last updated', 'name' => 'Name', 'count' => 'Post Count'];
         $order_selected = $page->get_cookie('ui-order-pool');
-        $order_sel = SHM_SELECT("order_pool", $order_arr, selected_options: [$order_selected], attrs: ["id"=>"order_pool"]);
+        $order_sel = SHM_SELECT("order_pool", $order_arr, selected_options: [$order_selected], attrs: ["id" => "order_pool"]);
 
         $this->display_top(null, "Pools");
         $page->add_block(new Block("Order By", $order_sel, "left", 15));
@@ -98,10 +98,10 @@ class PoolsTheme extends Themelet
     public function new_pool_composer(Page $page)
     {
         $form = SHM_SIMPLE_FORM("pool/create", TABLE(
-            TR(TD("Title:"), TD(INPUT(["type"=>"text", "name"=>"title"]))),
-            TR(TD("Public?:"), TD(INPUT(["type"=>"checkbox", "name"=>"public", "value"=>"Y", "checked"=>"checked"]))),
-            TR(TD("Description:"), TD(TEXTAREA(["name"=>"description"]))),
-            TR(TD(["colspan"=>"2"], SHM_SUBMIT("Create")))
+            TR(TD("Title:"), TD(INPUT(["type" => "text", "name" => "title"]))),
+            TR(TD("Public?:"), TD(INPUT(["type" => "checkbox", "name" => "public", "value" => "Y", "checked" => "checked"]))),
+            TR(TD("Description:"), TD(TEXTAREA(["name" => "description"]))),
+            TR(TD(["colspan" => "2"], SHM_SUBMIT("Create")))
         ));
 
         $this->display_top(null, "Create Pool");
@@ -171,8 +171,8 @@ class PoolsTheme extends Themelet
         global $user;
 
         // This could become a SHM_INPUT function that also accepts 'type' and other attributes.
-        $_hidden=function (string $name, $value) {
-            return INPUT(["type"=>"hidden", "name"=>$name, "value"=>$value]);
+        $_hidden = function (string $name, $value) {
+            return INPUT(["type" => "hidden", "name" => $name, "value" => $value]);
         };
 
         $_input_id = $_hidden("pool_id", $pool->id);
@@ -180,38 +180,38 @@ class PoolsTheme extends Themelet
         $editor = emptyHTML(
             SHM_SIMPLE_FORM(
                 "pool/import",
-                INPUT(["type"=>"text", "name"=>"pool_tag", "id"=>"edit_pool_tag", "placeholder"=>"Please enter a tag"]),
+                INPUT(["type" => "text", "name" => "pool_tag", "id" => "edit_pool_tag", "placeholder" => "Please enter a tag"]),
                 $_input_id,
-                SHM_SUBMIT("Import", ["name"=>"edit", "id"=>"edit_pool_import_btn"])
+                SHM_SUBMIT("Import", ["name" => "edit", "id" => "edit_pool_import_btn"])
             ),
             SHM_SIMPLE_FORM(
                 "pool/edit",
                 $_hidden("edit_pool", "yes"),
                 $_input_id,
-                SHM_SUBMIT("Edit Pool", ["name"=>"edit", "id"=>"edit_pool_btn"]),
+                SHM_SUBMIT("Edit Pool", ["name" => "edit", "id" => "edit_pool_btn"]),
             ),
             SHM_SIMPLE_FORM(
                 "pool/order",
                 $_hidden("order_view", "yes"),
                 $_input_id,
-                SHM_SUBMIT("Order Pool", ["name"=>"edit", "id"=>"edit_pool_order_btn"])
+                SHM_SUBMIT("Order Pool", ["name" => "edit", "id" => "edit_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
                 "pool/reverse",
                 $_hidden("reverse_view", "yes"),
                 $_input_id,
-                SHM_SUBMIT("Reverse Order", ["name"=>"edit", "id"=>"reverse_pool_order_btn"])
+                SHM_SUBMIT("Reverse Order", ["name" => "edit", "id" => "reverse_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
                 "post/list/pool_id=" . $pool->id . "/1",
-                SHM_SUBMIT("Post/List View", ["name"=>"edit", "id"=>$pool->id])
+                SHM_SUBMIT("Post/List View", ["name" => "edit", "id" => $pool->id])
             )
         );
 
         if ($user->id == $pool->user_id || $user->can(Permissions::POOLS_ADMIN)) {
             $editor->appendChild(
                 SCRIPT(
-                    ["type"=>"text/javascript"],
+                    ["type" => "text/javascript"],
                     rawHTML("<!--
                     function confirm_action() {
                         return confirm('Are you sure that you want to delete this pool?');
@@ -221,7 +221,7 @@ class PoolsTheme extends Themelet
                 SHM_SIMPLE_FORM(
                     "pool/nuke",
                     $_input_id,
-                    SHM_SUBMIT("Delete Pool", ["name"=>"delete", "id"=>"delete_pool_btn", "onclick"=>"return confirm_action()"])
+                    SHM_SUBMIT("Delete Pool", ["name" => "delete", "id" => "delete_pool_btn", "onclick" => "return confirm_action()"])
                 )
             );
         }
@@ -229,15 +229,15 @@ class PoolsTheme extends Themelet
         if ($check_all) {
             $editor->appendChild(
                 SCRIPT(
-                    ["type"=>"text/javascript"],
+                    ["type" => "text/javascript"],
                     rawHTML("<!--
                     function setAll(value) {
                         $('[name=\"check[]\"]').attr('checked', value);
                     }
                     //-->")
                 ),
-                INPUT(["type"=>"button", "name"=>"CheckAll", "value"=>"Check All", "onclick"=>"setAll(true)"]),
-                INPUT(["type"=>"button", "name"=>"UnCheckAll", "value"=>"Uncheck All", "onclick"=>"setAll(false)"])
+                INPUT(["type" => "button", "name" => "CheckAll", "value" => "Check All", "onclick" => "setAll(true)"]),
+                INPUT(["type" => "button", "name" => "UnCheckAll", "value" => "Uncheck All", "onclick" => "setAll(false)"])
             );
         }
 
@@ -253,7 +253,7 @@ class PoolsTheme extends Themelet
 
         $import = emptyHTML(
             SCRIPT(
-                ["type"=>"text/javascript"],
+                ["type" => "text/javascript"],
                 rawHTML("
                 function confirm_action() {
                     return confirm('Are you sure you want to add selected posts to this pool?');
@@ -264,14 +264,14 @@ class PoolsTheme extends Themelet
         $form = SHM_FORM("pool/add_posts", name: "checks");
         foreach ($images as $image) {
             $form->appendChild(
-                SPAN(["class"=>"thumb"], $this->build_thumb_html($image), BR(), INPUT(["type"=>"checkbox", "name"=>"check[]", "value"=>$image->id])),
+                SPAN(["class" => "thumb"], $this->build_thumb_html($image), BR(), INPUT(["type" => "checkbox", "name" => "check[]", "value" => $image->id])),
             );
         }
 
         $form->appendChild(
             BR(),
-            SHM_SUBMIT("Add Selected", ["name"=>"edit", "id"=>"edit_pool_add_btn", "onclick"=>"return confirm_action()"]),
-            INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id])
+            SHM_SUBMIT("Add Selected", ["name" => "edit", "id" => "edit_pool_add_btn", "onclick" => "return confirm_action()"]),
+            INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id])
         );
 
         $import->appendChild($form);
@@ -289,18 +289,18 @@ class PoolsTheme extends Themelet
         $this->display_top($pool, "Sorting Pool");
 
         $form = SHM_FORM("pool/order", name: "checks");
-        foreach ($images as $i=>$image) {
+        foreach ($images as $i => $image) {
             $form->appendChild(SPAN(
-                ["class"=>"thumb"],
+                ["class" => "thumb"],
                 $this->build_thumb_html($image),
-                INPUT(["type"=>"number", "name"=>"imgs[$i][]", "value"=>$image->image_order, "style"=>"max-width: 50px;"]),
-                INPUT(["type"=>"hidden", "name"=>"imgs[$i][]", "value"=>$image->id])
+                INPUT(["type" => "number", "name" => "imgs[$i][]", "value" => $image->image_order, "style" => "max-width: 50px;"]),
+                INPUT(["type" => "hidden", "name" => "imgs[$i][]", "value" => $image->id])
             ));
         }
 
         $form->appendChild(
-            INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id]),
-            SHM_SUBMIT("Order", ["name"=>"edit", "id"=>"edit_pool_order"])
+            INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id]),
+            SHM_SUBMIT("Order", ["name" => "edit", "id" => "edit_pool_order"])
         );
 
         $page->add_block(new Block("Sorting Posts", $form, position: 30));
@@ -314,11 +314,11 @@ class PoolsTheme extends Themelet
      */
     public function edit_pool(Page $page, Pool $pool, array $images)
     {
-        $_input_id = INPUT(["type"=>"hidden", "name"=>"pool_id", "value"=>$pool->id]);
+        $_input_id = INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id]);
 
         $desc_form = SHM_SIMPLE_FORM(
             "pool/edit/description",
-            TEXTAREA(["name"=>"description"], $pool->description),
+            TEXTAREA(["name" => "description"], $pool->description),
             BR(),
             $_input_id,
             SHM_SUBMIT("Change Description")
@@ -327,16 +327,16 @@ class PoolsTheme extends Themelet
         $images_form = SHM_FORM("pool/remove_posts", name: "checks");
         foreach ($images as $image) {
             $images_form->appendChild(SPAN(
-                ["class"=>"thumb"],
+                ["class" => "thumb"],
                 $this->build_thumb_html($image),
-                INPUT(["type"=>"checkbox", "name"=>"check[]", "value"=>$image->id])
+                INPUT(["type" => "checkbox", "name" => "check[]", "value" => $image->id])
             ));
         }
 
         $images_form->appendChild(
             BR(),
             $_input_id,
-            SHM_SUBMIT("Remove Selected", ["name"=>"edit", "id"=>"edit_pool_remove_sel"])
+            SHM_SUBMIT("Remove Selected", ["name" => "edit", "id" => "edit_pool_remove_sel"])
         );
 
         $pool->description = ""; //This is a rough fix to avoid showing the description twice.
@@ -353,7 +353,7 @@ class PoolsTheme extends Themelet
         global $page;
 
         $table = TABLE(
-            ["id"=>"poolsList", "class"=>"zebra"],
+            ["id" => "poolsList", "class" => "zebra"],
             THEAD(TR(TH("Pool"), TH("Post Count"), TH("Changes"), TH("Updater"), TH("Date"), TH("Action")))
         );
 
@@ -380,7 +380,7 @@ class PoolsTheme extends Themelet
             }
 
             $body[] = TR(
-                TD(["class"=>"left"], $pool_link),
+                TD(["class" => "left"], $pool_link),
                 TD($history["count"]),
                 TD($image_links),
                 TD($user_link),
@@ -406,11 +406,11 @@ class PoolsTheme extends Themelet
     {
         return INPUT(
             [
-                "type"=>"text",
-                "name"=>"bulk_pool_new",
-                "placeholder"=>"New Pool",
-                "required"=>"",
-                "value"=>implode(" ", $search_terms)
+                "type" => "text",
+                "name" => "bulk_pool_new",
+                "placeholder" => "New Pool",
+                "required" => "",
+                "value" => implode(" ", $search_terms)
             ]
         );
     }

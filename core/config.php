@@ -16,7 +16,7 @@ interface Config
      * so that the next time a page is loaded it will use the new
      * configuration.
      */
-    public function save(string $name=null): void;
+    public function save(string $name = null): void;
 
     //@{ /*--------------------------------- SET ------------------------------------------------------*/
     /**
@@ -101,27 +101,27 @@ interface Config
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
      */
-    public function get_int(string $name, ?int $default=null): ?int;
+    public function get_int(string $name, ?int $default = null): ?int;
 
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
      */
-    public function get_float(string $name, ?float $default=null): ?float;
+    public function get_float(string $name, ?float $default = null): ?float;
 
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
      */
-    public function get_string(string $name, ?string $default=null): ?string;
+    public function get_string(string $name, ?string $default = null): ?string;
 
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
      */
-    public function get_bool(string $name, ?bool $default=null): ?bool;
+    public function get_bool(string $name, ?bool $default = null): ?bool;
 
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
      */
-    public function get_array(string $name, ?array $default=[]): ?array;
+    public function get_array(string $name, ?array $default = []): ?array;
     //@} /*--------------------------------------------------------------------------------------------*/
 }
 
@@ -162,7 +162,7 @@ abstract class BaseConfig implements Config
 
     public function set_array(string $name, ?array $value): void
     {
-        if ($value!=null) {
+        if ($value != null) {
             $this->values[$name] = implode(",", $value);
         } else {
             $this->values[$name] = null;
@@ -205,17 +205,17 @@ abstract class BaseConfig implements Config
         }
     }
 
-    public function get_int(string $name, ?int $default=null): ?int
+    public function get_int(string $name, ?int $default = null): ?int
     {
         return (int)($this->get($name, $default));
     }
 
-    public function get_float(string $name, ?float $default=null): ?float
+    public function get_float(string $name, ?float $default = null): ?float
     {
         return (float)($this->get($name, $default));
     }
 
-    public function get_string(string $name, ?string $default=null): ?string
+    public function get_string(string $name, ?string $default = null): ?string
     {
         $val = $this->get($name, $default);
         if (!is_string($val) && !is_null($val)) {
@@ -224,17 +224,17 @@ abstract class BaseConfig implements Config
         return $val;
     }
 
-    public function get_bool(string $name, ?bool $default=null): ?bool
+    public function get_bool(string $name, ?bool $default = null): ?bool
     {
         return bool_escape($this->get($name, $default));
     }
 
-    public function get_array(string $name, ?array $default=[]): ?array
+    public function get_array(string $name, ?array $default = []): ?array
     {
         return explode(",", $this->get($name, ""));
     }
 
-    private function get(string $name, $default=null)
+    private function get(string $name, $default = null)
     {
         if (isset($this->values[$name])) {
             return $this->values[$name];
@@ -289,7 +289,7 @@ class DatabaseConfig extends BaseConfig
             $query = "SELECT name, value FROM {$this->table_name}";
             $args = [];
 
-            if (!empty($sub_column)&&!empty($sub_value)) {
+            if (!empty($sub_column) && !empty($sub_value)) {
                 $query .= " WHERE $sub_column = :sub_value";
                 $args["sub_value"] = $sub_value;
             }
@@ -301,7 +301,7 @@ class DatabaseConfig extends BaseConfig
         }
     }
 
-    public function save(string $name=null): void
+    public function save(string $name = null): void
     {
         global $cache;
 
@@ -312,10 +312,10 @@ class DatabaseConfig extends BaseConfig
             }
         } else {
             $query = "DELETE FROM {$this->table_name} WHERE name = :name";
-            $args = ["name"=>$name];
+            $args = ["name" => $name];
             $cols = ["name","value"];
             $params = [":name",":value"];
-            if (!empty($this->sub_column)&&!empty($this->sub_value)) {
+            if (!empty($this->sub_column) && !empty($this->sub_value)) {
                 $query .= " AND $this->sub_column = :sub_value";
                 $args["sub_value"] = $this->sub_value;
                 $cols[] = $this->sub_column;
@@ -324,7 +324,7 @@ class DatabaseConfig extends BaseConfig
 
             $this->database->execute($query, $args);
 
-            $args["value"] =$this->values[$name];
+            $args["value"] = $this->values[$name];
             $this->database->execute(
                 "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
                 $args

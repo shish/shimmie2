@@ -37,7 +37,7 @@ class BulkImportExport extends DataHandlerExtension
                     $database->begin_transaction();
                     try {
                         $image = Image::by_hash($item->hash);
-                        if ($image!=null) {
+                        if ($image != null) {
                             $skipped++;
                             log_info(BulkImportExportInfo::KEY, "Post $item->hash already present, skipping");
                             $database->commit();
@@ -54,17 +54,17 @@ class BulkImportExport extends DataHandlerExtension
 
                         $id = add_image($tmpfile, $item->filename, Tag::implode($item->tags))->image_id;
 
-                        if ($id==-1) {
+                        if ($id == -1) {
                             throw new SCoreException("Unable to import file $item->hash");
                         }
 
                         $image = Image::by_id($id);
 
-                        if ($image==null) {
+                        if ($image == null) {
                             throw new SCoreException("Unable to import file $item->hash");
                         }
 
-                        if ($item->source!=null) {
+                        if ($item->source != null) {
                             $image->set_source($item->source);
                         }
                         send_event(new BulkImportEvent($image, $item));

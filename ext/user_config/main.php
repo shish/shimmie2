@@ -93,7 +93,7 @@ class UserConfig extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="user" && !$user->is_anonymous()) {
+        if ($event->parent === "user" && !$user->is_anonymous()) {
             $event->add_nav_link("user_config", new Link('user_config'), "User Options", false, 40);
         }
     }
@@ -154,7 +154,7 @@ class UserConfig extends Extension
                     ]);
                     $duser = User::by_id($input['id']);
 
-                    if ($user->id!=$duser->id && !$user->can(Permissions::CHANGE_OTHER_USER_SETTING)) {
+                    if ($user->id != $duser->id && !$user->can(Permissions::CHANGE_OTHER_USER_SETTING)) {
                         $this->theme->display_permission_denied();
                         return;
                     }

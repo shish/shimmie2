@@ -48,9 +48,9 @@ class TranscodeVideo extends Extension
     {
         global $user;
 
-        if ($event->image->video===true && $user->can(Permissions::EDIT_FILES)) {
+        if ($event->image->video === true && $user->can(Permissions::EDIT_FILES)) {
             $options = self::get_output_options($event->image->get_mime(), $event->image->video_codec);
-            if (!empty($options)&&sizeof($options)>1) {
+            if (!empty($options) && sizeof($options) > 1) {
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
             }
         }
@@ -65,37 +65,37 @@ class TranscodeVideo extends Extension
         $sb->end_table();
     }
 
-/*
-    public function onDataUpload(DataUploadEvent $event)
-    {
-        global $config;
+    /*
+        public function onDataUpload(DataUploadEvent $event)
+        {
+            global $config;
 
-        if ($config->get_bool(TranscodeVideoConfig::UPLOAD) == true) {
-            $ext = strtolower($event->type);
+            if ($config->get_bool(TranscodeVideoConfig::UPLOAD) == true) {
+                $ext = strtolower($event->type);
 
-            $ext = Media::normalize_format($ext);
+                $ext = Media::normalize_format($ext);
 
-            if ($event->type=="gif"&&Media::is_animated_gif($event->tmpname)) {
-                return;
-            }
-
-            if (in_array($ext, array_values(self::INPUT_FORMATS))) {
-                $target_format = $config->get_string(TranscodeVideoConfig::UPLOAD_PREFIX.$ext);
-                if (empty($target_format)) {
+                if ($event->type=="gif"&&Media::is_animated_gif($event->tmpname)) {
                     return;
                 }
-                try {
-                    $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-                    $event->set_tmpname($new_image, Media::determine_ext($target_format));
-                } catch (Exception $e) {
-                    log_error("transcode_video", "Error while performing upload transcode: ".$e->getMessage());
-                    // We don't want to interfere with the upload process,
-                    // so if something goes wrong the untranscoded image jsut continues
+
+                if (in_array($ext, array_values(self::INPUT_FORMATS))) {
+                    $target_format = $config->get_string(TranscodeVideoConfig::UPLOAD_PREFIX.$ext);
+                    if (empty($target_format)) {
+                        return;
+                    }
+                    try {
+                        $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
+                        $event->set_tmpname($new_image, Media::determine_ext($target_format));
+                    } catch (Exception $e) {
+                        log_error("transcode_video", "Error while performing upload transcode: ".$e->getMessage());
+                        // We don't want to interfere with the upload process,
+                        // so if something goes wrong the untranscoded image jsut continues
+                    }
                 }
             }
         }
-    }
-*/
+    */
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -162,7 +162,7 @@ class TranscodeVideo extends Extension
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
                             $database->commit();
-                            if ($output_image!=$image) {
+                            if ($output_image != $image) {
                                 $total++;
                             }
                         } catch (\Exception $e) {
@@ -186,10 +186,10 @@ class TranscodeVideo extends Extension
 
 
         foreach (VideoContainers::ALL as $container) {
-            if ($starting_container==$container) {
+            if ($starting_container == $container) {
                 continue;
             }
-            if (!empty($starting_codec)&&
+            if (!empty($starting_codec) &&
                 !VideoContainers::is_video_codec_supported($container, $starting_codec)) {
                 continue;
             }
@@ -201,11 +201,11 @@ class TranscodeVideo extends Extension
 
     private function transcode_and_replace_video(Image $image, string $target_mime): Image
     {
-        if ($image->get_mime()==$target_mime) {
+        if ($image->get_mime() == $target_mime) {
             return $image;
         }
 
-        if ($image->video==null||($image->video===true && empty($image->video_codec))) {
+        if ($image->video == null || ($image->video === true && empty($image->video_codec))) {
             // If image predates the media system, or the video codec support, run a media check
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();

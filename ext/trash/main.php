@@ -49,7 +49,7 @@ class Trash extends Extension
     {
         global $user;
 
-        if ($image->trash===true && !$user->can(Permissions::VIEW_TRASH)) {
+        if ($image->trash === true && !$user->can(Permissions::VIEW_TRASH)) {
             return false;
         }
         return true;
@@ -77,7 +77,7 @@ class Trash extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {
-        if ($event->force!==true && $event->image->trash!==true) {
+        if ($event->force !== true && $event->image->trash !== true) {
             self::set_trash($event->image->id, true);
             $event->stop_processing = true;
         }
@@ -86,7 +86,7 @@ class Trash extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent=="posts") {
+        if ($event->parent == "posts") {
             if ($user->can(Permissions::VIEW_TRASH)) {
                 $event->add_nav_link("posts_trash", new Link('/post/list/in%3Atrash/1'), "Trash", null, 60);
             }
@@ -109,7 +109,7 @@ class Trash extends Extension
         $matches = [];
 
         if (is_null($event->term) && $this->no_trash_query($event->context)) {
-            $event->add_querylet(new Querylet("trash != :true", ["true"=>true]));
+            $event->add_querylet(new Querylet("trash != :true", ["true" => true]));
         }
 
         if (is_null($event->term)) {
@@ -117,7 +117,7 @@ class Trash extends Extension
         }
         if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
             if ($user->can(Permissions::VIEW_TRASH)) {
-                $event->add_querylet(new Querylet("trash = :true", ["true"=>true]));
+                $event->add_querylet(new Querylet("trash = :true", ["true" => true]));
             }
         }
     }
@@ -125,7 +125,7 @@ class Trash extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         global $user;
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             if ($user->can(Permissions::VIEW_TRASH)) {
                 $block = new Block();
                 $block->header = "Trash";
@@ -151,13 +151,13 @@ class Trash extends Extension
 
         $database->execute(
             "UPDATE images SET trash = :trash WHERE id = :id",
-            ["trash"=>$trash,"id"=>$image_id]
+            ["trash" => $trash,"id" => $image_id]
         );
     }
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($event->image->trash===true && $user->can(Permissions::VIEW_TRASH)) {
+        if ($event->image->trash === true && $user->can(Permissions::VIEW_TRASH)) {
             $event->add_part($this->theme->get_image_admin_html($event->image->id));
         }
     }
@@ -166,7 +166,7 @@ class Trash extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::VIEW_TRASH)&&in_array("in:trash", $event->search_terms)) {
+        if ($user->can(Permissions::VIEW_TRASH) && in_array("in:trash", $event->search_terms)) {
             $event->add_action("bulk_trash_restore", "(U)ndelete", "u");
         }
     }

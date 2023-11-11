@@ -24,7 +24,7 @@ class UserNameColumn extends TextColumn
 {
     public function display(array $row): HTMLElement
     {
-        return A(["href"=>make_link("user/{$row[$this->name]}")], $row[$this->name]);
+        return A(["href" => make_link("user/{$row[$this->name]}")], $row[$this->name]);
     }
 }
 
@@ -38,7 +38,7 @@ class UserActionColumn extends ActionColumn
 
     public function display(array $row): HTMLElement
     {
-        return A(["href"=>search_link(["user={$row['name']}"])], "Posts");
+        return A(["href" => search_link(["user={$row['name']}"])], "Posts");
     }
 }
 
@@ -368,17 +368,17 @@ class UserPage extends Extension
             $sb->add_choice_option(
                 "avatar_gravatar_type",
                 [
-                    'Default'=>'default',
-                    'Wavatar'=>'wavatar',
-                    'Monster ID'=>'monsterid',
-                    'Identicon'=>'identicon'
+                    'Default' => 'default',
+                    'Wavatar' => 'wavatar',
+                    'Monster ID' => 'monsterid',
+                    'Identicon' => 'identicon'
                 ],
                 "Type",
                 true
             );
             $sb->add_choice_option(
                 "avatar_gravatar_rating",
-                ['G'=>'g', 'PG'=>'pg', 'R'=>'r', 'X'=>'x'],
+                ['G' => 'g', 'PG' => 'pg', 'R' => 'r', 'X' => 'x'],
                 "Rating",
                 true
             );
@@ -389,13 +389,13 @@ class UserPage extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::EDIT_USER_PASSWORD)) {
                 $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
             }
         }
 
-        if ($event->parent==="user" && !$user->is_anonymous()) {
+        if ($event->parent === "user" && !$user->is_anonymous()) {
             $event->add_nav_link("logout", new Link('user_admin/logout'), "Log Out", false, 90);
         }
     }
@@ -465,7 +465,7 @@ class UserPage extends Extension
     public static function has_user_query(array $context): bool
     {
         foreach ($context as $term) {
-            if (preg_match(self::USER_SEARCH_REGEX, $term)||
+            if (preg_match(self::USER_SEARCH_REGEX, $term) ||
                 preg_match(self::USER_ID_SEARCH_REGEX, $term)) {
                 return true;
             }
@@ -501,7 +501,7 @@ class UserPage extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Users";
             $block->body = (string)$this->theme->get_help_html();
@@ -616,7 +616,7 @@ class UserPage extends Extension
 
         $database->execute(
             "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
-            ["username"=>$event->username, "hash"=>'', "email"=>$email, "class"=>$class]
+            ["username" => $event->username, "hash" => '', "email" => $email, "class" => $class]
         );
         $uid = $database->get_last_insert_id('users_id_seq');
         $new_user = User::by_name($event->username);
@@ -643,13 +643,13 @@ class UserPage extends Extension
         $page->add_cookie(
             "user",
             $name,
-            time()+60*60*24*365,
+            time() + 60 * 60 * 24 * 365,
             '/'
         );
         $page->add_cookie(
             "session",
             $this->get_session_id($name),
-            time()+60*60*24*$config->get_int('login_memory'),
+            time() + 60 * 60 * 24 * $config->get_int('login_memory'),
             '/'
         );
     }
@@ -754,7 +754,7 @@ class UserPage extends Extension
 				FROM images
 				WHERE owner_id=:id
 				GROUP BY owner_ip
-				ORDER BY max(posted) DESC", ["id"=>$duser->id]);
+				ORDER BY max(posted) DESC", ["id" => $duser->id]);
     }
 
     private function count_comment_ips(User $duser): array
@@ -767,7 +767,7 @@ class UserPage extends Extension
 				FROM comments
 				WHERE owner_id=:id
 				GROUP BY owner_ip
-				ORDER BY max(posted) DESC", ["id"=>$duser->id]);
+				ORDER BY max(posted) DESC", ["id" => $duser->id]);
     }
 
     private function count_log_ips(User $duser): array
@@ -783,10 +783,10 @@ class UserPage extends Extension
 				FROM score_log
 				WHERE username=:username
 				GROUP BY address
-				ORDER BY MAX(date_sent) DESC", ["username"=>$duser->name]);
+				ORDER BY MAX(date_sent) DESC", ["username" => $duser->name]);
     }
 
-    private function delete_user(Page $page, bool $with_images=false, bool $with_comments=false): void
+    private function delete_user(Page $page, bool $with_images = false, bool $with_comments = false): void
     {
         global $user, $config, $database;
 

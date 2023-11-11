@@ -34,7 +34,7 @@ abstract class DBEngine
 
     abstract public function get_version(PDO $db): string;
 
-    abstract public function notify(PDO $db, string $channel, ?string $data=null): void;
+    abstract public function notify(PDO $db, string $channel, ?string $data = null): void;
 }
 
 class MySQL extends DBEngine
@@ -66,7 +66,7 @@ class MySQL extends DBEngine
         // $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
     }
 
-    public function notify(PDO $db, string $channel, ?string $data=null): void
+    public function notify(PDO $db, string $channel, ?string $data = null): void
     {
     }
 
@@ -113,7 +113,7 @@ class PostgreSQL extends DBEngine
         $db->exec("SET statement_timeout TO ".$time.";");
     }
 
-    public function notify(PDO $db, string $channel, ?string $data=null): void
+    public function notify(PDO $db, string $channel, ?string $data = null): void
     {
         if ($data) {
             $db->exec("NOTIFY $channel, '$data';");
@@ -141,7 +141,7 @@ function _floor($a): float
 {
     return floor($a);
 }
-function _log($a, $b=null): float
+function _log($a, $b = null): float
 {
     if (is_null($b)) {
         return log($a);
@@ -225,7 +225,7 @@ class SQLite extends DBEngine
         // There doesn't seem to be such a thing for SQLite, so it does nothing
     }
 
-    public function notify(PDO $db, string $channel, ?string $data=null): void
+    public function notify(PDO $db, string $channel, ?string $data = null): void
     {
     }
 

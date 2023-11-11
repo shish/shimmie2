@@ -22,13 +22,13 @@ use function MicroHTML\TR;
 use function MicroHTML\TH;
 use function MicroHTML\TD;
 
-function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit="", string $name=""): HTMLElement
+function SHM_FORM(string $target, string $method = "POST", bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): HTMLElement
 {
     global $user;
 
     $attrs = [
-        "action"=>make_link($target),
-        "method"=>$method
+        "action" => make_link($target),
+        "method" => $method
     ];
 
     if ($form_id) {
@@ -45,7 +45,7 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     }
     return FORM(
         $attrs,
-        INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]),
+        INPUT(["type" => "hidden", "name" => "q", "value" => $target]),
         $method == "GET" ? "" : $user->get_auth_microhtml()
     );
 }
@@ -57,14 +57,14 @@ function SHM_SIMPLE_FORM($target, ...$children): HTMLElement
     return $form;
 }
 
-function SHM_SUBMIT(string $text, array $args=[]): HTMLElement
+function SHM_SUBMIT(string $text, array $args = []): HTMLElement
 {
     $args["type"] = "submit";
     $args["value"] = $text;
     return INPUT($args);
 }
 
-function SHM_A(string $href, string|HTMLElement $text, string $id="", string $class="", array $args=[]): HTMLElement
+function SHM_A(string $href, string|HTMLElement $text, string $id = "", string $class = "", array $args = []): HTMLElement
 {
     $args["href"] = make_link($href);
 
@@ -81,7 +81,7 @@ function SHM_A(string $href, string|HTMLElement $text, string $id="", string $cl
 function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement
 {
     return DIV(
-        ["class"=>"command_example"],
+        ["class" => "command_example"],
         PRE($ex),
         P($desc)
     );
@@ -90,15 +90,15 @@ function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement
 function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot): HTMLElement
 {
     if (is_string($foot)) {
-        $foot = TFOOT(TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>$foot]))));
+        $foot = TFOOT(TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => $foot]))));
     }
     return SHM_SIMPLE_FORM(
         $target,
         P(
-            INPUT(["type"=>'hidden', "name"=>'id', "value"=>$duser->id]),
+            INPUT(["type" => 'hidden', "name" => 'id', "value" => $duser->id]),
             TABLE(
-                ["class"=>"form"],
-                THEAD(TR(TH(["colspan"=>"2"], $title))),
+                ["class" => "form"],
+                THEAD(TR(TH(["colspan" => "2"], $title))),
                 $body,
                 $foot
             )
@@ -117,7 +117,7 @@ function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
  * @param bool $empty_option Whether the first option should be an empty one.
  * @param array $attrs Additional attributes dict for <select>. Example: ["id"=>"some_id", "class"=>"some_class"].
  */
-function SHM_SELECT(string $name, array $options, array $selected_options=[], bool $required=false, bool $multiple=false, bool $empty_option=false, array $attrs=[]): HTMLElement
+function SHM_SELECT(string $name, array $options, array $selected_options = [], bool $required = false, bool $multiple = false, bool $empty_option = false, array $attrs = []): HTMLElement
 {
     if ($required) {
         $attrs["required"] = "";
@@ -143,13 +143,13 @@ function SHM_SELECT(string $name, array $options, array $selected_options=[], bo
     return SELECT($attrs, ...$_options);
 }
 
-function SHM_OPTION(string $value, string $text, bool $selected=false): HTMLElement
+function SHM_OPTION(string $value, string $text, bool $selected = false): HTMLElement
 {
     if ($selected) {
-        return OPTION(["value"=>$value, "selected"=>""], $text);
+        return OPTION(["value" => $value, "selected" => ""], $text);
     }
 
-    return OPTION(["value"=>$value], $text);
+    return OPTION(["value" => $value], $text);
 }
 
 function SHM_POST_INFO(
@@ -159,11 +159,11 @@ function SHM_POST_INFO(
     HTMLElement|string $edit = "",
 ): HTMLElement {
     return TR(
-        TH(["width"=>"50px"], $title),
+        TH(["width" => "50px"], $title),
         $can_edit ?
             emptyHTML(
-                TD(["class"=>"view"], $view),
-                TD(["class"=>"edit"], $edit),
+                TD(["class" => "view"], $view),
+                TD(["class" => "edit"], $edit),
             ) :
             TD($view)
     );

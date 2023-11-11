@@ -22,7 +22,7 @@ class ET extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::VIEW_SYSINTO)) {
                 $event->add_nav_link("system_info", new Link('system_info'), "System Info", null, 10);
             }
@@ -105,9 +105,9 @@ class ET extends Extension
         if (file_exists(".git")) {
             try {
                 $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
-                $commitBranch= trim(exec('git rev-parse --abbrev-ref HEAD'));
-                $commitOrigin= trim(exec('git config --get remote.origin.url'));
-                $commitOrigin= preg_replace("#//.*@#", "//xxx@", $commitOrigin);
+                $commitBranch = trim(exec('git rev-parse --abbrev-ref HEAD'));
+                $commitOrigin = trim(exec('git config --get remote.origin.url'));
+                $commitOrigin = preg_replace("#//.*@#", "//xxx@", $commitOrigin);
                 $info['git'] = [
                     'commit' => $commitHash,
                     'branch' => $commitBranch,

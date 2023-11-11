@@ -15,8 +15,8 @@ class Rule34Theme extends Themelet
         global $page;
         $html = (string)SHM_SIMPLE_FORM(
             "rule34/comic_admin",
-            INPUT(["type"=>'hidden', "name"=>'user_id', "value"=>$duser->id]),
-            LABEL(INPUT(["type"=>'checkbox', "name"=>'is_admin', "checked"=>$current_state]), "Comic Admin"),
+            INPUT(["type" => 'hidden', "name" => 'user_id', "value" => $duser->id]),
+            LABEL(INPUT(["type" => 'checkbox', "name" => 'is_admin', "checked" => $current_state]), "Comic Admin"),
             BR(),
             SHM_SUBMIT("Set")
         );

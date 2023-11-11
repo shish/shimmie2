@@ -18,11 +18,11 @@ class AliasEditorTheme extends Themelet
     {
         global $page, $user;
 
-        $html = emptyHTML($table, BR(), $paginator, BR(), SHM_A("alias/export/aliases.csv", "Download as CSV", args: ["download"=>"aliases.csv"]));
+        $html = emptyHTML($table, BR(), $paginator, BR(), SHM_A("alias/export/aliases.csv", "Download as CSV", args: ["download" => "aliases.csv"]));
 
         $bulk_form = SHM_FORM("alias/import", multipart: true);
         $bulk_form->appendChild(
-            INPUT(["type"=>"file", "name"=>"alias_file"]),
+            INPUT(["type" => "file", "name" => "alias_file"]),
             SHM_SUBMIT("Upload List")
         );
         $bulk_html = emptyHTML($bulk_form);

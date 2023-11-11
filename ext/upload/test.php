@@ -43,7 +43,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
                 'size' => [0],
             ]
         ];
-        $page = $this->post_page("upload", ["tags0"=>"foo bar"]);
+        $page = $this->post_page("upload", ["tags0" => "foo bar"]);
         $this->assert_response(302);
         $this->assertStringStartsWith("/test/post/list/poster%3Dtest/1", $page->redirect);
 
@@ -67,7 +67,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
             ]
         ];
 
-        $page = $this->post_page("upload/replace", ["image_id"=>$image_id]);
+        $page = $this->post_page("upload/replace", ["image_id" => $image_id]);
         $this->assert_response(302);
         $this->assertEquals("/test/post/view/$image_id", $page->redirect);
 
@@ -104,7 +104,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
     public function testRejectHuge()
     {
         // FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
-        file_put_contents("data/huge.jpg", file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024*1024*3));
+        file_put_contents("data/huge.jpg", file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024 * 1024 * 3));
         try {
             $this->post_image("data/huge.jpg", "test");
             $this->fail("Uploading huge.jpg didn't fail...");

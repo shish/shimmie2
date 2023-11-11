@@ -100,7 +100,7 @@ global $_shm_event_count;
 $_shm_event_count = 0;
 $_shm_timeout = null;
 
-function shm_set_timeout(?int $timeout=null): void
+function shm_set_timeout(?int $timeout = null): void
 {
     global $_shm_timeout;
     if ($timeout) {
@@ -155,7 +155,7 @@ function send_event(Event $event): Event
         if ($tracer_enabled) {
             $_tracer->end();
         }
-        if ($event->stop_processing===true) {
+        if ($event->stop_processing === true) {
             break;
         }
     }

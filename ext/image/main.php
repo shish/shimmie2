@@ -15,13 +15,13 @@ class ImageIO extends Extension
     protected Themelet $theme;
 
     public const COLLISION_OPTIONS = [
-        'Error'=>ImageConfig::COLLISION_ERROR,
-        'Merge'=>ImageConfig::COLLISION_MERGE
+        'Error' => ImageConfig::COLLISION_ERROR,
+        'Merge' => ImageConfig::COLLISION_MERGE
     ];
 
     public const ON_DELETE_OPTIONS = [
-        'Return to post list'=>ImageConfig::ON_DELETE_LIST,
-        'Go to next post'=>ImageConfig::ON_DELETE_NEXT
+        'Return to post list' => ImageConfig::ON_DELETE_LIST,
+        'Go to next post' => ImageConfig::ON_DELETE_NEXT
     ];
 
     public const EXIF_READ_FUNCTION = "exif_read_data";
@@ -55,7 +55,7 @@ class ImageIO extends Extension
         $config->set_default_string(ImageConfig::TLINK, '');
         $config->set_default_string(ImageConfig::TIP, '$tags // $size // $filesize');
         $config->set_default_string(ImageConfig::UPLOAD_COLLISION_HANDLER, ImageConfig::COLLISION_ERROR);
-        $config->set_default_int(ImageConfig::EXPIRES, (60*60*24*31));	// defaults to one month
+        $config->set_default_int(ImageConfig::EXPIRES, (60 * 60 * 24 * 31));	// defaults to one month
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
@@ -87,7 +87,7 @@ class ImageIO extends Extension
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
 
-                    if ($config->get_string(ImageConfig::ON_DELETE)===ImageConfig::ON_DELETE_NEXT) {
+                    if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
                         redirect_to_next_image($image);
                     } else {
                         $page->set_mode(PageMode::REDIRECT);
@@ -227,7 +227,7 @@ class ImageIO extends Extension
             }
 
             $duplicate = Image::by_hash($image->hash);
-            if (!is_null($duplicate) && $duplicate->id!=$id) {
+            if (!is_null($duplicate) && $duplicate->id != $id) {
                 $error = "Post <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
                     "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
                 throw new ImageReplaceException($error);
@@ -306,7 +306,7 @@ class ImageIO extends Extension
 
         $sb->add_int_option(ImageConfig::THUMB_QUALITY, "Quality", true);
         $sb->add_int_option(ImageConfig::THUMB_SCALING, "High-DPI Scale %", true);
-        if ($config->get_string(ImageConfig::THUMB_MIME)===MimeType::JPEG) {
+        if ($config->get_string(ImageConfig::THUMB_MIME) === MimeType::JPEG) {
             $sb->add_color_option(ImageConfig::THUMB_ALPHA_COLOR, "Alpha Conversion Color", true);
         }
 

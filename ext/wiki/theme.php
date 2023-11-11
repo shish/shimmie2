@@ -12,7 +12,7 @@ class WikiTheme extends Themelet
      * $wiki_page The wiki page, has ->title and ->body
      * $nav_page A wiki page object with navigation, has ->body
      */
-    public function display_page(Page $page, WikiPage $wiki_page, ?WikiPage $nav_page=null)
+    public function display_page(Page $page, WikiPage $wiki_page, ?WikiPage $nav_page = null)
     {
         global $user;
 

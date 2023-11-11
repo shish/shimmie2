@@ -65,7 +65,7 @@ class HelpPages extends Extension
                 $hpbe = send_event(new HelpPageBuildingEvent($name));
                 asort($hpbe->blocks);
 
-                foreach ($hpbe->blocks as $key=>$value) {
+                foreach ($hpbe->blocks as $key => $value) {
                     foreach ($value as $block) {
                         $page->add_block($block);
                     }
@@ -87,9 +87,9 @@ class HelpPages extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="help") {
+        if ($event->parent == "help") {
             $pages = send_event(new HelpPageListBuildingEvent())->pages;
-            foreach ($pages as $key=>$value) {
+            foreach ($pages as $key => $value) {
                 $event->add_nav_link("help_".$key, new Link('help/'.$key), $value);
             }
         }
@@ -102,7 +102,7 @@ class HelpPages extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key=="licenses") {
+        if ($event->key == "licenses") {
             $block = new Block("Software Licenses");
             $block->body = "The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license.";
             $event->add_block($block);

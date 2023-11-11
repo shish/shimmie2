@@ -80,7 +80,7 @@ class MimeType
 
     public static function is_mime(string $value): bool
     {
-        return preg_match(self::REGEX_MIME_TYPE, $value)===1;
+        return preg_match(self::REGEX_MIME_TYPE, $value) === 1;
     }
 
     public static function add_parameters(string $mime, string ...$parameters): string
@@ -94,7 +94,7 @@ class MimeType
     public static function remove_parameters(string $mime): string
     {
         $i = strpos($mime, ";");
-        if ($i!==false) {
+        if ($i !== false) {
             return substr($mime, 0, $i);
         }
         return $mime;
@@ -121,7 +121,7 @@ class MimeType
             $mime1 = self::remove_parameters($mime1);
             $mime2 = self::remove_parameters($mime2);
         }
-        return strtolower($mime1)===strtolower($mime2);
+        return strtolower($mime1) === strtolower($mime2);
     }
 
 
@@ -147,7 +147,7 @@ class MimeType
                 @fclose($fh);
             }
         }
-        return ($is_anim_gif >=2);
+        return ($is_anim_gif >= 2);
     }
 
 
@@ -202,11 +202,11 @@ class MimeType
     public static function get_for_extension(string $ext): ?string
     {
         $data = MimeMap::get_for_extension($ext);
-        if ($data!=null) {
+        if ($data != null) {
             return $data[MimeMap::MAP_MIME][0];
         }
         // This was an old solution for differentiating lossless webps
-        if ($ext==="webp-lossless") {
+        if ($ext === "webp-lossless") {
             return MimeType::WEBP_LOSSLESS;
         }
         return null;
@@ -239,10 +239,10 @@ class MimeType
         if (!empty($ext)) {
             // Here we handle the few file types that need extension-based handling
             $ext = strtolower($ext);
-            if ($type===MimeType::ZIP && $ext===FileExtension::CBZ) {
+            if ($type === MimeType::ZIP && $ext === FileExtension::CBZ) {
                 $output = MimeType::COMIC_ZIP;
             }
-            if ($type===MimeType::OCTET_STREAM) {
+            if ($type === MimeType::OCTET_STREAM) {
                 switch ($ext) {
                     case FileExtension::ANI:
                         $output = MimeType::ANI;

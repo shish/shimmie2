@@ -90,7 +90,7 @@ class CustomCommentListTheme extends CommentListTheme
         // no recent comments in this theme
     }
 
-    protected function comment_to_html(Comment $comment, bool $trim=false): string
+    protected function comment_to_html(Comment $comment, bool $trim = false): string
     {
         global $user;
 

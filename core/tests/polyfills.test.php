@@ -135,16 +135,16 @@ class PolyfillsTest extends TestCase
             "num" => "42",
         ];
         $this->assertEquals(
-            ["foo"=>"bar"],
-            validate_input(["foo"=>"string,trim,lower"])
+            ["foo" => "bar"],
+            validate_input(["foo" => "string,trim,lower"])
         );
         //$this->assertEquals(
         //    ["to_null"=>null],
         //    validate_input(["to_null"=>"string,trim,nullify"])
         //);
         $this->assertEquals(
-            ["num"=>42],
-            validate_input(["num"=>"int"])
+            ["num" => 42],
+            validate_input(["num" => "int"])
         );
     }
 
@@ -223,7 +223,7 @@ class PolyfillsTest extends TestCase
     {
         $this->assertEquals(
             '["foo"=>"bar", "baz"=>[1, 2, 3], "qux"=>["a"=>"b"]]',
-            stringer(["foo"=>"bar", "baz"=>[1,2,3], "qux"=>["a"=>"b"]])
+            stringer(["foo" => "bar", "baz" => [1,2,3], "qux" => ["a" => "b"]])
         );
     }
 }

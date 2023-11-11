@@ -219,10 +219,10 @@ new UserClass("admin", "base", [
     Permissions::APPROVE_COMMENT => true,
     Permissions::BYPASS_IMAGE_APPROVAL => true,
 
-    Permissions::CRON_RUN =>true,
+    Permissions::CRON_RUN => true,
 
-    Permissions::BULK_IMPORT =>true,
-    Permissions::BULK_EXPORT =>true,
+    Permissions::BULK_IMPORT => true,
+    Permissions::BULK_EXPORT => true,
     Permissions::BULK_DOWNLOAD => true,
     Permissions::BULK_PARENT_CHILD => true,
 

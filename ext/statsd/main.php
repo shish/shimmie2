@@ -74,7 +74,7 @@ class StatsDInterface extends Extension
         return 99;
     }
 
-    private function send(array $data, float $sampleRate=1)
+    private function send(array $data, float $sampleRate = 1)
     {
         if (!STATSD_HOST) {
             return;
@@ -103,7 +103,7 @@ class StatsDInterface extends Extension
             $host = $parts[0];
             $port = (int)$parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
-            if (! $fp) {
+            if (!$fp) {
                 return;
             }
             foreach ($sampledData as $stat => $value) {

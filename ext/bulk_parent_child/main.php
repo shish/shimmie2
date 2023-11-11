@@ -27,7 +27,7 @@ class BulkParentChild extends Extension
     public function onBulkAction(BulkActionEvent $event)
     {
         global $user, $page, $config;
-        if ($user->can(Permissions::BULK_PARENT_CHILD)&&
+        if ($user->can(Permissions::BULK_PARENT_CHILD) &&
             ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)) {
             $prev_id = null;
             foreach ($event->items as $image) {

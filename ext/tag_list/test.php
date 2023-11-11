@@ -28,16 +28,16 @@ class TagListTest extends ShimmiePHPUnitTestCase
     public function testMinCount()
     {
         foreach ($this->pages as $page) {
-            $this->get_page("tags/$page", ["mincount"=>999999]);
+            $this->get_page("tags/$page", ["mincount" => 999999]);
             $this->assert_title("Tag List");
 
-            $this->get_page("tags/$page", ["mincount"=>1]);
+            $this->get_page("tags/$page", ["mincount" => 1]);
             $this->assert_title("Tag List");
 
-            $this->get_page("tags/$page", ["mincount"=>0]);
+            $this->get_page("tags/$page", ["mincount" => 0]);
             $this->assert_title("Tag List");
 
-            $this->get_page("tags/$page", ["mincount"=>-1]);
+            $this->get_page("tags/$page", ["mincount" => -1]);
             $this->assert_title("Tag List");
         }
     }

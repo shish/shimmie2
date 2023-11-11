@@ -53,7 +53,7 @@ class LogLogstash extends Extension
             $host = $parts[0];
             $port = (int)$parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
-            if (! $fp) {
+            if (!$fp) {
                 return;
             }
             fwrite($fp, json_encode($data));

@@ -38,7 +38,7 @@ class NumericScoreVote
         }
         return $database->get_one(
             "SELECT sum(score) FROM numeric_score_votes WHERE image_id=:image_id",
-            ['image_id'=>$post->id]
+            ['image_id' => $post->id]
         ) ?? 0;
     }
 
@@ -48,7 +48,7 @@ class NumericScoreVote
         global $database;
         $rows = $database->get_all(
             "SELECT * FROM numeric_score_votes WHERE image_id=:image_id",
-            ['image_id'=>$post->id]
+            ['image_id' => $post->id]
         );
         $votes = [];
         foreach ($rows as $row) {
@@ -67,7 +67,7 @@ class NumericScoreVote
         global $database, $user;
         return $database->get_one(
             "SELECT score FROM numeric_score_votes WHERE image_id=:image_id AND user_id=:user_id",
-            ['image_id'=>$post->id, "user_id"=>$user->id]
+            ['image_id' => $post->id, "user_id" => $user->id]
         ) ?? 0;
     }
 
@@ -137,7 +137,7 @@ class NumericScore extends Extension
 				FROM numeric_score_votes
 				JOIN users ON numeric_score_votes.user_id=users.id
 				WHERE image_id=:image_id",
-                ['image_id'=>$image_id]
+                ['image_id' => $image_id]
             );
             $html = "<table style='width: 100%;'>";
             foreach ($x as $vote) {
@@ -152,7 +152,7 @@ class NumericScore extends Extension
             if ($user->can(Permissions::CREATE_VOTE)) {
                 $image_id = int_escape($_POST['image_id']);
                 $score = int_escape($_POST['vote']);
-                if (($score == -1 || $score == 0 || $score == 1) && $image_id>0) {
+                if (($score == -1 || $score == 0 || $score == 1) && $image_id > 0) {
                     send_event(new NumericScoreSetEvent($image_id, $user, $score));
                 }
                 $page->set_mode(PageMode::REDIRECT);
@@ -163,11 +163,11 @@ class NumericScore extends Extension
                 $image_id = int_escape($_POST['image_id']);
                 $database->execute(
                     "DELETE FROM numeric_score_votes WHERE image_id=:image_id",
-                    ['image_id'=>$image_id]
+                    ['image_id' => $image_id]
                 );
                 $database->execute(
                     "UPDATE images SET numeric_score=0 WHERE id=:id",
-                    ['id'=>$image_id]
+                    ['id' => $image_id]
                 );
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$image_id"));
@@ -256,7 +256,7 @@ class NumericScore extends Extension
     {
         global $database;
 
-        $image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=:user_id", ['user_id'=>$user_id]);
+        $image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=:user_id", ['user_id' => $user_id]);
 
         if (count($image_ids) == 0) {
             return;
@@ -268,7 +268,7 @@ class NumericScore extends Extension
             $id_list = implode(",", $chunk);
             $database->execute(
                 "DELETE FROM numeric_score_votes WHERE user_id=:user_id AND image_id IN (".$id_list.")",
-                ['user_id'=>$user_id]
+                ['user_id' => $user_id]
             );
             $database->execute("
 				UPDATE images
@@ -291,7 +291,7 @@ class NumericScore extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Numeric Score";
             $block->body = $this->theme->get_help_html();
@@ -319,7 +319,7 @@ class NumericScore extends Extension
             }
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
-                ["ns_user_id"=>$duser->id]
+                ["ns_user_id" => $duser->id]
             ));
         } elseif (preg_match("/^downvoted_by[=|:](.*)$/i", $event->term, $matches)) {
             $duser = User::by_name($matches[1]);
@@ -330,19 +330,19 @@ class NumericScore extends Extension
             }
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
-                ["ns_user_id"=>$duser->id]
+                ["ns_user_id" => $duser->id]
             ));
         } elseif (preg_match("/^upvoted_by_id[=|:](\d+)$/i", $event->term, $matches)) {
             $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
-                ["ns_user_id"=>$iid]
+                ["ns_user_id" => $iid]
             ));
         } elseif (preg_match("/^downvoted_by_id[=|:](\d+)$/i", $event->term, $matches)) {
             $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
-                ["ns_user_id"=>$iid]
+                ["ns_user_id" => $iid]
             ));
         } elseif (preg_match("/^order[=|:](?:numeric_)?(score)(?:_(desc|asc))?$/i", $event->term, $matches)) {
             $default_order_for_column = "DESC";
@@ -373,7 +373,7 @@ class NumericScore extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="posts") {
+        if ($event->parent == "posts") {
             $event->add_nav_link("numeric_score_day", new Link('popular_by_day'), "Popular by Day");
             $event->add_nav_link("numeric_score_month", new Link('popular_by_month'), "Popular by Month");
             $event->add_nav_link("numeric_score_year", new Link('popular_by_year'), "Popular by Year");

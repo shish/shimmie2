@@ -98,7 +98,7 @@ class TranscodeImage extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         if ($this->get_version(TranscodeConfig::VERSION) < 1) {
-            $old_extensions =[];
+            $old_extensions = [];
             foreach (array_values(self::INPUT_MIMES) as $mime) {
                 $old_extensions = array_merge($old_extensions, FileExtension::get_all_for_mime($mime));
             }
@@ -152,7 +152,7 @@ class TranscodeImage extends Extension
         $sb->add_bool_option(TranscodeConfig::GET_ENABLED, "Enable GET args", true);
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload", true);
         $sb->add_choice_option(TranscodeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
-        foreach (self::INPUT_MIMES as $display=> $mime) {
+        foreach (self::INPUT_MIMES as $display => $mime) {
             if (MediaEngine::is_input_supported($engine, $mime)) {
                 $outputs = $this->get_supported_output_mimes($engine, $mime);
                 $sb->add_choice_option(self::get_mapping_name($mime), $outputs, "$display", true);
@@ -180,7 +180,7 @@ class TranscodeImage extends Extension
         }
 
         if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
-            if ($event->mime === MimeType::GIF&&MimeType::is_animated_gif($event->tmpname)) {
+            if ($event->mime === MimeType::GIF && MimeType::is_animated_gif($event->tmpname)) {
                 return;
             }
 
@@ -253,10 +253,10 @@ class TranscodeImage extends Extension
 
             $source_mime = $event->image->get_mime();
 
-            if ($source_mime!=$target_mime) {
+            if ($source_mime != $target_mime) {
                 $tmp_filename = $this->transcode_image($event->path, $source_mime, $target_mime);
 
-                if ($event->file_modified===true&&$event->path!=$event->image->get_image_filename()) {
+                if ($event->file_modified === true && $event->path != $event->image->get_image_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up
                     unlink($event->path);
                 }
@@ -314,10 +314,10 @@ class TranscodeImage extends Extension
                             }
                         }
                     }
-                    if ($size_difference>0) {
+                    if ($size_difference > 0) {
                         $page->flash("Transcoded $total items, reduced size by ".human_filesize($size_difference));
-                    } elseif ($size_difference<0) {
-                        $page->flash("Transcoded $total items, increased size by ".human_filesize(-1*$size_difference));
+                    } elseif ($size_difference < 0) {
+                        $page->flash("Transcoded $total items, increased size by ".human_filesize(-1 * $size_difference));
                     } else {
                         $page->flash("Transcoded $total items, no size difference");
                     }
@@ -338,13 +338,13 @@ class TranscodeImage extends Extension
         $output = [];
 
 
-        foreach (self::OUTPUT_MIMES as $key=> $value) {
-            if ($value=="") {
+        foreach (self::OUTPUT_MIMES as $key => $value) {
+            if ($value == "") {
                 $output[$key] = $value;
                 continue;
             }
             if (MediaEngine::is_output_supported($engine, $value)
-                &&(empty($omit_mime)||$omit_mime!=$value)) {
+                && (empty($omit_mime) || $omit_mime != $value)) {
                 $output[$key] = $value;
             }
         }
@@ -385,7 +385,7 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        if ($source_mime==$target_mime) {
+        if ($source_mime == $target_mime) {
             throw new ImageTranscodeException("Source and target MIMEs are the same: ".$source_mime);
         }
 
@@ -433,18 +433,18 @@ class TranscodeImage extends Extension
                     $width = imagesx($image);
                     $height = imagesy($image);
                     $new_image = imagecreatetruecolor($width, $height);
-                    if ($new_image===false) {
+                    if ($new_image === false) {
                         throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
                     }
                     try {
                         $background_color = Media::hex_color_allocate($new_image, $config->get_string(TranscodeConfig::ALPHA_COLOR));
-                        if ($background_color===false) {
+                        if ($background_color === false) {
                             throw new ImageTranscodeException("Could not allocate background color");
                         }
-                        if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color)===false) {
+                        if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
                             throw new ImageTranscodeException("Could not fill background color");
                         }
-                        if (imagecopy($new_image, $image, 0, 0, 0, 0, $width, $height)===false) {
+                        if (imagecopy($new_image, $image, 0, 0, 0, 0, $width, $height) === false) {
                             throw new ImageTranscodeException("Could not copy source image to new image");
                         }
                         $result = imagejpeg($new_image, $tmp_name, $q);
@@ -456,7 +456,7 @@ class TranscodeImage extends Extension
         } finally {
             imagedestroy($image);
         }
-        if ($result===false) {
+        if ($result === false) {
             throw new ImageTranscodeException("Error while transcoding ".$source_name." to ".$target_mime);
         }
         return $tmp_name;
@@ -507,7 +507,7 @@ class TranscodeImage extends Extension
 
         log_debug('transcode', "Transcoding with command `$cmd`, returns $ret");
 
-        if ($ret!==0) {
+        if ($ret !== 0) {
             throw new ImageTranscodeException("Transcoding failed with command ".$cmd.", returning ".implode("\r\n", $output));
         }
 

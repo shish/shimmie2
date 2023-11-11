@@ -57,7 +57,7 @@ class Database
     private function connect_engine(): void
     {
         if (preg_match("/^([^:]*)/", $this->dsn, $matches)) {
-            $db_proto=$matches[1];
+            $db_proto = $matches[1];
         } else {
             throw new SCoreException("Can't figure out database engine");
         }
@@ -138,7 +138,7 @@ class Database
         $query = preg_replace('/  +/m', ' ', $query);
         $query = trim($query);
         if ($tracer_enabled) {
-            $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
+            $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query" => $query, "args" => $args, "method" => $method]);
         }
         $this->queries[] = $query;
         $this->query_count++;
@@ -150,7 +150,7 @@ class Database
         $this->get_engine()->set_timeout($this->get_db(), $time);
     }
 
-    public function notify(string $channel, ?string $data=null): void
+    public function notify(string $channel, ?string $data = null): void
     {
         $this->get_engine()->notify($this->get_db(), $channel, $data);
     }
@@ -285,7 +285,7 @@ class Database
         $_start = ftime();
         $row = $this->_execute($query, $args)->fetch();
         $this->count_time("exists", $_start, $query, $args);
-        if ($row==null) {
+        if ($row == null) {
             return false;
         }
         return true;
@@ -346,7 +346,7 @@ class Database
         return $this->get_db();
     }
 
-    public function standardise_boolean(string $table, string $column, bool $include_postgres=false): void
+    public function standardise_boolean(string $table, string $column, bool $include_postgres = false): void
     {
         $d = $this->get_driver_id();
         if ($d == DatabaseDriverID::MYSQL) {

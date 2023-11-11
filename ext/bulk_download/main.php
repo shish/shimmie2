@@ -45,7 +45,7 @@ class BulkDownload extends Extension
     {
         global $user, $page, $config;
 
-        if ($user->can(Permissions::BULK_DOWNLOAD)&&
+        if ($user->can(Permissions::BULK_DOWNLOAD) &&
             ($event->action == BulkDownload::DOWNLOAD_ACTION_NAME)) {
             $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = tempnam(sys_get_temp_dir(), "shimmie_bulk_download");
@@ -57,7 +57,7 @@ class BulkDownload extends Extension
                 foreach ($event->items as $image) {
                     $img_loc = warehouse_path(Image::IMAGE_DIR, $image->hash, false);
                     $size_total += filesize($img_loc);
-                    if ($size_total>$max_size) {
+                    if ($size_total > $max_size) {
                         throw new BulkDownloadException("Bulk download limited to ".human_filesize($max_size));
                     }
 

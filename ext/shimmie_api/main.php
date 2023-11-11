@@ -70,7 +70,7 @@ class ShimmieApi extends Extension
                 $search_terms = $event->get_search_terms();
                 $page_number = $event->get_page_number();
                 $page_size = $event->get_page_size();
-                $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+                $images = Image::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
                 $safe_images = [];
                 foreach ($images as $image) {
                     $image->get_tag_array();
@@ -106,7 +106,7 @@ class ShimmieApi extends Extension
     {
         global $database;
         if (!empty($arg)) {
-            $all = $database->get_all("SELECT tag FROM tags WHERE tag LIKE :tag", ['tag'=>$arg . "%"]);
+            $all = $database->get_all("SELECT tag FROM tags WHERE tag LIKE :tag", ['tag' => $arg . "%"]);
         } else {
             $all = $database->get_all("SELECT tag FROM tags");
         }
@@ -122,7 +122,7 @@ class ShimmieApi extends Extension
         global $database;
         $all = $database->get_row(
             "SELECT id, name, joindate, class FROM users WHERE $type=:query",
-            ['query'=>$query]
+            ['query' => $query]
         );
 
         if (!empty($all)) {
@@ -140,7 +140,7 @@ class ShimmieApi extends Extension
             if (isset($_GET['recent'])) {
                 $recents = $database->get_all(
                     "SELECT * FROM images WHERE owner_id=:owner_id ORDER BY id DESC LIMIT 0, 5",
-                    ['owner_id'=>$all['id']]
+                    ['owner_id' => $all['id']]
                 );
 
                 $i = 0;

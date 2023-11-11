@@ -55,7 +55,7 @@ class AutoComplete extends Extension
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
         $search = str_replace('%', '\%', $search);
-        $SQLarr = ["search"=>"$search%"]; #, "cat_search"=>"%:$search%"];
+        $SQLarr = ["search" => "$search%"]; #, "cat_search"=>"%:$search%"];
         if ($limit !== 0) {
             $limitSQL = "LIMIT :limit";
             $SQLarr['limit'] = $limit;

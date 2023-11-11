@@ -186,7 +186,7 @@ class ResizeImage extends Extension
 
             [$new_width, $new_height] = get_scaled_by_aspect_ratio($event->image->width, $event->image->height, $max_width, $max_height);
 
-            if ($new_width!==$event->image->width || $new_height !==$event->image->height) {
+            if ($new_width !== $event->image->width || $new_height !== $event->image->height) {
                 $tmp_filename = tempnam(sys_get_temp_dir(), 'shimmie_resize');
                 if (empty($tmp_filename)) {
                     throw new ImageResizeException("Unable to save temporary image file.");
@@ -201,7 +201,7 @@ class ResizeImage extends Extension
                     $new_height
                 ));
 
-                if ($event->file_modified===true&&$event->path!=$event->image->get_image_filename()) {
+                if ($event->file_modified === true && $event->path != $event->image->get_image_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up
                     unlink($event->path);
                 }

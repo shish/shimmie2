@@ -87,7 +87,7 @@ class PageRequestEvent extends Event
             return false;
         }
 
-        for ($i=0; $i<$this->part_count; $i++) {
+        for ($i = 0; $i < $this->part_count; $i++) {
             if ($parts[$i] != $this->args[$i]) {
                 return false;
             }
@@ -114,7 +114,7 @@ class PageRequestEvent extends Event
      * If page arg $n is set, then treat that as a 1-indexed page number
      * and return a 0-indexed page number less than $max; else return 0
      */
-    public function try_page_num(int $n, ?int $max=null): int
+    public function try_page_num(int $n, ?int $max = null): int
     {
         if ($this->count_args() > $n) {
             $i = $this->get_arg($n);
@@ -195,7 +195,7 @@ class CommandEvent extends Event
         $log_level = SCORE_LOG_WARNING;
         $arg_count = count($args);
 
-        for ($i=1; $i<$arg_count; $i++) {
+        for ($i = 1; $i < $arg_count; $i++) {
             switch ($args[$i]) {
                 case '-u':
                     $user = User::by_name($args[++$i]);
