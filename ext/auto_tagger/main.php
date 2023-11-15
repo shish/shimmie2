@@ -63,8 +63,8 @@ class AutoTaggerTable extends Table
         }
         $thead->appendChild($tr);
 		
-		if ($this->create_url) {
-            $tr = TR();
+		$tr = TR();
+		if ($this->search_url) {
             foreach ($this->columns as $col) {
                 $tr->appendChild(TD($col->read_input($this->inputs)));
             }
@@ -303,38 +303,6 @@ class AutoTagger extends Extension
         }
 		// Now we apply it to existing items
 		$this->apply_new_auto_tag($tag);
-    }
-
-    private function update_auto_tag(string $tag, string $additional_tags): bool
-    {
-        global $database;
-        $result = $database->get_row("SELECT * FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag"=>$tag]);
-
-        if ($result===null) {
-            throw new AutoTaggerException("Auto-tag not set for $tag, can't update");
-        } else {
-            $additional_tags = Tag::explode($additional_tags);
-            $current_additional_tags = Tag::explode($result["additional_tags"]);
-
-            if (!Tag::compare($additional_tags, $current_additional_tags)) {
-                $database->execute(
-                    "UPDATE auto_tag SET additional_tags = :additional_tags WHERE LOWER(tag)=LOWER(:tag)",
-                    ["tag"=>$tag, "additional_tags"=>Tag::implode($additional_tags)]
-                );
-
-                log_info(
-                    AutoTaggerInfo::KEY,
-                    "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}",
-                    "Updated Auto-Tag"
-                );
-
-                // Now we apply it to existing items
-                $this->apply_new_auto_tag($tag);
-                return true;
-            }
-        }
-        // Now we apply it to existing items
-        $this->apply_new_auto_tag($tag);
     }
 
     private function apply_new_auto_tag(string $tag)

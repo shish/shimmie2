@@ -61,8 +61,8 @@ class AliasTable extends Table
         }
         $thead->appendChild($tr);
 		
-		if ($this->create_url) {
-            $tr = TR();
+		$tr = TR();
+		if ($this->search_url) {
             foreach ($this->columns as $col) {
                 $tr->appendChild(TD($col->read_input($this->inputs)));
             }
