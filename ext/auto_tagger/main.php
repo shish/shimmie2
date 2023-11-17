@@ -39,8 +39,8 @@ class AutoTaggerTable extends Table
         $this->size = 100;
         $this->limit = 1000000;
         $this->set_columns([
-            new TextColumn("tag", "Tag"),
-            new TextColumn("additional_tags", "Additional Tags"),
+            new AutoCompleteColumn("tag", "Tag"),
+            new AutoCompleteColumn("additional_tags", "Additional Tags"),
             new ActionColumn("tag"),
         ]);
         $this->order_by = ["tag"];

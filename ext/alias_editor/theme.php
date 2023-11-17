@@ -31,9 +31,6 @@ class AliasEditorTheme extends Themelet
         $page->set_heading("Alias List");
         $page->add_block(new NavBlock());
 		$block = new Block("Aliases", $html);
-		$block->body = str_replace(array("name='c_oldtag'", "name='c_newtag'"), 
-						array("name='c_oldtag' class='autocomplete_tags'", "name='c_newtag' class='autocomplete_tags'"), 
-						$block->body);
         $page->add_block($block);
 
         if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
