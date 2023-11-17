@@ -19,8 +19,8 @@ class AliasTable extends Table
         $this->size = 100;
         $this->limit = 1000000;
         $this->set_columns([
-            new TextColumn("oldtag", "Old Tag"),
-            new TextColumn("newtag", "New Tag"),
+            new AutoCompleteColumn("oldtag", "Old Tag"),
+            new AutoCompleteColumn("newtag", "New Tag"),
             new ActionColumn("oldtag"),
         ]);
         $this->order_by = ["oldtag"];
