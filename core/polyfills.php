@@ -121,7 +121,7 @@ function full_copy(string $source, string $target): void
 /**
  * Return a list of all the regular files in a directory and subdirectories
  */
-function list_files(string $base, string $_sub_dir=""): array
+function list_files(string $base, string $_sub_dir = ""): array
 {
     assert(is_dir($base));
 
@@ -129,7 +129,7 @@ function list_files(string $base, string $_sub_dir=""): array
 
     $files = [];
     $dir = opendir("$base/$_sub_dir");
-    if ($dir===false) {
+    if ($dir === false) {
         throw new SCoreException("Unable to open directory $base/$_sub_dir");
     }
     try {
@@ -439,7 +439,7 @@ function no_escape(string $input): string
  * Given a 1-indexed numeric-ish thing, return a zero-indexed
  * number between 0 and $max
  */
-function page_number(string $input, ?int $max=null): int
+function page_number(string $input, ?int $max = null): int
 {
     if (!is_numeric($input)) {
         $pageNumber = 0;
@@ -453,7 +453,7 @@ function page_number(string $input, ?int $max=null): int
     return $pageNumber;
 }
 
-function clamp(int $val, ?int $min=null, ?int $max=null): int
+function clamp(int $val, ?int $min = null, ?int $max = null): int
 {
     if (!is_null($min) && $val < $min) {
         $val = $min;
@@ -471,7 +471,7 @@ function clamp(int $val, ?int $min=null, ?int $max=null): int
  * Original PHP code by Chirp Internet: www.chirp.com.au
  * Please acknowledge use of this code by including this header.
  */
-function truncate(string $string, int $limit, string $break=" ", string $pad="..."): string
+function truncate(string $string, int $limit, string $break = " ", string $pad = "..."): string
 {
     // return with no change if string is shorter than $limit
     if (strlen($string) <= $limit) {
@@ -549,12 +549,12 @@ abstract class TIME_UNITS
     public const DAYS = "d";
     public const YEARS = "y";
     public const CONVERSION = [
-        self::MILLISECONDS=>1000,
-        self::SECONDS=>60,
-        self::MINUTES=>60,
-        self::HOURS=>24,
-        self::DAYS=>365,
-        self::YEARS=>PHP_INT_MAX
+        self::MILLISECONDS => 1000,
+        self::SECONDS => 60,
+        self::MINUTES => 60,
+        self::HOURS => 24,
+        self::DAYS => 365,
+        self::YEARS => PHP_INT_MAX
     ];
 }
 function format_milliseconds(int $input, string $min_unit = TIME_UNITS::SECONDS): string
@@ -565,17 +565,17 @@ function format_milliseconds(int $input, string $min_unit = TIME_UNITS::SECONDS)
 
     $found = false;
 
-    foreach (TIME_UNITS::CONVERSION as $unit=>$conversion) {
+    foreach (TIME_UNITS::CONVERSION as $unit => $conversion) {
         $count = $remainder % $conversion;
         $remainder = floor($remainder / $conversion);
 
-        if ($found||$unit==$min_unit) {
+        if ($found || $unit == $min_unit) {
             $found = true;
         } else {
             continue;
         }
 
-        if ($count==0&&$remainder<1) {
+        if ($count == 0 && $remainder < 1) {
             break;
         }
         $output = "$count".$unit." ".$output;
@@ -596,7 +596,7 @@ function parse_to_milliseconds(string $input): int
             $output += $length;
         }
     } else {
-        foreach (TIME_UNITS::CONVERSION as $unit=>$conversion) {
+        foreach (TIME_UNITS::CONVERSION as $unit => $conversion) {
             if (preg_match('/([0-9]+)'.$unit.'/i', $input, $match)) {
                 $length = $match[1];
                 if (is_numeric($length)) {
@@ -613,7 +613,7 @@ function parse_to_milliseconds(string $input): int
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
  */
-function autodate(string $date, bool $html=true): string
+function autodate(string $date, bool $html = true): string
 {
     $cpu = date('c', strtotime($date));
     $hum = date('F j, Y; H:i', strtotime($date));
@@ -791,7 +791,7 @@ function stringer($s): string
             return "[" . implode(", ", array_map("Shimmie2\stringer", $s)) . "]";
         } else {
             $pairs = [];
-            foreach ($s as $k=>$v) {
+            foreach ($s as $k => $v) {
                 $pairs[] = "\"$k\"=>" . stringer($v);
             }
             return "[" . implode(", ", $pairs) . "]";

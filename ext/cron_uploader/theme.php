@@ -84,7 +84,7 @@ class CronUploaderTheme extends Themelet
             </ol>";
 
 
-        $max_time = intval(ini_get('max_execution_time'))*.8;
+        $max_time = intval(ini_get('max_execution_time')) * .8;
 
         $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means.
 <br />(<b>{$queue_dirinfo['path']}</b>)
@@ -109,7 +109,7 @@ class CronUploaderTheme extends Themelet
 
         $block = new Block("Cron Uploader", $info_html, "main", 10);
         $block_install = new Block("Setup Guide", $install_html, "main", 30);
-        $block_usage= new Block("Usage Guide", $usage_html, "main", 20);
+        $block_usage = new Block("Usage Guide", $usage_html, "main", 20);
         $page->add_block($block);
         $page->add_block($block_install);
         $page->add_block($block_usage);
@@ -130,28 +130,28 @@ class CronUploaderTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             "user_admin/cron_uploader",
             TABLE(
-                ["class"=>"form"],
+                ["class" => "form"],
                 TBODY(
                     TR(
                         TH("Cron Uploader")
                     ),
                     TR(
                         TH("Root dir"),
-                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                        TD(INPUT(["type" => 'text', "name" => 'name', "required" => true]))
                     ),
                     TR(
                         TH(),
                         TD(
-                            LABEL(INPUT(["type"=>'checkbox', "name"=>'stop_on_error']), "Stop On Error")
+                            LABEL(INPUT(["type" => 'checkbox', "name" => 'stop_on_error']), "Stop On Error")
                         )
                     ),
                     TR(
                         TH(rawHTML("Repeat&nbsp;Password")),
-                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     )
                 ),
                 TFOOT(
-                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Save Settings"])))
+                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Save Settings"])))
                 )
             )
         );

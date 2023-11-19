@@ -80,17 +80,17 @@ class UrlsTest extends TestCase
     {
         $this->assertEquals(
             "/foo/bar?a=3&b=2",
-            modify_url("/foo/bar?a=1&b=2", ["a"=>"3"])
+            modify_url("/foo/bar?a=1&b=2", ["a" => "3"])
         );
 
         $this->assertEquals(
             "https://blah.com/foo/bar?b=2",
-            modify_url("https://blah.com/foo/bar?a=1&b=2", ["a"=>null])
+            modify_url("https://blah.com/foo/bar?a=1&b=2", ["a" => null])
         );
 
         $this->assertEquals(
             "/foo/bar",
-            modify_url("/foo/bar?a=1&b=2", ["a"=>null, "b"=>null])
+            modify_url("/foo/bar?a=1&b=2", ["a" => null, "b" => null])
         );
     }
 

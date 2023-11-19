@@ -109,7 +109,7 @@ class RotateImage extends Extension
         }
 
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
-        if (file_exists($image_filename)===false) {
+        if (file_exists($image_filename) === false) {
             throw new ImageRotateException("$image_filename does not exist.");
         }
 
@@ -136,12 +136,12 @@ class RotateImage extends Extension
                 $background_color = imagecolorallocatealpha($image, 0, 0, 0, 127);
                 break;
         }
-        if ($background_color===false) {
+        if ($background_color === false) {
             throw new ImageRotateException("Unable to allocate transparent color");
         }
 
         $image_rotated = imagerotate($image, $deg, $background_color);
-        if ($image_rotated===false) {
+        if ($image_rotated === false) {
             throw new ImageRotateException("Image rotate failed");
         }
 
@@ -172,7 +172,7 @@ class RotateImage extends Extension
                 throw new ImageRotateException("Unsupported image type.");
         }
 
-        if ($result===false) {
+        if ($result === false) {
             throw new ImageRotateException("Could not save image: ".$tmp_filename);
         }
 

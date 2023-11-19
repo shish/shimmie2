@@ -98,7 +98,7 @@ class User
             } else {
                 $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
             }
-            $row = $database->get_row($query, ["name"=>$name, "ip"=>get_session_ip($config), "sess"=>$session]);
+            $row = $database->get_row($query, ["name" => $name, "ip" => get_session_ip($config), "sess" => $session]);
             $cache->set("user-session:$name-$session", $row, 600);
         }
         return is_null($row) ? null : new User($row);
@@ -113,7 +113,7 @@ class User
                 return new User($cached);
             }
         }
-        $row = $database->get_row("SELECT * FROM users WHERE id = :id", ["id"=>$id]);
+        $row = $database->get_row("SELECT * FROM users WHERE id = :id", ["id" => $id]);
         if ($id === 1) {
             $cache->set('user-id:'.$id, $row, 600);
         }
@@ -124,7 +124,7 @@ class User
     public static function by_name(string $name): ?User
     {
         global $database;
-        $row = $database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name"=>$name]);
+        $row = $database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name" => $name]);
         return is_null($row) ? null : new User($row);
     }
 
@@ -188,7 +188,7 @@ class User
     public function set_class(string $class): void
     {
         global $database;
-        $database->execute("UPDATE users SET class=:class WHERE id=:id", ["class"=>$class, "id"=>$this->id]);
+        $database->execute("UPDATE users SET class=:class WHERE id=:id", ["class" => $class, "id" => $this->id]);
         log_info("core-user", 'Set class for '.$this->name.' to '.$class);
     }
 
@@ -200,7 +200,7 @@ class User
         }
         $old_name = $this->name;
         $this->name = $name;
-        $database->execute("UPDATE users SET name=:name WHERE id=:id", ["name"=>$this->name, "id"=>$this->id]);
+        $database->execute("UPDATE users SET name=:name WHERE id=:id", ["name" => $this->name, "id" => $this->id]);
         log_info("core-user", "Changed username for {$old_name} to {$this->name}");
     }
 
@@ -210,7 +210,7 @@ class User
         $hash = password_hash($password, PASSWORD_BCRYPT);
         if (is_string($hash)) {
             $this->passhash = $hash;
-            $database->execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash"=>$this->passhash, "id"=>$this->id]);
+            $database->execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash" => $this->passhash, "id" => $this->id]);
             log_info("core-user", 'Set password for '.$this->name);
         } else {
             throw new SCoreException("Failed to hash password");
@@ -220,7 +220,7 @@ class User
     public function set_email(string $address): void
     {
         global $database;
-        $database->execute("UPDATE users SET email=:email WHERE id=:id", ["email"=>$address, "id"=>$this->id]);
+        $database->execute("UPDATE users SET email=:email WHERE id=:id", ["email" => $address, "id" => $this->id]);
         log_info("core-user", 'Set email for '.$this->name);
     }
 
@@ -284,7 +284,7 @@ class User
     public function get_auth_microhtml(): HTMLElement
     {
         $at = $this->get_auth_token();
-        return INPUT(["type"=>"hidden", "name"=>"auth_token", "value"=>$at]);
+        return INPUT(["type" => "hidden", "name" => "auth_token", "value" => $at]);
     }
 
     public function check_auth_token(): bool

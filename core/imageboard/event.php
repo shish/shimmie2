@@ -84,7 +84,7 @@ class ThumbnailGenerationEvent extends Event
     public function __construct(
         public string $hash,
         public string $mime,
-        public bool $force=false
+        public bool $force = false
     ) {
         parent::__construct();
         $this->generated = false;

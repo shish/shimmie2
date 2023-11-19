@@ -86,7 +86,7 @@ class TagHistory extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
                 $event->add_nav_link("tag_history", new Link('tag_history/all/1'), "Tag Changes", NavLink::is_active(["tag_history"]));
             }
@@ -163,7 +163,7 @@ class TagHistory extends Extension
         $stored_tags = $result['tags'];
 
         $image = Image::by_id($stored_image_id);
-        if (! $image instanceof Image) {
+        if (!$image instanceof Image) {
             throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
         }
 
@@ -222,7 +222,7 @@ class TagHistory extends Extension
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
-				WHERE tag_histories.id = :id", ["id"=>$revert_id]);
+				WHERE tag_histories.id = :id", ["id" => $revert_id]);
         return ($row ? $row : null);
     }
 
@@ -236,7 +236,7 @@ class TagHistory extends Extension
 				JOIN users ON tag_histories.user_id = users.id
 				WHERE image_id = :id
 				ORDER BY tag_histories.id DESC",
-            ["id"=>$image_id]
+            ["id" => $image_id]
         );
     }
 
@@ -249,7 +249,7 @@ class TagHistory extends Extension
 				JOIN users ON tag_histories.user_id = users.id
 				ORDER BY tag_histories.id DESC
 				LIMIT 100 OFFSET :offset
-		", ["offset" => ($page_id-1)*100]);
+		", ["offset" => ($page_id - 1) * 100]);
     }
 
     /**
@@ -328,7 +328,7 @@ class TagHistory extends Extension
                 $stored_tags = $result['tags'];
 
                 $image = Image::by_id($stored_image_id);
-                if (! $image instanceof Image) {
+                if (!$image instanceof Image) {
                     continue;
                     //throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
                 }
@@ -372,13 +372,13 @@ class TagHistory extends Extension
         }
 
         // if the image has no history, make one with the old tags
-        $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = :id", ["id"=>$image->id]);
+        $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = :id", ["id" => $image->id]);
         if ($entries == 0 && !empty($old_tags)) {
             $database->execute(
                 "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-                ["image_id"=>$image->id, "tags"=>$old_tags, "user_id"=>$config->get_int('anon_id'), "user_ip"=>'127.0.0.1']
+                ["image_id" => $image->id, "tags" => $old_tags, "user_id" => $config->get_int('anon_id'), "user_ip" => '127.0.0.1']
             );
             $entries++;
         }
@@ -388,7 +388,7 @@ class TagHistory extends Extension
             "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-            ["image_id"=>$image->id, "tags"=>$new_tags, "user_id"=>$user->id, "user_ip"=>get_real_ip()]
+            ["image_id" => $image->id, "tags" => $new_tags, "user_id" => $user->id, "user_ip" => get_real_ip()]
         );
         $entries++;
 
@@ -405,8 +405,8 @@ class TagHistory extends Extension
                 https://dev.mysql.com/doc/refman/5.1/en/subquery-restrictions.html
                 https://stackoverflow.com/questions/45494/mysql-error-1093-cant-specify-target-table-for-update-in-from-clause
             */
-            $min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = :image_id", ["image_id"=>$image->id]);
-            $database->execute("DELETE FROM tag_histories WHERE id = :id", ["id"=>$min_id]);
+            $min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = :image_id", ["image_id" => $image->id]);
+            $database->execute("DELETE FROM tag_histories WHERE id = :id", ["id" => $min_id]);
         }
     }
 }

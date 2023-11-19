@@ -89,7 +89,7 @@ class ReportImage extends Extension
         $database->execute(
             "INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (:image_id, :reporter_id, :reason)",
-            ['image_id'=>$event->report->image_id, 'reporter_id'=>$event->report->user_id, 'reason'=>$event->report->reason]
+            ['image_id' => $event->report->image_id, 'reporter_id' => $event->report->user_id, 'reason' => $event->report->reason]
         );
         $cache->delete("image-report-count");
     }
@@ -97,7 +97,7 @@ class ReportImage extends Extension
     public function onRemoveReportedImage(RemoveReportedImageEvent $event)
     {
         global $cache, $database;
-        $database->execute("DELETE FROM image_reports WHERE id = :id", ["id"=>$event->id]);
+        $database->execute("DELETE FROM image_reports WHERE id = :id", ["id" => $event->id]);
         $cache->delete("image-report-count");
     }
 
@@ -122,7 +122,7 @@ class ReportImage extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
                 $count = $this->count_reported_images();
                 $h_count = $count > 0 ? " ($count)" : "";
@@ -145,7 +145,7 @@ class ReportImage extends Extension
     public function onImageDeletion(ImageDeletionEvent $event)
     {
         global $cache, $database;
-        $database->execute("DELETE FROM image_reports WHERE image_id = :image_id", ["image_id"=>$event->image->id]);
+        $database->execute("DELETE FROM image_reports WHERE image_id = :image_id", ["image_id" => $event->image->id]);
         $cache->delete("image-report-count");
     }
 
@@ -170,7 +170,7 @@ class ReportImage extends Extension
     public function delete_reports_by(int $user_id)
     {
         global $cache, $database;
-        $database->execute("DELETE FROM image_reports WHERE reporter_id=:reporter_id", ['reporter_id'=>$user_id]);
+        $database->execute("DELETE FROM image_reports WHERE reporter_id=:reporter_id", ['reporter_id' => $user_id]);
         $cache->delete("image-report-count");
     }
 

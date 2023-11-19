@@ -10,16 +10,16 @@ class PrivateImageTheme extends Themelet
 {
     public function get_image_admin_html(Image $image): string
     {
-        if ($image->private===false) {
+        if ($image->private === false) {
             $html = SHM_SIMPLE_FORM(
                 'privatize_image/'.$image->id,
-                INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
+                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),
                 SHM_SUBMIT("Make Private")
             );
         } else {
             $html = SHM_SIMPLE_FORM(
                 'publicize_image/'.$image->id,
-                INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
+                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),
                 SHM_SUBMIT("Make Public")
             );
         }

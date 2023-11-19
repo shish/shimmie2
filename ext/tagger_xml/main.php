@@ -19,7 +19,7 @@ class TaggerXML extends Extension
 
             //$match_tags = null;
             //$image_tags = null;
-            $tags=null;
+            $tags = null;
             if (isset($_GET['s'])) { // tagger/tags[/...]?s=$string
                 // return matching tags in XML form
                 $tags = $this->match_tag_list($_GET['s']);
@@ -58,7 +58,7 @@ class TaggerXML extends Extension
         //		$exclude = $event->get_arg(1)? "AND NOT IN ".$this->image_tags($event->get_arg(1)) : null;
 
         // Hidden Tags
-        $hidden = $config->get_string('ext-tagger_show-hidden', 'N')=='N' ?
+        $hidden = $config->get_string('ext-tagger_show-hidden', 'N') == 'N' ?
             "AND substring(tag,1,1) != '.'" : null;
 
         $q_where = "WHERE {$match} {$hidden} AND count > 0";
@@ -69,7 +69,7 @@ class TaggerXML extends Extension
             $q_from = "FROM (SELECT * FROM `tags` {$q_where} ".
                 "ORDER BY count DESC LIMIT {$limit_rows} OFFSET 0) AS `c_tags`";
             $q_where = null;
-            $count = ["max"=>$count];
+            $count = ["max" => $count];
         } else {
             $q_from = "FROM `tags`";
             $count = [];
@@ -93,17 +93,17 @@ class TaggerXML extends Extension
         $tags = $database->execute("
 			SELECT tags.*
 			FROM image_tags JOIN tags ON image_tags.tag_id = tags.id
-			WHERE image_id=:image_id ORDER BY tag", ['image_id'=>$image_id]);
+			WHERE image_id=:image_id ORDER BY tag", ['image_id' => $image_id]);
         return $this->list_to_xml($tags, "image", (string)$image_id);
     }
 
-    private function list_to_xml(\FFSPHP\PDOStatement $tags, string $type, string $query, ?array $misc=[]): string
+    private function list_to_xml(\FFSPHP\PDOStatement $tags, string $type, string $query, ?array $misc = []): string
     {
         $props = [
-            "id"=>$type,
-            "query"=>$query,
+            "id" => $type,
+            "query" => $query,
             // @phpstan-ignore-next-line
-            "rows"=>$tags->_numOfRows
+            "rows" => $tags->_numOfRows
         ];
         if (!is_null($misc)) {
             foreach ($misc as $attr => $val) {
@@ -113,7 +113,7 @@ class TaggerXML extends Extension
 
         $list = new \MicroHTML\HTMLElement("list", [$props]);
         foreach ($tags as $tag) {
-            $list->appendChild(new \MicroHTML\HTMLElement("tag", [["id"=>$tag["id"], "count"=>$tag["count"]], $tag["tag"]]));
+            $list->appendChild(new \MicroHTML\HTMLElement("tag", [["id" => $tag["id"], "count" => $tag["count"]], $tag["tag"]]));
         }
 
         return (string)($list);

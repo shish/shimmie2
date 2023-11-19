@@ -12,7 +12,7 @@ class MediaTheme extends Themelet
     {
         return (string)SHM_SIMPLE_FORM(
             "media_rescan/",
-            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
+            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             SHM_SUBMIT('Scan Media Properties'),
         );
     }

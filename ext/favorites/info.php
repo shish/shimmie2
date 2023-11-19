@@ -10,7 +10,7 @@ class FavoritesInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Favorites";
-    public array $authors = ["Daniel Marschall"=>"info@daniel-marschall.de"];
+    public array $authors = ["Daniel Marschall" => "info@daniel-marschall.de"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Allow users to favorite images";
     public ?string $documentation =

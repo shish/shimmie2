@@ -50,7 +50,7 @@ class Tips extends Extension
                 "
 					INSERT INTO tips (enable, image, text)
 					VALUES (:enable, :image, :text)",
-                ["enable"=>true, "image"=>"coins.png", "text"=>"Do you like this extension? Please support us for developing new ones. <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8235933\" target=\"_blank\">Donate through paypal</a>."]
+                ["enable" => true, "image" => "coins.png", "text" => "Do you like this extension? Please support us for developing new ones. <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8235933\" target=\"_blank\">Donate through paypal</a>."]
             );
 
             $this->set_version("ext_tips_version", 2);
@@ -101,7 +101,7 @@ class Tips extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::TIPS_ADMIN)) {
                 $event->add_nav_link("tips", new Link('tips/list'), "Tips Editor");
             }
@@ -141,7 +141,7 @@ class Tips extends Extension
             "
 				INSERT INTO tips (enable, image, text)
 				VALUES (:enable, :image, :text)",
-            ["enable"=>$event->enable, "image"=>$event->image, "text"=>$event->text]
+            ["enable" => $event->enable, "image" => $event->image, "text" => $event->text]
         );
     }
 
@@ -158,7 +158,7 @@ class Tips extends Extension
             WHERE enable = :true
             ORDER BY RAND()
             LIMIT 1
-        ", ["true"=>true]);
+        ", ["true" => true]);
 
         if ($tip) {
             $this->theme->showTip($url, $tip);
@@ -181,16 +181,16 @@ class Tips extends Extension
     {
         global $database;
 
-        $tip = $database->get_row("SELECT * FROM tips WHERE id = :id ", ["id"=>$tipID]);
+        $tip = $database->get_row("SELECT * FROM tips WHERE id = :id ", ["id" => $tipID]);
 
         $enable = bool_escape($tip['enable']);
 
-        $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable"=>$enable, "id"=>$tipID]);
+        $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable" => $enable, "id" => $tipID]);
     }
 
     public function onDeleteTip(DeleteTipEvent $event)
     {
         global $database;
-        $database->execute("DELETE FROM tips WHERE id = :id", ["id"=>$event->tip_id]);
+        $database->execute("DELETE FROM tips WHERE id = :id", ["id" => $event->tip_id]);
     }
 }

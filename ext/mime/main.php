@@ -42,7 +42,7 @@ class MimeSystem extends Extension
             foreach ($extensions as $ext) {
                 $mime = MimeType::get_for_extension($ext);
 
-                if (empty($mime) || $mime===MimeType::OCTET_STREAM) {
+                if (empty($mime) || $mime === MimeType::OCTET_STREAM) {
                     throw new SCoreException("Unknown extension: $ext");
                 }
 
@@ -60,7 +60,7 @@ class MimeSystem extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "File Types";
             $block->body = $this->theme->get_help_html();
@@ -81,7 +81,7 @@ class MimeSystem extends Extension
             $event->add_querylet(new Querylet('images.ext = :ext', ["ext" => $ext]));
         } elseif (preg_match("/^mime[=|:](.+)$/i", $event->term, $matches)) {
             $mime = strtolower($matches[1]);
-            $event->add_querylet(new Querylet("images.mime = :mime", ["mime"=>$mime]));
+            $event->add_querylet(new Querylet("images.mime = :mime", ["mime" => $mime]));
         }
     }
 }

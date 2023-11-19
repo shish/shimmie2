@@ -75,8 +75,8 @@ class RegenThumb extends Extension
                 if ($user->can(Permissions::DELETE_IMAGE)) {
                     $force = true;
                     if (isset($_POST["bulk_regen_thumb_missing_only"])
-                        &&$_POST["bulk_regen_thumb_missing_only"]=="true") {
-                        $force=false;
+                        && $_POST["bulk_regen_thumb_missing_only"] == "true") {
+                        $force = false;
                     }
 
                     $total = 0;
@@ -103,12 +103,12 @@ class RegenThumb extends Extension
             case "regen_thumbs":
                 $event->redirect = true;
                 $force = false;
-                if (isset($_POST["regen_thumb_force"])&&$_POST["regen_thumb_force"]=="true") {
-                    $force=true;
+                if (isset($_POST["regen_thumb_force"]) && $_POST["regen_thumb_force"] == "true") {
+                    $force = true;
                 }
                 $limit = 1000;
-                if (isset($_POST["regen_thumb_limit"])&&is_numeric($_POST["regen_thumb_limit"])) {
-                    $limit=intval($_POST["regen_thumb_limit"]);
+                if (isset($_POST["regen_thumb_limit"]) && is_numeric($_POST["regen_thumb_limit"])) {
+                    $limit = intval($_POST["regen_thumb_limit"]);
                 }
 
                 $mime = "";
@@ -129,7 +129,7 @@ class RegenThumb extends Extension
                     if ($event->generated) {
                         $i++;
                     }
-                    if ($i>=$limit) {
+                    if ($i >= $limit) {
                         break;
                     }
                 }
@@ -138,7 +138,7 @@ class RegenThumb extends Extension
             case "delete_thumbs":
                 $event->redirect = true;
 
-                if (isset($_POST["delete_thumb_mime"])&&$_POST["delete_thumb_mime"]!="") {
+                if (isset($_POST["delete_thumb_mime"]) && $_POST["delete_thumb_mime"] != "") {
                     $images = $this->get_images($_POST["delete_thumb_mime"]);
 
                     $i = 0;

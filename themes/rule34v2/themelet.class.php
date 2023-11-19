@@ -35,14 +35,14 @@ class Themelet extends BaseThemelet
         }
 
         $html = DIV(
-            ['class'=>'shm-thumb thumb', 'data-ext'=>$ext, 'data-tags'=>$tags, 'data-post-id'=>$id],
+            ['class' => 'shm-thumb thumb', 'data-ext' => $ext, 'data-tags' => $tags, 'data-post-id' => $id],
             A(
-                ['class'=>'shm-thumb-link', 'href'=>$view_link],
-                IMG(['id'=>"thumb_$id", 'title'=>$tip, 'alt'=>$tip, 'height'=>$tsize[1], 'width'=>$tsize[0], 'src'=>$thumb_link, 'loading'=>'lazy'])
+                ['class' => 'shm-thumb-link', 'href' => $view_link],
+                IMG(['id' => "thumb_$id", 'title' => $tip, 'alt' => $tip, 'height' => $tsize[1], 'width' => $tsize[0], 'src' => $thumb_link, 'loading' => 'lazy'])
             ),
             BR(),
-            A(['href'=>$image_link], 'File Only'),
-            SPAN(['class'=>'need-del'], ' - ', A(['href'=>'#', 'onclick'=>"image_hash_ban($id); return false;"], 'Ban'))
+            A(['href' => $image_link], 'File Only'),
+            SPAN(['class' => 'need-del'], ' - ', A(['href' => '#', 'onclick' => "image_hash_ban($id); return false;"], 'Ban'))
         );
 
         // cache for ages; will be cleared in ext/index:onImageInfoSet

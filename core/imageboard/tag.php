@@ -26,7 +26,7 @@ class TagUsage
      * @return TagUsage[]
      */
     #[Query(name: "tags", type: '[TagUsage!]!')]
-    public static function tags(string $search, int $limit=10): array
+    public static function tags(string $search, int $limit = 10): array
     {
         global $cache, $database;
 
@@ -48,7 +48,7 @@ class TagUsage
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
         $search = str_replace('%', '\%', $search);
-        $SQLarr = ["search"=>"$search%"]; #, "cat_search"=>"%:$search%"];
+        $SQLarr = ["search" => "$search%"]; #, "cat_search"=>"%:$search%"];
         if ($limit !== 0) {
             $limitSQL = "LIMIT :limit";
             $SQLarr['limit'] = $limit;
@@ -104,17 +104,17 @@ class Tag
 
         $id = $database->get_one(
             "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
-            ["tag"=>$tag]
+            ["tag" => $tag]
         );
         if (empty($id)) {
             // a new tag
             $database->execute(
                 "INSERT INTO tags(tag) VALUES (:tag)",
-                ["tag"=>$tag]
+                ["tag" => $tag]
             );
             $id = $database->get_one(
                 "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
-                ["tag"=>$tag]
+                ["tag" => $tag]
             );
         }
 
@@ -125,7 +125,7 @@ class Tag
     /** @param string[] $tags */
     public static function implode(array $tags): string
     {
-        sort($tags, SORT_FLAG_CASE|SORT_STRING);
+        sort($tags, SORT_FLAG_CASE | SORT_STRING);
         return implode(' ', $tags);
     }
 
@@ -134,7 +134,7 @@ class Tag
      *
      * #return string[]
      */
-    public static function explode(string $tags, bool $tagme=true): array
+    public static function explode(string $tags, bool $tagme = true): array
     {
         global $database;
 
@@ -152,7 +152,7 @@ class Tag
         $new = [];
         $i = 0;
         $tag_count = count($tag_array);
-        while ($i<$tag_count) {
+        while ($i < $tag_count) {
             $tag = $tag_array[$i];
             $negative = '';
             if (!empty($tag) && ($tag[0] == '-')) {
@@ -166,7 +166,7 @@ class Tag
 					FROM aliases
 					WHERE LOWER(oldtag)=LOWER(:tag)
 				",
-                ["tag"=>$tag]
+                ["tag" => $tag]
             );
             if (empty($newtags)) {
                 //tag has no alias, use old tag
@@ -217,7 +217,7 @@ class Tag
 
     public static function compare(array $tags1, array $tags2): bool
     {
-        if (count($tags1)!==count($tags2)) {
+        if (count($tags1) !== count($tags2)) {
             return false;
         }
 
@@ -312,7 +312,7 @@ class Tag
 
         $out = "";
         $length = strlen($str);
-        for ($i=0; $i<$length; $i++) {
+        for ($i = 0; $i < $length; $i++) {
             if ($str[$i] == "^") {
                 $i++;
                 $out .= $from_caret[$str[$i]] ?? '';

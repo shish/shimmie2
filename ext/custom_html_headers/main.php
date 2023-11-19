@@ -43,7 +43,7 @@ class CustomHtmlHeaders extends Extension
         global $config, $page;
 
         $header = $config->get_string('custom_html_headers', '');
-        if ($header!='') {
+        if ($header != '') {
             $page->add_html_header($header);
         }
     }

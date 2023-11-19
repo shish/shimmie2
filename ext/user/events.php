@@ -10,7 +10,7 @@ class UserBlockBuildingEvent extends Event
 {
     public array $parts = [];
 
-    public function add_link(string|HTMLElement $name, string $link, int $position=50): void
+    public function add_link(string|HTMLElement $name, string $link, int $position = 50): void
     {
         while (isset($this->parts[$position])) {
             $position++;
@@ -43,7 +43,7 @@ class UserPageBuildingEvent extends Event
         parent::__construct();
     }
 
-    public function add_stats(string $html, int $position=50)
+    public function add_stats(string $html, int $position = 50)
     {
         while (isset($this->stats[$position])) {
             $position++;

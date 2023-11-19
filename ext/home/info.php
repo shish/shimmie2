@@ -10,7 +10,7 @@ class HomeInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Home Page";
-    public array $authors =["Bzchan"=>"bzchan@animemahou.com"];
+    public array $authors = ["Bzchan" => "bzchan@animemahou.com"];
     public string $license = self::LICENSE_GPLV2;
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public string $description = "Displays a front page with logo, search box and post count";

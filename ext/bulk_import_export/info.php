@@ -12,7 +12,7 @@ class BulkImportExportInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Bulk Import/Export";
-    public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Allows bulk exporting/importing of images and associated data.";
     public array $dependencies = [BulkActionsInfo::KEY];

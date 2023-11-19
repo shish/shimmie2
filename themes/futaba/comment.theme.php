@@ -64,7 +64,7 @@ class CustomCommentListTheme extends CommentListTheme
     }
 
 
-    protected function comment_to_html(Comment $comment, bool $trim=false): string
+    protected function comment_to_html(Comment $comment, bool $trim = false): string
     {
         $inner_id = $this->inner_id; // because custom themes can't add params, because PHP
         global $user;

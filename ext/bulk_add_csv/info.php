@@ -11,7 +11,7 @@ class BulkAddCSVInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "Bulk Add CSV";
     public string $url = self::SHIMMIE_URL;
-    public array $authors = ["velocity37"=>"velocity37@gmail.com"];
+    public array $authors = ["velocity37" => "velocity37@gmail.com"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Bulk add server-side posts with metadata from CSV file";
     public ?string $documentation =

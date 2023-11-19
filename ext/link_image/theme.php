@@ -62,7 +62,7 @@ class LinkImageTheme extends Themelet
     protected function url(string $url, string $content, string $type): string
     {
         if (empty($content)) {
-            $content=$url;
+            $content = $url;
         }
 
         switch ($type) {
@@ -93,7 +93,7 @@ class LinkImageTheme extends Themelet
         return $text;
     }
 
-    protected function link_code(string $label, string $content, $id=null): string
+    protected function link_code(string $label, string $content, $id = null): string
     {
         return	"
 			<tr>

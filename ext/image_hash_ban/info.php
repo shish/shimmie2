@@ -11,7 +11,7 @@ class ImageBanInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "Post Hash Ban";
     public string $url = "http://atravelinggeek.com/";
-    public array $authors = ["ATravelingGeek"=>"atg@atravelinggeek.com"];
+    public array $authors = ["ATravelingGeek" => "atg@atravelinggeek.com"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Ban images based on their hash";
     public ?string $version = "0.1, October 21, 2007";

@@ -10,7 +10,7 @@ class PoolsInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Pools System";
-    public array $authors = ["Sein Kraft"=>"mail@seinkraft.info", "jgen"=>"jgen.tech@gmail.com", "Daku"=>"admin@codeanimu.net"];
+    public array $authors = ["Sein Kraft" => "mail@seinkraft.info", "jgen" => "jgen.tech@gmail.com", "Daku" => "admin@codeanimu.net"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Allow users to create groups of images and order them.";
     public ?string $documentation =

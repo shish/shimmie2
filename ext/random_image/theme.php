@@ -20,16 +20,16 @@ class RandomImageTheme extends Themelet
         $tsize = get_thumbnail_size($image->width, $image->height);
 
         return (string)DIV(
-            ["style"=>"text-align: center;"],
+            ["style" => "text-align: center;"],
             A(
-                ["href"=>make_link("post/view/{$image->id}", $query)],
+                ["href" => make_link("post/view/{$image->id}", $query)],
                 IMG([
-                    "id"=>"thumb_rand_{$image->id}",
-                    "title"=>$image->get_tooltip(),
-                    "alt"=>$image->get_tooltip(),
-                    "class"=>'highlighted',
-                    "style"=>"max-height: {$tsize[1]}px; max-width: 100%;",
-                    "src"=>$image->get_thumb_link()
+                    "id" => "thumb_rand_{$image->id}",
+                    "title" => $image->get_tooltip(),
+                    "alt" => $image->get_tooltip(),
+                    "class" => 'highlighted',
+                    "style" => "max-height: {$tsize[1]}px; max-width: 100%;",
+                    "src" => $image->get_thumb_link()
                 ])
             )
         );

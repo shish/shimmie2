@@ -20,7 +20,7 @@ class CronUploaderInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "Cron Uploader";
     public string $url = self::SHIMMIE_URL;
-    public array $authors = ["YaoiFox"=>"admin@yaoifox.com", "Matthew Barbour"=>"matthew@darkholme.net"];
+    public array $authors = ["YaoiFox" => "admin@yaoifox.com", "Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Uploads images automatically using Cron Jobs";
 

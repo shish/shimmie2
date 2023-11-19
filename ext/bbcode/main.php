@@ -97,8 +97,8 @@ class BBCode extends FormatterExtension
             }
 
             $beginning = substr($text, 0, $start);
-            $middle = str_rot13(substr($text, $start+$l1, ($end-$start-$l1)));
-            $ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
+            $middle = str_rot13(substr($text, $start + $l1, ($end - $start - $l1)));
+            $ending = substr($text, $end + $l2, (strlen($text) - $end + $l2));
 
             $text = $beginning . $middle . $ending;
         }
@@ -131,8 +131,8 @@ class BBCode extends FormatterExtension
             }
 
             $beginning = substr($text, 0, $start);
-            $middle = base64_encode(substr($text, $start+$l1, ($end-$start-$l1)));
-            $ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
+            $middle = base64_encode(substr($text, $start + $l1, ($end - $start - $l1)));
+            $ending = substr($text, $end + $l2, (strlen($text) - $end + $l2));
 
             $text = $beginning . "[code!]" . $middle . "[/code!]" . $ending;
         }
@@ -155,8 +155,8 @@ class BBCode extends FormatterExtension
             }
 
             $beginning = substr($text, 0, $start);
-            $middle = base64_decode(substr($text, $start+$l1, ($end-$start-$l1)));
-            $ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
+            $middle = base64_decode(substr($text, $start + $l1, ($end - $start - $l1)));
+            $ending = substr($text, $end + $l2, (strlen($text) - $end + $l2));
 
             $text = $beginning . "<pre>" . $middle . "</pre>" . $ending;
         }

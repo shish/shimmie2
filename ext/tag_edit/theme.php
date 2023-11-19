@@ -63,7 +63,7 @@ class TagEditTheme extends Themelet
                 "type" => "text",
                 "name" => "tag_edit__tags",
                 "value" => $image->get_tag_list(),
-                "id"=>"tag_editor",
+                "id" => "tag_editor",
                 "autocomplete" => "off"
             ])
         );
@@ -117,7 +117,7 @@ class TagEditTheme extends Themelet
             if (str_ends_with($h_source, "/")) {
                 $h_source = substr($h_source, 0, -1);
             }
-            return A(["href"=>$source], $h_source);
+            return A(["href" => $source], $h_source);
         }
         return rawHTML("Unknown");
     }

@@ -127,7 +127,7 @@ class BlotterTheme extends Themelet
             $entry_text = $entries[$i]['entry_text'];
             if ($entries[$i]['important'] == 'Y') {
                 $i_open = "<span style='color: #$i_color;'>";
-                $i_close="</span>";
+                $i_close = "</span>";
             }
             $html .= "{$i_open}{$clean_date} - {$entry_text}{$i_close}<br /><br />";
         }
@@ -155,7 +155,7 @@ class BlotterTheme extends Themelet
             $entry_text = $entries[$i]['entry_text'];
             if ($entries[$i]['important'] == 'Y') {
                 $i_open = "<span style='color: #$i_color'>";
-                $i_close="</span>";
+                $i_close = "</span>";
             }
             $entries_list .= "<li>{$i_open}{$clean_date} - {$entry_text}{$i_close}</li>";
         }

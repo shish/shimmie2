@@ -11,7 +11,7 @@ class ImageViewCounterInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "Post View Counter";
     public string $url = "http://www.drudexsoftware.com/";
-    public array $authors = ["Drudex Software"=>"support@drudexsoftware.com"];
+    public array $authors = ["Drudex Software" => "support@drudexsoftware.com"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Tracks & displays how many times a post is viewed";
     public ?string $documentation =

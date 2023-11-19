@@ -73,30 +73,30 @@ class CustomUserPageTheme extends UserPageTheme
         $form = SHM_SIMPLE_FORM(
             "user_admin/create",
             TABLE(
-                ["class"=>"form"],
+                ["class" => "form"],
                 TBODY(
                     TR(
                         TH("Name"),
-                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                        TD(INPUT(["type" => 'text', "name" => 'name', "required" => true]))
                     ),
                     TR(
                         TH("Password"),
-                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Repeat&nbsp;Password")),
-                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Email")),
-                        TD(INPUT(["type"=>'email', "name"=>'email', "required"=>true]))
+                        TD(INPUT(["type" => 'email', "name" => 'email', "required" => true]))
                     ),
                     TR(
-                        TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
+                        TD(["colspan" => "2"], rawHTML(captcha_get_html()))
                     ),
                 ),
                 TFOOT(
-                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Create Account"])))
                 )
             )
         );
@@ -119,30 +119,30 @@ class CustomUserPageTheme extends UserPageTheme
         $form = SHM_SIMPLE_FORM(
             "user_admin/create_other",
             TABLE(
-                ["class"=>"form"],
+                ["class" => "form"],
                 TBODY(
                     TR(
                         TH("Name"),
-                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                        TD(INPUT(["type" => 'text', "name" => 'name', "required" => true]))
                     ),
                     TR(
                         TH("Password"),
-                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Repeat&nbsp;Password")),
-                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                        TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
                         TH(rawHTML("Email")),
-                        TD(INPUT(["type"=>'email', "name"=>'email']))
+                        TD(INPUT(["type" => 'email', "name" => 'email']))
                     ),
                     TR(
-                        TD(["colspan"=>2], rawHTML("(Email is optional for admin-created accounts)")),
+                        TD(["colspan" => 2], rawHTML("(Email is optional for admin-created accounts)")),
                     ),
                 ),
                 TFOOT(
-                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Create Account"])))
                 )
             )
         );

@@ -114,7 +114,7 @@ class NotATag extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="tags") {
+        if ($event->parent === "tags") {
             if ($user->can(Permissions::BAN_IMAGE)) {
                 $event->add_nav_link("untags", new Link('untag/list/1'), "UnTags");
             }
@@ -137,19 +137,19 @@ class NotATag extends Extension
             if ($user->can(Permissions::BAN_IMAGE)) {
                 if ($event->get_arg(0) == "add") {
                     $user->ensure_authed();
-                    $input = validate_input(["c_tag"=>"string", "c_redirect"=>"string"]);
+                    $input = validate_input(["c_tag" => "string", "c_redirect" => "string"]);
                     $database->execute(
                         "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
-                        ["tag"=>$input['c_tag'], "redirect"=>$input['c_redirect']]
+                        ["tag" => $input['c_tag'], "redirect" => $input['c_redirect']]
                     );
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(referer_or(make_link()));
                 } elseif ($event->get_arg(0) == "remove") {
                     $user->ensure_authed();
-                    $input = validate_input(["d_tag"=>"string"]);
+                    $input = validate_input(["d_tag" => "string"]);
                     $database->execute(
                         "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",
-                        ["tag"=>$input['d_tag']]
+                        ["tag" => $input['d_tag']]
                     );
                     $page->flash("Post ban removed");
                     $page->set_mode(PageMode::REDIRECT);

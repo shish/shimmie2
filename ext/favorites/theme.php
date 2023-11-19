@@ -16,9 +16,9 @@ class FavoritesTheme extends Themelet
         $label = $is_favorited ? "Un-Favorite" : "Favorite";
         return SHM_SIMPLE_FORM(
             "change_favorite",
-            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image->id]),
-            INPUT(["type"=>"hidden", "name"=>"favorite_action", "value"=>$name]),
-            INPUT(["type"=>"submit", "value"=>$label]),
+            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image->id]),
+            INPUT(["type" => "hidden", "name" => "favorite_action", "value" => $name]),
+            INPUT(["type" => "submit", "value" => $label]),
         );
     }
 

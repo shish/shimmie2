@@ -34,7 +34,7 @@ class Themelet extends BaseThemelet
         $page->add_block(new Block("Paginator", $body, "main", 90));
     }
 
-    public function litetheme_gen_page_link(string $base_url, ?string $query, int $page, string $name, ?string $link_class=null): HTMLElement
+    public function litetheme_gen_page_link(string $base_url, ?string $query, int $page, string $name, ?string $link_class = null): HTMLElement
     {
         return A(["href" => make_link("$base_url/$page", $query), "class" => $link_class], $name);
     }
@@ -57,8 +57,8 @@ class Themelet extends BaseThemelet
         $at_start = ($current_page <= 1 || $total_pages <= 1);
         $at_end = ($current_page >= $total_pages);
 
-        $first_html  = $at_start ? SPAN(["class"=>"tab"], "First") : $this->litetheme_gen_page_link($base_url, $query, 1, "First");
-        $prev_html   = $at_start ? SPAN(["class"=>"tab"], "Prev") : $this->litetheme_gen_page_link($base_url, $query, $prev, "Prev");
+        $first_html  = $at_start ? SPAN(["class" => "tab"], "First") : $this->litetheme_gen_page_link($base_url, $query, 1, "First");
+        $prev_html   = $at_start ? SPAN(["class" => "tab"], "Prev") : $this->litetheme_gen_page_link($base_url, $query, $prev, "Prev");
 
         $random_html = "";
         if ($show_random) {
@@ -66,11 +66,11 @@ class Themelet extends BaseThemelet
             $random_html = $this->litetheme_gen_page_link($base_url, $query, $rand, "Random");
         }
 
-        $next_html   = $at_end ? SPAN(["class"=>"tab"], "Next") : $this->litetheme_gen_page_link($base_url, $query, $next, "Next");
-        $last_html   = $at_end ? SPAN(["class"=>"tab"], "Last") : $this->litetheme_gen_page_link($base_url, $query, $total_pages, "Last");
+        $next_html   = $at_end ? SPAN(["class" => "tab"], "Next") : $this->litetheme_gen_page_link($base_url, $query, $next, "Next");
+        $last_html   = $at_end ? SPAN(["class" => "tab"], "Last") : $this->litetheme_gen_page_link($base_url, $query, $total_pages, "Last");
 
-        $start = $current_page-5 > 1 ? $current_page-5 : 1;
-        $end = $start+10 < $total_pages ? $start+10 : $total_pages;
+        $start = $current_page - 5 > 1 ? $current_page - 5 : 1;
+        $end = $start + 10 < $total_pages ? $start + 10 : $total_pages;
 
         $pages = [];
         foreach (range($start, $end) as $i) {
@@ -78,7 +78,7 @@ class Themelet extends BaseThemelet
         }
 
         return DIV(
-            ["class"=>"paginator sfoot"],
+            ["class" => "paginator sfoot"],
             $first_html,
             $prev_html,
             $random_html,

@@ -76,7 +76,7 @@ class TagList extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="tags") {
+        if ($event->parent == "tags") {
             $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
             $event->add_nav_link("tags_alphabetic", new Link('tags/alphabetic'), "Alphabetic");
             $event->add_nav_link("tags_popularity", new Link('tags/popularity'), "Popularity");
@@ -214,11 +214,11 @@ class TagList extends Extension
 			FROM tags
 			WHERE count >= :tags_min
 			ORDER BY LOWER(substr(tag, 1, 1))
-		", ["tags_min"=>$tags_min]);
+		", ["tags_min" => $tags_min]);
 
         $html = "<span class='atoz'>";
         foreach ($tag_data as $a) {
-            $html .= " <a href='".modify_current_url(["starts_with"=>$a])."'>$a</a>";
+            $html .= " <a href='".modify_current_url(["starts_with" => $a])."'>$a</a>";
         }
         $html .= "</span>\n<p><hr>";
 
@@ -231,7 +231,7 @@ class TagList extends Extension
         $h_map = "<a href='".make_link("tags/map")."'>Map</a>";
         $h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
         $h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
-        $h_all = "<a href='".modify_current_url(["mincount"=>1])."'>Show All</a>";
+        $h_all = "<a href='".modify_current_url(["mincount" => 1])."'>Show All</a>";
         return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>&nbsp;<br>$h_all";
     }
 
@@ -260,7 +260,7 @@ class TagList extends Extension
             WHERE count >= :tags_min
             AND LOWER(tag) LIKE LOWER(:starts_with)
             ORDER BY LOWER(tag)
-        ", ["tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with]);
+        ", ["tags_min" => $tags_min, "tags_min2" => $tags_min, "starts_with" => $starts_with]);
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
@@ -275,7 +275,7 @@ class TagList extends Extension
             $h_tag = html_escape($row['tag']);
             $size = sprintf("%.2f", (float)$row['scaled']);
             $link = $this->theme->tag_link($row['tag']);
-            if ($size<0.5) {
+            if ($size < 0.5) {
                 $size = 0.5;
             }
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
@@ -314,7 +314,7 @@ class TagList extends Extension
             WHERE count >= :tags_min
             AND LOWER(tag) LIKE LOWER(:starts_with)
             ORDER BY LOWER(tag)
-        ", ["tags_min"=>$tags_min, "starts_with"=>$starts_with]);
+        ", ["tags_min" => $tags_min, "starts_with" => $starts_with]);
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
@@ -349,8 +349,8 @@ class TagList extends Extension
         foreach ($tag_data as $tag => $count) {
             // In PHP, $array["10"] sets the array key as int(10), not string("10")...
             $tag = (string)$tag;
-            if ($lastLetter != mb_strtolower(substr($tag, 0, strlen($starts_with)+1))) {
-                $lastLetter = mb_strtolower(substr($tag, 0, strlen($starts_with)+1));
+            if ($lastLetter != mb_strtolower(substr($tag, 0, strlen($starts_with) + 1))) {
+                $lastLetter = mb_strtolower(substr($tag, 0, strlen($starts_with) + 1));
                 $h_lastLetter = html_escape($lastLetter);
                 $html .= "<p>$h_lastLetter<br>";
             }
@@ -395,7 +395,7 @@ class TagList extends Extension
             FROM tags
             WHERE count >= :tags_min
             ORDER BY count DESC, tag ASC
-        ", ["tags_min"=>$tags_min]);
+        ", ["tags_min" => $tags_min]);
 
         $html = "Results grouped by log<sub>10</sub>(n)";
         $lastLog = "";
@@ -464,7 +464,7 @@ class TagList extends Extension
 			AND image_tags.image_id = :image_id
 			ORDER BY tags.count DESC
 		";
-        $args = ["image_id"=>$image->id];
+        $args = ["image_id" => $image->id];
 
         $tags = $database->get_all($query, $args);
         if (count($tags) > 0) {
@@ -483,7 +483,7 @@ class TagList extends Extension
 			AND image_tags.image_id = :image_id
 			ORDER BY tags.count DESC
 		";
-        $args = ["image_id"=>$image->id];
+        $args = ["image_id" => $image->id];
 
         $tags = $database->get_all($query, $args);
         if (count($tags) > 0) {
@@ -518,7 +518,7 @@ class TagList extends Extension
                     ";
             }
 
-            $args = ["popular_tag_list_length"=>$config->get_int(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
+            $args = ["popular_tag_list_length" => $config->get_int(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
 
             $tags = $database->get_all($query, $args);
 

@@ -17,11 +17,11 @@ class ArtistsTheme extends Themelet
             "Author",
             true,
             $author,
-            INPUT(["type"=>"text", "name"=>"tag_edit__author", "value"=>$author])
+            INPUT(["type" => "text", "name" => "tag_edit__author", "value" => $author])
         );
     }
 
-    public function sidebar_options(string $mode, ?int $artistID=null, $is_admin=false): void
+    public function sidebar_options(string $mode, ?int $artistID = null, $is_admin = false): void
     {
         global $page, $user;
 
@@ -113,7 +113,7 @@ class ArtistsTheme extends Themelet
             $urlsString .= $url["url"]."\n";
             $urlsIDsString .= $url["id"]." ";
         }
-        $urlsString = substr($urlsString, 0, strlen($urlsString) -1);
+        $urlsString = substr($urlsString, 0, strlen($urlsString) - 1);
         $urlsIDsString = rtrim($urlsIDsString);
 
         $html = '

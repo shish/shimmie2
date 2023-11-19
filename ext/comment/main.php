@@ -84,7 +84,7 @@ class Comment
 			SELECT COUNT(*) AS count
 			FROM comments
 			WHERE owner_id=:owner_id
-		", ["owner_id"=>$user->id]);
+		", ["owner_id" => $user->id]);
     }
 
     #[Field(name: "owner")]
@@ -187,7 +187,7 @@ class CommentList extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="comment") {
+        if ($event->parent == "comment") {
             $event->add_nav_link("comment_list", new Link('comment/list'), "All");
             $event->add_nav_link("comment_help", new Link('ext_doc/comment'), "Help");
         }
@@ -306,7 +306,7 @@ class CommentList extends Extension
 			GROUP BY image_id
 			ORDER BY latest DESC
 			LIMIT :limit OFFSET :offset
-		", ["limit"=>$threads_per_page, "offset"=>$start]);
+		", ["limit" => $threads_per_page, "offset" => $start]);
 
         $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_class_privs($user) : "";
 
@@ -322,7 +322,7 @@ class CommentList extends Extension
             if (
                 Extension::is_enabled(ApprovalInfo::KEY) && !is_null($image) &&
                 $config->get_bool(ApprovalConfig::IMAGES) &&
-                $image->approved!==true
+                $image->approved !== true
             ) {
                 $image = null;
             }
@@ -332,7 +332,7 @@ class CommentList extends Extension
             }
         }
 
-        $this->theme->display_comment_list($images, $current_page+1, $total_pages, $user->can(Permissions::CREATE_COMMENT));
+        $this->theme->display_comment_list($images, $current_page + 1, $total_pages, $user->can(Permissions::CREATE_COMMENT));
     }
 
     private function onPageRequest_beta_search(PageRequestEvent $event)
@@ -344,7 +344,7 @@ class CommentList extends Extension
         $com_per_page = 50;
         $total_pages = (int)ceil($i_comment_count / $com_per_page);
         $comments = $this->get_user_comments($duser->id, $com_per_page, $page_num * $com_per_page);
-        $this->theme->display_all_user_comments($comments, $page_num+1, $total_pages, $duser);
+        $this->theme->display_all_user_comments($comments, $page_num + 1, $total_pages, $duser);
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)
@@ -401,7 +401,7 @@ class CommentList extends Extension
         $database->execute("
 			DELETE FROM comments
 			WHERE id=:comment_id
-		", ["comment_id"=>$event->comment_id]);
+		", ["comment_id" => $event->comment_id]);
         log_info("comment", "Deleting Comment #{$event->comment_id}");
     }
 
@@ -446,7 +446,7 @@ class CommentList extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Comments";
             $block->body = $this->theme->get_help_html();
@@ -483,13 +483,13 @@ class CommentList extends Extension
 			LEFT JOIN users ON comments.owner_id=users.id
 			ORDER BY comments.id DESC
 			LIMIT :limit
-		", ["limit"=>$count]);
+		", ["limit" => $count]);
     }
 
     /**
      * #return Comment[]
      */
-    private static function get_user_comments(int $user_id, int $count, int $offset=0): array
+    private static function get_user_comments(int $user_id, int $count, int $offset = 0): array
     {
         return CommentList::get_generic_comments("
 			SELECT
@@ -502,7 +502,7 @@ class CommentList extends Extension
 			WHERE users.id = :user_id
 			ORDER BY comments.id DESC
 			LIMIT :limit OFFSET :offset
-		", ["user_id"=>$user_id, "offset"=>$offset, "limit"=>$count]);
+		", ["user_id" => $user_id, "offset" => $offset, "limit" => $count]);
     }
 
     /**
@@ -521,7 +521,7 @@ class CommentList extends Extension
 			LEFT JOIN users ON comments.owner_id=users.id
 			WHERE comments.image_id=:image_id
 			ORDER BY comments.id ASC
-		", ["image_id"=>$image_id]);
+		", ["image_id" => $image_id]);
     }
 
     private function is_comment_limit_hit(): bool
@@ -547,7 +547,7 @@ class CommentList extends Extension
 			SELECT *
 			FROM comments
 			WHERE owner_ip = :remote_ip AND posted > now() - $window_sql
-		", ["remote_ip"=>get_real_ip()]);
+		", ["remote_ip" => get_real_ip()]);
 
         return (count($result) >= $max);
     }
@@ -609,7 +609,7 @@ class CommentList extends Extension
 			SELECT *
 			FROM comments
 			WHERE image_id=:image_id AND comment=:comment
-		", ["image_id"=>$image_id, "comment"=>$comment]);
+		", ["image_id" => $image_id, "comment" => $comment]);
     }
     // do some checks
 
@@ -624,12 +624,12 @@ class CommentList extends Extension
 
         // all checks passed
         if ($user->is_anonymous()) {
-            $page->add_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
+            $page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");
         }
         $database->execute(
             "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
                 "VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
-            ["image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>get_real_ip(), "comment"=>$comment]
+            ["image_id" => $image_id, "user_id" => $user->id, "remote_addr" => get_real_ip(), "comment" => $comment]
         );
         $cid = $database->get_last_insert_id('comments_id_seq');
         $snippet = substr($comment, 0, 100);
@@ -654,10 +654,10 @@ class CommentList extends Extension
         }
 
         // advanced sanity checks
-        elseif (strlen($comment)/strlen(gzcompress($comment)) > 10) {
+        elseif (strlen($comment) / strlen(gzcompress($comment)) > 10) {
             throw new CommentPostingException("Comment too repetitive~");
         } elseif ($user->is_anonymous() && !$this->hash_match()) {
-            $page->add_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
+            $page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");
             throw new CommentPostingException(
                 "Comment submission form is out of date; refresh the ".
                     "comment form to show you aren't a spammer~"

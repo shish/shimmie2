@@ -61,7 +61,7 @@ class Home extends Extension
             if ($counter_dir != 'text-only') {
                 $strtotal = "$total";
                 $length = strlen($strtotal);
-                for ($n=0; $n<$length; $n++) {
+                for ($n = 0; $n < $length; $n++) {
                     $cur = $strtotal[$n];
                     $counter_text .= "<img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />";
                 }

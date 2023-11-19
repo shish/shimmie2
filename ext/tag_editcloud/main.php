@@ -40,7 +40,7 @@ class TagEditCloud extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sort_by = ['Alphabetical'=>'a','Popularity'=>'p','Relevance'=>'r','Categories'=>'c'];
+        $sort_by = ['Alphabetical' => 'a','Popularity' => 'p','Relevance' => 'r','Categories' => 'c'];
 
         $sb = $event->panel->create_new_block("Tag Edit Cloud");
         $sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
@@ -99,7 +99,7 @@ class TagEditCloud extends Extension
 					GROUP BY t2.tag
 					ORDER BY count DESC
 					LIMIT :limit",
-                    ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count, "relevant_tags"=>$relevant_tags]
+                    ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count, "relevant_tags" => $relevant_tags]
                 );
                 break;
                 /** @noinspection PhpMissingBreakStatementInspection */

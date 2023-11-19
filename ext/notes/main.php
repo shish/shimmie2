@@ -215,7 +215,7 @@ class Notes extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Notes";
             $block->body = $this->theme->get_help_html();
@@ -236,7 +236,7 @@ class Notes extends Extension
             FROM notes
             WHERE enable = :enable AND image_id = :image_id
             ORDER BY date ASC
-        ", ['enable'=>'1', 'image_id'=>$imageID]);
+        ", ['enable' => '1', 'image_id' => $imageID]);
     }
 
 
@@ -259,14 +259,14 @@ class Notes extends Extension
             "
 				INSERT INTO notes (enable, image_id, user_id, user_ip, date, x1, y1, height, width, note)
 				VALUES (:enable, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)",
-            ['enable'=>1, 'image_id'=>$imageID, 'user_id'=>$user_id, 'user_ip'=>get_real_ip(), 'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
+            ['enable' => 1, 'image_id' => $imageID, 'user_id' => $user_id, 'user_ip' => get_real_ip(), 'x1' => $noteX1, 'y1' => $noteY1, 'height' => $noteHeight, 'width' => $noteWidth, 'note' => $noteText]
         );
 
         $noteID = $database->get_last_insert_id('notes_id_seq');
 
         log_info("notes", "Note added {$noteID} by {$user->name}");
 
-        $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id1) WHERE id=:id2", ['id1'=>$imageID, 'id2'=>$imageID]);
+        $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id1) WHERE id=:id2", ['id1' => $imageID, 'id2' => $imageID]);
 
         $this->add_history(1, $noteID, $imageID, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText);
     }
@@ -282,7 +282,7 @@ class Notes extends Extension
             "
 				INSERT INTO note_request (image_id, user_id, date)
 				VALUES (:image_id, :user_id, now())",
-            ['image_id'=>$image_id, 'user_id'=>$user_id]
+            ['image_id' => $image_id, 'user_id' => $user_id]
         );
 
         $resultID = $database->get_last_insert_id('note_request_id_seq');
@@ -332,7 +332,7 @@ class Notes extends Extension
         $database->execute("
 			UPDATE notes SET enable = :enable
 			WHERE image_id = :image_id AND id = :id
-		", ['enable'=>0, 'image_id'=>$imageID, 'id'=>$noteID]);
+		", ['enable' => 0, 'image_id' => $imageID, 'id' => $noteID]);
 
         log_info("notes", "Note deleted {$noteID} by {$user->name}");
     }
@@ -341,7 +341,7 @@ class Notes extends Extension
     {
         global $database, $user;
         $image_id = int_escape($_POST["image_id"]);
-        $database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id'=>$image_id]);
+        $database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id' => $image_id]);
         log_info("notes", "Notes deleted from {$image_id} by {$user->name}");
     }
 
@@ -350,7 +350,7 @@ class Notes extends Extension
         global $database, $user;
         $image_id = int_escape($_POST["image_id"]);
 
-        $database->execute("DELETE FROM note_request WHERE image_id = :image_id", ['image_id'=>$image_id]);
+        $database->execute("DELETE FROM note_request WHERE image_id = :image_id", ['image_id' => $image_id]);
 
         log_info("notes", "Requests deleted from {$image_id} by {$user->name}");
     }
@@ -370,7 +370,7 @@ class Notes extends Extension
 			FROM notes
 			WHERE enable = :enable
 			ORDER BY date DESC LIMIT :limit OFFSET :offset",
-            ['enable'=>1, 'offset'=>$pageNumber * $notesPerPage, 'limit'=>$notesPerPage]
+            ['enable' => 1, 'offset' => $pageNumber * $notesPerPage, 'limit' => $notesPerPage]
         );
 
         $totalPages = ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
@@ -400,7 +400,7 @@ class Notes extends Extension
 				SELECT DISTINCT image_id
 				FROM note_request
 				ORDER BY date DESC LIMIT :limit OFFSET :offset",
-            ["offset"=>$pageNumber * $requestsPerPage, "limit"=>$requestsPerPage]
+            ["offset" => $pageNumber * $requestsPerPage, "limit" => $requestsPerPage]
         );
 
         $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_request") / $requestsPerPage);
@@ -417,7 +417,7 @@ class Notes extends Extension
     {
         global $user, $database;
 
-        $reviewID = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id'=>$noteID]);
+        $reviewID = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]);
         $reviewID = $reviewID + 1;
 
         $database->execute(
@@ -425,8 +425,8 @@ class Notes extends Extension
 				INSERT INTO note_histories (note_enable, note_id, review_id, image_id, user_id, user_ip, date, x1, y1, height, width, note)
 				VALUES (:note_enable, :note_id, :review_id, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)
 			",
-            ['note_enable'=>$noteEnable, 'note_id'=>$noteID, 'review_id'=>$reviewID, 'image_id'=>$imageID, 'user_id'=>$user->id, 'user_ip'=>get_real_ip(),
-            'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
+            ['note_enable' => $noteEnable, 'note_id' => $noteID, 'review_id' => $reviewID, 'image_id' => $imageID, 'user_id' => $user->id, 'user_ip' => get_real_ip(),
+            'x1' => $noteX1, 'y1' => $noteY1, 'height' => $noteHeight, 'width' => $noteWidth, 'note' => $noteText]
         );
     }
 
@@ -445,7 +445,7 @@ class Notes extends Extension
                                         "INNER JOIN users AS u ".
                                         "ON u.id = h.user_id ".
                                         "ORDER BY date DESC LIMIT :limit OFFSET :offset",
-            ['offset'=>$pageNumber * $historiesPerPage, 'limit'=>$historiesPerPage]
+            ['offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
         $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_histories") / $historiesPerPage);
@@ -469,10 +469,10 @@ class Notes extends Extension
                                         "ON u.id = h.user_id ".
                                         "WHERE note_id = :note_id ".
                                         "ORDER BY date DESC LIMIT :limit OFFSET :offset",
-            ['note_id'=>$noteID, 'offset'=>$pageNumber * $historiesPerPage, 'limit'=>$historiesPerPage]
+            ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id'=>$noteID]) / $historiesPerPage);
+        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
 
         $this->theme->display_history($histories, $pageNumber + 1, $totalPages);
     }
@@ -484,7 +484,7 @@ class Notes extends Extension
     {
         global $database;
 
-        $history = $database->get_row("SELECT * FROM note_histories WHERE note_id = :note_id AND review_id = :review_id", ['note_id'=>$noteID, 'review_id'=>$reviewID]);
+        $history = $database->get_row("SELECT * FROM note_histories WHERE note_id = :note_id AND review_id = :review_id", ['note_id' => $noteID, 'review_id' => $reviewID]);
 
         $noteEnable = $history['note_enable'];
         $noteID     = $history['note_id'];
@@ -499,7 +499,7 @@ class Notes extends Extension
 			UPDATE notes
 			SET enable = :enable, x1 = :x1, y1 = :y1, height = :height, width = :width, note = :note
 			WHERE image_id = :image_id AND id = :id
-		", ['enable'=>1, 'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText, 'image_id'=>$imageID, 'id'=>$noteID]);
+		", ['enable' => 1, 'x1' => $noteX1, 'y1' => $noteY1, 'height' => $noteHeight, 'width' => $noteWidth, 'note' => $noteText, 'image_id' => $imageID, 'id' => $noteID]);
 
         $this->add_history($noteEnable, $noteID, $imageID, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText);
     }

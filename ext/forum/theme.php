@@ -135,7 +135,7 @@ class ForumTheme extends Themelet
                 $delete_link = "";
             }
 
-            $post_number = (($pageNumber-1)*$posts_per_page)+$current_post;
+            $post_number = (($pageNumber - 1) * $posts_per_page) + $current_post;
             $html .= "<tr >
 			<tr class='postHead'>
 				<td class='forumSupuser'></td>

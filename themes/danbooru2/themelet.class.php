@@ -21,7 +21,7 @@ class Themelet extends BaseThemelet
 
     private function gen_page_link(string $base_url, ?string $query, int $page, string $name): HTMLElement
     {
-        return A(["href"=>make_link("$base_url/$page", $query)], $name);
+        return A(["href" => make_link("$base_url/$page", $query)], $name);
     }
 
     private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): HTMLElement
@@ -40,15 +40,15 @@ class Themelet extends BaseThemelet
         $prev = $current_page - 1;
 
         $at_start = ($current_page <= 3 || $total_pages <= 3);
-        $at_end = ($current_page >= $total_pages -2);
+        $at_end = ($current_page >= $total_pages - 2);
 
         $first_html  = $at_start ? "" : $this->gen_page_link($base_url, $query, 1, "1");
         $prev_html   = $at_start ? "" : $this->gen_page_link($base_url, $query, $prev, "<<");
         $next_html   = $at_end ? "" : $this->gen_page_link($base_url, $query, $next, ">>");
         $last_html   = $at_end ? "" : $this->gen_page_link($base_url, $query, $total_pages, "$total_pages");
 
-        $start = $current_page-2 > 1 ? $current_page-2 : 1;
-        $end   = $current_page+2 <= $total_pages ? $current_page+2 : $total_pages;
+        $start = $current_page - 2 > 1 ? $current_page - 2 : 1;
+        $end   = $current_page + 2 <= $total_pages ? $current_page + 2 : $total_pages;
 
         $pages = [];
         foreach (range($start, $end) as $i) {
@@ -62,12 +62,12 @@ class Themelet extends BaseThemelet
             $pdots = "";
         }
 
-        if ($total_pages > $end+1) {
+        if ($total_pages > $end + 1) {
             $ndots = "...";
         } else {
             $ndots = "";
         }
 
-        return DIV(["id"=>"paginator"], joinHTML(" ", [$prev_html, $first_html, $pdots, $pages_html, $ndots, $last_html, $next_html]));
+        return DIV(["id" => "paginator"], joinHTML(" ", [$prev_html, $first_html, $pdots, $pages_html, $ndots, $last_html, $next_html]));
     }
 }

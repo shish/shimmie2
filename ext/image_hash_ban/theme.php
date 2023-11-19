@@ -26,10 +26,10 @@ class ImageBanTheme extends Themelet
     {
         return (string)SHM_SIMPLE_FORM(
             "image_hash_ban/add",
-            INPUT(["type"=>'hidden', "name"=>'c_hash', "value"=>$image->hash]),
-            INPUT(["type"=>'hidden', "name"=>'c_image_id', "value"=>$image->id]),
-            INPUT(["type"=>'text', "name"=>'c_reason']),
-            INPUT(["type"=>'submit', "value"=>'Ban Hash and Delete Post']),
+            INPUT(["type" => 'hidden', "name" => 'c_hash', "value" => $image->hash]),
+            INPUT(["type" => 'hidden', "name" => 'c_image_id', "value" => $image->id]),
+            INPUT(["type" => 'text', "name" => 'c_reason']),
+            INPUT(["type" => 'submit', "value" => 'Ban Hash and Delete Post']),
         );
     }
 }

@@ -65,8 +65,8 @@ class Upgrade extends Extension
         if ($this->get_version("db_version") < 11) {
             log_info("upgrade", "Converting user flags to classes");
             $database->execute("ALTER TABLE users ADD COLUMN class VARCHAR(32) NOT NULL default :user", ["user" => "user"]);
-            $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name"=>"anonymous", "id"=>$config->get_int('anon_id')]);
-            $database->execute("UPDATE users SET class = :name WHERE admin=:admin", ["name"=>"admin", "admin"=>'Y']);
+            $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name" => "anonymous", "id" => $config->get_int('anon_id')]);
+            $database->execute("UPDATE users SET class = :name WHERE admin=:admin", ["name" => "admin", "admin" => 'Y']);
 
             $this->set_version("db_version", 11);
         }
@@ -195,13 +195,13 @@ class Upgrade extends Extension
                 // them into one big transaction would not be a good idea.
                 $database->commit();
             }
-            $database->execute("UPDATE images SET lossless = :t, video = :t WHERE ext IN ('swf')", ["t"=>true]);
-            $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :t WHERE ext IN ('mp3')", ["t"=>true, "f"=>false]);
-            $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :f WHERE ext IN ('jpg','jpeg')", ["f"=>false]);
-            $database->execute("UPDATE images SET lossless = :t, video = :f, audio = :f WHERE ext IN ('ico','ani','cur','png','svg')", ["t"=>true, "f"=>false]);
-            $database->execute("UPDATE images SET lossless = :t, audio = :f WHERE ext IN ('gif')", ["t"=>true, "f"=>false]);
-            $database->execute("UPDATE images SET audio = :f WHERE ext IN ('webp')", ["f"=>false]);
-            $database->execute("UPDATE images SET lossless = :f, video = :t WHERE ext IN ('flv','mp4','m4v','ogv','webm')", ["t"=>true, "f"=>false]);
+            $database->execute("UPDATE images SET lossless = :t, video = :t WHERE ext IN ('swf')", ["t" => true]);
+            $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :t WHERE ext IN ('mp3')", ["t" => true, "f" => false]);
+            $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :f WHERE ext IN ('jpg','jpeg')", ["f" => false]);
+            $database->execute("UPDATE images SET lossless = :t, video = :f, audio = :f WHERE ext IN ('ico','ani','cur','png','svg')", ["t" => true, "f" => false]);
+            $database->execute("UPDATE images SET lossless = :t, audio = :f WHERE ext IN ('gif')", ["t" => true, "f" => false]);
+            $database->execute("UPDATE images SET audio = :f WHERE ext IN ('webp')", ["f" => false]);
+            $database->execute("UPDATE images SET lossless = :f, video = :t WHERE ext IN ('flv','mp4','m4v','ogv','webm')", ["t" => true, "f" => false]);
             $this->set_version("db_version", 21);
         }
     }

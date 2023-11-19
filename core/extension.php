@@ -69,7 +69,7 @@ abstract class Extension
             $extras
         ) as $key) {
             $ext = ExtensionInfo::get_by_key($key);
-            if ($ext===null || !$ext->is_supported()) {
+            if ($ext === null || !$ext->is_supported()) {
                 continue;
             }
             // FIXME: error if one of our dependencies isn't supported
@@ -123,7 +123,7 @@ abstract class ExtensionInfo
     public const SHISH_NAME = "Shish";
     public const SHISH_EMAIL = "webmaster@shishnet.org";
     public const SHIMMIE_URL = "https://code.shishnet.org/shimmie2/";
-    public const SHISH_AUTHOR = [self::SHISH_NAME=>self::SHISH_EMAIL];
+    public const SHISH_AUTHOR = [self::SHISH_NAME => self::SHISH_EMAIL];
 
     public const LICENSE_GPLV2 = "GPLv2";
     public const LICENSE_MIT = "MIT";
@@ -152,7 +152,7 @@ abstract class ExtensionInfo
 
     public function is_supported(): bool
     {
-        if ($this->supported===null) {
+        if ($this->supported === null) {
             $this->check_support();
         }
         return $this->supported;
@@ -160,7 +160,7 @@ abstract class ExtensionInfo
 
     public function get_support_info(): string
     {
-        if ($this->supported===null) {
+        if ($this->supported === null) {
             $this->check_support();
         }
         return $this->support_info;
@@ -249,7 +249,7 @@ abstract class ExtensionInfo
 
             self::$all_info_by_key[$extension_info->key] = $extension_info;
             self::$all_info_by_class[$class] = $extension_info;
-            if ($extension_info->core===true) {
+            if ($extension_info->core === true) {
                 self::$core_extensions[] = $extension_info->key;
             }
         }

@@ -10,8 +10,8 @@ class EventTracingCache implements CacheInterface
 {
     private CacheInterface $engine;
     private \EventTracer $tracer;
-    private int $hits=0;
-    private int $misses=0;
+    private int $hits = 0;
+    private int $misses = 0;
 
     public function __construct(CacheInterface $engine, \EventTracer $tracer)
     {
@@ -19,7 +19,7 @@ class EventTracingCache implements CacheInterface
         $this->tracer = $tracer;
     }
 
-    public function get($key, $default=null)
+    public function get($key, $default = null)
     {
         if ($key === "__etc_cache_hits") {
             return $this->hits;
@@ -29,7 +29,7 @@ class EventTracingCache implements CacheInterface
         }
 
         $sentinel = "__etc_sentinel";
-        $this->tracer->begin("Cache Get", ["key"=>$key]);
+        $this->tracer->begin("Cache Get", ["key" => $key]);
         $val = $this->engine->get($key, $sentinel);
         if ($val != $sentinel) {
             $res = "hit";
@@ -39,13 +39,13 @@ class EventTracingCache implements CacheInterface
             $val = $default;
             $this->misses++;
         }
-        $this->tracer->end(null, ["result"=>$res]);
+        $this->tracer->end(null, ["result" => $res]);
         return $val;
     }
 
     public function set($key, $value, $ttl = null)
     {
-        $this->tracer->begin("Cache Set", ["key"=>$key, "ttl"=>$ttl]);
+        $this->tracer->begin("Cache Set", ["key" => $key, "ttl" => $ttl]);
         $val = $this->engine->set($key, $value, $ttl);
         $this->tracer->end();
         return $val;
@@ -53,7 +53,7 @@ class EventTracingCache implements CacheInterface
 
     public function delete($key)
     {
-        $this->tracer->begin("Cache Delete", ["key"=>$key]);
+        $this->tracer->begin("Cache Delete", ["key" => $key]);
         $val = $this->engine->delete($key);
         $this->tracer->end();
         return $val;
@@ -93,9 +93,9 @@ class EventTracingCache implements CacheInterface
 
     public function has($key)
     {
-        $this->tracer->begin("Cache Has", ["key"=>$key]);
+        $this->tracer->begin("Cache Has", ["key" => $key]);
         $val = $this->engine->has($key);
-        $this->tracer->end(null, ["exists"=>$val]);
+        $this->tracer->end(null, ["exists" => $val]);
         return $val;
     }
 }

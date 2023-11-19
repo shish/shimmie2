@@ -14,16 +14,16 @@ class ApprovalTheme extends Themelet
 {
     public function get_image_admin_html(Image $image): HTMLElement
     {
-        if ($image->approved===true) {
+        if ($image->approved === true) {
             $form = SHM_SIMPLE_FORM(
                 'disapprove_image/'.$image->id,
-                INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
+                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),
                 SHM_SUBMIT("Disapprove")
             );
         } else {
             $form = SHM_SIMPLE_FORM(
                 'approve_image/'.$image->id,
-                INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
+                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),
                 SHM_SUBMIT("Approve")
             );
         }
@@ -52,9 +52,9 @@ class ApprovalTheme extends Themelet
 
         $form = SHM_SIMPLE_FORM(
             "admin/approval",
-            BUTTON(["name"=>'approval_action', "value"=>'approve_all'], "Approve All Posts"),
+            BUTTON(["name" => 'approval_action', "value" => 'approve_all'], "Approve All Posts"),
             " ",
-            BUTTON(["name"=>'approval_action', "value"=>'disapprove_all'], "Disapprove All Posts"),
+            BUTTON(["name" => 'approval_action', "value" => 'disapprove_all'], "Disapprove All Posts"),
         );
 
         $page->add_block(new Block("Approval", $form));

@@ -11,7 +11,7 @@ class Link
     public ?string $page;
     public ?string $query;
 
-    public function __construct(?string $page=null, ?string $query=null)
+    public function __construct(?string $page = null, ?string $query = null)
     {
         $this->page = $page;
         $this->query = $query;
@@ -43,7 +43,7 @@ function search_link(array $terms = [], int $page = 1): string
  *
  * eg make_link("foo/bar") becomes "/v2/index.php?q=foo/bar"
  */
-function make_link(?string $page=null, ?string $query=null, ?string $fragment=null): string
+function make_link(?string $page = null, ?string $query = null, ?string $fragment = null): string
 {
     global $config;
 
@@ -118,7 +118,7 @@ function make_http(string $link): string
  * If HTTP_REFERER is set, and not blacklisted, then return it
  * Else return a default $dest
  */
-function referer_or(string $dest, ?array $blacklist=null): string
+function referer_or(string $dest, ?array $blacklist = null): string
 {
     if (empty($_SERVER['HTTP_REFERER'])) {
         return $dest;

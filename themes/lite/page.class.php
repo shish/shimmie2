@@ -112,7 +112,7 @@ class Page extends BasePage
 EOD;
     } /* end of function display_page() */
 
-    public function block_to_html(Block $block, bool $hidable=false): string
+    public function block_to_html(Block $block, bool $hidable = false): string
     {
         $h = $block->header;
         $b = $block->body;

@@ -10,8 +10,8 @@ class TranscodeVideoInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Transcode Video";
-    public array $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Allows admins to automatically and manually transcode videos.";
-    public ?string $documentation ="Requires ffmpeg";
+    public ?string $documentation = "Requires ffmpeg";
 }

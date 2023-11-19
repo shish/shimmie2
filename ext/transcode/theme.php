@@ -32,7 +32,7 @@ class TranscodeImageTheme extends Themelet
     public function get_transcode_picker_html(array $options): string
     {
         $html = "<select id='transcode_mime'  name='transcode_mime' required='required' >";
-        foreach ($options as $display=>$value) {
+        foreach ($options as $display => $value) {
             $html .= "<option value='$value'>$display</option>";
         }
 

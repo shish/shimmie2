@@ -11,7 +11,7 @@ class CustomHtmlHeadersInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "Custom HTML Headers";
     public string $url = "http://www.drudexsoftware.com";
-    public array $authors = ["Drudex Software"=>"support@drudexsoftware.com"];
+    public array $authors = ["Drudex Software" => "support@drudexsoftware.com"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Allows admins to modify & set custom &lt;head&gt; content";
     public ?string $documentation =

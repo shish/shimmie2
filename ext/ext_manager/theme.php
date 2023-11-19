@@ -34,7 +34,7 @@ class ExtManagerTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             "ext_manager/set",
             TABLE(
-                ["id"=>'extensions', "class"=>'zebra'],
+                ["id" => 'extensions', "class" => 'zebra'],
                 THEAD(TR(
                     $editable ? TH("Enabled") : null,
                     TH("Name"),
@@ -42,7 +42,7 @@ class ExtManagerTheme extends Themelet
                     TH("Description")
                 )),
                 $tbody,
-                $editable ? TFOOT(TR(TD(["colspan"=>'5'], INPUT(["type"=>'submit', "value"=>'Set Extensions'])))) : null
+                $editable ? TFOOT(TR(TD(["colspan" => '5'], INPUT(["type" => 'submit', "value" => 'Set Extensions'])))) : null
             )
         );
 
@@ -53,18 +53,18 @@ class ExtManagerTheme extends Themelet
             }
 
             $tbody->appendChild(TR(
-                ["data-ext"=>$extension->name],
+                ["data-ext" => $extension->name],
                 $editable ? TD(INPUT([
-                    "type"=>'checkbox',
-                    "name"=>"ext_{$extension->key}",
-                    "id"=>"ext_{$extension->key}",
-                    "checked"=>($extension->is_enabled() === true),
-                    "disabled"=>($extension->is_supported()===false || $extension->core===true)
+                    "type" => 'checkbox',
+                    "name" => "ext_{$extension->key}",
+                    "id" => "ext_{$extension->key}",
+                    "checked" => ($extension->is_enabled() === true),
+                    "disabled" => ($extension->is_supported() === false || $extension->core === true)
                 ])) : null,
                 TD(LABEL(
-                    ["for"=>"ext_{$extension->key}"],
+                    ["for" => "ext_{$extension->key}"],
                     (
-                        ($extension->beta===true ? "[BETA] " : "").
+                        ($extension->beta === true ? "[BETA] " : "").
                         (empty($extension->name) ? $extension->key : $extension->name)
                     )
                 )),
@@ -72,16 +72,16 @@ class ExtManagerTheme extends Themelet
                     // TODO: A proper "docs" symbol would be preferred here.
                     $extension->documentation ?
                         A(
-                            ["href"=>make_link("ext_doc/" . url_escape($extension->key))],
-                            IMG(["src"=>'ext/ext_manager/baseline_open_in_new_black_18dp.png'])
+                            ["href" => make_link("ext_doc/" . url_escape($extension->key))],
+                            IMG(["src" => 'ext/ext_manager/baseline_open_in_new_black_18dp.png'])
                         ) :
                         null
                 ),
                 TD(
-                    ["style"=>'text-align: left;'],
+                    ["style" => 'text-align: left;'],
                     $extension->description,
                     " ",
-                    B(["style"=>'color:red'], $extension->get_support_info())
+                    B(["style" => 'color:red'], $extension->get_support_info())
                 ),
             ));
         }
@@ -98,9 +98,9 @@ class ExtManagerTheme extends Themelet
         if (count($info->authors) > 0) {
             $author->appendChild(BR());
             $author->appendChild(B(count($info->authors) > 1 ? "Authors: " : "Author: "));
-            foreach ($info->authors as $auth=>$email) {
+            foreach ($info->authors as $auth => $email) {
                 if (!empty($email)) {
-                    $author->appendChild(A(["href"=>"mailto:$email"], $auth));
+                    $author->appendChild(A(["href" => "mailto:$email"], $auth));
                 } else {
                     $author->appendChild($auth);
                 }
@@ -109,13 +109,13 @@ class ExtManagerTheme extends Themelet
         }
 
         $html = DIV(
-            ["style"=>'margin: auto; text-align: left; width: 512px;'],
+            ["style" => 'margin: auto; text-align: left; width: 512px;'],
             $author,
             ($info->version ? emptyHTML(BR(), B("Version: "), $info->version) : null),
-            ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href"=>$info->link], "Link")) : null),
+            ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href" => $info->link], "Link")) : null),
             P(rawHTML($info->documentation ?? "(This extension has no documentation)")),
             // <hr>,
-            P(A(["href"=>make_link("ext_manager")], "Back to the list"))
+            P(A(["href" => make_link("ext_manager")], "Back to the list"))
         );
 
         $page->set_title("Documentation for " . html_escape($info->name));

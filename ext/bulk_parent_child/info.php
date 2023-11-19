@@ -10,7 +10,7 @@ class BulkParentChildInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Bulk Parent Child";
-    public array $authors = ["Flatty"=>""];
+    public array $authors = ["Flatty" => ""];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Allows bulk setting of parent-child relationships, in order of manual selection";
     public array $dependencies = [BulkActionsInfo::KEY];

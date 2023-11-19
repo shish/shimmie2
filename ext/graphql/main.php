@@ -123,7 +123,7 @@ class GraphQL extends Extension
         $common_source = $_POST['common_source'];
 
         $results = [];
-        for ($n=0; $n<100; $n++) {
+        for ($n = 0; $n < 100; $n++) {
             if (empty($_POST["url$n"]) && empty($_FILES["data$n"])) {
                 break;
             }
@@ -191,7 +191,7 @@ class GraphQL extends Extension
             $body['stats'] = get_debug_info_arr();
             $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);
             $body['stats']['graphql_execute_time'] = round($t3 - $t2, 2);
-            echo \json_encode($body, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+            echo \json_encode($body, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         }
         if ($event->cmd == "graphql-schema") {
             $schema = $this->get_schema();

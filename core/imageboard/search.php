@@ -8,7 +8,7 @@ class Querylet
 {
     public function __construct(
         public string $sql,
-        public array $variables=[],
+        public array $variables = [],
     ) {
     }
 

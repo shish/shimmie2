@@ -15,7 +15,7 @@ class RegenThumbTheme extends Themelet
     {
         return (string)SHM_SIMPLE_FORM(
             "regen_thumb/one",
-            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
+            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             SHM_SUBMIT('Regenerate Thumbnail')
         );
     }

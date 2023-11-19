@@ -81,22 +81,22 @@ class BaseThemelet
 
         return A(
             [
-                "href"=>$view_link,
-                "class"=>"thumb shm-thumb shm-thumb-link $custom_classes",
-                "data-tags"=>$tags,
-                "data-height"=>$image->height,
-                "data-width"=>$image->width,
-                "data-mime"=>$image->get_mime(),
-                "data-post-id"=>$id,
+                "href" => $view_link,
+                "class" => "thumb shm-thumb shm-thumb-link $custom_classes",
+                "data-tags" => $tags,
+                "data-height" => $image->height,
+                "data-width" => $image->width,
+                "data-mime" => $image->get_mime(),
+                "data-post-id" => $id,
             ],
             IMG(
                 [
-                    "id"=>"thumb_$id",
-                    "title"=>$tip,
-                    "alt"=>$tip,
-                    "height"=>$tsize[1],
-                    "width"=>$tsize[0],
-                    "src"=>$thumb_link,
+                    "id" => "thumb_$id",
+                    "title" => $tip,
+                    "alt" => $tip,
+                    "height" => $tsize[1],
+                    "width" => $tsize[0],
+                    "src" => $thumb_link,
                 ]
             )
         );
@@ -112,18 +112,18 @@ class BaseThemelet
 
         $page->add_html_header("<link rel='first' href='".make_http(make_link($base.'/1', $query))."'>");
         if ($page_number < $total_pages) {
-            $page->add_html_header("<link rel='prefetch' href='".make_http(make_link($base.'/'.($page_number+1), $query))."'>");
-            $page->add_html_header("<link rel='next' href='".make_http(make_link($base.'/'.($page_number+1), $query))."'>");
+            $page->add_html_header("<link rel='prefetch' href='".make_http(make_link($base.'/'.($page_number + 1), $query))."'>");
+            $page->add_html_header("<link rel='next' href='".make_http(make_link($base.'/'.($page_number + 1), $query))."'>");
         }
         if ($page_number > 1) {
-            $page->add_html_header("<link rel='previous' href='".make_http(make_link($base.'/'.($page_number-1), $query))."'>");
+            $page->add_html_header("<link rel='previous' href='".make_http(make_link($base.'/'.($page_number - 1), $query))."'>");
         }
         $page->add_html_header("<link rel='last' href='".make_http(make_link($base.'/'.$total_pages, $query))."'>");
     }
 
     private function gen_page_link(string $base_url, ?string $query, int $page, string $name): HTMLElement
     {
-        return A(["href"=>make_link($base_url.'/'.$page, $query)], $name);
+        return A(["href" => make_link($base_url.'/'.$page, $query)], $name);
     }
 
     private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): HTMLElement

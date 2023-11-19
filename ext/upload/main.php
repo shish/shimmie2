@@ -39,7 +39,7 @@ class DataUploadEvent extends Event
         $metadata['filename'] = substr($metadata['filename'], 0, 255);
     }
 
-    public function set_tmpname(string $tmpname, ?string $mime=null)
+    public function set_tmpname(string $tmpname, ?string $mime = null)
     {
         assert(is_readable($tmpname));
         $this->tmpname = $tmpname;
@@ -151,7 +151,7 @@ class Upload extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if ($event->parent=="upload") {
+        if ($event->parent == "upload") {
             if (class_exists("Shimmie2\Wiki")) {
                 $event->add_nav_link("upload_guidelines", new Link('wiki/upload_guidelines'), "Guidelines");
             }

@@ -73,7 +73,7 @@ class SVGFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        if (MimeType::get_for_file($tmpname)!==MimeType::SVG) {
+        if (MimeType::get_for_file($tmpname) !== MimeType::SVG) {
             return false;
         }
 
@@ -85,9 +85,9 @@ class SVGFileHandler extends DataHandlerExtension
 class MiniSVGParser
 {
     public bool $valid = false;
-    public int $width=0;
-    public int $height=0;
-    private int $xml_depth=0;
+    public int $width = 0;
+    public int $height = 0;
+    private int $xml_depth = 0;
 
     public function __construct(string $file)
     {

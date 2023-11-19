@@ -36,7 +36,7 @@ class Favorites extends Extension
 
             $is_favorited = $database->get_one(
                 "SELECT COUNT(*) AS ct FROM user_favorites WHERE user_id = :user_id AND image_id = :image_id",
-                ["user_id"=>$user_id, "image_id"=>$image_id]
+                ["user_id" => $user_id, "image_id" => $image_id]
             ) > 0;
 
             $event->add_part((string)$this->theme->get_voter_html($event->image, $is_favorited));
@@ -102,7 +102,7 @@ class Favorites extends Extension
     public function onImageDeletion(ImageDeletionEvent $event)
     {
         global $database;
-        $database->execute("DELETE FROM user_favorites WHERE image_id=:image_id", ["image_id"=>$event->image->id]);
+        $database->execute("DELETE FROM user_favorites WHERE image_id=:image_id", ["image_id" => $event->image->id]);
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
@@ -144,7 +144,7 @@ class Favorites extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $event->add_block(new Block("Favorites", $this->theme->get_help_html()));
         }
     }
@@ -152,11 +152,11 @@ class Favorites extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent=="posts") {
+        if ($event->parent == "posts") {
             $event->add_nav_link("posts_favorites", new Link("post/list/favorited_by={$user->name}/1"), "My Favorites");
         }
 
-        if ($event->parent==="user") {
+        if ($event->parent === "user") {
             if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
                 $username = url_escape($user->name);
                 $event->add_nav_link("favorites", new Link("post/list/favorited_by=$username/1"), "My Favorites");
@@ -237,21 +237,21 @@ class Favorites extends Extension
     {
         global $database;
         if ($do_set) {
-            if (!$database->get_row("select 1 from user_favorites where image_id=:image_id and user_id=:user_id", ["image_id"=>$image_id, "user_id"=>$user_id])) {
+            if (!$database->get_row("select 1 from user_favorites where image_id=:image_id and user_id=:user_id", ["image_id" => $image_id, "user_id" => $user_id])) {
                 $database->execute(
                     "INSERT INTO user_favorites(image_id, user_id, created_at) VALUES(:image_id, :user_id, NOW())",
-                    ["image_id"=>$image_id, "user_id"=>$user_id]
+                    ["image_id" => $image_id, "user_id" => $user_id]
                 );
             }
         } else {
             $database->execute(
                 "DELETE FROM user_favorites WHERE image_id = :image_id AND user_id = :user_id",
-                ["image_id"=>$image_id, "user_id"=>$user_id]
+                ["image_id" => $image_id, "user_id" => $user_id]
             );
         }
         $database->execute(
             "UPDATE images SET favorites=(SELECT COUNT(*) FROM user_favorites WHERE image_id=:image_id) WHERE id=:user_id",
-            ["image_id"=>$image_id, "user_id"=>$user_id]
+            ["image_id" => $image_id, "user_id" => $user_id]
         );
     }
 
@@ -264,7 +264,7 @@ class Favorites extends Extension
 
         return $database->get_col(
             "SELECT name FROM users WHERE id IN (SELECT user_id FROM user_favorites WHERE image_id = :image_id) ORDER BY name",
-            ["image_id"=>$image->id]
+            ["image_id" => $image->id]
         );
     }
 }

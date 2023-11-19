@@ -19,7 +19,7 @@ class ImageRating
 
     public function __construct(string $code, string $name, string $search_term, int $order)
     {
-        assert(strlen($code)==1, "Rating code must be exactly one character");
+        assert(strlen($code) == 1, "Rating code must be exactly one character");
 
         $this->name = $name;
         $this->code = $code;
@@ -230,7 +230,7 @@ class Ratings extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $ratings = self::get_sorted_ratings();
             $event->add_block(new Block("Ratings", $this->theme->get_help_html($ratings)));
         }
@@ -253,7 +253,7 @@ class Ratings extends Extension
         if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
 
-            if (count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
+            if (count($matches) > 2 && in_array($matches[2], self::UNRATED_KEYWORDS)) {
                 $ratings = "?";
             }
 
@@ -283,7 +283,7 @@ class Ratings extends Extension
         if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
 
-            if (count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
+            if (count($matches) > 2 && in_array($matches[2], self::UNRATED_KEYWORDS)) {
                 $ratings = "?";
             }
 
@@ -328,7 +328,7 @@ class Ratings extends Extension
                 $new = $_POST["rating_new"];
 
                 if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-                    $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>$new, "old"=>$old ]);
+                    $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new" => $new, "old" => $old ]);
                 }
 
                 break;
@@ -410,7 +410,7 @@ class Ratings extends Extension
         return $ratings;
     }
 
-    public static function get_ratings_dict(array $ratings=null): array
+    public static function get_ratings_dict(array $ratings = null): array
     {
         if (!isset($ratings)) {
             $ratings = self::get_sorted_ratings();
@@ -448,7 +448,7 @@ class Ratings extends Extension
         foreach ($privs as $i) {
             $arr[] = "'" . $i . "'";
         }
-        if (sizeof($arr)==0) {
+        if (sizeof($arr) == 0) {
             return "' '";
         }
         return join(', ', $arr);
@@ -538,7 +538,7 @@ class Ratings extends Extension
 
             $database->set_timeout(null); // These updates can take a little bit
 
-            $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>'?', "old"=>'u' ]);
+            $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new" => '?', "old" => 'u' ]);
 
             $this->set_version(RatingsConfig::VERSION, 4);
         }
@@ -548,7 +548,7 @@ class Ratings extends Extension
     {
         global $database;
         if ($old_rating != $rating) {
-            $database->execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating'=>$rating, 'id'=>$image_id]);
+            $database->execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating' => $rating, 'id' => $image_id]);
             log_info("rating", "Rating for >>{$image_id} set to: ".$this->rating_to_human($rating));
         }
     }

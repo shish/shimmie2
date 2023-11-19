@@ -10,7 +10,7 @@ class VideoFileHandlerInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Handle Video";
-    public array $authors = ["velocity37"=>"velocity37@gmail.com",self::SHISH_NAME=>self::SHISH_EMAIL, "jgen"=>"jeffgenovy@gmail.com", "im-mi"=>"im.mi.mail.mi@gmail.com"];
+    public array $authors = ["velocity37" => "velocity37@gmail.com",self::SHISH_NAME => self::SHISH_EMAIL, "jgen" => "jeffgenovy@gmail.com", "im-mi" => "im.mi.mail.mi@gmail.com"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Handle FLV, MP4, OGV and WEBM video files.";
     public ?string $documentation =

@@ -34,7 +34,7 @@ class Blocks extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::MANAGE_BLOCKS)) {
                 $event->add_nav_link("blocks", new Link('blocks/list'), "Blocks Editor");
             }
@@ -78,7 +78,7 @@ class Blocks extends Extension
                     $database->execute("
 						INSERT INTO blocks (pages, title, area, priority, content, userclass)
 						VALUES (:pages, :title, :area, :priority, :content, :userclass)
-					", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content'], 'userclass'=>$_POST['userclass']]);
+					", ['pages' => $_POST['pages'], 'title' => $_POST['title'], 'area' => $_POST['area'], 'priority' => (int)$_POST['priority'], 'content' => $_POST['content'], 'userclass' => $_POST['userclass']]);
                     log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
                     $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);
@@ -91,13 +91,13 @@ class Blocks extends Extension
                         $database->execute("
 							DELETE FROM blocks
 							WHERE id=:id
-						", ['id'=>$_POST['id']]);
+						", ['id' => $_POST['id']]);
                         log_info("blocks", "Deleted Block #".$_POST['id']);
                     } else {
                         $database->execute("
 							UPDATE blocks SET pages=:pages, title=:title, area=:area, priority=:priority, content=:content, userclass=:userclass
 							WHERE id=:id
-						", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content'], 'userclass'=>$_POST['userclass'], 'id'=>$_POST['id']]);
+						", ['pages' => $_POST['pages'], 'title' => $_POST['title'], 'area' => $_POST['area'], 'priority' => (int)$_POST['priority'], 'content' => $_POST['content'], 'userclass' => $_POST['userclass'], 'id' => $_POST['id']]);
                         log_info("blocks", "Updated Block #".$_POST['id']." (".$_POST['title'].")");
                     }
                     $cache->delete("blocks");

@@ -8,7 +8,7 @@ use function MicroHTML\INPUT;
 
 class TagToolsTheme extends Themelet
 {
-    protected function button(string $name, string $action, bool $protected=false): string
+    protected function button(string $name, string $action, bool $protected = false): string
     {
         $c_protected = $protected ? " protected" : "";
         $html = make_form(make_link("admin/$action"), "POST", false, "admin$c_protected");
@@ -39,7 +39,7 @@ class TagToolsTheme extends Themelet
 
         $html = (string)SHM_SIMPLE_FORM(
             "admin/set_tag_case",
-            INPUT(["type"=>'text', "name"=>'tag', "placeholder"=>'Enter tag with correct case', "autocomplete"=>'off']),
+            INPUT(["type" => 'text', "name" => 'tag', "placeholder" => 'Enter tag with correct case', "autocomplete" => 'off']),
             SHM_SUBMIT('Set Tag Case'),
         );
         $page->add_block(new Block("Set Tag Case", $html));

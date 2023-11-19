@@ -79,7 +79,7 @@ class ImageBan extends Extension
     public function onDataUpload(DataUploadEvent $event)
     {
         global $database;
-        $row = $database->get_row("SELECT * FROM image_bans WHERE hash = :hash", ["hash"=>$event->hash]);
+        $row = $database->get_row("SELECT * FROM image_bans WHERE hash = :hash", ["hash" => $event->hash]);
         if ($row) {
             log_info("image_hash_ban", "Attempted to upload a blocked image ({$event->hash} - {$row['reason']})");
             throw new UploadException("Post ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
@@ -94,7 +94,7 @@ class ImageBan extends Extension
             if ($user->can(Permissions::BAN_IMAGE)) {
                 if ($event->get_arg(0) == "add") {
                     $user->ensure_authed();
-                    $input = validate_input(["c_hash"=>"optional,string", "c_reason"=>"string", "c_image_id"=>"optional,int"]);
+                    $input = validate_input(["c_hash" => "optional,string", "c_reason" => "string", "c_image_id" => "optional,int"]);
                     $image = isset($input['c_image_id']) ? Image::by_id($input['c_image_id']) : null;
                     $hash = isset($input["c_hash"]) ? $input["c_hash"] : $image->hash;
                     $reason = isset($input['c_reason']) ? $input['c_reason'] : "DNP";
@@ -113,7 +113,7 @@ class ImageBan extends Extension
                     }
                 } elseif ($event->get_arg(0) == "remove") {
                     $user->ensure_authed();
-                    $input = validate_input(["d_hash"=>"string"]);
+                    $input = validate_input(["d_hash" => "string"]);
                     send_event(new RemoveImageHashBanEvent($input['d_hash']));
                     $page->flash("Post ban removed");
                     $page->set_mode(PageMode::REDIRECT);
@@ -131,7 +131,7 @@ class ImageBan extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if ($event->parent==="system") {
+        if ($event->parent === "system") {
             if ($user->can(Permissions::BAN_IMAGE)) {
                 $event->add_nav_link("image_bans", new Link('image_hash_ban/list/1'), "Post Bans", NavLink::is_active(["image_hash_ban"]));
             }
@@ -151,7 +151,7 @@ class ImageBan extends Extension
         global $database;
         $database->execute(
             "INSERT INTO image_bans (hash, reason, date) VALUES (:hash, :reason, now())",
-            ["hash"=>$event->hash, "reason"=>$event->reason]
+            ["hash" => $event->hash, "reason" => $event->reason]
         );
         log_info("image_hash_ban", "Banned hash {$event->hash} because '{$event->reason}'");
     }
@@ -159,7 +159,7 @@ class ImageBan extends Extension
     public function onRemoveImageHashBan(RemoveImageHashBanEvent $event)
     {
         global $database;
-        $database->execute("DELETE FROM image_bans WHERE hash = :hash", ["hash"=>$event->hash]);
+        $database->execute("DELETE FROM image_bans WHERE hash = :hash", ["hash" => $event->hash]);
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)

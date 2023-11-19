@@ -16,7 +16,7 @@ class ETServer extends Extension
             if (isset($_POST["data"])) {
                 $database->execute(
                     "INSERT INTO registration(data) VALUES(:data)",
-                    ["data"=>$_POST["data"]]
+                    ["data" => $_POST["data"]]
                 );
                 $page->set_title("Thanks!");
                 $page->set_heading("Thanks!");
@@ -28,7 +28,7 @@ class ETServer extends Extension
                 foreach ($database->get_all("SELECT responded, data FROM registration ORDER BY responded DESC") as $row) {
                     $page->add_block(new Block(
                         $row["responded"],
-                        PRE(["style"=>"text-align: left; overflow: scroll;"], $row["data"]),
+                        PRE(["style" => "text-align: left; overflow: scroll;"], $row["data"]),
                         "main",
                         $n++
                     ));

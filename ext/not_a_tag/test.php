@@ -10,7 +10,7 @@ class NotATagTest extends ShimmiePHPUnitTestCase
     {
         global $database;
         $database->execute("DELETE FROM untags");
-        $database->execute("INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)", ["tag"=>"face", "redirect"=>"no-body-parts.html"]);
+        $database->execute("INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)", ["tag" => "face", "redirect" => "no-body-parts.html"]);
 
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");

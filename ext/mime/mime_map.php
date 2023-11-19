@@ -262,7 +262,7 @@ class MimeMap
     public static function get_name_for_mime(string $mime): ?string
     {
         $data = self::get_for_mime($mime);
-        if ($data!==null) {
+        if ($data !== null) {
             return $data[self::MAP_NAME];
         }
         return null;

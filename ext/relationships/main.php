@@ -85,17 +85,17 @@ class Relationships extends Extension
                 $not = ($parentID == "any" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.parent_id IS $not NULL"));
             } else {
-                $event->add_querylet(new Querylet("images.parent_id = :pid", ["pid"=>$parentID]));
+                $event->add_querylet(new Querylet("images.parent_id = :pid", ["pid" => $parentID]));
             }
         } elseif (preg_match("/^child[=|:](any|none)$/", $event->term, $matches)) {
             $not = ($matches[1] == "any" ? "=" : "!=");
-            $event->add_querylet(new Querylet("images.has_children $not :true", ["true"=>true]));
+            $event->add_querylet(new Querylet("images.has_children $not :true", ["true" => true]));
         }
     }
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Relationships";
             $block->body = $this->theme->get_help_html();
@@ -137,7 +137,7 @@ class Relationships extends Extension
         global $database;
 
         if (bool_escape($event->image->has_children)) {
-            $database->execute("UPDATE images SET parent_id = NULL WHERE parent_id = :iid", ["iid"=>$event->image->id]);
+            $database->execute("UPDATE images SET parent_id = NULL WHERE parent_id = :iid", ["iid" => $event->image->id]);
         }
 
         if ($event->image->parent_id !== null) {
@@ -149,7 +149,7 @@ class Relationships extends Extension
     {
         global $database;
 
-        $old_parent = $database->get_one("SELECT parent_id FROM images WHERE id = :cid", ["cid"=>$event->child_id]);
+        $old_parent = $database->get_one("SELECT parent_id FROM images WHERE id = :cid", ["cid" => $event->child_id]);
         if (!is_null($old_parent)) {
             $old_parent = (int)$old_parent;
         }
@@ -162,9 +162,9 @@ class Relationships extends Extension
         }
 
         $database->execute("UPDATE images SET parent_id = :pid WHERE id = :cid", ["pid" => $event->parent_id, "cid" => $event->child_id]);
-        $database->execute("UPDATE images SET has_children = :true WHERE id = :pid", ["pid" => $event->parent_id, "true"=>true]);
+        $database->execute("UPDATE images SET has_children = :true WHERE id = :pid", ["pid" => $event->parent_id, "true" => true]);
 
-        if ($old_parent!=null) {
+        if ($old_parent != null) {
             $this->set_has_children($old_parent);
         }
     }
@@ -172,10 +172,10 @@ class Relationships extends Extension
     public static function get_children(Image $image, int $omit = null): array
     {
         global $database;
-        $results = $database->get_all_iterable("SELECT * FROM images WHERE parent_id = :pid ", ["pid"=>$image->id]);
+        $results = $database->get_all_iterable("SELECT * FROM images WHERE parent_id = :pid ", ["pid" => $image->id]);
         $output = [];
         foreach ($results as $result) {
-            if ($result["id"]==$omit) {
+            if ($result["id"] == $omit) {
                 continue;
             }
             $output[] = new Image($result);
@@ -186,10 +186,10 @@ class Relationships extends Extension
     private function remove_parent(int $imageID)
     {
         global $database;
-        $parentID = $database->get_one("SELECT parent_id FROM images WHERE id = :iid", ["iid"=>$imageID]);
+        $parentID = $database->get_one("SELECT parent_id FROM images WHERE id = :iid", ["iid" => $imageID]);
 
         if ($parentID) {
-            $database->execute("UPDATE images SET parent_id = NULL WHERE id = :iid", ["iid"=>$imageID]);
+            $database->execute("UPDATE images SET parent_id = NULL WHERE id = :iid", ["iid" => $imageID]);
             $this->set_has_children((int)$parentID);
         }
     }
@@ -207,11 +207,11 @@ class Relationships extends Extension
 
         $children = $database->get_one(
             "SELECT COUNT(*) FROM images WHERE parent_id=:pid",
-            ["pid"=>$parent_id]
+            ["pid" => $parent_id]
         );
         $database->execute(
             "UPDATE images SET has_children = :has_children WHERE id = :pid",
-            ["has_children"=>$children>0, "pid"=>$parent_id]
+            ["has_children" => $children > 0, "pid" => $parent_id]
         );
     }
 }

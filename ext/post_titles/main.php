@@ -81,7 +81,7 @@ class PostTitles extends Extension
     }
     public function onBulkImport(BulkImportEvent $event)
     {
-        if (array_key_exists("title", $event->fields) && $event->fields['title']!=null) {
+        if (array_key_exists("title", $event->fields) && $event->fields['title'] != null) {
             $this->set_title($event->image->id, $event->fields['title']);
         }
     }
@@ -89,7 +89,7 @@ class PostTitles extends Extension
     private function set_title(int $image_id, string $title)
     {
         global $database;
-        $database->execute("UPDATE images SET title=:title WHERE id=:id", ['title'=>$title, 'id'=>$image_id]);
+        $database->execute("UPDATE images SET title=:title WHERE id=:id", ['title' => $title, 'id' => $image_id]);
         log_info("post_titles", "Title for >>{$image_id} set to: ".$title);
     }
 
@@ -97,7 +97,7 @@ class PostTitles extends Extension
     {
         global $config;
 
-        $title = $image->title??"";
+        $title = $image->title ?? "";
         if (empty($title) && $config->get_bool(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
             $info = pathinfo($image->filename);
             if (array_key_exists("extension", $info)) {

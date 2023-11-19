@@ -79,8 +79,8 @@ class Forum extends Extension
     {
         global $database;
 
-        $threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=:user_id", ['user_id'=>$event->display_user->id]);
-        $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=:user_id", ['user_id'=>$event->display_user->id]);
+        $threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
+        $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
 
         $days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
 
@@ -113,7 +113,7 @@ class Forum extends Extension
                     // $pageNumber = int_escape($event->get_arg(2));
                     list($errors) = $this->sanity_check_viewed_thread($threadID);
 
-                    if ($errors!=null) {
+                    if ($errors != null) {
                         $this->theme->display_error(500, "Error", $errors);
                         break;
                     }
@@ -135,7 +135,7 @@ class Forum extends Extension
                     if (!$user->is_anonymous()) {
                         list($errors) = $this->sanity_check_new_thread();
 
-                        if ($errors!=null) {
+                        if ($errors != null) {
                             $this->theme->display_error(500, "Error", $errors);
                             break;
                         }
@@ -176,7 +176,7 @@ class Forum extends Extension
                     if (!$user->is_anonymous()) {
                         list($errors) = $this->sanity_check_new_post();
 
-                        if ($errors!=null) {
+                        if ($errors != null) {
                             $this->theme->display_error(500, "Error", $errors);
                             break;
                         }
@@ -197,7 +197,7 @@ class Forum extends Extension
     private function get_total_pages_for_thread(int $threadID): int
     {
         global $database, $config;
-        $result = $database->get_row("SELECT COUNT(1) AS count FROM forum_posts WHERE thread_id = :thread_id", ['thread_id'=>$threadID]);
+        $result = $database->get_row("SELECT COUNT(1) AS count FROM forum_posts WHERE thread_id = :thread_id", ['thread_id' => $threadID]);
 
         return (int)ceil($result["count"] / $config->get_int("forumPostsPerPage"));
     }
@@ -252,7 +252,7 @@ class Forum extends Extension
     private function get_thread_title(int $threadID): string
     {
         global $database;
-        $result = $database->get_row("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id'=>$threadID]);
+        $result = $database->get_row("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id' => $threadID]);
         return $result["title"];
     }
 
@@ -277,7 +277,7 @@ class Forum extends Extension
                 "ON p.thread_id = f.id ".
                 "GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.class ".
                 "ORDER BY f.sticky ASC, f.uptodate DESC LIMIT :limit OFFSET :offset",
-            ["limit"=>$threadsPerPage, "offset"=>$pageNumber * $threadsPerPage]
+            ["limit" => $threadsPerPage, "offset" => $pageNumber * $threadsPerPage]
         );
 
         $this->theme->display_thread_list($page, $threads, $showAdminOptions, $pageNumber + 1, $totalPages);
@@ -288,7 +288,7 @@ class Forum extends Extension
         global $config, $database;
         $threadID = int_escape($event->get_arg(1));
         $postsPerPage = $config->get_int('forumPostsPerPage', 15);
-        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id'=>$threadID]) / $postsPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id' => $threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
 
         if ($event->count_args() >= 3) {
@@ -305,7 +305,7 @@ class Forum extends Extension
                 "WHERE thread_id = :thread_id ".
                 "ORDER BY p.date ASC ".
                 "LIMIT :limit OFFSET :offset",
-            ["thread_id"=>$threadID, "offset"=>$pageNumber * $postsPerPage, "limit"=>$postsPerPage]
+            ["thread_id" => $threadID, "offset" => $pageNumber * $postsPerPage, "limit" => $postsPerPage]
         );
         $this->theme->display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber + 1, $totalPages);
     }
@@ -322,7 +322,7 @@ class Forum extends Extension
 				(title, sticky, user_id, date, uptodate)
 				VALUES
 				(:title, :sticky, :user_id, now(), now())",
-            ['title'=>$title, 'sticky'=>$sticky, 'user_id'=>$user->id]
+            ['title' => $title, 'sticky' => $sticky, 'user_id' => $user->id]
         );
 
         $threadID = $database->get_last_insert_id("forum_threads_id_seq");
@@ -345,32 +345,32 @@ class Forum extends Extension
         $database->execute("
 			INSERT INTO forum_posts (thread_id, user_id, date, message)
 			VALUES (:thread_id, :user_id, now(), :message)
-		", ['thread_id'=>$threadID, 'user_id'=>$userID, 'message'=>$message]);
+		", ['thread_id' => $threadID, 'user_id' => $userID, 'message' => $message]);
 
         $postID = $database->get_last_insert_id("forum_posts_id_seq");
 
         log_info("forum", "Post {$postID} created by {$user->name}");
 
-        $database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=:id", ['id'=>$threadID]);
+        $database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=:id", ['id' => $threadID]);
     }
 
     private function delete_thread(int $threadID): void
     {
         global $database;
-        $database->execute("DELETE FROM forum_threads WHERE id = :id", ['id'=>$threadID]);
-        $database->execute("DELETE FROM forum_posts WHERE thread_id = :thread_id", ['thread_id'=>$threadID]);
+        $database->execute("DELETE FROM forum_threads WHERE id = :id", ['id' => $threadID]);
+        $database->execute("DELETE FROM forum_posts WHERE thread_id = :thread_id", ['thread_id' => $threadID]);
     }
 
     private function delete_post(int $postID): void
     {
         global $database;
-        $database->execute("DELETE FROM forum_posts WHERE id = :id", ['id'=>$postID]);
+        $database->execute("DELETE FROM forum_posts WHERE id = :id", ['id' => $postID]);
     }
 
     private function threadExists(int $threadID): bool
     {
         global $database;
-        $result=$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id'=>$threadID]);
+        $result = $database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id' => $threadID]);
         return $result == 1;
     }
 }

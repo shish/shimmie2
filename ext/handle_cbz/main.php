@@ -52,7 +52,7 @@ class CBZFileHandler extends DataHandlerExtension
         $za = new \ZipArchive();
         $za->open($archive);
         $names = [];
-        for ($i=0; $i<$za->numFiles;$i++) {
+        for ($i = 0; $i < $za->numFiles;$i++) {
             $file = $za->statIndex($i);
             $names[] = $file['name'];
         }

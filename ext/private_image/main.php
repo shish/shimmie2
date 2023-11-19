@@ -53,10 +53,10 @@ class PrivateImage extends Extension
                 throw new SCoreException("Can not make image private: No valid Post ID given.");
             }
             $image = Image::by_id($image_id);
-            if ($image==null) {
+            if ($image == null) {
                 throw new SCoreException("Post not found.");
             }
-            if ($image->owner_id!=$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+            if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new SCoreException("Cannot set another user's image to private.");
             }
 
@@ -75,10 +75,10 @@ class PrivateImage extends Extension
                 throw new SCoreException("Can not make image public: No valid Post ID given.");
             }
             $image = Image::by_id($image_id);
-            if ($image==null) {
+            if ($image == null) {
                 throw new SCoreException("Post not found.");
             }
-            if ($image->owner_id!=$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+            if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new SCoreException("Cannot set another user's image to public.");
             }
 
@@ -117,7 +117,7 @@ class PrivateImage extends Extension
     {
         global $user, $page;
 
-        if ($event->image->private===true && $event->image->owner_id!=$user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ($event->image->private === true && $event->image->owner_id != $user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }
@@ -137,12 +137,12 @@ class PrivateImage extends Extension
                 $event->add_querylet(
                     new Querylet(
                         "private != :true OR owner_id = :private_owner_id",
-                        ["private_owner_id"=>$user->id, "true"=>true]
+                        ["private_owner_id" => $user->id, "true" => true]
                     )
                 );
             } else {
                 $event->add_querylet(
-                    new Querylet("private != :true", ["true"=>true])
+                    new Querylet("private != :true", ["true" => true])
                 );
             }
         }
@@ -182,7 +182,7 @@ class PrivateImage extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if ($event->key===HelpPages::SEARCH) {
+        if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Private Posts";
             $block->body = $this->theme->get_help_html();
@@ -207,7 +207,7 @@ class PrivateImage extends Extension
 
         $database->execute(
             "UPDATE images SET private = :true WHERE id = :id AND private = :false",
-            ["id"=>$image_id, "true"=>true, "false"=>false]
+            ["id" => $image_id, "true" => true, "false" => false]
         );
     }
 
@@ -217,14 +217,14 @@ class PrivateImage extends Extension
 
         $database->execute(
             "UPDATE images SET private = :false WHERE id = :id AND private = :true",
-            ["id"=>$image_id, "true"=>true, "false"=>false]
+            ["id" => $image_id, "true" => true, "false" => false]
         );
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if (($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id==$event->image->owner_id) || $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+        if (($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id == $event->image->owner_id) || $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
             $event->add_part($this->theme->get_image_admin_html($event->image));
         }
     }
@@ -256,7 +256,7 @@ class PrivateImage extends Extension
                 if ($user->can(Permissions::SET_PRIVATE_IMAGE)) {
                     $total = 0;
                     foreach ($event->items as $image) {
-                        if ($image->owner_id==$user->id ||
+                        if ($image->owner_id == $user->id ||
                             $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                             self::privatize_image($image->id);
                             $total++;
@@ -268,7 +268,7 @@ class PrivateImage extends Extension
             case "bulk_publicize_image":
                 $total = 0;
                 foreach ($event->items as $image) {
-                    if ($image->owner_id==$user->id ||
+                    if ($image->owner_id == $user->id ||
                         $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                         self::publicize_image($image->id);
                         $total++;
