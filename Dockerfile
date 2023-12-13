@@ -11,6 +11,7 @@ RUN apt update && apt upgrade -y && apt install -y \
 # Composer has 100MB of dependencies, and we only need that during build and test
 FROM base AS composer
 RUN apt update && apt upgrade -y && apt install -y composer php${PHP_VERSION}-xdebug && rm -rf /var/lib/apt/lists/*
+ENV XDEBUG_MODE=coverage
 
 # "Build" shimmie (composer install - done in its own stage so that we don't
 # need to include all the composer fluff in the final image)
@@ -35,6 +36,10 @@ RUN [ $RUN_TESTS = false ] || (\
     echo '=== Unit Tests ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml && \
     echo '=== Coverage ===' && XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
     echo '=== Cleaning ===' && rm -rf data)
+
+# Devcontainer target
+FROM composer AS devcontainer
+RUN apt update && apt upgrade -y && apt install -y git && rm -rf /var/lib/apt/lists/*
 
 # Actually run shimmie
 FROM base

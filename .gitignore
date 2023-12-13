@@ -5,7 +5,6 @@ thumbs
 *.phar
 *.sqlite
 *.cache
-.devcontainer
 trace.json
 
 #Composer
