@@ -159,7 +159,8 @@ class Image
             }
         }
 
-        $querylet = Image::build_search_querylet($tags, $limit, $start);
+        [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
+        $querylet = self::build_search_querylet($tag_conditions, $img_conditions, $order, $limit, $start);
         return $database->get_all_iterable($querylet->sql, $querylet->variables);
     }
 
@@ -246,7 +247,8 @@ class Image
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
                     $tags[] = "rating:*";
                 }
-                $querylet = Image::build_search_querylet($tags);
+                [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
+                $querylet = self::build_search_querylet($tag_conditions, $img_conditions, $order);
                 $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
                 if (SPEED_HAX && $total > 5000) {
                     // when we have a ton of images, the count
@@ -307,7 +309,8 @@ class Image
         } else {
             $tags[] = 'id'. $gtlt . $this->id;
             $tags[] = 'order:id_'. strtolower($dir);
-            $querylet = Image::build_search_querylet($tags);
+            [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
+            $querylet = self::build_search_querylet($tag_conditions, $img_conditions, $order);
             $querylet->append_sql(' LIMIT 1');
             $row = $database->get_row($querylet->sql, $querylet->variables);
         }
@@ -749,13 +752,13 @@ class Image
     }
 
     /**
+     * Turn a human input string into a an abstract search query
+     *
      * @param string[] $terms
+     * @return array{0: TagCondition[], 1: ImgCondition[], 2: string}
      */
-    private static function build_search_querylet(
-        array $terms,
-        ?int $limit = null,
-        ?int $offset = null
-    ): Querylet {
+    private static function terms_to_conditions(array $terms): array
+    {
         global $config;
 
         $tag_conditions = [];
@@ -776,18 +779,30 @@ class Image
 
         $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
 
-        /*
-         * Turn a bunch of Querylet objects into a base query
-         *
-         * Must follow the format
-         *
-         *   SELECT images.*
-         *   FROM (...) AS images
-         *   WHERE (...)
-         *
-         * ie, return a set of images.* columns, and end with a WHERE
-         */
+        return [$tag_conditions, $img_conditions, $order];
+    }
 
+    /**
+     * Turn an abstract search query into an SQL Querylet
+     *
+     * Must follow the format
+     *
+     *   SELECT images.*
+     *   FROM (...) AS images
+     *   WHERE (...)
+     *
+     * ie, return a set of images.* columns, and end with a WHERE
+     *
+     * @param TagCondition[] $tag_conditions
+     * @param ImgCondition[] $img_conditions
+     */
+    private static function build_search_querylet(
+        array $tag_conditions,
+        array $img_conditions,
+        string $order,
+        ?int $limit = null,
+        ?int $offset = null
+    ): Querylet {
         // no tags, do a simple search
         if (count($tag_conditions) === 0) {
             $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
@@ -796,15 +811,28 @@ class Image
         // one tag sorted by ID - we can fetch this from the image_tags table,
         // and do the offset / limit there, which is 10x faster than fetching
         // all the image_tags and doing the offset / limit on the result.
+        //
+        // NOTE: this is currently impossible to test, because the test suite
+        // loads all extensions, some of whom add generic img_conditions onto
+        // the search, which prevents this optimisation from being used.
         elseif (
             count($tag_conditions) === 1
+            && $tag_conditions[0]->positive
+            // We can only do this if img_conditions is empty, because
+            // we're going to apply the offset / limit to the image_tags
+            // subquery, and applying extra conditions to the top-level
+            // query might reduce the total results below the target limit
             && empty($img_conditions)
+            // We can only do this if we're sorting by ID, because
+            // we're going to be using the image_tags table, which
+            // only has image_id and tag_id, not any other columns
             && ($order == "id DESC" || $order == "images.id DESC")
-            && !is_null($offset)
+            // This is only an optimisation if we are applying limit
+            // and offset
             && !is_null($limit)
+            && !is_null($offset)
         ) {
             $tc = $tag_conditions[0];
-            $in = $tc->positive ? "IN" : "NOT IN";
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
             $tag_array = self::tag_or_wildcard_to_ids($tc->tag);
@@ -820,17 +848,16 @@ class Image
                 $query = new Querylet("
                     SELECT images.*
                     FROM images INNER JOIN (
-                        SELECT it.image_id
+                        SELECT DISTINCT it.image_id
                         FROM image_tags it
-                        WHERE it.tag_id $in ($set)
+                        WHERE it.tag_id IN ($set)
                         ORDER BY it.image_id DESC
                         LIMIT :limit OFFSET :offset
                     ) a on a.image_id = images.id
-                    ORDER BY images.id DESC
+                    WHERE 1=1
                 ", ["limit" => $limit, "offset" => $offset]);
                 // don't offset at the image level because
                 // we already offset at the image_tags level
-                $order = null;
                 $limit = null;
                 $offset = null;
             }
@@ -890,7 +917,7 @@ class Image
                 }
 
                 $first = array_shift($inner_joins);
-                $sub_query = "SELECT it.image_id FROM image_tags it ";
+                $sub_query = "SELECT DISTINCT it.image_id FROM image_tags it ";
                 $i = 0;
                 foreach ($inner_joins as $inner_join) {
                     $i++;
@@ -946,9 +973,8 @@ class Image
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
-        if (!is_null($order)) {
-            $query->append(new Querylet(" ORDER BY ".$order));
-        }
+        $query->append(new Querylet(" ORDER BY ".$order));
+
         if (!is_null($limit)) {
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
             $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
