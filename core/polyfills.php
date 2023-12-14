@@ -814,3 +814,18 @@ function stringer($s): string
     }
     return "<Unstringable>";
 }
+
+/**
+ * If a value is in the cache, return it; otherwise, call the callback
+ * to generate it and store it in the cache.
+ */
+function cache_get_or_set(string $key, callable $callback, int $ttl = 0)
+{
+    global $cache;
+    $value = $cache->get($key);
+    if ($value === null) {
+        $value = $callback();
+        $cache->set($key, $value, $ttl);
+    }
+    return $value;
+}

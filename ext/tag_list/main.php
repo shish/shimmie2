@@ -553,7 +553,6 @@ class TagList extends Extension
     {
         global $cache, $database;
 
-
         $wild_tags = $search;
         $cache_key = "related_tags:" . md5(Tag::implode($search));
         $related_tags = $cache->get($cache_key);

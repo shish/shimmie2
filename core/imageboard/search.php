@@ -119,13 +119,8 @@ class Search
 
     private static function count_total_images(): int
     {
-        global $cache, $database;
-        $total = $cache->get("image-count");
-        if (is_null($total)) {
-            $total = (int)$database->get_one("SELECT COUNT(*) FROM images");
-            $cache->set("image-count", $total, 600);
-        }
-        return $total;
+        global $database;
+        return cache_get_or_set("image-count", fn () => (int)$database->get_one("SELECT COUNT(*) FROM images"), 600);
     }
 
     /**

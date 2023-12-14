@@ -297,18 +297,17 @@ class PrivMsg extends Extension
 
     private function count_pms(User $user)
     {
-        global $cache, $database;
+        global $database;
 
-        $count = $cache->get("pm-count:{$user->id}");
-        if (is_null($count)) {
-            $count = $database->get_one("
-					SELECT count(*)
-					FROM private_message
-					WHERE to_id = :to_id
-					AND is_read = :is_read
-			", ["to_id" => $user->id, "is_read" => false]);
-            $cache->set("pm-count:{$user->id}", $count, 600);
-        }
-        return $count;
+        return cache_get_or_set(
+            "pm-count:{$user->id}",
+            fn () => $database->get_one("
+                SELECT count(*)
+                FROM private_message
+                WHERE to_id = :to_id
+                AND is_read = :is_read
+            ", ["to_id" => $user->id, "is_read" => false]),
+            600
+        );
     }
 }
