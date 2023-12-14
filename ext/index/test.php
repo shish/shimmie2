@@ -178,12 +178,19 @@ class IndexTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testWildSearchManyResults($image_ids)
+    public function testWildSearchManyResultsSimple($image_ids)
     {
         $image_ids = $this->testUpload();
-        // two images match comp* - one matches it once,
-        // one matches it twice
+        // two images match comp* - one matches it once, one matches it twice
         $this->assert_search_results(["comp*"], [$image_ids[1], $image_ids[0]]);
+    }
+
+    #[Depends('testUpload')]
+    public function testWildSearchManyResultsComplex($image_ids)
+    {
+        $image_ids = $this->testUpload();
+        // same thing, but with the complex branch
+        $this->assert_search_results(["comp*", "-asdf"], [$image_ids[1], $image_ids[0]]);
     }
 
     /* * * * * * * * * * *
@@ -196,19 +203,26 @@ class IndexTest extends ShimmiePHPUnitTestCase
         // multiple tags, many results
         $this->assert_search_results(["computer", "size=640x480"], [$image_ids[1], $image_ids[0]]);
     }
-    // tag + negative
-    // wildcards + ???
 
     /* * * * * * * * * * *
     * Negative           *
     * * * * * * * * * * */
     #[Depends('testUpload')]
-    public function testNegative($image_ids)
+    public function testSubtractFromSearch($image_ids)
     {
         $image_ids = $this->testUpload();
 
         // negative tag, should have one result
         $this->assert_search_results(["computer", "-pbx"], [$image_ids[1]]);
+
+        // removing something that doesn't exist should have no effect
+        $this->assert_search_results(["computer", "-not_a_tag"], [$image_ids[1], $image_ids[0]]);
+    }
+
+    #[Depends('testUpload')]
+    public function testSubtractFromDefault($image_ids)
+    {
+        $image_ids = $this->testUpload();
 
         // negative tag alone, should work
         $this->assert_search_results(["-pbx"], [$image_ids[1]]);
