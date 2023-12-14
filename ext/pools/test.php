@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use PHPUnit\Framework\Attributes\Depends;
+
 class PoolsTest extends ShimmiePHPUnitTestCase
 {
     public function setUp(): void
@@ -50,7 +52,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         return [$pool_id, [$image_id_1, $image_id_2]];
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testOnViewImage($args)
     {
         [$pool_id, $image_ids] = $this->testCreate();
@@ -64,7 +66,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Pool");
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testSearch($args)
     {
         [$pool_id, $image_ids] = $this->testCreate();
@@ -76,7 +78,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Pool");
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testList($args)
     {
         $this->testCreate();
@@ -84,7 +86,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Pool");
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testView($args)
     {
         [$pool_id, $image_ids] = $this->testCreate();
@@ -93,7 +95,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Pool");
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testHistory($args)
     {
         [$pool_id, $image_ids] = $this->testCreate();
@@ -102,7 +104,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Pool");
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testImport($args)
     {
         [$pool_id, $image_ids] = $this->testCreate();
@@ -114,7 +116,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Pool");
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testRemovePosts($args): array
     {
         [$pool_id, $image_ids] = $this->testCreate();
@@ -128,7 +130,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         return [$pool_id, $image_ids];
     }
 
-    /** @depends testRemovePosts */
+    #[Depends('testRemovePosts')]
     public function testAddPosts($args)
     {
         [$pool_id, $image_ids] = $this->testRemovePosts(null);
@@ -140,7 +142,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
     }
 
-    /** @depends testCreate */
+    #[Depends('testCreate')]
     public function testEditDescription($args): array
     {
         [$pool_id, $image_ids] = $this->testCreate();

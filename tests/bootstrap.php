@@ -64,7 +64,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     public function setUp(): void
     {
         global $database, $_tracer;
-        $_tracer->begin($this->getName());
+        $_tracer->begin($this->name());
         $_tracer->begin("setUp");
         $class = str_replace("Test", "", get_class($this));
         if (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
