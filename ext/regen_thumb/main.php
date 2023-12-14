@@ -30,7 +30,7 @@ class RegenThumb extends Extension
         }
         if ($event->page_matches("regen_thumb/mass") && $user->can(Permissions::DELETE_IMAGE) && isset($_POST['tags'])) {
             $tags = Tag::explode(strtolower($_POST['tags']), false);
-            $images = Image::find_images(limit: 10000, tags: $tags);
+            $images = Search::find_images(limit: 10000, tags: $tags);
 
             foreach ($images as $image) {
                 $this->regenerate_thumbnail($image);

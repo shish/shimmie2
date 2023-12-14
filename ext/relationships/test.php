@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use PHPUnit\Framework\Attributes\Depends;
+
 class RelationshipsTest extends ShimmiePHPUnitTestCase
 {
     //=================================================================
@@ -32,9 +34,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
-    /**
-     * @depends testNoParent
-     */
+    #[Depends('testNoParent')]
     public function testSetParent($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testNoParent();
@@ -56,9 +56,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
-    /**
-     * @depends testSetParent
-     */
+    #[Depends('testSetParent')]
     public function testChangeParent($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testSetParent(null);
@@ -79,9 +77,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
-    /**
-     * @depends testSetParent
-     */
+    #[Depends('testSetParent')]
     public function testSearch($imgs)
     {
         [$image_1, $image_2, $image_3] = $this->testSetParent(null);
@@ -94,9 +90,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["child:none"], [$image_3->id, $image_2->id]);
     }
 
-    /**
-     * @depends testChangeParent
-     */
+    #[Depends('testChangeParent')]
     public function testRemoveParent($imgs)
     {
         [$image_1, $image_2, $image_3] = $this->testChangeParent(null);
@@ -146,9 +140,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
-    /**
-     * @depends testSetParentByTagBase
-     */
+    #[Depends('testSetParentByTagBase')]
     public function testSetParentByTag($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testSetParentByTagBase();
@@ -171,9 +163,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
-    /**
-     * @depends testSetParentByTag
-     */
+    #[Depends('testSetParentByTag')]
     public function testSetChildByTag($imgs): array
     {
         [$image_1, $image_2, $image_3] = $this->testSetParentByTag(null);
@@ -196,9 +186,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
-    /**
-     * @depends testSetChildByTag
-     */
+    #[Depends('testSetChildByTag')]
     public function testRemoveParentByTag($imgs)
     {
         [$image_1, $image_2, $image_3] = $this->testSetChildByTag(null);

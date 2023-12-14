@@ -199,8 +199,8 @@ class DanbooruApi extends Extension
             $tags = array_filter($tags, static function ($element) {
                 return $element !== "*";
             });
-            $count = Image::count_images($tags);
-            $results = Image::find_images(max($start, 0), min($limit, 100), $tags);
+            $count = Search::count_images($tags);
+            $results = Search::find_images(max($start, 0), min($limit, 100), $tags);
         }
 
         // Now we have the array $results filled with Image objects

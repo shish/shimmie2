@@ -240,14 +240,12 @@ class ReportImage extends Extension
 
     public function count_reported_images(): int
     {
-        global $cache, $database;
+        global $database;
 
-        $count = $cache->get("image-report-count");
-        if (is_null($count)) {
-            $count = $database->get_one("SELECT count(*) FROM image_reports");
-            $cache->set("image-report-count", $count, 600);
-        }
-
-        return (int)$count;
+        return (int)cache_get_or_set(
+            "image-report-count",
+            fn () => $database->get_one("SELECT count(*) FROM image_reports"),
+            600
+        );
     }
 }

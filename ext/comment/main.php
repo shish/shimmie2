@@ -283,20 +283,17 @@ class CommentList extends Extension
     {
         global $cache, $config, $database, $user;
 
+        $threads_per_page = 10;
+
         $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 
-        $total_pages = $cache->get("comment_pages");
-        if (is_null($total_pages)) {
-            $total_pages = (int)ceil($database->get_one("
-				SELECT COUNT(c1)
-				FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1
-			") / 10);
-            $cache->set("comment_pages", $total_pages, 600);
-        }
+        $total_pages = cache_get_or_set("comment_pages", fn () => (int)ceil($database->get_one("
+            SELECT COUNT(c1)
+            FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1
+        ") / $threads_per_page), 600);
         $total_pages = max($total_pages, 1);
 
         $current_page = $event->try_page_num(1, $total_pages);
-        $threads_per_page = 10;
         $start = $threads_per_page * $current_page;
 
         $result = $database->execute("
@@ -357,11 +354,7 @@ class CommentList extends Extension
         global $cache, $config;
         $cc = $config->get_int("comment_count");
         if ($cc > 0) {
-            $recent = $cache->get("recent_comments");
-            if (is_null($recent)) {
-                $recent = $this->get_recent_comments($cc);
-                $cache->set("recent_comments", $recent, 60);
-            }
+            $recent = cache_get_or_set("recent_comments", fn () => $this->get_recent_comments($cc), 60);
             if (count($recent) > 0) {
                 $this->theme->display_recent_comments($recent);
             }

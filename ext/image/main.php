@@ -263,7 +263,7 @@ class ImageIO extends Extension
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {
         $u_name = url_escape($event->display_user->name);
-        $i_image_count = Image::count_images(["user={$event->display_user->name}"]);
+        $i_image_count = Search::count_images(["user={$event->display_user->name}"]);
         $i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
         $images_link = search_link(["user=$u_name"]);

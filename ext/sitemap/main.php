@@ -42,7 +42,7 @@ class XMLSitemap extends Extension
     private function handle_smaller_sitemap()
     {
         /* --- Add latest images to sitemap with higher priority --- */
-        $latestimages = Image::find_images(limit: 50);
+        $latestimages = Search::find_images(limit: 50);
         if (empty($latestimages)) {
             return;
         }
@@ -85,7 +85,7 @@ class XMLSitemap extends Extension
         $this->add_sitemap_queue($popular_tags, "monthly", "0.9" /* not sure how to deal with date here */);
 
         /* --- Add latest images to sitemap with higher priority --- */
-        $latestimages = Image::find_images(limit: 50);
+        $latestimages = Search::find_images(limit: 50);
         $latestimages_urllist = [];
         $latest_image = null;
         foreach ($latestimages as $arrayid => $image) {
@@ -107,7 +107,7 @@ class XMLSitemap extends Extension
         $this->add_sitemap_queue($other_tags, "monthly", "0.7" /* not sure how to deal with date here */);
 
         /* --- Add all other images to sitemap with lower priority --- */
-        $otherimages = Image::find_images(offset: 51, limit: 10000000);
+        $otherimages = Search::find_images(offset: 51, limit: 10000000);
         $image = null;
         foreach ($otherimages as $arrayid => $image) {
             // create url from image id's

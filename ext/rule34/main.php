@@ -84,7 +84,7 @@ class Rule34 extends Extension
     {
         global $cache;
         if ($event->cmd == "wipe-thumb-cache") {
-            foreach (Image::find_images_iterable(0, null, Tag::explode($event->args[0])) as $image) {
+            foreach (Search::find_images_iterable(0, null, Tag::explode($event->args[0])) as $image) {
                 print($image->id . "\n");
                 $cache->delete("thumb-block:{$image->id}");
             }

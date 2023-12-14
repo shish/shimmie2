@@ -22,7 +22,7 @@ class Index extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $cache, $page, $user;
+        global $cache, $config, $page, $user;
         if ($event->page_matches("post/list")) {
             if (isset($_GET['search'])) {
                 $page->set_mode(PageMode::REDIRECT);
@@ -67,7 +67,7 @@ class Index extends Extension
                     return;
                 }
 
-                $total_pages = Image::count_pages($search_terms);
+                $total_pages = (int)ceil(Search::count_images($search_terms) / $config->get_int(IndexConfig::IMAGES));
                 $images = [];
 
                 if (SPEED_HAX && $total_pages > $fast_page_limit && !$user->can("big_search")) {
@@ -77,16 +77,16 @@ class Index extends Extension
                 if (SPEED_HAX) {
                     if ($count_search_terms === 0 && ($page_number < 10)) {
                         // extra caching for the first few post/list pages
-                        $images = $cache->get("post-list:$page_number");
-                        if (is_null($images)) {
-                            $images = Image::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
-                            $cache->set("post-list:$page_number", $images, 60);
-                        }
+                        $images = cache_get_or_set(
+                            "post-list:$page_number",
+                            fn () => Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms),
+                            60
+                        );
                     }
                 }
 
                 if (!$images) {
-                    $images = Image::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
+                    $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
                 }
             } catch (PermissionDeniedException $pde) {
                 $this->theme->display_error(403, "Permission denied", $pde->error);
@@ -156,7 +156,7 @@ class Index extends Extension
         }
         if ($event->cmd == "search") {
             $query = count($event->args) > 0 ? Tag::explode($event->args[0]) : [];
-            $items = Image::find_images(limit: 1000, tags: $query);
+            $items = Search::find_images(limit: 1000, tags: $query);
             foreach ($items as $item) {
                 print("{$item->hash}\n");
             }

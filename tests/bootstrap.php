@@ -64,11 +64,15 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
     public function setUp(): void
     {
         global $database, $_tracer;
-        $_tracer->begin($this->getName());
+        $_tracer->begin($this->name());
         $_tracer->begin("setUp");
         $class = str_replace("Test", "", get_class($this));
-        if (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
-            $this->markTestSkipped("$class not supported with this database");
+        try {
+            if (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
+                $this->markTestSkipped("$class not supported with this database");
+            }
+        } catch (ExtensionNotFound $e) {
+            // ignore - this is a core test rather than an extension test
         }
 
         // Set up a clean environment for each test
@@ -220,7 +224,7 @@ abstract class ShimmiePHPUnitTestCase extends TestCase
 
     protected function assert_search_results($tags, $results): void
     {
-        $images = Image::find_images(0, null, $tags);
+        $images = Search::find_images(0, null, $tags);
         $ids = [];
         foreach ($images as $image) {
             $ids[] = $image->id;

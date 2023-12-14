@@ -278,27 +278,27 @@ class DatabaseConfig extends BaseConfig
         $this->table_name = $table_name;
         $this->sub_value = $sub_value;
         $this->sub_column = $sub_column;
-        $this->cache_name = empty($sub_value) ? "config" : "config_{$sub_value}";
+        $this->cache_name = empty($sub_value) ? "config" : "config_{$sub_column}_{$sub_value}";
+        $this->values = cache_get_or_set($this->cache_name, fn () => $this->get_values());
+    }
 
-        $cached = $cache->get($this->cache_name);
-        if (!is_null($cached)) {
-            $this->values = $cached;
-        } else {
-            $this->values = [];
+    private function get_values(): mixed
+    {
+        $values = [];
 
-            $query = "SELECT name, value FROM {$this->table_name}";
-            $args = [];
+        $query = "SELECT name, value FROM {$this->table_name}";
+        $args = [];
 
-            if (!empty($sub_column) && !empty($sub_value)) {
-                $query .= " WHERE $sub_column = :sub_value";
-                $args["sub_value"] = $sub_value;
-            }
-
-            foreach ($this->database->get_all($query, $args) as $row) {
-                $this->values[$row["name"]] = $row["value"];
-            }
-            $cache->set($this->cache_name, $this->values);
+        if (!empty($this->sub_column) && !empty($this->sub_value)) {
+            $query .= " WHERE {$this->sub_column} = :sub_value";
+            $args["sub_value"] = $this->sub_value;
         }
+
+        foreach ($this->database->get_all($query, $args) as $row) {
+            $values[$row["name"]] = $row["value"];
+        }
+
+        return $values;
     }
 
     public function save(string $name = null): void

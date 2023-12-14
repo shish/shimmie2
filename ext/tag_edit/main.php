@@ -300,7 +300,7 @@ class TagEdit extends Extension
         log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
         if (count($search_set) == 1 && count($replace_set) == 1) {
-            $images = Image::find_images(limit: 10, tags: $replace_set);
+            $images = Search::find_images(limit: 10, tags: $replace_set);
             if (count($images) == 0) {
                 log_info("tag_edit", "No images found with target tag, doing in-place rename");
                 $database->execute(
@@ -329,7 +329,7 @@ class TagEdit extends Extension
                 $search_forward[] = "id<$last_id";
             }
 
-            $images = Image::find_images(limit: 100, tags: $search_forward);
+            $images = Search::find_images(limit: 100, tags: $search_forward);
             if (count($images) == 0) {
                 break;
             }
@@ -364,7 +364,7 @@ class TagEdit extends Extension
                 $search_forward[] = "id<$last_id";
             }
 
-            $images = Image::find_images(limit: 100, tags: $search_forward);
+            $images = Search::find_images(limit: 100, tags: $search_forward);
             if (count($images) == 0) {
                 break;
             }
