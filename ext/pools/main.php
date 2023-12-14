@@ -372,7 +372,7 @@ class Pools extends Extension
                     break;
                 case "import":
                     if ($this->have_permission($user, $pool)) {
-                        $images = Image::find_images(
+                        $images = Search::find_images(
                             limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
                             tags: Tag::explode($_POST["pool_tag"])
                         );

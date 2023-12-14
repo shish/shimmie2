@@ -55,7 +55,7 @@ class Home extends Extension
         $num_comma = "";
         $counter_text = "";
         if ($counter_dir != 'none') {
-            $total = Image::count_images();
+            $total = Search::count_images();
             $num_comma = number_format($total);
 
             if ($counter_dir != 'text-only') {

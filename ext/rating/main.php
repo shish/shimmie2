@@ -376,7 +376,7 @@ class Ratings extends Extension
             } else {
                 $n = 0;
                 while (true) {
-                    $images = Image::find_images($n, 100, Tag::explode($_POST["query"]));
+                    $images = Search::find_images($n, 100, Tag::explode($_POST["query"]));
                     if (count($images) == 0) {
                         break;
                     }
