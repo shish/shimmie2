@@ -68,26 +68,28 @@
 	<ul>
 		<li><a href="//rule34.paheal.net/post/list" class="top_parent">Help &#9660;</a>
 		<ul>
+			<li><a href="mailto:dmca@paheal.net" class="sub_option">DMCA</a></li>
 			<li><a href="//rule34.paheal.net/wiki/rules" class="sub_option">Site rules</a></li>
-            <li><a href="//rule34.paheal.net/wiki/faq" class="sub_option">F.A.Q.</a></li>
+            		<li><a href="//rule34.paheal.net/wiki/faq" class="sub_option">F.A.Q.</a></li>
 			<li><a href="//rule34.paheal.net/wiki/tagging" class="sub_option">Tagging Guide</a></li>
 			<li><a href="//rule34.paheal.net/wiki/staff" class="sub_option">Staff</a></li>
 			<li><a href="#" class="parent">Contact</a>
 			<ul>
 				<li><a href="mailto:staff@paheal.net" class="sub_option">Staff</a></li>
 				<li><a href="mailto:webmaster@shishnet.org" class="sub_option">Programmer</a></li>
+				<li><a href="mailto:dmca@paheal.net" class="sub_option">DMCA</a></li>
 			</ul>
 			</li>
 		</ul>
 		</li>
 	</ul>
 	
-	<ul>
+	<!--<ul>
 		<li><a class="menu top_parent" href="//rule34.paheal.net/wiki/Notes">ANNOUNCEMENTS</a></li>
-	</ul>
+	</ul>-->
 
 	<ul>
-		<li><a href="https://s.zlinkd.com/d.php?z=3832265" target="_blank">Adult games! &#127918;</a></li>
+		<li><a href="https://s.zlink3.com/d.php?z=3832265" target="_blank" sub="0002">Adult games! &#127918;</a></li>
 	</ul>
 	
 </div>
