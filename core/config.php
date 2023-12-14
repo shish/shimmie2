@@ -278,7 +278,7 @@ class DatabaseConfig extends BaseConfig
         $this->table_name = $table_name;
         $this->sub_value = $sub_value;
         $this->sub_column = $sub_column;
-        $this->cache_name = empty($sub_value) ? "config" : "config_{$sub_column}={$sub_value}";
+        $this->cache_name = empty($sub_value) ? "config" : "config_{$sub_column}_{$sub_value}";
         $this->values = cache_get_or_set($this->cache_name, fn () => $this->get_values());
     }
 
