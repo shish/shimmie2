@@ -60,10 +60,10 @@
     },
 
 	"require-dev" : {
-		"phpunit/phpunit" : "^9.0",
-		"friendsofphp/php-cs-fixer" : "^3.12",
-		"scrutinizer/ocular": "dev-master",
-		"phpstan/phpstan": "1.10.x-dev"
+		"phpunit/phpunit" : "10.5.3",
+		"friendsofphp/php-cs-fixer" : "3.41.1",
+		"scrutinizer/ocular": "1.9",
+		"phpstan/phpstan": "1.10.50"
 	},
 	"suggest": {
 		"ext-memcache": "memcache caching",

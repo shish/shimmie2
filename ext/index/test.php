@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use PHPUnit\Framework\Attributes\Depends;
+
 class IndexTest extends ShimmiePHPUnitTestCase
 {
     public function testIndexPage()
@@ -79,21 +81,21 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /* * * * * * * * * * *
     * Tag Search         *
     * * * * * * * * * * */
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testTagSearchNoResults($image_ids)
     {
         $this->testUpload();
         $this->assert_search_results(["maumaumau"], []);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testTagSearchOneResult($image_ids)
     {
         $image_ids = $this->testUpload();
         $this->assert_search_results(["pbx"], [$image_ids[0]]);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testTagSearchManyResults($image_ids)
     {
         $image_ids = $this->testUpload();
@@ -103,7 +105,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /* * * * * * * * * * *
     * Multi-Tag Search   *
     * * * * * * * * * * */
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testMultiTagSearchNoResults($image_ids)
     {
         $this->testUpload();
@@ -112,14 +114,14 @@ class IndexTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["computer", "asdfasdfwaffle"], []);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testMultiTagSearchOneResult($image_ids)
     {
         $image_ids = $this->testUpload();
         $this->assert_search_results(["computer", "screenshot"], [$image_ids[0]]);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testMultiTagSearchManyResults($image_ids)
     {
         $image_ids = $this->testUpload();
@@ -129,7 +131,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /* * * * * * * * * * *
     * Meta Search        *
     * * * * * * * * * * */
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testMetaSearchNoResults($image_ids)
     {
         $this->testUpload();
@@ -137,7 +139,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["ratio=42:12345"], []);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testMetaSearchOneResult($image_ids)
     {
         $image_ids = $this->testUpload();
@@ -147,7 +149,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["filename=screenshot"], [$image_ids[0]]);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testMetaSearchManyResults($image_ids)
     {
         $image_ids = $this->testUpload();
@@ -159,14 +161,14 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /* * * * * * * * * * *
     * Wildcards          *
     * * * * * * * * * * */
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testWildSearchNoResults($image_ids)
     {
         $this->testUpload();
         $this->assert_search_results(["asdfasdf*"], []);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testWildSearchOneResult($image_ids)
     {
         $image_ids = $this->testUpload();
@@ -175,7 +177,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["comp*", "screenshot"], [$image_ids[0]]);
     }
 
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testWildSearchManyResults($image_ids)
     {
         $image_ids = $this->testUpload();
@@ -187,7 +189,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /* * * * * * * * * * *
     * Mixed              *
     * * * * * * * * * * */
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testMixedSearchTagMeta($image_ids)
     {
         $image_ids = $this->testUpload();
@@ -200,7 +202,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     /* * * * * * * * * * *
     * Negative           *
     * * * * * * * * * * */
-    /** @depends testUpload */
+    #[Depends('testUpload')]
     public function testNegative($image_ids)
     {
         $image_ids = $this->testUpload();
