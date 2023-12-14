@@ -21,12 +21,15 @@
 		"vscode": {
 			"extensions": [
 				"recca0120.vscode-phpunit",
-				"ryanluker.vscode-coverage-gutters"
+				"ryanluker.vscode-coverage-gutters",
+				"xdebug.php-debug",
+				"DEVSENSE.phptools-vscode",
+				"ms-azuretools.vscode-docker"
 			],
 			"settings": {
 				"phpunit.args": [
-					"--configuration", "${workspaceFolder}/tests/phpunit.xml"//,
-					//"--coverage-clover", "data/coverage.clover"
+					"--configuration", "${workspaceFolder}/tests/phpunit.xml",
+					"--coverage-clover", "data/coverage.clover"
 				],
 				"coverage-gutters.coverageFileNames": [
 					"data/coverage.clover"
