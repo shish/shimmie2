@@ -62,10 +62,8 @@ class AutoComplete extends Extension
             $cache_key .= "-" . $limit;
         }
 
-        $res = $cache->get($cache_key);
-        if (is_null($res)) {
-            $res = $database->get_pairs(
-                "
+        return cache_get_or_set($cache_key, fn () => $database->get_pairs(
+            "
                 SELECT tag, count
                 FROM tags
                 WHERE LOWER(tag) LIKE LOWER(:search)
@@ -74,11 +72,7 @@ class AutoComplete extends Extension
                 ORDER BY count DESC
                 $limitSQL
                 ",
-                $SQLarr
-            );
-            $cache->set($cache_key, $res, 600);
-        }
-
-        return $res;
+            $SQLarr
+        ), 600);
     }
 }

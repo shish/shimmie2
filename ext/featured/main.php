@@ -52,14 +52,17 @@ class Featured extends Extension
         global $cache, $config, $page, $user;
         $fid = $config->get_int("featured_id");
         if ($fid > 0) {
-            $image = $cache->get("featured_image_object:$fid");
-            if (is_null($image)) {
-                $image = Image::by_id($fid);
-                if ($image) { // make sure the object is fully populated before saving
-                    $image->get_tag_array();
-                }
-                $cache->set("featured_image_object:$fid", $image, 600);
-            }
+            $image = cache_get_or_set(
+                "featured_image_object:$fid",
+                function () use ($fid) {
+                    $image = Image::by_id($fid);
+                    if ($image) { // make sure the object is fully populated before saving
+                        $image->get_tag_array();
+                    }
+                    return $image;
+                },
+                600
+            );
             if (!is_null($image)) {
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
                     if (!in_array($image->rating, Ratings::get_user_class_privs($user))) {

@@ -53,11 +53,7 @@ class Blocks extends Extension
     {
         global $cache, $database, $page, $user;
 
-        $blocks = $cache->get("blocks");
-        if (is_null($blocks)) {
-            $blocks = $database->get_all("SELECT * FROM blocks");
-            $cache->set("blocks", $blocks, 600);
-        }
+        $blocks = cache_get_or_set("blocks", fn () => $database->get_all("SELECT * FROM blocks"), 600);
         foreach ($blocks as $block) {
             $path = implode("/", $event->args);
             if (strlen($path) < 4000 && fnmatch($block['pages'], $path)) {
