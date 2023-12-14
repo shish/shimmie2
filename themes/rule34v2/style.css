@@ -257,6 +257,7 @@ ul.tagit li.tagit-new {
 }
 
 
+[data-tags~="ai-generated"]>A>IMG { background: #BC8F8F; }
 [data-tags~="animated"]>A>IMG { background: #CC00CC; }
 [data-ext="mp4"]>A>IMG,
 [data-ext="webm"]>A>IMG { background: #0000FF; }
