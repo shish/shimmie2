@@ -209,7 +209,7 @@ class Artists extends Extension
                         $userIsLogged = !$user->is_anonymous();
                         $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
 
-                        $images = Image::find_images(limit: 4, tags: Tag::explode($artist['name']));
+                        $images = Search::find_images(limit: 4, tags: Tag::explode($artist['name']));
 
                         $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
                         /*

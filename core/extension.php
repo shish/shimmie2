@@ -110,6 +110,10 @@ abstract class Extension
     }
 }
 
+class ExtensionNotFound extends SCoreException
+{
+}
+
 enum ExtensionVisibility
 {
     case DEFAULT;
@@ -235,7 +239,7 @@ abstract class ExtensionInfo
             return self::$all_info_by_class[$normal];
         } else {
             $infos = print_r(array_keys(self::$all_info_by_class), true);
-            throw new SCoreException("$normal not found in {$infos}");
+            throw new ExtensionNotFound("$normal not found in {$infos}");
         }
     }
 

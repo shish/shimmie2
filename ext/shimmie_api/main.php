@@ -70,7 +70,7 @@ class ShimmieApi extends Extension
                 $search_terms = $event->get_search_terms();
                 $page_number = $event->get_page_number();
                 $page_size = $event->get_page_size();
-                $images = Image::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
+                $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
                 $safe_images = [];
                 foreach ($images as $image) {
                     $image->get_tag_array();
@@ -131,7 +131,7 @@ class ShimmieApi extends Extension
             for ($i = 0; $i < 4; $i++) {
                 unset($all[$i]);
             }
-            $all['uploadcount'] = Image::count_images(["user_id=" . $all['id']]);
+            $all['uploadcount'] = Search::count_images(["user_id=" . $all['id']]);
             $all['commentcount'] = $database->get_one(
                 "SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id",
                 ["owner_id" => $all['id']]
