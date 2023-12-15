@@ -41,6 +41,6 @@ class CustomSetupTheme extends SetupTheme
 			</div>
 		";
 
-        return $this->rr($html);
+        return "<div class='tframe'>$html</div>";
     }
 }

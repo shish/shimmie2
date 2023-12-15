@@ -13,18 +13,6 @@ use function MicroHTML\{A,DIV,SPAN,joinHTML};
  */
 class Themelet extends BaseThemelet
 {
-    /**
-     * Put something in a rounded rectangle box; specific to the default theme.
-     */
-    public function rr(string $html): string
-    {
-        return "
-			<div class='tframe'>
-				$html
-			</div>
-		";
-    }
-
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false)
     {
         if ($total_pages == 0) {

@@ -41,6 +41,6 @@ class CustomUserConfigTheme extends UserConfigTheme
 			</div>
 		";
 
-        return $this->rr($html);
+        return "<div class='tframe'>$html</div>";
     }
 }
