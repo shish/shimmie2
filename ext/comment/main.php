@@ -565,7 +565,8 @@ class CommentList extends Extension
     private function is_spam_akismet(string $text): bool
     {
         global $config, $user;
-        if (strlen($config->get_string('comment_wordpress_key')) > 0) {
+        $key = $config->get_string('comment_wordpress_key');
+        if (!is_null($key) && strlen($key) > 0) {
             $comment = [
                 'author'       => $user->name,
                 'email'        => $user->email,
@@ -577,11 +578,7 @@ class CommentList extends Extension
             ];
 
             // @phpstan-ignore-next-line
-            $akismet = new \Akismet(
-                $_SERVER['SERVER_NAME'],
-                $config->get_string('comment_wordpress_key'),
-                $comment
-            );
+            $akismet = new \Akismet($_SERVER['SERVER_NAME'], $key, $comment);
 
             // @phpstan-ignore-next-line
             if ($akismet->errorsExist()) {
