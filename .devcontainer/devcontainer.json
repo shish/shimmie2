@@ -12,10 +12,10 @@
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [8000],
 
 	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "apt update && apt install -y composer php8.2-xdebug git",
+	"postCreateCommand": "cd /workspaces/shimmie2 && /usr/bin/php -S 0.0.0.0:8000 tests/router.php 2>&1 | grep --line-buffered -vE \" (Accepted|Closing)\"",
 	
 	"customizations": {
 		"vscode": {
