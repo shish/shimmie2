@@ -13,11 +13,11 @@ class UrlsTest extends TestCase
     public function test_search_link()
     {
         $this->assertEquals(
-            "/test/post/list/bar+foo/1",
+            "/test/post/list/bar%20foo/1",
             search_link(["foo", "bar"])
         );
         $this->assertEquals(
-            "/test/post/list/cat%2A+rating%3D%5Eq/1",
+            "/test/post/list/cat%2A%20rating%3D%5Eq/1",
             search_link(["rating=?", "cat*"])
         );
     }
