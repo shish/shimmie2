@@ -113,6 +113,7 @@ class BasePage
     public string $title = "";
     public string $heading = "";
     public string $subheading = "";
+    public bool $left_enabled = true;
 
     /** @var string[] */
     public array $html_headers = [];
@@ -155,6 +156,11 @@ class BasePage
     public function flash(string $message): void
     {
         $this->flash[] = $message;
+    }
+
+    public function disable_left()
+    {
+        $this->left_enabled = false;
     }
 
     /**

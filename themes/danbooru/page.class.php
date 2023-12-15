@@ -50,13 +50,6 @@ Tips
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 class Page extends BasePage
 {
-    public bool $left_enabled = true;
-
-    public function disable_left()
-    {
-        $this->left_enabled = false;
-    }
-
     public function render()
     {
         global $config;
