@@ -4,6 +4,6 @@ parameters:
     - ../core
     - ../ext
     - ../tests
-    - ../themes/default
+    - ../themes
   ignoreErrors:
     - '#Access to an undefined property Shimmie2\\Image::\$#'

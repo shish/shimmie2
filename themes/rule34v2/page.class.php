@@ -53,7 +53,7 @@ class Page extends BasePage
             }
         }
 
-        $query = !empty($this->_search_query) ? html_escape(Tag::implode($this->_search_query)) : "";
+        $query = !empty(CustomIndexTheme::$_search_query) ? html_escape(Tag::implode(CustomIndexTheme::$_search_query)) : "";
         assert(!is_null($query));  # used in header.inc, do not remove :P
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
         $generated = autodate(date('c'));

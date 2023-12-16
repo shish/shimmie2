@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class CustomIndexTheme extends IndexTheme
 {
+    public static array $_search_query = [];
+
     protected function build_table(array $images, ?string $query): string
     {
         global $user;
@@ -27,7 +29,7 @@ class CustomIndexTheme extends IndexTheme
 
         $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
         if (!empty($this->search_terms)) {
-            $page->_search_query = $this->search_terms;
+            static::$_search_query = $this->search_terms;
         }
         $page->add_block(new Block("Navigation", $nav, "left", 0));
 
