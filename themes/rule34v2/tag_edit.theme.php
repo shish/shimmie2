@@ -25,10 +25,10 @@ class CustomTagEditTheme extends TagEditTheme
         $page->add_block(new Block("Mass Tag Edit", $html));
     }
 
-    public function get_tag_editor_html(Image $image): \MicroHTML\HTMLElement
+    public function get_tag_editor_html(Image $image): HTMLElement
     {
         $h_tags = html_escape($image->get_tag_list());
-        return \MicroHTML\rawHTML("
+        return rawHTML("
 			<tr>
 				<th width='50px'><a href='".make_link("tag_history/{$image->id}")."'>Tags</a></th>
 				<td>
@@ -38,13 +38,13 @@ class CustomTagEditTheme extends TagEditTheme
 		");
     }
 
-    public function get_source_editor_html(Image $image): \MicroHTML\HTMLElement
+    public function get_source_editor_html(Image $image): HTMLElement
     {
         global $user;
         $h_source = html_escape($image->get_source());
         $f_source = $this->format_source($image->get_source());
         $style = "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;";
-        return \MicroHTML\rawHTML("
+        return rawHTML("
 			<tr>
 				<th><a href='".make_link("source_history/{$image->id}")."'>Source&nbsp;Link</a></th>
 				<td>
