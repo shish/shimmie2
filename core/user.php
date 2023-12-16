@@ -11,12 +11,6 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\INPUT;
 
-function _new_user(array $row): User
-{
-    return new User($row);
-}
-
-
 /**
  * Class User
  *

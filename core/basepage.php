@@ -511,8 +511,9 @@ class BasePage
         }
 
         $sub_links = $sub_links ?? [];
-        usort($nav_links, "Shimmie2\sort_nav_links");
-        usort($sub_links, "Shimmie2\sort_nav_links");
+
+        usort($nav_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
+        usort($sub_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
 
         return [$nav_links, $sub_links];
     }
@@ -704,9 +705,4 @@ class NavLink
 
         return false;
     }
-}
-
-function sort_nav_links(NavLink $a, NavLink $b): int
-{
-    return $a->order - $b->order;
 }
