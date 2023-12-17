@@ -673,7 +673,7 @@ function _get_user(): User
             }
         }
     }
-    if ($page->get_cookie("user") && $page->get_cookie("session")) {
+    if (is_null($my_user) && $page->get_cookie("user") && $page->get_cookie("session")) {
         $my_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
     }
     if (is_null($my_user)) {
