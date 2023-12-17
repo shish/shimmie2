@@ -26,7 +26,7 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@master
       with:
-        php-version: 8.1
+        php-version: 8.3
     - name: Format
       run: ./vendor/bin/php-cs-fixer fix && git diff --exit-code
 
@@ -122,9 +122,13 @@ jobs:
         if [[ "${{ matrix.database }}" == "sqlite" ]]; then
             export TEST_DSN="sqlite:data/shimmie.sqlite"
         fi
-        vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+        if [[ "${{ matrix.php }}" == "8.3" ]]; then
+            vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+        else
+            vendor/bin/phpunit --configuration tests/phpunit.xml
+        fi
 
     - name: Upload coverage
-      if: matrix.php == '8.1'
+      if: matrix.php == '8.3'
       run: |
           vendor/bin/ocular code-coverage:upload --format=php-clover data/coverage.clover
