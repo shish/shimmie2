@@ -27,13 +27,6 @@
 * [High-performance notes](https://github.com/shish/shimmie2/wiki/Performance)
 
 
-# Contact
-
-Email: webmaster at shishnet.org
-
-Issue/Bug tracker: https://github.com/shish/shimmie2/issues
-
-
 # Licence
 
 All code is released under the [GNU GPL Version 2](https://www.gnu.org/licenses/gpl-2.0.html) unless mentioned otherwise.
