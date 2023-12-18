@@ -57,8 +57,8 @@
             "options": {
                 "admin": {
                     "memory_limit": "256M",
-                    "upload_max_filesize": "50M",
-                    "post_max_size": "50M"    
+                    "upload_max_filesize": "$UPLOAD_MAX_FILESIZE",
+                    "post_max_size": "$UPLOAD_MAX_FILESIZE"
                 }
             },
             "processes": {
@@ -70,7 +70,7 @@
     },
     "settings": {
         "http": {
-            "max_body_size": 104857600
+            "max_body_size": 1048576000
         }
     }
 }

@@ -12,6 +12,8 @@ chown shimmie:shimmie /app/data
 
 rm -rf /var/lib/unit/*
 
+envsubst '$UPLOAD_MAX_FILESIZE' < /app/.docker/entrypoint.d/config.json.tmpl > /app/.docker/entrypoint.d/config.json
+
 WAITLOOPS=5
 SLEEPSEC=1
 

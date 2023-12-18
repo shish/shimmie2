@@ -6,6 +6,7 @@ thumbs
 *.sqlite
 *.cache
 trace.json
+.docker/entrypoint.d/config.json
 
 #Composer
 composer.phar
