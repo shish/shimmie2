@@ -20,9 +20,8 @@ class RatingsTheme extends Themelet
     {
         return SHM_POST_INFO(
             "Rating",
-            $can_rate,
             A(["href" => search_link(["rating=$rating"])], Ratings::rating_to_human($rating)),
-            $this->get_selection_rater_html("rating", selected_options: [$rating])
+            $can_rate ? $this->get_selection_rater_html("rating", selected_options: [$rating]) : null
         );
     }
 

@@ -39,9 +39,8 @@ class RelationshipsTheme extends Themelet
 
         return SHM_POST_INFO(
             "Parent",
-            !$user->is_anonymous(),
             strval($image->parent_id) ?: "None",
-            INPUT(["type" => "number", "name" => "tag_edit__parent", "value" => $image->parent_id])
+            !$user->is_anonymous() ? INPUT(["type" => "number", "name" => "tag_edit__parent", "value" => $image->parent_id]) : null
         );
     }
 

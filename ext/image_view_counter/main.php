@@ -70,7 +70,7 @@ class ImageViewCounter extends Extension
                 ["image_id" => $event->image->id]
             );
 
-            $event->add_part(SHM_POST_INFO("Views", false, $view_count, ""), 38);
+            $event->add_part(SHM_POST_INFO("Views", $view_count), 38);
         }
     }
 

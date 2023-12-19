@@ -56,16 +56,15 @@ class TagEditTheme extends Themelet
 
         return SHM_POST_INFO(
             "Tags",
-            $user->can(Permissions::EDIT_IMAGE_TAG),
             joinHTML(", ", $tag_links),
-            INPUT([
+            $user->can(Permissions::EDIT_IMAGE_TAG) ? INPUT([
                 "class" => "autocomplete_tags",
                 "type" => "text",
                 "name" => "tag_edit__tags",
                 "value" => $image->get_tag_list(),
                 "id" => "tag_editor",
                 "autocomplete" => "off"
-            ])
+            ]) : null
         );
     }
 
@@ -77,9 +76,8 @@ class TagEditTheme extends Themelet
         $ip = $user->can(Permissions::VIEW_IP) ? rawHTML(" (" . show_ip($image->owner_ip, "Post posted {$image->posted}") . ")") : "";
         $info = SHM_POST_INFO(
             "Uploader",
-            $user->can(Permissions::EDIT_IMAGE_OWNER),
             emptyHTML(A(["class" => "username", "href" => make_link("user/$owner")], $owner), $ip, ", ", $date),
-            INPUT(["type" => "text", "name" => "tag_edit__owner", "value" => $owner])
+            $user->can(Permissions::EDIT_IMAGE_OWNER) ? INPUT(["type" => "text", "name" => "tag_edit__owner", "value" => $owner]) : null
         );
         // SHM_POST_INFO returns a TR, let's sneakily append
         // a TD with the avatar in it
@@ -97,12 +95,11 @@ class TagEditTheme extends Themelet
         global $user;
         return SHM_POST_INFO(
             "Source",
-            $user->can(Permissions::EDIT_IMAGE_SOURCE),
             DIV(
                 ["style" => "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;"],
                 $this->format_source($image->get_source())
             ),
-            INPUT(["type" => "text", "name" => "tag_edit__source", "value" => $image->get_source()])
+            $user->can(Permissions::EDIT_IMAGE_SOURCE) ? INPUT(["type" => "text", "name" => "tag_edit__source", "value" => $image->get_source()]) : null
         );
     }
 
@@ -127,9 +124,8 @@ class TagEditTheme extends Themelet
         global $user;
         return SHM_POST_INFO(
             "Locked",
-            $user->can(Permissions::EDIT_IMAGE_LOCK),
             $image->is_locked() ? "Yes (Only admins may edit these details)" : "No",
-            INPUT(["type" => "checkbox", "name" => "tag_edit__locked", "checked" => $image->is_locked()])
+            $user->can(Permissions::EDIT_IMAGE_LOCK) ? INPUT(["type" => "checkbox", "name" => "tag_edit__locked", "checked" => $image->is_locked()]) : null
         );
     }
 }

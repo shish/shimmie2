@@ -123,7 +123,7 @@ class ViewImage extends Extension
         global $config;
         $image_info = $config->get_string(ImageConfig::INFO);
         if ($image_info) {
-            $event->add_part(SHM_POST_INFO("Info", false, $event->image->get_info()), 85);
+            $event->add_part(SHM_POST_INFO("Info", $event->image->get_info()), 85);
         }
     }
 }
