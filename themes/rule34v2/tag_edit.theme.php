@@ -27,36 +27,31 @@ class CustomTagEditTheme extends TagEditTheme
 
     public function get_tag_editor_html(Image $image): HTMLElement
     {
-        $h_tags = html_escape($image->get_tag_list());
-        return rawHTML("
-			<tr>
-				<th width='50px'><a href='".make_link("tag_history/{$image->id}")."'>Tags</a></th>
-				<td>
-					<input type='text' name='tag_edit__tags' value='$h_tags'>
-				</td>
-			</tr>
-		");
+        global $user;
+        return SHM_POST_INFO(
+            "Tags",
+            INPUT([
+                "type" => "text",
+                "name" => "tag_edit__tags",
+                "value" => $image->get_tag_list(),
+                "autocomplete" => "off"
+            ])
+        );
     }
 
     public function get_source_editor_html(Image $image): HTMLElement
     {
         global $user;
-        $h_source = html_escape($image->get_source());
-        $f_source = $this->format_source($image->get_source());
-        $style = "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;";
-        return rawHTML("
-			<tr>
-				<th><a href='".make_link("source_history/{$image->id}")."'>Source&nbsp;Link</a></th>
-				<td>
-		".($user->can("edit_image_source") ? "
-					<div class='view' style='$style'>$f_source</div>
-					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
-		" : "
-					<div style='$style'>$f_source</div>
-		")."
-				</td>
-			</tr>
-		");
+        return SHM_POST_INFO(
+            A(["href" => make_link("source_history/{$image->id}")], rawHTML("Source&nbsp;Link")),
+            emptyHTML(
+                DIV(
+                    ["style" => "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;"],
+                    $this->format_source($image->get_source())
+                ),
+                $user->can(Permissions::EDIT_IMAGE_SOURCE) ? INPUT(["type" => "text", "name" => "tag_edit__source", "value" => $image->get_source()]) : null
+            )
+        );
     }
 
     public function get_user_editor_html(Image $image): HTMLElement
@@ -67,13 +62,12 @@ class CustomTagEditTheme extends TagEditTheme
         $ip = $user->can(Permissions::VIEW_IP) ? rawHTML(" (" . show_ip($image->owner_ip, "Post posted {$image->posted}") . ")") : "";
         $info = SHM_POST_INFO(
             "Uploader",
-            $user->can(Permissions::EDIT_IMAGE_OWNER),
             emptyHTML(
                 A(["class" => "username", "href" => make_link("user/$owner")], $owner),
                 $ip,
                 ", ",
                 $date,
-                INPUT(["type" => "text", "name" => "tag_edit__owner", "value" => $owner])
+                $user->can(Permissions::EDIT_IMAGE_OWNER) ? INPUT(["type" => "text", "name" => "tag_edit__owner", "value" => $owner]) : null
             ),
         );
         // SHM_POST_INFO returns a TR, let's sneakily append
@@ -92,11 +86,9 @@ class CustomTagEditTheme extends TagEditTheme
         global $user;
         return SHM_POST_INFO(
             "Locked",
-            $user->can(Permissions::EDIT_IMAGE_LOCK),
-            emptyHTML(
-                INPUT(["type" => "checkbox", "name" => "tag_edit__locked", "checked" => $image->is_locked()]),
-                $image->is_locked() ? "Yes (Only admins may edit these details)" : "No",
-            ),
+            $user->can(Permissions::EDIT_IMAGE_LOCK) ?
+                INPUT(["type" => "checkbox", "name" => "tag_edit__locked", "checked" => $image->is_locked()]) :
+                emptyHTML($image->is_locked() ? "Yes (Only admins may edit these details)" : "No")
         );
     }
 }

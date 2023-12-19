@@ -41,7 +41,6 @@ class Rule34 extends Extension
         $event->add_part(
             SHM_POST_INFO(
                 "Links",
-                false,
                 emptyHTML(
                     A(["href" => $url0], "File Only"),
                     " (",

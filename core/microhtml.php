@@ -15,6 +15,7 @@ use function MicroHTML\OPTION;
 use function MicroHTML\PRE;
 use function MicroHTML\P;
 use function MicroHTML\SELECT;
+use function MicroHTML\SPAN;
 use function MicroHTML\TABLE;
 use function MicroHTML\THEAD;
 use function MicroHTML\TFOOT;
@@ -154,17 +155,20 @@ function SHM_OPTION(string $value, string $text, bool $selected = false): HTMLEl
 
 function SHM_POST_INFO(
     HTMLElement|string $title,
-    bool $can_edit,
-    HTMLElement|string $view,
-    HTMLElement|string $edit = "",
+    HTMLElement|string|null $view = null,
+    HTMLElement|string|null $edit = null,
 ): HTMLElement {
-    return TR(
-        TH(["width" => "50px"], $title),
-        $can_edit ?
-            emptyHTML(
-                TD(["class" => "view"], $view),
-                TD(["class" => "edit"], $edit),
-            ) :
-            TD($view)
-    );
+    if(!is_null($view) && !is_null($edit)) {
+        $show = emptyHTML(
+            SPAN(["class" => "view"], $view),
+            SPAN(["class" => "edit"], $edit),
+        );
+    } elseif(!is_null($edit)) {
+        $show = $edit;
+    } elseif(!is_null($view)) {
+        $show = $view;
+    } else {
+        $show = "???";
+    }
+    return TR(TH(["width" => "50px"], $title), TD($show));
 }
