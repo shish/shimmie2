@@ -81,7 +81,6 @@ EOD;
 
     public function display_message(Page $page, User $from, User $to, PM $pm)
     {
-        $this->display_composer($page, $to, $from, "Re: ".$pm->subject);
         $page->set_title("Private Message");
         $page->set_heading(html_escape($pm->subject));
         $page->add_block(new NavBlock());

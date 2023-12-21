@@ -88,6 +88,7 @@ unset($_all_false);
 
 // Ghost users can't do anything
 new UserClass("ghost", "base", [
+    Permissions::READ_PM => true,
 ]);
 
 // Anonymous users can't do anything by default, but

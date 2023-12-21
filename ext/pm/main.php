@@ -212,7 +212,7 @@ class PrivMsg extends Extension
             if (!is_null($pms)) {
                 $this->theme->display_pms($page, $pms);
             }
-            if ($user->id != $duser->id) {
+            if ($user->can(Permissions::SEND_PM) && $user->id != $duser->id) {
                 $this->theme->display_composer($page, $user, $duser);
             }
         }
@@ -235,7 +235,11 @@ class PrivMsg extends Extension
                                 $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
                                 $cache->delete("pm-count-{$user->id}");
                             }
-                            $this->theme->display_message($page, $from_user, $user, PM::from_row($pm));
+                            $pmo = PM::from_row($pm);
+                            $this->theme->display_message($page, $from_user, $user, $pmo);
+                            if($user->can(Permissions::SEND_PM)) {
+                                $this->theme->display_composer($page, $user, $from_user, "Re: ".$pmo->subject);
+                            }
                         } else {
                             $this->theme->display_permission_denied();
                         }
