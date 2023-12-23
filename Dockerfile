@@ -9,7 +9,7 @@ RUN echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages
 RUN apt update && apt install -y \
     php${PHP_VERSION}-cli php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-curl \
-    gosu curl imagemagick ffmpeg zip unzip git unit unit-php gettext procps net-tools
+    curl imagemagick ffmpeg zip unzip git unit unit-php gettext procps net-tools vim
 
 # Composer has 100MB of dependencies, and we only need that during build and test
 FROM base AS composer
@@ -50,5 +50,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
 ENV UID=1000 GID=1000 UPLOAD_MAX_FILESIZE=50M
 COPY --from=build /app /app
+WORKDIR /app
 ENTRYPOINT ["/app/.docker/entrypoint.sh"]
 CMD ["unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
