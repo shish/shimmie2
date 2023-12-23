@@ -8,7 +8,7 @@ RUN curl --output /usr/share/keyrings/nginx-keyring.gpg https://unit.nginx.org/k
 RUN echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages.nginx.org/unit/debian/ bookworm unit' > /etc/apt/sources.list.d/unit.list
 RUN apt update && apt install -y \
     php${PHP_VERSION}-cli php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring \
-    php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
+    php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-curl \
     gosu curl imagemagick ffmpeg zip unzip git unit unit-php gettext procps net-tools
 
 # Composer has 100MB of dependencies, and we only need that during build and test
