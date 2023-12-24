@@ -32,3 +32,7 @@ IMG.lazy {display: none;}
 	margin: 8px;
 	border: 1px solid #882;
 }
+
+.tag {
+	overflow-wrap: anywhere;
+}
