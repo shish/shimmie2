@@ -52,7 +52,7 @@ EXPOSE 8000
 # Actually run shimmie
 FROM base AS run
 EXPOSE 8000
-HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
+# HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
 ENV UID=1000 GID=1000 UPLOAD_MAX_FILESIZE=50M
 COPY --from=build /app /app
 WORKDIR /app
