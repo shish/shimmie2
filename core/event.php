@@ -103,7 +103,7 @@ class PageRequestEvent extends Event
     {
         $offset = $this->part_count + $n;
         if ($offset >= 0 && $offset < $this->arg_count) {
-            return $this->args[$offset];
+            return rawurldecode($this->args[$offset]);
         } else {
             $nm1 = $this->arg_count - 1;
             throw new UserErrorException("Requested an invalid page argument {$offset} / {$nm1}");
@@ -144,7 +144,33 @@ class PageRequestEvent extends Event
     {
         $search_terms = [];
         if ($this->count_args() === 2) {
-            $search_terms = Tag::explode(Tag::decaret($this->get_arg(0)));
+            $str = $this->get_arg(0);
+
+            // decode legacy caret-encoding just in case
+            // somebody has bookmarked such a URL
+            $from_caret = [
+                "^" => "^",
+                "s" => "/",
+                "b" => "\\",
+                "q" => "?",
+                "a" => "&",
+                "d" => ".",
+            ];
+            $out = "";
+            $length = strlen($str);
+            for ($i = 0; $i < $length; $i++) {
+                if ($str[$i] == "^") {
+                    $i++;
+                    $out .= $from_caret[$str[$i]] ?? '';
+                } else {
+                    $out .= $str[$i];
+                }
+            }
+            $str = $out;
+            // end legacy
+
+
+            $search_terms = Tag::explode($str);
         }
         return $search_terms;
     }

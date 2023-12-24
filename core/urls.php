@@ -28,7 +28,7 @@ class Link
 function search_link(array $terms = [], int $page = 1): string
 {
     if($terms) {
-        $q = rawurlencode(Tag::caret(Tag::implode($terms)));
+        $q = url_escape(Tag::implode($terms));
         return make_link("post/list/$q/$page");
     } else {
         return make_link("post/list/$page");
