@@ -11,13 +11,13 @@ RUN apt update && \
     apt update && apt install -y --no-install-recommends \
     php${PHP_VERSION}-cli php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-curl \
-    curl imagemagick zip unzip git unit unit-php gettext && \
+    curl imagemagick zip unzip unit unit-php gettext && \
     rm -rf /var/lib/apt/lists/*
 
 # Composer has 100MB of dependencies, and we only need that during build and test
 FROM base AS composer
 RUN apt update && apt upgrade -y && \
-    apt install -y composer php${PHP_VERSION}-xdebug procps net-tools vim && \
+    apt install -y composer php${PHP_VERSION}-xdebug git procps net-tools vim && \
     rm -rf /var/lib/apt/lists/*
 ENV XDEBUG_MODE=coverage
 
