@@ -45,7 +45,7 @@ class ViewImageTheme extends Themelet
     protected function get_query(): ?string
     {
         if (isset($_GET['search'])) {
-            $query = "search=".url_escape(Tag::caret($_GET['search']));
+            $query = "search=".url_escape($_GET['search']);
         } else {
             $query = null;
         }

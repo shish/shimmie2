@@ -78,8 +78,6 @@ and of course start organising your images :-)
         $prev = $page_number - 1;
         $next = $page_number + 1;
 
-        $u_tags = url_escape(Tag::implode($search_terms));
-
         $h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.search_link($search_terms, $prev).'">Prev</a>';
         $h_index = "<a href='".make_link()."'>Index</a>";
         $h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.search_link($search_terms, $next).'">Next</a>';
@@ -176,7 +174,7 @@ and of course start organising your images :-)
                 // only index the first pages of each term
                 $page->add_html_header('<meta name="robots" content="noindex, nofollow">');
             }
-            $query = url_escape(Tag::caret(Tag::implode($this->search_terms)));
+            $query = url_escape(Tag::implode($this->search_terms));
             $page->add_block(new Block("Posts", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
             $this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, true);
         } else {

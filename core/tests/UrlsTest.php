@@ -17,7 +17,7 @@ class UrlsTest extends TestCase
             search_link(["foo", "bar"])
         );
         $this->assertEquals(
-            "/test/post/list/cat%2A%20rating%3D%5Eq/1",
+            "/test/post/list/cat%2A%20rating%3D%3F/1",
             search_link(["rating=?", "cat*"])
         );
     }

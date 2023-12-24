@@ -22,11 +22,11 @@ class ViewImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("post/prev") ||	$event->page_matches("post/next")) {
+        if ($event->page_matches("post/prev") || $event->page_matches("post/next")) {
             $image_id = int_escape($event->get_arg(0));
 
             if (isset($_GET['search'])) {
-                $search_terms = Tag::explode(Tag::decaret($_GET['search']));
+                $search_terms = Tag::explode($_GET['search']);
                 $query = "#search=".url_escape($_GET['search']);
             } else {
                 $search_terms = [];

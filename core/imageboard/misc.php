@@ -187,7 +187,7 @@ function redirect_to_next_image(Image $image): void
     global $page;
 
     if (isset($_GET['search'])) {
-        $search_terms = Tag::explode(Tag::decaret($_GET['search']));
+        $search_terms = Tag::explode($_GET['search']);
         $query = "search=" . url_escape($_GET['search']);
     } else {
         $search_terms = [];

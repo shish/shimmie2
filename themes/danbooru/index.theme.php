@@ -20,7 +20,7 @@ class CustomIndexTheme extends IndexTheme
             $page_title = $config->get_string(SetupConfig::TITLE);
         } else {
             $search_string = Tag::implode($this->search_terms);
-            $query = url_escape(Tag::caret($search_string));
+            $query = url_escape($search_string);
             $page_title = html_escape($search_string);
         }
 
