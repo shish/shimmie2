@@ -1,7 +1,21 @@
-#Navigationleft .blockbody { overflow: visible; }
-
-.tagit { background: white !important; border: 1px solid grey !important; cursor: text; }
-.tagit-choice { cursor: initial; }
+.autocomplete_completions {
+    position: absolute;
+    z-index: 1000;
+    border: 1px solid #ccc;
+    color: #000;
+    background-color: #fff;
+    padding: 5px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.autocomplete_completions LI {
+    padding: 0.15em;
+}
+.autocomplete_completions .selected {
+    background-color: #ccc;
+    outline: none;
+}
 input[name=search] ~ input[type=submit] { display: inline-block !important; }
 
 .tag-negative { background: #ff8080 !important; }

@@ -6,9 +6,6 @@ namespace Shimmie2;
 
 class AutoComplete extends Extension
 {
-    /** @var AutoCompleteTheme */
-    protected Themelet $theme;
-
     public function get_priority(): int
     {
         return 30;
@@ -28,8 +25,6 @@ class AutoComplete extends Extension
             $page->set_mime(MimeType::JSON);
             $page->set_data(json_encode($res));
         }
-
-        $this->theme->build_autocomplete($page);
     }
 
     private function complete(string $search, int $limit): array
