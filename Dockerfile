@@ -2,18 +2,22 @@ ARG PHP_VERSION=8.2
 
 # Install base packages which all stages (build, test, run) need
 FROM debian:bookworm AS base
-RUN apt update && apt upgrade -y
-RUN apt update && apt install -y curl
-RUN curl --output /usr/share/keyrings/nginx-keyring.gpg https://unit.nginx.org/keys/nginx-keyring.gpg
-RUN echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages.nginx.org/unit/debian/ bookworm unit' > /etc/apt/sources.list.d/unit.list
-RUN apt update && apt install -y \
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y curl && \
+    curl --output /usr/share/keyrings/nginx-keyring.gpg https://unit.nginx.org/keys/nginx-keyring.gpg && \
+    echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages.nginx.org/unit/debian/ bookworm unit' > /etc/apt/sources.list.d/unit.list && \
+    apt update && apt install -y --no-install-recommends \
     php${PHP_VERSION}-cli php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-curl \
-    curl imagemagick ffmpeg zip unzip git unit unit-php gettext procps net-tools vim
+    curl imagemagick ffmpeg zip unzip git unit unit-php gettext && \
+    rm -rf /var/lib/apt/lists/*
 
 # Composer has 100MB of dependencies, and we only need that during build and test
 FROM base AS composer
-RUN apt update && apt upgrade -y && apt install -y composer php${PHP_VERSION}-xdebug && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt upgrade -y && \
+    apt install -y composer php${PHP_VERSION}-xdebug procps net-tools vim && \
+    rm -rf /var/lib/apt/lists/*
 ENV XDEBUG_MODE=coverage
 
 # "Build" shimmie (composer install - done in its own stage so that we don't
