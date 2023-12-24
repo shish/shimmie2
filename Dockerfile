@@ -2,6 +2,7 @@ ARG PHP_VERSION=8.2
 
 # Install base packages which all stages (build, test, run) need
 FROM debian:bookworm AS base
+COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
     apt install -y curl && \
@@ -10,7 +11,7 @@ RUN apt update && \
     apt update && apt install -y --no-install-recommends \
     php${PHP_VERSION}-cli php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-curl \
-    curl imagemagick ffmpeg zip unzip git unit unit-php gettext && \
+    curl imagemagick zip unzip git unit unit-php gettext && \
     rm -rf /var/lib/apt/lists/*
 
 # Composer has 100MB of dependencies, and we only need that during build and test
