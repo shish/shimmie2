@@ -3,10 +3,12 @@
  * http://qwebirc.org/
  */
 
-BODY {
-	background: #F0F7FF;
+:root {
 	font-family: sans-serif;
 	font-size: 14px;
+}
+BODY {
+	background: #F0F7FF;
 	margin: 0;
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

@@ -2,10 +2,12 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-BODY {
+:root {
 	font-family: arial,helvetica,sans-serif;
 	font-size: 10pt;
+}
+
+BODY {
 	background: #FFFFEE url(fade.png) top center repeat-x;
 	color: #800000;
 	padding-left: 5px;

@@ -3,10 +3,12 @@
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-BODY {
-	background: url(bg.png);
+:root {
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
+}
+BODY {
+	background: url(bg.png);
 	margin: 0;
 }
 HEADER {
