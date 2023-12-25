@@ -13,7 +13,7 @@ class DowntimeTheme extends Themelet
     {
         $page->add_block(new Block(
             "Downtime",
-            "<span style='font-size: 1.5em; text-align: center;'><b>DOWNTIME MODE IS ON!</b></span>",
+            "<span style='font-size: 1.5rem; text-align: center;'><b>DOWNTIME MODE IS ON!</b></span>",
             "left",
             0
         ));

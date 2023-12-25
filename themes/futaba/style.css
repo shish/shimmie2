@@ -2,10 +2,12 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-BODY {
+:root {
 	font-family: arial,helvetica,sans-serif;
 	font-size: 10pt;
+}
+
+BODY {
 	background: #FFFFEE url(fade.png) top center repeat-x;
 	color: #800000;
 	padding-left: 5px;
@@ -24,7 +26,7 @@ H1 {
 FOOTER {
 	clear: both;
 	padding-top: 8px;
-	font-size: 0.7em;
+	font-size: 0.7rem;
 	text-align: center;
 }
 
@@ -43,7 +45,7 @@ NAV {
 	margin-left: 16px;
 }
 NAV .blockbody {
-	font-size: 0.85em;
+	font-size: 0.85rem;
 	text-align: center;
 	overflow: hidden;
 }
@@ -113,7 +115,7 @@ TABLE.tag_list>TBODY>TR>TD:after {
 
 #short-wiki-description > .blockbody {
 	padding-bottom: 15px;
-	font-size: 1.1em;
+	font-size: 1.1rem;
 }
 #short-wiki-description h2 {
 	margin: 0 0 0.4em;

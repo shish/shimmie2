@@ -3,10 +3,12 @@
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-BODY {
-	background: url(bg.png);
+:root {
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
+}
+BODY {
+	background: url(bg.png);
 	margin: 0;
 }
 HEADER {
@@ -18,7 +20,7 @@ HEADER {
 	text-align: center;
 }
 H1 {
-	font-size: 5em;
+	font-size: 5rem;
 	margin: 0;
 	padding: 0;
 }
@@ -38,16 +40,7 @@ TD {
 }
 CODE {
 	background: #DEDEDE;
-	font-size: 0.8em;
-}
-#subtitle {
-	width: 256px;
-	font-size: 0.75em;
-	margin: -16px auto auto;
-	text-align: center;
-	border: 1px solid black;
-	border-top: none;
-	background: #DDD;
+	font-size: 0.8rem;
 }
 
 TABLE.zebra {border-spacing: 0; border: 1px solid #B89F7C; }
@@ -61,7 +54,7 @@ TABLE.zebra TR:nth-child(even) {background: #DABC92;}
 FOOTER {
 	clear: both;
 	padding: 8px;
-	font-size: 0.7em;
+	font-size: 0.7rem;
 	text-align: center;
 	border-top: 1px solid #B89F7C;
 	background: #FCD9A9;
@@ -98,7 +91,7 @@ NAV {
 	margin-left: 16px;
 }
 NAV .blockbody {
-	font-size: 0.85em;
+	font-size: 0.85rem;
 	text-align: center;
 }
 NAV TABLE {

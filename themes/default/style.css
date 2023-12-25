@@ -45,12 +45,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+:root {
+	font-size: 14px;
+	font-family: sans-serif;
+}
 
 BODY {
 	background: var(--page);
 	color: var(--text);
-	font-family: sans-serif;
-	font-size: 14px;
 	margin: 0;
 }
 H1 {
@@ -97,7 +99,7 @@ TABLE.zebra TR:nth-child(even) {background: var(--zebra-even);}
 
 FOOTER {
 	clear: both;
-	font-size: 0.7em;
+	font-size: 0.7rem;
 	text-align: center;
 	background: var(--title);
 	border: 1px solid var(--title-border);
@@ -129,7 +131,7 @@ NAV {
 	margin-left: 16px;
 }
 NAV .blockbody {
-	font-size: 0.85em;
+	font-size: 0.85rem;
 	text-align: center;
 	overflow: hidden;
 }

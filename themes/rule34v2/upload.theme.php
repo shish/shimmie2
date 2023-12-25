@@ -79,7 +79,7 @@ class CustomUploadTheme extends UploadTheme
 
     protected function build_upload_block(): HTMLElement
     {
-        return A(["href" => make_link("upload"), "style" => 'font-size: 2em; display: block;'], "Upload");
+        return A(["href" => make_link("upload"), "style" => 'font-size: 2rem; display: block;'], "Upload");
     }
 
     protected function h_upload_list_1(): HTMLElement

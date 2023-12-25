@@ -10,7 +10,7 @@ a:active.menu { color: #FF0000; text-decoration: none; }
 
 #menuh-container
 	{
-	font-size: 1em;
+	font-size: 1rem;
 	float: left;
 	top:0;
 	left: 5%;

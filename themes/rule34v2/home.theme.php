@@ -21,13 +21,13 @@ class CustomHomeTheme extends HomeTheme
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		$hh
 		<style>
-			div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
+			div#front-page h1 {font-size: 4rem; margin-top: 2em; margin-bottom: 0; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
 			div#front-page {text-align:center;}
 			.space {margin-bottom: 1em;}
 			div#front-page div#links a {margin: 0 0.5em;}
 			div#front-page li {list-style-type: none; margin: 0;}
 			@media (max-width: 800px) {
-				div#front-page h1 {font-size: 3em; margin-top: 0.5em; margin-bottom: 0.5em;}
+				div#front-page h1 {font-size: 3rem; margin-top: 0.5em; margin-bottom: 0.5em;}
 				#counter {display: none;}
 			}
 		</style>

@@ -3,10 +3,12 @@
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-BODY {
-	background: url(bg.png) #ACE4A3;
+:root {
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
+}
+BODY {
+	background: url(bg.png) #ACE4A3;
 	margin: 0;
 }
 #header {
@@ -18,7 +20,7 @@ BODY {
 	text-align: center;
 }
 H1 {
-	font-size: 5em;
+	font-size: 5rem;
 	margin: 0;
 	padding: 0;
 }
@@ -37,15 +39,6 @@ TD {
 	text-align: center;
 }
 
-#subtitle {
-	width: 256px;
-	font-size: 0.75em;
-    margin: -16px auto auto;
-    text-align: center;
-	border: 1px solid black;
-	border-top: none;
-	background: #DDD;
-}
 #flash {
 	background: #FF7;
 	display: block;
@@ -55,14 +48,14 @@ TD {
 }
 
 TABLE.zebra {background: #ACE4A3; border-collapse: collapse; border: 1px solid #7EB977;}
-TABLE.zebra TD {font-size: 0.8em;margin: 0;	border-top: 1px solid #7EB977;	padding: 2px;}
+TABLE.zebra TD {font-size: 0.8rem;margin: 0;	border-top: 1px solid #7EB977;	padding: 2px;}
 TABLE.zebra TR:nth-child(odd) {background: #9CD493;}
 TABLE.zebra TR:nth-child(even) {background: #ACE4A3;}
 
 FOOTER {
 	clear: both;
 	padding: 8px;
-	font-size: 0.7em;
+	font-size: 0.7rem;
 	text-align: center;
 	border-top: 1px solid #7EB977;
 	background: #ACE4A3;
@@ -94,7 +87,7 @@ NAV {
 	margin-left: 16px;
 }
 NAV .blockbody {
-	font-size: 0.85em;
+	font-size: 0.85rem;
 	text-align: center;
 }
 NAV TABLE {
@@ -234,7 +227,7 @@ div#twitter_update_list li {
 	vertical-align: middle;
 }
 #bans INPUT {
-	font-size: 0.85em;
+	font-size: 0.85rem;
 }
 
 .need-del {
@@ -274,7 +267,7 @@ ul.tagit li.tagit-new {
 
 @media (max-width: 750px) {
 	.atoz, #paginator {
-		font-size: 2em;
+		font-size: 2rem;
 	}
 	.header-sites {
 		display: none;
@@ -340,7 +333,7 @@ ul.tagit li.tagit-new {
 #UserBlockhead {display: block;}
 #Loginleft {display: none;}
 #Loginhead {display: block;}
-.headcol {width: 250px; font-size: 0.85em;}
+.headcol {width: 250px; font-size: 0.85rem;}
 .headbox {width: 80%; margin: auto;}
 #big-logo {display: table-cell;}
 #mini-logo {display: none;}
@@ -358,7 +351,7 @@ ul.tagit li.tagit-new {
 
 	/* hide nav-search when header-search is sticky */
 	ARTICLE {margin-top: 0;}
-	#Navigationleft .blockbody {font-size: 1.5em;}
+	#Navigationleft .blockbody {font-size: 1.5rem;}
 	#Navigationleft .blockbody P,
 	#Navigationleft .blockbody FORM
 	{display: none;}
