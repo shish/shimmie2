@@ -105,6 +105,10 @@ function renderCompletions(element) {
 			setCompletion(element, key);
 			event.preventDefault();
 		});
+		li.addEventListener('touchstart', (event) => {
+			setCompletion(element, key);
+			event.preventDefault();
+		});
 		completions_el.appendChild(li);
 	});
 
