@@ -157,7 +157,7 @@ class UploadTheme extends Themelet
                 TR(
                     TD(["colspan" => $tl_enabled ? 2 : 4], DIV(["name" => "canceldata{$i}[]","style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;","onclick" => "$(\"input[name='data{$i}[]']\")[0].value='';updateTracker();"], "✖"), INPUT(["type" => "file", "name" => "data{$i}[]", "accept" => $accept, "multiple" => true])),
                     $tl_enabled ? TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "url{$i}"])) : emptyHTML(),
-                    TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "tags{$i}", "class" => "autocomplete_tags", "autocomplete" => "off"])),
+                    TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "tags{$i}", "class" => "autocomplete_tags"])),
                 )
             );
         }
@@ -328,7 +328,7 @@ class UploadTheme extends Themelet
         $form->appendChild(
             emptyHTML(
                 INPUT(["id" => "data[]", "name" => "data[]", "size" => "16", "type" => "file", "accept" => $accept, "multiple" => true]),
-                INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags", "required" => true, "autocomplete" => "off"]),
+                INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags", "required" => true]),
                 INPUT(["type" => "submit", "value" => "Post"]),
             )
         );

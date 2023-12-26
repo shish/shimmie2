@@ -48,7 +48,7 @@ class RandomListTheme extends Themelet
         $h_search_link = make_link("random");
         $h_search = "
 			<p><form action='$h_search_link' method='GET'>
-				<input type='search' name='search' value='$h_search_string' placeholder='Search random list' class='autocomplete_tags' autocomplete='off' />
+				<input type='search' name='search' value='$h_search_string' placeholder='Search random list' class='autocomplete_tags' />
 				<input type='hidden' name='q' value='/random'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>

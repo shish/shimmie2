@@ -68,7 +68,7 @@ class ViewImageTheme extends Themelet
         $h_search = "
 			<p><form action='".make_link()."' method='GET'>
 				<input type='hidden' name='q' value='/post/list'>
-				<input type='search' name='search' placeholder='Search' class='autocomplete_tags' autocomplete='off'>
+				<input type='search' name='search' placeholder='Search' class='autocomplete_tags'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>
 		";
