@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		$(".shm-zoomer").val(zoom_type);
 
 		if (save_cookie) {
-			Cookies.set("ui-image-zoom", zoom_type, {expires: 365});
+			shm_cookie_set("ui-image-zoom", zoom_type, {expires: 365, samesite: "lax", path: "/"});
 		}
 	}
 
@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	$("img.shm-main-image").click(function(e) {
-		switch(Cookies.get("ui-image-zoom")) {
+		switch(shm_cookie_get("ui-image-zoom")) {
 			case "full": zoom("width"); break;
 			default: zoom("full"); break;
 		}
 	});
 
-	if(Cookies.get("ui-image-zoom")) {
-		zoom(Cookies.get("ui-image-zoom"));
+	if(shm_cookie_get("ui-image-zoom")) {
+		zoom(shm_cookie_get("ui-image-zoom"));
 	}
 });

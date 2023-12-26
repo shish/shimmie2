@@ -4,14 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	$(".shm-blotter2-toggle").click(function() {
 		$(".shm-blotter2").slideToggle("slow", function() {
 			if($(".shm-blotter2").is(":hidden")) {
-				Cookies.set("ui-blotter2-hidden", 'true');
+				shm_cookie_set("ui-blotter2-hidden", 'true');
 			}
 			else {
-				Cookies.set("ui-blotter2-hidden", 'false');
+				shm_cookie_set("ui-blotter2-hidden", 'false');
 			}
 		});
 	});
-	if(Cookies.get("ui-blotter2-hidden") === 'true') {
+	if(shm_cookie_get("ui-blotter2-hidden") === 'true') {
 		$(".shm-blotter2").hide();
 	}
 });

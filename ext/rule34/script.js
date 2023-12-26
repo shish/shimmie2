@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-	if(Cookies.get("ui-tnc-agreed") !== "true" && window.location.href.indexOf("/wiki/") == -1) {
+	if(shm_cookie_get("ui-tnc-agreed") !== "true" && window.location.href.indexOf("/wiki/") == -1) {
 		$("BODY").addClass("censored");
 		$("BODY").append("<div class='tnc_bg'></div>");
 		$("BODY").append(""+
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function tnc_agree() {
-	Cookies.set("ui-tnc-agreed", "true", {path: '/', expires: 365});
+	shm_cookie_set("ui-tnc-agreed", "true");
 	$("BODY").removeClass("censored");
 	$(".tnc_bg").hide();
 	$(".tnc").hide();

@@ -1,5 +1,12 @@
 /*jshint bitwise:false, curly:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:false, strict:false, browser:true */
 
+function shm_cookie_set(name, value) {
+	Cookies.set(name, value, {expires: 365, samesite: "lax", path: "/"});
+}
+function shm_cookie_get(name) {
+	return Cookies.get(name);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	/** Load jQuery extensions **/
 	//Code via: https://stackoverflow.com/a/13106698
@@ -32,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	/** Setup sidebar toggle **/
 	let sidebar_hidden = [];
 	try {
-		sidebar_hidden = (Cookies.get("ui-sidebar-hidden") || "").split("|");
+		sidebar_hidden = (shm_cookie_get("ui-sidebar-hidden") || "").split("|");
         for (let i=0; i<sidebar_hidden.length; i++) {
 			if(sidebar_hidden[i].length > 0) {
 				$(sidebar_hidden[i]+" .blockbody").hide();
@@ -55,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 				}
 			}
-			Cookies.set("ui-sidebar-hidden", sidebar_hidden.join("|"), {expires: 365});
+			shm_cookie_set("ui-sidebar-hidden", sidebar_hidden.join("|"));
 		});
 	});
 

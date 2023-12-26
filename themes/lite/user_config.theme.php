@@ -23,14 +23,14 @@ class CustomUserConfigTheme extends UserConfigTheme
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\", function() {
 						if($(\"#$i\").is(\":hidden\")) {
-							Cookies.set(\"$i-hidden\", 'true', {path: '/'});
+							shm_cookie_set(\"$i-hidden\", 'true');
 						}
 						else {
-							Cookies.set(\"$i-hidden\", 'false', {path: '/'});
+							shm_cookie_set(\"$i-hidden\", 'false');
 						}
 					});
 				});
-				if(Cookies.get(\"$i-hidden\") == 'true') {
+				if(shm_cookie_get(\"$i-hidden\") == 'true') {
 					$(\"#$i\").hide();
 				}
 			});
