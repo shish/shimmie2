@@ -6,41 +6,6 @@ namespace Shimmie2;
 
 class CustomHomeTheme extends HomeTheme
 {
-    public function display_page(Page $page, string $sitename, string $base_href, string $theme_name, string $body): void
-    {
-        $page->set_mode(PageMode::DATA);
-        $page->add_auto_html_headers();
-        $hh = $page->get_all_html_headers();
-        $page->set_data(
-            <<<EOD
-<html lang="en">
-	<head>
-		<title>$sitename</title>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-		<meta name="theme-color" content="#7EB977">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		$hh
-		<style>
-			div#front-page h1 {font-size: 4rem; margin-top: 2em; margin-bottom: 0; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
-			div#front-page {text-align:center;}
-			.space {margin-bottom: 1em;}
-			div#front-page div#links a {margin: 0 0.5em;}
-			div#front-page li {list-style-type: none; margin: 0;}
-			@media (max-width: 800px) {
-				div#front-page h1 {font-size: 3rem; margin-top: 0.5em; margin-bottom: 0.5em;}
-				#counter {display: none;}
-			}
-		</style>
-	<meta name="juicyads-site-verification" content="20d309e193510e130c3f8a632f281335">
-	</head>
-	<body>
-		$body
-	</body>
-</html>
-EOD
-        );
-    }
-
     public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text): string
     {
         $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";

@@ -116,6 +116,9 @@ class Rule34 extends Extension
         # Database might not be connected at this point...
         #$database->set_timeout(null); // deleting users can take a while
 
+        $page->add_html_header("<meta name='theme-color' content='#7EB977'>");
+        $page->add_html_header("<meta name='juicyads-site-verification' content='20d309e193510e130c3f8a632f281335'>");
+
         if (function_exists("sd_notify_watchdog")) {
             \sd_notify_watchdog();
         }
