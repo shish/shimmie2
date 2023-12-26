@@ -21,17 +21,21 @@ use function MicroHTML\P;
 
 class CustomUploadTheme extends UploadTheme
 {
+    // override to put upload block in head and left
+    // (with css media queries deciding which one is visible)
     public function display_block(Page $page): void
     {
         $page->add_block(new Block("Upload", $this->build_upload_block(), "head", 20));
         $page->add_block(new Block("Upload", $this->build_upload_block(), "left", 20));
     }
 
+    // override to put the warning in the header
     public function display_full(Page $page): void
     {
         $page->add_block(new Block("Upload", "Disk nearly full, uploads disabled", "head", 20));
     }
 
+    // override to add link to tagging guide
     public function display_page(Page $page): void
     {
         global $config, $page;
@@ -77,6 +81,8 @@ class CustomUploadTheme extends UploadTheme
         $page->add_block(new Block(null, $html, "main", 19));
     }
 
+    // override to remove small uploader and just show a link to
+    // the big page
     protected function build_upload_block(): HTMLElement
     {
         return A(["href" => make_link("upload"), "style" => 'font-size: 2rem; display: block;'], "Upload");

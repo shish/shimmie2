@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class CustomHomeTheme extends HomeTheme
 {
+    // Override to add ads
     public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text): string
     {
         $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";

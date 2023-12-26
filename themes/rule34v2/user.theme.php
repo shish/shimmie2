@@ -23,6 +23,8 @@ use function MicroHTML\OPTION;
 
 class CustomUserPageTheme extends UserPageTheme
 {
+    // Override to display user block in the head and in the left column
+    // (with css media queries deciding which one is visible)
     public function display_user_block(Page $page, User $user, $parts)
     {
         $h_name = html_escape($user->name);
@@ -42,6 +44,8 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("Logged in as $h_name", $html, "left", 15, "UserBlockleft"));
     }
 
+    // Override to display login block in the head and in the left column
+    // (with css media queries deciding which one is visible)
     public function display_login_block(Page $page)
     {
         global $config;
@@ -112,6 +116,7 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("Signup", $html));
     }
 
+    // override to make email required
     public function display_user_creator()
     {
         global $page;

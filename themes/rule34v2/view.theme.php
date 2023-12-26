@@ -10,6 +10,7 @@ use function MicroHTML\{TR, TH, TD, emptyHTML, rawHTML, joinHTML, DIV, INPUT, A}
 
 class CustomViewImageTheme extends ViewImageTheme
 {
+    // override to make info box always in edit mode
     protected function build_info(Image $image, $editor_parts): string
     {
         global $user;

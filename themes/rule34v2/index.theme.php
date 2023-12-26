@@ -8,6 +8,8 @@ class CustomIndexTheme extends IndexTheme
 {
     public static array $_search_query = [];
 
+    // override to add the can-del class, so that thumbnail HTML can be cached
+    // with admin-controls included, and CSS is used to show or hide the controls
     protected function build_table(array $images, ?string $query): string
     {
         global $user;
@@ -23,6 +25,7 @@ class CustomIndexTheme extends IndexTheme
         return $table;
     }
 
+    // Override to add a custom error message
     public function display_page(Page $page, $images)
     {
         $this->display_page_header($page, $images);
