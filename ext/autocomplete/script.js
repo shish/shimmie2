@@ -110,7 +110,10 @@ function renderCompletions(element) {
 	// insert the completion block after the element
 	if(element.parentNode) {
 		element.parentNode.insertBefore(completions_el, element.nextSibling);
-		completions_el.style.width = element.clientWidth + 'px';	
+		let br = element.getBoundingClientRect();
+		completions_el.style.width = br.width + 'px';
+		completions_el.style.left = br.left + 'px';
+		completions_el.style.top = (br.top + br.height) + 'px';
 	}
 }
 /**
