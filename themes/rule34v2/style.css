@@ -8,7 +8,7 @@
 	font-size: 14px;
 }
 BODY {
-	background: url(bg.png) #ACE4A3;
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPBAMAAADJ+Ih5AAAAFVBMVEV8und+uXeo5aKo5qOq5aOr46Ks5KN5+6UZAAAAN0lEQVQImWNIc2FLcUhzYWBIczRLEU5zNGBwEQlxdHURCWBwdEkRcXN0SWBgVkswSgMSDDRTDADa2B2AhUf94AAAAABJRU5ErkJggg==');
 	margin: 0;
 }
 #header {
@@ -207,16 +207,6 @@ SECTION>H3 {
 	border: 1px solid #7EB977;
 	background: #ACE4A3;
 	padding: 4px;
-}
-
-div#twitter_update_list li {
-	list-style:none;
-	padding-bottom:0;
-	text-align:left;
-	margin-top:5px;
-	margin-bottom:5px;
-	border: solid 1px #000;
-	background: url(bg.png);
 }
 
 .username {
