@@ -113,8 +113,8 @@ function renderCompletions(element) {
 		element.parentNode.insertBefore(completions_el, element.nextSibling);
 		let br = element.getBoundingClientRect();
 		completions_el.style.width = br.width + 'px';
-		completions_el.style.left = br.left + 'px';
-		completions_el.style.top = (br.top + br.height) + 'px';
+		completions_el.style.left = window.scrollX + br.left + 'px';
+		completions_el.style.top = window.scrollY + (br.top + br.height) + 'px';
 	}
 }
 /**
