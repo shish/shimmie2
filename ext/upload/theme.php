@@ -22,8 +22,6 @@ use function MicroHTML\P;
 
 class UploadTheme extends Themelet
 {
-    protected bool $has_errors = false;
-
     public function display_block(Page $page): void
     {
         $b = new Block("Upload", (string)$this->build_upload_block(), "left", 20);
@@ -71,8 +69,8 @@ class UploadTheme extends Themelet
         );
         $html = emptyHTML(
             $form,
-            SMALL("(Max file size is $max_kb)"),
-            SMALL(BR(), "(Max total size is $max_total_kb)"),
+            $max_size > 0 ? SMALL("(Max file size is $max_kb)") : null,
+            $max_total_size > 0 ? SMALL(BR(), "(Max total size is $max_total_kb)") : null,
             rawHTML("<script>
                 function fileSize(size){
                     var i = Math.floor(Math.log(size) / Math.log(1024));
@@ -91,7 +89,7 @@ class UploadTheme extends Themelet
                             cancelbtn.style.visibility = 'visible';
                             for (var i = 0; i<n.files.length; i++){
                                 size += n.files[i].size;
-                                if (n.files[i].size > $max_size){
+                                if ($max_size > 0 && n.files[i].size > $max_size){
                                     toobig = true;
                                 }
                             }
@@ -109,7 +107,7 @@ class UploadTheme extends Themelet
 
                     if (size){
                         tracker.innerText = 'Total: ' + fileSize(size);
-                        if (size > $max_total_size){
+                        if ($max_total_size > 0 && size > $max_total_size){
                             lockbtn = true;
                             tracker.style = 'color:red';
                         }else{
@@ -273,7 +271,7 @@ class UploadTheme extends Themelet
             $thumbnail,
             BR(),
             $form,
-            SMALL("(Max file size is $max_kb)"),
+            $max_size > 0 ? SMALL("(Max file size is $max_kb)") : null,
         );
 
         $page->set_title("Replace Post");
@@ -282,35 +280,36 @@ class UploadTheme extends Themelet
         $page->add_block(new Block("Upload Replacement Post", $html, "main", 20));
     }
 
-    public function display_upload_status(Page $page, array $image_ids): void
+    /**
+     * @param int[] $image_ids
+     * @param UploadError[] $errors
+     */
+    public function display_upload_status(Page $page, array $image_ids, array $errors): void
     {
         global $user;
 
-        if ($this->has_errors) {
+        if (count($errors) > 0) {
             $page->set_title("Upload Status");
             $page->set_heading("Upload Status");
             $page->add_block(new NavBlock());
-        } else {
-            if (count($image_ids) < 1) {
-                $page->set_title("No images uploaded");
-                $page->set_heading("No images uploaded");
-                $page->add_block(new NavBlock());
-            } elseif (count($image_ids) == 1) {
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/{$image_ids[0]}"));
-            } else {
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(search_link(["poster={$user->name}"]));
+            foreach($errors as $error) {
+                $message = $error->error;
+                // this message has intentional HTML in it...
+                $message = str_contains($message, "already has hash") ? $message : html_escape($message);
+                $page->add_block(new Block($error->name, $message));
             }
+        } elseif (count($image_ids) == 0) {
+            $page->set_title("No images uploaded");
+            $page->set_heading("No images uploaded");
+            $page->add_block(new NavBlock());
+            $page->add_block(new Block("No images uploaded", "Upload attempted, but nothing succeeded and nothing failed?"));
+        } elseif (count($image_ids) == 1) {
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/{$image_ids[0]}"));
+        } else {
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(search_link(["poster={$user->name}"]));
         }
-    }
-
-    public function display_upload_error(Page $page, string $title, string $message): void
-    {
-        // this message has intentional HTML in it...
-        $message = str_contains($message, "already has hash") ? $message : html_escape($message);
-        $page->add_block(new Block($title, $message));
-        $this->has_errors = true;
     }
 
     protected function build_upload_block(): HTMLElement
@@ -337,8 +336,8 @@ class UploadTheme extends Themelet
         return DIV(
             ["class" => 'mini_upload'],
             $form,
-            SMALL("(Max file size is $max_kb)"),
-            SMALL(BR(), "(Max total size is $max_total_kb)"),
+            $max_size > 0 ? SMALL("(Max file size is $max_kb)") : null,
+            $max_total_size > 0 ? SMALL(BR(), "(Max total size is $max_total_kb)") : null,
             NOSCRIPT(BR(), A(["href" => make_link("upload")], "Larger Form"))
         );
     }
