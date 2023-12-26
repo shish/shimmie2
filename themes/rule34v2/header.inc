@@ -17,7 +17,7 @@
 				<input name='search' size="45" type='text' placeholder='Search' autocomplete='off' class='autocomplete_tags' value="<?=$query;?>"/>
 			</td>
 			<td width="100">
-				<input type='submit' value='Find' id="submit" style="border: 1px solid #888; height: 34px; border-radius: 2px; background: #EEE;"/>
+				<input type='submit' value='Find' id="submit" style="border: 1px solid #888; height: 22px; border-radius: 2px; background: #EEE;"/>
 			</td>
 		</form>
 	</tr>
