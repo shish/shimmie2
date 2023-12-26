@@ -101,8 +101,9 @@ function renderCompletions(element) {
 		// (mousedown is used instead of click because click is
 		// fired after blur, which causes the completion block to
 		// be removed before the click event is handled)
-		li.addEventListener('mousedown', () => {
+		li.addEventListener('mousedown', (event) => {
 			setCompletion(element, key);
+			event.preventDefault();
 		});
 		completions_el.appendChild(li);
 	});
