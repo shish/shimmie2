@@ -24,7 +24,9 @@ use function MicroHTML\OPTION;
 class CustomUserPageTheme extends UserPageTheme
 {
     // Override to display user block in the head and in the left column
-    // (with css media queries deciding which one is visible)
+    // (with css media queries deciding which one is visible), and also
+    // to switch between new-line and inline display depending on the
+    // number of links.
     public function display_user_block(Page $page, User $user, $parts)
     {
         $h_name = html_escape($user->name);
@@ -48,109 +50,7 @@ class CustomUserPageTheme extends UserPageTheme
     // (with css media queries deciding which one is visible)
     public function display_login_block(Page $page)
     {
-        global $config;
-        $html = "
-			<form action='".make_link("user_admin/login")."' method='POST'>
-				<table class='form' style='width: 100%;'>
-					<tr><th>Name</th><td><input type='text' name='user'></td></tr>
-					<tr><th>Password</th><td><input type='password' name='pass'></td></tr>
-					<tr><td colspan='2'><input type='submit' name='gobu' value='Log In'></td></tr>
-				</table>
-			</form>
-		";
-        if ($config->get_bool("login_signup_enabled")) {
-            $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
-        }
-        $page->add_block(new Block("Login", $html, "head", 90));
-        $page->add_block(new Block("Login", $html, "left", 15));
-    }
-
-    public function display_signup_page(Page $page)
-    {
-        global $config;
-        $tac = $config->get_string("login_tac", "");
-
-        if ($config->get_bool("login_tac_bbcode")) {
-            $tac = send_event(new TextFormattingEvent($tac))->formatted;
-        }
-
-        $form = SHM_SIMPLE_FORM(
-            "user_admin/create",
-            TABLE(
-                ["class" => "form"],
-                TBODY(
-                    TR(
-                        TH("Name"),
-                        TD(INPUT(["type" => 'text', "name" => 'name', "required" => true]))
-                    ),
-                    TR(
-                        TH("Password"),
-                        TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
-                    ),
-                    TR(
-                        TH(rawHTML("Repeat&nbsp;Password")),
-                        TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
-                    ),
-                    TR(
-                        TH(rawHTML("Email")),
-                        TD(INPUT(["type" => 'email', "name" => 'email', "required" => true]))
-                    ),
-                    TR(
-                        TD(["colspan" => "2"], rawHTML(captcha_get_html()))
-                    ),
-                ),
-                TFOOT(
-                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Create Account"])))
-                )
-            )
-        );
-
-        $html = emptyHTML(
-            $tac ? P(rawHTML($tac)) : null,
-            $form
-        );
-
-        $page->set_title("Create Account");
-        $page->set_heading("Create Account");
-        $page->add_block(new NavBlock());
-        $page->add_block(new Block("Signup", $html));
-    }
-
-    // override to make email required
-    public function display_user_creator()
-    {
-        global $page;
-
-        $form = SHM_SIMPLE_FORM(
-            "user_admin/create_other",
-            TABLE(
-                ["class" => "form"],
-                TBODY(
-                    TR(
-                        TH("Name"),
-                        TD(INPUT(["type" => 'text', "name" => 'name', "required" => true]))
-                    ),
-                    TR(
-                        TH("Password"),
-                        TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
-                    ),
-                    TR(
-                        TH(rawHTML("Repeat&nbsp;Password")),
-                        TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
-                    ),
-                    TR(
-                        TH(rawHTML("Email")),
-                        TD(INPUT(["type" => 'email', "name" => 'email']))
-                    ),
-                    TR(
-                        TD(["colspan" => 2], rawHTML("(Email is optional for admin-created accounts)")),
-                    ),
-                ),
-                TFOOT(
-                    TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Create Account"])))
-                )
-            )
-        );
-        $page->add_block(new Block("Create User", (string)$form, "main", 75));
+        $page->add_block(new Block("Login", $this->create_login_block(), "head", 90));
+        $page->add_block(new Block("Login", $this->create_login_block(), "left", 15));
     }
 }

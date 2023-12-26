@@ -149,6 +149,7 @@ class UserPage extends Extension
         $config->set_default_string("avatar_gravatar_default", "");
         $config->set_default_string("avatar_gravatar_rating", "g");
         $config->set_default_bool("login_tac_bbcode", true);
+        $config->set_default_bool("user_email_required", true);
     }
 
     public function onUserLogin(UserLoginEvent $event)
@@ -347,6 +348,7 @@ class UserPage extends Extension
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
         $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
+        $sb->add_bool_option("user_email_required", "Require email address", true);
         $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
         $sb->add_choice_option(
             "user_loginshowprofile",
@@ -423,11 +425,12 @@ class UserPage extends Extension
 
     public function onUserCreation(UserCreationEvent $event)
     {
+        global $config, $page, $user;
+
         $name = $event->username;
         //$pass = $event->password;
         //$email = $event->email;
 
-        global $config, $page, $user;
         if (!$user->can(Permissions::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
@@ -451,6 +454,12 @@ class UserPage extends Extension
         }
         if ($event->password != $event->password2) {
             throw new UserCreationException("Passwords don't match");
+        }
+        if(
+            $user->can(Permissions::CREATE_OTHER_USER) ||
+            ($config->get_bool("user_email_required") && empty($event->email))
+        ) {
+            throw new UserCreationException("Email address is required");
         }
 
         $new_user = $this->create_user($event);

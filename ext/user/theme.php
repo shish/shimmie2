@@ -63,13 +63,17 @@ class UserPageTheme extends Themelet
 
     public function display_signup_page(Page $page)
     {
-        global $config;
+        global $config, $user;
         $tac = $config->get_string("login_tac", "");
 
         if ($config->get_bool("login_tac_bbcode")) {
-            $tfe = send_event(new TextFormattingEvent($tac));
-            $tac = $tfe->formatted;
+            $tac = send_event(new TextFormattingEvent($tac))->formatted;
         }
+
+        $email_required = (
+            $config->get_bool("user_email_required") &&
+            !$user->can(Permissions::CREATE_OTHER_USER)
+        );
 
         $form = SHM_SIMPLE_FORM(
             "user_admin/create",
@@ -89,8 +93,8 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
-                        TH(rawHTML("Email&nbsp;(Optional)")),
-                        TD(INPUT(["type" => 'email', "name" => 'email']))
+                        TH($email_required ? "Email" : rawHTML("Email&nbsp;(Optional)")),
+                        TD(INPUT(["type" => 'email', "name" => 'email', "required" => $email_required]))
                     ),
                     TR(
                         TD(["colspan" => "2"], rawHTML(captcha_get_html()))
@@ -135,8 +139,11 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
-                        TH(rawHTML("Email&nbsp;(Optional)")),
+                        TH(rawHTML("Email")),
                         TD(INPUT(["type" => 'email', "name" => 'email']))
+                    ),
+                    TR(
+                        TD(["colspan" => 2], rawHTML("(Email is optional for admin-created accounts)")),
                     ),
                 ),
                 TFOOT(
@@ -159,6 +166,11 @@ class UserPageTheme extends Themelet
     }
 
     public function display_login_block(Page $page)
+    {
+        $page->add_block(new Block("Login", $this->create_login_block(), "left", 90));
+    }
+
+    public function create_login_block(): HTMLElement
     {
         global $config, $user;
         $form = SHM_SIMPLE_FORM(
@@ -187,7 +199,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
 
-        $page->add_block(new Block("Login", $html, "left", 90));
+        return $html;
     }
 
     private function _ip_list(string $name, array $ips): HTMLElement
