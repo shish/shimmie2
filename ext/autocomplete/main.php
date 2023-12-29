@@ -16,7 +16,7 @@ class AutoComplete extends Extension
         global $page;
 
         if ($event->page_matches("api/internal/autocomplete")) {
-            $limit = (int)($_GET["limit"] ?? 0);
+            $limit = (int)($_GET["limit"] ?? 1000);
             $s = $_GET["s"] ?? "";
 
             $res = $this->complete($s, $limit);
@@ -46,7 +46,7 @@ class AutoComplete extends Extension
         }
 
         # memcache keys can't contain spaces
-        $cache_key = "autocomplete:" . md5($search);
+        $cache_key = "autocomplete:$limit:" . md5($search);
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
         $search = str_replace('%', '\%', $search);
