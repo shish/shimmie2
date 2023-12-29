@@ -28,7 +28,9 @@ function getCurrentWord(element) {
  * @param {HTMLInputElement} element
  */
 function updateCompletions(element) {
-	highlightCompletion(element, -1);
+	// Reset selction, but no need to validate and re-render
+	// highlightCompletion(element, -1);
+	element.selected_completion = -1;
 
 	// get the word before the cursor
 	var word = getCurrentWord(element);
