@@ -200,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				event.preventDefault();
 				highlightCompletion(element, element.selected_completion+1);
 			}
-			// if enter is pressed, add the selected completion
-			if(event.code === "Enter" && element.selected_completion !== -1) {
+			// if enter or right are pressed, add the selected completion
+			if((event.code === "Enter" || event.code == "ArrowRight") && element.selected_completion !== -1) {
 				event.preventDefault();
 				setCompletion(element, Object.keys(element.completions)[element.selected_completion]);
 			}
