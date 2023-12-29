@@ -12,6 +12,7 @@
 }
 .autocomplete_completions LI {
     padding: 0.15em;
+    overflow-wrap: anywhere;
 }
 .autocomplete_completions .selected {
     background-color: #ccc;
@@ -21,4 +22,4 @@ input[name=search] ~ input[type=submit] { display: inline-block !important; }
 
 .tag-negative { background: #ff8080 !important; }
 .tag-positive { background: #40bf40 !important; }
-.tag-metatag   { background: #eaa338 !important; }
+.tag-metatag  { background: #eaa338 !important; }
