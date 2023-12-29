@@ -101,8 +101,14 @@ function renderCompletions(element) {
 			li.className = 'selected';
 		}
 		// on hover, select the completion
-		li.addEventListener('mouseover', () => {
-			highlightCompletion(element, i);
+		// (use mousemove rather than mouseover, because
+		// if the mouse is stationary, then we want the
+		// keyboard to be able to override it)
+		li.addEventListener('mousemove', () => {
+			// avoid re-rendering if the completion is already selected
+			if(element.selected_completion !== i) {
+				highlightCompletion(element, i);
+			}
 		});
 		// on click, set the completion
 		// (mousedown is used instead of click because click is
