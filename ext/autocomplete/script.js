@@ -1,7 +1,3 @@
-let completions_el = document.createElement('ul');
-completions_el.className = 'autocomplete_completions';
-completions_el.id = 'completions';
-
 /**
  * Find the word currently being typed in the given element
  *
@@ -84,21 +80,21 @@ function renderCompletions(element) {
 	let completions = element.completions;
 	let selected_completion = element.selected_completion;
 
-	// if there are no completions, remove the completion block
+	// remove any existing completion block
+	hideCompletions();
+
+	// if there are no completions, don't render anything
 	if(Object.keys(completions).length === 0) {
-		completions_el.remove();
 		return;
 	}
 
-	// remove all children
-	while(completions_el.firstChild) {
-		completions_el.removeChild(completions_el.firstChild);
-	}
+	let completions_el = document.createElement('ul');
+	completions_el.className = 'autocomplete_completions';
+	completions_el.id = 'completions';
 
 	// add children for each completion, with the selected one highlighted
 	Object.keys(completions).forEach((key, i) => {
 		let value = completions[key];
-
 		let li = document.createElement('li');
 		li.innerHTML = key + ' (' + value + ')';
 		if(i === selected_completion) {
@@ -132,6 +128,16 @@ function renderCompletions(element) {
 		completions_el.style.top = window.scrollY + (br.top + br.height) + 'px';
 	}
 }
+
+/**
+ * hide the completions block
+ */
+function hideCompletions() {
+	document.querySelectorAll('.autocomplete_completions').forEach((element) => {
+		element.remove();
+	});
+}
+
 /**
  * Set the current word to the given completion
  *
@@ -188,9 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// when element is blurred, remove completion block
 		element.addEventListener('blur', () => {
-			// if we are blurring because we are clicking on a completion,
-			// don't remove the completion block until the click event is done
-			completions_el.remove();
+			hideCompletions();
 		});
 
 		// when cursor is moved, change current completion
@@ -218,7 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			// if escape is pressed, hide the completion block
 			if(event.code === "Escape") {
-				completions_el.remove();
+				event.preventDefault();
+				hideCompletions();
 			}
 		});
 
