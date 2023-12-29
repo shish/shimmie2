@@ -64,7 +64,7 @@ class AutoComplete extends Extension
                 WHERE LOWER(tag) LIKE LOWER(:search)
                 -- OR LOWER(tag) LIKE LOWER(:cat_search)
                 AND count > 0
-                ORDER BY count DESC
+                ORDER BY count DESC, tag ASC
                 $limitSQL
                 ",
             $SQLarr
