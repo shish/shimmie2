@@ -123,7 +123,7 @@ function renderCompletions(element) {
 	if(element.parentNode) {
 		element.parentNode.insertBefore(completions_el, element.nextSibling);
 		let br = element.getBoundingClientRect();
-		completions_el.style.width = br.width + 'px';
+		completions_el.style.minWidth = br.width + 'px';
 		completions_el.style.left = window.scrollX + br.left + 'px';
 		completions_el.style.top = window.scrollY + (br.top + br.height) + 'px';
 	}

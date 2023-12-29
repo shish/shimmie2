@@ -12,7 +12,6 @@
 }
 .autocomplete_completions LI {
     padding: 0.15em;
-    overflow-wrap: anywhere;
 }
 .autocomplete_completions .selected {
     background-color: #ccc;
