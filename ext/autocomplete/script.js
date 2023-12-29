@@ -3,6 +3,25 @@ completions_el.className = 'autocomplete_completions';
 completions_el.id = 'completions';
 
 /**
+ * Find the word currently being typed in the given element
+ *
+ * @param {HTMLInputElement} element
+ * @returns {string}
+ */
+function getCurrentWord(element) {
+	let text = element.value;
+	let pos = element.selectionStart;
+	var start = text.lastIndexOf(' ', pos-1);
+	if(start === -1) {
+		start = 0;
+	}
+	else {
+		start++; // skip the space
+	}
+	return text.substring(start, pos);
+}
+
+/**
  * Whenever input changes, look at what word is currently
  * being typed, and fetch completions for it.
  *
@@ -11,18 +30,8 @@ completions_el.id = 'completions';
 function updateCompletions(element) {
 	highlightCompletion(element, -1);
 
-	let text = element.value;
-	let pos = element.selectionStart;
-
 	// get the word before the cursor
-	var start = text.lastIndexOf(' ', pos-1);
-	if(start === -1) {
-		start = 0;
-	}
-	else {
-		start++; // skip the space
-	}
-	var word = text.substring(start, pos);
+	var word = getCurrentWord(element);
 
 	// search for completions
 	if(element.completer_timeout !== null) {
