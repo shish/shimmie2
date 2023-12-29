@@ -96,7 +96,7 @@ function renderCompletions(element) {
 	Object.keys(completions).forEach((key, i) => {
 		let value = completions[key];
 		let li = document.createElement('li');
-		li.innerHTML = key + ' (' + value + ')';
+		li.innerText = key + ' (' + value + ')';
 		if(i === selected_completion) {
 			li.className = 'selected';
 		}
