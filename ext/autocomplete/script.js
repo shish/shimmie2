@@ -92,8 +92,8 @@ function renderCompletions(element) {
 	completions_el.className = 'autocomplete_completions';
 	completions_el.id = 'completions';
 
-	// add children for each completion, with the selected one highlighted
-	Object.keys(completions).forEach((key, i) => {
+	// add children for top completions, with the selected one highlighted
+	Object.keys(completions).slice(0, 100).forEach((key, i) => {
 		let value = completions[key];
 		let li = document.createElement('li');
 		li.innerText = key + ' (' + value + ')';
