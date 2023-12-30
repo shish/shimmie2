@@ -17,4 +17,5 @@ class Rule34Info extends ExtensionInfo
     public ?string $documentation =
 "Probably not much use to other sites, but it gives a few examples of how a shimmie-based site can be integrated with other systems";
     public array $db_support = [DatabaseDriverID::PGSQL];  # Only PG has the NOTIFY pubsub system
+    public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
 }
