@@ -2,7 +2,7 @@ ARG PHP_VERSION=8.2
 
 # Install base packages which all stages (build, test, run) need
 FROM debian:bookworm AS base
-COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /usr/local/bin/
+COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /ffprobe /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
     apt install -y curl && \
