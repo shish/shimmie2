@@ -7,23 +7,21 @@ function joinUrlSegments(base, query) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	function updateAttr(selector, attr, value) {
+		document.querySelectorAll(selector).forEach(function(e) {
+			let current = e.getAttribute(attr);
+			let newval = joinUrlSegments(current, query);
+			e.setAttribute(attr, newval);
+		});
+	}
+
 	if(document.location.hash.length > 3) {
 		var query = document.location.hash.substring(1);
 
-		$('LINK#prevlink').attr('href', function(i, attr) {
-			return joinUrlSegments(attr,query);
-		});
-		$('LINK#nextlink').attr('href', function(i, attr) {
-            return joinUrlSegments(attr,query);
-		});
-		$('A#prevlink').attr('href', function(i, attr) {
-            return joinUrlSegments(attr,query);
-		});
-		$('A#nextlink').attr('href', function(i, attr) {
-            return joinUrlSegments(attr,query);
-		});
-        $('span#image_delete_form form').attr('action', function(i, attr) {
-            return joinUrlSegments(attr,query);
-        });
+		updateAttr("LINK#prevlink", "href", query);
+		updateAttr("LINK#nextlink", "href", query);
+		updateAttr("A#prevlink", "href", query);
+		updateAttr("A#nextlink", "href", query);
+		updateAttr("span#image_delete_form form", "action", query);
 	}
 });
