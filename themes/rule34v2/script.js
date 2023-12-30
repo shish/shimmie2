@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
 var navHidden = false;
 function toggleNav() {
 	if(navHidden) {
-		$('BODY').removeClass('navHidden');
+		document.body.classList.remove('navHidden');
 		shm_cookie_set("ui-shownav", "true");
 	}
 	else {
-		$('BODY').addClass('navHidden');
+		document.body.classList.add('navHidden');
 		shm_cookie_set("ui-shownav", "false");
 	}
 	navHidden = !navHidden;
