@@ -86,14 +86,8 @@ class VideoFileHandler extends DataHandlerExtension
                                         break;
                                 }
                             }
-                            if (array_key_exists("width", $stream) && !empty($stream["width"])
-                                && is_numeric($stream["width"]) && intval($stream["width"]) > ($event->image->width) ?? 0) {
-                                $event->image->width = intval($stream["width"]);
-                            }
-                            if (array_key_exists("height", $stream) && !empty($stream["height"])
-                                && is_numeric($stream["height"]) && intval($stream["height"]) > ($event->image->height) ?? 0) {
-                                $event->image->height = intval($stream["height"]);
-                            }
+                            $event->image->width = max($event->image->width, @$stream["width"]);
+                            $event->image->height = max($event->image->height, @$stream["height"]);
                         }
                     }
                     $event->image->video = $video;
