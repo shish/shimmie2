@@ -432,7 +432,6 @@ class BasePage
                 "vendor/bower-asset/jquery/dist/jquery.min.js",
                 "vendor/bower-asset/jquery-timeago/jquery.timeago.js",
                 "vendor/bower-asset/js-cookie/src/js.cookie.js",
-                "ext/static_files/modernizr-3.3.1.custom.js",
             ],
             zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/script.js"),
             zglob("themes/$theme_name/{" . implode(",", $this->get_theme_scripts()) . "}")
