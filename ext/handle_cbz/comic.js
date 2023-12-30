@@ -11,8 +11,8 @@ function Comic(root, comicURL) {
         self.comicZip = zip;
 
         // Shimmie-specific; nullify existing back / forward
-        $("[rel='previous']").remove();
-        $("[rel='next']").remove();
+        document.querySelector("LINK[rel='previous']").remove();
+        document.querySelector("LINK[rel='next']").remove();
 
         zip.forEach(function (relativePath, file){
             self.comicPages.push(relativePath);
@@ -53,7 +53,8 @@ function Comic(root, comicURL) {
     };
 
     this.onKeyUp = function(e) {
-        if ($(e.target).is('input,textarea')) { return; }
+        let t = e.target;
+        if (t.tagName === "INPUT" || t.tagName === "TEXTAREA") { return; }
         if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) { return; }
         if (e.keyCode === 37) {self.prev();}
         else if (e.keyCode === 39) {self.next();}
