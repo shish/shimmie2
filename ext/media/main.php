@@ -277,6 +277,8 @@ class Media extends Extension
         } elseif ($event->image->length) {
             $s = ((int)($event->image->length / 100)) / 10;
             $event->replace('$size', "{$s}s");
+        } else {
+            $event->replace('$size', "unknown size");
         }
     }
 
