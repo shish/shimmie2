@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		$(".shm-zoomer").val(zoom_type);
 
 		if (save_cookie) {
-			shm_cookie_set("ui-image-zoom", zoom_type, {expires: 365, samesite: "lax", path: "/"});
+			shm_cookie_set("ui-image-zoom", zoom_type);
 		}
 	}
 
