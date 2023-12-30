@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	 * This allows us to cache the same thumb for all query
 	 * strings, adding the query in the browser.
 	 */
-	$(".shm-image-list").each(function(idx, elm) {
-		var query = $(this).data("query");
+	document.querySelectorAll(".shm-image-list").forEach(function(list) {
+		var query = list.getAttribute("data-query");
 		if(query) {
-			$(this).find(".shm-thumb-link").each(function(idx2, elm2) {
-				$(this).attr("href", $(this).attr("href") + query);
+			list.querySelectorAll(".shm-thumb-link").forEach(function(thumb) {
+				thumb.setAttribute("href", thumb.getAttribute("href") + query);
 			});
 		}
 	});
