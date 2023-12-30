@@ -26,11 +26,10 @@ else if(CA === 2) { // New Tags
 
 /*
  * Danbooru2
- * jQuery should always active here, meaning we can use jQuery in this part of the bookmarklet.
  */
 
 if(document.getElementById("image-container") !== null) {
-	var imageContainer = $('#image-container')[0];
+	var imageContainer = document.querySelector('#image-container');
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
 		var tag = imageContainer.getAttribute('data-tags');
 	}
@@ -40,9 +39,9 @@ if(document.getElementById("image-container") !== null) {
 
 	var rating = imageContainer.getAttribute('data-rating');
 
-	var fileinfo = $('#sidebar > section:eq(3) > ul > :contains("Size") > a');
-	var furl = "http://" + document.location.hostname + fileinfo.attr('href');
-	var fs = fileinfo.text().split(" ");
+	var fileinfo = document.querySelector('#sidebar > section:eq(3) > ul > :contains("Size") > a');
+	var furl = "http://" + document.location.hostname + fileinfo.getAttribute('href');
+	var fs = fileinfo.innerText.split(" ");
 	var filesize = (fs[1] === "MB" ? fs[0] * 1024 : fs[0]);
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
