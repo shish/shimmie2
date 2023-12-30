@@ -94,11 +94,10 @@ class SetupTheme extends Themelet
     {
         $h = $block->header;
         $b = $block->body;
-        $i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
         $html = "
 			<section class='setupblock'>
-				<b class='shm-toggler' data-toggle-sel='#$i'>$h</b>
-				<br><div id='$i'>$b</div>
+				<b>$h</b>
+				<br>$b
 			</section>
 		";
         return $html;
