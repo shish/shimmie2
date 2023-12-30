@@ -10,15 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			needs_refresh = true;
 		}
 	}
-	// need to trigger a reflow in opera, because opera implements
-	// text-align: justify with element margins and doesn't recalculate
-	// these margins when part of the line disappears...
-	if(needs_refresh) {
-		$('.shm-image-list').hide(
-			0,
-			function() {$('.shm-image-list').show();}
-		);
-	}
 
 	//Generate a random seed when using order:random
 	$('form > input[placeholder="Search"]').parent().submit(function(e){
