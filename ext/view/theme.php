@@ -97,7 +97,7 @@ class ViewImageTheme extends Themelet
         ) {
             $html .= "
 						<tr><td colspan='4'>
-							<input class='view' type='button' value='Edit' onclick='$(\".view\").hide(); $(\".edit\").show();'>
+							<input class='view' type='button' value='Edit' onclick='clearViewMode()'>
 							<input class='edit' type='submit' value='Set'>
 						</td></tr>
 			";

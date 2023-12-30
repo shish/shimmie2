@@ -6,7 +6,20 @@ function joinUrlSegments(base, query) {
     return base + separatorChar + query;
 }
 
+function clearViewMode() {
+	document.querySelectorAll('.image_info').forEach((element) => {
+		element.classList.remove('infomode-view');
+	});
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+	// find elements with class image_info and set them to view mode
+	// (by default, with no js, they are in edit mode - so that no-js
+	// users can still edit them)
+	document.querySelectorAll('.image_info').forEach((element) => {
+		element.classList.add('infomode-view');
+	});
+
 	if(document.location.hash.length > 3) {
 		var query = document.location.hash.substring(1);
 
