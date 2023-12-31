@@ -13,8 +13,8 @@ require_once "core/polyfills.php";
 require_once "core/util.php";
 
 $_SERVER['QUERY_STRING'] = '/';
-if (file_exists("tests/trace.json")) {
-    unlink("tests/trace.json");
+if (file_exists("data/test-trace.json")) {
+    unlink("data/test-trace.json");
 }
 
 global $cache, $config, $database, $user, $page, $_tracer;
