@@ -14,4 +14,5 @@ return $_phpcs_config->setRules([
         'array_syntax' => ['syntax' => 'short'],
     ])
     ->setFinder($_phpcs_finder)
+	->setCacheFile("data/php-cs-fixer.cache")
 ;

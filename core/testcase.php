@@ -52,7 +52,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_tracer->end();  # test
             $_tracer->end();  # $this->getName()
             $_tracer->clear();
-            $_tracer->flush("tests/trace.json");
+            $_tracer->flush("data/test-trace.json");
         }
 
         public static function tearDownAfterClass(): void
