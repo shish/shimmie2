@@ -232,14 +232,6 @@ SECTION>H3 {
 	color: red;
 }
 
-UL.tagit {
-	margin: 0;
-}
-ul.tagit li.tagit-new {
-	width: 50px;
-}
-
-
 [data-tags~="ai-generated"]>A>IMG { background: #BC8F8F; }
 [data-tags~="animated"]>A>IMG { background: #CC00CC; }
 [data-ext="mp4"]>A>IMG,
