@@ -16,7 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
     steps:
-    - uses: actions/checkout@master
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Set build vars
+      run: |
+        echo "BUILD_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+        echo "BUILD_HASH=$GITHUB_SHA" >> $GITHUB_ENV
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@main
       with:
@@ -25,4 +30,5 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         cache: ${{ github.event_name != 'schedule' }}
         buildoptions: "--build-arg RUN_TESTS=false"
+        buildargs: BUILD_TIME,BUILD_HASH
         tag_semver: true

@@ -21,7 +21,9 @@ function _load_event_listeners(): void
 {
     global $_shm_event_listeners;
 
-    $cache_path = data_path("cache/shm_event_listeners.php");
+    $key = md5(Extension::get_enabled_extensions_as_string());
+
+    $cache_path = data_path("cache/shm_event_listeners.$key.php");
     if (SPEED_HAX && file_exists($cache_path)) {
         require_once($cache_path);
     } else {

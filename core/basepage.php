@@ -527,7 +527,7 @@ class BasePage
 
         print <<<EOD
 <!doctype html>
-<html class="no-js" lang="en">
+<html lang="en">
     $head_html
     $body_html
 </html>

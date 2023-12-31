@@ -53,7 +53,8 @@ EXPOSE 8000
 FROM base AS run
 EXPOSE 8000
 # HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
-ENV UID=1000 GID=1000 UPLOAD_MAX_FILESIZE=50M
+ARG BUILD_TIME=unknown BUILD_HASH=unknown
+ENV UID=1000 GID=1000 UPLOAD_MAX_FILESIZE=50M BUILD_TIME=${BUILD_TIME} BUILD_HASH=${BUILD_HASH}
 COPY --from=build /app /app
 WORKDIR /app
 ENTRYPOINT ["/app/.docker/entrypoint.sh"]
