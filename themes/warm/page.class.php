@@ -45,7 +45,7 @@ class Page extends BasePage
 
         print <<<EOD
 <!doctype html>
-<html class="no-js" lang="en">
+<html lang="en">
     $head_html
 	<body>
 		<header>
