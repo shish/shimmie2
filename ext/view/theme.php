@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML};
+
 class ViewImageTheme extends Themelet
 {
     public function display_meta_headers(Image $image)
@@ -52,14 +56,14 @@ class ViewImageTheme extends Themelet
         return $query;
     }
 
-    protected function build_pin(Image $image): string
+    protected function build_pin(Image $image): HTMLElement
     {
         $query = $this->get_query();
-        $h_prev = "<a id='prevlink' href='".make_link("post/prev/{$image->id}", $query)."'>Prev</a>";
-        $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_next = "<a id='nextlink' href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
-
-        return "$h_prev | $h_index | $h_next";
+        return joinHTML(" | ", [
+            A(["href" => make_link("post/prev/{$image->id}", $query), "id" => "prevlink"], "Prev"),
+            A(["href" => make_link()], "Index"),
+            A(["href" => make_link("post/next/{$image->id}", $query), "id" => "nextlink"], "Next"),
+        ]);
     }
 
     protected function build_navigation(Image $image): string
@@ -76,36 +80,35 @@ class ViewImageTheme extends Themelet
         return "$h_pin<br>$h_search";
     }
 
-    protected function build_info(Image $image, $editor_parts): string
+    protected function build_info(Image $image, $editor_parts): HTMLElement
     {
         global $user;
 
         if (count($editor_parts) == 0) {
-            return ($image->is_locked() ? "<br>[Post Locked]" : "");
+            return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
         }
 
-        $html = make_form(make_link("post/set"))."
-					<input type='hidden' name='image_id' value='{$image->id}'>
-					<table style='width: 500px; max-width: 100%;' class='image_info form'>
-		";
-        foreach ($editor_parts as $part) {
-            $html .= $part;
-        }
-        if (
+        if(
             (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
             $user->can(Permissions::EDIT_IMAGE_TAG)
         ) {
-            $html .= "
-						<tr><td colspan='4'>
-							<input class='view' type='button' value='Edit' onclick='clearViewMode()'>
-							<input class='edit' type='submit' value='Set'>
-						</td></tr>
-			";
+            $editor_parts[] = TR(TD(
+                ["colspan" => 4],
+                INPUT(["class" => "view", "type" => "button", "value" => "Edit", "onclick" => "clearViewMode()"]),
+                INPUT(["class" => "edit", "type" => "submit", "value" => "Set"])
+            ));
         }
-        $html .= "
-					</table>
-				</form>
-		";
-        return $html;
+
+        return SHM_SIMPLE_FORM(
+            "post/set",
+            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image->id]),
+            TABLE(
+                [
+                    "class" => "image_info form",
+                    "style" => "width: 500px; max-width: 100%;"
+                ],
+                ...$editor_parts,
+            ),
+        );
     }
 }
