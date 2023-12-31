@@ -157,7 +157,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             } elseif ($page->mode == PageMode::DATA) {
                 return $page->data;
             } else {
-                $this->fail("Page mode is not PAGE or DATA");
+                $this->fail("Page mode is {$page->mode->name} (only PAGE and DATA are supported)");
             }
         }
 

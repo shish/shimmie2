@@ -427,6 +427,11 @@ class Ratings extends Extension
         );
     }
 
+    /**
+     * Figure out which ratings a user is allowed to see
+     *
+     * @return string[]
+     */
     public static function get_user_class_privs(User $user): array
     {
         global $config;
@@ -434,6 +439,12 @@ class Ratings extends Extension
         return $config->get_array("ext_rating_".$user->class->name."_privs");
     }
 
+    /**
+     * Figure out which ratings a user would like to see by default
+     * (Which will be a subset of what they are allowed to see)
+     *
+     * @return string[]
+     */
     public static function get_user_default_ratings(): array
     {
         global $user_config, $user;
