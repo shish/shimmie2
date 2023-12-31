@@ -55,9 +55,7 @@ class TagEditTheme extends Themelet
         }
 
         return SHM_POST_INFO(
-            Extension::is_enabled(TagHistoryInfo::KEY) ?
-                A(["href" => make_link("tag_history/{$image->id}")], "Tags") :
-                "Tags",
+            "Tags",
             joinHTML(", ", $tag_links),
             $user->can(Permissions::EDIT_IMAGE_TAG) ? INPUT([
                 "class" => "autocomplete_tags",
@@ -66,7 +64,8 @@ class TagEditTheme extends Themelet
                 "value" => $image->get_tag_list(),
                 "id" => "tag_editor",
                 "autocomplete" => "off"
-            ]) : null
+            ]) : null,
+            link: Extension::is_enabled(TagHistoryInfo::KEY) ? make_link("tag_history/{$image->id}") : null,
         );
     }
 
@@ -96,14 +95,13 @@ class TagEditTheme extends Themelet
     {
         global $user;
         return SHM_POST_INFO(
-            Extension::is_enabled(SourceHistoryInfo::KEY) ?
-                A(["href" => make_link("source_history/{$image->id}")], rawHTML("Source&nbsp;Link")) :
-                rawHTML("Source&nbsp;Link"),
+            "Source Link",
             DIV(
                 ["style" => "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;"],
                 $this->format_source($image->get_source())
             ),
-            $user->can(Permissions::EDIT_IMAGE_SOURCE) ? INPUT(["type" => "text", "name" => "tag_edit__source", "value" => $image->get_source()]) : null
+            $user->can(Permissions::EDIT_IMAGE_SOURCE) ? INPUT(["type" => "text", "name" => "tag_edit__source", "value" => $image->get_source()]) : null,
+            link: Extension::is_enabled(SourceHistoryInfo::KEY) ? make_link("source_history/{$image->id}") : null,
         );
     }
 

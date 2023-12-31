@@ -154,9 +154,10 @@ function SHM_OPTION(string $value, string $text, bool $selected = false): HTMLEl
 }
 
 function SHM_POST_INFO(
-    HTMLElement|string $title,
+    string $title,
     HTMLElement|string|null $view = null,
     HTMLElement|string|null $edit = null,
+    string|null $link = null,
 ): HTMLElement {
     if(!is_null($view) && !is_null($edit)) {
         $show = emptyHTML(
@@ -170,5 +171,9 @@ function SHM_POST_INFO(
     } else {
         $show = "???";
     }
-    return TR(TH(["width" => "50px"], $title), TD($show));
+    return TR(
+        ["data-row"=>$title],
+        TH(["width" => "50px"], $link ? A(["href" => $link], $title) : $title),
+        TD($show)
+    );
 }
