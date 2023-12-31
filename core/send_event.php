@@ -21,9 +21,10 @@ function _load_event_listeners(): void
 {
     global $_shm_event_listeners;
 
+    $ver = preg_replace("/[^a-zA-Z0-9\.]/", "_", VERSION);
     $key = md5(Extension::get_enabled_extensions_as_string());
 
-    $cache_path = data_path("cache/shm_event_listeners.$key.php");
+    $cache_path = data_path("cache/event_listeners/el.$ver.$key.php");
     if (SPEED_HAX && file_exists($cache_path)) {
         require_once($cache_path);
     } else {
