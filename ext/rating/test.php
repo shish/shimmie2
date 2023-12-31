@@ -38,4 +38,53 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $this->log_out();
         $this->assert_search_results(["pbx"], []);
     }
+
+    public function testUserConfig()
+    {
+        global $config, $user_config;
+
+        // post a safe image and an explicit image
+        $this->log_in_as_user();
+        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_e = Image::by_id($image_id_e);
+        send_event(new RatingSetEvent($image_e, "e"));
+        $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_s = Image::by_id($image_id_s);
+        send_event(new RatingSetEvent($image_s, "s"));
+
+        // user is allowed to see all
+        $config->set_array("ext_rating_user_privs", ["s", "q", "e"]);
+
+        // user prefers safe-only by default
+        $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["s"]);
+
+        // search with no tags should return only safe image
+        $this->assert_search_results([], [$image_id_s]);
+
+        // specifying a rating should return only that rating
+        $this->assert_search_results(["rating=e"], [$image_id_e]);
+        $this->assert_search_results(["rating=s"], [$image_id_s]);
+
+        // If user prefers to see all images, going to the safe image
+        // and clicking next should show the explicit image
+        $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["s", "q", "e"]);
+        $this->assertEquals($image_s->get_next()->id, $image_id_e);
+
+        // If the user prefers to see only safe images by default, then
+        // going to the safe image and clicking next should not show
+        // the explicit image (See bug #984)
+        $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["s"]);
+        $this->assertEquals($image_s->get_next(), null);
+    }
+
+    // reset the user config to defaults at the end of every test so
+    // that it doesn't mess with other unrelated tests
+    public function tearDown(): void
+    {
+        global $config, $user_config;
+        $config->set_array("ext_rating_user_privs", ["?", "s", "q", "e"]);
+
+        $this->log_in_as_user();
+        $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["?", "s", "q", "e"]);
+    }
 }

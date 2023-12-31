@@ -166,21 +166,10 @@ class Image
             $dir = "ASC";
         }
 
-        if (count($tags) === 0) {
-            $row = $database->get_row('
-				SELECT images.*
-				FROM images
-				WHERE images.id '.$gtlt.' '.$this->id.'
-				ORDER BY images.id '.$dir.'
-				LIMIT 1
-			');
-            return ($row ? new Image($row) : null);
-        } else {
-            $tags[] = 'id'. $gtlt . $this->id;
-            $tags[] = 'order:id_'. strtolower($dir);
-            $images = Search::find_images(0, 1, $tags);
-            return (count($images) > 0) ? $images[0] : null;
-        }
+        $tags[] = 'id'. $gtlt . $this->id;
+        $tags[] = 'order:id_'. strtolower($dir);
+        $images = Search::find_images(0, 1, $tags);
+        return (count($images) > 0) ? $images[0] : null;
     }
 
     /**
