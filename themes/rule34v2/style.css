@@ -243,6 +243,22 @@ SECTION>H3 {
 	margin: auto;
 }
 
+/*
+ * Image info - show both edit and view modes at the same time,
+ * except for Tags, Locked, and the Edit button.
+ */
+.image_info.infomode-view .edit,
+.image_info.infomode-view .view {
+	display: block;
+}
+.image_info.infomode-view TR[data-row="Tags"] .view,
+.image_info.infomode-view TR[data-row="Locked"] .view,
+.image_info INPUT[type="button"][value="Edit"] {
+	display: none;
+}
+
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                     responsive overrides                       *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
