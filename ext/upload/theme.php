@@ -17,6 +17,7 @@ use function MicroHTML\NOSCRIPT;
 use function MicroHTML\DIV;
 use function MicroHTML\BR;
 use function MicroHTML\A;
+use function MicroHTML\SPAN;
 
 use function MicroHTML\P;
 
@@ -43,7 +44,7 @@ class UploadTheme extends Themelet
         $max_kb = to_shorthand_int($max_size);
         $max_total_size = parse_shorthand_int(ini_get('post_max_size')) - 102400; //leave room for http request data
         $max_total_kb = to_shorthand_int($max_total_size);
-        $upload_list = $this->h_upload_list_1();
+        $upload_list = $this->build_upload_list();
 
         $form = SHM_FORM("upload", "POST", true, "file_upload");
         $form->appendChild(
@@ -59,71 +60,23 @@ class UploadTheme extends Themelet
                 ),
                 $upload_list,
                 TR(
-                    TD(["colspan" => $tl_enabled ? 2 : 4,"id" => "upload_size_tracker"], ""),
-                    TD(["colspan" => 2], ""),
-                ),
-                TR(
                     TD(["colspan" => "6"], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))
                 ),
             )
         );
         $html = emptyHTML(
             $form,
-            $max_size > 0 ? SMALL("(Max file size is $max_kb)") : null,
-            $max_total_size > 0 ? SMALL(BR(), "(Max total size is $max_total_kb)") : null,
+            SMALL(
+                "(",
+                $max_size > 0 ? "Per-file limit: $max_kb" : null,
+                $max_total_size > 0 ? " / Total limit: $max_total_kb" : null,
+                " / Current total: ",
+                SPAN(["id" => "upload_size_tracker"], "0KB"),
+                ")"
+            ),
             rawHTML("<script>
-                function fileSize(size){
-                    var i = Math.floor(Math.log(size) / Math.log(1024));
-                    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
-                }
-                function updateTracker(){
-                    var size = 0;
-                    var upbtn = $(\"#uploadbutton\")[0];
-                    var tracker = $(\"#upload_size_tracker\")[0];
-                    var lockbtn = false;
-
-                    $(\"input[name*='data'][id!='data[]']\").each(function(_,n){
-                        var cancelbtn = $(\"div[name='cancel\"+n.name+\"']\")[0];
-                        var toobig = false;
-                        if (n.files.length){
-                            cancelbtn.style.visibility = 'visible';
-                            for (var i = 0; i<n.files.length; i++){
-                                size += n.files[i].size;
-                                if ($max_size > 0 && n.files[i].size > $max_size){
-                                    toobig = true;
-                                }
-                            }
-                            if (toobig){
-                                lockbtn = true;
-                                n.style = 'color:red';
-                            }else{
-                                n.style = 'color:initial';
-                            }
-                        }else{
-                            n.style = 'color:initial';
-                            cancelbtn.style.visibility = 'hidden';
-                        }
-                    });
-
-                    if (size){
-                        tracker.innerText = 'Total: ' + fileSize(size);
-                        if ($max_total_size > 0 && size > $max_total_size){
-                            lockbtn = true;
-                            tracker.style = 'color:red';
-                        }else{
-                            tracker.style = 'color:initial';
-                        }
-                    }else{
-                        tracker.innerText = '';
-                    }
-                    upbtn.disabled = lockbtn;
-                }
-                window.onload = function(){
-                    $(\"input[name*='data'][id!='data[]']\").change(function(){
-                        updateTracker();
-                    });
-                    updateTracker();
-                }
+            window.shm_max_size = $max_size;
+            window.shm_max_total_size = $max_total_size;
             </script>")
         );
 
@@ -136,7 +89,7 @@ class UploadTheme extends Themelet
         }
     }
 
-    protected function h_upload_list_1(): HTMLElement
+    protected function build_upload_list(): HTMLElement
     {
         global $config;
         $upload_list = emptyHTML();
@@ -155,7 +108,11 @@ class UploadTheme extends Themelet
         for ($i = 0; $i < $upload_count; $i++) {
             $upload_list->appendChild(
                 TR(
-                    TD(["colspan" => $tl_enabled ? 2 : 4], DIV(["name" => "canceldata{$i}[]","style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;","onclick" => "$(\"input[name='data{$i}[]']\")[0].value='';updateTracker();"], "✖"), INPUT(["type" => "file", "name" => "data{$i}[]", "accept" => $accept, "multiple" => true])),
+                    TD(
+                        ["colspan" => $tl_enabled ? 2 : 4],
+                        DIV(["id" => "canceldata{$i}", "style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;","onclick" => "document.getElementById('data{$i}').value='';updateTracker();"], "✖"),
+                        INPUT(["type" => "file", "id"=>"data{$i}", "name" => "data{$i}[]", "accept" => $accept, "multiple" => true])
+                    ),
                     $tl_enabled ? TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "url{$i}"])) : emptyHTML(),
                     TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "tags{$i}", "class" => "autocomplete_tags"])),
                 )
