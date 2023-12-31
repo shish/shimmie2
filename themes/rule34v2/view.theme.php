@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{TR, TH, TD, emptyHTML, rawHTML, joinHTML, DIV, TABLE, INPUT, A};
 
-class CustomViewImageTheme extends ViewImageTheme
+class CustomViewPostTheme extends ViewPostTheme
 {
     // override to make info box always in edit mode
     protected function build_info(Image $image, $editor_parts): HTMLElement

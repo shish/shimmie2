@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML};
 
-class ViewImageTheme extends Themelet
+class ViewPostTheme extends Themelet
 {
     public function display_meta_headers(Image $image)
     {

@@ -13,9 +13,9 @@ use function MicroHTML\TR;
 use function MicroHTML\TH;
 use function MicroHTML\TD;
 
-class ViewImage extends Extension
+class ViewPost extends Extension
 {
-    /** @var ViewImageTheme */
+    /** @var ViewPostTheme */
     protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event)
