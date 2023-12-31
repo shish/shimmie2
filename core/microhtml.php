@@ -172,7 +172,7 @@ function SHM_POST_INFO(
         $show = "???";
     }
     return TR(
-        ["data-row"=>$title],
+        ["data-row" => $title],
         TH(["width" => "50px"], $link ? A(["href" => $link], $title) : $title),
         TD($show)
     );
