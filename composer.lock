@@ -1424,16 +1424,16 @@
         },
         {
             "name": "shish/microbundler",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microbundler.git",
-                "reference": "0804687eaba424e05a0c7eaf5eb750aa24657006"
+                "reference": "5f48327e92d3601f2c86caef2856b9671a63b6b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microbundler/zipball/0804687eaba424e05a0c7eaf5eb750aa24657006",
-                "reference": "0804687eaba424e05a0c7eaf5eb750aa24657006",
+                "url": "https://api.github.com/repos/shish/microbundler/zipball/5f48327e92d3601f2c86caef2856b9671a63b6b0",
+                "reference": "5f48327e92d3601f2c86caef2856b9671a63b6b0",
                 "shasum": ""
             },
             "require": {
@@ -1472,9 +1472,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microbundler/issues",
-                "source": "https://github.com/shish/microbundler/tree/v1.0.0"
+                "source": "https://github.com/shish/microbundler/tree/v1.0.1"
             },
-            "time": "2024-01-01T19:16:25+00:00"
+            "time": "2024-01-01T19:58:28+00:00"
         },
         {
             "name": "shish/microcrud",
