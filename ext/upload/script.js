@@ -15,7 +15,7 @@ function updateTracker() {
         if (input.files.length) {
             if(cancelbtn) cancelbtn.style.visibility = 'visible';
             for (var i = 0; i < input.files.length; i++) {
-                size += input.files[i].size;
+                size += input.files[i].size + 1024; // extra buffer for metadata
                 if (window.shm_max_size > 0 && input.files[i].size > window.shm_max_size) {
                     toobig = true;
                 }

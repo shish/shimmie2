@@ -42,7 +42,7 @@ class UploadTheme extends Themelet
         $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
         $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
-        $max_total_size = parse_shorthand_int(ini_get('post_max_size')) - 102400; //leave room for http request data
+        $max_total_size = parse_shorthand_int(ini_get('post_max_size'));
         $max_total_kb = to_shorthand_int($max_total_size);
         $upload_list = $this->build_upload_list();
 
@@ -172,7 +172,7 @@ class UploadTheme extends Themelet
         ';
         $html2 = P(
             A(["href" => $js], $title),
-            rawHTML("(Click when looking at a post page. Works on sites running Shimmie / Danbooru / Gelbooru. (This also grabs the tags / rating / source!))"),
+            rawHTML(" (Click when looking at a post page. Works on sites running Shimmie / Danbooru / Gelbooru. (This also grabs the tags / rating / source!))"),
         );
 
         return emptyHTML($html1, $html2);

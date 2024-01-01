@@ -21,7 +21,8 @@
 	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
 	"containerEnv": {
 		"UID": "2000",
-		"GID": "2000"
+		"GID": "2000",
+		"UPLOAD_MAX_FILESIZE": "50M",
 	},
 	"customizations": {
 		"vscode": {
