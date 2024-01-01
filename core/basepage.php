@@ -380,6 +380,9 @@ class BasePage
         $css_cache_file = $this->get_css_cache_file($theme_name, $config_latest);
         $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
 
+        $initjs_cache_file = $this->get_initjs_cache_file($theme_name, $config_latest);
+        $this->add_html_header("<script src='$data_href/$initjs_cache_file' type='text/javascript'></script>", 44);
+
         $js_cache_file = $this->get_js_cache_file($theme_name, $config_latest);
         $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
     }
@@ -405,6 +408,29 @@ class BasePage
         }
 
         return $css_cache_file;
+    }
+
+    private function get_initjs_cache_file(string $theme_name, int $config_latest): string
+    {
+        $js_latest = $config_latest;
+        $js_files = array_merge(
+            zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/init.js"),
+            zglob("themes/$theme_name/init.js")
+        );
+        foreach ($js_files as $js) {
+            $js_latest = max($js_latest, filemtime($js));
+        }
+        $js_md5 = md5(serialize($js_files));
+        $js_cache_file = data_path("cache/initscript/{$theme_name}.{$js_latest}.{$js_md5}.js");
+        if (!file_exists($js_cache_file)) {
+            $mcss = new \MicroBundler\MicroBundler();
+            foreach($js_files as $js) {
+                $mcss->addSource($js, file_get_contents($js));
+            }
+            $mcss->save($js_cache_file);
+        }
+
+        return $js_cache_file;
     }
 
     private function get_js_cache_file(string $theme_name, int $config_latest): string
@@ -434,7 +460,6 @@ class BasePage
 
         return $js_cache_file;
     }
-
 
     /**
      * @return array A list of stylesheets relative to the theme root.
