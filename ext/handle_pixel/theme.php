@@ -20,6 +20,7 @@ class PixelFileHandlerTheme extends Themelet
             'data-width' => $image->width,
             'data-height' => $image->height,
             'data-mime' => $image->get_mime(),
+            'onerror' => "shm_log('Error loading >>{$image->id}')",
         ]);
         $page->add_block(new Block("Image", $html, "main", 10));
     }
