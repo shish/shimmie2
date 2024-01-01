@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "091b1bcf581b4d04a9989860b068f327",
+    "content-hash": "0e61e4e500633d5c596af3b192df7045",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1580,16 +1580,16 @@
         },
         {
             "name": "shish/ffsphp",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/ffsphp.git",
-                "reference": "a2a1f0fe59606b90460513b48bacb442630dd253"
+                "reference": "26eea8149fda5f20bed7399b8b4a84946448bec0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/ffsphp/zipball/a2a1f0fe59606b90460513b48bacb442630dd253",
-                "reference": "a2a1f0fe59606b90460513b48bacb442630dd253",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/26eea8149fda5f20bed7399b8b4a84946448bec0",
+                "reference": "26eea8149fda5f20bed7399b8b4a84946448bec0",
                 "shasum": ""
             },
             "require": {
@@ -1597,9 +1597,9 @@
                 "php": "^8.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.12",
-                "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^9.0"
+                "friendsofphp/php-cs-fixer": "3.41.1",
+                "phpstan/phpstan": "1.10.50",
+                "phpunit/phpunit": "10.5.3"
             },
             "type": "library",
             "autoload": {
@@ -1623,9 +1623,9 @@
             "homepage": "https://github.com/shish/ffsphp",
             "support": {
                 "issues": "https://github.com/shish/ffsphp/issues",
-                "source": "https://github.com/shish/ffsphp/tree/v1.2.0"
+                "source": "https://github.com/shish/ffsphp/tree/v1.3.0"
             },
-            "time": "2023-08-28T15:51:16+00:00"
+            "time": "2024-01-01T14:48:00+00:00"
         },
         {
             "name": "shish/gqla",
@@ -6059,5 +6059,5 @@
     "platform-overrides": {
         "php": "8.1.0"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

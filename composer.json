@@ -44,7 +44,7 @@
 		"ifixit/php-akismet"        : "^1.0",
 		"google/recaptcha"          : "^1.1",
 		"shish/eventtracer-php"     : "^2.0",
-		"shish/ffsphp"              : "^1.0",
+		"shish/ffsphp"              : "^1.3",
 		"shish/microcrud"           : "^2.0",
 		"shish/microhtml"           : "^2.2",
 		"shish/gqla"                : "dev-main",
