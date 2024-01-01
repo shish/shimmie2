@@ -63,7 +63,9 @@ class TagEditTheme extends Themelet
                 "name" => "tag_edit__tags",
                 "id" => "tag_editor",
             ], $image->get_tag_list()) : null,
-            link: Extension::is_enabled(TagHistoryInfo::KEY) ? make_link("tag_history/{$image->id}") : null,
+            link: Extension::is_enabled(TagHistoryInfo::KEY) ?
+                make_link("tag_history/{$image->id}") :
+                null,
         );
     }
 
