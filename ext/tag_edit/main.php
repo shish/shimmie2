@@ -56,7 +56,7 @@ class TagSetEvent extends Event
     public array $metatags;
 
     /**
-     * #param string[] $tags
+     * @param string[] $tags
      */
     public function __construct(Image $image, array $tags)
     {

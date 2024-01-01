@@ -530,7 +530,7 @@ class TagList extends Extension
     }
 
     /**
-     * #param string[] $search
+     * @param string[] $search
      */
     private function add_refine_block(Page $page, array $search)
     {

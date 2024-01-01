@@ -272,7 +272,7 @@ class AutoTagger extends Extension
     }
 
     /**
-     * #param string[] $tags_mixed
+     * @param string[] $tags_mixed
      */
     private function apply_auto_tags(array $tags_mixed): ?array
     {

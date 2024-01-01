@@ -42,7 +42,7 @@ and of course start organising your images :-)
     }
 
     /**
-     * #param Image[] $images
+     * @param Image[] $images
      */
     public function display_page(Page $page, array $images)
     {
@@ -61,7 +61,7 @@ and of course start organising your images :-)
     }
 
     /**
-     * #param string[] $parts
+     * @param string[] $parts
      */
     public function display_admin_block(array $parts)
     {
@@ -71,7 +71,7 @@ and of course start organising your images :-)
 
 
     /**
-     * #param string[] $search_terms
+     * @param string[] $search_terms
      */
     protected function build_navigation(int $page_number, int $total_pages, array $search_terms): string
     {
@@ -96,7 +96,7 @@ and of course start organising your images :-)
     }
 
     /**
-     * #param Image[] $images
+     * @param Image[] $images
      */
     protected function build_table(array $images, ?string $query): string
     {
@@ -139,7 +139,7 @@ and of course start organising your images :-)
     }
 
     /**
-     * #param Image[] $images
+     * @param Image[] $images
      */
     protected function display_page_header(Page $page, array $images)
     {
@@ -165,7 +165,7 @@ and of course start organising your images :-)
     }
 
     /**
-     * #param Image[] $images
+     * @param Image[] $images
      */
     protected function display_page_images(Page $page, array $images)
     {

@@ -314,8 +314,8 @@ class Upload extends Extension
 
     /**
      * Handle an upload.
-     * #param string[] $file
-     * #param string[] $tags
+     * @param mixed[] $file
+     * @param string[] $tags
      */
     private function try_upload(array $file, array $tags, ?string $source = null, ?int $replace_id = null): array
     {

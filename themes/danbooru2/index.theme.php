@@ -7,7 +7,7 @@ namespace Shimmie2;
 class CustomIndexTheme extends IndexTheme
 {
     /**
-     * #param Image[] $images
+     * @param Image[] $images
      */
     public function display_page(Page $page, array $images)
     {
@@ -26,7 +26,7 @@ class CustomIndexTheme extends IndexTheme
     }
 
     /**
-     * #param string[] $search_terms
+     * @param string[] $search_terms
      */
     protected function build_navigation(int $page_number, int $total_pages, array $search_terms): string
     {
@@ -42,7 +42,7 @@ class CustomIndexTheme extends IndexTheme
     }
 
     /**
-     * #param Image[] $images
+     * @param Image[] $images
      */
     protected function build_table(array $images, ?string $query): string
     {

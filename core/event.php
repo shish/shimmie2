@@ -213,7 +213,7 @@ class CommandEvent extends Event
     public array $args = [];
 
     /**
-     * #param string[] $args
+     * @param string[] $args
      */
     public function __construct(array $args)
     {

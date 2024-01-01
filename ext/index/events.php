@@ -67,7 +67,7 @@ class PostListBuildingEvent extends Event
     public array $parts = [];
 
     /**
-     * #param string[] $search
+     * @param string[] $search
      */
     public function __construct(array $search)
     {
