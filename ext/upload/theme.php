@@ -268,31 +268,33 @@ class UploadTheme extends Themelet
     }
 
     /**
-     * @param int[] $image_ids
-     * @param UploadError[] $errors
+     * @param UploadResult[] $results
      */
-    public function display_upload_status(Page $page, array $image_ids, array $errors): void
+    public function display_upload_status(Page $page, array $results): void
     {
         global $user;
+
+        /** @var UploadSuccess[] */
+        $successes = array_filter($results, fn ($r) => is_a($r, UploadSuccess::class));
+
+        /** @var UploadError[] */
+        $errors = array_filter($results, fn ($r) => is_a($r, UploadError::class));
 
         if (count($errors) > 0) {
             $page->set_title("Upload Status");
             $page->set_heading("Upload Status");
             $page->add_block(new NavBlock());
             foreach($errors as $error) {
-                $message = $error->error;
-                // this message has intentional HTML in it...
-                $message = str_contains($message, "already has hash") ? $message : html_escape($message);
-                $page->add_block(new Block($error->name, $message));
+                $page->add_block(new Block($error->name, format_text($error->error)));
             }
-        } elseif (count($image_ids) == 0) {
+        } elseif (count($successes) == 0) {
             $page->set_title("No images uploaded");
             $page->set_heading("No images uploaded");
             $page->add_block(new NavBlock());
             $page->add_block(new Block("No images uploaded", "Upload attempted, but nothing succeeded and nothing failed?"));
-        } elseif (count($image_ids) == 1) {
+        } elseif (count($successes) == 1) {
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/{$image_ids[0]}"));
+            $page->set_redirect(make_link("post/view/{$successes[0]->image_id}"));
         } else {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(search_link(["poster={$user->name}"]));

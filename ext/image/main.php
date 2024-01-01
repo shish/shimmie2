@@ -152,9 +152,7 @@ class ImageIO extends Extension
                     $event->image = $im;
                     return;
                 } else {
-                    $error = "Post <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
-                        "already has hash {$image->hash}:<p>".$this->theme->build_thumb_html($existing);
-                    throw new ImageAdditionException($error);
+                    throw new ImageAdditionException(">>{$existing->id} already has hash {$image->hash}");
                 }
             }
 
@@ -216,9 +214,7 @@ class ImageIO extends Extension
 
             $duplicate = Image::by_hash($image->hash);
             if (!is_null($duplicate) && $duplicate->id != $id) {
-                $error = "Post <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
-                    "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
-                throw new ImageReplaceException($error);
+                throw new ImageReplaceException(">>{$duplicate->id} already has hash {$image->hash}");
             }
 
             if (strlen(trim($image->source ?? '')) == 0) {
