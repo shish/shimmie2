@@ -15,7 +15,7 @@ function clearViewMode() {
 function updateAttr(selector, attr, value) {
 	document.querySelectorAll(selector).forEach(function(e) {
 		let current = e.getAttribute(attr);
-		let newval = joinUrlSegments(current, query);
+		let newval = joinUrlSegments(current, value);
 		e.setAttribute(attr, newval);
 	});
 }
