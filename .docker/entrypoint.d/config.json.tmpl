@@ -35,6 +35,7 @@
                     "image/*",
                     "application/javascript",
                     "text/css",
+                    "application/sourcemap",
                     "!"
                 ],
                 "response_headers": {
@@ -69,7 +70,12 @@
     },
     "settings": {
         "http": {
-            "max_body_size": 1048576000
+            "max_body_size": 1048576000,
+            "static": {
+                "mime_types": {
+                    "application/sourcemap": [".map"]
+                }
+            }
         }
     }
 }
