@@ -49,7 +49,7 @@ class UploadTheme extends Themelet
         $form = SHM_FORM("upload", "POST", true, "file_upload");
         $form->appendChild(
             TABLE(
-                ["id" => "large_upload_form", "class" => "vert"],
+                ["id" => "large_upload_form"],
                 TR(
                     TD(["width" => "20"], rawHTML("Common&nbsp;Tags")),
                     TD(["colspan" => "6"], INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags"]))
@@ -242,7 +242,7 @@ class UploadTheme extends Themelet
         $form = SHM_FORM("replace/".$image_id, "POST", true);
         $form->appendChild(emptyHTML(
             TABLE(
-                ["id" => "large_upload_form", "class" => "vert"],
+                ["id" => "large_upload_form"],
                 $upload_list,
                 TR(TD("Source"), TD(["colspan" => 3], INPUT(["name" => "source", "type" => "text"]))),
                 TR(TD(["colspan" => 4], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))),

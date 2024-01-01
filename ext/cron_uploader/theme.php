@@ -115,7 +115,7 @@ class CronUploaderTheme extends Themelet
         $page->add_block($block_usage);
 
         if (!empty($log_entries)) {
-            $log_html = "<table class='log'>";
+            $log_html = "<table class='cron_uploader_log'>";
             foreach ($log_entries as $entry) {
                 $log_html .= "<tr><th>{$entry["date_sent"]}</th><td>{$entry["message"]}</td></tr>";
             }

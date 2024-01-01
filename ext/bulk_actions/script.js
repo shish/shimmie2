@@ -68,11 +68,11 @@ function get_selected_items() {
 }
 
 function set_selected_items(items) {
-    $(".shm-thumb").removeClass('selected');
+    $(".shm-thumb").removeClass('bulk_selected');
 
     $(items).each(
         function(index,item) {
-            $('.shm-thumb[data-post-id="' + item + '"]').addClass('selected');
+            $('.shm-thumb[data-post-id="' + item + '"]').addClass('bulk_selected');
         }
     );
 

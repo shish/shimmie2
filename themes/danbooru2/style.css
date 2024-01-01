@@ -269,21 +269,6 @@ width:100%;
 margin-top:0.4rem;
 padding:0.2rem 0.6rem;
 }
-.helpable {
-border-bottom:1px dashed gray;
-}
-.ok {
-background:#AAFFAA none repeat scroll 0 0;
--moz-background-clip:border;
--moz-background-inline-policy:continuous;
--moz-background-origin:padding;
-}
-.bad {
-background:#FFAAAA none repeat scroll 0 0;
--moz-background-clip:border;
--moz-background-inline-policy:continuous;
--moz-background-origin:padding;
-}
 .comment .username {
 font-weight:bold;
 font-size:1.5em;

@@ -219,21 +219,6 @@ margin:16px;
 padding:8px;
 width:350px;
 }
-.helpable {
-border-bottom:1px dashed gray;
-}
-.ok {
--moz-background-clip:border;
--moz-background-inline-policy:continuous;
--moz-background-origin:padding;
-background:#AAFFAA none repeat scroll 0 0;
-}
-.bad {
--moz-background-clip:border;
--moz-background-inline-policy:continuous;
--moz-background-origin:padding;
-background:#FFAAAA none repeat scroll 0 0;
-}
 .comment .username {
 font-size:1.5em;
 font-weight:bold;

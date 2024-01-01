@@ -316,16 +316,6 @@ ARTICLE TABLE {
 	font-size: 0.75rem;
 }
 
-.helpable {
-	border-bottom: 1px dashed gray;
-}
-
-.ok {
-	background: #AFA;
-}
-.bad {
-	background: #FAA;
-}
 
 NAV .thumbblock {
 	float: none;

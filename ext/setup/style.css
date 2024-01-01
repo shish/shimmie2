@@ -17,17 +17,6 @@
 	resize: vertical;
 }
 
-.helpable {
-	border-bottom: 1px dashed gray;
-}
-
-.ok {
-	background: #AFA;
-}
-.bad {
-	background: #FAA;
-}
-
 #Setupmain .blockbody {
 	background: none;
 	border: none;
