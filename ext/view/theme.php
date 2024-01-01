@@ -105,7 +105,6 @@ class ViewPostTheme extends Themelet
             TABLE(
                 [
                     "class" => "image_info form",
-                    "style" => "width: 500px; max-width: 100%;"
                 ],
                 ...$editor_parts,
             ),

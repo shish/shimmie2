@@ -1,3 +1,8 @@
+.image_info {
+	width: 550px;
+	max-width: 100%;
+}
+
 .image_info .edit {
 	display: block;
 }
