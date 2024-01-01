@@ -8,7 +8,7 @@ class MP3FileHandlerTheme extends Themelet
 {
     public function display_image(Image $image)
     {
-		global $page;
+        global $page;
         $data_href = get_base_href();
         $ilink = $image->get_image_link();
         $html = "
