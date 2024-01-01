@@ -1,16 +1,15 @@
-
-CODE {
-	background: #DEDEDE;
-	font-size: 0.8rem;
+.bbcode PRE.code {
+    background: #DEDEDE;
+	font-size: 0.9rem;
 }
-BLOCKQUOTE {
+.bbcode BLOCKQUOTE {
 	border: 1px solid black;
 	padding: 8px;
 	background: #DDD;
 }
-.anchor A.alink {
+.bbcode .anchor A.alink {
 	visibility: hidden;
 }
-.anchor:hover A.alink {
+.bbcode .anchor:hover A.alink {
 	visibility: visible;
 }

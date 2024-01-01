@@ -8,6 +8,12 @@ class BBCode extends FormatterExtension
 {
     public function format(string $text): string
     {
+        $text = $this->_format($text);
+        return "<span class='bbcode'>$text</span>";
+    }
+
+    public function _format(string $text): string
+    {
         $text = $this->extract_code($text);
         foreach ([
             "b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
@@ -158,7 +164,7 @@ class BBCode extends FormatterExtension
             $middle = base64_decode(substr($text, $start + $l1, ($end - $start - $l1)));
             $ending = substr($text, $end + $l2, (strlen($text) - $end + $l2));
 
-            $text = $beginning . "<pre>" . $middle . "</pre>" . $ending;
+            $text = $beginning . "<pre class='code'>" . $middle . "</pre>" . $ending;
         }
         return $text;
     }

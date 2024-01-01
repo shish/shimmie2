@@ -37,7 +37,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
     public function testCode()
     {
         $this->assertEquals(
-            "<pre>[b]bold[/b]</pre>",
+            "<pre class='code'>[b]bold[/b]</pre>",
             $this->filter("[code][b]bold[/b][/code]")
         );
     }
@@ -104,7 +104,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
     private function filter($in): string
     {
         $bb = new BBCode();
-        return $bb->format($in);
+        return $bb->_format($in);
     }
 
     private function strip($in): string
