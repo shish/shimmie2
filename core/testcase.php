@@ -86,7 +86,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             return $args;
         }
 
-        protected static function request($page_name, $get_args = null, $post_args = null): Page
+        protected static function request($method, $page_name, $get_args = null, $post_args = null): Page
         {
             // use a fresh page
             global $page;
@@ -100,7 +100,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_GET = $get_args;
             $_POST = $post_args;
             $page = new Page();
-            send_event(new PageRequestEvent($page_name));
+            send_event(new PageRequestEvent($method, $page_name));
             if ($page->mode == PageMode::REDIRECT) {
                 $page->code = 302;
             }
@@ -109,12 +109,12 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
 
         protected static function get_page($page_name, $args = null): Page
         {
-            return self::request($page_name, $args, null);
+            return self::request("GET", $page_name, $args, null);
         }
 
         protected static function post_page($page_name, $args = null): Page
         {
-            return self::request($page_name, null, $args);
+            return self::request("POST", $page_name, null, $args);
         }
 
         // page things

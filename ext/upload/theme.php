@@ -52,15 +52,15 @@ class UploadTheme extends Themelet
                 ["id" => "large_upload_form", "class" => "vert"],
                 TR(
                     TD(["width" => "20"], rawHTML("Common&nbsp;Tags")),
-                    TD(["colspan" => "5"], INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags", "autocomplete" => "off"]))
+                    TD(["colspan" => "6"], INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags"]))
                 ),
                 TR(
                     TD(["width" => "20"], rawHTML("Common&nbsp;Source")),
-                    TD(["colspan" => "5"], INPUT(["name" => "source", "type" => "text"]))
+                    TD(["colspan" => "6"], INPUT(["name" => "source", "type" => "text", "placeholder" => "https://..."]))
                 ),
                 $upload_list,
                 TR(
-                    TD(["colspan" => "6"], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))
+                    TD(["colspan" => "7"], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))
                 ),
             )
         );
@@ -85,7 +85,7 @@ class UploadTheme extends Themelet
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Upload", $html, "main", 20));
         if ($tl_enabled) {
-            $page->add_block(new Block("Bookmarklets", (string)$this->h_bookmarklets(), "left", 20));
+            $page->add_block(new Block("Bookmarklets", $this->build_bookmarklets(), "left", 20));
         }
     }
 
@@ -99,9 +99,10 @@ class UploadTheme extends Themelet
 
         $upload_list->appendChild(
             TR(
-                TD(["colspan" => $tl_enabled ? 2 : 4], "Files"),
-                $tl_enabled ? TD(["colspan" => "2"], "URLs") : emptyHTML(),
-                TD(["colspan" => "2"], "Post-Specific Tags"),
+                TD(["colspan" => 2], "Select File"),
+                TD($tl_enabled ? "or URL" : null),
+                TD("Post-Specific Tags"),
+                TD("Post-Specific Source"),
             )
         );
 
@@ -109,12 +110,42 @@ class UploadTheme extends Themelet
             $upload_list->appendChild(
                 TR(
                     TD(
-                        ["colspan" => $tl_enabled ? 2 : 4],
-                        DIV(["id" => "canceldata{$i}", "style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;","onclick" => "document.getElementById('data{$i}').value='';updateTracker();"], "✖"),
-                        INPUT(["type" => "file", "id"=>"data{$i}", "name" => "data{$i}[]", "accept" => $accept, "multiple" => true])
+                        ["colspan" => 2, "style" => "white-space: nowrap;"],
+                        DIV([
+                            "id" => "canceldata{$i}",
+                            "style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;",
+                            "onclick" => "document.getElementById('data{$i}').value='';updateTracker();",
+                        ], "✖"),
+                        INPUT([
+                            "type" => "file",
+                            "id" => "data{$i}",
+                            "name" => "data{$i}[]",
+                            "accept" => $accept,
+                            "multiple" => true,
+                        ]),
                     ),
-                    $tl_enabled ? TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "url{$i}"])) : emptyHTML(),
-                    TD(["colspan" => "2"], INPUT(["type" => "text", "name" => "tags{$i}", "class" => "autocomplete_tags"])),
+                    TD(
+                        $tl_enabled ? INPUT([
+                            "type" => "text",
+                            "name" => "url{$i}",
+                            "value" => ($i == 0) ? @$_GET['url'] : null,
+                        ]) : null
+                    ),
+                    TD(
+                        INPUT([
+                            "type" => "text",
+                            "name" => "tags{$i}",
+                            "class" => "autocomplete_tags",
+                            "value" => ($i == 0) ? @$_GET['tags'] : null,
+                        ])
+                    ),
+                    TD(
+                        INPUT([
+                            "type" => "text",
+                            "name" => "source{$i}",
+                            "value" => ($i == 0) ? @$_GET['source'] : null,
+                        ])
+                    ),
                 )
             );
         }
@@ -122,7 +153,7 @@ class UploadTheme extends Themelet
         return $upload_list;
     }
 
-    protected function h_bookmarklets(): HTMLElement
+    protected function build_bookmarklets(): HTMLElement
     {
         global $config;
         $link = make_http(make_link("upload"));
@@ -197,7 +228,7 @@ class UploadTheme extends Themelet
             $upload_list->appendChild(
                 TR(
                     TD("or URL"),
-                    TD(INPUT(["name" => "url", "type" => "text"]))
+                    TD(INPUT(["name" => "url", "type" => "text", "value" => @$_GET['url']]))
                 )
             );
         }
@@ -208,9 +239,8 @@ class UploadTheme extends Themelet
         $image = Image::by_id($image_id);
         $thumbnail = $this->build_thumb_html($image);
 
-        $form = SHM_FORM("upload/replace/".$image_id, "POST", true);
+        $form = SHM_FORM("replace/".$image_id, "POST", true);
         $form->appendChild(emptyHTML(
-            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
             TABLE(
                 ["id" => "large_upload_form", "class" => "vert"],
                 $upload_list,

@@ -192,7 +192,7 @@ class Upload extends Extension
             }
         }
 
-        if ($event->page_matches("upload/replace")) {
+        if ($event->page_matches("replace")) {
             if (!$user->can(Permissions::REPLACE_IMAGE)) {
                 $this->theme->display_error(403, "Error", "{$user->name} doesn't have permission to replace images");
                 return;
@@ -202,35 +202,24 @@ class Upload extends Extension
                 return;
             }
 
-            // Try to get the image ID
-            if ($event->count_args() >= 1) {
-                $image_id = int_escape($event->get_arg(0));
-            } elseif (isset($_POST['image_id'])) {
-                $image_id = int_escape($_POST['image_id']);
-            } else {
-                throw new UploadException("Can not replace Post: No valid Post ID given.");
-            }
+            $image_id = int_escape($event->get_arg(0));
             $image_old = Image::by_id($image_id);
             if (is_null($image_old)) {
                 throw new UploadException("Can not replace Post: No post with ID $image_id");
             }
 
-            $source = $_POST['source'] ?? null;
-
-            if (!empty($_POST["url"])) {
-                [$image_ids, $errors] = $this->try_transload($_POST["url"], [], $source, $image_id);
-                $cache->delete("thumb-block:{$image_id}");
-                $this->theme->display_upload_status($page, $image_ids, $errors);
-            } elseif (count($_FILES) > 0) {
-                [$image_ids, $errors] = $this->try_upload($_FILES["data"], [], $source, $image_id);
-                $cache->delete("thumb-block:{$image_id}");
-                $this->theme->display_upload_status($page, $image_ids, $errors);
-            } elseif (!empty($_GET['url'])) {
-                [$image_ids, $errors] = $this->try_transload($_GET['url'], [], $source, $image_id);
-                $cache->delete("thumb-block:{$image_id}");
-                $this->theme->display_upload_status($page, $image_ids, $errors);
-            } else {
+            if($event->method == "GET") {
                 $this->theme->display_replace_page($page, $image_id);
+            } elseif($event->method == "POST") {
+                $image_ids = [];
+                $errors = [];
+                if (!empty($_POST["url"])) {
+                    [$image_ids, $errors] = $this->try_transload($_POST["url"], [], $_POST['source'] ?? null, $image_id);
+                } elseif (count($_FILES) > 0) {
+                    [$image_ids, $errors] = $this->try_upload($_FILES["data"], [], $_POST['source'] ?? null, $image_id);
+                }
+                $cache->delete("thumb-block:{$image_id}");
+                $this->theme->display_upload_status($page, $image_ids, $errors);
             }
         } elseif ($event->page_matches("upload")) {
             if (!$user->can(Permissions::CREATE_IMAGE)) {
@@ -241,50 +230,39 @@ class Upload extends Extension
                 $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
                 return;
             }
-            if(count($_POST) == 0 && empty($_GET['url'])) {
+
+            if($event->method == "GET") {
                 $this->theme->display_page($page);
-                return;
-            }
+            } elseif($event->method == "POST") {
+                $all_image_ids = [];
+                $all_errors = [];
 
-            $all_image_ids = [];
-            $all_errors = [];
-
-            $files = array_filter($_FILES, function ($file) {
-                return !empty($file['name']);
-            });
-            $urls = array_filter($_POST, function ($value, $key) {
-                return str_starts_with($key, "url") && strlen($value) > 0;
-            }, ARRAY_FILTER_USE_BOTH);
-
-            foreach ($files as $name => $file) {
-                $tags = $this->tags_for_upload_slot(int_escape(substr($name, 4)));
-                $source = $_POST['source'] ?? null;
-                [$image_ids, $errors] = $this->try_upload($file, $tags, $source);
-                $all_image_ids = array_merge($all_image_ids, $image_ids);
-                $all_errors = array_merge($all_errors, $errors);
-            }
-            foreach ($urls as $name => $value) {
-                $tags = $this->tags_for_upload_slot(int_escape(substr($name, 3)));
-                $source = $_POST['source'] ?? $value;
-                [$image_ids, $errors] = $this->try_transload($value, $tags, $source);
-                $all_image_ids = array_merge($all_image_ids, $image_ids);
-                $all_errors = array_merge($all_errors, $errors);
-            }
-
-            if(!empty($_GET['url'])) {
-                $url = $_GET['url'];
-                $source = $_GET['source'] ?? $url;
-                $tags = ['tagme'];
-                if (!empty($_GET['tags']) && $_GET['tags'] != "null") {
-                    $tags = Tag::explode($_GET['tags']);
+                $files = array_filter($_FILES, function ($file) {
+                    return !empty($file['name']);
+                });
+                foreach ($files as $name => $file) {
+                    $slot = int_escape(substr($name, 4));
+                    $tags = $this->tags_for_upload_slot($slot);
+                    $source = $this->source_for_upload_slot($slot);
+                    [$image_ids, $errors] = $this->try_upload($file, $tags, $source);
+                    $all_image_ids = array_merge($all_image_ids, $image_ids);
+                    $all_errors = array_merge($all_errors, $errors);
                 }
 
-                [$image_ids, $errors] = $this->try_transload($url, $tags, $source);
-                $all_image_ids = array_merge($all_image_ids, $image_ids);
-                $all_errors = array_merge($all_errors, $errors);
-            }
+                $urls = array_filter($_POST, function ($value, $key) {
+                    return str_starts_with($key, "url") && strlen($value) > 0;
+                }, ARRAY_FILTER_USE_BOTH);
+                foreach ($urls as $name => $value) {
+                    $slot = int_escape(substr($name, 3));
+                    $tags = $this->tags_for_upload_slot($slot);
+                    $source = $this->source_for_upload_slot($slot);
+                    [$image_ids, $errors] = $this->try_transload($value, $tags, $source);
+                    $all_image_ids = array_merge($all_image_ids, $image_ids);
+                    $all_errors = array_merge($all_errors, $errors);
+                }
 
-            $this->theme->display_upload_status($page, $all_image_ids, $all_errors);
+                $this->theme->display_upload_status($page, $all_image_ids, $all_errors);
+            }
         }
     }
 
@@ -297,6 +275,11 @@ class Upload extends Extension
             " " .
             ($_POST["tags$id"] ?? "")
         );
+    }
+
+    private function source_for_upload_slot(int $id): ?string
+    {
+        return $_POST["source$id"] ?? $_POST['source'] ?? null;
     }
 
     /**

@@ -86,16 +86,15 @@ class AdminPage extends Extension
                 parse_str($event->args[1], $_GET);
                 $_SERVER['REQUEST_URI'] .= "?" . $event->args[1];
             }
-            send_event(new PageRequestEvent($event->args[0]));
+            send_event(new PageRequestEvent("GET", $event->args[0]));
             $page->display();
         }
         if ($event->cmd == "post-page") {
             global $page;
-            $_SERVER['REQUEST_METHOD'] = "POST";
             if (isset($event->args[1])) {
                 parse_str($event->args[1], $_POST);
             }
-            send_event(new PageRequestEvent($event->args[0]));
+            send_event(new PageRequestEvent("POST", $event->args[0]));
             $page->display();
         }
         if ($event->cmd == "get-token") {
