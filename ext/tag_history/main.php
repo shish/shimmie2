@@ -346,7 +346,7 @@ class TagHistory extends Extension
     /**
      * This function is called just before an images tag are changed.
      *
-     * #param string[] $tags
+     * @param string[] $tags
      */
     private function add_tag_history(Image $image, array $tags)
     {

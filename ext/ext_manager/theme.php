@@ -25,7 +25,7 @@ use function MicroHTML\rawHTML;
 class ExtManagerTheme extends Themelet
 {
     /**
-     * #param ExtensionInfo[] $extensions
+     * @param ExtensionInfo[] $extensions
      */
     public function display_table(Page $page, array $extensions, bool $editable)
     {

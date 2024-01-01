@@ -68,7 +68,7 @@ class NotATag extends Extension
     }
 
     /**
-     * #param string[] $tags_mixed
+     * @param string[] $tags_mixed
      */
     private function scan(array $tags_mixed)
     {
@@ -90,7 +90,7 @@ class NotATag extends Extension
     }
 
     /**
-     * #param string[] $tags
+     * @param string[] $tags
      */
     private function strip(array $tags): array
     {

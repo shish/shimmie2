@@ -9,7 +9,7 @@ class RandomListTheme extends Themelet
     protected array $search_terms;
 
     /**
-     * #param string[] $search_terms
+     * @param string[] $search_terms
      */
     public function set_page(array $search_terms)
     {
@@ -17,7 +17,7 @@ class RandomListTheme extends Themelet
     }
 
     /**
-     * #param Image[] $images
+     * @param Image[] $images
      */
     public function display_page(Page $page, array $images)
     {

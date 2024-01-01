@@ -485,7 +485,7 @@ class Ratings extends Extension
     }
 
     /**
-     * #param string[] $context
+     * @param string[] $context
      */
     private function no_rating_query(array $context): bool
     {

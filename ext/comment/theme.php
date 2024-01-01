@@ -111,7 +111,7 @@ class CommentListTheme extends Themelet
     /**
      * Add some comments to the page, probably in a sidebar.
      *
-     * #param Comment[] $comments An array of Comment objects to be shown
+     * @param Comment[] $comments An array of Comment objects to be shown
      */
     public function display_recent_comments(array $comments)
     {
@@ -128,7 +128,7 @@ class CommentListTheme extends Themelet
     /**
      * Show comments for an image.
      *
-     * #param Comment[] $comments
+     * @param Comment[] $comments
      */
     public function display_image_comments(Image $image, array $comments, bool $postbox)
     {
@@ -147,7 +147,7 @@ class CommentListTheme extends Themelet
     /**
      * Show comments made by a user.
      *
-     * #param Comment[] $comments
+     * @param Comment[] $comments
      */
     public function display_recent_user_comments(array $comments, User $user)
     {
