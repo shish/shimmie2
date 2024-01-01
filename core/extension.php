@@ -374,10 +374,13 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $page;
+        global $config, $page;
         if ($this->supported_mime($event->image->get_mime())) {
             // @phpstan-ignore-next-line
-            $this->theme->display_image($page, $event->image);
+            $this->theme->display_image($event->image);
+            if ($config->get_bool(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
+                $this->theme->display_metadata($event->image);
+            }
         }
     }
 

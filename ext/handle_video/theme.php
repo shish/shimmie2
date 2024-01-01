@@ -8,9 +8,9 @@ use function MicroHTML\{A, BR, VIDEO, SOURCE, emptyHTML};
 
 class VideoFileHandlerTheme extends Themelet
 {
-    public function display_image(Page $page, Image $image)
+    public function display_image(Image $image)
     {
-        global $config;
+        global $config, $page;
 
         $width = "auto";
         if ($image->width > 1) {

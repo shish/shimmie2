@@ -4,14 +4,31 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\IMG;
+
 class PixelFileHandlerTheme extends Themelet
 {
-    public function display_image(Page $page, Image $image)
+    public function display_image(Image $image)
     {
-        global $config;
+        global $config, $page;
 
-        $u_ilink = $image->get_image_link();
-        if ($config->get_bool(ImageConfig::SHOW_META) && function_exists(ImageIO::EXIF_READ_FUNCTION)) {
+        $html = IMG([
+            'alt' => 'main image',
+            'class' => 'shm-main-image',
+            'id' => 'main_image',
+            'src' => $image->get_image_link(),
+            'data-width' => $image->width,
+            'data-height' => $image->height,
+            'data-mime' => $image->get_mime(),
+        ]);
+        $page->add_block(new Block("Image", $html, "main", 10));
+    }
+
+    public function display_metadata(Image $image)
+    {
+        global $page;
+
+        if (function_exists(ImageIO::EXIF_READ_FUNCTION)) {
             # FIXME: only read from jpegs?
             $exif = @exif_read_data($image->get_image_filename(), "IFD0", true);
             if ($exif) {
@@ -32,9 +49,5 @@ class PixelFileHandlerTheme extends Themelet
                 }
             }
         }
-
-        $html = "<img alt='main image' class='shm-main-image' id='main_image' src='$u_ilink' ".
-            "data-width='{$image->width}' data-height='{$image->height}' data-mime='{$image->get_mime()}'>";
-        $page->add_block(new Block("Image", $html, "main", 10));
     }
 }
