@@ -14,15 +14,13 @@
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8000],
 
-	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
+	"postStartCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
 	"containerEnv": {
 		"UID": "2000",
 		"GID": "2000",
-		"UPLOAD_MAX_FILESIZE": "50M",
+		"UPLOAD_MAX_FILESIZE": "50M"
 	},
 	"customizations": {
 		"vscode": {
@@ -31,7 +29,8 @@
 				"ryanluker.vscode-coverage-gutters",
 				"xdebug.php-debug",
 				"DEVSENSE.phptools-vscode",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"SanderRonde.phpstan-vscode"
 			],
 			"settings": {
 				"phpunit.args": [
@@ -40,7 +39,8 @@
 				],
 				"coverage-gutters.coverageFileNames": [
 					"data/coverage.clover"
-				]	
+				],
+				"phpstan.configFile": "tests/phpstan.neon"
 			}
 		}
 	}
