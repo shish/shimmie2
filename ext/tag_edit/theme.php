@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TR, TH, TD, emptyHTML, rawHTML, joinHTML, DIV, INPUT, A};
+use function MicroHTML\{TR, TH, TD, emptyHTML, rawHTML, joinHTML, DIV, INPUT, A, TEXTAREA};
 
 class TagEditTheme extends Themelet
 {
@@ -57,14 +57,12 @@ class TagEditTheme extends Themelet
         return SHM_POST_INFO(
             "Tags",
             joinHTML(", ", $tag_links),
-            $user->can(Permissions::EDIT_IMAGE_TAG) ? INPUT([
+            $user->can(Permissions::EDIT_IMAGE_TAG) ? TEXTAREA([
                 "class" => "autocomplete_tags",
                 "type" => "text",
                 "name" => "tag_edit__tags",
-                "value" => $image->get_tag_list(),
                 "id" => "tag_editor",
-                "autocomplete" => "off"
-            ]) : null,
+            ], $image->get_tag_list()) : null,
             link: Extension::is_enabled(TagHistoryInfo::KEY) ? make_link("tag_history/{$image->id}") : null,
         );
     }
