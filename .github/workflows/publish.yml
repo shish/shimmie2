@@ -22,7 +22,7 @@ jobs:
       if: ${{ github.event_name == 'workflow_run' }}
       uses: actions/checkout@master
       with:
-        ref: if: ${{ github.event.workflow_run.head_sha }}
+        ref: ${{ github.event.workflow_run.head_sha }}
     - name: Checkout main commit
       if: ${{ github.event_name != 'workflow_run' }}
       uses: actions/checkout@master
