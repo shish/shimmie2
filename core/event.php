@@ -46,6 +46,7 @@ class InitExtEvent extends Event
  */
 class PageRequestEvent extends Event
 {
+    public string $method;
     /**
      * @var string[]
      */
@@ -53,10 +54,12 @@ class PageRequestEvent extends Event
     public int $arg_count;
     public int $part_count;
 
-    public function __construct(string $path)
+    public function __construct(string $method, string $path)
     {
         parent::__construct();
         global $config;
+
+        $this->method = $method;
 
         // trim starting slashes
         $path = ltrim($path, "/");

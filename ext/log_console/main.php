@@ -20,13 +20,12 @@ class LogConsole extends Extension
 
         if (
             $config->get_bool("log_console_access") &&
-            isset($_SERVER['REQUEST_METHOD']) &&
             isset($_SERVER['REQUEST_URI'])
         ) {
             $this->log(new LogEvent(
                 "access",
                 SCORE_LOG_INFO,
-                "{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}"
+                "{$event->method} {$_SERVER['REQUEST_URI']}"
             ));
         }
 

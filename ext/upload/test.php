@@ -67,7 +67,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
             ]
         ];
 
-        $page = $this->post_page("upload/replace", ["image_id" => $image_id]);
+        $page = $this->post_page("replace/$image_id");
         $this->assert_response(302);
         $this->assertEquals("/test/post/view/$image_id", $page->redirect);
 

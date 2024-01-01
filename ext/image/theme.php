@@ -26,10 +26,8 @@ class ImageIOTheme extends Themelet
      */
     public function get_replace_html(int $image_id): string
     {
-        return (string)SHM_SIMPLE_FORM(
-            "image/replace",
-            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
-            INPUT(["type" => 'submit', "value" => 'Replace']),
-        );
+        $form = SHM_FORM("replace/$image_id", "GET");
+        $form->appendChild(INPUT(["type" => 'submit', "value" => 'Replace']));
+        return (string)$form;
     }
 }
