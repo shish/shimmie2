@@ -12,7 +12,7 @@ class System extends Extension
 
         if ($event->page_matches("system")) {
             $e = send_event(new PageSubNavBuildingEvent("system"));
-            usort($e->links, "Shimmie2\sort_nav_links");
+            usort($e->links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
             $link = $e->links[0]->link;
 
             $page->set_redirect($link->make_link());
