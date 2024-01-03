@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	let blocked_tags = (shm_cookie_get("ui-blocked-tags") || "").split(" ");
 	let blocked_css = blocked_tags
+		.filter(tag => tag.length > 0)
 		.map(tag => tag.replace(/\\/g, "\\\\").replace(/"/g, "\\\""))
 		.map(tag => `.shm-thumb[data-tags~="${tag}"]`).join(", ");
 	if(blocked_css) {
