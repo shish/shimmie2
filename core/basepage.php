@@ -615,7 +615,7 @@ EOD;
 			<a href=\"https://code.shishnet.org/shimmie2/\">Shimmie</a> &copy;
 			<a href=\"https://www.shishnet.org/\">Shish</a> &amp;
 			<a href=\"https://github.com/shish/shimmie2/graphs/contributors\">The Team</a>
-			2007-2023,
+			2007-2024,
 			based on the Danbooru concept.
 			$debug
 			$contact
