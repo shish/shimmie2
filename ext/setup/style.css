@@ -24,3 +24,9 @@
 	margin: 0;
 	padding: 0;
 }
+.setupblock .form {
+	width: 100%;
+}
+.setupblock .form TH {
+	font-weight: normal;
+}

@@ -222,7 +222,7 @@ class SetupBlock extends Block
     {
         $val = $this->config->get_int($name);
 
-        $html = "<input type='number' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;' step='1' />\n";
+        $html = "<input type='number' id='$name' name='_config_$name' value='$val' size='4' step='1' />\n";
         $html .= "<input type='hidden' name='_type_$name' value='int' />\n";
 
         $this->format_option($name, $html, $label, $table_row);
@@ -231,7 +231,7 @@ class SetupBlock extends Block
     public function add_shorthand_int_option(string $name, string $label = null, bool $table_row = false)
     {
         $val = to_shorthand_int($this->config->get_int($name));
-        $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
+        $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
         $this->format_option($name, $html, $label, $table_row);

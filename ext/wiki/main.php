@@ -135,9 +135,9 @@ class Wiki extends Extension
     {
         $sb = $event->panel->create_new_block("Wiki");
         $sb->add_bool_option(WikiConfig::ENABLE_REVISIONS, "Enable wiki revisions: ");
-        $sb->add_longtext_option(WikiConfig::TAG_PAGE_TEMPLATE, "Tag page template: ");
-        $sb->add_text_option(WikiConfig::EMPTY_TAGINFO, "Empty list text: ");
-        $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "Show shortwiki entry when searching for a single tag: ");
+        $sb->add_longtext_option(WikiConfig::TAG_PAGE_TEMPLATE, "<br/>Tag page template: ");
+        $sb->add_text_option(WikiConfig::EMPTY_TAGINFO, "<br/>Empty list text: ");
+        $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "<br/>Show shortwiki entry when searching for a single tag: ");
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
