@@ -12,7 +12,6 @@ class ETServer extends Extension
     {
         global $database, $page, $user;
         if ($event->page_matches("register.php")) {
-            error_log("register.php");
             if (isset($_POST["data"])) {
                 $database->execute(
                     "INSERT INTO registration(data) VALUES(:data)",

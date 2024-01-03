@@ -6,7 +6,10 @@ namespace Shimmie2;
 
 class ImageViewCounterTheme extends Themelet
 {
-    public function view_popular($images)
+    /**
+     * @param Image[] $images
+     */
+    public function view_popular(array $images)
     {
         global $page, $config;
         $pop_images = "";

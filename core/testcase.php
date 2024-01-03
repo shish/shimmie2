@@ -161,6 +161,9 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             }
         }
 
+        /**
+         * Assert that the page contains the given text somewhere in the blocks
+         */
         protected function assert_text(string $text, string $section = null): void
         {
             $this->assertStringContainsString($text, $this->page_to_text($section));
@@ -171,6 +174,9 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertStringNotContainsString($text, $this->page_to_text($section));
         }
 
+        /**
+         * Assert that the page contains the given text somewhere in the binary data
+         */
         protected function assert_content(string $content): void
         {
             global $page;
