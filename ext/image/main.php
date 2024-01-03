@@ -79,7 +79,12 @@ class ImageIO extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $config;
+        global $config, $page;
+
+        $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH, 192);
+        $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT, 192);
+        $page->add_html_header("<style>:root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}</style>");
+
         if ($event->page_matches("image/delete")) {
             global $page, $user;
             if ($user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id']) && $user->check_auth_token()) {
