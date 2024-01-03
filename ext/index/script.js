@@ -1,14 +1,14 @@
 /*jshint bitwise:false, curly:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:false, strict:false, browser:true, jquery:true */
 
 document.addEventListener('DOMContentLoaded', () => {
-	var blocked_tags = (shm_cookie_get("ui-blocked-tags") || "").split(" ");
-	var needs_refresh = false;
-	for(var i=0; i<blocked_tags.length; i++) {
-		var tag = blocked_tags[i];
-		if(tag) {
-			$(".shm-thumb[data-tags~='"+tag+"']").hide();
-			needs_refresh = true;
-		}
+	let blocked_tags = (shm_cookie_get("ui-blocked-tags") || "").split(" ");
+	let blocked_css = blocked_tags
+		.map(tag => tag.replace(/\\/g, "\\\\").replace(/"/g, "\\\""))
+		.map(tag => `.shm-thumb[data-tags~="${tag}"]`).join(", ");
+	if(blocked_css) {
+		let style = document.createElement("style");
+		style.innerHTML = blocked_css + " { display: none; }";
+		document.head.appendChild(style);
 	}
 
 	//Generate a random seed when using order:random
