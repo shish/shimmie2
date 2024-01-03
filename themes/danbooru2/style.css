@@ -223,13 +223,6 @@ color:white;
 -moz-background-inline-policy:continuous;
 -moz-background-origin:padding;
 }
-span.thumb {
-display:inline-block;
-float:left;
-width:220px;
-height:220px;
-text-align:center;
-}
 #pagelist {
 margin-top:32px;
 }

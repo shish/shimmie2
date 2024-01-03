@@ -195,13 +195,12 @@ SECTION>H3 {
 	padding: 8px;
 }
 
+.shm-image-list {
+	justify-items: center;
+	align-items: end;
+}
 .thumb {
-	width: 226px;
-	display: inline-block;
-	zoom: 1; /* ie6 */
-	*display: inline; /* ie6 */
 	text-align: center;
-	margin-bottom: 8px;
 }
 .thumb IMG {
 	border: 1px solid #7EB977;

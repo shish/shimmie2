@@ -175,12 +175,7 @@ ARTICLE TABLE {
 }
 
 .thumb {
-	width: 226px;
-	display: inline-block;
-	zoom: 1; /* ie6 */
-	*display: inline; /* ie6 */
 	text-align: center;
-	margin-bottom: 8px;
 }
 .thumb IMG {
 	border: 1px solid #B89F7C;

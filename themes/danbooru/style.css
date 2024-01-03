@@ -200,13 +200,6 @@ background:blue none repeat scroll 0 0;
 border:1px solid #EEEEEE;
 color:white;
 }
-span.thumb {
-display:inline-block;
-float:left;
-height:220px;
-text-align:center;
-width:220px;
-}
 #pagelist {
 margin-top:32px;
 }

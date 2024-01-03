@@ -210,12 +210,6 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
-.thumb {
-	width: 226px;
-	display: inline-block;
-	text-align: center;
-	margin-bottom: 8px;
-}
 .thumb IMG {
 	border: 1px solid var(--block-border);
 	background: var(--block);
@@ -223,4 +217,3 @@ ARTICLE TABLE {
 	border-radius: 12px;
 	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
-
