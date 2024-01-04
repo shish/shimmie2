@@ -114,9 +114,9 @@ function ask_questions()
 		";
     }
 
+    $db_s = in_array(DatabaseDriverID::SQLITE->value, $drivers) ? '<option value="'. DatabaseDriverID::SQLITE->value .'">SQLite</option>' : "";
     $db_m = in_array(DatabaseDriverID::MYSQL->value, $drivers) ? '<option value="'. DatabaseDriverID::MYSQL->value .'">MySQL</option>' : "";
     $db_p = in_array(DatabaseDriverID::PGSQL->value, $drivers) ? '<option value="'. DatabaseDriverID::PGSQL->value .'">PostgreSQL</option>' : "";
-    $db_s = in_array(DatabaseDriverID::SQLITE->value, $drivers) ? '<option value="'. DatabaseDriverID::SQLITE->value .'">SQLite</option>' : "";
 
     $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
     $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
@@ -132,9 +132,9 @@ function ask_questions()
 			<tr>
 				<th>Type:</th>
 				<td><select name="database_type" id="database_type" onchange="update_qs();">
-					$db_m
+                    $db_s
+                    $db_m
 					$db_p
-					$db_s
 				</select></td>
 			</tr>
 			<tr class="dbconf mysql pgsql">
@@ -161,13 +161,9 @@ function ask_questions()
             return document.querySelectorAll(n);
         }
         function update_qs() {
-            Array.prototype.forEach.call(q('.dbconf'), function(el, i){
-                el.style.display = 'none';
-            });
+            q('.dbconf').forEach(el => el.style.display = 'none');
             let seldb = q("#database_type")[0].value || "none";
-            Array.prototype.forEach.call(q('.'+seldb), function(el, i){
-                el.style.display = null;
-            });
+            q('.'+seldb).forEach(el => el.style.display = null);
         }
         </script>
     </form>
@@ -178,8 +174,9 @@ function ask_questions()
         The username provided must have access to create tables within the database.
     </p>
     <p class="dbconf sqlite">
-        For SQLite the database name will be a filename on disk, relative to
-        where shimmie was installed.
+        SQLite with default settings is fine for tens of users with thousands
+        of images. For thousands of users or millions of images, postgres is
+        recommended.
     </p>
     <p class="dbconf none">
         Drivers can generally be downloaded with your OS package manager;
