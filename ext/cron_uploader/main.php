@@ -464,7 +464,7 @@ class CronUploader extends Extension
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
      */
-    private function add_image(string $tmpname, string $filename, string $tags): DataUploadEvent
+    private function add_image(string $tmpname, string $filename, array $tags): DataUploadEvent
     {
         $event = add_image($tmpname, $filename, $tags, null);
 
@@ -512,7 +512,7 @@ class CronUploader extends Extension
         foreach (new \RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath) && !$this->is_skippable_file($fullpath)) {
                 $relativePath = substr($fullpath, strlen($base));
-                $tags = Tag::implode(path_to_tags($relativePath));
+                $tags = path_to_tags($relativePath);
 
                 yield [
                     0 => $fullpath,
