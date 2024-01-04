@@ -325,6 +325,7 @@ abstract class DataHandlerExtension extends Extension
                 $event->metadata['tags'] = $existing->get_tag_list();
 
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
+                $image->posted = $existing->posted;
                 send_event(new ImageReplaceEvent($event->replace_id, $image));
                 $_id = $event->replace_id;
                 assert(!is_null($_id));

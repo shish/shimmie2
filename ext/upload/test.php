@@ -56,6 +56,9 @@ class UploadTest extends ShimmiePHPUnitTestCase
 
         $this->log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $original_posted = $database->get_one("SELECT posted FROM images WHERE id = $image_id");
+
+        sleep(1); // make sure the timestamp changes (see bug #903)
 
         $_FILES = [
             'data' => [
@@ -70,8 +73,13 @@ class UploadTest extends ShimmiePHPUnitTestCase
         $page = $this->post_page("replace/$image_id");
         $this->assert_response(302);
         $this->assertEquals("/test/post/view/$image_id", $page->redirect);
+        $new_posted = $database->get_one("SELECT posted FROM images WHERE id = $image_id");
 
         $this->assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
+
+        // check that the original timestamp is left alone, despite the
+        // file being replaced (see bug #903)
+        $this->assertEquals($original_posted, $new_posted);
     }
 
     public function testUpload()
