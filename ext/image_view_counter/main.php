@@ -94,19 +94,16 @@ class ImageViewCounter extends Extension
         global $database;
 
         if ($event->page_matches("popular_images")) {
-            $sql = "
+            $popular_ids = $database->get_col("
                 SELECT image_id, count(*) AS total_views
                 FROM image_views, images
                 WHERE image_views.image_id = image_views.image_id
                 AND image_views.image_id = images.id
                 GROUP BY image_views.image_id
                 ORDER BY total_views DESC
-            ";
-            $result = $database->get_col($sql);
-            $images = [];
-            foreach ($result as $id) {
-                $images[] = Image::by_id(intval($id));
-            }
+                LIMIT 100
+            ");
+            $images = Search::get_images($popular_ids);
             $this->theme->view_popular($images);
         }
     }
