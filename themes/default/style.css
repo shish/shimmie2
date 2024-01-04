@@ -217,3 +217,10 @@ ARTICLE TABLE {
 	border-radius: 12px;
 	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
+
+// example of how to apply specific styles to specific thumbs for specific userclasses
+/*
+BODY[data-userclass="anonymous"] .thumb[data-rating="e"] IMG {
+	filter: blur(5px);
+}
+*/

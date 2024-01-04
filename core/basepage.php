@@ -532,15 +532,21 @@ class BasePage
      */
     public function render()
     {
+        global $config, $user;
+
         $head = $this->head_html();
         $body = $this->body_html();
+
+        $body_attrs = [
+            "data-userclass" => $user->class->name,
+        ];
 
         print emptyHTML(
             rawHTML("<!doctype html>"),
             HTML(
                 ["lang" => "en"],
                 HEAD(rawHTML($head)),
-                BODY(rawHTML($body))
+                BODY($body_attrs, rawHTML($body))
             )
         );
     }
