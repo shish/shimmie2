@@ -111,10 +111,10 @@ class Forum extends Extension
                 case "view":
                     $threadID = int_escape($event->get_arg(1));
                     // $pageNumber = int_escape($event->get_arg(2));
-                    list($errors) = $this->sanity_check_viewed_thread($threadID);
+                    $errors = $this->sanity_check_viewed_thread($threadID);
 
-                    if ($errors != null) {
-                        $this->theme->display_error(500, "Error", $errors);
+                    if (count($errors) > 0) {
+                        $this->theme->display_error(500, "Error", implode("<br>", $errors));
                         break;
                     }
 
@@ -133,10 +133,10 @@ class Forum extends Extension
                 case "create":
                     $redirectTo = "forum/index";
                     if (!$user->is_anonymous()) {
-                        list($errors) = $this->sanity_check_new_thread();
+                        $errors = $this->sanity_check_new_thread();
 
-                        if ($errors != null) {
-                            $this->theme->display_error(500, "Error", $errors);
+                        if (count($errors) > 0) {
+                            $this->theme->display_error(500, "Error", implode("<br>", $errors));
                             break;
                         }
 
@@ -174,10 +174,10 @@ class Forum extends Extension
                     $threadID = int_escape($_POST["threadID"]);
                     $total_pages = $this->get_total_pages_for_thread($threadID);
                     if (!$user->is_anonymous()) {
-                        list($errors) = $this->sanity_check_new_post();
+                        $errors = $this->sanity_check_new_post();
 
-                        if ($errors != null) {
-                            $this->theme->display_error(500, "Error", $errors);
+                        if (count($errors) > 0) {
+                            $this->theme->display_error(500, "Error", implode("<br>", $errors));
                             break;
                         }
                         $this->save_new_post($threadID, $user);
@@ -197,63 +197,69 @@ class Forum extends Extension
     private function get_total_pages_for_thread(int $threadID): int
     {
         global $database, $config;
-        $result = $database->get_row("SELECT COUNT(1) AS count FROM forum_posts WHERE thread_id = :thread_id", ['thread_id' => $threadID]);
+        $result = $database->get_row("
+            SELECT COUNT(1) AS count
+            FROM forum_posts
+            WHERE thread_id = :thread_id
+        ", ['thread_id' => $threadID]);
 
         return (int)ceil($result["count"] / $config->get_int("forumPostsPerPage"));
     }
 
     private function sanity_check_new_thread(): array
     {
-        $errors = null;
+        $errors = [];
         if (!array_key_exists("title", $_POST)) {
-            $errors .= "<div id='error'>No title supplied.</div>";
+            $errors[] = "No title supplied.";
         } elseif (strlen($_POST["title"]) == 0) {
-            $errors .= "<div id='error'>You cannot have an empty title.</div>";
-        } elseif (strlen(html_escape($_POST["title"])) > 255) {
-            $errors .= "<div id='error'>Your title is too long.</div>";
+            $errors[] = "You cannot have an empty title.";
+        } elseif (strlen($_POST["title"]) > 255) {
+            $errors[] = "Your title is too long.";
         }
 
         if (!array_key_exists("message", $_POST)) {
-            $errors .= "<div id='error'>No message supplied.</div>";
+            $errors[] = "No message supplied.";
         } elseif (strlen($_POST["message"]) == 0) {
-            $errors .= "<div id='error'>You cannot have an empty message.</div>";
+            $errors[] = "You cannot have an empty message.";
         }
 
-        return [$errors];
+        return $errors;
     }
 
     private function sanity_check_new_post(): array
     {
-        $errors = null;
+        $errors = [];
         if (!array_key_exists("threadID", $_POST)) {
-            $errors = "<div id='error'>No thread ID supplied.</div>";
+            $errors[] = "No thread ID supplied.";
         } elseif (strlen($_POST["threadID"]) == 0) {
-            $errors = "<div id='error'>No thread ID supplied.</div>";
+            $errors[] = "No thread ID supplied.";
         } elseif (is_numeric($_POST["threadID"])) {
             if (!array_key_exists("message", $_POST)) {
-                $errors .= "<div id='error'>No message supplied.</div>";
+                $errors[] = "No message supplied.";
             } elseif (strlen($_POST["message"]) == 0) {
-                $errors .= "<div id='error'>You cannot have an empty message.</div>";
+                $errors[] = "You cannot have an empty message.";
             }
         }
 
-        return [$errors];
+        return $errors;
     }
 
+    /**
+     * @return string[]
+     */
     private function sanity_check_viewed_thread(int $threadID): array
     {
-        $errors = null;
+        $errors = [];
         if (!$this->threadExists($threadID)) {
-            $errors = "<div id='error'>Inexistent thread.</div>";
+            $errors[] = "Inexistent thread.";
         }
-        return [$errors];
+        return $errors;
     }
 
     private function get_thread_title(int $threadID): string
     {
         global $database;
-        $result = $database->get_row("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id' => $threadID]);
-        return $result["title"];
+        return $database->get_one("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id' => $threadID]);
     }
 
     private function show_last_threads(Page $page, PageRequestEvent $event, bool $showAdminOptions = false): void
@@ -312,7 +318,7 @@ class Forum extends Extension
 
     private function save_new_thread(User $user): int
     {
-        $title = html_escape($_POST["title"]);
+        $title = $_POST["title"];
         $sticky = !empty($_POST["sticky"]);
 
         global $database;
@@ -336,7 +342,7 @@ class Forum extends Extension
     {
         global $config;
         $userID = $user->id;
-        $message = html_escape($_POST["message"]);
+        $message = $_POST["message"];
 
         $max_characters = $config->get_int('forumMaxCharsPerPost');
         $message = substr($message, 0, $max_characters);

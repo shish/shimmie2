@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{INPUT, LABEL, SMALL, TEXTAREA, TR, TD, TABLE, TH, TBODY, THEAD, DIV, A, BR, emptyHTML, SUP, rawHTML};
+
 class ForumTheme extends Themelet
 {
     public function display_thread_list(Page $page, $threads, $showAdminOptions, $pageNumber, $totalPages)
@@ -27,29 +31,41 @@ class ForumTheme extends Themelet
     {
         global $config, $user;
         $max_characters = $config->get_int('forumMaxCharsPerPost');
-        $html = make_form(make_link("forum/create"));
 
-
-        if (!is_null($threadTitle)) {
-            $threadTitle = html_escape($threadTitle);
-        }
-
-        if (!is_null($threadText)) {
-            $threadText = html_escape($threadText);
-        }
-
-        $html .= "
-				<table style='width: 500px;'>
-					<tr><td>Title:</td><td><input type='text' name='title' value='$threadTitle'></td></tr>
-					<tr><td>Message:</td><td><textarea id='message' name='message' >$threadText</textarea></td></tr>
-					<tr><td></td><td><small>Max characters alowed: $max_characters.</small></td></tr>";
-        if ($user->can(Permissions::FORUM_ADMIN)) {
-            $html .= "<tr><td colspan='2'><label for='sticky'>Sticky:</label><input name='sticky' id='sticky' type='checkbox' value='Y' /></td></tr>";
-        }
-        $html .= "<tr><td colspan='2'><input type='submit' value='Submit' /></td></tr>
-				</table>
-				</form>
-				";
+        $html = SHM_SIMPLE_FORM(
+            "forum/create",
+            TABLE(
+                ["style" => "width: 500px;"],
+                TR(
+                    TD("Title:"),
+                    TD(INPUT(["type" => "text", "name" => "title", "value" => $threadTitle]))
+                ),
+                TR(
+                    TD("Message:"),
+                    TD(TEXTAREA(
+                        ["id" => "message", "name" => "message"],
+                        $threadText
+                    ))
+                ),
+                TR(
+                    TD(),
+                    TD(SMALL("Max characters allowed: $max_characters."))
+                ),
+                $user->can(Permissions::FORUM_ADMIN) ? TR(
+                    TD(),
+                    TD(
+                        LABEL(["for" => "sticky"], "Sticky:"),
+                        INPUT(["name" => "sticky", "id" => "sticky", "type" => "checkbox", "value" => "Y"])
+                    )
+                ) : null,
+                TR(
+                    TD(
+                        ["colspan" => 2],
+                        INPUT(["type" => "submit", "value" => "Submit"])
+                    )
+                )
+            )
+        );
 
         $blockTitle = "Write a new thread";
         $page->set_title(html_escape($blockTitle));
@@ -65,20 +81,27 @@ class ForumTheme extends Themelet
 
         $max_characters = $config->get_int('forumMaxCharsPerPost');
 
-        $html = make_form(make_link("forum/answer"));
-
-        $html .= '<input type="hidden" name="threadID" value="'.$threadID.'" />';
-
-        $html .= "
-				<table style='width: 500px;'>
-					<tr><td>Message:</td><td><textarea id='message' name='message' ></textarea>
-					<tr><td></td><td><small>Max characters alowed: $max_characters.</small></td></tr>
-					</td></tr>";
-
-        $html .= "<tr><td colspan='2'><input type='submit' value='Submit' /></td></tr>
-				</table>
-				</form>
-				";
+        $html = SHM_SIMPLE_FORM(
+            "forum/answer",
+            INPUT(["type" => "hidden", "name" => "threadID", "value" => $threadID]),
+            TABLE(
+                ["style" => "width: 500px;"],
+                TR(
+                    TD("Message:"),
+                    TD(TEXTAREA(["id" => "message", "name" => "message"]))
+                ),
+                TR(
+                    TD(),
+                    TD(SMALL("Max characters allowed: $max_characters."))
+                ),
+                TR(
+                    TD(
+                        ["colspan" => 2],
+                        INPUT(["type" => "submit", "value" => "Submit"])
+                    )
+                )
+            )
+        );
 
         $blockTitle = "Answer to this thread";
         $page->add_block(new Block($blockTitle, $html, "main", 130));
@@ -94,68 +117,70 @@ class ForumTheme extends Themelet
 
         $current_post = 0;
 
-        $html =
-            "<div id=returnLink>[<a href=".make_link("forum/index/").">Return</a>]</div><br><br>".
-            "<table id='threadPosts' class='zebra'>".
-            "<thead><tr>".
-            "<th id=threadHeadUser>User</th>".
-            "<th>Message</th>".
-            "</tr></thead>";
-
+        $tbody = TBODY();
         foreach ($posts as $post) {
             $current_post++;
-            $message = $post["message"];
-
-            $message = send_event(new TextFormattingEvent($message))->formatted;
-            $message = str_replace('\n\r', '<br>', $message);
-            $message = str_replace('\r\n', '<br>', $message);
-            $message = str_replace('\n', '<br>', $message);
-            $message = str_replace('\r', '<br>', $message);
-
-            $message = stripslashes($message);
-
-            $userLink = "<a href='".make_link("user/".$post["user_name"]."")."'>".$post["user_name"]."</a>";
-
-            $poster = User::by_name($post["user_name"]);
-            $gravatar = $poster->get_avatar_html();
-
-            $rank = "<sup class='user_rank'>{$post["user_class"]}</sup>";
-
-            $postID = $post['id'];
-
-            //if($user->can(Permissions::FORUM_ADMIN)){
-            //$delete_link = "<a href=".make_link("forum/delete/".$threadID."/".$postID).">Delete</a>";
-            //} else {
-            //$delete_link = "";
-            //}
-
-            if ($showAdminOptions) {
-                $delete_link = "<a href=".make_link("forum/delete/".$threadID."/".$postID).">Delete</a>";
-            } else {
-                $delete_link = "";
-            }
 
             $post_number = (($pageNumber - 1) * $posts_per_page) + $current_post;
-            $html .= "<tr >
-			<tr class='postHead'>
-				<td class='forumSupuser'></td>
-				<td class='forumSupmessage'><div class=deleteLink>".$delete_link."</div></td>
-			</tr>
-			<tr class='posBody'>
-				<td class='forumUser'>".$userLink."<br>".$rank."<br>".$gravatar."<br></td>
-				<td class='forumMessage'>
-					<div class=postDate><small>".autodate($post['date'])."</small></div>
-					<div class=postNumber> #".$post_number."</div>
-					<br>
-					<div class=postMessage>".$message."</td>
-			</tr>
-			<tr class='postFoot'>
-				<td class='forumSubuser'></td>
-				<td class='forumSubmessage'></td>
-			</tr>";
+            $tbody->appendChild(
+                emptyHTML(
+                    TR(
+                        ["class" => "postHead"],
+                        TD(["class" => "forumSupuser"]),
+                        TD(
+                            ["class" => "forumSupmessage"],
+                            DIV(
+                                ["class" => "deleteLink"],
+                                $showAdminOptions ? A(["href" => make_link("forum/delete/".$threadID."/".$post['id'])], "Delete") : null
+                            )
+                        )
+                    ),
+                    TR(
+                        ["class" => "posBody"],
+                        TD(
+                            ["class" => "forumUser"],
+                            A(["href" => make_link("user/".$post["user_name"])], $post["user_name"]),
+                            BR(),
+                            SUP(["class" => "user_rank"], $post["user_class"]),
+                            BR(),
+                            rawHTML(User::by_name($post["user_name"])->get_avatar_html()),
+                            BR()
+                        ),
+                        TD(
+                            ["class" => "forumMessage"],
+                            DIV(["class" => "postDate"], SMALL(rawHTML(autodate($post['date'])))),
+                            DIV(["class" => "postNumber"], " #".$post_number),
+                            BR(),
+                            DIV(["class" => "postMessage"], rawHTML(send_event(new TextFormattingEvent($post["message"]))->formatted))
+                        )
+                    ),
+                    TR(
+                        ["class" => "postFoot"],
+                        TD(["class" => "forumSubuser"]),
+                        TD(["class" => "forumSubmessage"])
+                    )
+                )
+            );
         }
 
-        $html .= "</tbody></table>";
+        $html = emptyHTML(
+            DIV(
+                ["id" => "returnLink"],
+                A(["href" => make_link("forum/index/")], "Return")
+            ),
+            BR(),
+            BR(),
+            TABLE(
+                ["id" => "threadPosts", "class" => "zebra"],
+                THEAD(
+                    TR(
+                        TH(["id" => "threadHeadUser"], "User"),
+                        TH("Message")
+                    )
+                ),
+                $tbody
+            )
+        );
 
         $this->display_paginator($page, "forum/view/".$threadID, null, $pageNumber, $totalPages);
 
@@ -164,37 +189,32 @@ class ForumTheme extends Themelet
         $page->add_block(new Block($threadTitle, $html, "main", 20));
     }
 
-
-
     public function add_actions_block(Page $page, $threadID)
     {
-        $html = '<a href="'.make_link("forum/nuke/".$threadID).'">Delete this thread and its posts.</a>';
-
+        $html = A(["href" => make_link("forum/nuke/".$threadID)], "Delete this thread and its posts.");
         $page->add_block(new Block("Admin Actions", $html, "main", 140));
     }
 
-
-
-    private function make_thread_list($threads, $showAdminOptions): string
+    private function make_thread_list($threads, $showAdminOptions): HTMLElement
     {
-        $html = "<table id='threadList' class='zebra'>".
-            "<thead><tr>".
-            "<th>Title</th>".
-            "<th>Author</th>".
-            "<th>Updated</th>".
-            "<th>Responses</th>";
+        global $config;
 
-        if ($showAdminOptions) {
-            $html .= "<th>Actions</th>";
-        }
+        $tbody = TBODY();
+        $html = TABLE(
+            ["id" => "threadList", "class" => "zebra"],
+            THEAD(
+                TR(
+                    TH("Title"),
+                    TH("Author"),
+                    TH("Updated"),
+                    TH("Responses"),
+                    $showAdminOptions ? TH("Actions") : null
+                )
+            ),
+            $tbody
+        );
 
-        $html .= "</tr></thead><tbody>";
-
-        $current_post = 0;
         foreach ($threads as $thread) {
-            $oe = ($current_post++ % 2 == 0) ? "even" : "odd";
-
-            global $config;
             $titleSubString = $config->get_int('forumTitleSubString');
 
             if ($titleSubString < strlen($thread["title"])) {
@@ -204,26 +224,22 @@ class ForumTheme extends Themelet
                 $title = $thread["title"];
             }
 
-            if (bool_escape($thread["sticky"])) {
-                $sticky = "Sticky: ";
-            } else {
-                $sticky = "";
-            }
-
-            $html .= "<tr class='$oe'>".
-                '<td class="left">'.$sticky.'<a href="'.make_link("forum/view/".$thread["id"]).'">'.$title."</a></td>".
-                '<td><a href="'.make_link("user/".$thread["user_name"]).'">'.$thread["user_name"]."</a></td>".
-                "<td>".autodate($thread["uptodate"])."</td>".
-                "<td>".$thread["response_count"]."</td>";
-
-            if ($showAdminOptions) {
-                $html .= '<td><a href="'.make_link("forum/nuke/".$thread["id"]).'" title="Delete '.$title.'">Delete</a></td>';
-            }
-
-            $html .= "</tr>";
+            $tbody->appendChild(
+                TR(
+                    TD(
+                        ["class" => "left"],
+                        bool_escape($thread["sticky"]) ? "Sticky: " : "",
+                        A(["href" => make_link("forum/view/".$thread["id"])], $title)
+                    ),
+                    TD(
+                        A(["href" => make_link("user/".$thread["user_name"])], $thread["user_name"])
+                    ),
+                    TD(rawHTML(autodate($thread["uptodate"]))),
+                    TD($thread["response_count"]),
+                    $showAdminOptions ? TD(A(["href" => make_link("forum/nuke/".$thread["id"])], "Delete")) : null
+                )
+            );
         }
-
-        $html .= "</tbody></table>";
 
         return $html;
     }
