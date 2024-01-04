@@ -85,25 +85,7 @@ jobs:
         extensions: mbstring
 
     - name: Set up database
-      run: |
-        mkdir -p data/config
-        if [[ "${{ matrix.database }}" == "pgsql" ]]; then
-            sudo systemctl start postgresql ;
-            psql --version ;
-            sudo -u postgres psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
-            sudo -u postgres psql -c "CREATE USER shimmie WITH PASSWORD 'shimmie';" -U postgres ;
-            sudo -u postgres psql -c "CREATE DATABASE shimmie WITH OWNER shimmie;" -U postgres ;
-        fi
-        if [[ "${{ matrix.database }}" == "mysql" ]]; then
-            sudo systemctl start mysql ;
-            mysql --version ;
-            mysql -e "SET GLOBAL general_log = 'ON';" -uroot -proot ;
-            mysql -e "CREATE DATABASE shimmie;" -uroot -proot ;
-        fi
-        if [[ "${{ matrix.database }}" == "sqlite" ]]; then
-            sudo apt update && sudo apt-get install -y sqlite3 ;
-            sqlite3 --version ;
-        fi
+      run: ./tests/setup-db.sh "${{ matrix.database }}"
 
     - name: Check versions
       run: php -v && composer -V
@@ -116,15 +98,6 @@ jobs:
 
     - name: Run test suite
       run: |
-        if [[ "${{ matrix.database }}" == "pgsql" ]]; then
-            export TEST_DSN="pgsql:user=shimmie;password=shimmie;host=127.0.0.1;dbname=shimmie"
-        fi
-        if [[ "${{ matrix.database }}" == "mysql" ]]; then
-            export TEST_DSN="mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie"
-        fi
-        if [[ "${{ matrix.database }}" == "sqlite" ]]; then
-            export TEST_DSN="sqlite:data/shimmie.sqlite"
-        fi
         if [[ "${{ matrix.php }}" == "8.3" ]]; then
             vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
         else
