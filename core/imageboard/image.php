@@ -217,7 +217,7 @@ class Image
         }
 
         if (is_null($this->id)) {
-            $database->execute(
+            $this->id = $database->get_one(
                 "INSERT INTO images(
 					owner_id, owner_ip,
                     filename, filesize,
@@ -231,7 +231,8 @@ class Image
 					:hash, :mime, :ext,
 				    0, 0,
 				    :posted, :source
-				)",
+				)
+                RETURNING id",
                 [
                     "owner_id" => $user->id, "owner_ip" => get_real_ip(),
                     "filename" => $cut_name, "filesize" => $this->filesize,
@@ -240,7 +241,6 @@ class Image
                     "posted" => $this->posted, "source" => $this->source
                 ]
             );
-            $this->id = $database->get_last_insert_id('images_id_seq');
         } else {
             $database->execute(
                 "UPDATE images SET ".
