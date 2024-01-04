@@ -17,7 +17,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8000],
 
-	// Uncomment the next line to run commands after the container is created.
+	"updateContentCommand": "composer install",
 	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
 	"containerEnv": {
 		"UID": "2000",
