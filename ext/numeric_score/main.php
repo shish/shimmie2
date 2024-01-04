@@ -224,12 +224,8 @@ class NumericScore extends Extension
 
             //filter images by score != 0 + date > limit to max images on one page > order from highest to lowest score
 
-            $result = $database->get_col($sql, $args);
-            $images = [];
-            foreach ($result as $id) {
-                $images[] = Image::by_id((int)$id);
-            }
-
+            $ids = $database->get_col($sql, $args);
+            $images = Search::get_images($ids);
             $this->theme->view_popular($images, $dte);
         }
     }
