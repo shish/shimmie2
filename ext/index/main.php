@@ -188,11 +188,18 @@ class Index extends Extension
             $cmp = preg_replace('/^:/', '=', $matches[1]);
             $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
             $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
-        } elseif (preg_match("/^(filesize|id)([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+[kmg]?b?)$/i", $event->term, $matches)) {
-            $col = $matches[1];
-            $cmp = ltrim($matches[2], ":") ?: "=";
-            $val = parse_shorthand_int($matches[3]);
-            $event->add_querylet(new Querylet("images.$col $cmp :val{$event->id}", ["val{$event->id}" => $val]));
+        } elseif (preg_match("/^filesize([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+[kmg]?b?)$/i", $event->term, $matches)) {
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $val = parse_shorthand_int($matches[2]);
+            $event->add_querylet(new Querylet("images.filesize $cmp :val{$event->id}", ["val{$event->id}" => $val]));
+        } elseif (preg_match("/^id=([\d,]+)$/i", $event->term, $matches)) {
+            $val = array_map(fn ($x) => int_escape($x), explode(",", $matches[1]));
+            $set = implode(",", $val);
+            $event->add_querylet(new Querylet("images.id IN ($set)"));
+        } elseif (preg_match("/^id([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $val = int_escape($matches[2]);
+            $event->add_querylet(new Querylet("images.id $cmp :val{$event->id}", ["val{$event->id}" => $val]));
         } elseif (preg_match("/^(hash|md5)[=|:]([0-9a-fA-F]*)$/i", $event->term, $matches)) {
             $hash = strtolower($matches[2]);
             $event->add_querylet(new Querylet('images.hash = :hash', ["hash" => $hash]));
