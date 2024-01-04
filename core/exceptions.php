@@ -9,15 +9,13 @@ namespace Shimmie2;
  */
 class SCoreException extends \RuntimeException
 {
-    public ?string $query;
     public string $error;
     public int $http_code = 500;
 
-    public function __construct(string $msg, ?string $query = null)
+    public function __construct(string $msg)
     {
         parent::__construct($msg);
         $this->error = $msg;
-        $this->query = $query;
     }
 }
 

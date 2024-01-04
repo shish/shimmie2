@@ -627,8 +627,6 @@ function _fatal_error(\Exception $e): void
     $version = VERSION;
     $message = $e->getMessage();
     $phpver = phpversion();
-    $query = is_subclass_of($e, "Shimmie2\SCoreException") ? $e->query : null;
-    $code = is_subclass_of($e, "Shimmie2\SCoreException") ? $e->http_code : 500;
 
     //$hash = exec("git rev-parse HEAD");
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
@@ -646,13 +644,21 @@ function _fatal_error(\Exception $e): void
 
         print("Message: $message\n");
 
-        if ($query) {
-            print("Query:   {$query}\n");
+        if (is_a($e, DatabaseException::class)) {
+            print("Query:   {$e->query}\n");
+            print("Args:    ".var_export($e->args, true)."\n");
         }
 
         print("Version: $version (on $phpver)\n");
     } else {
-        $q = $query ? "" : "<p><b>Query:</b> " . html_escape($query);
+        $query = is_a($e, DatabaseException::class) ? $e->query : null;
+        $code = is_a($e, SCoreException::class) ? $e->http_code : 500;
+
+        $q = "";
+        if(is_a($e, DatabaseException::class)) {
+            $q .= "<p><b>Query:</b> " . html_escape($query);
+            $q .= "<p><b>Args:</b> " . html_escape(var_export($e->args, true));
+        }
         if ($code >= 500) {
             error_log("Shimmie Error: $message (Query: $query)\n{$e->getTraceAsString()}");
         }

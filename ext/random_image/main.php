@@ -25,10 +25,7 @@ class RandomImage extends Extension
             }
             $image = Image::by_random($search_terms);
             if (!$image) {
-                throw new SCoreException(
-                    "Couldn't find any posts randomly",
-                    Tag::implode($search_terms)
-                );
+                throw new SCoreException("Couldn't find any posts randomly");
             }
 
             if ($action === "download") {

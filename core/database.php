@@ -7,11 +7,27 @@ namespace Shimmie2;
 use FFSPHP\PDO;
 use FFSPHP\PDOStatement;
 
+require_once __DIR__ . '/exceptions.php';
+
 enum DatabaseDriverID: string
 {
     case MYSQL = "mysql";
     case PGSQL = "pgsql";
     case SQLITE = "sqlite";
+}
+
+class DatabaseException extends SCoreException
+{
+    public string $query;
+    public array $args;
+
+    public function __construct(string $msg, string $query, array $args)
+    {
+        parent::__construct($msg);
+        $this->error = $msg;
+        $this->query = $query;
+        $this->args = $args;
+    }
 }
 
 /**
@@ -158,18 +174,13 @@ class Database
     public function _execute(string $query, array $args = []): PDOStatement
     {
         try {
-            $ret = $this->get_db()->execute(
+            return $this->get_db()->execute(
                 "-- " . str_replace("%2F", "/", urlencode($_GET['q'] ?? '')). "\n" .
                 $query,
                 $args
             );
-            if ($ret === false) {
-                throw new SCoreException("Query failed", $query);
-            }
-            /** @noinspection PhpIncompatibleReturnTypeInspection */
-            return $ret;
         } catch (\PDOException $pdoe) {
-            throw new SCoreException($pdoe->getMessage(), $query);
+            throw new DatabaseException($pdoe->getMessage(), $query, $args);
         }
     }
 

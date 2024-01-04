@@ -44,7 +44,7 @@ class TagSetException extends UserErrorException
 
     public function __construct(string $msg, ?string $redirect = null)
     {
-        parent::__construct($msg, null);
+        parent::__construct($msg);
         $this->redirect = $redirect;
     }
 }
