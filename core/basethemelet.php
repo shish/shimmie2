@@ -79,16 +79,21 @@ class BaseThemelet
             }
         }
 
+        $attrs = [
+            "href" => $view_link,
+            "class" => "thumb shm-thumb shm-thumb-link $custom_classes",
+            "data-tags" => $tags,
+            "data-height" => $image->height,
+            "data-width" => $image->width,
+            "data-mime" => $image->get_mime(),
+            "data-post-id" => $id,
+        ];
+        if(Extension::is_enabled(RatingsInfo::KEY)) {
+            $attrs["data-rating"] = $image->rating;
+        }
+
         return A(
-            [
-                "href" => $view_link,
-                "class" => "thumb shm-thumb shm-thumb-link $custom_classes",
-                "data-tags" => $tags,
-                "data-height" => $image->height,
-                "data-width" => $image->width,
-                "data-mime" => $image->get_mime(),
-                "data-post-id" => $id,
-            ],
+            $attrs,
             IMG(
                 [
                     "id" => "thumb_$id",
