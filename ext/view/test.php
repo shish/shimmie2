@@ -66,6 +66,24 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(404, $page->code);
     }
 
+    public function testPrevNextDisabledWhenOrdered()
+    {
+        $this->log_in_as_user();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+
+        $this->get_page("post/view/$image_id");
+        $this->assert_text("Prev");
+
+        $this->get_page("post/view/$image_id", ["search" => "test"]);
+        $this->assert_text("Prev");
+
+        $this->get_page("post/view/$image_id", ["search" => "cake_order:_the_cakening"]);
+        $this->assert_text("Prev");
+
+        $this->get_page("post/view/$image_id", ["search" => "order:score"]);
+        $this->assert_no_text("Prev");
+    }
+
     public function testView404()
     {
         $this->log_in_as_user();
