@@ -14,7 +14,7 @@ namespace Shimmie2;
  * @param string $base
  * @return array
  */
-function add_dir(string $base): array
+function add_dir(string $base, ?array $extra_tags = []): array
 {
     $results = [];
 
@@ -22,8 +22,8 @@ function add_dir(string $base): array
         $short_path = str_replace($base, "", $full_path);
         $filename = basename($full_path);
 
-        $tags = path_to_tags($short_path);
-        $result = "$short_path (".str_replace(" ", ", ", $tags).")... ";
+        $tags = array_merge(path_to_tags($short_path), $extra_tags);
+        $result = "$short_path (".implode(", ", $tags).")... ";
         try {
             add_image($full_path, $filename, $tags);
             $result .= "ok";
@@ -39,11 +39,11 @@ function add_dir(string $base): array
 /**
  * Sends a DataUploadEvent for a file.
  */
-function add_image(string $tmpname, string $filename, string $tags, ?string $source = null): DataUploadEvent
+function add_image(string $tmpname, string $filename, array $tags, ?string $source = null): DataUploadEvent
 {
     return send_event(new DataUploadEvent($tmpname, [
         'filename' => pathinfo($filename, PATHINFO_BASENAME),
-        'tags' => Tag::explode($tags),
+        'tags' => $tags,
         'source' => $source,
     ]));
 }

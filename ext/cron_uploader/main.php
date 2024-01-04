@@ -512,7 +512,7 @@ class CronUploader extends Extension
         foreach (new \RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath) && !$this->is_skippable_file($fullpath)) {
                 $relativePath = substr($fullpath, strlen($base));
-                $tags = path_to_tags($relativePath);
+                $tags = Tag::implode(path_to_tags($relativePath));
 
                 yield [
                     0 => $fullpath,

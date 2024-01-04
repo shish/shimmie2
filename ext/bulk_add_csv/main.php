@@ -48,7 +48,7 @@ class BulkAddCSV extends Extension
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
      */
-    private function add_image(string $tmpname, string $filename, string $tags, string $source, string $rating, string $thumbfile)
+    private function add_image(string $tmpname, string $filename, array $tags, string $source, string $rating, string $thumbfile)
     {
         $event = add_image($tmpname, $filename, $tags, $source);
         if ($event->image_id == -1) {
@@ -91,12 +91,12 @@ class BulkAddCSV extends Extension
                 }
             }
             $fullpath = $csvdata[0];
-            $tags = trim($csvdata[1]);
+            $tags = Tag::explode(trim($csvdata[1]));
             $source = $csvdata[2];
             $rating = $csvdata[3];
             $thumbfile = $csvdata[4];
             $shortpath = pathinfo($fullpath, PATHINFO_BASENAME);
-            $list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
+            $list .= "<br>".html_escape("$shortpath (".implode(", ", $tags).")... ");
             if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
                 try {
                     $this->add_image($fullpath, $shortpath, $tags, $source, $rating, $thumbfile);

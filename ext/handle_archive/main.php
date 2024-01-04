@@ -34,7 +34,7 @@ class ArchiveFileHandler extends DataHandlerExtension
             exec($cmd);
             if (file_exists($tmpdir)) {
                 try {
-                    $results = add_dir($tmpdir);
+                    $results = add_dir($tmpdir, $event->metadata['tags']);
                     if (count($results) > 0) {
                         $page->flash("Adding files" . implode("\n", $results));
                     }

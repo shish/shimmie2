@@ -346,7 +346,10 @@ function fetch_url(string $url, string $mfile): ?array
     return null;
 }
 
-function path_to_tags(string $path): string
+/**
+ * @return string[]
+ */
+function path_to_tags(string $path): array
 {
     $matches = [];
     $tags = [];
@@ -390,7 +393,7 @@ function path_to_tags(string $path): string
         $category = $category_to_inherit;
     }
 
-    return implode(" ", $tags);
+    return $tags;
 }
 
 function get_dir_contents(string $dir): array

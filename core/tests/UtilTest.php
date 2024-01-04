@@ -126,39 +126,39 @@ class UtilTest extends TestCase
     public function test_path_to_tags()
     {
         $this->assertEquals(
-            "",
+            [],
             path_to_tags("nope.jpg")
         );
         $this->assertEquals(
-            "",
+            [],
             path_to_tags("\\")
         );
         $this->assertEquals(
-            "",
+            [],
             path_to_tags("/")
         );
         $this->assertEquals(
-            "",
+            [],
             path_to_tags("C:\\")
         );
         $this->assertEquals(
-            "test tag",
+            ["test", "tag"],
             path_to_tags("123 - test tag.jpg")
         );
         $this->assertEquals(
-            "foo bar",
+            ["foo", "bar"],
             path_to_tags("/foo/bar/baz.jpg")
         );
         $this->assertEquals(
-            "cake pie foo bar",
+            ["cake", "pie", "foo", "bar"],
             path_to_tags("/foo/bar/123 - cake pie.jpg")
         );
         $this->assertEquals(
-            "bacon lemon",
+            ["bacon", "lemon"],
             path_to_tags("\\bacon\\lemon\\baz.jpg")
         );
         $this->assertEquals(
-            "category:tag",
+            ["category:tag"],
             path_to_tags("/category:/tag/baz.jpg")
         );
     }
