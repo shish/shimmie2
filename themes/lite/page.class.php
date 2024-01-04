@@ -17,7 +17,7 @@ use MicroHTML\HTMLElement;
 
 class Page extends BasePage
 {
-    public function render()
+    public function body_html(): string
     {
         global $config;
 
@@ -82,14 +82,9 @@ class Page extends BasePage
             $main_block_html = "<article>$flash_html{$main_block_html}</article>";
         }
 
-        $head_html = $this->head_html();
         $footer_html = $this->footer_html();
 
-        print <<<EOD
-<!doctype html>
-<html lang="en">
-    $head_html
-	<body>
+        return <<<EOD
 		<header>
 			$menu
 			$custom_sublinks
@@ -100,8 +95,6 @@ class Page extends BasePage
 		<footer>
 		    $footer_html
 		</footer>
-	</body>
-</html>
 EOD;
     } /* end of function display_page() */
 

@@ -6,63 +6,15 @@ namespace Shimmie2;
 
 class Page extends BasePage
 {
-    public function render()
+    public function head_html(): string
     {
         global $config, $user;
 
         $theme_name = $config->get_string('theme', 'default');
-        $data_href = get_base_href();
         $header_html = $this->get_all_html_headers();
+        $data_href = get_base_href();
 
-        $left_block_html = "";
-        $right_block_html = "";
-        $main_block_html = "";
-        $head_block_html = "";
-        $sub_block_html = "";
-
-        $main_headings = 0;
-        foreach ($this->blocks as $block) {
-            if ($block->section == "main" && !empty($block->header) && $block->header != "Comments") {
-                $main_headings++;
-            }
-        }
-
-        foreach ($this->blocks as $block) {
-            switch ($block->section) {
-                case "left":
-                    $left_block_html .= $block->get_html(true);
-                    break;
-                case "right":
-                    $right_block_html .= $block->get_html(true);
-                    break;
-                case "head":
-                    $head_block_html .= "<td class='headcol'>".$block->get_html(false)."</td>";
-                    break;
-                case "main":
-                    if ($main_headings == 1) {
-                        $block->header = null;
-                    }
-                    $main_block_html .= $block->get_html(false);
-                    break;
-                case "subheading":
-                    $sub_block_html .= $block->body; // $block->get_html(true);
-                    break;
-                default:
-                    print "<p>error: {$block->header} using an unknown section ({$block->section})";
-                    break;
-            }
-        }
-
-        $query = !empty(CustomIndexTheme::$_search_query) ? html_escape(Tag::implode(CustomIndexTheme::$_search_query)) : "";
-        assert(!is_null($query));  # used in header.inc, do not remove :P
-        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
-        $generated = autodate(date('c'));
-        $footer_html = $this->footer_html();
-
-        print <<<EOD
-<!DOCTYPE html>
-<html lang="en">
-	<head>
+        return <<<EOD
 		<title>{$this->title}</title>
 		<meta name="description" content="Rule 34, if it exists there is porn of it."/>
 		<meta name="viewport" content="width=1024">
@@ -111,16 +63,63 @@ $header_html
 		}
 		// setTimeout(logTimes, 3000);
 		</script>
-	</head>
+EOD;
+    }
 
-	<body>
+    public function body_html(): string
+    {
+        global $config, $user;
+
+        $left_block_html = "";
+        $right_block_html = "";
+        $main_block_html = "";
+        $head_block_html = "";
+        $sub_block_html = "";
+
+        $main_headings = 0;
+        foreach ($this->blocks as $block) {
+            if ($block->section == "main" && !empty($block->header) && $block->header != "Comments") {
+                $main_headings++;
+            }
+        }
+
+        foreach ($this->blocks as $block) {
+            switch ($block->section) {
+                case "left":
+                    $left_block_html .= $block->get_html(true);
+                    break;
+                case "right":
+                    $right_block_html .= $block->get_html(true);
+                    break;
+                case "head":
+                    $head_block_html .= "<td class='headcol'>".$block->get_html(false)."</td>";
+                    break;
+                case "main":
+                    if ($main_headings == 1) {
+                        $block->header = null;
+                    }
+                    $main_block_html .= $block->get_html(false);
+                    break;
+                case "subheading":
+                    $sub_block_html .= $block->body; // $block->get_html(true);
+                    break;
+                default:
+                    print "<p>error: {$block->header} using an unknown section ({$block->section})";
+                    break;
+            }
+        }
+
+        $query = !empty(CustomIndexTheme::$_search_query) ? html_escape(Tag::implode(CustomIndexTheme::$_search_query)) : "";
+        assert(!is_null($query));  # used in header.inc, do not remove :P
+        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
+        $generated = autodate(date('c'));
+        $footer_html = $this->footer_html();
+
+        $header_inc = file_get_contents("themes/rule34v2/header.inc");
+        return <<<EOD
 <table id="header" width="100%">
 	<tr>
-		<td>
-EOD;
-        include "themes/rule34v2/header.inc";
-        print <<<EOD
-		</td>
+		<td>$header_inc</td>
 		$head_block_html
 	</tr>
 </table>
@@ -158,8 +157,6 @@ Thank you!
 		<!-- BEGIN EroAdvertising ADSPACE CODE -->
 <!--<script type="text/javascript" language="javascript" charset="utf-8" src="https://adspaces.ero-advertising.com/adspace/158168.js"></script>-->
 <!-- END EroAdvertising ADSPACE CODE -->
-	</body>
-</html>
 EOD;
     }
 }

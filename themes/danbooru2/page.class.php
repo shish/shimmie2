@@ -51,7 +51,7 @@ Tips
 
 class Page extends BasePage
 {
-    public function render()
+    public function body_html(): string
     {
         global $config;
 
@@ -124,14 +124,9 @@ class Page extends BasePage
         }
 
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
-        $head_html = $this->head_html();
         $footer_html = $this->footer_html();
 
-        print <<<EOD
-<!doctype html>
-<html lang="en">
-	$head_html
-	<body>
+        return <<<EOD
 		<header>
 			$title_link
 			<ul id="navbar" class="flat-list">
@@ -149,8 +144,6 @@ class Page extends BasePage
 			$main_block_html
 		</article>
 		<footer><div>$footer_html</div></footer>
-	</body>
-</html>
 EOD;
     }
 

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class Page extends BasePage
 {
-    public function render()
+    public function body_html(): string
     {
         $left_block_html = "";
         $main_block_html = "";
@@ -44,14 +44,9 @@ class Page extends BasePage
         }
 
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
-        $head_html = $this->head_html();
         $footer_html = $this->footer_html();
 
-        print <<<EOD
-<!doctype html>
-<html lang="en">
-    $head_html
-	<body>
+        return <<<EOD
 		<header>
 			<h1>{$this->heading}</h1>
 			$subheading
@@ -66,8 +61,6 @@ class Page extends BasePage
 			<hr>
 			$footer_html
 		</footer>
-	</body>
-</html>
 EOD;
     }
 }

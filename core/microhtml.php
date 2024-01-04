@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{emptyHTML};
 use function MicroHTML\A;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
@@ -16,12 +16,7 @@ use function MicroHTML\PRE;
 use function MicroHTML\P;
 use function MicroHTML\SELECT;
 use function MicroHTML\SPAN;
-use function MicroHTML\TABLE;
-use function MicroHTML\THEAD;
-use function MicroHTML\TFOOT;
-use function MicroHTML\TR;
-use function MicroHTML\TH;
-use function MicroHTML\TD;
+use function MicroHTML\{TABLE,THEAD,TFOOT,TR,TH,TD};
 
 function SHM_FORM(string $target, string $method = "POST", bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): HTMLElement
 {

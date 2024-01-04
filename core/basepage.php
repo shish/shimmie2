@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\{emptyHTML,rawHTML,HTML,HEAD,BODY};
+
 require_once "core/event.php";
 
 enum PageMode: string
@@ -530,16 +532,17 @@ class BasePage
      */
     public function render()
     {
-        $head_html = $this->head_html();
-        $body_html = $this->body_html();
+        $head = $this->head_html();
+        $body = $this->body_html();
 
-        print <<<EOD
-<!doctype html>
-<html lang="en">
-    $head_html
-    $body_html
-</html>
-EOD;
+        print emptyHTML(
+            rawHTML("<!doctype html>"),
+            HTML(
+                ["lang" => "en"],
+                HEAD(rawHTML($head)),
+                BODY(rawHTML($body))
+            )
+        );
     }
 
     protected function head_html(): string
@@ -547,10 +550,8 @@ EOD;
         $html_header_html = $this->get_all_html_headers();
 
         return "
-        <head>
-		    <title>{$this->title}</title>
-            $html_header_html
-	    </head>
+        <title>{$this->title}</title>
+        $html_header_html
         ";
     }
 
@@ -585,22 +586,20 @@ EOD;
         $footer_html = $this->footer_html();
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
         return "
-            <body>
-                <header>
-                    <h1$wrapper>{$this->heading}</h1>
-                    $sub_block_html
-                </header>
-                <nav>
-                    $left_block_html
-                </nav>
-                <article>
-                    $flash_html
-                    $main_block_html
-                </article>
-                <footer>
-                    $footer_html
-                </footer>
-            </body>
+            <header>
+                <h1$wrapper>{$this->heading}</h1>
+                $sub_block_html
+            </header>
+            <nav>
+                $left_block_html
+            </nav>
+            <article>
+                $flash_html
+                $main_block_html
+            </article>
+            <footer>
+                $footer_html
+            </footer>
         ";
     }
 
