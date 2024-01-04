@@ -487,4 +487,19 @@ class SearchTest extends ShimmiePHPUnitTestCase
             path: ["general", "some_positives"],
         );
     }
+
+    /**
+     * get_images
+     */
+    #[Depends('testUpload')]
+    public function test_get_images()
+    {
+        $image_ids = $this->testUpload();
+
+        $res = Search::get_images($image_ids);
+        $this->assertGreaterThan($res[0]->id, $res[1]->id);
+
+        $res = Search::get_images(array_reverse($image_ids));
+        $this->assertLessThan($res[0]->id, $res[1]->id);
+    }
 }

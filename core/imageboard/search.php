@@ -104,6 +104,26 @@ class Search
         }
     }
 
+    /**
+     * Get a specific set of images, in the order that the set specifies,
+     * with all the search stuff (rating filters etc) taken into account
+     *
+     * @param int[] $ids
+     * @return Image[]
+     */
+    public static function get_images(array $ids): array
+    {
+        $visible_images = [];
+        foreach(Search::find_images(tags: ["id=" . implode(",", $ids)]) as $image) {
+            $visible_images[$image->id] = $image;
+        }
+        $visible_ids = array_keys($visible_images);
+
+        $visible_popular_ids = array_filter($ids, fn ($id) => in_array($id, $visible_ids));
+        $images = array_map(fn ($id) => $visible_images[$id], $visible_popular_ids);
+        return $images;
+    }
+
     /*
      * Image-related utility functions
      */
