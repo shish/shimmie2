@@ -54,7 +54,7 @@ function contact_link(): ?string
 function is_https_enabled(): bool
 {
     // check forwarded protocol
-    if (REVERSE_PROXY_X_HEADERS && !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+    if (is_trusted_proxy() && !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
         $_SERVER['HTTPS'] = 'on';
     }
     return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
@@ -148,25 +148,37 @@ function check_im_version(): int
     return (empty($convert_check) ? 0 : 1);
 }
 
-/**
- * Get request IP
- */
-
-function get_remote_addr()
+function is_trusted_proxy(): bool
 {
-    return $_SERVER['REMOTE_ADDR'];
+    $ra = $_SERVER['REMOTE_ADDR'] ?? "0.0.0.0";
+    foreach(TRUSTED_PROXIES as $proxy) {
+        if(ip_in_range($ra, $proxy)) {
+            return true;
+        }
+    }
+    return false;
 }
+
 /**
  * Get real IP if behind a reverse proxy
  */
-
 function get_real_ip()
 {
-    $ip = get_remote_addr();
-    if (REVERSE_PROXY_X_HEADERS && isset($_SERVER['HTTP_X_REAL_IP'])) {
-        $ip = $_SERVER['HTTP_X_REAL_IP'];
-        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-            $ip = "0.0.0.0";
+    $ip = $_SERVER['REMOTE_ADDR'];
+
+    if(is_trusted_proxy()) {
+        if (isset($_SERVER['HTTP_X_REAL_IP'])) {
+            if(filter_var($ip, FILTER_VALIDATE_IP)) {
+                $ip = $_SERVER['HTTP_X_REAL_IP'];
+            }
+        }
+
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $last_ip = $ips[count($ips) - 1];
+            if(filter_var($last_ip, FILTER_VALIDATE_IP)) {
+                $ip = $last_ip;
+            }
         }
     }
 

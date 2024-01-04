@@ -37,4 +37,4 @@ _d("EXTRA_EXTS", "");           // string   optional extra extensions
 _d("BASE_HREF", null);          // string   force a specific base URL (default is auto-detect)
 _d("TRACE_FILE", null);         // string   file to log performance data into
 _d("TRACE_THRESHOLD", 0.0);     // float    log pages which take more time than this many seconds
-_d("REVERSE_PROXY_X_HEADERS", false);     // boolean  get request IPs from "X-Real-IP" and protocol from "X-Forwarded-Proto" HTTP headers
+_d("TRUSTED_PROXIES", []);      // array    trust "X-Real-IP" / "X-Forwarded-For" / "X-Forwarded-Proto" headers from these IP ranges
