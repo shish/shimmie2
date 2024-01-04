@@ -15,6 +15,7 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=main)
 [![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/#shimmie:matrix.org)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/shish/shimmie2?quickstart=1)
 
 # Documentation
 
