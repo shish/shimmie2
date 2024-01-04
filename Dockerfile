@@ -22,6 +22,7 @@ RUN apt update && \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-curl \
     curl imagemagick zip unzip unit unit-php gettext && \
     rm -rf /var/lib/apt/lists/*
+RUN ln -sf /dev/stderr /var/log/unit.log
 
 # Install dev packages
 # Things which are only needed during development - Composer has 100MB of
