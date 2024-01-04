@@ -226,4 +226,13 @@ class PolyfillsTest extends TestCase
             stringer(["foo" => "bar", "baz" => [1,2,3], "qux" => ["a" => "b"]])
         );
     }
+
+    public function test_ip_in_range()
+    {
+        $this->assertTrue(ip_in_range("1.2.3.4", "1.2.0.0/16"));
+        $this->assertFalse(ip_in_range("4.3.2.1", "1.2.0.0/16"));
+
+        // A single IP should be interpreted as a /32
+        $this->assertTrue(ip_in_range("1.2.3.4", "1.2.3.4"));
+    }
 }

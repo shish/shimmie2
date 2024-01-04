@@ -36,7 +36,11 @@ function array_iunique(array $array): array
  */
 function ip_in_range(string $IP, string $CIDR): bool
 {
-    list($net, $mask) = explode("/", $CIDR);
+    $parts = explode("/", $CIDR);
+    if(count($parts) == 1) {
+        $parts[1] = "32";
+    }
+    list($net, $mask) = $parts;
 
     $ip_net = ip2long($net);
     $ip_mask = ~((1 << (32 - (int)$mask)) - 1);
