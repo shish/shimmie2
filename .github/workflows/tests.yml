@@ -55,6 +55,44 @@ jobs:
         configuration: tests/phpstan.neon
         memory_limit: 1G
 
+  upgrade:
+    name: Upgrade from 2.9 ${{ matrix.database }}
+    strategy:
+      matrix:
+        php: ['8.3']
+        database: ['pgsql', 'mysql', 'sqlite']
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        # is there a way to programatically get "the most recent
+        # minor version of the previous major version"?
+        ref: v2.9.3
+        fetch-depth: 0
+    - name: Set Up Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          vendor
+        key: vendor-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+    - name: Set up PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: ${{ matrix.php }}
+    - name: Set up database
+      run: ./tests/setup-db.sh "${{ matrix.database }}"
+    - name: Install PHP dependencies
+      run: composer install --no-progress
+    - name: Check old version works
+      run: php index.php get-page / | grep "https://code.shishnet.org/shimmie2/"
+    - name: Upgrade
+      run: |
+        git checkout {{ github.ref }}
+        composer install --no-progress
+    - name: Check new version works
+      run: php index.php get-page / | grep "https://code.shishnet.org/shimmie2/"
+
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
@@ -62,7 +100,6 @@ jobs:
       matrix:
         php: ['8.1', '8.2', '8.3']
         database: ['pgsql', 'mysql', 'sqlite']
-
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -94,7 +131,7 @@ jobs:
       run: composer validate
 
     - name: Install PHP dependencies
-      run: composer update && composer install --prefer-dist --no-progress
+      run: composer install --no-progress
 
     - name: Run test suite
       run: |
