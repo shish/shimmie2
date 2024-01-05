@@ -25,7 +25,7 @@ jobs:
       run: composer validate
 
     - name: Install PHP dependencies
-      run: composer update && composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress
 
     - name: Set up PHP
       uses: shivammathur/setup-php@master
