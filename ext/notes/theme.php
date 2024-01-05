@@ -5,36 +5,37 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
+
 use function MicroHTML\INPUT;
 
 class NotesTheme extends Themelet
 {
     public function note_button(int $image_id): HTMLElement
     {
-        return SHM_SIMPLE_FORM("", INPUT(["type"=>"button", "value"=>"Add Note", "onclick"=>"addNewNote()"]));
+        return SHM_SIMPLE_FORM("", INPUT(["type" => "button", "value" => "Add Note", "onclick" => "addNewNote()"]));
     }
     public function request_button(int $image_id): HTMLElement
     {
         return SHM_SIMPLE_FORM(
-            "note/add_request", 
-            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image_id]),
-            INPUT(["type"=>"submit", "value"=>"Add Note Request"]),
+            "note/add_request",
+            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
+            INPUT(["type" => "submit", "value" => "Add Note Request"]),
         );
     }
     public function nuke_notes_button(int $image_id): HTMLElement
     {
         return SHM_SIMPLE_FORM(
-            "note/nuke_notes", 
-            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image_id]),
-            INPUT(["type"=>"submit", "value"=>"Nuke Notes", "onclick"=>"return confirm_action('Are you sure?')"]),
+            "note/nuke_notes",
+            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
+            INPUT(["type" => "submit", "value" => "Nuke Notes", "onclick" => "return confirm_action('Are you sure?')"]),
         );
     }
     public function nuke_requests_button(int $image_id): HTMLElement
     {
         return SHM_SIMPLE_FORM(
-            "note/nuke_requests", 
-            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image_id]),
-            INPUT(["type"=>"submit", "value"=>"Nuke Requests", "onclick"=>"return confirm_action('Are you sure?')"]),
+            "note/nuke_requests",
+            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
+            INPUT(["type" => "submit", "value" => "Nuke Requests", "onclick" => "return confirm_action('Are you sure?')"]),
         );
     }
 

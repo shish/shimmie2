@@ -275,9 +275,13 @@ class Notes extends Extension
         $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id) WHERE id=:id", ['id' => $note['image_id']]);
 
         $this->add_history(
-            1, $noteID, $note['image_id'],
-            $note['x1'], $note['y1'],
-            $note['height'], $note['width'],
+            1,
+            $noteID,
+            $note['image_id'],
+            $note['x1'],
+            $note['y1'],
+            $note['height'],
+            $note['width'],
             $note['note']
         );
 
