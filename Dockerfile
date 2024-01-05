@@ -39,13 +39,13 @@ ENV XDEBUG_MODE=coverage
 FROM dev-tools AS build
 COPY composer.json composer.lock /app/
 WORKDIR /app
-RUN composer install --no-dev
+RUN composer install --no-dev --no-progress
 COPY . /app/
 
 # Tests in their own image.
 # Re-run composer install to get dev dependencies
 FROM build AS tests
-RUN composer install
+RUN composer install --no-progress
 COPY . /app/
 ARG RUN_TESTS=true
 RUN [ $RUN_TESTS = false ] || (\
