@@ -78,7 +78,7 @@ jobs:
       run: composer validate
 
     - name: Install PHP dependencies
-      run: composer update && composer install --prefer-dist --no-progress
+      run: composer install --no-progress
 
     - name: Run test suite
       run: vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
