@@ -54,42 +54,16 @@ function ip_in_range(string $IP, string $CIDR): bool
 
 /**
  * Delete an entire file heirachy
- *
- * from a patch by Christian Walde; only intended for use in the
- * "extension manager" extension, but it seems to fit better here
  */
-function deltree(string $f): void
+function deltree(string $dir): void
 {
-    //Because Windows (I know, bad excuse)
-    if (PHP_OS === 'WINNT') {
-        $real = realpath($f);
-        $path = realpath('./').'\\'.str_replace('/', '\\', $f);
-        if ($path != $real) {
-            rmdir($path);
-        } else {
-            foreach (glob($f.'/*') as $sf) {
-                if (is_dir($sf) && !is_link($sf)) {
-                    deltree($sf);
-                } else {
-                    unlink($sf);
-                }
-            }
-            rmdir($f);
-        }
-    } else {
-        if (is_link($f)) {
-            unlink($f);
-        } elseif (is_dir($f)) {
-            foreach (glob($f.'/*') as $sf) {
-                if (is_dir($sf) && !is_link($sf)) {
-                    deltree($sf);
-                } else {
-                    unlink($sf);
-                }
-            }
-            rmdir($f);
-        }
+    $di = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::KEY_AS_PATHNAME);
+    $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
+    /** @var \SplFileInfo $file */
+    foreach ($ri as $filename => $file) {
+        $file->isDir() ? rmdir($filename) : unlink($filename);
     }
+    rmdir($dir);
 }
 
 /**

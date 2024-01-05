@@ -235,4 +235,20 @@ class PolyfillsTest extends TestCase
         // A single IP should be interpreted as a /32
         $this->assertTrue(ip_in_range("1.2.3.4", "1.2.3.4"));
     }
+
+    public function test_deltree()
+    {
+        $tmp = sys_get_temp_dir();
+        $dir = "$tmp/test_deltree";
+        mkdir($dir);
+        file_put_contents("$dir/foo", "bar");
+        mkdir("$dir/baz");
+        file_put_contents("$dir/baz/.qux", "quux");
+        $this->assertTrue(file_exists($dir));
+        $this->assertTrue(file_exists("$dir/foo"));
+        $this->assertTrue(file_exists("$dir/baz"));
+        $this->assertTrue(file_exists("$dir/baz/.qux"));
+        deltree($dir);
+        $this->assertFalse(file_exists($dir));
+    }
 }
