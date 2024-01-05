@@ -14,7 +14,7 @@
 				<a class="vis-mobile" href="//rule34.paheal.net/post/list"><img alt="logo" src="//rule34.paheal.net/themes/rule34v2/rule34_logo_top.png" style="height: 34px;"/></a>
 			</td>
 			<td>
-				<input name='search' size="45" type='text' placeholder='Search' autocomplete='off' class='autocomplete_tags' value="<?=$query;?>"/>
+				<input name='search' size="45" type='text' placeholder='Search' autocomplete='off' class='autocomplete_tags' value="$QUERY"/>
 			</td>
 			<td width="100">
 				<input type='submit' value='Find' id="submit" style="border: 1px solid #888; height: 22px; border-radius: 2px; background: #EEE;"/>
