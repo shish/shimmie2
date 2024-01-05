@@ -482,7 +482,7 @@ class CronUploader extends Extension
     }
 
     private const PARTIAL_DOWNLOAD_EXTENSIONS = ['crdownload','part'];
-    private const SKIPPABLE_FILES = ['.ds_store','thumbs.db'];
+    private const SKIPPABLE_FILES = ['.ds_store', 'thumbs.db', 'desktop.ini', '.listing'];
 
     private function is_skippable_file(string $path): bool
     {
