@@ -292,7 +292,17 @@ class Upload extends Extension
 
     private function source_for_upload_slot(int $id): ?string
     {
-        return $_POST["source$id"] ?? $_POST['source'] ?? null;
+        global $config;
+        if(!empty($_POST["source$id"])) {
+            return $_POST["source$id"];
+        }
+        if(!empty($_POST['source'])) {
+            return $_POST['source'];
+        }
+        if($config->get_bool(UploadConfig::TLSOURCE) && !empty($_POST["url$id"])) {
+            return $_POST["url$id"];
+        }
+        return null;
     }
 
     /**
@@ -409,7 +419,7 @@ class Upload extends Extension
             $metadata = [];
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
-            $metadata['source'] = (($url == $source) && !$config->get_bool(UploadConfig::TLSOURCE) ? "" : $source);
+            $metadata['source'] = $source;
             if ($user->can(Permissions::EDIT_IMAGE_LOCK) && !empty($_GET['locked'])) {
                 $metadata['locked'] = bool_escape($_GET['locked']) ? "on" : "";
             }
