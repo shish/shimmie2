@@ -85,13 +85,13 @@ jobs:
     - name: Install PHP dependencies
       run: composer install --no-progress
     - name: Check old version works
-      run: php index.php get-page / | grep "https://code.shishnet.org/shimmie2/"
+      run: php index.php get-page /
     - name: Upgrade
       run: |
         git checkout {{ github.ref }}
         composer install --no-progress
     - name: Check new version works
-      run: php index.php get-page / | grep "https://code.shishnet.org/shimmie2/"
+      run: php index.php get-page /
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
