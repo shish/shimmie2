@@ -52,22 +52,18 @@ class BulkImportExport extends DataHandlerExtension
 
                         file_put_contents($tmpfile, $stream);
 
-                        $id = add_image($tmpfile, $item->filename, $item->tags)->image_id;
+                        $images = add_image($tmpfile, $item->filename, $item->tags)->images;
 
-                        if ($id == -1) {
+                        if (count($images) == 0) {
                             throw new SCoreException("Unable to import file $item->hash");
                         }
-
-                        $image = Image::by_id($id);
-
-                        if ($image == null) {
-                            throw new SCoreException("Unable to import file $item->hash");
+                        foreach ($images as $image) {
+                            $event->images[] = $image;
+                            if ($item->source != null) {
+                                $image->set_source($item->source);
+                            }
+                            send_event(new BulkImportEvent($image, $item));
                         }
-
-                        if ($item->source != null) {
-                            $image->set_source($item->source);
-                        }
-                        send_event(new BulkImportEvent($image, $item));
 
                         $database->commit();
                         $total++;
@@ -86,7 +82,6 @@ class BulkImportExport extends DataHandlerExtension
                         }
                     }
                 }
-                $event->image_id = -2; // default -1 = upload wasn't handled
 
                 log_info(
                     BulkImportExportInfo::KEY,

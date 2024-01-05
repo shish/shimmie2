@@ -375,7 +375,7 @@ class TranscodeImage extends Extension
         /* Remove temporary file */
         @unlink($tmp_filename);
 
-        send_event(new ImageReplaceEvent($image_obj->id, $new_image));
+        send_event(new ImageReplaceEvent($image_obj, $new_image));
 
         return $new_image;
     }

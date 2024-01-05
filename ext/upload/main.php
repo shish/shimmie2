@@ -15,7 +15,8 @@ class DataUploadEvent extends Event
     public string $mime;
     public int $size;
 
-    public int $image_id = -1;
+    /** @var Image[] */
+    public array $images = [];
     public bool $handled = false;
     public bool $merged = false;
 
@@ -377,11 +378,12 @@ class Upload extends Extension
 
                 $event = new DataUploadEvent($tmp_name, $metadata, $replace_id);
                 send_event($event);
-                if ($event->image_id == -1) {
+                if (count($event->images) == 0) {
                     throw new UploadException("MIME type not supported: " . $event->mime);
                 }
-                $results[] = new UploadSuccess($name, $event->image_id);
-                $page->add_http_header("X-Shimmie-Post-ID: " . $event->image_id);
+                foreach($event->images as $image) {
+                    $results[] = new UploadSuccess($name, $image->id);
+                }
             } catch (UploadException $ex) {
                 $results[] = new UploadError($name, $ex->getMessage());
             }
@@ -431,10 +433,12 @@ class Upload extends Extension
             // Upload file
             $event = new DataUploadEvent($tmp_filename, $metadata, $replace_id);
             send_event($event);
-            if ($event->image_id == -1) {
+            if (count($event->images) == 0) {
                 throw new UploadException("File type not supported: " . $event->mime);
             }
-            $results[] = new UploadSuccess($url, $event->image_id);
+            foreach($event->images as $image) {
+                $results[] = new UploadSuccess($url, $image->id);
+            }
         } catch (UploadException $ex) {
             $results[] = new UploadError($url, $ex->getMessage());
         } finally {

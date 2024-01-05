@@ -4,21 +4,27 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{UL, LI};
+
 class BulkAddTheme extends Themelet
 {
-    private array $messages = [];
-
-    /*
+    /**
      * Show a standard page for results to be put into
+     * 
+     * @param UploadResult[] $results
      */
-    public function display_upload_results(Page $page)
+    public function display_upload_results(Page $page, array $results)
     {
         $page->set_title("Adding folder");
         $page->set_heading("Adding folder");
         $page->add_block(new NavBlock());
-        $html = "";
-        foreach ($this->messages as $block) {
-            $html .= "<br/>" . $block->body;
+        $html = UL();
+        foreach ($results as $r) {
+            if (is_a($r, UploadError::class)) {
+                $html->appendChild(LI("{$r->name} failed: {$r->error}"));
+            } else {
+                $html->appendChild(LI("{$r->name} ok"));
+            }
         }
         $page->add_block(new Block("Results", $html));
     }
@@ -45,10 +51,5 @@ class BulkAddTheme extends Themelet
 			</form>
 		";
         $page->add_block(new Block("Bulk Add", $html));
-    }
-
-    public function add_status($title, $body)
-    {
-        $this->messages[] = new Block($title, $body);
     }
 }

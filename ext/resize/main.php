@@ -77,10 +77,9 @@ class ResizeImage extends Extension
     {
         global $config, $page;
 
-        $image_obj = Image::by_id($event->image_id);
-
         if ($config->get_bool(ResizeConfig::UPLOAD) == true
                 && $this->can_resize_mime($event->mime)) {
+            $image_obj = $event->images[0];
             $width = $height = 0;
 
             if ($config->get_int(ResizeConfig::DEFAULT_WIDTH) !== 0) {
@@ -109,10 +108,10 @@ class ResizeImage extends Extension
 
                 //Need to generate thumbnail again...
                 //This only seems to be an issue if one of the sizes was set to 0.
-                $image_obj = Image::by_id($event->image_id); //Must be a better way to grab the new hash than setting this again..
+                $image_obj = Image::by_id($image_obj->id); //Must be a better way to grab the new hash than setting this again..
                 send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->get_mime(), true));
 
-                log_info("resize", ">>{$event->image_id} has been resized to: ".$width."x".$height);
+                log_info("resize", ">>{$image_obj->id} has been resized to: ".$width."x".$height);
                 //TODO: Notify user that image has been resized.
             }
         }
@@ -280,7 +279,7 @@ class ResizeImage extends Extension
         /* Remove temporary file */
         @unlink($tmp_filename);
 
-        send_event(new ImageReplaceEvent($image_obj->id, $new_image));
+        send_event(new ImageReplaceEvent($image_obj, $new_image));
 
         log_info("resize", "Resized >>{$image_obj->id} - New hash: {$new_image->hash}");
     }

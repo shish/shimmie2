@@ -233,7 +233,7 @@ class TranscodeVideo extends Extension
                 throw new VideoTranscodeException("Failed to copy new post file from temporary location ({$tmp_filename}) to archive ($target)");
             }
 
-            send_event(new ImageReplaceEvent($image->id, $new_image));
+            send_event(new ImageReplaceEvent($image, $new_image));
 
             return $new_image;
         } finally {

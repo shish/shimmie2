@@ -295,9 +295,11 @@ class UploadTheme extends Themelet
         } elseif (count($successes) == 1) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/{$successes[0]->image_id}"));
+            $page->add_http_header("X-Shimmie-Post-ID: " . $successes[0]->image_id);
         } else {
+            $ids = join(",", array_reverse(array_map(fn ($s) => $s->image_id, $successes)));
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(search_link(["poster={$user->name}"]));
+            $page->set_redirect(search_link(["id={$ids}"]));
         }
     }
 

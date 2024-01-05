@@ -7,6 +7,7 @@ namespace Shimmie2;
 class BulkAddEvent extends Event
 {
     public string $dir;
+    /** @var UploadResult[] */
     public array $results;
 
     public function __construct(string $dir)
@@ -29,10 +30,7 @@ class BulkAdd extends Extension
             if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['dir'])) {
                 shm_set_timeout(null);
                 $bae = send_event(new BulkAddEvent($_POST['dir']));
-                foreach ($bae->results as $result) {
-                    $this->theme->add_status("Adding files", $result);
-                }
-                $this->theme->display_upload_results($page);
+                $this->theme->display_upload_results($page, $bae->results);
             }
         }
     }
@@ -46,6 +44,13 @@ class BulkAdd extends Extension
         if ($event->cmd == "bulk-add") {
             if (count($event->args) == 1) {
                 $bae = send_event(new BulkAddEvent($event->args[0]));
+                foreach ($bae->results as $r) {
+                    if(is_a($r, UploadError::class)) {
+                        print($r->name." failed: ".$r->error."\n");
+                    } else {
+                        print($r->name." ok\n");
+                    }
+                }
                 print(implode("\n", $bae->results));
             }
         }
@@ -61,8 +66,7 @@ class BulkAdd extends Extension
         if (is_dir($event->dir) && is_readable($event->dir)) {
             $event->results = add_dir($event->dir);
         } else {
-            $h_dir = html_escape($event->dir);
-            $event->results[] = "Error, $h_dir is not a readable directory";
+            $event->results = [new UploadError($event->dir, "is not a readable directory")];
         }
     }
 }

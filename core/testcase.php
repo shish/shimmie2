@@ -224,8 +224,8 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
                 "tags" => Tag::explode($tags),
                 "source" => null,
             ]));
-            // if($dae->image_id == -1) throw new \Exception("Upload failed :(");
-            return $dae->image_id;
+            if(count($dae->images) == 0) throw new \Exception("Upload failed :(");
+            return $dae->images[0]->id;
         }
 
         protected function delete_image(int $image_id): void

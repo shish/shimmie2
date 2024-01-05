@@ -195,7 +195,7 @@ class RotateImage extends Extension
         /* Remove temporary file */
         @unlink($tmp_filename);
 
-        send_event(new ImageReplaceEvent($image_id, $new_image));
+        send_event(new ImageReplaceEvent($image_obj, $new_image));
 
         log_info("rotate", "Rotated >>{$image_id} - New hash: {$new_image->hash}");
     }

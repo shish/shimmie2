@@ -12,7 +12,7 @@ namespace Shimmie2;
  * Add a directory full of images
  *
  * @param string $base
- * @return array
+ * @return UploadResult[]
  */
 function add_dir(string $base, ?array $extra_tags = []): array
 {
@@ -23,14 +23,14 @@ function add_dir(string $base, ?array $extra_tags = []): array
         $filename = basename($full_path);
 
         $tags = array_merge(path_to_tags($short_path), $extra_tags);
-        $result = "$short_path (".implode(", ", $tags).")... ";
         try {
-            add_image($full_path, $filename, $tags);
-            $result .= "ok";
+            $dae = add_image($full_path, $filename, $tags);
+            foreach($dae->images as $image) {
+                $results[] = new UploadSuccess($filename, $image->id);
+            }
         } catch (UploadException $ex) {
-            $result .= "failed: ".$ex->getMessage();
+            $results[] = new UploadError($filename, $ex->getMessage());
         }
-        $results[] = $result;
     }
 
     return $results;

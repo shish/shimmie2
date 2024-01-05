@@ -321,31 +321,32 @@ abstract class DataHandlerExtension extends Extension
                     throw new UploadException("The uploaded post is the same as the one to replace.");
                 }
 
-                // even more hax..
-                $event->metadata['tags'] = $existing->get_tag_list();
-
-                $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
-                $image->posted = $existing->posted;
-                send_event(new ImageReplaceEvent($event->replace_id, $image));
-                $_id = $event->replace_id;
-                assert(!is_null($_id));
-                $event->image_id = $_id;
+                $replacement = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
+                send_event(new ImageReplaceEvent($existing, $replacement));
+                $event->images[] = $replacement;
+                if(!empty($event->metadata['source'])) {
+                    send_event(new SourceSetEvent($existing, $event->metadata['source']));
+                }
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 $iae = send_event(new ImageAdditionEvent($image));
-                $event->image_id = $iae->image->id;
+                $event->images[] = $iae->image;
                 $event->merged = $iae->merged;
 
-                // Rating Stuff.
-                if (!empty($event->metadata['rating'])) {
-                    $rating = $event->metadata['rating'];
-                    send_event(new RatingSetEvent($image, $rating));
+                if(!empty($event->metadata['tags'])) {
+                    if($iae->merged) {
+                        $event->metadata['tags'] = array_merge($iae->image->get_tag_array(), $event->metadata['tags']);
+                    }
+                    send_event(new TagSetEvent($image, $event->metadata['tags']));
                 }
-
-                // Locked Stuff.
+                if(!empty($event->metadata['source'])) {
+                    send_event(new SourceSetEvent($image, $event->metadata['source']));
+                }
+                if (!empty($event->metadata['rating'])) {
+                    send_event(new RatingSetEvent($image, $event->metadata['rating']));
+                }
                 if (!empty($event->metadata['locked'])) {
-                    $locked = $event->metadata['locked'];
-                    send_event(new LockSetEvent($image, $locked));
+                    send_event(new LockSetEvent($image, $event->metadata['locked']));
                 }
             }
         } elseif ($supported_mime && !$check_contents) {
@@ -401,8 +402,6 @@ abstract class DataHandlerExtension extends Extension
         $image->hash = md5_file($filename);
         $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
         $image->set_mime(MimeType::get_for_file($filename, get_file_ext($metadata["filename"]) ?? null));
-        $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
-        $image->source = $metadata['source'];
 
         if (empty($image->get_mime())) {
             throw new UploadException("Unable to determine MIME for $filename");

@@ -52,11 +52,6 @@ class NotATag extends Extension
         }
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
-    {
-        $this->scan($event->image->get_tag_array());
-    }
-
     public function onTagSet(TagSetEvent $event)
     {
         global $user;

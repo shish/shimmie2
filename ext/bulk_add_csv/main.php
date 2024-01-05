@@ -51,11 +51,13 @@ class BulkAddCSV extends Extension
     private function add_image(string $tmpname, string $filename, array $tags, string $source, string $rating, string $thumbfile)
     {
         $event = add_image($tmpname, $filename, $tags, $source);
-        if ($event->image_id == -1) {
+        if (count($event->images) == 0) {
             throw new UploadException("File type not recognised");
         } else {
             if (class_exists("Shimmie2\RatingSetEvent") && in_array($rating, ["s", "q", "e"])) {
-                send_event(new RatingSetEvent(Image::by_id($event->image_id), $rating));
+                foreach($event->images as $image) {
+                    send_event(new RatingSetEvent($image, $rating));
+                }
             }
             if (file_exists($thumbfile)) {
                 copy($thumbfile, warehouse_path(Image::THUMBNAIL_DIR, $event->hash));

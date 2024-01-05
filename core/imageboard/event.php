@@ -60,8 +60,8 @@ class ImageReplaceEvent extends Event
      * the old image file and thumbnail from the disk.
      */
     public function __construct(
-        public int $id,
-        public Image $image
+        public Image $original,
+        public Image $replacement
     ) {
         parent::__construct();
     }

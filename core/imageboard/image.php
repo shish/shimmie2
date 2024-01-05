@@ -46,7 +46,7 @@ class Image
     #[Field]
     public ?string $posted = null;
     #[Field]
-    public ?string $source;
+    public ?string $source = null;
     #[Field]
     public bool $locked = false;
     public ?bool $lossless = null;
@@ -433,7 +433,7 @@ class Image
         if (is_null($m)) {
             $m = MimeMap::get_for_extension($this->ext)[0];
         }
-        return $m;
+        return strtolower($m);
     }
 
     /**

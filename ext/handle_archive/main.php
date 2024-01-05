@@ -35,13 +35,17 @@ class ArchiveFileHandler extends DataHandlerExtension
             if (file_exists($tmpdir)) {
                 try {
                     $results = add_dir($tmpdir, $event->metadata['tags']);
-                    if (count($results) > 0) {
-                        $page->flash("Adding files" . implode("\n", $results));
+                    foreach ($results as $r) {
+                        if(is_a($r, UploadError::class)) {
+                            $page->flash($r->name." failed: ".$r->error);
+                        }
+                        if(is_a($r, UploadSuccess::class)) {
+                            $event->images[] = Image::by_id($r->image_id);
+                        }
                     }
                 } finally {
                     deltree($tmpdir);
                 }
-                $event->image_id = -2; // default -1 = upload wasn't handled
             }
         }
     }

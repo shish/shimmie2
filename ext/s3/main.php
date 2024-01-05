@@ -54,16 +54,13 @@ class S3 extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event)
     {
-        $this->sync_post($event->image);
+        // Tags aren't set at this point, let's wait for the TagSetEvent
+        // $this->sync_post($event->image);
     }
 
     public function onTagSet(TagSetEvent $event)
     {
-        // pretend that tags were set already so that sync works
-        $orig_tags = $event->image->tag_array;
-        $event->image->tag_array = $event->tags;
-        $this->sync_post($event->image);
-        $event->image->tag_array = $orig_tags;
+        $this->sync_post($event->image, $event->tags);
     }
 
     public function onImageDeletion(ImageDeletionEvent $event)
@@ -73,9 +70,8 @@ class S3 extends Extension
 
     public function onImageReplace(ImageReplaceEvent $event)
     {
-        $existing = Image::by_id($event->id);
-        $this->remove_file($existing->hash);
-        $this->sync_post($event->image);
+        $this->remove_file($event->original->hash);
+        $this->sync_post($event->replacement, $event->original->get_tag_array());
     }
 
     // utils
@@ -105,7 +101,7 @@ class S3 extends Extension
     }
 
     // underlying s3 interaction functions
-    private function sync_post(Image $image)
+    private function sync_post(Image $image, ?array $new_tags = null)
     {
         global $config;
 
@@ -121,7 +117,17 @@ class S3 extends Extension
             return;
         }
         $image_bucket = $config->get_string(S3Config::IMAGE_BUCKET);
-        $friendly = $image->parse_link_template('$id - $tags.$ext');
+
+        if(is_null($new_tags)) {
+            $friendly = $image->parse_link_template('$id - $tags.$ext');
+        }
+        else {
+            $_orig_tags = $image->get_tag_array();
+            $image->tag_array = $new_tags;
+            $friendly = $image->parse_link_template('$id - $tags.$ext');
+            $image->tag_array = $_orig_tags;    
+        }
+
         $client->putObject([
             'Bucket' => $image_bucket,
             'Key' => $this->hash_to_path($image->hash),

@@ -45,7 +45,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
         ];
         $page = $this->post_page("upload", ["tags0" => "foo bar"]);
         $this->assert_response(302);
-        $this->assertStringStartsWith("/test/post/list/poster%3Dtest/1", $page->redirect);
+        $this->assertStringStartsWith("/test/post/list/id%3D4%2C3%2C2%2C1/1", $page->redirect);
 
         $this->assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
     }
@@ -105,8 +105,8 @@ class UploadTest extends ShimmiePHPUnitTestCase
 
     public function testRejectUnknownFiletype()
     {
-        $image_id = $this->post_image("index.php", "test");
-        $this->assertEquals(-1, $image_id);  // no file handler claimed this
+        $this->expectException(\Exception::class);
+        $this->post_image("index.php", "test");
     }
 
     public function testRejectHuge()
