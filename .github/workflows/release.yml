@@ -15,14 +15,14 @@ jobs:
 
       - name: Get version from tag
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+        run: echo VERSION=${GITHUB_REF/refs\/tags\/v/} >> $GITHUB_OUTPUT
 
       - name: Test version in sys_config
         run: grep ${{ steps.get_version.outputs.VERSION }} core/sys_config.php
 
       - name: Build
         run: |
-          composer install --no-dev
+          composer install --no-dev --no-progress
           cd ..
           tar cvzf shimmie2-${{ steps.get_version.outputs.VERSION }}.tgz shimmie2
           zip -r shimmie2-${{ steps.get_version.outputs.VERSION }}.zip shimmie2
