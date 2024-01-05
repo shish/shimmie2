@@ -405,10 +405,10 @@ class Upload extends Extension
             $headers = fetch_url($url, $tmp_filename);
             if (is_null($headers)) {
                 log_warning("core-util", "Failed to fetch $url");
-                throw new UploadException("Error reading from " . html_escape($url));
+                throw new UploadException("Error reading from $url");
             }
             if (filesize($tmp_filename) == 0) {
-                throw new UploadException("No data found in " . html_escape($url) . " -- perhaps the site has hotlink protection?");
+                throw new UploadException("No data found in $url -- perhaps the site has hotlink protection?");
             }
 
             // Parse metadata

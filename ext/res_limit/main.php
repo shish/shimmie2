@@ -54,7 +54,7 @@ class ResolutionLimit extends Extension
             if ($valids > 0 && !$ok) {
                 throw new UploadException(
                     "Post needs to be in one of these ratios: ".
-                    html_escape($config->get_string("upload_ratios", ""))
+                    $config->get_string("upload_ratios", "")
                 );
             }
         }
