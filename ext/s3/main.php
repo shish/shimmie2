@@ -120,12 +120,11 @@ class S3 extends Extension
 
         if(is_null($new_tags)) {
             $friendly = $image->parse_link_template('$id - $tags.$ext');
-        }
-        else {
+        } else {
             $_orig_tags = $image->get_tag_array();
             $image->tag_array = $new_tags;
             $friendly = $image->parse_link_template('$id - $tags.$ext');
-            $image->tag_array = $_orig_tags;    
+            $image->tag_array = $_orig_tags;
         }
 
         $client->putObject([

@@ -170,7 +170,7 @@ class GraphQL extends Extension
             'source' => $source,
         ]));
 
-        return ["image_ids" => array_map(fn($im) => $im->id, $event->images)];
+        return ["image_ids" => array_map(fn ($im) => $im->id, $event->images)];
     }
 
     public function onCommand(CommandEvent $event)

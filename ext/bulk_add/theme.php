@@ -10,7 +10,7 @@ class BulkAddTheme extends Themelet
 {
     /**
      * Show a standard page for results to be put into
-     * 
+     *
      * @param UploadResult[] $results
      */
     public function display_upload_results(Page $page, array $results)
