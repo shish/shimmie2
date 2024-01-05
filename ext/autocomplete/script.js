@@ -95,7 +95,11 @@ function renderCompletions(element) {
 	// add children for top completions, with the selected one highlighted
 	let word = getCurrentWord(element);
 	Object.keys(completions).filter(
-		(key) => key.toLowerCase().startsWith(word.toLowerCase())
+		(key) => {
+			let k = key.toLowerCase();
+			let w = word.toLowerCase();
+			return k.split(':').some((k) => k.startsWith(w))
+		}
 	).slice(0, 100).forEach((key, i) => {
 		let value = completions[key];
 		let li = document.createElement('li');

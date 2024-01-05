@@ -50,7 +50,10 @@ class AutoComplete extends Extension
         $limitSQL = "";
         $search = str_replace('_', '\_', $search);
         $search = str_replace('%', '\%', $search);
-        $SQLarr = ["search" => "$search%"]; #, "cat_search"=>"%:$search%"];
+        $SQLarr = [
+            "search" => "$search%",
+            "cat_search" => Extension::is_enabled(TagCategoriesInfo::KEY) ? "%:$search%" : "",
+        ];
         if ($limit !== 0) {
             $limitSQL = "LIMIT :limit";
             $SQLarr['limit'] = $limit;
@@ -62,7 +65,7 @@ class AutoComplete extends Extension
                 SELECT tag, count
                 FROM tags
                 WHERE LOWER(tag) LIKE LOWER(:search)
-                -- OR LOWER(tag) LIKE LOWER(:cat_search)
+                OR LOWER(tag) LIKE LOWER(:cat_search)
                 AND count > 0
                 ORDER BY count DESC, tag ASC
                 $limitSQL
