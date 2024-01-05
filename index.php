@@ -91,11 +91,13 @@ try {
     if (function_exists("fastcgi_finish_request")) {
         fastcgi_finish_request();
     }
+    $exit_code = 0;
 } catch (Exception $e) {
     if ($database && $database->is_transaction_open()) {
         $database->rollback();
     }
     _fatal_error($e);
+    $exit_code = 1;
 } finally {
     $_tracer->end();
     if (TRACE_FILE) {
@@ -110,4 +112,7 @@ try {
             $_tracer->flush(TRACE_FILE);
         }
     }
+}
+if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
+    exit($exit_code);
 }
