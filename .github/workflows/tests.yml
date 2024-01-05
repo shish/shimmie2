@@ -68,7 +68,7 @@ jobs:
       with:
         # is there a way to programatically get "the most recent
         # minor version of the previous major version"?
-        ref: v2.9.3
+        ref: v2.9.4
         fetch-depth: 0
     - name: Set Up Cache
       uses: actions/cache@v3
