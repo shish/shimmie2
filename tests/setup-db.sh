@@ -27,4 +27,5 @@ fi
 
 if [[ -n "$GITHUB_ENV" ]]; then
     echo "TEST_DSN=$TEST_DSN" >> $GITHUB_ENV
+    echo "INSTALL_DSN=$TEST_DSN" >> $GITHUB_ENV
 fi
