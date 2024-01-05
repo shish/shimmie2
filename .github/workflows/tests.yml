@@ -88,7 +88,7 @@ jobs:
       run: php index.php get-page /
     - name: Upgrade
       run: |
-        git checkout {{ github.ref }}
+        git checkout ${{ github.ref }}
         composer install --no-progress
     - name: Check new version works
       run: php index.php get-page /
