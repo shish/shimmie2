@@ -98,25 +98,48 @@ class Notes extends Extension
                     if (!$user->is_anonymous()) {
                         $this->revert_history($noteID, $reviewID);
                     }
-
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("note/updated"));
                     break;
-                case "add_note":
-                    if (!$user->is_anonymous()) {
-                        $this->add_new_note();
-                    }
 
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
-                    break;
                 case "add_request":
                     if (!$user->is_anonymous()) {
                         $this->add_note_request();
                     }
-
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+                    break;
+                case "nuke_requests":
+                    if ($user->can(Permissions::NOTES_ADMIN)) {
+                        $this->nuke_requests();
+                    }
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+                    break;
+
+                case "create_note":
+                    $page->set_mode(PageMode::DATA);
+                    if (!$user->is_anonymous()) {
+                        $note_id = $this->add_new_note();
+                        $page->set_data(json_encode([
+                            'status' => 'success',
+                            'note_id' => $note_id,
+                        ]));
+                    }
+                    break;
+                case "update_note":
+                    $page->set_mode(PageMode::DATA);
+                    if (!$user->is_anonymous()) {
+                        $this->update_note();
+                        $page->set_data(json_encode(['status' => 'success']));
+                    }
+                    break;
+                case "delete_note":
+                    $page->set_mode(PageMode::DATA);
+                    if ($user->can(Permissions::NOTES_ADMIN)) {
+                        $this->delete_note();
+                        $page->set_data(json_encode(['status' => 'success']));
+                    }
                     break;
                 case "nuke_notes":
                     if ($user->can(Permissions::NOTES_ADMIN)) {
@@ -126,28 +149,7 @@ class Notes extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     break;
-                case "nuke_requests":
-                    if ($user->can(Permissions::NOTES_ADMIN)) {
-                        $this->nuke_requests();
-                    }
 
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
-                    break;
-                case "edit_note":
-                    if (!$user->is_anonymous()) {
-                        $this->update_note();
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("post/view/" . $_POST["image_id"]));
-                    }
-                    break;
-                case "delete_note":
-                    if ($user->can(Permissions::NOTES_ADMIN)) {
-                        $this->delete_note();
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
-                    }
-                    break;
                 default:
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("note/list"));
@@ -243,32 +245,43 @@ class Notes extends Extension
     /*
      * HERE WE ADD A NOTE TO DATABASE
      */
-    private function add_new_note()
+    private function add_new_note(): int
     {
         global $database, $user;
 
-        $imageID    = int_escape($_POST["image_id"]);
-        $user_id    = $user->id;
-        $noteX1     = int_escape($_POST["note_x1"]);
-        $noteY1     = int_escape($_POST["note_y1"]);
-        $noteHeight = int_escape($_POST["note_height"]);
-        $noteWidth  = int_escape($_POST["note_width"]);
-        $noteText   = html_escape($_POST["note_text"]);
+        $note = json_decode(file_get_contents('php://input'), true);
 
         $database->execute(
             "
 				INSERT INTO notes (enable, image_id, user_id, user_ip, date, x1, y1, height, width, note)
 				VALUES (:enable, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)",
-            ['enable' => 1, 'image_id' => $imageID, 'user_id' => $user_id, 'user_ip' => get_real_ip(), 'x1' => $noteX1, 'y1' => $noteY1, 'height' => $noteHeight, 'width' => $noteWidth, 'note' => $noteText]
+            [
+                'enable' => 1,
+                'image_id' => $note['image_id'],
+                'user_id' => $user->id,
+                'user_ip' => get_real_ip(),
+                'x1' => $note['x1'],
+                'y1' => $note['y1'],
+                'height' => $note['height'],
+                'width' => $note['width'],
+                'note' => $note['note'],
+            ]
         );
 
         $noteID = $database->get_last_insert_id('notes_id_seq');
 
         log_info("notes", "Note added {$noteID} by {$user->name}");
 
-        $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id1) WHERE id=:id2", ['id1' => $imageID, 'id2' => $imageID]);
+        $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id) WHERE id=:id", ['id' => $note['image_id']]);
 
-        $this->add_history(1, $noteID, $imageID, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText);
+        $this->add_history(
+            1, $noteID, $note['image_id'],
+            $note['x1'], $note['y1'],
+            $note['height'], $note['width'],
+            $note['note']
+        );
+
+        return $noteID;
     }
 
     private function add_note_request()
@@ -294,15 +307,7 @@ class Notes extends Extension
     {
         global $database;
 
-        $note = [
-            "x1"     => int_escape($_POST["note_x1"]),
-            "y1"     => int_escape($_POST["note_y1"]),
-            "height" => int_escape($_POST["note_height"]),
-            "width"  => int_escape($_POST["note_width"]),
-            "note"   => $_POST["note_text"],
-            "image_id" => int_escape($_POST["image_id"]),
-            "id"     => int_escape($_POST["note_id"])
-        ];
+        $note = json_decode(file_get_contents('php://input'), true);
 
         // validate parameters
         if (empty($note['note'])) {
@@ -312,29 +317,22 @@ class Notes extends Extension
         $database->execute("
 			UPDATE notes
 			SET x1 = :x1, y1 = :y1, height = :height, width = :width, note = :note
-			WHERE image_id = :image_id AND id = :id", $note);
+			WHERE image_id = :image_id AND id = :note_id", $note);
 
-        $this->add_history(1, $note['id'], $note['image_id'], $note['x1'], $note['y1'], $note['height'], $note['width'], $note['note']);
+        $this->add_history(1, $note['note_id'], $note['image_id'], $note['x1'], $note['y1'], $note['height'], $note['width'], $note['note']);
     }
 
     private function delete_note()
     {
         global $user, $database;
 
-        $imageID = int_escape($_POST["image_id"]);
-        $noteID = int_escape($_POST["note_id"]);
-
-        // validate parameters
-        if (is_null($imageID) || !is_numeric($imageID) || is_null($noteID)  || !is_numeric($noteID)) {
-            return;
-        }
-
+        $note = json_decode(file_get_contents('php://input'), true);
         $database->execute("
 			UPDATE notes SET enable = :enable
 			WHERE image_id = :image_id AND id = :id
-		", ['enable' => 0, 'image_id' => $imageID, 'id' => $noteID]);
+		", ['enable' => 0, 'image_id' => $note["image_id"], 'id' => $note["note_id"]]);
 
-        log_info("notes", "Note deleted {$noteID} by {$user->name}");
+        log_info("notes", "Note deleted {$note["note_id"]} by {$user->name}");
     }
 
     private function nuke_notes()

@@ -4,41 +4,38 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+use function MicroHTML\INPUT;
+
 class NotesTheme extends Themelet
 {
-    public function note_button(int $image_id): string
+    public function note_button(int $image_id): HTMLElement
     {
-        return '
-			<!-- <a href="#" id="addnotelink" >Add a note</a> -->
-			<form action="" method="">
-			<input type="button" id="addnote" value="Add Note">
-			<input type="hidden" name="image_id" value="'.$image_id.'">
-			</form>
-		';
+        return SHM_SIMPLE_FORM("", INPUT(["type"=>"button", "value"=>"Add Note", "onclick"=>"addNewNote()"]));
     }
-    public function request_button(int $image_id): string
+    public function request_button(int $image_id): HTMLElement
     {
-        return make_form(make_link("note/add_request")) . '
-						<input id="noterequest" type="submit" value="Add Note Request">
-						<input type="hidden" name="image_id" value="'.$image_id.'">
-						</form>
-					';
+        return SHM_SIMPLE_FORM(
+            "note/add_request", 
+            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image_id]),
+            INPUT(["type"=>"submit", "value"=>"Add Note Request"]),
+        );
     }
-    public function nuke_notes_button(int $image_id): string
+    public function nuke_notes_button(int $image_id): HTMLElement
     {
-        return make_form(make_link("note/nuke_notes")) . '
-							<input id="noterequest" type="submit" value="Nuke Notes" onclick="return confirm_action(\'Are you sure?\')">
-							<input type="hidden" name="image_id" value="'.$image_id.'">
-							</form>
-				';
+        return SHM_SIMPLE_FORM(
+            "note/nuke_notes", 
+            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image_id]),
+            INPUT(["type"=>"submit", "value"=>"Nuke Notes", "onclick"=>"return confirm_action('Are you sure?')"]),
+        );
     }
-    public function nuke_requests_button(int $image_id): string
+    public function nuke_requests_button(int $image_id): HTMLElement
     {
-        return make_form(make_link("note/nuke_requests")) . '
-							<input id="noterequest" type="submit" value="Nuke Requests" onclick="return confirm_action()">
-							<input type="hidden" name="image_id" value="'.$image_id.'">
-							</form>
-						';
+        return SHM_SIMPLE_FORM(
+            "note/nuke_requests", 
+            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image_id]),
+            INPUT(["type"=>"submit", "value"=>"Nuke Requests", "onclick"=>"return confirm_action('Are you sure?')"]),
+        );
     }
 
     public function search_notes_page(Page $page): void
@@ -56,91 +53,23 @@ class NotesTheme extends Themelet
     // check action POST on form
     public function display_note_system(Page $page, int $image_id, array $recovered_notes, bool $adminOptions): void
     {
-        $base_href = get_base_href();
-
-        $page->add_html_header("<script defer src='$base_href/ext/notes/lib/jquery.imgnotes-1.0.min.js' type='text/javascript'></script>");
-        $page->add_html_header("<script defer src='$base_href/ext/notes/lib/jquery.imgareaselect-1.0.0-rc1.min.js' type='text/javascript'></script>");
-        $page->add_html_header("<link rel='stylesheet' type='text/css' href='$base_href/ext/notes/lib/jquery.imgnotes-1.0.min.css' />");
-
         $to_json = [];
         foreach ($recovered_notes as $note) {
-            $parsedNote = $note["note"];
-            $parsedNote = str_replace("\n", "\\n", $parsedNote);
-            $parsedNote = str_replace("\r", "\\r", $parsedNote);
-
             $to_json[] = [
+                'image_id' => $image_id,
                 'x1'      => $note["x1"],
                 'y1'      => $note["y1"],
                 'height'  => $note["height"],
                 'width'   => $note["width"],
-                'note'    => $parsedNote,
+                'note'    => $note["note"],
                 'note_id' => $note["id"],
             ];
         }
-
-        $html = "<script type='text/javascript'>notes = ".json_encode($to_json)."</script>";
-
-        $html .= "
-	<div id='noteform'>
-		".make_form(make_link("note/add_note"))."
-			<input type='hidden' name='image_id' value='".$image_id."' />
-			<input name='note_x1' type='hidden' value='' id='NoteX1' />
-			<input name='note_y1' type='hidden' value='' id='NoteY1' />
-			<input name='note_height' type='hidden' value='' id='NoteHeight' />
-			<input name='note_width' type='hidden' value='' id='NoteWidth' />
-
-			<table>
-				<tr>
-					<td colspan='2'>
-						<textarea name='note_text' id='NoteNote' ></textarea>
-					</td>
-				</tr>
-				<tr>
-					<td><input type='submit' value='Add Note' /></td>
-					<td><input type='button' value='Cancel' id='cancelnote' /></td>
-			  	</tr>
-			</table>
-
-		</form>
-	</div>
-		<div id='noteEditForm'>
-			".make_form(make_link("note/edit_note"))."
-				<input type='hidden' name='image_id' value='".$image_id."' />
-				<input type='hidden' name='note_id' id='EditNoteID' value='' />
-				<input name='note_x1' type='hidden' value='' id='EditNoteX1' />
-				<input name='note_y1' type='hidden' value='' id='EditNoteY1' />
-				<input name='note_height' type='hidden' value='' id='EditNoteHeight' />
-				<input name='note_width' type='hidden' value='' id='EditNoteWidth' />
-				<table>
-					<tr>
-						<td colspan='2'>
-							<textarea name='note_text' id='EditNoteNote' ></textarea>
-						</td>
-					</tr>
-					<tr>
-						<td><input type='submit' value='Save Note' /></td>
-						<td><input type='button' value='Cancel' id='EditCancelNote' /></td>
-					</tr>
-				</table>
-			</form>";
-
-        if ($adminOptions) {
-            $html .= "
-				".make_form(make_link("note/delete_note"))."
-				<input type='hidden' name='image_id' value='".$image_id."' />
-				<input type='hidden' name='note_id' value='' id='DeleteNoteNoteID' />
-				<table>
-					<tr>
-						<td><input type='submit' value='Delete note' /></td>
-					</tr>
-				</table>
-			</form>
-";
-        }
-
-        $html .= "</div>";
-
-        $page->add_block(new Block(null, $html, "main", 1, 'note_system'));
+        $page->add_html_header("<script type='text/javascript'>
+        window.notes = ".json_encode($to_json).";
+        window.notes_image_id = $image_id;
+        window.notes_admin = ".($adminOptions ? "true" : "false").";
+        </script>");
     }
 
 
