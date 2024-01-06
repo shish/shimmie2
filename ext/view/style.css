@@ -17,3 +17,7 @@ TABLE.form.image_info {
 	display: block;
 }
 
+.image_info TEXTAREA {
+	min-width: 100%;
+	min-height: 3rem;
+}
