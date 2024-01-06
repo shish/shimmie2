@@ -6,9 +6,18 @@ function joinUrlSegments(base, query) {
     return base + separatorChar + query;
 }
 
+function autosize(el) {
+	setTimeout(function() {
+		el.style.cssText = 'height:' + el.scrollHeight + 'px';
+	}, 0);
+}
+
 function clearViewMode() {
 	document.querySelectorAll('.image_info').forEach((element) => {
 		element.classList.remove('infomode-view');
+	});
+	document.querySelectorAll('.image_info textarea').forEach((el) => {
+		autosize(el);
 	});
 }
 
@@ -26,6 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	// users can still edit them)
 	document.querySelectorAll('.image_info').forEach((element) => {
 		element.classList.add('infomode-view');
+	});
+
+	document.querySelectorAll('.image_info textarea').forEach((el) => {
+		el.addEventListener('keydown', () => autosize(el));
+		autosize(el);
 	});
 
 	if(document.location.hash.length > 3) {
