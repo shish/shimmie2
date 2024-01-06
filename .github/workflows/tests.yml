@@ -63,13 +63,14 @@ jobs:
         database: ['pgsql', 'mysql', 'sqlite']
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout current
       uses: actions/checkout@v3
       with:
-        # is there a way to programatically get "the most recent
-        # tagged minor version of the previous major version"?
-        ref: branch-2.9
         fetch-depth: 0
+    - name: Travel to past
+      # is there a way to programatically get "the most recent
+      # tagged minor version of the previous major version"?
+      run: git checkout branch-2.9
     - name: Set Up Cache
       uses: actions/cache@v3
       with:
