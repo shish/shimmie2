@@ -17,8 +17,11 @@ jobs:
         id: get_version
         run: echo VERSION=${GITHUB_REF/refs\/tags\/v/} >> $GITHUB_OUTPUT
 
-      - name: Test version in sys_config
-        run: grep ${{ steps.get_version.outputs.VERSION }} core/sys_config.php
+      - name: Check and set sys_config
+        run: |
+          grep ${{ steps.get_version.outputs.VERSION }} core/sys_config.php
+          echo "_d('BUILD_TIME', '$(date +'%Y-%m-%dT%H:%M:%S')');" >> core/sys_config.php
+          echo "_d('BUILD_HASH', '$GITHUB_SHA');" >> core/sys_config.php
 
       - name: Build
         run: |

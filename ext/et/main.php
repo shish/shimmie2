@@ -63,6 +63,17 @@ class ET extends Extension
             }
         }
 
+        $ver = VERSION;
+        if(defined("BUILD_TIME")) {
+            $ver .= "-" . substr(constant("BUILD_TIME"), 0, 10);
+        }
+        if(defined("BUILD_HASH")) {
+            $ver .= "-" . substr(constant("BUILD_HASH"), 0, 7);
+        }
+        if(file_exists(".git")) {
+            $ver .= "+";
+        }
+
         $info = [
             "about" => [
                 'title' => $config->get_string(SetupConfig::TITLE),
@@ -70,7 +81,7 @@ class ET extends Extension
                 'url'   => make_http(make_link("/")),
             ],
             "versions" => [
-                'shimmie' => VERSION,
+                'shimmie' => $ver,
                 'schema'  => $config->get_int("db_version"),
                 'php'     => phpversion(),
                 'db'      => $database->get_driver_id()->value . " " . $database->get_version(),

@@ -66,8 +66,10 @@ FROM base AS run
 EXPOSE 8000
 # HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
 ARG BUILD_TIME=unknown BUILD_HASH=unknown
-ENV UID=1000 GID=1000 UPLOAD_MAX_FILESIZE=50M BUILD_TIME=${BUILD_TIME} BUILD_HASH=${BUILD_HASH}
+ENV UID=1000 GID=1000 UPLOAD_MAX_FILESIZE=50M
 COPY --from=build /app /app
 WORKDIR /app
+RUN echo "_d('BUILD_TIME', '$BUILD_TIME');" >> core/sys_config.php && \
+    echo "_d('BUILD_HASH', '$BUILD_HASH');" >> core/sys_config.php
 ENTRYPOINT ["/app/.docker/entrypoint.sh"]
 CMD ["unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
