@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\INPUT;
+
 require_once "config.php";
 
 class S3 extends Extension
@@ -49,6 +51,36 @@ class S3 extends Extension
                 ob_flush();
                 $this->remove_file($hash);
             }
+        }
+    }
+
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $config, $page, $user;
+        if ($event->page_matches("s3/sync")) {
+            if ($user->check_auth_token()) {
+                if ($user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id'])) {
+                    $id = int_escape($_POST['image_id']);
+                    if ($id > 0) {
+                        $this->sync_post(Image::by_id($id));
+                        log_info("s3", "Manual resync for >>$id", "File re-sync'ed");
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("post/view/$id"));
+                    }
+                }
+            }
+        }
+    }
+
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can(Permissions::DELETE_IMAGE)) {
+            $event->add_part(SHM_SIMPLE_FORM(
+                "s3/sync",
+                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),
+                INPUT(["type" => 'submit', "value" => 'CDN Re-Sync']),
+            ));
         }
     }
 
