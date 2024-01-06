@@ -7,31 +7,22 @@ namespace Shimmie2;
 use GraphQL\GraphQL as GQL;
 use GraphQL\Server\StandardServer;
 use GraphQL\Error\DebugFlag;
-use GraphQL\Type\Schema;
 use GraphQL\Utils\SchemaPrinter;
+use Psr\Container\ContainerInterface;
+use TheCodingMachine\GraphQLite\Schema;
+use TheCodingMachine\GraphQLite\SchemaFactory;
 
-#[\GQLA\InputObjectType]
-class MetadataInput
+class C implements ContainerInterface
 {
-    public function __construct(
-        #[\GQLA\Field]
-        public string $tags,
-        #[\GQLA\Field]
-        public string $source,
-    ) {
-    }
-
-    #[\GQLA\Mutation]
-    public static function update_post_metadata(int $post_id, MetadataInput $metadata): Image
+    public function get(string $id): mixed
     {
-        global $user;
-        $_POST['tag_edit__tags'] = $metadata->tags;
-        $_POST['tag_edit__source'] = $metadata->source;
-        $image = Image::by_id($post_id);
-        if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            send_event(new ImageInfoSetEvent($image));
-        }
-        return Image::by_id($post_id);
+        echo("get($id)\n");
+        return null;
+    }
+    public function has(string $id): bool
+    {
+        echo("has($id)\n");
+        return false;
     }
 }
 
@@ -39,9 +30,15 @@ class GraphQL extends Extension
 {
     public static function get_schema(): Schema
     {
-        global $_tracer;
+        global $cache, $_tracer;
+
         $_tracer->begin("Create Schema");
-        $schema = new \GQLA\Schema();
+        $container = new C();
+        $factory = new SchemaFactory($cache, $container);
+        $factory->addControllerNamespace('Shimmie2\\')
+                ->addTypeNamespace('Shimmie2\\');
+        $factory->devMode(); // vs prodMode
+        $schema = $factory->createSchema();
         $_tracer->end(null);
         return $schema;
     }
