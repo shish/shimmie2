@@ -164,6 +164,12 @@ class UserPage extends Extension
 
         $this->show_user_info();
 
+        if ($user->can(Permissions::VIEW_HELLBANNED)) {
+            $page->add_html_header("<style>DIV.hb, TR.hb TD {border: 1px solid red !important;}</style>");
+        } else if(!$user->can(Permissions::HELLBANNED)) {
+            $page->add_html_header("<style>.hb {display: none !important;}</style>");
+        }
+
         if ($event->page_matches("user_admin")) {
             if ($event->get_arg(0) == "login") {
                 if (isset($_POST['user']) && isset($_POST['pass'])) {
