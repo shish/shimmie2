@@ -166,7 +166,7 @@ class UserPage extends Extension
 
         if ($user->can(Permissions::VIEW_HELLBANNED)) {
             $page->add_html_header("<style>DIV.hb, TR.hb TD {border: 1px solid red !important;}</style>");
-        } else if(!$user->can(Permissions::HELLBANNED)) {
+        } elseif(!$user->can(Permissions::HELLBANNED)) {
             $page->add_html_header("<style>.hb {display: none !important;}</style>");
         }
 
