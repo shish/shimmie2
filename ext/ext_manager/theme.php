@@ -86,6 +86,18 @@ class ExtManagerTheme extends Themelet
             ));
         }
 
+        if($editable) {
+            foreach ($extensions as $extension) {
+                if ($extension->visibility === ExtensionVisibility::HIDDEN && !$extension->core) {
+                    $form->appendChild(INPUT([
+                        "type" => 'hidden',
+                        "name" => "ext_{$extension->key}",
+                        "value" => ($extension->is_enabled() === true) ? "on" : "off"
+                    ]));
+                }
+            }
+        }
+
         $page->set_title("Extensions");
         $page->set_heading("Extensions");
         $page->add_block(new NavBlock());

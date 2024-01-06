@@ -4,24 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b): int
-{
-    if ($a->beta === true && $b->beta === false) {
-        return 1;
-    }
-    if ($a->beta === false && $b->beta === true) {
-        return -1;
-    }
-
-    return strcmp($a->name, $b->name);
-}
-
-function __extman_extactive(ExtensionInfo $a): bool
-{
-    return Extension::is_enabled($a->key);
-}
-
-
 class ExtensionAuthor
 {
     public string $name;
@@ -110,15 +92,24 @@ class ExtManager extends Extension
     }
 
     /**
-     * #return ExtensionInfo[]
+     * @return ExtensionInfo[]
      */
     private function get_extensions(bool $all): array
     {
         $extensions = ExtensionInfo::get_all();
         if (!$all) {
-            $extensions = array_filter($extensions, "Shimmie2\__extman_extactive");
+            $extensions = array_filter($extensions, fn ($x) => Extension::is_enabled($x->key));
         }
-        usort($extensions, "Shimmie2\__extman_extcmp");
+        usort($extensions, function ($a, $b) {
+            if ($a->beta === true && $b->beta === false) {
+                return 1;
+            }
+            if ($a->beta === false && $b->beta === true) {
+                return -1;
+            }
+
+            return strcmp($a->name, $b->name);
+        });
         return $extensions;
     }
 
