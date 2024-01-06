@@ -146,10 +146,5 @@ class ExtManager extends Extension
             '<' . '?php' . "\n" .
             'define("EXTRA_EXTS", "' . implode(",", $extras) . '");' . "\n"
         );
-
-        // when the list of active extensions changes, we can be
-        // pretty sure that the list of who reacts to what will
-        // change too
-        _clear_cached_event_listeners();
     }
 }
