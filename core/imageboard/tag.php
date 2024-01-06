@@ -132,7 +132,7 @@ class Tag
     /**
      * Turn a human-supplied string into a valid tag array.
      *
-     * #return string[]
+     * @return string[]
      */
     public static function explode(string $tags, bool $tagme = true): array
     {

@@ -709,7 +709,7 @@ class Pools extends Extension
 
     /**
      * Get all of the pool IDs that an image is in, given an image ID.
-     * #return int[]
+     * @return int[]
      */
     private function get_pool_ids(int $imageID): array
     {
@@ -759,7 +759,7 @@ class Pools extends Extension
     /**
      * Gets the previous and next successive images from a pool, given a pool ID and an image ID.
      *
-     * #return int[] Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
+     * @return int[] Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
      */
     private function get_nav_posts(Pool $pool, int $imageID): ?array
     {

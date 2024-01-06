@@ -192,7 +192,7 @@ class ReportImage extends Extension
     }
 
     /**
-     * #return ImageReport[]
+     * @return ImageReport[]
      */
     public function get_reports(Image $image): array
     {

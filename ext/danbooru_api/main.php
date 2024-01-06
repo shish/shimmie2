@@ -161,7 +161,7 @@ class DanbooruApi extends Extension
      * - page: page number
      * - after_id: limit results to posts added after this id
      *
-     * #return string
+     * @return string
      */
     private function api_find_posts(): HTMLElement
     {

@@ -175,7 +175,7 @@ function stream_file(string $file, int $start, int $end): void
 # http://www.php.net/manual/en/function.http-parse-headers.php#112917
 if (!function_exists('http_parse_headers')) {
     /**
-     * #return string[]
+     * @return string[]
      */
     function http_parse_headers(string $raw_headers): array
     {

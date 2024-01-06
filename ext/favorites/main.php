@@ -256,7 +256,7 @@ class Favorites extends Extension
     }
 
     /**
-     * #return string[]
+     * @return string[]
      */
     private function list_persons_who_have_favorited(Image $image): array
     {

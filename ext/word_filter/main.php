@@ -42,7 +42,7 @@ class WordFilter extends Extension
     }
 
     /**
-     * #return string[]
+     * @return string[]
      */
     private function get_map(): array
     {

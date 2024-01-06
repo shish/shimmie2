@@ -448,7 +448,7 @@ class CommentList extends Extension
     }
 
     /**
-     * #return Comment[]
+     * @return Comment[]
      */
     private static function get_generic_comments(string $query, array $args): array
     {
@@ -462,7 +462,7 @@ class CommentList extends Extension
     }
 
     /**
-     * #return Comment[]
+     * @return Comment[]
      */
     private static function get_recent_comments(int $count): array
     {
@@ -480,7 +480,7 @@ class CommentList extends Extension
     }
 
     /**
-     * #return Comment[]
+     * @return Comment[]
      */
     private static function get_user_comments(int $user_id, int $count, int $offset = 0): array
     {
@@ -500,7 +500,7 @@ class CommentList extends Extension
 
     /**
      * public just for Image::get_comments()
-     * #return Comment[]
+     * @return Comment[]
      */
     public static function get_comments(int $image_id): array
     {

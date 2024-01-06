@@ -285,7 +285,7 @@ class ResizeImage extends Extension
     }
 
     /**
-     * #return int[]
+     * @return int[]
      */
     private function calc_new_size(Image $image_obj, int $width, int $height): array
     {
