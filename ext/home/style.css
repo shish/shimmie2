@@ -9,5 +9,4 @@ div#front-page li {list-style-type: none; margin: 0;}
 }
 
 div#front-page > #search > form { margin: 0 auto; }
-div#front-page > #search > form > ul { width: 225px; vertical-align: middle; display: inline-block; }
 div#front-page > #search > form > input[type=submit]{ padding: 4px 6px; }
