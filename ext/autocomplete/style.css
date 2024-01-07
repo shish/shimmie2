@@ -11,6 +11,7 @@
     font-size: 1rem;
     white-space: nowrap;
     overflow: hidden;
+    text-align: left;
 }
 .autocomplete_completions LI {
     padding: 0.15em;
