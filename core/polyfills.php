@@ -797,7 +797,7 @@ function stringer($s): string
  * If a value is in the cache, return it; otherwise, call the callback
  * to generate it and store it in the cache.
  */
-function cache_get_or_set(string $key, callable $callback, int $ttl = 0)
+function cache_get_or_set(string $key, callable $callback, ?int $ttl = null)
 {
     global $cache;
     $value = $cache->get($key);
