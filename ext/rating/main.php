@@ -137,7 +137,7 @@ class Ratings extends Extension
 
         $sb = $event->panel->create_new_block("Default Rating Filter");
         $sb->start_table();
-        $sb->add_multichoice_option(RatingsConfig::USER_DEFAULTS, $options, "Output Log Level: ", true);
+        $sb->add_multichoice_option(RatingsConfig::USER_DEFAULTS, $options, "Default Ratings: ", true);
         $sb->end_table();
         $sb->add_label("This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.");
     }
