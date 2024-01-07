@@ -77,6 +77,30 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $this->assertEquals($image_s->get_next(), null);
     }
 
+    public function testCountImages(): void
+    {
+        global $config, $user_config;
+
+        $this->log_in_as_user();
+
+        $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_s = Image::by_id($image_id_s);
+        send_event(new RatingSetEvent($image_s, "s"));
+        $image_id_q = $this->post_image("tests/favicon.png", "favicon");
+        $image_q = Image::by_id($image_id_q);
+        send_event(new RatingSetEvent($image_q, "q"));
+        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
+        $image_e = Image::by_id($image_id_e);
+        send_event(new RatingSetEvent($image_e, "e"));
+
+        $config->set_array("ext_rating_user_privs", ["s", "q"]);
+        $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["s"]);
+
+        $this->assertEquals(1, Search::count_images(["rating=s"]), "UserClass has access to safe, show safe");
+        $this->assertEquals(2, Search::count_images(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
+        $this->assertEquals(1, Search::count_images(), "If search doesn't specify anything, check the user defaults");
+    }
+
     // reset the user config to defaults at the end of every test so
     // that it doesn't mess with other unrelated tests
     public function tearDown(): void

@@ -172,9 +172,6 @@ class Search
             $cache_key = "image-count:" . md5(Tag::implode($tags));
             $total = $cache->get($cache_key);
             if (is_null($total)) {
-                if (Extension::is_enabled(RatingsInfo::KEY)) {
-                    $tags[] = "rating:*";
-                }
                 [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
                 $querylet = self::build_search_querylet($tag_conditions, $img_conditions, $order);
                 $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
