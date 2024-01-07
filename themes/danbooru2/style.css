@@ -40,6 +40,16 @@
 	}	
 }
 
+:root {
+	font-weight:normal;
+	font-style:normal;
+	font-variant:normal;
+	font-size-adjust:none;
+	font-stretch:normal;
+	font-size:87.5%;
+	line-height:normal;
+	-x-system-font:none;
+}
 .noleft{
 padding-left:2rem;
 }
@@ -47,15 +57,17 @@ HEADER {
 margin-bottom:0.9rem;
 }
 HEADER #site-title {
-padding:0.6rem 2rem 0.25rem;
+margin-left: 30px;
+font-family: "Tahoma", "Verdana", "Helvetica", sans-serif;
+padding: 0;
 }
 HEADER ul#navbar, HEADER ul#subnavbar {
-font-family:Verdana,Helvetica,sans-serif;
+font-family: "Verdana", "Helvetica", sans-serif;
 font-size:110%;
 }
 HEADER ul#navbar {
 margin:0;
-padding:0 1rem 0 2rem;
+padding:0 30px 0 30px;
 }
 HEADER ul#navbar li {
 margin:0;
@@ -72,12 +84,11 @@ font-weight: bold;
 }
 HEADER ul#navbar li a.current-page {
 background-color: var(--header-selected);
-border-radius:0.2rem 0.2rem 0 0;
 font-weight:bold;
 }
 HEADER ul#subnavbar {
 margin:0 0 0.5rem;
-padding:0 1rem 0 2rem;
+padding:0 30px 0 30px;
 background-color: var(--header-selected);
 }
 HEADER ul#subnavbar li {
@@ -91,14 +102,6 @@ margin-left: -0.6rem;
 body {
 background-color: var(--page);
 color: var(--text);
-font-weight:normal;
-font-style:normal;
-font-variant:normal;
-font-size-adjust:none;
-font-stretch:normal;
-font-size:80%;
-line-height:normal;
--x-system-font:none;
 }
 h1 {
 margin-top:0;
