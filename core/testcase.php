@@ -199,6 +199,23 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertEquals($results, $ids);
         }
 
+        protected function assertException(string $type, callable $function): \Exception|null
+        {
+            $exception = null;
+            try {
+                call_user_func($function);
+            } catch (\Exception $e) {
+                $exception = $e;
+            }
+
+            if(is_a($exception, $type)) {
+                self::assertThat($exception, new \PHPUnit\Framework\Constraint\Exception($type));
+                return $exception;
+            } else {
+                throw $exception;
+            }
+        }
+
         // user things
         protected static function log_in_as_admin(): void
         {
