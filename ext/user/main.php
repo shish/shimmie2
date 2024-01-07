@@ -462,7 +462,9 @@ class UserPage extends Extension
             throw new UserCreationException("Passwords don't match");
         }
         if(
-            $user->can(Permissions::CREATE_OTHER_USER) ||
+            // Users who can create other users (ie, admins) are exempt
+            // from the email requirement
+            !$user->can(Permissions::CREATE_OTHER_USER) &&
             ($config->get_bool("user_email_required") && empty($event->email))
         ) {
             throw new UserCreationException("Email address is required");

@@ -53,4 +53,28 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         $this->get_page('user_admin/classes');
         $this->assert_text("admin");
     }
+
+    public function testCreateOther()
+    {
+        global $page;
+
+        $this->assertException(UserCreationException::class, function () {
+            $this->log_out();
+            $this->post_page('user_admin/create_other', [
+                'name' => 'testnew',
+                'pass1' => 'testnew',
+                'email' => '',
+            ]);
+        });
+        $this->assertNull(User::by_name('testnew'), "Anon can't create others");
+
+        $this->log_in_as_admin();
+        $this->post_page('user_admin/create_other', [
+            'name' => 'testnew',
+            'pass1' => 'testnew',
+            'email' => '',
+        ]);
+        $this->assertEquals(302, $page->code);
+        $this->assertNotNull(User::by_name('testnew'), "Admin can create others");
+    }
 }
