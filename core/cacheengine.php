@@ -102,24 +102,26 @@ class EventTracingCache implements CacheInterface
 
 function loadCache(?string $dsn): CacheInterface
 {
-    $matches = [];
     $c = null;
-    if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {
-        if ($matches[1] == "memcached" || $matches[1] == "memcache") {
-            $hp = explode(":", $matches[2]);
-            $memcache = new \Memcached();
-            $memcache->addServer($hp[0], (int)$hp[1]);
-            $c = new \Sabre\Cache\Memcached($memcache);
-        } elseif ($matches[1] == "apc") {
-            $c = new \Sabre\Cache\Apcu();
-        } elseif ($matches[1] == "redis") {
-            $hp = explode(":", $matches[2]);
-            $redis = new \Predis\Client([
-                'scheme' => 'tcp',
-                'host' => $hp[0],
-                'port' => (int)$hp[1]
-            ], ['prefix' => 'shm:']);
-            $c = new \Naroga\RedisCache\Redis($redis);
+    if ($dsn && !isset($_GET['DISABLE_CACHE'])) {
+        $url = parse_url($dsn);
+        if($url) {
+            if ($url['scheme'] == "memcached" || $url['scheme'] == "memcache") {
+                $memcache = new \Memcached();
+                $memcache->addServer($url['host'], $url['port']);
+                $c = new \Sabre\Cache\Memcached($memcache);
+            } elseif ($url['scheme'] == "apc") {
+                $c = new \Sabre\Cache\Apcu();
+            } elseif ($url['scheme'] == "redis") {
+                $redis = new \Predis\Client([
+                    'scheme' => 'tcp',
+                    'host' => $url['host'],
+                    'port' => $url['port'],
+                    'username' => $url['user'],
+                    'password' => $url['pass'],
+                ], ['prefix' => 'shm:']);
+                $c = new \Naroga\RedisCache\Redis($redis);
+            }
         }
     }
     if(is_null($c)) {
