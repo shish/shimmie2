@@ -44,7 +44,7 @@ class TagListTheme extends Themelet
         $tag_count_is_visible = $config->get_bool("tag_list_numbers");
 
         return '
-			<table class="tag_list sortable">
+			<table class="tag_list">
 				<colgroup>' .
                     ($tag_info_link_is_visible ? '<col class="tag_info_link_column">' : '') .
                     ('<col class="tag_name_column">') .

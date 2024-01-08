@@ -15,8 +15,7 @@ TABLE.form TEXTAREA,
 TABLE.form BUTTON {width: 100%;}
 
 *[onclick],
-H3[class~="shm-toggler"],
-.sortable TH {
+H3[class~="shm-toggler"] {
 	cursor: pointer;
 }
 
