@@ -200,6 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// disable built-in autocomplete
 		element.setAttribute('autocomplete', 'off');
+
+		// safari treats spellcheck as a form of autocomplete
+		element.setAttribute('spellcheck', 'off');
 	
 		// when element is focused, add completion block
 		element.addEventListener('focus', () => {
