@@ -93,7 +93,10 @@ class PolyfillsTest extends TestCase
 
     public function test_to_shorthand_int()
     {
+        // 0-9 should have 1 decimal place, 10+ should have none
         $this->assertEquals("1.1GB", to_shorthand_int(1231231231));
+        $this->assertEquals("10KB", to_shorthand_int(10240));
+        $this->assertEquals("9.2KB", to_shorthand_int(9440));
         $this->assertEquals("2", to_shorthand_int(2));
     }
 

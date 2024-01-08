@@ -30,7 +30,7 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
 
         $config->set_string(ImageConfig::INFO, '$size // $filesize // $ext');
         $this->get_page("post/view/$image_id_1");
-        $this->assert_text("640x480 // 19.3KB // jpg");
+        $this->assert_text("640x480 // 19KB // jpg");
     }
 
     public function testPrevNext()

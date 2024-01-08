@@ -506,17 +506,17 @@ function to_shorthand_int(int $int): string
 {
     assert($int >= 0);
 
-    if ($int >= pow(1024, 4)) {
-        return sprintf("%.1fTB", $int / pow(1024, 4));
-    } elseif ($int >= pow(1024, 3)) {
-        return sprintf("%.1fGB", $int / pow(1024, 3));
-    } elseif ($int >= pow(1024, 2)) {
-        return sprintf("%.1fMB", $int / pow(1024, 2));
-    } elseif ($int >= 1024) {
-        return sprintf("%.1fKB", $int / 1024);
-    } else {
-        return (string)$int;
-    }
+    return match (true) {
+        $int >= pow(1024, 4) * 10 => sprintf("%.0fTB", $int / pow(1024, 4)),
+        $int >= pow(1024, 4) => sprintf("%.1fTB", $int / pow(1024, 4)),
+        $int >= pow(1024, 3) * 10 => sprintf("%.0fGB", $int / pow(1024, 3)),
+        $int >= pow(1024, 3) => sprintf("%.1fGB", $int / pow(1024, 3)),
+        $int >= pow(1024, 2) * 10 => sprintf("%.0fMB", $int / pow(1024, 2)),
+        $int >= pow(1024, 2) => sprintf("%.1fMB", $int / pow(1024, 2)),
+        $int >= pow(1024, 1) * 10 => sprintf("%.0fKB", $int / pow(1024, 1)),
+        $int >= pow(1024, 1) => sprintf("%.1fKB", $int / pow(1024, 1)),
+        default => (string)$int,
+    };
 }
 abstract class TIME_UNITS
 {
