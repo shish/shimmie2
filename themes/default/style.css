@@ -144,11 +144,9 @@ NAV TABLE {
 }
 NAV INPUT {
 	width: 100%;
-	padding: 0;
 }
 NAV SELECT {
 	width: 100%;
-	padding: 0;
 }
 
 TABLE.tag_list {

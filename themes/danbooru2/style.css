@@ -275,10 +275,12 @@ width:600px;
 .setupblock, .tagcategoryblock {
 margin:0.6rem 1rem 0.6rem 0;
 padding:0.5rem 0.6rem 0.7rem;
-width:18rem;
 border:1px solid var(--block-border);
 border-radius:0.25rem;
 display:inline-block;
+}
+.tagcategoryblock {
+	width:18rem;
 }
 .tagcategoryblock table {
 width:100%;

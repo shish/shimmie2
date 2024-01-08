@@ -332,6 +332,7 @@ SECTION>H3 {
 #Loginhead {display: block;}
 .headcol {width: 250px; font-size: 0.85rem;}
 .headbox {width: 80%; margin: auto;}
+.headbox INPUT {width: 100%;}
 #big-logo {display: table-cell;}
 #mini-logo {display: none;}
 @media (max-width: 1024px) {

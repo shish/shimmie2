@@ -1,4 +1,7 @@
-INPUT, TEXTAREA {box-sizing: border-box;}
+INPUT, TEXTAREA, SELECT, BUTTON {
+	box-sizing: border-box;
+	font-size: 1em;
+}
 
 TABLE.form {width: 300px;}
 TABLE.form.zebra {width: 100%;}
