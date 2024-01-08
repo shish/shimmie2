@@ -71,7 +71,7 @@ class UploadTheme extends Themelet
                 $max_size > 0 ? "File limit $max_kb" : null,
                 $max_size > 0 && $max_total_size > 0 ? " / " : null,
                 $max_total_size > 0 ? "Total limit $max_total_kb" : null,
-                " / Current total: ",
+                " / Current total ",
                 SPAN(["id" => "upload_size_tracker"], "0KB"),
                 ")"
             ),
