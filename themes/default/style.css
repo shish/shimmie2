@@ -50,6 +50,10 @@
 	font-family: sans-serif;
 }
 
+HEADER H1 {
+	max-height: 3em;
+	overflow: hidden;
+}
 BODY {
 	background: var(--page);
 	color: var(--text);

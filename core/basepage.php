@@ -584,16 +584,11 @@ class BasePage
             }
         }
 
-        $wrapper = "";
-        if (strlen($this->heading) > 100) {
-            $wrapper = ' style="height: 3em; overflow: auto;"';
-        }
-
         $footer_html = $this->footer_html();
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
         return "
             <header>
-                <h1$wrapper>{$this->heading}</h1>
+                <h1>{$this->heading}</h1>
                 $sub_block_html
             </header>
             <nav>
