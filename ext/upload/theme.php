@@ -6,9 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\TABLE;
-use function MicroHTML\TR;
-use function MicroHTML\TD;
+use function MicroHTML\{TABLE,TR,TH,TD};
 use function MicroHTML\SMALL;
 use function MicroHTML\rawHTML;
 use function MicroHTML\INPUT;
@@ -49,13 +47,13 @@ class UploadTheme extends Themelet
         $form = SHM_FORM("upload", "POST", true, "file_upload");
         $form->appendChild(
             TABLE(
-                ["id" => "large_upload_form"],
+                ["id" => "large_upload_form", "class"=>"form"],
                 TR(
-                    TD(["width" => "20"], rawHTML("Common&nbsp;Tags")),
+                    TH(["width" => "20"], "Common Tags"),
                     TD(["colspan" => "6"], INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags"]))
                 ),
                 TR(
-                    TD(["width" => "20"], rawHTML("Common&nbsp;Source")),
+                    TH(["width" => "20"], "Common Source"),
                     TD(["colspan" => "6"], INPUT(["name" => "source", "type" => "text", "placeholder" => "https://..."]))
                 ),
                 $upload_list,
@@ -100,10 +98,11 @@ class UploadTheme extends Themelet
 
         $upload_list->appendChild(
             TR(
-                TD(["colspan" => 2], "Select File"),
-                TD($tl_enabled ? "or URL" : null),
-                TD("Post-Specific Tags"),
-                TD("Post-Specific Source"),
+                ["class" => "header"],
+                TH(["colspan" => 2], "Select File"),
+                TH($tl_enabled ? "or URL" : null),
+                TH("Post-Specific Tags"),
+                TH("Post-Specific Source"),
             )
         );
 
@@ -243,7 +242,7 @@ class UploadTheme extends Themelet
         $form = SHM_FORM("replace/".$image_id, "POST", true);
         $form->appendChild(emptyHTML(
             TABLE(
-                ["id" => "large_upload_form"],
+                ["id" => "large_upload_form", "class"=>"form"],
                 $upload_list,
                 TR(TD("Source"), TD(["colspan" => 3], INPUT(["name" => "source", "type" => "text"]))),
                 TR(TD(["colspan" => 4], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))),

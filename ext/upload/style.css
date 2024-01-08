@@ -1,6 +1,5 @@
-#large_upload_form TD,
-#large_upload_form TH {
-	vertical-align: middle;
+TABLE#large_upload_form.form {
+	width: 100%;
 }
 
 .mini_upload INPUT {

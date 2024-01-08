@@ -13,8 +13,10 @@ TD>BUTTON, TD>SPAN>BUTTON {width: 100%;}
 
 TABLE.form {width: 300px;}
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}
-TABLE.form TBODY TD {text-align: left;}
-TABLE.form TBODY TH {text-align: right; padding-right: 4px; width: 1%; white-space: nowrap;}
+TABLE.form TBODY TR TD {text-align: left;}
+TABLE.form TBODY TR TH {text-align: right; padding-right: 4px; width: 1%; white-space: nowrap;}
+TABLE.form TBODY TR.header TD,
+TABLE.form TBODY TR.header TH {text-align: center; width: auto;}
 TABLE.form TD + TH {padding-left: 8px;}
 
 *[onclick],
