@@ -11,11 +11,16 @@
 	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
 	"workspaceFolder": "/app",
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8000],
+	"portsAttributes": {
+		"8000": {
+			"label": "Application",
+			"onAutoForward": "openPreview"
+		}
+	},
+	"otherPortsAttributes": {
+		"onAutoForward": "silent"
+	},
 
 	"updateContentCommand": "composer install",
 	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
