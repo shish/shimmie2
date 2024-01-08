@@ -1,23 +1,18 @@
-
-ARTICLE SELECT {width: 150px;}
 INPUT, TEXTAREA {box-sizing: border-box;}
 
-TD>INPUT[type="button"], TD>SPAN>INPUT[type="button"],
-TD>INPUT[type="submit"], TD>SPAN>INPUT[type="submit"],
-TD>INPUT[type="text"], TD>SPAN>INPUT[type="text"],
-TD>INPUT[type="password"], TD>SPAN>INPUT[type="password"],
-TD>INPUT[type="email"], TD>SPAN>INPUT[type="email"],
-TD>SELECT, TD>SPAN>SELECT,
-TD>TEXTAREA, TD>SPAN>TEXTAREA,
-TD>BUTTON, TD>SPAN>BUTTON {width: 100%;}
-
 TABLE.form {width: 300px;}
+TABLE.form.zebra {width: 100%;}
+
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}
 TABLE.form TBODY TR TD {text-align: left;}
 TABLE.form TBODY TR TH {text-align: right; padding-right: 4px; width: 1%; white-space: nowrap;}
 TABLE.form TBODY TR.header TD,
 TABLE.form TBODY TR.header TH {text-align: center; width: auto;}
 TABLE.form TD + TH {padding-left: 8px;}
+TABLE.form INPUT:not([type="checkbox"]):not([type="radio"]),
+TABLE.form SELECT,
+TABLE.form TEXTAREA,
+TABLE.form BUTTON {width: 100%;}
 
 *[onclick],
 H3[class~="shm-toggler"],

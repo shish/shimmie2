@@ -24,7 +24,7 @@ class AliasTable extends Table
             new ActionColumn("oldtag"),
         ]);
         $this->order_by = ["oldtag"];
-        $this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra form"];
     }
 }
 

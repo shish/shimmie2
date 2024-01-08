@@ -46,7 +46,7 @@ class IPBanTable extends Table
         ];
         $this->create_url = make_link("ip_ban/create");
         $this->delete_url = make_link("ip_ban/delete");
-        $this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra form"];
     }
 }
 

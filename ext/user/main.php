@@ -67,7 +67,7 @@ class UserTable extends Table
             new UserActionColumn(),
         ]);
         $this->order_by = ["id DESC"];
-        $this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra form"];
     }
 }
 

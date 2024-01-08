@@ -26,7 +26,7 @@ class AutoTaggerTable extends Table
             new ActionColumn("tag"),
         ]);
         $this->order_by = ["tag"];
-        $this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra form"];
     }
 }
 

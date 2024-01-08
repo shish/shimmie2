@@ -26,7 +26,7 @@ class NotATagTable extends Table
         $this->order_by = ["tag", "redirect"];
         $this->create_url = make_link("untag/add");
         $this->delete_url = make_link("untag/remove");
-        $this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra form"];
     }
 }
 

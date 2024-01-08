@@ -29,7 +29,7 @@ class HashBanTable extends Table
         $this->order_by = ["date DESC", "id"];
         $this->create_url = make_link("image_hash_ban/add");
         $this->delete_url = make_link("image_hash_ban/remove");
-        $this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra form"];
     }
 }
 

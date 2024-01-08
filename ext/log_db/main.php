@@ -221,7 +221,7 @@ class LogTable extends Table
             new ActionColumn("id"),
         ]);
         $this->order_by = ["date_sent DESC"];
-        $this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra form"];
     }
 }
 
