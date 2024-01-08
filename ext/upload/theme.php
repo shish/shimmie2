@@ -68,8 +68,9 @@ class UploadTheme extends Themelet
             $form,
             SMALL(
                 "(",
-                $max_size > 0 ? "Per-file limit: $max_kb" : null,
-                $max_total_size > 0 ? " / Total limit: $max_total_kb" : null,
+                $max_size > 0 ? "File limit $max_kb" : null,
+                $max_size > 0 && $max_total_size > 0 ? " / " : null,
+                $max_total_size > 0 ? "Total limit $max_total_kb" : null,
                 " / Current total: ",
                 SPAN(["id" => "upload_size_tracker"], "0KB"),
                 ")"
@@ -311,7 +312,7 @@ class UploadTheme extends Themelet
 
         $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
-        $max_total_size = parse_shorthand_int(ini_get('post_max_size')) - 102400; //leave room for http request data
+        $max_total_size = parse_shorthand_int(ini_get('post_max_size'));
         $max_total_kb = to_shorthand_int($max_total_size);
 
         // <input type='hidden' name='max_file_size' value='$max_size' />
@@ -327,8 +328,13 @@ class UploadTheme extends Themelet
         return DIV(
             ["class" => 'mini_upload'],
             $form,
-            $max_size > 0 ? SMALL("(Max file size is $max_kb)") : null,
-            $max_total_size > 0 ? SMALL(BR(), "(Max total size is $max_total_kb)") : null,
+            SMALL(
+                "(",
+                $max_size > 0 ? "File limit $max_kb" : null,
+                $max_size > 0 && $max_total_size > 0 ? " / " : null,
+                $max_total_size > 0 ? "Total limit $max_total_kb" : null,
+                ")",
+            ),
             NOSCRIPT(BR(), A(["href" => make_link("upload")], "Larger Form"))
         );
     }
