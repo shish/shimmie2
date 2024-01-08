@@ -62,6 +62,7 @@ class TagEditTheme extends Themelet
                 "type" => "text",
                 "name" => "tag_edit__tags",
                 "id" => "tag_editor",
+                "spellcheck" => "off",
             ], $image->get_tag_list()) : null,
             link: Extension::is_enabled(TagHistoryInfo::KEY) ?
                 make_link("tag_history/{$image->id}") :
