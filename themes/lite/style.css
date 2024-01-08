@@ -77,14 +77,6 @@ a.tab:hover, a.tab:active, .tab-selected {
 .shm-image-list {
 	margin-top: 10px;
 }
-.lazy{
-	background:none repeat scroll 0 0 #CEDFF0;
-	padding:4px;
-	border:1px solid #C3D2E0;
-	margin:5px;
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
-}
 .navtop, .maintop {
 	font-size:110%;
 	border-bottom:0 none;

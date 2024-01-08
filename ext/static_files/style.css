@@ -22,9 +22,6 @@ H3[class~="shm-toggler"],
 .sortable TH {
 	cursor: pointer;
 }
-IMG {border: none;}
-FORM {margin: 0;}
-IMG.lazy {display: none;}
 
 #flash {
 	background: #FF7;
