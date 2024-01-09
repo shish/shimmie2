@@ -52,7 +52,11 @@ class BulkImportExport extends DataHandlerExtension
 
                         file_put_contents($tmpfile, $stream);
 
-                        $images = add_image($tmpfile, $item->filename, $item->new_tags)->images;
+                        $images = send_event(new DataUploadEvent($tmpfile, [
+                            'filename' => pathinfo($item->filename, PATHINFO_BASENAME),
+                            'tags' => $item->new_tags,
+                            'source' => null,
+                        ]))->images;
 
                         if (count($images) == 0) {
                             throw new SCoreException("Unable to import file $item->hash");

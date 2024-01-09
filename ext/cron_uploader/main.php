@@ -466,7 +466,11 @@ class CronUploader extends Extension
      */
     private function add_image(string $tmpname, string $filename, array $tags): DataUploadEvent
     {
-        $event = add_image($tmpname, $filename, $tags, null);
+        $event = send_event(new DataUploadEvent($tmpname, [
+            'filename' => pathinfo($filename, PATHINFO_BASENAME),
+            'tags' => $tags,
+            'source' => null,
+        ]));
 
         // Generate info message
         if (count($event->images) == 0) {

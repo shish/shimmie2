@@ -24,7 +24,11 @@ function add_dir(string $base, ?array $extra_tags = []): array
 
         $tags = array_merge(path_to_tags($short_path), $extra_tags);
         try {
-            $dae = add_image($full_path, $filename, $tags);
+            $dae = send_event(new DataUploadEvent($full_path, [
+                'filename' => pathinfo($filename, PATHINFO_BASENAME),
+                'tags' => $tags,
+                'source' => null,
+            ]));
             foreach($dae->images as $image) {
                 $results[] = new UploadSuccess($filename, $image->id);
             }
@@ -34,18 +38,6 @@ function add_dir(string $base, ?array $extra_tags = []): array
     }
 
     return $results;
-}
-
-/**
- * Sends a DataUploadEvent for a file.
- */
-function add_image(string $tmpname, string $filename, array $tags, ?string $source = null): DataUploadEvent
-{
-    return send_event(new DataUploadEvent($tmpname, [
-        'filename' => pathinfo($filename, PATHINFO_BASENAME),
-        'tags' => $tags,
-        'source' => $source,
-    ]));
 }
 
 function get_file_ext(string $filename): ?string

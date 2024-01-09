@@ -50,7 +50,12 @@ class BulkAddCSV extends Extension
      */
     private function add_image(string $tmpname, string $filename, array $tags, string $source, string $rating, string $thumbfile)
     {
-        $event = add_image($tmpname, $filename, $tags, $source);
+        $event = send_event(new DataUploadEvent($tmpname, [
+            'filename' => pathinfo($filename, PATHINFO_BASENAME),
+            'tags' => $tags,
+            'source' => $source,
+        ]));
+
         if (count($event->images) == 0) {
             throw new UploadException("File type not recognised");
         } else {

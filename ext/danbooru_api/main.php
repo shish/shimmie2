@@ -343,10 +343,15 @@ class DanbooruApi extends Extension
 
         try {
             // Fire off an event which should process the new file and add it to the db
-            $nevent = add_image($file, $filename, $posttags, $source);
+            $dae = send_event(new DataUploadEvent($file, [
+                'filename' => pathinfo($filename, PATHINFO_BASENAME),
+                'tags' => $posttags,
+                'source' => $source,
+            ]));
+
             //log_debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
             // If it went ok, grab the id for the newly uploaded image and pass it in the header
-            $newimg = Image::by_hash($hash);        // FIXME: Unsupported file doesn't throw an error?
+            $newimg = $dae->images[0];
             $newid = make_link("post/view/" . $newimg->id);
             if ($danboorup_kludge) {
                 $newid = make_http($newid);
