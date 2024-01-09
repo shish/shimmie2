@@ -109,7 +109,7 @@ class ResizeImage extends Extension
                 //Need to generate thumbnail again...
                 //This only seems to be an issue if one of the sizes was set to 0.
                 $image_obj = Image::by_id($image_obj->id); //Must be a better way to grab the new hash than setting this again..
-                send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->get_mime(), true));
+                send_event(new ThumbnailGenerationEvent($image_obj, true));
 
                 log_info("resize", ">>{$image_obj->id} has been resized to: ".$width."x".$height);
                 //TODO: Notify user that image has been resized.

@@ -105,7 +105,7 @@ class AdminPage extends Extension
             $uid = $event->args[0];
             $image = Image::by_id_or_hash($uid);
             if ($image) {
-                send_event(new ThumbnailGenerationEvent($image->hash, $image->get_mime(), true));
+                send_event(new ThumbnailGenerationEvent($image, true));
             } else {
                 print("No post with ID '$uid'\n");
             }

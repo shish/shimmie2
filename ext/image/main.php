@@ -147,6 +147,8 @@ class ImageIO extends Extension
             // actually insert the info
             $image->save_to_db();
 
+            send_event(new ThumbnailGenerationEvent($image));
+
             log_info("image", "Uploaded >>{$image->id} ({$image->hash})");
         } catch (ImageAdditionException $e) {
             throw new UploadException($e->error);
@@ -205,7 +207,7 @@ class ImageIO extends Extension
             $original->remove_image_only(); // Actually delete the old image file from disk
 
             /* Generate new thumbnail */
-            send_event(new ThumbnailGenerationEvent($replacement->hash, $replacement->get_mime()));
+            send_event(new ThumbnailGenerationEvent($replacement));
 
             log_info("image", "Replaced >>{$original->id} with ({$replacement->hash})");
         } catch (ImageReplaceException $e) {

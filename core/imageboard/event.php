@@ -82,8 +82,7 @@ class ThumbnailGenerationEvent extends Event
      * Request a thumbnail be made for an image object
      */
     public function __construct(
-        public string $hash,
-        public string $mime,
+        public Image $image,
         public bool $force = false
     ) {
         parent::__construct();

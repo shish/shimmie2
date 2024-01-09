@@ -305,7 +305,6 @@ abstract class DataHandlerExtension extends Extension
         $check_contents = $this->check_contents($event->tmpname);
         if ($supported_mime && $check_contents) {
             $this->move_upload_to_archive($event);
-            send_event(new ThumbnailGenerationEvent($event->hash, $event->mime));
 
             /* Check if we are replacing an image */
             if (!is_null($event->replace_id)) {
@@ -358,15 +357,15 @@ abstract class DataHandlerExtension extends Extension
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
     {
         $result = false;
-        if ($this->supported_mime($event->mime)) {
+        if ($this->supported_mime($event->image->get_mime())) {
             if ($event->force) {
-                $result = $this->create_thumb($event->hash, $event->mime);
+                $result = $this->create_thumb($event->image->hash, $event->image->get_mime());
             } else {
-                $outname = warehouse_path(Image::THUMBNAIL_DIR, $event->hash);
+                $outname = $event->image->get_thumb_filename();
                 if (file_exists($outname)) {
                     return;
                 }
-                $result = $this->create_thumb($event->hash, $event->mime);
+                $result = $this->create_thumb($event->image->hash, $event->image->get_mime());
             }
         }
         if ($result) {

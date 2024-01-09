@@ -12,7 +12,7 @@ class RegenThumb extends Extension
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
         global $cache;
-        $event = send_event(new ThumbnailGenerationEvent($image->hash, $image->get_mime(), $force));
+        $event = send_event(new ThumbnailGenerationEvent($image, $force));
         $cache->delete("thumb-block:{$image->id}");
         return $event->generated;
     }
@@ -125,7 +125,7 @@ class RegenThumb extends Extension
                             continue;
                         }
                     }
-                    $event = send_event(new ThumbnailGenerationEvent($image->hash, $image->mime, $force));
+                    $event = send_event(new ThumbnailGenerationEvent($image, $force));
                     if ($event->generated) {
                         $i++;
                     }
