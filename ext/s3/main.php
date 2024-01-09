@@ -10,7 +10,7 @@ require_once "config.php";
 
 class S3 extends Extension
 {
-    public static array $synced = [];
+    public static int $synced = 0;
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
@@ -23,8 +23,23 @@ class S3 extends Extension
         $sb->add_text_option(S3Config::IMAGE_BUCKET, "<br>Image Bucket: ");
     }
 
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
+        global $database;
+
+        if ($this->get_version("ext_s3_version") < 1) {
+            $database->create_table("s3_sync_queue", "
+                hash CHAR(32) NOT NULL PRIMARY KEY,
+                time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                action CHAR(1) NOT NULL DEFAULT 'S'
+            ");
+            $this->set_version("ext_s3_version", 1);
+        }
+    }
+
     public function onCommand(CommandEvent $event)
     {
+        global $database;
         if ($event->cmd == "help") {
             print "\ts3-sync <post id>\n";
             print "\t\tsync a post to s3\n\n";
@@ -32,20 +47,35 @@ class S3 extends Extension
             print "\t\tdelete a leftover file from s3\n\n";
         }
         if ($event->cmd == "s3-sync") {
-            if (preg_match('/^(\d+)-(\d+)$/', $event->args[0], $matches)) {
-                $start = (int)$matches[1];
-                $end = (int)$matches[2];
-            } else {
-                $start = (int)$event->args[0];
-                $end = $start;
-            }
-            foreach(Search::find_images_iterable(tags: ["order=id", "id>=$start", "id<=$end"]) as $image) {
-                if($this->sync_post($image)) {
-                    print("{$image->id}: {$image->hash}\n");
-                } else {
-                    print("{$image->id}: {$image->hash} (skipped)\n");
+            if(count($event->args) == 0) {
+                foreach($database->get_all("SELECT * FROM s3_sync_queue ORDER BY time ASC") as $row) {
+                    if($row['action'] == "S") {
+                        $image = Image::by_hash($row['hash']);
+                        print("SYN {$row['hash']} ($image->id)\n");
+                        $this->sync_post($image);
+                    } elseif($row['action'] == "D") {
+                        print("DEL {$row['hash']}\n");
+                        $this->remove_file($row['hash']);
+                    } else {
+                        print("??? {$row['hash']} ({$row['action']})\n");
+                    }
                 }
-                ob_flush();
+            } else {
+                if (preg_match('/^(\d+)-(\d+)$/', $event->args[0], $matches)) {
+                    $start = (int)$matches[1];
+                    $end = (int)$matches[2];
+                } else {
+                    $start = (int)$event->args[0];
+                    $end = $start;
+                }
+                foreach(Search::find_images_iterable(tags: ["order=id", "id>=$start", "id<=$end"]) as $image) {
+                    if($this->sync_post($image)) {
+                        print("{$image->id}: {$image->hash}\n");
+                    } else {
+                        print("{$image->id}: {$image->hash} (skipped)\n");
+                    }
+                    ob_flush();
+                }
             }
         }
         if ($event->cmd == "s3-rm") {
@@ -135,17 +165,20 @@ class S3 extends Extension
         return "$ha/$sh/$hash";
     }
 
+    private function is_busy(): bool
+    {
+        global $config;
+        $this->synced++;
+        if(PHP_SAPI == "cli") {
+            return false; // CLI can go on for as long as it wants
+        }
+        return $this->synced > $config->get_int(UploadConfig::COUNT);
+    }
+
     // underlying s3 interaction functions
     private function sync_post(Image $image, ?array $new_tags = null, bool $overwrite = true): bool
     {
         global $config;
-
-        // multiple events can trigger a sync,
-        // let's only do one per request
-        if(in_array($image->id, self::$synced)) {
-            return false;
-        }
-        self::$synced[] = $image->id;
 
         $client = $this->get_client();
         if(is_null($client)) {
@@ -153,28 +186,32 @@ class S3 extends Extension
         }
         $image_bucket = $config->get_string(S3Config::IMAGE_BUCKET);
 
-        if(is_null($new_tags)) {
-            $friendly = $image->parse_link_template('$id - $tags.$ext');
-        } else {
-            $_orig_tags = $image->get_tag_array();
-            $image->tag_array = $new_tags;
-            $friendly = $image->parse_link_template('$id - $tags.$ext');
-            $image->tag_array = $_orig_tags;
-        }
-
         $key = $this->hash_to_path($image->hash);
         if(!$overwrite && $client->doesObjectExist($image_bucket, $key)) {
             return false;
         }
 
-        $client->putObject([
-            'Bucket' => $image_bucket,
-            'Key' => $key,
-            'Body' => file_get_contents($image->get_image_filename()),
-            'ACL' => 'public-read',
-            'ContentType' => $image->get_mime(),
-            'ContentDisposition' => "inline; filename=\"$friendly\"",
-        ]);
+        if($this->is_busy()) {
+            $this->enqueue($image->hash, "S");
+        } else {
+            if(is_null($new_tags)) {
+                $friendly = $image->parse_link_template('$id - $tags.$ext');
+            } else {
+                $_orig_tags = $image->get_tag_array();
+                $image->tag_array = $new_tags;
+                $friendly = $image->parse_link_template('$id - $tags.$ext');
+                $image->tag_array = $_orig_tags;
+            }
+            $client->putObject([
+                'Bucket' => $image_bucket,
+                'Key' => $key,
+                'Body' => file_get_contents($image->get_image_filename()),
+                'ACL' => 'public-read',
+                'ContentType' => $image->get_mime(),
+                'ContentDisposition' => "inline; filename=\"$friendly\"",
+            ]);
+            $this->dequeue($image->hash);
+        }
         return true;
     }
 
@@ -185,10 +222,30 @@ class S3 extends Extension
         if(is_null($client)) {
             return;
         }
-        $image_bucket = $config->get_string(S3Config::IMAGE_BUCKET);
-        $client->deleteObject([
-            'Bucket' => $image_bucket,
-            'Key' => $this->hash_to_path($hash),
-        ]);
+        if($this->is_busy()) {
+            $this->enqueue($hash, "D");
+        } else {
+            $client->deleteObject([
+                'Bucket' => $config->get_string(S3Config::IMAGE_BUCKET),
+                'Key' => $this->hash_to_path($hash),
+            ]);
+            $this->dequeue($hash);
+        }
+    }
+
+    private function enqueue(string $hash, string $action)
+    {
+        global $database;
+        $database->execute("DELETE FROM s3_sync_queue WHERE hash = :hash", ["hash" => $hash]);
+        $database->execute("
+            INSERT INTO s3_sync_queue (hash, action)
+            VALUES (:hash, :action)
+        ", ["hash" => $hash, "action" => $action]);
+    }
+
+    private function dequeue(string $hash)
+    {
+        global $database;
+        $database->execute("DELETE FROM s3_sync_queue WHERE hash = :hash", ["hash" => $hash]);
     }
 }
