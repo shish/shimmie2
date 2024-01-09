@@ -6,9 +6,15 @@ function joinUrlSegments(base, query) {
     return base + separatorChar + query;
 }
 
+/**
+ * @param {HTMLElement} el
+ */
 function autosize(el) {
 	setTimeout(function() {
-		el.style.cssText = 'height:' + el.scrollHeight + 'px';
+		if(el.offsetHeight < el.scrollHeight) {
+			el.style.height = el.scrollHeight + 'px';
+			el.style.width = el.offsetWidth + 'px';
+		}
 	}, 0);
 }
 
