@@ -71,14 +71,6 @@ class Rule34 extends Extension
         }
     }
 
-    public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
-    {
-        # global $database, $user;
-        # if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
-        #     $database->notify("shm_image_bans", $event->hash);
-        # }
-    }
-
     public function onCommand(CommandEvent $event)
     {
         global $cache;
