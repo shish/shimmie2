@@ -287,19 +287,6 @@ abstract class DataHandlerExtension extends Extension
 {
     protected array $SUPPORTED_MIME = [];
 
-    protected function move_upload_to_archive(DataUploadEvent $event): string
-    {
-        $target = warehouse_path(Image::IMAGE_DIR, $event->hash);
-        if (!@copy($event->tmpname, $target)) {
-            $errors = error_get_last();
-            throw new UploadException(
-                "Failed to copy file from uploads ({$event->tmpname}) to archive ($target): ".
-                "{$errors['type']} / {$errors['message']}"
-            );
-        }
-        return $target;
-    }
-
     public function onDataUpload(DataUploadEvent $event)
     {
         global $config;
@@ -329,8 +316,15 @@ abstract class DataHandlerExtension extends Extension
             $filename = $event->tmpname;
             // FIXME: this should happen after ImageAdditionEvent, but the thumbnail
             // code assumes the file is in the archive already instead of using
-            // the image->tmp_file field
-            $filename = $this->move_upload_to_archive($event);
+            // the image->get_image_filename() function
+            $filename = warehouse_path(Image::IMAGE_DIR, $event->hash);
+            if (!@copy($event->tmpname, $filename)) {
+                $errors = error_get_last();
+                throw new UploadException(
+                    "Failed to copy file from uploads ({$event->tmpname}) to archive ($filename): ".
+                    "{$errors['type']} / {$errors['message']}"
+                );
+            }
 
             assert(is_readable($filename));
             $image = new Image();

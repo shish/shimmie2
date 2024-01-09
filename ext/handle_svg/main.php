@@ -32,6 +32,26 @@ class SVGFileHandler extends DataHandlerExtension
         }
     }
 
+    public function onDataUpload(DataUploadEvent $event)
+    {
+        global $config;
+
+        if ($this->supported_mime($event->mime)) {
+            // If the SVG handler intends to handle this file,
+            // then sanitise it before touching it
+            $sanitizer = new Sanitizer();
+            $sanitizer->removeRemoteReferences(true);
+            $dirtySVG = file_get_contents($event->tmpname);
+            $cleanSVG = $sanitizer->sanitize($dirtySVG);
+            $event->hash = md5($cleanSVG);
+            $new_tmpname = tempnam(sys_get_temp_dir(), "shimmie_svg");
+            file_put_contents($new_tmpname, $cleanSVG);
+            $event->set_tmpname($new_tmpname);
+
+            parent::onDataUpload($event);
+        }
+    }
+
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
         $event->image->lossless = true;
@@ -42,18 +62,6 @@ class SVGFileHandler extends DataHandlerExtension
         $msp = new MiniSVGParser($event->image->get_image_filename());
         $event->image->width = $msp->width;
         $event->image->height = $msp->height;
-    }
-
-    protected function move_upload_to_archive(DataUploadEvent $event): string
-    {
-        $sanitizer = new Sanitizer();
-        $sanitizer->removeRemoteReferences(true);
-        $dirtySVG = file_get_contents($event->tmpname);
-        $cleanSVG = $sanitizer->sanitize($dirtySVG);
-        $event->hash = md5($cleanSVG);
-        $filename = warehouse_path(Image::IMAGE_DIR, $event->hash);
-        file_put_contents($filename, $cleanSVG);
-        return $filename;
     }
 
     protected function create_thumb(string $hash, string $mime): bool

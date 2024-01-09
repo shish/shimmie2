@@ -583,7 +583,7 @@ class Image
      * This function removes an image (and thumbnail) from the DISK ONLY.
      * It DOES NOT remove anything from the database.
      */
-    public function remove_image_only(bool $quiet=false): void
+    public function remove_image_only(bool $quiet = false): void
     {
         $img_del = @unlink($this->get_image_filename());
         $thumb_del = @unlink($this->get_thumb_filename());
@@ -591,8 +591,7 @@ class Image
             if(!$quiet) {
                 log_info("core_image", "Deleted files for Post #{$this->id} ({$this->hash})");
             }
-        }
-        else {
+        } else {
             $img = $img_del ? '' : ' image';
             $thumb = $thumb_del ? '' : ' thumbnail';
             log_error('core_image', "Failed to delete files for Post #{$this->id}{$img}{$thumb}");
