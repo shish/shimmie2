@@ -60,11 +60,15 @@ class UploadTest extends ShimmiePHPUnitTestCase
 
         sleep(1); // make sure the timestamp changes (see bug #903)
 
+        // create a copy because the file is deleted after upload
+        $tmpfile = tempnam(sys_get_temp_dir(), "shimmie_test");
+        copy("tests/bedroom_workshop.jpg", $tmpfile);
+
         $_FILES = [
             'data' => [
                 'name' => ['puppy-hugs.jpg'],
                 'type' => ['image/jpeg'],
-                'tmp_name' => ['tests/bedroom_workshop.jpg'],
+                'tmp_name' => [$tmpfile],
                 'error' => [0],
                 'size' => [271386],
             ]

@@ -105,8 +105,8 @@ class S3 extends Extension
 
     public function onImageReplace(ImageReplaceEvent $event)
     {
-        $this->remove_file($event->original->hash);
-        $this->sync_post($event->replacement, $event->original->get_tag_array());
+        $this->remove_file($event->original_hash);
+        $this->sync_post($event->image);
     }
 
     // utils

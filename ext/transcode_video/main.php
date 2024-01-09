@@ -157,12 +157,12 @@ class TranscodeVideo extends Extension
                         try {
                             $database->begin_transaction();
 
-                            $output_image = $this->transcode_and_replace_video($image, $format);
+                            $transcoded = $this->transcode_and_replace_video($image, $format);
                             // If a subsequent transcode fails, the database needs to have everything about the previous
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
                             $database->commit();
-                            if ($output_image != $image) {
+                            if ($transcoded) {
                                 $total++;
                             }
                         } catch (\Exception $e) {
@@ -199,10 +199,10 @@ class TranscodeVideo extends Extension
         return $output;
     }
 
-    private function transcode_and_replace_video(Image $image, string $target_mime): Image
+    private function transcode_and_replace_video(Image $image, string $target_mime): bool
     {
         if ($image->get_mime() == $target_mime) {
-            return $image;
+            return false;
         }
 
         if ($image->video == null || ($image->video === true && empty($image->video_codec))) {
@@ -215,31 +215,10 @@ class TranscodeVideo extends Extension
         }
 
         $original_file = warehouse_path(Image::IMAGE_DIR, $image->hash);
-
         $tmp_filename = tempnam(sys_get_temp_dir(), "shimmie_transcode_video");
-        try {
-            $tmp_filename = $this->transcode_video($original_file, $image->video_codec, $target_mime, $tmp_filename);
-
-            $new_image = new Image();
-            $new_image->hash = md5_file($tmp_filename);
-            $new_image->filesize = filesize($tmp_filename);
-            $new_image->filename = $image->filename;
-            $new_image->width = $image->width;
-            $new_image->height = $image->height;
-
-            /* Move the new image into the main storage location */
-            $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
-            if (!@copy($tmp_filename, $target)) {
-                throw new VideoTranscodeException("Failed to copy new post file from temporary location ({$tmp_filename}) to archive ($target)");
-            }
-
-            send_event(new ImageReplaceEvent($image, $new_image));
-
-            return $new_image;
-        } finally {
-            /* Remove temporary file */
-            @unlink($tmp_filename);
-        }
+        $tmp_filename = $this->transcode_video($original_file, $image->video_codec, $target_mime, $tmp_filename);
+        send_event(new ImageReplaceEvent($image, $tmp_filename));
+        return true;
     }
 
 

@@ -309,26 +309,16 @@ abstract class DataHandlerExtension extends Extension
                 throw new UploadException("Invalid or corrupted file");
             }
 
-            $this->move_upload_to_archive($event);
-
             /* Check if we are replacing an image */
             if (!is_null($event->replace_id)) {
-                /* hax: This seems like such a dirty way to do this.. */
-
-                /* Check to make sure the image exists. */
                 $existing = Image::by_id($event->replace_id);
-
                 if (is_null($existing)) {
                     throw new UploadException("Post to replace does not exist!");
                 }
-                if ($existing->hash === $event->hash) {
-                    throw new UploadException("The uploaded post is the same as the one to replace.");
-                }
-
-                $replacement = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
-                send_event(new ImageReplaceEvent($existing, $replacement, $event->metadata));
-                $event->images[] = $replacement;
+                send_event(new ImageReplaceEvent($existing, $event->tmpname));
+                $event->images[] = $existing;
             } else {
+                $this->move_upload_to_archive($event);
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
 
                 $existing = Image::by_hash($image->hash);

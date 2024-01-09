@@ -263,25 +263,9 @@ class ResizeImage extends Extension
             Media::RESIZE_TYPE_STRETCH
         ));
 
-        $new_image = new Image();
-        $new_image->hash = md5_file($tmp_filename);
-        $new_image->filesize = filesize($tmp_filename);
-        $new_image->filename = 'resized-'.$image_obj->filename;
-        $new_image->width = $new_width;
-        $new_image->height = $new_height;
+        send_event(new ImageReplaceEvent($image_obj, $tmp_filename));
 
-        /* Move the new image into the main storage location */
-        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
-        if (!@copy($tmp_filename, $target)) {
-            throw new ImageResizeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
-        }
-
-        /* Remove temporary file */
-        @unlink($tmp_filename);
-
-        send_event(new ImageReplaceEvent($image_obj, $new_image));
-
-        log_info("resize", "Resized >>{$image_obj->id} - New hash: {$new_image->hash}");
+        log_info("resize", "Resized >>{$image_obj->id} - New hash: {$image_obj->hash}");
     }
 
     /**

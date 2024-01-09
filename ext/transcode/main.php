@@ -298,13 +298,13 @@ class TranscodeImage extends Extension
 
                             $before_size =  $image->filesize;
 
-                            $new_image = $this->transcode_and_replace_image($image, $mime);
+                            $this->transcode_and_replace_image($image, $mime);
                             // If a subsequent transcode fails, the database needs to have everything about the previous
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
                             $database->commit();
                             $total++;
-                            $size_difference += ($before_size - $new_image->filesize);
+                            $size_difference += ($before_size - $image->filesize);
                         } catch (\Exception $e) {
                             log_error("transcode", "Error while bulk transcode on item {$image->id} to $mime: ".$e->getMessage());
                             try {
@@ -353,31 +353,11 @@ class TranscodeImage extends Extension
 
 
 
-    private function transcode_and_replace_image(Image $image_obj, string $target_mime): Image
+    private function transcode_and_replace_image(Image $image, string $target_mime): void
     {
-        $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
-
-        $tmp_filename = $this->transcode_image($original_file, $image_obj->get_mime(), $target_mime);
-
-        $new_image = new Image();
-        $new_image->hash = md5_file($tmp_filename);
-        $new_image->filesize = filesize($tmp_filename);
-        $new_image->filename = $image_obj->filename;
-        $new_image->width = $image_obj->width;
-        $new_image->height = $image_obj->height;
-
-        /* Move the new image into the main storage location */
-        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
-        if (!@copy($tmp_filename, $target)) {
-            throw new ImageTranscodeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
-        }
-
-        /* Remove temporary file */
-        @unlink($tmp_filename);
-
-        send_event(new ImageReplaceEvent($image_obj, $new_image));
-
-        return $new_image;
+        $original_file = warehouse_path(Image::IMAGE_DIR, $image->hash);
+        $tmp_filename = $this->transcode_image($original_file, $image->get_mime(), $target_mime);
+        send_event(new ImageReplaceEvent($image, $tmp_filename));
     }
 
 
@@ -390,8 +370,6 @@ class TranscodeImage extends Extension
         }
 
         $engine = $config->get_string(TranscodeConfig::ENGINE);
-
-
 
         if (!$this->can_convert_mime($engine, $source_mime)) {
             throw new ImageTranscodeException("Engine $engine does not support input MIME $source_mime");

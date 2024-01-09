@@ -143,41 +143,36 @@ class ImageIO extends Extension
 
     public function onImageReplace(ImageReplaceEvent $event)
     {
-        $original = $event->original;
-        $replacement = $event->replacement;
+        $image = $event->image;
 
         try {
-            $duplicate = Image::by_hash($replacement->hash);
-            if (!is_null($duplicate) && $duplicate->id != $original->id) {
-                throw new ImageReplaceException(">>{$duplicate->id} already has hash {$replacement->hash}");
+            $duplicate = Image::by_hash($event->new_hash);
+            if (!is_null($duplicate) && $duplicate->id != $image->id) {
+                throw new ImageReplaceException("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
             }
 
-            $replacement->set_mime(
-                MimeType::get_for_file($replacement->get_image_filename())
-            );
+            $image->remove_image_only(); // Actually delete the old image file from disk
 
-            // Update the data in the database.
-            if (empty($replacement->source)) {
-                $replacement->source = $original->get_source();
+            $target = warehouse_path(Image::IMAGE_DIR, $event->new_hash);
+            if (!@copy($event->tmp_filename, $target)) {
+                $errors = error_get_last();
+                throw new UploadException(
+                    "Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): ".
+                    "{$errors['type']} / {$errors['message']}"
+                );
             }
-            $replacement->posted = $original->posted;
-            $replacement->id = $original->id;
-            send_event(new MediaCheckPropertiesEvent($replacement));
-            $replacement->save_to_db();
+            unlink($event->tmp_filename);
 
-            /*
-                This step could be optional, ie: perhaps move the image somewhere
-                and have it stored in a 'replaced images' list that could be
-                inspected later by an admin?
-            */
+            // update metadata and save metadata to DB
+            $event->image->hash = $event->new_hash;
+            $event->image->filesize = filesize($target);
+            $event->image->set_mime(MimeType::get_for_file($target));
+            send_event(new MediaCheckPropertiesEvent($image));
+            $image->save_to_db();
 
-            log_debug("image", "Removing image with hash " . $original->hash);
-            $original->remove_image_only(); // Actually delete the old image file from disk
+            send_event(new ThumbnailGenerationEvent($image));
 
-            /* Generate new thumbnail */
-            send_event(new ThumbnailGenerationEvent($replacement));
-
-            log_info("image", "Replaced >>{$original->id} with ({$replacement->hash})");
+            log_info("image", "Replaced >>{$image->id} {$event->original_hash} with {$event->new_hash}");
         } catch (ImageReplaceException $e) {
             throw new UploadException($e->error);
         }

@@ -184,8 +184,8 @@ class TagEdit extends Extension
 
     public function onImageReplace(ImageReplaceEvent $event)
     {
-        if(!empty($event->metadata['source'])) {
-            send_event(new SourceSetEvent($event->replacement, $event->metadata['source']));
+        if(!empty($_POST['source'])) {
+            send_event(new SourceSetEvent($event->image, $_POST['source']));
         }
     }
 

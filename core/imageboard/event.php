@@ -52,21 +52,23 @@ class ImageDeletionEvent extends Event
  */
 class ImageReplaceEvent extends Event
 {
+    public string $original_hash;
+    public string $new_hash;
+
     /**
-     * Replaces an image.
+     * Replaces an image file.
      *
      * Updates an existing ID in the database to use a new image
      * file, leaving the tags and such unchanged. Also removes
      * the old image file and thumbnail from the disk.
-     *
-     * @param mixed[] $metadata
      */
     public function __construct(
-        public Image $original,
-        public Image $replacement,
-        public array $metadata = [],
+        public Image $image,
+        public string $tmp_filename,
     ) {
         parent::__construct();
+        $this->original_hash = $image->hash;
+        $this->new_hash = md5_file($tmp_filename);
     }
 }
 
