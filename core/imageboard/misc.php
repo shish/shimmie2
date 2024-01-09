@@ -135,18 +135,14 @@ function get_thumbnail_max_size_scaled(): array
 }
 
 
-function create_image_thumb(string $hash, string $mime, string $engine = null)
+function create_image_thumb(Image $image, string $engine = null)
 {
     global $config;
-
-    $inname = warehouse_path(Image::IMAGE_DIR, $hash);
-    $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
-    $tsize = get_thumbnail_max_size_scaled();
     create_scaled_image(
-        $inname,
-        $outname,
-        $tsize,
-        $mime,
+        $image->get_image_filename(),
+        $image->get_thumb_filename(),
+        get_thumbnail_max_size_scaled(),
+        $image->get_mime(),
         $engine,
         $config->get_string(ImageConfig::THUMB_FIT)
     );

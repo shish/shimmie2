@@ -64,7 +64,7 @@ class ArchiveFileHandler extends DataHandlerExtension
         return false;
     }
 
-    protected function create_thumb(string $hash, string $mime): bool
+    protected function create_thumb(Image $image): bool
     {
         return false;
     }

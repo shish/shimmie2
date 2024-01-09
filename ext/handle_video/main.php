@@ -121,9 +121,9 @@ class VideoFileHandler extends DataHandlerExtension
         return MimeType::matches_array($mime, $enabled_formats, true);
     }
 
-    protected function create_thumb(string $hash, string $mime): bool
+    protected function create_thumb(Image $image): bool
     {
-        return Media::create_thumbnail_ffmpeg($hash);
+        return Media::create_thumbnail_ffmpeg($image);
     }
 
     protected function check_contents(string $tmpname): bool

@@ -317,7 +317,7 @@ class Media extends Extension
      * @return bool true if successful, false if not.
      * @throws MediaException
      */
-    public static function create_thumbnail_ffmpeg($hash): bool
+    public static function create_thumbnail_ffmpeg(Image $image): bool
     {
         global $config;
 
@@ -327,10 +327,10 @@ class Media extends Extension
         }
 
         $ok = false;
-        $inname = warehouse_path(Image::IMAGE_DIR, $hash);
+        $inname = $image->get_image_filename();
         $tmpname = tempnam(sys_get_temp_dir(), "shimmie_ffmpeg_thumb");
         try {
-            $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
+            $outname = $image->get_thumb_filename();
 
             $orig_size = self::video_size($inname);
             $scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1], true);

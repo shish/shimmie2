@@ -42,19 +42,20 @@ class PixelFileHandler extends DataHandlerExtension
         return $info && in_array($info[2], $valid);
     }
 
-    protected function create_thumb(string $hash, string $mime): bool
+    protected function create_thumb(Image $image): bool
     {
         try {
-            create_image_thumb($hash, $mime);
+            create_image_thumb($image);
             return true;
         } catch (InsufficientMemoryException $e) {
+            log_warning("handle_pixel", "Insufficient memory while creating thumbnail: ".$e->getMessage());
             $tsize = get_thumbnail_max_size_scaled();
             $thumb = imagecreatetruecolor($tsize[0], min($tsize[1], 64));
             $white = imagecolorallocate($thumb, 255, 255, 255);
             $black = imagecolorallocate($thumb, 0, 0, 0);
             imagefill($thumb, 0, 0, $white);
-            log_warning("handle_pixel", "Insufficient memory while creating thumbnail: ".$e->getMessage());
             imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
+            // FIXME: write the image to disk??
             return true;
         } catch (\Exception $e) {
             log_error("handle_pixel", "Error while creating thumbnail: ".$e->getMessage());

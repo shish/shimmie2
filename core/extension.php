@@ -313,19 +313,8 @@ abstract class DataHandlerExtension extends Extension
                 }
             }
 
+            // Create a new Image object
             $filename = $event->tmpname;
-            // FIXME: this should happen after ImageAdditionEvent, but the thumbnail
-            // code assumes the file is in the archive already instead of using
-            // the image->get_image_filename() function
-            $filename = warehouse_path(Image::IMAGE_DIR, $event->hash);
-            if (!@copy($event->tmpname, $filename)) {
-                $errors = error_get_last();
-                throw new UploadException(
-                    "Failed to copy file from uploads ({$event->tmpname}) to archive ($filename): ".
-                    "{$errors['type']} / {$errors['message']}"
-                );
-            }
-
             assert(is_readable($filename));
             $image = new Image();
             $image->tmp_file = $filename;
@@ -341,12 +330,20 @@ abstract class DataHandlerExtension extends Extension
             } catch (MediaException $e) {
                 throw new UploadException("Unable to scan media properties $filename / $image->filename / $image->hash: ".$e->getMessage());
             }
+            $image->save_to_db(); // Ensure the image has a DB-assigned ID
 
-            // ensure $image has a database-assigned ID number
-            // before anything else happens
-            $image->save_to_db();
-
+            // Let everybody else know, so that TagEdit can set tags, Ratings can set ratings, etc
             $iae = send_event(new ImageAdditionEvent($image, $event->metadata));
+
+            // If everything is OK, then move the file to the archive
+            $filename = warehouse_path(Image::IMAGE_DIR, $event->hash);
+            if (!@copy($event->tmpname, $filename)) {
+                $errors = error_get_last();
+                throw new UploadException(
+                    "Failed to copy file from uploads ({$event->tmpname}) to archive ($filename): ".
+                    "{$errors['type']} / {$errors['message']}"
+                );
+            }
 
             $event->images[] = $iae->image;
         }
@@ -357,13 +354,13 @@ abstract class DataHandlerExtension extends Extension
         $result = false;
         if ($this->supported_mime($event->image->get_mime())) {
             if ($event->force) {
-                $result = $this->create_thumb($event->image->hash, $event->image->get_mime());
+                $result = $this->create_thumb($event->image);
             } else {
                 $outname = $event->image->get_thumb_filename();
                 if (file_exists($outname)) {
                     return;
                 }
-                $result = $this->create_thumb($event->image->hash, $event->image->get_mime());
+                $result = $this->create_thumb($event->image);
             }
         }
         if ($result) {
@@ -392,7 +389,7 @@ abstract class DataHandlerExtension extends Extension
 
     abstract protected function media_check_properties(MediaCheckPropertiesEvent $event): void;
     abstract protected function check_contents(string $tmpname): bool;
-    abstract protected function create_thumb(string $hash, string $mime): bool;
+    abstract protected function create_thumb(Image $image): bool;
 
     protected function supported_mime(string $mime): bool
     {

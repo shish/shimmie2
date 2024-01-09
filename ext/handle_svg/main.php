@@ -64,19 +64,19 @@ class SVGFileHandler extends DataHandlerExtension
         $event->image->height = $msp->height;
     }
 
-    protected function create_thumb(string $hash, string $mime): bool
+    protected function create_thumb(Image $image): bool
     {
         try {
             // Normally we require imagemagick, but for unit tests we can use a no-op engine
             if (defined('UNITTEST')) {
-                create_image_thumb($hash, $mime);
+                create_image_thumb($image);
             } else {
-                create_image_thumb($hash, $mime, MediaEngine::IMAGICK);
+                create_image_thumb($image, MediaEngine::IMAGICK);
             }
             return true;
         } catch (MediaException $e) {
             log_warning("handle_svg", "Could not generate thumbnail. " . $e->getMessage());
-            copy("ext/handle_svg/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
+            copy("ext/handle_svg/thumb.jpg", $image->get_thumb_filename());
             return false;
         }
     }
