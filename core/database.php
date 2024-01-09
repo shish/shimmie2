@@ -124,13 +124,17 @@ class Database
 
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
     {
+        global $_tracer;
         try {
+            $_tracer->begin("Savepoint $name");
             $this->execute("SAVEPOINT $name");
             $ret = $callback();
             $this->execute("RELEASE SAVEPOINT $name");
+            $_tracer->end();
             return $ret;
         } catch (\Exception $e) {
             $this->execute("ROLLBACK TO SAVEPOINT $name");
+            $_tracer->end();
             throw $e;
         }
     }
