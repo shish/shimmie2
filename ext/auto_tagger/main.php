@@ -155,9 +155,9 @@ class AutoTagger extends Extension
 
     public function onTagSet(TagSetEvent $event)
     {
-        $results = $this->apply_auto_tags($event->tags);
+        $results = $this->apply_auto_tags($event->new_tags);
         if (!empty($results)) {
-            $event->tags = $results;
+            $event->new_tags = $results;
         }
     }
 

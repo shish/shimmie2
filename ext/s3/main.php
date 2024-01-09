@@ -95,7 +95,7 @@ class S3 extends Extension
 
     public function onTagSet(TagSetEvent $event)
     {
-        $this->sync_post($event->image, $event->tags);
+        $this->sync_post($event->image, $event->new_tags);
     }
 
     public function onImageDeletion(ImageDeletionEvent $event)
@@ -105,7 +105,7 @@ class S3 extends Extension
 
     public function onImageReplace(ImageReplaceEvent $event)
     {
-        $this->remove_file($event->original_hash);
+        $this->remove_file($event->old_hash);
         $this->sync_post($event->image);
     }
 

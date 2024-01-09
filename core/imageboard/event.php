@@ -51,7 +51,7 @@ class ImageDeletionEvent extends Event
  */
 class ImageReplaceEvent extends Event
 {
-    public string $original_hash;
+    public string $old_hash;
     public string $new_hash;
 
     /**
@@ -66,7 +66,7 @@ class ImageReplaceEvent extends Event
         public string $tmp_filename,
     ) {
         parent::__construct();
-        $this->original_hash = $image->hash;
+        $this->old_hash = $image->hash;
         $this->new_hash = md5_file($tmp_filename);
     }
 }

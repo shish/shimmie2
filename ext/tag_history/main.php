@@ -9,12 +9,6 @@ class TagHistory extends Extension
     /** @var TagHistoryTheme */
     protected Themelet $theme;
 
-    // in before tags are actually set, so that "get current tags" works
-    public function get_priority(): int
-    {
-        return 40;
-    }
-
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -80,7 +74,64 @@ class TagHistory extends Extension
 
     public function onTagSet(TagSetEvent $event)
     {
-        $this->add_tag_history($event->image, $event->tags);
+        global $database, $config, $user;
+
+        $new_tags = Tag::implode($event->new_tags);
+        $old_tags = Tag::implode($event->old_tags);
+
+        if ($new_tags == $old_tags) {
+            return;
+        }
+
+        if (empty($old_tags)) {
+            /* no old tags, so we are probably adding the image for the first time */
+            log_debug("tag_history", "adding new tag history: [$new_tags]");
+        } else {
+            log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
+        }
+
+        $allowed = $config->get_int("history_limit");
+        if ($allowed == 0) {
+            return;
+        }
+
+        // if the image has no history, make one with the old tags
+        $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = :id", ["id" => $event->image->id]);
+        if ($entries == 0 && !empty($old_tags)) {
+            $database->execute(
+                "
+				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
+				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
+                ["image_id" => $event->image->id, "tags" => $old_tags, "user_id" => $config->get_int('anon_id'), "user_ip" => '127.0.0.1']
+            );
+            $entries++;
+        }
+
+        // add a history entry
+        $database->execute(
+            "
+				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
+				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
+            ["image_id" => $event->image->id, "tags" => $new_tags, "user_id" => $user->id, "user_ip" => get_real_ip()]
+        );
+        $entries++;
+
+        // if needed remove oldest one
+        if ($allowed == -1) {
+            return;
+        }
+        if ($entries > $allowed) {
+            // TODO: Make these queries better
+            /*
+                MySQL does NOT allow you to modify the same table which you use in the SELECT part.
+                Which means that these will probably have to stay as TWO separate queries...
+
+                https://dev.mysql.com/doc/refman/5.1/en/subquery-restrictions.html
+                https://stackoverflow.com/questions/45494/mysql-error-1093-cant-specify-target-table-for-update-in-from-clause
+            */
+            $min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = :image_id", ["image_id" => $event->image->id]);
+            $database->execute("DELETE FROM tag_histories WHERE id = :id", ["id" => $min_id]);
+        }
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
@@ -341,72 +392,5 @@ class TagHistory extends Extension
         }
 
         log_info("tag_history", 'Reverted '.count($result).' edits.');
-    }
-
-    /**
-     * This function is called just before an images tag are changed.
-     *
-     * @param string[] $tags
-     */
-    private function add_tag_history(Image $image, array $tags)
-    {
-        global $database, $config, $user;
-
-        $new_tags = Tag::implode($tags);
-        $old_tags = $image->get_tag_list();
-
-        if ($new_tags == $old_tags) {
-            return;
-        }
-
-        if (empty($old_tags)) {
-            /* no old tags, so we are probably adding the image for the first time */
-            log_debug("tag_history", "adding new tag history: [$new_tags]");
-        } else {
-            log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
-        }
-
-        $allowed = $config->get_int("history_limit");
-        if ($allowed == 0) {
-            return;
-        }
-
-        // if the image has no history, make one with the old tags
-        $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = :id", ["id" => $image->id]);
-        if ($entries == 0 && !empty($old_tags)) {
-            $database->execute(
-                "
-				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
-				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-                ["image_id" => $image->id, "tags" => $old_tags, "user_id" => $config->get_int('anon_id'), "user_ip" => '127.0.0.1']
-            );
-            $entries++;
-        }
-
-        // add a history entry
-        $database->execute(
-            "
-				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
-				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-            ["image_id" => $image->id, "tags" => $new_tags, "user_id" => $user->id, "user_ip" => get_real_ip()]
-        );
-        $entries++;
-
-        // if needed remove oldest one
-        if ($allowed == -1) {
-            return;
-        }
-        if ($entries > $allowed) {
-            // TODO: Make these queries better
-            /*
-                MySQL does NOT allow you to modify the same table which you use in the SELECT part.
-                Which means that these will probably have to stay as TWO separate queries...
-
-                https://dev.mysql.com/doc/refman/5.1/en/subquery-restrictions.html
-                https://stackoverflow.com/questions/45494/mysql-error-1093-cant-specify-target-table-for-update-in-from-clause
-            */
-            $min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = :image_id", ["image_id" => $image->id]);
-            $database->execute("DELETE FROM tag_histories WHERE id = :id", ["id" => $min_id]);
-        }
     }
 }

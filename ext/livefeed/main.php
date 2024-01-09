@@ -30,7 +30,7 @@ class LiveFeed extends Extension
     {
         $this->msg(
             make_http(make_link("post/view/".$event->image->id))." - ".
-            "tags set to: ".Tag::implode($event->tags)
+            "tags set to: ".Tag::implode($event->new_tags)
         );
     }
 

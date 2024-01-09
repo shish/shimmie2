@@ -85,6 +85,6 @@ class ReplaceFile extends Extension
 
         send_event(new ThumbnailGenerationEvent($image));
 
-        log_info("image", "Replaced >>{$image->id} {$event->original_hash} with {$event->new_hash}");
+        log_info("image", "Replaced >>{$image->id} {$event->old_hash} with {$event->new_hash}");
     }
 }

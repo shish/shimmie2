@@ -52,7 +52,8 @@ class TagSetException extends UserErrorException
 class TagSetEvent extends Event
 {
     public Image $image;
-    public array $tags;
+    public array $old_tags;
+    public array $new_tags;
     public array $metatags;
 
     /**
@@ -62,15 +63,15 @@ class TagSetEvent extends Event
     {
         parent::__construct();
         $this->image    = $image;
-
-        $this->tags     = [];
+        $this->old_tags = $image->get_tag_array();
+        $this->new_tags = [];
         $this->metatags = [];
 
         foreach ($tags as $tag) {
             if ((!str_contains($tag, ':')) && (!str_contains($tag, '='))) {
                 //Tag doesn't contain : or =, meaning it can't possibly be a metatag.
                 //This should help speed wise, as it avoids running every single tag through a bunch of preg_match instead.
-                $this->tags[] = $tag;
+                $this->new_tags[] = $tag;
                 continue;
             }
 
@@ -78,7 +79,7 @@ class TagSetEvent extends Event
 
             //seperate tags from metatags
             if (!$ttpe->metatag) {
-                $this->tags[] = $tag;
+                $this->new_tags[] = $tag;
             } else {
                 $this->metatags[] = $tag;
             }
@@ -224,7 +225,7 @@ class TagEdit extends Extension
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
-            $event->image->set_tags($event->tags);
+            $event->image->set_tags($event->new_tags);
         }
         foreach ($event->metatags as $tag) {
             send_event(new TagTermParseEvent($tag, $event->image->id));
