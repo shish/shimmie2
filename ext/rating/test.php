@@ -110,5 +110,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
 
         $this->log_in_as_user();
         $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["?", "s", "q", "e"]);
+
+        parent::tearDown();
     }
 }
