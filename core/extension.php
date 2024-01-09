@@ -301,9 +301,12 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDataUpload(DataUploadEvent $event)
     {
-        $supported_mime = $this->supported_mime($event->mime);
-        $check_contents = $this->check_contents($event->tmpname);
-        if ($supported_mime && $check_contents) {
+        if ($this->supported_mime($event->mime)) {
+            if (!$this->check_contents($event->tmpname)) {
+                // We DO support this extension - but the file looks corrupt
+                throw new UploadException("Invalid or corrupted file");
+            }
+
             $this->move_upload_to_archive($event);
 
             /* Check if we are replacing an image */
@@ -348,9 +351,6 @@ abstract class DataHandlerExtension extends Extension
                     send_event(new LockSetEvent($image, $event->metadata['locked']));
                 }
             }
-        } elseif ($supported_mime && !$check_contents) {
-            // We DO support this extension - but the file looks corrupt
-            throw new UploadException("Invalid or corrupted file");
         }
     }
 
