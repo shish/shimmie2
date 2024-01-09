@@ -44,14 +44,16 @@ class SVGFileHandler extends DataHandlerExtension
         $event->image->height = $msp->height;
     }
 
-    protected function move_upload_to_archive(DataUploadEvent $event)
+    protected function move_upload_to_archive(DataUploadEvent $event): string
     {
         $sanitizer = new Sanitizer();
         $sanitizer->removeRemoteReferences(true);
         $dirtySVG = file_get_contents($event->tmpname);
         $cleanSVG = $sanitizer->sanitize($dirtySVG);
         $event->hash = md5($cleanSVG);
-        file_put_contents(warehouse_path(Image::IMAGE_DIR, $event->hash), $cleanSVG);
+        $filename = warehouse_path(Image::IMAGE_DIR, $event->hash);
+        file_put_contents($filename, $cleanSVG);
+        return $filename;
     }
 
     protected function create_thumb(string $hash, string $mime): bool

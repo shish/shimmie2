@@ -18,7 +18,6 @@ class ImageAdditionEvent extends Event
     public function __construct(
         public Image $image,
         public array $metadata,
-        public bool $merged,
     ) {
         parent::__construct();
     }

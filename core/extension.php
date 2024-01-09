@@ -287,7 +287,7 @@ abstract class DataHandlerExtension extends Extension
 {
     protected array $SUPPORTED_MIME = [];
 
-    protected function move_upload_to_archive(DataUploadEvent $event)
+    protected function move_upload_to_archive(DataUploadEvent $event): string
     {
         $target = warehouse_path(Image::IMAGE_DIR, $event->hash);
         if (!@copy($event->tmpname, $target)) {
@@ -297,6 +297,7 @@ abstract class DataHandlerExtension extends Extension
                 "{$errors['type']} / {$errors['message']}"
             );
         }
+        return $target;
     }
 
     public function onDataUpload(DataUploadEvent $event)
@@ -309,24 +310,50 @@ abstract class DataHandlerExtension extends Extension
                 throw new UploadException("Invalid or corrupted file");
             }
 
-            $this->move_upload_to_archive($event);
-            $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
-
-            $existing = Image::by_hash($image->hash);
+            $existing = Image::by_hash(md5_file($event->tmpname));
             if (!is_null($existing)) {
-                $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
-                if ($handler == ImageConfig::COLLISION_MERGE) {
-                    $image = $existing;
+                if ($config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER) == ImageConfig::COLLISION_MERGE) {
+                    // Right now tags are the only thing that get merged, so
+                    // we can just send a TagSetEvent - in the future we might
+                    // want a dedicated MergeEvent?
+                    if(!empty($event->metadata['tags'])) {
+                        send_event(new TagSetEvent($existing, array_merge($existing->get_tag_array(), $event->metadata['tags'])));
+                    }
+                    $event->images[] = $existing;
+                    return;
                 } else {
-                    throw new UploadException(">>{$existing->id} already has hash {$image->hash}");
+                    throw new UploadException(">>{$existing->id} already has hash {$existing->hash}");
                 }
+            }
+
+            $filename = $event->tmpname;
+            // FIXME: this should happen after ImageAdditionEvent, but the thumbnail
+            // code assumes the file is in the archive already instead of using
+            // the image->tmp_file field
+            $filename = $this->move_upload_to_archive($event);
+
+            assert(is_readable($filename));
+            $image = new Image();
+            $image->tmp_file = $filename;
+            $image->filesize = filesize($filename);
+            $image->hash = md5_file($filename);
+            $image->filename = (($pos = strpos($event->metadata['filename'], '?')) !== false) ? substr($event->metadata['filename'], 0, $pos) : $event->metadata['filename'];
+            $image->set_mime(MimeType::get_for_file($filename, get_file_ext($event->metadata["filename"]) ?? null));
+            if (empty($image->get_mime())) {
+                throw new UploadException("Unable to determine MIME for $filename");
+            }
+            try {
+                send_event(new MediaCheckPropertiesEvent($image));
+            } catch (MediaException $e) {
+                throw new UploadException("Unable to scan media properties $filename / $image->filename / $image->hash: ".$e->getMessage());
             }
 
             // ensure $image has a database-assigned ID number
             // before anything else happens
             $image->save_to_db();
 
-            $iae = send_event(new ImageAdditionEvent($image, $event->metadata, !is_null($existing)));
+            $iae = send_event(new ImageAdditionEvent($image, $event->metadata));
+
             $event->images[] = $iae->image;
         }
     }
@@ -367,29 +394,6 @@ abstract class DataHandlerExtension extends Extension
         if ($this->supported_mime($event->image->get_mime())) {
             $this->media_check_properties($event);
         }
-    }
-
-    protected function create_image_from_data(string $filename, array $metadata): Image
-    {
-        $image = new Image();
-
-        assert(is_readable($filename));
-        $image->tmp_file = $filename;
-        $image->filesize = filesize($filename);
-        $image->hash = md5_file($filename);
-        $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
-        $image->set_mime(MimeType::get_for_file($filename, get_file_ext($metadata["filename"]) ?? null));
-
-        if (empty($image->get_mime())) {
-            throw new UploadException("Unable to determine MIME for $filename");
-        }
-        try {
-            send_event(new MediaCheckPropertiesEvent($image));
-        } catch (MediaException $e) {
-            throw new UploadException("Unable to scan media properties $filename / $image->filename / $image->hash: ".$e->getMessage());
-        }
-
-        return $image;
     }
 
     abstract protected function media_check_properties(MediaCheckPropertiesEvent $event): void;

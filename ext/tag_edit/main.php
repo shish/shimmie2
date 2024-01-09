@@ -169,9 +169,6 @@ class TagEdit extends Extension
     public function onImageAddition(ImageAdditionEvent $event)
     {
         if(!empty($event->metadata['tags'])) {
-            if($event->merged) {
-                $event->metadata['tags'] = array_merge($event->image->get_tag_array(), $event->metadata['tags']);
-            }
             send_event(new TagSetEvent($event->image, $event->metadata['tags']));
         }
         if(!empty($event->metadata['source'])) {
