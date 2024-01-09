@@ -366,7 +366,7 @@ class DanbooruApi extends Extension
             } else {
                 $page->add_http_header("Location: $newid");
             }
-    } catch (UploadException $ex) {
+        } catch (UploadException $ex) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: exception - " . $ex->getMessage());
         }
