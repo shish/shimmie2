@@ -309,35 +309,25 @@ abstract class DataHandlerExtension extends Extension
                 throw new UploadException("Invalid or corrupted file");
             }
 
-            /* Check if we are replacing an image */
-            if (!is_null($event->replace_id)) {
-                $existing = Image::by_id($event->replace_id);
-                if (is_null($existing)) {
-                    throw new UploadException("Post to replace does not exist!");
+            $this->move_upload_to_archive($event);
+            $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
+
+            $existing = Image::by_hash($image->hash);
+            if (!is_null($existing)) {
+                $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+                if ($handler == ImageConfig::COLLISION_MERGE) {
+                    $image = $existing;
+                } else {
+                    throw new UploadException(">>{$existing->id} already has hash {$image->hash}");
                 }
-                send_event(new ImageReplaceEvent($existing, $event->tmpname));
-                $event->images[] = $existing;
-            } else {
-                $this->move_upload_to_archive($event);
-                $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
-
-                $existing = Image::by_hash($image->hash);
-                if (!is_null($existing)) {
-                    $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
-                    if ($handler == ImageConfig::COLLISION_MERGE) {
-                        $image = $existing;
-                    } else {
-                        throw new UploadException(">>{$existing->id} already has hash {$image->hash}");
-                    }
-                }
-
-                // ensure $image has a database-assigned ID number
-                // before anything else happens
-                $image->save_to_db();
-
-                $iae = send_event(new ImageAdditionEvent($image, $event->metadata, !is_null($existing)));
-                $event->images[] = $iae->image;
             }
+
+            // ensure $image has a database-assigned ID number
+            // before anything else happens
+            $image->save_to_db();
+
+            $iae = send_event(new ImageAdditionEvent($image, $event->metadata, !is_null($existing)));
+            $event->images[] = $iae->image;
         }
     }
 

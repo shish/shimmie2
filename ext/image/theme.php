@@ -20,14 +20,4 @@ class ImageIOTheme extends Themelet
             INPUT(["type" => 'submit', "value" => 'Delete', "onclick" => 'return confirm("Delete the image?");', "id" => "image_delete_button"]),
         )."</span>";
     }
-
-    /**
-     * Display link to replace the image
-     */
-    public function get_replace_html(int $image_id): string
-    {
-        $form = SHM_FORM("replace/$image_id", "GET");
-        $form->appendChild(INPUT(["type" => 'submit', "value" => 'Replace']));
-        return (string)$form;
-    }
 }

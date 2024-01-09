@@ -27,7 +27,6 @@ class DataUploadEvent extends Event
     public function __construct(
         public string $tmpname,
         public array $metadata,
-        public ?int $replace_id = null
     ) {
         parent::__construct();
 
@@ -212,35 +211,7 @@ class Upload extends Extension
             }
         }
 
-        if ($event->page_matches("replace")) {
-            if (!$user->can(Permissions::REPLACE_IMAGE)) {
-                $this->theme->display_error(403, "Error", "{$user->name} doesn't have permission to replace images");
-                return;
-            }
-            if ($this->is_full) {
-                $this->theme->display_error(507, "Error", "Can't replace images: disk nearly full");
-                return;
-            }
-
-            $image_id = int_escape($event->get_arg(0));
-            $image_old = Image::by_id($image_id);
-            if (is_null($image_old)) {
-                throw new UploadException("Can not replace Post: No post with ID $image_id");
-            }
-
-            if($event->method == "GET") {
-                $this->theme->display_replace_page($page, $image_id);
-            } elseif($event->method == "POST") {
-                $results = [];
-                if (!empty($_POST["url"])) {
-                    $results = $this->try_transload($_POST["url"], [], $_POST['source'] ?? null, $image_id);
-                } elseif (count($_FILES) > 0) {
-                    $results = $this->try_upload($_FILES["data"], [], $_POST['source'] ?? null, $image_id);
-                }
-                $cache->delete("thumb-block:{$image_id}");
-                $this->theme->display_upload_status($page, $results);
-            }
-        } elseif ($event->page_matches("upload")) {
+        if ($event->page_matches("upload")) {
             if (!$user->can(Permissions::CREATE_IMAGE)) {
                 $this->theme->display_error(403, "Error", "{$user->name} doesn't have permission to upload images");
                 return;
@@ -342,7 +313,7 @@ class Upload extends Extension
      * @param string[] $tags
      * @return UploadResult[]
      */
-    private function try_upload(array $file, array $tags, ?string $source = null, ?int $replace_id = null): array
+    private function try_upload(array $file, array $tags, ?string $source = null): array
     {
         global $page, $config;
 
@@ -376,7 +347,7 @@ class Upload extends Extension
                 $metadata['tags'] = $tags;
                 $metadata['source'] = $source;
 
-                $event = new DataUploadEvent($tmp_name, $metadata, $replace_id);
+                $event = new DataUploadEvent($tmp_name, $metadata);
                 send_event($event);
                 if (count($event->images) == 0) {
                     throw new UploadException("MIME type not supported: " . $event->mime);
@@ -395,7 +366,7 @@ class Upload extends Extension
     /**
      * @return UploadResult[]
      */
-    private function try_transload(string $url, array $tags, string $source = null, ?int $replace_id = null): array
+    private function try_transload(string $url, array $tags, string $source = null): array
     {
         global $page, $config, $user;
 
@@ -431,7 +402,7 @@ class Upload extends Extension
             }
 
             // Upload file
-            $event = new DataUploadEvent($tmp_filename, $metadata, $replace_id);
+            $event = new DataUploadEvent($tmp_filename, $metadata);
             send_event($event);
             if (count($event->images) == 0) {
                 throw new UploadException("File type not supported: " . $event->mime);

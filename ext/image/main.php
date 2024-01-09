@@ -116,10 +116,6 @@ class ImageIO extends Extension
         if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_part($this->theme->get_deleter_html($event->image->id));
         }
-        /* In the future, could perhaps allow users to replace images that they own as well... */
-        if ($user->can(Permissions::REPLACE_IMAGE)) {
-            $event->add_part($this->theme->get_replace_html($event->image->id));
-        }
     }
 
     public function onCommand(CommandEvent $event)
@@ -139,43 +135,6 @@ class ImageIO extends Extension
     {
         send_event(new ThumbnailGenerationEvent($event->image));
         log_info("image", "Uploaded >>{$event->image->id} ({$event->image->hash})");
-    }
-
-    public function onImageReplace(ImageReplaceEvent $event)
-    {
-        $image = $event->image;
-
-        try {
-            $duplicate = Image::by_hash($event->new_hash);
-            if (!is_null($duplicate) && $duplicate->id != $image->id) {
-                throw new ImageReplaceException("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
-            }
-
-            $image->remove_image_only(); // Actually delete the old image file from disk
-
-            $target = warehouse_path(Image::IMAGE_DIR, $event->new_hash);
-            if (!@copy($event->tmp_filename, $target)) {
-                $errors = error_get_last();
-                throw new UploadException(
-                    "Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): ".
-                    "{$errors['type']} / {$errors['message']}"
-                );
-            }
-            unlink($event->tmp_filename);
-
-            // update metadata and save metadata to DB
-            $event->image->hash = $event->new_hash;
-            $event->image->filesize = filesize($target);
-            $event->image->set_mime(MimeType::get_for_file($target));
-            send_event(new MediaCheckPropertiesEvent($image));
-            $image->save_to_db();
-
-            send_event(new ThumbnailGenerationEvent($image));
-
-            log_info("image", "Replaced >>{$image->id} {$event->original_hash} with {$event->new_hash}");
-        } catch (ImageReplaceException $e) {
-            throw new UploadException($e->error);
-        }
     }
 
     public function onImageDeletion(ImageDeletionEvent $event)

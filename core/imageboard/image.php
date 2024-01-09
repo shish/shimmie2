@@ -576,20 +576,27 @@ class Image
         $this->delete_tags_from_image();
         $database->execute("DELETE FROM images WHERE id=:id", ["id" => $this->id]);
         log_info("core_image", 'Deleted Post #'.$this->id.' ('.$this->hash.')');
-
-        unlink($this->get_image_filename());
-        unlink($this->get_thumb_filename());
+        $this->remove_image_only(quiet: true);
     }
 
     /**
      * This function removes an image (and thumbnail) from the DISK ONLY.
      * It DOES NOT remove anything from the database.
      */
-    public function remove_image_only(): void
+    public function remove_image_only(bool $quiet=false): void
     {
-        log_info("core_image", 'Removed Post File ('.$this->hash.')');
-        @unlink($this->get_image_filename());
-        @unlink($this->get_thumb_filename());
+        $img_del = @unlink($this->get_image_filename());
+        $thumb_del = @unlink($this->get_thumb_filename());
+        if($img_del && $thumb_del) {
+            if(!$quiet) {
+                log_info("core_image", "Deleted files for Post #{$this->id} ({$this->hash})");
+            }
+        }
+        else {
+            $img = $img_del ? '' : ' image';
+            $thumb = $thumb_del ? '' : ' thumbnail';
+            log_error('core_image', "Failed to delete files for Post #{$this->id}{$img}{$thumb}");
+        }
     }
 
     public function parse_link_template(string $tmpl, int $n = 0): string

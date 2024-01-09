@@ -210,64 +210,6 @@ class UploadTheme extends Themelet
     }
 
     /**
-     * Only allows 1 file to be uploaded - for replacing another image file.
-     */
-    public function display_replace_page(Page $page, int $image_id)
-    {
-        global $config, $page;
-        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
-        $accept = $this->get_accept();
-
-        $upload_list = emptyHTML(
-            TR(
-                TD("File"),
-                TD(INPUT(["name" => "data[]", "type" => "file", "accept" => $accept]))
-            )
-        );
-        if ($tl_enabled) {
-            $upload_list->appendChild(
-                TR(
-                    TD("or URL"),
-                    TD(INPUT(["name" => "url", "type" => "text", "value" => @$_GET['url']]))
-                )
-            );
-        }
-
-        $max_size = $config->get_int(UploadConfig::SIZE);
-        $max_kb = to_shorthand_int($max_size);
-
-        $image = Image::by_id($image_id);
-        $thumbnail = $this->build_thumb_html($image);
-
-        $form = SHM_FORM("replace/".$image_id, "POST", true);
-        $form->appendChild(emptyHTML(
-            TABLE(
-                ["id" => "large_upload_form", "class" => "form"],
-                $upload_list,
-                TR(TD("Source"), TD(["colspan" => 3], INPUT(["name" => "source", "type" => "text"]))),
-                TR(TD(["colspan" => 4], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))),
-            )
-        ));
-
-        $html = emptyHTML(
-            P(
-                "Replacing Post ID $image_id",
-                BR(),
-                "Please note: You will have to refresh the post page, or empty your browser cache."
-            ),
-            $thumbnail,
-            BR(),
-            $form,
-            $max_size > 0 ? SMALL("(Max file size is $max_kb)") : null,
-        );
-
-        $page->set_title("Replace Post");
-        $page->set_heading("Replace Post");
-        $page->add_block(new NavBlock());
-        $page->add_block(new Block("Upload Replacement Post", $html, "main", 20));
-    }
-
-    /**
      * @param UploadResult[] $results
      */
     public function display_upload_status(Page $page, array $results): void
@@ -337,7 +279,6 @@ class UploadTheme extends Themelet
             NOSCRIPT(BR(), A(["href" => make_link("upload")], "Larger Form"))
         );
     }
-
     protected function get_accept(): string
     {
         return ".".join(",.", DataHandlerExtension::get_all_supported_exts());

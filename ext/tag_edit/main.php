@@ -182,13 +182,6 @@ class TagEdit extends Extension
         }
     }
 
-    public function onImageReplace(ImageReplaceEvent $event)
-    {
-        if(!empty($_POST['source'])) {
-            send_event(new SourceSetEvent($event->image, $_POST['source']));
-        }
-    }
-
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
         global $page, $user;

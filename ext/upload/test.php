@@ -50,42 +50,6 @@ class UploadTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
     }
 
-    public function testRawReplace()
-    {
-        global $database;
-
-        $this->log_in_as_admin();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        $original_posted = $database->get_one("SELECT posted FROM images WHERE id = $image_id");
-
-        sleep(1); // make sure the timestamp changes (see bug #903)
-
-        // create a copy because the file is deleted after upload
-        $tmpfile = tempnam(sys_get_temp_dir(), "shimmie_test");
-        copy("tests/bedroom_workshop.jpg", $tmpfile);
-
-        $_FILES = [
-            'data' => [
-                'name' => ['puppy-hugs.jpg'],
-                'type' => ['image/jpeg'],
-                'tmp_name' => [$tmpfile],
-                'error' => [0],
-                'size' => [271386],
-            ]
-        ];
-
-        $page = $this->post_page("replace/$image_id");
-        $this->assert_response(302);
-        $this->assertEquals("/test/post/view/$image_id", $page->redirect);
-        $new_posted = $database->get_one("SELECT posted FROM images WHERE id = $image_id");
-
-        $this->assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
-
-        // check that the original timestamp is left alone, despite the
-        // file being replaced (see bug #903)
-        $this->assertEquals($original_posted, $new_posted);
-    }
-
     public function testUpload()
     {
         $this->log_in_as_user();
