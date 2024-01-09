@@ -55,6 +55,7 @@ class Image
     public ?bool $image = null;
     public ?bool $audio = null;
     public ?int $length = null;
+    public ?string $tmp_file = null;
 
     public static array $bool_props = ["locked", "lossless", "video", "audio", "image"];
     public static array $int_props = ["id", "owner_id", "height", "width", "filesize", "length"];
@@ -391,6 +392,9 @@ class Image
      */
     public function get_image_filename(): string
     {
+        if(!is_null($this->tmp_file)) {
+            return $this->tmp_file;
+        }
         return warehouse_path(self::IMAGE_DIR, $this->hash);
     }
 

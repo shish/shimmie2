@@ -398,6 +398,7 @@ abstract class DataHandlerExtension extends Extension
         $image = new Image();
 
         assert(is_readable($filename));
+        $image->tmp_file = $filename;
         $image->filesize = filesize($filename);
         $image->hash = md5_file($filename);
         $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
