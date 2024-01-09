@@ -372,27 +372,18 @@ class CronUploader extends Extension
                     $this->log_message(SCORE_LOG_DEBUG, "Max run time remaining: $remaining");
                 }
                 try {
-                    $database->begin_transaction();
-                    $this->log_message(SCORE_LOG_INFO, "Adding file: {$img[0]} - tags: {$img[2]}");
-                    $result = $this->add_image($img[0], $img[1], $img[2]);
-                    if ($database->is_transaction_open()) {
-                        $database->commit();
-                    }
-                    $this->move_uploaded($img[0], $img[1], $output_subdir, false);
+                    $result = $database->with_savepoint(function () use ($img, $output_subdir) {
+                        $this->log_message(SCORE_LOG_INFO, "Adding file: {$img[0]} - tags: {$img[2]}");
+                        $result = $this->add_image($img[0], $img[1], $img[2]);
+                        $this->move_uploaded($img[0], $img[1], $output_subdir, false);
+                        return $result;
+                    });
                     if ($result->merged) {
                         $merged++;
                     } else {
                         $added++;
                     }
                 } catch (\Exception $e) {
-                    try {
-                        if ($database->is_transaction_open()) {
-                            $database->rollback();
-                        }
-                    } catch (\Exception $e) {
-                        // rollback failed, let's just log things and die
-                    }
-
                     $failed++;
                     $this->log_message(SCORE_LOG_ERROR, "(" . gettype($e) . ") " . $e->getMessage());
                     $this->log_message(SCORE_LOG_ERROR, $e->getTraceAsString());

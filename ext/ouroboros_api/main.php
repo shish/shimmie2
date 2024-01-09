@@ -383,18 +383,12 @@ class OuroborosAPI extends Extension
         }
         $meta['extension'] = pathinfo($meta['filename'], PATHINFO_EXTENSION);
         try {
-            $database->execute("SAVEPOINT upload");
-            $dae = send_event(new DataUploadEvent($meta['file'], $meta));
-            $image = $dae->images[0];
-            if (!is_null($image)) {
-                $this->sendResponse(200, make_link('post/view/' . $image->id), true);
-            } else {
-                // Fail, unsupported file?
-                $this->sendResponse(500, 'Unknown error');
-            }
-            $database->execute("RELEASE SAVEPOINT upload");
+            $image = $database->with_savepoint(function () use ($meta) {
+                $dae = send_event(new DataUploadEvent($meta['file'], $meta));
+                return $dae->images[0];
+            });
+            $this->sendResponse(200, make_link('post/view/' . $image->id), true);
         } catch (UploadException $e) {
-            $database->execute("ROLLBACK TO SAVEPOINT upload");
             // Cleanup in case shit hit the fan
             $this->sendResponse(500, $e->getMessage());
         }

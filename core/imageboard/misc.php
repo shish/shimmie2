@@ -25,18 +25,20 @@ function add_dir(string $base, ?array $extra_tags = []): array
 
         $tags = array_merge(path_to_tags($short_path), $extra_tags);
         try {
-            $database->execute("SAVEPOINT upload");
-            $dae = send_event(new DataUploadEvent($full_path, [
-                'filename' => pathinfo($filename, PATHINFO_BASENAME),
-                'tags' => $tags,
-                'source' => null,
-            ]));
-            foreach($dae->images as $image) {
-                $results[] = new UploadSuccess($filename, $image->id);
-            }
-            $database->execute("RELEASE SAVEPOINT upload");
+            $more_results = $database->with_savepoint(function () use ($full_path, $filename, $tags) {
+                $dae = send_event(new DataUploadEvent($full_path, [
+                    'filename' => pathinfo($filename, PATHINFO_BASENAME),
+                    'tags' => $tags,
+                    'source' => null,
+                ]));
+                $results = [];
+                foreach($dae->images as $image) {
+                    $results[] = new UploadSuccess($filename, $image->id);
+                }
+                return $results;
+            });
+            $results = array_merge($results, $more_results);
         } catch (UploadException $ex) {
-            $database->execute("ROLLBACK TO SAVEPOINT upload");
             $results[] = new UploadError($filename, $ex->getMessage());
         }
     }

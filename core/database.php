@@ -122,6 +122,19 @@ class Database
         }
     }
 
+    public function with_savepoint(callable $callback, string $name = "sp"): mixed
+    {
+        try {
+            $this->execute("SAVEPOINT $name");
+            $ret = $callback();
+            $this->execute("RELEASE SAVEPOINT $name");
+            return $ret;
+        } catch (\Exception $e) {
+            $this->execute("ROLLBACK TO SAVEPOINT $name");
+            throw $e;
+        }
+    }
+
     private function get_engine(): DBEngine
     {
         if (is_null($this->engine)) {

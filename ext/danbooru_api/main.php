@@ -342,17 +342,19 @@ class DanbooruApi extends Extension
         //log_debug("danbooru_api", "upload($filename): fileinfo(".var_export($fileinfo,TRUE)."), metadata(".var_export($metadata,TRUE).")...");
 
         try {
-            $database->execute("SAVEPOINT upload");
-            // Fire off an event which should process the new file and add it to the db
-            $dae = send_event(new DataUploadEvent($file, [
-                'filename' => pathinfo($filename, PATHINFO_BASENAME),
-                'tags' => $posttags,
-                'source' => $source,
-            ]));
+            $newimg = $database->with_savepoint(function () use ($file, $filename, $posttags, $source) {
+                // Fire off an event which should process the new file and add it to the db
+                $dae = send_event(new DataUploadEvent($file, [
+                    'filename' => pathinfo($filename, PATHINFO_BASENAME),
+                    'tags' => $posttags,
+                    'source' => $source,
+                ]));
 
-            //log_debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
-            // If it went ok, grab the id for the newly uploaded image and pass it in the header
-            $newimg = $dae->images[0];
+                //log_debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
+                // If it went ok, grab the id for the newly uploaded image and pass it in the header
+                return $dae->images[0];
+            });
+
             $newid = make_link("post/view/" . $newimg->id);
             if ($danboorup_kludge) {
                 $newid = make_http($newid);
@@ -364,9 +366,7 @@ class DanbooruApi extends Extension
             } else {
                 $page->add_http_header("Location: $newid");
             }
-            $database->execute("RELEASE SAVEPOINT upload");
-        } catch (UploadException $ex) {
-            $database->execute("ROLLBACK TO SAVEPOINT upload");
+    } catch (UploadException $ex) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: exception - " . $ex->getMessage());
         }

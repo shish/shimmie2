@@ -337,27 +337,26 @@ class Upload extends Extension
                 continue;
             }
             try {
-                $database->execute("SAVEPOINT upload");
                 // check if the upload was successful
                 if ($error !== UPLOAD_ERR_OK) {
                     throw new UploadException($this->upload_error_message($error));
                 }
 
-                $event = new DataUploadEvent($tmp_name, [
-                    'filename' => pathinfo($name, PATHINFO_BASENAME),
-                    'tags' => $tags,
-                    'source' => $source,
-                ]);
-                send_event($event);
-                if (count($event->images) == 0) {
-                    throw new UploadException("MIME type not supported: " . $event->mime);
-                }
-                foreach($event->images as $image) {
+                $new_images = $database->with_savepoint(function () use ($tmp_name, $name, $tags, $source) {
+                    $event = send_event(new DataUploadEvent($tmp_name, [
+                        'filename' => pathinfo($name, PATHINFO_BASENAME),
+                        'tags' => $tags,
+                        'source' => $source,
+                    ]));
+                    if (count($event->images) == 0) {
+                        throw new UploadException("MIME type not supported: " . $event->mime);
+                    }
+                    return $event->images;
+                });
+                foreach($new_images as $image) {
                     $results[] = new UploadSuccess($name, $image->id);
                 }
-                $database->execute("RELEASE SAVEPOINT upload");
             } catch (UploadException $ex) {
-                $database->execute("ROLLBACK TO SAVEPOINT upload");
                 $results[] = new UploadError($name, $ex->getMessage());
             }
         }
@@ -376,7 +375,6 @@ class Upload extends Extension
         $tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
 
         try {
-            $database->execute("SAVEPOINT upload");
             // Fetch file
             $headers = fetch_url($url, $tmp_filename);
             if (is_null($headers)) {
@@ -404,18 +402,20 @@ class Upload extends Extension
                 $metadata['rating'] = strtolower($_GET['rating'])[0];
             }
 
-            // Upload file
-            $event = new DataUploadEvent($tmp_filename, $metadata);
-            send_event($event);
-            if (count($event->images) == 0) {
-                throw new UploadException("File type not supported: " . $event->mime);
-            }
-            foreach($event->images as $image) {
+            $new_images = $database->with_savepoint(function () use ($tmp_filename, $metadata) {
+                $event = send_event(new DataUploadEvent($tmp_filename, $metadata));
+                if (count($event->images) == 0) {
+                    throw new UploadException("File type not supported: " . $event->mime);
+                }
+                if (count($event->images) == 0) {
+                    throw new UploadException("File type not supported: " . $event->mime);
+                }
+                return $event->images;
+            });
+            foreach($new_images as $image) {
                 $results[] = new UploadSuccess($url, $image->id);
             }
-            $database->execute("RELEASE SAVEPOINT upload");
         } catch (UploadException $ex) {
-            $database->execute("ROLLBACK TO SAVEPOINT upload");
             $results[] = new UploadError($url, $ex->getMessage());
         } finally {
             if (file_exists($tmp_filename)) {

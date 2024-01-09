@@ -294,24 +294,17 @@ class TranscodeImage extends Extension
                     $size_difference = 0;
                     foreach ($event->items as $image) {
                         try {
-                            $database->begin_transaction();
-
-                            $before_size =  $image->filesize;
-
-                            $this->transcode_and_replace_image($image, $mime);
+                            $before_size = $image->filesize;
+                            $database->with_savepoint(function () use ($image, $mime) {
+                                $this->transcode_and_replace_image($image, $mime);
+                            });
                             // If a subsequent transcode fails, the database needs to have everything about the previous
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
-                            $database->commit();
                             $total++;
                             $size_difference += ($before_size - $image->filesize);
                         } catch (\Exception $e) {
                             log_error("transcode", "Error while bulk transcode on item {$image->id} to $mime: ".$e->getMessage());
-                            try {
-                                $database->rollback();
-                            } catch (\Exception $e) {
-                                // is this safe? o.o
-                            }
                         }
                     }
                     if ($size_difference > 0) {

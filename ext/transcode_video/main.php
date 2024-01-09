@@ -155,23 +155,17 @@ class TranscodeVideo extends Extension
                     $total = 0;
                     foreach ($event->items as $image) {
                         try {
-                            $database->begin_transaction();
-
-                            $transcoded = $this->transcode_and_replace_video($image, $format);
                             // If a subsequent transcode fails, the database needs to have everything about the previous
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
-                            $database->commit();
+                            $transcoded = $database->with_savepoint(function () use ($image, $format) {
+                                return $this->transcode_and_replace_video($image, $format);
+                            });
                             if ($transcoded) {
                                 $total++;
                             }
                         } catch (\Exception $e) {
                             log_error("transcode_video", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
-                            try {
-                                $database->rollback();
-                            } catch (\Exception $e) {
-                                // is this safe? o.o
-                            }
                         }
                     }
                     $page->flash("Transcoded $total items");

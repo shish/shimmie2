@@ -30,17 +30,13 @@ class BulkImportExport extends DataHandlerExtension
                 $skipped = 0;
                 $failed = 0;
 
-                $database->commit();
-
                 while (!empty($json_data)) {
                     $item = array_pop($json_data);
-                    $database->begin_transaction();
                     try {
                         $image = Image::by_hash($item->hash);
                         if ($image != null) {
                             $skipped++;
                             log_info(BulkImportExportInfo::KEY, "Post $item->hash already present, skipping");
-                            $database->commit();
                             continue;
                         }
 
@@ -52,34 +48,29 @@ class BulkImportExport extends DataHandlerExtension
 
                         file_put_contents($tmpfile, $stream);
 
-                        $images = send_event(new DataUploadEvent($tmpfile, [
-                            'filename' => pathinfo($item->filename, PATHINFO_BASENAME),
-                            'tags' => $item->new_tags,
-                            'source' => null,
-                        ]))->images;
+                        $database->with_savepoint(function () use ($item, $tmpfile, $event) {
+                            $images = send_event(new DataUploadEvent($tmpfile, [
+                                'filename' => pathinfo($item->filename, PATHINFO_BASENAME),
+                                'tags' => $item->new_tags,
+                                'source' => null,
+                            ]))->images;
 
-                        if (count($images) == 0) {
-                            throw new SCoreException("Unable to import file $item->hash");
-                        }
-                        foreach ($images as $image) {
-                            $event->images[] = $image;
-                            if ($item->source != null) {
-                                $image->set_source($item->source);
+                            if (count($images) == 0) {
+                                throw new SCoreException("Unable to import file $item->hash");
                             }
-                            send_event(new BulkImportEvent($image, $item));
-                        }
+                            foreach ($images as $image) {
+                                $event->images[] = $image;
+                                if ($item->source != null) {
+                                    $image->set_source($item->source);
+                                }
+                                send_event(new BulkImportEvent($image, $item));
+                            }
+                        });
 
-                        $database->commit();
                         $total++;
                     } catch (\Exception $ex) {
                         $failed++;
-                        try {
-                            $database->rollBack();
-                        } catch (\Exception $ex2) {
-                            log_error(BulkImportExportInfo::KEY, "Could not roll back transaction: " . $ex2->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
-                        }
                         log_error(BulkImportExportInfo::KEY, "Could not import " . $item->hash . ": " . $ex->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
-                        continue;
                     } finally {
                         if (!empty($tmpfile) && is_file($tmpfile)) {
                             unlink($tmpfile);
@@ -97,8 +88,6 @@ class BulkImportExport extends DataHandlerExtension
             }
         }
     }
-
-
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
@@ -150,6 +139,7 @@ class BulkImportExport extends DataHandlerExtension
             }
         }
     }
+
     // we don't actually do anything, just accept one upload and spawn several
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {

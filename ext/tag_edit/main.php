@@ -355,6 +355,9 @@ class TagEdit extends Extension
                 $last_id = $image->id;
             }
             if ($commit) {
+                // Mass tag edit can take longer than the page timeout,
+                // so we need to commit periodically to save what little
+                // work we've done and avoid starting from scratch.
                 $database->commit();
                 $database->begin_transaction();
             }
