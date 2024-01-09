@@ -33,12 +33,10 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $config->set_string("upload_ratios", "4:3 16:9");
 
         $this->log_in_as_user();
-        try {
+        $e = $this->assertException(UploadException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-            $this->fail("Invalid-size image was allowed");
-        } catch (UploadException $e) {
-            $this->assertEquals("Post too small", $e->getMessage());
-        }
+        });
+        $this->assertEquals("Post too small", $e->getMessage());
     }
 
     public function testResLimitLarge()
@@ -50,12 +48,10 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $config->set_int("upload_max_width", 100);
         $config->set_string("upload_ratios", "4:3 16:9");
 
-        try {
+        $e = $this->assertException(UploadException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-            $this->fail("Invalid-size image was allowed");
-        } catch (UploadException $e) {
-            $this->assertEquals("Post too large", $e->getMessage());
-        }
+        });
+        $this->assertEquals("Post too large", $e->getMessage());
     }
 
     public function testResLimitRatio()
@@ -67,12 +63,10 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $config->set_int("upload_max_width", -1);
         $config->set_string("upload_ratios", "16:9");
 
-        try {
+        $e = $this->assertException(UploadException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-            $this->fail("Invalid-size image was allowed");
-        } catch (UploadException $e) {
-            $this->assertEquals("Post needs to be in one of these ratios: 16:9", $e->getMessage());
-        }
+        });
+        $this->assertEquals("Post needs to be in one of these ratios: 16:9", $e->getMessage());
     }
 
     # reset to defaults, otherwise this can interfere with

@@ -315,7 +315,7 @@ class Upload extends Extension
      */
     private function try_upload(array $file, array $tags, ?string $source = null): array
     {
-        global $page, $config;
+        global $page, $config, $database;
 
         // blank file boxes cause empty uploads, no need for error message
         if (empty($file['name'])) {
@@ -337,17 +337,17 @@ class Upload extends Extension
                 continue;
             }
             try {
+                $database->execute("SAVEPOINT upload");
                 // check if the upload was successful
                 if ($error !== UPLOAD_ERR_OK) {
                     throw new UploadException($this->upload_error_message($error));
                 }
 
-                $metadata = [];
-                $metadata['filename'] = pathinfo($name, PATHINFO_BASENAME);
-                $metadata['tags'] = $tags;
-                $metadata['source'] = $source;
-
-                $event = new DataUploadEvent($tmp_name, $metadata);
+                $event = new DataUploadEvent($tmp_name, [
+                    'filename' => pathinfo($name, PATHINFO_BASENAME),
+                    'tags' => $tags,
+                    'source' => $source,
+                ]);
                 send_event($event);
                 if (count($event->images) == 0) {
                     throw new UploadException("MIME type not supported: " . $event->mime);
@@ -355,7 +355,9 @@ class Upload extends Extension
                 foreach($event->images as $image) {
                     $results[] = new UploadSuccess($name, $image->id);
                 }
+                $database->execute("RELEASE SAVEPOINT upload");
             } catch (UploadException $ex) {
+                $database->execute("ROLLBACK TO SAVEPOINT upload");
                 $results[] = new UploadError($name, $ex->getMessage());
             }
         }
@@ -368,12 +370,13 @@ class Upload extends Extension
      */
     private function try_transload(string $url, array $tags, string $source = null): array
     {
-        global $page, $config, $user;
+        global $page, $config, $user, $database;
 
         $results = [];
         $tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
 
         try {
+            $database->execute("SAVEPOINT upload");
             // Fetch file
             $headers = fetch_url($url, $tmp_filename);
             if (is_null($headers)) {
@@ -410,7 +413,9 @@ class Upload extends Extension
             foreach($event->images as $image) {
                 $results[] = new UploadSuccess($url, $image->id);
             }
+            $database->execute("RELEASE SAVEPOINT upload");
         } catch (UploadException $ex) {
+            $database->execute("ROLLBACK TO SAVEPOINT upload");
             $results[] = new UploadError($url, $ex->getMessage());
         } finally {
             if (file_exists($tmp_filename)) {

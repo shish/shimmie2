@@ -16,6 +16,7 @@ namespace Shimmie2;
  */
 function add_dir(string $base, ?array $extra_tags = []): array
 {
+    global $database;
     $results = [];
 
     foreach (list_files($base) as $full_path) {
@@ -24,6 +25,7 @@ function add_dir(string $base, ?array $extra_tags = []): array
 
         $tags = array_merge(path_to_tags($short_path), $extra_tags);
         try {
+            $database->execute("SAVEPOINT upload");
             $dae = send_event(new DataUploadEvent($full_path, [
                 'filename' => pathinfo($filename, PATHINFO_BASENAME),
                 'tags' => $tags,
@@ -32,7 +34,9 @@ function add_dir(string $base, ?array $extra_tags = []): array
             foreach($dae->images as $image) {
                 $results[] = new UploadSuccess($filename, $image->id);
             }
+            $database->execute("RELEASE SAVEPOINT upload");
         } catch (UploadException $ex) {
+            $database->execute("ROLLBACK TO SAVEPOINT upload");
             $results[] = new UploadError($filename, $ex->getMessage());
         }
     }

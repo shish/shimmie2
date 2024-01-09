@@ -264,7 +264,7 @@ class DanbooruApi extends Extension
      */
     private function api_add_post(): void
     {
-        global $user, $page;
+        global $database, $user, $page;
         $danboorup_kludge = 1;            // danboorup for firefox makes broken links out of location: /path
 
         // Check first if a login was supplied, if it wasn't check if the user is logged in via cookie
@@ -342,6 +342,7 @@ class DanbooruApi extends Extension
         //log_debug("danbooru_api", "upload($filename): fileinfo(".var_export($fileinfo,TRUE)."), metadata(".var_export($metadata,TRUE).")...");
 
         try {
+            $database->execute("SAVEPOINT upload");
             // Fire off an event which should process the new file and add it to the db
             $dae = send_event(new DataUploadEvent($file, [
                 'filename' => pathinfo($filename, PATHINFO_BASENAME),
@@ -363,8 +364,9 @@ class DanbooruApi extends Extension
             } else {
                 $page->add_http_header("Location: $newid");
             }
+            $database->execute("RELEASE SAVEPOINT upload");
         } catch (UploadException $ex) {
-            // Did something screw up?
+            $database->execute("ROLLBACK TO SAVEPOINT upload");
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: exception - " . $ex->getMessage());
         }

@@ -64,11 +64,10 @@ class UploadTest extends ShimmiePHPUnitTestCase
     {
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
-        try {
+        $e = $this->assertException(UploadException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        } catch (UploadException $e) {
-            $this->assertStringContainsString("already has hash", $e->getMessage());
-        }
+        });
+        $this->assertStringContainsString("already has hash", $e->getMessage());
     }
 
     public function testRejectUnknownFiletype()
@@ -81,12 +80,10 @@ class UploadTest extends ShimmiePHPUnitTestCase
     {
         // FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
         file_put_contents("data/huge.jpg", file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024 * 1024 * 3));
-        try {
+        $e = $this->assertException(UploadException::class, function () {
             $this->post_image("data/huge.jpg", "test");
-            $this->fail("Uploading huge.jpg didn't fail...");
-        } catch (UploadException $e) {
-            $this->assertEquals("File too large (3.0MB > 1.0MB)", $e->error);
-        }
+        });
         unlink("data/huge.jpg");
+        $this->assertEquals("File too large (3.0MB > 1.0MB)", $e->getMessage());
     }
 }

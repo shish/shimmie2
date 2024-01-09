@@ -321,7 +321,7 @@ class OuroborosAPI extends Extension
      */
     protected function postCreate(OuroborosPost $post, ?string $md5 = '')
     {
-        global $config;
+        global $config, $database;
         $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
         if (!empty($md5) && !($handler == ImageConfig::COLLISION_MERGE)) {
             $img = Image::by_hash($md5);
@@ -383,20 +383,20 @@ class OuroborosAPI extends Extension
         }
         $meta['extension'] = pathinfo($meta['filename'], PATHINFO_EXTENSION);
         try {
-            send_event(new DataUploadEvent($meta['file'], $meta));
-            $image = Image::by_hash($meta['hash']);
+            $database->execute("SAVEPOINT upload");
+            $dae = send_event(new DataUploadEvent($meta['file'], $meta));
+            $image = $dae->images[0];
             if (!is_null($image)) {
                 $this->sendResponse(200, make_link('post/view/' . $image->id), true);
-                return;
             } else {
                 // Fail, unsupported file?
                 $this->sendResponse(500, 'Unknown error');
-                return;
             }
+            $database->execute("RELEASE SAVEPOINT upload");
         } catch (UploadException $e) {
+            $database->execute("ROLLBACK TO SAVEPOINT upload");
             // Cleanup in case shit hit the fan
             $this->sendResponse(500, $e->getMessage());
-            return;
         }
     }
 

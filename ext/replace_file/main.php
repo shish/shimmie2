@@ -69,7 +69,7 @@ class ReplaceFile extends Extension
         $target = warehouse_path(Image::IMAGE_DIR, $event->new_hash);
         if (!@copy($event->tmp_filename, $target)) {
             $errors = error_get_last();
-            throw new UploadException(
+            throw new ImageReplaceException(
                 "Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): ".
                 "{$errors['type']} / {$errors['message']}"
             );

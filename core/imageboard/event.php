@@ -23,10 +23,6 @@ class ImageAdditionEvent extends Event
     }
 }
 
-class ImageAdditionException extends SCoreException
-{
-}
-
 /**
  * An image is being deleted.
  */
