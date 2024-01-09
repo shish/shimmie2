@@ -152,7 +152,7 @@ class RegenThumb extends Extension
                     $page->flash("Deleted $i thumbnails for ".$_POST["delete_thumb_mime"]." images");
                 } else {
                     $dir = "data/thumbs/";
-                    $this->remove_dir_recursively($dir);
+                    deltree($dir);
                     $page->flash("Deleted all thumbnails");
                 }
 
@@ -173,23 +173,5 @@ class RegenThumb extends Extension
         }
 
         return $database->get_all($query, $args);
-    }
-
-    public function remove_dir_recursively($dir)
-    {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (filetype($dir."/".$object) == "dir") {
-                        $this->remove_dir_recursively($dir."/".$object);
-                    } else {
-                        unlink($dir."/".$object);
-                    }
-                }
-            }
-            reset($objects);
-            rmdir($dir);
-        }
     }
 }
