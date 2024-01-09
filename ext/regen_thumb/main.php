@@ -115,17 +115,17 @@ class RegenThumb extends Extension
                 if (isset($_POST["regen_thumb_mime"])) {
                     $mime = $_POST["regen_thumb_mime"];
                 }
-                $images = $this->get_images($mime);
+                $images = Search::find_images(tags: ["mime=" . $mime]);
 
                 $i = 0;
                 foreach ($images as $image) {
                     if (!$force) {
-                        $path = warehouse_path(Image::THUMBNAIL_DIR, $image["hash"], false);
+                        $path = warehouse_path(Image::THUMBNAIL_DIR, $image->hash, false);
                         if (file_exists($path)) {
                             continue;
                         }
                     }
-                    $event = send_event(new ThumbnailGenerationEvent($image["hash"], $image["mime"], $force));
+                    $event = send_event(new ThumbnailGenerationEvent($image->hash, $image->mime, $force));
                     if ($event->generated) {
                         $i++;
                     }
@@ -139,11 +139,11 @@ class RegenThumb extends Extension
                 $event->redirect = true;
 
                 if (isset($_POST["delete_thumb_mime"]) && $_POST["delete_thumb_mime"] != "") {
-                    $images = $this->get_images($_POST["delete_thumb_mime"]);
+                    $images = Search::find_images(tags: ["mime=" . $_POST["delete_thumb_mime"]]);
 
                     $i = 0;
                     foreach ($images as $image) {
-                        $outname = warehouse_path(Image::THUMBNAIL_DIR, $image["hash"]);
+                        $outname = $image->get_thumb_filename();
                         if (file_exists($outname)) {
                             unlink($outname);
                             $i++;
@@ -159,19 +159,5 @@ class RegenThumb extends Extension
 
                 break;
         }
-    }
-
-    public function get_images(string $mime = null): array
-    {
-        global $database;
-
-        $query = "SELECT hash, mime FROM images";
-        $args = [];
-        if (!empty($mime)) {
-            $query .= " WHERE mime = :mime";
-            $args["mime"] = $mime;
-        }
-
-        return $database->get_all($query, $args);
     }
 }
