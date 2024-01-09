@@ -143,7 +143,7 @@ function check_gd_version(): int
  */
 function check_im_version(): int
 {
-    $convert_check = exec("convert");
+    $convert_check = exec("convert --version");
 
     return (empty($convert_check) ? 0 : 1);
 }
