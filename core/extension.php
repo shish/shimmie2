@@ -301,6 +301,8 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDataUpload(DataUploadEvent $event)
     {
+        global $config;
+
         if ($this->supported_mime($event->mime)) {
             if (!$this->check_contents($event->tmpname)) {
                 // We DO support this extension - but the file looks corrupt
@@ -324,32 +326,27 @@ abstract class DataHandlerExtension extends Extension
                 }
 
                 $replacement = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
-                send_event(new ImageReplaceEvent($existing, $replacement));
+                send_event(new ImageReplaceEvent($existing, $replacement, $event->metadata));
                 $event->images[] = $replacement;
-                if(!empty($event->metadata['source'])) {
-                    send_event(new SourceSetEvent($existing, $event->metadata['source']));
-                }
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
-                $iae = send_event(new ImageAdditionEvent($image));
-                $event->images[] = $iae->image;
-                $event->merged = $iae->merged;
 
-                if(!empty($event->metadata['tags'])) {
-                    if($iae->merged) {
-                        $event->metadata['tags'] = array_merge($iae->image->get_tag_array(), $event->metadata['tags']);
+                $existing = Image::by_hash($image->hash);
+                if (!is_null($existing)) {
+                    $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+                    if ($handler == ImageConfig::COLLISION_MERGE) {
+                        $image = $existing;
+                    } else {
+                        throw new UploadException(">>{$existing->id} already has hash {$image->hash}");
                     }
-                    send_event(new TagSetEvent($image, $event->metadata['tags']));
                 }
-                if(!empty($event->metadata['source'])) {
-                    send_event(new SourceSetEvent($image, $event->metadata['source']));
-                }
-                if (!empty($event->metadata['rating'])) {
-                    send_event(new RatingSetEvent($image, $event->metadata['rating']));
-                }
-                if (!empty($event->metadata['locked'])) {
-                    send_event(new LockSetEvent($image, $event->metadata['locked']));
-                }
+
+                // ensure $image has a database-assigned ID number
+                // before anything else happens
+                $image->save_to_db();
+
+                $iae = send_event(new ImageAdditionEvent($image, $event->metadata, !is_null($existing)));
+                $event->images[] = $iae->image;
             }
         }
     }

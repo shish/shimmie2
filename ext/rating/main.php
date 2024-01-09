@@ -164,6 +164,13 @@ class Ratings extends Extension
         $sb->end_table();
     }
 
+    public function onImageAddition(ImageAdditionEvent $event)
+    {
+        if(!empty($event->metadata['rating'])) {
+            send_event(new RatingSetEvent($event->image, $event->metadata['rating']));
+        }
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $page;

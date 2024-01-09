@@ -9,16 +9,16 @@ namespace Shimmie2;
  */
 class ImageAdditionEvent extends Event
 {
-    public User $user;
-    public bool $merged = false;
-
     /**
      * Inserts a new image into the database with its associated
-     * information. Also calls TagSetEvent to set the tags for
-     * this new image.
+     * information.
+     *
+     * @param mixed[] $metadata
      */
     public function __construct(
         public Image $image,
+        public array $metadata,
+        public bool $merged,
     ) {
         parent::__construct();
     }
@@ -58,10 +58,13 @@ class ImageReplaceEvent extends Event
      * Updates an existing ID in the database to use a new image
      * file, leaving the tags and such unchanged. Also removes
      * the old image file and thumbnail from the disk.
+     *
+     * @param mixed[] $metadata
      */
     public function __construct(
         public Image $original,
-        public Image $replacement
+        public Image $replacement,
+        public array $metadata = [],
     ) {
         parent::__construct();
     }

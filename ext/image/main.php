@@ -122,44 +122,6 @@ class ImageIO extends Extension
         }
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
-    {
-        global $config;
-
-        try {
-            $image = $event->image;
-
-            /*
-             * Check for an existing image
-             */
-            $existing = Image::by_hash($image->hash);
-            if (!is_null($existing)) {
-                $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
-                if ($handler == ImageConfig::COLLISION_MERGE || isset($_GET['update'])) {
-                    $event->merged = true;
-                    $event->image = $existing;
-                    return;
-                } else {
-                    throw new ImageAdditionException(">>{$existing->id} already has hash {$image->hash}");
-                }
-            }
-
-            // actually insert the info
-            $image->save_to_db();
-
-            send_event(new ThumbnailGenerationEvent($image));
-
-            log_info("image", "Uploaded >>{$image->id} ({$image->hash})");
-        } catch (ImageAdditionException $e) {
-            throw new UploadException($e->error);
-        }
-    }
-
-    public function onImageDeletion(ImageDeletionEvent $event)
-    {
-        $event->image->delete();
-    }
-
     public function onCommand(CommandEvent $event)
     {
         if ($event->cmd == "help") {
@@ -171,6 +133,12 @@ class ImageIO extends Extension
             $image = Image::by_id($post_id);
             send_event(new ImageDeletionEvent($image));
         }
+    }
+
+    public function onImageAddition(ImageAdditionEvent $event)
+    {
+        send_event(new ThumbnailGenerationEvent($event->image));
+        log_info("image", "Uploaded >>{$event->image->id} ({$event->image->hash})");
     }
 
     public function onImageReplace(ImageReplaceEvent $event)
@@ -213,6 +181,11 @@ class ImageIO extends Extension
         } catch (ImageReplaceException $e) {
             throw new UploadException($e->error);
         }
+    }
+
+    public function onImageDeletion(ImageDeletionEvent $event)
+    {
+        $event->image->delete();
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event)

@@ -166,6 +166,29 @@ class TagEdit extends Extension
     //     }
     // }
 
+    public function onImageAddition(ImageAdditionEvent $event)
+    {
+        if(!empty($event->metadata['tags'])) {
+            if($event->merged) {
+                $event->metadata['tags'] = array_merge($event->image->get_tag_array(), $event->metadata['tags']);
+            }
+            send_event(new TagSetEvent($event->image, $event->metadata['tags']));
+        }
+        if(!empty($event->metadata['source'])) {
+            send_event(new SourceSetEvent($event->image, $event->metadata['source']));
+        }
+        if (!empty($event->metadata['locked'])) {
+            send_event(new LockSetEvent($event->image, $event->metadata['locked']));
+        }
+    }
+
+    public function onImageReplace(ImageReplaceEvent $event)
+    {
+        if(!empty($event->metadata['source'])) {
+            send_event(new SourceSetEvent($event->replacement, $event->metadata['source']));
+        }
+    }
+
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
         global $page, $user;
