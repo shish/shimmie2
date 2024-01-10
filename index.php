@@ -81,6 +81,7 @@ try {
     send_event(new UserLoginEvent($user));
     if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
         ob_end_flush();
+        ob_implicit_flush(true);
         send_event(new CommandEvent($argv));
     } else {
         send_event(new PageRequestEvent($_SERVER['REQUEST_METHOD'], _get_query()));
