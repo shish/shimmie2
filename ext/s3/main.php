@@ -48,6 +48,8 @@ class S3 extends Extension
         }
         if ($event->cmd == "s3-sync") {
             if(count($event->args) == 0) {
+                $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
+                print("{$count} items in queue\n");
                 foreach($database->get_all("SELECT * FROM s3_sync_queue ORDER BY time ASC") as $row) {
                     if($row['action'] == "S") {
                         $image = Image::by_hash($row['hash']);
