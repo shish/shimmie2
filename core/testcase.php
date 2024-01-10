@@ -51,8 +51,6 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             global $_tracer;
             $_tracer->end();  # test
             $_tracer->end();  # $this->getName()
-            $_tracer->clear();
-            $_tracer->flush("data/test-trace.json");
         }
 
         public static function tearDownAfterClass(): void
@@ -60,6 +58,8 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             parent::tearDownAfterClass();
             global $_tracer;
             $_tracer->end();  # get_called_class()
+            $_tracer->clear();
+            $_tracer->flush("data/test-trace.json");
         }
 
         protected static function create_user(string $name): void
