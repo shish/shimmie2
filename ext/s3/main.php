@@ -10,7 +10,7 @@ require_once "config.php";
 
 class S3 extends Extension
 {
-    public static int $synced = 0;
+    public int $synced = 0;
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
