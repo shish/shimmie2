@@ -23,5 +23,7 @@ class ArchiveFileHandlerTest extends ShimmiePHPUnitTestCase
         if(file_exists("tests/test.zip")) {
             unlink("tests/test.zip");
         }
+
+        parent::tearDown();
     }
 }
