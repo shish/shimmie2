@@ -159,6 +159,21 @@ class TagEdit extends Extension
         }
     }
 
+    public function onCommand(CommandEvent $event)
+    {
+        global $database;
+        if ($event->cmd == "help") {
+            print "\ttag-replace <tag> <tag>\n";
+            print "\t\tmass replace tags\n\n";
+        }
+        if ($event->cmd == "tag-replace") {
+            print("Mass editing tags: '{$event->args[0]}' -> '{$event->args[1]}'\n");
+            if(count($event->args) == 2) {
+                $this->mass_tag_edit($event->args[0], $event->args[1], true);
+            }
+        }
+    }
+
     // public function onPostListBuilding(PostListBuildingEvent $event)
     // {
     //     global $user;
