@@ -197,7 +197,6 @@ class GraphQL extends Extension
                 return Command::SUCCESS;
             });
         $event->app->register('graphql:schema')
-            ->addArgument('query', InputArgument::REQUIRED)
             ->setDescription('Print out the GraphQL schema')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $schema = $this->get_schema();
