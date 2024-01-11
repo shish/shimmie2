@@ -208,12 +208,12 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
                 $exception = $e;
             }
 
-            if(is_a($exception, $type)) {
-                self::assertThat($exception, new \PHPUnit\Framework\Constraint\Exception($type));
-                return $exception;
-            } else {
-                throw $exception;
-            }
+            self::assertThat(
+                $exception,
+                new \PHPUnit\Framework\Constraint\Exception($type),
+                "Expected exception of type $type, but got " . ($exception ? get_class($exception) : "none")
+            );
+            return $exception;
         }
 
         // user things
