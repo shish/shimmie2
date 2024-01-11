@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 class BulkAddEvent extends Event
 {
     public string $dir;
@@ -35,25 +39,23 @@ class BulkAdd extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tbulk-add [directory]\n";
-            print "\t\tImport this directory\n\n";
-        }
-        if ($event->cmd == "bulk-add") {
-            if (count($event->args) == 1) {
-                $bae = send_event(new BulkAddEvent($event->args[0]));
+        $event->app->register('bulk-add')
+            ->addArgument('directory', InputArgument::REQUIRED)
+            ->setDescription('Import a directory of images')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $dir = $input->getArgument('directory');
+                $bae = send_event(new BulkAddEvent($dir));
                 foreach ($bae->results as $r) {
                     if(is_a($r, UploadError::class)) {
-                        print($r->name." failed: ".$r->error."\n");
+                        $output->writeln($r->name." failed: ".$r->error);
                     } else {
-                        print($r->name." ok\n");
+                        $output->writeln($r->name." ok");
                     }
                 }
-                print(implode("\n", $bae->results));
-            }
-        }
+                return Command::SUCCESS;
+            });
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)

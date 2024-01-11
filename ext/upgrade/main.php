@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 class Upgrade extends Extension
 {
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tdb-upgrade\n";
-            print "\t\tRun DB schema updates, if automatic updates are disabled\n\n";
-        }
-        if ($event->cmd == "db-upgrade") {
-            print("Running DB Upgrade\n");
-            global $database;
-            $database->set_timeout(null); // These updates can take a little bit
-            send_event(new DatabaseUpgradeEvent());
-        }
+        $event->app->register('db-upgrade')
+            ->setDescription('Run DB schema updates, if automatic updates are disabled')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $output->writeln("Running DB Upgrade");
+                global $database;
+                $database->set_timeout(null); // These updates can take a little bit
+                send_event(new DatabaseUpgradeEvent());
+                return Command::SUCCESS;
+            });
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)

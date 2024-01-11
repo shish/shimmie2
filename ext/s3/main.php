@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 use function MicroHTML\INPUT;
 
 require_once "config.php";
@@ -37,56 +41,54 @@ class S3 extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        global $database;
-        if ($event->cmd == "help") {
-            print "\ts3-sync <post id>\n";
-            print "\t\tsync a post to s3\n\n";
-            print "\ts3-rm <hash>\n";
-            print "\t\tdelete a leftover file from s3\n\n";
-        }
-        if ($event->cmd == "s3-sync") {
-            if(count($event->args) == 0) {
+        $event->app->register('s3:process')
+            ->setDescription('Process the S3 queue')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                global $database;
                 $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
-                print("{$count} items in queue\n");
+                $output->writeln("{$count} items in queue");
                 foreach($database->get_all("SELECT * FROM s3_sync_queue ORDER BY time ASC") as $row) {
                     if($row['action'] == "S") {
                         $image = Image::by_hash($row['hash']);
-                        print("SYN {$row['hash']} ($image->id)\n");
+                        $output->writeln("SYN {$row['hash']} ($image->id)");
                         $this->sync_post($image);
                     } elseif($row['action'] == "D") {
-                        print("DEL {$row['hash']}\n");
+                        $output->writeln("DEL {$row['hash']}");
                         $this->remove_file($row['hash']);
                     } else {
-                        print("??? {$row['hash']} ({$row['action']})\n");
+                        $output->writeln("??? {$row['hash']} ({$row['action']})");
                     }
                 }
-            } else {
-                if (preg_match('/^(\d+)-(\d+)$/', $event->args[0], $matches)) {
-                    $start = (int)$matches[1];
-                    $end = (int)$matches[2];
-                } else {
-                    $start = (int)$event->args[0];
-                    $end = $start;
-                }
+                return Command::SUCCESS;
+            });
+        $event->app->register('s3:sync')
+            ->addArgument('start', InputArgument::REQUIRED)
+            ->addArgument('end', InputArgument::REQUIRED)
+            ->setDescription('Sync a range of images to S3')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $start = (int)$input->getArgument('start');
+                $end = (int)$input->getArgument('end');
+                $output->writeln("Syncing range: $start - $end");
                 foreach(Search::find_images_iterable(tags: ["order=id", "id>=$start", "id<=$end"]) as $image) {
                     if($this->sync_post($image)) {
                         print("{$image->id}: {$image->hash}\n");
                     } else {
                         print("{$image->id}: {$image->hash} (skipped)\n");
                     }
-                    ob_flush();
                 }
-            }
-        }
-        if ($event->cmd == "s3-rm") {
-            foreach($event->args as $hash) {
-                print("{$hash}\n");
-                ob_flush();
+                return Command::SUCCESS;
+            });
+        $event->app->register('s3:rm')
+            ->addArgument('hash', InputArgument::REQUIRED)
+            ->setDescription('Delete a leftover file from S3')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $hash = $input->getArgument('hash');
+                $output->writeln("Deleting file: '$hash'");
                 $this->remove_file($hash);
-            }
-        }
+                return Command::SUCCESS;
+            });
     }
 
     public function onPageRequest(PageRequestEvent $event)

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 class BulkActionException extends SCoreException
 {
 }
@@ -97,22 +101,20 @@ class BulkActions extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tbulk-action <action> <query>\n";
-            print "\t\tperform an action on all query results\n\n";
-        }
-        if ($event->cmd == "bulk-action") {
-            if (count($event->args) < 2) {
-                return;
-            }
-            $action = $event->args[0];
-            $query = $event->args[1];
-            $items = $this->yield_search_results($query);
-            log_info("bulk_actions", "Performing $action on {$event->args[1]}");
-            send_event(new BulkActionEvent($event->args[0], $items));
-        }
+        $event->app->register('bulk-action')
+            ->addArgument('action', InputArgument::REQUIRED)
+            ->addArgument('query', InputArgument::REQUIRED)
+            ->setDescription('Perform a bulk action on a given query')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $action = $input->getArgument('action');
+                $query = $input->getArgument('query');
+                $items = $this->yield_search_results($query);
+                log_info("bulk_actions", "Performing $action on $query");
+                send_event(new BulkActionEvent($action, $items));
+                return Command::SUCCESS;
+            });
     }
 
     public function onBulkAction(BulkActionEvent $event)

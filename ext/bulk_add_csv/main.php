@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 class BulkAddCSV extends Extension
 {
     /** @var BulkAddCSVTheme */
@@ -21,23 +25,22 @@ class BulkAddCSV extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tbulk-add-csv [/path/to.csv]\n";
-            print "\t\tImport this .csv file (refer to documentation)\n\n";
-        }
-        if ($event->cmd == "bulk-add-csv") {
-            global $user;
+        $event->app->register('bulk-add-csv')
+            ->addArgument('path-to-csv', InputArgument::REQUIRED)
+            ->setDescription('Import posts from a given CSV file')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                global $user;
+                if (!$user->can(Permissions::BULK_ADD)) {
+                    $output->writeln("Not running as an admin, which can cause problems.");
+                    $output->writeln("Please add the parameter: -u admin_username");
+                    return Command::FAILURE;
+                }
 
-            //Nag until CLI is admin by default
-            if (!$user->can(Permissions::BULK_ADD)) {
-                print "Not running as an admin, which can cause problems.\n";
-                print "Please add the parameter: -u admin_username";
-            } elseif (count($event->args) == 1) {
-                $this->add_csv($event->args[0]);
-            }
-        }
+                $this->add_csv($input->getArgument('path-to-csv'));
+                return Command::SUCCESS;
+            });
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)

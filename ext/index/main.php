@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 require_once "config.php";
 require_once "events.php";
 
@@ -147,20 +151,19 @@ class Index extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            # TODO: --fields a,b,c
-            print "\tsearch <query>\n";
-            print "\t\tsearch the database and print results\n\n";
-        }
-        if ($event->cmd == "search") {
-            $query = count($event->args) > 0 ? Tag::explode($event->args[0]) : [];
-            $items = Search::find_images(limit: 1000, tags: $query);
-            foreach ($items as $item) {
-                print("{$item->hash}\n");
-            }
-        }
+        $event->app->register('search')
+            ->addArgument('query', InputArgument::REQUIRED)
+            ->setDescription('Search the database and print results')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $query = Tag::explode($input->getArgument('query'));
+                $items = Search::find_images(limit: 1000, tags: $query);
+                foreach ($items as $item) {
+                    $output->writeln($item->hash);
+                }
+                return Command::SUCCESS;
+            });
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event)

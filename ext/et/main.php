@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 class ET extends Extension
 {
     /** @var ETTheme */
@@ -37,15 +41,14 @@ class ET extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tinfo\n";
-            print "\t\tList a bunch of info\n\n";
-        }
-        if ($event->cmd == "info") {
-            print($this->to_yaml($this->get_info()));
-        }
+        $event->app->register('info')
+            ->setDescription('List a bunch of info')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                print($this->to_yaml($this->get_info()));
+                return Command::SUCCESS;
+            });
     }
 
     /**

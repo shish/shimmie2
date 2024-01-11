@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 use function MicroHTML\{emptyHTML, A};
 
 if (
@@ -71,15 +76,20 @@ class Rule34 extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        global $cache;
-        if ($event->cmd == "wipe-thumb-cache") {
-            foreach (Search::find_images_iterable(0, null, Tag::explode($event->args[0])) as $image) {
-                print($image->id . "\n");
-                $cache->delete("thumb-block:{$image->id}");
-            }
-        }
+        $event->app->register('wipe-thumb-cache')
+            ->addArgument('tags', InputArgument::REQUIRED)
+            ->setDescription('Delete cached thumbnails for images matching the given tags')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                global $cache;
+                $tags = Tag::explode($input->getArgument('tags'));
+                foreach (Search::find_images_iterable(0, null, $tags) as $image) {
+                    $output->writeln($image->id);
+                    $cache->delete("thumb-block:{$image->id}");
+                }
+                return Command::SUCCESS;
+            });
     }
 
     public function onSourceSet(SourceSetEvent $event)

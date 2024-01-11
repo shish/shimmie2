@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 /*
  * OwnerSetEvent:
  *   $image_id
@@ -159,19 +163,19 @@ class TagEdit extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        global $database;
-        if ($event->cmd == "help") {
-            print "\ttag-replace <tag> <tag>\n";
-            print "\t\tmass replace tags\n\n";
-        }
-        if ($event->cmd == "tag-replace") {
-            print("Mass editing tags: '{$event->args[0]}' -> '{$event->args[1]}'\n");
-            if(count($event->args) == 2) {
-                $this->mass_tag_edit($event->args[0], $event->args[1], true);
-            }
-        }
+        $event->app->register('tag-replace')
+            ->addArgument('old_tag', InputArgument::REQUIRED)
+            ->addArgument('new_tag', InputArgument::REQUIRED)
+            ->setDescription('Mass edit tags')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $old_tag = $input->getArgument('old_tag');
+                $new_tag = $input->getArgument('new_tag');
+                $output->writeln("Mass editing tags: '$old_tag' -> '$new_tag'");
+                $this->mass_tag_edit($old_tag, $new_tag, true);
+                return Command::SUCCESS;
+            });
     }
 
     // public function onPostListBuilding(PostListBuildingEvent $event)

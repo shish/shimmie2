@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 class ExtensionAuthor
 {
     public string $name;
@@ -60,15 +64,14 @@ class ExtManager extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tdisable-all-ext\n";
-            print "\t\tdisable all extensions\n\n";
-        }
-        if ($event->cmd == "disable-all-ext") {
-            $this->write_config([]);
-        }
+        $event->app->register('disable-all-ext')
+            ->setDescription('Disable all extensions')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $this->write_config([]);
+                return Command::SUCCESS;
+            });
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)

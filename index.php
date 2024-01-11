@@ -82,7 +82,9 @@ try {
     if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
         ob_end_flush();
         ob_implicit_flush(true);
-        send_event(new CommandEvent($argv));
+        $app = new CliApp();
+        send_event(new CliGenEvent($app));
+        $app->run();
     } else {
         send_event(new PageRequestEvent($_SERVER['REQUEST_METHOD'], _get_query()));
         $page->display();

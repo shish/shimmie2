@@ -200,73 +200,12 @@ class PageRequestEvent extends Event
 }
 
 
-/**
- * Sent when index.php is called from the command line
- */
-class CommandEvent extends Event
+class CliGenEvent extends Event
 {
-    public string $cmd = "help";
-
-    /**
-     * @var string[]
-     */
-    public array $args = [];
-
-    /**
-     * @param string[] $args
-     */
-    public function __construct(array $args)
-    {
+    public function __construct(
+        public \Symfony\Component\Console\Application $app
+    ) {
         parent::__construct();
-        global $user;
-
-        $opts = [];
-        $log_level = SCORE_LOG_WARNING;
-        $arg_count = count($args);
-
-        for ($i = 1; $i < $arg_count; $i++) {
-            switch ($args[$i]) {
-                case '-u':
-                    $user = User::by_name($args[++$i]);
-                    if (is_null($user)) {
-                        die("Unknown user");
-                    } else {
-                        send_event(new UserLoginEvent($user));
-                    }
-                    break;
-                case '-q':
-                    $log_level += 10;
-                    break;
-                case '-v':
-                    $log_level -= 10;
-                    break;
-                default:
-                    $opts[] = $args[$i];
-                    break;
-            }
-        }
-
-        if (!defined("CLI_LOG_LEVEL")) {
-            define("CLI_LOG_LEVEL", $log_level);
-        }
-
-        if (count($opts) > 0) {
-            $this->cmd = $opts[0];
-            $this->args = array_slice($opts, 1);
-        } else {
-            print "\n";
-            print "Usage: php {$args[0]} [flags] [command]\n";
-            print "\n";
-            print "Flags:\n";
-            print "\t-u [username]\n";
-            print "\t\tLog in as the specified user\n";
-            print "\t-q / -v\n";
-            print "\t\tBe quieter / more verbose\n";
-            print "\t\tScale is debug - info - warning - error - critical\n";
-            print "\t\tDefault is to show warnings and above\n";
-            print "\n";
-            print "Currently known commands:\n";
-        }
     }
 }
 

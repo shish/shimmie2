@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 require_once "config.php";
 
 /*
@@ -420,26 +424,26 @@ class Setup extends Extension
         log_warning("setup", "Cache cleared");
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tconfig [get|set] <args>\n";
-            print "\t\teg 'config get db_version'\n\n";
-        }
-        if ($event->cmd == "config") {
-            global $cache, $config;
-            $cmd = $event->args[0];
-            $key = $event->args[1];
-            switch ($cmd) {
-                case "get":
-                    print($config->get_string($key) . "\n");
-                    break;
-                case "set":
-                    $config->set_string($key, $event->args[2]);
-                    break;
-            }
-            $cache->delete("config");
-        }
+        $event->app->register('config:get')
+            ->addArgument('key', InputArgument::REQUIRED)
+            ->setDescription('Get a config value')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                global $config;
+                $output->writeln($config->get_string($input->getArgument('key')));
+                return Command::SUCCESS;
+            });
+        $event->app->register('config:set')
+            ->addArgument('key', InputArgument::REQUIRED)
+            ->addArgument('value', InputArgument::REQUIRED)
+            ->setDescription('Set a config value')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                global $cache, $config;
+                $config->set_string($input->getArgument('key'), $input->getArgument('value'));
+                $cache->delete("config");
+                return Command::SUCCESS;
+            });
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)

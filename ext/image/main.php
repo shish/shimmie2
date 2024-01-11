@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 require_once "config.php";
 
 /**
@@ -118,17 +122,17 @@ class ImageIO extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tdelete <post id>\n";
-            print "\t\tdelete a specific post\n\n";
-        }
-        if ($event->cmd == "delete") {
-            $post_id = (int)$event->args[0];
-            $image = Image::by_id($post_id);
-            send_event(new ImageDeletionEvent($image));
-        }
+        $event->app->register('delete')
+            ->addArgument('id', InputArgument::REQUIRED)
+            ->setDescription('Delete a specific post')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $post_id = (int)$input->getArgument('id');
+                $image = Image::by_id($post_id);
+                send_event(new ImageDeletionEvent($image));
+                return Command::SUCCESS;
+            });
     }
 
     public function onImageAddition(ImageAdditionEvent $event)

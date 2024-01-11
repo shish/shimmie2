@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 require_once "config.php";
 require_once "events.php";
 require_once "media_engine.php";
@@ -147,22 +151,22 @@ class Media extends Extension
         }
     }
 
-    public function onCommand(CommandEvent $event)
+    public function onCliGen(CliGenEvent $event)
     {
-        if ($event->cmd == "help") {
-            print "\tmedia-rescan <id / hash>\n";
-            print "\t\trefresh metadata for a given post\n\n";
-        }
-        if ($event->cmd == "media-rescan") {
-            $uid = $event->args[0];
-            $image = Image::by_id_or_hash($uid);
-            if ($image) {
-                send_event(new MediaCheckPropertiesEvent($image));
-                $image->save_to_db();
-            } else {
-                print("No post with ID '$uid'\n");
-            }
-        }
+        $event->app->register('media-rescan')
+            ->addArgument('id_or_hash', InputArgument::REQUIRED)
+            ->setDescription('Refresh metadata for a given post')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $uid = $input->getArgument('id_or_hash');
+                $image = Image::by_id_or_hash($uid);
+                if ($image) {
+                    send_event(new MediaCheckPropertiesEvent($image));
+                    $image->save_to_db();
+                } else {
+                    $output->writeln("No post with ID '$uid'");
+                }
+                return Command::SUCCESS;
+            });
     }
 
     /**
