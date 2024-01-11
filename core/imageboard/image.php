@@ -524,24 +524,21 @@ class Image
     {
         global $cache, $database, $page;
 
-        $unfiltered_tags = array_unique($unfiltered_tags);
+        $tags = array_unique($unfiltered_tags);
 
-        $tags = [];
-        foreach ($unfiltered_tags as $tag) {
+        foreach ($tags as $tag) {
             if (mb_strlen($tag, 'UTF-8') > 255) {
-                $page->flash("Can't set a tag longer than 255 characters");
-                continue;
+                throw new TagSetException("Can't set a tag longer than 255 characters");
             }
             if (str_starts_with($tag, "-")) {
-                $page->flash("Can't set a tag which starts with a minus");
-                continue;
+                throw new TagSetException("Can't set a tag which starts with a minus");
             }
-
-            $tags[] = $tag;
+            if (str_contains($tag, "*")) {
+                throw new TagSetException("Can't set a tag which contains a wildcard (*)");
+            }
         }
-
         if (count($tags) <= 0) {
-            throw new SCoreException('Tried to set zero tags');
+            throw new TagSetException('Tried to set zero tags');
         }
 
         if (strtolower(Tag::implode($tags)) != strtolower($this->get_tag_list())) {

@@ -28,12 +28,15 @@ class TagEditTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id($image_id);
 
-        try {
+        $e = $this->assertException(TagSetException::class, function () use ($image) {
             send_event(new TagSetEvent($image, []));
-            $this->fail();
-        } catch (SCoreException $e) {
-            $this->assertEquals("Tried to set zero tags", $e->error);
-        }
+        });
+        $this->assertEquals("Tried to set zero tags", $e->getMessage());
+
+        $e = $this->assertException(TagSetException::class, function () use ($image) {
+            send_event(new TagSetEvent($image, ["*test*"]));
+        });
+        $this->assertEquals("Can't set a tag which contains a wildcard (*)", $e->getMessage());
     }
 
     public function testTagEdit_tooLong()
