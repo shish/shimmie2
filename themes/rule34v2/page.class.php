@@ -26,6 +26,9 @@ $header_html
 		<script defer src="https://unpkg.com/webp-hero@0.0.0-dev.21/dist-cjs/webp-hero.bundle.js"></script>
 		<script>
 		document.addEventListener('DOMContentLoaded', () => {
+			webpHero.detectWebpSupport().then(x => {
+				shm_log("webp", x);
+			});
 			var webpMachine = new webpHero.WebpMachine()
 			webpMachine.polyfillDocument()
 		});
