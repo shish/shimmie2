@@ -551,7 +551,7 @@ function get_debug_info_arr(): array
         "mem_mb" => round(((memory_get_peak_usage(true) + 512) / 1024) / 1024, 2),
         "files" => count(get_included_files()),
         "query_count" => $database->query_count,
-        // "query_log" => $database->queries,
+        "query_log" => $database->queries,
         "event_count" => $_shm_event_count,
         "cache_hits" => $cache->get("__etc_cache_hits"),
         "cache_misses" => $cache->get("__etc_cache_misses"),
