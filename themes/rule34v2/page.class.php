@@ -31,38 +31,6 @@ $header_html
 		});
 		</script>
 		<script src="/themes/rule34v2/prebid-ads.js"></script>
-		<script>
-		function makeid(length) {
-			var result           = '';
-			var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-			var charactersLength = characters.length;
-			for ( var i = 0; i < length; i++ ) {
-				result += characters.charAt(Math.floor(Math.random() * charactersLength));
-			}
-			return result;
-		}
-		function stat(ob) {
-			ob._ = makeid(10);
-			var xhr = new XMLHttpRequest();
-			xhr.open("GET", "/stat.txt?" + new URLSearchParams(ob).toString(), true);
-			xhr.send();
-		}
-		function logTimes() {
-			var t = window.performance.timing;
-			stat({
-				"v": 1,
-				"class": "{$user->class->name}",
-				"block": window.canRunAds === undefined,
-				"proto": window.location.protocol,
-				"responseStart": t.responseStart - t.fetchStart,
-				"responseEnd": t.responseEnd - t.fetchStart,
-				"domLoading": t.domLoading - t.fetchStart,
-				"domInteractive": t.domInteractive - t.fetchStart,
-				"domComplete": t.domComplete - t.fetchStart,
-			})
-		}
-		// setTimeout(logTimes, 3000);
-		</script>
 EOD;
     }
 
