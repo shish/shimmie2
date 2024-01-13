@@ -12,7 +12,7 @@ function joinUrlSegments(base, query) {
 function autosize(el) {
 	setTimeout(function() {
 		if(el.offsetHeight < el.scrollHeight) {
-			el.style.height = el.scrollHeight + 'px';
+			el.style.height = `calc(${el.scrollHeight}px + 0.5em)`;
 			el.style.width = el.offsetWidth + 'px';
 		}
 	}, 0);
