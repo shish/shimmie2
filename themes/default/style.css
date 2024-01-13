@@ -1,4 +1,6 @@
 :root {
+	color-scheme: light dark;
+
 	--page: #EEE;
 	--text: #000;
 	--link-default: #0000EE;
