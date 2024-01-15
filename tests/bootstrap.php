@@ -43,7 +43,7 @@ $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@te
 // in mysql, CREATE TABLE commits transactions, so after the database
 // upgrade we may or may not be inside a transaction depending on if
 // any tables were created.
-if(!$database->is_transaction_open()) {
+if($database->is_transaction_open()) {
     $database->commit();
 }
 $_tracer->end();
