@@ -23,6 +23,7 @@ class PostTitles extends Extension
 
         $config->set_default_bool(PostTitlesConfig::DEFAULT_TO_FILENAME, false);
         $config->set_default_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, false);
+        Image::$prop_types["title"] = ImagePropType::STRING;
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void

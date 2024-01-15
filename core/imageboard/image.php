@@ -15,6 +15,26 @@ enum ImagePropType
     case STRING;
 }
 
+function pop_val(array &$row, string $name): mixed
+{
+    $value = $row[$name];
+    unset($row[$name]);
+    if(is_null($value)) {
+        return null;
+    }
+    return $value;
+}
+function pop_int(array &$row, string $name): ?int
+{
+    $val = pop_val($row, $name);
+    return (is_null($val)) ? null : (int)$val;
+}
+function pop_bool(array &$row, string $name): ?bool
+{
+    $val = pop_val($row, $name);
+    return (is_null($val)) ? null : bool_escape($val);
+}
+
 /**
  * Class Image
  *
@@ -64,20 +84,7 @@ class Image implements \ArrayAccess
     public ?string $tmp_file = null;
 
     /** @var array<string, ImagePropType> */
-    public static array $prop_types = [
-        "id" => ImagePropType::INT,
-        "owner_id" => ImagePropType::INT,
-        "locked" => ImagePropType::BOOL,
-        "lossless" => ImagePropType::BOOL,
-        "video" => ImagePropType::BOOL,
-        "video_codec" => ImagePropType::STRING,
-        "image" => ImagePropType::BOOL,
-        "audio" => ImagePropType::BOOL,
-        "height" => ImagePropType::INT,
-        "width" => ImagePropType::INT,
-        "filesize" => ImagePropType::INT,
-        "length" => ImagePropType::INT,
-    ];
+    public static array $prop_types = [];
     /** @var array<string, mixed> */
     private array $dynamic_props = [];
 
@@ -88,30 +95,54 @@ class Image implements \ArrayAccess
     public function __construct(?array $row = null)
     {
         if (!is_null($row)) {
+            $this->id = pop_int($row, 'id');
+            $this->hash = pop_val($row, 'hash');
+            $this->filename = pop_val($row, 'filename');
+            $this->filesize = pop_int($row, 'filesize');
+            $this->mime = pop_val($row, 'mime');
+            $this->ext = pop_val($row, 'ext');
+            $this->posted = pop_val($row, 'posted');
+            $this->source = pop_val($row, 'source');
+            $this->owner_id = pop_int($row, 'owner_id');
+            $this->owner_ip = pop_val($row, 'owner_ip');
+            $this->locked = pop_bool($row, 'locked');
+            $this->lossless = pop_bool($row, 'lossless');
+            $this->video = pop_bool($row, 'video');
+            $this->video_codec = pop_val($row, 'video_codec');
+            $this->image = pop_bool($row, 'image');
+            $this->audio = pop_bool($row, 'audio');
+            $this->height = pop_int($row, 'height');
+            $this->width = pop_int($row, 'width');
+            $this->length = pop_int($row, 'length');
+
+            // Any remaining fields are dynamic properties
             foreach ($row as $name => $value) {
                 if (is_numeric($name)) {
                     continue;
                 }
+                if(property_exists($this, $name)) {
+                    throw new \Exception("Property $name already exists on Image");
+                }
 
-                // some databases use table.name rather than name
-                $name = str_replace("images.", "", $name);
-
-                if (is_null($value)) {
-                    $value = null;
-                } else {
-                    if(array_key_exists($name, static::$prop_types)) {
+                if(array_key_exists($name, static::$prop_types)) {
+                    if (is_null($value)) {
+                        $value = null;
+                    } else {
                         $value = match(static::$prop_types[$name]) {
                             ImagePropType::BOOL => bool_escape((string)$value),
                             ImagePropType::INT => int_escape((string)$value),
                             ImagePropType::STRING => (string)$value,
                         };
                     }
-                }
-
-                if(property_exists($this, $name)) {
-                    $this->$name = $value;
-                } else {
                     $this->dynamic_props[$name] = $value;
+                } else {
+                    // Database table has a column we don't know about,
+                    // it isn't static and it isn't a known prop_type -
+                    // maybe from an old extension that has since been
+                    // disabled? Just ignore it.
+                    if(UNITTEST) {
+                        throw new \Exception("Unknown column $name in images table");
+                    }
                 }
             }
         }
@@ -119,10 +150,13 @@ class Image implements \ArrayAccess
 
     public function offsetExists(mixed $offset): bool
     {
-        return isset($this->dynamic_props[$offset]);
+        return array_key_exists($offset, $this->dynamic_props);
     }
     public function offsetGet(mixed $offset): mixed
     {
+        if(!$this->offsetExists($offset)) {
+            throw new \OutOfBoundsException("Undefined dynamic property: $offset");
+        }
         return $this->dynamic_props[$offset];
     }
     public function offsetSet(mixed $offset, mixed $value): void

@@ -104,6 +104,11 @@ class NumericScore extends Extension
     /** @var NumericScoreTheme */
     protected Themelet $theme;
 
+    public function onInitExt(InitExtEvent $event): void
+    {
+        Image::$prop_types["numeric_score"] = ImagePropType::INT;
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user;

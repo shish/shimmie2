@@ -97,6 +97,8 @@ class Ratings extends Extension
             }
             $config->set_default_array("ext_rating_" . $key . "_privs", array_keys($_shm_ratings));
         }
+
+        Image::$prop_types["rating"] = ImagePropType::STRING;
     }
 
     private function check_permissions(Image $image): bool

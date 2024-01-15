@@ -24,6 +24,11 @@ class Artists extends Extension
     /** @var ArtistsTheme */
     protected Themelet $theme;
 
+    public function onInitExt(InitExtEvent $event): void
+    {
+        Image::$prop_types["author"] = ImagePropType::STRING;
+    }
+
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;

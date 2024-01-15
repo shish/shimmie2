@@ -24,6 +24,7 @@ class Approval extends Extension
         $config->set_default_bool(ApprovalConfig::COMMENTS, false);
 
         Image::$prop_types["approved"] = ImagePropType::BOOL;
+        Image::$prop_types["approved_by_id"] = ImagePropType::INT;
     }
 
     public function onImageAddition(ImageAdditionEvent $event): void

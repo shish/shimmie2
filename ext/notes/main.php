@@ -9,6 +9,11 @@ class Notes extends Extension
     /** @var NotesTheme */
     protected Themelet $theme;
 
+    public function onInitExt(InitExtEvent $event): void
+    {
+        Image::$prop_types["notes"] = ImagePropType::INT;
+    }
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;

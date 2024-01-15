@@ -14,3 +14,4 @@ parameters:
     - BASE_HREF
     - STATSD_HOST
     - TRACE_FILE
+    - UNITTEST

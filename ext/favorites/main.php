@@ -27,6 +27,11 @@ class Favorites extends Extension
     /** @var FavoritesTheme */
     protected Themelet $theme;
 
+    public function onInitExt(InitExtEvent $event): void
+    {
+        Image::$prop_types["favorites"] = ImagePropType::INT;
+    }
+
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $database, $user;
