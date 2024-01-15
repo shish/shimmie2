@@ -50,7 +50,7 @@ function install(): void
     }
 }
 
-function get_dsn(): string
+function get_dsn(): ?string
 {
     if (getenv("INSTALL_DSN")) {
         $dsn = getenv("INSTALL_DSN");
