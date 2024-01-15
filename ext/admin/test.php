@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class AdminPageTest extends ShimmiePHPUnitTestCase
 {
-    public function testAuth()
+    public function testAuth(): void
     {
         send_event(new UserLoginEvent(User::by_name(self::$anon_name)));
         $page = $this->get_page('admin');

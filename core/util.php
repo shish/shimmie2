@@ -163,7 +163,7 @@ function is_trusted_proxy(): bool
 /**
  * Get real IP if behind a reverse proxy
  */
-function get_real_ip()
+function get_real_ip(): string
 {
     $ip = $_SERVER['REMOTE_ADDR'];
 
@@ -572,7 +572,7 @@ function require_all(array $files): void
     }
 }
 
-function _load_core_files()
+function _load_core_files(): void
 {
     require_all(array_merge(
         zglob("core/*.php"),
@@ -581,14 +581,14 @@ function _load_core_files()
     ));
 }
 
-function _load_extension_files()
+function _load_extension_files(): void
 {
     ExtensionInfo::load_all_extension_info();
     Extension::determine_enabled_extensions();
     require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php"));
 }
 
-function _load_theme_files()
+function _load_theme_files(): void
 {
     $theme = get_theme();
     require_once('themes/'.$theme.'/page.class.php');
@@ -770,7 +770,7 @@ function make_form(string $target, string $method = "POST", bool $multipart = fa
 }
 
 const BYTE_DENOMINATIONS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-function human_filesize(int $bytes, $decimals = 2): string
+function human_filesize(int $bytes, int $decimals = 2): string
 {
     $factor = floor((strlen(strval($bytes)) - 1) / 3);
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @BYTE_DENOMINATIONS[$factor];

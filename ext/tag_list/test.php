@@ -8,7 +8,7 @@ class TagListTest extends ShimmiePHPUnitTestCase
 {
     private array $pages = ["map", "alphabetic", "popularity", "categories"];
 
-    public function testTagList()
+    public function testTagList(): void
     {
         $this->get_page('tags/map');
         $this->assert_title('Tag List');
@@ -25,7 +25,7 @@ class TagListTest extends ShimmiePHPUnitTestCase
         # FIXME: test that these show the right stuff
     }
 
-    public function testMinCount()
+    public function testMinCount(): void
     {
         foreach ($this->pages as $page) {
             $this->get_page("tags/$page", ["mincount" => 999999]);

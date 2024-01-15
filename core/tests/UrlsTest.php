@@ -10,7 +10,7 @@ require_once "core/urls.php";
 
 class UrlsTest extends TestCase
 {
-    public function test_search_link()
+    public function test_search_link(): void
     {
         $this->assertEquals(
             "/test/post/list/bar%20foo/1",
@@ -22,7 +22,7 @@ class UrlsTest extends TestCase
         );
     }
 
-    public function test_make_link()
+    public function test_make_link(): void
     {
         // basic
         $this->assertEquals(
@@ -55,7 +55,7 @@ class UrlsTest extends TestCase
         );
     }
 
-    public function test_make_http()
+    public function test_make_http(): void
     {
         // relative to shimmie install
         $this->assertEquals(
@@ -76,7 +76,7 @@ class UrlsTest extends TestCase
         );
     }
 
-    public function test_modify_url()
+    public function test_modify_url(): void
     {
         $this->assertEquals(
             "/foo/bar?a=3&b=2",
@@ -94,7 +94,7 @@ class UrlsTest extends TestCase
         );
     }
 
-    public function test_referer_or()
+    public function test_referer_or(): void
     {
         unset($_SERVER['HTTP_REFERER']);
         $this->assertEquals(

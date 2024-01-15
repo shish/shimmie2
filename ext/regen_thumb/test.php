@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class RegenThumbTest extends ShimmiePHPUnitTestCase
 {
-    public function testRegenThumb()
+    public function testRegenThumb(): void
     {
         $this->log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class TagToolsTest extends ShimmiePHPUnitTestCase
 {
-    public function testLowercaseAndSetCase()
+    public function testLowercaseAndSetCase(): void
     {
         // Create a problem
         $ts = time(); // we need a tag that hasn't been used before
@@ -34,7 +34,7 @@ class TagToolsTest extends ShimmiePHPUnitTestCase
     }
 
     # FIXME: make sure the admin tools actually work
-    public function testRecount()
+    public function testRecount(): void
     {
         global $database;
 

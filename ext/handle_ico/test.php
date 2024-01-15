@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class IcoFileHandlerTest extends ShimmiePHPUnitTestCase
 {
-    public function testIcoHander()
+    public function testIcoHander(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("ext/static_files/static/favicon.ico", "shimmie favicon");

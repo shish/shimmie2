@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class LogDatabaseTest extends ShimmiePHPUnitTestCase
 {
-    public function testLog()
+    public function testLog(): void
     {
         $this->log_in_as_admin();
         $this->get_page("log/view");

@@ -10,7 +10,7 @@ require_once "core/polyfills.php";
 
 class PolyfillsTest extends TestCase
 {
-    public function test_html_escape()
+    public function test_html_escape(): void
     {
         $this->assertEquals(
             "Foo &amp; &lt;main&gt;",
@@ -26,7 +26,7 @@ class PolyfillsTest extends TestCase
         $this->assertEquals(html_escape(html_unescape($x)), $x);
     }
 
-    public function test_int_escape()
+    public function test_int_escape(): void
     {
         $this->assertEquals(0, int_escape(""));
         $this->assertEquals(1, int_escape("1"));
@@ -35,13 +35,13 @@ class PolyfillsTest extends TestCase
         $this->assertEquals(0, int_escape(null));
     }
 
-    public function test_url_escape()
+    public function test_url_escape(): void
     {
         $this->assertEquals("%5E%5Co%2F%5E", url_escape("^\o/^"));
         $this->assertEquals("", url_escape(null));
     }
 
-    public function test_bool_escape()
+    public function test_bool_escape(): void
     {
         $this->assertTrue(bool_escape(true));
         $this->assertFalse(bool_escape(false));
@@ -71,7 +71,7 @@ class PolyfillsTest extends TestCase
         $this->assertFalse(bool_escape("0"));
     }
 
-    public function test_clamp()
+    public function test_clamp(): void
     {
         $this->assertEquals(5, clamp(0, 5, 10)); // too small
         $this->assertEquals(5, clamp(5, 5, 10)); // lower limit
@@ -83,7 +83,7 @@ class PolyfillsTest extends TestCase
         $this->assertEquals(42, clamp(42, null, null)); // no limit
     }
 
-    public function test_truncate()
+    public function test_truncate(): void
     {
         $this->assertEquals("test words", truncate("test words", 10));
         $this->assertEquals("test...", truncate("test...", 9));
@@ -91,7 +91,7 @@ class PolyfillsTest extends TestCase
         $this->assertEquals("te...", truncate("te...", 2));
     }
 
-    public function test_to_shorthand_int()
+    public function test_to_shorthand_int(): void
     {
         // 0-9 should have 1 decimal place, 10+ should have none
         $this->assertEquals("1.1GB", to_shorthand_int(1231231231));
@@ -100,7 +100,7 @@ class PolyfillsTest extends TestCase
         $this->assertEquals("2", to_shorthand_int(2));
     }
 
-    public function test_parse_shorthand_int()
+    public function test_parse_shorthand_int(): void
     {
         $this->assertEquals(-1, parse_shorthand_int("foo"));
         $this->assertEquals(33554432, parse_shorthand_int("32M"));
@@ -108,21 +108,21 @@ class PolyfillsTest extends TestCase
         $this->assertEquals(1231231231, parse_shorthand_int("1231231231"));
     }
 
-    public function test_format_milliseconds()
+    public function test_format_milliseconds(): void
     {
         $this->assertEquals("", format_milliseconds(5));
         $this->assertEquals("5s", format_milliseconds(5000));
         $this->assertEquals("1y 213d 16h 53m 20s", format_milliseconds(50000000000));
     }
 
-    public function test_parse_to_milliseconds()
+    public function test_parse_to_milliseconds(): void
     {
         $this->assertEquals(10, parse_to_milliseconds("10"));
         $this->assertEquals(5000, parse_to_milliseconds("5s"));
         $this->assertEquals(50000000000, parse_to_milliseconds("1y 213d 16h 53m 20s"));
     }
 
-    public function test_autodate()
+    public function test_autodate(): void
     {
         $this->assertEquals(
             "<time datetime='2012-06-23T16:14:22+00:00'>June 23, 2012; 16:14</time>",
@@ -130,7 +130,7 @@ class PolyfillsTest extends TestCase
         );
     }
 
-    public function test_validate_input()
+    public function test_validate_input(): void
     {
         $_POST = [
             "foo" => " bar ",
@@ -151,7 +151,7 @@ class PolyfillsTest extends TestCase
         );
     }
 
-    public function test_sanitize_path()
+    public function test_sanitize_path(): void
     {
         $this->assertEquals(
             "one",
@@ -194,7 +194,7 @@ class PolyfillsTest extends TestCase
         );
     }
 
-    public function test_join_path()
+    public function test_join_path(): void
     {
         $this->assertEquals(
             "one",
@@ -222,7 +222,7 @@ class PolyfillsTest extends TestCase
         );
     }
 
-    public function test_stringer()
+    public function test_stringer(): void
     {
         $this->assertEquals(
             '["foo"=>"bar", "baz"=>[1, 2, 3], "qux"=>["a"=>"b"]]',
@@ -230,7 +230,7 @@ class PolyfillsTest extends TestCase
         );
     }
 
-    public function test_ip_in_range()
+    public function test_ip_in_range(): void
     {
         $this->assertTrue(ip_in_range("1.2.3.4", "1.2.0.0/16"));
         $this->assertFalse(ip_in_range("4.3.2.1", "1.2.0.0/16"));
@@ -239,7 +239,7 @@ class PolyfillsTest extends TestCase
         $this->assertTrue(ip_in_range("1.2.3.4", "1.2.3.4"));
     }
 
-    public function test_deltree()
+    public function test_deltree(): void
     {
         $tmp = sys_get_temp_dir();
         $dir = "$tmp/test_deltree";

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class NotATagTest extends ShimmiePHPUnitTestCase
 {
-    public function testUntags()
+    public function testUntags(): void
     {
         global $database;
         $database->execute("DELETE FROM untags");

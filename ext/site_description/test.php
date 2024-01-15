@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class SiteDescriptionTest extends ShimmiePHPUnitTestCase
 {
-    public function testSiteDescription()
+    public function testSiteDescription(): void
     {
         global $config, $page;
         $config->set_string("site_description", "A Shimmie testbed");
@@ -17,7 +17,7 @@ class SiteDescriptionTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testSiteKeywords()
+    public function testSiteKeywords(): void
     {
         global $config, $page;
         $config->set_string("site_keywords", "foo,bar,baz");

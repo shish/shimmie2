@@ -8,7 +8,7 @@ class UserConfigTest extends ShimmiePHPUnitTestCase
 {
     private const OPTIONS_BLOCK_TITLE = "User Options";
 
-    public function testUserConfigPage()
+    public function testUserConfigPage(): void
     {
         $this->get_page('user_config');
         $this->assert_title("Permission Denied");

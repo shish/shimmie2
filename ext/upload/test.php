@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class UploadTest extends ShimmiePHPUnitTestCase
 {
-    public function testUploadPage()
+    public function testUploadPage(): void
     {
         $this->log_in_as_user();
 
@@ -15,7 +15,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
     }
 
     // Because $this->post_image() sends the event directly
-    public function testRawUpload()
+    public function testRawUpload(): void
     {
         global $database;
 
@@ -50,7 +50,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
     }
 
-    public function testUpload()
+    public function testUpload(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
@@ -60,7 +60,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Post $image_id: computer pbx screenshot");
     }
 
-    public function testRejectDupe()
+    public function testRejectDupe(): void
     {
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
@@ -70,13 +70,13 @@ class UploadTest extends ShimmiePHPUnitTestCase
         $this->assertStringContainsString("already has hash", $e->getMessage());
     }
 
-    public function testRejectUnknownFiletype()
+    public function testRejectUnknownFiletype(): void
     {
         $this->expectException(\Exception::class);
         $this->post_image("index.php", "test");
     }
 
-    public function testRejectHuge()
+    public function testRejectHuge(): void
     {
         // FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
         file_put_contents("data/huge.jpg", file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024 * 1024 * 3));

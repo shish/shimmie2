@@ -6,14 +6,14 @@ namespace Shimmie2;
 
 class AliasEditorTest extends ShimmiePHPUnitTestCase
 {
-    public function testAliasList()
+    public function testAliasList(): void
     {
         $this->get_page('alias/list');
         $this->assert_response(200);
         $this->assert_title("Alias List");
     }
 
-    public function testAliasListReadOnly()
+    public function testAliasListReadOnly(): void
     {
         $this->log_in_as_user();
         $this->get_page('alias/list');
@@ -26,7 +26,7 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $this->assert_no_text("Add");
     }
 
-    public function testAliasOneToOne()
+    public function testAliasOneToOne(): void
     {
         $this->log_in_as_admin();
 
@@ -54,7 +54,7 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $this->assert_no_text("test1");
     }
 
-    public function testAliasOneToMany()
+    public function testAliasOneToMany(): void
     {
         $this->log_in_as_admin();
 

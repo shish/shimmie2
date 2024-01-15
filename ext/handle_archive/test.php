@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ArchiveFileHandlerTest extends ShimmiePHPUnitTestCase
 {
-    public function testArchiveHander()
+    public function testArchiveHander(): void
     {
         $this->log_in_as_user();
         system("zip -q tests/test.zip tests/pbx_screenshot.jpg tests/favicon.png");

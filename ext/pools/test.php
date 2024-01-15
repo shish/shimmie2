@@ -20,7 +20,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         }
     }
 
-    public function testAnon()
+    public function testAnon(): void
     {
         $this->log_out();
 
@@ -53,7 +53,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testOnViewImage($args)
+    public function testOnViewImage($args): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -67,7 +67,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testSearch($args)
+    public function testSearch($args): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -79,7 +79,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testList($args)
+    public function testList($args): void
     {
         $this->testCreate();
         $this->get_page("pool/list");
@@ -87,7 +87,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testView($args)
+    public function testView($args): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -96,7 +96,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testHistory($args)
+    public function testHistory($args): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -105,7 +105,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testImport($args)
+    public function testImport($args): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -131,7 +131,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testRemovePosts')]
-    public function testAddPosts($args)
+    public function testAddPosts($args): void
     {
         [$pool_id, $image_ids] = $this->testRemovePosts(null);
 
@@ -156,7 +156,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         return [$pool_id, $image_ids];
     }
 
-    public function testNuke()
+    public function testNuke(): void
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");

@@ -23,7 +23,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         $this->assert_text($out);
     }
 
-    public function testRegular()
+    public function testRegular(): void
     {
         $this->_doThings(
             "posted by a whore",
@@ -31,7 +31,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testReplaceAll()
+    public function testReplaceAll(): void
     {
         $this->_doThings(
             "a whore is a whore is a whore",
@@ -39,7 +39,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testMixedCase()
+    public function testMixedCase(): void
     {
         $this->_doThings(
             "monkey WhorE",
@@ -47,7 +47,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testOnlyWholeWords()
+    public function testOnlyWholeWords(): void
     {
         $this->_doThings(
             "my name is whoretta",
@@ -55,7 +55,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testMultipleWords()
+    public function testMultipleWords(): void
     {
         $this->_doThings(
             "I would like a duck",
@@ -63,7 +63,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testWhitespace()
+    public function testWhitespace(): void
     {
         $this->_doThings(
             "A colour is white",
@@ -71,7 +71,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testIgnoreInvalid()
+    public function testIgnoreInvalid(): void
     {
         $this->_doThings(
             "The word was invalid",

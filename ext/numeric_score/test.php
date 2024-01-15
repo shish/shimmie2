@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class NumericScoreTest extends ShimmiePHPUnitTestCase
 {
-    public function testNumericScore()
+    public function testNumericScore(): void
     {
         global $user;
 

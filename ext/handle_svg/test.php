@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
 {
-    public function testSVGHander()
+    public function testSVGHander(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/test.svg", "something");
@@ -18,7 +18,7 @@ class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         # FIXME: test that it gets displayed properly
     }
 
-    public function testAbusiveSVG()
+    public function testAbusiveSVG(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/alert.svg", "something");

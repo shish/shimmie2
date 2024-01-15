@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class GraphQLTest extends ShimmiePHPUnitTestCase
 {
-    public function testSchema()
+    public function testSchema(): void
     {
         $schema = GraphQL::get_schema();
         $schema->assertValid();

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class DanbooruApiTest extends ShimmiePHPUnitTestCase
 {
-    public function testSearch()
+    public function testSearch(): void
     {
         $this->log_in_as_admin();
 

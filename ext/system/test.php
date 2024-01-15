@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class SystemTest extends ShimmiePHPUnitTestCase
 {
-    public function testView()
+    public function testView(): void
     {
         global $page;
         $this->get_page("system");

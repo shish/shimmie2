@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class BlotterTest extends ShimmiePHPUnitTestCase
 {
-    public function testDenial()
+    public function testDenial(): void
     {
         $this->get_page("blotter/editor");
         $this->assert_response(403);
@@ -16,7 +16,7 @@ class BlotterTest extends ShimmiePHPUnitTestCase
         $this->assert_response(403);
     }
 
-    public function testAddViewRemove()
+    public function testAddViewRemove(): void
     {
         $this->log_in_as_admin();
 

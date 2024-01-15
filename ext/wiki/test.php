@@ -6,14 +6,14 @@ namespace Shimmie2;
 
 class WikiTest extends ShimmiePHPUnitTestCase
 {
-    public function testIndex()
+    public function testIndex(): void
     {
         $this->get_page("wiki");
         $this->assert_title("Index");
         $this->assert_text("This is a default page");
     }
 
-    public function testAccess()
+    public function testAccess(): void
     {
         global $config;
         foreach (["anon", "user", "admin"] as $user) {
@@ -53,7 +53,7 @@ class WikiTest extends ShimmiePHPUnitTestCase
         }
     }
 
-    public function testDefault()
+    public function testDefault(): void
     {
         global $user;
         $this->log_in_as_admin();
@@ -82,7 +82,7 @@ class WikiTest extends ShimmiePHPUnitTestCase
         $this->assert_text("This is a default page");
     }
 
-    public function testRevisions()
+    public function testRevisions(): void
     {
         global $user;
         $this->log_in_as_admin();

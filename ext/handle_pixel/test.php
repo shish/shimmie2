@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class PixelFileHandlerTest extends ShimmiePHPUnitTestCase
 {
-    public function testPixelHander()
+    public function testPixelHander(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");

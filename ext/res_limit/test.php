@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 {
-    public function testResLimitOK()
+    public function testResLimitOK(): void
     {
         global $config;
         $config->set_int("upload_min_height", 0);
@@ -23,7 +23,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $this->assert_no_text("ratio");
     }
 
-    public function testResLimitSmall()
+    public function testResLimitSmall(): void
     {
         global $config;
         $config->set_int("upload_min_height", 900);
@@ -39,7 +39,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $this->assertEquals("Post too small", $e->getMessage());
     }
 
-    public function testResLimitLarge()
+    public function testResLimitLarge(): void
     {
         global $config;
         $config->set_int("upload_min_height", 0);
@@ -54,7 +54,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $this->assertEquals("Post too large", $e->getMessage());
     }
 
-    public function testResLimitRatio()
+    public function testResLimitRatio(): void
     {
         global $config;
         $config->set_int("upload_min_height", -1);

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ImageIOTest extends ShimmiePHPUnitTestCase
 {
-    public function testUserStats()
+    public function testUserStats(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
@@ -26,7 +26,7 @@ class ImageIOTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(200, $page->code);
     }
 
-    public function testDeleteRequest()
+    public function testDeleteRequest(): void
     {
         $this->log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");

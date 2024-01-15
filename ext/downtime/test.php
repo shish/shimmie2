@@ -13,7 +13,7 @@ class DowntimeTest extends ShimmiePHPUnitTestCase
         parent::tearDown();
     }
 
-    public function testDowntime()
+    public function testDowntime(): void
     {
         global $config;
 

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ExtManagerTest extends ShimmiePHPUnitTestCase
 {
-    public function testAuth()
+    public function testAuth(): void
     {
         $this->get_page('ext_manager');
         $this->assert_title("Extensions");

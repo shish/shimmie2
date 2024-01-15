@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class BlocksTest extends ShimmiePHPUnitTestCase
 {
-    public function testBlocks()
+    public function testBlocks(): void
     {
         $this->log_in_as_admin();
         $this->get_page("blocks/list");

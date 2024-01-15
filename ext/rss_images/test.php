@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class RSSImagesTest extends ShimmiePHPUnitTestCase
 {
-    public function testImageFeed()
+    public function testImageFeed(): void
     {
         $this->log_in_as_user();
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");

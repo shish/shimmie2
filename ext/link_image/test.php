@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class LinkImageTest extends ShimmiePHPUnitTestCase
 {
-    public function testLinkImage()
+    public function testLinkImage(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pie");

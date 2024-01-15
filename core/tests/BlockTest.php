@@ -10,7 +10,7 @@ require_once "core/block.php";
 
 class BlockTest extends TestCase
 {
-    public function test_basic()
+    public function test_basic(): void
     {
         $b = new Block("head", "body");
         $this->assertEquals(

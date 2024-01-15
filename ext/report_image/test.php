@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ReportImageTest extends ShimmiePHPUnitTestCase
 {
-    public function testReportImage()
+    public function testReportImage(): void
     {
         global $config, $database, $user;
 

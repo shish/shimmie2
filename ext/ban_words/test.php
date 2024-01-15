@@ -17,7 +17,7 @@ class BanWordsTest extends ShimmiePHPUnitTestCase
         }
     }
 
-    public function testWordBan()
+    public function testWordBan(): void
     {
         global $config;
         $config->set_string("banned_words", "viagra\nporn\n\n/http:.*\.cn\//");

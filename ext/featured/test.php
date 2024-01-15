@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class FeaturedTest extends ShimmiePHPUnitTestCase
 {
-    public function testFeatured()
+    public function testFeatured(): void
     {
         global $config;
 

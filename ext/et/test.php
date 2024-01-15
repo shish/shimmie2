@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ETTest extends ShimmiePHPUnitTestCase
 {
-    public function testET()
+    public function testET(): void
     {
         $this->log_in_as_admin();
         $this->get_page("system_info");

@@ -10,7 +10,7 @@ require_once "core/basepage.php";
 
 class BasePageTest extends TestCase
 {
-    public function test_page()
+    public function test_page(): void
     {
         $page = new BasePage();
         $page->set_mode(PageMode::PAGE);
@@ -20,7 +20,7 @@ class BasePageTest extends TestCase
         $this->assertTrue(true);  // doesn't crash
     }
 
-    public function test_file()
+    public function test_file(): void
     {
         $page = new BasePage();
         $page->set_mode(PageMode::FILE);
@@ -31,7 +31,7 @@ class BasePageTest extends TestCase
         $this->assertTrue(true);  // doesn't crash
     }
 
-    public function test_data()
+    public function test_data(): void
     {
         $page = new BasePage();
         $page->set_mode(PageMode::DATA);
@@ -42,7 +42,7 @@ class BasePageTest extends TestCase
         $this->assertTrue(true);  // doesn't crash
     }
 
-    public function test_redirect()
+    public function test_redirect(): void
     {
         $page = new BasePage();
         $page->set_mode(PageMode::REDIRECT);

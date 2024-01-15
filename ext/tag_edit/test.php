@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class TagEditTest extends ShimmiePHPUnitTestCase
 {
-    public function testValidChange()
+    public function testValidChange(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -22,7 +22,7 @@ class TagEditTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Post $image_id: new");
     }
 
-    public function testInvalidChange()
+    public function testInvalidChange(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -39,7 +39,7 @@ class TagEditTest extends ShimmiePHPUnitTestCase
         $this->assertEquals("Can't set a tag which contains a wildcard (*)", $e->getMessage());
     }
 
-    public function testTagEdit_tooLong()
+    public function testTagEdit_tooLong(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", str_repeat("a", 500));
@@ -47,7 +47,7 @@ class TagEditTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Post $image_id: tagme");
     }
 
-    public function testSourceEdit()
+    public function testSourceEdit(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");

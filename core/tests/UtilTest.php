@@ -10,42 +10,42 @@ require_once "core/util.php";
 
 class UtilTest extends TestCase
 {
-    public function test_get_theme()
+    public function test_get_theme(): void
     {
         $this->assertEquals("default", get_theme());
     }
 
-    public function test_get_memory_limit()
+    public function test_get_memory_limit(): void
     {
         get_memory_limit();
         $this->assertTrue(true);
     }
 
-    public function test_check_gd_version()
+    public function test_check_gd_version(): void
     {
         check_gd_version();
         $this->assertTrue(true);
     }
 
-    public function test_check_im_version()
+    public function test_check_im_version(): void
     {
         check_im_version();
         $this->assertTrue(true);
     }
 
-    public function test_human_filesize()
+    public function test_human_filesize(): void
     {
         $this->assertEquals("123.00B", human_filesize(123));
         $this->assertEquals("123B", human_filesize(123, 0));
         $this->assertEquals("120.56KB", human_filesize(123456));
     }
 
-    public function test_generate_key()
+    public function test_generate_key(): void
     {
         $this->assertEquals(20, strlen(generate_key()));
     }
 
-    public function test_warehouse_path()
+    public function test_warehouse_path(): void
     {
         $hash = "7ac19c10d6859415";
 
@@ -105,7 +105,7 @@ class UtilTest extends TestCase
         );
     }
 
-    public function test_load_balance_url()
+    public function test_load_balance_url(): void
     {
         $hash = "7ac19c10d6859415";
         $ext = "jpg";
@@ -123,7 +123,7 @@ class UtilTest extends TestCase
         );
     }
 
-    public function test_path_to_tags()
+    public function test_path_to_tags(): void
     {
         $this->assertEquals(
             [],

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ETServerTest extends ShimmiePHPUnitTestCase
 {
-    public function testView()
+    public function testView(): void
     {
         $this->post_page("register.php", ["data" => "test entry"]);
 

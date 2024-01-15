@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class RandomImageTest extends ShimmiePHPUnitTestCase
 {
-    public function testRandom()
+    public function testRandom(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
@@ -23,7 +23,7 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         # FIXME: assert($raw == file(blah.jpg))
     }
 
-    public function testPostListBlock()
+    public function testPostListBlock(): void
     {
         global $config;
 

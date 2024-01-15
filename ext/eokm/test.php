@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class EokmTest extends ShimmiePHPUnitTestCase
 {
-    public function testPass()
+    public function testPass(): void
     {
         // no EOKM login details set, so be a no-op
         $this->log_in_as_user();

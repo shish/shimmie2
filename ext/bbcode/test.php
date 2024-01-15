@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class BBCodeTest extends ShimmiePHPUnitTestCase
 {
-    public function testBasics()
+    public function testBasics(): void
     {
         $this->assertEquals(
             "<b>bold</b><i>italic</i>",
@@ -14,7 +14,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testStacking()
+    public function testStacking(): void
     {
         $this->assertEquals(
             "<b>B</b><i>I</i><b>B</b>",
@@ -26,7 +26,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testFailure()
+    public function testFailure(): void
     {
         $this->assertEquals(
             "[b]bold[i]italic",
@@ -34,7 +34,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testCode()
+    public function testCode(): void
     {
         $this->assertEquals(
             "<pre class='code'>[b]bold[/b]</pre>",
@@ -42,7 +42,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testNestedList()
+    public function testNestedList(): void
     {
         $this->assertEquals(
             "<ul><li>a<ul><li>a<li>b</ul><li>b</ul>",
@@ -54,7 +54,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testSpoiler()
+    public function testSpoiler(): void
     {
         $this->assertEquals(
             "<span style=\"background-color:#000; color:#000;\">ShishNet</span>",
@@ -69,7 +69,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         #	"[spoiler]ShishNet");
     }
 
-    public function testURL()
+    public function testURL(): void
     {
         $this->assertEquals(
             "<a href=\"https://shishnet.org\">https://shishnet.org</a>",
@@ -85,7 +85,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testEmailURL()
+    public function testEmailURL(): void
     {
         $this->assertEquals(
             "<a href=\"mailto:spam@shishnet.org\">spam@shishnet.org</a>",
@@ -93,7 +93,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testAnchor()
+    public function testAnchor(): void
     {
         $this->assertEquals(
             '<span class="anchor">Rules <a class="alink" href="#bb-rules" name="bb-rules" title="link to this anchor"> ¶ </a></span>',
@@ -113,7 +113,7 @@ class BBCodeTest extends ShimmiePHPUnitTestCase
         return $bb->strip($in);
     }
 
-    public function testSiteLinks()
+    public function testSiteLinks(): void
     {
         $this->assertEquals(
             '<a class="shm-clink" data-clink-sel="" href="/test/post/view/123">&gt;&gt;123</a>',

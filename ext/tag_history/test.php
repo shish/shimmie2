@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class TagHistoryTest extends ShimmiePHPUnitTestCase
 {
-    public function testTagHistory()
+    public function testTagHistory(): void
     {
         $this->log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "old_tag");

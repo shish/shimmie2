@@ -6,14 +6,14 @@ namespace Shimmie2;
 
 class ReplaceFileTest extends ShimmiePHPUnitTestCase
 {
-    public function testReplacePage()
+    public function testReplacePage(): void
     {
         $this->log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         $this->get_page("replace/$image_id");
         $this->assert_title("Replace File");
     }
-    public function testReplace()
+    public function testReplace(): void
     {
         global $database;
         $this->log_in_as_admin();

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class RatingsTest extends ShimmiePHPUnitTestCase
 {
-    public function testRatingSafe()
+    public function testRatingSafe(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -25,7 +25,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["rating=q"], []);
     }
 
-    public function testRatingExplicit()
+    public function testRatingExplicit(): void
     {
         global $config;
         $config->set_array("ext_rating_anonymous_privs", ["s", "q"]);
@@ -39,7 +39,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["pbx"], []);
     }
 
-    public function testUserConfig()
+    public function testUserConfig(): void
     {
         global $config, $user_config;
 

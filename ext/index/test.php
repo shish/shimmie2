@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Depends;
 
 class IndexTest extends ShimmiePHPUnitTestCase
 {
-    public function testIndexPage()
+    public function testIndexPage(): void
     {
         $this->get_page('post/list');
         $this->assert_title("Welcome to Shimmie");
@@ -51,7 +51,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
 
     // This isn't really an index thing, we just want to test this from
     // SOMEWHERE because the default theme doesn't use them.
-    public function test_nav()
+    public function test_nav(): void
     {
         send_event(new UserLoginEvent(User::by_name(self::$user_name)));
         send_event(new PageNavBuildingEvent());

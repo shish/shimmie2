@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ImageViewCounterTest extends ShimmiePHPUnitTestCase
 {
-    public function testPostView()
+    public function testPostView(): void
     {
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         $this->log_in_as_admin();
@@ -14,7 +14,7 @@ class ImageViewCounterTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Views");
     }
 
-    public function testPopular()
+    public function testPopular(): void
     {
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         $this->get_page("post/view/$image_id");

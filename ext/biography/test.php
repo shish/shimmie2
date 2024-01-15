@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class BiographyTest extends ShimmiePHPUnitTestCase
 {
-    public function testBio()
+    public function testBio(): void
     {
         $this->log_in_as_user();
         $this->post_page("biography", ["biography" => "My bio goes here"]);

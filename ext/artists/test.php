@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ArtistsTest extends ShimmiePHPUnitTestCase
 {
-    public function testSearch()
+    public function testSearch(): void
     {
         global $user;
         $this->log_in_as_user();

@@ -78,7 +78,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testSetParent')]
-    public function testSearch($imgs)
+    public function testSearch($imgs): void
     {
         [$image_1, $image_2, $image_3] = $this->testSetParent(null);
 
@@ -91,7 +91,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testChangeParent')]
-    public function testRemoveParent($imgs)
+    public function testRemoveParent($imgs): void
     {
         [$image_1, $image_2, $image_3] = $this->testChangeParent(null);
 
@@ -187,7 +187,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testSetChildByTag')]
-    public function testRemoveParentByTag($imgs)
+    public function testRemoveParentByTag($imgs): void
     {
         [$image_1, $image_2, $image_3] = $this->testSetChildByTag(null);
         assert(!is_null($image_3));
