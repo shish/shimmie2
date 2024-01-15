@@ -14,12 +14,12 @@ class RelationshipsTheme extends Themelet
     {
         global $page, $database;
 
-        if ($image->parent_id !== null) {
-            $a = "<a href='".make_link("post/view/".$image->parent_id)."'>parent post</a>";
+        if ($image['parent_id'] !== null) {
+            $a = "<a href='".make_link("post/view/".$image['parent_id'])."'>parent post</a>";
             $page->add_block(new Block(null, "This post belongs to a $a.", "main", 5, "ImageHasParent"));
         }
 
-        if (bool_escape($image->has_children)) {
+        if (bool_escape($image['has_children'])) {
             $ids = $database->get_col("SELECT id FROM images WHERE parent_id = :iid", ["iid" => $image->id]);
 
             $html = "This post has <a href='".search_link(['parent='.$image->id])."'>".(count($ids) > 1 ? "child posts" : "a child post")."</a>";
@@ -39,8 +39,8 @@ class RelationshipsTheme extends Themelet
 
         return SHM_POST_INFO(
             "Parent",
-            strval($image->parent_id) ?: "None",
-            !$user->is_anonymous() ? INPUT(["type" => "number", "name" => "tag_edit__parent", "value" => $image->parent_id]) : null
+            strval($image['parent_id']) ?: "None",
+            !$user->is_anonymous() ? INPUT(["type" => "number", "name" => "tag_edit__parent", "value" => $image['parent_id']]) : null
         );
     }
 

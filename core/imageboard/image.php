@@ -17,9 +17,8 @@ use GQLA\Query;
  * image per se, but could be a video, sound file, or any
  * other supported upload type.
  */
-#[\AllowDynamicProperties]
 #[Type(name: "Post")]
-class Image
+class Image implements \ArrayAccess
 {
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
@@ -57,6 +56,8 @@ class Image
     public ?int $length = null;
     public ?string $tmp_file = null;
 
+    /** @var array<string, mixed> */
+    private array $dynamic_props = [];
     public static array $bool_props = ["locked", "lossless", "video", "audio", "image"];
     public static array $int_props = ["id", "owner_id", "height", "width", "filesize", "length"];
 
@@ -75,18 +76,38 @@ class Image
                 // some databases use table.name rather than name
                 $name = str_replace("images.", "", $name);
 
-                // hax, this is likely the cause of much scrutinizer-ci complaints.
                 if (is_null($value)) {
-                    $this->$name = null;
+                    $value = null;
                 } elseif (in_array($name, self::$bool_props)) {
-                    $this->$name = bool_escape((string)$value);
+                    $value = bool_escape((string)$value);
                 } elseif (in_array($name, self::$int_props)) {
-                    $this->$name = int_escape((string)$value);
-                } else {
+                    $value = int_escape((string)$value);
+                }
+
+                if(property_exists($this, $name)) {
                     $this->$name = $value;
+                } else {
+                    $this->dynamic_props[$name] = $value;
                 }
             }
         }
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->dynamic_props[$offset]);
+    }
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->dynamic_props[$offset];
+    }
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->dynamic_props[$offset] = $value;
+    }
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->dynamic_props[$offset]);
     }
 
     #[Field(name: "post_id")]
@@ -261,6 +282,15 @@ class Image
                 ]
             );
         }
+
+        // For the future: automatically save dynamic props instead of
+        // requiring each extension to do it manually.
+        /*
+        $props_sql = "UPDATE images SET ";
+        $props_sql .= implode(", ", array_map(fn ($prop) => "$prop = :$prop", array_keys($this->dynamic_props)));
+        $props_sql .= " WHERE id = :id";
+        $database->execute($props_sql, array_merge($this->dynamic_props, ["id" => $this->id]));
+        */
 
         $database->execute(
             "UPDATE images SET ".

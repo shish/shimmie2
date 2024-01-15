@@ -65,7 +65,7 @@ class Featured extends Extension
             );
             if (!is_null($image)) {
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
-                    if (!in_array($image->rating, Ratings::get_user_class_privs($user))) {
+                    if (!in_array($image['rating'], Ratings::get_user_class_privs($user))) {
                         return;
                     }
                 }

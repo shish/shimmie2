@@ -6,8 +6,6 @@ parameters:
     - ../ext
     - ../tests
     - ../themes
-  ignoreErrors:
-    - '#Access to an undefined property Shimmie2\\Image::\$#'
   dynamicConstantNames:
     - DEBUG
     - SPEED_HAX

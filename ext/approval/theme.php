@@ -14,7 +14,7 @@ class ApprovalTheme extends Themelet
 {
     public function get_image_admin_html(Image $image): HTMLElement
     {
-        if ($image->approved === true) {
+        if ($image['approved'] === true) {
             $form = SHM_SIMPLE_FORM(
                 'disapprove_image/'.$image->id,
                 INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),

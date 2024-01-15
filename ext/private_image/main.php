@@ -117,7 +117,7 @@ class PrivateImage extends Extension
     {
         global $user, $page;
 
-        if ($event->image->private === true && $event->image->owner_id != $user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ($event->image['private'] === true && $event->image->owner_id != $user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }

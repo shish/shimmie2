@@ -89,7 +89,7 @@ class BaseThemelet
             "data-post-id" => $id,
         ];
         if(Extension::is_enabled(RatingsInfo::KEY)) {
-            $attrs["data-rating"] = $image->rating;
+            $attrs["data-rating"] = $image['rating'];
         }
 
         return A(

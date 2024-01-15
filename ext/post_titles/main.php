@@ -77,8 +77,9 @@ class PostTitles extends Extension
 
     public function onBulkExport(BulkExportEvent $event): void
     {
-        $event->fields["title"] = $event->image->title;
+        $event->fields["title"] = $event->image['title'];
     }
+
     public function onBulkImport(BulkImportEvent $event): void
     {
         if (array_key_exists("title", $event->fields) && $event->fields['title'] != null) {
@@ -97,7 +98,7 @@ class PostTitles extends Extension
     {
         global $config;
 
-        $title = $image->title ?? "";
+        $title = $image['title'] ?? "";
         if (empty($title) && $config->get_bool(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
             $info = pathinfo($image->filename);
             if (array_key_exists("extension", $info)) {

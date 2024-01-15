@@ -107,7 +107,7 @@ class Favorites extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        $event->replace('$favorites', (string)$event->image->favorites);
+        $event->replace('$favorites', (string)$event->image['favorites']);
     }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void

@@ -282,7 +282,7 @@ class NumericScore extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        $event->replace('$score', (string)$event->image->numeric_score);
+        $event->replace('$score', (string)$event->image['numeric_score']);
     }
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void

@@ -49,7 +49,7 @@ class Trash extends Extension
     {
         global $user;
 
-        if ($image->trash === true && !$user->can(Permissions::VIEW_TRASH)) {
+        if ($image['trash'] === true && !$user->can(Permissions::VIEW_TRASH)) {
             return false;
         }
         return true;
@@ -77,7 +77,7 @@ class Trash extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
-        if ($event->force !== true && $event->image->trash !== true) {
+        if ($event->force !== true && $event->image['trash'] !== true) {
             self::set_trash($event->image->id, true);
             $event->stop_processing = true;
         }
@@ -157,7 +157,7 @@ class Trash extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if ($event->image->trash === true && $user->can(Permissions::VIEW_TRASH)) {
+        if ($event->image['trash'] === true && $user->can(Permissions::VIEW_TRASH)) {
             $event->add_part($this->theme->get_image_admin_html($event->image->id));
         }
     }

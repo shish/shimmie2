@@ -74,12 +74,12 @@ class _SafeOuroborosImage
 
         if (Extension::is_enabled(RatingsInfo::KEY) !== false) {
             // 'u' is not a "valid" rating
-            if ($img->rating == 's' || $img->rating == 'q' || $img->rating == 'e') {
-                $this->rating = $img->rating;
+            if ($img['rating'] == 's' || $img['rating'] == 'q' || $img['rating'] == 'e') {
+                $this->rating = $img['rating'];
             }
         }
         if (Extension::is_enabled(NumericScoreInfo::KEY) !== false) {
-            $this->score = $img->numeric_score;
+            $this->score = $img['numeric_score'];
         }
 
         $this->source = $img->source;

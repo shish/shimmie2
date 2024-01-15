@@ -10,10 +10,7 @@ class NumericScoreTheme extends Themelet
     {
         global $user, $page;
         $i_image_id = $image->id;
-        if (is_string($image->numeric_score)) {
-            $image->numeric_score = (int)$image->numeric_score;
-        }
-        $i_score = $image->numeric_score;
+        $i_score = (int)$image['numeric_score'];
 
         $html = "
 			Current Score: $i_score

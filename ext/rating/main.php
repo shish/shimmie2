@@ -104,7 +104,7 @@ class Ratings extends Extension
         global $user;
 
         $user_view_level = Ratings::get_user_class_privs($user);
-        if (!in_array($image->rating, $user_view_level)) {
+        if (!in_array($image['rating'], $user_view_level)) {
             return false;
         }
         return true;
@@ -185,7 +185,7 @@ class Ratings extends Extension
 
     public function onBulkExport(BulkExportEvent $event): void
     {
-        $event->fields["rating"] = $event->image->rating;
+        $event->fields["rating"] = $event->image['rating'];
     }
     public function onBulkImport(BulkImportEvent $event): void
     {
@@ -198,10 +198,10 @@ class Ratings extends Extension
 
     public function onRatingSet(RatingSetEvent $event): void
     {
-        if (empty($event->image->rating)) {
+        if (empty($event->image['rating'])) {
             $old_rating = "";
         } else {
-            $old_rating = $event->image->rating;
+            $old_rating = $event->image['rating'];
         }
         $this->set_rating($event->image->id, $event->rating, $old_rating);
     }
@@ -212,7 +212,7 @@ class Ratings extends Extension
         $event->add_part(
             $this->theme->get_rater_html(
                 $event->image->id,
-                $event->image->rating,
+                $event->image['rating'],
                 $user->can(Permissions::EDIT_IMAGE_RATING)
             ),
             80
@@ -232,8 +232,8 @@ class Ratings extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        if(!is_null($event->image->rating)) {
-            $event->replace('$rating', $this->rating_to_human($event->image->rating));
+        if(!is_null($event->image['rating'])) {
+            $event->replace('$rating', $this->rating_to_human($event->image['rating']));
         }
     }
 

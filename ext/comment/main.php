@@ -312,14 +312,14 @@ class CommentList extends Extension
             $image = Image::by_id((int)$row["image_id"]);
             if (
                 Extension::is_enabled(RatingsInfo::KEY) && !is_null($image) &&
-                !in_array($image->rating, $user_ratings)
+                !in_array($image['rating'], $user_ratings)
             ) {
                 $image = null; // this is "clever", I may live to regret it
             }
             if (
                 Extension::is_enabled(ApprovalInfo::KEY) && !is_null($image) &&
                 $config->get_bool(ApprovalConfig::IMAGES) &&
-                $image->approved !== true
+                $image['approved'] !== true
             ) {
                 $image = null;
             }
