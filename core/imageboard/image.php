@@ -212,7 +212,7 @@ class Image implements \ArrayAccess
         $max = Search::count_images($tags);
         if ($max < 1) {
             return null;
-        }		// From Issue #22 - opened by HungryFeline on May 30, 2011.
+        }        // From Issue #22 - opened by HungryFeline on May 30, 2011.
         if ($limit_range > 0 && $max > $limit_range) {
             $max = $limit_range;
         }
@@ -282,10 +282,10 @@ class Image implements \ArrayAccess
         global $database;
         if ($owner->id != $this->owner_id) {
             $database->execute("
-				UPDATE images
-				SET owner_id=:owner_id
-				WHERE id=:id
-			", ["owner_id" => $owner->id, "id" => $this->id]);
+                UPDATE images
+                SET owner_id=:owner_id
+                WHERE id=:id
+            ", ["owner_id" => $owner->id, "id" => $this->id]);
             log_info("core_image", "Owner for Post #{$this->id} set to {$owner->name}");
         }
     }
@@ -293,54 +293,48 @@ class Image implements \ArrayAccess
     public function save_to_db(): void
     {
         global $database, $user;
-        $cut_name = substr($this->filename, 0, 255);
 
         if (is_null($this->posted) || $this->posted == "") {
             $this->posted = date('Y-m-d H:i:s', time());
         }
 
+        $props_to_save = [
+            "filename" => substr($this->filename, 0, 255),
+            "filesize" => $this->filesize,
+            "hash" => $this->hash,
+            "mime" => strtolower($this->mime),
+            "ext" => strtolower($this->ext),
+            "posted" => $this->posted,
+            "source" => $this->source,
+            "width" => $this->width,
+            "height" => $this->height,
+            "lossless" => $this->lossless,
+            "video" => $this->video,
+            "video_codec" => $this->video_codec,
+            "image" => $this->image,
+            "audio" => $this->audio,
+            "length" => $this->length
+        ];
         if (is_null($this->id)) {
+            $props_to_save["owner_id"] = $user->id;
+            $props_to_save["owner_ip"] = get_real_ip();
+
+            $props_sql = implode(", ", array_keys($props_to_save));
+            $vals_sql = implode(", ", array_map(fn ($prop) => ":$prop", array_keys($props_to_save)));
+
             $database->execute(
-                "INSERT INTO images(
-					owner_id, owner_ip,
-                    filename, filesize,
-				    hash, mime, ext,
-                    width, height,
-                    posted, source
-				)
-				VALUES (
-					:owner_id, :owner_ip,
-				    :filename, :filesize,
-					:hash, :mime, :ext,
-				    0, 0,
-				    :posted, :source
-				)",
-                [
-                    "owner_id" => $user->id, "owner_ip" => get_real_ip(),
-                    "filename" => $cut_name, "filesize" => $this->filesize,
-                    "hash" => $this->hash, "mime" => strtolower($this->mime),
-                    "ext" => strtolower($this->ext),
-                    "posted" => $this->posted, "source" => $this->source
-                ]
+                "INSERT INTO images($props_sql) VALUES ($vals_sql)",
+                $props_to_save,
             );
             $this->id = $database->get_last_insert_id('images_id_seq');
         } else {
+            $props_sql = implode(", ", array_map(fn ($prop) => "$prop = :$prop", array_keys($props_to_save)));
             $database->execute(
-                "UPDATE images SET ".
-                "filename = :filename, filesize = :filesize, hash = :hash, ".
-                "mime = :mime, ext = :ext, width = 0, height = 0, ".
-                "posted = :posted, source = :source ".
-                "WHERE id = :id",
-                [
-                    "filename" => $cut_name,
-                    "filesize" => $this->filesize,
-                    "hash" => $this->hash,
-                    "mime" => strtolower($this->mime),
-                    "ext" => strtolower($this->ext),
-                    "posted" => $this->posted,
-                    "source" => $this->source,
-                    "id" => $this->id,
-                ]
+                "UPDATE images SET $props_sql WHERE id = :id",
+                array_merge(
+                    $props_to_save,
+                    ["id" => $this->id]
+                )
             );
         }
 
@@ -352,25 +346,6 @@ class Image implements \ArrayAccess
         $props_sql .= " WHERE id = :id";
         $database->execute($props_sql, array_merge($this->dynamic_props, ["id" => $this->id]));
         */
-
-        $database->execute(
-            "UPDATE images SET ".
-            "lossless = :lossless, ".
-            "video = :video, video_codec = :video_codec, audio = :audio,image = :image, ".
-            "height = :height, width = :width, ".
-            "length = :length WHERE id = :id",
-            [
-                "id" => $this->id,
-                "width" => $this->width,
-                "height" => $this->height,
-                "lossless" => $this->lossless,
-                "video" => $this->video,
-                "video_codec" => $this->video_codec,
-                "image" => $this->image,
-                "audio" => $this->audio,
-                "length" => $this->length
-            ]
-        );
     }
 
     /**
@@ -384,12 +359,12 @@ class Image implements \ArrayAccess
         global $database;
         if (!isset($this->tag_array)) {
             $this->tag_array = $database->get_col("
-				SELECT tag
-				FROM image_tags
-				JOIN tags ON image_tags.tag_id = tags.id
-				WHERE image_id=:id
-				ORDER BY tag
-			", ["id" => $this->id]);
+                SELECT tag
+                FROM image_tags
+                JOIN tags ON image_tags.tag_id = tags.id
+                WHERE image_id=:id
+                ORDER BY tag
+            ", ["id" => $this->id]);
             sort($this->tag_array);
         }
         return $this->tag_array;
@@ -598,10 +573,10 @@ class Image implements \ArrayAccess
             )
         ", ["id" => $this->id]);
         $database->execute("
-			DELETE
-			FROM image_tags
-			WHERE image_id=:id
-		", ["id" => $this->id]);
+            DELETE
+            FROM image_tags
+            WHERE image_id=:id
+        ", ["id" => $this->id]);
     }
 
     /**
