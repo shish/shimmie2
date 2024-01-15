@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class BlotterTheme extends Themelet
 {
-    public function display_editor($entries)
+    public function display_editor($entries): void
     {
         global $page;
         $html = $this->get_html_for_blotter_editor($entries);
@@ -16,7 +16,7 @@ class BlotterTheme extends Themelet
         $page->add_block(new Block("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0));
     }
 
-    public function display_blotter_page($entries)
+    public function display_blotter_page($entries): void
     {
         global $page;
         $html = $this->get_html_for_blotter_page($entries);

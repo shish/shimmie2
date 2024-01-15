@@ -27,7 +27,7 @@ class CustomUserPageTheme extends UserPageTheme
     // (with css media queries deciding which one is visible), and also
     // to switch between new-line and inline display depending on the
     // number of links.
-    public function display_user_block(Page $page, User $user, $parts)
+    public function display_user_block(Page $page, User $user, $parts): void
     {
         $h_name = html_escape($user->name);
         $lines = [];
@@ -48,7 +48,7 @@ class CustomUserPageTheme extends UserPageTheme
 
     // Override to display login block in the head and in the left column
     // (with css media queries deciding which one is visible)
-    public function display_login_block(Page $page)
+    public function display_login_block(Page $page): void
     {
         $page->add_block(new Block("Login", $this->create_login_block(), "head", 90));
         $page->add_block(new Block("Login", $this->create_login_block(), "left", 15));

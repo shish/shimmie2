@@ -22,7 +22,7 @@ class IndexTheme extends Themelet
         $this->search_terms = $search_terms;
     }
 
-    public function display_intro(Page $page)
+    public function display_intro(Page $page): void
     {
         $text = "
 <div style='text-align: left;'>
@@ -44,7 +44,7 @@ and of course start organising your images :-)
     /**
      * @param Image[] $images
      */
-    public function display_page(Page $page, array $images)
+    public function display_page(Page $page, array $images): void
     {
         $this->display_shortwiki($page);
 
@@ -63,7 +63,7 @@ and of course start organising your images :-)
     /**
      * @param string[] $parts
      */
-    public function display_admin_block(array $parts)
+    public function display_admin_block(array $parts): void
     {
         global $page;
         $page->add_block(new Block("List Controls", join("<br>", $parts), "left", 50));

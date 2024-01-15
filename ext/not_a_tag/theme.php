@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class NotATagTheme extends Themelet
 {
-    public function display_untags(Page $page, $table, $paginator)
+    public function display_untags(Page $page, $table, $paginator): void
     {
         $page->set_title("UnTags");
         $page->set_heading("UnTags");

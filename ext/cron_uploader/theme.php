@@ -159,7 +159,7 @@ class CronUploaderTheme extends Themelet
         return (string)$html;
     }
 
-    public function display_form(array $failed_dirs)
+    public function display_form(array $failed_dirs): void
     {
         global $page;
 

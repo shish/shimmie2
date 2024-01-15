@@ -19,7 +19,7 @@ class RandomListTheme extends Themelet
     /**
      * @param Image[] $images
      */
-    public function display_page(Page $page, array $images)
+    public function display_page(Page $page, array $images): void
     {
         $page->title = "Random Posts";
 

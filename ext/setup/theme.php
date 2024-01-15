@@ -17,7 +17,7 @@ class SetupTheme extends Themelet
      *
      * The page should wrap all the options in a form which links to setup_save
      */
-    public function display_page(Page $page, SetupPanel $panel)
+    public function display_page(Page $page, SetupPanel $panel): void
     {
         usort($panel->blocks, "Shimmie2\blockcmp");
 
@@ -43,7 +43,7 @@ class SetupTheme extends Themelet
         $page->add_block(new Block("Setup", $table));
     }
 
-    public function display_advanced(Page $page, $options)
+    public function display_advanced(Page $page, $options): void
     {
         $h_rows = "";
         ksort($options);

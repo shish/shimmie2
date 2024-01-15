@@ -12,7 +12,7 @@ class WikiTheme extends Themelet
      * $wiki_page The wiki page, has ->title and ->body
      * $nav_page A wiki page object with navigation, has ->body
      */
-    public function display_page(Page $page, WikiPage $wiki_page, ?WikiPage $nav_page = null)
+    public function display_page(Page $page, WikiPage $wiki_page, ?WikiPage $nav_page = null): void
     {
         global $user;
 
@@ -47,7 +47,7 @@ class WikiTheme extends Themelet
         $page->add_block(new Block($title_html, $this->create_display_html($wiki_page)));
     }
 
-    public function display_page_history(Page $page, string $title, array $history)
+    public function display_page_history(Page $page, string $title, array $history): void
     {
         $html = "<table class='zebra'>";
         foreach ($history as $row) {
@@ -61,7 +61,7 @@ class WikiTheme extends Themelet
         $page->add_block(new Block(html_escape($title), $html));
     }
 
-    public function display_page_editor(Page $page, WikiPage $wiki_page)
+    public function display_page_editor(Page $page, WikiPage $wiki_page): void
     {
         $page->set_title(html_escape($wiki_page->title));
         $page->set_heading(html_escape($wiki_page->title));

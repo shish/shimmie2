@@ -8,7 +8,7 @@ use function MicroHTML\INPUT;
 
 class ReportImageTheme extends Themelet
 {
-    public function display_reported_images(Page $page, array $reports)
+    public function display_reported_images(Page $page, array $reports): void
     {
         global $config, $user;
 
@@ -58,7 +58,7 @@ class ReportImageTheme extends Themelet
     /**
      * @param ImageReport[] $reports
      */
-    public function display_image_banner(Image $image, array $reports)
+    public function display_image_banner(Image $image, array $reports): void
     {
         global $config, $page;
 

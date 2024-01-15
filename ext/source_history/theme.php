@@ -14,7 +14,7 @@ class SourceHistoryTheme extends Themelet
 {
     private array $messages = [];
 
-    public function display_history_page(Page $page, int $image_id, array $history)
+    public function display_history_page(Page $page, int $image_id, array $history): void
     {
         $history_html = $this->history_list($history, true);
 
@@ -24,7 +24,7 @@ class SourceHistoryTheme extends Themelet
         $page->add_block(new Block("Source History", $history_html, "main", 10));
     }
 
-    public function display_global_page(Page $page, array $history, int $page_number)
+    public function display_global_page(Page $page, array $history, int $page_number): void
     {
         $history_html = $this->history_list($history, false);
 
@@ -44,7 +44,7 @@ class SourceHistoryTheme extends Themelet
     /**
      * Add a section to the admin page.
      */
-    public function display_admin_block(string $validation_msg = '')
+    public function display_admin_block(string $validation_msg = ''): void
     {
         global $page;
 
@@ -71,7 +71,7 @@ class SourceHistoryTheme extends Themelet
     /*
      * Show a standard page for results to be put into
      */
-    public function display_revert_ip_results()
+    public function display_revert_ip_results(): void
     {
         global $page;
         $html = implode("\n", $this->messages);

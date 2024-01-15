@@ -9,7 +9,7 @@ class Themelet extends BaseThemelet
     /**
      * Add a generic paginator.
      */
-    public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false)
+    public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
         if ($total_pages == 0) {
             $total_pages = 1;

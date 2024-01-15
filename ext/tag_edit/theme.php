@@ -14,7 +14,7 @@ class TagEditTheme extends Themelet
      * Display a form which links to tag_edit/replace with POST[search]
      * and POST[replace] set appropriately
      */
-    public function display_mass_editor()
+    public function display_mass_editor(): void
     {
         global $page;
         $html = "

@@ -8,7 +8,7 @@ use function MicroHTML\{A, BR, VIDEO, SOURCE, emptyHTML};
 
 class VideoFileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image)
+    public function display_image(Image $image): void
     {
         global $config, $page;
 

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class CBZFileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image)
+    public function display_image(Image $image): void
     {
         global $page;
         $data_href = get_base_href();

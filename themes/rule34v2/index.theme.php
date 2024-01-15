@@ -26,7 +26,7 @@ class CustomIndexTheme extends IndexTheme
     }
 
     // Override to add a custom error message
-    public function display_page(Page $page, $images)
+    public function display_page(Page $page, $images): void
     {
         $this->display_page_header($page, $images);
 

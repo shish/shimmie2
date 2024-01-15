@@ -24,7 +24,7 @@ class RotateImageTheme extends Themelet
     /**
      * Display the error.
      */
-    public function display_rotate_error(Page $page, string $title, string $message)
+    public function display_rotate_error(Page $page, string $title, string $message): void
     {
         $page->set_title("Rotate Image");
         $page->set_heading("Rotate Image");

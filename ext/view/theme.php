@@ -10,7 +10,7 @@ use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML};
 
 class ViewPostTheme extends Themelet
 {
-    public function display_meta_headers(Image $image)
+    public function display_meta_headers(Image $image): void
     {
         global $page;
 
@@ -25,7 +25,7 @@ class ViewPostTheme extends Themelet
     /*
      * Build a page showing $image and some info about it
      */
-    public function display_page(Image $image, $editor_parts)
+    public function display_page(Image $image, $editor_parts): void
     {
         global $page;
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());
@@ -41,7 +41,7 @@ class ViewPostTheme extends Themelet
         }
     }
 
-    public function display_admin_block(Page $page, $parts)
+    public function display_admin_block(Page $page, $parts): void
     {
         if (count($parts) > 0) {
             $page->add_block(new Block("Post Controls", join("<br>", $parts), "left", 50));

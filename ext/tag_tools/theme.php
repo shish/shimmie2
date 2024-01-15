@@ -28,7 +28,7 @@ class TagToolsTheme extends Themelet
      *  'recount tag use'
      *  etc
      */
-    public function display_form()
+    public function display_form(): void
     {
         global $page;
 

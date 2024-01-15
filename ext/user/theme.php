@@ -25,7 +25,7 @@ use function MicroHTML\OPTION;
 
 class UserPageTheme extends Themelet
 {
-    public function display_login_page(Page $page)
+    public function display_login_page(Page $page): void
     {
         $page->set_title("Login");
         $page->set_heading("Login");
@@ -36,7 +36,7 @@ class UserPageTheme extends Themelet
         ));
     }
 
-    public function display_user_list(Page $page, $table, $paginator)
+    public function display_user_list(Page $page, $table, $paginator): void
     {
         $page->set_title("User List");
         $page->set_heading("User List");
@@ -44,12 +44,12 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Users", $table . $paginator));
     }
 
-    public function display_user_links(Page $page, User $user, $parts)
+    public function display_user_links(Page $page, User $user, $parts): void
     {
         # $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
     }
 
-    public function display_user_block(Page $page, User $user, $parts)
+    public function display_user_block(Page $page, User $user, $parts): void
     {
         $html = emptyHTML('Logged in as ', $user->name);
         foreach ($parts as $part) {
@@ -61,7 +61,7 @@ class UserPageTheme extends Themelet
         $page->add_block($b);
     }
 
-    public function display_signup_page(Page $page)
+    public function display_signup_page(Page $page): void
     {
         global $config, $user;
         $tac = $config->get_string("login_tac", "");
@@ -117,7 +117,7 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Signup", $html));
     }
 
-    public function display_user_creator()
+    public function display_user_creator(): void
     {
         global $page;
 
@@ -154,7 +154,7 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Create User", (string)$form, "main", 75));
     }
 
-    public function display_signups_disabled(Page $page)
+    public function display_signups_disabled(Page $page): void
     {
         $page->set_title("Signups Disabled");
         $page->set_heading("Signups Disabled");
@@ -165,7 +165,7 @@ class UserPageTheme extends Themelet
         ));
     }
 
-    public function display_login_block(Page $page)
+    public function display_login_block(Page $page): void
     {
         $page->add_block(new Block("Login", $this->create_login_block(), "left", 90));
     }
@@ -218,7 +218,7 @@ class UserPageTheme extends Themelet
         return $td;
     }
 
-    public function display_ip_list(Page $page, array $uploads, array $comments, array $events)
+    public function display_ip_list(Page $page, array $uploads, array $comments, array $events): void
     {
         $html = TABLE(
             ["id" => "ip-history"],
@@ -235,7 +235,7 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("IPs", $html, "main", 70));
     }
 
-    public function display_user_page(User $duser, $stats)
+    public function display_user_page(User $duser, $stats): void
     {
         global $page;
         assert(is_array($stats));

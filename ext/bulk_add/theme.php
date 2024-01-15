@@ -13,7 +13,7 @@ class BulkAddTheme extends Themelet
      *
      * @param UploadResult[] $results
      */
-    public function display_upload_results(Page $page, array $results)
+    public function display_upload_results(Page $page, array $results): void
     {
         $page->set_title("Adding folder");
         $page->set_heading("Adding folder");
@@ -34,7 +34,7 @@ class BulkAddTheme extends Themelet
      * links to bulk_add with POST[dir] set to the name of a server-side
      * directory full of images
      */
-    public function display_admin_block()
+    public function display_admin_block(): void
     {
         global $page;
         $html = "

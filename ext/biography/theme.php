@@ -8,12 +8,12 @@ use function MicroHTML\TEXTAREA;
 
 class BiographyTheme extends Themelet
 {
-    public function display_biography(Page $page, string $bio)
+    public function display_biography(Page $page, string $bio): void
     {
         $page->add_block(new Block("About Me", format_text($bio), "main", 30, "about-me"));
     }
 
-    public function display_composer(Page $page, string $bio)
+    public function display_composer(Page $page, string $bio): void
     {
         $html = SHM_SIMPLE_FORM(
             make_link("biography"),

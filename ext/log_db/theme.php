@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class LogDatabaseTheme extends Themelet
 {
-    public function display_events($table, $paginator)
+    public function display_events($table, $paginator): void
     {
         global $page;
         $page->set_title("Event Log");

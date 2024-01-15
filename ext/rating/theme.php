@@ -25,7 +25,7 @@ class RatingsTheme extends Themelet
         );
     }
 
-    public function display_form(array $current_ratings)
+    public function display_form(array $current_ratings): void
     {
         global $page;
 

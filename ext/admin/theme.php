@@ -9,7 +9,7 @@ class AdminPageTheme extends Themelet
     /*
      * Show the basics of a page, for other extensions to add to
      */
-    public function display_page()
+    public function display_page(): void
     {
         global $page;
 

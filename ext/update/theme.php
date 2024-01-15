@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class UpdateTheme extends Themelet
 {
-    public function display_admin_block()
+    public function display_admin_block(): void
     {
         global $page, $config;
 

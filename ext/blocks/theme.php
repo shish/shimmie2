@@ -16,7 +16,7 @@ use function MicroHTML\OPTION;
 
 class BlocksTheme extends Themelet
 {
-    public function display_blocks($blocks)
+    public function display_blocks($blocks): void
     {
         global $page;
 

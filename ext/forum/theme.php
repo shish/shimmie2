@@ -10,7 +10,7 @@ use function MicroHTML\{INPUT, LABEL, SMALL, TEXTAREA, TR, TD, TABLE, TH, TBODY,
 
 class ForumTheme extends Themelet
 {
-    public function display_thread_list(Page $page, $threads, $showAdminOptions, $pageNumber, $totalPages)
+    public function display_thread_list(Page $page, $threads, $showAdminOptions, $pageNumber, $totalPages): void
     {
         if (count($threads) == 0) {
             $html = "There are no threads to show.";
@@ -27,7 +27,7 @@ class ForumTheme extends Themelet
 
 
 
-    public function display_new_thread_composer(Page $page, $threadText = null, $threadTitle = null)
+    public function display_new_thread_composer(Page $page, $threadText = null, $threadTitle = null): void
     {
         global $config, $user;
         $max_characters = $config->get_int('forumMaxCharsPerPost');
@@ -75,7 +75,7 @@ class ForumTheme extends Themelet
 
 
 
-    public function display_new_post_composer(Page $page, $threadID)
+    public function display_new_post_composer(Page $page, $threadID): void
     {
         global $config;
 
@@ -109,7 +109,7 @@ class ForumTheme extends Themelet
 
 
 
-    public function display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber, $totalPages)
+    public function display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber, $totalPages): void
     {
         global $config, $page/*, $user*/;
 

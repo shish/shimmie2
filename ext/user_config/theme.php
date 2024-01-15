@@ -39,7 +39,7 @@ class UserConfigTheme extends Themelet
      *
      * The page should wrap all the options in a form which links to setup_save
      */
-    public function display_user_config_page(Page $page, User $user, SetupPanel $panel)
+    public function display_user_config_page(Page $page, User $user, SetupPanel $panel): void
     {
         usort($panel->blocks, "Shimmie2\blockcmp");
 

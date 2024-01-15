@@ -13,7 +13,7 @@ class CommentListTheme extends Themelet
     /**
      * Display a page with a list of images, and for each image, the image's comments.
      */
-    public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post)
+    public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
         global $config, $page, $user;
 
@@ -91,7 +91,7 @@ class CommentListTheme extends Themelet
         }
     }
 
-    public function display_admin_block()
+    public function display_admin_block(): void
     {
         global $page;
 
@@ -113,7 +113,7 @@ class CommentListTheme extends Themelet
      *
      * @param Comment[] $comments An array of Comment objects to be shown
      */
-    public function display_recent_comments(array $comments)
+    public function display_recent_comments(array $comments): void
     {
         global $page;
         $this->show_anon_id = false;
@@ -130,7 +130,7 @@ class CommentListTheme extends Themelet
      *
      * @param Comment[] $comments
      */
-    public function display_image_comments(Image $image, array $comments, bool $postbox)
+    public function display_image_comments(Image $image, array $comments, bool $postbox): void
     {
         global $page;
         $this->show_anon_id = true;
@@ -149,7 +149,7 @@ class CommentListTheme extends Themelet
      *
      * @param Comment[] $comments
      */
-    public function display_recent_user_comments(array $comments, User $user)
+    public function display_recent_user_comments(array $comments, User $user): void
     {
         global $page;
         $html = "";
@@ -164,7 +164,7 @@ class CommentListTheme extends Themelet
         $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
     }
 
-    public function display_all_user_comments(array $comments, int $page_number, int $total_pages, User $user)
+    public function display_all_user_comments(array $comments, int $page_number, int $total_pages, User $user): void
     {
         global $page;
 

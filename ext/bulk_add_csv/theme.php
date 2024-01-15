@@ -11,7 +11,7 @@ class BulkAddCSVTheme extends Themelet
     /*
      * Show a standard page for results to be put into
      */
-    public function display_upload_results(Page $page)
+    public function display_upload_results(Page $page): void
     {
         $page->set_title("Adding posts from csv");
         $page->set_heading("Adding posts from csv");
@@ -26,7 +26,7 @@ class BulkAddCSVTheme extends Themelet
      * links to bulk_add_csv with POST[csv] set to the name of a server-side
      * csv file
      */
-    public function display_admin_block()
+    public function display_admin_block(): void
     {
         global $page;
         $html = "

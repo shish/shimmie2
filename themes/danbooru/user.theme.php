@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class CustomUserPageTheme extends UserPageTheme
 {
-    public function display_login_page(Page $page)
+    public function display_login_page(Page $page): void
     {
         global $config;
         $page->set_title("Login");
@@ -33,16 +33,16 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("Login", $html, "main", 90));
     }
 
-    public function display_user_links(Page $page, User $user, $parts)
+    public function display_user_links(Page $page, User $user, $parts): void
     {
         // no block in this theme
     }
-    public function display_login_block(Page $page)
+    public function display_login_block(Page $page): void
     {
         // no block in this theme
     }
 
-    public function display_user_block(Page $page, User $user, $parts)
+    public function display_user_block(Page $page, User $user, $parts): void
     {
         $html = "";
         $blocked = ["Pools", "Pool Changes", "Alias Editor", "My Profile"];
@@ -57,7 +57,7 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block($b);
     }
 
-    public function display_signup_page(Page $page)
+    public function display_signup_page(Page $page): void
     {
         global $config;
         $tac = $config->get_string("login_tac", "");
@@ -91,7 +91,7 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("Signup", $html));
     }
 
-    public function display_ip_list(Page $page, array $uploads, array $comments, array $events)
+    public function display_ip_list(Page $page, array $uploads, array $comments, array $events): void
     {
         $html = "<table id='ip-history' style='width: 400px;'>";
         $html .= "<tr><td>Uploaded from: ";
@@ -108,7 +108,7 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("IPs", $html));
     }
 
-    public function display_user_page(User $duser, $stats)
+    public function display_user_page(User $duser, $stats): void
     {
         global $page;
         $page->disable_left();

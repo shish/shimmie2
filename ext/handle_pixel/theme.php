@@ -8,7 +8,7 @@ use function MicroHTML\IMG;
 
 class PixelFileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image)
+    public function display_image(Image $image): void
     {
         global $config, $page;
 
@@ -25,7 +25,7 @@ class PixelFileHandlerTheme extends Themelet
         $page->add_block(new Block("Image", $html, "main", 10));
     }
 
-    public function display_metadata(Image $image)
+    public function display_metadata(Image $image): void
     {
         global $page;
 

@@ -74,7 +74,7 @@ class NotesTheme extends Themelet
     }
 
 
-    public function display_note_list($images, $pageNumber, $totalPages)
+    public function display_note_list($images, $pageNumber, $totalPages): void
     {
         global $page;
         $pool_images = '';
@@ -94,7 +94,7 @@ class NotesTheme extends Themelet
         $page->add_block(new Block("Notes", $pool_images, "main", 20));
     }
 
-    public function display_note_requests($images, $pageNumber, $totalPages)
+    public function display_note_requests($images, $pageNumber, $totalPages): void
     {
         global $page;
 
@@ -157,7 +157,7 @@ class NotesTheme extends Themelet
         return $html;
     }
 
-    public function display_histories($histories, $pageNumber, $totalPages)
+    public function display_histories($histories, $pageNumber, $totalPages): void
     {
         global $page;
 
@@ -170,7 +170,7 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
 
-    public function display_history($histories, $pageNumber, $totalPages)
+    public function display_history($histories, $pageNumber, $totalPages): void
     {
         global $page;
 

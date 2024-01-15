@@ -16,7 +16,7 @@ class ETTheme extends Themelet
      *
      * $info = an array of ($name => $value)
      */
-    public function display_info_page($yaml)
+    public function display_info_page($yaml): void
     {
         global $page;
 

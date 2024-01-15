@@ -40,13 +40,13 @@ class ApprovalTheme extends Themelet
         );
     }
 
-    public function display_admin_block(SetupBuildingEvent $event)
+    public function display_admin_block(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Approval");
         $sb->add_bool_option(ApprovalConfig::IMAGES, "Posts: ");
     }
 
-    public function display_admin_form()
+    public function display_admin_form(): void
     {
         global $page;
 

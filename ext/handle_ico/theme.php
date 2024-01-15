@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class IcoFileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image)
+    public function display_image(Image $image): void
     {
         global $page;
         $ilink = $image->get_image_link();

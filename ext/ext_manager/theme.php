@@ -27,7 +27,7 @@ class ExtManagerTheme extends Themelet
     /**
      * @param ExtensionInfo[] $extensions
      */
-    public function display_table(Page $page, array $extensions, bool $editable)
+    public function display_table(Page $page, array $extensions, bool $editable): void
     {
         $tbody = TBODY();
 
@@ -104,7 +104,7 @@ class ExtManagerTheme extends Themelet
         $page->add_block(new Block("Extension Manager", $form));
     }
 
-    public function display_doc(Page $page, ExtensionInfo $info)
+    public function display_doc(Page $page, ExtensionInfo $info): void
     {
         $author = emptyHTML();
         if (count($info->authors) > 0) {

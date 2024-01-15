@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class CustomCommentListTheme extends CommentListTheme
 {
-    public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post)
+    public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
         global $config, $page, $user;
 
@@ -85,7 +85,7 @@ class CustomCommentListTheme extends CommentListTheme
         }
     }
 
-    public function display_recent_comments(array $comments)
+    public function display_recent_comments(array $comments): void
     {
         // no recent comments in this theme
     }

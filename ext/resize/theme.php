@@ -38,7 +38,7 @@ class ResizeImageTheme extends Themelet
         return $html;
     }
 
-    public function display_resize_error(Page $page, string $title, string $message)
+    public function display_resize_error(Page $page, string $title, string $message): void
     {
         $page->set_title("Resize Image");
         $page->set_heading("Resize Image");

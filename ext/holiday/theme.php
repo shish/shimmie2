@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class HolidayTheme extends Themelet
 {
-    public function display_holiday(?string $holiday)
+    public function display_holiday(?string $holiday): void
     {
         global $page;
         if ($holiday) {

@@ -9,7 +9,7 @@ class CustomIndexTheme extends IndexTheme
     /**
      * @param Image[] $images
      */
-    public function display_page(Page $page, array $images)
+    public function display_page(Page $page, array $images): void
     {
         $this->display_shortwiki($page);
 
