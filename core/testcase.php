@@ -12,6 +12,9 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
         protected static string $user_name = "test";
         protected string $wipe_time = "test";
 
+        /**
+         * Start a DB transaction for each test class
+         */
         public static function setUpBeforeClass(): void
         {
             global $_tracer, $database;
@@ -20,6 +23,9 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             parent::setUpBeforeClass();
         }
 
+        /**
+         * Start a savepoint for each test
+         */
         public function setUp(): void
         {
             global $database, $_tracer;

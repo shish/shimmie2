@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * Sets up a base test environment:
+ * - Loads the code
+ * - Runs the installer
+ * - Runs the database upgrade
+ * - Creates test users
+ * - Commits the database transaction
+ */
 declare(strict_types=1);
 
 namespace Shimmie2;
