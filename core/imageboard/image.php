@@ -433,11 +433,7 @@ class Image
         if ($this->mime === MimeType::WEBP && $this->lossless) {
             return MimeType::WEBP_LOSSLESS;
         }
-        $m = $this->mime;
-        if (is_null($m)) {
-            $m = MimeMap::get_for_extension($this->ext)[0];
-        }
-        return strtolower($m);
+        return strtolower($this->mime);
     }
 
     /**
