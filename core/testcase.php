@@ -14,12 +14,12 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
 
         public static function setUpBeforeClass(): void
         {
-            parent::setUpBeforeClass();
-            global $_tracer;
+            global $_tracer, $database;
             $_tracer->begin(get_called_class());
-
+            $database->begin_transaction();
             self::create_user(self::$admin_name);
             self::create_user(self::$user_name);
+            parent::setUpBeforeClass();
         }
 
         public function setUp(): void
@@ -56,7 +56,8 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
         public static function tearDownAfterClass(): void
         {
             parent::tearDownAfterClass();
-            global $_tracer;
+            global $_tracer, $database;
+            $database->rollback();
             $_tracer->end();  # get_called_class()
             $_tracer->clear();
             $_tracer->flush("data/test-trace.json");
