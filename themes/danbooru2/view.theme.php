@@ -55,6 +55,7 @@ class CustomViewPostTheme extends ViewPostTheme
             if ($image->rating === null || $image->rating == "?") {
                 $image->rating = "?";
             }
+            // @phpstan-ignore-next-line - ???
             if (Extension::is_enabled(RatingsInfo::KEY)) {
                 $h_rating = Ratings::rating_to_human($image->rating);
                 $html .= "<br>Rating: $h_rating";

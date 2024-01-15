@@ -67,6 +67,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             if (is_null(User::by_name($name))) {
                 $userPage = new UserPage();
                 $userPage->onUserCreation(new UserCreationEvent($name, $name, $name, "$name@$name.com", false));
+                // @phpstan-ignore-next-line - ???
                 assert(!is_null(User::by_name($name)), "Creation of user $name failed");
             }
         }

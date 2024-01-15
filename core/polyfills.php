@@ -659,6 +659,7 @@ function validate_input(array $inputs): array
             }
             $outputs[$key] = $id;
         } elseif (in_array('user_name', $flags)) {
+            // @phpstan-ignore-next-line - phpstan thinks $value can never be empty?
             if (strlen($value) < 1) {
                 throw new InvalidInput("Username must be at least 1 character");
             } elseif (!preg_match('/^[a-zA-Z0-9-_]+$/', $value)) {

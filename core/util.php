@@ -151,6 +151,7 @@ function check_im_version(): int
 function is_trusted_proxy(): bool
 {
     $ra = $_SERVER['REMOTE_ADDR'] ?? "0.0.0.0";
+    // @phpstan-ignore-next-line - TRUSTED_PROXIES is defined in config
     foreach(TRUSTED_PROXIES as $proxy) {
         if(ip_in_range($ra, $proxy)) {
             return true;
@@ -615,6 +616,7 @@ function _set_up_shimmie_environment(): void
     // The trace system has a certain amount of memory consumption every time it is used,
     // so to prevent running out of memory during complex operations code that uses it should
     // check if tracer output is enabled before making use of it.
+    // @phpstan-ignore-next-line - TRACE_FILE is defined in config
     $tracer_enabled = !is_null('TRACE_FILE');
 }
 

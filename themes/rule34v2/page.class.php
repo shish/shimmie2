@@ -81,6 +81,7 @@ EOD;
         }
 
         $query = !empty(CustomIndexTheme::$_search_query) ? html_escape(Tag::implode(CustomIndexTheme::$_search_query)) : "";
+        // @phpstan-ignore-next-line - yes this is deliberately asserting a constant
         assert(!is_null($query));  # used in header.inc, do not remove :P
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
         $generated = autodate(date('c'));

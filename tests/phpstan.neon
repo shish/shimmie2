@@ -1,6 +1,6 @@
 parameters:
   errorFormat: raw
-  level: 3
+  level: 4
   paths:
     - ../core
     - ../ext

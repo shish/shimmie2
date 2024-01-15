@@ -17,7 +17,7 @@ class IcoFileHandler extends DataHandlerExtension
 
         $fp = fopen($event->image->get_image_filename(), "r");
         try {
-            unpack("Snull/Stype/Scount", fread($fp, 6));
+            fseek($fp, 6); // skip header
             $subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
             $width = $subheader['width'];
             $height = $subheader['height'];
