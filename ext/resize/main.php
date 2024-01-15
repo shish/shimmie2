@@ -288,8 +288,8 @@ class ResizeImage extends Extension
                 $factor = min($width / $image_obj->width, $height / $image_obj->height);
             }
 
-            $new_width = round($image_obj->width * $factor);
-            $new_height = round($image_obj->height * $factor);
+            $new_width = (int)round($image_obj->width * $factor);
+            $new_height = (int)round($image_obj->height * $factor);
             return [$new_height, $new_width];
         }
     }
