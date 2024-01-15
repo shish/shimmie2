@@ -121,7 +121,7 @@ class PageRequestEvent extends Event
     {
         if ($this->count_args() > $n) {
             $i = $this->get_arg($n);
-            if (is_numeric($i) && int_escape($i) > 0) {
+            if (is_numberish($i) && int_escape($i) > 0) {
                 return page_number($i, $max);
             } else {
                 return 0;

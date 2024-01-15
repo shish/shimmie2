@@ -70,11 +70,11 @@ class BaseThemelet
         }
 
         $custom_classes = "";
-        if (class_exists("Shimmie2\Relationships")) {
-            if (property_exists($image, 'parent_id') && $image->parent_id !== null) {
+        if (Extension::is_enabled(RelationshipsInfo::KEY)) {
+            if ($image['parent_id'] !== null) {
                 $custom_classes .= "shm-thumb-has_parent ";
             }
-            if (property_exists($image, 'has_children') && bool_escape($image->has_children)) {
+            if ($image['has_children']) {
                 $custom_classes .= "shm-thumb-has_child ";
             }
         }

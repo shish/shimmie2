@@ -433,6 +433,11 @@ function page_number(string $input, ?int $max = null): int
     return $pageNumber;
 }
 
+function is_numberish(string $s): bool
+{
+    return is_numeric($s);
+}
+
 function clamp(int $val, ?int $min = null, ?int $max = null): int
 {
     if (!is_null($min) && $val < $min) {

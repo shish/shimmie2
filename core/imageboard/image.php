@@ -15,23 +15,6 @@ enum ImagePropType
     case STRING;
 }
 
-function pop_val(array &$row, string $name): mixed
-{
-    $value = $row[$name];
-    unset($row[$name]);
-    return $value;
-}
-function pop_int(array &$row, string $name): ?int
-{
-    $val = pop_val($row, $name);
-    return (is_null($val)) ? null : (int)$val;
-}
-function pop_bool(array &$row, string $name): ?bool
-{
-    $val = pop_val($row, $name);
-    return (is_null($val)) ? null : bool_escape($val);
-}
-
 /**
  * Class Image
  *
@@ -92,42 +75,22 @@ class Image implements \ArrayAccess
     public function __construct(?array $row = null)
     {
         if (!is_null($row)) {
-            // some databases return both key=>value and numeric indices,
-            // we only want the key=>value ones
             foreach ($row as $name => $value) {
+                // some databases return both key=>value and numeric indices,
+                // we only want the key=>value ones
                 if (is_numeric($name)) {
-                    unset($row[$name]);
-                }
-            }
-
-            // pull out known fields
-            $this->id = pop_int($row, 'id');
-            $this->hash = pop_val($row, 'hash');
-            $this->filename = pop_val($row, 'filename');
-            $this->filesize = pop_int($row, 'filesize');
-            $this->mime = pop_val($row, 'mime');
-            $this->ext = pop_val($row, 'ext');
-            $this->posted = pop_val($row, 'posted');
-            $this->source = pop_val($row, 'source');
-            $this->owner_id = pop_int($row, 'owner_id');
-            $this->owner_ip = pop_val($row, 'owner_ip');
-            $this->locked = pop_bool($row, 'locked');
-            $this->lossless = pop_bool($row, 'lossless');
-            $this->video = pop_bool($row, 'video');
-            $this->video_codec = pop_val($row, 'video_codec');
-            $this->image = pop_bool($row, 'image');
-            $this->audio = pop_bool($row, 'audio');
-            $this->height = pop_int($row, 'height');
-            $this->width = pop_int($row, 'width');
-            $this->length = pop_int($row, 'length');
-
-            // Any remaining fields are dynamic properties
-            foreach ($row as $name => $value) {
-                if(property_exists($this, $name)) {
-                    throw new \Exception("Property $name already exists on Image");
-                }
-
-                if(array_key_exists($name, static::$prop_types)) {
+                    continue;
+                } elseif(property_exists($this, $name)) {
+                    $t = (new \ReflectionProperty($this, $name))->getType();
+                    if(is_a($t, \ReflectionNamedType::class)) {
+                        $this->$name = match($t->getName()) {
+                            "int" => is_null($value) ? $value : int_escape((string)$value),
+                            "bool" => is_null($value) ? $value : bool_escape((string)$value),
+                            "string" => (string)$value,
+                            default => $value,
+                        };
+                    }
+                } elseif(array_key_exists($name, static::$prop_types)) {
                     if (is_null($value)) {
                         $value = null;
                     } else {
@@ -204,7 +167,7 @@ class Image implements \ArrayAccess
 
     public static function by_id_or_hash(string $id): ?Image
     {
-        return (is_numeric($id) && strlen($id) != 32) ? Image::by_id((int)$id) : Image::by_hash($id);
+        return (is_numberish($id) && strlen($id) != 32) ? Image::by_id((int)$id) : Image::by_hash($id);
     }
 
     public static function by_random(array $tags = [], int $limit_range = 0): ?Image

@@ -365,7 +365,8 @@ class Database
                 $this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
             );
         } else {
-            throw new SCoreException("Can't count tables for database type {$this->get_engine()->id}");
+            $did = (string)$this->get_engine()->id;
+            throw new SCoreException("Can't count tables for database type {$did}");
         }
     }
 
