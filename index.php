@@ -100,7 +100,7 @@ try {
     }
     $exit_code = 0;
 } catch (\Exception $e) {
-    if ($database && $database->is_transaction_open()) {
+    if ($database->is_transaction_open()) {
         $database->rollback();
     }
     _fatal_error($e);
