@@ -19,9 +19,6 @@ function pop_val(array &$row, string $name): mixed
 {
     $value = $row[$name];
     unset($row[$name]);
-    if(is_null($value)) {
-        return null;
-    }
     return $value;
 }
 function pop_int(array &$row, string $name): ?int
@@ -95,6 +92,15 @@ class Image implements \ArrayAccess
     public function __construct(?array $row = null)
     {
         if (!is_null($row)) {
+            // some databases return both key=>value and numeric indices,
+            // we only want the key=>value ones
+            foreach ($row as $name => $value) {
+                if (is_numeric($name)) {
+                    unset($row[$name]);
+                }
+            }
+
+            // pull out known fields
             $this->id = pop_int($row, 'id');
             $this->hash = pop_val($row, 'hash');
             $this->filename = pop_val($row, 'filename');
@@ -117,9 +123,6 @@ class Image implements \ArrayAccess
 
             // Any remaining fields are dynamic properties
             foreach ($row as $name => $value) {
-                if (is_numeric($name)) {
-                    continue;
-                }
                 if(property_exists($this, $name)) {
                     throw new \Exception("Property $name already exists on Image");
                 }
