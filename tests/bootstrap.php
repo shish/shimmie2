@@ -40,5 +40,10 @@ $user = User::by_id($config->get_int("anon_id", 0));
 $userPage = new UserPage();
 $userPage->onUserCreation(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
 $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@test.com", false));
-$database->commit();
+// in mysql, CREATE TABLE commits transactions, so after the database
+// upgrade we may or may not be inside a transaction depending on if
+// any tables were created.
+if(!$database->is_transaction_open()) {
+    $database->commit();
+}
 $_tracer->end();
