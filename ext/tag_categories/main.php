@@ -156,12 +156,12 @@ class TagCategories extends Extension
         return $h_tag_no_underscores;
     }
 
-    public function page_update(): bool
+    public function page_update(): void
     {
         global $user, $database;
 
         if (!$user->can(Permissions::EDIT_TAG_CATEGORIES)) {
-            return false;
+            return;
         }
 
         if (!isset($_POST['tc_status']) and
@@ -169,13 +169,11 @@ class TagCategories extends Extension
            !isset($_POST['tc_display_singular']) and
            !isset($_POST['tc_display_multiple']) and
            !isset($_POST['tc_color'])) {
-            return false;
+            return;
         }
 
-        $is_success = null;
-
         if ($_POST['tc_status'] == 'edit') {
-            $is_success = $database->execute(
+            $database->execute(
                 'UPDATE image_tag_categories
 				SET display_singular=:display_singular,
 					display_multiple=:display_multiple,
@@ -189,7 +187,7 @@ class TagCategories extends Extension
                 ]
             );
         } elseif ($_POST['tc_status'] == 'new') {
-            $is_success = $database->execute(
+            $database->execute(
                 'INSERT INTO image_tag_categories
 				VALUES (:category, :display_singular, :display_multiple, :color)',
                 [
@@ -200,7 +198,7 @@ class TagCategories extends Extension
                 ]
             );
         } elseif ($_POST['tc_status'] == 'delete') {
-            $is_success = $database->execute(
+            $database->execute(
                 'DELETE FROM image_tag_categories
 				WHERE category=:category',
                 [
@@ -208,8 +206,6 @@ class TagCategories extends Extension
                 ]
             );
         }
-
-        return $is_success;
     }
 
     public function show_tag_categories($page)
