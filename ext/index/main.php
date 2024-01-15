@@ -72,12 +72,11 @@ class Index extends Extension
                 }
 
                 $total_pages = (int)ceil(Search::count_images($search_terms) / $config->get_int(IndexConfig::IMAGES));
-                $images = [];
-
                 if (SPEED_HAX && $total_pages > $fast_page_limit && !$user->can("big_search")) {
                     $total_pages = $fast_page_limit;
                 }
 
+                $images = null;
                 if (SPEED_HAX) {
                     if ($count_search_terms === 0 && ($page_number < 10)) {
                         // extra caching for the first few post/list pages
@@ -88,8 +87,7 @@ class Index extends Extension
                         );
                     }
                 }
-
-                if (!$images) {
+                if (is_null($images)) {
                     $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
                 }
             } catch (PermissionDeniedException $pde) {

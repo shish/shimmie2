@@ -42,7 +42,7 @@ class BulkImportExport extends DataHandlerExtension
 
                         $tmpfile = tempnam(sys_get_temp_dir(), "shimmie_bulk_import");
                         $stream = $zip->getStream($item->hash);
-                        if ($zip === false) {
+                        if ($stream === false) {
                             throw new SCoreException("Could not import " . $item->hash . ": File not in zip");
                         }
 
