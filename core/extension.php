@@ -102,7 +102,7 @@ abstract class Extension
         return $config->get_int($name, 0);
     }
 
-    protected function set_version(string $name, int $ver)
+    protected function set_version(string $name, int $ver): void
     {
         global $config;
         $config->set_int($name, $ver);
@@ -188,7 +188,7 @@ abstract class ExtensionInfo
         return Extension::is_enabled($this->key);
     }
 
-    private function check_support()
+    private function check_support(): void
     {
         global $database;
         $this->support_info  = "";
@@ -243,7 +243,7 @@ abstract class ExtensionInfo
         }
     }
 
-    public static function load_all_extension_info()
+    public static function load_all_extension_info(): void
     {
         foreach (get_subclasses_of("Shimmie2\ExtensionInfo") as $class) {
             $extension_info = new $class();

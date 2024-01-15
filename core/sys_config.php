@@ -17,7 +17,7 @@ namespace Shimmie2;
  *  define("SPEED_HAX", true);
  */
 
-function _d(string $name, $value): void
+function _d(string $name, mixed $value): void
 {
     if (!defined($name)) {
         define($name, $value);

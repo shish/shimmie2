@@ -253,6 +253,8 @@ function get_subclasses_of(string $parent): array
 
 /**
  * Like glob, with support for matching very long patterns with braces.
+ *
+ * @return string[]
  */
 function zglob(string $pattern): array
 {
@@ -763,7 +765,7 @@ function iterator_map_to_array(callable $callback, \iterator $iter): array
     return iterator_to_array(iterator_map($callback, $iter));
 }
 
-function stringer($s): string
+function stringer(mixed $s): string
 {
     if (is_array($s)) {
         if (isset($s[0])) {
@@ -798,7 +800,7 @@ function stringer($s): string
  * If a value is in the cache, return it; otherwise, call the callback
  * to generate it and store it in the cache.
  */
-function cache_get_or_set(string $key, callable $callback, ?int $ttl = null)
+function cache_get_or_set(string $key, callable $callback, ?int $ttl = null): mixed
 {
     global $cache;
     $value = $cache->get($key);

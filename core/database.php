@@ -297,7 +297,7 @@ class Database
     /**
      * Execute an SQL query and return a single value, or null.
      */
-    public function get_one(string $query, array $args = [])
+    public function get_one(string $query, array $args = []): mixed
     {
         $_start = ftime();
         $row = $this->_execute($query, $args)->fetch();

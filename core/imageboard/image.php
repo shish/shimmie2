@@ -208,7 +208,7 @@ class Image
         }
     }
 
-    public function save_to_db()
+    public function save_to_db(): void
     {
         global $database, $user;
         $cut_name = substr($this->filename, 0, 255);

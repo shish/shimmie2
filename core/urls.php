@@ -24,6 +24,8 @@ class Link
 /**
  * Build a link to a search page for given terms,
  * with all the appropriate escaping
+ *
+ * @param string[] $terms
  */
 function search_link(array $terms = [], int $page = 1): string
 {
@@ -67,12 +69,19 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
 
 /**
  * Take the current URL and modify some parameters
+ *
+ * @param array<string, mixed> $changes
  */
 function modify_current_url(array $changes): string
 {
     return modify_url($_SERVER['REQUEST_URI'], $changes);
 }
 
+/**
+ * Take a URL and modify some parameters
+ *
+ * @param array<string, mixed> $changes
+ */
 function modify_url(string $url, array $changes): string
 {
     $parts = parse_url($url);
@@ -115,6 +124,8 @@ function make_http(string $link): string
 /**
  * If HTTP_REFERER is set, and not blacklisted, then return it
  * Else return a default $dest
+ *
+ * @param string[]|null $blacklist
  */
 function referer_or(string $dest, ?array $blacklist = null): string
 {

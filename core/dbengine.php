@@ -16,7 +16,7 @@ abstract class DBEngine
 {
     public DatabaseDriverID $id;
 
-    public function init(PDO $db)
+    public function init(PDO $db): void
     {
     }
 
@@ -30,7 +30,7 @@ abstract class DBEngine
         return 'CREATE TABLE '.$name.' ('.$data.')';
     }
 
-    abstract public function set_timeout(PDO $db, ?int $time);
+    abstract public function set_timeout(PDO $db, ?int $time): void;
 
     abstract public function get_version(PDO $db): string;
 
@@ -41,7 +41,7 @@ class MySQL extends DBEngine
 {
     public DatabaseDriverID $id = DatabaseDriverID::MYSQL;
 
-    public function init(PDO $db)
+    public function init(PDO $db): void
     {
         $db->exec("SET NAMES utf8;");
     }
@@ -80,7 +80,7 @@ class PostgreSQL extends DBEngine
 {
     public DatabaseDriverID $id = DatabaseDriverID::PGSQL;
 
-    public function init(PDO $db)
+    public function init(PDO $db): void
     {
         if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
             $db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
@@ -178,7 +178,7 @@ class SQLite extends DBEngine
 {
     public DatabaseDriverID $id = DatabaseDriverID::SQLITE;
 
-    public function init(PDO $db)
+    public function init(PDO $db): void
     {
         ini_set('sqlite.assoc_case', '0');
         $db->exec("PRAGMA foreign_keys = ON;");

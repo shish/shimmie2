@@ -133,7 +133,7 @@ function get_thumbnail_max_size_scaled(): array
 }
 
 
-function create_image_thumb(Image $image, string $engine = null)
+function create_image_thumb(Image $image, string $engine = null): void
 {
     global $config;
     create_scaled_image(
@@ -148,8 +148,14 @@ function create_image_thumb(Image $image, string $engine = null)
 
 
 
-function create_scaled_image(string $inname, string $outname, array $tsize, string $mime, ?string $engine = null, ?string $resize_type = null)
-{
+function create_scaled_image(
+    string $inname,
+    string $outname,
+    array $tsize,
+    string $mime,
+    ?string $engine = null,
+    ?string $resize_type = null
+): void {
     global $config;
     if (empty($engine)) {
         $engine = $config->get_string(ImageConfig::THUMB_ENGINE);

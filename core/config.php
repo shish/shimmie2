@@ -234,7 +234,7 @@ abstract class BaseConfig implements Config
         return explode(",", $this->get($name, ""));
     }
 
-    private function get(string $name, $default = null)
+    private function get(string $name, $default = null): mixed
     {
         if (isset($this->values[$name])) {
             return $this->values[$name];

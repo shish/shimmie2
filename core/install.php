@@ -20,7 +20,7 @@ namespace Shimmie2;
  * and other such things that aren't ready yet
  */
 
-function install()
+function install(): void
 {
     date_default_timezone_set('UTC');
 
@@ -50,7 +50,7 @@ function install()
     }
 }
 
-function get_dsn()
+function get_dsn(): string
 {
     if (getenv("INSTALL_DSN")) {
         $dsn = getenv("INSTALL_DSN");
@@ -66,7 +66,7 @@ function get_dsn()
     return $dsn;
 }
 
-function do_install($dsn)
+function do_install(string $dsn): void
 {
     try {
         create_dirs();
@@ -77,7 +77,7 @@ function do_install($dsn)
     }
 }
 
-function ask_questions()
+function ask_questions(): void
 {
     $warnings = [];
     $errors = [];
@@ -187,7 +187,7 @@ EOD
 }
 
 
-function create_dirs()
+function create_dirs(): void
 {
     $data_exists = file_exists("data") || mkdir("data");
     $data_writable = $data_exists && (is_writable("data") || chmod("data", 0755));
@@ -204,7 +204,7 @@ function create_dirs()
     }
 }
 
-function create_tables(Database $db)
+function create_tables(Database $db): void
 {
     try {
         if ($db->count_tables() > 0) {
@@ -301,7 +301,7 @@ function create_tables(Database $db)
     }
 }
 
-function write_config($dsn)
+function write_config(string $dsn): void
 {
     $file_content = "<" . "?php\ndefine('DATABASE_DSN', '$dsn');\n";
 

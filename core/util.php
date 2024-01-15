@@ -536,6 +536,11 @@ function get_debug_info(): string
     return $debug;
 }
 
+/**
+ * Collects some debug information (execution time, memory usage, queries, etc)
+ *
+ * @return array<string, mixed>
+ */
 function get_debug_info_arr(): array
 {
     global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
@@ -565,6 +570,9 @@ function get_debug_info_arr(): array
 * Request initialisation stuff                                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * @param string[] $files
+ */
 function require_all(array $files): void
 {
     foreach ($files as $filename) {

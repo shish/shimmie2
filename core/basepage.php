@@ -174,7 +174,7 @@ class BasePage
         $this->flash[] = $message;
     }
 
-    public function disable_left()
+    public function disable_left(): void
     {
         $this->left_enabled = false;
     }
@@ -480,7 +480,7 @@ class BasePage
     }
 
     /**
-     * @return array A list of stylesheets relative to the theme root.
+     * @return string[] A list of stylesheets relative to the theme root.
      */
     protected function get_theme_stylesheets(): array
     {
@@ -489,7 +489,7 @@ class BasePage
 
 
     /**
-     * @return array A list of script files relative to the theme root.
+     * @return string[] A list of script files relative to the theme root.
      */
     protected function get_theme_scripts(): array
     {
@@ -546,7 +546,7 @@ class BasePage
     /**
      * turns the Page into HTML
      */
-    public function render()
+    public function render(): void
     {
         global $config, $user;
 
@@ -643,7 +643,7 @@ class PageNavBuildingEvent extends Event
 {
     public array $links = [];
 
-    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
+    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50): void
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
     }
@@ -661,7 +661,7 @@ class PageSubNavBuildingEvent extends Event
         $this->parent = $parent;
     }
 
-    public function add_nav_link(string $name, Link $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50)
+    public function add_nav_link(string $name, Link $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50): void
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
     }

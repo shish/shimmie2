@@ -87,8 +87,12 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             return $args;
         }
 
-        protected static function request($method, $page_name, $get_args = null, $post_args = null): Page
-        {
+        protected static function request(
+            string $method,
+            string $page_name,
+            ?array $get_args = null,
+            ?array $post_args = null
+        ): Page {
             // use a fresh page
             global $page;
             $get_args = self::check_args($get_args);
@@ -108,12 +112,12 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             return $page;
         }
 
-        protected static function get_page($page_name, $args = null): Page
+        protected static function get_page(string $page_name, array $args = null): Page
         {
             return self::request("GET", $page_name, $args, null);
         }
 
-        protected static function post_page($page_name, $args = null): Page
+        protected static function post_page(string $page_name, array $args = null): Page
         {
             return self::request("POST", $page_name, null, $args);
         }
@@ -125,7 +129,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertStringContainsString($title, $page->title);
         }
 
-        protected function assert_title_matches($title): void
+        protected function assert_title_matches(string $title): void
         {
             global $page;
             $this->assertStringMatchesFormat($title, $page->title);
@@ -190,7 +194,11 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertStringNotContainsString($content, $page->data);
         }
 
-        protected function assert_search_results($tags, $results): void
+        /**
+         * @param string[] $tags
+         * @param int[] $results
+         */
+        protected function assert_search_results(array $tags, array $results): void
         {
             $images = Search::find_images(0, null, $tags);
             $ids = [];

@@ -9,7 +9,7 @@ namespace Shimmie2;
  * be included right at the very start of index.php and tests/bootstrap.php
  */
 
-function die_nicely($title, $body, $code = 0)
+function die_nicely(string $title, string $body, int $code = 0): void
 {
     print("<!DOCTYPE html>
 <html lang='en'>
