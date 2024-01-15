@@ -14,7 +14,7 @@ if [ "$DATABASE" = "pgsql" ]; then
     sudo -u postgres psql -c "CREATE DATABASE shimmie WITH OWNER shimmie;" -U postgres
     export TEST_DSN="pgsql:user=shimmie;password=shimmie;host=127.0.0.1;dbname=shimmie"
 fi
-if [ "$DATABASE" == "mysql" ]; then
+if [ "$DATABASE" = "mysql" ]; then
     sudo systemctl start mysql
     mysql --version
     mysql -e "SET GLOBAL general_log = 'ON';" -uroot -proot
@@ -28,6 +28,7 @@ if [ "$DATABASE" = "sqlite" ]; then
 fi
 
 if [ -n "$GITHUB_ENV" ]; then
+    echo "Setting DSN for $DATABASE: $TEST_DSN"
     echo "TEST_DSN=$TEST_DSN" >> $GITHUB_ENV
     echo "INSTALL_DSN=$TEST_DSN" >> $GITHUB_ENV
 fi
