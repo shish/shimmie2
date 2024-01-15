@@ -40,19 +40,6 @@ class ReverseSearchLinks extends Extension
         'Yandex'
     ];
 
-    private function get_options(): array
-    {
-        global $config;
-
-        $output = [];
-        $services = $this->SERVICES;
-        foreach ($services as $service) {
-            $output[$service] = $service;
-        }
-
-        return $output;
-    }
-
     /**
      * Set default config values
      */
