@@ -41,7 +41,7 @@ function install()
     if ($dsn) {
         do_install($dsn);
     } else {
-        if(PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli') {
             print("INSTALL_DSN needs to be set for CLI installation\n");
         } else {
             ask_questions();
@@ -312,7 +312,7 @@ function write_config($dsn)
     }
 
     if (file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
-        if(PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli') {
             print("Installation Successful\n");
             exit(0);
         } else {
