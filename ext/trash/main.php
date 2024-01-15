@@ -22,7 +22,7 @@ class Trash extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$bool_props[] = "trash";
+        Image::$prop_types["trash"] = ImagePropType::BOOL;
     }
 
     public function onPageRequest(PageRequestEvent $event): void

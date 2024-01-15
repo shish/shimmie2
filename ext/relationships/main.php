@@ -27,8 +27,8 @@ class Relationships extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$bool_props[] = "has_children";
-        Image::$int_props[] = "parent_id";
+        Image::$prop_types["parent_id"] = ImagePropType::INT;
+        Image::$prop_types["has_children"] = ImagePropType::BOOL;
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void

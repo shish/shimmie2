@@ -18,7 +18,7 @@ class PrivateImage extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$bool_props[] = "private";
+        Image::$prop_types["private"] = ImagePropType::BOOL;
     }
 
     public function onInitUserConfig(InitUserConfigEvent $event): void

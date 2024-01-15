@@ -8,6 +8,13 @@ use GQLA\Type;
 use GQLA\Field;
 use GQLA\Query;
 
+enum ImagePropType
+{
+    case BOOL;
+    case INT;
+    case STRING;
+}
+
 /**
  * Class Image
  *
@@ -56,10 +63,23 @@ class Image implements \ArrayAccess
     public ?int $length = null;
     public ?string $tmp_file = null;
 
+    /** @var array<string, ImagePropType> */
+    public static array $prop_types = [
+        "id" => ImagePropType::INT,
+        "owner_id" => ImagePropType::INT,
+        "locked" => ImagePropType::BOOL,
+        "lossless" => ImagePropType::BOOL,
+        "video" => ImagePropType::BOOL,
+        "video_codec" => ImagePropType::STRING,
+        "image" => ImagePropType::BOOL,
+        "audio" => ImagePropType::BOOL,
+        "height" => ImagePropType::INT,
+        "width" => ImagePropType::INT,
+        "filesize" => ImagePropType::INT,
+        "length" => ImagePropType::INT,
+    ];
     /** @var array<string, mixed> */
     private array $dynamic_props = [];
-    public static array $bool_props = ["locked", "lossless", "video", "audio", "image"];
-    public static array $int_props = ["id", "owner_id", "height", "width", "filesize", "length"];
 
     /**
      * One will very rarely construct an image directly, more common
@@ -78,10 +98,14 @@ class Image implements \ArrayAccess
 
                 if (is_null($value)) {
                     $value = null;
-                } elseif (in_array($name, self::$bool_props)) {
-                    $value = bool_escape((string)$value);
-                } elseif (in_array($name, self::$int_props)) {
-                    $value = int_escape((string)$value);
+                } else {
+                    if(array_key_exists($name, static::$prop_types)) {
+                        $value = match(static::$prop_types[$name]) {
+                            ImagePropType::BOOL => bool_escape((string)$value),
+                            ImagePropType::INT => int_escape((string)$value),
+                            ImagePropType::STRING => (string)$value,
+                        };
+                    }
                 }
 
                 if(property_exists($this, $name)) {
