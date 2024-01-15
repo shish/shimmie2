@@ -564,7 +564,7 @@ class Artists extends Extension
         // ALIAS MATCHING SECTION
         $i = 0;
         $aliasesAsArray = is_null($aliasesAsString) ? [] : explode(" ", $aliasesAsString);
-        $aliasesIDsAsArray = is_null($aliasesIDsAsString) ? [] : explode(" ", $aliasesIDsAsString);
+        $aliasesIDsAsArray = is_null($aliasesIDsAsString) ? [] : array_map(fn ($n) => int_escape($n), explode(" ", $aliasesIDsAsString));
         while ($i < count($aliasesAsArray)) {
             // if an alias was updated
             if ($i < count($aliasesIDsAsArray)) {
@@ -584,7 +584,7 @@ class Artists extends Extension
         // MEMBERS MATCHING SECTION
         $i = 0;
         $membersAsArray = is_null($membersAsString) ? [] : explode(" ", $membersAsString);
-        $membersIDsAsArray = is_null($membersIDsAsString) ? [] : explode(" ", $membersIDsAsString);
+        $membersIDsAsArray = is_null($membersIDsAsString) ? [] : array_map(fn ($n) => int_escape($n), explode(" ", $membersIDsAsString));
         while ($i < count($membersAsArray)) {
             // if a member was updated
             if ($i < count($membersIDsAsArray)) {
@@ -606,7 +606,7 @@ class Artists extends Extension
         $urlsAsString = str_replace("\r\n", "\n", $urlsAsString);
         $urlsAsString = str_replace("\n\r", "\n", $urlsAsString);
         $urlsAsArray = empty($urlsAsString) ? [] : explode("\n", $urlsAsString);
-        $urlsIDsAsArray = is_null($urlsIDsAsString) ? [] : explode(" ", $urlsIDsAsString);
+        $urlsIDsAsArray = is_null($urlsIDsAsString) ? [] : array_map(fn ($n) => int_escape($n), explode(" ", $urlsIDsAsString));
         while ($i < count($urlsAsArray)) {
             // if an URL was updated
             if ($i < count($urlsIDsAsArray)) {

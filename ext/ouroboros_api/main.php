@@ -262,7 +262,7 @@ class OuroborosAPI extends Extension
                     throw new SCoreException("update not implemented");
                 } elseif ($this->match('show')) {
                     // Show
-                    $id = !empty($_REQUEST['id']) ? filter_var($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
+                    $id = !empty($_REQUEST['id']) ? (int)filter_var($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
                     $this->postShow($id);
                 } elseif ($this->match('index') || $this->match('list')) {
                     // List
