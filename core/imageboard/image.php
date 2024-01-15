@@ -361,8 +361,8 @@ class Image implements \ArrayAccess
             "length = :length WHERE id = :id",
             [
                 "id" => $this->id,
-                "width" => $this->width ?? 0,
-                "height" => $this->height ?? 0,
+                "width" => $this->width,
+                "height" => $this->height,
                 "lossless" => $this->lossless,
                 "video" => $this->video,
                 "video_codec" => $this->video_codec,
