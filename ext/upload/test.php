@@ -45,9 +45,10 @@ class UploadTest extends ShimmiePHPUnitTestCase
         ];
         $page = $this->post_page("upload", ["tags0" => "foo bar"]);
         $this->assert_response(302);
-        $this->assertStringStartsWith("/test/post/list/id%3D4%2C3%2C2%2C1/1", $page->redirect);
-
         $this->assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
+        // FIXME: image IDs get allocated even when transactions are rolled back,
+        // so these IDs are not necessarily correct
+        // $this->assertStringStartsWith("/test/post/list/id%3D4%2C3%2C2%2C1/1", $page->redirect);
     }
 
     public function testUpload(): void

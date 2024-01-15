@@ -42,4 +42,3 @@ $userPage->onUserCreation(new UserCreationEvent("demo", "demo", "demo", "demo@de
 $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@test.com", false));
 $database->commit();
 $_tracer->end();
-
