@@ -180,6 +180,17 @@ class Pools extends Extension
             $database->standardise_boolean("pools", "public");
             $this->set_version("ext_pools_version", 4);
         }
+
+        if ($this->get_version("ext_pools_version") < 5) {
+            // earlier versions of the table-creation code added the lastupdated
+            // column non-deterministically, so let's check if it is there and
+            // add it if needed.
+            $cols = $database->raw_db()->describe("pools");
+            if(!array_key_exists("lastupdated", $cols)) {
+                $database->execute("ALTER TABLE pools ADD COLUMN lastupdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+            }
+            $this->set_version("ext_pools_version", 5);
+        }
     }
 
     // Add a block to the Board Config / Setup
