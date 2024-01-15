@@ -9,7 +9,7 @@ class RandomList extends Extension
     /** @var RandomListTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
 
@@ -53,13 +53,13 @@ class RandomList extends Extension
         }
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int("random_images_list_count", 12);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Random Posts List");
 
@@ -70,7 +70,7 @@ class RandomList extends Extension
         );
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
             $event->add_nav_link("posts_random", new Link('random'), "Shuffle");

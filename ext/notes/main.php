@@ -9,7 +9,7 @@ class Notes extends Extension
     /** @var NotesTheme */
     protected Themelet $theme;
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
 
@@ -70,7 +70,7 @@ class Notes extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
         if ($event->page_matches("note")) {
@@ -162,7 +162,7 @@ class Notes extends Extension
     /*
      * HERE WE LOAD THE NOTES IN THE IMAGE
      */
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page, $user;
 
@@ -175,7 +175,7 @@ class Notes extends Extension
     /*
      * HERE WE ADD THE BUTTONS ON SIDEBAR
      */
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if (!$user->is_anonymous()) {
@@ -192,7 +192,7 @@ class Notes extends Extension
     /*
      * HERE WE ADD QUERYLETS TO ADD SEARCH SYSTEM
      */
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;
@@ -215,7 +215,7 @@ class Notes extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();

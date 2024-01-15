@@ -230,13 +230,13 @@ class LogDatabase extends Extension
     /** @var LogDatabaseTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int("log_db_priority", SCORE_LOG_INFO);
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -255,7 +255,7 @@ class LogDatabase extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Logging (Database)");
         $sb->add_choice_option("log_db_priority", [
@@ -267,7 +267,7 @@ class LogDatabase extends Extension
         ], "Debug Level: ");
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $user;
         if ($event->page_matches("log/view")) {
@@ -279,7 +279,7 @@ class LogDatabase extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -289,7 +289,7 @@ class LogDatabase extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::VIEW_EVENTLOG)) {
@@ -297,7 +297,7 @@ class LogDatabase extends Extension
         }
     }
 
-    public function onLog(LogEvent $event)
+    public function onLog(LogEvent $event): void
     {
         global $config, $database, $user;
 

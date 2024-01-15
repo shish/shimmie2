@@ -14,7 +14,7 @@ class Download extends Extension
         return 99;
     }
 
-    public function onImageDownloading(ImageDownloadingEvent $event)
+    public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         global $page;
 

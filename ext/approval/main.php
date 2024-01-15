@@ -16,7 +16,7 @@ class Approval extends Extension
     /** @var ApprovalTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
 
@@ -26,7 +26,7 @@ class Approval extends Extension
         Image::$bool_props[] = "approved";
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         global $user, $config;
 
@@ -35,7 +35,7 @@ class Approval extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -70,17 +70,17 @@ class Approval extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $this->theme->display_admin_block($event);
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_form();
     }
 
-    public function onAdminAction(AdminActionEvent $event)
+    public function onAdminAction(AdminActionEvent $event): void
     {
         global $database, $user;
 
@@ -110,7 +110,7 @@ class Approval extends Extension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
 
@@ -120,7 +120,7 @@ class Approval extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent == "posts") {
@@ -130,7 +130,7 @@ class Approval extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::APPROVE_IMAGE)) {
@@ -139,7 +139,7 @@ class Approval extends Extension
     }
 
     public const SEARCH_REGEXP = "/^approved:(yes|no)/";
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user, $config;
 
@@ -163,7 +163,7 @@ class Approval extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         global $user, $config;
         if ($event->key === HelpPages::SEARCH) {
@@ -214,7 +214,7 @@ class Approval extends Extension
         return true;
     }
 
-    public function onImageDownloading(ImageDownloadingEvent $event)
+    public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         /**
          * Deny images upon insufficient permissions.
@@ -224,7 +224,7 @@ class Approval extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
         if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
@@ -232,7 +232,7 @@ class Approval extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user, $config;
 
@@ -245,7 +245,7 @@ class Approval extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $page, $user;
 
@@ -273,7 +273,7 @@ class Approval extends Extension
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 

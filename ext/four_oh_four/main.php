@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class FourOhFour extends Extension
 {
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
         // hax.

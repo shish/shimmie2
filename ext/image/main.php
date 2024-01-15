@@ -40,7 +40,7 @@ class ImageIO extends Extension
         'WEBP (Not IE compatible)' => MimeType::WEBP
     ];
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string(ImageConfig::THUMB_ENGINE, MediaEngine::GD);
@@ -62,7 +62,7 @@ class ImageIO extends Extension
         $config->set_default_int(ImageConfig::EXPIRES, (60 * 60 * 24 * 31));	// defaults to one month
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config;
 
@@ -81,7 +81,7 @@ class ImageIO extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
 
@@ -113,7 +113,7 @@ class ImageIO extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -122,7 +122,7 @@ class ImageIO extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('delete')
             ->addArgument('id', InputArgument::REQUIRED)
@@ -135,18 +135,18 @@ class ImageIO extends Extension
             });
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         send_event(new ThumbnailGenerationEvent($event->image));
         log_info("image", "Uploaded >>{$event->image->id} ({$event->image->hash})");
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $event->image->delete();
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $u_name = url_escape($event->display_user->name);
         $i_image_count = Search::count_images(["user={$event->display_user->name}"]);
@@ -156,7 +156,7 @@ class ImageIO extends Extension
         $event->add_stats("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         global $config;
 
@@ -199,7 +199,7 @@ class ImageIO extends Extension
         $sb->end_table();
     }
 
-    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $fname = $event->image->get_filename();
         $base_fname = str_contains($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;

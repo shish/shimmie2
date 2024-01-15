@@ -26,7 +26,7 @@ function POST(...$args): HTMLElement
 
 class DanbooruApi extends Extension
 {
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("api/danbooru")) {
             global $page;

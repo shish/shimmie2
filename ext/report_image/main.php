@@ -45,7 +45,7 @@ class ReportImage extends Extension
     /** @var ReportImageTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
         if ($event->page_matches("image_report")) {
@@ -82,7 +82,7 @@ class ReportImage extends Extension
         }
     }
 
-    public function onAddReportedImage(AddReportedImageEvent $event)
+    public function onAddReportedImage(AddReportedImageEvent $event): void
     {
         global $cache, $database;
         log_info("report_image", "Adding report of >>{$event->report->image_id} with reason '{$event->report->reason}'");
@@ -94,14 +94,14 @@ class ReportImage extends Extension
         $cache->delete("image-report-count");
     }
 
-    public function onRemoveReportedImage(RemoveReportedImageEvent $event)
+    public function onRemoveReportedImage(RemoveReportedImageEvent $event): void
     {
         global $cache, $database;
         $database->execute("DELETE FROM image_reports WHERE id = :id", ["id" => $event->id]);
         $cache->delete("image-report-count");
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
@@ -109,7 +109,7 @@ class ReportImage extends Extension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::CREATE_IMAGE_REPORT)) {
@@ -119,7 +119,7 @@ class ReportImage extends Extension
     }
 
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -132,7 +132,7 @@ class ReportImage extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
@@ -142,19 +142,19 @@ class ReportImage extends Extension
         }
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $cache, $database;
         $database->execute("DELETE FROM image_reports WHERE image_id = :image_id", ["image_id" => $event->image->id]);
         $cache->delete("image-report-count");
     }
 
-    public function onUserDeletion(UserDeletionEvent $event)
+    public function onUserDeletion(UserDeletionEvent $event): void
     {
         $this->delete_reports_by($event->id);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Post Reports");
 
@@ -174,7 +174,7 @@ class ReportImage extends Extension
         $cache->delete("image-report-count");
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 

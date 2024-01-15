@@ -9,7 +9,7 @@ class QRImage extends Extension
     /** @var QRImageTheme */
     protected Themelet $theme;
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $this->theme->links_block(make_http(make_link('image/'.$event->image->id.'.'.$event->image->get_ext())));
     }

@@ -6,13 +6,13 @@ namespace Shimmie2;
 
 class BrowserSearch extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string("search_suggestions_results_order", 'a');
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page;
 
@@ -75,7 +75,7 @@ class BrowserSearch extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sort_by = [];
         $sort_by['Alphabetical'] = 'a';

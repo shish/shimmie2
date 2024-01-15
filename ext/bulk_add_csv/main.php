@@ -13,7 +13,7 @@ class BulkAddCSV extends Extension
     /** @var BulkAddCSVTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
         if ($event->page_matches("bulk_add_csv")) {
@@ -25,7 +25,7 @@ class BulkAddCSV extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('bulk-add-csv')
             ->addArgument('path-to-csv', InputArgument::REQUIRED)
@@ -43,7 +43,7 @@ class BulkAddCSV extends Extension
             });
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }

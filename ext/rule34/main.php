@@ -25,19 +25,19 @@ class Rule34 extends Extension
     /** @var Rule34Theme */
     protected Themelet $theme;
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $database;
         $database->notify("shm_image_bans", $event->image->hash);
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $cache;
         $cache->delete("thumb-block:{$event->image->id}");
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $config;
         $image_link = $config->get_string(ImageConfig::ILINK);
@@ -57,7 +57,7 @@ class Rule34 extends Extension
         );
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $page;
         $html = make_form(make_link("admin/cache_purge"), "POST");
@@ -67,7 +67,7 @@ class Rule34 extends Extension
         $page->add_block(new Block("Cache Purger", $html));
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $database, $user, $config;
         if ($user->can(Permissions::CHANGE_SETTING) && $config->get_bool('r34_comic_integration')) {
@@ -76,7 +76,7 @@ class Rule34 extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('wipe-thumb-cache')
             ->addArgument('tags', InputArgument::REQUIRED)
@@ -92,7 +92,7 @@ class Rule34 extends Extension
             });
     }
 
-    public function onSourceSet(SourceSetEvent $event)
+    public function onSourceSet(SourceSetEvent $event): void
     {
         // Maybe check for 404?
         if (empty($event->source)) {
@@ -103,7 +103,7 @@ class Rule34 extends Extension
         }
     }
 
-    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         // robots should only check the canonical site, not mirrors
         if ($_SERVER['HTTP_HOST'] != "rule34.paheal.net") {
@@ -111,7 +111,7 @@ class Rule34 extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $page, $user;
 

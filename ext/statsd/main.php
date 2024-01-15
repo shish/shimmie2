@@ -25,7 +25,7 @@ class StatsDInterface extends Extension
         StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get("__etc_cache_misses", -1)."|c";
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         $this->_stats("overall");
 
@@ -49,22 +49,22 @@ class StatsDInterface extends Extension
         StatsDInterface::$stats = [];
     }
 
-    public function onUserCreation(UserCreationEvent $event)
+    public function onUserCreation(UserCreationEvent $event): void
     {
         StatsDInterface::$stats["shimmie_events.user_creations"] = "1|c";
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         StatsDInterface::$stats["shimmie_events.uploads"] = "1|c";
     }
 
-    public function onCommentPosting(CommentPostingEvent $event)
+    public function onCommentPosting(CommentPostingEvent $event): void
     {
         StatsDInterface::$stats["shimmie_events.comments"] = "1|c";
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         StatsDInterface::$stats["shimmie_events.info-sets"] = "1|c";
     }

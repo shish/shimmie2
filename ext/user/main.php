@@ -139,7 +139,7 @@ class UserPage extends Extension
     /** @var UserPageTheme $theme */
     public Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool("login_signup_enabled", true);
@@ -152,13 +152,13 @@ class UserPage extends Extension
         $config->set_default_bool("user_email_required", true);
     }
 
-    public function onUserLogin(UserLoginEvent $event)
+    public function onUserLogin(UserLoginEvent $event): void
     {
         global $user;
         $user = $event->user;
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page, $user, $_shm_user_classes;
 
@@ -264,7 +264,7 @@ class UserPage extends Extension
         }
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $user, $config;
 
@@ -297,7 +297,7 @@ class UserPage extends Extension
         }
     }
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         global $user;
         if ($user->is_anonymous()) {
@@ -341,7 +341,7 @@ class UserPage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         global $config;
 
@@ -394,7 +394,7 @@ class UserPage extends Extension
         $sb->end_table();
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -408,7 +408,7 @@ class UserPage extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         $event->add_link("My Profile", make_link("user"));
@@ -421,7 +421,7 @@ class UserPage extends Extension
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::CREATE_OTHER_USER)) {
@@ -429,7 +429,7 @@ class UserPage extends Extension
         }
     }
 
-    public function onUserCreation(UserCreationEvent $event)
+    public function onUserCreation(UserCreationEvent $event): void
     {
         global $config, $page, $user;
 
@@ -490,7 +490,7 @@ class UserPage extends Extension
         return false;
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user;
 
@@ -516,7 +516,7 @@ class UserPage extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();

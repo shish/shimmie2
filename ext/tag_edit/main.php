@@ -140,7 +140,7 @@ class TagEdit extends Extension
     /** @var TagEditTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $user, $page;
         if ($event->page_matches("tag_edit")) {
@@ -163,7 +163,7 @@ class TagEdit extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('tag-replace')
             ->addArgument('old_tag', InputArgument::REQUIRED)
@@ -178,7 +178,7 @@ class TagEdit extends Extension
             });
     }
 
-    // public function onPostListBuilding(PostListBuildingEvent $event)
+    // public function onPostListBuilding(PostListBuildingEvent $event): void
     // {
     //     global $user;
     //     if ($user->can(UserAbilities::BULK_EDIT_IMAGE_SOURCE) && !empty($event->search_terms)) {
@@ -186,7 +186,7 @@ class TagEdit extends Extension
     //     }
     // }
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         if(!empty($event->metadata['tags'])) {
             send_event(new TagSetEvent($event->image, $event->metadata['tags']));
@@ -199,7 +199,7 @@ class TagEdit extends Extension
         }
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $page, $user;
         if ($user->can(Permissions::EDIT_IMAGE_OWNER) && isset($_POST['tag_edit__owner'])) {
@@ -232,7 +232,7 @@ class TagEdit extends Extension
         }
     }
 
-    public function onOwnerSet(OwnerSetEvent $event)
+    public function onOwnerSet(OwnerSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_OWNER) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
@@ -240,7 +240,7 @@ class TagEdit extends Extension
         }
     }
 
-    public function onTagSet(TagSetEvent $event)
+    public function onTagSet(TagSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
@@ -251,7 +251,7 @@ class TagEdit extends Extension
         }
     }
 
-    public function onSourceSet(SourceSetEvent $event)
+    public function onSourceSet(SourceSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
@@ -259,7 +259,7 @@ class TagEdit extends Extension
         }
     }
 
-    public function onLockSet(LockSetEvent $event)
+    public function onLockSet(LockSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
@@ -267,17 +267,17 @@ class TagEdit extends Extension
         }
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $event->image->delete_tags_from_image();
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_mass_editor();
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "tags") {
             $event->add_nav_link("tags_help", new Link('ext_doc/tag_edit'), "Help");
@@ -287,12 +287,12 @@ class TagEdit extends Extension
     /**
      * When an alias is added, oldtag becomes inaccessible.
      */
-    public function onAddAlias(AddAliasEvent $event)
+    public function onAddAlias(AddAliasEvent $event): void
     {
         $this->mass_tag_edit($event->oldtag, $event->newtag, false);
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_user_editor_html($event->image), 39);
         $event->add_part($this->theme->get_tag_editor_html($event->image), 40);
@@ -300,14 +300,14 @@ class TagEdit extends Extension
         $event->add_part($this->theme->get_lock_editor_html($event->image), 42);
     }
 
-    public function onTagTermCheck(TagTermCheckEvent $event)
+    public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if (preg_match("/^source[=|:](.*)$/i", $event->term)) {
             $event->metatag = true;
         }
     }
 
-    public function onTagTermParse(TagTermParseEvent $event)
+    public function onTagTermParse(TagTermParseEvent $event): void
     {
         if (preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
             $source = ($matches[1] !== "none" ? $matches[1] : null);
@@ -315,7 +315,7 @@ class TagEdit extends Extension
         }
     }
 
-    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $tags = $event->image->get_tag_list();
         $tags = str_replace("/", "", $tags);

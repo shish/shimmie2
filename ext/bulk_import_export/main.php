@@ -11,7 +11,7 @@ class BulkImportExport extends DataHandlerExtension
     protected array $SUPPORTED_MIME = [MimeType::ZIP];
 
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         global $user, $database;
 
@@ -89,7 +89,7 @@ class BulkImportExport extends DataHandlerExtension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -98,7 +98,7 @@ class BulkImportExport extends DataHandlerExtension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $user, $page;
 

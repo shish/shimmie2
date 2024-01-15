@@ -26,7 +26,7 @@ class VideoFileHandler extends DataHandlerExtension
     ];
     protected array $SUPPORTED_MIME = self::SUPPORTED_MIME;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
 
@@ -48,7 +48,7 @@ class VideoFileHandler extends DataHandlerExtension
         return $output;
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Video Options");
         $sb->start_table();

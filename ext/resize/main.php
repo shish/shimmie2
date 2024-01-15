@@ -31,7 +31,7 @@ class ResizeImage extends Extension
     }
 
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool(ResizeConfig::ENABLED, true);
@@ -42,7 +42,7 @@ class ResizeImage extends Extension
         $config->set_default_int(ResizeConfig::DEFAULT_HEIGHT, 0);
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
         if ($user->can(Permissions::EDIT_FILES) && $config->get_bool(ResizeConfig::ENABLED)
@@ -52,7 +52,7 @@ class ResizeImage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Image Resize");
         $sb->start_table();
@@ -73,7 +73,7 @@ class ResizeImage extends Extension
         $sb->end_table();
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         global $config, $page;
 
@@ -117,7 +117,7 @@ class ResizeImage extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -164,7 +164,7 @@ class ResizeImage extends Extension
         }
     }
 
-    public function onImageDownloading(ImageDownloadingEvent $event)
+    public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         global $config, $user;
 

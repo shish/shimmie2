@@ -18,7 +18,7 @@ class ViewPost extends Extension
     /** @var ViewPostTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -94,7 +94,7 @@ class ViewPost extends Extension
         }
     }
 
-    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         // next and prev are just CPU-heavier ways of getting
         // to the same images that the index shows
@@ -102,7 +102,7 @@ class ViewPost extends Extension
         $event->add_disallow("post/prev");
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page, $user;
         $image = $event->get_image();
@@ -118,7 +118,7 @@ class ViewPost extends Extension
         $this->theme->display_admin_block($page, $iabbe->parts);
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $config;
         $image_info = $config->get_string(ImageConfig::INFO);

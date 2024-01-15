@@ -116,7 +116,7 @@ class CommentList extends Extension
     /** @var CommentListTheme $theme */
     public Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int('comment_window', 5);
@@ -126,7 +126,7 @@ class CommentList extends Extension
         $config->set_default_bool('comment_captcha', false);
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
         if ($this->get_version("ext_comments_version") < 3) {
@@ -179,13 +179,13 @@ class CommentList extends Extension
     }
 
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("comment", new Link('comment/list'), "Comments");
     }
 
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "comment") {
             $event->add_nav_link("comment_list", new Link('comment/list'), "All");
@@ -193,7 +193,7 @@ class CommentList extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("comment")) {
             switch ($event->get_arg(0)) {
@@ -216,7 +216,7 @@ class CommentList extends Extension
         }
     }
 
-    public function onRobotsBuilding(RobotsBuildingEvent $event)
+    public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         // comment lists change all the time, crawlers should
         // index individual image's comments
@@ -344,12 +344,12 @@ class CommentList extends Extension
         $this->theme->display_all_user_comments($comments, $page_num + 1, $total_pages, $duser);
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $cache, $config;
         $cc = $config->get_int("comment_count");
@@ -361,7 +361,7 @@ class CommentList extends Extension
         }
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
         $i_comment_count = Comment::count_comments_by_user($event->display_user);
@@ -372,7 +372,7 @@ class CommentList extends Extension
         $this->theme->display_recent_user_comments($recent, $event->display_user);
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user;
         $this->theme->display_image_comments(
@@ -383,12 +383,12 @@ class CommentList extends Extension
     }
 
     // TODO: split akismet into a separate class, which can veto the event
-    public function onCommentPosting(CommentPostingEvent $event)
+    public function onCommentPosting(CommentPostingEvent $event): void
     {
         $this->add_comment_wrapper($event->image_id, $event->user, $event->comment);
     }
 
-    public function onCommentDeletion(CommentDeletionEvent $event)
+    public function onCommentDeletion(CommentDeletionEvent $event): void
     {
         global $database;
         $database->execute("
@@ -398,7 +398,7 @@ class CommentList extends Extension
         log_info("comment", "Deleting Comment #{$event->comment_id}");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Comment Options");
         $sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments: ");
@@ -417,7 +417,7 @@ class CommentList extends Extension
         $sb->add_bool_option("comment_samefags_public");
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;
@@ -437,7 +437,7 @@ class CommentList extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();

@@ -57,7 +57,7 @@ class BulkActions extends Extension
     /** @var BulkActionsTheme */
     protected Themelet $theme;
 
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $page, $user;
 
@@ -77,7 +77,7 @@ class BulkActions extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -101,7 +101,7 @@ class BulkActions extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('bulk-action')
             ->addArgument('action', InputArgument::REQUIRED)
@@ -117,7 +117,7 @@ class BulkActions extends Extension
             });
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $page, $user;
 
@@ -156,7 +156,7 @@ class BulkActions extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
         if ($event->page_matches("bulk_action") && $user->can(Permissions::PERFORM_BULK_ACTIONS)) {

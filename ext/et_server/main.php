@@ -8,7 +8,7 @@ use function MicroHTML\{PRE};
 
 class ETServer extends Extension
 {
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $page, $user;
         if ($event->page_matches("register.php")) {
@@ -36,7 +36,7 @@ class ETServer extends Extension
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 

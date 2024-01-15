@@ -14,7 +14,7 @@ use function MicroHTML\rawHTML;
  */
 class TagEditCloud extends Extension
 {
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $config;
 
@@ -26,7 +26,7 @@ class TagEditCloud extends Extension
         }
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool("tageditcloud_disable", false);
@@ -38,7 +38,7 @@ class TagEditCloud extends Extension
         $config->set_default_string("tageditcloud_ignoretags", 'tagme');
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sort_by = ['Alphabetical' => 'a','Popularity' => 'p','Relevance' => 'r','Categories' => 'c'];
 

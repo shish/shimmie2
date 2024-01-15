@@ -300,7 +300,7 @@ class Setup extends Extension
     /** @var SetupTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string(SetupConfig::TITLE, "Shimmie");
@@ -310,7 +310,7 @@ class Setup extends Extension
         $config->set_default_bool(SetupConfig::WORD_WRAP, true);
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
 
@@ -340,7 +340,7 @@ class Setup extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $themes = [];
         foreach (glob("themes/*") as $theme_dirname) {
@@ -393,7 +393,7 @@ class Setup extends Extension
         $sb->add_text_option("api_recaptcha_pubkey", "<br>Site key: ");
     }
 
-    public function onConfigSave(ConfigSaveEvent $event)
+    public function onConfigSave(ConfigSaveEvent $event): void
     {
         $config = $event->config;
         foreach ($_POST as $_name => $junk) {
@@ -424,7 +424,7 @@ class Setup extends Extension
         log_warning("setup", "Cache cleared");
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('config:get')
             ->addArgument('key', InputArgument::REQUIRED)
@@ -446,7 +446,7 @@ class Setup extends Extension
             });
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -456,7 +456,7 @@ class Setup extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::CHANGE_SETTING)) {
@@ -464,7 +464,7 @@ class Setup extends Extension
         }
     }
 
-    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         global $config;
         $event->replace('$base', $config->get_string('base_href'));

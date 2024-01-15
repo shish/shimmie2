@@ -20,12 +20,12 @@ class Trash extends Extension
         return 10;
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         Image::$bool_props[] = "trash";
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -55,7 +55,7 @@ class Trash extends Extension
         return true;
     }
 
-    public function onImageDownloading(ImageDownloadingEvent $event)
+    public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         /**
          * Deny images upon insufficient permissions.
@@ -65,7 +65,7 @@ class Trash extends Extension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
 
@@ -75,7 +75,7 @@ class Trash extends Extension
         }
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         if ($event->force !== true && $event->image->trash !== true) {
             self::set_trash($event->image->id, true);
@@ -83,7 +83,7 @@ class Trash extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent == "posts") {
@@ -93,7 +93,7 @@ class Trash extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::VIEW_TRASH)) {
@@ -102,7 +102,7 @@ class Trash extends Extension
     }
 
     public const SEARCH_REGEXP = "/^in:trash$/";
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user;
 
@@ -122,7 +122,7 @@ class Trash extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         global $user;
         if ($event->key === HelpPages::SEARCH) {
@@ -154,7 +154,7 @@ class Trash extends Extension
             ["trash" => $trash,"id" => $image_id]
         );
     }
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if ($event->image->trash === true && $user->can(Permissions::VIEW_TRASH)) {
@@ -162,7 +162,7 @@ class Trash extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -171,7 +171,7 @@ class Trash extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $page, $user;
 
@@ -189,7 +189,7 @@ class Trash extends Extension
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 

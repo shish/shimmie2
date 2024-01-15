@@ -79,7 +79,7 @@ class Ratings extends Extension
 
     private string $search_regexp;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config, $_shm_user_classes, $_shm_ratings;
 
@@ -110,12 +110,12 @@ class Ratings extends Extension
         return true;
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event)
+    public function onInitUserConfig(InitUserConfigEvent $event): void
     {
         $event->user_config->set_default_array(RatingsConfig::USER_DEFAULTS, self::get_user_class_privs($event->user));
     }
 
-    public function onImageDownloading(ImageDownloadingEvent $event)
+    public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         /**
          * Deny images upon insufficient permissions.
@@ -125,7 +125,7 @@ class Ratings extends Extension
         }
     }
 
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
+    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
         global $user, $_shm_ratings;
 
@@ -142,7 +142,7 @@ class Ratings extends Extension
         $sb->add_label("This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         global $_shm_user_classes;
 
@@ -164,14 +164,14 @@ class Ratings extends Extension
         $sb->end_table();
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         if(!empty($event->metadata['rating'])) {
             send_event(new RatingSetEvent($event->image, $event->metadata['rating']));
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
         /**
@@ -183,11 +183,11 @@ class Ratings extends Extension
         }
     }
 
-    public function onBulkExport(BulkExportEvent $event)
+    public function onBulkExport(BulkExportEvent $event): void
     {
         $event->fields["rating"] = $event->image->rating;
     }
-    public function onBulkImport(BulkImportEvent $event)
+    public function onBulkImport(BulkImportEvent $event): void
     {
         if (array_key_exists("rating", $event->fields)
             && $event->fields['rating'] !== null
@@ -196,7 +196,7 @@ class Ratings extends Extension
         }
     }
 
-    public function onRatingSet(RatingSetEvent $event)
+    public function onRatingSet(RatingSetEvent $event): void
     {
         if (empty($event->image->rating)) {
             $old_rating = "";
@@ -206,7 +206,7 @@ class Ratings extends Extension
         $this->set_rating($event->image->id, $event->rating, $old_rating);
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $user;
         $event->add_part(
@@ -219,7 +219,7 @@ class Ratings extends Extension
         );
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_RATING) && isset($_POST["rating"])) {
@@ -230,14 +230,14 @@ class Ratings extends Extension
         }
     }
 
-    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         if(!is_null($event->image->rating)) {
             $event->replace('$rating', $this->rating_to_human($event->image->rating));
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $ratings = self::get_sorted_ratings();
@@ -245,7 +245,7 @@ class Ratings extends Extension
         }
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user;
 
@@ -277,14 +277,14 @@ class Ratings extends Extension
         }
     }
 
-    public function onTagTermCheck(TagTermCheckEvent $event)
+    public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if (preg_match($this->search_regexp, $event->term)) {
             $event->metatag = true;
         }
     }
 
-    public function onTagTermParse(TagTermParseEvent $event)
+    public function onTagTermParse(TagTermParseEvent $event): void
     {
         global $user;
         $matches = [];
@@ -303,7 +303,7 @@ class Ratings extends Extension
         }
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $database, $_shm_ratings;
 
@@ -320,7 +320,7 @@ class Ratings extends Extension
         $this->theme->display_form($original_values);
     }
 
-    public function onAdminAction(AdminActionEvent $event)
+    public function onAdminAction(AdminActionEvent $event): void
     {
         global $database, $user;
         $action = $event->action;
@@ -344,7 +344,7 @@ class Ratings extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -353,7 +353,7 @@ class Ratings extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $page, $user;
 
@@ -375,7 +375,7 @@ class Ratings extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $user, $page;
 
@@ -504,7 +504,7 @@ class Ratings extends Extension
         return true;
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database, $config;
 

@@ -21,7 +21,7 @@ class CronUploader extends Extension
 
     private static bool $IMPORT_RUNNING = false;
 
-    public function onInitUserConfig(InitUserConfigEvent $event)
+    public function onInitUserConfig(InitUserConfigEvent $event): void
     {
         $event->user_config->set_default_string(
             CronUploaderConfig::DIR,
@@ -32,7 +32,7 @@ class CronUploader extends Extension
         $event->user_config->set_default_int(CronUploaderConfig::LOG_LEVEL, SCORE_LOG_INFO);
     }
 
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
+    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
         if ($event->user->can(Permissions::CRON_ADMIN)) {
             $documentation_link = make_http(make_link("cron_upload"));
@@ -55,7 +55,7 @@ class CronUploader extends Extension
     }
 
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "system") {
             $event->add_nav_link("cron_docs", new Link('cron_upload'), "Cron Upload");
@@ -66,7 +66,7 @@ class CronUploader extends Extension
      * Checks if the cron upload page has been accessed
      * and initializes the upload.
      */
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $user;
 
@@ -79,7 +79,7 @@ class CronUploader extends Extension
         }
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $failed_dir = $this->get_failed_dir();
         $results = get_dir_contents($failed_dir);
@@ -95,7 +95,7 @@ class CronUploader extends Extension
         $this->theme->display_form($failed_dirs);
     }
 
-    public function onAdminAction(AdminActionEvent $event)
+    public function onAdminAction(AdminActionEvent $event): void
     {
         $action = $event->action;
         switch ($action) {
@@ -120,7 +120,7 @@ class CronUploader extends Extension
         }
     }
 
-    public function onLog(LogEvent $event)
+    public function onLog(LogEvent $event): void
     {
         global $user_config;
 

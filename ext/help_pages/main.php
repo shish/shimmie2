@@ -40,7 +40,7 @@ class HelpPages extends Extension
     protected Themelet $theme;
     public const SEARCH = "search";
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
 
@@ -74,18 +74,18 @@ class HelpPages extends Extension
         }
     }
 
-    public function onHelpPageListBuilding(HelpPageListBuildingEvent $event)
+    public function onHelpPageListBuilding(HelpPageListBuildingEvent $event): void
     {
         $event->add_page("search", "Searching");
         $event->add_page("licenses", "Licenses");
     }
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("help", new Link('help'), "Help");
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "help") {
             $pages = send_event(new HelpPageListBuildingEvent())->pages;
@@ -95,12 +95,12 @@ class HelpPages extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("Help", make_link("help"));
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key == "licenses") {
             $block = new Block("Software Licenses");

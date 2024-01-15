@@ -40,7 +40,7 @@ class NotATag extends Extension
         return 30;
     } // before ImageUploadEvent and tag_history
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
         if ($this->get_version("ext_notatag_version") < 1) {
@@ -52,7 +52,7 @@ class NotATag extends Extension
         }
     }
 
-    public function onTagSet(TagSetEvent $event)
+    public function onTagSet(TagSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
@@ -106,7 +106,7 @@ class NotATag extends Extension
         return $ok_tags;
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "tags") {
@@ -116,7 +116,7 @@ class NotATag extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
@@ -124,7 +124,7 @@ class NotATag extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $page, $user;
 

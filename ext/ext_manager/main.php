@@ -25,7 +25,7 @@ class ExtManager extends Extension
     /** @var ExtManagerTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
         if ($event->page_matches("ext_manager")) {
@@ -64,7 +64,7 @@ class ExtManager extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('disable-all-ext')
             ->setDescription('Disable all extensions')
@@ -74,7 +74,7 @@ class ExtManager extends Extension
             });
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -86,7 +86,7 @@ class ExtManager extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {

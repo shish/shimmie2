@@ -105,7 +105,7 @@ class Upload extends Extension
         return 40;
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int(UploadConfig::COUNT, 3);
@@ -134,7 +134,7 @@ class Upload extends Extension
         );
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $tes = [];
         $tes["Disabled"] = "none";
@@ -169,7 +169,7 @@ class Upload extends Extension
         return $output;
     }
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::CREATE_IMAGE)) {
@@ -177,7 +177,7 @@ class Upload extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "upload") {
             if (class_exists("Shimmie2\Wiki")) {
@@ -186,7 +186,7 @@ class Upload extends Extension
         }
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         global $config;
         if ($this->is_full) {
@@ -199,7 +199,7 @@ class Upload extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $page, $user;
 

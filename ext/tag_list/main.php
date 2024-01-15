@@ -13,7 +13,7 @@ class TagList extends Extension
 
     private $tagcategories = null;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int(TagListConfig::LENGTH, 15);
@@ -27,7 +27,7 @@ class TagList extends Extension
         $config->set_default_bool(TagListConfig::PAGES, false);
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
 
@@ -57,7 +57,7 @@ class TagList extends Extension
         }
     }
 
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
@@ -69,12 +69,12 @@ class TagList extends Extension
         }
     }
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("tags", new Link('tags/map'), "Tags");
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "tags") {
             $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
@@ -83,7 +83,7 @@ class TagList extends Extension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $config, $page;
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
@@ -101,7 +101,7 @@ class TagList extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Tag Map Options");
         $sb->add_int_option(TagListConfig::TAGS_MIN, "Only show tags used at least ");

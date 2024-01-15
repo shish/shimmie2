@@ -13,7 +13,7 @@ class SVGFileHandler extends DataHandlerExtension
     /** @var SVGFileHandlerTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
         if ($event->page_matches("get_svg")) {
@@ -32,7 +32,7 @@ class SVGFileHandler extends DataHandlerExtension
         }
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         global $config;
 

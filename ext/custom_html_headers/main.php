@@ -7,7 +7,7 @@ namespace Shimmie2;
 class CustomHtmlHeaders extends Extension
 {
     # Adds setup block for custom <head> content
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Custom HTML Headers");
 
@@ -25,14 +25,14 @@ class CustomHtmlHeaders extends Extension
         ], "<br>Add website name in title");
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string("sitename_in_title", "none");
     }
 
     # Load Analytics tracking code on page request
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         $this->handle_custom_html_headers();
         $this->handle_modified_page_title();

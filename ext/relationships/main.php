@@ -25,13 +25,13 @@ class Relationships extends Extension
 
     public const NAME = "Relationships";
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         Image::$bool_props[] = "has_children";
         Image::$int_props[] = "parent_id";
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -52,7 +52,7 @@ class Relationships extends Extension
         }
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_RELATIONSHIPS)) {
@@ -66,12 +66,12 @@ class Relationships extends Extension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $this->theme->relationship_info($event->image);
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;
@@ -93,7 +93,7 @@ class Relationships extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
@@ -103,14 +103,14 @@ class Relationships extends Extension
         }
     }
 
-    public function onTagTermCheck(TagTermCheckEvent $event)
+    public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if (preg_match("/^(parent|child)[=|:](.*)$/i", $event->term)) {
             $event->metatag = true;
         }
     }
 
-    public function onTagTermParse(TagTermParseEvent $event)
+    public function onTagTermParse(TagTermParseEvent $event): void
     {
         $matches = [];
 
@@ -127,12 +127,12 @@ class Relationships extends Extension
         }
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_parent_editor_html($event->image), 45);
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $database;
 
@@ -145,7 +145,7 @@ class Relationships extends Extension
         }
     }
 
-    public function onImageRelationshipSet(ImageRelationshipSetEvent $event)
+    public function onImageRelationshipSet(ImageRelationshipSetEvent $event): void
     {
         global $database;
 

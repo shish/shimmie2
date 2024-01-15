@@ -12,7 +12,7 @@ class EmoticonList extends Extension
     /** @var EmoticonListTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("emote/list")) {
             $this->theme->display_emotes(glob("ext/emoticons/default/*"));

@@ -121,7 +121,7 @@ class Pools extends Extension
     /** @var PoolsTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
 
@@ -136,7 +136,7 @@ class Pools extends Extension
         $config->set_default_bool(PoolsConfig::AUTO_INCREMENT_ORDER, false);
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -183,7 +183,7 @@ class Pools extends Extension
     }
 
     // Add a block to the Board Config / Setup
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Pools");
         $sb->add_int_option(PoolsConfig::MAX_IMPORT_RESULTS, "Max results on import: ");
@@ -196,12 +196,12 @@ class Pools extends Extension
         //$sb->add_bool_option(PoolsConfig::ADDER_ON_VIEW_IMAGE, "<br>Show pool adder on image: ");
     }
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("pool", new Link('pool/list'), "Pools");
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "pool") {
             $event->add_nav_link("pool_list", new Link('pool/list'), "List");
@@ -211,7 +211,7 @@ class Pools extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page, $user;
         if ($event->page_matches("pool/list")) { //index
@@ -442,7 +442,7 @@ class Pools extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("Pools", make_link("pool/list"));
     }
@@ -452,7 +452,7 @@ class Pools extends Extension
      * image is currently a member of on a side panel, as well as a link
      * to the Next image in the pool.
      */
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $config;
 
@@ -475,7 +475,7 @@ class Pools extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $config, $database, $user;
         if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && !$user->is_anonymous()) {
@@ -491,14 +491,14 @@ class Pools extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $event->add_block(new Block("Pools", $this->theme->get_help_html()));
         }
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;
@@ -530,14 +530,14 @@ class Pools extends Extension
 
     }
 
-    public function onTagTermCheck(TagTermCheckEvent $event)
+    public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if (preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term)) {
             $event->metatag = true;
         }
     }
 
-    public function onTagTermParse(TagTermParseEvent $event)
+    public function onTagTermParse(TagTermParseEvent $event): void
     {
         $matches = [];
         if (preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term, $matches)) {
@@ -560,7 +560,7 @@ class Pools extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $database;
 
@@ -571,7 +571,7 @@ class Pools extends Extension
         $event->add_action("bulk_pool_add_new", "Create Pool", "", "", (string)$this->theme->get_bulk_pool_input($event->search_terms));
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $user;
 
@@ -658,7 +658,7 @@ class Pools extends Extension
         $this->theme->list_pools($page, $pools, $search, $pageNumber + 1, $totalPages);
     }
 
-    public function onPoolCreation(PoolCreationEvent $event)
+    public function onPoolCreation(PoolCreationEvent $event): void
     {
         global $user, $database;
 
@@ -728,7 +728,7 @@ class Pools extends Extension
     /**
      * HERE WE ADD CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
      */
-    public function onPoolAddPosts(PoolAddPostsEvent $event)
+    public function onPoolAddPosts(PoolAddPostsEvent $event): void
     {
         global $database, $user;
 
@@ -856,7 +856,7 @@ class Pools extends Extension
     /**
      * HERE WE NUKE ENTIRE POOL. WE REMOVE POOLS AND POSTS FROM REMOVED POOL AND HISTORIES ENTRIES FROM REMOVED POOL.
      */
-    public function onPoolDeletion(PoolDeletionEvent $event)
+    public function onPoolDeletion(PoolDeletionEvent $event): void
     {
         global $user, $database;
         $poolID = $event->pool_id;

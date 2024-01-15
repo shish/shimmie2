@@ -143,7 +143,7 @@ class PrivMsg extends Extension
     /** @var PrivMsgTheme */
     protected Themelet $theme;
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -181,7 +181,7 @@ class PrivMsg extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "user") {
@@ -193,7 +193,7 @@ class PrivMsg extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::READ_PM)) {
@@ -203,7 +203,7 @@ class PrivMsg extends Extension
         }
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $page, $user;
         $duser = $event->display_user;
@@ -218,7 +218,7 @@ class PrivMsg extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $database, $page, $user;
         if ($event->page_matches("pm")) {
@@ -283,7 +283,7 @@ class PrivMsg extends Extension
         }
     }
 
-    public function onSendPM(SendPMEvent $event)
+    public function onSendPM(SendPMEvent $event): void
     {
         global $cache, $database;
         $database->execute(

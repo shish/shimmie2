@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class VarnishPurger extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string('varnish_host', '127.0.0.1');
@@ -39,17 +39,17 @@ class VarnishPurger extends Extension
         curl_close($ch);
     }
 
-    public function onCommentPosting(CommentPostingEvent $event)
+    public function onCommentPosting(CommentPostingEvent $event): void
     {
         $this->curl_purge("post/view/{$event->image_id}");
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $this->curl_purge("post/view/{$event->image->id}");
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $this->curl_purge("post/view/{$event->image->id}");
     }

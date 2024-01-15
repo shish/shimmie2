@@ -6,18 +6,18 @@ namespace Shimmie2;
 
 class LiveFeed extends Extension
 {
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Live Feed");
         $sb->add_text_option("livefeed_host", "IP:port to send events to: ");
     }
 
-    public function onUserCreation(UserCreationEvent $event)
+    public function onUserCreation(UserCreationEvent $event): void
     {
         $this->msg("New user created: {$event->username}");
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         global $user;
         $this->msg(
@@ -26,7 +26,7 @@ class LiveFeed extends Extension
         );
     }
 
-    public function onTagSet(TagSetEvent $event)
+    public function onTagSet(TagSetEvent $event): void
     {
         $this->msg(
             make_http(make_link("post/view/".$event->image->id))." - ".
@@ -34,7 +34,7 @@ class LiveFeed extends Extension
         );
     }
 
-    public function onCommentPosting(CommentPostingEvent $event)
+    public function onCommentPosting(CommentPostingEvent $event): void
     {
         global $user;
         $this->msg(

@@ -16,18 +16,18 @@ class PrivateImage extends Extension
     /** @var PrivateImageTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         Image::$bool_props[] = "private";
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event)
+    public function onInitUserConfig(InitUserConfigEvent $event): void
     {
         $event->user_config->set_default_bool(PrivateImageConfig::USER_SET_DEFAULT, false);
         $event->user_config->set_default_bool(PrivateImageConfig::USER_VIEW_DEFAULT, true);
     }
 
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
+    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
         global $user;
         $sb = $event->panel->create_new_block("Private Posts");
@@ -39,7 +39,7 @@ class PrivateImage extends Extension
         $sb->end_table();
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user, $user_config;
 
@@ -113,7 +113,7 @@ class PrivateImage extends Extension
             }
         }
     }
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user, $page;
 
@@ -125,7 +125,7 @@ class PrivateImage extends Extension
 
 
     public const SEARCH_REGEXP = "/^private:(yes|no|any)/";
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user, $user_config;
         $show_private = $user_config->get_bool(PrivateImageConfig::USER_VIEW_DEFAULT);
@@ -180,7 +180,7 @@ class PrivateImage extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
@@ -221,7 +221,7 @@ class PrivateImage extends Extension
         );
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if (($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id == $event->image->owner_id) || $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
@@ -229,7 +229,7 @@ class PrivateImage extends Extension
         }
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         global $user, $user_config;
         if ($user_config->get_bool(PrivateImageConfig::USER_SET_DEFAULT) && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
@@ -237,7 +237,7 @@ class PrivateImage extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -247,7 +247,7 @@ class PrivateImage extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $page, $user;
 
@@ -278,7 +278,7 @@ class PrivateImage extends Extension
                 break;
         }
     }
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 

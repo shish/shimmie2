@@ -13,14 +13,14 @@ class ImageViewCounter extends Extension
     private int $view_interval = 3600; # allows views to be added each hour
 
     # Add Setup Block with options for view counter
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Post View Counter");
         $sb->add_bool_option("image_viewcounter_adminonly", "Display view counter only to admin");
     }
 
     # Adds view to database if needed
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $database, $user;
 
@@ -60,7 +60,7 @@ class ImageViewCounter extends Extension
         );
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $user, $database;
 
@@ -74,7 +74,7 @@ class ImageViewCounter extends Extension
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database, $config;
 
@@ -89,7 +89,7 @@ class ImageViewCounter extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
 
@@ -108,7 +108,7 @@ class ImageViewCounter extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
             $event->add_nav_link("sort_by_visits", new Link('popular_images'), "Popular Posts");

@@ -61,7 +61,7 @@ class Media extends Extension
         return 30;
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
@@ -70,7 +70,7 @@ class Media extends Extension
         $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -85,7 +85,7 @@ class Media extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Media Engine Commands");
 
@@ -110,7 +110,7 @@ class Media extends Extension
         $sb->end_table();
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::DELETE_IMAGE)) {
@@ -118,7 +118,7 @@ class Media extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::RESCAN_MEDIA)) {
@@ -126,7 +126,7 @@ class Media extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $page, $user;
 
@@ -151,7 +151,7 @@ class Media extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('media-rescan')
             ->addArgument('id_or_hash', InputArgument::REQUIRED)
@@ -174,7 +174,7 @@ class Media extends Extension
      * @throws MediaException
      * @throws InsufficientMemoryException
      */
-    public function onMediaResize(MediaResizeEvent $event)
+    public function onMediaResize(MediaResizeEvent $event): void
     {
         if (!in_array(
             $event->resize_type,
@@ -237,7 +237,7 @@ class Media extends Extension
 
     public const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio)|(image)|(unknown))$/i";
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;
@@ -254,7 +254,7 @@ class Media extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
@@ -264,14 +264,14 @@ class Media extends Extension
         }
     }
 
-    public function onTagTermCheck(TagTermCheckEvent $event)
+    public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term)) {
             $event->metatag = true;
         }
     }
 
-    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         if ($event->image->width && $event->image->height && $event->image->length) {
             $s = ((int)($event->image->length / 100)) / 10;
@@ -867,7 +867,7 @@ class Media extends Extension
         return $size;
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
         if ($this->get_version(MediaConfig::VERSION) < 1) {

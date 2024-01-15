@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class RSSComments extends Extension
 {
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;
         $title = $config->get_string(SetupConfig::TITLE);
@@ -15,7 +15,7 @@ class RSSComments extends Extension
             "title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page;
         if ($event->page_matches("rss/comments")) {
@@ -75,7 +75,7 @@ EOD;
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "comment") {
             $event->add_nav_link("comment_rss", new Link('rss/comments'), "Feed");

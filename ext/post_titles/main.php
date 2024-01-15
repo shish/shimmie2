@@ -17,7 +17,7 @@ class PostTitles extends Extension
         return 60;
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
 
@@ -25,7 +25,7 @@ class PostTitles extends Extension
         $config->set_default_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, false);
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -35,7 +35,7 @@ class PostTitles extends Extension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $config, $page;
 
@@ -44,14 +44,14 @@ class PostTitles extends Extension
         }
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $user;
 
         $event->add_part($this->theme->get_title_set_html(self::get_title($event->image), $user->can(Permissions::EDIT_IMAGE_TITLE)), 10);
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
 
@@ -61,12 +61,12 @@ class PostTitles extends Extension
         }
     }
 
-    public function onPostTitleSet(PostTitleSetEvent $event)
+    public function onPostTitleSet(PostTitleSetEvent $event): void
     {
         $this->set_title($event->image->id, $event->title);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Post Titles");
         $sb->start_table();
@@ -75,11 +75,11 @@ class PostTitles extends Extension
         $sb->end_table();
     }
 
-    public function onBulkExport(BulkExportEvent $event)
+    public function onBulkExport(BulkExportEvent $event): void
     {
         $event->fields["title"] = $event->image->title;
     }
-    public function onBulkImport(BulkImportEvent $event)
+    public function onBulkImport(BulkImportEvent $event): void
     {
         if (array_key_exists("title", $event->fields) && $event->fields['title'] != null) {
             $this->set_title($event->image->id, $event->fields['title']);

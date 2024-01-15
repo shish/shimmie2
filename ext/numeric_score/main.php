@@ -104,7 +104,7 @@ class NumericScore extends Extension
     /** @var NumericScoreTheme */
     protected Themelet $theme;
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::CREATE_VOTE)) {
@@ -112,7 +112,7 @@ class NumericScore extends Extension
         }
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
@@ -126,7 +126,7 @@ class NumericScore extends Extension
         $event->add_stats("<a href='$link_up'>$n_up Upvotes</a> / <a href='$link_down'>$n_down Downvotes</a>");
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $user, $page;
 
@@ -230,20 +230,20 @@ class NumericScore extends Extension
         }
     }
 
-    public function onNumericScoreSet(NumericScoreSetEvent $event)
+    public function onNumericScoreSet(NumericScoreSetEvent $event): void
     {
         global $user;
         log_debug("numeric_score", "Rated >>{$event->image_id} as {$event->score}", "Rated Post");
         $this->add_vote($event->image_id, $user->id, $event->score);
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $database;
         $database->execute("DELETE FROM numeric_score_votes WHERE image_id=:id", ["id" => $event->image->id]);
     }
 
-    public function onUserDeletion(UserDeletionEvent $event)
+    public function onUserDeletion(UserDeletionEvent $event): void
     {
         $this->delete_votes_by($event->id);
     }
@@ -280,12 +280,12 @@ class NumericScore extends Extension
         }
     }
 
-    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $event->replace('$score', (string)$event->image->numeric_score);
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
@@ -295,7 +295,7 @@ class NumericScore extends Extension
         }
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;
@@ -347,14 +347,14 @@ class NumericScore extends Extension
         }
     }
 
-    public function onTagTermCheck(TagTermCheckEvent $event)
+    public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if (preg_match("/^vote[=|:](up|down|remove)$/i", $event->term)) {
             $event->metatag = true;
         }
     }
 
-    public function onTagTermParse(TagTermParseEvent $event)
+    public function onTagTermParse(TagTermParseEvent $event): void
     {
         $matches = [];
 
@@ -367,7 +367,7 @@ class NumericScore extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
             $event->add_nav_link("numeric_score_day", new Link('popular_by_day'), "Popular by Day");
@@ -376,7 +376,7 @@ class NumericScore extends Extension
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 

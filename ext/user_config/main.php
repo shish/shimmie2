@@ -48,13 +48,13 @@ class UserConfig extends Extension
     public const ENABLE_API_KEYS = "ext_user_config_enable_api_keys";
     public const API_KEY = "api_key";
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool(self::ENABLE_API_KEYS, false);
     }
 
-    public function onUserLogin(UserLoginEvent $event)
+    public function onUserLogin(UserLoginEvent $event): void
     {
         global $user_config;
 
@@ -90,7 +90,7 @@ class UserConfig extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "user" && !$user->is_anonymous()) {
@@ -98,7 +98,7 @@ class UserConfig extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if (!$user->is_anonymous()) {
@@ -106,7 +106,7 @@ class UserConfig extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $user, $database, $config, $page, $user_config;
 
@@ -170,7 +170,7 @@ class UserConfig extends Extension
         }
     }
 
-    public function onUserOperationsBuilding(UserOperationsBuildingEvent $event)
+    public function onUserOperationsBuilding(UserOperationsBuildingEvent $event): void
     {
         global $config;
 

@@ -8,13 +8,13 @@ class ArchiveFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::ZIP];
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Archive Handler Options");
         $sb->add_text_option("archive_tmp_dir", "Temporary folder: ");
@@ -22,7 +22,7 @@ class ArchiveFileHandler extends DataHandlerExtension
         $sb->add_label("<br>%f for archive, %d for temporary directory");
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {
             global $config, $page;
@@ -50,7 +50,7 @@ class ArchiveFileHandler extends DataHandlerExtension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
     }
 

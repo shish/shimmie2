@@ -17,7 +17,7 @@ class Forum extends Extension
     /** @var ForumTheme */
     protected Themelet $theme;
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
 
@@ -65,7 +65,7 @@ class Forum extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Forum");
         $sb->add_int_option("forumTitleSubString", "Title max long: ");
@@ -75,7 +75,7 @@ class Forum extends Extension
         $sb->add_int_option("forumMaxCharsPerPost", "<br>Max chars per post: ");
     }
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $database;
 
@@ -91,12 +91,12 @@ class Forum extends Extension
         $event->add_stats("Forum posts: $posts_count, $posts_rate per day");
     }
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("forum", new Link('forum/index'), "Forum");
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 

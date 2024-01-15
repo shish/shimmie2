@@ -12,7 +12,7 @@ class TaggerXML extends Extension
         return 10;
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("tagger/tags")) {
             global $page;

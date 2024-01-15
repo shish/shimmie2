@@ -267,7 +267,7 @@ abstract class ExtensionInfo
  */
 abstract class FormatterExtension extends Extension
 {
-    public function onTextFormatting(TextFormattingEvent $event)
+    public function onTextFormatting(TextFormattingEvent $event): void
     {
         $event->formatted = $this->format($event->formatted);
         $event->stripped  = $this->strip($event->stripped);
@@ -287,7 +287,7 @@ abstract class DataHandlerExtension extends Extension
 {
     protected array $SUPPORTED_MIME = [];
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         global $config;
 
@@ -349,7 +349,7 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
-    public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
+    public function onThumbnailGeneration(ThumbnailGenerationEvent $event): void
     {
         $result = false;
         if ($this->supported_mime($event->image->get_mime())) {
@@ -368,7 +368,7 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $config, $page;
         if ($this->supported_mime($event->image->get_mime())) {
@@ -380,7 +380,7 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
-    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
             $this->media_check_properties($event);

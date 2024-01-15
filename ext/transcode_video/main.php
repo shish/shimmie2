@@ -36,7 +36,7 @@ class TranscodeVideo extends Extension
     }
 
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool(TranscodeVideoConfig::ENABLED, true);
@@ -44,7 +44,7 @@ class TranscodeVideo extends Extension
         $config->set_default_bool(TranscodeVideoConfig::UPLOAD_TO_NATIVE_CONTAINER, false);
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -56,7 +56,7 @@ class TranscodeVideo extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Video Transcode");
         $sb->start_table();
@@ -66,7 +66,7 @@ class TranscodeVideo extends Extension
     }
 
     /*
-        public function onDataUpload(DataUploadEvent $event)
+        public function onDataUpload(DataUploadEvent $event): void
         {
             global $config;
 
@@ -97,7 +97,7 @@ class TranscodeVideo extends Extension
         }
     */
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -126,7 +126,7 @@ class TranscodeVideo extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -141,7 +141,7 @@ class TranscodeVideo extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $user, $database, $page;
 

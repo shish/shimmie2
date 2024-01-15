@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Upgrade extends Extension
 {
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('db-upgrade')
             ->setDescription('Run DB schema updates, if automatic updates are disabled')
@@ -23,7 +23,7 @@ class Upgrade extends Extension
             });
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
 

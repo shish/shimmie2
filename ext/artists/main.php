@@ -24,7 +24,7 @@ class Artists extends Extension
     /** @var ArtistsTheme */
     protected Themelet $theme;
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_ARTIST) && isset($_POST["tag_edit__author"])) {
@@ -32,7 +32,7 @@ class Artists extends Extension
         }
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $user;
         $artistName = $this->get_artistName_by_imageID($event->image->id);
@@ -41,7 +41,7 @@ class Artists extends Extension
         }
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;
@@ -54,14 +54,14 @@ class Artists extends Extension
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $event->add_block(new Block("Artist", $this->theme->get_help_html()));
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
 
@@ -113,7 +113,7 @@ class Artists extends Extension
         }
     }
 
-    public function onAuthorSet(AuthorSetEvent $event)
+    public function onAuthorSet(AuthorSetEvent $event): void
     {
         global $database;
 
@@ -154,7 +154,7 @@ class Artists extends Extension
         );
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 

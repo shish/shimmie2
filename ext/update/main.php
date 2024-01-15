@@ -9,7 +9,7 @@ class Update extends Extension
     /** @var UpdateTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string("update_guserrepo", "shish/shimmie2");
@@ -17,13 +17,13 @@ class Update extends Extension
         $config->set_default_string("update_time", "01/01/1970");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Update");
         $sb->add_text_option("update_guserrepo", "User/Repo: ");
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $config;
         if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) !== "none") {
@@ -31,7 +31,7 @@ class Update extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $user, $page;
         if ($user->can(Permissions::EDIT_FILES) && isset($_GET['sha'])) {

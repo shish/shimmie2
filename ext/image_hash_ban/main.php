@@ -62,7 +62,7 @@ class ImageBan extends Extension
     /** @var ImageBanTheme */
     protected Themelet $theme;
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
         if ($this->get_version("ext_imageban_version") < 1) {
@@ -76,7 +76,7 @@ class ImageBan extends Extension
         }
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         global $database;
         $row = $database->get_row("SELECT * FROM image_bans WHERE hash = :hash", ["hash" => $event->hash]);
@@ -86,7 +86,7 @@ class ImageBan extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $page, $user;
 
@@ -128,7 +128,7 @@ class ImageBan extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -138,7 +138,7 @@ class ImageBan extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
@@ -146,7 +146,7 @@ class ImageBan extends Extension
         }
     }
 
-    public function onAddImageHashBan(AddImageHashBanEvent $event)
+    public function onAddImageHashBan(AddImageHashBanEvent $event): void
     {
         global $database;
         $database->execute(
@@ -156,13 +156,13 @@ class ImageBan extends Extension
         log_info("image_hash_ban", "Banned hash {$event->hash} because '{$event->reason}'");
     }
 
-    public function onRemoveImageHashBan(RemoveImageHashBanEvent $event)
+    public function onRemoveImageHashBan(RemoveImageHashBanEvent $event): void
     {
         global $database;
         $database->execute("DELETE FROM image_bans WHERE hash = :hash", ["hash" => $event->hash]);
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {

@@ -9,19 +9,19 @@ class LinkImage extends Extension
     /** @var LinkImageTheme */
     protected Themelet $theme;
 
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
         $this->theme->links_block($page, $this->data($event->image));
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Link to Post");
         $sb->add_text_option("ext_link-img_text-link_format", "Text Link Format: ");
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');

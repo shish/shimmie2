@@ -11,7 +11,7 @@ class Eokm extends Extension
         return 40;
     } // early, to veto ImageUploadEvent
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         global $config;
         $username = $config->get_string("eokm_username");
@@ -41,7 +41,7 @@ class Eokm extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("EOKM Filter");
 

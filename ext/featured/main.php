@@ -9,13 +9,13 @@ class Featured extends Extension
     /** @var FeaturedTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int('featured_id', 0);
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
         if ($event->page_matches("featured_image")) {
@@ -47,7 +47,7 @@ class Featured extends Extension
         }
     }
 
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $cache, $config, $page, $user;
         $fid = $config->get_int("featured_id");
@@ -74,7 +74,7 @@ class Featured extends Extension
         }
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $config;
         if ($event->image->id == $config->get_int("featured_id")) {
@@ -83,7 +83,7 @@ class Featured extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::EDIT_FEATURE) && $event->context == "view") {

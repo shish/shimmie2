@@ -16,7 +16,7 @@ class Index extends Extension
     /** @var IndexTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int(IndexConfig::IMAGES, 24);
@@ -24,7 +24,7 @@ class Index extends Extension
         $config->set_default_string(IndexConfig::ORDER, "id DESC");
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $config, $page, $user;
         if ($event->page_matches("post/list")) {
@@ -122,7 +122,7 @@ class Index extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Index Options");
         $sb->position = 20;
@@ -132,26 +132,26 @@ class Index extends Extension
         $sb->add_label(" images on the post list");
     }
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("posts", new Link('post/list'), "Posts", NavLink::is_active(["post","view"]), 20);
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
             $event->add_nav_link("posts_all", new Link('post/list'), "All");
         }
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
             $event->add_block(new Block("General", $this->theme->get_help_html()), 0);
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('search')
             ->addArgument('query', InputArgument::REQUIRED)
@@ -166,7 +166,7 @@ class Index extends Extension
             });
     }
 
-    public function onSearchTermParse(SearchTermParseEvent $event)
+    public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
             return;

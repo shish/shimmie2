@@ -50,7 +50,7 @@ class TranscodeImage extends Extension
     }
 
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool(TranscodeConfig::ENABLED, true);
@@ -95,7 +95,7 @@ class TranscodeImage extends Extension
         return $output;
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         if ($this->get_version(TranscodeConfig::VERSION) < 1) {
             $old_extensions = [];
@@ -126,7 +126,7 @@ class TranscodeImage extends Extension
     }
 
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
 
@@ -139,7 +139,7 @@ class TranscodeImage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         global $config;
 
@@ -163,7 +163,7 @@ class TranscodeImage extends Extension
         $sb->end_table();
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    public function onDataUpload(DataUploadEvent $event): void
     {
         global $config;
 
@@ -203,7 +203,7 @@ class TranscodeImage extends Extension
 
 
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -232,7 +232,7 @@ class TranscodeImage extends Extension
         }
     }
 
-    public function onImageDownloading(ImageDownloadingEvent $event)
+    public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         global $config, $user;
 
@@ -268,7 +268,7 @@ class TranscodeImage extends Extension
         }
     }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user, $config;
 
@@ -279,7 +279,7 @@ class TranscodeImage extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $user, $database, $page;
 

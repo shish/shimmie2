@@ -9,7 +9,7 @@ class Biography extends Extension
     /** @var BiographyTheme */
     protected Themelet $theme;
 
-    public function onUserPageBuilding(UserPageBuildingEvent $event)
+    public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $page, $user;
         $duser = $event->display_user;
@@ -23,7 +23,7 @@ class Biography extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user, $user_config;
         if ($event->page_matches("biography")) {

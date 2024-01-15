@@ -88,7 +88,7 @@ class IPBan extends Extension
         return 10;
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string(
@@ -100,7 +100,7 @@ class IPBan extends Extension
         );
     }
 
-    public function onUserLogin(UserLoginEvent $event)
+    public function onUserLogin(UserLoginEvent $event): void
     {
         global $cache, $config, $database, $page, $_shm_user_classes;
 
@@ -177,7 +177,7 @@ class IPBan extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("ip_ban")) {
             global $database, $page, $user;
@@ -210,7 +210,7 @@ class IPBan extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         global $config;
 
@@ -224,7 +224,7 @@ class IPBan extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -234,7 +234,7 @@ class IPBan extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::BAN_IP)) {
@@ -242,7 +242,7 @@ class IPBan extends Extension
         }
     }
 
-    public function onAddIPBan(AddIPBanEvent $event)
+    public function onAddIPBan(AddIPBanEvent $event): void
     {
         global $cache, $user, $database;
         $sql = "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)";
@@ -252,7 +252,7 @@ class IPBan extends Extension
         log_info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
-    public function onRemoveIPBan(RemoveIPBanEvent $event)
+    public function onRemoveIPBan(RemoveIPBanEvent $event): void
     {
         global $cache, $database;
         $ban = $database->get_row("SELECT * FROM bans WHERE id = :id", ["id" => $event->id]);
@@ -264,7 +264,7 @@ class IPBan extends Extension
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 

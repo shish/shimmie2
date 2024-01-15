@@ -74,14 +74,14 @@ class GraphQL extends Extension
         }
     }
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string('graphql_cors_pattern', "");
         $config->set_default_bool('graphql_debug', false);
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
         if ($event->page_matches("graphql")) {
@@ -177,7 +177,7 @@ class GraphQL extends Extension
         return ["image_ids" => array_map(fn ($im) => $im->id, $event->images)];
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('graphql:query')
             ->addArgument('query', InputArgument::REQUIRED)

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class BanWords extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string('banned_words', "
@@ -39,7 +39,7 @@ xanax
 ");
     }
 
-    public function onCommentPosting(CommentPostingEvent $event)
+    public function onCommentPosting(CommentPostingEvent $event): void
     {
         global $user;
         if (!$user->can(Permissions::BYPASS_COMMENT_CHECKS)) {
@@ -47,17 +47,17 @@ xanax
         }
     }
 
-    public function onSourceSet(SourceSetEvent $event)
+    public function onSourceSet(SourceSetEvent $event): void
     {
         $this->test_text($event->source, new SCoreException("Source contains banned terms"));
     }
 
-    public function onTagSet(TagSetEvent $event)
+    public function onTagSet(TagSetEvent $event): void
     {
         $this->test_text(Tag::implode($event->new_tags), new SCoreException("Tags contain banned terms"));
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Banned Phrases");
         $sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");

@@ -9,7 +9,7 @@ class XMLSitemap extends Extension
     private string $sitemap_queue = "";
     private string $sitemap_filepath = ""; // set onPageRequest
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("sitemap.xml")) {
             global $config;
@@ -29,7 +29,7 @@ class XMLSitemap extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Sitemap");
 

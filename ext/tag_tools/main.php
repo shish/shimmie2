@@ -10,12 +10,12 @@ class TagTools extends Extension
     /** @var TagToolsTheme */
     protected Themelet $theme;
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_form();
     }
 
-    public function onAdminAction(AdminActionEvent $event)
+    public function onAdminAction(AdminActionEvent $event): void
     {
         $action = $event->action;
         if (method_exists($this, $action)) {

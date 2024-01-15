@@ -17,7 +17,7 @@ class RegenThumb extends Extension
         return $event->generated;
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -41,7 +41,7 @@ class RegenThumb extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::DELETE_IMAGE)) {
@@ -49,7 +49,7 @@ class RegenThumb extends Extension
         }
     }
 
-    // public function onPostListBuilding(PostListBuildingEvent $event)
+    // public function onPostListBuilding(PostListBuildingEvent $event): void
     // {
     //     global $user;
     //     if ($user->can(UserAbilities::DELETE_IMAGE) && !empty($event->search_terms)) {
@@ -57,7 +57,7 @@ class RegenThumb extends Extension
     //     }
     // }
 
-    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -66,7 +66,7 @@ class RegenThumb extends Extension
         }
     }
 
-    public function onBulkAction(BulkActionEvent $event)
+    public function onBulkAction(BulkActionEvent $event): void
     {
         global $page, $user;
 
@@ -91,12 +91,12 @@ class RegenThumb extends Extension
         }
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
-    public function onAdminAction(AdminActionEvent $event)
+    public function onAdminAction(AdminActionEvent $event): void
     {
         global $page;
         switch ($event->action) {

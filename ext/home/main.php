@@ -9,7 +9,7 @@ class Home extends Extension
     /** @var HomeTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
         if ($event->page_matches("home")) {
@@ -23,7 +23,7 @@ class Home extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $counters = [];
         $counters["None"] = "none";

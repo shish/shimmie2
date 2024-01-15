@@ -11,7 +11,7 @@ class AutoComplete extends Extension
         return 30;
     } // before Home
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
 

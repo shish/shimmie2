@@ -61,7 +61,7 @@ class AliasEditor extends Extension
     /** @var AliasEditorTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page, $user;
 
@@ -120,7 +120,7 @@ class AliasEditor extends Extension
         }
     }
 
-    public function onAddAlias(AddAliasEvent $event)
+    public function onAddAlias(AddAliasEvent $event): void
     {
         global $database;
 
@@ -147,21 +147,21 @@ class AliasEditor extends Extension
         log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
     }
 
-    public function onDeleteAlias(DeleteAliasEvent $event)
+    public function onDeleteAlias(DeleteAliasEvent $event): void
     {
         global $database;
         $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $event->oldtag]);
         log_info("alias_editor", "Deleted alias for {$event->oldtag}", "Deleted alias");
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "tags") {
             $event->add_nav_link("aliases", new Link('alias/list'), "Aliases", NavLink::is_active(["alias"]));
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {

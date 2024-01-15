@@ -7,7 +7,7 @@ namespace Shimmie2;
 class GoogleAnalytics extends Extension
 {
     # Add analytics to config
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Google Analytics");
         $sb->add_text_option("google_analytics_id", "Analytics ID: ");
@@ -15,7 +15,7 @@ class GoogleAnalytics extends Extension
     }
 
     # Load Analytics tracking code on page request
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
 

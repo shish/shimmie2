@@ -16,7 +16,7 @@ class S3 extends Extension
 {
     public int $synced = 0;
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         global $config;
 
@@ -27,7 +27,7 @@ class S3 extends Extension
         $sb->add_text_option(S3Config::IMAGE_BUCKET, "<br>Image Bucket: ");
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -41,7 +41,7 @@ class S3 extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('s3:process')
             ->setDescription('Process the S3 queue')
@@ -91,7 +91,7 @@ class S3 extends Extension
             });
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
         if ($event->page_matches("s3/sync")) {
@@ -109,7 +109,7 @@ class S3 extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::DELETE_IMAGE)) {
@@ -121,23 +121,23 @@ class S3 extends Extension
         }
     }
 
-    public function onImageAddition(ImageAdditionEvent $event)
+    public function onImageAddition(ImageAdditionEvent $event): void
     {
         // Tags aren't set at this point, let's wait for the TagSetEvent
         // $this->sync_post($event->image);
     }
 
-    public function onTagSet(TagSetEvent $event)
+    public function onTagSet(TagSetEvent $event): void
     {
         $this->sync_post($event->image, $event->new_tags);
     }
 
-    public function onImageDeletion(ImageDeletionEvent $event)
+    public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $this->remove_file($event->image->hash);
     }
 
-    public function onImageReplace(ImageReplaceEvent $event)
+    public function onImageReplace(ImageReplaceEvent $event): void
     {
         $this->remove_file($event->old_hash);
         $this->sync_post($event->image);

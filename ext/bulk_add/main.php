@@ -27,7 +27,7 @@ class BulkAdd extends Extension
     /** @var BulkAddTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
         if ($event->page_matches("bulk_add")) {
@@ -39,7 +39,7 @@ class BulkAdd extends Extension
         }
     }
 
-    public function onCliGen(CliGenEvent $event)
+    public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('bulk-add')
             ->addArgument('directory', InputArgument::REQUIRED)
@@ -58,12 +58,12 @@ class BulkAdd extends Extension
             });
     }
 
-    public function onAdminBuilding(AdminBuildingEvent $event)
+    public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
-    public function onBulkAdd(BulkAddEvent $event)
+    public function onBulkAdd(BulkAddEvent $event): void
     {
         if (is_dir($event->dir) && is_readable($event->dir)) {
             $event->results = add_dir($event->dir);

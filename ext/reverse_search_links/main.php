@@ -17,7 +17,7 @@ class ReverseSearchLinks extends Extension
     /**
      * Show the extension block when viewing an image
      */
-    public function onDisplayingImage(DisplayingImageEvent $event)
+    public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
 
@@ -56,7 +56,7 @@ class ReverseSearchLinks extends Extension
     /**
      * Set default config values
      */
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_array(

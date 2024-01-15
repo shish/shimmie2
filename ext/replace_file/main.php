@@ -9,7 +9,7 @@ class ReplaceFile extends Extension
     /** @var ReplaceFileTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $page, $user;
 
@@ -45,7 +45,7 @@ class ReplaceFile extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
 
@@ -55,7 +55,7 @@ class ReplaceFile extends Extension
         }
     }
 
-    public function onImageReplace(ImageReplaceEvent $event)
+    public function onImageReplace(ImageReplaceEvent $event): void
     {
         $image = $event->image;
 

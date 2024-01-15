@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class System extends Extension
 {
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
 
@@ -19,7 +19,7 @@ class System extends Extension
             $page->set_mode(PageMode::REDIRECT);
         }
     }
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("system", new Link('system'), "System");
     }

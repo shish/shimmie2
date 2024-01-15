@@ -23,14 +23,14 @@ class RotateImage extends Extension
 
     public const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool('rotate_enabled', true);
         $config->set_default_int('rotate_default_deg', 180);
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
         if ($user->can(Permissions::EDIT_FILES) && $config->get_bool("rotate_enabled")
@@ -40,7 +40,7 @@ class RotateImage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Image Rotate");
         $sb->add_bool_option("rotate_enabled", "Allow rotating images: ");
@@ -49,7 +49,7 @@ class RotateImage extends Extension
         $sb->add_label(" deg");
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 

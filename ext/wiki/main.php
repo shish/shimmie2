@@ -115,7 +115,7 @@ class Wiki extends Extension
     /** @var WikiTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_string(
@@ -131,7 +131,7 @@ class Wiki extends Extension
     }
 
     // Add a block to the Board Config / Setup
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Wiki");
         $sb->add_bool_option(WikiConfig::ENABLE_REVISIONS, "Enable wiki revisions: ");
@@ -140,7 +140,7 @@ class Wiki extends Extension
         $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "<br/>Show shortwiki entry when searching for a single tag: ");
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -170,7 +170,7 @@ class Wiki extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
         if ($event->page_matches("wiki")) {
@@ -240,13 +240,13 @@ class Wiki extends Extension
     }
 
 
-    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("wiki", new Link('wiki'), "Wiki");
     }
 
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "wiki") {
             $event->add_nav_link("wiki_rules", new Link('wiki/rules'), "Rules");
@@ -254,7 +254,7 @@ class Wiki extends Extension
         }
     }
 
-    public function onWikiUpdate(WikiUpdateEvent $event)
+    public function onWikiUpdate(WikiUpdateEvent $event): void
     {
         global $database, $config;
         $wpage = $event->wikipage;
@@ -284,7 +284,7 @@ class Wiki extends Extension
         }
     }
 
-    public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event)
+    public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event): void
     {
         global $database;
         $database->execute(
@@ -293,7 +293,7 @@ class Wiki extends Extension
         );
     }
 
-    public function onWikiDeletePage(WikiDeletePageEvent $event)
+    public function onWikiDeletePage(WikiDeletePageEvent $event): void
     {
         global $database;
         $database->execute(

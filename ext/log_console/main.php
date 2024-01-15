@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class LogConsole extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_bool("log_console_access", true);
@@ -14,7 +14,7 @@ class LogConsole extends Extension
         $config->set_default_int("log_console_level", SCORE_LOG_INFO);
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
 
@@ -40,7 +40,7 @@ class LogConsole extends Extension
         */
     }
 
-    public function onLog(LogEvent $event)
+    public function onLog(LogEvent $event): void
     {
         global $config;
         if ($event->priority >= $config->get_int("log_console_level")) {

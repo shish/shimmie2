@@ -234,7 +234,7 @@ class OuroborosAPI extends Extension
     public const ERROR_POST_CREATE_DUPE = 'Duplicate';
     public const OK_POST_CREATE_UPDATE = 'Updated';
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 

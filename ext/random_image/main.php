@@ -9,7 +9,7 @@ class RandomImage extends Extension
     /** @var RandomImageTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
 
@@ -40,13 +40,13 @@ class RandomImage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Random Post");
         $sb->add_bool_option("show_random_block", "Show Random Block: ");
     }
 
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;
         if ($config->get_bool("show_random_block")) {
@@ -57,7 +57,7 @@ class RandomImage extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
             $event->add_nav_link("posts_random", new Link('random_image/view'), "Random Post");

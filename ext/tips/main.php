@@ -34,7 +34,7 @@ class Tips extends Extension
     /** @var TipsTheme */
     protected Themelet $theme;
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -61,7 +61,7 @@ class Tips extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
 
@@ -98,7 +98,7 @@ class Tips extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -108,7 +108,7 @@ class Tips extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::TIPS_ADMIN)) {
@@ -134,7 +134,7 @@ class Tips extends Extension
         $this->theme->manageTips($url, $images);
     }
 
-    public function onCreateTip(CreateTipEvent $event)
+    public function onCreateTip(CreateTipEvent $event): void
     {
         global $database;
         $database->execute(
@@ -188,7 +188,7 @@ class Tips extends Extension
         $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable" => $enable, "id" => $tipID]);
     }
 
-    public function onDeleteTip(DeleteTipEvent $event)
+    public function onDeleteTip(DeleteTipEvent $event): void
     {
         global $database;
         $database->execute("DELETE FROM tips WHERE id = :id", ["id" => $event->tip_id]);

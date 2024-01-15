@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class RSSImages extends Extension
 {
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;
         $title = $config->get_string(SetupConfig::TITLE);
@@ -21,7 +21,7 @@ class RSSImages extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("rss/images")) {
             $search_terms = $event->get_search_terms();
@@ -41,7 +41,7 @@ class RSSImages extends Extension
         }
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
+    public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $cache;
         $cache->delete("rss-item-image:{$event->image->id}");
@@ -129,7 +129,7 @@ class RSSImages extends Extension
         return $data;
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
             $event->add_nav_link("posts_rss", new Link('rss/images'), "Feed");

@@ -67,7 +67,7 @@ class AutoTagger extends Extension
     /** @var AutoTaggerTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page, $user;
 
@@ -126,14 +126,14 @@ class AutoTagger extends Extension
         }
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "tags") {
             $event->add_nav_link("auto_tag", new Link('auto_tag/list'), "Auto-Tag", NavLink::is_active(["auto_tag"]));
         }
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -153,7 +153,7 @@ class AutoTagger extends Extension
         }
     }
 
-    public function onTagSet(TagSetEvent $event)
+    public function onTagSet(TagSetEvent $event): void
     {
         $results = $this->apply_auto_tags($event->new_tags);
         if (!empty($results)) {
@@ -161,19 +161,19 @@ class AutoTagger extends Extension
         }
     }
 
-    public function onAddAutoTag(AddAutoTagEvent $event)
+    public function onAddAutoTag(AddAutoTagEvent $event): void
     {
         global $page;
         $this->add_auto_tag($event->tag, $event->additional_tags);
         $page->flash("Added Auto-Tag");
     }
 
-    public function onDeleteAutoTag(DeleteAutoTagEvent $event)
+    public function onDeleteAutoTag(DeleteAutoTagEvent $event): void
     {
         $this->remove_auto_tag($event->tag);
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::MANAGE_AUTO_TAG)) {

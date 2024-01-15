@@ -9,7 +9,7 @@ class Blotter extends Extension
     /** @var BlotterTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event)
+    public function onInitExt(InitExtEvent $event): void
     {
         global $config;
         $config->set_default_int("blotter_recent", 5);
@@ -17,7 +17,7 @@ class Blotter extends Extension
         $config->set_default_string("blotter_position", "subheading");
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
@@ -42,7 +42,7 @@ class Blotter extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event)
+    public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Blotter");
         $sb->add_int_option("blotter_recent", "<br />Number of recent entries to display: ");
@@ -50,7 +50,7 @@ class Blotter extends Extension
         $sb->add_choice_option("blotter_position", ["Top of page" => "subheading", "In navigation bar" => "left"], "<br>Position: ");
     }
 
-    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
         if ($event->parent === "system") {
@@ -61,7 +61,7 @@ class Blotter extends Extension
     }
 
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event)
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
         if ($user->can(Permissions::BLOTTER_ADMIN)) {
@@ -69,7 +69,7 @@ class Blotter extends Extension
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $database, $user;
         if ($event->page_matches("blotter") && $event->count_args() > 0) {
