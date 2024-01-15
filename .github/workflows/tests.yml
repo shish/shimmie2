@@ -86,7 +86,9 @@ jobs:
     - name: Install PHP dependencies
       run: composer install --no-progress
     - name: Install old version
-      run: php index.php
+      run: |
+        export INSTALL_DSN=$INSTALL_DSN
+        php index.php
     - name: Check old version works
       run: php index.php get-page /
     - name: Upgrade
