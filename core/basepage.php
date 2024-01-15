@@ -19,6 +19,22 @@ enum PageMode: string
     case MANUAL = 'manual';
 }
 
+class Cookie
+{
+    public string $name;
+    public string $value;
+    public int $time;
+    public string $path;
+
+    public function __construct(string $name, string $value, int $time, string $path)
+    {
+        $this->name = $name;
+        $this->value = $value;
+        $this->time = $time;
+        $this->path = $path;
+    }
+}
+
 /**
  * Class Page
  *
@@ -121,7 +137,7 @@ class BasePage
     /** @var string[] */
     public array $http_headers = [];
 
-    /** @var string[][] */
+    /** @var Cookie[] */
     public array $cookies = [];
 
     /** @var Block[] */
@@ -193,7 +209,7 @@ class BasePage
     public function add_cookie(string $name, string $value, int $time, string $path): void
     {
         $full_name = COOKIE_PREFIX . "_" . $name;
-        $this->cookies[] = [$full_name, $value, $time, $path];
+        $this->cookies[] = new Cookie($full_name, $value, $time, $path);
     }
 
     public function get_cookie(string $name): ?string
@@ -254,7 +270,7 @@ class BasePage
                 header($head);
             }
             foreach ($this->cookies as $c) {
-                setcookie($c[0], $c[1], $c[2], $c[3]);
+                setcookie($c->name, $c->value, $c->time, $c->path);
             }
         } else {
             print "Error: Headers have already been sent to the client.";
