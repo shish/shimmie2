@@ -43,6 +43,7 @@ function install()
     } else {
         if (PHP_SAPI == 'cli') {
             print("INSTALL_DSN needs to be set for CLI installation\n");
+            exit(1);
         } else {
             ask_questions();
         }
