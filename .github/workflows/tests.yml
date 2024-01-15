@@ -90,13 +90,19 @@ jobs:
         php index.php
         cat data/config/shimmie.conf.php
     - name: Check old version works
-      run: php index.php get-page /
+      run: |
+        php index.php get-page / > old.out
+        grep -q 'Welcome to Shimmie 2.9' old.out || cat old.out
+        rm -f old.out
     - name: Upgrade
       run: |
         git checkout ${{ github.sha }}
         composer install --no-progress
     - name: Check new version works
-      run: php index.php page:get /
+      run: |
+        php index.php page:get / > new.out
+        grep -q 'Welcome to Shimmie 2.10' new.out || cat new.out
+        rm -f new.out
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
