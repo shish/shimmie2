@@ -146,9 +146,7 @@ class GraphQL extends Extension
     private static function handle_upload(int $n, string $common_tags, string $common_source): array
     {
         if (!empty($_POST["url$n"])) {
-            return ["error" => "URLs not handled yet"];
-            $tmpname = "...";
-            $filename = "...";
+            throw new \Exception("URLs not handled yet");
         } else {
             $ec = $_FILES["data$n"]["error"];
             switch($ec) {

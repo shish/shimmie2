@@ -407,9 +407,6 @@ class Upload extends Extension
                 if (count($event->images) == 0) {
                     throw new UploadException("File type not supported: " . $event->mime);
                 }
-                if (count($event->images) == 0) {
-                    throw new UploadException("File type not supported: " . $event->mime);
-                }
                 return $event->images;
             });
             foreach($new_images as $image) {

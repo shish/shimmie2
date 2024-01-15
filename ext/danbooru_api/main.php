@@ -265,7 +265,6 @@ class DanbooruApi extends Extension
     private function api_add_post(): void
     {
         global $database, $user, $page;
-        $danboorup_kludge = 1;            // danboorup for firefox makes broken links out of location: /path
 
         // Check first if a login was supplied, if it wasn't check if the user is logged in via cookie
         // If all that fails, it's an anonymous upload
@@ -331,9 +330,7 @@ class DanbooruApi extends Extension
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: duplicate");
             $existinglink = make_link("post/view/" . $existing->id);
-            if ($danboorup_kludge) {
-                $existinglink = make_http($existinglink);
-            }
+            $existinglink = make_http($existinglink);
             $page->add_http_header("X-Danbooru-Location: $existinglink");
             return;
         }
@@ -356,9 +353,7 @@ class DanbooruApi extends Extension
             });
 
             $newid = make_link("post/view/" . $newimg->id);
-            if ($danboorup_kludge) {
-                $newid = make_http($newid);
-            }
+            $newid = make_http($newid);
 
             // Did we POST or GET this call?
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {

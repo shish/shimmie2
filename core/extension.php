@@ -82,7 +82,7 @@ abstract class Extension
         }
     }
 
-    public static function is_enabled(string $key): ?bool
+    public static function is_enabled(string $key): bool
     {
         return in_array($key, self::$enabled_extensions);
     }

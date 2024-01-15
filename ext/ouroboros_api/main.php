@@ -331,7 +331,7 @@ class OuroborosAPI extends Extension
             }
         }
         $meta = [];
-        $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
+        $meta['tags'] = Tag::explode($post->tags);
         $meta['source'] = $post->source;
         if (Extension::is_enabled(RatingsInfo::KEY) !== false) {
             $meta['rating'] = $post->rating;
@@ -365,7 +365,7 @@ class OuroborosAPI extends Extension
             if (!is_null($img)) {
                 $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
                 if ($handler == ImageConfig::COLLISION_MERGE) {
-                    $postTags = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
+                    $postTags = Tag::explode($post->tags);
                     $merged = array_merge($postTags, $img->get_tag_array());
                     send_event(new TagSetEvent($img, $merged));
 

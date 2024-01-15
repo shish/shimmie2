@@ -30,10 +30,6 @@ class TagUsage
     {
         global $cache, $database;
 
-        if (!$search) {
-            return [];
-        }
-
         $search = strtolower($search);
         if (
             $search == '' ||

@@ -31,10 +31,6 @@ class AutoComplete extends Extension
     {
         global $cache, $database;
 
-        if (!$search) {
-            return [];
-        }
-
         $search = strtolower($search);
         if (
             $search == '' ||

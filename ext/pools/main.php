@@ -737,19 +737,19 @@ class Pools extends Extension
             return;
         }
 
-        $images = " ";
+        $images = [];
         foreach ($event->posts as $post_id) {
             if ($this->add_post($event->pool_id, $post_id, false)) {
-                $images .= " " . $post_id;
+                $images[] = $post_id;
             }
         }
 
-        if (!strlen($images) == 0) {
+        if (count($images) > 0) {
             $count = (int)$database->get_one(
                 "SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid",
                 ["pid" => $event->pool_id]
             );
-            $this->add_history($event->pool_id, 1, $images, $count);
+            $this->add_history($event->pool_id, 1, implode(" ", $images), $count);
         }
     }
 

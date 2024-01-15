@@ -160,7 +160,7 @@ class TagList extends Extension
         $results = $cache->get("tag_list_omitted_tags:".$tags_config);
 
         if (is_null($results)) {
-            $tags = explode(" ", $tags_config);
+            $tags = Tag::explode($tags_config, false);
 
             if (count($tags) == 0) {
                 return [];

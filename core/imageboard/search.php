@@ -182,9 +182,6 @@ class Search
                 }
             }
         }
-        if (is_null($total)) {
-            return 0;
-        }
         return $total;
     }
 

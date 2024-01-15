@@ -104,9 +104,6 @@ class RotateImage extends Extension
 
         $image_obj = Image::by_id($image_id);
         $hash = $image_obj->hash;
-        if (is_null($hash)) {
-            throw new ImageRotateException("Post does not have a hash associated with it.");
-        }
 
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
         if (file_exists($image_filename) === false) {

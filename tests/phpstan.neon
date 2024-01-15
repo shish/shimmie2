@@ -8,3 +8,11 @@ parameters:
     - ../themes
   ignoreErrors:
     - '#Access to an undefined property Shimmie2\\Image::\$#'
+  dynamicConstantNames:
+    - DEBUG
+    - SPEED_HAX
+    - TRUSTED_PROXIES
+    - TIMEZONE
+    - BASE_HREF
+    - STATSD_HOST
+    - TRACE_FILE

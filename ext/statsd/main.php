@@ -45,7 +45,11 @@ class StatsDInterface extends Extension
             $this->_stats("other");
         }
 
-        $this->send(StatsDInterface::$stats, 1.0);
+        // @phpstan-ignore-next-line
+        if (STATSD_HOST) {
+            $this->send(STATSD_HOST, StatsDInterface::$stats, 1.0);
+        }
+
         StatsDInterface::$stats = [];
     }
 
@@ -74,12 +78,8 @@ class StatsDInterface extends Extension
         return 99;
     }
 
-    private function send(array $data, float $sampleRate = 1)
+    private function send(string $host, array $data, float $sampleRate = 1)
     {
-        if (!STATSD_HOST) {
-            return;
-        }
-
         // sampling
         $sampledData = [];
 
@@ -99,7 +99,7 @@ class StatsDInterface extends Extension
 
         // Wrap this in a try/catch - failures in any of this should be silently ignored
         try {
-            $parts = explode(":", STATSD_HOST);
+            $parts = explode(":", $host);
             $host = $parts[0];
             $port = (int)$parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);

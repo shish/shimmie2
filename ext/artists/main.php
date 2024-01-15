@@ -605,7 +605,7 @@ class Artists extends Extension
         $i = 0;
         $urlsAsString = str_replace("\r\n", "\n", $urlsAsString);
         $urlsAsString = str_replace("\n\r", "\n", $urlsAsString);
-        $urlsAsArray = is_null($urlsAsString) ? [] : explode("\n", $urlsAsString);
+        $urlsAsArray = empty($urlsAsString) ? [] : explode("\n", $urlsAsString);
         $urlsIDsAsArray = is_null($urlsIDsAsString) ? [] : explode(" ", $urlsIDsAsString);
         while ($i < count($urlsAsArray)) {
             // if an URL was updated

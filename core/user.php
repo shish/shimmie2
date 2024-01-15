@@ -202,13 +202,9 @@ class User
     {
         global $database;
         $hash = password_hash($password, PASSWORD_BCRYPT);
-        if (is_string($hash)) {
-            $this->passhash = $hash;
-            $database->execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash" => $this->passhash, "id" => $this->id]);
-            log_info("core-user", 'Set password for '.$this->name);
-        } else {
-            throw new SCoreException("Failed to hash password");
-        }
+        $this->passhash = $hash;
+        $database->execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash" => $this->passhash, "id" => $this->id]);
+        log_info("core-user", 'Set password for '.$this->name);
     }
 
     public function set_email(string $address): void
