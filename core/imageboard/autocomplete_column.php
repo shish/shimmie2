@@ -10,7 +10,7 @@ use function MicroHTML\INPUT;
 
 class AutoCompleteColumn extends TextColumn
 {
-    public function read_input(array $inputs)
+    public function read_input(array $inputs): \MicroHTML\HTMLElement
     {
         return INPUT([
             "type" => "text",
@@ -21,7 +21,7 @@ class AutoCompleteColumn extends TextColumn
         ]);
     }
 
-    public function create_input(array $inputs)
+    public function create_input(array $inputs): \MicroHTML\HTMLElement
     {
         return INPUT([
             "type" => "text",

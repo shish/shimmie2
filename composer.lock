@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.295.5",
+            "version": "3.296.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cd9d48ebfdfc8fb5f6df9fe95dced622287f3412"
+                "reference": "38e47bbd3b5f76f008dd71c8a68545f9e4e47b6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cd9d48ebfdfc8fb5f6df9fe95dced622287f3412",
-                "reference": "cd9d48ebfdfc8fb5f6df9fe95dced622287f3412",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/38e47bbd3b5f76f008dd71c8a68545f9e4e47b6b",
+                "reference": "38e47bbd3b5f76f008dd71c8a68545f9e4e47b6b",
                 "shasum": ""
             },
             "require": {
@@ -151,16 +151,16 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.295.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.296.1"
             },
-            "time": "2024-01-03T19:12:43+00:00"
+            "time": "2024-01-14T05:20:33+00:00"
         },
         {
             "name": "bower-asset/jquery",
             "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
@@ -1532,21 +1532,21 @@
         },
         {
             "name": "shish/microcrud",
-            "version": "v2.1.1",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "8f0c38af61e2543c2e11ad6face37ae34e4571cf"
+                "reference": "b3daa6736d965c1688ff4e09b0354d4114595276"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/8f0c38af61e2543c2e11ad6face37ae34e4571cf",
-                "reference": "8f0c38af61e2543c2e11ad6face37ae34e4571cf",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/b3daa6736d965c1688ff4e09b0354d4114595276",
+                "reference": "b3daa6736d965c1688ff4e09b0354d4114595276",
                 "shasum": ""
             },
             "require": {
                 "ext-pdo": "*",
-                "php": "^8.0",
+                "php": "^8.1",
                 "shish/ffsphp": "^1.0",
                 "shish/microhtml": "^2.0.2"
             },
@@ -1581,9 +1581,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microcrud/issues",
-                "source": "https://github.com/shish/microcrud/tree/v2.1.1"
+                "source": "https://github.com/shish/microcrud/tree/v2.2.1"
             },
-            "time": "2023-11-11T21:25:53+00:00"
+            "time": "2024-01-15T12:08:16+00:00"
         },
         {
             "name": "shish/microhtml",
@@ -3144,12 +3144,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "1eeeb2d5252d6d8706c5a8d9d88b8d1e7ecf2109"
+                "reference": "ce019e9ad711e31ee87c2c4c72e538b5240970c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1eeeb2d5252d6d8706c5a8d9d88b8d1e7ecf2109",
-                "reference": "1eeeb2d5252d6d8706c5a8d9d88b8d1e7ecf2109",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ce019e9ad711e31ee87c2c4c72e538b5240970c3",
+                "reference": "ce019e9ad711e31ee87c2c4c72e538b5240970c3",
                 "shasum": ""
             },
             "require": {
@@ -3195,7 +3195,7 @@
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
                 "source": "https://github.com/nikic/PHP-Parser/tree/master"
             },
-            "time": "2023-12-22T18:57:32+00:00"
+            "time": "2024-01-14T09:02:54+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -5743,7 +5743,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "shish/gqla": 20,
-        "naroga/redis-cache": 20
+        "naroga/redis-cache": 20,
+        "symfony/console": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
@@ -5757,5 +5758,5 @@
     "platform-overrides": {
         "php": "8.1.0"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

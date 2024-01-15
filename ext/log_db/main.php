@@ -22,7 +22,7 @@ use function MicroHTML\rawHTML;
 
 class ShortDateTimeColumn extends DateTimeColumn
 {
-    public function read_input(array $inputs)
+    public function read_input(array $inputs): HTMLElement
     {
         return emptyHTML(
             INPUT([
@@ -59,7 +59,7 @@ class ActorColumn extends Column
         }
     }
 
-    public function read_input($inputs)
+    public function read_input(array $inputs): HTMLElement
     {
         return emptyHTML(
             INPUT([
@@ -78,7 +78,7 @@ class ActorColumn extends Column
         );
     }
 
-    public function modify_input_for_read($input): array
+    public function modify_input_for_read(string|array $input): array
     {
         list($un, $ip) = $input;
         if (empty($un)) {
@@ -121,7 +121,7 @@ class MessageColumn extends Column
         }
     }
 
-    public function read_input(array $inputs)
+    public function read_input(array $inputs): HTMLElement
     {
         $ret = emptyHTML(
             INPUT([
@@ -152,7 +152,7 @@ class MessageColumn extends Column
         return $ret;
     }
 
-    public function modify_input_for_read($input)
+    public function modify_input_for_read(array|string $input): mixed
     {
         list($m, $l) = $input;
         if (empty($m)) {
@@ -166,7 +166,7 @@ class MessageColumn extends Column
         return [$m, $l];
     }
 
-    public function display($row)
+    public function display(array $row): HTMLElement
     {
         $c = "#000";
         switch ($row['priority']) {
