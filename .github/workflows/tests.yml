@@ -92,7 +92,7 @@ jobs:
         git checkout ${{ github.sha }}
         composer install --no-progress
     - name: Check new version works
-      run: php index.php get-page /
+      run: php index.php page:get /
 
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
