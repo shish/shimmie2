@@ -551,7 +551,8 @@ class Image implements \ArrayAccess
         global $database;
         if ($locked !== $this->locked) {
             $database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn" => $locked, "id" => $this->id]);
-            log_info("core_image", "Setting Post #{$this->id} lock to: $locked");
+            $s = $locked ? "locked" : "unlocked";
+            log_info("core_image", "Setting Post #{$this->id} to $s");
         }
     }
 
