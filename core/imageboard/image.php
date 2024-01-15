@@ -106,7 +106,7 @@ class Image implements \ArrayAccess
                     // it isn't static and it isn't a known prop_type -
                     // maybe from an old extension that has since been
                     // disabled? Just ignore it.
-                    if(UNITTEST) {
+                    if(defined('UNITTEST')) {
                         throw new \Exception("Unknown column $name in images table");
                     }
                 }
