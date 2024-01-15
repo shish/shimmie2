@@ -37,4 +37,9 @@ $config->set_bool("nice_urls", true);
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 $user = User::by_id($config->get_int("anon_id", 0));
+$userPage = new UserPage();
+$userPage->onUserCreation(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
+$userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@test.com", false));
+$database->commit();
 $_tracer->end();
+

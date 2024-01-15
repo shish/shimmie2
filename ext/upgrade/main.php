@@ -193,11 +193,9 @@ class Upgrade extends Extension
 
         if ($this->get_version("db_version") < 21) {
             log_info("upgrade", "Setting predictable media values for known file types");
-            if ($database->is_transaction_open()) {
-                // Each of these commands could hit a lot of data, combining
-                // them into one big transaction would not be a good idea.
-                $database->commit();
-            }
+            // Each of these commands could hit a lot of data, combining
+            // them into one big transaction would not be a good idea.
+            $database->commit();
             $database->execute("UPDATE images SET lossless = :t, video = :t WHERE ext IN ('swf')", ["t" => true]);
             $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :t WHERE ext IN ('mp3')", ["t" => true, "f" => false]);
             $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :f WHERE ext IN ('jpg','jpeg')", ["f" => false]);
@@ -206,6 +204,7 @@ class Upgrade extends Extension
             $database->execute("UPDATE images SET audio = :f WHERE ext IN ('webp')", ["f" => false]);
             $database->execute("UPDATE images SET lossless = :f, video = :t WHERE ext IN ('flv','mp4','m4v','ogv','webm')", ["t" => true, "f" => false]);
             $this->set_version("db_version", 21);
+            $database->begin_transaction();
         }
     }
 

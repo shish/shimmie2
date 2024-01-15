@@ -17,8 +17,6 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             global $_tracer, $database;
             $_tracer->begin(get_called_class());
             $database->begin_transaction();
-            self::create_user(self::$admin_name);
-            self::create_user(self::$user_name);
             parent::setUpBeforeClass();
         }
 
@@ -37,6 +35,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             }
 
             // Set up a clean environment for each test
+            $database->execute("SAVEPOINT test_start");
             self::log_out();
             foreach ($database->get_col("SELECT id FROM images") as $image_id) {
                 send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
@@ -48,7 +47,8 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
 
         public function tearDown(): void
         {
-            global $_tracer;
+            global $_tracer, $database;
+            $database->execute("ROLLBACK TO test_start");
             $_tracer->end();  # test
             $_tracer->end();  # $this->getName()
         }
@@ -61,16 +61,6 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_tracer->end();  # get_called_class()
             $_tracer->clear();
             $_tracer->flush("data/test-trace.json");
-        }
-
-        protected static function create_user(string $name): void
-        {
-            if (is_null(User::by_name($name))) {
-                $userPage = new UserPage();
-                $userPage->onUserCreation(new UserCreationEvent($name, $name, $name, "$name@$name.com", false));
-                // @phpstan-ignore-next-line - ???
-                assert(!is_null(User::by_name($name)), "Creation of user $name failed");
-            }
         }
 
         private static function check_args(?array $args): array

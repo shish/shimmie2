@@ -293,6 +293,8 @@ function create_tables(Database $db): void
         if ($db->is_transaction_open()) {
             $db->commit();
         }
+        // Ensure that we end this code in a transaction (for testing)
+        $db->begin_transaction();
     } catch (\PDOException $e) {
         throw new InstallerException(
             "PDO Error:",

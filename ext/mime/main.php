@@ -30,11 +30,9 @@ class MimeSystem extends Extension
         // adjustment needs to be made to the mime types.
 
         if ($this->get_version(self::VERSION) < 1) {
-            if ($database->is_transaction_open()) {
-                // Each of these commands could hit a lot of data, combining
-                // them into one big transaction would not be a good idea.
-                $database->commit();
-            }
+            // Each of these commands could hit a lot of data, combining
+            // them into one big transaction would not be a good idea.
+            $database->commit();
             $database->set_timeout(null); // These updates can take a little bit
 
             $extensions = $database->get_col_iterable("SELECT DISTINCT ext FROM images");
@@ -55,6 +53,7 @@ class MimeSystem extends Extension
             }
 
             $this->set_version(self::VERSION, 1);
+            $database->begin_transaction();
         }
     }
 
