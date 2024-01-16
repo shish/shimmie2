@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Input\{InputInterface,InputArgument,InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function MicroHTML\INPUT;
@@ -75,12 +75,16 @@ class S3 extends Extension
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('s3:process')
+            ->addOption('count', 'c', InputOption::VALUE_REQUIRED, 'Number of items to process')
             ->setDescription('Process the S3 queue')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 global $database;
                 $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
                 $output->writeln("{$count} items in queue");
-                foreach($database->get_all("SELECT * FROM s3_sync_queue ORDER BY time ASC") as $row) {
+                foreach($database->get_all(
+                    "SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT :count",
+                    ["count" => $input->getOption('count') ?? $count]
+                ) as $row) {
                     if($row['action'] == "S") {
                         $image = Image::by_hash($row['hash']);
                         $output->writeln("SYN {$row['hash']} ($image->id)");
