@@ -32,11 +32,17 @@ class LinkScan extends Extension
         $matches = [];
         preg_match_all("/post\/view\/(\d+)/", $text, $matches);
         foreach($matches[1] as $match) {
-            $ids[] = $match;
+            $img = Image::by_id((int)$match);
+            if ($img) {
+                $ids[] = $img->id;
+            }
         }
         preg_match_all("/\b([0-9a-fA-F]{32})\b/", $text, $matches);
         foreach($matches[1] as $match) {
-            $ids[] = Image::by_hash($match)->id;
+            $img = Image::by_hash($match);
+            if ($img) {
+                $ids[] = $img->id;
+            }
         }
         return array_unique($ids);
     }

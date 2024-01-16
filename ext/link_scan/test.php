@@ -16,6 +16,8 @@ class LinkScanTest extends ShimmiePHPUnitTestCase
         Look at http://example.com/post/view/{$image_id_1} there is an image
 
         http://example.com/post/view/{$image_id_2} is another one
+
+        But there is no http://example.com/post/view/65432
         ";
         $page = $this->get_page("post/list", ["search" => $text]);
 
@@ -31,7 +33,8 @@ class LinkScanTest extends ShimmiePHPUnitTestCase
 
         $text = "
         Look at http://example.com/_images/feb01bab5698a11dd87416724c7a89e3/foobar.jpg
-        there is an image or search for e106ea2983e1b77f11e00c0c54e53805";
+        there is an image or search for e106ea2983e1b77f11e00c0c54e53805 but one that
+        doesn't exist is e106ea2983e1b77f11e00c0c54e50000 o.o";
         $page = $this->get_page("post/list", ["search" => $text]);
 
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
