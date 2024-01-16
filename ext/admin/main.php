@@ -58,6 +58,8 @@ class AdminPage extends Extension
                         shm_set_timeout(null);
                         $database->set_timeout(null);
                         send_event($aae);
+                    } else {
+                        throw new SCoreException("Invalid CSRF token");
                     }
 
                     if ($aae->redirect) {
