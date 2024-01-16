@@ -26,7 +26,7 @@ class LinkScan extends Extension
         }
     }
 
-    private function scan(string $text): array 
+    private function scan(string $text): array
     {
         $ids = [];
         $matches = [];
