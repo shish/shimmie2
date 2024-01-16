@@ -116,14 +116,14 @@ class Image implements \ArrayAccess
 
     public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists($offset, $this->dynamic_props);
+        return array_key_exists($offset, static::$prop_types);
     }
     public function offsetGet(mixed $offset): mixed
     {
         if(!$this->offsetExists($offset)) {
             throw new \OutOfBoundsException("Undefined dynamic property: $offset");
         }
-        return $this->dynamic_props[$offset];
+        return $this->dynamic_props[$offset] ?? null;
     }
     public function offsetSet(mixed $offset, mixed $value): void
     {
