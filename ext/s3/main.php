@@ -47,7 +47,8 @@ class S3 extends Extension
         $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
         $html = SHM_SIMPLE_FORM(
             "admin/s3_process",
-            SHM_SUBMIT("Sync $count posts"),
+            INPUT(["type" => 'number', "name" => 'count', 'value' => '10']),
+            SHM_SUBMIT("Sync N/$count posts"),
         );
         $page->add_block(new Block("Process S3 Queue", $html));
     }
@@ -56,7 +57,10 @@ class S3 extends Extension
     {
         global $database;
         if($event->action == "s3_process") {
-            foreach($database->get_all("SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT 10") as $row) {
+            foreach($database->get_all(
+                "SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT :count",
+                ["count" => isset($_POST['count']) ? int_escape($_POST["count"]) : 10]
+            ) as $row) {
                 if($row['action'] == "S") {
                     $image = Image::by_hash($row['hash']);
                     $this->sync_post($image);
