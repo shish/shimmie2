@@ -6,34 +6,38 @@ namespace Shimmie2;
 
 class LinkScan extends Extension
 {
-    /** @var LinkScanTheme */
-    protected Themelet $theme;
-
-    public function onAdminBuilding(AdminBuildingEvent $event): void
+    public function get_priority(): int
     {
-        $this->theme->display_form();
+        return 10; // be able to intercept post/list
     }
 
-    public function onAdminAction(AdminActionEvent $event): void
+    public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-        if($event->action == "link_scan") {
-            $text = $_POST['text'];
-            $ids = [];
+        global $config, $page;
 
-            $matches = [];
-            preg_match_all("/post\/view\/(\d+)/", $text, $matches);
-            foreach($matches[1] as $match) {
-                $ids[] = $match;
+        if ($event->page_matches("post/list") && isset($_GET['search'])) {
+            $trigger = $config->get_string("link_scan_trigger", "https?://");
+            if (preg_match("#.*{$trigger}.*#", $_GET['search'])) {
+                $ids = $this->scan($_GET['search']);
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(search_link(["id=".implode(",", $ids)]));
+                $event->stop_processing = true;
             }
-            preg_match_all("/\b([0-9a-fA-F]{32})\b/", $text, $matches);
-            foreach($matches[1] as $match) {
-                $ids[] = Image::by_hash($match)->id;
-            }
-
-            $event->redirect = false;
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(search_link(["id=".implode(",", $ids)]));
         }
+    }
+
+    private function scan(string $text): array 
+    {
+        $ids = [];
+        $matches = [];
+        preg_match_all("/post\/view\/(\d+)/", $text, $matches);
+        foreach($matches[1] as $match) {
+            $ids[] = $match;
+        }
+        preg_match_all("/\b([0-9a-fA-F]{32})\b/", $text, $matches);
+        foreach($matches[1] as $match) {
+            $ids[] = Image::by_hash($match)->id;
+        }
+        return array_unique($ids);
     }
 }
