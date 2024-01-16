@@ -41,6 +41,33 @@ class S3 extends Extension
         }
     }
 
+    public function onAdminBuilding(AdminBuildingEvent $event): void
+    {
+        global $database, $page;
+        $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
+        $html = SHM_SIMPLE_FORM(
+            "admin/s3_process",
+            SHM_SUBMIT("Sync $count posts"),
+        );
+        $page->add_block(new Block("Process S3 Queue", $html));
+    }
+
+    public function onAdminAction(AdminActionEvent $event): void
+    {
+        global $database;
+        if($event->action == "s3_process") {
+            foreach($database->get_all("SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT 10") as $row) {
+                if($row['action'] == "S") {
+                    $image = Image::by_hash($row['hash']);
+                    $this->sync_post($image);
+                } elseif($row['action'] == "D") {
+                    $this->remove_file($row['hash']);
+                }
+            }
+            $event->redirect = true;
+        }
+    }
+
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('s3:process')
