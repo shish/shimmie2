@@ -37,26 +37,6 @@ class Rule34 extends Extension
         $cache->delete("thumb-block:{$event->image->id}");
     }
 
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
-    {
-        global $config;
-        $image_link = $config->get_string(ImageConfig::ILINK);
-        $url0 = $event->image->parse_link_template($image_link, 0);
-        $url1 = $event->image->parse_link_template($image_link, 1);
-        $event->add_part(
-            SHM_POST_INFO(
-                "Links",
-                emptyHTML(
-                    A(["href" => $url0], "File Only"),
-                    " (",
-                    A(["href" => $url1], "Backup Server"),
-                    ")"
-                )
-            ),
-            90
-        );
-    }
-
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $page;
