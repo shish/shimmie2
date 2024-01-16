@@ -12,6 +12,7 @@ class CliApp extends \Symfony\Component\Console\Application
     public function __construct()
     {
         parent::__construct('Shimmie', VERSION);
+        $this->setAutoExit(false);
     }
 
     protected function getDefaultInputDefinition(): InputDefinition

@@ -84,7 +84,9 @@ try {
         ob_implicit_flush(true);
         $app = new CliApp();
         send_event(new CliGenEvent($app));
-        $app->run();
+        if($app->run() !== 0) {
+            throw new \Exception("CLI command failed");
+        }
     } else {
         send_event(new PageRequestEvent($_SERVER['REQUEST_METHOD'], _get_query()));
         $page->display();
