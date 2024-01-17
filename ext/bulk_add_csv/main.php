@@ -53,24 +53,23 @@ class BulkAddCSV extends Extension
      */
     private function add_image(string $tmpname, string $filename, array $tags, string $source, string $rating, string $thumbfile)
     {
-        $event = send_event(new DataUploadEvent($tmpname, [
-            'filename' => pathinfo($filename, PATHINFO_BASENAME),
-            'tags' => $tags,
-            'source' => $source,
-        ]));
+        global $database;
+        $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
+            $event = send_event(new DataUploadEvent($tmpname, [
+                'filename' => pathinfo($filename, PATHINFO_BASENAME),
+                'tags' => $tags,
+                'source' => $source,
+                'rating' => $rating,
+            ]));
 
-        if (count($event->images) == 0) {
-            throw new UploadException("File type not recognised");
-        } else {
-            if (class_exists("Shimmie2\RatingSetEvent") && in_array($rating, ["s", "q", "e"])) {
-                foreach($event->images as $image) {
-                    send_event(new RatingSetEvent($image, $rating));
+            if (count($event->images) == 0) {
+                throw new UploadException("File type not recognised");
+            } else {
+                if (file_exists($thumbfile)) {
+                    copy($thumbfile, warehouse_path(Image::THUMBNAIL_DIR, $event->hash));
                 }
             }
-            if (file_exists($thumbfile)) {
-                copy($thumbfile, warehouse_path(Image::THUMBNAIL_DIR, $event->hash));
-            }
-        }
+        });
     }
 
     private function add_csv(string $csvfile)
