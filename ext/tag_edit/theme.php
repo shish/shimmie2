@@ -109,8 +109,8 @@ class TagEditTheme extends Themelet
     protected function format_source(string $source = null): HTMLElement
     {
         if (!empty($source)) {
-            if (!str_starts_with($source, "http://") && !str_starts_with($source, "https://")) {
-                $source = "http://" . $source;
+            if (!str_contains($source, "://")) {
+                $source = "https://" . $source;
             }
             $proto_domain = explode("://", $source);
             $h_source = $proto_domain[1];
