@@ -23,12 +23,7 @@ function _d(string $name, mixed $value): void
     if (!defined($name)) {
         $env = getenv("SHM_{$name}");
         if ($env !== false) {
-            try {
-                $value = json_decode($env);
-            }
-            catch(\Exception $e) {
-                $value = $env;
-            }
+            $value = json_decode($env) ?? $env;
         }
         define($name, $value);
     }
