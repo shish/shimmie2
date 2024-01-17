@@ -9,7 +9,8 @@ namespace Shimmie2;
  * Shimmie will set the values to their defaults
  *
  * All of these can be over-ridden by placing a 'define' in
- * data/config/shimmie.conf.php
+ * data/config/shimmie.conf.php, or by setting an environment
+ * variable SHM_{$name} (eg SHM_DATABASE_DSN)
  *
  * Do NOT change them in this file. These are the defaults only!
  *
@@ -20,6 +21,15 @@ namespace Shimmie2;
 function _d(string $name, mixed $value): void
 {
     if (!defined($name)) {
+        $env = getenv("SHM_{$name}");
+        if ($env !== false) {
+            try {
+                $value = json_decode($env);
+            }
+            catch(\Exception $e) {
+                $value = $env;
+            }
+        }
         define($name, $value);
     }
 }

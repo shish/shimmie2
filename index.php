@@ -23,7 +23,7 @@ if (!file_exists("vendor/")) {
     );
 }
 
-if (!file_exists("data/config/shimmie.conf.php")) {
+if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN")) {
     require_once "core/install.php";
     install();
     exit;
