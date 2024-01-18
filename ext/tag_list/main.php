@@ -390,7 +390,7 @@ class TagList extends Extension
         }
 
         $tag_data = $database->get_all("
-            SELECT tag, count, FLOOR(LOG(count)) AS scaled
+            SELECT tag, count, FLOOR(LOG(10, count)) AS scaled
             FROM tags
             WHERE count >= :tags_min
             ORDER BY count DESC, tag ASC
