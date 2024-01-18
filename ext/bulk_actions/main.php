@@ -170,26 +170,19 @@ class BulkActions extends Extension
                 $items = null;
                 if (isset($_POST['bulk_selected_ids']) && !empty($_POST['bulk_selected_ids'])) {
                     $data = json_decode($_POST['bulk_selected_ids']);
-                    if (empty($data)) {
+                    if (!is_array($data) || empty($data)) {
                         throw new BulkActionException("No ids specified in bulk_selected_ids");
                     }
-                    if (is_array($data)) {
-                        $items = $this->yield_items($data);
-                    }
-                } elseif (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
+                    $items = $this->yield_items($data);
+                } elseif (isset($_POST['bulk_query']) && !empty($_POST['bulk_query'])) {
                     $query = $_POST['bulk_query'];
-                    if (!empty($query)) {
-                        $items = $this->yield_search_results($query);
-                    }
+                    $items = $this->yield_search_results($query);
                 } else {
                     throw new BulkActionException("No ids selected and no query present, cannot perform bulk operation on entire collection");
                 }
 
-                $bae = new BulkActionEvent($action, $items);
-
-                if (is_iterable($items)) {
-                    send_event($bae);
-                }
+                shm_set_timeout(null);
+                $bae = send_event(new BulkActionEvent($action, $items));
 
                 if ($bae->redirect) {
                     $page->set_mode(PageMode::REDIRECT);
