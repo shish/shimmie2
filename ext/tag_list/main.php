@@ -251,16 +251,15 @@ class TagList extends Extension
             return file_get_contents($cache_key);
         }
 
-        // SHIT: PDO/pgsql has problems using the same named param twice -_-;;
         $tag_data = $database->get_all("
             SELECT
                 tag,
-                FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
+                FLOOR(LN(LN(count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
             FROM tags
             WHERE count >= :tags_min
             AND LOWER(tag) LIKE LOWER(:starts_with)
             ORDER BY LOWER(tag)
-        ", ["tags_min" => $tags_min, "tags_min2" => $tags_min, "starts_with" => $starts_with]);
+        ", ["tags_min" => $tags_min, "starts_with" => $starts_with]);
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
