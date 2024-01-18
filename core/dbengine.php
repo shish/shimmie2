@@ -146,7 +146,7 @@ function _log($a, $b = null): float
     if (is_null($b)) {
         return log($a);
     } else {
-        return log($a, $b);
+        return log($b, $a);
     }
 }
 function _isnull($a): bool
