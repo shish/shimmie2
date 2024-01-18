@@ -9,8 +9,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function MicroHTML\{emptyHTML, A};
-
 if (
     // kill these glitched requests immediately
     !empty($_SERVER["REQUEST_URI"])
@@ -22,9 +20,6 @@ if (
 
 class Rule34 extends Extension
 {
-    /** @var Rule34Theme */
-    protected Themelet $theme;
-
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $database;
@@ -45,15 +40,6 @@ class Rule34 extends Extension
         $html .= "<br><input type='submit' value='Purge from caches'>";
         $html .= "</form>\n";
         $page->add_block(new Block("Cache Purger", $html));
-    }
-
-    public function onUserPageBuilding(UserPageBuildingEvent $event): void
-    {
-        global $database, $user, $config;
-        if ($user->can(Permissions::CHANGE_SETTING) && $config->get_bool('r34_comic_integration')) {
-            $current_state = bool_escape($database->get_one("SELECT comic_admin FROM users WHERE id=:id", ['id' => $event->display_user->id]));
-            $this->theme->show_comic_changer($event->display_user, $current_state);
-        }
     }
 
     public function onCliGen(CliGenEvent $event): void
@@ -100,25 +86,6 @@ class Rule34 extends Extension
 
         $page->add_html_header("<meta name='theme-color' content='#7EB977'>");
         $page->add_html_header("<meta name='juicyads-site-verification' content='20d309e193510e130c3f8a632f281335'>");
-
-        if (function_exists("sd_notify_watchdog")) {
-            \sd_notify_watchdog();
-        }
-
-        if ($event->page_matches("rule34/comic_admin")) {
-            if ($user->can(Permissions::CHANGE_SETTING) && $user->check_auth_token()) {
-                $input = validate_input([
-                    'user_id' => 'user_id,exists',
-                    'is_admin' => 'bool',
-                ]);
-                $database->execute(
-                    'UPDATE users SET comic_admin=:is_admin WHERE id=:id',
-                    ['is_admin' => $input['is_admin'] ? 't' : 'f', 'id' => $input['user_id']]
-                );
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(referer_or(make_link()));
-            }
-        }
 
         if ($event->page_matches("tnc_agreed")) {
             setcookie("ui-tnc-agreed", "true", 0, "/");
