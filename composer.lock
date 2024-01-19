@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.296.1",
+            "version": "3.296.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "38e47bbd3b5f76f008dd71c8a68545f9e4e47b6b"
+                "reference": "23b009f305278e227bc5149bcb8fc9c1503fb130"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/38e47bbd3b5f76f008dd71c8a68545f9e4e47b6b",
-                "reference": "38e47bbd3b5f76f008dd71c8a68545f9e4e47b6b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/23b009f305278e227bc5149bcb8fc9c1503fb130",
+                "reference": "23b009f305278e227bc5149bcb8fc9c1503fb130",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.296.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.296.5"
             },
-            "time": "2024-01-14T05:20:33+00:00"
+            "time": "2024-01-18T19:06:27+00:00"
         },
         {
             "name": "bower-asset/jquery",
@@ -1532,16 +1532,16 @@
         },
         {
             "name": "shish/microcrud",
-            "version": "v2.2.1",
+            "version": "v2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "b3daa6736d965c1688ff4e09b0354d4114595276"
+                "reference": "e696f35b494b78bf1bfcddd47b4d542e98a468cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/b3daa6736d965c1688ff4e09b0354d4114595276",
-                "reference": "b3daa6736d965c1688ff4e09b0354d4114595276",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/e696f35b494b78bf1bfcddd47b4d542e98a468cb",
+                "reference": "e696f35b494b78bf1bfcddd47b4d542e98a468cb",
                 "shasum": ""
             },
             "require": {
@@ -1581,9 +1581,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microcrud/issues",
-                "source": "https://github.com/shish/microcrud/tree/v2.2.1"
+                "source": "https://github.com/shish/microcrud/tree/v2.2.2"
             },
-            "time": "2024-01-15T12:08:16+00:00"
+            "time": "2024-01-19T17:35:05+00:00"
         },
         {
             "name": "shish/microhtml",
@@ -1643,12 +1643,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "0254811a143e6bc6c8deea08b589a7e68a37f625"
+                "reference": "f88dd6369c238e127aba7212252301945f47ee53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/0254811a143e6bc6c8deea08b589a7e68a37f625",
-                "reference": "0254811a143e6bc6c8deea08b589a7e68a37f625",
+                "url": "https://api.github.com/repos/symfony/console/zipball/f88dd6369c238e127aba7212252301945f47ee53",
+                "reference": "f88dd6369c238e127aba7212252301945f47ee53",
                 "shasum": ""
             },
             "require": {
@@ -1729,7 +1729,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-10T16:15:48+00:00"
+            "time": "2024-01-19T13:57:07+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -2222,12 +2222,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "7cb80bc10bfcdf6b5492741c0b9357dac66940bc"
+                "reference": "1b4a76ca2c0bd2916edb36b2a0a62087a13c0358"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/7cb80bc10bfcdf6b5492741c0b9357dac66940bc",
-                "reference": "7cb80bc10bfcdf6b5492741c0b9357dac66940bc",
+                "url": "https://api.github.com/repos/symfony/string/zipball/1b4a76ca2c0bd2916edb36b2a0a62087a13c0358",
+                "reference": "1b4a76ca2c0bd2916edb36b2a0a62087a13c0358",
                 "shasum": ""
             },
             "require": {
@@ -2300,7 +2300,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-10T16:15:48+00:00"
+            "time": "2024-01-19T13:57:07+00:00"
         },
         {
             "name": "webonyx/graphql-php",
@@ -5571,12 +5571,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "c4b1ef0bc80533d87a2e969806172f1c2a980241"
+                "reference": "d33b31f8d8de203ed1feb7c3b7cc003174e32fd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/c4b1ef0bc80533d87a2e969806172f1c2a980241",
-                "reference": "c4b1ef0bc80533d87a2e969806172f1c2a980241",
+                "url": "https://api.github.com/repos/symfony/process/zipball/d33b31f8d8de203ed1feb7c3b7cc003174e32fd8",
+                "reference": "d33b31f8d8de203ed1feb7c3b7cc003174e32fd8",
                 "shasum": ""
             },
             "require": {
@@ -5624,7 +5624,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-22T16:42:54+00:00"
+            "time": "2024-01-19T13:57:07+00:00"
         },
         {
             "name": "symfony/stopwatch",
