@@ -146,7 +146,7 @@ class Search
     /**
      * Count the number of image results for a given search
      *
-     * @param string[] $tags
+     * @param list<string> $tags
      */
     public static function count_images(array $tags = []): int
     {
