@@ -228,17 +228,22 @@ document.addEventListener('DOMContentLoaded', () => {
 				event.preventDefault();
 				highlightCompletion(element, element.selected_completion-1);
 			}
-			if(event.code === "ArrowDown") {
+			else if(event.code === "ArrowDown") {
 				event.preventDefault();
 				highlightCompletion(element, element.selected_completion+1);
 			}
 			// if enter or right are pressed, add the selected completion
-			if((event.code === "Enter" || event.code == "ArrowRight") && element.selected_completion !== -1) {
+			else if((event.code === "Enter" || event.code == "ArrowRight") && element.selected_completion !== -1) {
 				event.preventDefault();
 				setCompletion(element, Object.keys(element.completions)[element.selected_completion]);
 			}
+			// If enter is pressed while nothing is selected, submit the form
+			else if(event.code === "Enter" && element.selected_completion === -1) {
+				event.preventDefault();
+				element.form.submit();
+			}
 			// if escape is pressed, hide the completion block
-			if(event.code === "Escape") {
+			else if(event.code === "Escape") {
 				event.preventDefault();
 				hideCompletions();
 			}
