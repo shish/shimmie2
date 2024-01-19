@@ -8,6 +8,10 @@ use GQLA\Query;
 
 class Querylet
 {
+    /**
+     * @param string $sql
+     * @param array<string, mixed> $variables
+     */
     public function __construct(
         public string $sql,
         public array $variables = [],
@@ -18,16 +22,6 @@ class Querylet
     {
         $this->sql .= $querylet->sql;
         $this->variables = array_merge($this->variables, $querylet->variables);
-    }
-
-    public function append_sql(string $sql): void
-    {
-        $this->sql .= $sql;
-    }
-
-    public function add_variable($var): void
-    {
-        $this->variables[] = $var;
     }
 }
 
@@ -51,9 +45,13 @@ class ImgCondition
 
 class Search
 {
+    /** @var list<string> */
     public static array $_search_path = [];
 
-    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): iterable
+    /**
+     * @param list<string> $tags
+     */
+    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): \FFSPHP\PDOStatement
     {
         global $database, $user;
 
@@ -78,7 +76,7 @@ class Search
     /**
      * Search for an array of images
      *
-     * @param string[] $tags
+     * @param list<string> $tags
      * @return Image[]
      */
     #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
@@ -95,6 +93,9 @@ class Search
 
     /**
      * Search for an array of images, returning a iterable object of Image
+     * 
+     * @param list<string> $tags
+     * @return \Generator<Image>
      */
     public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags = []): \Generator
     {
@@ -186,6 +187,9 @@ class Search
     }
 
 
+    /**
+     * @return list<int>
+     */
     private static function tag_or_wildcard_to_ids(string $tag): array
     {
         global $database;
@@ -406,7 +410,7 @@ class Search
                 $img_sql .= " (" . $iq->qlet->sql . ")";
                 $img_vars = array_merge($img_vars, $iq->qlet->variables);
             }
-            $query->append_sql(" AND ");
+            $query->append(new Querylet(" AND "));
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
