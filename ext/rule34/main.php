@@ -51,7 +51,7 @@ class Rule34 extends Extension
                 global $cache;
                 $tags = Tag::explode($input->getArgument('tags'));
                 foreach (Search::find_images_iterable(0, null, $tags) as $image) {
-                    $output->writeln($image->id);
+                    $output->writeln((string)$image->id);
                     $cache->delete("thumb-block:{$image->id}");
                 }
                 return Command::SUCCESS;
