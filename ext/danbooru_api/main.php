@@ -6,18 +6,30 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+/**
+ * @param mixed[] ...$args
+ */
 function TAGS(...$args): HTMLElement
 {
     return new HTMLElement("tags", $args);
 }
+/**
+ * @param mixed[] ...$args
+ */
 function TAG(...$args): HTMLElement
 {
     return new HTMLElement("tag", $args);
 }
+/**
+ * @param mixed[] ...$args
+ */
 function POSTS(...$args): HTMLElement
 {
     return new HTMLElement("posts", $args);
 }
+/**
+ * @param mixed[] ...$args
+ */
 function POST(...$args): HTMLElement
 {
     return new HTMLElement("post", $args);
@@ -75,6 +87,7 @@ class DanbooruApi extends Extension
                 $user = $duser;
             } else {
                 $user = User::by_id($config->get_int("anon_id", 0));
+                assert(!is_null($user));
             }
             send_event(new UserLoginEvent($user));
         }
@@ -299,6 +312,7 @@ class DanbooruApi extends Extension
         } elseif (isset($_REQUEST['source']) || isset($_REQUEST['post']['source'])) {    // A url was provided
             $source = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
             $file = tempnam(sys_get_temp_dir(), "shimmie_transload");
+            assert($file !== false);
             $ok = fetch_url($source, $file);
             if (!$ok) {
                 $page->set_code(409);
@@ -317,6 +331,7 @@ class DanbooruApi extends Extension
 
         // Was an md5 supplied? Does it match the file hash?
         $hash = md5_file($file);
+        assert($hash !== false);
         if (isset($_REQUEST['md5']) && strtolower($_REQUEST['md5']) != $hash) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: md5 mismatch");

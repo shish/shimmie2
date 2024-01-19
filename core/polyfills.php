@@ -804,6 +804,12 @@ function stringer(mixed $s): string
 /**
  * If a value is in the cache, return it; otherwise, call the callback
  * to generate it and store it in the cache.
+ * 
+ * @template T
+ * @param string $key
+ * @param callable():T $callback
+ * @param int|null $ttl
+ * @return T
  */
 function cache_get_or_set(string $key, callable $callback, ?int $ttl = null): mixed
 {
