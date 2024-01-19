@@ -55,6 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		updateAttr("LINK#nextlink", "href", query);
 		updateAttr("A#prevlink", "href", query);
 		updateAttr("A#nextlink", "href", query);
-		updateAttr("span#image_delete_form form", "action", query);
+		updateAttr("form#image_delete_form", "action", query);
 	}
 });

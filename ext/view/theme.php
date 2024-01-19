@@ -47,7 +47,7 @@ class ViewPostTheme extends Themelet
     public function display_admin_block(Page $page, array $parts): void
     {
         if (count($parts) > 0) {
-            $page->add_block(new Block("Post Controls", DIV(["class"=>"post_controls"], joinHTML(BR(), $parts)), "left", 50));
+            $page->add_block(new Block("Post Controls", DIV(["class"=>"post_controls"], joinHTML("", $parts)), "left", 50));
         }
     }
 

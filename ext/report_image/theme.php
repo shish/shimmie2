@@ -23,19 +23,19 @@ class ReportImageTheme extends Themelet
 
             $iabbe = send_event(new ImageAdminBlockBuildingEvent($image, $user, "report"));
             ksort($iabbe->parts);
-            $actions = join("<br>", $iabbe->parts);
+            $actions = join("", $iabbe->parts);
 
             $h_reportedimages .= "
 				<tr>
 					<td>{$image_link}</td>
 					<td class='reason'>Report by $userlink: $h_reason</td>
-					<td class='formstretch'>
+					<td class='formstretch post_controls'>
 						".make_form(make_link("image_report/remove"))."
 							<input type='hidden' name='id' value='{$report['id']}'>
 							<input type='submit' value='Remove Report'>
 						</form>
 
-						<br>$actions
+						$actions
 					</td>
 				</tr>
 			";
