@@ -55,7 +55,7 @@ class PixelFileHandler extends DataHandlerExtension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if ($event->context == "view") {
-            $event->add_part("
+            $event->add_part(\MicroHTML\rawHTML("
                 <form>
                     <select class='shm-zoomer'>
                         <option value='full'>Full Size</option>
@@ -64,7 +64,7 @@ class PixelFileHandler extends DataHandlerExtension
                         <option value='both'>Fit Both</option>
                     </select>
                 </form>
-            ", 20);
+            "), 20);
         }
     }
 }

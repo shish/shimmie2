@@ -11,9 +11,9 @@ class RotateImageTheme extends Themelet
     /**
      * Display a link to rotate an image.
      */
-    public function get_rotate_html(int $image_id): string
+    public function get_rotate_html(int $image_id): \MicroHTML\HTMLElement
     {
-        return (string)SHM_SIMPLE_FORM(
+        return SHM_SIMPLE_FORM(
             'rotate/'.$image_id,
             INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             INPUT(["type" => 'number', "name" => 'rotate_deg', "id" => "rotate_deg", "placeholder" => "Rotation degrees"]),

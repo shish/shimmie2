@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{rawHTML};
+
 class ResizeImageTheme extends Themelet
 {
     /*
      * Display a link to resize an image
      */
-    public function get_resize_html(Image $image): string
+    public function get_resize_html(Image $image): \MicroHTML\HTMLElement
     {
         global $config;
 
@@ -23,7 +25,7 @@ class ResizeImageTheme extends Themelet
             $default_height = $image->height;
         }
 
-        $html = "
+        $html = rawHTML("
 			".make_form(make_link("resize/{$image->id}"), 'POST')."
 				<input type='hidden' name='image_id' value='{$image->id}'>
 				<input id='original_width'  name='original_width'  type='hidden' value='{$image->width}'>
@@ -33,7 +35,7 @@ class ResizeImageTheme extends Themelet
 				<br><label><input type='checkbox' id='resize_aspect' name='resize_aspect' style='max-width: 20px;' checked='checked'> Keep Aspect</label>
 				<br><input id='resizebutton' type='submit' value='Resize'>
 			</form>
-		";
+		");
 
         return $html;
     }

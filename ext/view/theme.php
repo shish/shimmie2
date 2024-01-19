@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML};
+use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, DIV, BR};
 
 class ViewPostTheme extends Themelet
 {
@@ -41,10 +41,13 @@ class ViewPostTheme extends Themelet
         }
     }
 
-    public function display_admin_block(Page $page, $parts): void
+    /**
+     * @param HTMLElement[] $parts
+     */
+    public function display_admin_block(Page $page, array $parts): void
     {
         if (count($parts) > 0) {
-            $page->add_block(new Block("Post Controls", join("<br>", $parts), "left", 50));
+            $page->add_block(new Block("Post Controls", DIV(["class"=>"post_controls"], joinHTML(BR(), $parts)), "left", 50));
         }
     }
 

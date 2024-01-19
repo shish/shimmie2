@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{rawHTML};
+
 class SourceHistory extends Extension
 {
     /** @var SourceHistoryTheme */
@@ -58,11 +60,11 @@ class SourceHistory extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        $event->add_part("
+        $event->add_part(rawHTML("
 			<form action='".make_link("source_history/{$event->image->id}")."' method='GET'>
 				<input type='submit' value='View Source History'>
 			</form>
-		", 20);
+		"), 20);
     }
 
     /*

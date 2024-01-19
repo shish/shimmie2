@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class TagHistory extends Extension
 {
     /** @var TagHistoryTheme */
@@ -52,11 +54,11 @@ class TagHistory extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        $event->add_part("
+        $event->add_part(rawHTML("
 			<form action='".make_link("tag_history/{$event->image->id}")."' method='GET'>
 				<input type='submit' value='View Tag History'>
 			</form>
-		", 20);
+		"), 20);
     }
 
     /*

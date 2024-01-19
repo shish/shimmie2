@@ -229,7 +229,7 @@ class Approval extends Extension
     {
         global $user, $config;
         if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
-            $event->add_part((string)$this->theme->get_image_admin_html($event->image));
+            $event->add_part($this->theme->get_image_admin_html($event->image));
         }
     }
 

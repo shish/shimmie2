@@ -22,9 +22,9 @@ class ImageBanTheme extends Themelet
     /*
      * Display a link to delete an image
      */
-    public function get_buttons_html(Image $image): string
+    public function get_buttons_html(Image $image): \MicroHTML\HTMLElement
     {
-        return (string)SHM_SIMPLE_FORM(
+        return SHM_SIMPLE_FORM(
             "image_hash_ban/add",
             INPUT(["type" => 'hidden', "name" => 'c_hash', "value" => $image->hash]),
             INPUT(["type" => 'hidden', "name" => 'c_image_id', "value" => $image->id]),

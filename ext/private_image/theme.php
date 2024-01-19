@@ -8,7 +8,7 @@ use function MicroHTML\INPUT;
 
 class PrivateImageTheme extends Themelet
 {
-    public function get_image_admin_html(Image $image): string
+    public function get_image_admin_html(Image $image): \MicroHTML\HTMLElement
     {
         if ($image['private'] === false) {
             $html = SHM_SIMPLE_FORM(
@@ -24,7 +24,7 @@ class PrivateImageTheme extends Themelet
             );
         }
 
-        return (string)$html;
+        return $html;
     }
 
     public function get_help_html(): string

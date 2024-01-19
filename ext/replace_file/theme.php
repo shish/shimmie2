@@ -66,11 +66,11 @@ class ReplaceFileTheme extends Themelet
     /**
      * Display link to replace the image
      */
-    public function get_replace_html(int $image_id): string
+    public function get_replace_html(int $image_id): \MicroHTML\HTMLElement
     {
         $form = SHM_FORM("replace/$image_id", "GET");
         $form->appendChild(INPUT(["type" => 'submit', "value" => 'Replace']));
-        return (string)$form;
+        return $form;
     }
 
     protected function get_accept(): string

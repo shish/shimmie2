@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{rawHTML};
+
 class TranscodeImageTheme extends Themelet
 {
     /*
      * Display a link to resize an image
      */
-    public function get_transcode_html(Image $image, array $options): string
+    public function get_transcode_html(Image $image, array $options): \MicroHTML\HTMLElement
     {
         $html = "
 			".make_form(
@@ -26,7 +28,7 @@ class TranscodeImageTheme extends Themelet
 			</form>
 		";
 
-        return $html;
+        return rawHTML($html);
     }
 
     public function get_transcode_picker_html(array $options): string

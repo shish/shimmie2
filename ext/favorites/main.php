@@ -44,7 +44,7 @@ class Favorites extends Extension
                 ["user_id" => $user_id, "image_id" => $image_id]
             ) > 0;
 
-            $event->add_part((string)$this->theme->get_voter_html($event->image, $is_favorited));
+            $event->add_part($this->theme->get_voter_html($event->image, $is_favorited));
         }
     }
 
