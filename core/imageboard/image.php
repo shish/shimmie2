@@ -52,7 +52,7 @@ class Image implements \ArrayAccess
     public int $owner_id;
     public string $owner_ip;
     #[Field]
-    public ?string $posted = null;
+    public string $posted;
     #[Field]
     public ?string $source = null;
     #[Field]
@@ -272,17 +272,12 @@ class Image implements \ArrayAccess
     {
         global $database, $user;
 
-        if (is_null($this->posted) || $this->posted == "") {
-            $this->posted = date('Y-m-d H:i:s', time());
-        }
-
         $props_to_save = [
             "filename" => substr($this->filename, 0, 255),
             "filesize" => $this->filesize,
             "hash" => $this->hash,
             "mime" => strtolower($this->mime),
             "ext" => strtolower($this->ext),
-            "posted" => $this->posted,
             "source" => $this->source,
             "width" => $this->width,
             "height" => $this->height,
@@ -296,6 +291,7 @@ class Image implements \ArrayAccess
         if (is_null($this->id)) {
             $props_to_save["owner_id"] = $user->id;
             $props_to_save["owner_ip"] = get_real_ip();
+            $props_to_save["posted"] = date('Y-m-d H:i:s', time());
 
             $props_sql = implode(", ", array_keys($props_to_save));
             $vals_sql = implode(", ", array_map(fn ($prop) => ":$prop", array_keys($props_to_save)));
