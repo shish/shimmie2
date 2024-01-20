@@ -174,7 +174,9 @@ class Approval extends Extension
         }
     }
 
-
+    /**
+     * @param string[] $context
+     */
     private function no_approval_query(array $context): bool
     {
         foreach ($context as $term) {
@@ -185,7 +187,7 @@ class Approval extends Extension
         return true;
     }
 
-    public static function approve_image($image_id)
+    public static function approve_image(int $image_id): void
     {
         global $database, $user;
 
@@ -195,7 +197,7 @@ class Approval extends Extension
         );
     }
 
-    public static function disapprove_image($image_id)
+    public static function disapprove_image(int $image_id): void
     {
         global $database;
 

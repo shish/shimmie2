@@ -83,6 +83,9 @@ class TranscodeImage extends Extension
         $config->set_string(self::get_mapping_name($from_mime), $to_mime);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_enabled_mimes(): array
     {
         $output = [];
@@ -320,16 +323,17 @@ class TranscodeImage extends Extension
     }
 
 
-    private function can_convert_mime($engine, $mime): bool
+    private function can_convert_mime(string $engine, string $mime): bool
     {
         return MediaEngine::is_input_supported($engine, $mime);
     }
 
-
-    private function get_supported_output_mimes($engine, ?string $omit_mime = null): array
+    /**
+     * @return array<string, string>
+     */
+    private function get_supported_output_mimes(string $engine, ?string $omit_mime = null): array
     {
         $output = [];
-
 
         foreach (self::OUTPUT_MIMES as $key => $value) {
             if ($value == "") {
@@ -409,9 +413,6 @@ class TranscodeImage extends Extension
                     }
                     try {
                         $background_color = Media::hex_color_allocate($new_image, $config->get_string(TranscodeConfig::ALPHA_COLOR));
-                        if ($background_color === false) {
-                            throw new ImageTranscodeException("Could not allocate background color");
-                        }
                         if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
                             throw new ImageTranscodeException("Could not fill background color");
                         }

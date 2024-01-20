@@ -6,6 +6,9 @@ namespace Shimmie2;
 
 class BulkActionsTheme extends Themelet
 {
+    /**
+     * @param array<array{block:string,access_key:?string,confirmation_message:string,action:string,button_text:string,position:int}> $actions
+     */
     public function display_selector(Page $page, array $actions, string $query): void
     {
         $body = "<input type='hidden' name='bulk_selected_ids' id='bulk_selected_ids' />

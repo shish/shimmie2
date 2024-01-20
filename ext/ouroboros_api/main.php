@@ -22,6 +22,7 @@ class _SafeOuroborosImage
      * Post Meta
      */
     public ?int $change = null;
+    /** @var array{n:int,s:int,json_class:string} */
     public ?array $created_at = null;
     public ?int $id = null;
     public ?int $parent_id = null;
@@ -103,7 +104,8 @@ class _SafeOuroborosImage
 
 class OuroborosPost extends _SafeOuroborosImage
 {
-    public array $file = [];
+    /** @var array{tmp_name:string,name:string} */
+    public ?array $file = null;
     public bool $is_rating_locked = false;
     public bool $is_note_locked = false;
 
@@ -111,6 +113,8 @@ class OuroborosPost extends _SafeOuroborosImage
      * Initialize an OuroborosPost for creation
      * Mainly just acts as a wrapper and validation layer
      * @noinspection PhpMissingParentConstructorInspection
+     *
+     * @param array<string,mixed> $post
      */
     public function __construct(array $post)
     {
@@ -184,6 +188,9 @@ class _SafeOuroborosTag
     public string $name = '';
     public int $type = 0;
 
+    /**
+     * @param array{id:int,tag:string,count:int} $tag
+     */
     public function __construct(array $tag)
     {
         $this->count = $tag['count'];
@@ -319,7 +326,7 @@ class OuroborosAPI extends Extension
     /**
      * Wrapper for post creation
      */
-    protected function postCreate(OuroborosPost $post, ?string $md5 = '')
+    protected function postCreate(OuroborosPost $post, ?string $md5 = ''): void
     {
         global $config, $database;
         $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
@@ -397,7 +404,7 @@ class OuroborosAPI extends Extension
     /**
      * Wrapper for getting a single post
      */
-    protected function postShow(int $id = null)
+    protected function postShow(int $id = null): void
     {
         if (!is_null($id)) {
             $post = new _SafeOuroborosImage(Image::by_id($id));
@@ -411,7 +418,7 @@ class OuroborosAPI extends Extension
      * Wrapper for getting a list of posts
      * @param string[] $tags
      */
-    protected function postIndex(int $limit, int $page, array $tags)
+    protected function postIndex(int $limit, int $page, array $tags): void
     {
         $start = ($page - 1) * $limit;
         $results = Search::find_images(max($start, 0), min($limit, 100), $tags);
@@ -429,7 +436,7 @@ class OuroborosAPI extends Extension
      * Tag
      */
 
-    protected function tagIndex(int $limit, int $page, string $order, int $id, int $after_id, string $name, string $name_pattern)
+    protected function tagIndex(int $limit, int $page, string $order, int $id, int $after_id, string $name, string $name_pattern): void
     {
         global $database, $config;
         $start = ($page - 1) * $limit;
@@ -476,7 +483,7 @@ class OuroborosAPI extends Extension
     /**
      * Sends a simple {success,reason} message to browser
      */
-    private function sendResponse(int $code = 200, string $reason = '', bool $location = false)
+    private function sendResponse(int $code = 200, string $reason = '', bool $location = false): void
     {
         global $page;
         if ($code == 200) {
@@ -529,7 +536,10 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    private function sendData(string $type = '', array $data = [], int $offset = 0)
+    /**
+     * @param list<_SafeOuroborosTag>|list<_SafeOuroborosImage> $data
+     */
+    private function sendData(string $type = '', array $data = [], int $offset = 0): void
     {
         global $page;
         $response = '';
@@ -539,22 +549,20 @@ class OuroborosAPI extends Extension
             $xml = new \XMLWriter();
             $xml->openMemory();
             $xml->startDocument('1.0', 'utf-8');
-            if (array_key_exists(0, $data)) {
-                $xml->startElement($type . 's');
-                if ($type == 'post') {
-                    $xml->writeAttribute('count', (string)count($data));
-                    $xml->writeAttribute('offset', (string)$offset);
-                }
-                if ($type == 'tag') {
-                    $xml->writeAttribute('type', 'array');
-                }
-                foreach ($data as $item) {
-                    $this->createItemXML($xml, $type, $item);
-                }
-                $xml->endElement();
-            } else {
-                $this->createItemXML($xml, $type, $data);
+
+            $xml->startElement($type . 's');
+            if ($type == 'post') {
+                $xml->writeAttribute('count', (string)count($data));
+                $xml->writeAttribute('offset', (string)$offset);
             }
+            if ($type == 'tag') {
+                $xml->writeAttribute('type', 'array');
+            }
+            foreach ($data as $item) {
+                $this->createItemXML($xml, $type, $item);
+            }
+            $xml->endElement();
+
             $xml->endDocument();
             $response = $xml->outputMemory(true);
             unset($xml);
@@ -562,10 +570,10 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    private function createItemXML(\XMLWriter $xml, string $type, $item)
+    private function createItemXML(\XMLWriter $xml, string $type, _SafeOuroborosTag|_SafeOuroborosImage $item): void
     {
         $xml->startElement($type);
-        foreach ($item as $key => $val) {
+        foreach (json_decode(json_encode($item)) as $key => $val) {
             if ($key == 'created_at' && $type == 'post') {
                 $xml->writeAttribute($key, $val['s']);
             } else {
@@ -584,7 +592,7 @@ class OuroborosAPI extends Extension
      * Currently checks for either user & session in request or cookies
      * and initializes a global User
      */
-    private function tryAuth()
+    private function tryAuth(): void
     {
         global $config, $user;
 

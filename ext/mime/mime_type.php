@@ -100,6 +100,9 @@ class MimeType
         return $mime;
     }
 
+    /**
+     * @param array<string> $mime_array
+     */
     public static function matches_array(string $mime, array $mime_array, bool $exact = false): bool
     {
         // If there's an exact match, find it and that's it
@@ -151,6 +154,9 @@ class MimeType
     }
 
 
+    /**
+     * @param array<int|null> $comparison
+     */
     private static function compare_file_bytes(string $file_name, array $comparison): bool
     {
         $size = filesize($file_name);

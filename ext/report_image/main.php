@@ -167,7 +167,7 @@ class ReportImage extends Extension
         $sb->add_choice_option("report_image_publicity", $opts, "Show publicly: ");
     }
 
-    public function delete_reports_by(int $user_id)
+    public function delete_reports_by(int $user_id): void
     {
         global $cache, $database;
         $database->execute("DELETE FROM image_reports WHERE reporter_id=:reporter_id", ['reporter_id' => $user_id]);
@@ -210,6 +210,9 @@ class ReportImage extends Extension
         return $reps;
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     */
     public function get_reported_images(): array
     {
         global $database;

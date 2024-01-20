@@ -6,6 +6,9 @@ namespace Shimmie2;
 
 class CustomCommentListTheme extends CommentListTheme
 {
+    /**
+     * @param array<array{0: Image, 1: Comment[]}> $images
+     */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
         global $config, $page, $user;
@@ -49,7 +52,7 @@ class CustomCommentListTheme extends CommentListTheme
             }
             $p = autodate($image->posted);
 
-            $r = Extension::is_enabled(RatingsInfo::KEY) ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
+            $r = Extension::is_enabled(RatingsInfo::KEY) ? "<b>Rating</b> ".Ratings::rating_to_human($image['rating']) : "";
             $comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
 
             $comment_count = count($comments);

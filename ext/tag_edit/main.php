@@ -56,8 +56,11 @@ class TagSetException extends UserErrorException
 class TagSetEvent extends Event
 {
     public Image $image;
+    /** @var string[] */
     public array $old_tags;
+    /** @var string[] */
     public array $new_tags;
+    /** @var string[] */
     public array $metatags;
 
     /**
@@ -323,7 +326,7 @@ class TagEdit extends Extension
         $event->replace('$tags', $tags);
     }
 
-    private function mass_tag_edit(string $search, string $replace, bool $commit)
+    private function mass_tag_edit(string $search, string $replace, bool $commit): void
     {
         global $database, $tracer_enabled, $_tracer;
 
@@ -386,7 +389,7 @@ class TagEdit extends Extension
         }
     }
 
-    private function mass_source_edit(string $tags, string $source)
+    private function mass_source_edit(string $tags, string $source): void
     {
         $tags = Tag::explode($tags);
 

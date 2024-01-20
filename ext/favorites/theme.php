@@ -22,6 +22,9 @@ class FavoritesTheme extends Themelet
         );
     }
 
+    /**
+     * @param string[] $username_array
+     */
     public function display_people(array $username_array): void
     {
         global $page;

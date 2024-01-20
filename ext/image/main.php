@@ -215,7 +215,7 @@ class ImageIO extends Extension
         $event->replace("\\n", "\n");
     }
 
-    private function send_file(int $image_id, string $type)
+    private function send_file(int $image_id, string $type): void
     {
         global $config, $page;
 

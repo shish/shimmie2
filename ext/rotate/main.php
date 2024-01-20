@@ -96,7 +96,7 @@ class RotateImage extends Extension
 
     // Private functions
     /* ----------------------------- */
-    private function rotate_image(int $image_id, int $deg)
+    private function rotate_image(int $image_id, int $deg): void
     {
         if (($deg <= -360) || ($deg >= 360)) {
             throw new ImageRotateException("Invalid options for rotation angle. ($deg)");

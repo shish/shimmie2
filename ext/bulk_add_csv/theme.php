@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class BulkAddCSVTheme extends Themelet
 {
+    /** @var Block[] */
     private array $messages = [];
 
     /*
@@ -44,7 +45,7 @@ class BulkAddCSVTheme extends Themelet
         $page->add_block(new Block("Bulk Add CSV", $html));
     }
 
-    public function add_status($title, $body)
+    public function add_status(string $title, string $body): void
     {
         $this->messages[] = new Block($title, $body);
     }

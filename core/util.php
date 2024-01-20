@@ -285,12 +285,16 @@ function load_balance_url(string $tmpl, string $hash, int $n = 0): string
     return $tmpl;
 }
 
+/**
+ * @return null|array<string, mixed>
+ */
 function fetch_url(string $url, string $mfile): ?array
 {
     global $config;
 
     if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "curl" && function_exists("curl_init")) {
         $ch = curl_init($url);
+        assert($ch !== false);
         $fp = fopen($mfile, "w");
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -397,6 +401,9 @@ function path_to_tags(string $path): array
     return $tags;
 }
 
+/**
+ * @return string[]
+ */
 function get_dir_contents(string $dir): array
 {
     assert(!empty($dir));
@@ -442,7 +449,9 @@ function remove_empty_dirs(string $dir): bool
     return $result;
 }
 
-
+/**
+ * @return string[]
+ */
 function get_files_recursively(string $dir): array
 {
     assert(!empty($dir));
@@ -475,6 +484,8 @@ function get_files_recursively(string $dir): array
 
 /**
  * Returns amount of files & total size of dir.
+ *
+ * @return array{"path": string, "total_files": int, "total_mb": string}
  */
 function scan_dir(string $path): array
 {

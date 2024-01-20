@@ -155,6 +155,9 @@ class BulkImportExport extends DataHandlerExtension
         return false;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function get_export_data(\ZipArchive $zip): ?array
     {
         $info = $zip->getStream(self::EXPORT_INFO_FILE_NAME);

@@ -10,6 +10,9 @@ namespace Shimmie2;
 
 /**
  * Return the unique elements of an array, case insensitively
+ *
+ * @param array<string> $array
+ * @return list<string>
  */
 function array_iunique(array $array): array
 {
@@ -98,6 +101,8 @@ function full_copy(string $source, string $target): void
 
 /**
  * Return a list of all the regular files in a directory and subdirectories
+ *
+ * @return string[]
  */
 function list_files(string $base, string $_sub_dir = ""): array
 {
@@ -203,6 +208,8 @@ if (!function_exists('http_parse_headers')) {
 /**
  * HTTP Headers can sometimes be lowercase which will cause issues.
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
+ *
+ * @param array<string, mixed> $headers
  */
 function find_header(array $headers, string $name): ?string
 {
@@ -225,20 +232,22 @@ function find_header(array $headers, string $name): ?string
 if (!function_exists('mb_strlen')) {
     // TODO: we should warn the admin that they are missing multibyte support
     /** @noinspection PhpUnusedParameterInspection */
-    function mb_strlen($str, $encoding): int
+    function mb_strlen(string $str, string $encoding): int
     {
         return strlen($str);
     }
-    function mb_internal_encoding($encoding): void
+    function mb_internal_encoding(string $encoding): void
     {
     }
-    function mb_strtolower($str): string
+    function mb_strtolower(string $str): string
     {
         return strtolower($str);
     }
 }
 
-/** @noinspection PhpUnhandledExceptionInspection */
+/**
+ * @return class-string[]
+ */
 function get_subclasses_of(string $parent): array
 {
     $result = [];
@@ -307,6 +316,8 @@ function get_base_href(): string
 
 /**
  * The opposite of the standard library's parse_url
+ *
+ * @param array<string, string|int> $parsed_url
  */
 function unparse_url(array $parsed_url): string
 {
@@ -376,7 +387,7 @@ function url_escape(?string $input): string
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  */
-function bool_escape($input): bool
+function bool_escape(mixed $input): bool
 {
     /*
      Sometimes, I don't like PHP -- this, is one of those times...
@@ -634,6 +645,10 @@ function isValidDate(string $date): bool
     return false;
 }
 
+/**
+ * @param array<string, string> $inputs
+ * @return array<string, mixed>
+ */
 function validate_input(array $inputs): array
 {
     $outputs = [];
@@ -754,6 +769,12 @@ function join_path(string ...$paths): string
 
 /**
  * Perform callback on each item returned by an iterator.
+ *
+ * @template T
+ * @template U
+ * @param callable(U):T $callback
+ * @param \iterator<U> $iter
+ * @return \Generator<T>
  */
 function iterator_map(callable $callback, \iterator $iter): \Generator
 {
@@ -764,6 +785,12 @@ function iterator_map(callable $callback, \iterator $iter): \Generator
 
 /**
  * Perform callback on each item returned by an iterator and combine the result into an array.
+ *
+ * @template T
+ * @template U
+ * @param callable(U):T $callback
+ * @param \iterator<U> $iter
+ * @return array<T>
  */
 function iterator_map_to_array(callable $callback, \iterator $iter): array
 {

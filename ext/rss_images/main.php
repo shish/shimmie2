@@ -47,7 +47,11 @@ class RSSImages extends Extension
         $cache->delete("rss-item-image:{$event->image->id}");
     }
 
-    private function do_rss(array $images, array $search_terms, int $page_number)
+    /**
+     * @param Image[] $images
+     * @param string[] $search_terms
+     */
+    private function do_rss(array $images, array $search_terms, int $page_number): void
     {
         global $page;
         global $config;

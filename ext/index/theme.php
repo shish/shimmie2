@@ -13,9 +13,13 @@ class IndexTheme extends Themelet
 {
     protected int $page_number;
     protected int $total_pages;
+    /** @var string[] */
     protected array $search_terms;
 
-    public function set_page(int $page_number, int $total_pages, array $search_terms)
+    /**
+     * @param string[] $search_terms
+     */
+    public function set_page(int $page_number, int $total_pages, array $search_terms): void
     {
         $this->page_number = $page_number;
         $this->total_pages = $total_pages;
@@ -109,7 +113,7 @@ and of course start organising your images :-)
         return $table;
     }
 
-    protected function display_shortwiki(Page $page)
+    protected function display_shortwiki(Page $page): void
     {
         global $config;
 
@@ -141,7 +145,7 @@ and of course start organising your images :-)
     /**
      * @param Image[] $images
      */
-    protected function display_page_header(Page $page, array $images)
+    protected function display_page_header(Page $page, array $images): void
     {
         global $config;
 
@@ -167,7 +171,7 @@ and of course start organising your images :-)
     /**
      * @param Image[] $images
      */
-    protected function display_page_images(Page $page, array $images)
+    protected function display_page_images(Page $page, array $images): void
     {
         if (count($this->search_terms) > 0) {
             if ($this->page_number > 3) {

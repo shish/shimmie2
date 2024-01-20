@@ -13,10 +13,14 @@ class BulkActionException extends SCoreException
 }
 class BulkActionBlockBuildingEvent extends Event
 {
+    /**
+     * @var array<array{block:string,access_key:?string,confirmation_message:string,action:string,button_text:string,position:int}>
+     */
     public array $actions = [];
+    /** @var string[] */
     public array $search_terms = [];
 
-    public function add_action(string $action, string $button_text, string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40)
+    public function add_action(string $action, string $button_text, string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40): void
     {
         if (!empty($access_key)) {
             assert(strlen($access_key) == 1);
@@ -28,13 +32,13 @@ class BulkActionBlockBuildingEvent extends Event
         }
 
         $this->actions[] = [
-                "block" => $block,
-                "access_key" => $access_key,
-                "confirmation_message" => $confirmation_message,
-                "action" => $action,
-                "button_text" => $button_text,
-                "position" => $position
-            ];
+            "block" => $block,
+            "access_key" => $access_key,
+            "confirmation_message" => $confirmation_message,
+            "action" => $action,
+            "button_text" => $button_text,
+            "position" => $position
+        ];
     }
 }
 
@@ -194,29 +198,42 @@ class BulkActions extends Extension
         }
     }
 
+    /**
+     * @param int[] $data
+     * @return \Generator<Image>
+     */
     private function yield_items(array $data): \Generator
     {
         foreach ($data as $id) {
-            if (is_numeric($id)) {
-                $image = Image::by_id($id);
-                if ($image != null) {
-                    yield $image;
-                }
+            $image = Image::by_id($id);
+            if ($image != null) {
+                yield $image;
             }
         }
     }
 
+    /**
+     * @return \Generator<Image>
+     */
     private function yield_search_results(string $query): \Generator
     {
         $tags = Tag::explode($query);
         return Search::find_images_iterable(0, null, $tags);
     }
 
-    private function sort_blocks($a, $b)
+    /**
+     * @param array{position: int} $a
+     * @param array{position: int} $b
+     */
+    private function sort_blocks(array $a, array $b): int
     {
         return $a["position"] - $b["position"];
     }
 
+    /**
+     * @param iterable<Image> $posts
+     * @return array{0: int, 1: int}
+     */
     private function delete_posts(iterable $posts): array
     {
         global $page;
@@ -240,6 +257,9 @@ class BulkActions extends Extension
         return [$total, $size];
     }
 
+    /**
+     * @param iterable<Image> $items
+     */
     private function tag_items(iterable $items, string $tags, bool $replace): int
     {
         $tags = Tag::explode($tags);
@@ -280,6 +300,9 @@ class BulkActions extends Extension
         return $total;
     }
 
+    /**
+     * @param iterable<Image> $items
+     */
     private function set_source(iterable $items, string $source): int
     {
         global $page;

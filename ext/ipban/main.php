@@ -130,7 +130,7 @@ class IPBan extends Extension
 
         // Check if our current IP is in either of the ban lists
         $active_ban_id = (
-            $this->find_active_ban($ips, get_real_ip(), $networks)
+            $this->find_active_ban(get_real_ip(), $ips, $networks)
         );
 
         // If an active ban is found, act on it
@@ -355,11 +355,12 @@ class IPBan extends Extension
         }
     }
 
-    public function find_active_ban($ips, $remote, $networks)
+    /**
+     * @param array<string,int> $ips
+     * @param array<string,int> $networks
+     */
+    public function find_active_ban(string $remote, array $ips, array $networks): ?int
     {
-        if (!$remote) {
-            return null;
-        }
         $active_ban_id = null;
         if (isset($ips[$remote])) {
             $active_ban_id = $ips[$remote];

@@ -6,9 +6,10 @@ namespace Shimmie2;
 
 class HelpPageListBuildingEvent extends Event
 {
+    /** @var array<string,string> */
     public array $pages = [];
 
-    public function add_page(string $key, string $name)
+    public function add_page(string $key, string $name): void
     {
         $this->pages[$key] = $name;
     }
@@ -17,6 +18,7 @@ class HelpPageListBuildingEvent extends Event
 class HelpPageBuildingEvent extends Event
 {
     public string $key;
+    /** @var array<string,array<Block>> */
     public array $blocks = [];
 
     public function __construct(string $key)
@@ -25,7 +27,7 @@ class HelpPageBuildingEvent extends Event
         $this->key = $key;
     }
 
-    public function add_block(Block $block, int $position = 50)
+    public function add_block(Block $block, int $position = 50): void
     {
         if (!array_key_exists("$position", $this->blocks)) {
             $this->blocks["$position"] = [];

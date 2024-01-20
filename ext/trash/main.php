@@ -135,6 +135,9 @@ class Trash extends Extension
         }
     }
 
+    /**
+     * @param string[] $context
+     */
     private function no_trash_query(array $context): bool
     {
         foreach ($context as $term) {
@@ -145,7 +148,7 @@ class Trash extends Extension
         return true;
     }
 
-    public static function set_trash(int $image_id, bool $trash)
+    public static function set_trash(int $image_id, bool $trash): void
     {
         global $database;
 

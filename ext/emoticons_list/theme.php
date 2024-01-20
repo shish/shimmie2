@@ -6,6 +6,9 @@ namespace Shimmie2;
 
 class EmoticonListTheme extends Themelet
 {
+    /**
+     * @param string[] $list
+     */
     public function display_emotes(array $list): void
     {
         global $page;

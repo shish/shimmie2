@@ -8,6 +8,10 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\INPUT;
 
+/**
+ * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
+ * @phpstan-type Note array{id:int,x1:int,y1:int,height:int,width:int,note:string}
+ */
 class NotesTheme extends Themelet
 {
     public function note_button(int $image_id): HTMLElement
@@ -52,6 +56,9 @@ class NotesTheme extends Themelet
     }
 
     // check action POST on form
+    /**
+     * @param Note[] $recovered_notes
+     */
     public function display_note_system(Page $page, int $image_id, array $recovered_notes, bool $adminOptions): void
     {
         $to_json = [];
@@ -73,8 +80,10 @@ class NotesTheme extends Themelet
         </script>");
     }
 
-
-    public function display_note_list($images, $pageNumber, $totalPages): void
+    /**
+     * @param array<array{0:Image}> $images
+     */
+    public function display_note_list(array $images, int $pageNumber, int $totalPages): void
     {
         global $page;
         $pool_images = '';
@@ -94,7 +103,10 @@ class NotesTheme extends Themelet
         $page->add_block(new Block("Notes", $pool_images, "main", 20));
     }
 
-    public function display_note_requests($images, $pageNumber, $totalPages): void
+    /**
+     * @param array<array{0:Image}> $images
+     */
+    public function display_note_requests(array $images, int $pageNumber, int $totalPages): void
     {
         global $page;
 
@@ -115,6 +127,9 @@ class NotesTheme extends Themelet
         $page->add_block(new Block("Note Requests", $pool_images, "main", 20));
     }
 
+    /**
+     * @param NoteHistory[] $histories
+     */
     private function get_history(array $histories): string
     {
         global $user;
@@ -157,7 +172,10 @@ class NotesTheme extends Themelet
         return $html;
     }
 
-    public function display_histories($histories, $pageNumber, $totalPages): void
+    /**
+     * @param NoteHistory[] $histories
+     */
+    public function display_histories(array $histories, int $pageNumber, int $totalPages): void
     {
         global $page;
 
@@ -170,7 +188,10 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
 
-    public function display_history($histories, $pageNumber, $totalPages): void
+    /**
+     * @param NoteHistory[] $histories
+     */
+    public function display_history(array $histories, int $pageNumber, int $totalPages): void
     {
         global $page;
 

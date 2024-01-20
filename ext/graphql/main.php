@@ -115,6 +115,9 @@ class GraphQL extends Extension
         }
     }
 
+    /**
+     * @return array{error?:string,results?:array<array{error?:string,image_ids?:int[]}>}
+     */
     private static function handle_uploads(): array
     {
         global $user;
@@ -135,7 +138,7 @@ class GraphQL extends Extension
                 break;
             }
             try {
-                $results[] = self::handle_upload($n, $common_tags, $common_source);
+                $results[] = ["image_ids" => self::handle_upload($n, $common_tags, $common_source)];
             } catch(\Exception $e) {
                 $results[] = ["error" => $e->getMessage()];
             }
@@ -143,10 +146,14 @@ class GraphQL extends Extension
         return ["results" => $results];
     }
 
+    /**
+     * @return int[]
+     */
     private static function handle_upload(int $n, string $common_tags, string $common_source): array
     {
+        global $database;
         if (!empty($_POST["url$n"])) {
-            throw new \Exception("URLs not handled yet");
+            throw new UploadException("URLs not handled yet");
         } else {
             $ec = $_FILES["data$n"]["error"];
             switch($ec) {
@@ -155,9 +162,9 @@ class GraphQL extends Extension
                     $filename = $_FILES["data$n"]["name"];
                     break;
                 case UPLOAD_ERR_INI_SIZE:
-                    return ["error" => "File larger than PHP can handle"];
+                    throw new UploadException("File larger than PHP can handle");
                 default:
-                    return ["error" => "Mystery error: $ec"];
+                    throw new UploadException("Mystery error: $ec");
             }
         }
 
@@ -166,13 +173,15 @@ class GraphQL extends Extension
         if (!empty($_POST["source$n"])) {
             $source = $_POST["source$n"];
         }
-        $event = send_event(new DataUploadEvent($tmpname, [
-            'filename' => $filename,
-            'tags' => Tag::explode($tags),
-            'source' => $source,
-        ]));
+        $event = $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source) {
+            return send_event(new DataUploadEvent($tmpname, [
+                'filename' => $filename,
+                'tags' => Tag::explode($tags),
+                'source' => $source,
+            ]));
+        });
 
-        return ["image_ids" => array_map(fn ($im) => $im->id, $event->images)];
+        return array_map(fn ($im) => $im->id, $event->images);
     }
 
     public function onCliGen(CliGenEvent $event): void

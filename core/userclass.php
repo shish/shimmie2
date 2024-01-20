@@ -23,8 +23,13 @@ class UserClass
     #[Field]
     public ?string $name = null;
     public ?UserClass $parent = null;
+
+    /** @var array<string, bool> */
     public array $abilities = [];
 
+    /**
+     * @param array<string, bool> $abilities
+     */
     public function __construct(string $name, string $parent = null, array $abilities = [])
     {
         global $_shm_user_classes;
@@ -39,6 +44,9 @@ class UserClass
         $_shm_user_classes[$name] = $this;
     }
 
+    /**
+     * @return string[]
+     */
     #[Field(type: "[Permission!]!")]
     public function permissions(): array
     {

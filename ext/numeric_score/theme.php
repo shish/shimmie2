@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class NumericScoreTheme extends Themelet
 {
-    public function get_voter(Image $image)
+    public function get_voter(Image $image): void
     {
         global $user, $page;
         $i_image_id = $image->id;
@@ -55,7 +55,7 @@ class NumericScoreTheme extends Themelet
         $page->add_block(new Block("Post Score", $html, "left", 20));
     }
 
-    public function get_nuller(User $duser)
+    public function get_nuller(User $duser): void
     {
         global $user, $page;
         $html = "
@@ -68,7 +68,11 @@ class NumericScoreTheme extends Themelet
         $page->add_block(new Block("Votes", $html, "main", 80));
     }
 
-    public function view_popular($images, $dte)
+    /**
+     * @param Image[] $images
+     * @param string[] $dte
+     */
+    public function view_popular(array $images, array $dte): void
     {
         global $page, $config;
 

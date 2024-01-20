@@ -22,7 +22,7 @@ class ImageAdminBlockBuildingEvent extends Event
         $this->context = $context;
     }
 
-    public function add_part(HTMLElement $html, int $position = 50)
+    public function add_part(HTMLElement $html, int $position = 50): void
     {
         while (isset($this->parts[$position])) {
             $position++;

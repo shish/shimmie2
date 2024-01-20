@@ -6,12 +6,13 @@ namespace Shimmie2;
 
 class RandomListTheme extends Themelet
 {
+    /** @var string[] */
     protected array $search_terms;
 
     /**
      * @param string[] $search_terms
      */
-    public function set_page(array $search_terms)
+    public function set_page(array $search_terms): void
     {
         $this->search_terms = $search_terms;
     }
@@ -42,6 +43,9 @@ class RandomListTheme extends Themelet
         $page->add_block(new Block("Navigation", $nav, "left", 0));
     }
 
+    /**
+     * @param string[] $search_terms
+     */
     protected function build_navigation(array $search_terms): string
     {
         $h_search_string = html_escape(Tag::implode($search_terms));

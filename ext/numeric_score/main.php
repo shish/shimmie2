@@ -33,8 +33,8 @@ class NumericScoreVote
     public static function score(Image $post): int
     {
         global $database;
-        if ($post->score ?? null) {
-            return $post->score;
+        if ($post['score'] ?? null) {
+            return $post['score'];
         }
         return $database->get_one(
             "SELECT sum(score) FROM numeric_score_votes WHERE image_id=:image_id",
@@ -42,6 +42,9 @@ class NumericScoreVote
         ) ?? 0;
     }
 
+    /**
+     * @return NumericScoreVote[]
+     */
     #[Field(extends: "Post", type: "[NumericScoreVote!]!")]
     public static function votes(Image $post): array
     {
@@ -253,7 +256,7 @@ class NumericScore extends Extension
         $this->delete_votes_by($event->id);
     }
 
-    public function delete_votes_by(int $user_id)
+    public function delete_votes_by(int $user_id): void
     {
         global $database;
 
@@ -405,7 +408,7 @@ class NumericScore extends Extension
         }
     }
 
-    private function add_vote(int $image_id, int $user_id, int $score)
+    private function add_vote(int $image_id, int $user_id, int $score): void
     {
         global $database;
         $database->execute(

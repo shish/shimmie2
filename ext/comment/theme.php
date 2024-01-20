@@ -8,10 +8,13 @@ class CommentListTheme extends Themelet
 {
     private bool $show_anon_id = false;
     private int $anon_id = 1;
+    /** @var array<string,int> */
     private array $anon_map = [];
 
     /**
      * Display a page with a list of images, and for each image, the image's comments.
+     *
+     * @param array<array{0: Image, 1: Comment[]}> $images
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
@@ -164,6 +167,9 @@ class CommentListTheme extends Themelet
         $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
     }
 
+    /**
+     * @param Comment[] $comments
+     */
     public function display_all_user_comments(array $comments, int $page_number, int $total_pages, User $user): void
     {
         global $page;

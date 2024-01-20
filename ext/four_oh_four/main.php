@@ -21,7 +21,10 @@ class FourOhFour extends Extension
         }
     }
 
-    private function count_main($blocks): int
+    /**
+     * @param Block[] $blocks
+     */
+    private function count_main(array $blocks): int
     {
         $n = 0;
         foreach ($blocks as $block) {

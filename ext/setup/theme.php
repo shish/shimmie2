@@ -43,7 +43,10 @@ class SetupTheme extends Themelet
         $page->add_block(new Block("Setup", $table));
     }
 
-    public function display_advanced(Page $page, $options): void
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function display_advanced(Page $page, array $options): void
     {
         $h_rows = "";
         ksort($options);

@@ -233,6 +233,8 @@ class Notes extends Extension
 
     /**
      * HERE WE GET ALL NOTES FOR DISPLAYED IMAGE.
+     *
+     * @return array<string, mixed>
      */
     private function get_notes(int $imageID): array
     {
@@ -293,7 +295,7 @@ class Notes extends Extension
         return $noteID;
     }
 
-    private function add_note_request()
+    private function add_note_request(): void
     {
         global $database, $user;
 
@@ -312,7 +314,7 @@ class Notes extends Extension
         log_info("notes", "Note requested {$resultID} by {$user->name}");
     }
 
-    private function update_note()
+    private function update_note(): void
     {
         global $database;
 
@@ -331,7 +333,7 @@ class Notes extends Extension
         $this->add_history(1, $note['note_id'], $note['image_id'], $note['x1'], $note['y1'], $note['height'], $note['width'], $note['note']);
     }
 
-    private function delete_note()
+    private function delete_note(): void
     {
         global $user, $database;
 
@@ -344,7 +346,7 @@ class Notes extends Extension
         log_info("notes", "Note deleted {$note["note_id"]} by {$user->name}");
     }
 
-    private function nuke_notes()
+    private function nuke_notes(): void
     {
         global $database, $user;
         $image_id = int_escape($_POST["image_id"]);
@@ -352,7 +354,7 @@ class Notes extends Extension
         log_info("notes", "Notes deleted from {$image_id} by {$user->name}");
     }
 
-    private function nuke_requests()
+    private function nuke_requests(): void
     {
         global $database, $user;
         $image_id = int_escape($_POST["image_id"]);
@@ -362,7 +364,7 @@ class Notes extends Extension
         log_info("notes", "Requests deleted from {$image_id} by {$user->name}");
     }
 
-    private function get_notes_list(PageRequestEvent $event)
+    private function get_notes_list(PageRequestEvent $event): void
     {
         global $database, $config;
 
@@ -380,7 +382,7 @@ class Notes extends Extension
             ['enable' => 1, 'offset' => $pageNumber * $notesPerPage, 'limit' => $notesPerPage]
         );
 
-        $totalPages = ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 
         $images = [];
         while ($row = $result->fetch()) {
@@ -390,7 +392,7 @@ class Notes extends Extension
         $this->theme->display_note_list($images, $pageNumber + 1, $totalPages);
     }
 
-    private function get_notes_requests(PageRequestEvent $event)
+    private function get_notes_requests(PageRequestEvent $event): void
     {
         global $config, $database;
 
@@ -398,9 +400,7 @@ class Notes extends Extension
 
         $requestsPerPage = $config->get_int('notesRequestsPerPage');
 
-
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
-
 
         $result = $database->execute(
             "
@@ -410,7 +410,7 @@ class Notes extends Extension
             ["offset" => $pageNumber * $requestsPerPage, "limit" => $requestsPerPage]
         );
 
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_request") / $requestsPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM note_request") / $requestsPerPage);
 
         $images = [];
         while ($row = $result->fetch()) {
@@ -420,7 +420,7 @@ class Notes extends Extension
         $this->theme->display_note_requests($images, $pageNumber + 1, $totalPages);
     }
 
-    private function add_history($noteEnable, $noteID, $imageID, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText)
+    private function add_history(int $noteEnable, int $noteID, int $imageID, int $noteX1, int $noteY1, int $noteHeight, int $noteWidth, string $noteText): void
     {
         global $user, $database;
 
@@ -437,7 +437,7 @@ class Notes extends Extension
         );
     }
 
-    private function get_histories(PageRequestEvent $event)
+    private function get_histories(PageRequestEvent $event): void
     {
         global $config, $database;
 
@@ -455,12 +455,12 @@ class Notes extends Extension
             ['offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_histories") / $historiesPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM note_histories") / $historiesPerPage);
 
         $this->theme->display_histories($histories, $pageNumber + 1, $totalPages);
     }
 
-    private function get_history(PageRequestEvent $event)
+    private function get_history(PageRequestEvent $event): void
     {
         global $config, $database;
 
@@ -479,7 +479,7 @@ class Notes extends Extension
             ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
 
         $this->theme->display_history($histories, $pageNumber + 1, $totalPages);
     }
@@ -487,7 +487,7 @@ class Notes extends Extension
     /**
      * HERE GO BACK IN HISTORY AND SET THE OLD NOTE. IF WAS REMOVED WE RE-ADD IT.
      */
-    private function revert_history(int $noteID, int $reviewID)
+    private function revert_history(int $noteID, int $reviewID): void
     {
         global $database;
 

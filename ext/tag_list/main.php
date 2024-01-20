@@ -11,7 +11,7 @@ class TagList extends Extension
     /** @var TagListTheme */
     protected Themelet $theme;
 
-    private $tagcategories = null;
+    private mixed $tagcategories = null;
 
     public function onInitExt(InitExtEvent $event): void
     {
@@ -152,6 +152,9 @@ class TagList extends Extension
         }
     }
 
+    /**
+     * @return int[]
+     */
     private static function get_omitted_tags(): array
     {
         global $cache, $config, $database;
@@ -452,7 +455,7 @@ class TagList extends Extension
         }
     }
 
-    private function add_split_tags_block(Page $page, Image $image)
+    private function add_split_tags_block(Page $page, Image $image): void
     {
         global $database;
 
@@ -471,7 +474,7 @@ class TagList extends Extension
         }
     }
 
-    private function add_tags_block(Page $page, Image $image)
+    private function add_tags_block(Page $page, Image $image): void
     {
         global $database;
 
@@ -490,7 +493,7 @@ class TagList extends Extension
         }
     }
 
-    private function add_popular_block(Page $page)
+    private function add_popular_block(Page $page): void
     {
         global $cache, $database, $config;
 
@@ -531,7 +534,7 @@ class TagList extends Extension
     /**
      * @param string[] $search
      */
-    private function add_refine_block(Page $page, array $search)
+    private function add_refine_block(Page $page, array $search): void
     {
         global $config;
 
@@ -548,6 +551,10 @@ class TagList extends Extension
         }
     }
 
+    /**
+     * @param string[] $search
+     * @return array<array{tag: string, count: int}>
+     */
     public static function get_related_tags(array $search, int $limit): array
     {
         global $cache, $database;

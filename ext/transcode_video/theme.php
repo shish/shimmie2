@@ -8,8 +8,10 @@ use function MicroHTML\{rawHTML};
 
 class TranscodeVideoTheme extends Themelet
 {
-    /*
+    /**
      * Display a link to resize an image
+     *
+     * @param array<string, string> $options
      */
     public function get_transcode_html(Image $image, array $options): \MicroHTML\HTMLElement
     {
@@ -31,6 +33,9 @@ class TranscodeVideoTheme extends Themelet
         return rawHTML($html);
     }
 
+    /**
+     * @param array<string, string> $options
+     */
     public function get_transcode_picker_html(array $options): string
     {
         $html = "<select id='transcode_format'  name='transcode_format' required='required' >";

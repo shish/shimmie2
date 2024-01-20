@@ -298,7 +298,7 @@ class Media extends Extension
      * The factor of 2.5 is simply a rough guideline.
      * https://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
      *
-     * @param array $info The output of getimagesize() for the source file in question.
+     * @param array{0:int,1:int,2:int,bits?:int,channels?:int} $info The output of getimagesize() for the source file in question.
      * @return int The number of bytes an image resize operation is estimated to use.
      */
     public static function calc_memory_use(array $info): int
@@ -368,8 +368,10 @@ class Media extends Extension
         return $ok;
     }
 
-
-    public static function get_ffprobe_data($filename): array
+    /**
+     * @return array<string, mixed>
+     */
+    public static function get_ffprobe_data(string $filename): array
     {
         global $config;
 
@@ -410,7 +412,7 @@ class Media extends Extension
         return $ext;
     }
 
-    //    private static function image_save_imagick(Imagick $image, string $path, string $format, int $output_quality = 80, bool $minimize)
+    //    private static function image_save_imagick(Imagick $image, string $path, string $format, int $output_quality = 80, bool $minimize): void
     //    {
     //        switch ($format) {
     //            case FileExtension::PNG:
@@ -638,7 +640,7 @@ class Media extends Extension
      * Performs a resize operation on an image file using GD.
      *
      * @param string $image_filename The source file to be resized.
-     * @param array $info The output of getimagesize() for the source file.
+     * @param array{0:int,1:int,2:int} $info The output of getimagesize() for the source file.
      * @param int $new_width
      * @param int $new_height
      * @param string $output_filename
@@ -658,7 +660,7 @@ class Media extends Extension
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
         bool $allow_upscale = true
-    ) {
+    ): void {
         $width = $info[0];
         $height = $info[1];
 
@@ -785,9 +787,6 @@ class Media extends Extension
                     }
 
                     $background_color = Media::hex_color_allocate($new_image, $alpha_color);
-                    if ($background_color === false) {
-                        throw new ImageTranscodeException("Could not allocate background color");
-                    }
                     if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
                         throw new ImageTranscodeException("Could not fill background color");
                     }
@@ -839,7 +838,7 @@ class Media extends Extension
      * Determines the dimensions of a video file using ffmpeg.
      *
      * @param string $filename
-     * @return array [width, height]
+     * @return array{0: int, 1: int}
      */
     public static function video_size(string $filename): array
     {
@@ -939,12 +938,14 @@ class Media extends Extension
         }
     }
 
-    public static function hex_color_allocate($im, $hex)
+    public static function hex_color_allocate(mixed $im, string $hex): int
     {
         $hex = ltrim($hex, '#');
         $a = hexdec(substr($hex, 0, 2));
         $b = hexdec(substr($hex, 2, 2));
         $c = hexdec(substr($hex, 4, 2));
-        return imagecolorallocate($im, $a, $b, $c);
+        $col = imagecolorallocate($im, $a, $b, $c);
+        assert($col !== false);
+        return $col;
     }
 }

@@ -31,6 +31,9 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Error");
     }
 
+    /**
+     * @return array{0: int, 1: array{0: int, 1: int}}
+     */
     public function testCreate(): array
     {
         $this->log_in_as_user();
@@ -53,7 +56,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testOnViewImage($args): void
+    public function testOnViewImage(): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -67,7 +70,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testSearch($args): void
+    public function testSearch(): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -79,7 +82,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testList($args): void
+    public function testList(): void
     {
         $this->testCreate();
         $this->get_page("pool/list");
@@ -87,7 +90,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testView($args): void
+    public function testView(): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -96,7 +99,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testHistory($args): void
+    public function testHistory(): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -105,7 +108,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testCreate')]
-    public function testImport($args): void
+    public function testImport(): void
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -116,8 +119,11 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Pool");
     }
 
+    /**
+     * @return array{0: int, 1: array{0: int, 1:int}}
+     */
     #[Depends('testCreate')]
-    public function testRemovePosts($args): array
+    public function testRemovePosts(): array
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
@@ -131,9 +137,9 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testRemovePosts')]
-    public function testAddPosts($args): void
+    public function testAddPosts(): void
     {
-        [$pool_id, $image_ids] = $this->testRemovePosts(null);
+        [$pool_id, $image_ids] = $this->testRemovePosts();
 
         $page = $this->post_page("pool/add_posts", [
             "pool_id" => $pool_id,
@@ -142,8 +148,11 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
     }
 
+    /**
+     * @return array{0: int, 1: array{0: int, 1:int}}
+     */
     #[Depends('testCreate')]
-    public function testEditDescription($args): array
+    public function testEditDescription(): array
     {
         [$pool_id, $image_ids] = $this->testCreate();
 

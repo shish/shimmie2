@@ -21,6 +21,9 @@ class SearchTermParseEvent extends Event
     public array $tag_conditions = [];
     public ?string $order = null;
 
+    /**
+     * @param string[] $context
+     */
     public function __construct(int $id, string $term = null, array $context = [])
     {
         parent::__construct();
@@ -41,17 +44,17 @@ class SearchTermParseEvent extends Event
         $this->context = $context;
     }
 
-    public function add_querylet(Querylet $q)
+    public function add_querylet(Querylet $q): void
     {
         $this->add_img_condition(new ImgCondition($q, $this->positive));
     }
 
-    public function add_img_condition(ImgCondition $c)
+    public function add_img_condition(ImgCondition $c): void
     {
         $this->img_conditions[] = $c;
     }
 
-    public function add_tag_condition(TagCondition $c)
+    public function add_tag_condition(TagCondition $c): void
     {
         $this->tag_conditions[] = $c;
     }
@@ -63,7 +66,9 @@ class SearchTermParseException extends SCoreException
 
 class PostListBuildingEvent extends Event
 {
+    /** @var string[] */
     public array $search_terms = [];
+    /** @var array<int,string> */
     public array $parts = [];
 
     /**
@@ -75,7 +80,7 @@ class PostListBuildingEvent extends Event
         $this->search_terms = $search;
     }
 
-    public function add_control(string $html, int $position = 50)
+    public function add_control(string $html, int $position = 50): void
     {
         while (isset($this->parts[$position])) {
             $position++;

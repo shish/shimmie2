@@ -26,8 +26,12 @@ class PoolCreationException extends SCoreException
 class PoolAddPostsEvent extends Event
 {
     public int $pool_id;
+    /** @var int[] */
     public array $posts = [];
 
+    /**
+     * @param int[] $posts
+     */
     public function __construct(int $pool_id, array $posts)
     {
         parent::__construct();
@@ -82,6 +86,9 @@ class Pool
     public string $date;
     public int $posts;
 
+    /**
+     * @param array<string,mixed> $row
+     */
     public function __construct(array $row)
     {
         $this->id = (int)$row['id'];
@@ -94,12 +101,15 @@ class Pool
         $this->posts = (int)$row['posts'];
     }
 
+    /**
+     * @param array<string,mixed> $row
+     */
     public static function makePool(array $row): Pool
     {
         return new Pool($row);
     }
 
-    public static function get_pool_id_by_title($poolTitle): ?int
+    public static function get_pool_id_by_title(string $poolTitle): ?int
     {
         global $database;
         $row = $database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
@@ -632,7 +642,7 @@ class Pools extends Extension
         );
     }
 
-    private function list_pools(Page $page, int $pageNumber, $search)
+    private function list_pools(Page $page, int $pageNumber, ?string $search): void
     {
         global $config, $database;
 
@@ -767,46 +777,43 @@ class Pools extends Extension
     /**
      * Gets the previous and next successive images from a pool, given a pool ID and an image ID.
      *
-     * @return int[] Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
+     * @return array{prev:?int,next:?int} Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
      */
-    private function get_nav_posts(Pool $pool, int $imageID): ?array
+    private function get_nav_posts(Pool $pool, int $imageID): array
     {
         global $database;
 
-        if (empty($imageID)) {
-            return null;
-        }
-
         return $database->get_row(
             "
-						SELECT (
-							SELECT image_id
-							FROM pool_images
-							WHERE pool_id = :pid
-							AND image_order < (
-								SELECT image_order
-								FROM pool_images
-								WHERE pool_id = :pid
-								AND image_id = :iid
-								LIMIT 1
-							)
-							ORDER BY image_order DESC LIMIT 1
-						) AS prev,
-						(
-							SELECT image_id
-							FROM pool_images
-							WHERE pool_id = :pid
-							AND image_order > (
-								SELECT image_order
-								FROM pool_images
-								WHERE pool_id = :pid
-								AND image_id = :iid
-								LIMIT 1
-							)
-							ORDER BY image_order ASC LIMIT 1
-						) AS next
+                SELECT (
+                    SELECT image_id
+                    FROM pool_images
+                    WHERE pool_id = :pid
+                    AND image_order < (
+                        SELECT image_order
+                        FROM pool_images
+                        WHERE pool_id = :pid
+                        AND image_id = :iid
+                        LIMIT 1
+                    )
+                    ORDER BY image_order DESC LIMIT 1
+                ) AS prev,
+                (
+                    SELECT image_id
+                    FROM pool_images
+                    WHERE pool_id = :pid
+                    AND image_order > (
+                        SELECT image_order
+                        FROM pool_images
+                        WHERE pool_id = :pid
+                        AND image_id = :iid
+                        LIMIT 1
+                    )
+                    ORDER BY image_order ASC LIMIT 1
+                ) AS next
 
-						LIMIT 1",
+                LIMIT 1
+            ",
             ["pid" => $pool->id, "iid" => $imageID]
         );
     }
@@ -814,7 +821,7 @@ class Pools extends Extension
     /**
      * Retrieve all the images in a pool, given a pool ID.
      */
-    private function get_posts(PageRequestEvent $event, int $poolID)
+    private function get_posts(PageRequestEvent $event, int $poolID): void
     {
         global $config, $user, $database;
 
@@ -885,7 +892,7 @@ class Pools extends Extension
      *
      * $action Action=1 (one) MEANS ADDED, Action=0 (zero) MEANS REMOVED
      */
-    private function add_history(int $poolID, int $action, string $images, int $count)
+    private function add_history(int $poolID, int $action, string $images, int $count): void
     {
         global $user, $database;
 
@@ -897,7 +904,7 @@ class Pools extends Extension
         );
     }
 
-    private function get_history(int $pageNumber)
+    private function get_history(int $pageNumber): void
     {
         global $config, $database;
 
@@ -923,7 +930,7 @@ class Pools extends Extension
     /**
      * HERE GO BACK IN HISTORY AND ADD OR REMOVE POSTS TO POOL.
      */
-    private function revert_history(int $historyID)
+    private function revert_history(int $historyID): void
     {
         global $database;
         $status = $database->get_all("SELECT * FROM pool_history WHERE id=:hid", ["hid" => $historyID]);
@@ -1009,7 +1016,7 @@ class Pools extends Extension
         return true;
     }
 
-    private function update_count(int $pool_id)
+    private function update_count(int $pool_id): void
     {
         global $database;
         $database->execute(

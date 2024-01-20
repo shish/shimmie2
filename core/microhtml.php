@@ -46,13 +46,19 @@ function SHM_FORM(string $target, string $method = "POST", bool $multipart = fal
     );
 }
 
-function SHM_SIMPLE_FORM($target, ...$children): HTMLElement
+/**
+ * @param array<string|HTMLElement|null> $children
+ */
+function SHM_SIMPLE_FORM(string $target, ...$children): HTMLElement
 {
     $form = SHM_FORM($target);
     $form->appendChild(emptyHTML(...$children));
     return $form;
 }
 
+/**
+ * @param array<string, mixed> $args
+ */
 function SHM_SUBMIT(string $text, array $args = []): HTMLElement
 {
     $args["type"] = "submit";
@@ -60,6 +66,9 @@ function SHM_SUBMIT(string $text, array $args = []): HTMLElement
     return INPUT($args);
 }
 
+/**
+ * @param array<string, mixed> $args
+ */
 function SHM_A(string $href, string|HTMLElement $text, string $id = "", string $class = "", array $args = []): HTMLElement
 {
     $args["href"] = make_link($href);
@@ -83,7 +92,7 @@ function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement
     );
 }
 
-function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot): HTMLElement
+function SHM_USER_FORM(User $duser, string $target, string $title, HTMLElement $body, HTMLElement|string $foot): HTMLElement
 {
     if (is_string($foot)) {
         $foot = TFOOT(TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => $foot]))));
@@ -106,12 +115,12 @@ function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
  * Generates a <select> element and sets up the given options.
  *
  * @param string $name The name attribute of <select>.
- * @param array $options An array of pairs of parameters for <option> tags. First one is value, second one is text. Example: ('optionA', 'Choose Option A').
- * @param array $selected_options The values of options that should be pre-selected.
+ * @param array<string|int, string> $options An array of pairs of parameters for <option> tags. First one is value, second one is text. Example: ('optionA', 'Choose Option A').
+ * @param array<string> $selected_options The values of options that should be pre-selected.
  * @param bool $required Wether the <select> element is required.
  * @param bool $multiple Wether the <select> element is multiple-choice.
  * @param bool $empty_option Whether the first option should be an empty one.
- * @param array $attrs Additional attributes dict for <select>. Example: ["id"=>"some_id", "class"=>"some_class"].
+ * @param array<string, mixed> $attrs Additional attributes dict for <select>. Example: ["id"=>"some_id", "class"=>"some_class"].
  */
 function SHM_SELECT(string $name, array $options, array $selected_options = [], bool $required = false, bool $multiple = false, bool $empty_option = false, array $attrs = []): HTMLElement
 {

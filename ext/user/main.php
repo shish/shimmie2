@@ -360,7 +360,8 @@ class UserPage extends Extension
             "user_loginshowprofile",
             [
                 "Return to previous page" => 0, // 0 is default
-                "Send to user profile" => 1],
+                "Send to user profile" => 1,
+            ],
             "On log in/out",
             true
         );
@@ -479,6 +480,9 @@ class UserPage extends Extension
     public const USER_SEARCH_REGEX = "/^(?:poster|user)(!?)[=|:](.*)$/i";
     public const USER_ID_SEARCH_REGEX = "/^(?:poster|user)_id(!?)[=|:]([0-9]+)$/i";
 
+    /**
+     * @param string[] $context
+     */
     public static function has_user_query(array $context): bool
     {
         foreach ($context as $term) {
@@ -761,6 +765,9 @@ class UserPage extends Extension
         }
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function count_upload_ips(User $duser): array
     {
         global $database;
@@ -774,6 +781,9 @@ class UserPage extends Extension
 				ORDER BY max(posted) DESC", ["id" => $duser->id]);
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function count_comment_ips(User $duser): array
     {
         global $database;
@@ -787,6 +797,9 @@ class UserPage extends Extension
 				ORDER BY max(posted) DESC", ["id" => $duser->id]);
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function count_log_ips(User $duser): array
     {
         if (!Extension::is_enabled(LogDatabaseInfo::KEY)) {

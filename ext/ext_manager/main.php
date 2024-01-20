@@ -116,7 +116,10 @@ class ExtManager extends Extension
         return $extensions;
     }
 
-    private function set_things($settings)
+    /**
+     * @param array<string, bool> $settings
+     */
+    private function set_things(array $settings): void
     {
         $core = ExtensionInfo::get_core_extensions();
         $extras = [];
@@ -133,7 +136,7 @@ class ExtManager extends Extension
     /**
      * @param string[] $extras
      */
-    private function write_config(array $extras)
+    private function write_config(array $extras): void
     {
         file_put_contents(
             "data/config/extensions.conf.php",

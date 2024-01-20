@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 class AutoTaggerTheme extends Themelet
 {
     /**
@@ -11,7 +13,7 @@ class AutoTaggerTheme extends Themelet
      *
      * Note: $can_manage = whether things like "add new alias" should be shown
      */
-    public function display_auto_tagtable($table, $paginator): void
+    public function display_auto_tagtable(HTMLElement $table, HTMLElement $paginator): void
     {
         global $page, $user;
 

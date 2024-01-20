@@ -137,7 +137,7 @@ class SourceHistory extends Extension
     /**
      * This function is called when a revert request is received.
      */
-    private function process_revert_request(int $revert_id)
+    private function process_revert_request(int $revert_id): void
     {
         global $page;
 
@@ -180,7 +180,7 @@ class SourceHistory extends Extension
         $page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 
-    protected function process_bulk_revert_request()
+    protected function process_bulk_revert_request(): void
     {
         if (isset($_POST['revert_name']) && !empty($_POST['revert_name'])) {
             $revert_name = $_POST['revert_name'];
@@ -219,6 +219,9 @@ class SourceHistory extends Extension
         $this->theme->display_revert_ip_results();
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function get_source_history_from_revert(int $revert_id): ?array
     {
         global $database;
@@ -230,6 +233,9 @@ class SourceHistory extends Extension
         return ($row ? $row : null);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function get_source_history_from_id(int $image_id): array
     {
         global $database;
@@ -244,6 +250,9 @@ class SourceHistory extends Extension
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function get_global_source_history(int $page_id): array
     {
         global $database;
@@ -259,7 +268,7 @@ class SourceHistory extends Extension
     /**
      * This function attempts to revert all changes by a given IP within an (optional) timeframe.
      */
-    public function process_revert_all_changes(?string $name, ?string $ip, ?string $date)
+    public function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
     {
         global $database;
 
@@ -351,7 +360,7 @@ class SourceHistory extends Extension
     /**
      * This function is called just before an images source is changed.
      */
-    private function add_source_history(Image $image, string $source)
+    private function add_source_history(Image $image, string $source): void
     {
         global $database, $config, $user;
 

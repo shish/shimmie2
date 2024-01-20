@@ -39,7 +39,10 @@ class LogLogstash extends Extension
         }
     }
 
-    private function send_data($data)
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function send_data(array $data): void
     {
         global $config;
 

@@ -10,13 +10,18 @@ use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 use function MicroHTML\{A,BR,DIV,INPUT,P,SCRIPT,SPAN,TABLE,TBODY,TD,TEXTAREA,TH,THEAD,TR};
 
+/**
+ * @phpstan-type PoolHistory array{id:int,pool_id:int,title:string,user_name:string,action:string,images:string,count:int,date:string}
+ */
 class PoolsTheme extends Themelet
 {
     /**
      * Adds a block to the panel with information on the pool(s) the image is in.
      * $navIDs = Multidimensional array containing pool id, info & nav IDs.
+     *
+     * @param array<int,array{nav:array{prev:?int,next:?int},info:Pool}> $navIDs
      */
-    public function pool_info(array $navIDs)
+    public function pool_info(array $navIDs): void
     {
         global $page;
 
@@ -25,13 +30,11 @@ class PoolsTheme extends Themelet
         foreach ($navIDs as $poolID => $poolInfo) {
             $div = DIV(SHM_A("pool/view/" . $poolID, $poolInfo["info"]->title));
 
-            if (!empty($poolInfo["nav"])) {
-                if (!empty($poolInfo["nav"]["prev"])) {
-                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
-                }
-                if (!empty($poolInfo["nav"]["next"])) {
-                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["next"], "Next", class: "pools_next_img"));
-                }
+            if (!empty($poolInfo["nav"]["prev"])) {
+                $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
+            }
+            if (!empty($poolInfo["nav"]["next"])) {
+                $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["next"], "Next", class: "pools_next_img"));
             }
 
             $linksPools->appendChild($div);
@@ -42,6 +45,9 @@ class PoolsTheme extends Themelet
         }
     }
 
+    /**
+     * @param array<int, string> $pools
+     */
     public function get_adder_html(Image $image, array $pools): HTMLElement
     {
         return SHM_SIMPLE_FORM(
@@ -54,8 +60,10 @@ class PoolsTheme extends Themelet
 
     /**
      * HERE WE SHOWS THE LIST OF POOLS.
+     *
+     * @param Pool[] $pools
      */
-    public function list_pools(Page $page, array $pools, string $search, int $pageNumber, int $totalPages)
+    public function list_pools(Page $page, array $pools, string $search, int $pageNumber, int $totalPages): void
     {
         // Build up the list of pools.
         $pool_rows = [];
@@ -95,7 +103,7 @@ class PoolsTheme extends Themelet
     /*
      * HERE WE DISPLAY THE NEW POOL COMPOSER
      */
-    public function new_pool_composer(Page $page)
+    public function new_pool_composer(Page $page): void
     {
         $form = SHM_SIMPLE_FORM("pool/create", TABLE(
             TR(TD("Title:"), TD(INPUT(["type" => "text", "name" => "title"]))),
@@ -108,7 +116,7 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Create Pool", $form, position: 20));
     }
 
-    private function display_top(?Pool $pool, string $heading, bool $check_all = false)
+    private function display_top(?Pool $pool, string $heading, bool $check_all = false): void
     {
         global $page, $user;
 
@@ -146,8 +154,10 @@ class PoolsTheme extends Themelet
 
     /**
      * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION.
+     *
+     * @param Image[] $images
      */
-    public function view_pool(Pool $pool, array $images, int $pageNumber, int $totalPages)
+    public function view_pool(Pool $pool, array $images, int $pageNumber, int $totalPages): void
     {
         global $page;
 
@@ -166,7 +176,7 @@ class PoolsTheme extends Themelet
     /**
      * HERE WE DISPLAY THE POOL OPTIONS ON SIDEBAR BUT WE HIDE REMOVE OPTION IF THE USER IS NOT THE OWNER OR ADMIN.
      */
-    public function sidebar_options(Page $page, Pool $pool, bool $check_all)
+    public function sidebar_options(Page $page, Pool $pool, bool $check_all): void
     {
         global $user;
 
@@ -246,8 +256,10 @@ class PoolsTheme extends Themelet
 
     /**
      * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT.
+     *
+     * @param Image[] $images
      */
-    public function pool_result(Page $page, array $images, Pool $pool)
+    public function pool_result(Page $page, array $images, Pool $pool): void
     {
         $this->display_top($pool, "Importing Posts", true);
 
@@ -283,8 +295,10 @@ class PoolsTheme extends Themelet
     /**
      * HERE WE DISPLAY THE POOL ORDERER.
      * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH A TEXT INPUT TO SET A NUMBER AND CHANGE THE ORDER
+     *
+     * @param Image[] $images
      */
-    public function edit_order(Page $page, Pool $pool, array $images)
+    public function edit_order(Page $page, Pool $pool, array $images): void
     {
         $this->display_top($pool, "Sorting Pool");
 
@@ -293,7 +307,7 @@ class PoolsTheme extends Themelet
             $form->appendChild(SPAN(
                 ["class" => "thumb"],
                 $this->build_thumb_html($image),
-                INPUT(["type" => "number", "name" => "imgs[$i][]", "value" => $image->image_order, "style" => "max-width: 50px;"]),
+                INPUT(["type" => "number", "name" => "imgs[$i][]", "value" => $image['image_order'], "style" => "max-width: 50px;"]),
                 INPUT(["type" => "hidden", "name" => "imgs[$i][]", "value" => $image->id])
             ));
         }
@@ -311,8 +325,10 @@ class PoolsTheme extends Themelet
      *
      * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH
      * A CHECKBOX TO SELECT WHICH IMAGE WE WANT TO REMOVE
+     *
+     * @param Image[] $images
      */
-    public function edit_pool(Page $page, Pool $pool, array $images)
+    public function edit_pool(Page $page, Pool $pool, array $images): void
     {
         $_input_id = INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id]);
 
@@ -347,8 +363,10 @@ class PoolsTheme extends Themelet
 
     /**
      * HERE WE DISPLAY THE HISTORY LIST.
+     *
+     * @param PoolHistory[] $histories
      */
-    public function show_history(array $histories, int $pageNumber, int $totalPages)
+    public function show_history(array $histories, int $pageNumber, int $totalPages): void
     {
         global $page;
 
@@ -397,11 +415,17 @@ class PoolsTheme extends Themelet
         $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
     }
 
+    /**
+     * @param array<int,string> $options
+     */
     public function get_bulk_pool_selector(array $options): HTMLElement
     {
         return SHM_SELECT("bulk_pool_select", $options, required: true, empty_option: true);
     }
 
+    /**
+     * @param string[] $search_terms
+     */
     public function get_bulk_pool_input(array $search_terms): HTMLElement
     {
         return INPUT(
@@ -410,7 +434,7 @@ class PoolsTheme extends Themelet
                 "name" => "bulk_pool_new",
                 "placeholder" => "New Pool",
                 "required" => "",
-                "value" => implode(" ", $search_terms)
+                "value" => Tag::implode($search_terms)
             ]
         );
     }

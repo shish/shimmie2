@@ -70,6 +70,9 @@ class PM
         $this->is_read = $is_read;
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public static function from_row(array $row): PM
     {
         $pm = new PM(
@@ -85,6 +88,9 @@ class PM
         return $pm;
     }
 
+    /**
+     * @return PM[]|null
+     */
     #[Field(extends: "User", name: "private_messages", type: "[PrivateMessage!]")]
     public static function get_pms(User $duser): ?array
     {
@@ -299,7 +305,7 @@ class PrivMsg extends Extension
         log_info("pm", "Sent PM to User #{$event->pm->to_id}");
     }
 
-    private function count_pms(User $user)
+    private function count_pms(User $user): int
     {
         global $database;
 

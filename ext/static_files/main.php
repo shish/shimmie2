@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class RobotsBuildingEvent extends Event
 {
+    /** @var string[] */
     public array $parts = [
         "User-agent: *",
         // Site is rate limited to 1 request / sec,
@@ -54,7 +55,10 @@ class StaticFiles extends Extension
         }
     }
 
-    private function count_main($blocks): int
+    /**
+     * @param Block[] $blocks
+     */
+    private function count_main(array $blocks): int
     {
         $n = 0;
         foreach ($blocks as $block) {

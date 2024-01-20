@@ -53,6 +53,8 @@ class ET extends Extension
 
     /**
      * Collect the information and return it in a keyed array.
+     *
+     * @return array<string, mixed>
      */
     private function get_info(): array
     {
@@ -135,6 +137,9 @@ class ET extends Extension
         return $info;
     }
 
+    /**
+     * @param array<string, mixed> $info
+     */
     private function to_yaml(array $info): string
     {
         $data = "";

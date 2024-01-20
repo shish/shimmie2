@@ -44,6 +44,7 @@ class User
      * One will very rarely construct a user directly, more common
      * would be to use User::by_id, User::by_session, etc.
      *
+     * @param array<string|int, mixed> $row
      * @throws SCoreException
      */
     public function __construct(array $row)

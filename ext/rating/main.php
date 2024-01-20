@@ -410,6 +410,9 @@ class Ratings extends Extension
         }
     }
 
+    /**
+     * @return ImageRating[]
+     */
     public static function get_sorted_ratings(): array
     {
         global $_shm_ratings;
@@ -421,6 +424,10 @@ class Ratings extends Extension
         return $ratings;
     }
 
+    /**
+     * @param ImageRating[]|null $ratings
+     * @return array<string, string>
+     */
     public static function get_ratings_dict(array $ratings = null): array
     {
         if (!isset($ratings)) {
@@ -464,6 +471,9 @@ class Ratings extends Extension
         return array_intersect($available, $selected);
     }
 
+    /**
+     * @param string[] $privs
+     */
     public static function privs_to_sql(array $privs): string
     {
         $arr = [];
@@ -566,7 +576,7 @@ class Ratings extends Extension
         }
     }
 
-    private function set_rating(int $image_id, string $rating, string $old_rating)
+    private function set_rating(int $image_id, string $rating, string $old_rating): void
     {
         global $database;
         if ($old_rating != $rating) {

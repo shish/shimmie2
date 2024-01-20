@@ -495,43 +495,52 @@ class Artists extends Extension
         return (int)$database->get_one("SELECT artist_id FROM artist_urls WHERE id = :id", ['id' => $urlID]);
     }
 
-    private function delete_alias(int $aliasID)
+    private function delete_alias(int $aliasID): void
     {
         global $database;
         $database->execute("DELETE FROM artist_alias WHERE id = :id", ['id' => $aliasID]);
     }
 
-    private function delete_url(int $urlID)
+    private function delete_url(int $urlID): void
     {
         global $database;
         $database->execute("DELETE FROM artist_urls WHERE id = :id", ['id' => $urlID]);
     }
 
-    private function delete_member(int $memberID)
+    private function delete_member(int $memberID): void
     {
         global $database;
         $database->execute("DELETE FROM artist_members WHERE id = :id", ['id' => $memberID]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function get_alias_by_id(int $aliasID): array
     {
         global $database;
         return $database->get_row("SELECT * FROM artist_alias WHERE id = :id", ['id' => $aliasID]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function get_url_by_id(int $urlID): array
     {
         global $database;
         return $database->get_row("SELECT * FROM artist_urls WHERE id = :id", ['id' => $urlID]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function get_member_by_id(int $memberID): array
     {
         global $database;
         return $database->get_row("SELECT * FROM artist_members WHERE id = :id", ['id' => $memberID]);
     }
 
-    private function update_artist()
+    private function update_artist(): void
     {
         global $user;
         $inputs = validate_input([
@@ -629,7 +638,7 @@ class Artists extends Extension
         }
     }
 
-    private function update_alias()
+    private function update_alias(): void
     {
         global $user;
         $inputs = validate_input([
@@ -639,7 +648,7 @@ class Artists extends Extension
         $this->save_existing_alias($inputs['aliasID'], $inputs['alias'], $user->id);
     }
 
-    private function save_existing_alias(int $aliasID, string $alias, int $userID)
+    private function save_existing_alias(int $aliasID, string $alias, int $userID): void
     {
         global $database;
         $database->execute(
@@ -648,7 +657,7 @@ class Artists extends Extension
         );
     }
 
-    private function update_url()
+    private function update_url(): void
     {
         global $user;
         $inputs = validate_input([
@@ -658,7 +667,7 @@ class Artists extends Extension
         $this->save_existing_url($inputs['urlID'], $inputs['url'], $user->id);
     }
 
-    private function save_existing_url(int $urlID, string $url, int $userID)
+    private function save_existing_url(int $urlID, string $url, int $userID): void
     {
         global $database;
         $database->execute(
@@ -667,7 +676,7 @@ class Artists extends Extension
         );
     }
 
-    private function update_member()
+    private function update_member(): void
     {
         global $user;
         $inputs = validate_input([
@@ -677,7 +686,7 @@ class Artists extends Extension
         $this->save_existing_member($inputs['memberID'], $inputs['name'], $user->id);
     }
 
-    private function save_existing_member(int $memberID, string $memberName, int $userID)
+    private function save_existing_member(int $memberID, string $memberName, int $userID): void
     {
         global $database;
         $database->execute(
@@ -772,6 +781,9 @@ class Artists extends Extension
         return ($result != 0);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function get_artist(int $artistID): array
     {
         global $database;
@@ -786,6 +798,9 @@ class Artists extends Extension
         return $result;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function get_members(int $artistID): array
     {
         global $database;
@@ -802,6 +817,9 @@ class Artists extends Extension
         return $result;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function get_urls(int $artistID): array
     {
         global $database;
@@ -837,7 +855,7 @@ class Artists extends Extension
         );
     }
 
-    private function delete_artist(int $artistID)
+    private function delete_artist(int $artistID): void
     {
         global $database;
         $database->execute(
@@ -849,7 +867,7 @@ class Artists extends Extension
     /*
     * HERE WE GET THE LIST OF ALL ARTIST WITH PAGINATION
     */
-    private function get_listing(PageRequestEvent $event)
+    private function get_listing(PageRequestEvent $event): void
     {
         global $config, $database;
 
@@ -927,7 +945,7 @@ class Artists extends Extension
                         ON a.id = aa.artist_id
             ");
 
-        $totalPages = ceil($count / $artistsPerPage);
+        $totalPages = (int)ceil($count / $artistsPerPage);
 
         $this->theme->list_artists($listing, $pageNumber + 1, $totalPages);
     }
@@ -935,7 +953,7 @@ class Artists extends Extension
     /*
     * HERE WE ADD AN ALIAS
     */
-    private function add_urls()
+    private function add_urls(): void
     {
         global $user;
         $inputs = validate_input([
@@ -952,7 +970,7 @@ class Artists extends Extension
         }
     }
 
-    private function save_new_url(int $artistID, string $url, int $userID)
+    private function save_new_url(int $artistID, string $url, int $userID): void
     {
         global $database;
 
@@ -962,7 +980,7 @@ class Artists extends Extension
         );
     }
 
-    private function add_alias()
+    private function add_alias(): void
     {
         global $user;
         $inputs = validate_input([
@@ -979,7 +997,7 @@ class Artists extends Extension
         }
     }
 
-    private function save_new_alias(int $artistID, string $alias, int $userID)
+    private function save_new_alias(int $artistID, string $alias, int $userID): void
     {
         global $database;
 
@@ -989,7 +1007,7 @@ class Artists extends Extension
         );
     }
 
-    private function add_members()
+    private function add_members(): void
     {
         global $user;
         $inputs = validate_input([
@@ -1006,7 +1024,7 @@ class Artists extends Extension
         }
     }
 
-    private function save_new_member(int $artistID, string $member, int $userID)
+    private function save_new_member(int $artistID, string $member, int $userID): void
     {
         global $database;
 
@@ -1040,6 +1058,8 @@ class Artists extends Extension
 
     /**
      * HERE WE GET THE INFO OF THE ALIAS
+     *
+     * @return array<string, mixed>
      */
     private function get_alias(int $artistID): array
     {

@@ -63,7 +63,10 @@ class Comment
     #[Field]
     public string $posted;
 
-    public function __construct($row)
+    /**
+     * @param array<string,mixed> $row
+     */
+    public function __construct(array $row)
     {
         $this->owner = null;
         $this->owner_id = (int)$row['user_id'];
@@ -96,6 +99,9 @@ class Comment
         return $this->owner;
     }
 
+    /**
+     * @return Comment[]
+     */
     #[Field(extends: "Post", name: "comments", type: "[Comment!]!")]
     public static function get_comments(Image $post): array
     {
@@ -223,7 +229,7 @@ class CommentList extends Extension
         $event->add_disallow("comment");
     }
 
-    private function onPageRequest_add()
+    private function onPageRequest_add(): void
     {
         global $user, $page;
         if (isset($_POST['image_id']) && isset($_POST['comment'])) {
@@ -238,7 +244,7 @@ class CommentList extends Extension
         }
     }
 
-    private function onPageRequest_delete(PageRequestEvent $event)
+    private function onPageRequest_delete(PageRequestEvent $event): void
     {
         global $user, $page;
         if ($user->can(Permissions::DELETE_COMMENT)) {
@@ -254,7 +260,7 @@ class CommentList extends Extension
         }
     }
 
-    private function onPageRequest_bulk_delete()
+    private function onPageRequest_bulk_delete(): void
     {
         global $user, $database, $page;
         if ($user->can(Permissions::DELETE_COMMENT) && !empty($_POST["ip"])) {
@@ -279,7 +285,7 @@ class CommentList extends Extension
         }
     }
 
-    private function onPageRequest_list(PageRequestEvent $event)
+    private function onPageRequest_list(PageRequestEvent $event): void
     {
         global $cache, $config, $database, $user;
 
@@ -332,7 +338,7 @@ class CommentList extends Extension
         $this->theme->display_comment_list($images, $current_page + 1, $total_pages, $user->can(Permissions::CREATE_COMMENT));
     }
 
-    private function onPageRequest_beta_search(PageRequestEvent $event)
+    private function onPageRequest_beta_search(PageRequestEvent $event): void
     {
         $search = $event->get_arg(1);
         $page_num = $event->try_page_num(2);
@@ -448,6 +454,7 @@ class CommentList extends Extension
     }
 
     /**
+     * @param array<string,mixed> $args
      * @return Comment[]
      */
     private static function get_generic_comments(string $query, array $args): array
@@ -603,7 +610,7 @@ class CommentList extends Extension
     }
     // do some checks
 
-    private function add_comment_wrapper(int $image_id, User $user, string $comment)
+    private function add_comment_wrapper(int $image_id, User $user, string $comment): void
     {
         global $database, $page;
 
@@ -628,7 +635,7 @@ class CommentList extends Extension
         log_info("comment", "Comment #$cid added to >>$image_id: $snippet");
     }
 
-    private function comment_checks(int $image_id, User $user, string $comment)
+    private function comment_checks(int $image_id, User $user, string $comment): void
     {
         global $config, $page;
 

@@ -97,6 +97,9 @@ class TaggerXML extends Extension
         return $this->list_to_xml($tags, "image", (string)$image_id);
     }
 
+    /**
+     * @param array<string, mixed> $misc
+     */
     private function list_to_xml(\FFSPHP\PDOStatement $tags, string $type, string $query, ?array $misc = []): string
     {
         $props = [
@@ -119,12 +122,12 @@ class TaggerXML extends Extension
         return (string)($list);
     }
 
-    private function count(string $query, $values)
+    /**
+     * @param array<string, string> $values
+     */
+    private function count(string $query, array $values): int
     {
         global $database;
-        return $database->execute(
-            "SELECT COUNT(*) FROM `tags` $query",
-            $values
-        )->fields['COUNT(*)'];
+        return $database->get_one("SELECT COUNT(*) FROM `tags` $query", $values);
     }
 }

@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\emptyHTML;
+
 class IPBanTheme extends Themelet
 {
-    public function display_bans(Page $page, $table, $paginator): void
+    public function display_bans(Page $page, HTMLElement $table, HTMLElement $paginator): void
     {
         $html = "
 			<a href='".make_link("ip_ban/list", "r__size=1000000")."'>Show All Active</a> /

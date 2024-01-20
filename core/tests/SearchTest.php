@@ -25,7 +25,9 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["exclamation%"], [$image_id_2]);
     }
 
-    // base case
+    /**
+     * @return int[]
+     */
     public function testUpload(): array
     {
         $this->log_in_as_user();
@@ -41,8 +43,13 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
 
-    /********************************************************
+    /** ******************************************************
      * Test turning a string into an abstract query
+     *
+     * @param string $tags
+     * @param TagCondition[] $expected_tag_conditions
+     * @param ImgCondition[] $expected_img_conditions
+     * @param string $expected_order
      */
     private function assert_TTC(
         string $tags,
@@ -142,8 +149,16 @@ class SearchTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    /********************************************************
+    /** ******************************************************
      * Test turning an abstract query into SQL + fetching the results
+     *
+     * @param string[] $tcs
+     * @param string[] $ics
+     * @param string $order
+     * @param int $limit
+     * @param int $start
+     * @param int[] $res
+     * @param string[] $path
      */
     private function assert_BSQ(
         array $tcs = [],
@@ -196,7 +211,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     * No-tag search      *
     * * * * * * * * * * */
     #[Depends('testUpload')]
-    public function testBSQ_NoTags(array $image_ids): void
+    public function testBSQ_NoTags(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -210,7 +225,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     * Fast-path search   *
     * * * * * * * * * * */
     #[Depends('testUpload')]
-    public function testBSQ_FastPath_NoResults(array $image_ids): void
+    public function testBSQ_FastPath_NoResults(): void
     {
         $this->testUpload();
         $this->assert_BSQ(
@@ -221,7 +236,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_FastPath_OneResult(array $image_ids): void
+    public function testBSQ_FastPath_OneResult(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -232,7 +247,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_FastPath_ManyResults(array $image_ids): void
+    public function testBSQ_FastPath_ManyResults(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -243,7 +258,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_FastPath_WildNoResults(array $image_ids): void
+    public function testBSQ_FastPath_WildNoResults(): void
     {
         $this->testUpload();
         $this->assert_BSQ(
@@ -262,7 +277,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
      * https://github.com/shish/shimmie2/issues/547
      */
     #[Depends('testUpload')]
-    public function testBSQ_FastPath_WildOneResult(array $image_ids): void
+    public function testBSQ_FastPath_WildOneResult(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -277,7 +292,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
      * when a wildcard matches one image multiple times.
      */
     #[Depends('testUpload')]
-    public function testBSQ_FastPath_WildManyResults(array $image_ids): void
+    public function testBSQ_FastPath_WildManyResults(): void
     {
         $image_ids = $this->testUpload();
         // two images match comp* - one matches it once, one matches it twice
@@ -292,7 +307,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     * General search     *
     * * * * * * * * * * */
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_NoResults(array $image_ids): void
+    public function testBSQ_GeneralPath_NoResults(): void
     {
         $this->testUpload();
         # multiple tags, one of which doesn't exist
@@ -305,7 +320,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_OneResult(array $image_ids): void
+    public function testBSQ_GeneralPath_OneResult(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -324,7 +339,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
      * https://github.com/shish/shimmie2/issues/547
      */
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_WildOneResult(array $image_ids): void
+    public function testBSQ_GeneralPath_WildOneResult(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -335,7 +350,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_ManyResults(array $image_ids): void
+    public function testBSQ_GeneralPath_ManyResults(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -346,7 +361,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_WildManyResults(array $image_ids): void
+    public function testBSQ_GeneralPath_WildManyResults(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -357,7 +372,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_SubtractValidFromResults(array $image_ids): void
+    public function testBSQ_GeneralPath_SubtractValidFromResults(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -368,7 +383,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_SubtractNotValidFromResults(array $image_ids): void
+    public function testBSQ_GeneralPath_SubtractNotValidFromResults(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -379,7 +394,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_SubtractValidFromDefault(array $image_ids): void
+    public function testBSQ_GeneralPath_SubtractValidFromDefault(): void
     {
         $image_ids = $this->testUpload();
         // negative tag alone, should remove the image with that tag
@@ -391,7 +406,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_SubtractNotValidFromDefault(array $image_ids): void
+    public function testBSQ_GeneralPath_SubtractNotValidFromDefault(): void
     {
         $image_ids = $this->testUpload();
         // negative that doesn't exist, should return all results
@@ -403,7 +418,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_GeneralPath_SubtractMultipleNotValidFromDefault(array $image_ids): void
+    public function testBSQ_GeneralPath_SubtractMultipleNotValidFromDefault(): void
     {
         $image_ids = $this->testUpload();
         // multiple negative tags that don't exist, should return all results
@@ -418,7 +433,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     * Meta Search        *
     * * * * * * * * * * */
     #[Depends('testUpload')]
-    public function testBSQ_ImgCond_NoResults(array $image_ids): void
+    public function testBSQ_ImgCond_NoResults(): void
     {
         $this->testUpload();
         $this->assert_BSQ(
@@ -434,7 +449,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_ImgCond_OneResult(array $image_ids): void
+    public function testBSQ_ImgCond_OneResult(): void
     {
         $image_ids = $this->testUpload();
         $this->assert_BSQ(
@@ -455,7 +470,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testUpload')]
-    public function testBSQ_ImgCond_ManyResults(array $image_ids): void
+    public function testBSQ_ImgCond_ManyResults(): void
     {
         $image_ids = $this->testUpload();
 
@@ -480,7 +495,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     * Mixed              *
     * * * * * * * * * * */
     #[Depends('testUpload')]
-    public function testBSQ_TagCondWithImgCond(array $image_ids): void
+    public function testBSQ_TagCondWithImgCond(): void
     {
         $image_ids = $this->testUpload();
         // multiple tags, many results

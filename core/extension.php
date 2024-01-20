@@ -22,9 +22,10 @@ abstract class Extension
     protected Themelet $theme;
     public ExtensionInfo $info;
 
+    /** @var string[] */
     private static array $enabled_extensions = [];
 
-    public function __construct($class = null)
+    public function __construct(?string $class = null)
     {
         $class = $class ?? get_called_class();
         $this->theme = $this->get_theme_object($class);
@@ -87,6 +88,9 @@ abstract class Extension
         return in_array($key, self::$enabled_extensions);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_enabled_extensions(): array
     {
         return self::$enabled_extensions;
@@ -141,8 +145,11 @@ abstract class ExtensionInfo
     public string $name;
     public string $license;
     public string $description;
+    /** @var array<string, string> */
     public array $authors = [];
+    /** @var string[] */
     public array $dependencies = [];
+    /** @var string[] */
     public array $conflicts = [];
     public ExtensionVisibility $visibility = ExtensionVisibility::DEFAULT;
     public ?string $link = null;
@@ -170,8 +177,11 @@ abstract class ExtensionInfo
         return $this->support_info;
     }
 
+    /** @var array<string, ExtensionInfo> */
     private static array $all_info_by_key = [];
+    /** @var array<string, ExtensionInfo> */
     private static array $all_info_by_class = [];
+    /** @var string[] */
     private static array $core_extensions = [];
 
     protected function __construct()
@@ -207,16 +217,25 @@ abstract class ExtensionInfo
         $this->supported = empty($this->support_info);
     }
 
+    /**
+     * @return ExtensionInfo[]
+     */
     public static function get_all(): array
     {
         return array_values(self::$all_info_by_key);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_all_keys(): array
     {
         return array_keys(self::$all_info_by_key);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_core_extensions(): array
     {
         return self::$core_extensions;
@@ -285,6 +304,7 @@ abstract class FormatterExtension extends Extension
  */
 abstract class DataHandlerExtension extends Extension
 {
+    /** @var string[] */
     protected array $SUPPORTED_MIME = [];
 
     public function onDataUpload(DataUploadEvent $event): void
@@ -396,6 +416,9 @@ abstract class DataHandlerExtension extends Extension
         return MimeType::matches_array($mime, $this->SUPPORTED_MIME);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_all_supported_mimes(): array
     {
         $arr = [];
@@ -413,6 +436,9 @@ abstract class DataHandlerExtension extends Extension
         return $arr;
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_all_supported_exts(): array
     {
         $arr = [];

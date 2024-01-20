@@ -8,6 +8,9 @@ use function MicroHTML\INPUT;
 
 class ReportImageTheme extends Themelet
 {
+    /**
+     * @param array<array{id: int, image: Image, reason: string, reporter_name: string}> $reports
+     */
     public function display_reported_images(Page $page, array $reports): void
     {
         global $config, $user;
@@ -91,7 +94,7 @@ class ReportImageTheme extends Themelet
         $page->add_block(new Block("Report Post", $html, "left"));
     }
 
-    public function get_nuller(User $duser)
+    public function get_nuller(User $duser): void
     {
         global $page;
         $html = (string)SHM_SIMPLE_FORM(

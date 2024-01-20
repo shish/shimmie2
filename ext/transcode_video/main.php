@@ -174,10 +174,12 @@ class TranscodeVideo extends Extension
         }
     }
 
+    /**
+     * @return array<string, string>
+     */
     private static function get_output_options(?string $starting_container = null, ?string $starting_codec = null): array
     {
         $output = ["" => ""];
-
 
         foreach (VideoContainers::ALL as $container) {
             if ($starting_container == $container) {

@@ -14,7 +14,7 @@ class VarnishPurger extends Extension
         $config->set_default_string('varnish_protocol', 'http');
     }
 
-    private function curl_purge($path)
+    private function curl_purge(string $path): void
     {
         // waiting for curl timeout adds ~5 minutes to unit tests
         if (defined("UNITTEST")) {

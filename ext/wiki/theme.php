@@ -47,6 +47,10 @@ class WikiTheme extends Themelet
         $page->add_block(new Block($title_html, $this->create_display_html($wiki_page)));
     }
 
+    /**
+     * @param array<array{revision: string, date: string}> $history
+     */
+
     public function display_page_history(Page $page, string $title, array $history): void
     {
         $html = "<table class='zebra'>";

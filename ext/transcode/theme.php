@@ -8,8 +8,10 @@ use function MicroHTML\{rawHTML};
 
 class TranscodeImageTheme extends Themelet
 {
-    /*
+    /**
      * Display a link to resize an image
+     *
+     * @param array<string, string> $options
      */
     public function get_transcode_html(Image $image, array $options): \MicroHTML\HTMLElement
     {
@@ -31,6 +33,9 @@ class TranscodeImageTheme extends Themelet
         return rawHTML($html);
     }
 
+    /**
+     * @param array<string, string> $options
+     */
     public function get_transcode_picker_html(array $options): string
     {
         $html = "<select id='transcode_mime'  name='transcode_mime' required='required' >";

@@ -27,6 +27,9 @@ class AutoComplete extends Extension
         }
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function complete(string $search, int $limit): array
     {
         global $cache, $database;

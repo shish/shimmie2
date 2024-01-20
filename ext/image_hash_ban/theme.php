@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\INPUT;
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{INPUT,emptyHTML};
 
 class ImageBanTheme extends Themelet
 {
     /*
      * Show all the bans
      */
-    public function display_bans(Page $page, $table, $paginator): void
+    public function display_bans(Page $page, HTMLElement $table, HTMLElement $paginator): void
     {
         $page->set_title("Post Bans");
         $page->set_heading("Post Bans");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Edit Post Bans", $table . $paginator));
+        $page->add_block(new Block("Edit Post Bans", emptyHTML($table, $paginator)));
     }
 
     /*
      * Display a link to delete an image
      */
-    public function get_buttons_html(Image $image): \MicroHTML\HTMLElement
+    public function get_buttons_html(Image $image): HTMLElement
     {
         return SHM_SIMPLE_FORM(
             "image_hash_ban/add",

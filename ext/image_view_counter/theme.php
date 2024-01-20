@@ -9,7 +9,7 @@ class ImageViewCounterTheme extends Themelet
     /**
      * @param Image[] $images
      */
-    public function view_popular(array $images)
+    public function view_popular(array $images): void
     {
         global $page, $config;
         $pop_images = "";

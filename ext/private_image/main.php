@@ -190,7 +190,9 @@ class PrivateImage extends Extension
         }
     }
 
-
+    /**
+     * @param string[] $context
+     */
     private function no_private_query(array $context): bool
     {
         foreach ($context as $term) {
@@ -201,7 +203,7 @@ class PrivateImage extends Extension
         return true;
     }
 
-    public static function privatize_image($image_id)
+    public static function privatize_image(int $image_id): void
     {
         global $database;
 
@@ -211,7 +213,7 @@ class PrivateImage extends Extension
         );
     }
 
-    public static function publicize_image($image_id)
+    public static function publicize_image(int $image_id): void
     {
         global $database;
 

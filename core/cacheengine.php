@@ -67,6 +67,11 @@ class EventTracingCache implements CacheInterface
         return $val;
     }
 
+    /**
+     * @param string[] $keys
+     * @param mixed $default
+     * @return mixed[]
+     */
     public function getMultiple($keys, $default = null)
     {
         $this->tracer->begin("Cache Get Multiple", ["keys" => $keys]);
@@ -75,6 +80,9 @@ class EventTracingCache implements CacheInterface
         return $val;
     }
 
+    /**
+     * @param array<string, mixed> $values
+     */
     public function setMultiple($values, $ttl = null)
     {
         $this->tracer->begin("Cache Set Multiple", ["keys" => array_keys($values)]);
@@ -83,6 +91,9 @@ class EventTracingCache implements CacheInterface
         return $val;
     }
 
+    /**
+     * @param string[] $keys
+     */
     public function deleteMultiple($keys)
     {
         $this->tracer->begin("Cache Delete Multiple", ["keys" => $keys]);

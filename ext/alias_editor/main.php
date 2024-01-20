@@ -174,6 +174,7 @@ class AliasEditor extends Extension
         $csv = "";
         $aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases ORDER BY newtag");
         foreach ($aliases as $old => $new) {
+            assert(is_string($new));
             $csv .= "\"$old\",\"$new\"\n";
         }
         return $csv;

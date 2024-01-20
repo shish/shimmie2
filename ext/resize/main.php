@@ -211,7 +211,7 @@ class ResizeImage extends Extension
         }
     }
 
-    private function can_resize_mime($mime): bool
+    private function can_resize_mime(string $mime): bool
     {
         global $config;
         $engine = $config->get_string(ResizeConfig::ENGINE);
@@ -222,7 +222,7 @@ class ResizeImage extends Extension
 
     // Private functions
     /* ----------------------------- */
-    private function resize_image(Image $image_obj, int $width, int $height)
+    private function resize_image(Image $image_obj, int $width, int $height): void
     {
         global $config;
 

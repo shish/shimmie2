@@ -9,6 +9,12 @@ use MicroHTML\HTMLElement;
 use function MicroHTML\emptyHTML;
 use function MicroHTML\{INPUT,P};
 
+/**
+ * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:string,name:string,notes:string,type:string,posts:int}
+ * @phpstan-type ArtistAlias array{id:int,alias_id:int,alias_name:string,alias:string}
+ * @phpstan-type ArtistMember array{id:int,name:string}
+ * @phpstan-type ArtistUrl array{id:int,url:string}
+ */
 class ArtistsTheme extends Themelet
 {
     public function get_author_editor_html(string $author): HTMLElement
@@ -20,7 +26,7 @@ class ArtistsTheme extends Themelet
         );
     }
 
-    public function sidebar_options(string $mode, ?int $artistID = null, $is_admin = false): void
+    public function sidebar_options(string $mode, ?int $artistID = null, bool $is_admin = false): void
     {
         global $page, $user;
 
@@ -77,7 +83,13 @@ class ArtistsTheme extends Themelet
         }
     }
 
-    public function show_artist_editor($artist, $aliases, $members, $urls)
+    /**
+     * @param ArtistArtist $artist
+     * @param ArtistAlias[] $aliases
+     * @param ArtistMember[] $members
+     * @param ArtistUrl[] $urls
+     */
+    public function show_artist_editor(array $artist, array $aliases, array $members, array $urls): void
     {
         global $user;
 
@@ -137,7 +149,7 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Edit artist", $html, "main", 10));
     }
 
-    public function new_artist_composer()
+    public function new_artist_composer(): void
     {
         global $page, $user;
 
@@ -158,7 +170,10 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Artists", $html, "main", 10));
     }
 
-    public function list_artists($artists, $pageNumber, $totalPages)
+    /**
+    * @param ArtistArtist[] $artists
+    */
+    public function list_artists(array $artists, int $pageNumber, int $totalPages): void
     {
         global $user, $page;
 
@@ -237,7 +252,7 @@ class ArtistsTheme extends Themelet
         $this->display_paginator($page, "artist/list", null, $pageNumber, $totalPages);
     }
 
-    public function show_new_alias_composer($artistID)
+    public function show_new_alias_composer(int $artistID): void
     {
         global $user;
 
@@ -256,7 +271,7 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Artist Aliases", $html, "main", 20));
     }
 
-    public function show_new_member_composer($artistID)
+    public function show_new_member_composer(int $artistID): void
     {
         global $user;
 
@@ -275,7 +290,7 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Artist members", $html, "main", 30));
     }
 
-    public function show_new_url_composer($artistID)
+    public function show_new_url_composer(int $artistID): void
     {
         global $user;
 
@@ -294,7 +309,10 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Artist URLs", $html, "main", 40));
     }
 
-    public function show_alias_editor($alias)
+    /**
+     * @param ArtistAlias $alias
+     */
+    public function show_alias_editor(array $alias): void
     {
         global $user;
 
@@ -312,7 +330,10 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Edit Alias", $html, "main", 10));
     }
 
-    public function show_url_editor($url)
+    /**
+     * @param ArtistUrl $url
+     */
+    public function show_url_editor(array $url): void
     {
         global $user;
 
@@ -330,7 +351,10 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Edit URL", $html, "main", 10));
     }
 
-    public function show_member_editor($member)
+    /**
+     * @param ArtistMember $member
+     */
+    public function show_member_editor(array $member): void
     {
         global $user;
 
@@ -348,7 +372,14 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Edit Member", $html, "main", 10));
     }
 
-    public function show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin)
+    /**
+     * @param ArtistArtist $artist
+     * @param ArtistAlias[] $aliases
+     * @param ArtistMember[] $members
+     * @param ArtistUrl[] $urls
+     * @param Image[] $images
+     */
+    public function show_artist(array $artist, array $aliases, array $members, array $urls, array $images, bool $userIsLogged, bool $userIsAdmin): void
     {
         global $page;
 
@@ -416,6 +447,9 @@ class ArtistsTheme extends Themelet
         $page->add_block(new Block("Artist Posts", $artist_images, "main", 20));
     }
 
+    /**
+     * @param ArtistAlias[] $aliases
+     */
     private function render_aliases(array $aliases, bool $userIsLogged, bool $userIsAdmin): string
     {
         $html = "";
@@ -462,6 +496,9 @@ class ArtistsTheme extends Themelet
         return $html;
     }
 
+    /**
+     * @param ArtistMember[] $members
+     */
     private function render_members(array $members, bool $userIsLogged, bool $userIsAdmin): string
     {
         $html = "";
@@ -506,6 +543,9 @@ class ArtistsTheme extends Themelet
         return $html;
     }
 
+    /**
+     * @param ArtistUrl[] $urls
+     */
     private function render_urls(array $urls, bool $userIsLogged, bool $userIsAdmin): string
     {
         $html = "";

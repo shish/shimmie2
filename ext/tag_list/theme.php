@@ -9,19 +9,19 @@ class TagListTheme extends Themelet
     public string $heading = "";
     public string $list = "";
     public ?string $navigation;
-    private $tagcategories = null;
+    private mixed $tagcategories = null;
 
-    public function set_heading(string $text)
+    public function set_heading(string $text): void
     {
         $this->heading = $text;
     }
 
-    public function set_tag_list(string $list)
+    public function set_tag_list(string $list): void
     {
         $this->list = $list;
     }
 
-    public function set_navigation(string $nav)
+    public function set_navigation(string $nav): void
     {
         $this->navigation = $nav;
     }
@@ -60,13 +60,10 @@ class TagListTheme extends Themelet
 				<tbody>';
     }
 
-    /*
-     * $tag_infos = array(
-     *                 array('tag' => $tag, 'count' => $number_of_uses),
-     *                 ...
-     *              )
+    /**
+     * @param array<array{tag: string, count: int}> $tag_infos
      */
-    public function display_split_related_block(Page $page, $tag_infos): void
+    public function display_split_related_block(Page $page, array $tag_infos): void
     {
         global $config;
 
@@ -124,11 +121,8 @@ class TagListTheme extends Themelet
         }
     }
 
-    /*
-     * $tag_infos = array(
-     *                 array('tag' => $tag, 'count' => $number_of_uses),
-     *                 ...
-     *              )
+    /**
+     * @param array<array{tag: string, count: int}> $tag_infos
      */
     private function get_tag_list_html(array $tag_infos, string $sort): string
     {
@@ -156,13 +150,10 @@ class TagListTheme extends Themelet
         return $main_html;
     }
 
-    /*
-     * $tag_infos = array(
-     *                 array('tag' => $tag, 'count' => $number_of_uses),
-     *                 ...
-     *              )
+    /**
+     * @param array<array{tag: string, count: int}> $tag_infos
      */
-    public function display_related_block(Page $page, $tag_infos, $block_name): void
+    public function display_related_block(Page $page, array $tag_infos, string $block_name): void
     {
         global $config;
 
@@ -174,14 +165,10 @@ class TagListTheme extends Themelet
         $page->add_block(new Block($block_name, $main_html, "left", 10));
     }
 
-
-    /*
-     * $tag_infos = array(
-     *                 array('tag' => $tag, 'count' => $number_of_uses),
-     *                 ...
-     *              )
+    /**
+     * @param array<array{tag: string, count: int}> $tag_infos
      */
-    public function display_popular_block(Page $page, $tag_infos): void
+    public function display_popular_block(Page $page, array $tag_infos): void
     {
         global $config;
 
@@ -194,14 +181,11 @@ class TagListTheme extends Themelet
         $page->add_block(new Block("Popular Tags", $main_html, "left", 60));
     }
 
-    /*
-     * $tag_infos = array(
-     *                 array('tag' => $tag),
-     *                 ...
-     *              )
-     * $search = the current array of tags being searched for
+    /**
+     * @param array<array{tag: string, count: int}> $tag_infos
+     * @param string[] $search
      */
-    public function display_refine_block(Page $page, $tag_infos, $search): void
+    public function display_refine_block(Page $page, array $tag_infos, array $search): void
     {
         global $config;
 
@@ -214,6 +198,11 @@ class TagListTheme extends Themelet
         $page->add_block(new Block("Refine Search", $main_html, "left", 60));
     }
 
+    /**
+     * @param array{tag: string, count: int} $row
+     * @param array<string, array{color: string}> $tag_category_dict
+     * @return array{0: string, 1: string}
+     */
     public function return_tag(array $row, array $tag_category_dict): array
     {
         global $config;
@@ -252,6 +241,9 @@ class TagListTheme extends Themelet
         return [$category, $display_html];
     }
 
+    /**
+     * @param string[] $tags
+     */
     protected function ars(string $tag, array $tags): string
     {
         // FIXME: a better fix would be to make sure the inputs are correct
@@ -266,6 +258,9 @@ class TagListTheme extends Themelet
         return $html;
     }
 
+    /**
+     * @param string[] $tags
+     */
     protected function get_remove_link(array $tags, string $tag): string
     {
         if (!in_array($tag, $tags) && !in_array("-$tag", $tags)) {
@@ -276,6 +271,9 @@ class TagListTheme extends Themelet
         }
     }
 
+    /**
+     * @param string[] $tags
+     */
     protected function get_add_link(array $tags, string $tag): string
     {
         if (in_array($tag, $tags)) {
@@ -286,6 +284,9 @@ class TagListTheme extends Themelet
         }
     }
 
+    /**
+     * @param string[] $tags
+     */
     protected function get_subtract_link(array $tags, string $tag): string
     {
         if (in_array("-$tag", $tags)) {

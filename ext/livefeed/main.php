@@ -48,7 +48,7 @@ class LiveFeed extends Extension
         return 99;
     }
 
-    private function msg(string $data)
+    private function msg(string $data): void
     {
         global $config;
 

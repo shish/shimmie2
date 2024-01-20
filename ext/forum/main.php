@@ -206,6 +206,9 @@ class Forum extends Extension
         return (int)ceil($result["count"] / $config->get_int("forumPostsPerPage"));
     }
 
+    /**
+     * @return string[]
+     */
     private function sanity_check_new_thread(): array
     {
         $errors = [];
@@ -226,6 +229,9 @@ class Forum extends Extension
         return $errors;
     }
 
+    /**
+     * @return string[]
+     */
     private function sanity_check_new_post(): array
     {
         $errors = [];

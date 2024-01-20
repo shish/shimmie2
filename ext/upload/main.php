@@ -23,6 +23,8 @@ class DataUploadEvent extends Event
     /**
      * Some data is being uploaded.
      * This should be caught by a file handler.
+     *
+     * @param array<string, mixed> $metadata
      */
     public function __construct(
         public string $tmpname,
@@ -39,7 +41,7 @@ class DataUploadEvent extends Event
         $metadata['filename'] = substr($metadata['filename'], 0, 255);
     }
 
-    public function set_tmpname(string $tmpname, ?string $mime = null)
+    public function set_tmpname(string $tmpname, ?string $mime = null): void
     {
         assert(is_readable($tmpname));
         $this->tmpname = $tmpname;
@@ -160,6 +162,9 @@ class Upload extends Extension
         $sb->end_table();
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function get_mime_options(): array
     {
         $output = [];
@@ -251,6 +256,9 @@ class Upload extends Extension
         }
     }
 
+    /**
+     * @return string[]
+     */
     private function tags_for_upload_slot(int $id): array
     {
         # merge then explode, not explode then merge - else
@@ -365,6 +373,7 @@ class Upload extends Extension
     }
 
     /**
+     * @param string[] $tags
      * @return UploadResult[]
      */
     private function try_transload(string $url, array $tags, string $source = null): array

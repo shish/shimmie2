@@ -496,6 +496,9 @@ class BasePage
         return ["script.js"];
     }
 
+    /**
+     * @return array{0: NavLink[], 1: NavLink[]}
+     */
     protected function get_nav_links(): array
     {
         $pnbe = send_event(new PageNavBuildingEvent());
@@ -641,6 +644,7 @@ class BasePage
 
 class PageNavBuildingEvent extends Event
 {
+    /** @var NavLink[] */
     public array $links = [];
 
     public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50): void
@@ -653,6 +657,7 @@ class PageSubNavBuildingEvent extends Event
 {
     public string $parent;
 
+    /** @var NavLink[] */
     public array $links = [];
 
     public function __construct(string $parent)
@@ -704,6 +709,9 @@ class NavLink
         }
     }
 
+    /**
+     * @param string[] $pages_matched
+     */
     public static function is_active(array $pages_matched, string $url = null): bool
     {
         /**

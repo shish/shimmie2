@@ -139,7 +139,7 @@ class CronUploader extends Extension
         }
     }
 
-    private function restage_folder(string $folder)
+    private function restage_folder(string $folder): void
     {
         global $page;
         if (empty($folder)) {
@@ -196,7 +196,7 @@ class CronUploader extends Extension
         }
     }
 
-    private function clear_folder($folder)
+    private function clear_folder(string $folder): void
     {
         global $page, $user_config;
         $path = join_path($user_config->get_string(CronUploaderConfig::DIR), $folder);
@@ -414,7 +414,7 @@ class CronUploader extends Extension
         }
     }
 
-    private function move_uploaded(string $path, string $filename, string $output_subdir, bool $corrupt = false)
+    private function move_uploaded(string $path, string $filename, string $output_subdir, bool $corrupt = false): void
     {
         global $user_config;
 
@@ -454,6 +454,8 @@ class CronUploader extends Extension
 
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
+     *
+     * @param string[] $tags
      */
     private function add_image(string $tmpname, string $filename, array $tags): DataUploadEvent
     {

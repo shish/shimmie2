@@ -8,9 +8,10 @@ _d("STATSD_HOST", null);
 
 class StatsDInterface extends Extension
 {
+    /** @var array<string, string> */
     public static array $stats = [];
 
-    private function _stats(string $type)
+    private function _stats(string $type): void
     {
         global $_shm_event_count, $cache, $database, $_shm_load_start;
         $time = ftime() - $_shm_load_start;
@@ -78,7 +79,10 @@ class StatsDInterface extends Extension
         return 99;
     }
 
-    private function send(string $host, array $data, float $sampleRate = 1)
+    /**
+     * @param array<string, string> $data
+     */
+    private function send(string $host, array $data, float $sampleRate = 1): void
     {
         // sampling
         $sampledData = [];

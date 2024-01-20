@@ -67,6 +67,9 @@ class WikiPage
     #[Field]
     public string $body;
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function __construct(array $row = null)
     {
         //assert(!empty($row));
@@ -314,6 +317,9 @@ class Wiki extends Extension
         return false;
     }
 
+    /**
+     * @return array<array{revision: string, date: string}>
+     */
     public static function get_history(string $title): array
     {
         global $database;

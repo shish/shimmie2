@@ -238,7 +238,7 @@ class Favorites extends Extension
         }
     }
 
-    private function add_vote(int $image_id, int $user_id, bool $do_set)
+    private function add_vote(int $image_id, int $user_id, bool $do_set): void
     {
         global $database;
         if ($do_set) {

@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/**
+ * @phpstan-type Tip array{id: int, image: string, text: string, enable: bool}
+ */
 class TipsTheme extends Themelet
 {
-    public function manageTips($url, $images)
+    /**
+     * @param string[] $images
+     */
+    public function manageTips(string $url, array $images): void
     {
         global $page;
         $select = "<select name='image'><option value=''>- Select Post -</option>";
@@ -45,7 +51,10 @@ class TipsTheme extends Themelet
         $page->add_block(new Block("Add Tip", $html, "main", 10));
     }
 
-    public function showTip($url, $tip)
+    /**
+     * @param Tip $tip
+     */
+    public function showTip(string $url, array $tip): void
     {
         global $page;
 
@@ -57,7 +66,10 @@ class TipsTheme extends Themelet
         $page->add_block(new Block(null, $html, "subheading", 10));
     }
 
-    public function showAll($url, $tips)
+    /**
+     * @param Tip[] $tips
+     */
+    public function showAll(string $url, array $tips): void
     {
         global $user, $page;
 

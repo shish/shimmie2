@@ -31,7 +31,7 @@ class LogNet extends Extension
         }
     }
 
-    private function msg($data)
+    private function msg(string $data): void
     {
         global $config;
         $host = $config->get_string("log_net_host");

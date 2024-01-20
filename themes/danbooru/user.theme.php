@@ -33,7 +33,10 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("Login", $html, "main", 90));
     }
 
-    public function display_user_links(Page $page, User $user, $parts): void
+    /**
+     * @param array<int, array{name: string, link: string}> $parts
+     */
+    public function display_user_links(Page $page, User $user, array $parts): void
     {
         // no block in this theme
     }
@@ -42,7 +45,10 @@ class CustomUserPageTheme extends UserPageTheme
         // no block in this theme
     }
 
-    public function display_user_block(Page $page, User $user, $parts): void
+    /**
+     * @param array<array{link: string, name: string}> $parts
+     */
+    public function display_user_block(Page $page, User $user, array $parts): void
     {
         $html = "";
         $blocked = ["Pools", "Pool Changes", "Alias Editor", "My Profile"];
@@ -91,6 +97,11 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("Signup", $html));
     }
 
+    /**
+     * @param array<string, int> $uploads
+     * @param array<string, int> $comments
+     * @param array<string, int> $events
+     */
     public function display_ip_list(Page $page, array $uploads, array $comments, array $events): void
     {
         $html = "<table id='ip-history' style='width: 400px;'>";
@@ -108,7 +119,10 @@ class CustomUserPageTheme extends UserPageTheme
         $page->add_block(new Block("IPs", $html));
     }
 
-    public function display_user_page(User $duser, $stats): void
+    /**
+     * @param string[] $stats
+     */
+    public function display_user_page(User $duser, array $stats): void
     {
         global $page;
         $page->disable_left();

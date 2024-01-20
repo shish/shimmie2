@@ -8,6 +8,7 @@ use MicroHTML\HTMLElement;
 
 class ImageInfoBoxBuildingEvent extends Event
 {
+    /** @var HTMLElement[] */
     public array $parts = [];
     public Image $image;
     public User $user;
@@ -19,7 +20,7 @@ class ImageInfoBoxBuildingEvent extends Event
         $this->user = $user;
     }
 
-    public function add_part(HTMLElement $html, int $position = 50)
+    public function add_part(HTMLElement $html, int $position = 50): void
     {
         while (isset($this->parts[$position])) {
             $position++;

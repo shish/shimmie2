@@ -29,7 +29,7 @@ class TagEditTheme extends Themelet
         $page->add_block(new Block("Mass Tag Edit", $html));
     }
 
-    public function mss_html($terms): string
+    public function mss_html(string $terms): string
     {
         $h_terms = html_escape($terms);
         $html = make_form(make_link("tag_edit/mass_source_set"), "POST") . "

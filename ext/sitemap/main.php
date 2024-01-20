@@ -37,7 +37,7 @@ class XMLSitemap extends Extension
     }
 
     // Full sitemap
-    private function handle_full_sitemap()
+    private function handle_full_sitemap(): string
     {
         global $database, $config;
 
@@ -121,7 +121,7 @@ class XMLSitemap extends Extension
     /**
      * Returns true if a new sitemap is needed.
      */
-    private function new_sitemap_needed($cache_path): bool
+    private function new_sitemap_needed(string $cache_path): bool
     {
         if (!file_exists($cache_path)) {
             return true;
