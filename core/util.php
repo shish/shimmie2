@@ -194,7 +194,7 @@ function get_session_ip(Config $config): string
 {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = get_real_ip();
-    $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
+    $addr = false_throws(inet_ntop(false_throws(inet_pton($addr)) & false_throws(inet_pton($mask))));
     return $addr;
 }
 
@@ -285,17 +285,21 @@ function load_balance_url(string $tmpl, string $hash, int $n = 0): string
     return $tmpl;
 }
 
+class FetchException extends \Exception
+{
+}
+
 /**
- * @return null|array<string, mixed>
+ * @return array<string, string|string[]>
  */
-function fetch_url(string $url, string $mfile): ?array
+function fetch_url(string $url, string $mfile): array
 {
     global $config;
 
     if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "curl" && function_exists("curl_init")) {
         $ch = curl_init($url);
         assert($ch !== false);
-        $fp = fopen($mfile, "w");
+        $fp = false_throws(fopen($mfile, "w"));
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
@@ -306,37 +310,37 @@ function fetch_url(string $url, string $mfile): ?array
 
         $response = curl_exec($ch);
         if ($response === false) {
-            return null;
+            throw new FetchException("cURL failed: ".curl_error($ch));
+        }
+        if ($response === true) { // we use CURLOPT_RETURNTRANSFER, so this should never happen
+            throw new FetchException("cURL failed successfully??");
         }
 
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $headers = http_parse_headers(implode("\n", preg_split('/\R/', rtrim(substr($response, 0, $header_size)))));
+        $header_text = trim(substr($response, 0, $header_size));
+        $headers = http_parse_headers(implode("\n", false_throws(preg_split('/\R/', $header_text))));
         $body = substr($response, $header_size);
 
         curl_close($ch);
         fwrite($fp, $body);
         fclose($fp);
-
-        return $headers;
-    }
-
-    if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "wget") {
+    } elseif ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "wget") {
         $s_url = escapeshellarg($url);
         $s_mfile = escapeshellarg($mfile);
         system("wget --no-check-certificate $s_url --output-document=$s_mfile");
-
-        return file_exists($mfile) ? ["ok" => "true"] : null;
-    }
-
-    if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "fopen") {
+        if(!file_exists($mfile)) {
+            throw new FetchException("wget failed");
+        }
+        $headers = [];
+    } elseif ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "fopen") {
         $fp_in = @fopen($url, "r");
         $fp_out = fopen($mfile, "w");
         if (!$fp_in || !$fp_out) {
-            return null;
+            throw new FetchException("fopen failed");
         }
         $length = 0;
         while (!feof($fp_in) && $length <= $config->get_int(UploadConfig::SIZE)) {
-            $data = fread($fp_in, 8192);
+            $data = false_throws(fread($fp_in, 8192));
             $length += strlen($data);
             fwrite($fp_out, $data);
         }
@@ -344,11 +348,16 @@ function fetch_url(string $url, string $mfile): ?array
         fclose($fp_out);
 
         $headers = http_parse_headers(implode("\n", $http_response_header));
-
-        return $headers;
+    } else {
+        throw new FetchException("No transload engine configured");
     }
 
-    return null;
+    if (filesize($mfile) == 0) {
+        @unlink($mfile);
+        throw new FetchException("No data found in $url -- perhaps the site has hotlink protection?");
+    }
+
+    return $headers;
 }
 
 /**
@@ -412,29 +421,17 @@ function get_dir_contents(string $dir): array
         return [];
     }
     return array_diff(
-        scandir(
-            $dir
-        ),
+        false_throws(scandir($dir)),
         ['..', '.']
     );
 }
 
 function remove_empty_dirs(string $dir): bool
 {
-    assert(!empty($dir));
-
     $result = true;
 
-    if (!is_dir($dir)) {
-        return false;
-    }
-
-    $items = array_diff(
-        scandir(
-            $dir
-        ),
-        ['..', '.']
-    );
+    $items = get_dir_contents($dir);
+    ;
     foreach ($items as $item) {
         $path = join_path($dir, $item);
         if (is_dir($path)) {
@@ -454,21 +451,9 @@ function remove_empty_dirs(string $dir): bool
  */
 function get_files_recursively(string $dir): array
 {
-    assert(!empty($dir));
-
-    if (!is_dir($dir)) {
-        return [];
-    }
-
-    $things = array_diff(
-        scandir(
-            $dir
-        ),
-        ['..', '.']
-    );
+    $things = get_dir_contents($dir);
 
     $output = [];
-
 
     foreach ($things as $thing) {
         $path = join_path($dir, $thing);
@@ -659,8 +644,10 @@ function _fatal_error(\Exception $e): void
         foreach ($t as $n => $f) {
             $c = $f['class'] ?? '';
             $t = $f['type'] ?? '';
+            $i = $f['file'] ?? 'unknown file';
+            $l = $f['line'] ?? -1;
             $a = implode(", ", array_map("Shimmie2\stringer", $f['args'] ?? []));
-            print("$n: {$f['file']}({$f['line']}): {$c}{$t}{$f['function']}({$a})\n");
+            print("$n: {$i}({$l}): {$c}{$t}{$f['function']}({$a})\n");
         }
 
         print("Message: $message\n");

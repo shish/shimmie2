@@ -348,7 +348,7 @@ class Setup extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $themes = [];
-        foreach (glob("themes/*") as $theme_dirname) {
+        foreach (false_throws(glob("themes/*")) as $theme_dirname) {
             $name = str_replace("themes/", "", $theme_dirname);
             $human = str_replace("_", " ", $name);
             $human = ucwords($human);

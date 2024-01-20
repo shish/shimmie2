@@ -45,7 +45,7 @@ class UserPageTheme extends Themelet
     }
 
     /**
-     * @param array<int, array{name: string, link: string}> $parts
+     * @param array<int, array{name: string|HTMLElement, link: string}> $parts
      */
     public function display_user_links(Page $page, User $user, array $parts): void
     {
@@ -53,7 +53,7 @@ class UserPageTheme extends Themelet
     }
 
     /**
-     * @param array<array{link: string, name: string}> $parts
+     * @param array<array{link: string, name: string|HTMLElement}> $parts
      */
     public function display_user_block(Page $page, User $user, array $parts): void
     {

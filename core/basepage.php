@@ -308,7 +308,7 @@ class BasePage
                 assert($this->file, "file should not be null with PageMode::FILE");
 
                 // https://gist.github.com/codler/3906826
-                $size = filesize($this->file); // File size
+                $size = false_throws(filesize($this->file)); // File size
                 $length = $size;           // Content length
                 $start = 0;               // Start byte
                 $end = $size - 1;       // End byte
@@ -420,7 +420,7 @@ class BasePage
         if (!file_exists($css_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
             foreach($css_files as $css) {
-                $mcss->addSource($css, file_get_contents($css));
+                $mcss->addSource($css);
             }
             $mcss->save($css_cache_file);
         }
@@ -443,7 +443,7 @@ class BasePage
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
             foreach($js_files as $js) {
-                $mcss->addSource($js, file_get_contents($js));
+                $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);
         }
@@ -471,7 +471,7 @@ class BasePage
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
             foreach($js_files as $js) {
-                $mcss->addSource($js, file_get_contents($js));
+                $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);
         }

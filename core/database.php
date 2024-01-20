@@ -129,6 +129,11 @@ class Database
         }
     }
 
+    /**
+     * @template T
+     * @param callable():T $callback
+     * @return T
+     */
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
     {
         global $_tracer;

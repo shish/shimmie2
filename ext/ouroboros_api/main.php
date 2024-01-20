@@ -352,8 +352,10 @@ class OuroborosAPI extends Extension
             // Transload from source
             $meta['file'] = tempnam(sys_get_temp_dir(), 'shimmie_transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
             $meta['filename'] = basename($post->file_url);
-            if (!fetch_url($post->file_url, $meta['file'])) {
-                $this->sendResponse(500, 'Transloading failed');
+            try {
+                fetch_url($post->file_url, $meta['file']);
+            } catch (FetchException $e) {
+                $this->sendResponse(500, "Transloading failed: $e");
                 return;
             }
             $meta['hash'] = md5_file($meta['file']);

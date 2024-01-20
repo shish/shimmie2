@@ -43,9 +43,13 @@ abstract class Extension
         $normal = "Shimmie2\\{$base}Theme";
 
         if (class_exists($custom)) {
-            return new $custom();
+            $c = new $custom();
+            assert(is_a($c, Themelet::class));
+            return $c;
         } elseif (class_exists($normal)) {
-            return new $normal();
+            $n = new $normal();
+            assert(is_a($n, Themelet::class));
+            return $n;
         } else {
             return new Themelet();
         }
@@ -266,6 +270,7 @@ abstract class ExtensionInfo
     {
         foreach (get_subclasses_of(ExtensionInfo::class) as $class) {
             $extension_info = new $class();
+            assert(is_a($extension_info, ExtensionInfo::class));
             if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
                 throw new SCoreException("Extension Info $class with key $extension_info->key has already been loaded");
             }
@@ -317,7 +322,7 @@ abstract class DataHandlerExtension extends Extension
                 throw new UploadException("Invalid or corrupted file");
             }
 
-            $existing = Image::by_hash(md5_file($event->tmpname));
+            $existing = Image::by_hash(false_throws(md5_file($event->tmpname)));
             if (!is_null($existing)) {
                 if ($config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER) == ImageConfig::COLLISION_MERGE) {
                     // Right now tags are the only thing that get merged, so
@@ -338,8 +343,8 @@ abstract class DataHandlerExtension extends Extension
             assert(is_readable($filename));
             $image = new Image();
             $image->tmp_file = $filename;
-            $image->filesize = filesize($filename);
-            $image->hash = md5_file($filename);
+            $image->filesize = false_throws(filesize($filename));
+            $image->hash = false_throws(md5_file($filename));
             $image->filename = (($pos = strpos($event->metadata['filename'], '?')) !== false) ? substr($event->metadata['filename'], 0, $pos) : $event->metadata['filename'];
             $image->set_mime(MimeType::get_for_file($filename, get_file_ext($event->metadata["filename"]) ?? null));
             if (empty($image->get_mime())) {
@@ -424,6 +429,7 @@ abstract class DataHandlerExtension extends Extension
         $arr = [];
         foreach (get_subclasses_of(DataHandlerExtension::class) as $handler) {
             $handler = (new $handler());
+            assert(is_a($handler, DataHandlerExtension::class));
             $arr = array_merge($arr, $handler->SUPPORTED_MIME);
         }
 

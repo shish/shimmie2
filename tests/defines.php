@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 define("UNITTEST", true);
-define("EXTRA_EXTS", str_replace("ext/", "", implode(',', glob('ext/*'))));
+$_all_exts = glob('ext/*');
+assert($_all_exts !== false);
+define("EXTRA_EXTS", str_replace("ext/", "", implode(',', $_all_exts)));
 
 define("DATABASE_DSN", null);
 define("DATABASE_TIMEOUT", 10000);

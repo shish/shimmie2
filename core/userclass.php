@@ -89,6 +89,7 @@ class UserClass
 
 $_all_false = [];
 foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
+    assert(is_string($v));
     $_all_false[$v] = false;
 }
 new UserClass("base", null, $_all_false);

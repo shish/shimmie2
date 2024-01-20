@@ -111,7 +111,7 @@ class AutoTagger extends Extension
                 if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
                     if (count($_FILES) > 0) {
                         $tmp = $_FILES['auto_tag_file']['tmp_name'];
-                        $contents = file_get_contents($tmp);
+                        $contents = false_throws(file_get_contents($tmp));
                         $count = $this->add_auto_tag_csv($contents);
                         log_info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
                         $page->set_mode(PageMode::REDIRECT);

@@ -313,10 +313,11 @@ class DanbooruApi extends Extension
             $source = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
             $file = tempnam(sys_get_temp_dir(), "shimmie_transload");
             assert($file !== false);
-            $ok = fetch_url($source, $file);
-            if (!$ok) {
+            try {
+                fetch_url($source, $file);
+            } catch(FetchException $e) {
                 $page->set_code(409);
-                $page->add_http_header("X-Danbooru-Errors: fopen read error");
+                $page->add_http_header("X-Danbooru-Errors: $e");
                 return;
             }
             $filename = basename($source);

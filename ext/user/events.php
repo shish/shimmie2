@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 class UserBlockBuildingEvent extends Event
 {
-    /** @var array<int, array{name: string, link: string}> */
+    /** @var array<int, array{name: string|HTMLElement, link: string}> */
     public array $parts = [];
 
     public function add_link(string|HTMLElement $name, string $link, int $position = 50): void

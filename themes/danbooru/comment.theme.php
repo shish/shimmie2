@@ -59,7 +59,8 @@ class CustomCommentListTheme extends CommentListTheme
             if ($comment_limit > 0 && $comment_count > $comment_limit) {
                 //$hidden = $comment_count - $comment_limit;
                 $comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
-                $comments = array_slice($comments, -$comment_limit);
+
+                $comments = array_slice($comments, negative_int($comment_limit));
             }
             foreach ($comments as $comment) {
                 $comment_html .= $this->comment_to_html($comment);

@@ -79,9 +79,13 @@ function full_copy(string $source, string $target): void
     if (is_dir($source)) {
         @mkdir($target);
 
-        $d = dir($source);
+        $d = false_throws(dir($source));
 
-        while (false !== ($entry = $d->read())) {
+        while (true) {
+            $entry = $d->read();
+            if ($entry === false) {
+                break;
+            }
             if ($entry == '.' || $entry == '..') {
                 continue;
             }
@@ -155,12 +159,16 @@ function flush_output(): void
 function stream_file(string $file, int $start, int $end): void
 {
     $fp = fopen($file, 'r');
+    if(!$fp) {
+        throw new \Exception("Failed to open $file");
+    }
     try {
         fseek($fp, $start);
         $buffer = 1024 * 1024;
         while (!feof($fp) && ($p = ftell($fp)) <= $end) {
             if ($p + $buffer > $end) {
                 $buffer = $end - $p + 1;
+                assert($buffer >= 0);
             }
             echo fread($fp, $buffer);
             flush_output();
@@ -180,13 +188,13 @@ function stream_file(string $file, int $start, int $end): void
 # http://www.php.net/manual/en/function.http-parse-headers.php#112917
 if (!function_exists('http_parse_headers')) {
     /**
-     * @return string[]
+     * @return array<string, string|string[]>
      */
     function http_parse_headers(string $raw_headers): array
     {
-        $headers = []; // $headers = [];
+        $headers = [];
 
-        foreach (explode("\n", $raw_headers) as $i => $h) {
+        foreach (explode("\n", $raw_headers) as $h) {
             $h = explode(':', $h, 2);
 
             if (isset($h[1])) {
@@ -441,12 +449,20 @@ function page_number(string $input, ?int $max = null): int
     } else {
         $pageNumber = $input - 1;
     }
-    return $pageNumber;
+    return (int)$pageNumber;
 }
 
 function is_numberish(string $s): bool
 {
     return is_numeric($s);
+}
+
+/**
+ * Because apparently phpstan thinks that if $i is an int, type(-$i) == int|float
+ */
+function negative_int(int $i): int
+{
+    return -$i;
 }
 
 function clamp(int $val, ?int $min = null, ?int $max = null): int
@@ -611,9 +627,22 @@ function parse_to_milliseconds(string $input): int
  */
 function autodate(string $date, bool $html = true): string
 {
-    $cpu = date('c', strtotime($date));
-    $hum = date('F j, Y; H:i', strtotime($date));
+    $cpu = date('c', false_throws(strtotime($date)));
+    $hum = date('F j, Y; H:i', false_throws(strtotime($date)));
     return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
+}
+
+/**
+ * @template T
+ * @param T|false $x
+ * @return T
+ */
+function false_throws(mixed $x): mixed
+{
+    if($x === false) {
+        throw new \Exception("Unexpected false");
+    }
+    return $x;
 }
 
 /**
@@ -710,7 +739,7 @@ function validate_input(array $inputs): array
         } elseif (in_array('bool', $flags)) {
             $outputs[$key] = bool_escape($value);
         } elseif (in_array('date', $flags)) {
-            $outputs[$key] = date("Y-m-d H:i:s", strtotime(trim($value)));
+            $outputs[$key] = date("Y-m-d H:i:s", false_throws(strtotime(trim($value))));
         } elseif (in_array('string', $flags)) {
             if (in_array('trim', $flags)) {
                 $value = trim($value);
