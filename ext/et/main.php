@@ -120,9 +120,9 @@ class ET extends Extension
 
         if (file_exists(".git")) {
             try {
-                $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
-                $commitBranch = trim(exec('git rev-parse --abbrev-ref HEAD'));
-                $commitOrigin = trim(exec('git config --get remote.origin.url'));
+                $commitHash = trim(exec_ex('git log --pretty="%h" -n1 HEAD'));
+                $commitBranch = trim(exec_ex('git rev-parse --abbrev-ref HEAD'));
+                $commitOrigin = trim(exec_ex('git config --get remote.origin.url'));
                 $commitOrigin = preg_replace("#//.*@#", "//xxx@", $commitOrigin);
                 $info['git'] = [
                     'commit' => $commitHash,
@@ -146,7 +146,7 @@ class ET extends Extension
         foreach ($info as $title => $section) {
             $data .= "$title:\n";
             foreach ($section as $k => $v) {
-                $data .= "  $k: " . json_encode($v, JSON_UNESCAPED_SLASHES) . "\n";
+                $data .= "  $k: " . json_encode_ex($v, JSON_UNESCAPED_SLASHES) . "\n";
             }
             $data .= "\n";
         }

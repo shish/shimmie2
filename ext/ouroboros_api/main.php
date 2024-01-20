@@ -69,7 +69,7 @@ class _SafeOuroborosImage
         // meta
         $this->change = intval($img->id); //DaFug is this even supposed to do? ChangeID?
         // Should be JSON specific, just strip this when converting to XML
-        $this->created_at = ['n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time'];
+        $this->created_at = ['n' => 123456789, 's' => strtotime_ex($img->posted), 'json_class' => 'Time'];
         $this->id = intval($img->id);
         $this->parent_id = null;
 
@@ -139,19 +139,19 @@ class OuroborosPost extends _SafeOuroborosImage
             $this->rating = $post['rating'];
         }
         if (array_key_exists('source', $post)) {
-            $this->file_url = filter_var(
+            $this->file_url = filter_var_ex(
                 urldecode($post['source']),
                 FILTER_SANITIZE_URL
             );
         }
         if (array_key_exists('sourceurl', $post)) {
-            $this->source = filter_var(
+            $this->source = filter_var_ex(
                 urldecode($post['sourceurl']),
                 FILTER_SANITIZE_URL
             );
         }
         if (array_key_exists('description', $post)) {
-            $this->description = filter_var(
+            $this->description = filter_var_ex(
                 $post['description'],
                 FILTER_SANITIZE_STRING
             );
@@ -260,7 +260,7 @@ class OuroborosAPI extends Extension
                 if ($this->match('create')) {
                     // Create
                     if ($user->can(Permissions::CREATE_IMAGE)) {
-                        $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
+                        $md5 = !empty($_REQUEST['md5']) ? filter_var_ex($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
                         $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                     } else {
                         $this->sendResponse(403, 'You cannot create new posts');
@@ -269,17 +269,17 @@ class OuroborosAPI extends Extension
                     throw new SCoreException("update not implemented");
                 } elseif ($this->match('show')) {
                     // Show
-                    $id = !empty($_REQUEST['id']) ? (int)filter_var($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
+                    $id = !empty($_REQUEST['id']) ? (int)filter_var_ex($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
                     $this->postShow($id);
                 } elseif ($this->match('index') || $this->match('list')) {
                     // List
                     $limit = !empty($_REQUEST['limit']) ? intval(
-                        filter_var($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
+                        filter_var_ex($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 45;
                     $p = !empty($_REQUEST['page']) ? intval(
-                        filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
+                        filter_var_ex($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 1;
-                    $tags = !empty($_REQUEST['tags']) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : [];
+                    $tags = !empty($_REQUEST['tags']) ? filter_var_ex($_REQUEST['tags'], FILTER_SANITIZE_STRING) : [];
                     if (is_string($tags)) {
                         $tags = Tag::explode($tags);
                     }
@@ -288,23 +288,23 @@ class OuroborosAPI extends Extension
             } elseif ($event->page_matches('tag')) {
                 if ($this->match('index') || $this->match('list')) {
                     $limit = !empty($_REQUEST['limit']) ? intval(
-                        filter_var($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
+                        filter_var_ex($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 50;
                     $p = !empty($_REQUEST['page']) ? intval(
-                        filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
+                        filter_var_ex($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 1;
-                    $order = (!empty($_REQUEST['order']) && ($_REQUEST['order'] == 'date' || $_REQUEST['order'] == 'count' || $_REQUEST['order'] == 'name')) ? filter_var(
+                    $order = (!empty($_REQUEST['order']) && ($_REQUEST['order'] == 'date' || $_REQUEST['order'] == 'count' || $_REQUEST['order'] == 'name')) ? filter_var_ex(
                         $_REQUEST['order'],
                         FILTER_SANITIZE_STRING
                     ) : 'date';
                     $id = !empty($_REQUEST['id']) ? intval(
-                        filter_var($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT)
+                        filter_var_ex($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT)
                     ) : null;
                     $after_id = !empty($_REQUEST['after_id']) ? intval(
-                        filter_var($_REQUEST['after_id'], FILTER_SANITIZE_NUMBER_INT)
+                        filter_var_ex($_REQUEST['after_id'], FILTER_SANITIZE_NUMBER_INT)
                     ) : null;
-                    $name = !empty($_REQUEST['name']) ? filter_var($_REQUEST['name'], FILTER_SANITIZE_STRING) : '';
-                    $name_pattern = !empty($_REQUEST['name_pattern']) ? filter_var(
+                    $name = !empty($_REQUEST['name']) ? filter_var_ex($_REQUEST['name'], FILTER_SANITIZE_STRING) : '';
+                    $name_pattern = !empty($_REQUEST['name_pattern']) ? filter_var_ex(
                         $_REQUEST['name_pattern'],
                         FILTER_SANITIZE_STRING
                     ) : '';
@@ -344,13 +344,13 @@ class OuroborosAPI extends Extension
             $meta['rating'] = $post->rating;
         }
         // Check where we should try for the file
-        if (empty($post->file) && !empty($post->file_url) && filter_var(
+        if (empty($post->file) && !empty($post->file_url) && filter_var_ex(
             $post->file_url,
             FILTER_VALIDATE_URL
         ) !== false
         ) {
             // Transload from source
-            $meta['file'] = tempnam(sys_get_temp_dir(), 'shimmie_transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
+            $meta['file'] = shm_tempnam('transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
             $meta['filename'] = basename($post->file_url);
             try {
                 fetch_url($post->file_url, $meta['file']);
@@ -459,20 +459,17 @@ class OuroborosAPI extends Extension
             default:
                 $tag_data = $database->get_all(
                     "
-                                                    SELECT id, tag, count
-                                                    FROM tags
-                                                    WHERE count >= :tags_min
-                                                    ORDER BY count DESC, tag ASC LIMIT :start, :max_items
-                                                    ",
+                        SELECT id, tag, count
+                        FROM tags
+                        WHERE count >= :tags_min
+                        ORDER BY count DESC, tag ASC LIMIT :start, :max_items
+                    ",
                     ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
         }
         $tags = [];
         foreach ($tag_data as $tag) {
-            if (!is_array($tag)) {
-                continue;
-            }
             $tags[] = new _SafeOuroborosTag($tag);
         }
         $this->sendData('tag', $tags, $start);
@@ -517,7 +514,7 @@ class OuroborosAPI extends Extension
                 $response['location'] = $response['reason'];
                 unset($response['reason']);
             }
-            $response = json_encode($response);
+            $response = json_encode_ex($response);
         } elseif ($this->type == 'xml') {
             // Seriously, XML sucks...
             $xml = new \XMLWriter();
@@ -546,7 +543,7 @@ class OuroborosAPI extends Extension
         global $page;
         $response = '';
         if ($this->type == 'json') {
-            $response = json_encode($data);
+            $response = json_encode_ex($data);
         } elseif ($this->type == 'xml') {
             $xml = new \XMLWriter();
             $xml->openMemory();
@@ -575,7 +572,7 @@ class OuroborosAPI extends Extension
     private function createItemXML(\XMLWriter $xml, string $type, _SafeOuroborosTag|_SafeOuroborosImage $item): void
     {
         $xml->startElement($type);
-        foreach (json_decode(json_encode($item)) as $key => $val) {
+        foreach (json_decode(json_encode_ex($item)) as $key => $val) {
             if ($key == 'created_at' && $type == 'post') {
                 $xml->writeAttribute($key, $val['s']);
             } else {

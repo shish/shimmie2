@@ -19,7 +19,7 @@ class PoolsTheme extends Themelet
      * Adds a block to the panel with information on the pool(s) the image is in.
      * $navIDs = Multidimensional array containing pool id, info & nav IDs.
      *
-     * @param array<int,array{nav:array{prev:?int,next:?int},info:Pool}> $navIDs
+     * @param array<int,array{info:Pool,nav:array{prev:?int,next:?int}|null}> $navIDs
      */
     public function pool_info(array $navIDs): void
     {
@@ -30,11 +30,13 @@ class PoolsTheme extends Themelet
         foreach ($navIDs as $poolID => $poolInfo) {
             $div = DIV(SHM_A("pool/view/" . $poolID, $poolInfo["info"]->title));
 
-            if (!empty($poolInfo["nav"]["prev"])) {
-                $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
-            }
-            if (!empty($poolInfo["nav"]["next"])) {
-                $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["next"], "Next", class: "pools_next_img"));
+            if(!empty($poolInfo["nav"])) {
+                if (!empty($poolInfo["nav"]["prev"])) {
+                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
+                }
+                if (!empty($poolInfo["nav"]["next"])) {
+                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["next"], "Next", class: "pools_next_img"));
+                }
             }
 
             $linksPools->appendChild($div);

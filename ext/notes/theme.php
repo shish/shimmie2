@@ -74,22 +74,20 @@ class NotesTheme extends Themelet
             ];
         }
         $page->add_html_header("<script type='text/javascript'>
-        window.notes = ".json_encode($to_json).";
+        window.notes = ".json_encode_ex($to_json).";
         window.notes_image_id = $image_id;
         window.notes_admin = ".($adminOptions ? "true" : "false").";
         </script>");
     }
 
     /**
-     * @param array<array{0:Image}> $images
+     * @param array<Image> $images
      */
     public function display_note_list(array $images, int $pageNumber, int $totalPages): void
     {
         global $page;
         $pool_images = '';
-        foreach ($images as $pair) {
-            $image = $pair[0];
-
+        foreach ($images as $image) {
             $thumb_html = $this->build_thumb_html($image);
 
             $pool_images .= '<span class="thumb">'.
@@ -104,18 +102,15 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param array<array{0:Image}> $images
+     * @param array<Image> $images
      */
     public function display_note_requests(array $images, int $pageNumber, int $totalPages): void
     {
         global $page;
 
         $pool_images = '';
-        foreach ($images as $pair) {
-            $image = $pair[0];
-
+        foreach ($images as $image) {
             $thumb_html = $this->build_thumb_html($image);
-
             $pool_images .= '<span class="thumb">'.
                             '    <a href="$image_link">'.$thumb_html.'</a>'.
                             '</span>';

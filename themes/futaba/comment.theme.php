@@ -86,7 +86,7 @@ class CustomCommentListTheme extends CommentListTheme
         $h_del = "";
         if ($user->can(Permissions::DELETE_COMMENT)) {
             $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
-            $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
+            $j_delete_confirm_message = json_encode_ex("Delete comment by {$comment->owner_name}:\n$comment_preview");
             $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
             $h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
             $h_del = " - <a onclick='$h_delete_script' href='$h_delete_link'>Del</a>";

@@ -332,7 +332,7 @@ class Media extends Extension
 
         $ok = false;
         $inname = $image->get_image_filename();
-        $tmpname = tempnam(sys_get_temp_dir(), "shimmie_ffmpeg_thumb");
+        $tmpname = shm_tempnam("ffmpeg_thumb");
         try {
             $outname = $image->get_thumb_filename();
 
@@ -702,16 +702,17 @@ class Media extends Extension
             $new_width = $width;
         }
 
-        $image = imagecreatefromstring(file_get_contents($image_filename));
-        $image_resized = imagecreatetruecolor($new_width, $new_height);
-        try {
-            if ($image === false) {
-                throw new MediaException("Could not load image: " . $image_filename);
-            }
-            if ($image_resized === false) {
-                throw new MediaException("Could not create output image with dimensions $new_width c $new_height ");
-            }
+        $image = imagecreatefromstring(file_get_contents_ex($image_filename));
+        if ($image === false) {
+            throw new MediaException("Could not load image: " . $image_filename);
+        }
 
+        $image_resized = imagecreatetruecolor($new_width, $new_height);
+        if ($image_resized === false) {
+            throw new MediaException("Could not create output image with dimensions $new_width x $new_height ");
+        }
+
+        try {
             // Handle transparent images
             switch ($info[2]) {
                 case IMAGETYPE_GIF:
@@ -849,7 +850,7 @@ class Media extends Extension
             "-y", "-i", escapeshellarg($filename),
             "-vstats"
         ]));
-        $output = shell_exec($cmd . " 2>&1");
+        $output = null_throws(false_throws(shell_exec($cmd . " 2>&1")));
         // error_log("Getting size with `$cmd`");
 
         $regex_sizes = "/Video: .* ([0-9]{1,4})x([0-9]{1,4})/";
@@ -941,9 +942,9 @@ class Media extends Extension
     public static function hex_color_allocate(mixed $im, string $hex): int
     {
         $hex = ltrim($hex, '#');
-        $a = hexdec(substr($hex, 0, 2));
-        $b = hexdec(substr($hex, 2, 2));
-        $c = hexdec(substr($hex, 4, 2));
+        $a = (int)hexdec(substr($hex, 0, 2));
+        $b = (int)hexdec(substr($hex, 2, 2));
+        $c = (int)hexdec(substr($hex, 4, 2));
         $col = imagecolorallocate($im, $a, $b, $c);
         assert($col !== false);
         return $col;

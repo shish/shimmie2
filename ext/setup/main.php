@@ -348,7 +348,7 @@ class Setup extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $themes = [];
-        foreach (false_throws(glob("themes/*")) as $theme_dirname) {
+        foreach (glob_ex("themes/*") as $theme_dirname) {
             $name = str_replace("themes/", "", $theme_dirname);
             $human = str_replace("_", " ", $name);
             $human = ucwords($human);
@@ -423,7 +423,7 @@ class Setup extends Extension
             }
         }
         log_warning("setup", "Configuration updated");
-        foreach (glob("data/cache/*.css") as $css_cache) {
+        foreach (glob_ex("data/cache/*.css") as $css_cache) {
             unlink($css_cache);
         }
         log_warning("setup", "Cache cleared");

@@ -6,10 +6,13 @@ namespace Shimmie2;
 
 use function MicroHTML\INPUT;
 
+/**
+ * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}
+ */
 class ReportImageTheme extends Themelet
 {
     /**
-     * @param array<array{id: int, image: Image, reason: string, reporter_name: string}> $reports
+     * @param array<Report> $reports
      */
     public function display_reported_images(Page $page, array $reports): void
     {

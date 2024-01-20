@@ -40,6 +40,9 @@ class ImageReport
     }
 }
 
+/**
+ * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}
+ */
 class ReportImage extends Extension
 {
     /** @var ReportImageTheme */
@@ -211,7 +214,7 @@ class ReportImage extends Extension
     }
 
     /**
-     * @return array<array<string, mixed>>
+     * @return array<Report>
      */
     public function get_reported_images(): array
     {

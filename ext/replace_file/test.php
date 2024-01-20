@@ -23,7 +23,7 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
 
         // check that the image is original
         $image = Image::by_id($image_id);
-        $old_hash = md5_file("tests/pbx_screenshot.jpg");
+        $old_hash = md5_file_ex("tests/pbx_screenshot.jpg");
         //$this->assertEquals("pbx_screenshot.jpg", $image->filename);
         $this->assertEquals("image/jpeg", $image->get_mime());
         $this->assertEquals(19774, $image->filesize);
@@ -32,9 +32,9 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
 
         // replace it
         // create a copy because the file is deleted after upload
-        $tmpfile = tempnam(sys_get_temp_dir(), "shimmie_test");
+        $tmpfile = shm_tempnam("test");
         copy("tests/favicon.png", $tmpfile);
-        $new_hash = md5_file($tmpfile);
+        $new_hash = md5_file_ex($tmpfile);
         $_FILES = [
             'data' => [
                 'name' => 'favicon.png',

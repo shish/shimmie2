@@ -247,7 +247,7 @@ class S3 extends Extension
             $client->putObject([
                 'Bucket' => $image_bucket,
                 'Key' => $key,
-                'Body' => file_get_contents($image->get_image_filename()),
+                'Body' => file_get_contents_ex($image->get_image_filename()),
                 'ACL' => 'public-read',
                 'ContentType' => $image->get_mime(),
                 'ContentDisposition' => "inline; filename=\"$friendly\"",

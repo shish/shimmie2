@@ -45,8 +45,8 @@ class DataUploadEvent extends Event
     {
         assert(is_readable($tmpname));
         $this->tmpname = $tmpname;
-        $this->hash = md5_file($tmpname);
-        $this->size = filesize($tmpname);
+        $this->hash = md5_file_ex($tmpname);
+        $this->size = filesize_ex($tmpname);
         $mime = $mime ?? MimeType::get_for_file($tmpname, get_file_ext($this->metadata["filename"]) ?? null);
         if (empty($mime)) {
             throw new UploadException("Could not determine mime type");
@@ -381,7 +381,7 @@ class Upload extends Extension
         global $page, $config, $user, $database;
 
         $results = [];
-        $tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
+        $tmp_filename = shm_tempnam("transload");
 
         try {
             // Fetch file

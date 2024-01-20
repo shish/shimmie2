@@ -311,7 +311,7 @@ class CommentList extends Extension
 			LIMIT :limit OFFSET :offset
 		", ["limit" => $threads_per_page, "offset" => $start]);
 
-        $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_class_privs($user) : "";
+        $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_class_privs($user) : [];
 
         $images = [];
         while ($row = $result->fetch()) {
@@ -369,7 +369,7 @@ class CommentList extends Extension
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        $i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
+        $i_days_old = ((time() - strtotime_ex($event->display_user->join_date)) / 86400) + 1;
         $i_comment_count = Comment::count_comments_by_user($event->display_user);
         $h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
         $event->add_stats("Comments made: $i_comment_count, $h_comment_rate per day");
@@ -651,7 +651,7 @@ class CommentList extends Extension
         }
 
         // advanced sanity checks
-        elseif (strlen($comment) / strlen(gzcompress($comment)) > 10) {
+        elseif (strlen($comment) / strlen(false_throws(gzcompress($comment))) > 10) {
             throw new CommentPostingException("Comment too repetitive~");
         } elseif ($user->is_anonymous() && !$this->hash_match()) {
             $page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");

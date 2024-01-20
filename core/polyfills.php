@@ -79,7 +79,7 @@ function full_copy(string $source, string $target): void
     if (is_dir($source)) {
         @mkdir($target);
 
-        $d = false_throws(dir($source));
+        $d = dir_ex($source);
 
         while (true) {
             $entry = $d->read();
@@ -627,22 +627,9 @@ function parse_to_milliseconds(string $input): int
  */
 function autodate(string $date, bool $html = true): string
 {
-    $cpu = date('c', false_throws(strtotime($date)));
-    $hum = date('F j, Y; H:i', false_throws(strtotime($date)));
+    $cpu = date('c', strtotime_ex($date));
+    $hum = date('F j, Y; H:i', strtotime_ex($date));
     return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
-}
-
-/**
- * @template T
- * @param T|false $x
- * @return T
- */
-function false_throws(mixed $x): mixed
-{
-    if($x === false) {
-        throw new \Exception("Unexpected false");
-    }
-    return $x;
 }
 
 /**
@@ -738,7 +725,7 @@ function validate_input(array $inputs): array
         } elseif (in_array('bool', $flags)) {
             $outputs[$key] = bool_escape($value);
         } elseif (in_array('date', $flags)) {
-            $outputs[$key] = date("Y-m-d H:i:s", false_throws(strtotime(trim($value))));
+            $outputs[$key] = date("Y-m-d H:i:s", strtotime_ex(trim($value)));
         } elseif (in_array('string', $flags)) {
             if (in_array('trim', $flags)) {
                 $value = trim($value);

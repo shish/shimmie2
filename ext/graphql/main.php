@@ -92,6 +92,8 @@ class GraphQL extends Extension
             ]);
             $t2 = ftime();
             $resp = $server->executeRequest();
+            assert(!is_array($resp));
+            assert(is_a($resp, \GraphQL\Executor\ExecutionResult::class));
             if ($config->get_bool("graphql_debug")) {
                 $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
                 $body = $resp->toArray($debug);
@@ -105,13 +107,13 @@ class GraphQL extends Extension
             // sleep(1);
             $page->set_mode(PageMode::DATA);
             $page->set_mime("application/json");
-            $page->set_data(\json_encode($body, JSON_UNESCAPED_UNICODE));
+            $page->set_data(json_encode_ex($body, JSON_UNESCAPED_UNICODE));
         }
         if ($event->page_matches("graphql_upload")) {
             $this->cors();
             $page->set_mode(PageMode::DATA);
             $page->set_mime("application/json");
-            $page->set_data(\json_encode(self::handle_uploads()));
+            $page->set_data(json_encode_ex(self::handle_uploads()));
         }
     }
 
@@ -200,7 +202,7 @@ class GraphQL extends Extension
                 $body['stats'] = get_debug_info_arr();
                 $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);
                 $body['stats']['graphql_execute_time'] = round($t3 - $t2, 2);
-                echo \json_encode($body, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                echo json_encode_ex($body, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
                 return Command::SUCCESS;
             });
         $event->app->register('graphql:schema')

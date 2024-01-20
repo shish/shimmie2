@@ -87,7 +87,7 @@ class BulkAddCSV extends Extension
 
         $linenum = 1;
         $list = "";
-        $csvhandle = fopen($csvfile, "r");
+        $csvhandle = false_throws(fopen($csvfile, "r"));
 
         while (($csvdata = fgetcsv($csvhandle, 0, ",")) !== false) {
             if (count($csvdata) != 5) {

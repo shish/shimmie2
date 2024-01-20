@@ -308,7 +308,7 @@ class BasePage
                 assert($this->file, "file should not be null with PageMode::FILE");
 
                 // https://gist.github.com/codler/3906826
-                $size = false_throws(filesize($this->file)); // File size
+                $size = filesize_ex($this->file); // File size
                 $length = $size;           // Content length
                 $start = 0;               // Start byte
                 $end = $size - 1;       // End byte

@@ -131,7 +131,7 @@ class PostgreSQL extends DBEngine
 // shimmie functions for export to sqlite
 function _unix_timestamp(string $date): int
 {
-    return false_throws(strtotime($date));
+    return strtotime_ex($date);
 }
 function _now(): string
 {

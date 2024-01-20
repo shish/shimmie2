@@ -831,7 +831,7 @@ class UserPage extends Extension
                 "You need to specify the account number to edit"
             ));
         } else {
-            $uid = int_escape($_POST['id']);
+            $uid = int_escape((string)$_POST['id']);
             $duser = User::by_id($uid);
             log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
 

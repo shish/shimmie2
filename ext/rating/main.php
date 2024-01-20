@@ -304,6 +304,7 @@ class Ratings extends Extension
         $results = $database->get_col("SELECT DISTINCT rating FROM images ORDER BY rating");
         $original_values = [];
         foreach ($results as $result) {
+            assert(is_string($result));
             if (array_key_exists($result, ImageRating::$known_ratings)) {
                 $original_values[$result] = ImageRating::$known_ratings[$result]->name;
             } else {

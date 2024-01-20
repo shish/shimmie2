@@ -150,7 +150,7 @@ class ImageIO extends Extension
     {
         $u_name = url_escape($event->display_user->name);
         $i_image_count = Search::count_images(["user={$event->display_user->name}"]);
-        $i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
+        $i_days_old = ((time() - strtotime_ex($event->display_user->join_date)) / 86400) + 1;
         $h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
         $images_link = search_link(["user=$u_name"]);
         $event->add_stats("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
@@ -202,7 +202,7 @@ class ImageIO extends Extension
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $fname = $event->image->get_filename();
-        $base_fname = str_contains($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
+        $base_fname = basename($fname, '.' . $event->image->get_ext());
 
         $event->replace('$id', (string)$event->image->id);
         $event->replace('$hash_ab', substr($event->image->hash, 0, 2));
@@ -241,7 +241,7 @@ class ImageIO extends Extension
             } else {
                 $if_modified_since = "";
             }
-            $gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
+            $gmdate_mod = gmdate('D, d M Y H:i:s', false_throws(filemtime($file))) . ' GMT';
 
             if ($if_modified_since == $gmdate_mod) {
                 $page->set_mode(PageMode::DATA);

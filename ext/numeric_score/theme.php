@@ -70,9 +70,8 @@ class NumericScoreTheme extends Themelet
 
     /**
      * @param Image[] $images
-     * @param string[] $dte
      */
-    public function view_popular(array $images, array $dte): void
+    public function view_popular(array $images, string $totaldate, string $current, string $name, string $fmt): void
     {
         global $page, $config;
 
@@ -81,12 +80,12 @@ class NumericScoreTheme extends Themelet
             $pop_images .= $this->build_thumb_html($image)."\n";
         }
 
-        $b_dte = make_link("popular_by_".$dte[3], date($dte[2], (strtotime('-1 '.$dte[3], strtotime($dte[0])))));
-        $f_dte = make_link("popular_by_".$dte[3], date($dte[2], (strtotime('+1 '.$dte[3], strtotime($dte[0])))));
+        $b_dte = make_link("popular_by_$name", date($fmt, strtotime_ex("-1 $name", strtotime_ex($totaldate))));
+        $f_dte = make_link("popular_by_$name", date($fmt, strtotime_ex("+1 $name", strtotime_ex($totaldate))));
 
         $html = "\n".
             "<h3 style='text-align: center;'>\n".
-            "	<a href='{$b_dte}'>&laquo;</a> {$dte[1]} <a href='{$f_dte}'>&raquo;</a>\n".
+            "	<a href='{$b_dte}'>&laquo;</a> {$current} <a href='{$f_dte}'>&raquo;</a>\n".
             "</h3>\n".
             "<br/>\n".$pop_images;
 

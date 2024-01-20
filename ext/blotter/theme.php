@@ -141,7 +141,7 @@ class BlotterTheme extends Themelet
             $i_close = "";
             //$id = $entries[$i]['id'];
             $messy_date = $entries[$i]['entry_date'];
-            $clean_date = date("y/m/d", strtotime($messy_date));
+            $clean_date = date("y/m/d", strtotime_ex($messy_date));
             $entry_text = $entries[$i]['entry_text'];
             if ($entries[$i]['important'] == 'Y') {
                 $i_open = "<span style='color: #$i_color;'>";
@@ -171,7 +171,7 @@ class BlotterTheme extends Themelet
             $i_close = "";
             //$id = $entry['id'];
             $messy_date = $entry['entry_date'];
-            $clean_date = date("m/d/y", strtotime($messy_date));
+            $clean_date = date("m/d/y", strtotime_ex($messy_date));
             $entry_text = $entry['entry_text'];
             if ($entry['important'] == 'Y') {
                 $i_open = "<span style='color: #$i_color'>";
@@ -192,7 +192,7 @@ class BlotterTheme extends Themelet
             $out_text = "No blotter entries yet.";
             $in_text = "Empty.";
         } else {
-            $clean_date = date("m/d/y", strtotime($entries[0]['entry_date']));
+            $clean_date = date("m/d/y", strtotime_ex($entries[0]['entry_date']));
             $out_text = "Blotter updated: {$clean_date}";
             $in_text = "<ul>$entries_list</ul>";
         }

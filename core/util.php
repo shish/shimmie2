@@ -169,7 +169,7 @@ function get_real_ip(): string
 
     if(is_trusted_proxy()) {
         if (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            if(filter_var($ip, FILTER_VALIDATE_IP)) {
+            if(filter_var_ex($ip, FILTER_VALIDATE_IP)) {
                 $ip = $_SERVER['HTTP_X_REAL_IP'];
             }
         }
@@ -177,7 +177,7 @@ function get_real_ip(): string
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             $last_ip = $ips[count($ips) - 1];
-            if(filter_var($last_ip, FILTER_VALIDATE_IP)) {
+            if(filter_var_ex($last_ip, FILTER_VALIDATE_IP)) {
                 $ip = $last_ip;
             }
         }
@@ -194,7 +194,7 @@ function get_session_ip(Config $config): string
 {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = get_real_ip();
-    $addr = false_throws(inet_ntop(false_throws(inet_pton($addr)) & false_throws(inet_pton($mask))));
+    $addr = inet_ntop_ex(inet_pton_ex($addr) & inet_pton_ex($mask));
     return $addr;
 }
 
@@ -795,4 +795,13 @@ function generate_key(int $length = 20): string
     }
 
     return $randomString;
+}
+
+function shm_tempnam(string $prefix = ""): string
+{
+    if(!is_dir("data/temp")) {
+        mkdir("data/temp");
+    }
+    $temp = false_throws(realpath("data/temp"));
+    return false_throws(tempnam($temp, $prefix));
 }

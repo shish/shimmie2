@@ -35,7 +35,7 @@ class Featured extends Extension
                 if (!is_null($image)) {
                     $page->set_mode(PageMode::DATA);
                     $page->set_mime($image->get_mime());
-                    $page->set_data(file_get_contents($image->get_image_filename()));
+                    $page->set_data(file_get_contents_ex($image->get_image_filename()));
                 }
             }
             if ($event->get_arg(0) == "view") {

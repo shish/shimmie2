@@ -235,7 +235,7 @@ class CronUploader extends Extension
 
 
         $running = false;
-        $lockfile = fopen($this->get_lock_file(), "w");
+        $lockfile = false_throws(fopen($this->get_lock_file(), "w"));
         try {
             if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
                 $running = true;
@@ -343,7 +343,7 @@ class CronUploader extends Extension
             throw new SCoreException("User does not have permission to run cron upload");
         }
 
-        $lockfile = fopen($this->get_lock_file(), "w");
+        $lockfile = false_throws(fopen($this->get_lock_file(), "w"));
         if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
             throw new SCoreException("Cron upload process is already running");
         }

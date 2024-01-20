@@ -29,7 +29,7 @@ class XMLSitemap extends Extension
                 file_put_contents($cache_path, $xml);
             }
 
-            $xml = file_get_contents($cache_path);
+            $xml = file_get_contents_ex($cache_path);
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::XML_APPLICATION);
             $page->set_data($xml);
@@ -67,7 +67,7 @@ class XMLSitemap extends Extension
                 "post/view/$image->id",
                 "weekly",
                 "0.8",
-                date("Y-m-d", strtotime($image->posted))
+                date("Y-m-d", strtotime_ex($image->posted))
             );
         }
 
@@ -87,7 +87,7 @@ class XMLSitemap extends Extension
                 "post/view/$image->id",
                 "monthly",
                 "0.6",
-                date("Y-m-d", strtotime($image->posted))
+                date("Y-m-d", strtotime_ex($image->posted))
             );
         }
 

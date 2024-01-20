@@ -94,7 +94,7 @@ class Update extends Extension
         $zip = new \ZipArchive();
         if ($zip->open("./data/update_$commitSHA.zip") === true) {
             for ($i = 1; $i < $zip->numFiles; $i++) {
-                $filename = $zip->getNameIndex($i);
+                $filename = false_throws($zip->getNameIndex($i));
 
                 if (substr($filename, -1) !== "/") {
                     copy("zip://".dirname(dirname(__DIR__)).'/'."./data/update_$commitSHA.zip"."#".$filename, substr($filename, 50));

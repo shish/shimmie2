@@ -12,7 +12,7 @@ use function MicroHTML\{A,P,TABLE,TD,TH,TR};
 class RatingsTheme extends Themelet
 {
     /**
-     * @param array<string, ImageRating> $ratings
+     * @param array<string, string> $ratings
      * @param string[] $selected_options
      */
     public function get_selection_rater_html(string $name = "rating", array $ratings = [], array $selected_options = []): HTMLElement
@@ -30,7 +30,7 @@ class RatingsTheme extends Themelet
     }
 
     /**
-     * @param ImageRating[] $current_ratings
+     * @param array<string,string> $current_ratings
      */
     public function display_form(array $current_ratings): void
     {

@@ -19,6 +19,12 @@ class AuthorSetEvent extends Event
     }
 }
 
+/**
+ * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:string,name:string,notes:string,type:string,posts:int}
+ * @phpstan-type ArtistAlias array{id:int,alias_id:int,alias_name:string,alias:string}
+ * @phpstan-type ArtistMember array{id:int,name:string}
+ * @phpstan-type ArtistUrl array{id:int,url:string}
+ */
 class Artists extends Extension
 {
     /** @var ArtistsTheme */
@@ -514,7 +520,7 @@ class Artists extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ArtistAlias
      */
     private function get_alias_by_id(int $aliasID): array
     {
@@ -523,7 +529,7 @@ class Artists extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ArtistUrl
      */
     private function get_url_by_id(int $urlID): array
     {
@@ -532,7 +538,7 @@ class Artists extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ArtistMember
      */
     private function get_member_by_id(int $memberID): array
     {
@@ -617,6 +623,7 @@ class Artists extends Extension
 
         // URLS MATCHING SECTION
         $i = 0;
+        assert(is_string($urlsAsString));
         $urlsAsString = str_replace("\r\n", "\n", $urlsAsString);
         $urlsAsString = str_replace("\n\r", "\n", $urlsAsString);
         $urlsAsArray = empty($urlsAsString) ? [] : explode("\n", $urlsAsString);
@@ -747,6 +754,7 @@ class Artists extends Extension
         }
 
         if (!is_null($urls)) {
+            assert(is_string($urls));
             //delete double "separators"
             $urls = str_replace("\r\n", "\n", $urls);
             $urls = str_replace("\n\r", "\n", $urls);
@@ -782,7 +790,7 @@ class Artists extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ArtistArtist
      */
     private function get_artist(int $artistID): array
     {
@@ -799,7 +807,7 @@ class Artists extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ArtistMember[]
      */
     private function get_members(int $artistID): array
     {
@@ -818,7 +826,7 @@ class Artists extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ArtistUrl[]
      */
     private function get_urls(int $artistID): array
     {

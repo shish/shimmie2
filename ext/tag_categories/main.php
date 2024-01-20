@@ -126,7 +126,7 @@ class TagCategories extends Extension
         $tc_keyed_dict = [];
 
         foreach ($tc_dict as $row) {
-            $tc_keyed_dict[$row['category']] = $row;
+            $tc_keyed_dict[(string)$row['category']] = $row;
         }
 
         return $tc_keyed_dict;

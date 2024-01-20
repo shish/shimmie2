@@ -40,7 +40,7 @@ class BulkImportExport extends DataHandlerExtension
                             continue;
                         }
 
-                        $tmpfile = tempnam(sys_get_temp_dir(), "shimmie_bulk_import");
+                        $tmpfile = shm_tempnam("bulk_import");
                         $stream = $zip->getStream($item->hash);
                         if ($stream === false) {
                             throw new SCoreException("Could not import " . $item->hash . ": File not in zip");
@@ -105,7 +105,7 @@ class BulkImportExport extends DataHandlerExtension
         if ($user->can(Permissions::BULK_EXPORT) &&
             ($event->action == self::EXPORT_ACTION_NAME)) {
             $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
-            $zip_filename = tempnam(sys_get_temp_dir(), "shimmie_bulk_export");
+            $zip_filename = shm_tempnam("bulk_export");
             $zip = new \ZipArchive();
 
             $json_data = [];
@@ -126,7 +126,7 @@ class BulkImportExport extends DataHandlerExtension
                     $zip->addFile($img_loc, $image->hash);
                 }
 
-                $json_data = json_encode($json_data, JSON_PRETTY_PRINT);
+                $json_data = json_encode_ex($json_data, JSON_PRETTY_PRINT);
                 $zip->addFromString(self::EXPORT_INFO_FILE_NAME, $json_data);
 
                 $zip->close();
@@ -163,7 +163,7 @@ class BulkImportExport extends DataHandlerExtension
         $info = $zip->getStream(self::EXPORT_INFO_FILE_NAME);
         if ($info !== false) {
             try {
-                $json_string = stream_get_contents($info);
+                $json_string = false_throws(stream_get_contents($info));
                 $json_data = json_decode($json_string);
                 return $json_data;
             } finally {

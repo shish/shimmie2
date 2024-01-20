@@ -79,10 +79,11 @@ class ActorColumn extends Column
     }
 
     /**
-     * @return array{0: string, 1: string}
+     * @return array{0: string|null, 1: string|null}
      */
     public function modify_input_for_read(string|array $input): array
     {
+        assert(is_array($input));
         list($un, $ip) = $input;
         if (empty($un)) {
             $un = null;
@@ -160,6 +161,7 @@ class MessageColumn extends Column
 
     public function modify_input_for_read(array|string $input): mixed
     {
+        assert(is_array($input));
         list($m, $l) = $input;
         if (empty($m)) {
             $m = "%";

@@ -126,7 +126,7 @@ class Notes extends Extension
                     $page->set_mode(PageMode::DATA);
                     if (!$user->is_anonymous()) {
                         $note_id = $this->add_new_note();
-                        $page->set_data(json_encode([
+                        $page->set_data(json_encode_ex([
                             'status' => 'success',
                             'note_id' => $note_id,
                         ]));
@@ -136,14 +136,14 @@ class Notes extends Extension
                     $page->set_mode(PageMode::DATA);
                     if (!$user->is_anonymous()) {
                         $this->update_note();
-                        $page->set_data(json_encode(['status' => 'success']));
+                        $page->set_data(json_encode_ex(['status' => 'success']));
                     }
                     break;
                 case "delete_note":
                     $page->set_mode(PageMode::DATA);
                     if ($user->can(Permissions::NOTES_ADMIN)) {
                         $this->delete_note();
-                        $page->set_data(json_encode(['status' => 'success']));
+                        $page->set_data(json_encode_ex(['status' => 'success']));
                     }
                     break;
                 case "nuke_notes":
@@ -256,7 +256,7 @@ class Notes extends Extension
     {
         global $database, $user;
 
-        $note = json_decode(file_get_contents('php://input'), true);
+        $note = json_decode(file_get_contents_ex('php://input'), true);
 
         $database->execute(
             "
@@ -318,7 +318,7 @@ class Notes extends Extension
     {
         global $database;
 
-        $note = json_decode(file_get_contents('php://input'), true);
+        $note = json_decode(file_get_contents_ex('php://input'), true);
 
         // validate parameters
         if (empty($note['note'])) {
@@ -337,7 +337,7 @@ class Notes extends Extension
     {
         global $user, $database;
 
-        $note = json_decode(file_get_contents('php://input'), true);
+        $note = json_decode(file_get_contents_ex('php://input'), true);
         $database->execute("
 			UPDATE notes SET enable = :enable
 			WHERE image_id = :image_id AND id = :id
@@ -369,11 +369,11 @@ class Notes extends Extension
         global $database, $config;
 
         $pageNumber = $event->try_page_num(1);
-
         $notesPerPage = $config->get_int('notesNotesPerPage');
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
-        $result = $database->execute(
+        $image_ids = $database->get_col(
             "
 			SELECT DISTINCT image_id
 			FROM notes
@@ -382,11 +382,9 @@ class Notes extends Extension
             ['enable' => 1, 'offset' => $pageNumber * $notesPerPage, 'limit' => $notesPerPage]
         );
 
-        $totalPages = (int)ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
-
         $images = [];
-        while ($row = $result->fetch()) {
-            $images[] = [Image::by_id($row["image_id"])];
+        foreach($image_ids as $id) {
+            $images[] = Image::by_id($id);
         }
 
         $this->theme->display_note_list($images, $pageNumber + 1, $totalPages);
@@ -414,7 +412,7 @@ class Notes extends Extension
 
         $images = [];
         while ($row = $result->fetch()) {
-            $images[] = [Image::by_id($row["image_id"])];
+            $images[] = Image::by_id($row["image_id"]);
         }
 
         $this->theme->display_note_requests($images, $pageNumber + 1, $totalPages);

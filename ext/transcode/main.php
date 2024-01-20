@@ -391,9 +391,9 @@ class TranscodeImage extends Extension
 
         $q = $config->get_int(TranscodeConfig::QUALITY);
 
-        $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
+        $tmp_name = shm_tempnam("transcode");
 
-        $image = imagecreatefromstring(file_get_contents($source_name));
+        $image = false_throws(imagecreatefromstring(file_get_contents_ex($source_name)));
         try {
             $result = false;
             switch ($target_mime) {
@@ -467,7 +467,7 @@ class TranscodeImage extends Extension
                 break;
         }
 
-        $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
+        $tmp_name = shm_tempnam("transcode");
 
         $source_type = FileExtension::get_for_mime($source_mime);
 

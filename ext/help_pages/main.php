@@ -18,7 +18,7 @@ class HelpPageListBuildingEvent extends Event
 class HelpPageBuildingEvent extends Event
 {
     public string $key;
-    /** @var array<string,array<Block>> */
+    /** @var array<int,Block> */
     public array $blocks = [];
 
     public function __construct(string $key)
@@ -29,10 +29,10 @@ class HelpPageBuildingEvent extends Event
 
     public function add_block(Block $block, int $position = 50): void
     {
-        if (!array_key_exists("$position", $this->blocks)) {
-            $this->blocks["$position"] = [];
+        while (array_key_exists($position, $this->blocks)) {
+            $position++;
         }
-        $this->blocks["$position"][] = $block;
+        $this->blocks[$position] = $block;
     }
 }
 
@@ -65,12 +65,9 @@ class HelpPages extends Extension
                 $this->theme->display_help_page($title);
 
                 $hpbe = send_event(new HelpPageBuildingEvent($name));
-                asort($hpbe->blocks);
-
-                foreach ($hpbe->blocks as $key => $value) {
-                    foreach ($value as $block) {
-                        $page->add_block($block);
-                    }
+                ksort($hpbe->blocks);
+                foreach ($hpbe->blocks as $block) {
+                    $page->add_block($block);
                 }
             }
         }

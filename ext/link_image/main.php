@@ -28,7 +28,7 @@ class LinkImage extends Extension
     }
 
     /**
-     * @return array{thumb_src: string, image_src: string, post_link: string, text_link: string}
+     * @return array{thumb_src: string, image_src: string, post_link: string, text_link: string|null}
      */
     private function data(Image $image): array
     {

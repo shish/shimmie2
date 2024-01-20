@@ -7,7 +7,7 @@ namespace Shimmie2;
 class LinkImageTheme extends Themelet
 {
     /**
-     * @param array{thumb_src:string,image_src:string,post_link:string,text_link:string} $data
+     * @param array{thumb_src:string,image_src:string,post_link:string,text_link:string|null} $data
      */
     public function links_block(Page $page, array $data): void
     {

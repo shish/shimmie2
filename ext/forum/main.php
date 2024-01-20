@@ -82,7 +82,7 @@ class Forum extends Extension
         $threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
         $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
 
-        $days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
+        $days_old = ((time() - strtotime_ex($event->display_user->join_date)) / 86400) + 1;
 
         $threads_rate = sprintf("%.1f", ($threads_count / $days_old));
         $posts_rate = sprintf("%.1f", ($posts_count / $days_old));
