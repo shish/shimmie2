@@ -34,7 +34,6 @@ function add_dir(string $base, array $extra_tags = []): array
                 ]));
                 $results = [];
                 foreach($dae->images as $image) {
-                    assert(!is_null($image->id));
                     $results[] = new UploadSuccess($filename, $image->id);
                 }
                 return $results;

@@ -32,7 +32,9 @@ class Image implements \ArrayAccess
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
-    public ?int $id = null;
+    private bool $in_db = false;
+
+    public int $id;
     #[Field]
     public int $height = 0;
     #[Field]
@@ -116,6 +118,7 @@ class Image implements \ArrayAccess
                     }
                 }
             }
+            $this->in_db = true;
         }
     }
 
@@ -146,7 +149,6 @@ class Image implements \ArrayAccess
     #[Field(name: "post_id")]
     public function graphql_oid(): int
     {
-        assert(!is_null($this->id));
         return $this->id;
     }
     #[Field(name: "id")]
@@ -288,7 +290,7 @@ class Image implements \ArrayAccess
             "audio" => $this->audio,
             "length" => $this->length
         ];
-        if (is_null($this->id)) {
+        if (!$this->in_db) {
             $props_to_save["owner_id"] = $user->id;
             $props_to_save["owner_ip"] = get_real_ip();
             $props_to_save["posted"] = date('Y-m-d H:i:s', time());
@@ -301,6 +303,7 @@ class Image implements \ArrayAccess
                 $props_to_save,
             );
             $this->id = $database->get_last_insert_id('images_id_seq');
+            $this->in_db = true;
         } else {
             $props_sql = implode(", ", array_map(fn ($prop) => "$prop = :$prop", array_keys($props_to_save)));
             $database->execute(
