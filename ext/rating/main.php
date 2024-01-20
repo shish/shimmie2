@@ -81,7 +81,7 @@ class Ratings extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        global $config, $_shm_user_classes, $_shm_ratings;
+        global $config, $_shm_ratings;
 
         $codes = implode("", array_keys($_shm_ratings));
         $search_terms = [];
@@ -91,7 +91,7 @@ class Ratings extends Extension
         $this->search_regexp = "/^rating[=|:](?:(\*|[" . $codes . "]+)|(" .
             implode("|", $search_terms) . "|".implode("|", self::UNRATED_KEYWORDS)."))$/D";
 
-        foreach (array_keys($_shm_user_classes) as $key) {
+        foreach (array_keys(UserClass::$known_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {
                 continue;
             }
@@ -146,8 +146,6 @@ class Ratings extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        global $_shm_user_classes;
-
         $ratings = self::get_sorted_ratings();
 
         $options = [];
@@ -157,7 +155,7 @@ class Ratings extends Extension
 
         $sb = $event->panel->create_new_block("Post Rating Visibility");
         $sb->start_table();
-        foreach (array_keys($_shm_user_classes) as $key) {
+        foreach (array_keys(UserClass::$known_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {
                 continue;
             }

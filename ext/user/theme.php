@@ -313,9 +313,8 @@ class UserPageTheme extends Themelet
             ));
 
             if ($user->can(Permissions::EDIT_USER_CLASS)) {
-                global $_shm_user_classes;
                 $select = SELECT(["name" => "class"]);
-                foreach ($_shm_user_classes as $name => $values) {
+                foreach (UserClass::$known_classes as $name => $values) {
                     $select->appendChild(
                         OPTION(["value" => $name, "selected" => $name == $duser->class->name], ucwords($name))
                     );

@@ -102,7 +102,7 @@ class IPBan extends Extension
 
     public function onUserLogin(UserLoginEvent $event): void
     {
-        global $cache, $config, $database, $page, $_shm_user_classes;
+        global $cache, $config, $database, $page;
 
         // Get lists of banned IPs and banned networks
         $ips = $cache->get("ip_bans");
@@ -160,14 +160,14 @@ class IPBan extends Extension
                 $b->is_content = false;
                 $page->add_block($b);
                 $page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
-                $event->user->class = $_shm_user_classes["ghost"];
+                $event->user->class = UserClass::$known_classes["ghost"];
             } elseif ($row["mode"] == "anon-ghost") {
                 if ($event->user->is_anonymous()) {
                     $b = new Block(null, $msg, "main", 0);
                     $b->is_content = false;
                     $page->add_block($b);
                     $page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
-                    $event->user->class = $_shm_user_classes["ghost"];
+                    $event->user->class = UserClass::$known_classes["ghost"];
                 }
             } else {
                 header("HTTP/1.1 403 Forbidden");

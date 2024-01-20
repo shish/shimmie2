@@ -46,9 +46,8 @@ class UserTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
-        global $_shm_user_classes;
         $classes = [];
-        foreach ($_shm_user_classes as $cls) {
+        foreach (UserClass::$known_classes as $cls) {
             $classes[$cls->name] = $cls->name;
         }
         ksort($classes);
@@ -160,7 +159,7 @@ class UserPage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $page, $user, $_shm_user_classes;
+        global $config, $database, $page, $user;
 
         $this->show_user_info();
 
@@ -199,7 +198,7 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "classes") {
                 $this->theme->display_user_classes(
                     $page,
-                    $_shm_user_classes,
+                    UserClass::$known_classes,
                     (new \ReflectionClass(Permissions::class))->getReflectionConstants()
                 );
             } elseif ($event->get_arg(0) == "logout") {
