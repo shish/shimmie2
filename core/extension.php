@@ -245,7 +245,7 @@ abstract class ExtensionInfo
 
     public static function load_all_extension_info(): void
     {
-        foreach (get_subclasses_of("Shimmie2\ExtensionInfo") as $class) {
+        foreach (get_subclasses_of(ExtensionInfo::class) as $class) {
             $extension_info = new $class();
             if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
                 throw new SCoreException("Extension Info $class with key $extension_info->key has already been loaded");
@@ -399,13 +399,13 @@ abstract class DataHandlerExtension extends Extension
     public static function get_all_supported_mimes(): array
     {
         $arr = [];
-        foreach (get_subclasses_of("Shimmie2\DataHandlerExtension") as $handler) {
+        foreach (get_subclasses_of(DataHandlerExtension::class) as $handler) {
             $handler = (new $handler());
             $arr = array_merge($arr, $handler->SUPPORTED_MIME);
         }
 
         // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class
-        if (class_exists("Shimmie2\TranscodeImage")) {
+        if (Extension::is_enabled(TranscodeImageInfo::KEY)) {
             $arr = array_merge($arr, TranscodeImage::get_enabled_mimes());
         }
 

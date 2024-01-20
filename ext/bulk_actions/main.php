@@ -224,7 +224,7 @@ class BulkActions extends Extension
         $size = 0;
         foreach ($posts as $post) {
             try {
-                if (class_exists("Shimmie2\ImageBan") && isset($_POST['bulk_ban_reason'])) {
+                if (Extension::is_enabled(ImageBanInfo::KEY) && isset($_POST['bulk_ban_reason'])) {
                     $reason = $_POST['bulk_ban_reason'];
                     if ($reason) {
                         send_event(new AddImageHashBanEvent($post->hash, $reason));

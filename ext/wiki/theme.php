@@ -30,7 +30,7 @@ class WikiTheme extends Themelet
 
         // see if title is a category'd tag
         $title_html = html_escape($wiki_page->title);
-        if (class_exists('Shimmie2\TagCategories')) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $tagcategories = new TagCategories();
             $tag_category_dict = $tagcategories->getKeyedDict();
             $title_html = $tagcategories->getTagHtml($title_html, $tag_category_dict);

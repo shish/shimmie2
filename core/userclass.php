@@ -44,7 +44,7 @@ class UserClass
     {
         global $_all_false;
         $perms = [];
-        foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
+        foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
             if ($this->can($v)) {
                 $perms[] = $v;
             }
@@ -80,7 +80,7 @@ class UserClass
 }
 
 $_all_false = [];
-foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
+foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
     $_all_false[$v] = false;
 }
 new UserClass("base", null, $_all_false);

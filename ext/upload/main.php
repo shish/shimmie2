@@ -180,7 +180,7 @@ class Upload extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "upload") {
-            if (class_exists("Shimmie2\Wiki")) {
+            if (Extension::is_enabled(WikiInfo::KEY)) {
                 $event->add_nav_link("upload_guidelines", new Link('wiki/upload_guidelines'), "Guidelines");
             }
         }

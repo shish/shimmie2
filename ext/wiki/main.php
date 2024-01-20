@@ -392,7 +392,7 @@ class Wiki extends Extension
             $template = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
 
             //CATEGORIES
-            if (class_exists("Shimmie2\TagCategories")) {
+            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $tagcategories = new TagCategories();
                 $tag_category_dict = $tagcategories->getKeyedDict();
             }
@@ -415,7 +415,7 @@ class Wiki extends Extension
             $template = format_text($template);
             //Things after this line will NOT be escaped!!! Be careful what you add.
 
-            if (class_exists("Shimmie2\AutoTagger")) {
+            if (Extension::is_enabled(AutoTaggerInfo::KEY)) {
                 $auto_tags = $database->get_one("
                     SELECT additional_tags
                     FROM auto_tag

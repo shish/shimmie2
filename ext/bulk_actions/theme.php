@@ -51,7 +51,7 @@ class BulkActionsTheme extends Themelet
 
     public function render_ban_reason_input(): string
     {
-        if (class_exists("Shimmie2\ImageBan")) {
+        if (Extension::is_enabled(ImageBanInfo::KEY)) {
             return "<input type='text' name='bulk_ban_reason' placeholder='Ban reason (leave blank to not ban)' />";
         } else {
             return "";

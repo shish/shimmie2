@@ -200,7 +200,7 @@ class UserPage extends Extension
                 $this->theme->display_user_classes(
                     $page,
                     $_shm_user_classes,
-                    (new \ReflectionClass('\Shimmie2\Permissions'))->getReflectionConstants()
+                    (new \ReflectionClass(Permissions::class))->getReflectionConstants()
                 );
             } elseif ($event->get_arg(0) == "logout") {
                 $this->page_logout();
@@ -789,7 +789,7 @@ class UserPage extends Extension
 
     private function count_log_ips(User $duser): array
     {
-        if (!class_exists('Shimmie2\LogDatabase')) {
+        if (!Extension::is_enabled(LogDatabaseInfo::KEY)) {
             return [];
         }
         global $database;

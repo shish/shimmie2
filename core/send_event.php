@@ -48,7 +48,7 @@ function _set_event_listeners(): void
     global $_shm_event_listeners;
     $_shm_event_listeners = [];
 
-    foreach (get_subclasses_of("Shimmie2\Extension") as $class) {
+    foreach (get_subclasses_of(Extension::class) as $class) {
         /** @var Extension $extension */
         $extension = new $class();
 

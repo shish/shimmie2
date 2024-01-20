@@ -50,7 +50,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         array $expected_img_conditions,
         string $expected_order,
     ): void {
-        $class = new \ReflectionClass('\Shimmie2\Search');
+        $class = new \ReflectionClass(Search::class);
         $terms_to_conditions = $class->getMethod("terms_to_conditions");
         $terms_to_conditions->setAccessible(true); // Use this if you are running PHP older than 8.1.0
 
@@ -171,7 +171,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
 
         Search::$_search_path = [];
 
-        $class = new \ReflectionClass('\Shimmie2\Search');
+        $class = new \ReflectionClass(Search::class);
         $build_search_querylet = $class->getMethod("build_search_querylet");
         $build_search_querylet->setAccessible(true); // Use this if you are running PHP older than 8.1.0
 

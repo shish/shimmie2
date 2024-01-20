@@ -113,7 +113,7 @@ and of course start organising your images :-)
     {
         global $config;
 
-        if (class_exists('Shimmie2\Wiki') && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
+        if (Extension::is_enabled(WikiInfo::KEY) && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) == 1) {
                 $st = Tag::implode($this->search_terms);
 
@@ -127,7 +127,7 @@ and of course start organising your images :-)
                     $short_wiki_description = $tfe->formatted;
                 }
                 $wikiLink = make_link("wiki/$st");
-                if (class_exists('Shimmie2\TagCategories')) {
+                if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                     $tagcategories = new TagCategories();
                     $tag_category_dict = $tagcategories->getKeyedDict();
                     $st = $tagcategories->getTagHtml(html_escape($st), $tag_category_dict);

@@ -89,7 +89,7 @@ class TagList extends Extension
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
             $type = $config->get_string(TagListConfig::IMAGE_TYPE);
             if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
-                if (class_exists("Shimmie2\TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
+                if (Extension::is_enabled(TagCategoriesInfo::KEY) and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                     $this->add_split_tags_block($page, $event->image);
                 } else {
                     $this->add_tags_block($page, $event->image);
@@ -266,7 +266,7 @@ class TagList extends Extension
             $html .= $this->build_az();
         }
         $tag_category_dict = [];
-        if (class_exists('Shimmie2\TagCategories')) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
@@ -278,7 +278,7 @@ class TagList extends Extension
                 $size = 0.5;
             }
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
-            if (class_exists('Shimmie2\TagCategories')) {
+            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $h_tag_no_underscores = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict);
             }
             $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
@@ -336,7 +336,7 @@ class TagList extends Extension
         mb_internal_encoding('UTF-8');
 
         $tag_category_dict = [];
-        if (class_exists('Shimmie2\TagCategories')) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
@@ -355,7 +355,7 @@ class TagList extends Extension
             }
             $link = $this->theme->tag_link($tag);
             $h_tag = html_escape($tag);
-            if (class_exists('Shimmie2\TagCategories')) {
+            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $h_tag = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict, "&nbsp;($count)");
             }
             $html .= "<a href='$link'>$h_tag</a>\n";

@@ -74,7 +74,7 @@ class TagListTheme extends Themelet
             asort($tag_infos);
         }
 
-        if (class_exists('Shimmie2\TagCategories')) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         } else {
@@ -136,7 +136,7 @@ class TagListTheme extends Themelet
             asort($tag_infos);
         }
 
-        if (class_exists('Shimmie2\TagCategories')) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         } else {
