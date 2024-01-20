@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-/**
-* @global ImageRating[] $_shm_ratings
-*/
-global $_shm_ratings;
-$_shm_ratings = [];
-
 class ImageRating
 {
+    /** @var array<string, ImageRating> */
+    public static array $known_ratings = [];
     public string $name;
     public string $code;
     public string $search_term;
@@ -30,14 +26,13 @@ class ImageRating
 
 function add_rating(ImageRating $rating): void
 {
-    global $_shm_ratings;
-    if ($rating->code == "?" && array_key_exists("?", $_shm_ratings)) {
+    if ($rating->code == "?" && array_key_exists("?", ImageRating::$known_ratings)) {
         throw new \RuntimeException("? is a reserved rating code that cannot be overridden");
     }
     if ($rating->code != "?" && in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
         throw new \RuntimeException("$rating->search_term is a reserved search term");
     }
-    $_shm_ratings[$rating->code] = $rating;
+    ImageRating::$known_ratings[$rating->code] = $rating;
 }
 
 add_rating(new ImageRating("?", "Unrated", "unrated", 99999));
@@ -55,9 +50,8 @@ class RatingSetEvent extends Event
     public function __construct(Image $image, string $rating)
     {
         parent::__construct();
-        global $_shm_ratings;
 
-        assert(in_array($rating, array_keys($_shm_ratings)));
+        assert(in_array($rating, array_keys(ImageRating::$known_ratings)));
 
         $this->image = $image;
         $this->rating = $rating;
@@ -81,11 +75,11 @@ class Ratings extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        global $config, $_shm_ratings;
+        global $config;
 
-        $codes = implode("", array_keys($_shm_ratings));
+        $codes = implode("", array_keys(ImageRating::$known_ratings));
         $search_terms = [];
-        foreach ($_shm_ratings as $key => $rating) {
+        foreach (ImageRating::$known_ratings as $key => $rating) {
             $search_terms[] = $rating->search_term;
         }
         $this->search_regexp = "/^rating[=|:](?:(\*|[" . $codes . "]+)|(" .
@@ -95,7 +89,7 @@ class Ratings extends Extension
             if ($key == "base" || $key == "hellbanned") {
                 continue;
             }
-            $config->set_default_array("ext_rating_" . $key . "_privs", array_keys($_shm_ratings));
+            $config->set_default_array("ext_rating_" . $key . "_privs", array_keys(ImageRating::$known_ratings));
         }
 
         Image::$prop_types["rating"] = ImagePropType::STRING;
@@ -129,12 +123,12 @@ class Ratings extends Extension
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
-        global $user, $_shm_ratings;
+        global $user;
 
         $levels = self::get_user_class_privs($user);
         $options = [];
         foreach ($levels as $level) {
-            $options[$_shm_ratings[$level]->name] = $level;
+            $options[ImageRating::$known_ratings[$level]->name] = $level;
         }
 
         $sb = $event->panel->create_new_block("Default Rating Filter");
@@ -305,13 +299,13 @@ class Ratings extends Extension
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
-        global $database, $_shm_ratings;
+        global $database;
 
         $results = $database->get_col("SELECT DISTINCT rating FROM images ORDER BY rating");
         $original_values = [];
         foreach ($results as $result) {
-            if (array_key_exists($result, $_shm_ratings)) {
-                $original_values[$result] = $_shm_ratings[$result]->name;
+            if (array_key_exists($result, ImageRating::$known_ratings)) {
+                $original_values[$result] = ImageRating::$known_ratings[$result]->name;
             } else {
                 $original_values[$result] = $result;
             }
@@ -413,9 +407,7 @@ class Ratings extends Extension
      */
     public static function get_sorted_ratings(): array
     {
-        global $_shm_ratings;
-
-        $ratings = array_values($_shm_ratings);
+        $ratings = array_values(ImageRating::$known_ratings);
         usort($ratings, function ($a, $b) {
             return $a->order <=> $b->order;
         });
@@ -486,19 +478,15 @@ class Ratings extends Extension
 
     public static function rating_to_human(string $rating): string
     {
-        global $_shm_ratings;
-
-        if (array_key_exists($rating, $_shm_ratings)) {
-            return $_shm_ratings[$rating]->name;
+        if (array_key_exists($rating, ImageRating::$known_ratings)) {
+            return ImageRating::$known_ratings[$rating]->name;
         }
         return "Unknown";
     }
 
     public static function rating_is_valid(string $rating): bool
     {
-        global $_shm_ratings;
-
-        return in_array($rating, array_keys($_shm_ratings));
+        return in_array($rating, array_keys(ImageRating::$known_ratings));
     }
 
     /**
