@@ -56,7 +56,6 @@ class AutoComplete extends Extension
         if ($limit !== 0) {
             $limitSQL = "LIMIT :limit";
             $SQLarr['limit'] = $limit;
-            $cache_key .= "-" . $limit;
         }
 
         return cache_get_or_set($cache_key, fn () => $database->get_pairs(
@@ -70,7 +69,7 @@ class AutoComplete extends Extension
                 AND count > 0
                 ORDER BY count DESC, tag ASC
                 $limitSQL
-                ",
+            ",
             $SQLarr
         ), 600);
     }
