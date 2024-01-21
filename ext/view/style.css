@@ -21,3 +21,10 @@ TABLE.form.image_info {
 	min-width: 100%;
 	min-height: 3rem;
 }
+
+.post_controls FORM {
+	margin-bottom: 0.75em;
+}
+.post_controls FORM:last-child {
+	margin-bottom: 0;
+}

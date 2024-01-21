@@ -23,6 +23,8 @@ class DataUploadEvent extends Event
     /**
      * Some data is being uploaded.
      * This should be caught by a file handler.
+     *
+     * @param array<string, mixed> $metadata
      */
     public function __construct(
         public string $tmpname,
@@ -39,12 +41,12 @@ class DataUploadEvent extends Event
         $metadata['filename'] = substr($metadata['filename'], 0, 255);
     }
 
-    public function set_tmpname(string $tmpname, ?string $mime = null)
+    public function set_tmpname(string $tmpname, ?string $mime = null): void
     {
         assert(is_readable($tmpname));
         $this->tmpname = $tmpname;
-        $this->hash = md5_file($tmpname);
-        $this->size = filesize($tmpname);
+        $this->hash = md5_file_ex($tmpname);
+        $this->size = filesize_ex($tmpname);
         $mime = $mime ?? MimeType::get_for_file($tmpname, get_file_ext($this->metadata["filename"]) ?? null);
         if (empty($mime)) {
             throw new UploadException("Could not determine mime type");
@@ -160,6 +162,9 @@ class Upload extends Extension
         $sb->end_table();
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function get_mime_options(): array
     {
         $output = [];
@@ -180,7 +185,7 @@ class Upload extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "upload") {
-            if (class_exists("Shimmie2\Wiki")) {
+            if (Extension::is_enabled(WikiInfo::KEY)) {
                 $event->add_nav_link("upload_guidelines", new Link('wiki/upload_guidelines'), "Guidelines");
             }
         }
@@ -251,6 +256,9 @@ class Upload extends Extension
         }
     }
 
+    /**
+     * @return string[]
+     */
     private function tags_for_upload_slot(int $id): array
     {
         # merge then explode, not explode then merge - else
@@ -365,6 +373,7 @@ class Upload extends Extension
     }
 
     /**
+     * @param string[] $tags
      * @return UploadResult[]
      */
     private function try_transload(string $url, array $tags, string $source = null): array
@@ -372,17 +381,14 @@ class Upload extends Extension
         global $page, $config, $user, $database;
 
         $results = [];
-        $tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
+        $tmp_filename = shm_tempnam("transload");
 
         try {
             // Fetch file
-            $headers = fetch_url($url, $tmp_filename);
-            if (is_null($headers)) {
-                log_warning("core-util", "Failed to fetch $url");
-                throw new UploadException("Error reading from $url");
-            }
-            if (filesize($tmp_filename) == 0) {
-                throw new UploadException("No data found in $url -- perhaps the site has hotlink protection?");
+            try {
+                $headers = fetch_url($url, $tmp_filename);
+            } catch (FetchException $e) {
+                throw new UploadException("Error reading from $url: $e");
             }
 
             // Parse metadata

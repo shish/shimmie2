@@ -33,8 +33,8 @@ class NumericScoreVote
     public static function score(Image $post): int
     {
         global $database;
-        if ($post->score ?? null) {
-            return $post->score;
+        if ($post['score'] ?? null) {
+            return $post['score'];
         }
         return $database->get_one(
             "SELECT sum(score) FROM numeric_score_votes WHERE image_id=:image_id",
@@ -42,6 +42,9 @@ class NumericScoreVote
         ) ?? 0;
     }
 
+    /**
+     * @return NumericScoreVote[]
+     */
     #[Field(extends: "Post", type: "[NumericScoreVote!]!")]
     public static function votes(Image $post): array
     {
@@ -202,25 +205,25 @@ class NumericScore extends Extension
 
             $totaldate = $year."/".$month."/".$day;
 
-            $sql = "SELECT id FROM images
-			        WHERE EXTRACT(YEAR FROM posted) = :year
-					";
+            $sql = "SELECT id FROM images WHERE EXTRACT(YEAR FROM posted) = :year";
             $args = ["limit" => $config->get_int(IndexConfig::IMAGES), "year" => $year];
 
             if ($event->page_matches("popular_by_day")) {
-                $sql .=
-                    "AND EXTRACT(MONTH FROM posted) = :month
-					AND EXTRACT(DAY FROM posted) = :day";
-
+                $sql .= " AND EXTRACT(MONTH FROM posted) = :month AND EXTRACT(DAY FROM posted) = :day";
                 $args = array_merge($args, ["month" => $month, "day" => $day]);
-                $dte = [$totaldate, date("F jS, Y", (strtotime($totaldate))), "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m\\&\\d\\a\\y\\=d", "day"];
+                $current = date("F jS, Y", strtotime_ex($totaldate)).
+                $name = "day";
+                $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m\\&\\d\\a\\y\\=d";
             } elseif ($event->page_matches("popular_by_month")) {
-                $sql .=	"AND EXTRACT(MONTH FROM posted) = :month";
-
+                $sql .=	" AND EXTRACT(MONTH FROM posted) = :month";
                 $args = array_merge($args, ["month" => $month]);
-                $dte = [$totaldate, date("F Y", (strtotime($totaldate))), "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m", "month"];
+                $current = date("F Y", strtotime_ex($totaldate));
+                $name = "month";
+                $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m";
             } elseif ($event->page_matches("popular_by_year")) {
-                $dte = [$totaldate, $year, "\\y\\e\\a\\r\=Y", "year"];
+                $current = "$year";
+                $name = "year";
+                $fmt = "\\y\\e\\a\\r\=Y";
             } else {
                 // this should never happen due to the fact that the page event is already matched against earlier.
                 throw new \UnexpectedValueException("Error: Invalid page event.");
@@ -231,7 +234,7 @@ class NumericScore extends Extension
 
             $ids = $database->get_col($sql, $args);
             $images = Search::get_images($ids);
-            $this->theme->view_popular($images, $dte);
+            $this->theme->view_popular($images, $totaldate, $current, $name, $fmt);
         }
     }
 
@@ -253,7 +256,7 @@ class NumericScore extends Extension
         $this->delete_votes_by($event->id);
     }
 
-    public function delete_votes_by(int $user_id)
+    public function delete_votes_by(int $user_id): void
     {
         global $database;
 
@@ -405,7 +408,7 @@ class NumericScore extends Extension
         }
     }
 
-    private function add_vote(int $image_id, int $user_id, int $score)
+    private function add_vote(int $image_id, int $user_id, int $score): void
     {
         global $database;
         $database->execute(

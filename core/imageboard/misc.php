@@ -12,9 +12,10 @@ namespace Shimmie2;
  * Add a directory full of images
  *
  * @param string $base
+ * @param string[] $extra_tags
  * @return UploadResult[]
  */
-function add_dir(string $base, ?array $extra_tags = []): array
+function add_dir(string $base, array $extra_tags = []): array
 {
     global $database;
     $results = [];
@@ -59,7 +60,7 @@ function get_file_ext(string $filename): ?string
  * @param int $orig_width
  * @param int $orig_height
  * @param bool $use_dpi_scaling Enables the High-DPI scaling.
- * @return array
+ * @return array{0: int, 1: int}
  */
 function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_scaling = false): array
 {
@@ -107,6 +108,9 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
     }
 }
 
+/**
+ * @return array{0: int, 1: int, 2: float}
+ */
 function get_scaled_by_aspect_ratio(int $original_width, int $original_height, int $max_width, int $max_height): array
 {
     $xscale = ($max_width / $original_width);
@@ -120,7 +124,7 @@ function get_scaled_by_aspect_ratio(int $original_width, int $original_height, i
 /**
  * Fetches the thumbnails height and width settings and applies the High-DPI scaling setting before returning the dimensions.
  *
- * @return array [width, height]
+ * @return array{0: int, 1: int}
  */
 function get_thumbnail_max_size_scaled(): array
 {
@@ -147,7 +151,9 @@ function create_image_thumb(Image $image, string $engine = null): void
 }
 
 
-
+/**
+ * @param array{0: int, 1: int} $tsize
+ */
 function create_scaled_image(
     string $inname,
     string $outname,

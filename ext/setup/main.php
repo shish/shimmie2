@@ -71,36 +71,36 @@ class SetupBlock extends Block
         $this->config = $config;
     }
 
-    public function add_label(string $text)
+    public function add_label(string $text): void
     {
         $this->body .= $text;
     }
 
-    public function start_table()
+    public function start_table(): void
     {
         $this->body .= "<table class='form'>";
     }
-    public function end_table()
+    public function end_table(): void
     {
         $this->body .= "</table>";
     }
-    public function start_table_row()
+    public function start_table_row(): void
     {
         $this->body .= "<tr>";
     }
-    public function end_table_row()
+    public function end_table_row(): void
     {
         $this->body .= "</tr>";
     }
-    public function start_table_head()
+    public function start_table_head(): void
     {
         $this->body .= "<thead>";
     }
-    public function end_table_head()
+    public function end_table_head(): void
     {
         $this->body .= "</thead>";
     }
-    public function add_table_header($content, int $colspan = 2)
+    public function add_table_header(string $content, int $colspan = 2): void
     {
         $this->start_table_head();
         $this->start_table_row();
@@ -109,29 +109,29 @@ class SetupBlock extends Block
         $this->end_table_head();
     }
 
-    public function start_table_cell(int $colspan = 1)
+    public function start_table_cell(int $colspan = 1): void
     {
         $this->body .= "<td colspan='$colspan'>";
     }
-    public function end_table_cell()
+    public function end_table_cell(): void
     {
         $this->body .= "</td>";
     }
-    public function add_table_cell($content, int $colspan = 1)
+    public function add_table_cell(string $content, int $colspan = 1): void
     {
         $this->start_table_cell($colspan);
         $this->body .= $content;
         $this->end_table_cell();
     }
-    public function start_table_header_cell(int $colspan = 1, string $align = 'right')
+    public function start_table_header_cell(int $colspan = 1, string $align = 'right'): void
     {
         $this->body .= "<th colspan='$colspan' style='text-align: $align'>";
     }
-    public function end_table_header_cell()
+    public function end_table_header_cell(): void
     {
         $this->body .= "</th>";
     }
-    public function add_table_header_cell($content, int $colspan = 1)
+    public function add_table_header_cell(string $content, int $colspan = 1): void
     {
         $this->start_table_header_cell($colspan);
         $this->body .= $content;
@@ -140,11 +140,11 @@ class SetupBlock extends Block
 
     private function format_option(
         string $name,
-        $html,
+        string $html,
         ?string $label,
         bool $table_row,
         bool $label_row = false
-    ) {
+    ): void {
         if ($table_row) {
             $this->start_table_row();
         }
@@ -176,7 +176,7 @@ class SetupBlock extends Block
         }
     }
 
-    public function add_text_option(string $name, string $label = null, bool $table_row = false)
+    public function add_text_option(string $name, string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -186,7 +186,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_longtext_option(string $name, string $label = null, bool $table_row = false)
+    public function add_longtext_option(string $name, string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -197,7 +197,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row, true);
     }
 
-    public function add_bool_option(string $name, string $label = null, bool $table_row = false)
+    public function add_bool_option(string $name, string $label = null, bool $table_row = false): void
     {
         $checked = $this->config->get_bool($name) ? " checked" : "";
 
@@ -222,7 +222,7 @@ class SetupBlock extends Block
     //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
     //	}
 
-    public function add_int_option(string $name, string $label = null, bool $table_row = false)
+    public function add_int_option(string $name, string $label = null, bool $table_row = false): void
     {
         $val = $this->config->get_int($name);
 
@@ -232,7 +232,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_shorthand_int_option(string $name, string $label = null, bool $table_row = false)
+    public function add_shorthand_int_option(string $name, string $label = null, bool $table_row = false): void
     {
         $val = to_shorthand_int($this->config->get_int($name));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6'>\n";
@@ -241,7 +241,10 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_choice_option(string $name, array $options, string $label = null, bool $table_row = false)
+    /**
+     * @param array<string,string|int> $options
+     */
+    public function add_choice_option(string $name, array $options, string $label = null, bool $table_row = false): void
     {
         if (is_int(array_values($options)[0])) {
             $current = $this->config->get_int($name);
@@ -264,7 +267,10 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_multichoice_option(string $name, array $options, string $label = null, bool $table_row = false)
+    /**
+     * @param array<string,string> $options
+     */
+    public function add_multichoice_option(string $name, array $options, string $label = null, bool $table_row = false): void
     {
         $current = $this->config->get_array($name);
 
@@ -279,12 +285,11 @@ class SetupBlock extends Block
         }
         $html .= "</select>";
         $html .= "<input type='hidden' name='_type_$name' value='array'>\n";
-        $html .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
 
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_color_option(string $name, string $label = null, bool $table_row = false)
+    public function add_color_option(string $name, string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -343,7 +348,7 @@ class Setup extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $themes = [];
-        foreach (glob("themes/*") as $theme_dirname) {
+        foreach (glob_ex("themes/*") as $theme_dirname) {
             $name = str_replace("themes/", "", $theme_dirname);
             $human = str_replace("_", " ", $name);
             $human = ucwords($human);
@@ -418,7 +423,7 @@ class Setup extends Extension
             }
         }
         log_warning("setup", "Configuration updated");
-        foreach (glob("data/cache/*.css") as $css_cache) {
+        foreach (glob_ex("data/cache/*.css") as $css_cache) {
             unlink($css_cache);
         }
         log_warning("setup", "Cache cleared");

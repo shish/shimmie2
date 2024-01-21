@@ -308,7 +308,7 @@ class BasePage
                 assert($this->file, "file should not be null with PageMode::FILE");
 
                 // https://gist.github.com/codler/3906826
-                $size = filesize($this->file); // File size
+                $size = filesize_ex($this->file); // File size
                 $length = $size;           // Content length
                 $start = 0;               // Start byte
                 $end = $size - 1;       // End byte
@@ -420,7 +420,7 @@ class BasePage
         if (!file_exists($css_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
             foreach($css_files as $css) {
-                $mcss->addSource($css, file_get_contents($css));
+                $mcss->addSource($css);
             }
             $mcss->save($css_cache_file);
         }
@@ -443,7 +443,7 @@ class BasePage
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
             foreach($js_files as $js) {
-                $mcss->addSource($js, file_get_contents($js));
+                $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);
         }
@@ -471,7 +471,7 @@ class BasePage
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
             foreach($js_files as $js) {
-                $mcss->addSource($js, file_get_contents($js));
+                $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);
         }
@@ -496,6 +496,9 @@ class BasePage
         return ["script.js"];
     }
 
+    /**
+     * @return array{0: NavLink[], 1: NavLink[]}
+     */
     protected function get_nav_links(): array
     {
         $pnbe = send_event(new PageNavBuildingEvent());
@@ -641,6 +644,7 @@ class BasePage
 
 class PageNavBuildingEvent extends Event
 {
+    /** @var NavLink[] */
     public array $links = [];
 
     public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50): void
@@ -653,6 +657,7 @@ class PageSubNavBuildingEvent extends Event
 {
     public string $parent;
 
+    /** @var NavLink[] */
     public array $links = [];
 
     public function __construct(string $parent)
@@ -704,6 +709,9 @@ class NavLink
         }
     }
 
+    /**
+     * @param string[] $pages_matched
+     */
     public static function is_active(array $pages_matched, string $url = null): bool
     {
         /**

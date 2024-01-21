@@ -23,6 +23,8 @@ enum ImagePropType
  * As of 2.2, this no longer necessarily represents an
  * image per se, but could be a video, sound file, or any
  * other supported upload type.
+ *
+ * @implements \ArrayAccess<string, mixed>
  */
 #[Type(name: "Post")]
 class Image implements \ArrayAccess
@@ -30,7 +32,9 @@ class Image implements \ArrayAccess
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
-    public ?int $id = null;
+    private bool $in_db = false;
+
+    public int $id;
     #[Field]
     public int $height = 0;
     #[Field]
@@ -50,7 +54,7 @@ class Image implements \ArrayAccess
     public int $owner_id;
     public string $owner_ip;
     #[Field]
-    public ?string $posted = null;
+    public string $posted;
     #[Field]
     public ?string $source = null;
     #[Field]
@@ -71,6 +75,8 @@ class Image implements \ArrayAccess
     /**
      * One will very rarely construct an image directly, more common
      * would be to use Image::by_id, Image::by_hash, etc.
+     *
+     * @param array<string|int, mixed>|null $row
      */
     public function __construct(?array $row = null)
     {
@@ -82,6 +88,7 @@ class Image implements \ArrayAccess
                     continue;
                 } elseif(property_exists($this, $name)) {
                     $t = (new \ReflectionProperty($this, $name))->getType();
+                    assert(!is_null($t));
                     if(is_a($t, \ReflectionNamedType::class)) {
                         $this->$name = match($t->getName()) {
                             "int" => is_null($value) ? $value : int_escape((string)$value),
@@ -111,15 +118,18 @@ class Image implements \ArrayAccess
                     }
                 }
             }
+            $this->in_db = true;
         }
     }
 
     public function offsetExists(mixed $offset): bool
     {
+        assert(is_string($offset));
         return array_key_exists($offset, static::$prop_types);
     }
     public function offsetGet(mixed $offset): mixed
     {
+        assert(is_string($offset));
         if(!$this->offsetExists($offset)) {
             throw new \OutOfBoundsException("Undefined dynamic property: $offset");
         }
@@ -127,10 +137,12 @@ class Image implements \ArrayAccess
     }
     public function offsetSet(mixed $offset, mixed $value): void
     {
+        assert(is_string($offset));
         $this->dynamic_props[$offset] = $value;
     }
     public function offsetUnset(mixed $offset): void
     {
+        assert(is_string($offset));
         unset($this->dynamic_props[$offset]);
     }
 
@@ -170,6 +182,9 @@ class Image implements \ArrayAccess
         return (is_numberish($id) && strlen($id) != 32) ? Image::by_id((int)$id) : Image::by_hash($id);
     }
 
+    /**
+     * @param string[] $tags
+     */
     public static function by_random(array $tags = [], int $limit_range = 0): ?Image
     {
         $max = Search::count_images($tags);
@@ -234,7 +249,9 @@ class Image implements \ArrayAccess
     #[Field(name: "owner")]
     public function get_owner(): User
     {
-        return User::by_id($this->owner_id);
+        $user = User::by_id($this->owner_id);
+        assert(!is_null($user));
+        return $user;
     }
 
     /**
@@ -257,17 +274,12 @@ class Image implements \ArrayAccess
     {
         global $database, $user;
 
-        if (is_null($this->posted) || $this->posted == "") {
-            $this->posted = date('Y-m-d H:i:s', time());
-        }
-
         $props_to_save = [
             "filename" => substr($this->filename, 0, 255),
             "filesize" => $this->filesize,
             "hash" => $this->hash,
             "mime" => strtolower($this->mime),
             "ext" => strtolower($this->ext),
-            "posted" => $this->posted,
             "source" => $this->source,
             "width" => $this->width,
             "height" => $this->height,
@@ -278,9 +290,10 @@ class Image implements \ArrayAccess
             "audio" => $this->audio,
             "length" => $this->length
         ];
-        if (is_null($this->id)) {
+        if (!$this->in_db) {
             $props_to_save["owner_id"] = $user->id;
             $props_to_save["owner_ip"] = get_real_ip();
+            $props_to_save["posted"] = date('Y-m-d H:i:s', time());
 
             $props_sql = implode(", ", array_keys($props_to_save));
             $vals_sql = implode(", ", array_map(fn ($prop) => ":$prop", array_keys($props_to_save)));
@@ -290,6 +303,7 @@ class Image implements \ArrayAccess
                 $props_to_save,
             );
             $this->id = $database->get_last_insert_id('images_id_seq');
+            $this->in_db = true;
         } else {
             $props_sql = implode(", ", array_map(fn ($prop) => "$prop = :$prop", array_keys($props_to_save)));
             $database->execute(
@@ -457,7 +471,7 @@ class Image implements \ArrayAccess
      * Get the image's mime type.
      */
     #[Field(name: "mime")]
-    public function get_mime(): ?string
+    public function get_mime(): string
     {
         if ($this->mime === MimeType::WEBP && $this->lossless) {
             return MimeType::WEBP_LOSSLESS;
@@ -468,7 +482,7 @@ class Image implements \ArrayAccess
     /**
      * Set the image's mime type.
      */
-    public function set_mime($mime): void
+    public function set_mime(string $mime): void
     {
         $this->mime = $mime;
         $ext = FileExtension::get_for_mime($this->get_mime());
@@ -545,6 +559,8 @@ class Image implements \ArrayAccess
 
     /**
      * Set the tags for this image.
+     *
+     * @param string[] $unfiltered_tags
      */
     public function set_tags(array $unfiltered_tags): void
     {

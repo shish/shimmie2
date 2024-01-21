@@ -72,7 +72,7 @@ class MySQL extends DBEngine
 
     public function get_version(PDO $db): string
     {
-        return $db->query('select version()')->fetch()[0];
+        return false_throws($db->query('select version()'))->fetch()[0];
     }
 }
 
@@ -124,24 +124,24 @@ class PostgreSQL extends DBEngine
 
     public function get_version(PDO $db): string
     {
-        return $db->query('select version()')->fetch()[0];
+        return false_throws($db->query('select version()'))->fetch()[0];
     }
 }
 
 // shimmie functions for export to sqlite
-function _unix_timestamp($date): int
+function _unix_timestamp(string $date): int
 {
-    return strtotime($date);
+    return strtotime_ex($date);
 }
 function _now(): string
 {
     return date("Y-m-d H:i:s");
 }
-function _floor($a): float
+function _floor(float|int $a): float
 {
     return floor($a);
 }
-function _log($a, $b = null): float
+function _log(float $a, ?float $b = null): float
 {
     if (is_null($b)) {
         return log($a);
@@ -149,19 +149,19 @@ function _log($a, $b = null): float
         return log($b, $a);
     }
 }
-function _isnull($a): bool
+function _isnull(mixed $a): bool
 {
     return is_null($a);
 }
-function _md5($a): string
+function _md5(string $a): string
 {
     return md5($a);
 }
-function _concat($a, $b): string
+function _concat(string $a, string $b): string
 {
     return $a . $b;
 }
-function _lower($a): string
+function _lower(string $a): string
 {
     return strtolower($a);
 }
@@ -169,7 +169,7 @@ function _rand(): int
 {
     return rand();
 }
-function _ln($n): float
+function _ln(float $n): float
 {
     return log($n);
 }
@@ -231,6 +231,6 @@ class SQLite extends DBEngine
 
     public function get_version(PDO $db): string
     {
-        return $db->query('select sqlite_version()')->fetch()[0];
+        return false_throws($db->query('select sqlite_version()'))->fetch()[0];
     }
 }

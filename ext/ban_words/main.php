@@ -97,6 +97,9 @@ xanax
         }
     }
 
+    /**
+     * @return string[]
+     */
     private function get_words(): array
     {
         global $config;

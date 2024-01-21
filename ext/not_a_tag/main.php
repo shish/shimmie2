@@ -65,7 +65,7 @@ class NotATag extends Extension
     /**
      * @param string[] $tags_mixed
      */
-    private function scan(array $tags_mixed)
+    private function scan(array $tags_mixed): void
     {
         global $database;
 
@@ -86,6 +86,7 @@ class NotATag extends Extension
 
     /**
      * @param string[] $tags
+     * @return string[]
      */
     private function strip(array $tags): array
     {

@@ -67,12 +67,12 @@ class TagCategories extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $database, $page, $user;
 
         if ($event->page_matches("tags/categories")) {
             if ($user->can(Permissions::EDIT_TAG_CATEGORIES)) {
                 $this->page_update();
-                $this->show_tag_categories($page);
+                $this->theme->show_tag_categories($page, $database->get_all('SELECT * FROM image_tag_categories'));
             }
         }
     }
@@ -116,26 +116,26 @@ class TagCategories extends Extension
         }
     }
 
-    public function getDict(): array
+    /**
+     * @return array<string, array{category: string, display_singular: string, display_multiple: string, color: string}>
+     */
+    public function getKeyedDict(): array
     {
         global $database;
-        return $database->get_all('SELECT * FROM image_tag_categories;');
-    }
-
-    public function getKeyedDict($key_with = 'category'): array
-    {
-        $tc_dict = $this->getDict();
+        $tc_dict = $database->get_all('SELECT * FROM image_tag_categories');
         $tc_keyed_dict = [];
 
         foreach ($tc_dict as $row) {
-            $key = $row[$key_with];
-            $tc_keyed_dict[$key] = $row;
+            $tc_keyed_dict[(string)$row['category']] = $row;
         }
 
         return $tc_keyed_dict;
     }
 
-    public function getTagHtml(string $h_tag, $tag_category_dict, string $extra_text = ''): string
+    /**
+     * @param array<string, array{color: string}> $tag_category_dict
+     */
+    public function getTagHtml(string $h_tag, array $tag_category_dict, string $extra_text = ''): string
     {
         $h_tag_no_underscores = str_replace("_", " ", $h_tag);
 
@@ -206,10 +206,5 @@ class TagCategories extends Extension
                 ]
             );
         }
-    }
-
-    public function show_tag_categories($page)
-    {
-        $this->theme->show_tag_categories($page, $this->getDict());
     }
 }

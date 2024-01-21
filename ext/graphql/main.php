@@ -92,6 +92,8 @@ class GraphQL extends Extension
             ]);
             $t2 = ftime();
             $resp = $server->executeRequest();
+            assert(!is_array($resp));
+            assert(is_a($resp, \GraphQL\Executor\ExecutionResult::class));
             if ($config->get_bool("graphql_debug")) {
                 $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
                 $body = $resp->toArray($debug);
@@ -105,16 +107,19 @@ class GraphQL extends Extension
             // sleep(1);
             $page->set_mode(PageMode::DATA);
             $page->set_mime("application/json");
-            $page->set_data(\json_encode($body, JSON_UNESCAPED_UNICODE));
+            $page->set_data(json_encode_ex($body, JSON_UNESCAPED_UNICODE));
         }
         if ($event->page_matches("graphql_upload")) {
             $this->cors();
             $page->set_mode(PageMode::DATA);
             $page->set_mime("application/json");
-            $page->set_data(\json_encode(self::handle_uploads()));
+            $page->set_data(json_encode_ex(self::handle_uploads()));
         }
     }
 
+    /**
+     * @return array{error?:string,results?:array<array{error?:string,image_ids?:int[]}>}
+     */
     private static function handle_uploads(): array
     {
         global $user;
@@ -135,7 +140,7 @@ class GraphQL extends Extension
                 break;
             }
             try {
-                $results[] = self::handle_upload($n, $common_tags, $common_source);
+                $results[] = ["image_ids" => self::handle_upload($n, $common_tags, $common_source)];
             } catch(\Exception $e) {
                 $results[] = ["error" => $e->getMessage()];
             }
@@ -143,10 +148,14 @@ class GraphQL extends Extension
         return ["results" => $results];
     }
 
+    /**
+     * @return int[]
+     */
     private static function handle_upload(int $n, string $common_tags, string $common_source): array
     {
+        global $database;
         if (!empty($_POST["url$n"])) {
-            throw new \Exception("URLs not handled yet");
+            throw new UploadException("URLs not handled yet");
         } else {
             $ec = $_FILES["data$n"]["error"];
             switch($ec) {
@@ -155,9 +164,9 @@ class GraphQL extends Extension
                     $filename = $_FILES["data$n"]["name"];
                     break;
                 case UPLOAD_ERR_INI_SIZE:
-                    return ["error" => "File larger than PHP can handle"];
+                    throw new UploadException("File larger than PHP can handle");
                 default:
-                    return ["error" => "Mystery error: $ec"];
+                    throw new UploadException("Mystery error: $ec");
             }
         }
 
@@ -166,13 +175,15 @@ class GraphQL extends Extension
         if (!empty($_POST["source$n"])) {
             $source = $_POST["source$n"];
         }
-        $event = send_event(new DataUploadEvent($tmpname, [
-            'filename' => $filename,
-            'tags' => Tag::explode($tags),
-            'source' => $source,
-        ]));
+        $event = $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source) {
+            return send_event(new DataUploadEvent($tmpname, [
+                'filename' => $filename,
+                'tags' => Tag::explode($tags),
+                'source' => $source,
+            ]));
+        });
 
-        return ["image_ids" => array_map(fn ($im) => $im->id, $event->images)];
+        return array_map(fn ($im) => $im->id, $event->images);
     }
 
     public function onCliGen(CliGenEvent $event): void
@@ -191,7 +202,7 @@ class GraphQL extends Extension
                 $body['stats'] = get_debug_info_arr();
                 $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);
                 $body['stats']['graphql_execute_time'] = round($t3 - $t2, 2);
-                echo \json_encode($body, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                echo json_encode_ex($body, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
                 return Command::SUCCESS;
             });
         $event->app->register('graphql:schema')

@@ -11,6 +11,10 @@ use function MicroHTML\{A,P,TABLE,TD,TH,TR};
 
 class RatingsTheme extends Themelet
 {
+    /**
+     * @param array<string, string> $ratings
+     * @param string[] $selected_options
+     */
     public function get_selection_rater_html(string $name = "rating", array $ratings = [], array $selected_options = []): HTMLElement
     {
         return SHM_SELECT($name, !empty($ratings) ? $ratings : Ratings::get_ratings_dict(), required: true, selected_options: $selected_options);
@@ -25,6 +29,9 @@ class RatingsTheme extends Themelet
         );
     }
 
+    /**
+     * @param array<string,string> $current_ratings
+     */
     public function display_form(array $current_ratings): void
     {
         global $page;
@@ -39,6 +46,9 @@ class RatingsTheme extends Themelet
         $page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM("admin/update_ratings", $table)));
     }
 
+    /**
+     * @param ImageRating[] $ratings
+     */
     public function get_help_html(array $ratings): HTMLElement
     {
         $rating_rows = [TR(TH("Name"), TH("Search Term"), TH("Abbreviation"))];

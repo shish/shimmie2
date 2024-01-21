@@ -16,9 +16,9 @@ class FeaturedTheme extends Themelet
         $page->add_block(new Block("Featured Post", $this->build_featured_html($image), "left", 3));
     }
 
-    public function get_buttons_html(int $image_id): string
+    public function get_buttons_html(int $image_id): \MicroHTML\HTMLElement
     {
-        return (string)SHM_SIMPLE_FORM(
+        return SHM_SIMPLE_FORM(
             "featured_image/set",
             INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             INPUT(["type" => 'submit', "value" => 'Feature This']),

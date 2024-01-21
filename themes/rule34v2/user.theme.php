@@ -27,7 +27,10 @@ class CustomUserPageTheme extends UserPageTheme
     // (with css media queries deciding which one is visible), and also
     // to switch between new-line and inline display depending on the
     // number of links.
-    public function display_user_block(Page $page, User $user, $parts): void
+    /**
+     * @param array<array{link: string, name: string}> $parts
+     */
+    public function display_user_block(Page $page, User $user, array $parts): void
     {
         $h_name = html_escape($user->name);
         $lines = [];

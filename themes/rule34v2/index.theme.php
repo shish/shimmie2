@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class CustomIndexTheme extends IndexTheme
 {
+    /** @var string[] */
     public static array $_search_query = [];
 
     // override to add the can-del class, so that thumbnail HTML can be cached

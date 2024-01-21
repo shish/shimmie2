@@ -6,6 +6,9 @@ namespace Shimmie2;
 
 class HelpPagesTheme extends Themelet
 {
+    /**
+     * @param array<string,string> $pages
+     */
     public function display_list_page(array $pages): void
     {
         global $page;

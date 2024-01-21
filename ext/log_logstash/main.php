@@ -39,7 +39,10 @@ class LogLogstash extends Extension
         }
     }
 
-    private function send_data($data)
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function send_data(array $data): void
     {
         global $config;
 
@@ -56,7 +59,7 @@ class LogLogstash extends Extension
             if (!$fp) {
                 return;
             }
-            fwrite($fp, json_encode($data));
+            fwrite($fp, json_encode_ex($data));
             fclose($fp);
         } catch (\Exception $e) {
             // we can't log that logging is broken

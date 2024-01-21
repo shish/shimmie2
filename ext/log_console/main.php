@@ -48,7 +48,7 @@ class LogConsole extends Extension
         }
     }
 
-    private function log(LogEvent $event)
+    private function log(LogEvent $event): void
     {
         global $config, $user;
         // TODO: colour based on event->priority

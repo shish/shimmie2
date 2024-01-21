@@ -13,7 +13,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         $config->set_string("word_filter", "whore,nice lady\na duck,a kitten\n white ,\tspace\ninvalid");
     }
 
-    public function _doThings($in, $out)
+    public function _doThings(string $in, string $out): void
     {
         global $user;
         $this->log_in_as_user();

@@ -10,7 +10,7 @@ use function MicroHTML\{TR, TH, TD, emptyHTML, DIV, INPUT};
 
 class RelationshipsTheme extends Themelet
 {
-    public function relationship_info(Image $image)
+    public function relationship_info(Image $image): void
     {
         global $page, $database;
 

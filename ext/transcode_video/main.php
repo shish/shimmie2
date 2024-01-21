@@ -174,10 +174,12 @@ class TranscodeVideo extends Extension
         }
     }
 
+    /**
+     * @return array<string, string>
+     */
     private static function get_output_options(?string $starting_container = null, ?string $starting_codec = null): array
     {
         $output = ["" => ""];
-
 
         foreach (VideoContainers::ALL as $container) {
             if ($starting_container == $container) {
@@ -209,7 +211,7 @@ class TranscodeVideo extends Extension
         }
 
         $original_file = warehouse_path(Image::IMAGE_DIR, $image->hash);
-        $tmp_filename = tempnam(sys_get_temp_dir(), "shimmie_transcode_video");
+        $tmp_filename = shm_tempnam("transcode_video");
         $tmp_filename = $this->transcode_video($original_file, $image->video_codec, $target_mime, $tmp_filename);
         send_event(new ImageReplaceEvent($image, $tmp_filename));
         return true;

@@ -28,7 +28,7 @@ class BrowserSearch extends Extension
             $search_title = $config->get_string(SetupConfig::TITLE);
             $search_form_url =  search_link(['{searchTerms}']);
             $suggenton_url = make_link('browser_search/')."{searchTerms}";
-            $icon_b64 = base64_encode(file_get_contents("ext/static_files/static/favicon.ico"));
+            $icon_b64 = base64_encode(file_get_contents_ex("ext/static_files/static/favicon.ico"));
 
             // Now for the XML
             $xml = "
@@ -71,7 +71,7 @@ class BrowserSearch extends Extension
             // And to do stuff with it. We want our output to look like:
             // ["shimmie",["shimmies","shimmy","shimmie","21 shimmies","hip shimmies","skea shimmies"],[],[]]
             $page->set_mode(PageMode::DATA);
-            $page->set_data(json_encode([$tag_search, $tags, [], []]));
+            $page->set_data(json_encode_ex([$tag_search, $tags, [], []]));
         }
     }
 

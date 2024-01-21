@@ -23,10 +23,13 @@ class AutoComplete extends Extension
 
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::JSON);
-            $page->set_data(json_encode($res));
+            $page->set_data(json_encode_ex($res));
         }
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function complete(string $search, int $limit): array
     {
         global $cache, $database;
@@ -53,7 +56,6 @@ class AutoComplete extends Extension
         if ($limit !== 0) {
             $limitSQL = "LIMIT :limit";
             $SQLarr['limit'] = $limit;
-            $cache_key .= "-" . $limit;
         }
 
         return cache_get_or_set($cache_key, fn () => $database->get_pairs(
@@ -67,7 +69,7 @@ class AutoComplete extends Extension
                 AND count > 0
                 ORDER BY count DESC, tag ASC
                 $limitSQL
-                ",
+            ",
             $SQLarr
         ), 600);
     }

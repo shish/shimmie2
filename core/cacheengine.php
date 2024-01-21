@@ -67,6 +67,11 @@ class EventTracingCache implements CacheInterface
         return $val;
     }
 
+    /**
+     * @param string[] $keys
+     * @param mixed $default
+     * @return iterable<mixed>
+     */
     public function getMultiple($keys, $default = null)
     {
         $this->tracer->begin("Cache Get Multiple", ["keys" => $keys]);
@@ -75,6 +80,9 @@ class EventTracingCache implements CacheInterface
         return $val;
     }
 
+    /**
+     * @param array<string, mixed> $values
+     */
     public function setMultiple($values, $ttl = null)
     {
         $this->tracer->begin("Cache Set Multiple", ["keys" => array_keys($values)]);
@@ -83,6 +91,9 @@ class EventTracingCache implements CacheInterface
         return $val;
     }
 
+    /**
+     * @param string[] $keys
+     */
     public function deleteMultiple($keys)
     {
         $this->tracer->begin("Cache Delete Multiple", ["keys" => $keys]);
@@ -115,10 +126,10 @@ function loadCache(?string $dsn): CacheInterface
             } elseif ($url['scheme'] == "redis") {
                 $redis = new \Predis\Client([
                     'scheme' => 'tcp',
-                    'host' => $url['host'],
-                    'port' => $url['port'],
-                    'username' => $url['user'],
-                    'password' => $url['pass'],
+                    'host' => $url['host'] ?? "127.0.0.1",
+                    'port' => $url['port'] ?? 6379,
+                    'username' => $url['user'] ?? null,
+                    'password' => $url['pass'] ?? null,
                 ], ['prefix' => 'shm:']);
                 $c = new \Naroga\RedisCache\Redis($redis);
             }

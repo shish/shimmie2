@@ -40,6 +40,9 @@ class ImageReport
     }
 }
 
+/**
+ * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}
+ */
 class ReportImage extends Extension
 {
     /** @var ReportImageTheme */
@@ -167,7 +170,7 @@ class ReportImage extends Extension
         $sb->add_choice_option("report_image_publicity", $opts, "Show publicly: ");
     }
 
-    public function delete_reports_by(int $user_id)
+    public function delete_reports_by(int $user_id): void
     {
         global $cache, $database;
         $database->execute("DELETE FROM image_reports WHERE reporter_id=:reporter_id", ['reporter_id' => $user_id]);
@@ -210,6 +213,9 @@ class ReportImage extends Extension
         return $reps;
     }
 
+    /**
+     * @return array<Report>
+     */
     public function get_reported_images(): array
     {
         global $database;

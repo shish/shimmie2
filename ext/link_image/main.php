@@ -27,6 +27,9 @@ class LinkImage extends Extension
         $config->set_default_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');
     }
 
+    /**
+     * @return array{thumb_src: string, image_src: string, post_link: string, text_link: string|null}
+     */
     private function data(Image $image): array
     {
         global $config;
@@ -38,6 +41,7 @@ class LinkImage extends Extension
             'thumb_src' => make_http($image->get_thumb_link()),
             'image_src' => make_http($image->get_image_link()),
             'post_link' => make_http(make_link("post/view/{$image->id}")),
-            'text_link' => $text_link];
+            'text_link' => $text_link
+        ];
     }
 }

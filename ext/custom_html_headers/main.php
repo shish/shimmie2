@@ -38,7 +38,7 @@ class CustomHtmlHeaders extends Extension
         $this->handle_modified_page_title();
     }
 
-    private function handle_custom_html_headers()
+    private function handle_custom_html_headers(): void
     {
         global $config, $page;
 
@@ -48,7 +48,7 @@ class CustomHtmlHeaders extends Extension
         }
     }
 
-    private function handle_modified_page_title()
+    private function handle_modified_page_title(): void
     {
         global $config, $page;
 

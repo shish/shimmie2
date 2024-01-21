@@ -11,9 +11,9 @@ class RegenThumbTheme extends Themelet
     /**
      * Show a form which offers to regenerate the thumb of an image with ID #$image_id
      */
-    public function get_buttons_html(int $image_id): string
+    public function get_buttons_html(int $image_id): \MicroHTML\HTMLElement
     {
-        return (string)SHM_SIMPLE_FORM(
+        return SHM_SIMPLE_FORM(
             "regen_thumb/one",
             INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             SHM_SUBMIT('Regenerate Thumbnail')

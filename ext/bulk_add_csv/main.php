@@ -50,8 +50,10 @@ class BulkAddCSV extends Extension
 
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
+     *
+     * @param string[] $tags
      */
-    private function add_image(string $tmpname, string $filename, array $tags, string $source, string $rating, string $thumbfile)
+    private function add_image(string $tmpname, string $filename, array $tags, string $source, string $rating, string $thumbfile): void
     {
         global $database;
         $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
@@ -72,7 +74,7 @@ class BulkAddCSV extends Extension
         });
     }
 
-    private function add_csv(string $csvfile)
+    private function add_csv(string $csvfile): void
     {
         if (!file_exists($csvfile)) {
             $this->theme->add_status("Error", "$csvfile not found");
@@ -85,7 +87,7 @@ class BulkAddCSV extends Extension
 
         $linenum = 1;
         $list = "";
-        $csvhandle = fopen($csvfile, "r");
+        $csvhandle = false_throws(fopen($csvfile, "r"));
 
         while (($csvdata = fgetcsv($csvhandle, 0, ",")) !== false) {
             if (count($csvdata) != 5) {

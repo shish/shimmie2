@@ -12,6 +12,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     // Set by box
     //=================================================================
 
+    /**
+     * @return array{0: Image, 1: Image, 2: Image}
+     */
     public function testNoParent(): array
     {
         $this->log_in_as_user();
@@ -20,9 +23,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
         $image_id_3 = $this->post_image("tests/favicon.png", "pbx");
 
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
+        $image_1 = null_throws(Image::by_id($image_id_1));
+        $image_2 = null_throws(Image::by_id($image_id_2));
+        $image_3 = null_throws(Image::by_id($image_id_3));
 
         $this->assertNull($image_1['parent_id']);
         $this->assertNull($image_2['parent_id']);
@@ -34,17 +37,20 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
+    /**
+     * @return array{0:Image, 1:Image, 2:Image}
+     */
     #[Depends('testNoParent')]
-    public function testSetParent($imgs): array
+    public function testSetParent(): array
     {
         [$image_1, $image_2, $image_3] = $this->testNoParent();
 
         send_event(new ImageRelationshipSetEvent($image_2->id, $image_1->id));
 
         // refresh data from database
-        $image_1 = Image::by_id($image_1->id);
-        $image_2 = Image::by_id($image_2->id);
-        $image_3 = Image::by_id($image_3->id);
+        $image_1 = null_throws(Image::by_id($image_1->id));
+        $image_2 = null_throws(Image::by_id($image_2->id));
+        $image_3 = null_throws(Image::by_id($image_3->id));
 
         $this->assertNull($image_1['parent_id']);
         $this->assertEquals($image_1->id, $image_2['parent_id']);
@@ -56,16 +62,19 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
+    /**
+     * @return array{0:Image, 1:Image, 2:Image}
+     */
     #[Depends('testSetParent')]
-    public function testChangeParent($imgs): array
+    public function testChangeParent(): array
     {
-        [$image_1, $image_2, $image_3] = $this->testSetParent(null);
+        [$image_1, $image_2, $image_3] = $this->testSetParent();
         send_event(new ImageRelationshipSetEvent($image_2->id, $image_3->id));
 
         // refresh data from database
-        $image_1 = Image::by_id($image_1->id);
-        $image_2 = Image::by_id($image_2->id);
-        $image_3 = Image::by_id($image_3->id);
+        $image_1 = null_throws(Image::by_id($image_1->id));
+        $image_2 = null_throws(Image::by_id($image_2->id));
+        $image_3 = null_throws(Image::by_id($image_3->id));
 
         $this->assertNull($image_1['parent_id']);
         $this->assertEquals($image_3->id, $image_2['parent_id']);
@@ -78,9 +87,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testSetParent')]
-    public function testSearch($imgs): void
+    public function testSearch(): void
     {
-        [$image_1, $image_2, $image_3] = $this->testSetParent(null);
+        [$image_1, $image_2, $image_3] = $this->testSetParent();
 
         $this->assert_search_results(["parent:any"], [$image_2->id]);
         $this->assert_search_results(["parent:none"], [$image_3->id, $image_1->id]);
@@ -91,9 +100,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testChangeParent')]
-    public function testRemoveParent($imgs): void
+    public function testRemoveParent(): void
     {
-        [$image_1, $image_2, $image_3] = $this->testChangeParent(null);
+        [$image_1, $image_2, $image_3] = $this->testChangeParent();
 
         global $database;
         $database->execute(
@@ -103,9 +112,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         // FIXME: send_event(new ImageRelationshipSetEvent($image_2->id, null));
 
         // refresh data from database
-        $image_1 = Image::by_id($image_1->id);
-        $image_2 = Image::by_id($image_2->id);
-        $image_3 = Image::by_id($image_3->id);
+        $image_1 = null_throws(Image::by_id($image_1->id));
+        $image_2 = null_throws(Image::by_id($image_2->id));
+        $image_3 = null_throws(Image::by_id($image_3->id));
 
         $this->assertNull($image_1['parent_id']);
         $this->assertNull($image_2['parent_id']);
@@ -119,6 +128,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     // Set by tag
     //=================================================================
 
+    /**
+     * @return array{0:Image, 1:Image, 2:Image}
+     */
     public function testSetParentByTagBase(): array
     {
         $this->log_in_as_user();
@@ -126,9 +138,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
         $image_id_3 = $this->post_image("tests/favicon.png", "pbx");
 
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
+        $image_1 = null_throws(Image::by_id($image_id_1));
+        $image_2 = null_throws(Image::by_id($image_id_2));
+        $image_3 = null_throws(Image::by_id($image_id_3));
 
         $this->assertNull($image_1['parent_id']);
         $this->assertNull($image_2['parent_id']);
@@ -140,17 +152,20 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
+    /**
+     * @return array{0:Image, 1:Image, 2:Image}
+     */
     #[Depends('testSetParentByTagBase')]
-    public function testSetParentByTag($imgs): array
+    public function testSetParentByTag(): array
     {
         [$image_1, $image_2, $image_3] = $this->testSetParentByTagBase();
 
         send_event(new TagSetEvent($image_2, ["pbx", "parent:{$image_1->id}"]));
 
         // refresh data from database
-        $image_1 = Image::by_id($image_1->id);
-        $image_2 = Image::by_id($image_2->id);
-        $image_3 = Image::by_id($image_3->id);
+        $image_1 = null_throws(Image::by_id($image_1->id));
+        $image_2 = null_throws(Image::by_id($image_2->id));
+        $image_3 = null_throws(Image::by_id($image_3->id));
 
         $this->assertEquals(["pbx"], $image_2->get_tag_array());
         $this->assertNull($image_1['parent_id']);
@@ -163,17 +178,20 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         return [$image_1, $image_2, $image_3];
     }
 
+    /**
+     * @return array{0:Image, 1:Image, 2:Image}
+     */
     #[Depends('testSetParentByTag')]
-    public function testSetChildByTag($imgs): array
+    public function testSetChildByTag(): array
     {
-        [$image_1, $image_2, $image_3] = $this->testSetParentByTag(null);
+        [$image_1, $image_2, $image_3] = $this->testSetParentByTag();
 
         send_event(new TagSetEvent($image_3, ["pbx", "child:{$image_1->id}"]));
 
         // refresh data from database
-        $image_1 = Image::by_id($image_1->id);
-        $image_2 = Image::by_id($image_2->id);
-        $image_3 = Image::by_id($image_3->id);
+        $image_1 = null_throws(Image::by_id($image_1->id));
+        $image_2 = null_throws(Image::by_id($image_2->id));
+        $image_3 = null_throws(Image::by_id($image_3->id));
 
         $this->assertEquals(["pbx"], $image_3->get_tag_array());
         $this->assertEquals($image_3->id, $image_1['parent_id']);
@@ -187,10 +205,9 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     }
 
     #[Depends('testSetChildByTag')]
-    public function testRemoveParentByTag($imgs): void
+    public function testRemoveParentByTag(): void
     {
-        [$image_1, $image_2, $image_3] = $this->testSetChildByTag(null);
-        assert(!is_null($image_3));
+        [$image_1, $image_2, $image_3] = $this->testSetChildByTag();
 
         // check parent is set
         $this->assertEquals($image_2['parent_id'], $image_1->id);

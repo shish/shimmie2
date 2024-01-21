@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class TagListTest extends ShimmiePHPUnitTestCase
 {
+    /** @var string[] */
     private array $pages = ["map", "alphabetic", "popularity", "categories"];
 
     public function testTagList(): void

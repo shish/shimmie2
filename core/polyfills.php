@@ -10,6 +10,9 @@ namespace Shimmie2;
 
 /**
  * Return the unique elements of an array, case insensitively
+ *
+ * @param array<string> $array
+ * @return list<string>
  */
 function array_iunique(array $array): array
 {
@@ -76,9 +79,13 @@ function full_copy(string $source, string $target): void
     if (is_dir($source)) {
         @mkdir($target);
 
-        $d = dir($source);
+        $d = dir_ex($source);
 
-        while (false !== ($entry = $d->read())) {
+        while (true) {
+            $entry = $d->read();
+            if ($entry === false) {
+                break;
+            }
             if ($entry == '.' || $entry == '..') {
                 continue;
             }
@@ -98,6 +105,8 @@ function full_copy(string $source, string $target): void
 
 /**
  * Return a list of all the regular files in a directory and subdirectories
+ *
+ * @return string[]
  */
 function list_files(string $base, string $_sub_dir = ""): array
 {
@@ -150,12 +159,16 @@ function flush_output(): void
 function stream_file(string $file, int $start, int $end): void
 {
     $fp = fopen($file, 'r');
+    if(!$fp) {
+        throw new \Exception("Failed to open $file");
+    }
     try {
         fseek($fp, $start);
         $buffer = 1024 * 1024;
         while (!feof($fp) && ($p = ftell($fp)) <= $end) {
             if ($p + $buffer > $end) {
                 $buffer = $end - $p + 1;
+                assert($buffer >= 0);
             }
             echo fread($fp, $buffer);
             flush_output();
@@ -175,13 +188,13 @@ function stream_file(string $file, int $start, int $end): void
 # http://www.php.net/manual/en/function.http-parse-headers.php#112917
 if (!function_exists('http_parse_headers')) {
     /**
-     * @return string[]
+     * @return array<string, string|string[]>
      */
     function http_parse_headers(string $raw_headers): array
     {
-        $headers = []; // $headers = [];
+        $headers = [];
 
-        foreach (explode("\n", $raw_headers) as $i => $h) {
+        foreach (explode("\n", $raw_headers) as $h) {
             $h = explode(':', $h, 2);
 
             if (isset($h[1])) {
@@ -203,6 +216,8 @@ if (!function_exists('http_parse_headers')) {
 /**
  * HTTP Headers can sometimes be lowercase which will cause issues.
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
+ *
+ * @param array<string, mixed> $headers
  */
 function find_header(array $headers, string $name): ?string
 {
@@ -225,20 +240,22 @@ function find_header(array $headers, string $name): ?string
 if (!function_exists('mb_strlen')) {
     // TODO: we should warn the admin that they are missing multibyte support
     /** @noinspection PhpUnusedParameterInspection */
-    function mb_strlen($str, $encoding): int
+    function mb_strlen(string $str, string $encoding): int
     {
         return strlen($str);
     }
-    function mb_internal_encoding($encoding): void
+    function mb_internal_encoding(string $encoding): void
     {
     }
-    function mb_strtolower($str): string
+    function mb_strtolower(string $str): string
     {
         return strtolower($str);
     }
 }
 
-/** @noinspection PhpUnhandledExceptionInspection */
+/**
+ * @return class-string[]
+ */
 function get_subclasses_of(string $parent): array
 {
     $result = [];
@@ -307,6 +324,8 @@ function get_base_href(): string
 
 /**
  * The opposite of the standard library's parse_url
+ *
+ * @param array<string, string|int> $parsed_url
  */
 function unparse_url(array $parsed_url): string
 {
@@ -376,7 +395,7 @@ function url_escape(?string $input): string
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  */
-function bool_escape($input): bool
+function bool_escape(mixed $input): bool
 {
     /*
      Sometimes, I don't like PHP -- this, is one of those times...
@@ -430,12 +449,20 @@ function page_number(string $input, ?int $max = null): int
     } else {
         $pageNumber = $input - 1;
     }
-    return $pageNumber;
+    return (int)$pageNumber;
 }
 
 function is_numberish(string $s): bool
 {
     return is_numeric($s);
+}
+
+/**
+ * Because apparently phpstan thinks that if $i is an int, type(-$i) == int|float
+ */
+function negative_int(int $i): int
+{
+    return -$i;
 }
 
 function clamp(int $val, ?int $min = null, ?int $max = null): int
@@ -600,8 +627,8 @@ function parse_to_milliseconds(string $input): int
  */
 function autodate(string $date, bool $html = true): string
 {
-    $cpu = date('c', strtotime($date));
-    $hum = date('F j, Y; H:i', strtotime($date));
+    $cpu = date('c', strtotime_ex($date));
+    $hum = date('F j, Y; H:i', strtotime_ex($date));
     return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
 }
 
@@ -634,6 +661,10 @@ function isValidDate(string $date): bool
     return false;
 }
 
+/**
+ * @param array<string, string> $inputs
+ * @return array<string, mixed>
+ */
 function validate_input(array $inputs): array
 {
     $outputs = [];
@@ -677,8 +708,7 @@ function validate_input(array $inputs): array
             }
             $outputs[$key] = $value;
         } elseif (in_array('user_class', $flags)) {
-            global $_shm_user_classes;
-            if (!array_key_exists($value, $_shm_user_classes)) {
+            if (!array_key_exists($value, UserClass::$known_classes)) {
                 throw new InvalidInput("Invalid user class: ".html_escape($value));
             }
             $outputs[$key] = $value;
@@ -695,7 +725,7 @@ function validate_input(array $inputs): array
         } elseif (in_array('bool', $flags)) {
             $outputs[$key] = bool_escape($value);
         } elseif (in_array('date', $flags)) {
-            $outputs[$key] = date("Y-m-d H:i:s", strtotime(trim($value)));
+            $outputs[$key] = date("Y-m-d H:i:s", strtotime_ex(trim($value)));
         } elseif (in_array('string', $flags)) {
             if (in_array('trim', $flags)) {
                 $value = trim($value);
@@ -754,6 +784,12 @@ function join_path(string ...$paths): string
 
 /**
  * Perform callback on each item returned by an iterator.
+ *
+ * @template T
+ * @template U
+ * @param callable(U):T $callback
+ * @param \iterator<U> $iter
+ * @return \Generator<T>
  */
 function iterator_map(callable $callback, \iterator $iter): \Generator
 {
@@ -764,6 +800,12 @@ function iterator_map(callable $callback, \iterator $iter): \Generator
 
 /**
  * Perform callback on each item returned by an iterator and combine the result into an array.
+ *
+ * @template T
+ * @template U
+ * @param callable(U):T $callback
+ * @param \iterator<U> $iter
+ * @return array<T>
  */
 function iterator_map_to_array(callable $callback, \iterator $iter): array
 {
@@ -804,7 +846,7 @@ function stringer(mixed $s): string
 /**
  * If a value is in the cache, return it; otherwise, call the callback
  * to generate it and store it in the cache.
- * 
+ *
  * @template T
  * @param string $key
  * @param callable():T $callback

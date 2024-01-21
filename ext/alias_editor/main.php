@@ -105,7 +105,7 @@ class AliasEditor extends Extension
                 if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     if (count($_FILES) > 0) {
                         $tmp = $_FILES['alias_file']['tmp_name'];
-                        $contents = file_get_contents($tmp);
+                        $contents = file_get_contents_ex($tmp);
                         $this->add_alias_csv($contents);
                         log_info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
                         $page->set_mode(PageMode::REDIRECT);
@@ -174,6 +174,7 @@ class AliasEditor extends Extension
         $csv = "";
         $aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases ORDER BY newtag");
         foreach ($aliases as $old => $new) {
+            assert(is_string($new));
             $csv .= "\"$old\",\"$new\"\n";
         }
         return $csv;

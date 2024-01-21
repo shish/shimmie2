@@ -39,7 +39,7 @@ class CBZFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        $fp = fopen($tmpname, "r");
+        $fp = false_throws(fopen($tmpname, "r"));
         $head = fread($fp, 4);
         fclose($fp);
         return $head == "PK\x03\x04";
@@ -53,7 +53,7 @@ class CBZFileHandler extends DataHandlerExtension
         $za->open($archive);
         $names = [];
         for ($i = 0; $i < $za->numFiles;$i++) {
-            $file = $za->statIndex($i);
+            $file = false_throws($za->statIndex($i));
             $names[] = $file['name'];
         }
         sort($names);

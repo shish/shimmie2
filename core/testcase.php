@@ -69,7 +69,11 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_tracer->flush("data/test-trace.json");
         }
 
-        private static function check_args(?array $args): array
+        /**
+         * @param array<string, mixed> $args
+         * @return array<string, string|mixed[]>
+         */
+        private static function check_args(array $args): array
         {
             if (!$args) {
                 return [];
@@ -84,11 +88,15 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             return $args;
         }
 
+        /**
+         * @param array<string, mixed> $get_args
+         * @param array<string, mixed> $post_args
+         */
         protected static function request(
             string $method,
             string $page_name,
-            ?array $get_args = null,
-            ?array $post_args = null
+            array $get_args = [],
+            array $post_args = []
         ): Page {
             // use a fresh page
             global $page;
@@ -109,14 +117,20 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             return $page;
         }
 
-        protected static function get_page(string $page_name, array $args = null): Page
+        /**
+         * @param array<string, mixed> $args
+         */
+        protected static function get_page(string $page_name, array $args = []): Page
         {
-            return self::request("GET", $page_name, $args, null);
+            return self::request("GET", $page_name, $args, []);
         }
 
-        protected static function post_page(string $page_name, array $args = null): Page
+        /**
+         * @param array<string, mixed> $args
+         */
+        protected static function post_page(string $page_name, array $args = []): Page
         {
-            return self::request("POST", $page_name, null, $args);
+            return self::request("POST", $page_name, [], $args);
         }
 
         // page things

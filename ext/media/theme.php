@@ -8,9 +8,9 @@ use function MicroHTML\INPUT;
 
 class MediaTheme extends Themelet
 {
-    public function get_buttons_html(int $image_id): string
+    public function get_buttons_html(int $image_id): \MicroHTML\HTMLElement
     {
-        return (string)SHM_SIMPLE_FORM(
+        return SHM_SIMPLE_FORM(
             "media_rescan/",
             INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             SHM_SUBMIT('Scan Media Properties'),

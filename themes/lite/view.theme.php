@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 class CustomViewPostTheme extends ViewPostTheme
 {
-    public function display_page(Image $image, $editor_parts): void
+    /**
+     * @param HTMLElement[] $editor_parts
+     */
+    public function display_page(Image $image, array $editor_parts): void
     {
         global $page;
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());

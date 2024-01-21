@@ -100,6 +100,9 @@ class MimeType
         return $mime;
     }
 
+    /**
+     * @param array<string> $mime_array
+     */
     public static function matches_array(string $mime, array $mime_array, bool $exact = false): bool
     {
         // If there's an exact match, find it and that's it
@@ -151,9 +154,12 @@ class MimeType
     }
 
 
+    /**
+     * @param array<int|null> $comparison
+     */
     private static function compare_file_bytes(string $file_name, array $comparison): bool
     {
-        $size = filesize($file_name);
+        $size = filesize_ex($file_name);
         $cc = count($comparison);
         if ($size < $cc) {
             // Can't match because it's too small
@@ -162,7 +168,7 @@ class MimeType
 
         if (($fh = @fopen($file_name, 'rb'))) {
             try {
-                $chunk = unpack("C*", fread($fh, $cc));
+                $chunk = false_throws(unpack("C*", false_throws(fread($fh, $cc))));
 
                 for ($i = 0; $i < $cc; $i++) {
                     $byte = $comparison[$i];
@@ -225,12 +231,9 @@ class MimeType
 
         $output = self::OCTET_STREAM;
 
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        try {
-            $type = finfo_file($finfo, $file);
-        } finally {
-            finfo_close($finfo);
-        }
+        $finfo = false_throws(finfo_open(FILEINFO_MIME_TYPE));
+        $type = finfo_file($finfo, $file);
+        finfo_close($finfo);
 
         if ($type !== false && !empty($type)) {
             $output = $type;

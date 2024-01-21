@@ -102,7 +102,7 @@ class IPBan extends Extension
 
     public function onUserLogin(UserLoginEvent $event): void
     {
-        global $cache, $config, $database, $page, $_shm_user_classes;
+        global $cache, $config, $database, $page;
 
         // Get lists of banned IPs and banned networks
         $ips = $cache->get("ip_bans");
@@ -130,7 +130,7 @@ class IPBan extends Extension
 
         // Check if our current IP is in either of the ban lists
         $active_ban_id = (
-            $this->find_active_ban($ips, get_real_ip(), $networks)
+            $this->find_active_ban(get_real_ip(), $ips, $networks)
         );
 
         // If an active ban is found, act on it
@@ -142,7 +142,7 @@ class IPBan extends Extension
 
             $row_banner_id_int = intval($row['banner_id']);
 
-            $msg = $config->get_string("ipban_message_{$row['mode']}") ?? $config->get_string("ipban_message");
+            $msg = $config->get_string("ipban_message_{$row['mode']}") ?? $config->get_string("ipban_message") ?? "(no message)";
             $msg = str_replace('$IP', $row["ip"], $msg);
             $msg = str_replace('$DATE', $row['expires'] ?? 'the end of time', $msg);
             $msg = str_replace('$ADMIN', User::by_id($row_banner_id_int)->name, $msg);
@@ -153,6 +153,7 @@ class IPBan extends Extension
             } else {
                 $msg = str_replace('$CONTACT', "", $msg);
             }
+            assert(is_string($msg));
             $msg .= "<!-- $active_ban_id / {$row["mode"]} -->";
 
             if ($row["mode"] == "ghost") {
@@ -160,14 +161,14 @@ class IPBan extends Extension
                 $b->is_content = false;
                 $page->add_block($b);
                 $page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
-                $event->user->class = $_shm_user_classes["ghost"];
+                $event->user->class = UserClass::$known_classes["ghost"];
             } elseif ($row["mode"] == "anon-ghost") {
                 if ($event->user->is_anonymous()) {
                     $b = new Block(null, $msg, "main", 0);
                     $b->is_content = false;
                     $page->add_block($b);
                     $page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
-                    $event->user->class = $_shm_user_classes["ghost"];
+                    $event->user->class = UserClass::$known_classes["ghost"];
                 }
             } else {
                 header("HTTP/1.1 403 Forbidden");
@@ -355,11 +356,12 @@ class IPBan extends Extension
         }
     }
 
-    public function find_active_ban($ips, $remote, $networks)
+    /**
+     * @param array<string,int> $ips
+     * @param array<string,int> $networks
+     */
+    public function find_active_ban(string $remote, array $ips, array $networks): ?int
     {
-        if (!$remote) {
-            return null;
-        }
         $active_ban_id = null;
         if (isset($ips[$remote])) {
             $active_ban_id = $ips[$remote];

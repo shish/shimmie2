@@ -93,7 +93,7 @@ class Search
 
     /**
      * Search for an array of images, returning a iterable object of Image
-     * 
+     *
      * @param list<string> $tags
      * @return \Generator<Image>
      */

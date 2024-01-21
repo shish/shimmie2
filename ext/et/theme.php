@@ -13,10 +13,8 @@ class ETTheme extends Themelet
 {
     /*
      * Create a page showing info
-     *
-     * $info = an array of ($name => $value)
      */
-    public function display_info_page($yaml): void
+    public function display_info_page(string $yaml): void
     {
         global $page;
 
@@ -26,7 +24,7 @@ class ETTheme extends Themelet
         $page->add_block(new Block("Information:", $this->build_data_form($yaml)));
     }
 
-    protected function build_data_form($yaml): \MicroHTML\HTMLElement
+    protected function build_data_form(string $yaml): \MicroHTML\HTMLElement
     {
         return FORM(
             ["action" => "https://shimmie.shishnet.org/register.php", "method" => "POST"],

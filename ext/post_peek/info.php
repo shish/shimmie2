@@ -11,7 +11,7 @@ class PostPeekInfo extends ExtensionInfo
     public string $key = self::KEY;
     public string $name = "Post Peek";
     public string $url = self::SHIMMIE_URL;
-    public array $authors = ["Matthew Barbour"];
+    public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Peek at posts";
 }

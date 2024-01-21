@@ -17,6 +17,12 @@ use function MicroHTML\emptyHTML;
 
 class CronUploaderTheme extends Themelet
 {
+    /**
+     * @param array{path:string,total_files:int,total_mb:string} $queue_dirinfo
+     * @param array{path:string,total_files:int,total_mb:string} $uploaded_dirinfo
+     * @param array{path:string,total_files:int,total_mb:string} $failed_dirinfo
+     * @param array<array{date_sent:string,message:string}>|null $log_entries
+     */
     public function display_documentation(
         bool $running,
         array $queue_dirinfo,
@@ -25,7 +31,7 @@ class CronUploaderTheme extends Themelet
         string $cron_cmd,
         string $cron_url,
         ?array $log_entries
-    ) {
+    ): void {
         global $page, $config, $user_config;
 
         $info_html = "";
@@ -159,6 +165,9 @@ class CronUploaderTheme extends Themelet
         return (string)$html;
     }
 
+    /**
+     * @param string[] $failed_dirs
+     */
     public function display_form(array $failed_dirs): void
     {
         global $page;

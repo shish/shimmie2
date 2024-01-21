@@ -48,7 +48,7 @@ function _set_event_listeners(): void
     global $_shm_event_listeners;
     $_shm_event_listeners = [];
 
-    foreach (get_subclasses_of("Shimmie2\Extension") as $class) {
+    foreach (get_subclasses_of(Extension::class) as $class) {
         /** @var Extension $extension */
         $extension = new $class();
 
@@ -75,11 +75,16 @@ function _namespaced_class_name(string $class): string
     return str_replace("Shimmie2\\", "", $class);
 }
 
+/**
+ * Dump the event listeners to a file for faster loading.
+ *
+ * @param array<string, array<int, Extension>> $event_listeners
+ */
 function _dump_event_listeners(array $event_listeners, string $path): void
 {
     $p = "<"."?php\nnamespace Shimmie2;\n";
 
-    foreach (get_subclasses_of("Shimmie2\Extension") as $class) {
+    foreach (get_subclasses_of(Extension::class) as $class) {
         $scn = _namespaced_class_name($class);
         $p .= "\$$scn = new $scn(); ";
     }

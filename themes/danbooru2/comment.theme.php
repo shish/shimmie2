@@ -6,6 +6,9 @@ namespace Shimmie2;
 
 class CustomCommentListTheme extends CommentListTheme
 {
+    /**
+     * @param array<array{0: Image, 1: Comment[]}> $images
+     */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
         global $config, $page, $user;
@@ -49,14 +52,14 @@ class CustomCommentListTheme extends CommentListTheme
             }
             $p = autodate($image->posted);
 
-            $r = Extension::is_enabled(RatingsInfo::KEY) ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
+            $r = Extension::is_enabled(RatingsInfo::KEY) ? "<b>Rating</b> ".Ratings::rating_to_human($image['rating']) : "";
             $comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
 
             $comment_count = count($comments);
             if ($comment_limit > 0 && $comment_count > $comment_limit) {
                 //$hidden = $comment_count - $comment_limit;
                 $comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
-                $comments = array_slice($comments, -$comment_limit);
+                $comments = array_slice($comments, negative_int($comment_limit));
             }
             foreach ($comments as $comment) {
                 $comment_html .= $this->comment_to_html($comment);
@@ -109,7 +112,7 @@ class CustomCommentListTheme extends CommentListTheme
         $h_del = "";
         if ($user->can(Permissions::DELETE_COMMENT)) {
             $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
-            $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
+            $j_delete_confirm_message = json_encode_ex("Delete comment by {$comment->owner_name}:\n$comment_preview");
             $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
             $h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
             $h_del = " - <a onclick='$h_delete_script' href='$h_delete_link'>Del</a>";

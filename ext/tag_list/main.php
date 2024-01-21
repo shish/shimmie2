@@ -11,7 +11,7 @@ class TagList extends Extension
     /** @var TagListTheme */
     protected Themelet $theme;
 
-    private $tagcategories = null;
+    private mixed $tagcategories = null;
 
     public function onInitExt(InitExtEvent $event): void
     {
@@ -89,7 +89,7 @@ class TagList extends Extension
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
             $type = $config->get_string(TagListConfig::IMAGE_TYPE);
             if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
-                if (class_exists("Shimmie2\TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
+                if (Extension::is_enabled(TagCategoriesInfo::KEY) and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                     $this->add_split_tags_block($page, $event->image);
                 } else {
                     $this->add_tags_block($page, $event->image);
@@ -152,6 +152,9 @@ class TagList extends Extension
         }
     }
 
+    /**
+     * @return int[]
+     */
     private static function get_omitted_tags(): array
     {
         global $cache, $config, $database;
@@ -248,7 +251,7 @@ class TagList extends Extension
             md5("tc" . $tags_min . $starts_with . VERSION)
         );
         if (file_exists($cache_key)) {
-            return file_get_contents($cache_key);
+            return file_get_contents_ex($cache_key);
         }
 
         $tag_data = $database->get_all("
@@ -266,7 +269,7 @@ class TagList extends Extension
             $html .= $this->build_az();
         }
         $tag_category_dict = [];
-        if (class_exists('Shimmie2\TagCategories')) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
@@ -278,7 +281,7 @@ class TagList extends Extension
                 $size = 0.5;
             }
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
-            if (class_exists('Shimmie2\TagCategories')) {
+            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $h_tag_no_underscores = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict);
             }
             $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
@@ -304,7 +307,7 @@ class TagList extends Extension
             md5("ta" . $tags_min . $starts_with . VERSION)
         );
         if (file_exists($cache_key)) {
-            return file_get_contents($cache_key);
+            return file_get_contents_ex($cache_key);
         }
 
         $tag_data = $database->get_pairs("
@@ -336,7 +339,7 @@ class TagList extends Extension
         mb_internal_encoding('UTF-8');
 
         $tag_category_dict = [];
-        if (class_exists('Shimmie2\TagCategories')) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $this->tagcategories = new TagCategories();
             $tag_category_dict = $this->tagcategories->getKeyedDict();
         }
@@ -355,7 +358,7 @@ class TagList extends Extension
             }
             $link = $this->theme->tag_link($tag);
             $h_tag = html_escape($tag);
-            if (class_exists('Shimmie2\TagCategories')) {
+            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $h_tag = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict, "&nbsp;($count)");
             }
             $html .= "<a href='$link'>$h_tag</a>\n";
@@ -386,7 +389,7 @@ class TagList extends Extension
             md5("tp" . $tags_min . VERSION)
         );
         if (file_exists($cache_key)) {
-            return file_get_contents($cache_key);
+            return file_get_contents_ex($cache_key);
         }
 
         $tag_data = $database->get_all("
@@ -452,7 +455,7 @@ class TagList extends Extension
         }
     }
 
-    private function add_split_tags_block(Page $page, Image $image)
+    private function add_split_tags_block(Page $page, Image $image): void
     {
         global $database;
 
@@ -471,7 +474,7 @@ class TagList extends Extension
         }
     }
 
-    private function add_tags_block(Page $page, Image $image)
+    private function add_tags_block(Page $page, Image $image): void
     {
         global $database;
 
@@ -490,7 +493,7 @@ class TagList extends Extension
         }
     }
 
-    private function add_popular_block(Page $page)
+    private function add_popular_block(Page $page): void
     {
         global $cache, $database, $config;
 
@@ -531,7 +534,7 @@ class TagList extends Extension
     /**
      * @param string[] $search
      */
-    private function add_refine_block(Page $page, array $search)
+    private function add_refine_block(Page $page, array $search): void
     {
         global $config;
 
@@ -548,6 +551,10 @@ class TagList extends Extension
         }
     }
 
+    /**
+     * @param string[] $search
+     * @return array<array{tag: string, count: int}>
+     */
     public static function get_related_tags(array $search, int $limit): array
     {
         global $cache, $database;

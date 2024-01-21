@@ -87,7 +87,8 @@ EOD;
         $generated = autodate(date('c'));
         $footer_html = $this->footer_html();
 
-        $header_inc = file_get_contents("themes/rule34v2/header.inc");
+        $header_inc = file_get_contents_ex("themes/rule34v2/header.inc");
+        assert($header_inc !== false);
         $header_inc = str_replace('$QUERY', $query, $header_inc);
         return <<<EOD
 <table id="header" width="100%">

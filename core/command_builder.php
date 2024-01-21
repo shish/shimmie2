@@ -10,7 +10,9 @@ namespace Shimmie2;
 class CommandBuilder
 {
     private string $executable;
+    /** @var string[] */
     private array $args = [];
+    /** @var string[] */
     public array $output;
 
     public function __construct(string $executable)

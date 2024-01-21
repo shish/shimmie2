@@ -41,6 +41,8 @@ interface Config
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
+     *
+     * @param mixed[] $value
      */
     public function set_array(string $name, array $value): void;
     //@} /*--------------------------------------------------------------------------------------------*/
@@ -93,6 +95,8 @@ interface Config
      * This has the advantage that the values will show up in the "advanced" setup
      * page where they can be modified, while calling get_* with a "default"
      * parameter won't show up.
+     *
+     * @param mixed[] $value
      */
     public function set_default_array(string $name, array $value): void;
     //@} /*--------------------------------------------------------------------------------------------*/
@@ -120,6 +124,9 @@ interface Config
 
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
+     *
+     * @param mixed[] $default
+     * @return mixed[]
      */
     public function get_array(string $name, ?array $default = []): ?array;
     //@} /*--------------------------------------------------------------------------------------------*/
@@ -134,6 +141,7 @@ interface Config
  */
 abstract class BaseConfig implements Config
 {
+    /** @var array<string, mixed> */
     public array $values = [];
 
     public function set_int(string $name, ?int $value): void
@@ -205,16 +213,31 @@ abstract class BaseConfig implements Config
         }
     }
 
+    /**
+     * @template T of int|null
+     * @param T $default
+     * @return T|int
+     */
     public function get_int(string $name, ?int $default = null): ?int
     {
         return (int)($this->get($name, $default));
     }
 
+    /**
+     * @template T of float|null
+     * @param T $default
+     * @return T|float
+     */
     public function get_float(string $name, ?float $default = null): ?float
     {
         return (float)($this->get($name, $default));
     }
 
+    /**
+     * @template T of string|null
+     * @param T $default
+     * @return T|string
+     */
     public function get_string(string $name, ?string $default = null): ?string
     {
         $val = $this->get($name, $default);
@@ -224,17 +247,34 @@ abstract class BaseConfig implements Config
         return $val;
     }
 
+    /**
+     * @template T of bool|null
+     * @param T $default
+     * @return T|bool
+     */
     public function get_bool(string $name, ?bool $default = null): ?bool
     {
         return bool_escape($this->get($name, $default));
     }
 
-    public function get_array(string $name, ?array $default = []): ?array
+    /**
+     * @template T of array<string>|null
+     * @param T $default
+     * @return T|array<string>
+     */
+    public function get_array(string $name, ?array $default = null): ?array
     {
-        return explode(",", $this->get($name, ""));
+        $val = $this->get($name);
+        if(is_null($val)) {
+            return $default;
+        }
+        if(empty($val)) {
+            return [];
+        }
+        return explode(",", $val);
     }
 
-    private function get(string $name, $default = null): mixed
+    private function get(string $name, mixed $default = null): mixed
     {
         if (isset($this->values[$name])) {
             return $this->values[$name];

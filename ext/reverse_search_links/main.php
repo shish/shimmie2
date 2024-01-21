@@ -31,6 +31,8 @@ class ReverseSearchLinks extends Extension
 
     /**
      * Supported reverse search services
+     *
+     * @var string[]
      */
     protected array $SERVICES = [
         'SauceNAO',

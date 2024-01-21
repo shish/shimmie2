@@ -3,3 +3,6 @@
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 }
+#reportedimage .formstretch INPUT {
+	width: 100%;
+}

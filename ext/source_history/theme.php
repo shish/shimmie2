@@ -10,10 +10,17 @@ use function MicroHTML\INPUT;
 use function MicroHTML\LABEL;
 use function MicroHTML\rawHTML;
 
+/**
+ * @phpstan-type HistoryEntry array{image_id:int,id:int,source:string,date_set:string,user_id:string,user_ip:string,name:string}
+ */
 class SourceHistoryTheme extends Themelet
 {
+    /** @var string[] */
     private array $messages = [];
 
+    /**
+     * @param HistoryEntry[] $history
+     */
     public function display_history_page(Page $page, int $image_id, array $history): void
     {
         $history_html = $this->history_list($history, true);
@@ -24,6 +31,9 @@ class SourceHistoryTheme extends Themelet
         $page->add_block(new Block("Source History", $history_html, "main", 10));
     }
 
+    /**
+     * @param HistoryEntry[] $history
+     */
     public function display_global_page(Page $page, array $history, int $page_number): void
     {
         $history_html = $this->history_list($history, false);
@@ -78,11 +88,14 @@ class SourceHistoryTheme extends Themelet
         $page->add_block(new Block("Bulk Revert Results", $html));
     }
 
-    public function add_status(string $title, string $body)
+    public function add_status(string $title, string $body): void
     {
         $this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
     }
 
+    /**
+     * @param HistoryEntry[] $history
+     */
     protected function history_list(array $history, bool $select_2nd): string
     {
         $history_list = "";
@@ -102,6 +115,9 @@ class SourceHistoryTheme extends Themelet
 		";
     }
 
+    /**
+     * @param HistoryEntry $fields
+     */
     protected function history_entry(array $fields, bool $selected): string
     {
         global $user;

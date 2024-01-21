@@ -86,7 +86,8 @@ class TagUsage
  */
 class Tag
 {
-    private static $tag_id_cache = [];
+    /** @var array<string, int> */
+    private static array $tag_id_cache = [];
 
     public static function get_or_create_id(string $tag): int
     {
@@ -196,9 +197,13 @@ class Tag
     public static function sanitize(string $tag): string
     {
         $tag = preg_replace("/\s/", "", $tag);                # whitespace
+        assert($tag !== null);
         $tag = preg_replace('/\x20[\x0e\x0f]/', '', $tag);    # unicode RTL
+        assert($tag !== null);
         $tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
+        assert($tag !== null);
         $tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
+        assert($tag !== null);
         $tag = trim($tag, ", \t\n\r\0\x0B");
 
         if ($tag == ".") {
@@ -211,6 +216,10 @@ class Tag
         return $tag;
     }
 
+    /**
+     * @param string[] $tags1
+     * @param string[] $tags2
+     */
     public static function compare(array $tags1, array $tags2): bool
     {
         if (count($tags1) !== count($tags2)) {
@@ -225,6 +234,11 @@ class Tag
         return $tags1 == $tags2;
     }
 
+    /**
+     * @param string[] $source
+     * @param string[] $remove
+     * @return string[]
+     */
     public static function get_diff_tags(array $source, array $remove): array
     {
         $before = array_map('strtolower', $source);
@@ -238,6 +252,10 @@ class Tag
         return $after;
     }
 
+    /**
+     * @param string[] $tags
+     * @return string[]
+     */
     public static function sanitize_array(array $tags): array
     {
         global $page;

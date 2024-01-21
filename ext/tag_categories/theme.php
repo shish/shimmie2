@@ -6,7 +6,10 @@ namespace Shimmie2;
 
 class TagCategoriesTheme extends Themelet
 {
-    public function show_tag_categories(Page $page, $tc_dict)
+    /**
+     * @param array<array{category: string, display_singular: string, display_multiple: string, color: string}> $tc_dict
+     */
+    public function show_tag_categories(Page $page, array $tc_dict): void
     {
         $tc_block_index = 0;
         $html = '';

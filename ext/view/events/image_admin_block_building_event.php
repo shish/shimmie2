@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 class ImageAdminBlockBuildingEvent extends Event
 {
-    /** @var HTMLElement[]|string[] */
+    /** @var HTMLElement[] */
     public array $parts = [];
     public Image $image;
     public User $user;
@@ -22,7 +22,7 @@ class ImageAdminBlockBuildingEvent extends Event
         $this->context = $context;
     }
 
-    public function add_part(HTMLElement|string $html, int $position = 50)
+    public function add_part(HTMLElement $html, int $position = 50): void
     {
         while (isset($this->parts[$position])) {
             $position++;

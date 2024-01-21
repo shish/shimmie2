@@ -179,7 +179,7 @@ class S3 extends Extension
     }
 
     // utils
-    private function get_client()
+    private function get_client(): ?\Aws\S3\S3Client
     {
         global $config;
         $access_key_id = $config->get_string(S3Config::ACCESS_KEY_ID);
@@ -197,7 +197,7 @@ class S3 extends Extension
         ]);
     }
 
-    private function hash_to_path(string $hash)
+    private function hash_to_path(string $hash): string
     {
         $ha = substr($hash, 0, 2);
         $sh = substr($hash, 2, 2);
@@ -215,6 +215,9 @@ class S3 extends Extension
     }
 
     // underlying s3 interaction functions
+    /**
+     * @param string[]|null $new_tags
+     */
     private function sync_post(Image $image, ?array $new_tags = null, bool $overwrite = true): bool
     {
         global $config;
@@ -244,7 +247,7 @@ class S3 extends Extension
             $client->putObject([
                 'Bucket' => $image_bucket,
                 'Key' => $key,
-                'Body' => file_get_contents($image->get_image_filename()),
+                'Body' => file_get_contents_ex($image->get_image_filename()),
                 'ACL' => 'public-read',
                 'ContentType' => $image->get_mime(),
                 'ContentDisposition' => "inline; filename=\"$friendly\"",
@@ -254,7 +257,7 @@ class S3 extends Extension
         return true;
     }
 
-    private function remove_file(string $hash)
+    private function remove_file(string $hash): void
     {
         global $config;
         $client = $this->get_client();
@@ -272,7 +275,7 @@ class S3 extends Extension
         }
     }
 
-    private function enqueue(string $hash, string $action)
+    private function enqueue(string $hash, string $action): void
     {
         global $database;
         $database->execute("DELETE FROM s3_sync_queue WHERE hash = :hash", ["hash" => $hash]);
@@ -282,7 +285,7 @@ class S3 extends Extension
         ", ["hash" => $hash, "action" => $action]);
     }
 
-    private function dequeue(string $hash)
+    private function dequeue(string $hash): void
     {
         global $database;
         $database->execute("DELETE FROM s3_sync_queue WHERE hash = :hash", ["hash" => $hash]);

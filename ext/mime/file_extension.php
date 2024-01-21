@@ -90,6 +90,8 @@ class FileExtension
 
     /**
      * Returns all the file extension associated with the specified mimetype.
+     *
+     * @return string[]
      */
     public static function get_all_for_mime(string $mime): array
     {

@@ -143,6 +143,9 @@ class PageRequestEvent extends Event
      * Many things use these functions
      */
 
+    /**
+     * @return string[]
+     */
     public function get_search_terms(): array
     {
         $search_terms = [];
@@ -171,7 +174,6 @@ class PageRequestEvent extends Event
             }
             $str = $out;
             // end legacy
-
 
             $search_terms = Tag::explode($str);
         }

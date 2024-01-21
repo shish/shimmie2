@@ -139,7 +139,7 @@ class CronUploader extends Extension
         }
     }
 
-    private function restage_folder(string $folder)
+    private function restage_folder(string $folder): void
     {
         global $page;
         if (empty($folder)) {
@@ -196,7 +196,7 @@ class CronUploader extends Extension
         }
     }
 
-    private function clear_folder($folder)
+    private function clear_folder(string $folder): void
     {
         global $page, $user_config;
         $path = join_path($user_config->get_string(CronUploaderConfig::DIR), $folder);
@@ -235,7 +235,7 @@ class CronUploader extends Extension
 
 
         $running = false;
-        $lockfile = fopen($this->get_lock_file(), "w");
+        $lockfile = false_throws(fopen($this->get_lock_file(), "w"));
         try {
             if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
                 $running = true;
@@ -343,7 +343,7 @@ class CronUploader extends Extension
             throw new SCoreException("User does not have permission to run cron upload");
         }
 
-        $lockfile = fopen($this->get_lock_file(), "w");
+        $lockfile = false_throws(fopen($this->get_lock_file(), "w"));
         if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
             throw new SCoreException("Cron upload process is already running");
         }
@@ -414,7 +414,7 @@ class CronUploader extends Extension
         }
     }
 
-    private function move_uploaded(string $path, string $filename, string $output_subdir, bool $corrupt = false)
+    private function move_uploaded(string $path, string $filename, string $output_subdir, bool $corrupt = false): void
     {
         global $user_config;
 
@@ -454,6 +454,8 @@ class CronUploader extends Extension
 
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
+     *
+     * @param string[] $tags
      */
     private function add_image(string $tmpname, string $filename, array $tags): DataUploadEvent
     {

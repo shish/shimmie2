@@ -53,6 +53,8 @@ class ET extends Extension
 
     /**
      * Collect the information and return it in a keyed array.
+     *
+     * @return array<string, mixed>
      */
     private function get_info(): array
     {
@@ -118,9 +120,9 @@ class ET extends Extension
 
         if (file_exists(".git")) {
             try {
-                $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
-                $commitBranch = trim(exec('git rev-parse --abbrev-ref HEAD'));
-                $commitOrigin = trim(exec('git config --get remote.origin.url'));
+                $commitHash = trim(exec_ex('git log --pretty="%h" -n1 HEAD'));
+                $commitBranch = trim(exec_ex('git rev-parse --abbrev-ref HEAD'));
+                $commitOrigin = trim(exec_ex('git config --get remote.origin.url'));
                 $commitOrigin = preg_replace("#//.*@#", "//xxx@", $commitOrigin);
                 $info['git'] = [
                     'commit' => $commitHash,
@@ -135,13 +137,16 @@ class ET extends Extension
         return $info;
     }
 
+    /**
+     * @param array<string, mixed> $info
+     */
     private function to_yaml(array $info): string
     {
         $data = "";
         foreach ($info as $title => $section) {
             $data .= "$title:\n";
             foreach ($section as $k => $v) {
-                $data .= "  $k: " . json_encode($v, JSON_UNESCAPED_SLASHES) . "\n";
+                $data .= "  $k: " . json_encode_ex($v, JSON_UNESCAPED_SLASHES) . "\n";
             }
             $data .= "\n";
         }

@@ -31,6 +31,7 @@ class ArchiveFileHandler extends DataHandlerExtension
             $cmd = $config->get_string('archive_extract_command');
             $cmd = str_replace('%f', $event->tmpname, $cmd);
             $cmd = str_replace('%d', $tmpdir, $cmd);
+            assert(is_string($cmd));
             exec($cmd);
             if (file_exists($tmpdir)) {
                 try {

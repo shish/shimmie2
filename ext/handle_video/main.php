@@ -39,6 +39,9 @@ class VideoFileHandler extends DataHandlerExtension
         );
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function get_options(): array
     {
         $output = [];

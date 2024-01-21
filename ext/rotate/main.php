@@ -96,7 +96,7 @@ class RotateImage extends Extension
 
     // Private functions
     /* ----------------------------- */
-    private function rotate_image(int $image_id, int $deg)
+    private function rotate_image(int $image_id, int $deg): void
     {
         if (($deg <= -360) || ($deg >= 360)) {
             throw new ImageRotateException("Invalid options for rotation angle. ($deg)");
@@ -110,7 +110,7 @@ class RotateImage extends Extension
             throw new ImageRotateException("$image_filename does not exist.");
         }
 
-        $info = getimagesize($image_filename);
+        $info = false_throws(getimagesize($image_filename));
 
         $memory_use = Media::calc_memory_use($info);
         $memory_limit = get_memory_limit();
@@ -121,7 +121,7 @@ class RotateImage extends Extension
 
 
         /* Attempt to load the image */
-        $image = imagecreatefromstring(file_get_contents($image_filename));
+        $image = imagecreatefromstring(file_get_contents_ex($image_filename));
         if ($image == false) {
             throw new ImageRotateException("Could not load image: ".$image_filename);
         }
@@ -143,7 +143,7 @@ class RotateImage extends Extension
         }
 
         /* Temp storage while we rotate */
-        $tmp_filename = tempnam(ini_get('upload_tmp_dir'), 'shimmie_rotate');
+        $tmp_filename = shm_tempnam('rotate');
         if (empty($tmp_filename)) {
             throw new ImageRotateException("Unable to save temporary image file.");
         }
@@ -173,7 +173,7 @@ class RotateImage extends Extension
             throw new ImageRotateException("Could not save image: ".$tmp_filename);
         }
 
-        $new_hash = md5_file($tmp_filename);
+        $new_hash = md5_file_ex($tmp_filename);
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_hash);
         if (!@copy($tmp_filename, $target)) {

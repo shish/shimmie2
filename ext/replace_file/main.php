@@ -29,7 +29,7 @@ class ReplaceFile extends Extension
                 $this->theme->display_replace_page($page, $image_id);
             } elseif($event->method == "POST") {
                 if (!empty($_POST["url"])) {
-                    $tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
+                    $tmp_filename = shm_tempnam("transload");
                     fetch_url($_POST["url"], $tmp_filename);
                     send_event(new ImageReplaceEvent($image, $tmp_filename));
                 } elseif (count($_FILES) > 0) {
@@ -78,7 +78,7 @@ class ReplaceFile extends Extension
 
         // update metadata and save metadata to DB
         $event->image->hash = $event->new_hash;
-        $event->image->filesize = filesize($target);
+        $event->image->filesize = filesize_ex($target);
         $event->image->set_mime(MimeType::get_for_file($target));
         send_event(new MediaCheckPropertiesEvent($image));
         $image->save_to_db();

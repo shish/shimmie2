@@ -116,12 +116,12 @@ class Tips extends Extension
         }
     }
 
-    private function manageTips()
+    private function manageTips(): void
     {
         $data_href = get_base_href();
         $url = $data_href."/ext/tips/images/";
 
-        $dirPath = dir('./ext/tips/images');
+        $dirPath = dir_ex('./ext/tips/images');
         $images = [];
         while (($file = $dirPath->read()) !== false) {
             if ($file[0] != ".") {
@@ -145,7 +145,7 @@ class Tips extends Extension
         );
     }
 
-    private function getTip()
+    private function getTip(): void
     {
         global $database;
 
@@ -165,7 +165,7 @@ class Tips extends Extension
         }
     }
 
-    private function getAll()
+    private function getAll(): void
     {
         global $database;
 
@@ -177,7 +177,7 @@ class Tips extends Extension
         $this->theme->showAll($url, $tips);
     }
 
-    private function setStatus(int $tipID)
+    private function setStatus(int $tipID): void
     {
         global $database;
 

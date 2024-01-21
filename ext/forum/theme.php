@@ -8,9 +8,16 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{INPUT, LABEL, SMALL, TEXTAREA, TR, TD, TABLE, TH, TBODY, THEAD, DIV, A, BR, emptyHTML, SUP, rawHTML};
 
+/**
+ * @phpstan-type Thread array{id:int,title:string,sticky:bool,user_name:string,uptodate:string,response_count:int}
+ * @phpstan-type Post array{id:int,user_name:string,user_class:string,date:string,message:string}
+ */
 class ForumTheme extends Themelet
 {
-    public function display_thread_list(Page $page, $threads, $showAdminOptions, $pageNumber, $totalPages): void
+    /**
+     * @param Thread[] $threads
+     */
+    public function display_thread_list(Page $page, array $threads, bool $showAdminOptions, int $pageNumber, int $totalPages): void
     {
         if (count($threads) == 0) {
             $html = "There are no threads to show.";
@@ -27,7 +34,7 @@ class ForumTheme extends Themelet
 
 
 
-    public function display_new_thread_composer(Page $page, $threadText = null, $threadTitle = null): void
+    public function display_new_thread_composer(Page $page, string $threadText = null, string $threadTitle = null): void
     {
         global $config, $user;
         $max_characters = $config->get_int('forumMaxCharsPerPost');
@@ -73,9 +80,7 @@ class ForumTheme extends Themelet
         $page->add_block(new Block($blockTitle, $html, "main", 120));
     }
 
-
-
-    public function display_new_post_composer(Page $page, $threadID): void
+    public function display_new_post_composer(Page $page, int $threadID): void
     {
         global $config;
 
@@ -108,8 +113,10 @@ class ForumTheme extends Themelet
     }
 
 
-
-    public function display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber, $totalPages): void
+    /**
+     * @param array<Post> $posts
+     */
+    public function display_thread(array $posts, bool $showAdminOptions, string $threadTitle, int $threadID, int $pageNumber, int $totalPages): void
     {
         global $config, $page/*, $user*/;
 
@@ -189,13 +196,16 @@ class ForumTheme extends Themelet
         $page->add_block(new Block($threadTitle, $html, "main", 20));
     }
 
-    public function add_actions_block(Page $page, $threadID)
+    public function add_actions_block(Page $page, int $threadID): void
     {
         $html = A(["href" => make_link("forum/nuke/".$threadID)], "Delete this thread and its posts.");
         $page->add_block(new Block("Admin Actions", $html, "main", 140));
     }
 
-    private function make_thread_list($threads, $showAdminOptions): HTMLElement
+    /**
+     * @param Thread[] $threads
+     */
+    private function make_thread_list(array $threads, bool $showAdminOptions): HTMLElement
     {
         global $config;
 

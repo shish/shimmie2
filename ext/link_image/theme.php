@@ -6,13 +6,15 @@ namespace Shimmie2;
 
 class LinkImageTheme extends Themelet
 {
-    public function links_block(Page $page, $data)
+    /**
+     * @param array{thumb_src:string,image_src:string,post_link:string,text_link:string|null} $data
+     */
+    public function links_block(Page $page, array $data): void
     {
         $thumb_src = $data['thumb_src'];
         $image_src = $data['image_src'];
         $post_link = $data['post_link'];
         $text_link = $data['text_link'];
-
 
         $page->add_block(new Block(
             "Link to Post",
@@ -93,7 +95,7 @@ class LinkImageTheme extends Themelet
         return $text;
     }
 
-    protected function link_code(string $label, string $content, $id = null): string
+    protected function link_code(string $label, string $content, string $id): string
     {
         return	"
 			<tr>

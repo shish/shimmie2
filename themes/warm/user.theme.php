@@ -6,7 +6,10 @@ namespace Shimmie2;
 
 class CustomUserPageTheme extends UserPageTheme
 {
-    public function display_user_block(Page $page, User $user, $parts): void
+    /**
+     * @param array<array{link: string, name: string}> $parts
+     */
+    public function display_user_block(Page $page, User $user, array $parts): void
     {
         $h_name = html_escape($user->name);
         $html = " | ";

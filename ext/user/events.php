@@ -8,6 +8,7 @@ use MicroHTML\HTMLElement;
 
 class UserBlockBuildingEvent extends Event
 {
+    /** @var array<int, array{name: string|HTMLElement, link: string}> */
     public array $parts = [];
 
     public function add_link(string|HTMLElement $name, string $link, int $position = 50): void
@@ -21,6 +22,7 @@ class UserBlockBuildingEvent extends Event
 
 class UserOperationsBuildingEvent extends Event
 {
+    /** @var string[] */
     public array $parts = [];
 
     public function __construct(public User $user, public BaseConfig $user_config)
@@ -36,6 +38,7 @@ class UserOperationsBuildingEvent extends Event
 
 class UserPageBuildingEvent extends Event
 {
+    /** @var array<int, string> */
     public array $stats = [];
 
     public function __construct(public User $display_user)
@@ -43,7 +46,7 @@ class UserPageBuildingEvent extends Event
         parent::__construct();
     }
 
-    public function add_stats(string $html, int $position = 50)
+    public function add_stats(string $html, int $position = 50): void
     {
         while (isset($this->stats[$position])) {
             $position++;

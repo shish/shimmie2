@@ -111,7 +111,7 @@ class AutoTagger extends Extension
                 if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
                     if (count($_FILES) > 0) {
                         $tmp = $_FILES['auto_tag_file']['tmp_name'];
-                        $contents = file_get_contents($tmp);
+                        $contents = file_get_contents_ex($tmp);
                         $count = $this->add_auto_tag_csv($contents);
                         log_info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
                         $page->set_mode(PageMode::REDIRECT);
@@ -186,6 +186,7 @@ class AutoTagger extends Extension
         $csv = "";
         $pairs = $database->get_pairs("SELECT tag, additional_tags FROM auto_tag ORDER BY tag");
         foreach ($pairs as $old => $new) {
+            assert(is_string($new));
             $csv .= "\"$old\",\"$new\"\n";
         }
         return $csv;
@@ -209,7 +210,7 @@ class AutoTagger extends Extension
         return $i;
     }
 
-    private function add_auto_tag(string $tag, string $additional_tags)
+    private function add_auto_tag(string $tag, string $additional_tags): void
     {
         global $database;
         $existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag" => $tag]);
@@ -250,7 +251,7 @@ class AutoTagger extends Extension
         $this->apply_new_auto_tag($tag);
     }
 
-    private function apply_new_auto_tag(string $tag)
+    private function apply_new_auto_tag(string $tag): void
     {
         global $database;
         $tag_id = $database->get_one("SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)", ["tag" => $tag]);
@@ -264,7 +265,7 @@ class AutoTagger extends Extension
         }
     }
 
-    private function remove_auto_tag(string $tag)
+    private function remove_auto_tag(string $tag): void
     {
         global $database;
 
@@ -273,6 +274,7 @@ class AutoTagger extends Extension
 
     /**
      * @param string[] $tags_mixed
+     * @return string[]
      */
     private function apply_auto_tags(array $tags_mixed): array
     {

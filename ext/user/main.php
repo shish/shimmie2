@@ -46,9 +46,8 @@ class UserTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
-        global $_shm_user_classes;
         $classes = [];
-        foreach ($_shm_user_classes as $cls) {
+        foreach (UserClass::$known_classes as $cls) {
             $classes[$cls->name] = $cls->name;
         }
         ksort($classes);
@@ -160,7 +159,7 @@ class UserPage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $page, $user, $_shm_user_classes;
+        global $config, $database, $page, $user;
 
         $this->show_user_info();
 
@@ -199,8 +198,8 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "classes") {
                 $this->theme->display_user_classes(
                     $page,
-                    $_shm_user_classes,
-                    (new \ReflectionClass('\Shimmie2\Permissions'))->getReflectionConstants()
+                    UserClass::$known_classes,
+                    (new \ReflectionClass(Permissions::class))->getReflectionConstants()
                 );
             } elseif ($event->get_arg(0) == "logout") {
                 $this->page_logout();
@@ -360,7 +359,8 @@ class UserPage extends Extension
             "user_loginshowprofile",
             [
                 "Return to previous page" => 0, // 0 is default
-                "Send to user profile" => 1],
+                "Send to user profile" => 1,
+            ],
             "On log in/out",
             true
         );
@@ -479,6 +479,9 @@ class UserPage extends Extension
     public const USER_SEARCH_REGEX = "/^(?:poster|user)(!?)[=|:](.*)$/i";
     public const USER_ID_SEARCH_REGEX = "/^(?:poster|user)_id(!?)[=|:]([0-9]+)$/i";
 
+    /**
+     * @param string[] $context
+     */
     public static function has_user_query(array $context): bool
     {
         foreach ($context as $term) {
@@ -761,6 +764,9 @@ class UserPage extends Extension
         }
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function count_upload_ips(User $duser): array
     {
         global $database;
@@ -774,6 +780,9 @@ class UserPage extends Extension
 				ORDER BY max(posted) DESC", ["id" => $duser->id]);
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function count_comment_ips(User $duser): array
     {
         global $database;
@@ -787,9 +796,12 @@ class UserPage extends Extension
 				ORDER BY max(posted) DESC", ["id" => $duser->id]);
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function count_log_ips(User $duser): array
     {
-        if (!class_exists('Shimmie2\LogDatabase')) {
+        if (!Extension::is_enabled(LogDatabaseInfo::KEY)) {
             return [];
         }
         global $database;
@@ -819,7 +831,7 @@ class UserPage extends Extension
                 "You need to specify the account number to edit"
             ));
         } else {
-            $uid = int_escape($_POST['id']);
+            $uid = int_escape((string)$_POST['id']);
             $duser = User::by_id($uid);
             log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
 

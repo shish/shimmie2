@@ -83,6 +83,9 @@ class TranscodeImage extends Extension
         $config->set_string(self::get_mapping_name($from_mime), $to_mime);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_enabled_mimes(): array
     {
         $output = [];
@@ -320,16 +323,17 @@ class TranscodeImage extends Extension
     }
 
 
-    private function can_convert_mime($engine, $mime): bool
+    private function can_convert_mime(string $engine, string $mime): bool
     {
         return MediaEngine::is_input_supported($engine, $mime);
     }
 
-
-    private function get_supported_output_mimes($engine, ?string $omit_mime = null): array
+    /**
+     * @return array<string, string>
+     */
+    private function get_supported_output_mimes(string $engine, ?string $omit_mime = null): array
     {
         $output = [];
-
 
         foreach (self::OUTPUT_MIMES as $key => $value) {
             if ($value == "") {
@@ -387,9 +391,9 @@ class TranscodeImage extends Extension
 
         $q = $config->get_int(TranscodeConfig::QUALITY);
 
-        $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
+        $tmp_name = shm_tempnam("transcode");
 
-        $image = imagecreatefromstring(file_get_contents($source_name));
+        $image = false_throws(imagecreatefromstring(file_get_contents_ex($source_name)));
         try {
             $result = false;
             switch ($target_mime) {
@@ -409,9 +413,6 @@ class TranscodeImage extends Extension
                     }
                     try {
                         $background_color = Media::hex_color_allocate($new_image, $config->get_string(TranscodeConfig::ALPHA_COLOR));
-                        if ($background_color === false) {
-                            throw new ImageTranscodeException("Could not allocate background color");
-                        }
                         if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
                             throw new ImageTranscodeException("Could not fill background color");
                         }
@@ -466,7 +467,7 @@ class TranscodeImage extends Extension
                 break;
         }
 
-        $tmp_name = tempnam(sys_get_temp_dir(), "shimmie_transcode");
+        $tmp_name = shm_tempnam("transcode");
 
         $source_type = FileExtension::get_for_mime($source_mime);
 

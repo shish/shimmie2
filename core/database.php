@@ -19,8 +19,12 @@ enum DatabaseDriverID: string
 class DatabaseException extends SCoreException
 {
     public string $query;
+    /** @var array<string, mixed> */
     public array $args;
 
+    /**
+     * @param array<string, mixed> $args
+     */
     public function __construct(string $msg, string $query, array $args)
     {
         parent::__construct($msg);
@@ -32,6 +36,8 @@ class DatabaseException extends SCoreException
 
 /**
  * A class for controlled database access
+ *
+ * @phpstan-type QueryArgs array<string, string|int|bool|null>
  */
 class Database
 {
@@ -52,6 +58,7 @@ class Database
      * How many queries this DB object has run
      */
     public int $query_count = 0;
+    /** @var string[] */
     public array $queries = [];
 
     public function __construct(string $dsn)
@@ -122,6 +129,11 @@ class Database
         }
     }
 
+    /**
+     * @template T
+     * @param callable():T $callback
+     * @return T
+     */
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
     {
         global $_tracer;
@@ -162,13 +174,15 @@ class Database
         return $this->get_engine()->get_version($this->get_db());
     }
 
+    /**
+     * @param QueryArgs $args
+     */
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
         global $_tracer, $tracer_enabled;
         $dur = ftime() - $start;
         // trim whitespace
-        $query = preg_replace('/[\n\t ]/m', ' ', $query);
-        $query = preg_replace('/  +/m', ' ', $query);
+        $query = preg_replace('/[\n\t ]+/m', ' ', $query);
         $query = trim($query);
         if ($tracer_enabled) {
             $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query" => $query, "args" => $args, "method" => $method]);
@@ -188,6 +202,9 @@ class Database
         $this->get_engine()->notify($this->get_db(), $channel, $data);
     }
 
+    /**
+     * @param QueryArgs $args
+     */
     public function _execute(string $query, array $args = []): PDOStatement
     {
         try {
@@ -203,6 +220,8 @@ class Database
 
     /**
      * Execute an SQL query with no return
+     *
+     * @param QueryArgs $args
      */
     public function execute(string $query, array $args = []): PDOStatement
     {
@@ -214,6 +233,9 @@ class Database
 
     /**
      * Execute an SQL query and return a 2D array.
+     *
+     * @param QueryArgs $args
+     * @return array<array<string, mixed>>
      */
     public function get_all(string $query, array $args = []): array
     {
@@ -225,6 +247,8 @@ class Database
 
     /**
      * Execute an SQL query and return a iterable object for use with generators.
+     *
+     * @param QueryArgs $args
      */
     public function get_all_iterable(string $query, array $args = []): PDOStatement
     {
@@ -236,6 +260,9 @@ class Database
 
     /**
      * Execute an SQL query and return a single row.
+     *
+     * @param QueryArgs $args
+     * @return array<string, mixed>
      */
     public function get_row(string $query, array $args = []): ?array
     {
@@ -247,6 +274,9 @@ class Database
 
     /**
      * Execute an SQL query and return the first column of each row.
+     *
+     * @param QueryArgs $args
+     * @return array<mixed>
      */
     public function get_col(string $query, array $args = []): array
     {
@@ -258,6 +288,8 @@ class Database
 
     /**
      * Execute an SQL query and return the first column of each row as a single iterable object.
+     *
+     * @param QueryArgs $args
      */
     public function get_col_iterable(string $query, array $args = []): \Generator
     {
@@ -271,6 +303,9 @@ class Database
 
     /**
      * Execute an SQL query and return the the first column => the second column.
+     *
+     * @param QueryArgs $args
+     * @return array<string, mixed>
      */
     public function get_pairs(string $query, array $args = []): array
     {
@@ -283,6 +318,8 @@ class Database
 
     /**
      * Execute an SQL query and return the the first column => the second column as an iterable object.
+     *
+     * @param QueryArgs $args
      */
     public function get_pairs_iterable(string $query, array $args = []): \Generator
     {
@@ -296,6 +333,8 @@ class Database
 
     /**
      * Execute an SQL query and return a single value, or null.
+     *
+     * @param QueryArgs $args
      */
     public function get_one(string $query, array $args = []): mixed
     {
@@ -307,6 +346,8 @@ class Database
 
     /**
      * Execute an SQL query and returns a bool indicating if any data was returned
+     *
+     * @param QueryArgs $args
      */
     public function exists(string $query, array $args = []): bool
     {

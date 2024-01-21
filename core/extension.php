@@ -22,9 +22,10 @@ abstract class Extension
     protected Themelet $theme;
     public ExtensionInfo $info;
 
+    /** @var string[] */
     private static array $enabled_extensions = [];
 
-    public function __construct($class = null)
+    public function __construct(?string $class = null)
     {
         $class = $class ?? get_called_class();
         $this->theme = $this->get_theme_object($class);
@@ -42,9 +43,13 @@ abstract class Extension
         $normal = "Shimmie2\\{$base}Theme";
 
         if (class_exists($custom)) {
-            return new $custom();
+            $c = new $custom();
+            assert(is_a($c, Themelet::class));
+            return $c;
         } elseif (class_exists($normal)) {
-            return new $normal();
+            $n = new $normal();
+            assert(is_a($n, Themelet::class));
+            return $n;
         } else {
             return new Themelet();
         }
@@ -87,6 +92,9 @@ abstract class Extension
         return in_array($key, self::$enabled_extensions);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_enabled_extensions(): array
     {
         return self::$enabled_extensions;
@@ -141,8 +149,11 @@ abstract class ExtensionInfo
     public string $name;
     public string $license;
     public string $description;
+    /** @var array<string, string|null> */
     public array $authors = [];
+    /** @var string[] */
     public array $dependencies = [];
+    /** @var string[] */
     public array $conflicts = [];
     public ExtensionVisibility $visibility = ExtensionVisibility::DEFAULT;
     public ?string $link = null;
@@ -170,8 +181,11 @@ abstract class ExtensionInfo
         return $this->support_info;
     }
 
+    /** @var array<string, ExtensionInfo> */
     private static array $all_info_by_key = [];
+    /** @var array<string, ExtensionInfo> */
     private static array $all_info_by_class = [];
+    /** @var string[] */
     private static array $core_extensions = [];
 
     protected function __construct()
@@ -207,16 +221,25 @@ abstract class ExtensionInfo
         $this->supported = empty($this->support_info);
     }
 
+    /**
+     * @return ExtensionInfo[]
+     */
     public static function get_all(): array
     {
         return array_values(self::$all_info_by_key);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_all_keys(): array
     {
         return array_keys(self::$all_info_by_key);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_core_extensions(): array
     {
         return self::$core_extensions;
@@ -245,8 +268,9 @@ abstract class ExtensionInfo
 
     public static function load_all_extension_info(): void
     {
-        foreach (get_subclasses_of("Shimmie2\ExtensionInfo") as $class) {
+        foreach (get_subclasses_of(ExtensionInfo::class) as $class) {
             $extension_info = new $class();
+            assert(is_a($extension_info, ExtensionInfo::class));
             if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
                 throw new SCoreException("Extension Info $class with key $extension_info->key has already been loaded");
             }
@@ -285,6 +309,7 @@ abstract class FormatterExtension extends Extension
  */
 abstract class DataHandlerExtension extends Extension
 {
+    /** @var string[] */
     protected array $SUPPORTED_MIME = [];
 
     public function onDataUpload(DataUploadEvent $event): void
@@ -297,7 +322,7 @@ abstract class DataHandlerExtension extends Extension
                 throw new UploadException("Invalid or corrupted file");
             }
 
-            $existing = Image::by_hash(md5_file($event->tmpname));
+            $existing = Image::by_hash(md5_file_ex($event->tmpname));
             if (!is_null($existing)) {
                 if ($config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER) == ImageConfig::COLLISION_MERGE) {
                     // Right now tags are the only thing that get merged, so
@@ -318,8 +343,8 @@ abstract class DataHandlerExtension extends Extension
             assert(is_readable($filename));
             $image = new Image();
             $image->tmp_file = $filename;
-            $image->filesize = filesize($filename);
-            $image->hash = md5_file($filename);
+            $image->filesize = filesize_ex($filename);
+            $image->hash = md5_file_ex($filename);
             $image->filename = (($pos = strpos($event->metadata['filename'], '?')) !== false) ? substr($event->metadata['filename'], 0, $pos) : $event->metadata['filename'];
             $image->set_mime(MimeType::get_for_file($filename, get_file_ext($event->metadata["filename"]) ?? null));
             if (empty($image->get_mime())) {
@@ -396,16 +421,20 @@ abstract class DataHandlerExtension extends Extension
         return MimeType::matches_array($mime, $this->SUPPORTED_MIME);
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_all_supported_mimes(): array
     {
         $arr = [];
-        foreach (get_subclasses_of("Shimmie2\DataHandlerExtension") as $handler) {
+        foreach (get_subclasses_of(DataHandlerExtension::class) as $handler) {
             $handler = (new $handler());
+            assert(is_a($handler, DataHandlerExtension::class));
             $arr = array_merge($arr, $handler->SUPPORTED_MIME);
         }
 
         // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class
-        if (class_exists("Shimmie2\TranscodeImage")) {
+        if (Extension::is_enabled(TranscodeImageInfo::KEY)) {
             $arr = array_merge($arr, TranscodeImage::get_enabled_mimes());
         }
 
@@ -413,6 +442,9 @@ abstract class DataHandlerExtension extends Extension
         return $arr;
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_all_supported_exts(): array
     {
         $arr = [];

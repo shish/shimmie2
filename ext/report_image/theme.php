@@ -6,8 +6,14 @@ namespace Shimmie2;
 
 use function MicroHTML\INPUT;
 
+/**
+ * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}
+ */
 class ReportImageTheme extends Themelet
 {
+    /**
+     * @param array<Report> $reports
+     */
     public function display_reported_images(Page $page, array $reports): void
     {
         global $config, $user;
@@ -23,19 +29,19 @@ class ReportImageTheme extends Themelet
 
             $iabbe = send_event(new ImageAdminBlockBuildingEvent($image, $user, "report"));
             ksort($iabbe->parts);
-            $actions = join("<br>", $iabbe->parts);
+            $actions = join("", $iabbe->parts);
 
             $h_reportedimages .= "
 				<tr>
 					<td>{$image_link}</td>
 					<td class='reason'>Report by $userlink: $h_reason</td>
-					<td class='formstretch'>
+					<td class='formstretch post_controls'>
 						".make_form(make_link("image_report/remove"))."
 							<input type='hidden' name='id' value='{$report['id']}'>
 							<input type='submit' value='Remove Report'>
 						</form>
 
-						<br>$actions
+						$actions
 					</td>
 				</tr>
 			";
@@ -91,7 +97,7 @@ class ReportImageTheme extends Themelet
         $page->add_block(new Block("Report Post", $html, "left"));
     }
 
-    public function get_nuller(User $duser)
+    public function get_nuller(User $duser): void
     {
         global $page;
         $html = (string)SHM_SIMPLE_FORM(

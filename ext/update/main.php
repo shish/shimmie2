@@ -69,18 +69,14 @@ class Update extends Extension
         $filename = "./data/update_{$commitSHA}.zip";
 
         log_info("update", "Attempting to download Shimmie commit:  ".$commitSHA);
-        if ($headers = fetch_url($url, $filename)) {
-            if (($headers['Content-Type'] !== MimeType::ZIP) || ((int) $headers['Content-Length'] !== filesize($filename))) {
-                unlink("./data/update_{$commitSHA}.zip");
-                log_warning("update", "Download failed: not zip / not same size as remote file.");
-                return false;
-            }
-
-            return true;
+        $headers = fetch_url($url, $filename);
+        if (($headers['Content-Type'] !== MimeType::ZIP) || ((int) $headers['Content-Length'] !== filesize($filename))) {
+            unlink("./data/update_{$commitSHA}.zip");
+            log_warning("update", "Download failed: not zip / not same size as remote file.");
+            return false;
         }
 
-        log_warning("update", "Download failed to download.");
-        return false;
+        return true;
     }
 
     private function update_shimmie(): bool
@@ -98,7 +94,7 @@ class Update extends Extension
         $zip = new \ZipArchive();
         if ($zip->open("./data/update_$commitSHA.zip") === true) {
             for ($i = 1; $i < $zip->numFiles; $i++) {
-                $filename = $zip->getNameIndex($i);
+                $filename = false_throws($zip->getNameIndex($i));
 
                 if (substr($filename, -1) !== "/") {
                     copy("zip://".dirname(dirname(__DIR__)).'/'."./data/update_$commitSHA.zip"."#".$filename, substr($filename, 50));

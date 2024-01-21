@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 class ReverseSearchLinksTheme extends Themelet
 {
-    public function reverse_search_block(Page $page, Image $image)
+    public function reverse_search_block(Page $page, Image $image): void
     {
         global $config;
 

@@ -44,20 +44,19 @@ class User
      * One will very rarely construct a user directly, more common
      * would be to use User::by_id, User::by_session, etc.
      *
+     * @param array<string|int, mixed> $row
      * @throws SCoreException
      */
     public function __construct(array $row)
     {
-        global $_shm_user_classes;
-
         $this->id = int_escape((string)$row['id']);
         $this->name = $row['name'];
         $this->email = $row['email'];
         $this->join_date = $row['joindate'];
         $this->passhash = $row['pass'];
 
-        if (array_key_exists($row["class"], $_shm_user_classes)) {
-            $this->class = $_shm_user_classes[$row["class"]];
+        if (array_key_exists($row["class"], UserClass::$known_classes)) {
+            $this->class = UserClass::$known_classes[$row["class"]];
         } else {
             throw new SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");
         }

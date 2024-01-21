@@ -6,13 +6,6 @@ namespace Shimmie2;
 
 use GQLA\Type;
 use GQLA\Field;
-use GQLA\Query;
-
-/**
- * @global UserClass[] $_shm_user_classes
- */
-global $_shm_user_classes;
-$_shm_user_classes = [];
 
 /**
  * Class UserClass
@@ -20,31 +13,40 @@ $_shm_user_classes = [];
 #[Type(name: "UserClass")]
 class UserClass
 {
+    /** @var array<string, UserClass> */
+    public static array $known_classes = [];
+
     #[Field]
     public ?string $name = null;
     public ?UserClass $parent = null;
+
+    /** @var array<string, bool> */
     public array $abilities = [];
 
+    /**
+     * @param array<string, bool> $abilities
+     */
     public function __construct(string $name, string $parent = null, array $abilities = [])
     {
-        global $_shm_user_classes;
-
         $this->name = $name;
         $this->abilities = $abilities;
 
         if (!is_null($parent)) {
-            $this->parent = $_shm_user_classes[$parent];
+            $this->parent = static::$known_classes[$parent];
         }
 
-        $_shm_user_classes[$name] = $this;
+        static::$known_classes[$name] = $this;
     }
 
+    /**
+     * @return string[]
+     */
     #[Field(type: "[Permission!]!")]
     public function permissions(): array
     {
         global $_all_false;
         $perms = [];
-        foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
+        foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
             if ($this->can($v)) {
                 $perms[] = $v;
             }
@@ -64,10 +66,9 @@ class UserClass
         } elseif (!is_null($this->parent)) {
             return $this->parent->can($ability);
         } else {
-            global $_shm_user_classes;
             $min_dist = 9999;
             $min_ability = null;
-            foreach ($_shm_user_classes['base']->abilities as $a => $cando) {
+            foreach (UserClass::$known_classes['base']->abilities as $a => $cando) {
                 $v = levenshtein($ability, $a);
                 if ($v < $min_dist) {
                     $min_dist = $v;
@@ -80,7 +81,8 @@ class UserClass
 }
 
 $_all_false = [];
-foreach ((new \ReflectionClass('\Shimmie2\Permissions'))->getConstants() as $k => $v) {
+foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
+    assert(is_string($v));
     $_all_false[$v] = false;
 }
 new UserClass("base", null, $_all_false);

@@ -84,6 +84,7 @@ function modify_current_url(array $changes): string
  */
 function modify_url(string $url, array $changes): string
 {
+    /** @var array<string, mixed> */
     $parts = parse_url($url);
 
     $params = [];

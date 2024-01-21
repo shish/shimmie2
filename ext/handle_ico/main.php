@@ -15,10 +15,10 @@ class IcoFileHandler extends DataHandlerExtension
         $event->image->audio = false;
         $event->image->image = ($event->image->get_mime() != MimeType::ANI);
 
-        $fp = fopen($event->image->get_image_filename(), "r");
+        $fp = false_throws(fopen($event->image->get_image_filename(), "r"));
         try {
             fseek($fp, 6); // skip header
-            $subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
+            $subheader = false_throws(unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", false_throws(fread($fp, 16))));
             $width = $subheader['width'];
             $height = $subheader['height'];
             $event->image->width = $width == 0 ? 256 : $width;
@@ -41,8 +41,8 @@ class IcoFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        $fp = fopen($tmpname, "r");
-        $header = unpack("Snull/Stype/Scount", fread($fp, 6));
+        $fp = false_throws(fopen($tmpname, "r"));
+        $header = false_throws(unpack("Snull/Stype/Scount", false_throws(fread($fp, 6))));
         fclose($fp);
         return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
     }

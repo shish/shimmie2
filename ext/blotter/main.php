@@ -136,7 +136,7 @@ class Blotter extends Extension
         $this->display_blotter();
     }
 
-    private function display_blotter()
+    private function display_blotter(): void
     {
         global $database, $config;
         $limit = $config->get_int("blotter_recent", 5);

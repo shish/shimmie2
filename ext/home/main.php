@@ -28,7 +28,7 @@ class Home extends Extension
         $counters = [];
         $counters["None"] = "none";
         $counters["Text-only"] = "text-only";
-        foreach (glob("ext/home/counters/*") as $counter_dirname) {
+        foreach (glob_ex("ext/home/counters/*") as $counter_dirname) {
             $name = str_replace("ext/home/counters/", "", $counter_dirname);
             $counters[ucfirst($name)] = $name;
         }
@@ -71,10 +71,10 @@ class Home extends Extension
             $main_links = $config->get_string('home_links');
         } else {
             $main_links = '[url=site://post/list]Posts[/url][url=site://comment/list]Comments[/url][url=site://tags]Tags[/url]';
-            if (class_exists("Shimmie2\Pools")) {
+            if (Extension::is_enabled(PoolsInfo::KEY)) {
                 $main_links .= '[url=site://pool/list]Pools[/url]';
             }
-            if (class_exists("Shimmie2\Wiki")) {
+            if (Extension::is_enabled(WikiInfo::KEY)) {
                 $main_links .= '[url=site://wiki]Wiki[/url]';
             }
             $main_links .= '[url=site://ext_doc]Documentation[/url]';

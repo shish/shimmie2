@@ -88,7 +88,7 @@ class PostTitles extends Extension
         }
     }
 
-    private function set_title(int $image_id, string $title)
+    private function set_title(int $image_id, string $title): void
     {
         global $database;
         $database->execute("UPDATE images SET title=:title WHERE id=:id", ['title' => $title, 'id' => $image_id]);

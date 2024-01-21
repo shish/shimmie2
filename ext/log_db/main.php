@@ -42,7 +42,7 @@ class ShortDateTimeColumn extends DateTimeColumn
 
 class ActorColumn extends Column
 {
-    public function __construct($name, $title)
+    public function __construct(string $name, string $title)
     {
         parent::__construct($name, $title);
         $this->sortable = false;
@@ -78,8 +78,12 @@ class ActorColumn extends Column
         );
     }
 
+    /**
+     * @return array{0: string|null, 1: string|null}
+     */
     public function modify_input_for_read(string|array $input): array
     {
+        assert(is_array($input));
         list($un, $ip) = $input;
         if (empty($un)) {
             $un = null;
@@ -90,7 +94,10 @@ class ActorColumn extends Column
         return [$un, $ip];
     }
 
-    public function display($row): HTMLElement
+    /**
+     * @param array{username: string, address: string} $row
+     */
+    public function display(array $row): HTMLElement
     {
         $ret = emptyHTML();
         if ($row['username'] != "Anonymous") {
@@ -154,6 +161,7 @@ class MessageColumn extends Column
 
     public function modify_input_for_read(array|string $input): mixed
     {
+        assert(is_array($input));
         list($m, $l) = $input;
         if (empty($m)) {
             $m = "%";
@@ -189,7 +197,7 @@ class MessageColumn extends Column
         return SPAN(["style" => "color: $c"], rawHTML($this->scan_entities($row[$this->name])));
     }
 
-    protected function scan_entities(string $line)
+    protected function scan_entities(string $line): string
     {
         $line = preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
         $line = preg_replace_callback("/Post #(\d+)/s", [$this, "link_image"], $line);
@@ -197,7 +205,10 @@ class MessageColumn extends Column
         return $line;
     }
 
-    protected function link_image($id)
+    /**
+     * @param array{1: string} $id
+     */
+    protected function link_image(array $id): string
     {
         $iid = int_escape($id[1]);
         return "<a href='".make_link("post/view/$iid")."'>&gt;&gt;$iid</a>";

@@ -6,7 +6,10 @@ namespace Shimmie2;
 
 class PrivMsgTheme extends Themelet
 {
-    public function display_pms(Page $page, $pms): void
+    /**
+     * @param PM[] $pms
+     */
+    public function display_pms(Page $page, array $pms): void
     {
         global $user;
 
@@ -58,7 +61,7 @@ class PrivMsgTheme extends Themelet
         $page->add_block(new Block("Private Messages", $html, "main", 40, "private-messages"));
     }
 
-    public function display_composer(Page $page, User $from, User $to, $subject = ""): void
+    public function display_composer(Page $page, User $from, User $to, string $subject = ""): void
     {
         global $user;
         $post_url = make_link("pm/send");

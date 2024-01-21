@@ -235,6 +235,9 @@ class MimeMap
         ],
     ];
 
+    /**
+     * @return array{name: string, ext: string[], mime: string[]}
+     */
     public static function get_for_extension(string $ext): ?array
     {
         $ext = strtolower($ext);
@@ -247,6 +250,9 @@ class MimeMap
         return null;
     }
 
+    /**
+     * @return array{name: string, ext: string[], mime: string[]}
+     */
     public static function get_for_mime(string $mime): ?array
     {
         $mime = strtolower(MimeType::remove_parameters($mime));

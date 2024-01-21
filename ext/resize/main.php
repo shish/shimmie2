@@ -94,7 +94,7 @@ class ResizeImage extends Extension
                 if (($fh = @fopen($image_filename, 'rb'))) {
                     //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                     while (!feof($fh) && $isanigif < 2) {
-                        $chunk = fread($fh, 1024 * 100);
+                        $chunk = false_throws(fread($fh, 1024 * 100));
                         $isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
                     }
                 }
@@ -186,7 +186,7 @@ class ResizeImage extends Extension
             [$new_width, $new_height] = get_scaled_by_aspect_ratio($event->image->width, $event->image->height, $max_width, $max_height);
 
             if ($new_width !== $event->image->width || $new_height !== $event->image->height) {
-                $tmp_filename = tempnam(sys_get_temp_dir(), 'shimmie_resize');
+                $tmp_filename = shm_tempnam('resize');
                 if (empty($tmp_filename)) {
                     throw new ImageResizeException("Unable to save temporary image file.");
                 }
@@ -211,7 +211,7 @@ class ResizeImage extends Extension
         }
     }
 
-    private function can_resize_mime($mime): bool
+    private function can_resize_mime(string $mime): bool
     {
         global $config;
         $engine = $config->get_string(ResizeConfig::ENGINE);
@@ -222,7 +222,7 @@ class ResizeImage extends Extension
 
     // Private functions
     /* ----------------------------- */
-    private function resize_image(Image $image_obj, int $width, int $height)
+    private function resize_image(Image $image_obj, int $width, int $height): void
     {
         global $config;
 
@@ -240,7 +240,7 @@ class ResizeImage extends Extension
         $hash = $image_obj->hash;
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
 
-        $info = getimagesize($image_filename);
+        $info = false_throws(getimagesize($image_filename));
         if (($image_obj->width != $info[0]) || ($image_obj->height != $info[1])) {
             throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
         }
@@ -248,7 +248,7 @@ class ResizeImage extends Extension
         list($new_height, $new_width) = $this->calc_new_size($image_obj, $width, $height);
 
         /* Temp storage while we resize */
-        $tmp_filename = tempnam(sys_get_temp_dir(), 'shimmie_resize');
+        $tmp_filename = shm_tempnam('resize');
         if (empty($tmp_filename)) {
             throw new ImageResizeException("Unable to save temporary image file.");
         }

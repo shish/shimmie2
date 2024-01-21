@@ -169,6 +169,9 @@ class Relationships extends Extension
         }
     }
 
+    /**
+     * @return Image[]
+     */
     public static function get_children(Image $image, int $omit = null): array
     {
         global $database;
@@ -183,7 +186,7 @@ class Relationships extends Extension
         return $output;
     }
 
-    private function remove_parent(int $imageID)
+    private function remove_parent(int $imageID): void
     {
         global $database;
         $parentID = $database->get_one("SELECT parent_id FROM images WHERE id = :iid", ["iid" => $imageID]);
@@ -194,7 +197,7 @@ class Relationships extends Extension
         }
     }
 
-    private function set_has_children(int $parent_id)
+    private function set_has_children(int $parent_id): void
     {
         global $database;
 
