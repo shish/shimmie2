@@ -98,7 +98,7 @@ function renderCompletions(element) {
 		(key) => {
 			let k = key.toLowerCase();
 			let w = word.toLowerCase();
-			return k.split(':').some((k) => k.startsWith(w))
+			return (k.startsWith(w) || k.split(':').some((k) => k.startsWith(w)))
 		}
 	).slice(0, 100).forEach((key, i) => {
 		let value = completions[key];
