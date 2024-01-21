@@ -149,13 +149,13 @@ tt_musX, tt_musY,
 tt_over,
 tt_x, tt_y, tt_w, tt_h; // Position, width and height of currently displayed tooltip
 
-function tt_Extension(): void
+function tt_Extension()
 {
 	tt_ExtCmdEnum();
 	tt_aExt[tt_aExt.length] = this;
 	return this;
 }
-function tt_SetTipPos(x, y): void
+function tt_SetTipPos(x, y)
 {
 	var css = tt_aElt[0].style;
 
@@ -173,7 +173,7 @@ function tt_SetTipPos(x, y): void
 		}
 	}
 }
-function tt_HideInit(): void
+function tt_HideInit()
 {
 	if(tt_iState)
 	{
@@ -192,7 +192,7 @@ function tt_HideInit(): void
 		tt_tHide.Timer("tt_Hide();", 1, false);
 	}
 }
-function tt_Hide(): void
+function tt_Hide()
 {
 	if(tt_db && tt_iState)
 	{
@@ -228,45 +228,45 @@ function tt_Hide(): void
 		}
 	}
 }
-function tt_GetElt(id): void
+function tt_GetElt(id)
 {
 	return(document.getElementById ? document.getElementById(id)
 			: document.all ? document.all[id]
 			: null);
 }
-function tt_GetDivW(el): void
+function tt_GetDivW(el)
 {
 	return(el ? (el.offsetWidth || el.style.pixelWidth || 0) : 0);
 }
-function tt_GetDivH(el): void
+function tt_GetDivH(el)
 {
 	return(el ? (el.offsetHeight || el.style.pixelHeight || 0) : 0);
 }
-function tt_GetScrollX(): void
+function tt_GetScrollX()
 {
 	return(window.pageXOffset || (tt_db ? (tt_db.scrollLeft || 0) : 0));
 }
-function tt_GetScrollY(): void
+function tt_GetScrollY()
 {
 	return(window.pageYOffset || (tt_db ? (tt_db.scrollTop || 0) : 0));
 }
-function tt_GetClientW(): void
+function tt_GetClientW()
 {
 	return tt_GetWndCliSiz("Width");
 }
-function tt_GetClientH(): void
+function tt_GetClientH()
 {
 	return tt_GetWndCliSiz("Height");
 }
-function tt_GetEvtX(e): void
+function tt_GetEvtX(e)
 {
 	return (e ? ((typeof(e.pageX) !== tt_u) ? e.pageX : (e.clientX + tt_GetScrollX())) : 0);
 }
-function tt_GetEvtY(e): void
+function tt_GetEvtY(e)
 {
 	return (e ? ((typeof(e.pageY) !== tt_u) ? e.pageY : (e.clientY + tt_GetScrollY())) : 0);
 }
-function tt_AddEvtFnc(el, sEvt, PFnc): void
+function tt_AddEvtFnc(el, sEvt, PFnc)
 {
 	if(el)
 	{
@@ -277,7 +277,7 @@ function tt_AddEvtFnc(el, sEvt, PFnc): void
 		}
 	}
 }
-function tt_RemEvtFnc(el, sEvt, PFnc): void
+function tt_RemEvtFnc(el, sEvt, PFnc)
 {
 	if(el)
 	{
@@ -288,11 +288,11 @@ function tt_RemEvtFnc(el, sEvt, PFnc): void
 		}
 	}
 }
-function tt_GetDad(el): void
+function tt_GetDad(el)
 {
 	return(el.parentNode || el.parentElement || el.offsetParent);
 }
-function tt_MovDomNode(el, dadFrom, dadTo): void
+function tt_MovDomNode(el, dadFrom, dadTo)
 {
 	if(dadFrom) {
 		dadFrom.removeChild(el);
@@ -321,7 +321,7 @@ tt_bWait = false,
 tt_u = "undefined";
 
 
-function tt_Init(): void
+function tt_Init()
 {
 	tt_MkCmdEnum();
 	// Send old browsers instantly to hell
@@ -340,7 +340,7 @@ function tt_Init(): void
 	tt_AddEvtFnc(window, "unload", tt_Hide);
 }
 // Creates command names by translating config variable names to upper case
-function tt_MkCmdEnum(): void
+function tt_MkCmdEnum()
 {
 	var n = 0;
 	for(var i in config) {
@@ -348,7 +348,7 @@ function tt_MkCmdEnum(): void
 	}
 	tt_aV.length = n;
 }
-function tt_Browser(): void
+function tt_Browser()
 {
 	var n, nv, n6, w3c;
 
@@ -393,7 +393,7 @@ function tt_Browser(): void
 	tt_db = null;
 	return false;
 }
-function tt_MkMainDiv(): void
+function tt_MkMainDiv()
 {
 	// Create the tooltip DIV
 	if(tt_body.insertAdjacentHTML) {
@@ -407,7 +407,7 @@ function tt_MkMainDiv(): void
 	tt_db = null;
 	return false;
 }
-function tt_MkMainDivHtm(): void
+function tt_MkMainDivHtm()
 {
 	return(
 		'<div id="WzTtDiV"></div>' +
@@ -415,7 +415,7 @@ function tt_MkMainDivHtm(): void
 		: '')
 	);
 }
-function tt_MkMainDivDom(): void
+function tt_MkMainDivDom()
 {
 	var el = document.createElement("div");
 	if(el) {
@@ -423,7 +423,7 @@ function tt_MkMainDivDom(): void
 	}
 	return el;
 }
-function tt_GetMainDivRefs(): void
+function tt_GetMainDivRefs()
 {
 	tt_aElt[0] = tt_GetElt("WzTtDiV");
 	if(tt_ie56 && tt_aElt[0])
@@ -444,14 +444,14 @@ function tt_GetMainDivRefs(): void
 	}
 	return false;
 }
-function tt_ResetMainDiv(): void
+function tt_ResetMainDiv()
 {
 	tt_SetTipPos(0, 0);
 	tt_aElt[0].innerHTML = "";
 	tt_aElt[0].style.width = "0px";
 	tt_h = 0;
 }
-function tt_IsW3cBox(): void
+function tt_IsW3cBox()
 {
 	var css = tt_aElt[0].style;
 
@@ -461,7 +461,7 @@ function tt_IsW3cBox(): void
 	css.padding = "0px";
 	tt_ResetMainDiv();
 }
-function tt_OpaSupport(): void
+function tt_OpaSupport()
 {
 	var css = tt_body.style;
 
@@ -474,7 +474,7 @@ function tt_OpaSupport(): void
 }
 // Ported from http://dean.edwards.name/weblog/2006/06/again/
 // (Dean Edwards et al.)
-function tt_SetOnloadFnc(): void
+function tt_SetOnloadFnc()
 {
 	tt_AddEvtFnc(document, "DOMContentLoaded", tt_HideSrcTags);
 	tt_AddEvtFnc(window, "load", tt_HideSrcTags);
@@ -497,7 +497,7 @@ function tt_SetOnloadFnc(): void
 				}, 10);
 	}
 }
-function tt_HideSrcTags(): void
+function tt_HideSrcTags()
 {
 	if(!window.tt_HideSrcTags || window.tt_HideSrcTags.done) {
 		return;
@@ -510,7 +510,7 @@ function tt_HideSrcTags(): void
 				" tooltip configuration to true.", true);
 	}
 }
-function tt_HideSrcTagsRecurs(dad): void
+function tt_HideSrcTagsRecurs(dad)
 {
 	var ovr, asT2t;
 	// Walk the DOM tree for tags that have an onmouseover or onclick attribute
@@ -539,7 +539,7 @@ function tt_HideSrcTagsRecurs(dad): void
 	}
 	return true;
 }
-function tt_HideSrcTag(sT2t): void
+function tt_HideSrcTag(sT2t)
 {
 	var id, el;
 
@@ -560,7 +560,7 @@ function tt_HideSrcTag(sT2t): void
 	}
 	return true;
 }
-function tt_Tip(arg, t2t): void
+function tt_Tip(arg, t2t)
 {
 	if(!tt_db || (tt_iState & 0x8)) {
 		return;
@@ -590,7 +590,7 @@ function tt_Tip(arg, t2t): void
 	tt_ShowInit();
 	tt_Move();
 }
-function tt_ReadCmds(a): void
+function tt_ReadCmds(a)
 {
 	var i;
 
@@ -612,7 +612,7 @@ function tt_ReadCmds(a): void
 	tt_Err("Incorrect call of Tip() or TagToTip().\n Each command must be followed by a value.", true);
 	return false;
 }
-function tt_AdaptConfig1(): void
+function tt_AdaptConfig1()
 {
 	tt_ExtCallFncs(0, "LoadConfig");
 	// Inherit unspecified title formattings from body
@@ -654,7 +654,7 @@ function tt_AdaptConfig1(): void
 		tt_aV[DELAY] = Math.max(tt_aV[DELAY] - tt_aV[FADEIN], 100);
 	}
 }
-function tt_AdaptConfig2(): void
+function tt_AdaptConfig2()
 {
 	if(tt_aV[CENTERMOUSE])
 	{
@@ -663,7 +663,7 @@ function tt_AdaptConfig2(): void
 	}
 }
 // Expose content globally so extensions can modify it
-function tt_MkTipContent(a): void
+function tt_MkTipContent(a)
 {
 	if(tt_t2t)
 	{
@@ -678,7 +678,7 @@ function tt_MkTipContent(a): void
 	}
 	tt_ExtCallFncs(0, "CreateContentString");
 }
-function tt_MkTipSubDivs(): void
+function tt_MkTipSubDivs()
 {
 	var sCss = 'position:relative;margin:0px;padding:0px;border-width:0px;left:0px;top:0px;line-height:normal;width:auto;',
 	sTbTrTd = ' cellspacing="0" cellpadding="0" border="0" style="' + sCss + '"><tbody style="' + sCss + '"><tr><td ';
@@ -717,7 +717,7 @@ function tt_MkTipSubDivs(): void
 	}
 	tt_ExtCallFncs(0, "SubDivsCreated");
 }
-function tt_GetSubDivRefs(): void
+function tt_GetSubDivRefs()
 {
 	var aId = new Array("WzTiTl", "WzTiTlTb", "WzTiTlI", "WzClOsE", "WzBoDy", "WzBoDyI", "WzTtShDwB", "WzTtShDwR");
 
@@ -725,7 +725,7 @@ function tt_GetSubDivRefs(): void
 		tt_aElt[i] = tt_GetElt(aId[i - 1]);
 	}
 }
-function tt_FormatTip(): void
+function tt_FormatTip()
 {
 	var css, w, h, pad = tt_aV[PADDING], padT, wBrd = tt_aV[BORDERWIDTH],
 	iOffY, iOffSh, iAdd = (pad + wBrd) << 1;
@@ -863,7 +863,7 @@ function tt_FormatTip(): void
 	tt_FixSize(iOffY, iOffSh);
 }
 // Fixate the size so it can't dynamically change while the tooltip is moving.
-function tt_FixSize(iOffY, iOffSh): void
+function tt_FixSize(iOffY, iOffSh)
 {
 	var wIn, wOut, h, add, pad = tt_aV[PADDING], wBrd = tt_aV[BORDERWIDTH], i;
 
@@ -910,7 +910,7 @@ function tt_FixSize(iOffY, iOffSh): void
 		tt_aElt[i].style.height = tt_h + "px";
 	}
 }
-function tt_DeAlt(el): void
+function tt_DeAlt(el)
 {
 	var aKid;
 
@@ -932,7 +932,7 @@ function tt_DeAlt(el): void
 	}
 }
 // This hack removes the native tooltips over links in Opera
-function tt_OpDeHref(el): void
+function tt_OpDeHref(el)
 {
 	if(!tt_op) {
 		return;
@@ -956,7 +956,7 @@ function tt_OpDeHref(el): void
 		el = tt_GetDad(el);
 	}
 }
-function tt_OpReHref(): void
+function tt_OpReHref()
 {
 	if(tt_elDeHref)
 	{
@@ -966,7 +966,7 @@ function tt_OpReHref(): void
 		tt_elDeHref = null;
 	}
 }
-function tt_El2Tip(): void
+function tt_El2Tip()
 {
 	var css = tt_t2t.style;
 
@@ -983,7 +983,7 @@ function tt_El2Tip(): void
 	css.position = "static";
 	css.left = css.top = css.marginLeft = css.marginTop = "0px";
 }
-function tt_UnEl2Tip(): void
+function tt_UnEl2Tip()
 {
 	// Restore positioning and display
 	var css = tt_t2t.style;
@@ -995,7 +995,7 @@ function tt_UnEl2Tip(): void
 	css.top = tt_t2t.t_ct;
 	tt_t2tDad = null;
 }
-function tt_OverInit(): void
+function tt_OverInit()
 {
 	if(window.event) {
 		tt_over = window.event.target || window.event.srcElement;
@@ -1005,14 +1005,14 @@ function tt_OverInit(): void
 	tt_DeAlt(tt_over);
 	tt_OpDeHref(tt_over);
 }
-function tt_ShowInit(): void
+function tt_ShowInit()
 {
 	tt_tShow.Timer("tt_Show()", tt_aV[DELAY], true);
 	if(tt_aV[CLICKCLOSE] || tt_aV[CLICKSTICKY]) {
 		tt_AddEvtFnc(document, "mouseup", tt_OnLClick);
 	}
 }
-function tt_Show(): void
+function tt_Show()
 {
 	var css = tt_aElt[0].style;
 
@@ -1035,7 +1035,7 @@ function tt_Show(): void
 	}
 	tt_ShowIfrm();
 }
-function tt_ShowIfrm(): void
+function tt_ShowIfrm()
 {
 	if(tt_ie56)
 	{
@@ -1048,7 +1048,7 @@ function tt_ShowIfrm(): void
 		}
 	}
 }
-function tt_Move(e): void
+function tt_Move(e)
 {
 	if(e) {
 		tt_ovr_ = e.target || e.srcElement;
@@ -1081,7 +1081,7 @@ function tt_Move(e): void
 		tt_ExtCallFncs([tt_musX, tt_musY], "MoveAfter");
 	}
 }
-function tt_Pos(iDim): void
+function tt_Pos(iDim)
 {
 	var iX, bJmpMod, cmdAlt, cmdOff, cx, iMax, iScrl, iMus, bJmp;
 
@@ -1140,7 +1140,7 @@ function tt_Pos(iDim): void
 	}
 	return iX;
 }
-function tt_PosDef(iDim): void
+function tt_PosDef(iDim)
 {
 	if(iDim) {
 		tt_bJmpVert = tt_aV[ABOVE];
@@ -1150,7 +1150,7 @@ function tt_PosDef(iDim): void
 	}
 	return tt_CalcPosDef(iDim);
 }
-function tt_PosAlt(iDim): void
+function tt_PosAlt(iDim)
 {
 	if(iDim) {
 		tt_bJmpVert = !tt_aV[ABOVE];
@@ -1160,11 +1160,11 @@ function tt_PosAlt(iDim): void
 	}
 	return tt_CalcPosAlt(iDim);
 }
-function tt_CalcPosDef(iDim): void
+function tt_CalcPosDef(iDim)
 {
 	return iDim ? (tt_musY + tt_aV[OFFSETY]) : (tt_musX + tt_aV[OFFSETX]);
 }
-function tt_CalcPosAlt(iDim): void
+function tt_CalcPosAlt(iDim)
 {
 	var cmdOff = iDim ? OFFSETY : OFFSETX;
 	var dx = tt_aV[cmdOff] - (tt_aV[SHADOW] ? tt_aV[SHADOWWIDTH] : 0);
@@ -1173,7 +1173,7 @@ function tt_CalcPosAlt(iDim): void
 	}
 	return((iDim ? (tt_musY - tt_h) : (tt_musX - tt_w)) - dx);
 }
-function tt_PosFix(): void
+function tt_PosFix()
 {
 	var iX, iY;
 
@@ -1209,7 +1209,7 @@ function tt_PosFix(): void
 	}
 	tt_SetTipPos(iX, iY);
 }
-function tt_Fade(a, now, z, n): void
+function tt_Fade(a, now, z, n)
 {
 	if(n)
 	{
@@ -1226,7 +1226,7 @@ function tt_Fade(a, now, z, n): void
 		tt_Hide();
 	}
 }
-function tt_SetTipOpa(opa): void
+function tt_SetTipOpa(opa)
 {
 	// To circumvent the opacity nesting flaws of IE, we set the opacity
 	// for each sub-DIV separately, rather than for the container DIV.
@@ -1241,7 +1241,7 @@ function tt_SetTipOpa(opa): void
 		tt_SetOpa(tt_aElt[8], opa);
 	}
 }
-function tt_OnCloseBtnOver(iOver): void
+function tt_OnCloseBtnOver(iOver)
 {
 	var css = tt_aElt[4].style;
 
@@ -1249,7 +1249,7 @@ function tt_OnCloseBtnOver(iOver): void
 	css.background = tt_aV[CLOSEBTNCOLORS][iOver];
 	css.color = tt_aV[CLOSEBTNCOLORS][iOver + 1];
 }
-function tt_OnLClick(e): void
+function tt_OnLClick(e)
 {
 	//  Ignore right-clicks
 	e = e || window.event;
@@ -1265,7 +1265,7 @@ function tt_OnLClick(e): void
 		}
 	}
 }
-function tt_Int(x): void
+function tt_Int(x)
 {
 	var y;
 
@@ -1285,7 +1285,7 @@ Number.prototype.EndTimer = function()
 		this.value = 0;
 	}
 };
-function tt_GetWndCliSiz(s): void
+function tt_GetWndCliSiz(s)
 {
 	var db, y = window["inner" + s], sC = "client" + s, sN = "number";
 	if(typeof y === sN)
@@ -1310,7 +1310,7 @@ function tt_GetWndCliSiz(s): void
 		: document.body[sC]
 	);
 }
-function tt_SetOpa(el, opa): void
+function tt_SetOpa(el, opa)
 {
 	var css = el.style;
 
@@ -1361,7 +1361,7 @@ function tt_SetOpa(el, opa): void
 		}
 	}
 }
-function tt_Err(sErr, bIfDebug): void
+function tt_Err(sErr, bIfDebug)
 {
 	if(tt_Debug || !bIfDebug) {
 		alert("Tooltip Script Error Message:\n\n" + sErr);
@@ -1369,7 +1369,7 @@ function tt_Err(sErr, bIfDebug): void
 }
 
 //============  EXTENSION (PLUGIN) MANAGER  ===============//
-function tt_ExtCmdEnum(): void
+function tt_ExtCmdEnum()
 {
 	var s;
 
@@ -1384,7 +1384,7 @@ function tt_ExtCmdEnum(): void
 		}
 	}
 }
-function tt_ExtCallFncs(arg, sFnc): void
+function tt_ExtCallFncs(arg, sFnc)
 {
 	var b = false;
 	for(var i = tt_aExt.length; i;)
