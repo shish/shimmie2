@@ -383,8 +383,6 @@ class BasePage
         $data_href = get_base_href();
         $theme_name = $config->get_string(SetupConfig::THEME, 'default');
 
-        $this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>", 40);
-
         # static handler will map these to themes/foo/static/bar.ico or ext/static_files/static/bar.ico
         $this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
         $this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
@@ -558,6 +556,7 @@ class BasePage
 
         $body_attrs = [
             "data-userclass" => $user->class->name,
+            "data-base-href" => get_base_href(),
         ];
 
         print emptyHTML(
