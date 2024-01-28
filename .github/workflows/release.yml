@@ -31,7 +31,7 @@ jobs:
           zip -r shimmie2-${{ steps.get_version.outputs.VERSION }}.zip shimmie2
 
       - name: Create Release
-        uses: softprops/action-gh-release@latest
+        uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Shimmie ${{ steps.get_version.outputs.VERSION }}
