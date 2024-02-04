@@ -31,35 +31,11 @@ jobs:
           zip -r shimmie2-${{ steps.get_version.outputs.VERSION }}.zip shimmie2
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Shimmie ${{ steps.get_version.outputs.VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Shimmie ${{ steps.get_version.outputs.VERSION }}
           body: Automated release from tags
-          draft: false
-          prerelease: false
-
-      - name: Upload Zip
-        id: upload-release-asset-zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ../shimmie2-${{ steps.get_version.outputs.VERSION }}.zip
-          asset_name: shimmie2-${{ steps.get_version.outputs.VERSION }}.zip
-          asset_content_type: application/zip
-
-      - name: Upload Tar
-        id: upload-release-asset-tar
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ../shimmie2-${{ steps.get_version.outputs.VERSION }}.tgz
-          asset_name: shimmie2-${{ steps.get_version.outputs.VERSION }}.tgz
-          asset_content_type: application/gzip
+          files: |
+            ../shimmie2-${{ steps.get_version.outputs.VERSION }}.zip
+            ../shimmie2-${{ steps.get_version.outputs.VERSION }}.tgz

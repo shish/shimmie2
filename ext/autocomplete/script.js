@@ -42,7 +42,7 @@ function updateCompletions(element) {
 	}
 	else {
 		element.completer_timeout = setTimeout(() => {
-			fetch(base_href + '/api/internal/autocomplete?s=' + word).then(
+			fetch(document.body.getAttribute("data-base-href") + '/api/internal/autocomplete?s=' + word).then(
 				(response) => response.json()
 			).then((json) => {
 				if(element.selected_completion !== -1) {
@@ -232,15 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				event.preventDefault();
 				highlightCompletion(element, element.selected_completion+1);
 			}
-			// if enter or right are pressed, add the selected completion
+			// if enter or right are pressed while a completion is selected, add the selected completion
 			else if((event.code === "Enter" || event.code == "ArrowRight") && element.selected_completion !== -1) {
 				event.preventDefault();
 				setCompletion(element, Object.keys(element.completions)[element.selected_completion]);
-			}
-			// If enter is pressed while nothing is selected, submit the form
-			else if(event.code === "Enter" && element.selected_completion === -1) {
-				event.preventDefault();
-				element.form.submit();
 			}
 			// if escape is pressed, hide the completion block
 			else if(event.code === "Escape") {
