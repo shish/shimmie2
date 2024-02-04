@@ -42,7 +42,7 @@ function updateCompletions(element) {
 	}
 	else {
 		element.completer_timeout = setTimeout(() => {
-			fetch(document.body.getAttribute("data-base-href") + '/api/internal/autocomplete?s=' + word).then(
+			fetch((document.body.getAttribute("data-base-href") ?? "") + '/api/internal/autocomplete?s=' + word).then(
 				(response) => response.json()
 			).then((json) => {
 				if(element.selected_completion !== -1) {
