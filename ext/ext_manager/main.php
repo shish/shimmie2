@@ -117,7 +117,7 @@ class ExtManager extends Extension
     }
 
     /**
-     * @param array<string, bool> $settings
+     * @param array<string, mixed> $settings
      */
     private function set_things(array $settings): void
     {
@@ -125,7 +125,7 @@ class ExtManager extends Extension
         $extras = [];
 
         foreach (ExtensionInfo::get_all_keys() as $key) {
-            if (!in_array($key, $core) && isset($settings["ext_$key"])) {
+            if (!in_array($key, $core) && isset($settings["ext_$key"]) && $settings["ext_$key"] === "on") {
                 $extras[] = $key;
             }
         }
