@@ -16,7 +16,7 @@ class StdLibExTest extends ShimmiePHPUnitTestCase
 
     public function testJsonEncodeError(): void
     {
-        $e = $this->assertException(\Exception::class, function() {
+        $e = $this->assertException(\Exception::class, function () {
             json_encode_ex("\xB1\x31");
         });
         $this->assertEquals(

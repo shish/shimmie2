@@ -5,7 +5,7 @@
  * @param T|false $x
  * @return T
  */
-function false_throws(mixed $x, ?callable $errorgen=null): mixed
+function false_throws(mixed $x, ?callable $errorgen = null): mixed
 {
     if($x === false) {
         $msg = "Unexpected false";
@@ -22,7 +22,7 @@ function false_throws(mixed $x, ?callable $errorgen=null): mixed
  * @param T|null $x
  * @return T
  */
-function null_throws(mixed $x, ?callable $errorgen=null): mixed
+function null_throws(mixed $x, ?callable $errorgen = null): mixed
 {
     if($x === null) {
         $msg = "Unexpected null";
