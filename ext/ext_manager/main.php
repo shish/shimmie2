@@ -125,7 +125,10 @@ class ExtManager extends Extension
         $extras = [];
 
         foreach (ExtensionInfo::get_all_keys() as $key) {
-            if (!in_array($key, $core) && isset($settings["ext_$key"]) && $settings["ext_$key"] === "on") {
+            if (in_array($key, $core)) {
+                continue;  // core extensions are always enabled
+            }
+            if (isset($settings["ext_$key"]) && $settings["ext_$key"] === "on") {
                 $extras[] = $key;
             }
         }
