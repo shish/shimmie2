@@ -5,10 +5,14 @@
  * @param T|false $x
  * @return T
  */
-function false_throws(mixed $x): mixed
+function false_throws(mixed $x, ?callable $errorgen=null): mixed
 {
     if($x === false) {
-        throw new \Exception("Unexpected false");
+        $msg = "Unexpected false";
+        if($errorgen) {
+            $msg = $errorgen();
+        }
+        throw new \Exception($msg);
     }
     return $x;
 }
@@ -18,10 +22,14 @@ function false_throws(mixed $x): mixed
  * @param T|null $x
  * @return T
  */
-function null_throws(mixed $x): mixed
+function null_throws(mixed $x, ?callable $errorgen=null): mixed
 {
     if($x === null) {
-        throw new \Exception("Unexpected null");
+        $msg = "Unexpected null";
+        if($errorgen) {
+            $msg = $errorgen();
+        }
+        throw new \Exception($msg);
     }
     return $x;
 }
@@ -31,7 +39,7 @@ function null_throws(mixed $x): mixed
  */
 function json_encode_ex(mixed $value, int|null $flags = 0, int $depth = 512): string
 {
-    return false_throws(json_encode($value, $flags, $depth));
+    return false_throws(json_encode($value, $flags, $depth), "json_last_error_msg");
 }
 
 function strtotime_ex(string $time, int|null $now = null): int
