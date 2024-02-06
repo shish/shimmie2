@@ -21,7 +21,7 @@ class CliApp extends \Symfony\Component\Console\Application
         $definition->addOption(new InputOption(
             '--user',
             '-u',
-            InputOption::VALUE_NONE,
+            InputOption::VALUE_REQUIRED,
             'Log in as the given user'
         ));
 
@@ -36,9 +36,10 @@ class CliApp extends \Symfony\Component\Console\Application
         $output ??= new ConsoleOutput();
 
         if ($input->hasParameterOption(['--user', '-u'])) {
-            $user = User::by_name($input->getOption('user'));
+            $name = $input->getParameterOption(['--user', '-u']);
+            $user = User::by_name($name);
             if (is_null($user)) {
-                die("Unknown user");
+                die("Unknown user '$name'\n");
             } else {
                 send_event(new UserLoginEvent($user));
             }
