@@ -162,4 +162,23 @@ class UtilTest extends TestCase
             path_to_tags("/category:/tag/baz.jpg")
         );
     }
+
+    public function test_get_query(): void
+    {
+        // no query string
+        $_SERVER["REQUEST_URI"] = "/tasty/cake";
+        $this->assertEquals("/tasty/cake", _get_query());
+
+        // query string
+        $_SERVER["REQUEST_URI"] = "index.php?q=/tasty/cake";
+        $this->assertEquals("/tasty/cake", _get_query());
+
+        // leave url encoding alone
+        $_SERVER["REQUEST_URI"] = "index.php?q=/tasty/cake%20pie";
+        $this->assertEquals("/tasty/cake%20pie", _get_query());
+
+        // if just viewing index.php
+        $_SERVER["REQUEST_URI"] = "index.php";
+        $this->assertEquals("/", _get_query());
+    }
 }

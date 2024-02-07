@@ -715,19 +715,33 @@ function _get_user(): User
 
 function _get_query(): string
 {
-    // if query is explicitly set, use it
-    $q = @$_POST["q"] ?: @$_GET["q"];
-    if(!empty($q)) {
-        return $q;
+    // if q is set in POST, use that
+    if(isset($_POST["q"])) {
+        return $_POST["q"];
     }
+
+    // if q is set in GET, use that
+    // (we need to manually parse the query string because PHP's $_GET
+    // does an extra round of URL decoding, which we don't want)
+    $parts = parse_url($_SERVER['REQUEST_URI']);
+    $qs = [];
+    foreach(explode('&', $parts['query'] ?? "") as $z) {
+        $qps = explode('=', $z, 2);
+        if(count($qps) == 2) {
+            $qs[$qps[0]] = $qps[1];
+        }
+    }
+    if(isset($qs["q"])) {
+        return $qs["q"];
+    }
+
     // if we're just looking at index.php, use the default query
-    elseif (str_contains($_SERVER['REQUEST_URI'], "index.php")) {
+    if(str_ends_with($parts["path"], "index.php")) {
         return "/";
     }
+
     // otherwise, use the request URI
-    else {
-        return explode("?", $_SERVER['REQUEST_URI'])[0];
-    }
+    return $parts["path"];
 }
 
 

@@ -306,21 +306,22 @@ function get_base_href(): string
     if (defined("BASE_HREF") && !empty(BASE_HREF)) {
         return BASE_HREF;
     }
-    $possible_vars = ['SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO'];
-    $ok_var = null;
-    foreach ($possible_vars as $var) {
-        if (isset($_SERVER[$var]) && substr($_SERVER[$var], -4) === '.php') {
-            $ok_var = $_SERVER[$var];
-            break;
-        }
+    if(str_ends_with($_SERVER['PHP_SELF'], 'index.php')) {
+        $self = $_SERVER['PHP_SELF'];
     }
-    if(empty($ok_var) && isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['DOCUMENT_ROOT'])) {
-        $ok_var = substr($_SERVER['SCRIPT_FILENAME'], strlen($_SERVER['DOCUMENT_ROOT']));
+    elseif(isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['DOCUMENT_ROOT'])) {
+        $self = substr($_SERVER['SCRIPT_FILENAME'], strlen(rtrim($_SERVER['DOCUMENT_ROOT'], "/")));
     }
-    assert(!empty($ok_var));
-    $dir = dirname($ok_var);
+    /*
+    die(var_export([
+        $_SERVER['PHP_SELF'],
+        $_SERVER['SCRIPT_FILENAME'],
+        $_SERVER['DOCUMENT_ROOT'],
+        $self
+    ], true));
+    */
+    $dir = dirname($self);
     $dir = str_replace("\\", "/", $dir);
-    $dir = str_replace("//", "/", $dir);
     $dir = rtrim($dir, "/");
     return $dir;
 }
