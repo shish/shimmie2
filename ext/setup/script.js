@@ -7,13 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
         out_span.innerHTML = '(testing...)';
 
         fetch(document.body.getAttribute('data-base-href') + "/nicetest").then(response => {
-            if(response.ok) {
-                checkbox.disabled = false;
-                out_span.innerHTML = '(test passed)';
-            }
-            else {
+            if(!response.ok) {
                 checkbox.disabled = true;
-                out_span.innerHTML = '(test failed)';
+                out_span.innerHTML = '(http error)';
+            } else {
+                response.text().then(text => {
+                    if(text === 'ok') {
+                        checkbox.disabled = false;
+                        out_span.innerHTML = '(test passed)';
+                    } else {
+                        checkbox.disabled = true;
+                        out_span.innerHTML = '(test failed)';
+                    }
+                });
             }
         }).catch(() => {
             checkbox.disabled = true;
