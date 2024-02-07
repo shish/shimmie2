@@ -314,6 +314,9 @@ function get_base_href(): string
             break;
         }
     }
+    if(empty($ok_var) && isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['DOCUMENT_ROOT'])) {
+        $ok_var = substr($_SERVER['SCRIPT_FILENAME'], strlen($_SERVER['DOCUMENT_ROOT']));
+    }
     assert(!empty($ok_var));
     $dir = dirname($ok_var);
     $dir = str_replace("\\", "/", $dir);
