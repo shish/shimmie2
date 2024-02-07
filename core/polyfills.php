@@ -312,14 +312,6 @@ function get_base_href(): string
     elseif(isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['DOCUMENT_ROOT'])) {
         $self = substr($_SERVER['SCRIPT_FILENAME'], strlen(rtrim($_SERVER['DOCUMENT_ROOT'], "/")));
     }
-    /*
-    die(var_export([
-        $_SERVER['PHP_SELF'],
-        $_SERVER['SCRIPT_FILENAME'],
-        $_SERVER['DOCUMENT_ROOT'],
-        $self
-    ], true));
-    */
     $dir = dirname($self);
     $dir = str_replace("\\", "/", $dir);
     $dir = rtrim($dir, "/");
