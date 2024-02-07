@@ -740,8 +740,8 @@ function _get_query(): string
         return "/";
     }
 
-    // otherwise, use the request URI
-    return $parts["path"];
+    // otherwise, use the request URI minus the base path
+    return substr($parts["path"], strlen(get_base_href()));
 }
 
 
