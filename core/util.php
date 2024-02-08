@@ -736,12 +736,12 @@ function _get_query(): string
     }
 
     // if we're just looking at index.php, use the default query
-    if(str_ends_with($parts["path"], "index.php")) {
+    if(str_ends_with($parts["path"] ?? "", "index.php")) {
         return "/";
     }
 
     // otherwise, use the request URI minus the base path
-    return substr($parts["path"], strlen(get_base_href()));
+    return substr($parts["path"] ?? "", strlen(get_base_href()));
 }
 
 

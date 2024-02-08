@@ -255,6 +255,9 @@ class PolyfillsTest extends TestCase
         $this->assertFalse(file_exists($dir));
     }
 
+    /**
+     * @param array<string, string> $vars
+     */
     private function _tbh(array $vars, string $result): void
     {
         // update $_SERVER with $vars, call get_base_href() and check result, then reset $_SERVER to original value
