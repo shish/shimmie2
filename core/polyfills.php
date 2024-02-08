@@ -308,9 +308,10 @@ function get_base_href(): string
     }
     if(str_ends_with($_SERVER['PHP_SELF'], 'index.php')) {
         $self = $_SERVER['PHP_SELF'];
-    }
-    elseif(isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['DOCUMENT_ROOT'])) {
+    } elseif(isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['DOCUMENT_ROOT'])) {
         $self = substr($_SERVER['SCRIPT_FILENAME'], strlen(rtrim($_SERVER['DOCUMENT_ROOT'], "/")));
+    } else {
+        die("PHP_SELF or SCRIPT_FILENAME need to be set");
     }
     $dir = dirname($self);
     $dir = str_replace("\\", "/", $dir);
