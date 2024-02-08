@@ -355,30 +355,6 @@ class Setup extends Extension
             $themes[$human] = $name;
         }
 
-        $test_url = str_replace("/index.php", "/nicetest", $_SERVER["SCRIPT_NAME"]);
-
-        $nicescript = "<script type='text/javascript'>
-			checkbox = document.getElementById('nice_urls');
-			out_span = document.getElementById('nicetest');
-
-			checkbox.disabled = true;
-			out_span.innerHTML = '(testing...)';
-
-			document.addEventListener('DOMContentLoaded', () => {
-				var http_request = new XMLHttpRequest();
-				http_request.open('GET', '$test_url', false);
-				http_request.send(null);
-
-				if(http_request.status === 200 && http_request.responseText === 'ok') {
-					checkbox.disabled = false;
-					out_span.innerHTML = '(tested ok)';
-				}
-				else {
-					checkbox.disabled = true;
-					out_span.innerHTML = '(test failed)';
-				}
-			});
-		</script>";
         $sb = $event->panel->create_new_block("General");
         $sb->position = 0;
         $sb->add_text_option(SetupConfig::TITLE, "Site title: ");
@@ -388,7 +364,7 @@ class Setup extends Extension
         $sb->add_choice_option(SetupConfig::THEME, $themes, "<br>Theme: ");
         //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
         $sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
-        $sb->add_label("<span title='$test_url' id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
+        $sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>");
 
         $sb = $event->panel->create_new_block("Remote API Integration");
         $sb->add_label("<a href='https://akismet.com/'>Akismet</a>");
