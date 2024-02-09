@@ -101,7 +101,7 @@ class CommentListTheme extends Themelet
         $html = '
 			Delete comments by IP.
 
-			<br><br>'.make_form(make_link("comment/bulk_delete"))."
+			<br><br>'.make_form(make_link("comment/bulk_delete"), 'POST')."
 				<table class='form'>
 					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='ip' size='15'></td></tr>
 					<tr><td colspan='2'><input type='submit' value='Delete'></td></tr>

@@ -32,7 +32,7 @@ class TagEditTheme extends Themelet
     public function mss_html(string $terms): string
     {
         $h_terms = html_escape($terms);
-        $html = make_form(make_link("tag_edit/mass_source_set")) . "
+        $html = make_form(make_link("tag_edit/mass_source_set"), "POST") . "
 				<input type='hidden' name='tags' value='$h_terms'>
 				<input type='text' name='source' value=''>
 				<input type='submit' value='Set Source For All' onclick='return confirm(\"This will mass-edit all sources on the page.\\nAre you sure you want to do this?\")'>

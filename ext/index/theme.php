@@ -89,8 +89,9 @@ and of course start organising your images :-)
         $h_search_string = html_escape(Tag::implode($search_terms));
         $h_search_link = search_link();
         $h_search = "
-			<p><form action='$h_search_link' method='POST'>
+			<p><form action='$h_search_link' method='GET'>
 				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' />
+				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 		";

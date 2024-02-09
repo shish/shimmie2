@@ -47,10 +47,11 @@ class CustomIndexTheme extends IndexTheme
     protected function build_navigation(int $page_number, int $total_pages, array $search_terms): string
     {
         $h_search_string = count($search_terms) == 0 ? "" : html_escape(implode(" ", $search_terms));
-        $h_search_link = search_link();
+        $h_search_link = make_link();
         return "
-			<p><form action='$h_search_link' method='POST'>
+			<p><form action='$h_search_link' method='GET'>
 				<input name='search' type='text' value='$h_search_string' class='autocomplete_tags' placeholder='Search' />
+				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 			<div id='search_completions'></div>";
