@@ -14,15 +14,15 @@ class RandomList extends Extension
         global $config, $page;
 
         if ($event->page_matches("random")) {
-            if (isset($_GET['search'])) {
+            if (isset($_POST['search'])) {
                 // implode(explode()) to resolve aliases and sanitise
-                $search = url_escape(Tag::implode(Tag::explode($_GET['search'], false)));
+                $search = url_escape(Tag::implode(Tag::explode($_POST['search'], false)));
                 if (empty($search)) {
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("random"));
                 } else {
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link('random/'.$search));
+                    $page->set_redirect(make_link('random/'.url_escape($search)));
                 }
                 return;
             }

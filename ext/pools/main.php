@@ -236,9 +236,9 @@ class Pools extends Extension
     {
         global $config, $database, $page, $user;
         if ($event->page_matches("pool/list")) { //index
-            if (isset($_GET['search']) and $_GET['search'] != null) {
+            if (isset($_POST['search']) and $_POST['search'] != null) {
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link('pool/list').'/'.$_GET['search'].'/'.strval($event->try_page_num(1)));
+                $page->set_redirect(make_link('pool/list').'/'.url_escape($_POST['search']).'/'.strval($event->try_page_num(1)));
                 return;
             }
             if (count($event->args) >= 4) { // Assume first 2 args are search and page num

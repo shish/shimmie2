@@ -772,9 +772,7 @@ function make_form(string $target, string $method = "POST", bool $multipart = fa
 {
     global $user;
     if ($method == "GET") {
-        $link = html_escape($target);
-        $target = make_link($target);
-        $extra_inputs = "<input type='hidden' name='q' value='$link'>";
+        die("make_form: GET method is not supported");
     } else {
         $extra_inputs = $user->get_auth_html();
     }

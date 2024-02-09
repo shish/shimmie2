@@ -25,7 +25,7 @@ class AutoTaggerTheme extends Themelet
 		";
 
         $bulk_html = "
-			".make_form(make_link("auto_tag/import"), 'post', true)."
+			".make_form(make_link("auto_tag/import"), 'POST', true)."
 				<input type='file' name='auto_tag_file'>
 				<input type='submit' value='Upload List'>
 			</form>
