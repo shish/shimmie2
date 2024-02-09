@@ -50,10 +50,10 @@ class DanbooruApi extends Extension
                 $this->api_add_post();
             } elseif ($event->page_matches("api/danbooru/find_posts") || $event->page_matches("api/danbooru/post/index.xml")) {
                 $page->set_mime(MimeType::XML_APPLICATION);
-                $page->set_data((string)$this->api_find_posts());
+                $page->set_data((string)$this->api_find_posts($event->GET));
             } elseif ($event->page_matches("api/danbooru/find_tags")) {
                 $page->set_mime(MimeType::XML_APPLICATION);
-                $page->set_data((string)$this->api_find_tags());
+                $page->set_data((string)$this->api_find_tags($event->GET));
             }
 
             // Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper
@@ -102,13 +102,15 @@ class DanbooruApi extends Extension
      * - name: A comma delimited list of tag names.
      * - tags: any typical tag query. See Tag#parse_query for details.
      * - after_id: limit results to tags with an id number after after_id. Useful if you only want to refresh
+
+     * @param array<string, mixed> $GET
      */
-    private function api_find_tags(): HTMLElement
+    private function api_find_tags(array $GET): HTMLElement
     {
         global $database;
         $results = [];
-        if (isset($_GET['id'])) {
-            $idlist = explode(",", $_GET['id']);
+        if (isset($GET['id'])) {
+            $idlist = explode(",", $GET['id']);
             foreach ($idlist as $id) {
                 $sqlresult = $database->get_all(
                     "SELECT id,tag,count FROM tags WHERE id = :id",
@@ -118,8 +120,8 @@ class DanbooruApi extends Extension
                     $results[] = [$row['count'], $row['tag'], $row['id']];
                 }
             }
-        } elseif (isset($_GET['name'])) {
-            $namelist = explode(",", $_GET['name']);
+        } elseif (isset($GET['name'])) {
+            $namelist = explode(",", $GET['name']);
             foreach ($namelist as $name) {
                 $sqlresult = $database->get_all(
                     "SELECT id,tag,count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
@@ -132,14 +134,14 @@ class DanbooruApi extends Extension
         }
         // Currently disabled to maintain identical functionality to danbooru 1.0's own "broken" find_tags
         /*
-        elseif (isset($_GET['tags'])) {
-            $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
-            $tags = Tag::explode($_GET['tags']);
+        elseif (isset($GET['tags'])) {
+            $start = isset($GET['after_id']) ? int_escape($GET['offset']) : 0;
+            $tags = Tag::explode($GET['tags']);
             assert(!is_null($start) && !is_null($tags));
         }
         */
         else {
-            $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
+            $start = isset($GET['after_id']) ? int_escape($GET['offset']) : 0;
             $sqlresult = $database->get_all(
                 "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= :id ORDER BY id DESC",
                 ['id' => $start]
@@ -173,39 +175,41 @@ class DanbooruApi extends Extension
      * - limit: limit
      * - page: page number
      * - after_id: limit results to posts added after this id
+     *
+     * @param array<string, mixed> $GET
      */
-    private function api_find_posts(): HTMLElement
+    private function api_find_posts(array $GET): HTMLElement
     {
         $results = [];
 
         $this->authenticate_user();
         $start = 0;
 
-        if (isset($_GET['md5'])) {
-            $md5list = explode(",", $_GET['md5']);
+        if (isset($GET['md5'])) {
+            $md5list = explode(",", $GET['md5']);
             foreach ($md5list as $md5) {
                 $results[] = Image::by_hash($md5);
             }
             $count = count($results);
-        } elseif (isset($_GET['id'])) {
-            $idlist = explode(",", $_GET['id']);
+        } elseif (isset($GET['id'])) {
+            $idlist = explode(",", $GET['id']);
             foreach ($idlist as $id) {
                 $results[] = Image::by_id(int_escape($id));
             }
             $count = count($results);
         } else {
-            $limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
+            $limit = isset($GET['limit']) ? int_escape($GET['limit']) : 100;
 
             // Calculate start offset.
-            if (isset($_GET['page'])) { // Danbooru API uses 'page' >= 1
-                $start = (int_escape($_GET['page']) - 1) * $limit;
-            } elseif (isset($_GET['pid'])) { // Gelbooru API uses 'pid' >= 0
-                $start = int_escape($_GET['pid']) * $limit;
+            if (isset($GET['page'])) { // Danbooru API uses 'page' >= 1
+                $start = (int_escape($GET['page']) - 1) * $limit;
+            } elseif (isset($GET['pid'])) { // Gelbooru API uses 'pid' >= 0
+                $start = int_escape($GET['pid']) * $limit;
             } else {
                 $start = 0;
             }
 
-            $tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : [];
+            $tags = isset($GET['tags']) ? Tag::explode($GET['tags']) : [];
             // danbooru API clients often set tags=*
             $tags = array_filter($tags, static function ($element) {
                 return $element !== "*";

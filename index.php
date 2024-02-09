@@ -88,7 +88,7 @@ try {
             throw new \Exception("CLI command failed");
         }
     } else {
-        send_event(new PageRequestEvent($_SERVER['REQUEST_METHOD'], _get_query()));
+        send_event(new PageRequestEvent($_SERVER['REQUEST_METHOD'], _get_query(), $_GET, $_POST));
         $page->display();
     }
 

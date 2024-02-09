@@ -10,12 +10,18 @@ class ImageDownloadingEvent extends Event
     public string $mime;
     public string $path;
     public bool $file_modified = false;
+    /** @var array<string, mixed> */
+    public array $params;
 
-    public function __construct(Image $image, string $path, string $mime)
+    /**
+     * @param array<string, mixed> $params
+     */
+    public function __construct(Image $image, string $path, string $mime, array $params)
     {
         parent::__construct();
         $this->image = $image;
         $this->path = $path;
         $this->mime = $mime;
+        $this->params = $params;
     }
 }

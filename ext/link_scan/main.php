@@ -15,7 +15,7 @@ class LinkScan extends Extension
     {
         global $config, $page;
 
-        $search = @$_GET['search'] ?? @$_POST['search'] ?? "";
+        $search = $event->get_GET('search') ?? $event->get_POST('search') ?? "";
         if ($event->page_matches("post/list") && !empty($search)) {
             $trigger = $config->get_string("link_scan_trigger", "https?://");
             if (preg_match("#.*{$trigger}.*#", $search)) {

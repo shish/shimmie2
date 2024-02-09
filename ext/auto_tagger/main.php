@@ -95,7 +95,7 @@ class AutoTagger extends Extension
             } elseif ($event->get_arg(0) == "list") {
                 $t = new AutoTaggerTable($database->raw_db());
                 $t->token = $user->get_auth_token();
-                $t->inputs = $_GET;
+                $t->inputs = $event->GET;
                 $t->size = $config->get_int(AutoTaggerConfig::ITEMS_PER_PAGE, 30);
                 if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
                     $t->create_url = make_link("auto_tag/add");

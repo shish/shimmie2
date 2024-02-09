@@ -400,13 +400,6 @@ class Upload extends Extension
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
             $metadata['source'] = $source;
-            if ($user->can(Permissions::EDIT_IMAGE_LOCK) && !empty($_GET['locked'])) {
-                $metadata['locked'] = bool_escape($_GET['locked']) ? "on" : "";
-            }
-            if (Extension::is_enabled(RatingsInfo::KEY) && !empty($_GET['rating'])) {
-                // Rating event will validate that this is s/q/e/u
-                $metadata['rating'] = strtolower($_GET['rating'])[0];
-            }
 
             $new_images = $database->with_savepoint(function () use ($tmp_filename, $metadata) {
                 $event = send_event(new DataUploadEvent($tmp_filename, $metadata));

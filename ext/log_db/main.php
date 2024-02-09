@@ -284,7 +284,7 @@ class LogDatabase extends Extension
         if ($event->page_matches("log/view")) {
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $t = new LogTable($database->raw_db());
-                $t->inputs = $_GET;
+                $t->inputs = $event->GET;
                 $this->theme->display_events($t->table($t->query()), $t->paginator());
             }
         }

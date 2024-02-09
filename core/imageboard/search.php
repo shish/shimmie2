@@ -336,7 +336,7 @@ class Search
                 }
             }
 
-            assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array || $all_nonexistent_negatives, @$_GET['q']);
+            assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array || $all_nonexistent_negatives, _get_query());
 
             if ($all_nonexistent_negatives) {
                 static::$_search_path[] = "all_nonexistent_negatives";

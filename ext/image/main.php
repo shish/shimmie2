@@ -91,13 +91,13 @@ class ImageIO extends Extension
 
         if ($event->page_matches("image/delete")) {
             global $page, $user;
-            if ($user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id']) && $user->check_auth_token()) {
-                $image = Image::by_id(int_escape($_POST['image_id']));
+            if ($user->can(Permissions::DELETE_IMAGE) && $event->get_POST('image_id') && $user->check_auth_token()) {
+                $image = Image::by_id(int_escape($event->get_POST('image_id')));
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
 
                     if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
-                        redirect_to_next_image($image);
+                        redirect_to_next_image($image, @$event->get_GET('search'));
                     } else {
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(referer_or(make_link(), ['post/view']));
@@ -106,10 +106,10 @@ class ImageIO extends Extension
             }
         } elseif ($event->page_matches("image")) {
             $num = int_escape($event->get_arg(0));
-            $this->send_file($num, "image");
+            $this->send_file($num, "image", $event->GET);
         } elseif ($event->page_matches("thumb")) {
             $num = int_escape($event->get_arg(0));
-            $this->send_file($num, "thumb");
+            $this->send_file($num, "thumb", $event->GET);
         }
     }
 
@@ -217,7 +217,10 @@ class ImageIO extends Extension
         $event->replace("\\n", "\n");
     }
 
-    private function send_file(int $image_id, string $type): void
+    /**
+     * @param array<string, string|string[]> $params
+     */
+    private function send_file(int $image_id, string $type, array $params): void
     {
         global $config, $page;
 
@@ -266,7 +269,7 @@ class ImageIO extends Extension
                 $page->add_http_header('Expires: ' . $expires);
             }
 
-            send_event(new ImageDownloadingEvent($image, $file, $mime));
+            send_event(new ImageDownloadingEvent($image, $file, $mime, $params));
         } else {
             $page->set_title("Not Found");
             $page->set_heading("Not Found");

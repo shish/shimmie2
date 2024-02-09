@@ -153,7 +153,7 @@ class NotATag extends Extension
                 } elseif ($event->get_arg(0) == "list") {
                     $t = new NotATagTable($database->raw_db());
                     $t->token = $user->get_auth_token();
-                    $t->inputs = $_GET;
+                    $t->inputs = $event->GET;
                     $this->theme->display_untags($page, $t->table($t->query()), $t->paginator());
                 }
             }

@@ -20,9 +20,9 @@ class TaggerXML extends Extension
             //$match_tags = null;
             //$image_tags = null;
             $tags = null;
-            if (isset($_GET['s'])) { // tagger/tags[/...]?s=$string
+            if ($event->get_GET('s')) { // tagger/tags[/...]?s=$string
                 // return matching tags in XML form
-                $tags = $this->match_tag_list($_GET['s']);
+                $tags = $this->match_tag_list($event->get_GET('s'));
             } elseif ($event->get_arg(0)) { // tagger/tags/$int
                 // return arg[1] AS image_id's tag list in XML form
                 $tags = $this->image_tag_list(int_escape($event->get_arg(0)));

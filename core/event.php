@@ -48,6 +48,11 @@ class PageRequestEvent extends Event
 {
     public string $method;
     public string $path;
+    /** @var array<string, string|string[]> */
+    public array $GET;
+    /** @var array<string, string|string[]> */
+    public array $POST;
+
     /**
      * @var string[]
      */
@@ -55,7 +60,13 @@ class PageRequestEvent extends Event
     public int $arg_count;
     public int $part_count;
 
-    public function __construct(string $method, string $path)
+    /**
+     * @param string $method The HTTP method used to make the request
+     * @param string $path The path of the request
+     * @param array<string, string|string[]> $get The GET parameters
+     * @param array<string, string|string[]> $post The POST parameters
+     */
+    public function __construct(string $method, string $path, array $get, array $post)
     {
         parent::__construct();
         global $config;
@@ -68,12 +79,38 @@ class PageRequestEvent extends Event
             $path = $config->get_string(SetupConfig::FRONT_PAGE);
         }
         $this->path = $path;
+        $this->GET = $get;
+        $this->POST = $post;
 
         // break the path into parts
         $args = explode('/', $path);
 
         $this->args = $args;
         $this->arg_count = count($args);
+    }
+
+    public function get_GET(string $key): ?string
+    {
+        if(array_key_exists($key, $this->GET)) {
+            if(is_array($this->GET[$key])) {
+                throw new SCoreException("GET parameter {$key} is an array, expected single value");
+            }
+            return $this->GET[$key];
+        } else {
+            return null;
+        }
+    }
+
+    public function get_POST(string $key): ?string
+    {
+        if(array_key_exists($key, $this->POST)) {
+            if(is_array($this->POST[$key])) {
+                throw new SCoreException("POST parameter {$key} is an array, expected single value");
+            }
+            return $this->POST[$key];
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -29,7 +29,7 @@ class TagList extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
+        global $config, $page;
 
         if ($event->page_matches("tags")) {
             $this->theme->set_navigation($this->build_navigation());
@@ -38,19 +38,37 @@ class TagList extends Extension
             } else {
                 $sub = $event->get_arg(0);
             }
+
+            if ($event->get_GET('starts_with')) {
+                $starts_with = $event->get_GET('starts_with') . "%";
+            } else {
+                if ($config->get_bool(TagListConfig::PAGES)) {
+                    $starts_with = "a%";
+                } else {
+                    $starts_with = "%";
+                }
+            }
+
+            if ($event->get_GET('mincount')) {
+                $tags_min = int_escape($event->get_GET('mincount'));
+            } else {
+                global $config;
+                $tags_min = $config->get_int(TagListConfig::TAGS_MIN);	// get the default.
+            }
+
             switch ($sub) {
                 default:
                 case 'map':
                     $this->theme->set_heading("Tag Map");
-                    $this->theme->set_tag_list($this->build_tag_map());
+                    $this->theme->set_tag_list($this->build_tag_map($starts_with, $tags_min));
                     break;
                 case 'alphabetic':
                     $this->theme->set_heading("Alphabetic Tag List");
-                    $this->theme->set_tag_list($this->build_tag_alphabetic());
+                    $this->theme->set_tag_list($this->build_tag_alphabetic($starts_with, $tags_min));
                     break;
                 case 'popularity':
                     $this->theme->set_heading("Tag List by Popularity");
-                    $this->theme->set_tag_list($this->build_tag_popularity());
+                    $this->theme->set_tag_list($this->build_tag_popularity($tags_min));
                     break;
             }
             $this->theme->display_page($page);
@@ -139,20 +157,6 @@ class TagList extends Extension
     }
 
     /**
-     * Get the minimum number of times a tag needs to be used
-     * in order to be considered in the tag list.
-     */
-    private function get_tags_min(): int
-    {
-        if (isset($_GET['mincount'])) {
-            return int_escape($_GET['mincount']);
-        } else {
-            global $config;
-            return $config->get_int(TagListConfig::TAGS_MIN);	// get the default.
-        }
-    }
-
-    /**
      * @return int[]
      */
     private static function get_omitted_tags(): array
@@ -191,25 +195,9 @@ class TagList extends Extension
         return $results;
     }
 
-    private function get_starts_with(): string
-    {
-        global $config;
-        if (isset($_GET['starts_with'])) {
-            return $_GET['starts_with'] . "%";
-        } else {
-            if ($config->get_bool(TagListConfig::PAGES)) {
-                return "a%";
-            } else {
-                return "%";
-            }
-        }
-    }
-
-    private function build_az(): string
+    private function build_az(int $tags_min): string
     {
         global $database;
-
-        $tags_min = $this->get_tags_min();
 
         $tag_data = $database->get_col("
 			SELECT DISTINCT
@@ -238,12 +226,9 @@ class TagList extends Extension
         return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>&nbsp;<br>$h_all";
     }
 
-    private function build_tag_map(): string
+    private function build_tag_map(string $starts_with, int $tags_min): string
     {
         global $config, $database;
-
-        $tags_min = $this->get_tags_min();
-        $starts_with = $this->get_starts_with();
 
         // check if we have a cached version
         $cache_key = warehouse_path(
@@ -266,7 +251,7 @@ class TagList extends Extension
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
-            $html .= $this->build_az();
+            $html .= $this->build_az($tags_min);
         }
         $tag_category_dict = [];
         if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
@@ -294,12 +279,9 @@ class TagList extends Extension
         return $html;
     }
 
-    private function build_tag_alphabetic(): string
+    private function build_tag_alphabetic(string $starts_with, int $tags_min): string
     {
         global $config, $database;
-
-        $tags_min = $this->get_tags_min();
-        $starts_with = $this->get_starts_with();
 
         // check if we have a cached version
         $cache_key = warehouse_path(
@@ -320,7 +302,7 @@ class TagList extends Extension
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
-            $html .= $this->build_az();
+            $html .= $this->build_az($tags_min);
         }
 
         /*
@@ -371,11 +353,9 @@ class TagList extends Extension
         return $html;
     }
 
-    private function build_tag_popularity(): string
+    private function build_tag_popularity(int $tags_min): string
     {
         global $database;
-
-        $tags_min = $this->get_tags_min();
 
         // Make sure that the value of $tags_min is at least 1.
         // Otherwise the database will complain if you try to do: LOG(0)

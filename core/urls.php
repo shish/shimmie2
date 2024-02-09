@@ -88,7 +88,7 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
  */
 function _get_query(?string $uri = null): string
 {
-    $parsed_url = parse_url($uri ?? $_SERVER['REQUEST_URI']);
+    $parsed_url = parse_url($uri ?? $_SERVER['REQUEST_URI'] ?? "");
 
     // if we're looking at http://site.com/$INSTALL_DIR/index.php,
     // then get the query from the "q" parameter

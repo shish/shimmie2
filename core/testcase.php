@@ -110,7 +110,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_GET = $get_args;
             $_POST = $post_args;
             $page = new Page();
-            send_event(new PageRequestEvent($method, $page_name));
+            send_event(new PageRequestEvent($method, $page_name, $get_args, $post_args));
             if ($page->mode == PageMode::REDIRECT) {
                 $page->code = 302;
             }

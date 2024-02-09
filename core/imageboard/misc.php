@@ -188,13 +188,13 @@ function create_scaled_image(
     ));
 }
 
-function redirect_to_next_image(Image $image): void
+function redirect_to_next_image(Image $image, ?string $search = null): void
 {
     global $page;
 
-    if (isset($_GET['search'])) {
-        $search_terms = Tag::explode($_GET['search']);
-        $query = "search=" . url_escape($_GET['search']);
+    if (!is_null($search)) {
+        $search_terms = Tag::explode($search);
+        $query = "search=" . url_escape($search);
     } else {
         $search_terms = [];
         $query = null;

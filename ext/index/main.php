@@ -28,9 +28,9 @@ class Index extends Extension
     {
         global $cache, $config, $page, $user;
         if ($event->page_matches("post/list")) {
-            if (isset($_POST['search'])) {
+            if ($event->get_GET('search')) {
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(search_link(Tag::explode($_POST['search'], false)));
+                $page->set_redirect(search_link(Tag::explode($event->get_GET('search'), false)));
                 return;
             }
 

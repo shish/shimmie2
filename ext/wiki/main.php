@@ -184,8 +184,8 @@ class Wiki extends Extension
             }
 
             $revision = -1;
-            if (isset($_GET['revision'])) {
-                $revision = int_escape($_GET['revision']);
+            if ($event->get_GET('revision')) {
+                $revision = int_escape($event->get_GET('revision'));
             }
 
             $content = $this->get_page($title, $revision);
@@ -212,8 +212,8 @@ class Wiki extends Extension
                 $this->theme->display_permission_denied();
             }
         } elseif ($event->page_matches("wiki_admin/history")) {
-            $history = $this->get_history($_GET['title']);
-            $this->theme->display_page_history($page, $_GET['title'], $history);
+            $history = $this->get_history($event->get_GET('title'));
+            $this->theme->display_page_history($page, $event->get_GET('title'), $history);
         } elseif ($event->page_matches("wiki_admin/delete_revision")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
                 send_event(new WikiDeleteRevisionEvent($_POST["title"], (int)$_POST["revision"]));

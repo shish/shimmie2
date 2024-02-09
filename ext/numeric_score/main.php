@@ -190,16 +190,16 @@ class NumericScore extends Extension
             //FIXME: popular_by isn't linked from anywhere
             list($day, $month, $year) = [date("d"), date("m"), date("Y")];
 
-            if (!empty($_GET['day'])) {
-                $D = (int) $_GET['day'];
+            if ($event->get_GET('day')) {
+                $D = (int) $event->get_GET('day');
                 $day = clamp($D, 1, 31);
             }
-            if (!empty($_GET['month'])) {
-                $M = (int) $_GET['month'];
+            if ($event->get_GET('month')) {
+                $M = (int) $event->get_GET('month');
                 $month = clamp($M, 1, 12);
             }
-            if (!empty($_GET['year'])) {
-                $Y = (int) $_GET['year'];
+            if ($event->get_GET('year')) {
+                $Y = (int) $event->get_GET('year');
                 $year = clamp($Y, 1970, 2100);
             }
 

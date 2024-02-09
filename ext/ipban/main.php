@@ -198,11 +198,11 @@ class IPBan extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("ip_ban/list"));
                 } elseif ($event->get_arg(0) == "list") {
-                    $_GET['c_banner'] = $user->name;
-                    $_GET['c_added'] = date('Y-m-d');
+                    $event->GET['c_banner'] = $user->name;
+                    $event->GET['c_added'] = date('Y-m-d');
                     $t = new IPBanTable($database->raw_db());
                     $t->token = $user->get_auth_token();
-                    $t->inputs = $_GET;
+                    $t->inputs = $event->GET;
                     $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
                 }
             } else {

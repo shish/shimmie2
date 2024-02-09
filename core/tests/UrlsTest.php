@@ -26,7 +26,7 @@ class UrlsTest extends TestCase
          * @return array<string>
          */
         $gst = function (array $terms): array {
-            $pre = new PageRequestEvent("GET", _get_query(search_link($terms)));
+            $pre = new PageRequestEvent("GET", _get_query(search_link($terms)), [], []);
             $pre->page_matches("post/list");
             return $pre->get_search_terms();
         };

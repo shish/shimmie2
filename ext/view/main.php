@@ -25,9 +25,10 @@ class ViewPost extends Extension
         if ($event->page_matches("post/prev") || $event->page_matches("post/next")) {
             $image_id = int_escape($event->get_arg(0));
 
-            if (isset($_GET['search'])) {
-                $search_terms = Tag::explode($_GET['search']);
-                $query = "#search=".url_escape($_GET['search']);
+            $search = $event->get_GET('search');
+            if ($search) {
+                $search_terms = Tag::explode($search);
+                $query = "#search=".url_escape($search);
             } else {
                 $search_terms = [];
                 $query = null;
@@ -82,8 +83,8 @@ class ViewPost extends Extension
                 send_event(new ImageInfoSetEvent($image));
                 $page->set_mode(PageMode::REDIRECT);
 
-                if (isset($_GET['search'])) {
-                    $query = "search=" . url_escape($_GET['search']);
+                if ($event->get_GET('search')) {
+                    $query = "search=" . url_escape($event->get_GET('search'));
                 } else {
                     $query = null;
                 }

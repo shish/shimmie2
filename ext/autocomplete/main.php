@@ -16,8 +16,8 @@ class AutoComplete extends Extension
         global $page;
 
         if ($event->page_matches("api/internal/autocomplete")) {
-            $limit = (int)($_GET["limit"] ?? 1000);
-            $s = $_GET["s"] ?? "";
+            $limit = (int)($event->get_GET("limit") ?? 1000);
+            $s = $event->get_GET("s") ?? "";
 
             $res = $this->complete($s, $limit);
 

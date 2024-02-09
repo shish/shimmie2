@@ -188,7 +188,7 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "list") {
                 $t = new UserTable($database->raw_db());
                 $t->token = $user->get_auth_token();
-                $t->inputs = $_GET;
+                $t->inputs = $event->GET;
                 if ($user->can(Permissions::DELETE_USER)) {
                     $col = new TextColumn("email", "Email");
                     // $t->columns[] = $col;

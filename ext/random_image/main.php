@@ -29,7 +29,7 @@ class RandomImage extends Extension
             }
 
             if ($action === "download") {
-                send_event(new ImageDownloadingEvent($image, $image->get_image_filename(), $image->get_mime()));
+                send_event(new ImageDownloadingEvent($image, $image->get_image_filename(), $image->get_mime(), $event->GET));
             } elseif ($action === "view") {
                 send_event(new DisplayingImageEvent($image));
             } elseif ($action === "widget") {

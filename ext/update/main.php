@@ -34,18 +34,20 @@ class Update extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $user, $page;
-        if ($user->can(Permissions::EDIT_FILES) && isset($_GET['sha'])) {
+        $sha = $event->get_GET('sha');
+
+        if ($user->can(Permissions::EDIT_FILES) && $sha) {
             if ($event->page_matches("update/download")) {
-                $ok = $this->download_shimmie();
+                $ok = $this->download_shimmie($sha);
 
                 $page->set_mode(PageMode::REDIRECT);
                 if ($ok) {
-                    $page->set_redirect(make_link("update/update", "sha=".$_GET['sha']));
+                    $page->set_redirect(make_link("update/update", "sha=".$sha));
                 } else {
                     $page->set_redirect(make_link("admin"));
                 } //TODO: Show error?
             } elseif ($event->page_matches("update/update")) {
-                $ok = $this->update_shimmie();
+                $ok = $this->update_shimmie($sha);
 
                 $page->set_mode(PageMode::REDIRECT);
                 if ($ok) {
@@ -58,11 +60,10 @@ class Update extends Extension
         }
     }
 
-    private function download_shimmie(): bool
+    private function download_shimmie(string $commitSHA): bool
     {
         global $config;
 
-        $commitSHA = $_GET['sha'];
         $g_userrepo = $config->get_string('update_guserrepo');
 
         $url = "https://codeload.github.com/".$g_userrepo."/zip/".$commitSHA;
@@ -79,11 +80,9 @@ class Update extends Extension
         return true;
     }
 
-    private function update_shimmie(): bool
+    private function update_shimmie(string $commitSHA): bool
     {
         global $config;
-
-        $commitSHA = $_GET['sha'];
 
         log_info("update", "Download succeeded. Attempting to update Shimmie.");
         $ok = false;

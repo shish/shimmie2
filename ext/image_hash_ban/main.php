@@ -121,7 +121,7 @@ class ImageBan extends Extension
                 } elseif ($event->get_arg(0) == "list") {
                     $t = new HashBanTable($database->raw_db());
                     $t->token = $user->get_auth_token();
-                    $t->inputs = $_GET;
+                    $t->inputs = $event->GET;
                     $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
                 }
             }

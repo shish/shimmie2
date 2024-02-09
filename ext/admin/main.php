@@ -81,12 +81,12 @@ class AdminPage extends Extension
                 global $page;
                 $query = $input->getArgument('query');
                 $args = $input->getArgument('args');
-                $_SERVER['REQUEST_URI'] = $query;
+                $_SERVER['REQUEST_URI'] = make_link($query);
                 if (!is_null($args)) {
                     parse_str($args, $_GET);
                     $_SERVER['REQUEST_URI'] .= "?" . $args;
                 }
-                send_event(new PageRequestEvent("GET", $query));
+                send_event(new PageRequestEvent("GET", $query, $_GET, []));
                 $page->display();
                 return Command::SUCCESS;
             });
@@ -102,7 +102,7 @@ class AdminPage extends Extension
                 if (!is_null($args)) {
                     parse_str($args, $_POST);
                 }
-                send_event(new PageRequestEvent("POST", $query));
+                send_event(new PageRequestEvent("POST", $query, [], $_POST));
                 $page->display();
                 return Command::SUCCESS;
             });

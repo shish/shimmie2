@@ -203,9 +203,6 @@ class TranscodeImage extends Extension
             }
         }
     }
-
-
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
@@ -240,16 +237,16 @@ class TranscodeImage extends Extension
         global $config, $user;
 
         if ($config->get_bool(TranscodeConfig::GET_ENABLED) &&
-            isset($_GET['transcode']) &&
+            isset($event->params['transcode']) &&
             $user->can(Permissions::EDIT_FILES) &&
             $this->can_convert_mime($config->get_string(TranscodeConfig::ENGINE), $event->image->get_mime())) {
-            $target_mime = $_GET['transcode'];
+            $target_mime = $event->params['transcode'];
 
             if (!MimeType::is_mime($target_mime)) {
                 $target_mime = MimeType::get_for_extension($target_mime);
             }
             if (empty($target_mime)) {
-                throw new ImageTranscodeException("Unable to determine output MIME for ".$_GET['transcode']);
+                throw new ImageTranscodeException("Unable to determine output MIME for ".$event->params['transcode']);
             }
 
             MediaEngine::is_output_supported($config->get_string(TranscodeConfig::ENGINE), $target_mime);

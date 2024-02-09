@@ -171,14 +171,14 @@ class ResizeImage extends Extension
         if ($config->get_bool(ResizeConfig::GET_ENABLED) &&
             $user->can(Permissions::EDIT_FILES) &&
             $this->can_resize_mime($event->image->get_mime())) {
-            if (isset($_GET['max_height'])) {
-                $max_height = int_escape($_GET['max_height']);
+            if (isset($event->params['max_height'])) {
+                $max_height = int_escape($event->params['max_height']);
             } else {
                 $max_height = $event->image->height;
             }
 
-            if (isset($_GET['max_width'])) {
-                $max_width = int_escape($_GET['max_width']);
+            if (isset($event->params['max_width'])) {
+                $max_width = int_escape($event->params['max_width']);
             } else {
                 $max_width = $event->image->width;
             }

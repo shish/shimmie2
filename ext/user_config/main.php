@@ -111,10 +111,10 @@ class UserConfig extends Extension
         global $user, $database, $config, $page, $user_config;
 
         if ($config->get_bool(self::ENABLE_API_KEYS)) {
-            if (!empty($_GET["api_key"]) && $user->is_anonymous()) {
+            if ($event->get_GET("api_key") && $user->is_anonymous()) {
                 $user_id = $database->get_one(
                     "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
-                    ["value" => $_GET["api_key"], "name" => self::API_KEY]
+                    ["value" => $event->get_GET("api_key"), "name" => self::API_KEY]
                 );
 
                 if (!empty($user_id)) {
