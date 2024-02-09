@@ -71,10 +71,9 @@ class CustomViewPostTheme extends ViewPostTheme
     {
         //$h_pin = $this->build_pin($image);
         $h_search = "
-			<form action='".make_link()."' method='GET'>
+			<form action='".search_link()."' method='POST'>
 				<input name='search' type='text'  style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
-				<input type='hidden' name='q' value='/post/list'>
 			</form>
 		";
 

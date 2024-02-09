@@ -98,8 +98,7 @@ class ViewPostTheme extends Themelet
     {
         $h_pin = $this->build_pin($image);
         $h_search = "
-			<p><form action='".make_link()."' method='GET'>
-				<input type='hidden' name='q' value='/post/list'>
+			<p><form action='".search_link()."' method='POST'>
 				<input type='search' name='search' placeholder='Search' class='autocomplete_tags'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>

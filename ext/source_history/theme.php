@@ -66,7 +66,7 @@ class SourceHistoryTheme extends Themelet
 			Revert source changes by a specific IP address or username, optionally limited to recent changes.
 			'.$validation_msg.'
 
-			<br><br>'.make_form(make_link("source_history/bulk_revert"), 'POST')."
+			<br><br>'.make_form(make_link("source_history/bulk_revert"))."
 				<table class='form'>
 					<tr><th>Username</th>        <td><input type='text' name='revert_name' size='15'></td></tr>
 					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='revert_ip' size='15'></td></tr>

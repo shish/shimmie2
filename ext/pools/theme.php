@@ -133,10 +133,9 @@ class PoolsTheme extends Themelet
             SHM_A("pool/updated", "Pool Changes")
         );
 
-        $search = "<form action='".make_link('pool/list')."' method='GET'>
+        $search = "<form action='".make_link('pool/list')."' method='POST'>
 				<input name='search' type='text'  style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
-				<input type='hidden' name='q' value='pool/list'>
 			</form>";
 
         $page->add_block(new NavBlock());
