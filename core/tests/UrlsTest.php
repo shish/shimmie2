@@ -25,12 +25,11 @@ class UrlsTest extends TestCase
          * @param array<string> $vars
          * @return array<string>
          */
-        function _gst(array $terms): array
-        {
+        $gst = function (array $terms): array {
             $pre = new PageRequestEvent("GET", _get_query(search_link($terms)));
             $pre->page_matches("post/list");
             return $pre->get_search_terms();
-        }
+        };
 
         global $config;
         foreach([true, false] as $nice_urls) {
@@ -38,15 +37,15 @@ class UrlsTest extends TestCase
 
             $this->assertEquals(
                 ["bar", "foo"],
-                _gst(["foo", "bar"])
+                $gst(["foo", "bar"])
             );
             $this->assertEquals(
                 ["AC/DC"],
-                _gst(["AC/DC"])
+                $gst(["AC/DC"])
             );
             $this->assertEquals(
                 ["cat*", "rating=?"],
-                _gst(["rating=?", "cat*"]),
+                $gst(["rating=?", "cat*"]),
             );
         }
     }
@@ -57,13 +56,13 @@ class UrlsTest extends TestCase
         global $config;
         foreach([true, false] as $nice_urls) {
             $config->set_bool('nice_urls', $nice_urls);
-        
+
             // basic
             $this->assertEquals(
                 $nice_urls ? "/test/foo" : "/test/index.php?q=foo",
                 make_link("foo")
             );
-    
+
             // remove leading slash from path
             $this->assertEquals(
                 $nice_urls ? "/test/foo" : "/test/index.php?q=foo",
@@ -75,18 +74,18 @@ class UrlsTest extends TestCase
                 $nice_urls ? "/test/foo?a=1&b=2" : "/test/index.php?q=foo&a=1&b=2",
                 make_link("foo", "a=1&b=2")
             );
-    
+
             // hash
             $this->assertEquals(
                 $nice_urls ? "/test/foo#cake" : "/test/index.php?q=foo#cake",
                 make_link("foo", null, "cake")
             );
-    
+
             // query + hash
             $this->assertEquals(
                 $nice_urls ? "/test/foo?a=1&b=2#cake" : "/test/index.php?q=foo&a=1&b=2#cake",
                 make_link("foo", "a=1&b=2", "cake")
-            );    
+            );
         }
     }
 
@@ -120,7 +119,7 @@ class UrlsTest extends TestCase
 
         $this->assertEquals(
             "tasty/cake",
-            _get_query("/test/tasty/cake"), 
+            _get_query("/test/tasty/cake"),
             'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
         );
         $this->assertEquals(
@@ -263,5 +262,12 @@ class UrlsTest extends TestCase
             "foo",
             referer_or("foo", ["cake"])
         );
+    }
+
+    public function tearDown(): void
+    {
+        global $config;
+        $config->set_bool('nice_urls', true);
+        parent::tearDown();
     }
 }

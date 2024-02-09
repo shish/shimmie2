@@ -69,9 +69,9 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
 
 /**
  * Figure out the current page from a link that make_link() generated
- * 
+ *
  * SHIT: notes for the future, because the web stack is a pile of hacks
- * 
+ *
  * - According to some specs, "/" is for URL dividers with heiracial
  *   significance and %2F is for slashes that are just slashes. This
  *   is what shimmie currently does - eg if you search for "AC/DC",
@@ -83,7 +83,7 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
  *   can parse it for ourselves
  * - <input type="hidden" name="q" value="post/list"> generates
  *   q=post%2Flist
- * 
+ *
  * This function should always return strings with no leading slashes
  */
 function _get_query(?string $uri = null): string
@@ -123,10 +123,10 @@ function _get_query(?string $uri = null): string
  * function should return /gallery
  *
  * PHP really, really sucks.
- * 
+ *
  * This function should always return strings with no trailing
  * slashes, so that it can be used like `get_base_href() . "/data/asset.abc"`
- * 
+ *
  * @param array<string, string>|null $server_settings
  */
 function get_base_href(?array $server_settings = null): string
