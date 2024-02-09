@@ -208,8 +208,9 @@ class Database
     public function _execute(string $query, array $args = []): PDOStatement
     {
         try {
+            $uri = $_SERVER['REQUEST_URI'] ?? "unknown uri";
             return $this->get_db()->execute(
-                "-- " . str_replace("%2F", "/", urlencode($_GET['q'] ?? '')). "\n" .
+                "-- $uri\n" .
                 $query,
                 $args
             );

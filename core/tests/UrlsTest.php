@@ -5,74 +5,223 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Depends;
 
 require_once "core/urls.php";
 
 class UrlsTest extends TestCase
 {
-    public function test_search_link(): void
+    /**
+     * An integration test for
+     * - search_link()
+     *   - make_link()
+     * - _get_query()
+     * - get_search_terms()
+     */
+    #[Depends("test_search_link")]
+    public function test_get_search_terms_from_search_link(): void
     {
-        $this->assertEquals(
-            "/test/post/list/bar%20foo/1",
-            search_link(["foo", "bar"])
-        );
-        $this->assertEquals(
-            "/test/post/list/cat%2A%20rating%3D%3F/1",
-            search_link(["rating=?", "cat*"])
-        );
+        /**
+         * @param array<string> $vars
+         * @return array<string>
+         */
+        $gst = function (array $terms): array {
+            $pre = new PageRequestEvent("GET", _get_query(search_link($terms)));
+            $pre->page_matches("post/list");
+            return $pre->get_search_terms();
+        };
+
+        global $config;
+        foreach([true, false] as $nice_urls) {
+            $config->set_bool('nice_urls', $nice_urls);
+
+            $this->assertEquals(
+                ["bar", "foo"],
+                $gst(["foo", "bar"])
+            );
+            $this->assertEquals(
+                ["AC/DC"],
+                $gst(["AC/DC"])
+            );
+            $this->assertEquals(
+                ["cat*", "rating=?"],
+                $gst(["rating=?", "cat*"]),
+            );
+        }
     }
 
+    #[Depends("test_get_base_href")]
     public function test_make_link(): void
     {
-        // basic
+        global $config;
+        foreach([true, false] as $nice_urls) {
+            $config->set_bool('nice_urls', $nice_urls);
+
+            // basic
+            $this->assertEquals(
+                $nice_urls ? "/test/foo" : "/test/index.php?q=foo",
+                make_link("foo")
+            );
+
+            // remove leading slash from path
+            $this->assertEquals(
+                $nice_urls ? "/test/foo" : "/test/index.php?q=foo",
+                make_link("/foo")
+            );
+
+            // query
+            $this->assertEquals(
+                $nice_urls ? "/test/foo?a=1&b=2" : "/test/index.php?q=foo&a=1&b=2",
+                make_link("foo", "a=1&b=2")
+            );
+
+            // hash
+            $this->assertEquals(
+                $nice_urls ? "/test/foo#cake" : "/test/index.php?q=foo#cake",
+                make_link("foo", null, "cake")
+            );
+
+            // query + hash
+            $this->assertEquals(
+                $nice_urls ? "/test/foo?a=1&b=2#cake" : "/test/index.php?q=foo&a=1&b=2#cake",
+                make_link("foo", "a=1&b=2", "cake")
+            );
+        }
+    }
+
+    #[Depends("test_make_link")]
+    public function test_search_link(): void
+    {
+        global $config;
+        foreach([true, false] as $nice_urls) {
+            $config->set_bool('nice_urls', $nice_urls);
+
+            $this->assertEquals(
+                $nice_urls ? "/test/post/list/bar%20foo/1" : "/test/index.php?q=post/list/bar%20foo/1",
+                search_link(["foo", "bar"])
+            );
+            $this->assertEquals(
+                $nice_urls ? "/test/post/list/AC%2FDC/1" : "/test/index.php?q=post/list/AC%2FDC/1",
+                search_link(["AC/DC"])
+            );
+            $this->assertEquals(
+                $nice_urls ? "/test/post/list/cat%2A%20rating%3D%3F/1" : "/test/index.php?q=post/list/cat%2A%20rating%3D%3F/1",
+                search_link(["rating=?", "cat*"])
+            );
+        }
+    }
+
+    #[Depends("test_get_base_href")]
+    public function test_get_query(): void
+    {
+        // just validating an assumption that this test relies upon
+        $this->assertEquals(get_base_href(), "/test");
+
         $this->assertEquals(
-            "/test/foo",
-            make_link("foo")
+            "tasty/cake",
+            _get_query("/test/tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
+        );
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/test/index.php?q=tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
         );
 
-        // remove leading slash from path
         $this->assertEquals(
-            "/test/foo",
-            make_link("/foo")
+            "tasty/cake%20pie",
+            _get_query("/test/index.php?q=tasty/cake%20pie"),
+            'URL encoded paths should be left alone'
+        );
+        $this->assertEquals(
+            "tasty/cake%20pie",
+            _get_query("/test/tasty/cake%20pie"),
+            'URL encoded queries should be left alone'
         );
 
-        // query
         $this->assertEquals(
-            "/test/foo?a=1&b=2",
-            make_link("foo", "a=1&b=2")
+            "",
+            _get_query("/test/"),
+            'If just viewing install directory, should return /'
+        );
+        $this->assertEquals(
+            "",
+            _get_query("/test/index.php"),
+            'If just viewing index.php, should return /'
         );
 
-        // hash
         $this->assertEquals(
-            "/test/foo#cake",
-            make_link("foo", null, "cake")
+            "post/list/tasty%2Fcake/1",
+            _get_query("/test/post/list/tasty%2Fcake/1"),
+            'URL encoded niceurls should be left alone, even encoded slashes'
         );
-
-        // query + hash
         $this->assertEquals(
-            "/test/foo?a=1&b=2#cake",
-            make_link("foo", "a=1&b=2", "cake")
+            "post/list/tasty%2Fcake/1",
+            _get_query("/test/index.php?q=post/list/tasty%2Fcake/1"),
+            'URL encoded uglyurls should be left alone, even encoded slashes'
         );
     }
 
+    public function test_is_https_enabled(): void
+    {
+        $this->assertFalse(is_https_enabled(), "HTTPS should be disabled by default");
+
+        $_SERVER['HTTPS'] = "on";
+        $this->assertTrue(is_https_enabled(), "HTTPS should be enabled when set to 'on'");
+        unset($_SERVER['HTTPS']);
+    }
+
+    public function test_get_base_href(): void
+    {
+        // PHP_SELF should point to "the currently executing script
+        // relative to the document root"
+        $this->assertEquals("", get_base_href(["PHP_SELF" => "/index.php"]));
+        $this->assertEquals("/mydir", get_base_href(["PHP_SELF" => "/mydir/index.php"]));
+
+        // SCRIPT_FILENAME should point to "the absolute pathname of
+        // the currently executing script" and DOCUMENT_ROOT should
+        // point to "the document root directory under which the
+        // current script is executing"
+        $this->assertEquals("", get_base_href([
+            "PHP_SELF" => "<invalid>",
+            "SCRIPT_FILENAME" => "/var/www/html/index.php",
+            "DOCUMENT_ROOT" => "/var/www/html",
+        ]), "root directory");
+        $this->assertEquals("/mydir", get_base_href([
+            "PHP_SELF" => "<invalid>",
+            "SCRIPT_FILENAME" => "/var/www/html/mydir/index.php",
+            "DOCUMENT_ROOT" => "/var/www/html",
+        ]), "subdirectory");
+        $this->assertEquals("", get_base_href([
+            "PHP_SELF" => "<invalid>",
+            "SCRIPT_FILENAME" => "/var/www/html/index.php",
+            "DOCUMENT_ROOT" => "/var/www/html/",
+        ]), "trailing slash in DOCUMENT_ROOT root should be ignored");
+        $this->assertEquals("/mydir", get_base_href([
+            "PHP_SELF" => "<invalid>",
+            "SCRIPT_FILENAME" => "/var/www/html/mydir/index.php",
+            "DOCUMENT_ROOT" => "/var/www/html/",
+        ]), "trailing slash in DOCUMENT_ROOT subdir should be ignored");
+    }
+
+    #[Depends("test_is_https_enabled")]
+    #[Depends("test_get_base_href")]
     public function test_make_http(): void
     {
-        // relative to shimmie install
         $this->assertEquals(
             "http://cli-command/test/foo",
-            make_http("foo")
+            make_http("foo"),
+            "relative to shimmie root"
         );
-
-        // relative to web server
         $this->assertEquals(
             "http://cli-command/foo",
-            make_http("/foo")
+            make_http("/foo"),
+            "relative to web server"
         );
-
-        // absolute
         $this->assertEquals(
             "https://foo.com",
-            make_http("https://foo.com")
+            make_http("https://foo.com"),
+            "absolute URL should be left alone"
         );
     }
 
@@ -113,5 +262,12 @@ class UrlsTest extends TestCase
             "foo",
             referer_or("foo", ["cake"])
         );
+    }
+
+    public function tearDown(): void
+    {
+        global $config;
+        $config->set_bool('nice_urls', true);
+        parent::tearDown();
     }
 }

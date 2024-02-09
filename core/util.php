@@ -713,37 +713,6 @@ function _get_user(): User
     return $my_user;
 }
 
-function _get_query(): string
-{
-    // if q is set in POST, use that
-    if(isset($_POST["q"])) {
-        return $_POST["q"];
-    }
-
-    // if q is set in GET, use that
-    // (we need to manually parse the query string because PHP's $_GET
-    // does an extra round of URL decoding, which we don't want)
-    $parts = parse_url($_SERVER['REQUEST_URI']);
-    $qs = [];
-    foreach(explode('&', $parts['query'] ?? "") as $z) {
-        $qps = explode('=', $z, 2);
-        if(count($qps) == 2) {
-            $qs[$qps[0]] = $qps[1];
-        }
-    }
-    if(isset($qs["q"])) {
-        return $qs["q"];
-    }
-
-    // if we're just looking at index.php, use the default query
-    if(str_ends_with($parts["path"] ?? "", "index.php")) {
-        return "/";
-    }
-
-    // otherwise, use the request URI minus the base path
-    return substr($parts["path"] ?? "", strlen(get_base_href()));
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *

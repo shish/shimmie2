@@ -15,10 +15,11 @@ class LinkScan extends Extension
     {
         global $config, $page;
 
-        if ($event->page_matches("post/list") && isset($_POST['search'])) {
+        $search = @$_GET['search'] ?? @$_POST['search'] ?? "";
+        if ($event->page_matches("post/list") && !empty($search)) {
             $trigger = $config->get_string("link_scan_trigger", "https?://");
-            if (preg_match("#.*{$trigger}.*#", $_POST['search'])) {
-                $ids = $this->scan($_POST['search']);
+            if (preg_match("#.*{$trigger}.*#", $search)) {
+                $ids = $this->scan($search);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(search_link(["id=".implode(",", $ids)]));
                 $event->stop_processing = true;
