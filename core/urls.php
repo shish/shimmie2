@@ -41,7 +41,8 @@ function search_link(array $terms = [], int $page = 1): string
  * Figure out the correct way to link to a page, taking into account
  * things like the nice URLs setting.
  *
- * eg make_link("foo/bar") becomes "/v2/index.php?q=foo/bar"
+ * eg make_link("foo/bar") becomes either "/v2/foo/bar" (niceurls) or
+ * "/v2/index.php?q=foo/bar" (uglyurls)
  */
 function make_link(?string $page = null, ?string $query = null, ?string $fragment = null): string
 {
@@ -64,6 +65,106 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
     $parts['fragment'] = $fragment;  // http_build_query($hash);
 
     return unparse_url($parts);
+}
+
+/**
+ * Figure out the current page from a link that make_link() generated
+ * 
+ * SHIT: notes for the future, because the web stack is a pile of hacks
+ * 
+ * - According to some specs, "/" is for URL dividers with heiracial
+ *   significance and %2F is for slashes that are just slashes. This
+ *   is what shimmie currently does - eg if you search for "AC/DC",
+ *   the shimmie URL will be /post/list/AC%2FDC/1
+ * - According to some other specs "/" and "%2F" are identical...
+ * - PHP's $_GET[] automatically urldecodes the inputs so we can't
+ *   tell the difference between q=foo/bar and q=foo%2Fbar
+ * - REQUEST_URI contains the exact URI that was given to us, so we
+ *   can parse it for ourselves
+ * - <input type="hidden" name="q" value="post/list"> generates
+ *   q=post%2Flist
+ * 
+ * This function should always return strings with no leading slashes
+ */
+function _get_query(?string $uri = null): string
+{
+    $parsed_url = parse_url($uri ?? $_SERVER['REQUEST_URI']);
+
+    // if we're looking at http://site.com/$INSTALL_DIR/index.php,
+    // then get the query from the "q" parameter
+    if(($parsed_url["path"] ?? "") == (get_base_href() . "/index.php")) {
+        // $q = $_GET["q"] ?? "";
+        // default to looking at the root
+        $q = "";
+        // (we need to manually parse the query string because PHP's $_GET
+        // does an extra round of URL decoding, which we don't want)
+        foreach(explode('&', $parsed_url['query'] ?? "") as $z) {
+            $qps = explode('=', $z, 2);
+            if(count($qps) == 2 && $qps[0] == "q") {
+                $q = $qps[1];
+            }
+        }
+    }
+
+    // if we're looking at http://site.com/$INSTALL_DIR/$PAGE,
+    // then get the query from the path
+    else {
+        $q = substr($parsed_url["path"] ?? "", strlen(get_base_href() . "/"));
+    }
+
+    assert(!str_starts_with($q, "/"));
+    return $q;
+}
+
+/**
+ * Figure out the path to the shimmie install directory.
+ *
+ * eg if shimmie is visible at https://foo.com/gallery, this
+ * function should return /gallery
+ *
+ * PHP really, really sucks.
+ * 
+ * This function should always return strings with no trailing
+ * slashes, so that it can be used like `get_base_href() . "/data/asset.abc"`
+ * 
+ * @param array<string, string>|null $server_settings
+ */
+function get_base_href(?array $server_settings = null): string
+{
+    if (defined("BASE_HREF") && !empty(BASE_HREF)) {
+        return BASE_HREF;
+    }
+    $server_settings = $server_settings ?? $_SERVER;
+    if(str_ends_with($server_settings['PHP_SELF'], 'index.php')) {
+        $self = $server_settings['PHP_SELF'];
+    } elseif(isset($server_settings['SCRIPT_FILENAME']) && isset($server_settings['DOCUMENT_ROOT'])) {
+        $self = substr($server_settings['SCRIPT_FILENAME'], strlen(rtrim($server_settings['DOCUMENT_ROOT'], "/")));
+    } else {
+        die("PHP_SELF or SCRIPT_FILENAME need to be set");
+    }
+    $dir = dirname($self);
+    $dir = str_replace("\\", "/", $dir);
+    $dir = rtrim($dir, "/");
+    return $dir;
+}
+
+/**
+ * The opposite of the standard library's parse_url
+ *
+ * @param array<string, string|int> $parsed_url
+ */
+function unparse_url(array $parsed_url): string
+{
+    $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+    $host     = $parsed_url['host'] ?? '';
+    $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+    $user     = $parsed_url['user'] ?? '';
+    $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass'] : '';
+    $pass     = ($user || $pass) ? "$pass@" : '';
+    $path     = $parsed_url['path'] ?? '';
+    $query    = !empty($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+    $fragment = !empty($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+    return "$scheme$user$pass$host$port$path$query$fragment";
 }
 
 

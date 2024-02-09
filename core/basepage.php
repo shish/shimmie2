@@ -688,7 +688,7 @@ class NavLink
         $this->description = $description;
         $this->order = $order;
         if ($active == null) {
-            $query = ltrim(_get_query(), "/");
+            $query = _get_query();
             if ($query === "") {
                 // This indicates the front page, so we check what's set as the front page
                 $front_page = trim($config->get_string(SetupConfig::FRONT_PAGE), "/");
@@ -716,7 +716,7 @@ class NavLink
         /**
          * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
          */
-        $url = $url ?? ltrim(_get_query(), "/");
+        $url = $url ?? _get_query();
 
         $re1 = '.*?';
         $re2 = '((?:[a-z][a-z_]+))';

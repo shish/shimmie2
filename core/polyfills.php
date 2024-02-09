@@ -293,51 +293,6 @@ function zglob(string $pattern): array
     }
 }
 
-/**
- * Figure out the path to the shimmie install directory.
- *
- * eg if shimmie is visible at https://foo.com/gallery, this
- * function should return /gallery
- *
- * PHP really, really sucks.
- */
-function get_base_href(): string
-{
-    if (defined("BASE_HREF") && !empty(BASE_HREF)) {
-        return BASE_HREF;
-    }
-    if(str_ends_with($_SERVER['PHP_SELF'], 'index.php')) {
-        $self = $_SERVER['PHP_SELF'];
-    } elseif(isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['DOCUMENT_ROOT'])) {
-        $self = substr($_SERVER['SCRIPT_FILENAME'], strlen(rtrim($_SERVER['DOCUMENT_ROOT'], "/")));
-    } else {
-        die("PHP_SELF or SCRIPT_FILENAME need to be set");
-    }
-    $dir = dirname($self);
-    $dir = str_replace("\\", "/", $dir);
-    $dir = rtrim($dir, "/");
-    return $dir;
-}
-
-/**
- * The opposite of the standard library's parse_url
- *
- * @param array<string, string|int> $parsed_url
- */
-function unparse_url(array $parsed_url): string
-{
-    $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
-    $host     = $parsed_url['host'] ?? '';
-    $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
-    $user     = $parsed_url['user'] ?? '';
-    $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass'] : '';
-    $pass     = ($user || $pass) ? "$pass@" : '';
-    $path     = $parsed_url['path'] ?? '';
-    $query    = !empty($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
-    $fragment = !empty($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
-    return "$scheme$user$pass$host$port$path$query$fragment";
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *

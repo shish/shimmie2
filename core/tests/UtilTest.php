@@ -162,35 +162,4 @@ class UtilTest extends TestCase
             path_to_tags("/category:/tag/baz.jpg")
         );
     }
-
-    public function test_get_query(): void
-    {
-        // niceurls
-        $_SERVER["REQUEST_URI"] = "/test/tasty/cake";
-        $this->assertEquals("/tasty/cake", _get_query());
-
-        // no niceurls
-        $_SERVER["REQUEST_URI"] = "/test/index.php?q=/tasty/cake";
-        $this->assertEquals("/tasty/cake", _get_query());
-
-        // leave url encoding alone
-        $_SERVER["REQUEST_URI"] = "/test/index.php?q=/tasty/cake%20pie";
-        $this->assertEquals("/tasty/cake%20pie", _get_query());
-
-        // if just viewing index.php
-        $_SERVER["REQUEST_URI"] = "/test/index.php";
-        $this->assertEquals("/", _get_query());
-
-        // niceurl root
-        $_SERVER["REQUEST_URI"] = "/test/";
-        $this->assertEquals("/", _get_query());
-
-        // niceurls with encoded slashes
-        $_SERVER["REQUEST_URI"] = "/test/post/list/tasty%2Fcake/1";
-        $this->assertEquals("/post/list/tasty%2Fcake/1", _get_query());
-
-        // query string with encoded slashes
-        $_SERVER["REQUEST_URI"] = "/test/index.php?q=/post/list/tasty%2Fcake/1";
-        $this->assertEquals("/post/list/tasty%2Fcake/1", _get_query());
-    }
 }

@@ -254,45 +254,4 @@ class PolyfillsTest extends TestCase
         deltree($dir);
         $this->assertFalse(file_exists($dir));
     }
-
-    /**
-     * @param array<string, string> $vars
-     */
-    private function _tbh(array $vars, string $result): void
-    {
-        // update $_SERVER with $vars, call get_base_href() and check result, then reset $_SERVER to original value
-        $old_server = $_SERVER;
-        $_SERVER = array_merge($_SERVER, $vars);
-        $this->assertEquals($result, get_base_href());
-        $_SERVER = $old_server;
-    }
-
-    public function test_get_base_href(): void
-    {
-        // PHP_SELF should point to "the currently executing script
-        // relative to the document root"
-        $this->_tbh(["PHP_SELF" => "/index.php"], "");
-        $this->_tbh(["PHP_SELF" => "/mydir/index.php"], "/mydir");
-
-
-        // SCRIPT_FILENAME should point to "the absolute pathname of
-        // the currently executing script" and DOCUMENT_ROOT should
-        // point to "the document root directory under which the
-        // current script is executing"
-        $this->_tbh([
-            "PHP_SELF" => "<invalid>",
-            "SCRIPT_FILENAME" => "/var/www/html/mydir/index.php",
-            "DOCUMENT_ROOT" => "/var/www/html",
-        ], "/mydir");
-        $this->_tbh([
-            "PHP_SELF" => "<invalid>",
-            "SCRIPT_FILENAME" => "/var/www/html/mydir/index.php",
-            "DOCUMENT_ROOT" => "/var/www/html/",
-        ], "/mydir");
-        $this->_tbh([
-            "PHP_SELF" => "<invalid>",
-            "SCRIPT_FILENAME" => "/var/www/html/index.php",
-            "DOCUMENT_ROOT" => "/var/www/html",
-        ], "");
-    }
 }

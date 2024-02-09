@@ -47,6 +47,7 @@ class InitExtEvent extends Event
 class PageRequestEvent extends Event
 {
     public string $method;
+    public string $path;
     /**
      * @var string[]
      */
@@ -61,13 +62,12 @@ class PageRequestEvent extends Event
 
         $this->method = $method;
 
-        // trim starting slashes
-        $path = ltrim($path, "/");
-
-        // if path is not specified, use the default front page
-        if (empty($path)) {   /* empty is faster than strlen */
+        // if we're looking at the root of the install,
+        // use the default front page
+        if ($path == "") {
             $path = $config->get_string(SetupConfig::FRONT_PAGE);
         }
+        $this->path = $path;
 
         // break the path into parts
         $args = explode('/', $path);
