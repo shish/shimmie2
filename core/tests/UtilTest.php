@@ -184,5 +184,13 @@ class UtilTest extends TestCase
         // niceurl root
         $_SERVER["REQUEST_URI"] = "/test/";
         $this->assertEquals("/", _get_query());
+
+        // niceurls with encoded slashes
+        $_SERVER["REQUEST_URI"] = "/test/post/list/tasty%2Fcake/1";
+        $this->assertEquals("/post/list/tasty%2Fcake/1", _get_query());
+
+        // query string with encoded slashes
+        $_SERVER["REQUEST_URI"] = "/test/index.php?q=/post/list/tasty%2Fcake/1";
+        $this->assertEquals("/post/list/tasty%2Fcake/1", _get_query());
     }
 }
