@@ -51,7 +51,7 @@ class PageRequestEvent extends Event
     /**
      * @var string[]
      */
-    public $args;
+    public array $args;
     public int $arg_count;
     public int $part_count;
 
