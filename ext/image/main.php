@@ -88,19 +88,17 @@ class ImageIO extends Extension
         $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT, 192);
         $page->add_html_header("<style>:root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}</style>");
 
-        if ($event->page_matches("image/delete")) {
+        if ($event->page_matches("image/delete", method: "POST", permission: Permissions::DELETE_IMAGE)) {
             global $page, $user;
-            if ($user->can(Permissions::DELETE_IMAGE) && $event->get_POST('image_id') && $user->check_auth_token()) {
-                $image = Image::by_id(int_escape($event->get_POST('image_id')));
-                if ($image) {
-                    send_event(new ImageDeletionEvent($image));
+            $image = Image::by_id(int_escape($event->req_POST('image_id')));
+            if ($image) {
+                send_event(new ImageDeletionEvent($image));
 
-                    if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
-                        redirect_to_next_image($image, $event->get_GET('search'));
-                    } else {
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(referer_or(make_link(), ['post/view']));
-                    }
+                if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
+                    redirect_to_next_image($image, $event->get_GET('search'));
+                } else {
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(referer_or(make_link(), ['post/view']));
                 }
             }
         } elseif ($event->page_matches("image")) {

@@ -26,15 +26,11 @@ class TagHistory extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("tag_history/revert")) {
+        if ($event->page_matches("tag_history/revert", method: "POST", permission: Permissions::EDIT_IMAGE_TAG)) {
             // this is a request to revert to a previous version of the tags
-            if ($user->can(Permissions::EDIT_IMAGE_TAG)) {
-                $this->process_revert_request((int)$event->req_POST('revert'));
-            }
-        } elseif ($event->page_matches("tag_history/bulk_revert")) {
-            if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG) && $user->check_auth_token()) {
-                $this->process_bulk_revert_request();
-            }
+            $this->process_revert_request((int)$event->req_POST('revert'));
+        } elseif ($event->page_matches("tag_history/bulk_revert", method: "POST", permission: Permissions::BULK_EDIT_IMAGE_TAG)) {
+            $this->process_bulk_revert_request();
         } elseif ($event->page_matches("tag_history/all")) {
             $page_id = int_escape($event->get_arg(0));
             $this->theme->display_global_page($page, $this->get_global_tag_history($page_id), $page_id);

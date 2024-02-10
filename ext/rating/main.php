@@ -374,27 +374,23 @@ class Ratings extends Extension
     {
         global $user, $page;
 
-        if ($event->page_matches("admin/bulk_rate")) {
-            if (!$user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-                throw new PermissionDeniedException("Permission denied");
-            } else {
-                $n = 0;
-                while (true) {
-                    $images = Search::find_images($n, 100, Tag::explode($event->req_POST("query")));
-                    if (count($images) == 0) {
-                        break;
-                    }
-
-                    reset($images); // rewind to first element in array.
-
-                    foreach ($images as $image) {
-                        send_event(new RatingSetEvent($image, $event->req_POST('rating')));
-                    }
-                    $n += 100;
+        if ($event->page_matches("admin/bulk_rate", method: "POST", permission: Permissions::BULK_EDIT_IMAGE_RATING)) {
+            $n = 0;
+            while (true) {
+                $images = Search::find_images($n, 100, Tag::explode($event->req_POST("query")));
+                if (count($images) == 0) {
+                    break;
                 }
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link());
+
+                reset($images); // rewind to first element in array.
+
+                foreach ($images as $image) {
+                    send_event(new RatingSetEvent($image, $event->req_POST('rating')));
+                }
+                $n += 100;
             }
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link());
         }
     }
 

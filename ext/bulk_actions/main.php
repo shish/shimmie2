@@ -169,7 +169,7 @@ class BulkActions extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("bulk_action") && $user->can(Permissions::PERFORM_BULK_ACTIONS)) {
+        if ($event->page_matches("bulk_action", method: "POST", permission: Permissions::PERFORM_BULK_ACTIONS)) {
             $action = $event->req_POST('bulk_action');
 
             try {

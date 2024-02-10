@@ -43,7 +43,7 @@ class PrivateImage extends Extension
     {
         global $page, $user, $user_config;
 
-        if ($event->page_matches("privatize_image") && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
+        if ($event->page_matches("privatize_image", method: "POST", permission: Permissions::SET_PRIVATE_IMAGE)) {
             // Try to get the image ID
             $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);
@@ -59,7 +59,7 @@ class PrivateImage extends Extension
             $page->set_redirect(make_link("post/view/" . $image_id));
         }
 
-        if ($event->page_matches("publicize_image")) {
+        if ($event->page_matches("publicize_image", method: "POST")) {
             // Try to get the image ID
             $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);
@@ -75,29 +75,22 @@ class PrivateImage extends Extension
             $page->set_redirect(make_link("post/view/".$image_id));
         }
 
-        if ($event->page_matches("user_admin")) {
-            if (!$user->check_auth_token()) {
-                return;
+        if ($event->page_matches("user_admin/private_image", method: "POST")) {
+            $id = int_escape($event->req_POST('id'));
+            if ($id != $user->id) {
+                throw new SCoreException("Cannot change another user's settings");
             }
-            switch ($event->get_arg(0)) {
-                case "private_image":
-                    $id = int_escape($event->req_POST('id'));
-                    if ($id != $user->id) {
-                        throw new SCoreException("Cannot change another user's settings");
-                    }
-                    $set_default = array_key_exists("set_default", $event->POST);
-                    $view_default = array_key_exists("view_default", $event->POST);
+            $set_default = array_key_exists("set_default", $event->POST);
+            $view_default = array_key_exists("view_default", $event->POST);
 
-                    $user_config->set_bool(PrivateImageConfig::USER_SET_DEFAULT, $set_default);
-                    $user_config->set_bool(PrivateImageConfig::USER_VIEW_DEFAULT, $view_default);
+            $user_config->set_bool(PrivateImageConfig::USER_SET_DEFAULT, $set_default);
+            $user_config->set_bool(PrivateImageConfig::USER_VIEW_DEFAULT, $view_default);
 
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("user"));
-
-                    break;
-            }
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("user"));
         }
     }
+
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user, $page;
@@ -107,7 +100,6 @@ class PrivateImage extends Extension
             $page->set_redirect(make_link());
         }
     }
-
 
     public const SEARCH_REGEXP = "/^private:(yes|no|any)/";
     public function onSearchTermParse(SearchTermParseEvent $event): void

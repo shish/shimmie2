@@ -36,27 +36,29 @@ class Update extends Extension
         global $user, $page;
         $sha = $event->get_GET('sha');
 
-        if ($user->can(Permissions::EDIT_FILES) && $sha) {
-            if ($event->page_matches("update/download")) {
-                $ok = $this->download_shimmie($sha);
+        // FIXME: use POST
+        if ($event->page_matches("update/download", permission: Permissions::EDIT_FILES)) {
+            assert(!is_null($sha));
+            $ok = $this->download_shimmie($sha);
 
-                $page->set_mode(PageMode::REDIRECT);
-                if ($ok) {
-                    $page->set_redirect(make_link("update/update", "sha=".$sha));
-                } else {
-                    $page->set_redirect(make_link("admin"));
-                } //TODO: Show error?
-            } elseif ($event->page_matches("update/update")) {
-                $ok = $this->update_shimmie($sha);
+            $page->set_mode(PageMode::REDIRECT);
+            if ($ok) {
+                $page->set_redirect(make_link("update/update", "sha=".$sha));
+            } else {
+                $page->set_redirect(make_link("admin"));
+            } //TODO: Show error?
+        }
+        if ($event->page_matches("update/update", permission: Permissions::EDIT_FILES)) {
+            assert(!is_null($sha));
+            $ok = $this->update_shimmie($sha);
 
-                $page->set_mode(PageMode::REDIRECT);
-                if ($ok) {
-                    $page->set_redirect(make_link("admin"));
-                } //TODO: Show success?
-                else {
-                    $page->set_redirect(make_link("admin"));
-                } //TODO: Show error?
-            }
+            $page->set_mode(PageMode::REDIRECT);
+            if ($ok) {
+                $page->set_redirect(make_link("admin"));
+            } //TODO: Show success?
+            else {
+                $page->set_redirect(make_link("admin"));
+            } //TODO: Show error?
         }
     }
 

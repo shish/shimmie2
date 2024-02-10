@@ -125,47 +125,34 @@ class UserConfig extends Extension
                 }
             }
 
-            if ($event->page_matches("user_admin")) {
-                if (!$user->check_auth_token()) {
-                    return;
-                }
-                switch ($event->get_arg(0)) {
-                    case "reset_api_key":
-                        $user_config->set_string(self::API_KEY, "");
+            if ($event->page_matches("user_admin/reset_api_key", method: "POST")) {
+                $user_config->set_string(self::API_KEY, "");
 
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("user"));
-
-                        break;
-                }
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("user"));
             }
         }
 
-        if ($event->page_matches("user_config")) {
-            if (!$user->can(Permissions::CHANGE_USER_SETTING)) {
-                $this->theme->display_permission_denied();
-            } else {
-                if ($event->count_args() == 0) {
-                    $uobe = send_event(new UserOptionsBuildingEvent($user, new SetupPanel($user_config)));
-                    $this->theme->display_user_config_page($page, $uobe->user, $uobe->panel);
-                } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
-                    $input = validate_input([
-                        'id' => 'user_id,exists'
-                    ]);
-                    $duser = User::by_id($input['id']);
+        if ($event->page_matches("user_config", permission: Permissions::CHANGE_USER_SETTING)) {
+            if ($event->count_args() == 0) {
+                $uobe = send_event(new UserOptionsBuildingEvent($user, new SetupPanel($user_config)));
+                $this->theme->display_user_config_page($page, $uobe->user, $uobe->panel);
+            } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
+                $input = validate_input([
+                    'id' => 'user_id,exists'
+                ]);
+                $duser = User::by_id($input['id']);
 
-                    if ($user->id != $duser->id && !$user->can(Permissions::CHANGE_OTHER_USER_SETTING)) {
-                        $this->theme->display_permission_denied();
-                        return;
-                    }
-
-                    $target_config = UserConfig::get_for_user($duser->id);
-                    send_event(new ConfigSaveEvent($target_config, $event->POST));
-                    $target_config->save();
-                    $page->flash("Config saved");
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("user_config"));
+                if ($user->id != $duser->id && !$user->can(Permissions::CHANGE_OTHER_USER_SETTING)) {
+                    throw new PermissionDeniedException("You do not have permission to change other user's settings");
                 }
+
+                $target_config = UserConfig::get_for_user($duser->id);
+                send_event(new ConfigSaveEvent($target_config, $event->POST));
+                $target_config->save();
+                $page->flash("Config saved");
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("user_config"));
             }
         }
     }

@@ -207,7 +207,7 @@ class TranscodeImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("transcode") && $user->can(Permissions::EDIT_FILES)) {
+        if ($event->page_matches("transcode", method: "POST", permission: Permissions::EDIT_FILES)) {
             $image_id = int_escape($event->get_arg(0));
             $image_obj = Image::by_id($image_id);
             if (is_null($image_obj)) {

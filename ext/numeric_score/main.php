@@ -156,36 +156,30 @@ class NumericScore extends Extension
                 $html .= "</td></tr>";
             }
             die($html);
-        } elseif ($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
-            if ($user->can(Permissions::CREATE_VOTE)) {
-                $image_id = int_escape($event->req_POST("image_id"));
-                $score = int_escape($event->req_POST("vote"));
-                if (($score == -1 || $score == 0 || $score == 1) && $image_id > 0) {
-                    send_event(new NumericScoreSetEvent($image_id, $user, $score));
-                }
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$image_id"));
+        } elseif ($event->page_matches("numeric_score_vote", method: "POST", permission: Permissions::CREATE_VOTE)) {
+            $image_id = int_escape($event->req_POST("image_id"));
+            $score = int_escape($event->req_POST("vote"));
+            if (($score == -1 || $score == 0 || $score == 1) && $image_id > 0) {
+                send_event(new NumericScoreSetEvent($image_id, $user, $score));
             }
-        } elseif ($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
-            if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
-                $image_id = int_escape($event->req_POST("image_id"));
-                $database->execute(
-                    "DELETE FROM numeric_score_votes WHERE image_id=:image_id",
-                    ['image_id' => $image_id]
-                );
-                $database->execute(
-                    "UPDATE images SET numeric_score=0 WHERE id=:id",
-                    ['id' => $image_id]
-                );
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$image_id"));
-            }
-        } elseif ($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
-            if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
-                $this->delete_votes_by(int_escape($event->req_POST('user_id')));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link());
-            }
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$image_id"));
+        } elseif ($event->page_matches("numeric_score/remove_votes_on", method: "POST", permission: Permissions::EDIT_OTHER_VOTE)) {
+            $image_id = int_escape($event->req_POST("image_id"));
+            $database->execute(
+                "DELETE FROM numeric_score_votes WHERE image_id=:image_id",
+                ['image_id' => $image_id]
+            );
+            $database->execute(
+                "UPDATE images SET numeric_score=0 WHERE id=:id",
+                ['id' => $image_id]
+            );
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$image_id"));
+        } elseif ($event->page_matches("numeric_score/remove_votes_by", method: "POST", permission: Permissions::EDIT_OTHER_VOTE)) {
+            $this->delete_votes_by(int_escape($event->req_POST('user_id')));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link());
         } elseif ($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
             //FIXME: popular_by isn't linked from anywhere
             list($day, $month, $year) = [date("d"), date("m"), date("Y")];

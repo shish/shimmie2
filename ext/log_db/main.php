@@ -278,12 +278,10 @@ class LogDatabase extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $user;
-        if ($event->page_matches("log/view")) {
-            if ($user->can(Permissions::VIEW_EVENTLOG)) {
-                $t = new LogTable($database->raw_db());
-                $t->inputs = $event->GET;
-                $this->theme->display_crud("Event Log", $t->table($t->query()), $t->paginator());
-            }
+        if ($event->page_matches("log/view", permission: Permissions::VIEW_EVENTLOG)) {
+            $t = new LogTable($database->raw_db());
+            $t->inputs = $event->GET;
+            $this->theme->display_crud("Event Log", $t->table($t->query()), $t->paginator());
         }
     }
 

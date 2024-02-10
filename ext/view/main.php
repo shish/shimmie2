@@ -72,7 +72,7 @@ class ViewPost extends Extension
             } else {
                 $this->theme->display_error(404, "Post not found", "No post in the database has the ID #$image_id");
             }
-        } elseif ($event->page_matches("post/set")) {
+        } elseif ($event->page_matches("post/set", method: "POST")) {
             $image_id = int_escape($event->req_POST('image_id'));
             $image = Image::by_id($image_id);
             if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {

@@ -29,7 +29,7 @@ class Trash extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("trash_restore") && $user->can(Permissions::VIEW_TRASH)) {
+        if ($event->page_matches("trash_restore", method: "POST", permission: Permissions::VIEW_TRASH)) {
             $image_id = int_escape(null_throws($event->get_arg(0)));
             self::set_trash($image_id, false);
             $page->set_mode(PageMode::REDIRECT);

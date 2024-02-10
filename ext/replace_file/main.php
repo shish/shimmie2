@@ -13,12 +13,7 @@ class ReplaceFile extends Extension
     {
         global $cache, $page, $user;
 
-        if ($event->page_matches("replace")) {
-            if (!$user->can(Permissions::REPLACE_IMAGE)) {
-                $this->theme->display_error(403, "Error", "{$user->name} doesn't have permission to replace images");
-                return;
-            }
-
+        if ($event->page_matches("replace", permission: Permissions::REPLACE_IMAGE)) {
             $image_id = int_escape($event->get_arg(0));
             $image = Image::by_id($image_id);
             if (is_null($image)) {
@@ -28,6 +23,7 @@ class ReplaceFile extends Extension
             if($event->method == "GET") {
                 $this->theme->display_replace_page($page, $image_id);
             } elseif($event->method == "POST") {
+                $user->ensure_authed();
                 if (!empty($event->get_POST("url"))) {
                     $tmp_filename = shm_tempnam("transload");
                     fetch_url($event->req_POST("url"), $tmp_filename);

@@ -105,7 +105,15 @@ try {
     if ($database->is_transaction_open()) {
         $database->rollback();
     }
-    _fatal_error($e);
+    if(is_a($e, \Shimmie2\UserErrorException::class)) {
+        $page->set_mode(PageMode::PAGE);
+        $page->set_code($e->http_code);
+        $page->set_title("Error");
+        $page->add_block(new Block(null, \MicroHTML\SPAN($e->getMessage())));
+        $page->display();
+    } else {
+        _fatal_error($e);
+    }
     $exit_code = 1;
 } finally {
     $_tracer->end();

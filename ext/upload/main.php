@@ -216,11 +216,7 @@ class Upload extends Extension
             }
         }
 
-        if ($event->page_matches("upload")) {
-            if (!$user->can(Permissions::CREATE_IMAGE)) {
-                $this->theme->display_error(403, "Error", "{$user->name} doesn't have permission to upload images");
-                return;
-            }
+        if ($event->page_matches("upload", permission: Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
                 $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
                 return;

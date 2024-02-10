@@ -59,7 +59,7 @@ class RotateImage extends Extension
     {
         global $page, $user;
 
-        if ($event->authed_page_matches("rotate") && $user->can(Permissions::EDIT_FILES)) {
+        if ($event->page_matches("rotate", method: "POST", permission: Permissions::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);

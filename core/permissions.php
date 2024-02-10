@@ -88,7 +88,7 @@ abstract class Permissions
     public const BULK_EDIT_VOTE = "bulk_edit_vote";
     public const EDIT_OTHER_VOTE = "edit_other_vote";
 
-    public const VIEW_SYSINTO = "view_sysinfo";
+    public const VIEW_SYSINFO = "view_sysinfo";
 
     public const HELLBANNED = "hellbanned";
     public const VIEW_HELLBANNED = "view_hellbanned";

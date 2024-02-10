@@ -75,7 +75,7 @@ class Media extends Extension
         global $page, $user;
 
         if (
-            $event->authed_page_matches("media_rescan") &&
+            $event->page_matches("media_rescan", method: "POST") &&
             $user->can(Permissions::RESCAN_MEDIA)
         ) {
             $image = Image::by_id(int_escape($event->get_arg(0)));

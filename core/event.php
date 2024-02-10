@@ -59,6 +59,7 @@ class PageRequestEvent extends Event
     public array $args;
     public int $arg_count;
     public int $part_count;
+    public bool $is_authed;
 
     /**
      * @param string $method The HTTP method used to make the request
@@ -68,6 +69,7 @@ class PageRequestEvent extends Event
      */
     public function __construct(string $method, string $path, array $get, array $post)
     {
+        global $user;
         parent::__construct();
         global $config;
 
@@ -81,6 +83,7 @@ class PageRequestEvent extends Event
         $this->path = $path;
         $this->GET = $get;
         $this->POST = $post;
+        $this->is_authed = $user->check_auth_token();
 
         // break the path into parts
         $args = explode('/', $path);
@@ -163,28 +166,40 @@ class PageRequestEvent extends Event
      *
      * If it matches, store the remaining path elements in $args
      */
-    public function page_matches(string $name): bool
+    public function page_matches(string $name, ?string $method = null, ?bool $authed = null, ?string $permission = null): bool
     {
-        $parts = explode("/", $name);
-        $this->part_count = count($parts);
+        global $user;
 
-        if ($this->part_count > $this->arg_count) {
+        assert($method === null || in_array($method, ["GET", "POST", "OPTIONS"]));
+        $authed = $authed ?? $method == "POST";
+
+        // method check is fast so do that first
+        if($method !== null && $this->method !== $method) {
             return false;
         }
 
+        // check if the path matches
+        $parts = explode("/", $name);
+        $this->part_count = count($parts);
+        if ($this->part_count > $this->arg_count) {
+            return false;
+        }
         for ($i = 0; $i < $this->part_count; $i++) {
             if ($parts[$i] != $this->args[$i]) {
                 return false;
             }
         }
 
-        return true;
-    }
+        // if we matched the method and the path, but the page requires
+        // authentication and the user is not authenticated, then complain
+        if($authed && $this->is_authed === false) {
+            throw new PermissionDeniedException("Permission Denied");
+        }
+        if($permission !== null && !$user->can($permission)) {
+            throw new PermissionDeniedException("Permission Denied");
+        }
 
-    public function authed_page_matches(string $name): bool
-    {
-        global $user;
-        return $this->page_matches($name) && $user->check_auth_token();
+        return true;
     }
 
     /**

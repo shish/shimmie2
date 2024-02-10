@@ -22,8 +22,9 @@ class WikiTest extends ShimmiePHPUnitTestCase
         $this->assert_title("test");
         $this->assert_text("This is a default page");
 
-        $this->get_page("wiki/test/edit");
-        $this->assert_no_text("Editor");
+        $this->assertException(PermissionDeniedException::class, function () {
+            $this->get_page("wiki/test/edit");
+        });
     }
 
     // Admins can edit

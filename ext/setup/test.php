@@ -18,17 +18,17 @@ class SetupTest extends ShimmiePHPUnitTestCase
 
     public function testAuthAnon(): void
     {
-        $this->get_page('setup');
-        $this->assert_response(403);
-        $this->assert_title("Permission Denied");
+        $this->assertException(PermissionDeniedException::class, function () {
+            $this->get_page('setup');
+        });
     }
 
     public function testAuthUser(): void
     {
         $this->log_in_as_user();
-        $this->get_page('setup');
-        $this->assert_response(403);
-        $this->assert_title("Permission Denied");
+        $this->assertException(PermissionDeniedException::class, function () {
+            $this->get_page('setup');
+        });
     }
 
     public function testAuthAdmin(): void

@@ -21,8 +21,8 @@ class RegenThumb extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("regen_thumb") && $user->can(Permissions::DELETE_IMAGE)) {
-            if ($event->authed_page_matches("regen_thumb/one")) {
+        if ($event->page_matches("regen_thumb", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+            if ($event->page_matches("regen_thumb/one")) {
                 $image = Image::by_id(int_escape($event->get_arg(0)));
 
                 $this->regenerate_thumbnail($image);

@@ -197,7 +197,7 @@ class Wiki extends Extension
                 if ($this->can_edit($user, $content)) {
                     $this->theme->display_page_editor($page, $content);
                 } else {
-                    $this->theme->display_permission_denied();
+                    throw new PermissionDeniedException("You are not allowed to edit this page");
                 }
             } elseif($action == "save" && $user->check_auth_token()) {
                 $rev = int_escape($event->req_POST('revision'));
@@ -214,7 +214,7 @@ class Wiki extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } else {
-                    $this->theme->display_permission_denied();
+                    throw new PermissionDeniedException("You are not allowed to edit this page");
                 }
             } elseif($action == "delete_revision" && $user->check_auth_token()) {
                 $content = $this->get_page($title);
@@ -225,7 +225,7 @@ class Wiki extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } else {
-                    $this->theme->display_permission_denied();
+                    throw new PermissionDeniedException("You are not allowed to edit this page");
                 }
             } elseif($action == "delete_all" && $user->check_auth_token()) {
                 if ($user->can(Permissions::WIKI_ADMIN)) {

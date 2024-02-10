@@ -165,91 +165,153 @@ class UserPage extends Extension
 
         if ($user->can(Permissions::VIEW_HELLBANNED)) {
             $page->add_html_header("<style>DIV.hb, TR.hb TD {border: 1px solid red !important;}</style>");
-        } elseif(!$user->can(Permissions::HELLBANNED)) {
+        } elseif (!$user->can(Permissions::HELLBANNED)) {
             $page->add_html_header("<style>.hb {display: none !important;}</style>");
         }
 
-        if ($event->page_matches("user_admin")) {
-            if ($event->get_arg(0) == "login") {
-                if ($event->method == "POST") {
-                    $this->page_login($event->req_POST('user'), $event->req_POST('pass'));
-                } else {
-                    $this->theme->display_login_page($page);
-                }
-            } elseif ($event->get_arg(0) == "recover") {
-                $this->page_recover($event->req_POST('username'));
-            } elseif ($event->get_arg(0) == "create") {
-                $this->page_create($event);
-            } elseif ($event->get_arg(0) == "create_other") {
-                send_event(new UserCreationEvent(
+        if ($event->page_matches("user_admin/login", method: "GET")) {
+            $this->theme->display_login_page($page);
+        }
+        if ($event->page_matches("user_admin/login", method: "POST", authed: false)) {
+            $this->page_login($event->req_POST('user'), $event->req_POST('pass'));
+        }
+        if ($event->page_matches("user_admin/recover", method: "POST")) {
+            $this->page_recover($event->req_POST('username'));
+        }
+        if ($event->page_matches("user_admin/create", method: "GET", permission: Permissions::CREATE_USER)) {
+            global $config, $page, $user;
+            if (!$config->get_bool("login_signup_enabled")) {
+                $this->theme->display_signups_disabled($page);
+                return;
+            }
+            $this->theme->display_signup_page($page);
+        }
+        if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: Permissions::CREATE_USER)) {
+            global $config, $page, $user;
+            if (!$config->get_bool("login_signup_enabled")) {
+                $this->theme->display_signups_disabled($page);
+                return;
+            }
+            try {
+                $uce = send_event(
+                    new UserCreationEvent(
+                        $event->req_POST('name'),
+                        $event->req_POST('pass1'),
+                        $event->req_POST('pass2'),
+                        $event->req_POST('email'),
+                        true
+                    )
+                );
+                $this->set_login_cookie($uce->username);
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("user"));
+            } catch (UserCreationException $ex) {
+                $this->theme->display_error(400, "User Creation Error", $ex->getMessage());
+            }
+        }
+        if ($event->page_matches("user_admin/create_other", method: "POST", permission: Permissions::CREATE_OTHER_USER)) {
+            send_event(
+                new UserCreationEvent(
                     $event->req_POST("name"),
                     $event->req_POST("pass1"),
                     $event->req_POST("pass1"),
                     $event->req_POST("email"),
                     false
-                ));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("admin"));
-                $page->flash("Created new user");
-            } elseif ($event->get_arg(0) == "list") {
-                $t = new UserTable($database->raw_db());
-                $t->token = $user->get_auth_token();
-                $t->inputs = $event->GET;
-                if ($user->can(Permissions::DELETE_USER)) {
-                    $col = new TextColumn("email", "Email");
-                    // $t->columns[] = $col;
-                    array_splice($t->columns, 2, 0, [$col]);
-                }
-                $this->theme->display_crud("Users", $t->table($t->query()), $t->paginator());
-            } elseif ($event->get_arg(0) == "classes") {
-                $this->theme->display_user_classes(
-                    $page,
-                    UserClass::$known_classes,
-                    (new \ReflectionClass(Permissions::class))->getReflectionConstants()
-                );
-            } elseif ($event->get_arg(0) == "logout") {
-                $this->page_logout();
+                )
+            );
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("admin"));
+            $page->flash("Created new user");
+        }
+        if ($event->page_matches("user_admin/list", method: "GET")) {
+            $t = new UserTable($database->raw_db());
+            $t->token = $user->get_auth_token();
+            $t->inputs = $event->GET;
+            if ($user->can(Permissions::DELETE_USER)) {
+                $col = new TextColumn("email", "Email");
+                // $t->columns[] = $col;
+                array_splice($t->columns, 2, 0, [$col]);
             }
+            $this->theme->display_crud("Users", $t->table($t->query()), $t->paginator());
+        }
+        if ($event->page_matches("user_admin/classes", method: "GET")) {
+            $this->theme->display_user_classes(
+                $page,
+                UserClass::$known_classes,
+                (new \ReflectionClass(Permissions::class))->getReflectionConstants()
+            );
+        }
+        if ($event->page_matches("user_admin/logout", method: "GET")) {
+            // FIXME: security
+            $this->page_logout();
+        }
 
-            if (!$user->check_auth_token()) {
-                return;
-            } elseif ($event->get_arg(0) == "change_name") {
-                $input = validate_input([
-                    'id' => 'user_id,exists',
-                    'name' => 'user_name',
-                ]);
-                $duser = User::by_id($input['id']);
-                $this->change_name_wrapper($duser, $input['name']);
-            } elseif ($event->get_arg(0) == "change_pass") {
-                $input = validate_input([
-                    'id' => 'user_id,exists',
-                    'pass1' => 'password',
-                    'pass2' => 'password',
-                ]);
-                $duser = User::by_id($input['id']);
-                $this->change_password_wrapper($duser, $input['pass1'], $input['pass2']);
-            } elseif ($event->get_arg(0) == "change_email") {
-                $input = validate_input([
-                    'id' => 'user_id,exists',
-                    'address' => 'email',
-                ]);
-                $duser = User::by_id($input['id']);
-                $this->change_email_wrapper($duser, $input['address']);
-            } elseif ($event->get_arg(0) == "change_class") {
-                $input = validate_input([
-                    'id' => 'user_id,exists',
-                    'class' => 'user_class',
-                ]);
-                $duser = User::by_id($input['id']);
-                $this->change_class_wrapper($duser, $input['class']);
-            } elseif ($event->get_arg(0) == "delete_user") {
-                $this->delete_user(
-                    $page,
-                    int_escape($event->req_POST('id')),
-                    $event->get_POST("with_images") == "on",
-                    $event->get_POST("with_comments") == "on"
-                );
+        if ($event->page_matches("user_admin/change_name", method: "POST", permission: Permissions::EDIT_USER_NAME)) {
+            $input = validate_input([
+                'id' => 'user_id,exists',
+                'name' => 'user_name',
+            ]);
+            $duser = User::by_id($input['id']);
+            if ($this->user_can_edit_user($user, $duser)) {
+                $duser->set_name($input['name']);
+                $page->flash("Username changed");
+                // TODO: set login cookie if user changed themselves
+                $this->redirect_to_user($duser);
             }
+        }
+        if ($event->page_matches("user_admin/change_pass", method: "POST")) {
+            $input = validate_input([
+                'id' => 'user_id,exists',
+                'pass1' => 'password',
+                'pass2' => 'password',
+            ]);
+            $duser = User::by_id($input['id']);
+            if ($this->user_can_edit_user($user, $duser)) {
+                if ($input['pass1'] != $input['pass2']) {
+                    throw new UserErrorException("Passwords don't match");
+                } else {
+                    // FIXME: send_event()
+                    $duser->set_password($input['pass1']);
+                    if ($duser->id == $user->id) {
+                        $this->set_login_cookie($duser->name);
+                    }
+                    $page->flash("Password changed");
+                    $this->redirect_to_user($duser);
+                }
+            }
+        }
+        if ($event->page_matches("user_admin/change_email", method: "POST")) {
+            $input = validate_input([
+                'id' => 'user_id,exists',
+                'address' => 'email',
+            ]);
+            $duser = User::by_id($input['id']);
+            if ($this->user_can_edit_user($user, $duser)) {
+                $duser->set_email($input['address']);
+                $page->flash("Email changed");
+                $this->redirect_to_user($duser);
+            }
+        }
+        if ($event->page_matches("user_admin/change_class", method: "POST")) {
+            $input = validate_input([
+                'id' => 'user_id,exists',
+                'class' => 'user_class',
+            ]);
+            $duser = User::by_id($input['id']);
+            // hard-coded that only admins can change people's classes
+            if ($user->class->name == "admin") {
+                $duser->set_class($input['class']);
+                $page->flash("Class changed");
+                $this->redirect_to_user($duser);
+            }
+        }
+        if ($event->page_matches("user_admin/delete_user", method: "POST", permission: Permissions::DELETE_USER)) {
+            $this->delete_user(
+                $page,
+                int_escape($event->req_POST('id')),
+                $event->get_POST("with_images") == "on",
+                $event->get_POST("with_comments") == "on"
+            );
         }
 
         if ($event->page_matches("user")) {
@@ -267,7 +329,7 @@ class UserPage extends Extension
                 $this->theme->display_error(
                     404,
                     "No Such User",
-                    "If you typed the ID by hand, try again; if you came from a link on this ".
+                    "If you typed the ID by hand, try again; if you came from a link on this " .
                     "site, it might be bug report time..."
                 );
             }
@@ -294,13 +356,14 @@ class UserPage extends Extension
         $av = $event->display_user->get_avatar_html();
         if ($av) {
             $event->add_stats($av, 0);
-        } elseif ((
-            $config->get_string("avatar_host") == "gravatar"
-        ) &&
+        } elseif (
+            (
+                $config->get_string("avatar_host") == "gravatar"
+            ) &&
             ($user->id == $event->display_user->id)
         ) {
             $event->add_stats(
-                "No avatar? This gallery uses <a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the".
+                "No avatar? This gallery uses <a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the" .
                 "<br>same email address here and there to have your avatar synced<br>",
                 0
             );
@@ -459,8 +522,8 @@ class UserPage extends Extension
         }
         if (!preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
             throw new UserCreationException(
-                "Username contains invalid characters. Allowed characters are ".
-                    "letters, numbers, dash, and underscore"
+                "Username contains invalid characters. Allowed characters are " .
+                "letters, numbers, dash, and underscore"
             );
         }
         if (User::by_name($name)) {
@@ -472,7 +535,7 @@ class UserPage extends Extension
         if ($event->password != $event->password2) {
             throw new UserCreationException("Passwords don't match");
         }
-        if(
+        if (
             // Users who can create other users (ie, admins) are exempt
             // from the email requirement
             !$user->can(Permissions::CREATE_OTHER_USER) &&
@@ -496,8 +559,10 @@ class UserPage extends Extension
     public static function has_user_query(array $context): bool
     {
         foreach ($context as $term) {
-            if (preg_match(self::USER_SEARCH_REGEX, $term) ||
-                preg_match(self::USER_ID_SEARCH_REGEX, $term)) {
+            if (
+                preg_match(self::USER_SEARCH_REGEX, $term) ||
+                preg_match(self::USER_ID_SEARCH_REGEX, $term)
+            ) {
                 return true;
             }
         }
@@ -517,7 +582,7 @@ class UserPage extends Extension
             $duser = User::by_name($matches[2]);
             if (is_null($duser)) {
                 throw new SearchTermParseException(
-                    "Can't find the user named ".html_escape($matches[2])
+                    "Can't find the user named " . html_escape($matches[2])
                 );
             }
             $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= {$duser->id}"));
@@ -535,7 +600,7 @@ class UserPage extends Extension
         if ($event->key === HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Users";
-            $block->body = (string)$this->theme->get_help_html();
+            $block->body = (string) $this->theme->get_help_html();
             $event->add_block($block);
         }
     }
@@ -606,38 +671,6 @@ class UserPage extends Extension
         }
     }
 
-    private function page_create(PageRequestEvent $event): void
-    {
-        global $config, $page, $user;
-        if (!$user->can(Permissions::CREATE_USER)) {
-            $this->theme->display_error(403, "Account creation blocked", "Account creation is currently disabled");
-            return;
-        }
-        if (!$config->get_bool("login_signup_enabled")) {
-            $this->theme->display_signups_disabled($page);
-            return;
-        }
-
-        if ($event->method == "GET") {
-            $this->theme->display_signup_page($page);
-        } else {
-            try {
-                $uce = send_event(new UserCreationEvent(
-                    $event->req_POST('name'),
-                    $event->req_POST('pass1'),
-                    $event->req_POST('pass2'),
-                    $event->req_POST('email'),
-                    true
-                ));
-                $this->set_login_cookie($uce->username);
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("user"));
-            } catch (UserCreationException $ex) {
-                $this->theme->display_error(400, "User Creation Error", $ex->getMessage());
-            }
-        }
-    }
-
     private function create_user(UserCreationEvent $event): User
     {
         global $database;
@@ -666,7 +699,7 @@ class UserPage extends Extension
         global $config;
         $addr = get_session_ip($config);
         $hash = User::by_name($name)->passhash;
-        return md5($hash.$addr);
+        return md5($hash . $addr);
     }
 
     private function set_login_cookie(string $name): void
@@ -717,64 +750,6 @@ class UserPage extends Extension
         } else {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user/{$duser->name}"));
-        }
-    }
-
-    private function change_name_wrapper(User $duser, string $name): void
-    {
-        global $page, $user;
-
-        if ($user->can(Permissions::EDIT_USER_NAME) && $this->user_can_edit_user($user, $duser)) {
-            $duser->set_name($name);
-            $page->flash("Username changed");
-            // TODO: set login cookie if user changed themselves
-            $this->redirect_to_user($duser);
-        } else {
-            $this->theme->display_error(400, "Error", "Permission denied");
-        }
-    }
-
-    private function change_password_wrapper(User $duser, string $pass1, string $pass2): void
-    {
-        global $page, $user;
-
-        if ($this->user_can_edit_user($user, $duser)) {
-            if ($pass1 != $pass2) {
-                $this->theme->display_error(400, "Error", "Passwords don't match");
-            } else {
-                // FIXME: send_event()
-                $duser->set_password($pass1);
-
-                if ($duser->id == $user->id) {
-                    $this->set_login_cookie($duser->name);
-                }
-
-                $page->flash("Password changed");
-                $this->redirect_to_user($duser);
-            }
-        }
-    }
-
-    private function change_email_wrapper(User $duser, string $address): void
-    {
-        global $page, $user;
-
-        if ($this->user_can_edit_user($user, $duser)) {
-            $duser->set_email($address);
-
-            $page->flash("Email changed");
-            $this->redirect_to_user($duser);
-        }
-    }
-
-    private function change_class_wrapper(User $duser, string $class): void
-    {
-        global $page, $user;
-
-        if ($user->class->name == "admin") {
-            $duser->set_class($class);
-            $page->flash("Class changed");
-            $this->redirect_to_user($duser);
         }
     }
 
@@ -837,47 +812,43 @@ class UserPage extends Extension
         $page->set_heading("Error");
         $page->add_block(new NavBlock());
 
-        if (!$user->can(Permissions::DELETE_USER)) {
-            $page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
-        } else {
-            $duser = User::by_id($uid);
-            log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
+        $duser = User::by_id($uid);
+        log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
 
-            if ($with_images) {
-                log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s uploads");
-                $image_ids = $database->get_col("SELECT id FROM images WHERE owner_id = :owner_id", ["owner_id" => $uid]);
-                foreach ($image_ids as $image_id) {
-                    $image = Image::by_id((int)$image_id);
-                    if ($image) {
-                        send_event(new ImageDeletionEvent($image));
-                    }
+        if ($with_images) {
+            log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s uploads");
+            $image_ids = $database->get_col("SELECT id FROM images WHERE owner_id = :owner_id", ["owner_id" => $uid]);
+            foreach ($image_ids as $image_id) {
+                $image = Image::by_id((int) $image_id);
+                if ($image) {
+                    send_event(new ImageDeletionEvent($image));
                 }
-            } else {
-                $database->execute(
-                    "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                    ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
-                );
             }
-
-            if ($with_comments) {
-                log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s comments");
-                $database->execute("DELETE FROM comments WHERE owner_id = :owner_id", ["owner_id" => $uid]);
-            } else {
-                $database->execute(
-                    "UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                    ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
-                );
-            }
-
-            send_event(new UserDeletionEvent($uid));
-
+        } else {
             $database->execute(
-                "DELETE FROM users WHERE id = :id",
-                ["id" => $uid]
+                "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
+                ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
             );
-
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
         }
+
+        if ($with_comments) {
+            log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s comments");
+            $database->execute("DELETE FROM comments WHERE owner_id = :owner_id", ["owner_id" => $uid]);
+        } else {
+            $database->execute(
+                "UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
+                ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
+            );
+        }
+
+        send_event(new UserDeletionEvent($uid));
+
+        $database->execute(
+            "DELETE FROM users WHERE id = :id",
+            ["id" => $uid]
+        );
+
+        $page->set_mode(PageMode::REDIRECT);
+        $page->set_redirect(make_link());
     }
 }

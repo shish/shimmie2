@@ -169,261 +169,181 @@ class Artists extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("artist")) {
-            switch ($event->get_arg(0)) {
-                //*************ARTIST SECTION**************
-                case "list":
-                    {
-                        $this->get_listing($event);
-                        $this->theme->sidebar_options("neutral");
-                        break;
-                    }
-                case "new":
-                    {
-                        if (!$user->is_anonymous()) {
-                            $this->theme->new_artist_composer();
-                        } else {
-                            $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
-                        }
-                        break;
-                    }
-                case "new_artist":
-                    {
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("artist/new"));
-                        break;
-                    }
-                case "create":
-                    {
-                        if (!$user->is_anonymous()) {
-                            $newArtistID = $this->add_artist();
-                            if ($newArtistID == -1) {
-                                $this->theme->display_error(400, "Error", "Error when entering artist data.");
-                            } else {
-                                $page->set_mode(PageMode::REDIRECT);
-                                $page->set_redirect(make_link("artist/view/".$newArtistID));
-                            }
-                        } else {
-                            $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
-                        }
-                        break;
-                    }
-
-                case "view":
-                    {
-                        $artistID = int_escape($event->get_arg(1));
-                        $artist = $this->get_artist($artistID);
-                        $aliases = $this->get_alias($artist['id']);
-                        $members = $this->get_members($artist['id']);
-                        $urls = $this->get_urls($artist['id']);
-
-                        $userIsLogged = !$user->is_anonymous();
-                        $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
-
-                        $images = Search::find_images(limit: 4, tags: Tag::explode($artist['name']));
-
-                        $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
-                        /*
-                        if ($userIsLogged) {
-                            $this->theme->show_new_alias_composer($artistID);
-                            $this->theme->show_new_member_composer($artistID);
-                            $this->theme->show_new_url_composer($artistID);
-                        }
-                        */
-
-                        $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-
-                        break;
-                    }
-
-                case "edit":
-                    {
-                        $artistID = int_escape($event->get_arg(1));
-                        $artist = $this->get_artist($artistID);
-                        $aliases = $this->get_alias($artistID);
-                        $members = $this->get_members($artistID);
-                        $urls = $this->get_urls($artistID);
-
-                        if (!$user->is_anonymous()) {
-                            $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
-
-                            $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
-                            $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-                        } else {
-                            $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");
-                        }
-                        break;
-                    }
-                case "edit_artist":
-                    {
-                        $artistID = int_escape($event->req_POST('artist_id'));
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("artist/edit/".$artistID));
-                        break;
-                    }
-                case "edited":
-                    {
-                        $artistID = int_escape($event->get_POST('id'));
-                        $this->update_artist();
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("artist/view/".$artistID));
-                        break;
-                    }
-                case "nuke_artist":
-                    {
-                        $artistID = int_escape($event->req_POST('artist_id'));
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("artist/nuke/".$artistID));
-                        break;
-                    }
-                case "nuke":
-                    {
-                        $artistID = int_escape($event->get_arg(1));
-                        $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("artist/list"));
-                        break;
-                    }
-                case "add_alias":
-                    {
-                        $artistID = int_escape($event->req_POST('artist_id'));
-                        $this->theme->show_new_alias_composer($artistID);
-                        break;
-                    }
-                case "add_member":
-                    {
-                        $artistID = int_escape($event->req_POST('artist_id'));
-                        $this->theme->show_new_member_composer($artistID);
-                        break;
-                    }
-                case "add_url":
-                    {
-                        $artistID = int_escape($event->req_POST('artist_id'));
-                        $this->theme->show_new_url_composer($artistID);
-                        break;
-                    }
-                    //***********ALIAS SECTION ***********************
-                case "alias":
-                    {
-                        switch ($event->get_arg(1)) {
-                            case "add":
-                                {
-                                    $artistID = int_escape($event->req_POST('artist_id'));
-                                    $this->add_alias();
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                            case "delete":
-                                {
-                                    $aliasID = int_escape($event->get_arg(2));
-                                    $artistID = $this->get_artistID_by_aliasID($aliasID);
-                                    $this->delete_alias($aliasID);
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                            case "edit":
-                                {
-                                    $aliasID = int_escape($event->get_arg(2));
-                                    $alias = $this->get_alias_by_id($aliasID);
-                                    $this->theme->show_alias_editor($alias);
-                                    break;
-                                }
-                            case "edited":
-                                {
-                                    $this->update_alias();
-                                    $aliasID = int_escape($event->req_POST('aliasID'));
-                                    $artistID = $this->get_artistID_by_aliasID($aliasID);
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                        }
-                        break; // case: alias
-                    }
-
-                    //**************** URLS SECTION **********************
-                case "url":
-                    {
-                        switch ($event->get_arg(1)) {
-                            case "add":
-                                {
-                                    $artistID = int_escape($event->req_POST('artist_id'));
-                                    $this->add_urls();
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                            case "delete":
-                                {
-                                    $urlID = int_escape($event->get_arg(2));
-                                    $artistID = $this->get_artistID_by_urlID($urlID);
-                                    $this->delete_url($urlID);
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                            case "edit":
-                                {
-                                    $urlID = int_escape($event->get_arg(2));
-                                    $url = $this->get_url_by_id($urlID);
-                                    $this->theme->show_url_editor($url);
-                                    break;
-                                }
-                            case "edited":
-                                {
-                                    $this->update_url();
-                                    $urlID = int_escape($event->req_POST('urlID'));
-                                    $artistID = $this->get_artistID_by_urlID($urlID);
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                        }
-                        break; // case: urls
-                    }
-                    //******************* MEMBERS SECTION *********************
-                case "member":
-                    {
-                        switch ($event->get_arg(1)) {
-                            case "add":
-                                {
-                                    $artistID = int_escape($event->req_POST('artist_id'));
-                                    $this->add_members();
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                            case "delete":
-                                {
-                                    $memberID = int_escape($event->get_arg(2));
-                                    $artistID = $this->get_artistID_by_memberID($memberID);
-                                    $this->delete_member($memberID);
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                            case "edit":
-                                {
-                                    $memberID = int_escape($event->get_arg(2));
-                                    $member = $this->get_member_by_id($memberID);
-                                    $this->theme->show_member_editor($member);
-                                    break;
-                                }
-                            case "edited":
-                                {
-                                    $this->update_member();
-                                    $memberID = int_escape($event->req_POST('memberID'));
-                                    $artistID = $this->get_artistID_by_memberID($memberID);
-                                    $page->set_mode(PageMode::REDIRECT);
-                                    $page->set_redirect(make_link("artist/view/".$artistID));
-                                    break;
-                                }
-                        }
-                        break; //case: members
-                    }
+        if ($event->page_matches("artist/list")) {
+            $this->get_listing(clamp(int_escape($event->get_arg(0)), 1, null) - 1);
+            $this->theme->sidebar_options("neutral");
+        }
+        if ($event->page_matches("artist/new")) {
+            if (!$user->is_anonymous()) {
+                $this->theme->new_artist_composer();
+            } else {
+                $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
             }
+        }
+        if ($event->page_matches("artist/new_artist")) {
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/new"));
+        }
+        if ($event->page_matches("artist/create")) {
+            if (!$user->is_anonymous()) {
+                $newArtistID = $this->add_artist();
+                if ($newArtistID == -1) {
+                    $this->theme->display_error(400, "Error", "Error when entering artist data.");
+                } else {
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("artist/view/" . $newArtistID));
+                }
+            } else {
+                $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
+            }
+        }
+        if ($event->page_matches("artist/view")) {
+            $artistID = int_escape($event->get_arg(0));
+            $artist = $this->get_artist($artistID);
+            $aliases = $this->get_alias($artist['id']);
+            $members = $this->get_members($artist['id']);
+            $urls = $this->get_urls($artist['id']);
+
+            $userIsLogged = !$user->is_anonymous();
+            $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
+
+            $images = Search::find_images(limit: 4, tags: Tag::explode($artist['name']));
+
+            $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
+            /*
+            if ($userIsLogged) {
+                $this->theme->show_new_alias_composer($artistID);
+                $this->theme->show_new_member_composer($artistID);
+                $this->theme->show_new_url_composer($artistID);
+            }
+            */
+
+            $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
+        }
+        if ($event->page_matches("artist/edit")) {
+            $artistID = int_escape($event->get_arg(0));
+            $artist = $this->get_artist($artistID);
+            $aliases = $this->get_alias($artistID);
+            $members = $this->get_members($artistID);
+            $urls = $this->get_urls($artistID);
+
+            if (!$user->is_anonymous()) {
+                $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
+
+                $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
+                $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
+            } else {
+                $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");
+            }
+        }
+        if ($event->page_matches("artist/edit_artist")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/edit/" . $artistID));
+        }
+        if ($event->page_matches("artist/edited")) {
+            $artistID = int_escape($event->get_POST('id'));
+            $this->update_artist();
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/nuke_artist")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/nuke/" . $artistID));
+        }
+        if ($event->page_matches("artist/nuke")) {
+            $artistID = int_escape($event->get_arg(0));
+            $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/list"));
+        }
+        if ($event->page_matches("artist/add_alias")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $this->theme->show_new_alias_composer($artistID);
+        }
+        if ($event->page_matches("artist/add_member")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $this->theme->show_new_member_composer($artistID);
+        }
+        if ($event->page_matches("artist/add_url")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $this->theme->show_new_url_composer($artistID);
+        }
+        if ($event->page_matches("artist/alias/add")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $this->add_alias();
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/alias/delete")) {
+            $aliasID = int_escape($event->get_arg(0));
+            $artistID = $this->get_artistID_by_aliasID($aliasID);
+            $this->delete_alias($aliasID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/alias/edit")) {
+            $aliasID = int_escape($event->get_arg(0));
+            $alias = $this->get_alias_by_id($aliasID);
+            $this->theme->show_alias_editor($alias);
+        }
+        if ($event->page_matches("artist/alias/edited")) {
+            $this->update_alias();
+            $aliasID = int_escape($event->req_POST('aliasID'));
+            $artistID = $this->get_artistID_by_aliasID($aliasID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/url/add")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $this->add_urls();
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/url/delete")) {
+            $urlID = int_escape($event->get_arg(0));
+            $artistID = $this->get_artistID_by_urlID($urlID);
+            $this->delete_url($urlID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/url/edit")) {
+            $urlID = int_escape($event->get_arg(0));
+            $url = $this->get_url_by_id($urlID);
+            $this->theme->show_url_editor($url);
+        }
+        if ($event->page_matches("artist/url/edited")) {
+            $this->update_url();
+            $urlID = int_escape($event->req_POST('urlID'));
+            $artistID = $this->get_artistID_by_urlID($urlID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/member/add")) {
+            $artistID = int_escape($event->req_POST('artist_id'));
+            $this->add_members();
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/member/delete")) {
+            $memberID = int_escape($event->get_arg(0));
+            $artistID = $this->get_artistID_by_memberID($memberID);
+            $this->delete_member($memberID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
+        }
+        if ($event->page_matches("artist/member/edit")) {
+            $memberID = int_escape($event->get_arg(0));
+            $member = $this->get_member_by_id($memberID);
+            $this->theme->show_member_editor($member);
+        }
+        if ($event->page_matches("artist/member/edited")) {
+            $this->update_member();
+            $memberID = int_escape($event->req_POST('memberID'));
+            $artistID = $this->get_artistID_by_memberID($memberID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("artist/view/" . $artistID));
         }
     }
 
@@ -468,37 +388,37 @@ class Artists extends Extension
     private function get_artistID_by_url(string $url): int
     {
         global $database;
-        return (int)$database->get_one("SELECT artist_id FROM artist_urls WHERE url = :url", ['url' => $url]);
+        return (int) $database->get_one("SELECT artist_id FROM artist_urls WHERE url = :url", ['url' => $url]);
     }
 
     private function get_artistID_by_memberName(string $member): int
     {
         global $database;
-        return (int)$database->get_one("SELECT artist_id FROM artist_members WHERE name = :name", ['name' => $member]);
+        return (int) $database->get_one("SELECT artist_id FROM artist_members WHERE name = :name", ['name' => $member]);
     }
 
     private function get_artistName_by_artistID(int $artistID): string
     {
         global $database;
-        return (string)$database->get_one("SELECT name FROM artists WHERE id = :id", ['id' => $artistID]);
+        return (string) $database->get_one("SELECT name FROM artists WHERE id = :id", ['id' => $artistID]);
     }
 
     private function get_artistID_by_aliasID(int $aliasID): int
     {
         global $database;
-        return (int)$database->get_one("SELECT artist_id FROM artist_alias WHERE id = :id", ['id' => $aliasID]);
+        return (int) $database->get_one("SELECT artist_id FROM artist_alias WHERE id = :id", ['id' => $aliasID]);
     }
 
     private function get_artistID_by_memberID(int $memberID): int
     {
         global $database;
-        return (int)$database->get_one("SELECT artist_id FROM artist_members WHERE id = :id", ['id' => $memberID]);
+        return (int) $database->get_one("SELECT artist_id FROM artist_members WHERE id = :id", ['id' => $memberID]);
     }
 
     private function get_artistID_by_urlID(int $urlID): int
     {
         global $database;
-        return (int)$database->get_one("SELECT artist_id FROM artist_urls WHERE id = :id", ['id' => $urlID]);
+        return (int) $database->get_one("SELECT artist_id FROM artist_urls WHERE id = :id", ['id' => $urlID]);
     }
 
     private function delete_alias(int $aliasID): void
@@ -818,7 +738,7 @@ class Artists extends Extension
         );
 
         $num = count($result);
-        for ($i = 0 ; $i < $num ; $i++) {
+        for ($i = 0; $i < $num; $i++) {
             $result[$i]["name"] = stripslashes($result[$i]["name"]);
         }
 
@@ -837,7 +757,7 @@ class Artists extends Extension
         );
 
         $num = count($result);
-        for ($i = 0 ; $i < $num ; $i++) {
+        for ($i = 0; $i < $num; $i++) {
             $result[$i]["url"] = stripslashes($result[$i]["url"]);
         }
 
@@ -847,7 +767,7 @@ class Artists extends Extension
     private function get_artist_id(string $name): int
     {
         global $database;
-        return (int)$database->get_one(
+        return (int) $database->get_one(
             "SELECT id FROM artists WHERE name = :name",
             ['name' => $name]
         );
@@ -857,7 +777,7 @@ class Artists extends Extension
     {
         global $database;
 
-        return (int)$database->get_one(
+        return (int) $database->get_one(
             "SELECT artist_id FROM artist_alias WHERE alias = :alias",
             ['alias' => $alias]
         );
@@ -873,60 +793,59 @@ class Artists extends Extension
     }
 
     /*
-    * HERE WE GET THE LIST OF ALL ARTIST WITH PAGINATION
-    */
-    private function get_listing(PageRequestEvent $event): void
+     * HERE WE GET THE LIST OF ALL ARTIST WITH PAGINATION
+     */
+    private function get_listing(int $pageNumber): void
     {
         global $config, $database;
 
-        $pageNumber = clamp(int_escape($event->get_arg(1)), 1, null) - 1;
         $artistsPerPage = $config->get_int("artistsPerPage");
 
         $listing = $database->get_all(
             "
-                        (
-                            SELECT a.id, a.user_id, a.name, u.name AS user_name, COALESCE(t.count, 0) AS posts
-                                , 'artist' as type, a.id AS artist_id, a.name AS artist_name, a.updated
-                            FROM artists AS a
-                                INNER JOIN users AS u
-                                    ON a.user_id = u.id
-                                LEFT OUTER JOIN tags AS t
-                                    ON a.name = t.tag
-                            GROUP BY a.id, a.user_id, a.name, u.name
-                            ORDER BY a.updated DESC
-                        )
+                (
+                    SELECT a.id, a.user_id, a.name, u.name AS user_name, COALESCE(t.count, 0) AS posts
+                        , 'artist' as type, a.id AS artist_id, a.name AS artist_name, a.updated
+                    FROM artists AS a
+                        INNER JOIN users AS u
+                            ON a.user_id = u.id
+                        LEFT OUTER JOIN tags AS t
+                            ON a.name = t.tag
+                    GROUP BY a.id, a.user_id, a.name, u.name
+                    ORDER BY a.updated DESC
+                )
 
-                        UNION
+                UNION
 
-                        (
-                            SELECT aa.id, aa.user_id, aa.alias AS name, u.name AS user_name, COALESCE(t.count, 0) AS posts
-                                , 'alias' as type, a.id AS artist_id, a.name AS artist_name, aa.updated
-                            FROM artist_alias AS aa
-                                INNER JOIN users AS u
-                                    ON aa.user_id = u.id
-                                INNER JOIN artists AS a
-                                    ON aa.artist_id = a.id
-                                LEFT OUTER JOIN tags AS t
-                                    ON aa.alias = t.tag
-                            GROUP BY aa.id, a.user_id, aa.alias, u.name, a.id, a.name
-                            ORDER BY aa.updated DESC
-                        )
+                (
+                    SELECT aa.id, aa.user_id, aa.alias AS name, u.name AS user_name, COALESCE(t.count, 0) AS posts
+                        , 'alias' as type, a.id AS artist_id, a.name AS artist_name, aa.updated
+                    FROM artist_alias AS aa
+                        INNER JOIN users AS u
+                            ON aa.user_id = u.id
+                        INNER JOIN artists AS a
+                            ON aa.artist_id = a.id
+                        LEFT OUTER JOIN tags AS t
+                            ON aa.alias = t.tag
+                    GROUP BY aa.id, a.user_id, aa.alias, u.name, a.id, a.name
+                    ORDER BY aa.updated DESC
+                )
 
-                        UNION
+                UNION
 
-                        (
-                            SELECT m.id, m.user_id, m.name AS name, u.name AS user_name, COALESCE(t.count, 0) AS posts
-                                , 'member' AS type, a.id AS artist_id, a.name AS artist_name, m.updated
-                            FROM artist_members AS m
-                                INNER JOIN users AS u
-                                    ON m.user_id = u.id
-                                INNER JOIN artists AS a
-                                    ON m.artist_id = a.id
-                                LEFT OUTER JOIN tags AS t
-                                    ON m.name = t.tag
-                            GROUP BY m.id, m.user_id, m.name, u.name, a.id, a.name
-                            ORDER BY m.updated DESC
-                        )
+                (
+                    SELECT m.id, m.user_id, m.name AS name, u.name AS user_name, COALESCE(t.count, 0) AS posts
+                        , 'member' AS type, a.id AS artist_id, a.name AS artist_name, m.updated
+                    FROM artist_members AS m
+                        INNER JOIN users AS u
+                            ON m.user_id = u.id
+                        INNER JOIN artists AS a
+                            ON m.artist_id = a.id
+                        LEFT OUTER JOIN tags AS t
+                            ON m.name = t.tag
+                    GROUP BY m.id, m.user_id, m.name, u.name, a.id, a.name
+                    ORDER BY m.updated DESC
+                )
                 ORDER BY updated DESC
                 LIMIT :offset, :limit
             ",
@@ -938,7 +857,7 @@ class Artists extends Extension
 
         $number_of_listings = count($listing);
 
-        for ($i = 0 ; $i < $number_of_listings ; $i++) {
+        for ($i = 0; $i < $number_of_listings; $i++) {
             $listing[$i]["name"] = stripslashes($listing[$i]["name"]);
             $listing[$i]["user_name"] = stripslashes($listing[$i]["user_name"]);
             $listing[$i]["artist_name"] = stripslashes($listing[$i]["artist_name"]);
@@ -953,14 +872,14 @@ class Artists extends Extension
                         ON a.id = aa.artist_id
             ");
 
-        $totalPages = (int)ceil($count / $artistsPerPage);
+        $totalPages = (int) ceil($count / $artistsPerPage);
 
         $this->theme->list_artists($listing, $pageNumber + 1, $totalPages);
     }
 
     /*
-    * HERE WE ADD AN ALIAS
-    */
+     * HERE WE ADD AN ALIAS
+     */
     private function add_urls(): void
     {
         global $user;
@@ -1081,7 +1000,7 @@ class Artists extends Extension
         ", ['artist_id' => $artistID]);
 
         $rc = count($result);
-        for ($i = 0 ; $i < $rc ; $i++) {
+        for ($i = 0; $i < $rc; $i++) {
             $result[$i]["alias_name"] = stripslashes($result[$i]["alias_name"]);
         }
         return $result;

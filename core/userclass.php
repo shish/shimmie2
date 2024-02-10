@@ -188,7 +188,7 @@ new UserClass("admin", "base", [
     Permissions::BULK_EDIT_VOTE => true,
     Permissions::EDIT_OTHER_VOTE => true,
     Permissions::CREATE_VOTE => true,
-    Permissions::VIEW_SYSINTO => true,
+    Permissions::VIEW_SYSINFO => true,
 
     Permissions::HELLBANNED => false,
     Permissions::VIEW_HELLBANNED => true,

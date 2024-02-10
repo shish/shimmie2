@@ -146,22 +146,18 @@ class TagEdit extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $user, $page;
-        if ($event->page_matches("tag_edit")) {
+        if ($event->page_matches("tag_edit", method: "POST", permission: Permissions::MASS_TAG_EDIT)) {
             if ($event->get_arg(0) == "replace") {
-                if ($user->can(Permissions::MASS_TAG_EDIT)) {
-                    $search = $event->req_POST('search');
-                    $replace = $event->req_POST('replace');
-                    $this->mass_tag_edit($search, $replace, true);
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("admin"));
-                }
+                $search = $event->req_POST('search');
+                $replace = $event->req_POST('replace');
+                $this->mass_tag_edit($search, $replace, true);
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("admin"));
             }
             if ($event->get_arg(0) == "mass_source_set") {
-                if ($user->can(Permissions::MASS_TAG_EDIT)) {
-                    $this->mass_source_edit($event->req_POST('tags'), $event->req_POST('source'));
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(search_link());
-                }
+                $this->mass_source_edit($event->req_POST('tags'), $event->req_POST('source'));
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(search_link());
             }
         }
     }

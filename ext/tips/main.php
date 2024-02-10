@@ -67,38 +67,32 @@ class Tips extends Extension
 
         $this->getTip();
 
-        if ($event->page_matches("tips") && $user->can(Permissions::TIPS_ADMIN)) {
-            switch ($event->get_arg(0)) {
-                case "list":
-                    $this->manageTips();
-                    $this->getAll();
-                    break;
-                case "save":
-                    if ($user->check_auth_token()) {
-                        send_event(new CreateTipEvent(
-                            $event->get_POST("enable") == "on",
-                            $event->req_POST("image"),
-                            $event->req_POST("text")
-                        ));
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("tips/list"));
-                    }
-                    break;
-                case "status":
-                    // FIXME: HTTP GET CSRF
-                    $tipID = int_escape($event->get_arg(1));
-                    $this->setStatus($tipID);
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("tips/list"));
-                    break;
-                case "delete":
-                    // FIXME: HTTP GET CSRF
-                    $tipID = int_escape($event->get_arg(1));
-                    send_event(new DeleteTipEvent($tipID));
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("tips/list"));
-                    break;
-            }
+        if ($event->page_matches("tips/list", permission: Permissions::TIPS_ADMIN)) {
+            $this->manageTips();
+            $this->getAll();
+        }
+        if ($event->page_matches("tips/save", method: "POST", permission: Permissions::TIPS_ADMIN)) {
+            send_event(new CreateTipEvent(
+                $event->get_POST("enable") == "on",
+                $event->req_POST("image"),
+                $event->req_POST("text")
+            ));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("tips/list"));
+        }
+        if ($event->page_matches("tips/status", permission: Permissions::TIPS_ADMIN)) {
+            // FIXME: HTTP GET CSRF
+            $tipID = int_escape($event->get_arg(1));
+            $this->setStatus($tipID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("tips/list"));
+        }
+        if ($event->page_matches("tips/delete", permission: Permissions::TIPS_ADMIN)) {
+            // FIXME: HTTP GET CSRF
+            $tipID = int_escape($event->get_arg(1));
+            send_event(new DeleteTipEvent($tipID));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("tips/list"));
         }
     }
 

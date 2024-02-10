@@ -16,10 +16,8 @@ class ET extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $user;
-        if ($event->page_matches("system_info")) {
-            if ($user->can(Permissions::VIEW_SYSINTO)) {
-                $this->theme->display_info_page($this->to_yaml($this->get_info()));
-            }
+        if ($event->page_matches("system_info", permission: Permissions::VIEW_SYSINFO)) {
+            $this->theme->display_info_page($this->to_yaml($this->get_info()));
         }
     }
 
@@ -27,7 +25,7 @@ class ET extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::VIEW_SYSINTO)) {
+            if ($user->can(Permissions::VIEW_SYSINFO)) {
                 $event->add_nav_link("system_info", new Link('system_info'), "System Info", null, 10);
             }
         }
@@ -36,7 +34,7 @@ class ET extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::VIEW_SYSINTO)) {
+        if ($user->can(Permissions::VIEW_SYSINFO)) {
             $event->add_link("System Info", make_link("system_info"), 99);
         }
     }

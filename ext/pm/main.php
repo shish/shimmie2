@@ -227,65 +227,48 @@ class PrivMsg extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $database, $page, $user;
-        if ($event->page_matches("pm")) {
-            switch ($event->get_arg(0)) {
-                case "read":
-                    if ($user->can(Permissions::READ_PM)) {
-                        $pm_id = int_escape($event->get_arg(1));
-                        $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
-                        if (is_null($pm)) {
-                            $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
-                        } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
-                            $from_user = User::by_id((int)$pm["from_id"]);
-                            if ($pm["to_id"] == $user->id) {
-                                $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
-                                $cache->delete("pm-count-{$user->id}");
-                            }
-                            $pmo = PM::from_row($pm);
-                            $this->theme->display_message($page, $from_user, $user, $pmo);
-                            if($user->can(Permissions::SEND_PM)) {
-                                $this->theme->display_composer($page, $user, $from_user, "Re: ".$pmo->subject);
-                            }
-                        } else {
-                            $this->theme->display_permission_denied();
-                        }
-                    }
-                    break;
-                case "delete":
-                    if ($user->can(Permissions::READ_PM)) {
-                        if ($user->check_auth_token()) {
-                            $pm_id = int_escape($event->get_POST("pm_id"));
-                            $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
-                            if (is_null($pm)) {
-                                $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
-                            } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
-                                $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
-                                $cache->delete("pm-count-{$user->id}");
-                                log_info("pm", "Deleted PM #$pm_id", "PM deleted");
-                                $page->set_mode(PageMode::REDIRECT);
-                                $page->set_redirect(referer_or(make_link()));
-                            }
-                        }
-                    }
-                    break;
-                case "send":
-                    if ($user->can(Permissions::SEND_PM)) {
-                        if ($user->check_auth_token()) {
-                            $to_id = int_escape($event->get_POST("to_id"));
-                            $from_id = $user->id;
-                            $subject = $event->req_POST("subject");
-                            $message = $event->req_POST("message");
-                            send_event(new SendPMEvent(new PM($from_id, get_real_ip(), $to_id, $subject, $message)));
-                            $page->flash("PM sent");
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(referer_or(make_link()));
-                        }
-                    }
-                    break;
-                default:
-                    $this->theme->display_error(400, "Invalid action", "That's not something you can do with a PM");
-                    break;
+        if ($event->page_matches("pm/read", permission: Permissions::READ_PM)) {
+            $pm_id = int_escape($event->get_arg(1));
+            $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
+            if (is_null($pm)) {
+                $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
+            } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
+                $from_user = User::by_id((int)$pm["from_id"]);
+                if ($pm["to_id"] == $user->id) {
+                    $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
+                    $cache->delete("pm-count-{$user->id}");
+                }
+                $pmo = PM::from_row($pm);
+                $this->theme->display_message($page, $from_user, $user, $pmo);
+                if($user->can(Permissions::SEND_PM)) {
+                    $this->theme->display_composer($page, $user, $from_user, "Re: ".$pmo->subject);
+                }
+            } else {
+                throw new PermissionDeniedException("You do not have permission to view this PM");
             }
+        }
+        if ($event->page_matches("pm/delete", method: "POST", permission: Permissions::READ_PM)) {
+            $pm_id = int_escape($event->req_POST("pm_id"));
+            $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
+            if (is_null($pm)) {
+                $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
+            } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
+                $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
+                $cache->delete("pm-count-{$user->id}");
+                log_info("pm", "Deleted PM #$pm_id", "PM deleted");
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(referer_or(make_link()));
+            }
+        }
+        if ($event->page_matches("pm/send", method: "POST", permission: Permissions::SEND_PM)) {
+            $to_id = int_escape($event->req_POST("to_id"));
+            $from_id = $user->id;
+            $subject = $event->req_POST("subject");
+            $message = $event->req_POST("message");
+            send_event(new SendPMEvent(new PM($from_id, get_real_ip(), $to_id, $subject, $message)));
+            $page->flash("PM sent");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(referer_or(make_link()));
         }
     }
 

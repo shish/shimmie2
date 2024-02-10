@@ -67,13 +67,13 @@ class Favorites extends Extension
             return;
         } // FIXME: proper permissions
 
-        if ($event->authed_page_matches("favourite/add")) {
+        if ($event->page_matches("favourite/add", method: "POST")) {
             $image_id = int_escape($event->get_arg(0));
             send_event(new FavoriteSetEvent($image_id, $user, true));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
-        if ($event->authed_page_matches("favourite/remove")) {
+        if ($event->page_matches("favourite/remove", method: "POST")) {
             $image_id = int_escape($event->get_arg(0));
             send_event(new FavoriteSetEvent($image_id, $user, false));
             $page->set_mode(PageMode::REDIRECT);

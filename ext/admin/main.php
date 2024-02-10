@@ -49,29 +49,22 @@ class AdminPage extends Extension
     {
         global $database, $page, $user;
 
-        if ($event->page_matches("admin")) {
-            if (!$user->can(Permissions::MANAGE_ADMINTOOLS)) {
-                $this->theme->display_permission_denied();
+        if ($event->page_matches("admin", permission: Permissions::MANAGE_ADMINTOOLS)) {
+            if ($event->count_args() == 0) {
+                send_event(new AdminBuildingEvent($page));
             } else {
-                if ($event->count_args() == 0) {
-                    send_event(new AdminBuildingEvent($page));
-                } else {
-                    $action = $event->get_arg(0);
-                    $aae = new AdminActionEvent($action, $event->POST);
+                $action = $event->get_arg(0);
+                $aae = new AdminActionEvent($action, $event->POST);
 
-                    if ($user->check_auth_token()) {
-                        log_info("admin", "Util: $action");
-                        shm_set_timeout(null);
-                        $database->set_timeout(null);
-                        send_event($aae);
-                    } else {
-                        throw new SCoreException("Invalid CSRF token");
-                    }
+                $user->ensure_authed();
+                log_info("admin", "Util: $action");
+                shm_set_timeout(null);
+                $database->set_timeout(null);
+                send_event($aae);
 
-                    if ($aae->redirect) {
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("admin"));
-                    }
+                if ($aae->redirect) {
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("admin"));
                 }
             }
         }

@@ -40,16 +40,14 @@ class Approval extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("approve_image") && $user->can(Permissions::APPROVE_IMAGE)) {
-            // Try to get the image ID
+        if ($event->page_matches("approve_image", method: "POST", permission: Permissions::APPROVE_IMAGE)) {
             $image_id = int_escape(null_throws($event->get_arg(0)));
             self::approve_image($image_id);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/" . $image_id));
         }
 
-        if ($event->page_matches("disapprove_image") && $user->can(Permissions::APPROVE_IMAGE)) {
-            // Try to get the image ID
+        if ($event->page_matches("disapprove_image", method: "POST", permission: Permissions::APPROVE_IMAGE)) {
             $image_id = int_escape(null_throws($event->get_arg(0)));
             self::disapprove_image($image_id);
             $page->set_mode(PageMode::REDIRECT);
