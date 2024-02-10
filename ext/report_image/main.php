@@ -53,27 +53,19 @@ class ReportImage extends Extension
         global $page, $user;
         if ($event->page_matches("image_report")) {
             if ($event->get_arg(0) == "add") {
-                if (!empty($_POST['image_id']) && !empty($_POST['reason'])) {
-                    $image_id = int_escape($_POST['image_id']);
-                    send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $_POST['reason'])));
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/$image_id"));
-                } else {
-                    $this->theme->display_error(500, "Missing input", "Missing post ID or report reason");
-                }
+                $image_id = int_escape($event->req_POST('image_id'));
+                send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $event->req_POST('reason'))));
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("post/view/$image_id"));
             } elseif ($event->get_arg(0) == "remove") {
-                if (!empty($_POST['id'])) {
-                    if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
-                        send_event(new RemoveReportedImageEvent(int_escape($_POST['id'])));
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("image_report/list"));
-                    }
-                } else {
-                    $this->theme->display_error(500, "Missing input", "Missing post ID");
+                if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
+                    send_event(new RemoveReportedImageEvent(int_escape($event->req_POST('id'))));
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("image_report/list"));
                 }
             } elseif ($event->get_arg(0) == "remove_reports_by" && $user->check_auth_token()) {
                 if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
-                    $this->delete_reports_by(int_escape($_POST['user_id']));
+                    $this->delete_reports_by(int_escape($event->req_POST('user_id')));
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link());
                 }

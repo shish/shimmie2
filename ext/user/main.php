@@ -171,7 +171,7 @@ class UserPage extends Extension
 
         if ($event->page_matches("user_admin")) {
             if ($event->get_arg(0) == "login") {
-                if ($event->get_POST('user') && $event->get_POST('pass')) {
+                if ($event->method == "POST") {
                     $this->page_login($event->req_POST('user'), $event->req_POST('pass'));
                 } else {
                     $this->theme->display_login_page($page);
@@ -179,7 +179,7 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "recover") {
                 $this->page_recover($event->req_POST('username'));
             } elseif ($event->get_arg(0) == "create") {
-                $this->page_create();
+                $this->page_create($event);
             } elseif ($event->get_arg(0) == "create_other") {
                 send_event(new UserCreationEvent(
                     $event->req_POST("name"),
@@ -245,6 +245,7 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "delete_user") {
                 $this->delete_user(
                     $page,
+                    int_escape($event->req_POST('id')),
                     $event->get_POST("with_images") == "on",
                     $event->get_POST("with_comments") == "on"
                 );
@@ -556,11 +557,6 @@ class UserPage extends Extension
     {
         global $config, $page;
 
-        if (empty($name) || empty($pass)) {
-            $this->theme->display_error(400, "Error", "Username or password left blank");
-            return;
-        }
-
         $duser = User::by_name_and_pass($name, $pass);
         if (!is_null($duser)) {
             send_event(new UserLoginEvent($duser));
@@ -610,21 +606,29 @@ class UserPage extends Extension
         }
     }
 
-    private function page_create(): void
+    private function page_create(PageRequestEvent $event): void
     {
         global $config, $page, $user;
         if (!$user->can(Permissions::CREATE_USER)) {
             $this->theme->display_error(403, "Account creation blocked", "Account creation is currently disabled");
             return;
         }
-
         if (!$config->get_bool("login_signup_enabled")) {
             $this->theme->display_signups_disabled($page);
-        } elseif (!isset($_POST['name'])) {
+            return;
+        }
+
+        if ($event->method == "GET") {
             $this->theme->display_signup_page($page);
         } else {
             try {
-                $uce = send_event(new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['pass2'], $_POST['email'], true));
+                $uce = send_event(new UserCreationEvent(
+                    $event->req_POST('name'),
+                    $event->req_POST('pass1'),
+                    $event->req_POST('pass2'),
+                    $event->req_POST('email'),
+                    true
+                ));
                 $this->set_login_cookie($uce->username);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
@@ -825,7 +829,7 @@ class UserPage extends Extension
 				ORDER BY MAX(date_sent) DESC", ["username" => $duser->name]);
     }
 
-    private function delete_user(Page $page, bool $with_images = false, bool $with_comments = false): void
+    private function delete_user(Page $page, int $uid, bool $with_images = false, bool $with_comments = false): void
     {
         global $user, $config, $database;
 
@@ -836,13 +840,12 @@ class UserPage extends Extension
         if (!$user->can(Permissions::DELETE_USER)) {
             $page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
         } else {
-            $uid = int_escape($_POST['id']);
             $duser = User::by_id($uid);
             log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
 
             if ($with_images) {
                 log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s uploads");
-                $image_ids = $database->get_col("SELECT id FROM images WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
+                $image_ids = $database->get_col("SELECT id FROM images WHERE owner_id = :owner_id", ["owner_id" => $uid]);
                 foreach ($image_ids as $image_id) {
                     $image = Image::by_id((int)$image_id);
                     if ($image) {

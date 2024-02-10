@@ -1,6 +1,7 @@
 backup
 data
 .docker/entrypoint.d/config.json
+.sl
 
 #Composer
 composer.phar

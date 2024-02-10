@@ -129,24 +129,11 @@ class ResizeImage extends Extension
                 $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
                 /* Check if options were given to resize an image. */
-                if (isset($_POST['resize_width']) || isset($_POST['resize_height'])) {
-                    /* get options */
-
-                    $width = $height = 0;
-
-                    if (isset($_POST['resize_width'])) {
-                        $width = int_escape($_POST['resize_width']);
-                    }
-                    if (isset($_POST['resize_height'])) {
-                        $height = int_escape($_POST['resize_height']);
-                    }
-
-                    /* Attempt to resize the image */
+                $width = int_escape($event->get_POST('resize_width'));
+                $height = int_escape($event->get_POST('resize_height'));
+                if ($width || $height) {
                     try {
                         $this->resize_image($image, $width, $height);
-
-                        //$this->theme->display_resize_page($page, $image_id);
-
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageResizeException $e) {

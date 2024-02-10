@@ -129,18 +129,16 @@ class S3 extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
-        if ($event->page_matches("s3/sync")) {
-            if ($user->check_auth_token()) {
-                if ($user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id'])) {
-                    $id = int_escape($_POST['image_id']);
-                    if ($id > 0) {
-                        $this->sync_post(Image::by_id($id));
-                        log_info("s3", "Manual resync for >>$id", "File re-sync'ed");
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("post/view/$id"));
-                    }
-                }
-            }
+        if (
+            $event->page_matches("s3/sync") &&
+            $user->can(Permissions::DELETE_IMAGE) &&
+            $user->check_auth_token()
+        ) {
+            $id = int_escape($event->req_POST('image_id'));
+            $this->sync_post(Image::by_id($id));
+            log_info("s3", "Manual resync for >>$id", "File re-sync'ed");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$id"));
         }
     }
 

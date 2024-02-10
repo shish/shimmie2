@@ -236,18 +236,18 @@ class Upload extends Extension
                 });
                 foreach ($files as $name => $file) {
                     $slot = int_escape(substr($name, 4));
-                    $tags = $this->tags_for_upload_slot($slot);
-                    $source = $this->source_for_upload_slot($slot);
+                    $tags = $this->tags_for_upload_slot($event->POST, $slot);
+                    $source = $this->source_for_upload_slot($event->POST, $slot);
                     $results = array_merge($results, $this->try_upload($file, $tags, $source));
                 }
 
-                $urls = array_filter($_POST, function ($value, $key) {
-                    return str_starts_with($key, "url") && strlen($value) > 0;
+                $urls = array_filter($event->POST, function ($value, $key) {
+                    return str_starts_with($key, "url") && is_string($value) && strlen($value) > 0;
                 }, ARRAY_FILTER_USE_BOTH);
                 foreach ($urls as $name => $value) {
                     $slot = int_escape(substr($name, 3));
-                    $tags = $this->tags_for_upload_slot($slot);
-                    $source = $this->source_for_upload_slot($slot);
+                    $tags = $this->tags_for_upload_slot($event->POST, $slot);
+                    $source = $this->source_for_upload_slot($event->POST, $slot);
                     $results = array_merge($results, $this->try_transload($value, $tags, $source));
                 }
 
@@ -257,30 +257,34 @@ class Upload extends Extension
     }
 
     /**
+     * @param array<string, mixed> $params
      * @return string[]
      */
-    private function tags_for_upload_slot(int $id): array
+    private function tags_for_upload_slot(array $params, int $id): array
     {
         # merge then explode, not explode then merge - else
         # one of the merges may create a surplus "tagme"
         return Tag::explode(
-            ($_POST["tags"] ?? "") .
+            ($params["tags"] ?? "") .
             " " .
-            ($_POST["tags$id"] ?? "")
+            ($params["tags$id"] ?? "")
         );
     }
 
-    private function source_for_upload_slot(int $id): ?string
+    /**
+     * @param array<string, mixed> $params
+     */
+    private function source_for_upload_slot(array $params, int $id): ?string
     {
         global $config;
-        if(!empty($_POST["source$id"])) {
-            return $_POST["source$id"];
+        if(!empty($params["source$id"])) {
+            return $params["source$id"];
         }
-        if(!empty($_POST['source'])) {
-            return $_POST['source'];
+        if(!empty($params['source'])) {
+            return $params['source'];
         }
-        if($config->get_bool(UploadConfig::TLSOURCE) && !empty($_POST["url$id"])) {
-            return $_POST["url$id"];
+        if($config->get_bool(UploadConfig::TLSOURCE) && !empty($params["url$id"])) {
+            return $params["url$id"];
         }
         return null;
     }

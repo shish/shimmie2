@@ -25,8 +25,7 @@ class TagToolsTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Post $image_id_1: testcase$ts");
 
         // Change
-        $_POST["tag"] = "TestCase$ts";
-        send_event(new AdminActionEvent('set_tag_case', []));
+        send_event(new AdminActionEvent('set_tag_case', ["tag" => "TestCase$ts"]));
 
         // Validate change
         $this->get_page("post/view/$image_id_1");

@@ -208,25 +208,17 @@ class TranscodeImage extends Extension
         global $page, $user;
 
         if ($event->page_matches("transcode") && $user->can(Permissions::EDIT_FILES)) {
-            if ($event->count_args() >= 1) {
-                $image_id = int_escape($event->get_arg(0));
-            } elseif (isset($_POST['image_id'])) {
-                $image_id =  int_escape($_POST['image_id']);
-            } else {
-                throw new ImageTranscodeException("Can not resize Image: No valid Post ID given.");
-            }
+            $image_id = int_escape($event->get_arg(0));
             $image_obj = Image::by_id($image_id);
             if (is_null($image_obj)) {
                 $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
-                if (isset($_POST['transcode_mime'])) {
-                    try {
-                        $this->transcode_and_replace_image($image_obj, $_POST['transcode_mime']);
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("post/view/".$image_id));
-                    } catch (ImageTranscodeException $e) {
-                        $this->theme->display_transcode_error($page, "Error Transcoding", $e->getMessage());
-                    }
+                try {
+                    $this->transcode_and_replace_image($image_obj, $event->req_POST('transcode_mime'));
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("post/view/".$image_id));
+                } catch (ImageTranscodeException $e) {
+                    $this->theme->display_transcode_error($page, "Error Transcoding", $e->getMessage());
                 }
             }
         }

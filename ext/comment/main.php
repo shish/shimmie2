@@ -204,13 +204,13 @@ class CommentList extends Extension
         if ($event->page_matches("comment")) {
             switch ($event->get_arg(0)) {
                 case "add":
-                    $this->onPageRequest_add();
+                    $this->onPageRequest_add($event);
                     break;
                 case "delete":
                     $this->onPageRequest_delete($event);
                     break;
                 case "bulk_delete":
-                    $this->onPageRequest_bulk_delete();
+                    $this->onPageRequest_bulk_delete($event);
                     break;
                 case "list":
                     $this->onPageRequest_list($event);
@@ -229,18 +229,16 @@ class CommentList extends Extension
         $event->add_disallow("comment");
     }
 
-    private function onPageRequest_add(): void
+    private function onPageRequest_add(PageRequestEvent $event): void
     {
         global $user, $page;
-        if (isset($_POST['image_id']) && isset($_POST['comment'])) {
-            try {
-                $i_iid = int_escape($_POST['image_id']);
-                send_event(new CommentPostingEvent(int_escape($_POST['image_id']), $user, $_POST['comment']));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
-            } catch (CommentPostingException $ex) {
-                $this->theme->display_error(403, "Comment Blocked", $ex->getMessage());
-            }
+        try {
+            $i_iid = int_escape($event->req_POST('image_id'));
+            send_event(new CommentPostingEvent($i_iid, $user, $event->req_POST('comment')));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
+        } catch (CommentPostingException $ex) {
+            $this->theme->display_error(403, "Comment Blocked", $ex->getMessage());
         }
     }
 
@@ -260,11 +258,11 @@ class CommentList extends Extension
         }
     }
 
-    private function onPageRequest_bulk_delete(): void
+    private function onPageRequest_bulk_delete(PageRequestEvent $event): void
     {
         global $user, $database, $page;
-        if ($user->can(Permissions::DELETE_COMMENT) && !empty($_POST["ip"])) {
-            $ip = $_POST['ip'];
+        if ($user->can(Permissions::DELETE_COMMENT)) {
+            $ip = $event->req_POST('ip');
 
             $comment_ids = $database->get_col("
 				SELECT id
@@ -552,11 +550,6 @@ class CommentList extends Extension
         return (count($result) >= $max);
     }
 
-    private function hash_match(): bool
-    {
-        return ($_POST['hash'] == $this->get_hash());
-    }
-
     /**
      * get a hash which semi-uniquely identifies a submission form,
      * to stop spam bots which download the form once then submit
@@ -653,7 +646,7 @@ class CommentList extends Extension
         // advanced sanity checks
         elseif (strlen($comment) / strlen(false_throws(gzcompress($comment))) > 10) {
             throw new CommentPostingException("Comment too repetitive~");
-        } elseif ($user->is_anonymous() && !$this->hash_match()) {
+        } elseif ($user->is_anonymous() && ($_POST['hash'] != $this->get_hash())) {
             $page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");
             throw new CommentPostingException(
                 "Comment submission form is out of date; refresh the ".

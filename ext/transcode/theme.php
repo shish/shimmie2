@@ -15,15 +15,10 @@ class TranscodeImageTheme extends Themelet
      */
     public function get_transcode_html(Image $image, array $options): \MicroHTML\HTMLElement
     {
-        $html = "
-			".make_form(
+        $html = make_form(
             make_link("transcode/{$image->id}"),
-            'POST',
-            false,
-            "",
-            "return transcodeSubmit()"
+            onsubmit: "return transcodeSubmit()"
         )."
-                <input type='hidden' name='image_id' value='{$image->id}'>
                 <input type='hidden' id='image_lossless' name='image_lossless' value='{$image->lossless}'>
                 ".$this->get_transcode_picker_html($options)."
 				<br><input id='transcodebutton' type='submit' value='Transcode Image'>
@@ -42,7 +37,6 @@ class TranscodeImageTheme extends Themelet
         foreach ($options as $display => $value) {
             $html .= "<option value='$value'>$display</option>";
         }
-
         return $html."</select>";
     }
 

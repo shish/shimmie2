@@ -21,23 +21,25 @@ class RegenThumb extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("regen_thumb/one") && $user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id'])) {
-            $image = Image::by_id(int_escape($_POST['image_id']));
+        if ($event->page_matches("regen_thumb") && $user->can(Permissions::DELETE_IMAGE)) {
+            if ($event->page_matches("regen_thumb/one")) {
+                $image = Image::by_id(int_escape($event->req_POST('image_id')));
 
-            $this->regenerate_thumbnail($image);
-
-            $this->theme->display_results($page, $image);
-        }
-        if ($event->page_matches("regen_thumb/mass") && $user->can(Permissions::DELETE_IMAGE) && isset($_POST['tags'])) {
-            $tags = Tag::explode(strtolower($_POST['tags']), false);
-            $images = Search::find_images(limit: 10000, tags: $tags);
-
-            foreach ($images as $image) {
                 $this->regenerate_thumbnail($image);
-            }
 
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+                $this->theme->display_results($page, $image);
+            }
+            if ($event->page_matches("regen_thumb/mass")) {
+                $tags = Tag::explode(strtolower($event->req_POST('tags')), false);
+                $images = Search::find_images(limit: 10000, tags: $tags);
+
+                foreach ($images as $image) {
+                    $this->regenerate_thumbnail($image);
+                }
+
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link());
+            }
         }
     }
 
@@ -74,8 +76,8 @@ class RegenThumb extends Extension
             case "bulk_regen":
                 if ($user->can(Permissions::DELETE_IMAGE)) {
                     $force = true;
-                    if (isset($_POST["bulk_regen_thumb_missing_only"])
-                        && $_POST["bulk_regen_thumb_missing_only"] == "true") {
+                    if (isset($event->params["bulk_regen_thumb_missing_only"])
+                        && $event->params["bulk_regen_thumb_missing_only"] == "true") {
                         $force = false;
                     }
 

@@ -75,7 +75,11 @@ class Tips extends Extension
                     break;
                 case "save":
                     if ($user->check_auth_token()) {
-                        send_event(new CreateTipEvent(isset($_POST["enable"]), $_POST["image"], $_POST["text"]));
+                        send_event(new CreateTipEvent(
+                            $event->get_POST("enable") == "on",
+                            $event->req_POST("image"),
+                            $event->req_POST("text")
+                        ));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("tips/list"));
                     }

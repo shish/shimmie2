@@ -350,7 +350,7 @@ class Pools extends Extension
                                         SET image_order = :ord
                                         WHERE pool_id = :pid AND image_id = :iid",
                                         ["ord" => $value, "pid" => int_escape($event->req_POST('pool_id')), "iid" => $imageID]
-                                    );    
+                                    );
                                 }
                             }
                             $page->set_mode(PageMode::REDIRECT);

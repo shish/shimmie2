@@ -148,17 +148,17 @@ class TagEdit extends Extension
         global $user, $page;
         if ($event->page_matches("tag_edit")) {
             if ($event->get_arg(0) == "replace") {
-                if ($user->can(Permissions::MASS_TAG_EDIT) && isset($_POST['search']) && isset($_POST['replace'])) {
-                    $search = $_POST['search'];
-                    $replace = $_POST['replace'];
+                if ($user->can(Permissions::MASS_TAG_EDIT)) {
+                    $search = $event->req_POST('search');
+                    $replace = $event->req_POST('replace');
                     $this->mass_tag_edit($search, $replace, true);
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("admin"));
                 }
             }
             if ($event->get_arg(0) == "mass_source_set") {
-                if ($user->can(Permissions::MASS_TAG_EDIT) && isset($_POST['tags']) && isset($_POST['source'])) {
-                    $this->mass_source_edit($_POST['tags'], $_POST['source']);
+                if ($user->can(Permissions::MASS_TAG_EDIT)) {
+                    $this->mass_source_edit($event->req_POST('tags'), $event->req_POST('source'));
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(search_link());
                 }

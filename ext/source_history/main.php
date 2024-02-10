@@ -35,9 +35,7 @@ class SourceHistory extends Extension
         if ($event->page_matches("source_history/revert")) {
             // this is a request to revert to a previous version of the source
             if ($user->can(Permissions::EDIT_IMAGE_TAG)) {
-                if (isset($_POST['revert'])) {
-                    $this->process_revert_request((int)$_POST['revert']);
-                }
+                $this->process_revert_request((int)$event->req_POST('revert'));
             }
         } elseif ($event->page_matches("source_history/bulk_revert")) {
             if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG) && $user->check_auth_token()) {
