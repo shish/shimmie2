@@ -37,7 +37,7 @@ EOD
         $contact_link = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a> &ndash;";
         $search_html = "
 			<div class='space' id='search'>
-				<form action='".search_link()."' method='POST'>
+				<form action='".search_link()."' method='GET'>
 				<input name='search' size='30' type='search' value='' class='autocomplete_tags' autofocus='autofocus' />
 				<input type='submit' value='Search'/>
 				</form>
