@@ -17,11 +17,17 @@ require_once "config.php";
 class ConfigSaveEvent extends Event
 {
     public Config $config;
+    /** @var array<string, mixed> $values */
+    public array $values;
 
-    public function __construct(Config $config)
+    /**
+     * @param array<string, mixed> $values
+     */
+    public function __construct(Config $config, array $values)
     {
         parent::__construct();
         $this->config = $config;
+        $this->values = $values;
     }
 }
 
@@ -340,7 +346,7 @@ class Setup extends Extension
                     send_event(new SetupBuildingEvent($panel));
                     $this->theme->display_page($page, $panel);
                 } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
-                    send_event(new ConfigSaveEvent($config));
+                    send_event(new ConfigSaveEvent($config, $event->POST));
                     $config->save();
                     $page->flash("Config saved");
                     $page->set_mode(PageMode::REDIRECT);
@@ -384,11 +390,11 @@ class Setup extends Extension
     public function onConfigSave(ConfigSaveEvent $event): void
     {
         $config = $event->config;
-        foreach ($_POST as $_name => $junk) {
+        foreach ($event->values as $_name => $junk) {
             if (substr($_name, 0, 6) == "_type_") {
                 $name = substr($_name, 6);
-                $type = $_POST["_type_$name"];
-                $value = isset($_POST["_config_$name"]) ? $_POST["_config_$name"] : null;
+                $type = $event->values["_type_$name"];
+                $value = isset($event->values["_config_$name"]) ? $event->values["_config_$name"] : null;
                 switch ($type) {
                     case "string":
                         $config->set_string($name, $value);
