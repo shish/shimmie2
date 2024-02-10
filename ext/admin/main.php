@@ -57,7 +57,7 @@ class AdminPage extends Extension
                     send_event(new AdminBuildingEvent($page));
                 } else {
                     $action = $event->get_arg(0);
-                    $aae = new AdminActionEvent($action, $_POST);
+                    $aae = new AdminActionEvent($action, $event->POST);
 
                     if ($user->check_auth_token()) {
                         log_info("admin", "Util: $action");

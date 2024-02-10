@@ -101,6 +101,15 @@ class PageRequestEvent extends Event
         }
     }
 
+    public function req_GET(string $key): string
+    {
+        $value = $this->get_GET($key);
+        if($value === null) {
+            throw new UserErrorException("Missing GET parameter {$key}");
+        }
+        return $value;
+    }
+
     public function get_POST(string $key): ?string
     {
         if(array_key_exists($key, $this->POST)) {
@@ -111,6 +120,15 @@ class PageRequestEvent extends Event
         } else {
             return null;
         }
+    }
+
+    public function req_POST(string $key): string
+    {
+        $value = $this->get_POST($key);
+        if($value === null) {
+            throw new UserErrorException("Missing POST parameter {$key}");
+        }
+        return $value;
     }
 
     /**

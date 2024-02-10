@@ -108,18 +108,20 @@ class Notes extends Extension
                     break;
 
                 case "add_request":
+                    $image_id = int_escape($event->req_POST("image_id"));
                     if (!$user->is_anonymous()) {
-                        $this->add_note_request();
+                        $this->add_note_request($image_id);
                     }
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+                    $page->set_redirect(make_link("post/view/$image_id"));
                     break;
                 case "nuke_requests":
+                    $image_id = int_escape($event->req_POST("image_id"));
                     if ($user->can(Permissions::NOTES_ADMIN)) {
-                        $this->nuke_requests();
+                        $this->nuke_requests($image_id);
                     }
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+                    $page->set_redirect(make_link("post/view/$image_id"));
                     break;
 
                 case "create_note":
@@ -147,12 +149,13 @@ class Notes extends Extension
                     }
                     break;
                 case "nuke_notes":
+                    $image_id = int_escape($event->req_POST("image_id"));
                     if ($user->can(Permissions::NOTES_ADMIN)) {
-                        $this->nuke_notes();
+                        $this->nuke_notes($image_id);
                     }
 
                     $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+                    $page->set_redirect(make_link("post/view/$image_id"));
                     break;
 
                 default:
@@ -295,11 +298,10 @@ class Notes extends Extension
         return $noteID;
     }
 
-    private function add_note_request(): void
+    private function add_note_request(int $image_id): void
     {
         global $database, $user;
 
-        $image_id = int_escape($_POST["image_id"]);
         $user_id = $user->id;
 
         $database->execute(
@@ -346,18 +348,16 @@ class Notes extends Extension
         log_info("notes", "Note deleted {$note["note_id"]} by {$user->name}");
     }
 
-    private function nuke_notes(): void
+    private function nuke_notes(int $image_id): void
     {
         global $database, $user;
-        $image_id = int_escape($_POST["image_id"]);
         $database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id' => $image_id]);
         log_info("notes", "Notes deleted from {$image_id} by {$user->name}");
     }
 
-    private function nuke_requests(): void
+    private function nuke_requests(int $image_id): void
     {
         global $database, $user;
-        $image_id = int_escape($_POST["image_id"]);
 
         $database->execute("DELETE FROM note_request WHERE image_id = :image_id", ['image_id' => $image_id]);
 

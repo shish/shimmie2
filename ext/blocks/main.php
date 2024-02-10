@@ -74,8 +74,8 @@ class Blocks extends Extension
                     $database->execute("
 						INSERT INTO blocks (pages, title, area, priority, content, userclass)
 						VALUES (:pages, :title, :area, :priority, :content, :userclass)
-					", ['pages' => $_POST['pages'], 'title' => $_POST['title'], 'area' => $_POST['area'], 'priority' => (int)$_POST['priority'], 'content' => $_POST['content'], 'userclass' => $_POST['userclass']]);
-                    log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
+					", ['pages' => $event->req_POST('pages'), 'title' => $event->req_POST('title'), 'area' => $event->req_POST('area'), 'priority' => (int)$event->req_POST('priority'), 'content' => $event->req_POST('content'), 'userclass' => $event->req_POST('userclass')]);
+                    log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$event->req_POST('title').")");
                     $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("blocks/list"));
@@ -83,18 +83,18 @@ class Blocks extends Extension
             }
             if ($event->get_arg(0) == "update") {
                 if ($user->check_auth_token()) {
-                    if (!empty($_POST['delete'])) {
+                    if (!empty($event->req_POST('delete'))) {
                         $database->execute("
 							DELETE FROM blocks
 							WHERE id=:id
-						", ['id' => $_POST['id']]);
-                        log_info("blocks", "Deleted Block #".$_POST['id']);
+						", ['id' => $event->req_POST('id')]);
+                        log_info("blocks", "Deleted Block #".$event->req_POST('id'));
                     } else {
                         $database->execute("
 							UPDATE blocks SET pages=:pages, title=:title, area=:area, priority=:priority, content=:content, userclass=:userclass
 							WHERE id=:id
-						", ['pages' => $_POST['pages'], 'title' => $_POST['title'], 'area' => $_POST['area'], 'priority' => (int)$_POST['priority'], 'content' => $_POST['content'], 'userclass' => $_POST['userclass'], 'id' => $_POST['id']]);
-                        log_info("blocks", "Updated Block #".$_POST['id']." (".$_POST['title'].")");
+						", ['pages' => $event->req_POST('pages'), 'title' => $event->req_POST('title'), 'area' => $event->req_POST('area'), 'priority' => (int)$event->req_POST('priority'), 'content' => $event->req_POST('content'), 'userclass' => $event->req_POST('userclass'), 'id' => $event->req_POST('id')]);
+                        log_info("blocks", "Updated Block #".$event->req_POST('id')." (".$event->req_POST('title').")");
                     }
                     $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);

@@ -92,11 +92,8 @@ class Blotter extends Extension
                     if (!$user->can(Permissions::BLOTTER_ADMIN) || !$user->check_auth_token()) {
                         $this->theme->display_permission_denied();
                     } else {
-                        $entry_text = $_POST['entry_text'];
-                        if ($entry_text == "") {
-                            die("No entry message!");
-                        }
-                        $important = isset($_POST['important']);
+                        $entry_text = $event->req_POST('entry_text');
+                        $important = !is_null($event->get_POST('important'));
                         // Now insert into db:
                         $database->execute(
                             "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
@@ -114,7 +111,7 @@ class Blotter extends Extension
                     if (!$user->can(Permissions::BLOTTER_ADMIN) || !$user->check_auth_token()) {
                         $this->theme->display_permission_denied();
                     } else {
-                        $id = int_escape($_POST['id']);
+                        $id = int_escape($event->req_POST('id'));
                         $database->execute("DELETE FROM blotter WHERE id=:id", ["id" => $id]);
                         log_info("blotter", "Removed Entry #$id");
                         $page->set_mode(PageMode::REDIRECT);

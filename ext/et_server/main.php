@@ -12,10 +12,11 @@ class ETServer extends Extension
     {
         global $database, $page, $user;
         if ($event->page_matches("register.php")) {
-            if (isset($_POST["data"])) {
+            $data = $event->get_POST("data");
+            if ($data) {
                 $database->execute(
                     "INSERT INTO registration(data) VALUES(:data)",
-                    ["data" => $_POST["data"]]
+                    ["data" => $data]
                 );
                 $page->set_title("Thanks!");
                 $page->set_heading("Thanks!");

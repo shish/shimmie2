@@ -73,14 +73,10 @@ class ViewPost extends Extension
                 $this->theme->display_error(404, "Post not found", "No post in the database has the ID #$image_id");
             }
         } elseif ($event->page_matches("post/set")) {
-            if (!isset($_POST['image_id'])) {
-                return;
-            }
-
-            $image_id = int_escape($_POST['image_id']);
+            $image_id = int_escape($event->req_POST('image_id'));
             $image = Image::by_id($image_id);
             if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-                send_event(new ImageInfoSetEvent($image, $_POST));
+                send_event(new ImageInfoSetEvent($image, $event->POST));
                 $page->set_mode(PageMode::REDIRECT);
 
                 if ($event->get_GET('search')) {

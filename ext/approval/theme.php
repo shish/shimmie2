@@ -17,13 +17,11 @@ class ApprovalTheme extends Themelet
         if ($image['approved'] === true) {
             $form = SHM_SIMPLE_FORM(
                 'disapprove_image/'.$image->id,
-                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),
                 SHM_SUBMIT("Disapprove")
             );
         } else {
             $form = SHM_SIMPLE_FORM(
                 'approve_image/'.$image->id,
-                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),
                 SHM_SUBMIT("Approve")
             );
         }

@@ -30,15 +30,7 @@ class Trash extends Extension
         global $page, $user;
 
         if ($event->page_matches("trash_restore") && $user->can(Permissions::VIEW_TRASH)) {
-            // Try to get the image ID
-            if ($event->count_args() >= 1) {
-                $image_id = int_escape($event->get_arg(0));
-            } elseif (isset($_POST['image_id'])) {
-                $image_id = $_POST['image_id'];
-            } else {
-                throw new SCoreException("Can not restore post: No valid Post ID given.");
-            }
-
+            $image_id = int_escape(null_throws($event->get_arg(0)));
             self::set_trash($image_id, false);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/".$image_id));

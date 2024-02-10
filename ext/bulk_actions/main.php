@@ -170,11 +170,7 @@ class BulkActions extends Extension
     {
         global $page, $user;
         if ($event->page_matches("bulk_action") && $user->can(Permissions::PERFORM_BULK_ACTIONS)) {
-            if (!isset($_POST['bulk_action'])) {
-                return;
-            }
-
-            $action = $_POST['bulk_action'];
+            $action = $event->req_POST('bulk_action');
 
             try {
                 $items = null;

@@ -15,7 +15,6 @@ class RotateImageTheme extends Themelet
     {
         return SHM_SIMPLE_FORM(
             'rotate/'.$image_id,
-            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             INPUT(["type" => 'number', "name" => 'rotate_deg', "id" => "rotate_deg", "placeholder" => "Rotation degrees"]),
             INPUT(["type" => 'submit', "value" => 'Rotate', "id" => "rotatebutton"]),
         );

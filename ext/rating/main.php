@@ -380,7 +380,7 @@ class Ratings extends Extension
             } else {
                 $n = 0;
                 while (true) {
-                    $images = Search::find_images($n, 100, Tag::explode($_POST["query"]));
+                    $images = Search::find_images($n, 100, Tag::explode($event->req_POST("query")));
                     if (count($images) == 0) {
                         break;
                     }
@@ -388,15 +388,10 @@ class Ratings extends Extension
                     reset($images); // rewind to first element in array.
 
                     foreach ($images as $image) {
-                        send_event(new RatingSetEvent($image, $_POST['rating']));
+                        send_event(new RatingSetEvent($image, $event->req_POST('rating')));
                     }
                     $n += 100;
                 }
-                #$database->execute("
-                #	update images set rating=:rating where images.id in (
-                #		select image_id from image_tags join tags
-                #		on image_tags.tag_id = tags.id where tags.tag = :tag);
-                #	", ['rating'=>$_POST["rating"], 'tag'=>$_POST["tag"]]);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link());
             }

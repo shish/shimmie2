@@ -55,39 +55,21 @@ class RotateImage extends Extension
 
         if ($event->page_matches("rotate") && $user->can(Permissions::EDIT_FILES)) {
             // Try to get the image ID
-            $image_id = int_escape($event->get_arg(0));
-            if (empty($image_id)) {
-                $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
-            }
-            if (empty($image_id)) {
-                throw new ImageRotateException("Can not rotate Image: No valid Post ID given.");
-            }
-
+            $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);
             if (is_null($image)) {
                 $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
             } else {
                 /* Check if options were given to rotate an image. */
-                if (isset($_POST['rotate_deg'])) {
-                    /* get options */
+                $deg = int_escape($event->req_POST('rotate_deg'));
 
-                    $deg = 0;
-
-                    if (isset($_POST['rotate_deg'])) {
-                        $deg = int_escape($_POST['rotate_deg']);
-                    }
-
-                    /* Attempt to rotate the image */
-                    try {
-                        $this->rotate_image($image_id, $deg);
-
-                        //$this->theme->display_rotate_page($page, $image_id);
-
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("post/view/".$image_id));
-                    } catch (ImageRotateException $e) {
-                        $this->theme->display_rotate_error($page, "Error Rotating", $e->error);
-                    }
+                /* Attempt to rotate the image */
+                try {
+                    $this->rotate_image($image_id, $deg);
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("post/view/".$image_id));
+                } catch (ImageRotateException $e) {
+                    $this->theme->display_rotate_error($page, "Error Rotating", $e->error);
                 }
             }
         }

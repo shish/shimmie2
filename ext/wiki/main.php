@@ -191,13 +191,13 @@ class Wiki extends Extension
             $content = $this->get_page($title, $revision);
             $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
         } elseif ($event->page_matches("wiki_admin/edit")) {
-            $content = $this->get_page($_POST['title']);
+            $content = $this->get_page($event->req_POST('title'));
             $this->theme->display_page_editor($page, $content);
         } elseif ($event->page_matches("wiki_admin/save")) {
-            $title = $_POST['title'];
-            $rev = int_escape($_POST['revision']);
-            $body = $_POST['body'];
-            $lock = $user->can(Permissions::WIKI_ADMIN) && isset($_POST['lock']) && ($_POST['lock'] == "on");
+            $title = $event->req_POST('title');
+            $rev = int_escape($event->req_POST('revision'));
+            $body = $event->req_POST('body');
+            $lock = $user->can(Permissions::WIKI_ADMIN) && ($event->get_POST('lock') == "on");
 
             if ($this->can_edit($user, $this->get_page($title))) {
                 $wikipage = $this->get_page($title);
@@ -216,15 +216,18 @@ class Wiki extends Extension
             $this->theme->display_page_history($page, $event->get_GET('title'), $history);
         } elseif ($event->page_matches("wiki_admin/delete_revision")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
-                send_event(new WikiDeleteRevisionEvent($_POST["title"], (int)$_POST["revision"]));
-                $u_title = url_escape($_POST["title"]);
+                $title = $event->req_POST('title');
+                $revision = int_escape($event->req_POST('revision'));
+                send_event(new WikiDeleteRevisionEvent($title, $revision));
+                $u_title = url_escape($title);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
             }
         } elseif ($event->page_matches("wiki_admin/delete_all")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
-                send_event(new WikiDeletePageEvent($_POST["title"]));
-                $u_title = url_escape($_POST["title"]);
+                $title = $event->req_POST('title');
+                send_event(new WikiDeletePageEvent($title));
+                $u_title = url_escape($title);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
             }

@@ -171,17 +171,23 @@ class UserPage extends Extension
 
         if ($event->page_matches("user_admin")) {
             if ($event->get_arg(0) == "login") {
-                if (isset($_POST['user']) && isset($_POST['pass'])) {
-                    $this->page_login($_POST['user'], $_POST['pass']);
+                if ($event->get_POST('user') && $event->get_POST('pass')) {
+                    $this->page_login($event->req_POST('user'), $event->req_POST('pass'));
                 } else {
                     $this->theme->display_login_page($page);
                 }
             } elseif ($event->get_arg(0) == "recover") {
-                $this->page_recover($_POST['username']);
+                $this->page_recover($event->req_POST('username'));
             } elseif ($event->get_arg(0) == "create") {
                 $this->page_create();
             } elseif ($event->get_arg(0) == "create_other") {
-                send_event(new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['pass1'], $_POST['email'], false));
+                send_event(new UserCreationEvent(
+                    $event->req_POST("name"),
+                    $event->req_POST("pass1"),
+                    $event->req_POST("pass1"),
+                    $event->req_POST("email"),
+                    false
+                ));
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("admin"));
                 $page->flash("Created new user");
@@ -237,7 +243,11 @@ class UserPage extends Extension
                 $duser = User::by_id($input['id']);
                 $this->change_class_wrapper($duser, $input['class']);
             } elseif ($event->get_arg(0) == "delete_user") {
-                $this->delete_user($page, isset($_POST["with_images"]), isset($_POST["with_comments"]));
+                $this->delete_user(
+                    $page,
+                    $event->get_POST("with_images") == "on",
+                    $event->get_POST("with_comments") == "on"
+                );
             }
         }
 
@@ -825,18 +835,13 @@ class UserPage extends Extension
 
         if (!$user->can(Permissions::DELETE_USER)) {
             $page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
-        } elseif (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-            $page->add_block(new Block(
-                "No ID Specified",
-                "You need to specify the account number to edit"
-            ));
         } else {
-            $uid = int_escape((string)$_POST['id']);
+            $uid = int_escape($_POST['id']);
             $duser = User::by_id($uid);
             log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
 
             if ($with_images) {
-                log_warning("user", "Deleting user #{$_POST['id']} (@{$duser->name})'s uploads");
+                log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s uploads");
                 $image_ids = $database->get_col("SELECT id FROM images WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
                 foreach ($image_ids as $image_id) {
                     $image = Image::by_id((int)$image_id);
@@ -847,17 +852,17 @@ class UserPage extends Extension
             } else {
                 $database->execute(
                     "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                    ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id']]
+                    ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
                 );
             }
 
             if ($with_comments) {
-                log_warning("user", "Deleting user #{$_POST['id']} (@{$duser->name})'s comments");
-                $database->execute("DELETE FROM comments WHERE owner_id = :owner_id", ["owner_id" => $_POST['id']]);
+                log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s comments");
+                $database->execute("DELETE FROM comments WHERE owner_id = :owner_id", ["owner_id" => $uid]);
             } else {
                 $database->execute(
                     "UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                    ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id']]
+                    ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
                 );
             }
 
@@ -865,7 +870,7 @@ class UserPage extends Extension
 
             $database->execute(
                 "DELETE FROM users WHERE id = :id",
-                ["id" => $_POST['id']]
+                ["id" => $uid]
             );
 
             $page->set_mode(PageMode::REDIRECT);

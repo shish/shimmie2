@@ -256,14 +256,14 @@ class Artists extends Extension
                     }
                 case "edit_artist":
                     {
-                        $artistID = $_POST['artist_id'];
+                        $artistID = int_escape($event->req_POST('artist_id'));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("artist/edit/".$artistID));
                         break;
                     }
                 case "edited":
                     {
-                        $artistID = int_escape($_POST['id']);
+                        $artistID = int_escape($event->get_POST('id'));
                         $this->update_artist();
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("artist/view/".$artistID));
@@ -271,7 +271,7 @@ class Artists extends Extension
                     }
                 case "nuke_artist":
                     {
-                        $artistID = $_POST['artist_id'];
+                        $artistID = int_escape($event->req_POST('artist_id'));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("artist/nuke/".$artistID));
                         break;
@@ -286,19 +286,19 @@ class Artists extends Extension
                     }
                 case "add_alias":
                     {
-                        $artistID = $_POST['artist_id'];
+                        $artistID = int_escape($event->req_POST('artist_id'));
                         $this->theme->show_new_alias_composer($artistID);
                         break;
                     }
                 case "add_member":
                     {
-                        $artistID = $_POST['artist_id'];
+                        $artistID = int_escape($event->req_POST('artist_id'));
                         $this->theme->show_new_member_composer($artistID);
                         break;
                     }
                 case "add_url":
                     {
-                        $artistID = $_POST['artist_id'];
+                        $artistID = int_escape($event->req_POST('artist_id'));
                         $this->theme->show_new_url_composer($artistID);
                         break;
                     }
@@ -308,7 +308,7 @@ class Artists extends Extension
                         switch ($event->get_arg(1)) {
                             case "add":
                                 {
-                                    $artistID = $_POST['artistID'];
+                                    $artistID = int_escape($event->req_POST('artist_id'));
                                     $this->add_alias();
                                     $page->set_mode(PageMode::REDIRECT);
                                     $page->set_redirect(make_link("artist/view/".$artistID));
@@ -333,7 +333,7 @@ class Artists extends Extension
                             case "edited":
                                 {
                                     $this->update_alias();
-                                    $aliasID = int_escape($_POST['aliasID']);
+                                    $aliasID = int_escape($event->req_POST('aliasID'));
                                     $artistID = $this->get_artistID_by_aliasID($aliasID);
                                     $page->set_mode(PageMode::REDIRECT);
                                     $page->set_redirect(make_link("artist/view/".$artistID));
@@ -349,7 +349,7 @@ class Artists extends Extension
                         switch ($event->get_arg(1)) {
                             case "add":
                                 {
-                                    $artistID = $_POST['artistID'];
+                                    $artistID = int_escape($event->req_POST('artist_id'));
                                     $this->add_urls();
                                     $page->set_mode(PageMode::REDIRECT);
                                     $page->set_redirect(make_link("artist/view/".$artistID));
@@ -374,7 +374,7 @@ class Artists extends Extension
                             case "edited":
                                 {
                                     $this->update_url();
-                                    $urlID = int_escape($_POST['urlID']);
+                                    $urlID = int_escape($event->req_POST('urlID'));
                                     $artistID = $this->get_artistID_by_urlID($urlID);
                                     $page->set_mode(PageMode::REDIRECT);
                                     $page->set_redirect(make_link("artist/view/".$artistID));
@@ -389,7 +389,7 @@ class Artists extends Extension
                         switch ($event->get_arg(1)) {
                             case "add":
                                 {
-                                    $artistID = $_POST['artistID'];
+                                    $artistID = int_escape($event->req_POST('artist_id'));
                                     $this->add_members();
                                     $page->set_mode(PageMode::REDIRECT);
                                     $page->set_redirect(make_link("artist/view/".$artistID));
@@ -414,7 +414,7 @@ class Artists extends Extension
                             case "edited":
                                 {
                                     $this->update_member();
-                                    $memberID = int_escape($_POST['memberID']);
+                                    $memberID = int_escape($event->req_POST('memberID'));
                                     $artistID = $this->get_artistID_by_memberID($memberID);
                                     $page->set_mode(PageMode::REDIRECT);
                                     $page->set_redirect(make_link("artist/view/".$artistID));

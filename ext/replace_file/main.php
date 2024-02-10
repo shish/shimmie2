@@ -28,15 +28,15 @@ class ReplaceFile extends Extension
             if($event->method == "GET") {
                 $this->theme->display_replace_page($page, $image_id);
             } elseif($event->method == "POST") {
-                if (!empty($_POST["url"])) {
+                if (!empty($event->get_POST("url"))) {
                     $tmp_filename = shm_tempnam("transload");
-                    fetch_url($_POST["url"], $tmp_filename);
+                    fetch_url($event->req_POST("url"), $tmp_filename);
                     send_event(new ImageReplaceEvent($image, $tmp_filename));
                 } elseif (count($_FILES) > 0) {
                     send_event(new ImageReplaceEvent($image, $_FILES["data"]['tmp_name']));
                 }
-                if(!empty($_POST["source"])) {
-                    send_event(new SourceSetEvent($image, $_POST["source"]));
+                if($event->get_POST("source")) {
+                    send_event(new SourceSetEvent($image, $event->req_POST("source")));
                 }
                 $cache->delete("thumb-block:{$image_id}");
                 $page->set_mode(PageMode::REDIRECT);

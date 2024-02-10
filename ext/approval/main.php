@@ -42,14 +42,7 @@ class Approval extends Extension
 
         if ($event->page_matches("approve_image") && $user->can(Permissions::APPROVE_IMAGE)) {
             // Try to get the image ID
-            $image_id = int_escape($event->get_arg(0));
-            if (empty($image_id)) {
-                $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
-            }
-            if (empty($image_id)) {
-                throw new SCoreException("Can not approve post: No valid Post ID given.");
-            }
-
+            $image_id = int_escape(null_throws($event->get_arg(0)));
             self::approve_image($image_id);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/" . $image_id));
@@ -57,14 +50,7 @@ class Approval extends Extension
 
         if ($event->page_matches("disapprove_image") && $user->can(Permissions::APPROVE_IMAGE)) {
             // Try to get the image ID
-            $image_id = int_escape($event->get_arg(0));
-            if (empty($image_id)) {
-                $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
-            }
-            if (empty($image_id)) {
-                throw new SCoreException("Can not disapprove image: No valid Post ID given.");
-            }
-
+            $image_id = int_escape(null_throws($event->get_arg(0)));
             self::disapprove_image($image_id);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/".$image_id));

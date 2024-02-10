@@ -20,14 +20,12 @@ class Featured extends Extension
         global $config, $page, $user;
         if ($event->page_matches("featured_image")) {
             if ($event->get_arg(0) == "set" && $user->check_auth_token()) {
-                if ($user->can(Permissions::EDIT_FEATURE) && isset($_POST['image_id'])) {
-                    $id = int_escape($_POST['image_id']);
-                    if ($id > 0) {
-                        $config->set_int("featured_id", $id);
-                        log_info("featured", "Featured post set to >>$id", "Featured post set");
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("post/view/$id"));
-                    }
+                $id = int_escape($event->get_POST('image_id'));
+                if ($user->can(Permissions::EDIT_FEATURE) && $id > 0) {
+                    $config->set_int("featured_id", $id);
+                    log_info("featured", "Featured post set to >>$id", "Featured post set");
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("post/view/$id"));
                 }
             }
             if ($event->get_arg(0) == "download") {

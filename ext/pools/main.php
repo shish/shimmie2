@@ -263,12 +263,11 @@ class Pools extends Extension
 
                 case "create": // ADD _POST
                     try {
-                        $title = $_POST["title"];
                         $event = send_event(new PoolCreationEvent(
-                            $title,
+                            $event->req_POST("title"),
                             $user,
-                            bool_escape($_POST["public"]),
-                            $_POST["description"]
+                            bool_escape($event->req_POST("public")),
+                            $event->req_POST("description")
                         ));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $event->new_id));
@@ -296,7 +295,7 @@ class Pools extends Extension
                     break;
 
                 case "edit": // Edit the pool (remove images)
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($this->have_permission($user, $pool)) {
@@ -313,10 +312,10 @@ class Pools extends Extension
                     break;
 
                 case "order": // Order the pool (view and change the order of images within the pool)
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
-                    if (isset($_POST["order_view"])) {
+                    if (isset($event->req_POST("order_view"))) {
                         if ($this->have_permission($user, $pool)) {
                             $result = $database->execute(
                                 "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC",
@@ -342,14 +341,14 @@ class Pools extends Extension
                         }
                     } else {
                         if ($this->have_permission($user, $pool)) {
-                            foreach ($_POST['imgs'] as $data) {
+                            foreach ($event->req_POST('imgs') as $data) {
                                 list($imageORDER, $imageID) = $data;
                                 $database->execute(
                                     "
                                     UPDATE pool_images
                                     SET image_order = :ord
                                     WHERE pool_id = :pid AND image_id = :iid",
-                                    ["ord" => $imageORDER, "pid" => int_escape($_POST['pool_id']), "iid" => $imageID]
+                                    ["ord" => $imageORDER, "pid" => int_escape($event->req_POST('pool_id')), "iid" => $imageID]
                                 );
                             }
                             $page->set_mode(PageMode::REDIRECT);
@@ -360,7 +359,7 @@ class Pools extends Extension
                     }
                     break;
                 case "reverse":
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($this->have_permission($user, $pool)) {
@@ -389,13 +388,13 @@ class Pools extends Extension
                     }
                     break;
                 case "import":
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($this->have_permission($user, $pool)) {
                         $images = Search::find_images(
                             limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
-                            tags: Tag::explode($_POST["pool_tag"])
+                            tags: Tag::explode($event->req_POST("pool_tag"))
                         );
                         $this->theme->pool_result($page, $images, $pool);
                     } else {
@@ -404,11 +403,11 @@ class Pools extends Extension
                     break;
 
                 case "add_posts":
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($this->have_permission($user, $pool)) {
-                        $image_ids = array_map('intval', $_POST['check']);
+                        $image_ids = array_map('intval', $event->req_POST('check'));
                         send_event(new PoolAddPostsEvent($pool_id, $image_ids));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $pool_id));
@@ -418,12 +417,12 @@ class Pools extends Extension
                     break;
 
                 case "remove_posts":
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($this->have_permission($user, $pool)) {
                         $images = "";
-                        foreach ($_POST['check'] as $imageID) {
+                        foreach ($event->req_POST('check') as $imageID) {
                             $database->execute(
                                 "DELETE FROM pool_images WHERE pool_id = :pid AND image_id = :iid",
                                 ["pid" => $pool_id, "iid" => $imageID]
@@ -444,13 +443,13 @@ class Pools extends Extension
                     break;
 
                 case "edit_description":
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($this->have_permission($user, $pool)) {
                         $database->execute(
                             "UPDATE pools SET description=:dsc,lastupdated=CURRENT_TIMESTAMP WHERE id=:pid",
-                            ["dsc" => $_POST['description'], "pid" => $pool_id]
+                            ["dsc" => $event->req_POST('description'), "pid" => $pool_id]
                         );
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $pool_id));
@@ -463,7 +462,7 @@ class Pools extends Extension
                 case "nuke":
                     // Completely remove the given pool.
                     //  -> Only admins and owners may do this
-                    $pool_id = int_escape($_POST["pool_id"]);
+                    $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($user->can(Permissions::POOLS_ADMIN) || $user->id == $pool->user_id) {

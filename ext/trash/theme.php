@@ -12,7 +12,6 @@ class TrashTheme extends Themelet
     {
         return SHM_SIMPLE_FORM(
             'trash_restore/'.$image_id,
-            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
             INPUT(["type" => 'submit', "value" => 'Restore From Trash']),
         );
     }

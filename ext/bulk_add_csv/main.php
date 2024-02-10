@@ -17,9 +17,10 @@ class BulkAddCSV extends Extension
     {
         global $page, $user;
         if ($event->page_matches("bulk_add_csv")) {
-            if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['csv'])) {
+            $csv = $event->get_POST('csv');
+            if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && $csv) {
                 shm_set_timeout(null);
-                $this->add_csv($_POST['csv']);
+                $this->add_csv($csv);
                 $this->theme->display_upload_results($page);
             }
         }

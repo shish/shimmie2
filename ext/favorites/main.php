@@ -60,9 +60,10 @@ class Favorites extends Extension
     {
         global $page, $user;
         if ($event->page_matches("change_favorite") && !$user->is_anonymous() && $user->check_auth_token()) {
-            $image_id = int_escape($_POST['image_id']);
-            if ((($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) && ($image_id > 0)) {
-                if ($_POST['favorite_action'] == "set") {
+            $image_id = int_escape($event->req_POST('image_id'));
+            $action = $event->req_POST('favorite_action');
+            if ((($action == "set") || ($action == "unset")) && ($image_id > 0)) {
+                if ($action == "set") {
                     send_event(new FavoriteSetEvent($image_id, $user, true));
                     log_debug("favourite", "Favourite set for $image_id", "Favourite added");
                 } else {

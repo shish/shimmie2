@@ -45,13 +45,7 @@ class PrivateImage extends Extension
 
         if ($event->page_matches("privatize_image") && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
             // Try to get the image ID
-            $image_id = int_escape($event->get_arg(0));
-            if (empty($image_id)) {
-                $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
-            }
-            if (empty($image_id)) {
-                throw new SCoreException("Can not make image private: No valid Post ID given.");
-            }
+            $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);
             if ($image == null) {
                 throw new SCoreException("Post not found.");
@@ -67,13 +61,7 @@ class PrivateImage extends Extension
 
         if ($event->page_matches("publicize_image")) {
             // Try to get the image ID
-            $image_id = int_escape($event->get_arg(0));
-            if (empty($image_id)) {
-                $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
-            }
-            if (empty($image_id)) {
-                throw new SCoreException("Can not make image public: No valid Post ID given.");
-            }
+            $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);
             if ($image == null) {
                 throw new SCoreException("Post not found.");
@@ -93,15 +81,12 @@ class PrivateImage extends Extension
             }
             switch ($event->get_arg(0)) {
                 case "private_image":
-                    if (!array_key_exists("id", $_POST) || empty($_POST["id"])) {
-                        return;
-                    }
-                    $id = intval($_POST["id"]);
+                    $id = int_escape($event->req_POST('id'));
                     if ($id != $user->id) {
                         throw new SCoreException("Cannot change another user's settings");
                     }
-                    $set_default = array_key_exists("set_default", $_POST);
-                    $view_default = array_key_exists("view_default", $_POST);
+                    $set_default = array_key_exists("set_default", $event->POST);
+                    $view_default = array_key_exists("view_default", $event->POST);
 
                     $user_config->set_bool(PrivateImageConfig::USER_SET_DEFAULT, $set_default);
                     $user_config->set_bool(PrivateImageConfig::USER_VIEW_DEFAULT, $view_default);

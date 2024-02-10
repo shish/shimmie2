@@ -31,9 +31,10 @@ class BulkAdd extends Extension
     {
         global $page, $user;
         if ($event->page_matches("bulk_add")) {
-            if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['dir'])) {
+            $dir = $event->get_POST('dir');
+            if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && $dir) {
                 shm_set_timeout(null);
-                $bae = send_event(new BulkAddEvent($_POST['dir']));
+                $bae = send_event(new BulkAddEvent($dir));
                 $this->theme->display_upload_results($page, $bae->results);
             }
         }

@@ -27,7 +27,6 @@ class ResizeImageTheme extends Themelet
 
         $html = rawHTML("
 			".make_form(make_link("resize/{$image->id}"))."
-				<input type='hidden' name='image_id' value='{$image->id}'>
 				<input id='original_width'  name='original_width'  type='hidden' value='{$image->width}'>
 				<input id='original_height' name='original_height' type='hidden' value='{$image->height}'>
 				<input id='resize_width'  style='width: 70px;' name='resize_width'  type='number' min='1' value='".$default_width."'> x

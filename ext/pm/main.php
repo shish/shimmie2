@@ -254,7 +254,7 @@ class PrivMsg extends Extension
                 case "delete":
                     if ($user->can(Permissions::READ_PM)) {
                         if ($user->check_auth_token()) {
-                            $pm_id = int_escape($_POST["pm_id"]);
+                            $pm_id = int_escape($event->get_POST("pm_id"));
                             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
                             if (is_null($pm)) {
                                 $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
@@ -271,10 +271,10 @@ class PrivMsg extends Extension
                 case "send":
                     if ($user->can(Permissions::SEND_PM)) {
                         if ($user->check_auth_token()) {
-                            $to_id = int_escape($_POST["to_id"]);
+                            $to_id = int_escape($event->get_POST("to_id"));
                             $from_id = $user->id;
-                            $subject = $_POST["subject"];
-                            $message = $_POST["message"];
+                            $subject = $event->req_POST("subject");
+                            $message = $event->req_POST("message");
                             send_event(new SendPMEvent(new PM($from_id, get_real_ip(), $to_id, $subject, $message)));
                             $page->flash("PM sent");
                             $page->set_mode(PageMode::REDIRECT);
