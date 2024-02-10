@@ -13,8 +13,8 @@ class ImageBanInfo extends ExtensionInfo
     public string $url = "http://atravelinggeek.com/";
     public array $authors = ["ATravelingGeek" => "atg@atravelinggeek.com"];
     public string $license = self::LICENSE_GPLV2;
+    public ExtensionCategory $category = ExtensionCategory::MODERATION;
     public string $description = "Ban images based on their hash";
-    public ?string $version = "0.1, October 21, 2007";
     public ?string $documentation =
 "Based on the ResolutionLimit and IPban extensions by Shish";
 }

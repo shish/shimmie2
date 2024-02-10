@@ -14,4 +14,5 @@ class TagToolsInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Recount / Rename / Etc";
+    public ExtensionCategory $category = ExtensionCategory::ADMIN;
 }

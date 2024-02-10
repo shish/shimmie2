@@ -14,4 +14,5 @@ class BulkParentChildInfo extends ExtensionInfo
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Allows bulk setting of parent-child relationships, in order of manual selection";
     public array $dependencies = [BulkActionsInfo::KEY];
+    public ExtensionCategory $category = ExtensionCategory::METADATA;
 }

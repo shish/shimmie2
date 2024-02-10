@@ -12,6 +12,7 @@ class LogDatabaseInfo extends ExtensionInfo
     public string $name = "Logging (Database)";
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
+    public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
     public string $description = "Keep a record of SCore events (in the database).";
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
 }

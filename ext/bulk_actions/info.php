@@ -35,4 +35,5 @@ class BulkActionsInfo extends ExtensionInfo
         <br>Sets the source of all selected posts.
     </p>
     </p>";
+    public ExtensionCategory $category = ExtensionCategory::MODERATION;
 }

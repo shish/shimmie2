@@ -13,6 +13,7 @@ class RatingsInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
+    public ExtensionCategory $category = ExtensionCategory::METADATA;
     public string $description = "Allow users to rate images \"safe\", \"questionable\" or \"explicit\"";
     public ?string $documentation =
 "This shimmie extension provides filter:

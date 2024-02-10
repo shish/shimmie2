@@ -13,4 +13,5 @@ class NavTimingInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Log navigation timing data";
+    public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
 }

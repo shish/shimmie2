@@ -13,6 +13,7 @@ class ArchiveFileHandlerInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $description = "Allow users to upload archives (zip, etc)";
+    public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public ?string $documentation =
 "Note: requires exec() access and an external unzip command
 <p>Any command line unzipper should work, some examples:

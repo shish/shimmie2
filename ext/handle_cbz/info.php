@@ -12,5 +12,6 @@ class CBZFileHandlerInfo extends ExtensionInfo
     public string $name = "Handle CBZ";
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
+    public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Handle CBZ Comic Archives.";
 }

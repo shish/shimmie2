@@ -18,6 +18,6 @@ class ResizeImageInfo extends ExtensionInfo
     public string $name = "Resize Post";
     public array $authors = ["jgen" => "jgen.tech@gmail.com"];
     public string $license = self::LICENSE_GPLV2;
+    public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "This extension allows admins to resize images.";
-    public ?string $version = "0.1";
 }

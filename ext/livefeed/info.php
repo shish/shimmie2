@@ -13,5 +13,6 @@ class LiveFeedInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
+    public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
     public string $description = "Logs user-safe (no IPs) data to a UDP socket, eg IRCCat";
 }

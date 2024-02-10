@@ -16,4 +16,5 @@ class AdminPageInfo extends ExtensionInfo
     public string $description = "Provides a base for various small admin functions";
     public bool $core = true;
     public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
+    public ExtensionCategory $category = ExtensionCategory::ADMIN;
 }

@@ -7,6 +7,7 @@ namespace Shimmie2;
 use function MicroHTML\LABEL;
 use function MicroHTML\A;
 use function MicroHTML\B;
+use function MicroHTML\BR;
 use function MicroHTML\IMG;
 use function MicroHTML\TABLE;
 use function MicroHTML\THEAD;
@@ -18,7 +19,6 @@ use function MicroHTML\TD;
 use function MicroHTML\INPUT;
 use function MicroHTML\DIV;
 use function MicroHTML\P;
-use function MicroHTML\BR;
 use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 
@@ -46,10 +46,25 @@ class ExtManagerTheme extends Themelet
             )
         );
 
+        $categories = [];
+        $last_cat = null;
         foreach ($extensions as $extension) {
-            if ((!$editable && $extension->visibility === ExtensionVisibility::ADMIN)
-                    || $extension->visibility === ExtensionVisibility::HIDDEN) {
+            if (
+                (!$editable && $extension->visibility === ExtensionVisibility::ADMIN)
+                || $extension->visibility === ExtensionVisibility::HIDDEN
+            ) {
                 continue;
+            }
+
+            if($extension->category !== $last_cat) {
+                $last_cat = $extension->category;
+                $categories[] = $last_cat;
+                $tbody->appendChild(
+                    TR(
+                        ["class" => 'category', "id" => $extension->category->value],
+                        TH(["colspan" => '5'], BR(), $last_cat->value)
+                    )
+                );
             }
 
             $tbody->appendChild(TR(
@@ -98,9 +113,17 @@ class ExtManagerTheme extends Themelet
             }
         }
 
+        $cat_html = [
+            A(["href" => make_link()], "Index"),
+            BR(),
+        ];
+        foreach ($categories as $cat) {
+            $cat_html[] = A(["href" => "#".$cat->value], $cat->value);
+        }
+
         $page->set_title("Extensions");
         $page->set_heading("Extensions");
-        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Navigation", \MicroHTML\joinHTML(BR(), $cat_html), "left", 0));
         $page->add_block(new Block("Extension Manager", $form));
     }
 
@@ -123,7 +146,6 @@ class ExtManagerTheme extends Themelet
         $html = DIV(
             ["style" => 'margin: auto; text-align: left; width: 512px;'],
             $author,
-            ($info->version ? emptyHTML(BR(), B("Version: "), $info->version) : null),
             ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href" => $info->link], "Link")) : null),
             P(rawHTML($info->documentation ?? "(This extension has no documentation)")),
             // <hr>,

@@ -14,5 +14,5 @@ class ReportImageInfo extends ExtensionInfo
     public array $authors = ["ATravelingGeek" => "atg@atravelinggeek.com"];
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Report posts as dupes/illegal/etc";
-    public ?string $version = "0.3a";
+    public ExtensionCategory $category = ExtensionCategory::MODERATION;
 }

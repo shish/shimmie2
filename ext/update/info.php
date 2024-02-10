@@ -13,5 +13,7 @@ class UpdateInfo extends ExtensionInfo
     public string $url = "http://www.codeanimu.net";
     public array $authors = ["DakuTree" => "dakutree@codeanimu.net"];
     public string $license = self::LICENSE_GPLV2;
-    public string $description = "Shimmie updater! (Requires admin panel extension & transload engine (cURL/fopen/Wget))";
+    public string $description = "Shimmie updater!";
+    public array $dependencies = [AdminPageInfo::KEY];
+    public ExtensionCategory $category = ExtensionCategory::ADMIN;
 }

@@ -104,13 +104,12 @@ class ExtManager extends Extension
             $extensions = array_filter($extensions, fn ($x) => Extension::is_enabled($x->key));
         }
         usort($extensions, function ($a, $b) {
-            if ($a->beta === true && $b->beta === false) {
-                return 1;
+            if($a->category->name !== $b->category->name) {
+                return $a->category->name <=> $b->category->name;
             }
-            if ($a->beta === false && $b->beta === true) {
-                return -1;
+            if ($a->beta !== $b->beta) {
+                return $a->beta <=> $b->beta;
             }
-
             return strcmp($a->name, $b->name);
         });
         return $extensions;

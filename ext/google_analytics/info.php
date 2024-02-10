@@ -16,4 +16,5 @@ class GoogleAnalyticsInfo extends ExtensionInfo
     public string $description = "Integrates Google Analytics tracking";
     public ?string $documentation =
 "User has to enter their Google Analytics ID in the Board Config to use this extension.";
+    public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
 }

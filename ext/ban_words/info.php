@@ -27,4 +27,5 @@ to block comments with four (or more) links in.
 matched, eg banning \"sex\" would block the comment \"get free
 sex call this number\", but allow \"This is a photo of Bob
 from Essex\"";
+    public ExtensionCategory $category = ExtensionCategory::MODERATION;
 }

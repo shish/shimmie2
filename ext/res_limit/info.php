@@ -14,4 +14,5 @@ class ResolutionLimitInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Allows the admin to set min / max image dimensions";
+    public ExtensionCategory $category = ExtensionCategory::MODERATION;
 }

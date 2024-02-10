@@ -13,6 +13,7 @@ class RegenThumbInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
+    public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Regenerate a thumbnail image";
     public ?string $documentation =
 "This adds a button in the post control section on a post's view page, which allows an admin to regenerate

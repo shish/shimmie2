@@ -13,6 +13,7 @@ class PrivMsgInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
+    public ExtensionCategory $category = ExtensionCategory::FEATURE;
     public string $description = "Allow users to send messages to eachother";
     public ?string $documentation =
 "PMs show up on a user's profile page, readable by that user

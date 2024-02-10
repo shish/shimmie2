@@ -57,7 +57,7 @@ class RSSComments extends Extension
 
             $title = $config->get_string(SetupConfig::TITLE);
             $base_href = make_http(get_base_href());
-            $version = $config->get_string('version');
+            $version = VERSION;
             $xml = <<<EOD
 <?xml version="1.0" encoding="utf-8" ?>
 <rss version="2.0">

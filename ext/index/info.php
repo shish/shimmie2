@@ -13,6 +13,7 @@ class IndexInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
+    public ExtensionCategory $category = ExtensionCategory::FEATURE;
     public string $description = "Show a list of uploaded posts";
     public bool $core = true;
     public ?string $documentation = " etc.

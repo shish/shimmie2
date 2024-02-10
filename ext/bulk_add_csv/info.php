@@ -27,4 +27,5 @@ Any value but the first may be omitted, but there must be five values per line.
 Useful for importing tagged posts without having to do database manipulation.
 
 <p><b>Note:</b> requires \"Admin Controls\" and optionally \"Post Ratings\" to be enabled<br><br>";
+    public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
 }

@@ -13,7 +13,8 @@ class CustomHtmlHeadersInfo extends ExtensionInfo
     public string $url = "http://www.drudexsoftware.com";
     public array $authors = ["Drudex Software" => "support@drudexsoftware.com"];
     public string $license = self::LICENSE_GPLV2;
-    public string $description = "Allows admins to modify & set custom &lt;head&gt; content";
+    public ExtensionCategory $category = ExtensionCategory::ADMIN;
+    public string $description = "Allows admins to modify & set custom <head> content";
     public ?string $documentation =
 "When you go to board config you can find a block named Custom HTML Headers.
 <br>In that block you can simply place any thing you can place within &lt;head&gt;&lt;/head&gt;

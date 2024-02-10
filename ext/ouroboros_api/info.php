@@ -12,7 +12,7 @@ class OuroborosAPIInfo extends ExtensionInfo
     public string $name = "Ouroboros API";
     public array $authors = ["Diftraku" => "diftraku[at]derpy.me"];
     public string $description = "Ouroboros-like API for Shimmie";
-    public ?string $version = "0.2";
+    public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public ?string $documentation =
 "Currently working features
  <ul>

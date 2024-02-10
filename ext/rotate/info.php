@@ -18,5 +18,6 @@ class RotateImageInfo extends ExtensionInfo
     public string $name = "Rotate Image";
     public array $authors = ["jgen" => "jgen.tech@gmail.com","Agasa" => "hiroshiagasa@gmail.com"];
     public string $license = self::LICENSE_GPLV2;
+    public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Allows admins to rotate images.";
 }

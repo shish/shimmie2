@@ -14,5 +14,6 @@ class VarnishPurgerInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
+    public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public string $description = "Sends PURGE requests when a /post/view is updated";
 }

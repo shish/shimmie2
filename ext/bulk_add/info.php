@@ -23,4 +23,5 @@ class BulkAddInfo extends ExtensionInfo
  tagged \"holiday 2008\")
  <p><b>Note:</b> requires the \"admin\" extension to be enabled
 ";
+    public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
 }

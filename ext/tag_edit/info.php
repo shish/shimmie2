@@ -13,6 +13,7 @@ class TagEditInfo extends ExtensionInfo
     public bool $core = true;
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
+    public ExtensionCategory $category = ExtensionCategory::METADATA;
     public string $description = "Allow images to have tags assigned to them";
     public ?string $documentation =
 "  Here is a list of the tagging metatags available out of the box;

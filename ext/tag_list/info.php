@@ -15,4 +15,5 @@ class TagListInfo extends ExtensionInfo
     public string $description = "Show the tags in various ways";
     public bool $core = true;
     public ExtensionVisibility $visibility = ExtensionVisibility::HIDDEN;
+    public ExtensionCategory $category = ExtensionCategory::METADATA;
 }
