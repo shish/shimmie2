@@ -315,7 +315,7 @@ class Pools extends Extension
                     $pool_id = int_escape($event->req_POST("pool_id"));
                     $pool = $this->get_single_pool($pool_id);
 
-                    if (isset($event->req_POST("order_view"))) {
+                    if ($event->get_POST("order_view")) {
                         if ($this->have_permission($user, $pool)) {
                             $result = $database->execute(
                                 "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC",
@@ -341,15 +341,17 @@ class Pools extends Extension
                         }
                     } else {
                         if ($this->have_permission($user, $pool)) {
-                            foreach ($event->req_POST('imgs') as $data) {
-                                list($imageORDER, $imageID) = $data;
-                                $database->execute(
-                                    "
-                                    UPDATE pool_images
-                                    SET image_order = :ord
-                                    WHERE pool_id = :pid AND image_id = :iid",
-                                    ["ord" => $imageORDER, "pid" => int_escape($event->req_POST('pool_id')), "iid" => $imageID]
-                                );
+                            foreach ($event->POST as $key => $value) {
+                                if(str_starts_with($key, "order_")) {
+                                    $imageID = (int)substr($key, 6);
+                                    $database->execute(
+                                        "
+                                        UPDATE pool_images
+                                        SET image_order = :ord
+                                        WHERE pool_id = :pid AND image_id = :iid",
+                                        ["ord" => $value, "pid" => int_escape($event->req_POST('pool_id')), "iid" => $imageID]
+                                    );    
+                                }
                             }
                             $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("pool/view/" . $pool_id));
@@ -407,7 +409,7 @@ class Pools extends Extension
                     $pool = $this->get_single_pool($pool_id);
 
                     if ($this->have_permission($user, $pool)) {
-                        $image_ids = array_map('intval', $event->req_POST('check'));
+                        $image_ids = array_map('intval', $event->req_POST_array('check'));
                         send_event(new PoolAddPostsEvent($pool_id, $image_ids));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/" . $pool_id));
@@ -422,7 +424,7 @@ class Pools extends Extension
 
                     if ($this->have_permission($user, $pool)) {
                         $images = "";
-                        foreach ($event->req_POST('check') as $imageID) {
+                        foreach ($event->req_POST_array('check') as $imageID) {
                             $database->execute(
                                 "DELETE FROM pool_images WHERE pool_id = :pid AND image_id = :iid",
                                 ["pid" => $pool_id, "iid" => $imageID]

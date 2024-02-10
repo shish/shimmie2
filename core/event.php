@@ -132,6 +132,33 @@ class PageRequestEvent extends Event
     }
 
     /**
+     * @return string[]|null
+     */
+    public function get_POST_array(string $key): ?array
+    {
+        if(array_key_exists($key, $this->POST)) {
+            if(!is_array($this->POST[$key])) {
+                throw new SCoreException("POST parameter {$key} is a single value, expected array");
+            }
+            return $this->POST[$key];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function req_POST_array(string $key): array
+    {
+        $value = $this->get_POST_array($key);
+        if($value === null) {
+            throw new UserErrorException("Missing POST parameter {$key}");
+        }
+        return $value;
+    }
+
+    /**
      * Test if the requested path matches a given pattern.
      *
      * If it matches, store the remaining path elements in $args

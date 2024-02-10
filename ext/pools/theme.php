@@ -308,8 +308,7 @@ class PoolsTheme extends Themelet
             $form->appendChild(SPAN(
                 ["class" => "thumb"],
                 $this->build_thumb_html($image),
-                INPUT(["type" => "number", "name" => "imgs[$i][]", "value" => $image['image_order'], "style" => "max-width: 50px;"]),
-                INPUT(["type" => "hidden", "name" => "imgs[$i][]", "value" => $image->id])
+                INPUT(["type" => "number", "name" => "order_{$image->id}", "value" => $image['image_order'], "style" => "max-width: 50px;"]),
             ));
         }
 
