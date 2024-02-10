@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{rawHTML};
+
 abstract class ResizeConfig
 {
     public const ENABLED = 'resize_enabled';
@@ -45,10 +47,28 @@ class ResizeImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
-        if ($user->can(Permissions::EDIT_FILES) && $config->get_bool(ResizeConfig::ENABLED)
-            && $this->can_resize_mime($event->image->get_mime())) {
+        if (
+            $user->can(Permissions::EDIT_FILES) &&
+            $config->get_bool(ResizeConfig::ENABLED) &&
+            $this->can_resize_mime($event->image->get_mime())
+        ) {
             /* Add a link to resize the image */
-            $event->add_part($this->theme->get_resize_html($event->image));
+            global $config;
+
+            $default_width = $config->get_int(ResizeConfig::DEFAULT_WIDTH, $event->image->width);
+            $default_height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT, $event->image->height);
+
+            $event->add_part(SHM_SIMPLE_FORM(
+                "resize/{$event->image->id}",
+                rawHTML("
+                    <input id='original_width'  name='original_width'  type='hidden' value='{$event->image->width}'>
+                    <input id='original_height' name='original_height' type='hidden' value='{$event->image->height}'>
+                    <input id='resize_width'  style='width: 70px;' name='resize_width'  type='number' min='1' value='".$default_width."'> x
+                    <input id='resize_height' style='width: 70px;' name='resize_height' type='number' min='1' value='".$default_height."'>
+                    <br><label><input type='checkbox' id='resize_aspect' name='resize_aspect' style='max-width: 20px;' checked='checked'> Keep Aspect</label>
+                    <br><input id='resizebutton' type='submit' value='Resize'>
+                ")
+            ));
         }
     }
 
@@ -121,7 +141,7 @@ class ResizeImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("resize") && $user->can(Permissions::EDIT_FILES)) {
+        if ($event->authed_page_matches("resize") && $user->can(Permissions::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);

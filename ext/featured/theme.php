@@ -16,15 +16,6 @@ class FeaturedTheme extends Themelet
         $page->add_block(new Block("Featured Post", $this->build_featured_html($image), "left", 3));
     }
 
-    public function get_buttons_html(int $image_id): \MicroHTML\HTMLElement
-    {
-        return SHM_SIMPLE_FORM(
-            "featured_image/set",
-            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
-            INPUT(["type" => 'submit', "value" => 'Feature This']),
-        );
-    }
-
     public function build_featured_html(Image $image, ?string $query = null): \MicroHTML\HTMLElement
     {
         $tsize = get_thumbnail_size($image->width, $image->height);

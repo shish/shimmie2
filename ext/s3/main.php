@@ -130,11 +130,10 @@ class S3 extends Extension
     {
         global $config, $page, $user;
         if (
-            $event->page_matches("s3/sync") &&
-            $user->can(Permissions::DELETE_IMAGE) &&
-            $user->check_auth_token()
+            $event->authed_page_matches("s3/sync") &&
+            $user->can(Permissions::DELETE_IMAGE)
         ) {
-            $id = int_escape($event->req_POST('image_id'));
+            $id = int_escape($event->get_arg(0));
             $this->sync_post(Image::by_id($id));
             log_info("s3", "Manual resync for >>$id", "File re-sync'ed");
             $page->set_mode(PageMode::REDIRECT);
@@ -146,11 +145,7 @@ class S3 extends Extension
     {
         global $user;
         if ($user->can(Permissions::DELETE_IMAGE)) {
-            $event->add_part(SHM_SIMPLE_FORM(
-                "s3/sync",
-                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),
-                INPUT(["type" => 'submit', "value" => 'CDN Re-Sync']),
-            ));
+            $event->add_button("CDN Re-Sync", "s3/sync/{$event->image->id}");
         }
     }
 

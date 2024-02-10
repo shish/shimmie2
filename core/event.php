@@ -181,6 +181,12 @@ class PageRequestEvent extends Event
         return true;
     }
 
+    public function authed_page_matches(string $name): bool
+    {
+        global $user;
+        return $this->page_matches($name) && $user->check_auth_token();
+    }
+
     /**
      * Get the n th argument of the page request (if it exists.)
      */

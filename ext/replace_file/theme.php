@@ -63,16 +63,6 @@ class ReplaceFileTheme extends Themelet
         $page->add_block(new Block("Upload Replacement File", $html, "main", 20));
     }
 
-    /**
-     * Display link to replace the image
-     */
-    public function get_replace_html(int $image_id): \MicroHTML\HTMLElement
-    {
-        $form = SHM_FORM("replace/$image_id", "GET");
-        $form->appendChild(INPUT(["type" => 'submit', "value" => 'Replace']));
-        return $form;
-    }
-
     protected function get_accept(): string
     {
         return ".".join(",.", DataHandlerExtension::get_all_supported_exts());

@@ -52,11 +52,7 @@ class TagHistory extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        $event->add_part(rawHTML("
-			<form action='".make_link("tag_history/{$event->image->id}")."' method='GET'>
-				<input type='submit' value='View Tag History'>
-			</form>
-		"), 20);
+        $event->add_button("View Tag History", "tag_history/{$event->image->id}", 20);
     }
 
     /*

@@ -44,7 +44,11 @@ class Favorites extends Extension
                 ["user_id" => $user_id, "image_id" => $image_id]
             ) > 0;
 
-            $event->add_part($this->theme->get_voter_html($event->image, $is_favorited));
+            if($is_favorited) {
+                $event->add_button("Un-Favorite", "favourite/remove/{$event->image->id}");
+            } else {
+                $event->add_button("Favorite", "favourite/add/{$event->image->id}");
+            }
         }
     }
 
@@ -59,18 +63,19 @@ class Favorites extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("change_favorite") && !$user->is_anonymous() && $user->check_auth_token()) {
-            $image_id = int_escape($event->req_POST('image_id'));
-            $action = $event->req_POST('favorite_action');
-            if ((($action == "set") || ($action == "unset")) && ($image_id > 0)) {
-                if ($action == "set") {
-                    send_event(new FavoriteSetEvent($image_id, $user, true));
-                    log_debug("favourite", "Favourite set for $image_id", "Favourite added");
-                } else {
-                    send_event(new FavoriteSetEvent($image_id, $user, false));
-                    log_debug("favourite", "Favourite removed for $image_id", "Favourite removed");
-                }
-            }
+        if ($user->is_anonymous()) {
+            return;
+        } // FIXME: proper permissions
+
+        if ($event->authed_page_matches("favourite/add")) {
+            $image_id = int_escape($event->get_arg(0));
+            send_event(new FavoriteSetEvent($image_id, $user, true));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$image_id"));
+        }
+        if ($event->authed_page_matches("favourite/remove")) {
+            $image_id = int_escape($event->get_arg(0));
+            send_event(new FavoriteSetEvent($image_id, $user, false));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }

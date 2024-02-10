@@ -36,14 +36,6 @@ class UserPageTheme extends Themelet
         ));
     }
 
-    public function display_user_list(Page $page, HTMLElement $table, HTMLElement $paginator): void
-    {
-        $page->set_title("User List");
-        $page->set_heading("User List");
-        $page->add_block(new NavBlock());
-        $page->add_block(new Block("Users", emptyHTML($table, $paginator)));
-    }
-
     /**
      * @param array<int, array{name: string|HTMLElement, link: string}> $parts
      */

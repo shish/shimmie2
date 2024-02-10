@@ -48,19 +48,6 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * @param array<int, string> $pools
-     */
-    public function get_adder_html(Image $image, array $pools): HTMLElement
-    {
-        return SHM_SIMPLE_FORM(
-            "pool/add_post",
-            SHM_SELECT("pool_id", $pools),
-            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image->id]),
-            SHM_SUBMIT("Add Post to Pool")
-        );
-    }
-
-    /**
      * HERE WE SHOWS THE LIST OF POOLS.
      *
      * @param Pool[] $pools

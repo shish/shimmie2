@@ -10,6 +10,8 @@ use MicroCRUD\DateColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
+use function MicroHTML\{INPUT,emptyHTML};
+
 class HashBanTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
@@ -59,9 +61,6 @@ class AddImageHashBanEvent extends Event
 
 class ImageBan extends Extension
 {
-    /** @var ImageBanTheme */
-    protected Themelet $theme;
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -122,7 +121,7 @@ class ImageBan extends Extension
                     $t = new HashBanTable($database->raw_db());
                     $t->token = $user->get_auth_token();
                     $t->inputs = $event->GET;
-                    $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
+                    $this->theme->display_crud("Post Bans", $t->table($t->query()), $t->paginator());
                 }
             }
         }
@@ -166,7 +165,13 @@ class ImageBan extends Extension
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
-            $event->add_part($this->theme->get_buttons_html($event->image));
+            $event->add_part(SHM_SIMPLE_FORM(
+                "image_hash_ban/add",
+                INPUT(["type" => 'hidden', "name" => 'c_hash', "value" => $event->image->hash]),
+                INPUT(["type" => 'hidden', "name" => 'c_image_id', "value" => $event->image->id]),
+                INPUT(["type" => 'text', "name" => 'c_reason']),
+                INPUT(["type" => 'submit', "value" => 'Ban Hash and Delete Post']),
+            ));
         }
     }
 

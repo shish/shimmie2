@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{INPUT};
+
 // TODO Add warning that rotate doesn't support lossless webp output
 
 /**
@@ -36,7 +38,11 @@ class RotateImage extends Extension
         if ($user->can(Permissions::EDIT_FILES) && $config->get_bool("rotate_enabled")
                 && MimeType::matches_array($event->image->get_mime(), self::SUPPORTED_MIME)) {
             /* Add a link to rotate the image */
-            $event->add_part($this->theme->get_rotate_html($event->image->id));
+            $event->add_part(SHM_SIMPLE_FORM(
+                'rotate/'.$event->image->id,
+                INPUT(["type" => 'number', "name" => 'rotate_deg', "id" => "rotate_deg", "placeholder" => "Rotation degrees"]),
+                INPUT(["type" => 'submit', "value" => 'Rotate', "id" => "rotatebutton"]),
+            ));
         }
     }
 
@@ -53,7 +59,7 @@ class RotateImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("rotate") && $user->can(Permissions::EDIT_FILES)) {
+        if ($event->authed_page_matches("rotate") && $user->can(Permissions::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = int_escape(null_throws($event->get_arg(0)));
             $image = Image::by_id($image_id);

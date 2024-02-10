@@ -12,23 +12,6 @@ use function MicroHTML\{BUTTON,INPUT,P};
 
 class ApprovalTheme extends Themelet
 {
-    public function get_image_admin_html(Image $image): HTMLElement
-    {
-        if ($image['approved'] === true) {
-            $form = SHM_SIMPLE_FORM(
-                'disapprove_image/'.$image->id,
-                SHM_SUBMIT("Disapprove")
-            );
-        } else {
-            $form = SHM_SIMPLE_FORM(
-                'approve_image/'.$image->id,
-                SHM_SUBMIT("Approve")
-            );
-        }
-
-        return $form;
-    }
-
     public function get_help_html(): HTMLElement
     {
         return emptyHTML(

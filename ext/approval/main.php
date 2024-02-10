@@ -217,7 +217,12 @@ class Approval extends Extension
     {
         global $user, $config;
         if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
-            $event->add_part($this->theme->get_image_admin_html($event->image));
+            if ($event->image['approved'] === true) {
+                $event->add_button("Disapprove", "disapprove_image/".$event->image->id);
+            } else {
+                $event->add_button("Approve", "approve_image/".$event->image->id);
+            }
+
         }
     }
 

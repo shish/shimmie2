@@ -8,15 +8,6 @@ use function MicroHTML\INPUT;
 
 class TrashTheme extends Themelet
 {
-    public function get_image_admin_html(int $image_id): \MicroHTML\HTMLElement
-    {
-        return SHM_SIMPLE_FORM(
-            'trash_restore/'.$image_id,
-            INPUT(["type" => 'submit', "value" => 'Restore From Trash']),
-        );
-    }
-
-
     public function get_help_html(): string
     {
         return '<p>Search for posts in the trash.</p>

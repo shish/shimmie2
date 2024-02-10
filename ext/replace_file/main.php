@@ -51,7 +51,7 @@ class ReplaceFile extends Extension
 
         /* In the future, could perhaps allow users to replace images that they own as well... */
         if ($user->can(Permissions::REPLACE_IMAGE)) {
-            $event->add_part($this->theme->get_replace_html($event->image->id));
+            $event->add_button("Replace", "replace/{$event->image->id}");
         }
     }
 

@@ -75,11 +75,10 @@ class Media extends Extension
         global $page, $user;
 
         if (
-            $event->page_matches("media_rescan/") &&
-            $user->can(Permissions::RESCAN_MEDIA) &&
-            $event->get_POST('image_id')
+            $event->authed_page_matches("media_rescan") &&
+            $user->can(Permissions::RESCAN_MEDIA)
         ) {
-            $image = Image::by_id(int_escape($event->get_POST('image_id')));
+            $image = Image::by_id(int_escape($event->get_arg(0)));
 
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();
@@ -118,7 +117,7 @@ class Media extends Extension
     {
         global $user;
         if ($user->can(Permissions::DELETE_IMAGE)) {
-            $event->add_part($this->theme->get_buttons_html($event->image->id));
+            $event->add_button("Scan Media Properties", "media_rescan/{$event->image->id}");
         }
     }
 

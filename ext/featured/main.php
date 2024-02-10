@@ -85,7 +85,7 @@ class Featured extends Extension
     {
         global $user;
         if ($user->can(Permissions::EDIT_FEATURE) && $event->context == "view") {
-            $event->add_part($this->theme->get_buttons_html($event->image->id));
+            $event->add_button("Feature This", "featured_image/set/{$event->image->id}");
         }
     }
 }

@@ -153,7 +153,7 @@ class Trash extends Extension
     {
         global $user;
         if ($event->image['trash'] === true && $user->can(Permissions::VIEW_TRASH)) {
-            $event->add_part($this->theme->get_image_admin_html($event->image->id));
+            $event->add_button("Restore From Trash", "trash_restore/".$event->image->id);
         }
     }
 

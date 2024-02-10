@@ -8,37 +8,6 @@ use function MicroHTML\{rawHTML};
 
 class ResizeImageTheme extends Themelet
 {
-    /*
-     * Display a link to resize an image
-     */
-    public function get_resize_html(Image $image): \MicroHTML\HTMLElement
-    {
-        global $config;
-
-        $default_width = $config->get_int(ResizeConfig::DEFAULT_WIDTH);
-        $default_height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
-
-        if (!$default_width) {
-            $default_width = $image->width;
-        }
-        if (!$default_height) {
-            $default_height = $image->height;
-        }
-
-        $html = rawHTML("
-			".make_form(make_link("resize/{$image->id}"))."
-				<input id='original_width'  name='original_width'  type='hidden' value='{$image->width}'>
-				<input id='original_height' name='original_height' type='hidden' value='{$image->height}'>
-				<input id='resize_width'  style='width: 70px;' name='resize_width'  type='number' min='1' value='".$default_width."'> x
-				<input id='resize_height' style='width: 70px;' name='resize_height' type='number' min='1' value='".$default_height."'>
-				<br><label><input type='checkbox' id='resize_aspect' name='resize_aspect' style='max-width: 20px;' checked='checked'> Keep Aspect</label>
-				<br><input id='resizebutton' type='submit' value='Resize'>
-			</form>
-		");
-
-        return $html;
-    }
-
     public function display_resize_error(Page $page, string $title, string $message): void
     {
         $page->set_title("Resize Image");

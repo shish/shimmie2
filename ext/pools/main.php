@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{INPUT};
+
 abstract class PoolsConfig
 {
     public const MAX_IMPORT_RESULTS = "poolsMaxImportResults";
@@ -523,7 +525,13 @@ class Pools extends Extension
                 $pools = $database->get_pairs("SELECT id,title FROM pools WHERE user_id=:id ORDER BY title", ["id" => $user->id]);
             }
             if (count($pools) > 0) {
-                $event->add_part($this->theme->get_adder_html($event->image, $pools));
+                $html = SHM_SIMPLE_FORM(
+                    "pool/add_post",
+                    SHM_SELECT("pool_id", $pools),
+                    INPUT(["type" => "hidden", "name" => "image_id", "value" => $event->image->id]),
+                    SHM_SUBMIT("Add Post to Pool")
+                );
+                $event->add_part($html);
             }
         }
     }

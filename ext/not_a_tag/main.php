@@ -32,9 +32,6 @@ class NotATagTable extends Table
 
 class NotATag extends Extension
 {
-    /** @var NotATagTheme */
-    protected Themelet $theme;
-
     public function get_priority(): int
     {
         return 30;
@@ -154,7 +151,7 @@ class NotATag extends Extension
                     $t = new NotATagTable($database->raw_db());
                     $t->token = $user->get_auth_token();
                     $t->inputs = $event->GET;
-                    $this->theme->display_untags($page, $t->table($t->query()), $t->paginator());
+                    $this->theme->display_crud("UnTags", $t->table($t->query()), $t->paginator());
                 }
             }
         }

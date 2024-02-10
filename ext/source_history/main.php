@@ -58,11 +58,7 @@ class SourceHistory extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        $event->add_part(rawHTML("
-			<form action='".make_link("source_history/{$event->image->id}")."' method='GET'>
-				<input type='submit' value='View Source History'>
-			</form>
-		"), 20);
+        $event->add_button("View Source History", "source_history/{$event->image->id}", 20);
     }
 
     /*

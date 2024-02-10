@@ -22,8 +22,8 @@ class RegenThumb extends Extension
         global $page, $user;
 
         if ($event->page_matches("regen_thumb") && $user->can(Permissions::DELETE_IMAGE)) {
-            if ($event->page_matches("regen_thumb/one")) {
-                $image = Image::by_id(int_escape($event->req_POST('image_id')));
+            if ($event->authed_page_matches("regen_thumb/one")) {
+                $image = Image::by_id(int_escape($event->get_arg(0)));
 
                 $this->regenerate_thumbnail($image);
 
@@ -47,7 +47,7 @@ class RegenThumb extends Extension
     {
         global $user;
         if ($user->can(Permissions::DELETE_IMAGE)) {
-            $event->add_part($this->theme->get_buttons_html($event->image->id));
+            $event->add_button("Regenerate Thumbnail", "regen_thumb/one/{$event->image->id}");
         }
     }
 

@@ -200,7 +200,7 @@ class UserPage extends Extension
                     // $t->columns[] = $col;
                     array_splice($t->columns, 2, 0, [$col]);
                 }
-                $this->theme->display_user_list($page, $t->table($t->query()), $t->paginator());
+                $this->theme->display_crud("Users", $t->table($t->query()), $t->paginator());
             } elseif ($event->get_arg(0) == "classes") {
                 $this->theme->display_user_classes(
                     $page,

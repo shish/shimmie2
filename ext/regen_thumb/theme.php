@@ -9,18 +9,6 @@ use function MicroHTML\INPUT;
 class RegenThumbTheme extends Themelet
 {
     /**
-     * Show a form which offers to regenerate the thumb of an image with ID #$image_id
-     */
-    public function get_buttons_html(int $image_id): \MicroHTML\HTMLElement
-    {
-        return SHM_SIMPLE_FORM(
-            "regen_thumb/one",
-            INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image_id]),
-            SHM_SUBMIT('Regenerate Thumbnail')
-        );
-    }
-
-    /**
      * Show a link to the new thumbnail.
      */
     public function display_results(Page $page, Image $image): void

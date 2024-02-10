@@ -238,9 +238,6 @@ class LogTable extends Table
 
 class LogDatabase extends Extension
 {
-    /** @var LogDatabaseTheme */
-    protected Themelet $theme;
-
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
@@ -285,7 +282,7 @@ class LogDatabase extends Extension
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $t = new LogTable($database->raw_db());
                 $t->inputs = $event->GET;
-                $this->theme->display_events($t->table($t->query()), $t->paginator());
+                $this->theme->display_crud("Event Log", $t->table($t->query()), $t->paginator());
             }
         }
     }

@@ -10,18 +10,6 @@ use function MicroHTML\INPUT;
 
 class FavoritesTheme extends Themelet
 {
-    public function get_voter_html(Image $image, bool $is_favorited): HTMLElement
-    {
-        $name  = $is_favorited ? "unset" : "set";
-        $label = $is_favorited ? "Un-Favorite" : "Favorite";
-        return SHM_SIMPLE_FORM(
-            "change_favorite",
-            INPUT(["type" => "hidden", "name" => "image_id", "value" => $image->id]),
-            INPUT(["type" => "hidden", "name" => "favorite_action", "value" => $name]),
-            INPUT(["type" => "submit", "value" => $label]),
-        );
-    }
-
     /**
      * @param string[] $username_array
      */

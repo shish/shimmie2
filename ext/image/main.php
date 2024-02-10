@@ -8,6 +8,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function MicroHTML\{INPUT, emptyHTML};
+
 require_once "config.php";
 
 /**
@@ -15,9 +17,6 @@ require_once "config.php";
  */
 class ImageIO extends Extension
 {
-    /** @var ImageIOTheme */
-    protected Themelet $theme;
-
     public const COLLISION_OPTIONS = [
         'Error' => ImageConfig::COLLISION_ERROR,
         'Merge' => ImageConfig::COLLISION_MERGE
@@ -118,7 +117,12 @@ class ImageIO extends Extension
         global $user;
 
         if ($user->can(Permissions::DELETE_IMAGE)) {
-            $event->add_part($this->theme->get_deleter_html($event->image->id));
+            $form = SHM_FORM("image/delete", form_id: "image_delete_form");
+            $form->appendChild(emptyHTML(
+                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),
+                INPUT(["type" => 'submit', "value" => 'Delete', "onclick" => 'return confirm("Delete the image?");', "id" => "image_delete_button"]),
+            ));
+            $event->add_part($form);
         }
     }
 

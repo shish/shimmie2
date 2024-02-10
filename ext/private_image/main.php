@@ -212,7 +212,11 @@ class PrivateImage extends Extension
     {
         global $user;
         if (($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id == $event->image->owner_id) || $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
-            $event->add_part($this->theme->get_image_admin_html($event->image));
+            if ($event->image['private'] === false) {
+                $event->add_button("Make Private", "privatize_image/".$event->image->id);
+            } else {
+                $event->add_button("Make Public", "publicize_image/".$event->image->id);
+            }
         }
     }
 
