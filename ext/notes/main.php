@@ -78,16 +78,11 @@ class Notes extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("note/lost")) {
+        if ($event->page_matches("note/list")) {
             $this->get_notes_list($event->try_page_num(0)); // This should show images like post/list but i don't know how do that.
         }
         if ($event->page_matches("note/requests")) {
             $this->get_notes_requests($event->try_page_num(0)); // This should show images like post/list but i don't know how do that.
-        }
-        if ($event->page_matches("note/search")) {
-            if (!$user->is_anonymous()) {
-                $this->theme->search_notes_page($page);
-            }
         }
         if ($event->page_matches("note/updated")) {
             $this->get_histories($event->try_page_num(0));
@@ -122,7 +117,7 @@ class Notes extends Extension
         }
         if ($event->page_matches("note/create_note")) {
             $page->set_mode(PageMode::DATA);
-            if (!$user->is_anonymous()) {
+            if (!$user->can(Permissions::NOTES_CREATE)) {
                 $note_id = $this->add_new_note();
                 $page->set_data(json_encode_ex([
                     'status' => 'success',
@@ -132,7 +127,7 @@ class Notes extends Extension
         }
         if ($event->page_matches("note/update_note")) {
             $page->set_mode(PageMode::DATA);
-            if (!$user->is_anonymous()) {
+            if (!$user->can(Permissions::NOTES_EDIT)) {
                 $this->update_note();
                 $page->set_data(json_encode_ex(['status' => 'success']));
             }
@@ -175,7 +170,7 @@ class Notes extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if (!$user->is_anonymous()) {
+        if (!$user->can(Permissions::NOTES_CREATE)) {
             $event->add_part($this->theme->note_button($event->image->id));
             $event->add_part($this->theme->request_button($event->image->id));
             if ($user->can(Permissions::NOTES_ADMIN)) {

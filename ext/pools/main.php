@@ -243,7 +243,7 @@ class Pools extends Extension
                 $page->set_redirect(make_link('pool/list') . '/' . url_escape($event->get_GET('search')) . '/' . strval($event->try_page_num(1)));
                 return;
             }
-            if (count($event->args) >= 4) { // Assume first 2 args are search and page num
+            if ($event->count_args() >= 2) { // Assume first 2 args are search and page num
                 $search = $event->get_arg(0); // Search is based on name comparison instead of tag search
                 $page_num = $event->try_page_num(1);
             } else {
@@ -252,15 +252,10 @@ class Pools extends Extension
             }
             $this->list_pools($page, $page_num, $search);
         }
-        if ($event->page_matches("pool/new", method: "GET")) {
-            if (!$user->is_anonymous()) {
-                $this->theme->new_pool_composer($page);
-            } else {
-                $errMessage = "You must be registered and logged in to create a new pool.";
-                $this->theme->display_error(401, "Error", $errMessage);
-            }
+        if ($event->page_matches("pool/new", method: "GET", permission: Permissions::POOLS_CREATE)) {
+            $this->theme->new_pool_composer($page);
         }
-        if ($event->page_matches("pool/create", method: "POST")) {
+        if ($event->page_matches("pool/create", method: "POST", permission: Permissions::POOLS_CREATE)) {
             try {
                 $pce = send_event(
                     new PoolCreationEvent(
@@ -283,13 +278,11 @@ class Pools extends Extension
         if ($event->page_matches("pool/updated")) {
             $this->get_history($event->try_page_num(0));
         }
-        if ($event->page_matches("pool/revert")) {
-            if (!$user->is_anonymous()) {
-                $historyID = int_escape($event->get_arg(0));
-                $this->revert_history($historyID);
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("pool/updated"));
-            }
+        if ($event->page_matches("pool/revert", method: "POST", permission: Permissions::POOLS_UPDATE)) {
+            $historyID = int_escape($event->get_arg(0));
+            $this->revert_history($historyID);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("pool/updated"));
         }
         if ($event->page_matches("pool/edit")) {
             $pool_id = int_escape($event->req_POST("pool_id"));
@@ -476,7 +469,7 @@ class Pools extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $config, $database, $user;
-        if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && !$user->is_anonymous()) {
+        if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && $user->can(Permissions::POOLS_UPDATE)) {
             $pools = [];
             if ($user->can(Permissions::POOLS_ADMIN)) {
                 $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
@@ -613,7 +606,7 @@ class Pools extends Extension
         // OR if the user is admin
         // OR if the pool is owned by the user.
         return (
-            ($pool->public && !$user->is_anonymous()) ||
+            ($pool->public && $user->can(Permissions::POOLS_UPDATE)) ||
             $user->can(Permissions::POOLS_ADMIN) ||
             $user->id == $pool->user_id
         );
@@ -667,7 +660,7 @@ class Pools extends Extension
     {
         global $user, $database;
 
-        if ($user->is_anonymous()) {
+        if (!$user->can(Permissions::POOLS_UPDATE)) {
             throw new PoolCreationException("You must be registered and logged in to add a image.");
         }
         if (empty($event->title)) {

@@ -49,7 +49,6 @@ class StaticFiles extends Extension
                 $page->add_http_header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
                 $page->set_mode(PageMode::DATA);
                 $page->set_data(file_get_contents_ex($filename));
-
                 $page->set_mime(MimeType::get_for_file($filename));
             }
         }

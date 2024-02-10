@@ -113,14 +113,22 @@ abstract class Permissions
 
     public const ARTISTS_ADMIN = "artists_admin";
     public const BLOTTER_ADMIN = "blotter_admin";
-    public const FORUM_ADMIN = "forum_admin";
-    public const NOTES_ADMIN = "notes_admin";
-    public const POOLS_ADMIN = "pools_admin";
     public const TIPS_ADMIN = "tips_admin";
     public const CRON_ADMIN = "cron_admin";
     public const APPROVE_IMAGE = "approve_image";
     public const APPROVE_COMMENT = "approve_comment";
     public const BYPASS_IMAGE_APPROVAL = "bypass_image_approval";
+
+    public const FORUM_ADMIN = "forum_admin";
+    public const FORUM_CREATE_THREAD = "forum_create_thread";
+
+    public const NOTES_ADMIN = "notes_admin";
+    public const NOTES_CREATE = "notes_create";
+    public const NOTES_EDIT = "notes_edit";
+
+    public const POOLS_ADMIN = "pools_admin";
+    public const POOLS_CREATE = "pools_create";
+    public const POOLS_UPDATE = "pools_update";
 
     public const SET_PRIVATE_IMAGE = "set_private_image";
     public const SET_OTHERS_PRIVATE_IMAGES = "set_others_private_images";

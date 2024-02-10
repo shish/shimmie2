@@ -27,8 +27,9 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->get_page('pool/list');
         $this->assert_title("Pools");
 
-        $this->get_page('pool/new');
-        $this->assert_title("Error");
+        $this->assertException(PermissionDeniedException::class, function () {
+            $this->get_page('pool/new');
+        });
     }
 
     /**

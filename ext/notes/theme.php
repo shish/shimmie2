@@ -43,18 +43,6 @@ class NotesTheme extends Themelet
         );
     }
 
-    public function search_notes_page(Page $page): void
-    { //IN DEVELOPMENT, NOT FULLY WORKING
-        $html = '<form method="GET" action="'.search_link(["note="]).'">
-		<input placeholder="Search Notes" type="text" name="search"/>
-		<input type="submit" style="display: none;" value="Find"/>
-		</form>';
-
-        $page->set_title(html_escape("Search Note"));
-        $page->set_heading(html_escape("Search Note"));
-        $page->add_block(new Block("Search Note", $html, "main", 10));
-    }
-
     // check action POST on form
     /**
      * @param Note[] $recovered_notes

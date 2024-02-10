@@ -117,7 +117,12 @@ new UserClass("user", "base", [
     Permissions::SET_PRIVATE_IMAGE => true,
     Permissions::PERFORM_BULK_ACTIONS => true,
     Permissions::BULK_DOWNLOAD => true,
-    Permissions::CHANGE_USER_SETTING => true
+    Permissions::CHANGE_USER_SETTING => true,
+    Permissions::FORUM_CREATE_THREAD => true,
+    Permissions::NOTES_CREATE => true,
+    Permissions::NOTES_EDIT => true,
+    Permissions::POOLS_CREATE => true,
+    Permissions::POOLS_UPDATE => true,
 ]);
 
 new UserClass("hellbanned", "user", [
