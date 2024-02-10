@@ -613,10 +613,7 @@ class Pools extends Extension
 
         switch ($event->action) {
             case "bulk_pool_add_existing":
-                if (!isset($_POST['bulk_pool_select'])) {
-                    return;
-                }
-                $pool_id = intval($_POST['bulk_pool_select']);
+                $pool_id = intval($event->params['bulk_pool_select']);
                 $pool = $this->get_single_pool($pool_id);
 
                 if ($this->have_permission($user, $pool)) {
@@ -626,10 +623,7 @@ class Pools extends Extension
                 }
                 break;
             case "bulk_pool_add_new":
-                if (!isset($_POST['bulk_pool_new'])) {
-                    return;
-                }
-                $new_pool_title = $_POST['bulk_pool_new'];
+                $new_pool_title = $event->params['bulk_pool_new'];
                 $pce = send_event(new PoolCreationEvent($new_pool_title));
                 send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items)));
                 break;

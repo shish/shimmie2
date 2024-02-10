@@ -285,11 +285,11 @@ class TranscodeImage extends Extension
 
         switch ($event->action) {
             case self::ACTION_BULK_TRANSCODE:
-                if (!isset($_POST['transcode_mime'])) {
+                if (!isset($event->params['transcode_mime'])) {
                     return;
                 }
                 if ($user->can(Permissions::EDIT_FILES)) {
-                    $mime = $_POST['transcode_mime'];
+                    $mime = $event->params['transcode_mime'];
                     $total = 0;
                     $size_difference = 0;
                     foreach ($event->items as $image) {

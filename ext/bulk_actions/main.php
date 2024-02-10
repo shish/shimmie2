@@ -46,13 +46,19 @@ class BulkActionEvent extends Event
 {
     public string $action;
     public \Generator $items;
+    /** @var array<string, mixed> */
+    public array $params;
     public bool $redirect = true;
 
-    public function __construct(string $action, \Generator $items)
+    /**
+     * @param array<string, mixed> $params
+     */
+    public function __construct(string $action, \Generator $items, array $params)
     {
         parent::__construct();
         $this->action = $action;
         $this->items = $items;
+        $this->params = $params;
     }
 }
 
@@ -116,7 +122,7 @@ class BulkActions extends Extension
                 $query = $input->getArgument('query');
                 $items = $this->yield_search_results($query);
                 log_info("bulk_actions", "Performing $action on $query");
-                send_event(new BulkActionEvent($action, $items));
+                send_event(new BulkActionEvent($action, $items, []));
                 return Command::SUCCESS;
             });
     }
@@ -133,13 +139,13 @@ class BulkActions extends Extension
                 }
                 break;
             case "bulk_tag":
-                if (!isset($_POST['bulk_tags'])) {
+                if (!isset($event->params['bulk_tags'])) {
                     return;
                 }
                 if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
-                    $tags = $_POST['bulk_tags'];
+                    $tags = $event->params['bulk_tags'];
                     $replace = false;
-                    if (isset($_POST['bulk_tags_replace']) &&  $_POST['bulk_tags_replace'] == "true") {
+                    if (isset($event->params['bulk_tags_replace']) &&  $event->params['bulk_tags_replace'] == "true") {
                         $replace = true;
                     }
 
@@ -148,11 +154,11 @@ class BulkActions extends Extension
                 }
                 break;
             case "bulk_source":
-                if (!isset($_POST['bulk_source'])) {
+                if (!isset($event->params['bulk_source'])) {
                     return;
                 }
                 if ($user->can(Permissions::BULK_EDIT_IMAGE_SOURCE)) {
-                    $source = $_POST['bulk_source'];
+                    $source = $event->params['bulk_source'];
                     $i = $this->set_source($event->items, $source);
                     $page->flash("Set source for $i items");
                 }
@@ -186,7 +192,7 @@ class BulkActions extends Extension
                 }
 
                 shm_set_timeout(null);
-                $bae = send_event(new BulkActionEvent($action, $items));
+                $bae = send_event(new BulkActionEvent($action, $items, $event->POST));
 
                 if ($bae->redirect) {
                     $page->set_mode(PageMode::REDIRECT);

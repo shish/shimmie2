@@ -354,11 +354,11 @@ class Ratings extends Extension
 
         switch ($event->action) {
             case "bulk_rate":
-                if (!isset($_POST['rating'])) {
+                if (!isset($event->params['rating'])) {
                     return;
                 }
                 if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-                    $rating = $_POST['rating'];
+                    $rating = $event->params['rating'];
                     $total = 0;
                     foreach ($event->items as $image) {
                         send_event(new RatingSetEvent($image, $rating));

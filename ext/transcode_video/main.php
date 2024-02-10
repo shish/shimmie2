@@ -147,11 +147,11 @@ class TranscodeVideo extends Extension
 
         switch ($event->action) {
             case self::ACTION_BULK_TRANSCODE:
-                if (!isset($_POST['transcode_format'])) {
+                if (!isset($event->params['transcode_format'])) {
                     return;
                 }
                 if ($user->can(Permissions::EDIT_FILES)) {
-                    $format = $_POST['transcode_format'];
+                    $format = $event->params['transcode_format'];
                     $total = 0;
                     foreach ($event->items as $image) {
                         try {
