@@ -33,7 +33,7 @@ class MetadataInput
         $_POST['tag_edit__source'] = $metadata->source;
         $image = Image::by_id($post_id);
         if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            send_event(new ImageInfoSetEvent($image));
+            send_event(new ImageInfoSetEvent($image, $_POST));
         }
         return Image::by_id($post_id);
     }

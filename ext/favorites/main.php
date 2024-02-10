@@ -89,10 +89,10 @@ class Favorites extends Extension
         global $user;
         if (
             $user->can(Permissions::EDIT_FAVOURITES) &&
-            in_array('favorite_action', $_POST) &&
-            (($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset"))
+            in_array('favorite_action', $event->params) &&
+            (($event->params['favorite_action'] == "set") || ($event->params['favorite_action'] == "unset"))
         ) {
-            send_event(new FavoriteSetEvent($event->image->id, $user, ($_POST['favorite_action'] == "set")));
+            send_event(new FavoriteSetEvent($event->image->id, $user, ($event->params['favorite_action'] == "set")));
         }
     }
 

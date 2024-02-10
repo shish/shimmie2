@@ -80,7 +80,7 @@ class ViewPost extends Extension
             $image_id = int_escape($_POST['image_id']);
             $image = Image::by_id($image_id);
             if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-                send_event(new ImageInfoSetEvent($image));
+                send_event(new ImageInfoSetEvent($image, $_POST));
                 $page->set_mode(PageMode::REDIRECT);
 
                 if ($event->get_GET('search')) {

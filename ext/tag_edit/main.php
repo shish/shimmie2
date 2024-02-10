@@ -205,17 +205,17 @@ class TagEdit extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $page, $user;
-        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && isset($_POST['tag_edit__owner'])) {
-            $owner = User::by_name($_POST['tag_edit__owner']);
+        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && isset($event->params['tag_edit__owner'])) {
+            $owner = User::by_name($event->params['tag_edit__owner']);
             if ($owner instanceof User) {
                 send_event(new OwnerSetEvent($event->image, $owner));
             } else {
                 throw new NullUserException("Error: No user with that name was found.");
             }
         }
-        if ($user->can(Permissions::EDIT_IMAGE_TAG) && isset($_POST['tag_edit__tags'])) {
+        if ($user->can(Permissions::EDIT_IMAGE_TAG) && isset($event->params['tag_edit__tags'])) {
             try {
-                send_event(new TagSetEvent($event->image, Tag::explode($_POST['tag_edit__tags'])));
+                send_event(new TagSetEvent($event->image, Tag::explode($event->params['tag_edit__tags'])));
             } catch (TagSetException $e) {
                 if ($e->redirect) {
                     $page->flash("{$e->getMessage()}, please see {$e->redirect}");
@@ -224,13 +224,13 @@ class TagEdit extends Extension
                 }
             }
         }
-        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && isset($_POST['tag_edit__source'])) {
-            if (isset($_POST['tag_edit__tags']) ? !preg_match('/source[=|:]/', $_POST["tag_edit__tags"]) : true) {
-                send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
+        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && isset($event->params['tag_edit__source'])) {
+            if (isset($event->params['tag_edit__tags']) ? !preg_match('/source[=|:]/', $event->params["tag_edit__tags"]) : true) {
+                send_event(new SourceSetEvent($event->image, $event->params['tag_edit__source']));
             }
         }
         if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            $locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked'] == "on";
+            $locked = isset($event->params['tag_edit__locked']) && $event->params['tag_edit__locked'] == "on";
             send_event(new LockSetEvent($event->image, $locked));
         }
     }

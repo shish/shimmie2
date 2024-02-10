@@ -216,8 +216,8 @@ class Ratings extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_RATING) && isset($_POST["rating"])) {
-            $rating = $_POST["rating"];
+        if ($user->can(Permissions::EDIT_IMAGE_RATING) && isset($event->params["rating"])) {
+            $rating = $event->params["rating"];
             if (Ratings::rating_is_valid($rating)) {
                 send_event(new RatingSetEvent($event->image, $rating));
             }
