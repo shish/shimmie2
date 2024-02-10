@@ -103,17 +103,17 @@ class RegenThumb extends Extension
             case "regen_thumbs":
                 $event->redirect = true;
                 $force = false;
-                if (isset($_POST["regen_thumb_force"]) && $_POST["regen_thumb_force"] == "true") {
+                if (isset($event->params["regen_thumb_force"]) && $event->params["regen_thumb_force"] == "true") {
                     $force = true;
                 }
                 $limit = 1000;
-                if (isset($_POST["regen_thumb_limit"]) && is_numeric($_POST["regen_thumb_limit"])) {
-                    $limit = intval($_POST["regen_thumb_limit"]);
+                if (isset($event->params["regen_thumb_limit"]) && is_numeric($event->params["regen_thumb_limit"])) {
+                    $limit = intval($event->params["regen_thumb_limit"]);
                 }
 
                 $mime = "";
-                if (isset($_POST["regen_thumb_mime"])) {
-                    $mime = $_POST["regen_thumb_mime"];
+                if (isset($event->params["regen_thumb_mime"])) {
+                    $mime = $event->params["regen_thumb_mime"];
                 }
                 $images = Search::find_images(tags: ["mime=" . $mime]);
 
@@ -138,8 +138,8 @@ class RegenThumb extends Extension
             case "delete_thumbs":
                 $event->redirect = true;
 
-                if (isset($_POST["delete_thumb_mime"]) && $_POST["delete_thumb_mime"] != "") {
-                    $images = Search::find_images(tags: ["mime=" . $_POST["delete_thumb_mime"]]);
+                if (isset($event->params["delete_thumb_mime"]) && $event->params["delete_thumb_mime"] != "") {
+                    $images = Search::find_images(tags: ["mime=" . $event->params["delete_thumb_mime"]]);
 
                     $i = 0;
                     foreach ($images as $image) {
@@ -149,7 +149,7 @@ class RegenThumb extends Extension
                             $i++;
                         }
                     }
-                    $page->flash("Deleted $i thumbnails for ".$_POST["delete_thumb_mime"]." images");
+                    $page->flash("Deleted $i thumbnails for ".$event->params["delete_thumb_mime"]." images");
                 } else {
                     $dir = "data/thumbs/";
                     deltree($dir);

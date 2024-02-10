@@ -26,11 +26,17 @@ class AdminActionEvent extends Event
 {
     public string $action;
     public bool $redirect = true;
+    /** @var array<string, mixed> */
+    public array $params;
 
-    public function __construct(string $action)
+    /**
+     * @param array<string, mixed> $params
+     */
+    public function __construct(string $action, array $params)
     {
         parent::__construct();
         $this->action = $action;
+        $this->params = $params;
     }
 }
 
@@ -51,7 +57,7 @@ class AdminPage extends Extension
                     send_event(new AdminBuildingEvent($page));
                 } else {
                     $action = $event->get_arg(0);
-                    $aae = new AdminActionEvent($action);
+                    $aae = new AdminActionEvent($action, $_POST);
 
                     if ($user->check_auth_token()) {
                         log_info("admin", "Util: $action");

@@ -113,8 +113,8 @@ class CronUploader extends Extension
                 break;
             case "cron_uploader_restage":
                 $event->redirect = true;
-                if (array_key_exists("failed_dir", $_POST) && !empty($_POST["failed_dir"])) {
-                    $this->restage_folder($_POST["failed_dir"]);
+                if (array_key_exists("failed_dir", $event->params) && !empty($event->params["failed_dir"])) {
+                    $this->restage_folder($event->params["failed_dir"]);
                 }
                 break;
         }

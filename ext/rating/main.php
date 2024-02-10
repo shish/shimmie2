@@ -322,14 +322,14 @@ class Ratings extends Extension
         switch ($action) {
             case "update_ratings":
                 $event->redirect = true;
-                if (!array_key_exists("rating_old", $_POST) || empty($_POST["rating_old"])) {
+                if (!array_key_exists("rating_old", $event->params) || empty($event->params["rating_old"])) {
                     return;
                 }
-                if (!array_key_exists("rating_new", $_POST) || empty($_POST["rating_new"])) {
+                if (!array_key_exists("rating_new", $event->params) || empty($event->params["rating_new"])) {
                     return;
                 }
-                $old = $_POST["rating_old"];
-                $new = $_POST["rating_new"];
+                $old = $event->params["rating_old"];
+                $new = $event->params["rating_new"];
 
                 if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                     $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new" => $new, "old" => $old ]);

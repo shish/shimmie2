@@ -88,7 +88,7 @@ class Approval extends Extension
         $action = $event->action;
         $event->redirect = true;
         if ($action === "approval") {
-            $approval_action = $_POST["approval_action"];
+            $approval_action = $event->params["approval_action"];
             switch ($approval_action) {
                 case "approve_all":
                     $database->set_timeout(null); // These updates can take a little bit

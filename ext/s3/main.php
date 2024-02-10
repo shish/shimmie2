@@ -59,7 +59,7 @@ class S3 extends Extension
         if($event->action == "s3_process") {
             foreach($database->get_all(
                 "SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT :count",
-                ["count" => isset($_POST['count']) ? int_escape($_POST["count"]) : 10]
+                ["count" => isset($event->params['count']) ? int_escape($event->params["count"]) : 10]
             ) as $row) {
                 if($row['action'] == "S") {
                     $image = Image::by_hash($row['hash']);
