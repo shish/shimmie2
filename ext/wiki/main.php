@@ -182,64 +182,66 @@ class Wiki extends Extension
             } else {
                 $title = $event->get_arg(0);
             }
+            $action = $event->count_args() > 1 ? $event->get_arg(1) : "view";
 
-            $revision = -1;
-            if ($event->get_GET('revision')) {
-                $revision = int_escape($event->get_GET('revision'));
-            }
 
-            $content = $this->get_page($title, $revision);
-            $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
-        } elseif ($event->page_matches("wiki_admin/edit")) {
-            $content = $this->get_page($event->req_POST('title'));
-            $this->theme->display_page_editor($page, $content);
-        } elseif ($event->page_matches("wiki_admin/save")) {
-            $title = $event->req_POST('title');
-            $rev = int_escape($event->req_POST('revision'));
-            $body = $event->req_POST('body');
-            $lock = $user->can(Permissions::WIKI_ADMIN) && ($event->get_POST('lock') == "on");
+            if($action == "view") {
+                $revision = int_escape($event->get_GET('revision') ?? "-1");
+                $content = $this->get_page($title, $revision);
+                $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
+            } elseif($action == "history") {
+                $history = $this->get_history($title);
+                $this->theme->display_page_history($page, $title, $history);
+            } elseif($action == "edit") {
+                $content = $this->get_page($title);
+                if ($this->can_edit($user, $content)) {
+                    $this->theme->display_page_editor($page, $content);
+                } else {
+                    $this->theme->display_permission_denied();
+                }
+            } elseif($action == "save" && $user->check_auth_token()) {
+                $rev = int_escape($event->req_POST('revision'));
+                $body = $event->req_POST('body');
+                $lock = $user->can(Permissions::WIKI_ADMIN) && ($event->get_POST('lock') == "on");
 
-            if ($this->can_edit($user, $this->get_page($title))) {
-                $wikipage = $this->get_page($title);
-                $wikipage->revision = $rev;
-                $wikipage->body = $body;
-                $wikipage->locked = $lock;
-                send_event(new WikiUpdateEvent($user, $wikipage));
-                $u_title = url_escape($title);
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("wiki/$u_title"));
-            } else {
-                $this->theme->display_permission_denied();
-            }
-        } elseif ($event->page_matches("wiki_admin/history")) {
-            $history = $this->get_history($event->get_GET('title'));
-            $this->theme->display_page_history($page, $event->get_GET('title'), $history);
-        } elseif ($event->page_matches("wiki_admin/delete_revision")) {
-            if ($user->can(Permissions::WIKI_ADMIN)) {
-                $title = $event->req_POST('title');
-                $revision = int_escape($event->req_POST('revision'));
-                send_event(new WikiDeleteRevisionEvent($title, $revision));
-                $u_title = url_escape($title);
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("wiki/$u_title"));
-            }
-        } elseif ($event->page_matches("wiki_admin/delete_all")) {
-            if ($user->can(Permissions::WIKI_ADMIN)) {
-                $title = $event->req_POST('title');
-                send_event(new WikiDeletePageEvent($title));
-                $u_title = url_escape($title);
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("wiki/$u_title"));
+                if ($this->can_edit($user, $this->get_page($title))) {
+                    $wikipage = $this->get_page($title);
+                    $wikipage->revision = $rev;
+                    $wikipage->body = $body;
+                    $wikipage->locked = $lock;
+                    send_event(new WikiUpdateEvent($user, $wikipage));
+                    $u_title = url_escape($title);
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("wiki/$u_title"));
+                } else {
+                    $this->theme->display_permission_denied();
+                }
+            } elseif($action == "delete_revision" && $user->check_auth_token()) {
+                $content = $this->get_page($title);
+                if ($user->can(Permissions::WIKI_ADMIN)) {
+                    $revision = int_escape($event->req_POST('revision'));
+                    send_event(new WikiDeleteRevisionEvent($title, $revision));
+                    $u_title = url_escape($title);
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("wiki/$u_title"));
+                } else {
+                    $this->theme->display_permission_denied();
+                }
+            } elseif($action == "delete_all" && $user->check_auth_token()) {
+                if ($user->can(Permissions::WIKI_ADMIN)) {
+                    send_event(new WikiDeletePageEvent($title));
+                    $u_title = url_escape($title);
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("wiki/$u_title"));
+                }
             }
         }
     }
-
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("wiki", new Link('wiki'), "Wiki");
     }
-
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {

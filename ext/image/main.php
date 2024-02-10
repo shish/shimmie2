@@ -97,7 +97,7 @@ class ImageIO extends Extension
                     send_event(new ImageDeletionEvent($image));
 
                     if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
-                        redirect_to_next_image($image, @$event->get_GET('search'));
+                        redirect_to_next_image($image, $event->get_GET('search'));
                     } else {
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(referer_or(make_link(), ['post/view']));
