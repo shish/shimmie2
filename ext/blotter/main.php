@@ -108,9 +108,10 @@ class Blotter extends Extension
     private function display_blotter(): void
     {
         global $database, $config;
-        $limit = $config->get_int("blotter_recent", 5);
-        $sql = 'SELECT * FROM blotter ORDER BY id DESC LIMIT ' . intval($limit);
-        $entries = $database->get_all($sql);
+        $entries = $database->get_all(
+            'SELECT * FROM blotter ORDER BY id DESC LIMIT :limit',
+            ["limit" => $config->get_int("blotter_recent", 5)]
+        );
         $this->theme->display_blotter($entries);
     }
 }

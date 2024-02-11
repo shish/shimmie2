@@ -46,13 +46,6 @@ class Tips extends Extension
                 text TEXT NOT NULL,
             ");
 
-            $database->execute(
-                "
-					INSERT INTO tips (enable, image, text)
-					VALUES (:enable, :image, :text)",
-                ["enable" => true, "image" => "coins.png", "text" => "Do you like this extension? Please support us for developing new ones. <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8235933\" target=\"_blank\">Donate through paypal</a>."]
-            );
-
             $this->set_version("ext_tips_version", 2);
         }
         if ($this->get_version("ext_tips_version") < 2) {
