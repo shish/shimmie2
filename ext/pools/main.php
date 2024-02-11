@@ -130,6 +130,8 @@ class Pools extends Extension
     {
         global $config;
 
+        Image::$prop_types["image_order"] = ImagePropType::INT;
+
         // Set the defaults for the pools extension
         $config->set_default_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000);
         $config->set_default_int(PoolsConfig::IMAGES_PER_PAGE, 20);
