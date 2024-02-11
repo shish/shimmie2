@@ -151,12 +151,12 @@ class PoolsTheme extends Themelet
 
         $this->display_top($pool, "Pool: " . html_escape($pool->title));
 
-        $pool_images = emptyHTML();
+        $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
-            $pool_images->appendChild($this->build_thumb_html($image));
+            $image_list->appendChild($this->build_thumb_html($image));
         }
 
-        $page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));
+        $page->add_block(new Block("Viewing Posts", $image_list, "main", 30));
         $this->display_paginator($page, "pool/view/" . $pool->id, null, $pageNumber, $totalPages);
     }
 
@@ -262,11 +262,13 @@ class PoolsTheme extends Themelet
         );
 
         $form = SHM_FORM("pool/add_posts", name: "checks");
+        $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
-            $form->appendChild(
+            $image_list->appendChild(
                 SPAN(["class" => "thumb"], $this->build_thumb_html($image), BR(), INPUT(["type" => "checkbox", "name" => "check[]", "value" => $image->id])),
             );
         }
+        $form->appendChild($image_list);
 
         $form->appendChild(
             BR(),
@@ -291,14 +293,16 @@ class PoolsTheme extends Themelet
         $this->display_top($pool, "Sorting Pool");
 
         $form = SHM_FORM("pool/order", name: "checks");
+        $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $i => $image) {
-            $form->appendChild(SPAN(
+            $image_list->appendChild(SPAN(
                 ["class" => "thumb"],
                 $this->build_thumb_html($image),
                 INPUT(["type" => "number", "name" => "order_{$image->id}", "value" => $image['image_order'], "style" => "max-width: 50px;"]),
             ));
         }
-
+        $form->appendChild($image_list);
+        
         $form->appendChild(
             INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id]),
             SHM_SUBMIT("Order", ["name" => "edit", "id" => "edit_pool_order"])
@@ -328,13 +332,15 @@ class PoolsTheme extends Themelet
         );
 
         $images_form = SHM_FORM("pool/remove_posts", name: "checks");
+        $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
-            $images_form->appendChild(SPAN(
+            $image_list->appendChild(SPAN(
                 ["class" => "thumb"],
                 $this->build_thumb_html($image),
                 INPUT(["type" => "checkbox", "name" => "check[]", "value" => $image->id])
             ));
         }
+        $images_form->appendChild($image_list);
 
         $images_form->appendChild(
             BR(),
