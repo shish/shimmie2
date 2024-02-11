@@ -317,7 +317,7 @@ class PoolsTheme extends Themelet
             ));
         }
         $form->appendChild($image_list);
-        
+
         $form->appendChild(
             INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id]),
             SHM_SUBMIT("Order", ["name" => "edit", "id" => "edit_pool_order"])
