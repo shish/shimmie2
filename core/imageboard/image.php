@@ -131,7 +131,8 @@ class Image implements \ArrayAccess
     {
         assert(is_string($offset));
         if(!$this->offsetExists($offset)) {
-            throw new \OutOfBoundsException("Undefined dynamic property: $offset");
+            $known = implode(", ", array_keys(static::$prop_types));
+            throw new \OutOfBoundsException("Undefined dynamic property: $offset (Known: $known)");
         }
         return $this->dynamic_props[$offset] ?? null;
     }
