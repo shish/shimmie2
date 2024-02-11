@@ -293,7 +293,7 @@ class PoolsTheme extends Themelet
             ));
         }
         $form->appendChild($image_list);
-        
+
         $form->appendChild(
             SHM_SUBMIT("Order", ["name" => "edit", "id" => "edit_pool_order"])
         );

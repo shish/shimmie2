@@ -113,8 +113,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
-        $this->post_page("pool/import", [
-            "pool_id" => $pool_id,
+        $this->post_page("pool/import/$pool_id", [
             "pool_tag" => "test"
         ]);
         $this->assert_text("Pool");
@@ -128,8 +127,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
-        $page = $this->post_page("pool/remove_posts", [
-            "pool_id" => $pool_id,
+        $page = $this->post_page("pool/remove_posts/$pool_id", [
             "check" => [(string)($image_ids[0]), (string)($image_ids[1])]
         ]);
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
@@ -142,8 +140,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     {
         [$pool_id, $image_ids] = $this->testRemovePosts();
 
-        $page = $this->post_page("pool/add_posts", [
-            "pool_id" => $pool_id,
+        $page = $this->post_page("pool/add_posts/$pool_id", [
             "check" => [(string)($image_ids[0]), (string)($image_ids[1])]
         ]);
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
@@ -157,8 +154,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
-        $page = $this->post_page("pool/edit_description", [
-            "pool_id" => $pool_id,
+        $page = $this->post_page("pool/edit_description/$pool_id", [
             "description" => "Updated description"
         ]);
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
@@ -184,9 +180,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $pool_id = (int)(explode("/", $page->redirect)[4]);
         send_event(new PoolAddPostsEvent($pool_id, [$image_id_1, $image_id_2]));
 
-        $page = $this->post_page("pool/nuke", [
-            "pool_id" => "$pool_id",
-        ]);
+        $page = $this->post_page("pool/nuke/$pool_id");
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
     }
 }

@@ -328,7 +328,7 @@ class Pools extends Extension
             }
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
-    }
+        }
         if ($event->page_matches("pool/reverse/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
