@@ -177,27 +177,20 @@ class PoolsTheme extends Themelet
 
         $editor = emptyHTML(
             SHM_SIMPLE_FORM(
-                "pool/import",
-                INPUT(["type" => "text", "name" => "pool_tag", "id" => "edit_pool_tag", "placeholder" => "Please enter a tag"]),
-                $_input_id,
+                "pool/import/{$pool->id}",
+                INPUT(["type" => "text", "name" => "pool_tag", "id" => "edit_pool_tag", "placeholder" => "Please enter a tag", "class" => "autocomplete_tags"]),
                 SHM_SUBMIT("Import", ["name" => "edit", "id" => "edit_pool_import_btn"])
             ),
             SHM_SIMPLE_FORM(
-                "pool/edit",
-                $_hidden("edit_pool", "yes"),
-                $_input_id,
+                "pool/edit/{$pool->id}",
                 SHM_SUBMIT("Edit Pool", ["name" => "edit", "id" => "edit_pool_btn"]),
             ),
             SHM_SIMPLE_FORM(
-                "pool/order",
-                $_hidden("order_view", "yes"),
-                $_input_id,
+                "pool/order/{$pool->id}",
                 SHM_SUBMIT("Order Pool", ["name" => "edit", "id" => "edit_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
-                "pool/reverse",
-                $_hidden("reverse_view", "yes"),
-                $_input_id,
+                "pool/reverse/{$pool->id}",
                 SHM_SUBMIT("Reverse Order", ["name" => "edit", "id" => "reverse_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
@@ -217,8 +210,7 @@ class PoolsTheme extends Themelet
                     //-->")
                 ),
                 SHM_SIMPLE_FORM(
-                    "pool/nuke",
-                    $_input_id,
+                    "pool/nuke/{$pool->id}",
                     SHM_SUBMIT("Delete Pool", ["name" => "delete", "id" => "delete_pool_btn", "onclick" => "return confirm_action()"])
                 )
             );
@@ -261,7 +253,7 @@ class PoolsTheme extends Themelet
             )
         );
 
-        $form = SHM_FORM("pool/add_posts", name: "checks");
+        $form = SHM_FORM("pool/add_posts/{$pool->id}", name: "checks");
         $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
             $image_list->appendChild(
@@ -273,7 +265,6 @@ class PoolsTheme extends Themelet
         $form->appendChild(
             BR(),
             SHM_SUBMIT("Add Selected", ["name" => "edit", "id" => "edit_pool_add_btn", "onclick" => "return confirm_action()"]),
-            INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id])
         );
 
         $import->appendChild($form);
@@ -292,7 +283,7 @@ class PoolsTheme extends Themelet
     {
         $this->display_top($pool, "Sorting Pool");
 
-        $form = SHM_FORM("pool/order", name: "checks");
+        $form = SHM_FORM("pool/save_order/{$pool->id}", name: "checks");
         $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $i => $image) {
             $image_list->appendChild(SPAN(
@@ -304,7 +295,6 @@ class PoolsTheme extends Themelet
         $form->appendChild($image_list);
         
         $form->appendChild(
-            INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id]),
             SHM_SUBMIT("Order", ["name" => "edit", "id" => "edit_pool_order"])
         );
 
@@ -321,17 +311,14 @@ class PoolsTheme extends Themelet
      */
     public function edit_pool(Page $page, Pool $pool, array $images): void
     {
-        $_input_id = INPUT(["type" => "hidden", "name" => "pool_id", "value" => $pool->id]);
-
         $desc_form = SHM_SIMPLE_FORM(
-            "pool/edit/description",
+            "pool/edit_description/{$pool->id}",
             TEXTAREA(["name" => "description"], $pool->description),
             BR(),
-            $_input_id,
             SHM_SUBMIT("Change Description")
         );
 
-        $images_form = SHM_FORM("pool/remove_posts", name: "checks");
+        $images_form = SHM_FORM("pool/remove_posts/{$pool->id}", name: "checks");
         $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
             $image_list->appendChild(SPAN(
@@ -344,7 +331,6 @@ class PoolsTheme extends Themelet
 
         $images_form->appendChild(
             BR(),
-            $_input_id,
             SHM_SUBMIT("Remove Selected", ["name" => "edit", "id" => "edit_pool_remove_sel"])
         );
 
