@@ -51,26 +51,24 @@ class ReportImage extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("image_report")) {
-            if ($event->page_matches("image_report/add")) {
-                $image_id = int_escape($event->req_POST('image_id'));
-                send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $event->req_POST('reason'))));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$image_id"));
-            }
-            if ($event->page_matches("image_report/remove", method: "POST", permission: Permissions::VIEW_IMAGE_REPORT)) {
-                send_event(new RemoveReportedImageEvent(int_escape($event->req_POST('id'))));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("image_report/list"));
-            }
-            if ($event->page_matches("image_report/remove_reports_by", method: "POST", permission: Permissions::VIEW_IMAGE_REPORT)) {
-                $this->delete_reports_by(int_escape($event->req_POST('user_id')));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link());
-            }
-            if ($event->page_matches("image_report/list", permission: Permissions::VIEW_IMAGE_REPORT)) {
-                $this->theme->display_reported_images($page, $this->get_reported_images());
-            }
+        if ($event->page_matches("image_report/add")) {
+            $image_id = int_escape($event->req_POST('image_id'));
+            send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $event->req_POST('reason'))));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$image_id"));
+        }
+        if ($event->page_matches("image_report/remove", method: "POST", permission: Permissions::VIEW_IMAGE_REPORT)) {
+            send_event(new RemoveReportedImageEvent(int_escape($event->req_POST('id'))));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("image_report/list"));
+        }
+        if ($event->page_matches("image_report/remove_reports_by", method: "POST", permission: Permissions::VIEW_IMAGE_REPORT)) {
+            $this->delete_reports_by(int_escape($event->req_POST('user_id')));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link());
+        }
+        if ($event->page_matches("image_report/list", permission: Permissions::VIEW_IMAGE_REPORT)) {
+            $this->theme->display_reported_images($page, $this->get_reported_images());
         }
     }
 

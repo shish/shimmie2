@@ -78,21 +78,21 @@ class Notes extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("note/list")) {
-            $this->get_notes_list($event->try_page_num(0)); // This should show images like post/list but i don't know how do that.
+        if ($event->page_matches("note/list", paged: true)) {
+            $this->get_notes_list($event->get_iarg('page_num', 1) - 1); // This should show images like post/list but i don't know how do that.
         }
-        if ($event->page_matches("note/requests")) {
-            $this->get_notes_requests($event->try_page_num(0)); // This should show images like post/list but i don't know how do that.
+        if ($event->page_matches("note/requests", paged: true)) {
+            $this->get_notes_requests($event->get_iarg('page_num', 1) - 1); // This should show images like post/list but i don't know how do that.
         }
-        if ($event->page_matches("note/updated")) {
-            $this->get_histories($event->try_page_num(0));
+        if ($event->page_matches("note/updated", paged: true)) {
+            $this->get_histories($event->get_iarg('page_num', 1) - 1);
         }
-        if ($event->page_matches("note/history")) {
-            $this->get_history(int_escape($event->get_arg(0)), $event->try_page_num(1));
+        if ($event->page_matches("note/history/{note_id}", paged: true)) {
+            $this->get_history($event->get_iarg('note_id'), $event->get_iarg('page_num', 1) - 1);
         }
-        if ($event->page_matches("note/revert")) {
-            $noteID = int_escape($event->get_arg(0));
-            $reviewID = int_escape($event->get_arg(1));
+        if ($event->page_matches("note/revert/{noteID}/{reviewID}")) {
+            $noteID = $event->get_iarg('noteID');
+            $reviewID = $event->get_iarg('reviewID');
             if (!$user->is_anonymous()) {
                 $this->revert_history($noteID, $reviewID);
             }

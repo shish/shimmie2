@@ -28,39 +28,32 @@ class ExtManager extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("ext_manager")) {
-            if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
-                if ($event->count_args() == 1 && $event->get_arg(0) == "set" && $user->check_auth_token()) {
-                    if (is_writable("data/config")) {
-                        $this->set_things($event->POST);
-                        log_warning("ext_manager", "Active extensions changed", "Active extensions changed");
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("ext_manager"));
-                    } else {
-                        $this->theme->display_error(
-                            500,
-                            "File Operation Failed",
-                            "The config file (data/config/extensions.conf.php) isn't writable by the web server :("
-                        );
-                    }
-                } else {
-                    $this->theme->display_table($page, $this->get_extensions(true), true);
-                }
+        if ($event->page_matches("ext_manager/set", method: "POST", permission: Permissions::MANAGE_EXTENSION_LIST)) {
+            if (is_writable("data/config")) {
+                $this->set_things($event->POST);
+                log_warning("ext_manager", "Active extensions changed", "Active extensions changed");
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("ext_manager"));
             } else {
-                $this->theme->display_table($page, $this->get_extensions(false), false);
+                $this->theme->display_error(
+                    500,
+                    "File Operation Failed",
+                    "The config file (data/config/extensions.conf.php) isn't writable by the web server :("
+                );
             }
+        } elseif ($event->page_matches("ext_manager", method: "GET")) {
+            $is_admin = $user->can(Permissions::MANAGE_EXTENSION_LIST);
+            $this->theme->display_table($page, $this->get_extensions($is_admin), $is_admin);
         }
 
-        if ($event->page_matches("ext_doc")) {
-            if ($event->count_args() == 1) {
-                $ext = $event->get_arg(0);
-                if (file_exists("ext/$ext/info.php")) {
-                    $info = ExtensionInfo::get_by_key($ext);
-                    $this->theme->display_doc($page, $info);
-                }
-            } else {
-                $this->theme->display_table($page, $this->get_extensions(false), false);
+        if ($event->page_matches("ext_doc/{ext}")) {
+            $ext = $event->get_arg('ext');
+            $info = ExtensionInfo::get_by_key($ext);
+            if($info) {
+                $this->theme->display_doc($page, $info);
             }
+        } elseif ($event->page_matches("ext_doc")) {
+            $this->theme->display_table($page, $this->get_extensions(false), false);
         }
     }
 

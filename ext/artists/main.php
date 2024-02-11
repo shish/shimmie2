@@ -169,8 +169,8 @@ class Artists extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("artist/list")) {
-            $this->get_listing(clamp(int_escape($event->get_arg(0)), 1, null) - 1);
+        if ($event->page_matches("artist/list/{page}")) {
+            $this->get_listing(page_number($event->get_arg('page')));
             $this->theme->sidebar_options("neutral");
         }
         if ($event->page_matches("artist/new")) {
@@ -197,8 +197,8 @@ class Artists extends Extension
                 $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
             }
         }
-        if ($event->page_matches("artist/view")) {
-            $artistID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/view/{artistID}")) {
+            $artistID = $event->get_iarg('artistID');
             $artist = $this->get_artist($artistID);
             $aliases = $this->get_alias($artist['id']);
             $members = $this->get_members($artist['id']);
@@ -220,8 +220,8 @@ class Artists extends Extension
 
             $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
         }
-        if ($event->page_matches("artist/edit")) {
-            $artistID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/edit/{artistID}")) {
+            $artistID = $event->get_iarg('artistID');
             $artist = $this->get_artist($artistID);
             $aliases = $this->get_alias($artistID);
             $members = $this->get_members($artistID);
@@ -252,8 +252,8 @@ class Artists extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/nuke/" . $artistID));
         }
-        if ($event->page_matches("artist/nuke")) {
-            $artistID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/nuke/{artistID}")) {
+            $artistID = $event->get_iarg('artistID');
             $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/list"));
@@ -276,15 +276,15 @@ class Artists extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
-        if ($event->page_matches("artist/alias/delete")) {
-            $aliasID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/alias/delete/{aliasID}")) {
+            $aliasID = $event->get_iarg('aliasID');
             $artistID = $this->get_artistID_by_aliasID($aliasID);
             $this->delete_alias($aliasID);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
-        if ($event->page_matches("artist/alias/edit")) {
-            $aliasID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/alias/edit/{aliasID}")) {
+            $aliasID = $event->get_iarg('aliasID');
             $alias = $this->get_alias_by_id($aliasID);
             $this->theme->show_alias_editor($alias);
         }
@@ -301,15 +301,15 @@ class Artists extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
-        if ($event->page_matches("artist/url/delete")) {
-            $urlID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/url/delete/{urlID}")) {
+            $urlID = $event->get_iarg('urlID');
             $artistID = $this->get_artistID_by_urlID($urlID);
             $this->delete_url($urlID);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
-        if ($event->page_matches("artist/url/edit")) {
-            $urlID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/url/edit/{urlID}")) {
+            $urlID = $event->get_iarg('urlID');
             $url = $this->get_url_by_id($urlID);
             $this->theme->show_url_editor($url);
         }
@@ -326,15 +326,15 @@ class Artists extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
-        if ($event->page_matches("artist/member/delete")) {
-            $memberID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/member/delete/{memberID}")) {
+            $memberID = $event->get_iarg('memberID');
             $artistID = $this->get_artistID_by_memberID($memberID);
             $this->delete_member($memberID);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
-        if ($event->page_matches("artist/member/edit")) {
-            $memberID = int_escape($event->get_arg(0));
+        if ($event->page_matches("artist/member/edit/{memberID}")) {
+            $memberID = $event->get_iarg('memberID');
             $member = $this->get_member_by_id($memberID);
             $this->theme->show_member_editor($member);
         }

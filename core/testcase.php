@@ -106,6 +106,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             if (str_contains($page_name, "?")) {
                 throw new \RuntimeException("Query string included in page name");
             }
+            $_SERVER['REQUEST_METHOD'] = $method;
             $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($get_args));
             $_GET = $get_args;
             $_POST = $post_args;

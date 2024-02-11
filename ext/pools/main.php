@@ -237,19 +237,17 @@ class Pools extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page, $user;
-        if ($event->page_matches("pool/list")) { //index
+        if (
+            $event->page_matches("pool/list", paged: true)
+            || $event->page_matches("pool/list/{search}", paged: true)
+        ) { //index
             if ($event->get_GET('search')) {
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link('pool/list') . '/' . url_escape($event->get_GET('search')) . '/' . strval($event->try_page_num(1)));
+                $page->set_redirect(make_link('pool/list') . '/' . url_escape($event->get_GET('search')) . '/' . strval($event->page_num));
                 return;
             }
-            if ($event->count_args() >= 2) { // Assume first 2 args are search and page num
-                $search = $event->get_arg(0); // Search is based on name comparison instead of tag search
-                $page_num = $event->try_page_num(1);
-            } else {
-                $search = "";
-                $page_num = $event->try_page_num(0);
-            }
+            $search = $event->get_arg('search', "");
+            $page_num = $event->get_iarg('page_num', 1) - 1;
             $this->list_pools($page, $page_num, $search);
         }
         if ($event->page_matches("pool/new", method: "GET", permission: Permissions::POOLS_CREATE)) {
@@ -271,15 +269,15 @@ class Pools extends Extension
                 $this->theme->display_error(400, "Error", $e->error);
             }
         }
-        if ($event->page_matches("pool/view", method: "GET")) {
-            $poolID = int_escape($event->get_arg(0));
-            $this->get_posts($event->try_page_num(1), $poolID);
+        if ($event->page_matches("pool/view/{poolID}", method: "GET", paged: true)) {
+            $poolID = $event->get_iarg('poolID');
+            $this->get_posts($event->get_iarg('page_num', 1) - 1, $poolID);
         }
-        if ($event->page_matches("pool/updated")) {
-            $this->get_history($event->try_page_num(0));
+        if ($event->page_matches("pool/updated", paged: true)) {
+            $this->get_history($event->get_iarg('page_num', 1) - 1);
         }
-        if ($event->page_matches("pool/revert", method: "POST", permission: Permissions::POOLS_UPDATE)) {
-            $historyID = int_escape($event->get_arg(0));
+        if ($event->page_matches("pool/revert/{historyID}", method: "POST", permission: Permissions::POOLS_UPDATE)) {
+            $historyID = $event->get_iarg('historyID');
             $this->revert_history($historyID);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/updated"));
@@ -619,7 +617,7 @@ class Pools extends Extension
         }
     }
 
-    private function list_pools(Page $page, int $pageNumber, ?string $search): void
+    private function list_pools(Page $page, int $pageNumber, string $search): void
     {
         global $config, $database;
 

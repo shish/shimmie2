@@ -216,39 +216,41 @@ class Upload extends Extension
             }
         }
 
-        if ($event->page_matches("upload", permission: Permissions::CREATE_IMAGE)) {
+        if ($event->page_matches("upload", method: "GET", permission: Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
                 $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
                 return;
             }
-
-            if($event->method == "GET") {
-                $this->theme->display_page($page);
-            } elseif($event->method == "POST") {
-                $results = [];
-
-                $files = array_filter($_FILES, function ($file) {
-                    return !empty($file['name']);
-                });
-                foreach ($files as $name => $file) {
-                    $slot = int_escape(substr($name, 4));
-                    $tags = $this->tags_for_upload_slot($event->POST, $slot);
-                    $source = $this->source_for_upload_slot($event->POST, $slot);
-                    $results = array_merge($results, $this->try_upload($file, $tags, $source));
-                }
-
-                $urls = array_filter($event->POST, function ($value, $key) {
-                    return str_starts_with($key, "url") && is_string($value) && strlen($value) > 0;
-                }, ARRAY_FILTER_USE_BOTH);
-                foreach ($urls as $name => $value) {
-                    $slot = int_escape(substr($name, 3));
-                    $tags = $this->tags_for_upload_slot($event->POST, $slot);
-                    $source = $this->source_for_upload_slot($event->POST, $slot);
-                    $results = array_merge($results, $this->try_transload($value, $tags, $source));
-                }
-
-                $this->theme->display_upload_status($page, $results);
+            $this->theme->display_page($page);
+        }
+        if ($event->page_matches("upload", method: "POST", permission: Permissions::CREATE_IMAGE)) {
+            if ($this->is_full) {
+                $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
+                return;
             }
+            $results = [];
+
+            $files = array_filter($_FILES, function ($file) {
+                return !empty($file['name']);
+            });
+            foreach ($files as $name => $file) {
+                $slot = int_escape(substr($name, 4));
+                $tags = $this->tags_for_upload_slot($event->POST, $slot);
+                $source = $this->source_for_upload_slot($event->POST, $slot);
+                $results = array_merge($results, $this->try_upload($file, $tags, $source));
+            }
+
+            $urls = array_filter($event->POST, function ($value, $key) {
+                return str_starts_with($key, "url") && is_string($value) && strlen($value) > 0;
+            }, ARRAY_FILTER_USE_BOTH);
+            foreach ($urls as $name => $value) {
+                $slot = int_escape(substr($name, 3));
+                $tags = $this->tags_for_upload_slot($event->POST, $slot);
+                $source = $this->source_for_upload_slot($event->POST, $slot);
+                $results = array_merge($results, $this->try_transload($value, $tags, $source));
+            }
+
+            $this->theme->display_upload_status($page, $results);
         }
     }
 

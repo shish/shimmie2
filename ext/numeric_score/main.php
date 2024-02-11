@@ -138,8 +138,8 @@ class NumericScore extends Extension
     {
         global $config, $database, $user, $page;
 
-        if ($event->page_matches("numeric_score_votes")) {
-            $image_id = int_escape($event->get_arg(0));
+        if ($event->page_matches("numeric_score_votes/{image_id}")) {
+            $image_id = $event->get_iarg('image_id');
             $x = $database->get_all(
                 "SELECT users.name as username, user_id, score
 				FROM numeric_score_votes

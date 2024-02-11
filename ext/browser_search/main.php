@@ -48,14 +48,14 @@ class BrowserSearch extends Extension
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::XML);
             $page->set_data($xml);
-        } elseif ($event->page_matches("browser_search")) {
+        } elseif ($event->page_matches("browser_search/{tag_search}")) {
             $suggestions = $config->get_string("search_suggestions_results_order");
             if ($suggestions == "n") {
                 return;
             }
 
             // We have to build some json stuff
-            $tag_search = $event->get_arg(0);
+            $tag_search = $event->get_arg('tag_search');
 
             // Now to get DB results
             if ($suggestions == "a") {

@@ -59,9 +59,9 @@ class RotateImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("rotate", method: "POST", permission: Permissions::EDIT_FILES)) {
+        if ($event->page_matches("rotate/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
             // Try to get the image ID
-            $image_id = int_escape(null_throws($event->get_arg(0)));
+            $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
             if (is_null($image)) {
                 $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");

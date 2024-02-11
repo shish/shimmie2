@@ -99,31 +99,20 @@ class Forum extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("forum/index")) {
-            if ($event->count_args() >= 2) {
-                $pageNumber = page_number($event->get_arg(1));
-            } else {
-                $pageNumber = 0;
-            }
+        if ($event->page_matches("forum/index", paged: true)) {
+            $pageNumber = $event->get_iarg('page_num', 1) - 1;
             $this->show_last_threads($page, $pageNumber, $user->can(Permissions::FORUM_ADMIN));
             if (!$user->can(Permissions::FORUM_CREATE_THREAD)) {
                 $this->theme->display_new_thread_composer($page);
             }
         }
-        if ($event->page_matches("forum/view")) {
-            $threadID = int_escape($event->get_arg(1));
-            // $pageNumber = int_escape($event->get_arg(2));
+        if ($event->page_matches("forum/view/{threadID}", paged: true)) {
+            $threadID = $event->get_iarg('threadID');
+            $pageNumber = $event->get_iarg('page_num', 1) - 1;
             $errors = $this->sanity_check_viewed_thread($threadID);
 
             if (count($errors) > 0) {
                 throw new UserErrorException(implode("<br>", $errors));
-            }
-
-            $threadID = int_escape($event->get_arg(1));
-            if ($event->count_args() >= 3) {
-                $pageNumber = page_number($event->get_arg(2));
-            } else {
-                $pageNumber = 0;
             }
 
             $this->show_posts($threadID, $pageNumber, $user->can(Permissions::FORUM_ADMIN));
@@ -154,9 +143,9 @@ class Forum extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link($redirectTo));
         }
-        if ($event->page_matches("forum/delete")) {
-            $threadID = int_escape($event->get_arg(1));
-            $postID = int_escape($event->get_arg(2));
+        if ($event->page_matches("forum/delete/{threadID}/{postID}")) {
+            $threadID = $event->get_iarg('threadID');
+            $postID = $event->get_iarg('postID');
 
             if ($user->can(Permissions::FORUM_ADMIN)) {
                 $this->delete_post($postID);
@@ -165,8 +154,8 @@ class Forum extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("forum/view/" . $threadID));
         }
-        if ($event->page_matches("forum/nuke")) {
-            $threadID = int_escape($event->get_arg(1));
+        if ($event->page_matches("forum/nuke/{threadID}")) {
+            $threadID = $event->get_iarg('threadID');
 
             if ($user->can(Permissions::FORUM_ADMIN)) {
                 $this->delete_thread($threadID);

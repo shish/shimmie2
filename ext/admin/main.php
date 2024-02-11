@@ -49,23 +49,21 @@ class AdminPage extends Extension
     {
         global $database, $page, $user;
 
-        if ($event->page_matches("admin", permission: Permissions::MANAGE_ADMINTOOLS)) {
-            if ($event->count_args() == 0) {
-                send_event(new AdminBuildingEvent($page));
-            } else {
-                $action = $event->get_arg(0);
-                $aae = new AdminActionEvent($action, $event->POST);
+        if ($event->page_matches("admin", method: "GET", permission: Permissions::MANAGE_ADMINTOOLS)) {
+            send_event(new AdminBuildingEvent($page));
+        }
+        if ($event->page_matches("admin/{action}", method: "POST", permission: Permissions::MANAGE_ADMINTOOLS)) {
+            $action = $event->get_arg('action');
+            $aae = new AdminActionEvent($action, $event->POST);
 
-                $user->ensure_authed();
-                log_info("admin", "Util: $action");
-                shm_set_timeout(null);
-                $database->set_timeout(null);
-                send_event($aae);
+            log_info("admin", "Util: $action");
+            shm_set_timeout(null);
+            $database->set_timeout(null);
+            send_event($aae);
 
-                if ($aae->redirect) {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("admin"));
-                }
+            if ($aae->redirect) {
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("admin"));
             }
         }
     }

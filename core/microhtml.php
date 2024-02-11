@@ -18,13 +18,13 @@ use function MicroHTML\SELECT;
 use function MicroHTML\SPAN;
 use function MicroHTML\{TABLE,THEAD,TFOOT,TR,TH,TD};
 
-function SHM_FORM(string $target, string $method = "POST", bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): HTMLElement
+function SHM_FORM(string $target, bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): HTMLElement
 {
     global $user;
 
     $attrs = [
         "action" => make_link($target),
-        "method" => $method
+        "method" => 'POST'
     ];
 
     if ($form_id) {
@@ -39,10 +39,10 @@ function SHM_FORM(string $target, string $method = "POST", bool $multipart = fal
     if ($name) {
         $attrs["name"] = $name;
     }
+
     return FORM(
         $attrs,
-        INPUT(["type" => "hidden", "name" => "q", "value" => $target]),
-        $method == "GET" ? "" : $user->get_auth_microhtml()
+        INPUT(["type" => "hidden", "name" => "auth_token", "value" => $user->get_auth_token()])
     );
 }
 

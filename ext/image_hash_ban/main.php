@@ -89,39 +89,37 @@ class ImageBan extends Extension
     {
         global $database, $page, $user;
 
-        if ($event->page_matches("image_hash_ban", permission: Permissions::BAN_IMAGE)) {
-            if ($event->page_matches("image_hash_ban/add", method: "POST")) {
-                $input = validate_input(["c_hash" => "optional,string", "c_reason" => "string", "c_image_id" => "optional,int"]);
-                $image = isset($input['c_image_id']) ? Image::by_id($input['c_image_id']) : null;
-                $hash = isset($input["c_hash"]) ? $input["c_hash"] : $image->hash;
-                $reason = isset($input['c_reason']) ? $input['c_reason'] : "DNP";
+        if ($event->page_matches("image_hash_ban/add", method: "POST", permission: Permissions::BAN_IMAGE)) {
+            $input = validate_input(["c_hash" => "optional,string", "c_reason" => "string", "c_image_id" => "optional,int"]);
+            $image = isset($input['c_image_id']) ? Image::by_id($input['c_image_id']) : null;
+            $hash = isset($input["c_hash"]) ? $input["c_hash"] : $image->hash;
+            $reason = isset($input['c_reason']) ? $input['c_reason'] : "DNP";
 
-                if ($hash) {
-                    send_event(new AddImageHashBanEvent($hash, $reason));
-                    $page->flash("Post ban added");
+            if ($hash) {
+                send_event(new AddImageHashBanEvent($hash, $reason));
+                $page->flash("Post ban added");
 
-                    if ($image) {
-                        send_event(new ImageDeletionEvent($image));
-                        $page->flash("Post deleted");
-                    }
-
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(referer_or(make_link()));
+                if ($image) {
+                    send_event(new ImageDeletionEvent($image));
+                    $page->flash("Post deleted");
                 }
-            }
-            if ($event->page_matches("image_hash_ban/remove", method: "POST")) {
-                $input = validate_input(["d_hash" => "string"]);
-                send_event(new RemoveImageHashBanEvent($input['d_hash']));
-                $page->flash("Post ban removed");
+
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(referer_or(make_link()));
             }
-            if ($event->page_matches("image_hash_ban/list")) {
-                $t = new HashBanTable($database->raw_db());
-                $t->token = $user->get_auth_token();
-                $t->inputs = $event->GET;
-                $this->theme->display_crud("Post Bans", $t->table($t->query()), $t->paginator());
-            }
+        }
+        if ($event->page_matches("image_hash_ban/remove", method: "POST", permission: Permissions::BAN_IMAGE)) {
+            $input = validate_input(["d_hash" => "string"]);
+            send_event(new RemoveImageHashBanEvent($input['d_hash']));
+            $page->flash("Post ban removed");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(referer_or(make_link()));
+        }
+        if ($event->page_matches("image_hash_ban/list", permission: Permissions::BAN_IMAGE)) {
+            $t = new HashBanTable($database->raw_db());
+            $t->token = $user->get_auth_token();
+            $t->inputs = $event->GET;
+            $this->theme->display_crud("Post Bans", $t->table($t->query()), $t->paginator());
         }
     }
 

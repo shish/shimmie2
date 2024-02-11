@@ -21,25 +21,23 @@ class RegenThumb extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("regen_thumb", method: "POST", permission: Permissions::DELETE_IMAGE)) {
-            if ($event->page_matches("regen_thumb/one")) {
-                $image = Image::by_id(int_escape($event->get_arg(0)));
+        if ($event->page_matches("regen_thumb/one/{image_id}", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+            $image = Image::by_id($event->get_iarg('image_id'));
 
+            $this->regenerate_thumbnail($image);
+
+            $this->theme->display_results($page, $image);
+        }
+        if ($event->page_matches("regen_thumb/mass", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+            $tags = Tag::explode(strtolower($event->req_POST('tags')), false);
+            $images = Search::find_images(limit: 10000, tags: $tags);
+
+            foreach ($images as $image) {
                 $this->regenerate_thumbnail($image);
-
-                $this->theme->display_results($page, $image);
             }
-            if ($event->page_matches("regen_thumb/mass")) {
-                $tags = Tag::explode(strtolower($event->req_POST('tags')), false);
-                $images = Search::find_images(limit: 10000, tags: $tags);
 
-                foreach ($images as $image) {
-                    $this->regenerate_thumbnail($image);
-                }
-
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link());
-            }
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link());
         }
     }
 

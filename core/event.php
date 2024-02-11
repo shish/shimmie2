@@ -40,13 +40,12 @@ class InitExtEvent extends Event
  * A signal that a page has been requested.
  *
  * User requests /view/42 -> an event is generated with $args = array("view",
- * "42"); when an event handler asks $event->page_matches("view"), it returns
- * true and ignores the matched part, such that $event->count_args() = 1 and
- * $event->get_arg(0) = "42"
+ * "42"); when an event handler asks $event->page_matches("view/{id}"), it returns
+ * true and sets $event->get_arg('id') = "42"
  */
 class PageRequestEvent extends Event
 {
-    public string $method;
+    private string $method;
     public string $path;
     /** @var array<string, string|string[]> */
     public array $GET;
@@ -57,9 +56,12 @@ class PageRequestEvent extends Event
      * @var string[]
      */
     public array $args;
-    public int $arg_count;
-    public int $part_count;
-    public bool $is_authed;
+    /**
+     * @var array<string, string>
+     */
+    private array $named_args = [];
+    public int $page_num;
+    private bool $is_authed;
 
     /**
      * @param string $method The HTTP method used to make the request
@@ -83,13 +85,15 @@ class PageRequestEvent extends Event
         $this->path = $path;
         $this->GET = $get;
         $this->POST = $post;
-        $this->is_authed = $user->check_auth_token();
+        $this->is_authed = (
+            defined("UNITTEST")
+            || (isset($_POST["auth_token"]) && $_POST["auth_token"] == $user->get_auth_token())
+        );
 
         // break the path into parts
         $args = explode('/', $path);
 
         $this->args = $args;
-        $this->arg_count = count($args);
     }
 
     public function get_GET(string $key): ?string
@@ -166,9 +170,23 @@ class PageRequestEvent extends Event
      *
      * If it matches, store the remaining path elements in $args
      */
-    public function page_matches(string $name, ?string $method = null, ?bool $authed = null, ?string $permission = null): bool
-    {
+    public function page_matches(
+        string $name,
+        ?string $method = null,
+        ?bool $authed = null,
+        ?string $permission = null,
+        bool $paged = false,
+    ): bool {
         global $user;
+
+        if($paged) {
+            if($this->page_matches("$name/{page_num}", $method, $authed, $permission, false)) {
+                $pn = $this->get_arg("page_num");
+                if(is_numberish($pn)) {
+                    return true;
+                }
+            }
+        }
 
         assert($method === null || in_array($method, ["GET", "POST", "OPTIONS"]));
         $authed = $authed ?? $method == "POST";
@@ -180,12 +198,15 @@ class PageRequestEvent extends Event
 
         // check if the path matches
         $parts = explode("/", $name);
-        $this->part_count = count($parts);
-        if ($this->part_count > $this->arg_count) {
+        $part_count = count($parts);
+        if ($part_count != count($this->args)) {
             return false;
         }
-        for ($i = 0; $i < $this->part_count; $i++) {
-            if ($parts[$i] != $this->args[$i]) {
+        $this->named_args = [];
+        for ($i = 0; $i < $part_count; $i++) {
+            if (str_starts_with($parts[$i], "{")) {
+                $this->named_args[substr($parts[$i], 1, -1)] = $this->args[$i];
+            } elseif ($parts[$i] != $this->args[$i]) {
                 return false;
             }
         }
@@ -205,102 +226,29 @@ class PageRequestEvent extends Event
     /**
      * Get the n th argument of the page request (if it exists.)
      */
-    public function get_arg(int $n): string
+    public function get_arg(string $n, ?string $default = null): string
     {
-        $offset = $this->part_count + $n;
-        if ($offset >= 0 && $offset < $this->arg_count) {
-            return rawurldecode($this->args[$offset]);
+        if(array_key_exists($n, $this->named_args)) {
+            return rawurldecode($this->named_args[$n]);
+        } elseif($default !== null) {
+            return $default;
         } else {
-            $nm1 = $this->arg_count - 1;
-            throw new UserErrorException("Requested an invalid page argument {$offset} / {$nm1}");
+            throw new UserErrorException("Page argument {$n} is missing");
         }
     }
 
-    /**
-     * If page arg $n is set, then treat that as a 1-indexed page number
-     * and return a 0-indexed page number less than $max; else return 0
-     */
-    public function try_page_num(int $n, ?int $max = null): int
+    public function get_iarg(string $n, ?int $default = null): int
     {
-        if ($this->count_args() > $n) {
-            $i = $this->get_arg($n);
-            if (is_numberish($i) && int_escape($i) > 0) {
-                return page_number($i, $max);
-            } else {
-                return 0;
+        if(array_key_exists($n, $this->named_args)) {
+            if(is_numberish($this->named_args[$n]) === false) {
+                throw new UserErrorException("Page argument {$n} exists but is not numeric");
             }
+            return int_escape($this->named_args[$n]);
+        } elseif($default !== null) {
+            return $default;
         } else {
-            return 0;
+            throw new UserErrorException("Page argument {$n} is missing");
         }
-    }
-
-    /**
-     * Returns the number of arguments the page request has.
-     */
-    public function count_args(): int
-    {
-        return $this->arg_count - $this->part_count;
-    }
-
-    /*
-     * Many things use these functions
-     */
-
-    /**
-     * @return string[]
-     */
-    public function get_search_terms(): array
-    {
-        $search_terms = [];
-        if ($this->count_args() === 2) {
-            $str = $this->get_arg(0);
-
-            // decode legacy caret-encoding just in case
-            // somebody has bookmarked such a URL
-            $from_caret = [
-                "^" => "^",
-                "s" => "/",
-                "b" => "\\",
-                "q" => "?",
-                "a" => "&",
-                "d" => ".",
-            ];
-            $out = "";
-            $length = strlen($str);
-            for ($i = 0; $i < $length; $i++) {
-                if ($str[$i] == "^") {
-                    $i++;
-                    $out .= $from_caret[$str[$i]] ?? '';
-                } else {
-                    $out .= $str[$i];
-                }
-            }
-            $str = $out;
-            // end legacy
-
-            $search_terms = Tag::explode($str);
-        }
-        return $search_terms;
-    }
-
-    public function get_page_number(): int
-    {
-        $page_number = 1;
-        if ($this->count_args() === 1) {
-            $page_number = int_escape($this->get_arg(0));
-        } elseif ($this->count_args() === 2) {
-            $page_number = int_escape($this->get_arg(1));
-        }
-        if ($page_number === 0) {
-            $page_number = 1;
-        } // invalid -> 0
-        return $page_number;
-    }
-
-    public function get_page_size(): int
-    {
-        global $config;
-        return $config->get_int(IndexConfig::IMAGES);
     }
 }
 

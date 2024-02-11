@@ -101,11 +101,11 @@ class ImageIO extends Extension
                     $page->set_redirect(referer_or(make_link(), ['post/view']));
                 }
             }
-        } elseif ($event->page_matches("image")) {
-            $num = int_escape($event->get_arg(0));
+        } elseif ($event->page_matches("image/{image_id}/{filename}")) {
+            $num = $event->get_iarg('image_id');
             $this->send_file($num, "image", $event->GET);
-        } elseif ($event->page_matches("thumb")) {
-            $num = int_escape($event->get_arg(0));
+        } elseif ($event->page_matches("thumb/{image_id}/{filename}")) {
+            $num = $event->get_iarg('image_id');
             $this->send_file($num, "thumb", $event->GET);
         }
     }

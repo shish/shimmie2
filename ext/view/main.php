@@ -22,8 +22,8 @@ class ViewPost extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("post/prev") || $event->page_matches("post/next")) {
-            $image_id = int_escape($event->get_arg(0));
+        if ($event->page_matches("post/prev/{image_id}") || $event->page_matches("post/next/{image_id}")) {
+            $image_id = $event->get_iarg('image_id');
 
             $search = $event->get_GET('search');
             if ($search) {
@@ -40,7 +40,7 @@ class ViewPost extends Extension
                 return;
             }
 
-            if ($event->page_matches("post/next")) {
+            if ($event->page_matches("post/next/{image_id}")) {
                 $image = $image->get_next($search_terms);
             } else {
                 $image = $image->get_prev($search_terms);
@@ -53,8 +53,8 @@ class ViewPost extends Extension
 
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/{$image->id}", $query));
-        } elseif ($event->page_matches("post/view")) {
-            if (!is_numeric($event->get_arg(0))) {
+        } elseif ($event->page_matches("post/view/{image_id}")) {
+            if (!is_numeric($event->get_arg('image_id'))) {
                 // For some reason there exists some very broken mobile client
                 // who follows up every request to '/post/view/123' with
                 // '/post/view/12300000000000Image 123: tags' which spams the
@@ -63,8 +63,7 @@ class ViewPost extends Extension
                 return;
             }
 
-            $image_id = int_escape($event->get_arg(0));
-
+            $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
 
             if (!is_null($image)) {

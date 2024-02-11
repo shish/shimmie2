@@ -16,8 +16,8 @@ class SVGFileHandler extends DataHandlerExtension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;
-        if ($event->page_matches("get_svg")) {
-            $id = int_escape($event->get_arg(0));
+        if ($event->page_matches("get_svg/{id}")) {
+            $id = $event->get_iarg('id');
             $image = Image::by_id($id);
             $hash = $image->hash;
 

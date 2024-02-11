@@ -80,16 +80,16 @@ class Tips extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("tips/list"));
         }
-        if ($event->page_matches("tips/status", permission: Permissions::TIPS_ADMIN)) {
+        if ($event->page_matches("tips/status/{tipID}", permission: Permissions::TIPS_ADMIN)) {
             // FIXME: HTTP GET CSRF
-            $tipID = int_escape($event->get_arg(1));
+            $tipID = $event->get_iarg('tipID');
             $this->setStatus($tipID);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("tips/list"));
         }
-        if ($event->page_matches("tips/delete", permission: Permissions::TIPS_ADMIN)) {
+        if ($event->page_matches("tips/delete/{tipID}", permission: Permissions::TIPS_ADMIN)) {
             // FIXME: HTTP GET CSRF
-            $tipID = int_escape($event->get_arg(1));
+            $tipID = $event->get_iarg('tipID');
             send_event(new DeleteTipEvent($tipID));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("tips/list"));

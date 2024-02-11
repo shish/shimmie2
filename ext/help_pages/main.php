@@ -46,30 +46,27 @@ class HelpPages extends Extension
     {
         global $page;
 
-        if ($event->page_matches("help")) {
+        if ($event->page_matches("help/{topic}")) {
             $pages = send_event(new HelpPageListBuildingEvent())->pages;
-            if ($event->count_args() == 0) {
-                $name = array_key_first($pages);
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("help/".$name));
-                return;
+            $page->set_mode(PageMode::PAGE);
+            $name = $event->get_arg('topic');
+            if (array_key_exists($name, $pages)) {
+                $title = $pages[$name];
             } else {
-                $page->set_mode(PageMode::PAGE);
-                $name = $event->get_arg(0);
-                if (array_key_exists($name, $pages)) {
-                    $title = $pages[$name];
-                } else {
-                    return;
-                }
-
-                $this->theme->display_help_page($title);
-
-                $hpbe = send_event(new HelpPageBuildingEvent($name));
-                ksort($hpbe->blocks);
-                foreach ($hpbe->blocks as $block) {
-                    $page->add_block($block);
-                }
+                return;
             }
+
+            $this->theme->display_help_page($title);
+            $hpbe = send_event(new HelpPageBuildingEvent($name));
+            ksort($hpbe->blocks);
+            foreach ($hpbe->blocks as $block) {
+                $page->add_block($block);
+            }
+        } elseif ($event->page_matches("help")) {
+            $pages = send_event(new HelpPageListBuildingEvent())->pages;
+            $name = array_key_first($pages);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("help/".$name));
         }
     }
 

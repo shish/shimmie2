@@ -68,14 +68,10 @@ class CronUploader extends Extension
      */
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $user;
-
-        if ($event->page_matches("cron_upload")) {
-            if ($event->count_args() == 1 && $event->get_arg(0) == "run") {
-                $this->process_upload(); // Start upload
-            } elseif ($user->can(Permissions::CRON_RUN)) {
-                $this->display_documentation();
-            }
+        if ($event->page_matches("cron_upload/run")) {
+            $this->process_upload();
+        } elseif ($event->page_matches("cron_upload", permission: Permissions::CRON_RUN)) {
+            $this->display_documentation();
         }
     }
 

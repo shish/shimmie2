@@ -13,16 +13,12 @@ class RandomImage extends Extension
     {
         global $page;
 
-        if ($event->page_matches("random_image")) {
-            if ($event->count_args() == 1) {
-                $action = $event->get_arg(0);
-                $search_terms = [];
-            } elseif ($event->count_args() == 2) {
-                $action = $event->get_arg(0);
-                $search_terms = Tag::explode($event->get_arg(1));
-            } else {
-                throw new SCoreException("Error: too many arguments.");
-            }
+        if (
+            $event->page_matches("random_image/{action}")
+            || $event->page_matches("random_image/{action}/{search}")
+        ) {
+            $action = $event->get_arg('action');
+            $search_terms = Tag::explode($event->get_arg('search', ""), false);
             $image = Image::by_random($search_terms);
             if (!$image) {
                 throw new SCoreException("Couldn't find any posts randomly");

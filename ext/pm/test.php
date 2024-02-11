@@ -20,7 +20,7 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase
 
         // Check that user can see own messages
         $this->log_in_as_user();
-        $this->get_page("user");
+        $this->get_page("user/" . self::$user_name);
         $this->assert_text("message demo to test");
 
         // FIXME: read PM

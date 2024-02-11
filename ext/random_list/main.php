@@ -27,12 +27,9 @@ class RandomList extends Extension
                 return;
             }
 
-            if ($event->count_args() == 0) {
-                $search_terms = [];
-            } elseif ($event->count_args() == 1) {
-                $search_terms = explode(' ', $event->get_arg(0));
-            } else {
-                throw new SCoreException("Error: too many arguments.");
+            $search_terms = [];
+            if ($event->page_matches("random/{search}")) {
+                $search_terms = explode(' ', $event->get_arg('search'));
             }
 
             // set vars

@@ -176,20 +176,11 @@ class Wiki extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("wiki")) {
-            if ($event->count_args() == 0 || strlen(trim($event->get_arg(0))) === 0) {
-                $title = "Index";
-            } else {
-                $title = $event->get_arg(0);
-            }
-            $action = $event->count_args() > 1 ? $event->get_arg(1) : "view";
+        if ($event->page_matches("wiki/{title}/{action}", method: "GET")) {
+            $title = $event->get_arg('title');
+            $action = $event->get_arg('action');
 
-
-            if($action == "view") {
-                $revision = int_escape($event->get_GET('revision') ?? "-1");
-                $content = $this->get_page($title, $revision);
-                $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
-            } elseif($action == "history") {
+            if($action == "history") {
                 $history = $this->get_history($title);
                 $this->theme->display_page_history($page, $title, $history);
             } elseif($action == "edit") {
@@ -199,7 +190,13 @@ class Wiki extends Extension
                 } else {
                     throw new PermissionDeniedException("You are not allowed to edit this page");
                 }
-            } elseif($action == "save" && $user->check_auth_token()) {
+            }
+        }
+        if ($event->page_matches("wiki/{title}/{action}", method: "POST")) {
+            $title = $event->get_arg('title');
+            $action = $event->get_arg('action');
+
+            if($action == "save") {
                 $rev = int_escape($event->req_POST('revision'));
                 $body = $event->req_POST('body');
                 $lock = $user->can(Permissions::WIKI_ADMIN) && ($event->get_POST('lock') == "on");
@@ -216,7 +213,7 @@ class Wiki extends Extension
                 } else {
                     throw new PermissionDeniedException("You are not allowed to edit this page");
                 }
-            } elseif($action == "delete_revision" && $user->check_auth_token()) {
+            } elseif($action == "delete_revision") {
                 $content = $this->get_page($title);
                 if ($user->can(Permissions::WIKI_ADMIN)) {
                     $revision = int_escape($event->req_POST('revision'));
@@ -227,7 +224,7 @@ class Wiki extends Extension
                 } else {
                     throw new PermissionDeniedException("You are not allowed to edit this page");
                 }
-            } elseif($action == "delete_all" && $user->check_auth_token()) {
+            } elseif($action == "delete_all") {
                 if ($user->can(Permissions::WIKI_ADMIN)) {
                     send_event(new WikiDeletePageEvent($title));
                     $u_title = url_escape($title);
@@ -235,6 +232,14 @@ class Wiki extends Extension
                     $page->set_redirect(make_link("wiki/$u_title"));
                 }
             }
+        } elseif ($event->page_matches("wiki/{title}")) {
+            $title = $event->get_arg('title');
+            $revision = int_escape($event->get_GET('revision') ?? "-1");
+            $content = $this->get_page($title, $revision);
+            $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
+        } elseif ($event->page_matches("wiki")) {
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("wiki/Index"));
         }
     }
 
@@ -262,16 +267,16 @@ class Wiki extends Extension
             if ($config->get_bool(WikiConfig::ENABLE_REVISIONS) || !$exists) {
                 $database->execute(
                     "
-                                INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
-                                VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
+                        INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
+                        VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
                     ["owner_id" => $event->user->id, "owner_ip" => get_real_ip(),
                     "title" => $wpage->title, "revision" => $wpage->revision, "locked" => $wpage->locked, "body" => $wpage->body]
                 );
             } else {
                 $database->execute(
                     "
-                                UPDATE wiki_pages SET owner_id=:owner_id, owner_ip=:owner_ip, date=now(), locked=:locked, body=:body
-                                WHERE title = :title ORDER BY revision DESC LIMIT 1",
+                        UPDATE wiki_pages SET owner_id=:owner_id, owner_ip=:owner_ip, date=now(), locked=:locked, body=:body
+                        WHERE title = :title ORDER BY revision DESC LIMIT 1",
                     ["owner_id" => $event->user->id, "owner_ip" => get_real_ip(),
                     "title" => $wpage->title, "locked" => $wpage->locked, "body" => $wpage->body]
                 );

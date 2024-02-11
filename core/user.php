@@ -262,32 +262,4 @@ class User
         $addr = get_session_ip($config);
         return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
     }
-
-    public function get_auth_html(): string
-    {
-        $at = $this->get_auth_token();
-        return '<input type="hidden" name="auth_token" value="'.$at.'">';
-    }
-
-    // Temporary? This should eventually become get_auth_html (probably with a different name?).
-    public function get_auth_microhtml(): HTMLElement
-    {
-        $at = $this->get_auth_token();
-        return INPUT(["type" => "hidden", "name" => "auth_token", "value" => $at]);
-    }
-
-    public function check_auth_token(): bool
-    {
-        if (defined("UNITTEST")) {
-            return true;
-        }
-        return (isset($_POST["auth_token"]) && $_POST["auth_token"] == $this->get_auth_token());
-    }
-
-    public function ensure_authed(): void
-    {
-        if (!$this->check_auth_token()) {
-            die("Invalid auth token");
-        }
-    }
 }

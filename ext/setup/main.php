@@ -336,20 +336,18 @@ class Setup extends Extension
             $page->set_data("ok");
         }
 
-        if ($event->page_matches("setup", permission: Permissions::CHANGE_SETTING)) {
-            if ($event->count_args() == 0) {
-                $panel = new SetupPanel($config);
-                send_event(new SetupBuildingEvent($panel));
-                $this->theme->display_page($page, $panel);
-            } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
-                send_event(new ConfigSaveEvent($config, $event->POST));
-                $config->save();
-                $page->flash("Config saved");
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("setup"));
-            } elseif ($event->get_arg(0) == "advanced") {
-                $this->theme->display_advanced($page, $config->values);
-            }
+        if ($event->page_matches("setup/advanced", method: "GET", permission: Permissions::CHANGE_SETTING)) {
+            $this->theme->display_advanced($page, $config->values);
+        } elseif ($event->page_matches("setup", method: "GET", permission: Permissions::CHANGE_SETTING)) {
+            $panel = new SetupPanel($config);
+            send_event(new SetupBuildingEvent($panel));
+            $this->theme->display_page($page, $panel);
+        } elseif ($event->page_matches("setup/save", method: "POST", permission: Permissions::CHANGE_SETTING)) {
+            send_event(new ConfigSaveEvent($config, $event->POST));
+            $config->save();
+            $page->flash("Config saved");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("setup"));
         }
     }
 

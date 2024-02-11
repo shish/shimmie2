@@ -15,31 +15,26 @@ class NumericScoreTheme extends Themelet
         $html = "
 			Current Score: $i_score
 
-			<p><form action='".make_link("numeric_score_vote")."' method='POST'>
-			".$user->get_auth_html()."
+			<p>".make_form(make_link("numeric_score_vote"))."
 			<input type='hidden' name='image_id' value='$i_image_id'>
 			<input type='hidden' name='vote' value='1'>
 			<input type='submit' value='Vote Up'>
 			</form>
 
-			<form action='".make_link("numeric_score_vote")."' method='POST'>
-			".$user->get_auth_html()."
+			".make_form(make_link("numeric_score_vote"))."
 			<input type='hidden' name='image_id' value='$i_image_id'>
 			<input type='hidden' name='vote' value='0'>
 			<input type='submit' value='Remove Vote'>
 			</form>
 
-			<form action='".make_link("numeric_score_vote")."' method='POST'>
-			".$user->get_auth_html()."
+			".make_form(make_link("numeric_score_vote"))."
 			<input type='hidden' name='image_id' value='$i_image_id'>
 			<input type='hidden' name='vote' value='-1'>
 			<input type='submit' value='Vote Down'>
 			</form>
 		";
         if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
-            $html .= "
-			<form action='".make_link("numeric_score/remove_votes_on")."' method='POST'>
-			".$user->get_auth_html()."
+            $html .= make_form(make_link("numeric_score/remove_votes_on"))."
 			<input type='hidden' name='image_id' value='$i_image_id'>
 			<input type='submit' value='Remove All Votes'>
 			</form>
@@ -58,9 +53,7 @@ class NumericScoreTheme extends Themelet
     public function get_nuller(User $duser): void
     {
         global $user, $page;
-        $html = "
-			<form action='".make_link("numeric_score/remove_votes_by")."' method='POST'>
-			".$user->get_auth_html()."
+        $html = make_form(make_link("numeric_score/remove_votes_by"))."
 			<input type='hidden' name='user_id' value='{$duser->id}'>
 			<input type='submit' value='Delete all votes by this user'>
 			</form>

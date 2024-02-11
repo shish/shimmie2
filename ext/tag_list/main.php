@@ -31,13 +31,9 @@ class TagList extends Extension
     {
         global $config, $page;
 
-        if ($event->page_matches("tags")) {
+        if ($event->page_matches("tags/{sub}")) {
             $this->theme->set_navigation($this->build_navigation());
-            if ($event->count_args() == 0) {
-                $sub = "map";
-            } else {
-                $sub = $event->get_arg(0);
-            }
+            $sub = $event->get_arg('sub');
 
             if ($event->get_GET('starts_with')) {
                 $starts_with = $event->get_GET('starts_with') . "%";
@@ -72,6 +68,9 @@ class TagList extends Extension
                     break;
             }
             $this->theme->display_page($page);
+        } elseif ($event->page_matches("tags")) {
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("tags/map"));
         }
     }
 

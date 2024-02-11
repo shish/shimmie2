@@ -8,9 +8,8 @@ class WikiTest extends ShimmiePHPUnitTestCase
 {
     public function testIndex(): void
     {
-        $this->get_page("wiki");
-        $this->assert_title("Index");
-        $this->assert_text("This is a default page");
+        $page = $this->get_page("wiki");
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
     }
 
     // By default users are read-only

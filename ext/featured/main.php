@@ -18,27 +18,25 @@ class Featured extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
-        if ($event->page_matches("featured_image")) {
-            if ($event->page_matches("featured_image/set", method: "POST", permission: Permissions::EDIT_FEATURE)) {
-                $id = int_escape($event->req_POST('image_id'));
-                $config->set_int("featured_id", $id);
-                log_info("featured", "Featured post set to >>$id", "Featured post set");
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$id"));
+        if ($event->page_matches("featured_image/set", method: "POST", permission: Permissions::EDIT_FEATURE)) {
+            $id = int_escape($event->req_POST('image_id'));
+            $config->set_int("featured_id", $id);
+            log_info("featured", "Featured post set to >>$id", "Featured post set");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$id"));
+        }
+        if ($event->page_matches("featured_image/download")) {
+            $image = Image::by_id($config->get_int("featured_id"));
+            if (!is_null($image)) {
+                $page->set_mode(PageMode::DATA);
+                $page->set_mime($image->get_mime());
+                $page->set_data(file_get_contents_ex($image->get_image_filename()));
             }
-            if ($event->page_matches("featured_image/download")) {
-                $image = Image::by_id($config->get_int("featured_id"));
-                if (!is_null($image)) {
-                    $page->set_mode(PageMode::DATA);
-                    $page->set_mime($image->get_mime());
-                    $page->set_data(file_get_contents_ex($image->get_image_filename()));
-                }
-            }
-            if ($event->page_matches("featured_image/view")) {
-                $image = Image::by_id($config->get_int("featured_id"));
-                if (!is_null($image)) {
-                    send_event(new DisplayingImageEvent($image));
-                }
+        }
+        if ($event->page_matches("featured_image/view")) {
+            $image = Image::by_id($config->get_int("featured_id"));
+            if (!is_null($image)) {
+                send_event(new DisplayingImageEvent($image));
             }
         }
     }

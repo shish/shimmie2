@@ -28,7 +28,7 @@ class DowntimeTheme extends Themelet
         $theme_name = $config->get_string(SetupConfig::THEME);
         $data_href = get_base_href();
         $login_link = make_link("user_admin/login");
-        $auth = $user->get_auth_html();
+        $form = make_form($login_link);
 
         $page->set_mode(PageMode::DATA);
         $page->set_code(503);
@@ -50,8 +50,7 @@ class DowntimeTheme extends Themelet
 			<section>
 				<h3>Admin Login</h3>
 				<div id="login" class="blockbody">
-					<form action="$login_link" method="POST">
-						$auth
+					$form
 						<table id="login_table" summary="Login Form">
 							<tr>
 								<td width="70"><label for="user">Name</label></td>

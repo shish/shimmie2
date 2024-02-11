@@ -43,9 +43,8 @@ class PrivateImage extends Extension
     {
         global $page, $user, $user_config;
 
-        if ($event->page_matches("privatize_image", method: "POST", permission: Permissions::SET_PRIVATE_IMAGE)) {
-            // Try to get the image ID
-            $image_id = int_escape(null_throws($event->get_arg(0)));
+        if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: Permissions::SET_PRIVATE_IMAGE)) {
+            $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
             if ($image == null) {
                 throw new SCoreException("Post not found.");
@@ -59,9 +58,8 @@ class PrivateImage extends Extension
             $page->set_redirect(make_link("post/view/" . $image_id));
         }
 
-        if ($event->page_matches("publicize_image", method: "POST")) {
-            // Try to get the image ID
-            $image_id = int_escape(null_throws($event->get_arg(0)));
+        if ($event->page_matches("publicize_image/{image_id}", method: "POST")) {
+            $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
             if ($image == null) {
                 throw new SCoreException("Post not found.");

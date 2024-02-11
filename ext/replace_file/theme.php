@@ -28,7 +28,7 @@ class ReplaceFileTheme extends Themelet
         $image = Image::by_id($image_id);
         $thumbnail = $this->build_thumb_html($image);
 
-        $form = SHM_FORM("replace/".$image_id, "POST", true);
+        $form = SHM_FORM("replace/".$image_id, multipart: true);
         $form->appendChild(emptyHTML(
             TABLE(
                 ["id" => "large_upload_form", "class" => "form"],

@@ -33,7 +33,7 @@ class CustomIndexTheme extends IndexTheme
         $h_search_string = count($search_terms) == 0 ? "" : html_escape(implode(" ", $search_terms));
         $h_search_link = search_link();
         return "
-			<p><form action='$h_search_link' method='POST'>
+			<p><form action='$h_search_link' method='GET'>
 				<input name='search' type='text' value='$h_search_string' class='autocomplete_tags' placeholder=''  style='width:75%'/>
 				<input type='submit' value='Go' style='width:20%'>
 			</form>

@@ -96,8 +96,7 @@ class BlotterTheme extends Themelet
 				<td>$entry_date</td>
 				<td>$entry_text</td>
 				<td>$important</td>
-				<td><form name='remove$id' method='post' action='".make_link("blotter/remove")."'>
-				".$user->get_auth_html()."
+				<td>".make_form(make_link("blotter/remove"), name: "remove$id")."
 				<input type='hidden' name='id' value='$id' />
 				<input type='submit' style='width: 100%;' value='Remove' />
 				</form>

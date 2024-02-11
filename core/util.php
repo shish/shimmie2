@@ -737,14 +737,10 @@ function show_ip(string $ip, string $ban_reason): string
 /**
  * Make a form tag with relevant auth token and stuff
  */
-function make_form(string $target, string $method = "POST", bool $multipart = false, string $form_id = "", string $onsubmit = ""): string
+function make_form(string $target, bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): string
 {
     global $user;
-    if ($method == "GET") {
-        die("make_form: GET method is not supported");
-    } else {
-        $extra_inputs = $user->get_auth_html();
-    }
+    $at = $user->get_auth_token();
 
     $extra = empty($form_id) ? '' : 'id="'. $form_id .'"';
     if ($multipart) {
@@ -753,7 +749,11 @@ function make_form(string $target, string $method = "POST", bool $multipart = fa
     if ($onsubmit) {
         $extra .= ' onsubmit="'.$onsubmit.'"';
     }
-    return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
+    if ($name) {
+        $extra .= ' name="'.$name.'"';
+    }
+    return '<form action="'.$target.'" method="POST" '.$extra.'>'.
+    '<input type="hidden" name="auth_token" value="'.$at.'">';
 }
 
 const BYTE_DENOMINATIONS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];

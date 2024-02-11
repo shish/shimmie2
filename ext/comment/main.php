@@ -212,12 +212,12 @@ class CommentList extends Extension
                 $this->theme->display_error(403, "Comment Blocked", $ex->getMessage());
             }
         }
-        if ($event->page_matches("comment/delete", permission: Permissions::DELETE_COMMENT)) {
+        if ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: Permissions::DELETE_COMMENT)) {
             // FIXME: post, not args
-            send_event(new CommentDeletionEvent(int_escape($event->get_arg(0))));
+            send_event(new CommentDeletionEvent($event->get_iarg('comment_id')));
             $page->flash("Deleted comment");
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link("post/view/" . $event->get_arg(1))));
+            $page->set_redirect(referer_or(make_link("post/view/" . $event->get_iarg('image_id'))));
         }
         if ($event->page_matches("comment/bulk_delete", method: "POST", permission: Permissions::DELETE_COMMENT)) {
             $ip = $event->req_POST('ip');
@@ -237,7 +237,7 @@ class CommentList extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("admin"));
         }
-        if ($event->page_matches("comment/list")) {
+        if ($event->page_matches("comment/list", paged: true)) {
             $threads_per_page = 10;
 
             $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
@@ -248,7 +248,7 @@ class CommentList extends Extension
             ") / $threads_per_page), 600);
             $total_pages = max($total_pages, 1);
 
-            $current_page = $event->try_page_num(1, $total_pages);
+            $current_page = $event->get_iarg('page_num', 1) - 1;
             $start = $threads_per_page * $current_page;
 
             $result = $database->execute("
@@ -286,9 +286,9 @@ class CommentList extends Extension
 
             $this->theme->display_comment_list($images, $current_page + 1, $total_pages, $user->can(Permissions::CREATE_COMMENT));
         }
-        if ($event->page_matches("comment/beta-search")) {
-            $search = $event->get_arg(0);
-            $page_num = $event->try_page_num(1);
+        if ($event->page_matches("comment/beta-search/{search}", paged: true)) {
+            $search = $event->get_arg('search');
+            $page_num = $event->get_iarg('page_num', 1) - 1;
             $duser = User::by_name($search);
             $i_comment_count = Comment::count_comments_by_user($duser);
             $com_per_page = 50;

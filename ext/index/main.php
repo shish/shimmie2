@@ -27,18 +27,20 @@ class Index extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $config, $page, $user;
-        if ($event->page_matches("post/list")) {
+        if (
+            $event->page_matches("post/list", paged: true)
+            || $event->page_matches("post/list/{search}", paged: true)
+        ) {
             if ($event->get_GET('search')) {
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(search_link(Tag::explode($event->get_GET('search'), false)));
                 return;
             }
 
-            $search_terms = $event->get_search_terms();
-            $page_number = $event->get_page_number();
-            $page_size = $event->get_page_size();
-
+            $search_terms = Tag::explode($event->get_arg('search', ""), false);
             $count_search_terms = count($search_terms);
+            $page_number = $event->get_iarg('page_num', 1);
+            $page_size = $config->get_int(IndexConfig::IMAGES);
 
             try {
                 $fast_page_limit = 500;

@@ -36,7 +36,7 @@ class BulkActionsTheme extends Themelet
         }
 
         foreach ($actions as $action) {
-            $body .= "<div class='bulk_action'>" . make_form(make_link("bulk_action"), "POST", false, "", "return validate_selections(this,'" . html_escape($action["confirmation_message"]) . "');") .
+            $body .= "<div class='bulk_action'>" . make_form(make_link("bulk_action"), onsubmit: "return validate_selections(this,'" . html_escape($action["confirmation_message"]) . "');") .
                 "<input type='hidden' name='bulk_query' value='" . html_escape($query) . "'>" .
                 "<input type='hidden' name='bulk_selected_ids' />" .
                 "<input type='hidden' name='bulk_action' value='" . $action["action"] . "' />" .

@@ -314,15 +314,9 @@ class UserPage extends Extension
             );
         }
 
-        if ($event->page_matches("user")) {
-            $display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
-            if ($event->count_args() == 0 && $user->is_anonymous()) {
-                $this->theme->display_error(
-                    401,
-                    "Not Logged In",
-                    "You aren't logged in. First do that, then you can see your stats."
-                );
-            } elseif (!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
+        if ($event->page_matches("user/{name}")) {
+            $display_user = User::by_name($event->get_arg('name'));
+            if (!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
                 $e = send_event(new UserPageBuildingEvent($display_user));
                 $this->display_stats($e);
             } else {
@@ -333,6 +327,9 @@ class UserPage extends Extension
                     "site, it might be bug report time..."
                 );
             }
+        } elseif($event->page_matches("user")) {
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("user/" . $user->name));
         }
     }
 

@@ -31,12 +31,12 @@ class TagHistory extends Extension
             $this->process_revert_request((int)$event->req_POST('revert'));
         } elseif ($event->page_matches("tag_history/bulk_revert", method: "POST", permission: Permissions::BULK_EDIT_IMAGE_TAG)) {
             $this->process_bulk_revert_request();
-        } elseif ($event->page_matches("tag_history/all")) {
-            $page_id = int_escape($event->get_arg(0));
+        } elseif ($event->page_matches("tag_history/all/{page}")) {
+            $page_id = $event->get_iarg('page');
             $this->theme->display_global_page($page, $this->get_global_tag_history($page_id), $page_id);
-        } elseif ($event->page_matches("tag_history") && $event->count_args() == 1) {
+        } elseif ($event->page_matches("tag_history/{image_id}")) {
             // must be an attempt to view a tag history
-            $image_id = int_escape($event->get_arg(0));
+            $image_id = $event->get_iarg('image_id');
             $this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id));
         }
     }

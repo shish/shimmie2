@@ -23,9 +23,9 @@ class TaggerXML extends Extension
             if ($event->get_GET('s')) { // tagger/tags[/...]?s=$string
                 // return matching tags in XML form
                 $tags = $this->match_tag_list($event->get_GET('s'));
-            } elseif ($event->get_arg(0)) { // tagger/tags/$int
+            } elseif ($event->page_matches("tagger/tags/{image_id}")) { // tagger/tags/$int
                 // return arg[1] AS image_id's tag list in XML form
-                $tags = $this->image_tag_list(int_escape($event->get_arg(0)));
+                $tags = $this->image_tag_list($event->get_iarg('image_id'));
             }
 
             $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".
@@ -55,7 +55,7 @@ class TaggerXML extends Extension
         // Match
         $match = "concat(:p, tag) LIKE :sq";
         // Exclude
-        //		$exclude = $event->get_arg(1)? "AND NOT IN ".$this->image_tags($event->get_arg(1)) : null;
+        //		$exclude = $event->get_arg('exclude')? "AND NOT IN ".$this->image_tags($event->get_arg('exclude')) : null;
 
         // Hidden Tags
         $hidden = $config->get_string('ext-tagger_show-hidden', 'N') == 'N' ?

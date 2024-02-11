@@ -29,8 +29,8 @@ class Trash extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("trash_restore", method: "POST", permission: Permissions::VIEW_TRASH)) {
-            $image_id = int_escape(null_throws($event->get_arg(0)));
+        if ($event->page_matches("trash_restore/{image_id}", method: "POST", permission: Permissions::VIEW_TRASH)) {
+            $image_id = $event->get_iarg('image_id');
             self::set_trash($image_id, false);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/".$image_id));

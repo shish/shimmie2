@@ -101,8 +101,8 @@ class TranscodeVideo extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("transcode_video", method: "POST", permission: Permissions::EDIT_FILES)) {
-            $image_id = int_escape($event->get_arg(0));
+        if ($event->page_matches("transcode_video/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
+            $image_id = $event->get_iarg('image_id');
             $image_obj = Image::by_id($image_id);
             if (is_null($image_obj)) {
                 $this->theme->display_error(404, "Post not found", "No post in the database has the ID #$image_id");

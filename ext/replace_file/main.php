@@ -13,31 +13,35 @@ class ReplaceFile extends Extension
     {
         global $cache, $page, $user;
 
-        if ($event->page_matches("replace", permission: Permissions::REPLACE_IMAGE)) {
-            $image_id = int_escape($event->get_arg(0));
+        if ($event->page_matches("replace/{image_id}", method: "GET", permission: Permissions::REPLACE_IMAGE)) {
+            $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
             if (is_null($image)) {
                 throw new UploadException("Can not replace Post: No post with ID $image_id");
             }
 
-            if($event->method == "GET") {
-                $this->theme->display_replace_page($page, $image_id);
-            } elseif($event->method == "POST") {
-                $user->ensure_authed();
-                if (!empty($event->get_POST("url"))) {
-                    $tmp_filename = shm_tempnam("transload");
-                    fetch_url($event->req_POST("url"), $tmp_filename);
-                    send_event(new ImageReplaceEvent($image, $tmp_filename));
-                } elseif (count($_FILES) > 0) {
-                    send_event(new ImageReplaceEvent($image, $_FILES["data"]['tmp_name']));
-                }
-                if($event->get_POST("source")) {
-                    send_event(new SourceSetEvent($image, $event->req_POST("source")));
-                }
-                $cache->delete("thumb-block:{$image_id}");
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$image_id"));
+            $this->theme->display_replace_page($page, $image_id);
+        }
+        if ($event->page_matches("replace/{image_id}", method: "POST", permission: Permissions::REPLACE_IMAGE)) {
+            $image_id = $event->get_iarg('image_id');
+            $image = Image::by_id($image_id);
+            if (is_null($image)) {
+                throw new UploadException("Can not replace Post: No post with ID $image_id");
             }
+
+            if (!empty($event->get_POST("url"))) {
+                $tmp_filename = shm_tempnam("transload");
+                fetch_url($event->req_POST("url"), $tmp_filename);
+                send_event(new ImageReplaceEvent($image, $tmp_filename));
+            } elseif (count($_FILES) > 0) {
+                send_event(new ImageReplaceEvent($image, $_FILES["data"]['tmp_name']));
+            }
+            if($event->get_POST("source")) {
+                send_event(new SourceSetEvent($image, $event->req_POST("source")));
+            }
+            $cache->delete("thumb-block:{$image_id}");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$image_id"));
         }
     }
 

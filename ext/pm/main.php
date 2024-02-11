@@ -227,8 +227,8 @@ class PrivMsg extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $database, $page, $user;
-        if ($event->page_matches("pm/read", permission: Permissions::READ_PM)) {
-            $pm_id = int_escape($event->get_arg(1));
+        if ($event->page_matches("pm/read/{pm_id}", permission: Permissions::READ_PM)) {
+            $pm_id = $event->get_iarg('pm_id');
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
                 $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");

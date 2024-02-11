@@ -40,31 +40,31 @@ class DanbooruApi extends Extension
 {
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if ($event->page_matches("api/danbooru")) {
-            global $page;
+        global $page;
+
+        if ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
+            // No XML data is returned from this function
             $page->set_mode(PageMode::DATA);
+            $page->set_mime(MimeType::TEXT);
+            $this->api_add_post();
+        } elseif ($event->page_matches("api/danbooru/find_posts") || $event->page_matches("api/danbooru/post/index.xml")) {
+            $page->set_mode(PageMode::DATA);
+            $page->set_mime(MimeType::XML_APPLICATION);
+            $page->set_data((string)$this->api_find_posts($event->GET));
+        } elseif ($event->page_matches("api/danbooru/find_tags")) {
+            $page->set_mode(PageMode::DATA);
+            $page->set_mime(MimeType::XML_APPLICATION);
+            $page->set_data((string)$this->api_find_tags($event->GET));
+        }
 
-            if ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
-                // No XML data is returned from this function
-                $page->set_mime(MimeType::TEXT);
-                $this->api_add_post();
-            } elseif ($event->page_matches("api/danbooru/find_posts") || $event->page_matches("api/danbooru/post/index.xml")) {
-                $page->set_mime(MimeType::XML_APPLICATION);
-                $page->set_data((string)$this->api_find_posts($event->GET));
-            } elseif ($event->page_matches("api/danbooru/find_tags")) {
-                $page->set_mime(MimeType::XML_APPLICATION);
-                $page->set_data((string)$this->api_find_tags($event->GET));
-            }
-
-            // Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper
-            // Shimmie view page
-            // Example: danbooruup says the url is https://shimmie/api/danbooru/post/show/123
-            // This redirects that to https://shimmie/post/view/123
-            elseif ($event->page_matches("api/danbooru/post/show")) {
-                $fixedlocation = make_link("post/view/" . $event->get_arg(0));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect($fixedlocation);
-            }
+        // Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper
+        // Shimmie view page
+        // Example: danbooruup says the url is https://shimmie/api/danbooru/post/show/123
+        // This redirects that to https://shimmie/post/view/123
+        elseif ($event->page_matches("api/danbooru/post/show/{id}")) {
+            $fixedlocation = make_link("post/view/" . $event->get_iarg('id'));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect($fixedlocation);
         }
     }
 

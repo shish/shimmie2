@@ -44,7 +44,7 @@ class UploadTheme extends Themelet
         $max_total_kb = to_shorthand_int($max_total_size);
         $upload_list = $this->build_upload_list();
 
-        $form = SHM_FORM("upload", "POST", true, "file_upload");
+        $form = SHM_FORM("upload", multipart: true, form_id: "file_upload");
         $form->appendChild(
             TABLE(
                 ["id" => "large_upload_form", "class" => "form"],
@@ -257,7 +257,7 @@ class UploadTheme extends Themelet
         $max_total_kb = to_shorthand_int($max_total_size);
 
         // <input type='hidden' name='max_file_size' value='$max_size' />
-        $form = SHM_FORM("upload", "POST", true);
+        $form = SHM_FORM("upload", multipart: true);
         $form->appendChild(
             emptyHTML(
                 INPUT(["id" => "data[]", "name" => "data[]", "size" => "16", "type" => "file", "accept" => $accept, "multiple" => true]),

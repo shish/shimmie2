@@ -25,7 +25,7 @@ class LogConsole extends Extension
             $this->log(new LogEvent(
                 "access",
                 SCORE_LOG_INFO,
-                "{$event->method} {$_SERVER['REQUEST_URI']}"
+                "{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}"
             ));
         }
 

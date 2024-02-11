@@ -8,9 +8,8 @@ class UserPageTest extends ShimmiePHPUnitTestCase
 {
     public function testUserPage(): void
     {
-        $this->get_page('user');
-        $this->assert_title("Not Logged In");
-        $this->assert_no_text("Stats");
+        $page = $this->get_page('user');
+        $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
         $this->get_page('user/demo');
         $this->assert_title("demo's Page");
