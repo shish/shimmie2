@@ -362,7 +362,7 @@ class Image implements \ArrayAccess
     #[Field(name: "image_link")]
     public function get_image_link(): string
     {
-        return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
+        return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id/$id%20-%20$tags.$ext');
     }
 
     /**
@@ -383,7 +383,7 @@ class Image implements \ArrayAccess
         global $config;
         $mime = $config->get_string(ImageConfig::THUMB_MIME);
         $ext = FileExtension::get_for_mime($mime);
-        return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
+        return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
     }
 
     /**
