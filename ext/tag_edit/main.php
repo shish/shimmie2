@@ -42,7 +42,7 @@ class SourceSetEvent extends Event
 }
 
 
-class TagSetException extends UserErrorException
+class TagSetException extends UserError
 {
     public ?string $redirect;
 
@@ -202,7 +202,7 @@ class TagEdit extends Extension
             if ($owner instanceof User) {
                 send_event(new OwnerSetEvent($event->image, $owner));
             } else {
-                throw new NullUserException("Error: No user with that name was found.");
+                throw new UserNotFound("Error: No user with that name was found.");
             }
         }
         if ($user->can(Permissions::EDIT_IMAGE_TAG) && isset($event->params['tag_edit__tags'])) {

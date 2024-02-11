@@ -56,8 +56,6 @@ class UserClass
 
     /**
      * Determine if this class of user can perform an action or has ability.
-     *
-     * @throws SCoreException
      */
     public function can(string $ability): bool
     {
@@ -75,7 +73,7 @@ class UserClass
                     $min_ability = $a;
                 }
             }
-            throw new SCoreException("Unknown ability '$ability'. Did the developer mean '$min_ability'?");
+            throw new ServerError("Unknown ability '$ability'. Did the developer mean '$min_ability'?");
         }
     }
 }

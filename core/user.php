@@ -45,7 +45,6 @@ class User
      * would be to use User::by_id, User::by_session, etc.
      *
      * @param array<string|int, mixed> $row
-     * @throws SCoreException
      */
     public function __construct(array $row)
     {
@@ -58,7 +57,7 @@ class User
         if (array_key_exists($row["class"], UserClass::$known_classes)) {
             $this->class = UserClass::$known_classes[$row["class"]];
         } else {
-            throw new SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");
+            throw new ServerError("User '{$this->name}' has invalid class '{$row["class"]}'");
         }
     }
 
@@ -125,7 +124,7 @@ class User
     {
         $u = User::by_name($name);
         if (is_null($u)) {
-            throw new UserDoesNotExist("Can't find any user named $name");
+            throw new UserNotFound("Can't find any user named $name");
         } else {
             return $u->id;
         }
@@ -189,7 +188,7 @@ class User
     {
         global $database;
         if (User::by_name($name)) {
-            throw new SCoreException("Desired username is already in use");
+            throw new InvalidInput("Desired username is already in use");
         }
         $old_name = $this->name;
         $this->name = $name;

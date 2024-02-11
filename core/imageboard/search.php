@@ -64,7 +64,7 @@ class Search
 
         if (SPEED_HAX) {
             if (!$user->can(Permissions::BIG_SEARCH) and count($tags) > 3) {
-                throw new PermissionDeniedException("Anonymous users may only search for up to 3 tags at a time");
+                throw new PermissionDenied("Anonymous users may only search for up to 3 tags at a time");
             }
         }
 
@@ -388,7 +388,7 @@ class Search
                     WHERE negative.image_id IS NULL
                 ");
             } else {
-                throw new SCoreException("No criteria specified");
+                throw new InvalidInput("No criteria specified");
             }
         }
 

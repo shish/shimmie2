@@ -26,12 +26,9 @@ class NotATagTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Post $image_id: two");
 
         // Modified Bad as user - redirect
-        try {
+        $this->assertException(TagSetException::class, function () use ($image) {
             send_event(new TagSetEvent($image, ["three", "face"]));
-            $this->fail("Should've had an exception");
-        } catch (TagSetException $e) {
-            $this->assertTrue(true);
-        }
+        });
         $this->get_page("post/view/$image_id");
         $this->assert_title("Post $image_id: two");
 

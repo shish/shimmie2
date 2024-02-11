@@ -20,9 +20,6 @@ class ImageRotateException extends SCoreException
  */
 class RotateImage extends Extension
 {
-    /** @var RotateImageTheme */
-    protected Themelet $theme;
-
     public const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 
     public function onInitExt(InitExtEvent $event): void
@@ -70,13 +67,9 @@ class RotateImage extends Extension
                 $deg = int_escape($event->req_POST('rotate_deg'));
 
                 /* Attempt to rotate the image */
-                try {
-                    $this->rotate_image($image_id, $deg);
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/".$image_id));
-                } catch (ImageRotateException $e) {
-                    $this->theme->display_rotate_error($page, "Error Rotating", $e->error);
-                }
+                $this->rotate_image($image_id, $deg);
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("post/view/".$image_id));
             }
         }
     }

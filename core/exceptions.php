@@ -34,12 +34,12 @@ class InstallerException extends \RuntimeException
     }
 }
 
-class UserErrorException extends SCoreException
+class UserError extends SCoreException
 {
     public int $http_code = 400;
 }
 
-class ServerErrorException extends SCoreException
+class ServerError extends SCoreException
 {
     public int $http_code = 500;
 }
@@ -47,45 +47,28 @@ class ServerErrorException extends SCoreException
 /**
  * A fairly common, generic exception.
  */
-class PermissionDeniedException extends UserErrorException
+class PermissionDenied extends UserError
 {
     public int $http_code = 403;
 }
 
-/**
- * This exception is used when an Image cannot be found by ID.
- */
-class ImageDoesNotExist extends UserErrorException
+class ObjectNotFound extends UserError
 {
     public int $http_code = 404;
 }
 
-/**
- * This exception is used when a User cannot be found by some criteria.
- */
-class UserDoesNotExist extends UserErrorException
+class ImageNotFound extends ObjectNotFound
 {
-    public int $http_code = 404;
+}
+
+class UserNotFound extends ObjectNotFound
+{
 }
 
 /*
  * For validate_input()
  */
-class InvalidInput extends UserErrorException
+class InvalidInput extends UserError
 {
     public int $http_code = 402;
-}
-
-/*
- * This is used by the image resizing code when there is not enough memory to perform a resize.
- */
-class InsufficientMemoryException extends ServerErrorException
-{
-}
-
-/*
- * This is used by the image resizing code when there is an error while resizing
- */
-class ImageResizeException extends ServerErrorException
-{
 }

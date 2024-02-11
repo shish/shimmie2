@@ -20,6 +20,10 @@ class MediaException extends SCoreException
 {
 }
 
+class InsufficientMemoryException extends ServerError
+{
+}
+
 class Media extends Extension
 {
     /** @var MediaTheme */
@@ -171,8 +175,6 @@ class Media extends Extension
 
     /**
      * @param MediaResizeEvent $event
-     * @throws MediaException
-     * @throws InsufficientMemoryException
      */
     public function onMediaResize(MediaResizeEvent $event): void
     {
@@ -407,7 +409,7 @@ class Media extends Extension
     {
         $ext = FileExtension::get_for_mime($mime);
         if (empty($ext)) {
-            throw new SCoreException("Could not determine extension for $mime");
+            throw new ServerError("Could not determine extension for $mime");
         }
         return $ext;
     }
@@ -646,8 +648,6 @@ class Media extends Extension
      * @param string $output_filename
      * @param ?string $output_mime If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
      * @param int $output_quality Defaults to 80.
-     * @throws MediaException
-     * @throws InsufficientMemoryException if the estimated memory usage exceeds the memory limit.
      */
     public static function image_resize_gd(
         string $image_filename,

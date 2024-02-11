@@ -10,7 +10,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
 
     public function testAccess(): void
     {
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->get_page('ip_ban/list');
         });
     }

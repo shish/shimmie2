@@ -144,7 +144,7 @@ class UserConfig extends Extension
             $duser = User::by_id($input['id']);
 
             if ($user->id != $duser->id && !$user->can(Permissions::CHANGE_OTHER_USER_SETTING)) {
-                throw new PermissionDeniedException("You do not have permission to change other user's settings");
+                throw new PermissionDenied("You do not have permission to change other user's settings");
             }
 
             $target_config = UserConfig::get_for_user($duser->id);

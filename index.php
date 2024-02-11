@@ -105,7 +105,7 @@ try {
     if ($database->is_transaction_open()) {
         $database->rollback();
     }
-    if(is_a($e, \Shimmie2\UserErrorException::class)) {
+    if(is_a($e, \Shimmie2\UserError::class)) {
         $page->set_mode(PageMode::PAGE);
         $page->set_code($e->http_code);
         $page->set_title("Error");

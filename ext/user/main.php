@@ -74,10 +74,6 @@ class UserCreationException extends SCoreException
 {
 }
 
-class NullUserException extends SCoreException
-{
-}
-
 #[Type]
 class LoginResult
 {
@@ -268,7 +264,7 @@ class UserPage extends Extension
             $duser = User::by_id($input['id']);
             if ($this->user_can_edit_user($user, $duser)) {
                 if ($input['pass1'] != $input['pass2']) {
-                    throw new UserErrorException("Passwords don't match");
+                    throw new InvalidInput("Passwords don't match");
                 } else {
                     // FIXME: send_event()
                     $duser->set_password($input['pass1']);
@@ -664,7 +660,7 @@ class UserPage extends Extension
         } elseif (is_null($my_user->email)) {
             $this->theme->display_error(400, "Error", "That user has no registered email address");
         } else {
-            throw new SCoreException("Email sending not implemented");
+            throw new ServerError("Email sending not implemented");
         }
     }
 

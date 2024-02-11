@@ -226,7 +226,7 @@ class MimeType
     public static function get_for_file(string $file, ?string $ext = null): string
     {
         if (!file_exists($file)) {
-            throw new SCoreException("File not found: ".$file);
+            throw new UserError("File not found: ".$file);
         }
 
         $output = self::OCTET_STREAM;

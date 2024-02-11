@@ -9,12 +9,12 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
     public function testAuth(): void
     {
         $this->log_out();
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->get_page('admin');
         });
 
         $this->log_in_as_user();
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->get_page('admin');
         });
 

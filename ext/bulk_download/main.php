@@ -8,10 +8,6 @@ class BulkDownloadConfig
 {
     public const SIZE_LIMIT = "bulk_download_size_limit";
 }
-class BulkDownloadException extends BulkActionException
-{
-}
-
 
 class BulkDownload extends Extension
 {
@@ -58,7 +54,7 @@ class BulkDownload extends Extension
                     $img_loc = warehouse_path(Image::IMAGE_DIR, $image->hash, false);
                     $size_total += filesize($img_loc);
                     if ($size_total > $max_size) {
-                        throw new BulkDownloadException("Bulk download limited to ".human_filesize($max_size));
+                        throw new UserError("Bulk download limited to ".human_filesize($max_size));
                     }
 
                     $filename = urldecode($image->get_nice_image_name());

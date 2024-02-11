@@ -242,7 +242,7 @@ abstract class BaseConfig implements Config
     {
         $val = $this->get($name, $default);
         if (!is_string($val) && !is_null($val)) {
-            throw new SCoreException("$name is not a string: $val");
+            throw new ServerError("$name is not a string: $val");
         }
         return $val;
     }

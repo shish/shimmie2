@@ -47,10 +47,10 @@ class PrivateImage extends Extension
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
             if ($image == null) {
-                throw new SCoreException("Post not found.");
+                throw new ImageNotFound("Post not found.");
             }
             if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
-                throw new SCoreException("Cannot set another user's image to private.");
+                throw new PermissionDenied("Cannot set another user's image to private.");
             }
 
             self::privatize_image($image_id);
@@ -62,10 +62,10 @@ class PrivateImage extends Extension
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
             if ($image == null) {
-                throw new SCoreException("Post not found.");
+                throw new ImageNotFound("Post not found.");
             }
             if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
-                throw new SCoreException("Cannot set another user's image to public.");
+                throw new PermissionDenied("Cannot set another user's image to public.");
             }
 
             self::publicize_image($image_id);
@@ -76,7 +76,7 @@ class PrivateImage extends Extension
         if ($event->page_matches("user_admin/private_image", method: "POST")) {
             $id = int_escape($event->req_POST('id'));
             if ($id != $user->id) {
-                throw new SCoreException("Cannot change another user's settings");
+                throw new PermissionDenied("Cannot change another user's settings");
             }
             $set_default = array_key_exists("set_default", $event->POST);
             $view_default = array_key_exists("view_default", $event->POST);

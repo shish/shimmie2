@@ -7,9 +7,6 @@ namespace Shimmie2;
 class BulkParentChildConfig
 {
 }
-class BulkParentChildException extends BulkActionException
-{
-}
 
 class BulkParentChild extends Extension
 {

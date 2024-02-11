@@ -42,7 +42,7 @@ class CommentDeletionEvent extends Event
     }
 }
 
-class CommentPostingException extends SCoreException
+class CommentPostingException extends InvalidInput
 {
 }
 
@@ -203,14 +203,10 @@ class CommentList extends Extension
     {
         global $cache, $config, $database, $user, $page;
         if ($event->page_matches("comment/add", method: "POST", permission: Permissions::CREATE_COMMENT)) {
-            try {
-                $i_iid = int_escape($event->req_POST('image_id'));
-                send_event(new CommentPostingEvent($i_iid, $user, $event->req_POST('comment')));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
-            } catch (CommentPostingException $ex) {
-                $this->theme->display_error(403, "Comment Blocked", $ex->getMessage());
-            }
+            $i_iid = int_escape($event->req_POST('image_id'));
+            send_event(new CommentPostingEvent($i_iid, $user, $event->req_POST('comment')));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
         }
         if ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: Permissions::DELETE_COMMENT)) {
             // FIXME: post, not args

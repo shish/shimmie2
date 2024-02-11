@@ -8,9 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BulkActionException extends SCoreException
-{
-}
 class BulkActionBlockBuildingEvent extends Event
 {
     /**
@@ -26,7 +23,7 @@ class BulkActionBlockBuildingEvent extends Event
             assert(strlen($access_key) == 1);
             foreach ($this->actions as $existing) {
                 if ($existing["access_key"] == $access_key) {
-                    throw new SCoreException("Access key $access_key is already in use");
+                    throw new UserError("Access key $access_key is already in use");
                 }
             }
         }
@@ -171,31 +168,26 @@ class BulkActions extends Extension
         global $page, $user;
         if ($event->page_matches("bulk_action", method: "POST", permission: Permissions::PERFORM_BULK_ACTIONS)) {
             $action = $event->req_POST('bulk_action');
-
-            try {
-                $items = null;
-                if ($event->get_POST('bulk_selected_ids')) {
-                    $data = json_decode($event->req_POST('bulk_selected_ids'));
-                    if (!is_array($data) || empty($data)) {
-                        throw new BulkActionException("No ids specified in bulk_selected_ids");
-                    }
-                    $items = $this->yield_items($data);
-                } elseif ($event->get_POST('bulk_query')) {
-                    $query = $event->req_POST('bulk_query');
-                    $items = $this->yield_search_results($query);
-                } else {
-                    throw new BulkActionException("No ids selected and no query present, cannot perform bulk operation on entire collection");
+            $items = null;
+            if ($event->get_POST('bulk_selected_ids')) {
+                $data = json_decode($event->req_POST('bulk_selected_ids'));
+                if (!is_array($data) || empty($data)) {
+                    throw new InvalidInput("No ids specified in bulk_selected_ids");
                 }
+                $items = $this->yield_items($data);
+            } elseif ($event->get_POST('bulk_query')) {
+                $query = $event->req_POST('bulk_query');
+                $items = $this->yield_search_results($query);
+            } else {
+                throw new InvalidInput("No ids selected and no query present, cannot perform bulk operation on entire collection");
+            }
 
-                shm_set_timeout(null);
-                $bae = send_event(new BulkActionEvent($action, $items, $event->POST));
+            shm_set_timeout(null);
+            $bae = send_event(new BulkActionEvent($action, $items, $event->POST));
 
-                if ($bae->redirect) {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(referer_or(make_link()));
-                }
-            } catch (BulkActionException $e) {
-                log_error(BulkActionsInfo::KEY, $e->getMessage(), $e->getMessage());
+            if ($bae->redirect) {
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(referer_or(make_link()));
             }
         }
     }

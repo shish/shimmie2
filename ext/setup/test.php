@@ -18,7 +18,7 @@ class SetupTest extends ShimmiePHPUnitTestCase
 
     public function testAuthAnon(): void
     {
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->get_page('setup');
         });
     }
@@ -26,7 +26,7 @@ class SetupTest extends ShimmiePHPUnitTestCase
     public function testAuthUser(): void
     {
         $this->log_in_as_user();
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->get_page('setup');
         });
     }

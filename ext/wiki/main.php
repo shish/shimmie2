@@ -46,10 +46,6 @@ class WikiDeletePageEvent extends Event
     }
 }
 
-class WikiUpdateException extends SCoreException
-{
-}
-
 #[Type(name: "WikiPage")]
 class WikiPage
 {
@@ -188,7 +184,7 @@ class Wiki extends Extension
                 if ($this->can_edit($user, $content)) {
                     $this->theme->display_page_editor($page, $content);
                 } else {
-                    throw new PermissionDeniedException("You are not allowed to edit this page");
+                    throw new PermissionDenied("You are not allowed to edit this page");
                 }
             }
         }
@@ -211,7 +207,7 @@ class Wiki extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } else {
-                    throw new PermissionDeniedException("You are not allowed to edit this page");
+                    throw new PermissionDenied("You are not allowed to edit this page");
                 }
             } elseif($action == "delete_revision") {
                 $content = $this->get_page($title);
@@ -222,7 +218,7 @@ class Wiki extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } else {
-                    throw new PermissionDeniedException("You are not allowed to edit this page");
+                    throw new PermissionDenied("You are not allowed to edit this page");
                 }
             } elseif($action == "delete_all") {
                 if ($user->can(Permissions::WIKI_ADMIN)) {
@@ -282,7 +278,7 @@ class Wiki extends Extension
                 );
             }
         } catch (\Exception $e) {
-            throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
+            throw new UserError("Somebody else edited that page at the same time :-(");
         }
     }
 

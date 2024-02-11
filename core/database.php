@@ -82,7 +82,7 @@ class Database
         if (preg_match("/^([^:]*)/", $this->dsn, $matches)) {
             $db_proto = $matches[1];
         } else {
-            throw new SCoreException("Can't figure out database engine");
+            throw new ServerError("Can't figure out database engine");
         }
 
         if ($db_proto === DatabaseDriverID::MYSQL->value) {
@@ -116,7 +116,7 @@ class Database
         if ($this->is_transaction_open()) {
             return $this->get_db()->commit();
         } else {
-            throw new SCoreException("Unable to call commit() as there is no transaction currently open.");
+            throw new ServerError("Unable to call commit() as there is no transaction currently open.");
         }
     }
 
@@ -125,7 +125,7 @@ class Database
         if ($this->is_transaction_open()) {
             return $this->get_db()->rollback();
         } else {
-            throw new SCoreException("Unable to call rollback() as there is no transaction currently open.");
+            throw new ServerError("Unable to call rollback() as there is no transaction currently open.");
         }
     }
 
@@ -389,8 +389,6 @@ class Database
 
     /**
      * Returns the number of tables present in the current database.
-     *
-     * @throws SCoreException
      */
     public function count_tables(): int
     {
@@ -408,7 +406,7 @@ class Database
             );
         } else {
             $did = (string)$this->get_engine()->id;
-            throw new SCoreException("Can't count tables for database type {$did}");
+            throw new ServerError("Can't count tables for database type {$did}");
         }
     }
 

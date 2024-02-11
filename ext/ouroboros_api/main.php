@@ -266,7 +266,7 @@ class OuroborosAPI extends Extension
                         $this->sendResponse(403, 'You cannot create new posts');
                     }
                 } elseif ($this->match('update')) {
-                    throw new SCoreException("update not implemented");
+                    throw new ServerError("update not implemented");
                 } elseif ($this->match('show')) {
                     // Show
                     $id = !empty($_REQUEST['id']) ? (int)filter_var_ex($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;

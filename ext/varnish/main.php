@@ -34,7 +34,7 @@ class VarnishPurger extends Extension
         $result = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpCode != 200) {
-            throw new SCoreException('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
+            throw new ServerError('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
         }
         curl_close($ch);
     }

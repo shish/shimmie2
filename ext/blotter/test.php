@@ -8,13 +8,13 @@ class BlotterTest extends ShimmiePHPUnitTestCase
 {
     public function testDenial(): void
     {
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->get_page("blotter/editor");
         });
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->post_page("blotter/add");
         });
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->post_page("blotter/remove");
         });
     }

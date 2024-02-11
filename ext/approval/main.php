@@ -207,7 +207,7 @@ class Approval extends Extension
          * Deny images upon insufficient permissions.
          **/
         if (!$this->check_permissions($event->image)) {
-            throw new PermissionDeniedException("Access denied");
+            throw new PermissionDenied("Access denied");
         }
     }
 

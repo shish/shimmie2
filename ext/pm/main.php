@@ -244,7 +244,7 @@ class PrivMsg extends Extension
                     $this->theme->display_composer($page, $user, $from_user, "Re: ".$pmo->subject);
                 }
             } else {
-                throw new PermissionDeniedException("You do not have permission to view this PM");
+                throw new PermissionDenied("You do not have permission to view this PM");
             }
         }
         if ($event->page_matches("pm/delete", method: "POST", permission: Permissions::READ_PM)) {

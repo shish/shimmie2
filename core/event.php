@@ -100,7 +100,7 @@ class PageRequestEvent extends Event
     {
         if(array_key_exists($key, $this->GET)) {
             if(is_array($this->GET[$key])) {
-                throw new SCoreException("GET parameter {$key} is an array, expected single value");
+                throw new UserError("GET parameter {$key} is an array, expected single value");
             }
             return $this->GET[$key];
         } else {
@@ -112,7 +112,7 @@ class PageRequestEvent extends Event
     {
         $value = $this->get_GET($key);
         if($value === null) {
-            throw new UserErrorException("Missing GET parameter {$key}");
+            throw new UserError("Missing GET parameter {$key}");
         }
         return $value;
     }
@@ -121,7 +121,7 @@ class PageRequestEvent extends Event
     {
         if(array_key_exists($key, $this->POST)) {
             if(is_array($this->POST[$key])) {
-                throw new SCoreException("POST parameter {$key} is an array, expected single value");
+                throw new UserError("POST parameter {$key} is an array, expected single value");
             }
             return $this->POST[$key];
         } else {
@@ -133,7 +133,7 @@ class PageRequestEvent extends Event
     {
         $value = $this->get_POST($key);
         if($value === null) {
-            throw new UserErrorException("Missing POST parameter {$key}");
+            throw new UserError("Missing POST parameter {$key}");
         }
         return $value;
     }
@@ -145,7 +145,7 @@ class PageRequestEvent extends Event
     {
         if(array_key_exists($key, $this->POST)) {
             if(!is_array($this->POST[$key])) {
-                throw new SCoreException("POST parameter {$key} is a single value, expected array");
+                throw new UserError("POST parameter {$key} is a single value, expected array");
             }
             return $this->POST[$key];
         } else {
@@ -160,7 +160,7 @@ class PageRequestEvent extends Event
     {
         $value = $this->get_POST_array($key);
         if($value === null) {
-            throw new UserErrorException("Missing POST parameter {$key}");
+            throw new UserError("Missing POST parameter {$key}");
         }
         return $value;
     }
@@ -214,10 +214,10 @@ class PageRequestEvent extends Event
         // if we matched the method and the path, but the page requires
         // authentication and the user is not authenticated, then complain
         if($authed && $this->is_authed === false) {
-            throw new PermissionDeniedException("Permission Denied");
+            throw new PermissionDenied("Permission Denied");
         }
         if($permission !== null && !$user->can($permission)) {
-            throw new PermissionDeniedException("Permission Denied");
+            throw new PermissionDenied("Permission Denied");
         }
 
         return true;
@@ -233,7 +233,7 @@ class PageRequestEvent extends Event
         } elseif($default !== null) {
             return $default;
         } else {
-            throw new UserErrorException("Page argument {$n} is missing");
+            throw new UserError("Page argument {$n} is missing");
         }
     }
 
@@ -241,13 +241,13 @@ class PageRequestEvent extends Event
     {
         if(array_key_exists($n, $this->named_args)) {
             if(is_numberish($this->named_args[$n]) === false) {
-                throw new UserErrorException("Page argument {$n} exists but is not numeric");
+                throw new UserError("Page argument {$n} exists but is not numeric");
             }
             return int_escape($this->named_args[$n]);
         } elseif($default !== null) {
             return $default;
         } else {
-            throw new UserErrorException("Page argument {$n} is missing");
+            throw new UserError("Page argument {$n} is missing");
         }
     }
 }

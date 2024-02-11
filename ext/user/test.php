@@ -57,7 +57,7 @@ class UserPageTest extends ShimmiePHPUnitTestCase
     {
         global $page;
 
-        $this->assertException(PermissionDeniedException::class, function () {
+        $this->assertException(PermissionDenied::class, function () {
             $this->log_out();
             $this->post_page('user_admin/create_other', [
                 'name' => 'testnew',

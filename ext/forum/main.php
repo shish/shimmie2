@@ -112,7 +112,7 @@ class Forum extends Extension
             $errors = $this->sanity_check_viewed_thread($threadID);
 
             if (count($errors) > 0) {
-                throw new UserErrorException(implode("<br>", $errors));
+                throw new InvalidInput(implode("<br>", $errors));
             }
 
             $this->show_posts($threadID, $pageNumber, $user->can(Permissions::FORUM_ADMIN));
@@ -132,7 +132,7 @@ class Forum extends Extension
                 $errors = $this->sanity_check_new_thread();
 
                 if (count($errors) > 0) {
-                    throw new UserErrorException(implode("<br>", $errors));
+                    throw new InvalidInput(implode("<br>", $errors));
                 }
 
                 $newThreadID = $this->save_new_thread($user);
@@ -171,7 +171,7 @@ class Forum extends Extension
                 $errors = $this->sanity_check_new_post();
 
                 if (count($errors) > 0) {
-                    throw new UserErrorException(implode("<br>", $errors));
+                    throw new InvalidInput(implode("<br>", $errors));
                 }
                 $this->save_new_post($threadID, $user);
             }

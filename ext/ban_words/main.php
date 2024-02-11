@@ -49,12 +49,12 @@ xanax
 
     public function onSourceSet(SourceSetEvent $event): void
     {
-        $this->test_text($event->source, new SCoreException("Source contains banned terms"));
+        $this->test_text($event->source, new UserError("Source contains banned terms"));
     }
 
     public function onTagSet(TagSetEvent $event): void
     {
-        $this->test_text(Tag::implode($event->new_tags), new SCoreException("Tags contain banned terms"));
+        $this->test_text(Tag::implode($event->new_tags), new UserError("Tags contain banned terms"));
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void

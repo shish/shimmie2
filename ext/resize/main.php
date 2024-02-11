@@ -16,14 +16,15 @@ abstract class ResizeConfig
     public const GET_ENABLED = 'resize_get_enabled';
 }
 
+class ImageResizeException extends ServerError
+{
+}
+
 /**
  *	This class handles image resize requests.
  */
 class ResizeImage extends Extension
 {
-    /** @var ResizeImageTheme */
-    protected Themelet $theme;
-
     /**
      * Needs to be after the data processing extensions
      */
@@ -120,11 +121,7 @@ class ResizeImage extends Extension
                 }
             }
             if ($isanigif == 0) {
-                try {
-                    $this->resize_image($image_obj, $width, $height);
-                } catch (ImageResizeException $e) {
-                    $this->theme->display_resize_error($page, "Error Resizing", $e->error);
-                }
+                $this->resize_image($image_obj, $width, $height);
 
                 //Need to generate thumbnail again...
                 //This only seems to be an issue if one of the sizes was set to 0.
@@ -152,13 +149,9 @@ class ResizeImage extends Extension
                 $width = int_escape($event->get_POST('resize_width'));
                 $height = int_escape($event->get_POST('resize_height'));
                 if ($width || $height) {
-                    try {
-                        $this->resize_image($image, $width, $height);
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("post/view/".$image_id));
-                    } catch (ImageResizeException $e) {
-                        $this->theme->display_resize_error($page, "Error Resizing", $e->error);
-                    }
+                    $this->resize_image($image, $width, $height);
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("post/view/".$image_id));
                 }
             }
         }

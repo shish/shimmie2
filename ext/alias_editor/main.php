@@ -52,7 +52,7 @@ class DeleteAliasEvent extends Event
     }
 }
 
-class AddAliasException extends UserErrorException
+class AddAliasException extends UserError
 {
 }
 
@@ -175,12 +175,8 @@ class AliasEditor extends Extension
         foreach (explode("\n", $csv) as $line) {
             $parts = str_getcsv($line);
             if (count($parts) == 2) {
-                try {
-                    send_event(new AddAliasEvent($parts[0], $parts[1]));
-                    $i++;
-                } catch (AddAliasException $ex) {
-                    $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
-                }
+                send_event(new AddAliasEvent($parts[0], $parts[1]));
+                $i++;
             }
         }
         return $i;

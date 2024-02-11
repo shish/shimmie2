@@ -18,13 +18,6 @@ abstract class PoolsConfig
     public const AUTO_INCREMENT_ORDER = "poolsAutoIncrementOrder";
 }
 
-/**
- * This class is just a wrapper around SCoreException.
- */
-class PoolCreationException extends SCoreException
-{
-}
-
 class PoolAddPostsEvent extends Event
 {
     public int $pool_id;
@@ -254,20 +247,16 @@ class Pools extends Extension
             $this->theme->new_pool_composer($page);
         }
         if ($event->page_matches("pool/create", method: "POST", permission: Permissions::POOLS_CREATE)) {
-            try {
-                $pce = send_event(
-                    new PoolCreationEvent(
-                        $event->req_POST("title"),
-                        $user,
-                        bool_escape($event->req_POST("public")),
-                        $event->req_POST("description")
-                    )
-                );
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("pool/view/" . $pce->new_id));
-            } catch (PoolCreationException $e) {
-                $this->theme->display_error(400, "Error", $e->error);
-            }
+            $pce = send_event(
+                new PoolCreationEvent(
+                    $event->req_POST("title"),
+                    $user,
+                    bool_escape($event->req_POST("public")),
+                    $event->req_POST("description")
+                )
+            );
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("pool/view/" . $pce->new_id));
         }
         if ($event->page_matches("pool/view/{poolID}", method: "GET", paged: true)) {
             $poolID = $event->get_iarg('poolID');
@@ -426,7 +415,7 @@ class Pools extends Extension
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("pool/list"));
             } else {
-                throw new PermissionDeniedException("You do not have permission to access this page");
+                throw new PermissionDenied("You do not have permission to access this page");
             }
         }
     }
@@ -613,7 +602,7 @@ class Pools extends Extension
     private function assert_permission(User $user, Pool $pool): void
     {
         if (!$this->have_permission($user, $pool)) {
-            throw new PermissionDeniedException("You do not have permission to access this pool");
+            throw new PermissionDenied("You do not have permission to access this pool");
         }
     }
 
@@ -659,13 +648,13 @@ class Pools extends Extension
         global $user, $database;
 
         if (!$user->can(Permissions::POOLS_UPDATE)) {
-            throw new PoolCreationException("You must be registered and logged in to add a image.");
+            throw new PermissionDenied("You must be registered and logged in to add a image.");
         }
         if (empty($event->title)) {
-            throw new PoolCreationException("Pool title is empty.");
+            throw new InvalidInput("Pool title is empty.");
         }
         if ($this->get_single_pool_from_title($event->title)) {
-            throw new PoolCreationException("A pool using this title already exists.");
+            throw new InvalidInput("A pool using this title already exists.");
         }
 
         $database->execute(

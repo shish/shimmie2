@@ -60,7 +60,7 @@ class SearchTermParseEvent extends Event
     }
 }
 
-class SearchTermParseException extends SCoreException
+class SearchTermParseException extends InvalidInput
 {
 }
 

@@ -42,64 +42,51 @@ class Index extends Extension
             $page_number = $event->get_iarg('page_num', 1);
             $page_size = $config->get_int(IndexConfig::IMAGES);
 
-            try {
-                $fast_page_limit = 500;
+            $fast_page_limit = 500;
 
-                $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
-                if (
-                    SPEED_HAX
-                    && (
-                        str_contains($ua, "Googlebot")
-                        || str_contains($ua, "YandexBot")
-                        || str_contains($ua, "bingbot")
-                        || str_contains($ua, "msnbot")
-                    )
-                    && (
-                        $count_search_terms > 1
-                        || ($count_search_terms == 1 && $search_terms[0][0] == "-")
-                    )
-                ) {
-                    // bots love searching for weird combinations of tags...
-                    $fast_page_limit = 10;
-                }
+            $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
+            if (
+                SPEED_HAX
+                && (
+                    str_contains($ua, "Googlebot")
+                    || str_contains($ua, "YandexBot")
+                    || str_contains($ua, "bingbot")
+                    || str_contains($ua, "msnbot")
+                )
+                && (
+                    $count_search_terms > 1
+                    || ($count_search_terms == 1 && $search_terms[0][0] == "-")
+                )
+            ) {
+                // bots love searching for weird combinations of tags...
+                $fast_page_limit = 10;
+            }
 
-                if (SPEED_HAX && $page_number > $fast_page_limit && !$user->can("big_search")) {
-                    $this->theme->display_error(
-                        404,
-                        "Search limit hit",
-                        "Only $fast_page_limit pages of results are searchable - " .
-                        "if you want to find older results, use more specific search terms"
+            if (SPEED_HAX && $page_number > $fast_page_limit && !$user->can("big_search")) {
+                throw new PermissionDenied(
+                    "Only $fast_page_limit pages of results are searchable - " .
+                    "if you want to find older results, use more specific search terms"
+                );
+            }
+
+            $total_pages = (int)ceil(Search::count_images($search_terms) / $config->get_int(IndexConfig::IMAGES));
+            if (SPEED_HAX && $total_pages > $fast_page_limit && !$user->can("big_search")) {
+                $total_pages = $fast_page_limit;
+            }
+
+            $images = null;
+            if (SPEED_HAX) {
+                if ($count_search_terms === 0 && ($page_number < 10)) {
+                    // extra caching for the first few post/list pages
+                    $images = cache_get_or_set(
+                        "post-list:$page_number",
+                        fn () => Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms),
+                        60
                     );
-                    return;
                 }
-
-                $total_pages = (int)ceil(Search::count_images($search_terms) / $config->get_int(IndexConfig::IMAGES));
-                if (SPEED_HAX && $total_pages > $fast_page_limit && !$user->can("big_search")) {
-                    $total_pages = $fast_page_limit;
-                }
-
-                $images = null;
-                if (SPEED_HAX) {
-                    if ($count_search_terms === 0 && ($page_number < 10)) {
-                        // extra caching for the first few post/list pages
-                        $images = cache_get_or_set(
-                            "post-list:$page_number",
-                            fn () => Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms),
-                            60
-                        );
-                    }
-                }
-                if (is_null($images)) {
-                    $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
-                }
-            } catch (PermissionDeniedException $pde) {
-                $this->theme->display_error(403, "Permission denied", $pde->error);
-                $total_pages = 0;
-                $images = [];
-            } catch (SearchTermParseException $stpe) {
-                $this->theme->display_error(400, "Malformed search query", $stpe->error);
-                $total_pages = 0;
-                $images = [];
+            }
+            if (is_null($images)) {
+                $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
             }
 
             $count_images = count($images);

@@ -284,7 +284,7 @@ abstract class ExtensionInfo
             $extension_info = new $class();
             assert(is_a($extension_info, ExtensionInfo::class));
             if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
-                throw new SCoreException("Extension Info $class with key $extension_info->key has already been loaded");
+                throw new ServerError("Extension Info $class with key $extension_info->key has already been loaded");
             }
 
             self::$all_info_by_key[$extension_info->key] = $extension_info;

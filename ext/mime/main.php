@@ -43,7 +43,7 @@ class MimeSystem extends Extension
                 $mime = MimeType::get_for_extension($ext);
 
                 if (empty($mime) || $mime === MimeType::OCTET_STREAM) {
-                    throw new SCoreException("Unknown extension: $ext");
+                    throw new UserError("Unknown extension: $ext");
                 }
 
                 $normalized_extension = FileExtension::get_for_mime($mime);

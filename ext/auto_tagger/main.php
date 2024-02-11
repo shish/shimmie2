@@ -73,13 +73,9 @@ class AutoTagger extends Extension
 
         if ($event->page_matches("auto_tag/add", method: "POST", permission: Permissions::MANAGE_AUTO_TAG)) {
             $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
-            try {
-                send_event(new AddAutoTagEvent($input['c_tag'], $input['c_additional_tags']));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("auto_tag/list"));
-            } catch (AddAutoTagException $ex) {
-                $this->theme->display_error(500, "Error adding auto-tag", $ex->getMessage());
-            }
+            send_event(new AddAutoTagEvent($input['c_tag'], $input['c_additional_tags']));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("auto_tag/list"));
         }
         if ($event->page_matches("auto_tag/remove", method: "POST", permission: Permissions::MANAGE_AUTO_TAG)) {
             $input = validate_input(["d_tag" => "string"]);
@@ -191,12 +187,8 @@ class AutoTagger extends Extension
         foreach (explode("\n", $csv) as $line) {
             $parts = str_getcsv($line);
             if (count($parts) == 2) {
-                try {
-                    send_event(new AddAutoTagEvent($parts[0], $parts[1]));
-                    $i++;
-                } catch (AddAutoTagException $ex) {
-                    $this->theme->display_error(500, "Error adding auto-tags", $ex->getMessage());
-                }
+                send_event(new AddAutoTagEvent($parts[0], $parts[1]));
+                $i++;
             }
         }
         return $i;

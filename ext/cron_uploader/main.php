@@ -139,13 +139,13 @@ class CronUploader extends Extension
     {
         global $page;
         if (empty($folder)) {
-            throw new SCoreException("folder empty");
+            throw new InvalidInput("folder empty");
         }
         $queue_dir = $this->get_queue_dir();
         $stage_dir = join_path($this->get_failed_dir(), $folder);
 
         if (!is_dir($stage_dir)) {
-            throw new SCoreException("Could not find $stage_dir");
+            throw new InvalidInput("Could not find $stage_dir");
         }
 
         $this->prep_root_dir();
@@ -326,22 +326,22 @@ class CronUploader extends Extension
         $this->set_headers();
 
         if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
-            throw new SCoreException("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
+            throw new ServerError("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 
         if ($user->is_anonymous()) {
-            throw new SCoreException("User not present. Please specify the api_key for the user to run cron upload as.");
+            throw new UserError("User not present. Please specify the api_key for the user to run cron upload as.");
         }
 
         $this->log_message(SCORE_LOG_INFO, "Logged in as user {$user->name}");
 
         if (!$user->can(Permissions::CRON_RUN)) {
-            throw new SCoreException("User does not have permission to run cron upload");
+            throw new PermissionDenied("User does not have permission to run cron upload");
         }
 
         $lockfile = false_throws(fopen($this->get_lock_file(), "w"));
         if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
-            throw new SCoreException("Cron upload process is already running");
+            throw new ServerError("Cron upload process is already running");
         }
 
         self::$IMPORT_RUNNING = true;

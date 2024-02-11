@@ -43,7 +43,7 @@ class BulkImportExport extends DataHandlerExtension
                         $tmpfile = shm_tempnam("bulk_import");
                         $stream = $zip->getStream($item->hash);
                         if ($stream === false) {
-                            throw new SCoreException("Could not import " . $item->hash . ": File not in zip");
+                            throw new UserError("Could not import " . $item->hash . ": File not in zip");
                         }
 
                         file_put_contents($tmpfile, $stream);
@@ -56,7 +56,7 @@ class BulkImportExport extends DataHandlerExtension
                             ]))->images;
 
                             if (count($images) == 0) {
-                                throw new SCoreException("Unable to import file $item->hash");
+                                throw new UserError("Unable to import file $item->hash");
                             }
                             foreach ($images as $image) {
                                 $event->images[] = $image;
@@ -84,7 +84,7 @@ class BulkImportExport extends DataHandlerExtension
                     "Imported $total items, skipped $skipped, $failed failed"
                 );
             } else {
-                throw new SCoreException("Could not open zip archive");
+                throw new UserError("Could not open zip archive");
             }
         }
     }
