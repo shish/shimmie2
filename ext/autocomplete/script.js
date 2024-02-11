@@ -42,7 +42,8 @@ function updateCompletions(element) {
 	}
 	else {
 		element.completer_timeout = setTimeout(() => {
-			fetch((document.body.getAttribute("data-base-href") ?? "") + '/api/internal/autocomplete?s=' + word).then(
+			const wordWithoutMinus = word.replace(/^-/, '');
+			fetch((document.body.getAttribute("data-base-href") ?? "") + '/api/internal/autocomplete?s=' + wordWithoutMinus).then(
 				(response) => response.json()
 			).then((json) => {
 				if(element.selected_completion !== -1) {
@@ -97,7 +98,7 @@ function renderCompletions(element) {
 	Object.keys(completions).filter(
 		(key) => {
 			let k = key.toLowerCase();
-			let w = word.toLowerCase();
+			let w = word.replace(/^-/, '').toLowerCase();
 			return (k.startsWith(w) || k.split(':').some((k) => k.startsWith(w)))
 		}
 	).slice(0, 100).forEach((key, i) => {
@@ -176,6 +177,9 @@ function setCompletion(element, new_word) {
 	}
 
 	// replace the word with the completion
+	if(text[start] === '-') {
+		new_word = '-' + new_word;
+	}
 	new_word += ' ';
 	element.value = text.substring(0, start) + new_word + text.substring(end);
 	element.selectionStart = start + new_word.length;
