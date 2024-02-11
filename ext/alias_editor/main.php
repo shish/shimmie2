@@ -52,7 +52,7 @@ class DeleteAliasEvent extends Event
     }
 }
 
-class AddAliasException extends SCoreException
+class AddAliasException extends UserErrorException
 {
 }
 
@@ -67,13 +67,9 @@ class AliasEditor extends Extension
 
         if ($event->page_matches("alias/add", method: "POST", permission: Permissions::MANAGE_ALIAS_LIST)) {
             $input = validate_input(["c_oldtag" => "string", "c_newtag" => "string"]);
-            try {
-                send_event(new AddAliasEvent($input['c_oldtag'], $input['c_newtag']));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("alias/list"));
-            } catch (AddAliasException $ex) {
-                $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
-            }
+            send_event(new AddAliasEvent($input['c_oldtag'], $input['c_newtag']));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("alias/list"));
         }
         if ($event->page_matches("alias/remove", method: "POST", permission: Permissions::MANAGE_ALIAS_LIST)) {
             $input = validate_input(["d_oldtag" => "string"]);

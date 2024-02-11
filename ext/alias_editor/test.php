@@ -33,7 +33,7 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $this->get_page("alias/export/aliases.csv");
         $this->assert_no_text("test1");
 
-        send_event(new AddAliasEvent("test1", "test2"));
+        $this->post_page('alias/add', ['c_oldtag' => 'test1', 'c_newtag' => 'test2']);
         $this->get_page('alias/list');
         $this->assert_text("test1");
         $this->get_page("alias/export/aliases.csv");
@@ -48,7 +48,7 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $this->assert_response(302);
         $this->delete_image($image_id);
 
-        send_event(new DeleteAliasEvent("test1"));
+        $this->post_page('alias/remove', ['d_oldtag' => 'test1']);
         $this->get_page('alias/list');
         $this->assert_title("Alias List");
         $this->assert_no_text("test1");

@@ -52,4 +52,12 @@ class BasePageTest extends TestCase
         ob_end_clean();
         $this->assertTrue(true);  // doesn't crash
     }
+
+    public function test_subNav(): void
+    {
+        // the default theme doesn't send this, so let's have
+        // a random test manually
+        send_event(new PageSubNavBuildingEvent("system"));
+        $this->assertTrue(true);  // doesn't crash
+    }
 }

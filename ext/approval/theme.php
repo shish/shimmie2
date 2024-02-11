@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
 
-use function MicroHTML\{BUTTON,INPUT,P};
+use function MicroHTML\{BUTTON,P};
 
 class ApprovalTheme extends Themelet
 {
@@ -19,12 +19,6 @@ class ApprovalTheme extends Themelet
             SHM_COMMAND_EXAMPLE("approved:yes", "Returns posts that have been approved."),
             SHM_COMMAND_EXAMPLE("approved:no", "Returns posts that have not been approved.")
         );
-    }
-
-    public function display_admin_block(SetupBuildingEvent $event): void
-    {
-        $sb = $event->panel->create_new_block("Approval");
-        $sb->add_bool_option(ApprovalConfig::IMAGES, "Posts: ");
     }
 
     public function display_admin_form(): void

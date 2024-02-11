@@ -154,6 +154,15 @@ class AdminPage extends Extension
             });
     }
 
+    public function onAdminAction(AdminActionEvent $event): void
+    {
+        global $page;
+        if ($event->action === "test") {
+            $page->set_mode(PageMode::DATA);
+            $page->set_data("test");
+        }
+    }
+
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_page();

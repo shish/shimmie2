@@ -57,7 +57,8 @@ class Approval extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $this->theme->display_admin_block($event);
+        $sb = $event->panel->create_new_block("Approval");
+        $sb->add_bool_option(ApprovalConfig::IMAGES, "Posts: ");
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
@@ -89,7 +90,6 @@ class Approval extends Extension
                     );
                     break;
                 default:
-
                     break;
             }
         }
@@ -99,7 +99,7 @@ class Approval extends Extension
     {
         global $page;
 
-        if (!$this->check_permissions(($event->image))) {
+        if (!$this->check_permissions($event->image)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }
@@ -207,7 +207,7 @@ class Approval extends Extension
          * Deny images upon insufficient permissions.
          **/
         if (!$this->check_permissions($event->image)) {
-            throw new SCoreException("Access denied");
+            throw new PermissionDeniedException("Access denied");
         }
     }
 
