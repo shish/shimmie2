@@ -81,7 +81,7 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
  *   tell the difference between q=foo/bar and q=foo%2Fbar
  * - REQUEST_URI contains the exact URI that was given to us, so we
  *   can parse it for ourselves
- * - <input type="hidden" name="q" value="post/list"> generates
+ * - <input type='hidden' name='q' value='post/list'> generates
  *   q=post%2Flist
  *
  * This function should always return strings with no leading slashes
@@ -103,6 +103,11 @@ function _get_query(?string $uri = null): string
             if(count($qps) == 2 && $qps[0] == "q") {
                 $q = $qps[1];
             }
+        }
+        // if we have no slashes, but do have an encoded
+        // slash, then we _probably_ encoded too much
+        if(!str_contains($q, "/") && str_contains($q, "%2F")) {
+            $q = rawurldecode($q);
         }
     }
 
