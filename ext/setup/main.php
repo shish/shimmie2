@@ -324,7 +324,7 @@ class Setup extends Extension
     {
         global $config, $page, $user;
 
-        if ($event->page_matches("nicedebug")) {
+        if ($event->page_starts_with("nicedebug")) {
             $page->set_mode(PageMode::DATA);
             $page->set_data(json_encode_ex([
                 "args" => $event->args,

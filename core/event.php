@@ -91,9 +91,7 @@ class PageRequestEvent extends Event
         );
 
         // break the path into parts
-        $args = explode('/', $path);
-
-        $this->args = $args;
+        $this->args = explode('/', $path);
     }
 
     public function get_GET(string $key): ?string
@@ -163,6 +161,11 @@ class PageRequestEvent extends Event
             throw new UserError("Missing POST parameter {$key}");
         }
         return $value;
+    }
+
+    public function page_starts_with(string $name): bool
+    {
+        return (count($this->args) >= 1) && ($this->args[0] == $name);
     }
 
     /**

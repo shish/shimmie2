@@ -16,6 +16,13 @@ class SetupTest extends ShimmiePHPUnitTestCase
         $this->assert_no_content("\n");
     }
 
+    public function testNiceDebug(): void
+    {
+        // the automatic testing for shimmie2-examples depends on this
+        $page = $this->get_page('nicedebug/foo%2Fbar/1');
+        $this->assertEquals('{"args":["nicedebug","foo%2Fbar","1"]}', $page->data);
+    }
+
     public function testAuthAnon(): void
     {
         $this->assertException(PermissionDenied::class, function () {
