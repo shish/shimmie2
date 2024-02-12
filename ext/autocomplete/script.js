@@ -36,7 +36,7 @@ function updateCompletions(element) {
 		clearTimeout(element.completer_timeout);
 		element.completer_timeout = null;
 	}
-	if(word === '') {
+	if(word === '' || word === '-') {
 		element.completions = {};
 		renderCompletions(element);
 	}
