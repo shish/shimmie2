@@ -90,12 +90,17 @@ class Image implements \ArrayAccess
                     $t = (new \ReflectionProperty($this, $name))->getType();
                     assert(!is_null($t));
                     if(is_a($t, \ReflectionNamedType::class)) {
-                        $this->$name = match($t->getName()) {
-                            "int" => is_null($value) ? $value : int_escape((string)$value),
-                            "bool" => is_null($value) ? $value : bool_escape((string)$value),
-                            "string" => (string)$value,
-                            default => $value,
-                        };
+                        if(is_null($value)) {
+                            $this->$name = null;
+                        } else {
+                            $this->$name = match($t->getName()) {
+                                "int" => int_escape((string)$value),
+                                "bool" => bool_escape((string)$value),
+                                "string" => (string)$value,
+                                default => $value,
+                            };
+                        }
+
                     }
                 } elseif(array_key_exists($name, static::$prop_types)) {
                     if (is_null($value)) {
