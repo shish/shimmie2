@@ -36,6 +36,7 @@ class CustomIndexTheme extends IndexTheme
 			<p><form action='$h_search_link' method='GET'>
 				<input name='search' type='text' value='$h_search_string' class='autocomplete_tags' placeholder=''  style='width:75%'/>
 				<input type='submit' value='Go' style='width:20%'>
+				<input type='hidden' name='q' value='post/list'>
 			</form>
 			<div id='search_completions'></div>";
     }
