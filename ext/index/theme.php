@@ -91,7 +91,7 @@ and of course start organising your images :-)
         $h_search = "
 			<p><form action='$h_search_link' method='GET'>
 				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' />
-				<input type='hidden' name='q' value='/post/list'>
+				<input type='hidden' name='q' value='post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 		";

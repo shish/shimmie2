@@ -74,7 +74,7 @@ class CustomViewPostTheme extends ViewPostTheme
 			<form action='".make_link()."' method='GET'>
 				<input name='search' type='text'  style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
-				<input type='hidden' name='q' value='/post/list'>
+				<input type='hidden' name='q' value='post/list'>
 			</form>
 		";
 
