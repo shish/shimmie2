@@ -20,12 +20,12 @@ jobs:
     steps:
     - name: Checkout triggering commit
       if: ${{ github.event_name == 'workflow_run' }}
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.workflow_run.head_sha }}
     - name: Checkout main commit
       if: ${{ github.event_name != 'workflow_run' }}
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
     - name: Set build vars
       run: |
         echo "BUILD_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
