@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagEditTest extends ShimmiePHPUnitTestCase
+class PostTagsTest extends ShimmiePHPUnitTestCase
 {
     public function testValidChange(): void
     {
@@ -45,18 +45,5 @@ class TagEditTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", str_repeat("a", 500));
         $this->get_page("post/view/$image_id");
         $this->assert_title("Post $image_id: tagme");
-    }
-
-    public function testSourceEdit(): void
-    {
-        $this->log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id($image_id);
-
-        send_event(new SourceSetEvent($image, "example.com"));
-        send_event(new SourceSetEvent($image, "http://example.com"));
-
-        $this->get_page("post/view/$image_id");
-        $this->assert_text("example.com");
     }
 }
