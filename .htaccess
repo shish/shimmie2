@@ -34,11 +34,17 @@
 
 <IfModule mod_expires.c>
 	ExpiresActive On
-	<FilesMatch "([0-9a-f]{32}|\.(gif|jpe?g|png|webp|css|js))$">
+	<FilesMatch "([0-9a-f]{32}|\.(gif|jpe?g|png|webp))$">
 		<IfModule mod_headers.c>
 			Header set Cache-Control "public, max-age=2629743"
 		</IfModule>
 		ExpiresDefault "access plus 1 month"
+	</FilesMatch>
+	<FilesMatch "\.(css|js)$">
+		<IfModule mod_headers.c>
+			Header set Cache-Control "public, max-age=86400"
+		</IfModule>
+		ExpiresDefault "access plus 1 day"
 	</FilesMatch>
 	#ExpiresByType text/html "now"
 	#ExpiresByType text/plain "now"
