@@ -29,11 +29,12 @@ class MetadataInput
     public static function update_post_metadata(int $post_id, MetadataInput $metadata): Image
     {
         global $user;
-        $_POST['tag_edit__tags'] = $metadata->tags;
-        $_POST['tag_edit__source'] = $metadata->source;
         $image = Image::by_id($post_id);
         if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            send_event(new ImageInfoSetEvent($image, $_POST));
+            send_event(new ImageInfoSetEvent($image, [
+                'tags' => $metadata->tags,
+                'source' => $metadata->source,
+            ]));
         }
         return Image::by_id($post_id);
     }

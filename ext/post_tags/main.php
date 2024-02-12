@@ -8,40 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-/*
- * OwnerSetEvent:
- *   $image_id
- *   $source
- *
- */
-class OwnerSetEvent extends Event
-{
-    public Image $image;
-    public User $owner;
-
-    public function __construct(Image $image, User $owner)
-    {
-        parent::__construct();
-        $this->image = $image;
-        $this->owner = $owner;
-    }
-}
-
-
-class SourceSetEvent extends Event
-{
-    public Image $image;
-    public ?string $source;
-
-    public function __construct(Image $image, string $source = null)
-    {
-        parent::__construct();
-        $this->image = $image;
-        $this->source = trim($source);
-    }
-}
-
-
 class TagSetException extends UserError
 {
     public ?string $redirect;
@@ -94,19 +60,6 @@ class TagSetEvent extends Event
     }
 }
 
-class LockSetEvent extends Event
-{
-    public Image $image;
-    public bool $locked;
-
-    public function __construct(Image $image, bool $locked)
-    {
-        parent::__construct();
-        $this->image = $image;
-        $this->locked = $locked;
-    }
-}
-
 /**
  * Check whether or not a tag is a meta-tag
  */
@@ -138,9 +91,9 @@ class TagTermParseEvent extends Event
     }
 }
 
-class TagEdit extends Extension
+class PostTags extends Extension
 {
-    /** @var TagEditTheme */
+    /** @var PostTagsTheme */
     protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -150,11 +103,6 @@ class TagEdit extends Extension
             $this->mass_tag_edit($event->req_POST('search'), $event->req_POST('replace'), true);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("admin"));
-        }
-        if ($event->page_matches("tag_edit/mass_source_set", method: "POST", permission: Permissions::MASS_TAG_EDIT)) {
-            $this->mass_source_edit($event->req_POST('tags'), $event->req_POST('source'));
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(search_link());
         }
     }
 
@@ -173,41 +121,19 @@ class TagEdit extends Extension
             });
     }
 
-    // public function onPostListBuilding(PostListBuildingEvent $event): void
-    // {
-    //     global $user;
-    //     if ($user->can(UserAbilities::BULK_EDIT_IMAGE_SOURCE) && !empty($event->search_terms)) {
-    //         $event->add_control($this->theme->mss_html(Tag::implode($event->search_terms)));
-    //     }
-    // }
-
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         if(!empty($event->metadata['tags'])) {
             send_event(new TagSetEvent($event->image, $event->metadata['tags']));
-        }
-        if(!empty($event->metadata['source'])) {
-            send_event(new SourceSetEvent($event->image, $event->metadata['source']));
-        }
-        if (!empty($event->metadata['locked'])) {
-            send_event(new LockSetEvent($event->image, $event->metadata['locked']));
         }
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $page, $user;
-        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && isset($event->params['tag_edit__owner'])) {
-            $owner = User::by_name($event->params['tag_edit__owner']);
-            if ($owner instanceof User) {
-                send_event(new OwnerSetEvent($event->image, $owner));
-            } else {
-                throw new UserNotFound("Error: No user with that name was found.");
-            }
-        }
-        if ($user->can(Permissions::EDIT_IMAGE_TAG) && isset($event->params['tag_edit__tags'])) {
+        if ($user->can(Permissions::EDIT_IMAGE_TAG) && isset($event->params['tags'])) {
             try {
-                send_event(new TagSetEvent($event->image, Tag::explode($event->params['tag_edit__tags'])));
+                send_event(new TagSetEvent($event->image, Tag::explode($event->params['tags'])));
             } catch (TagSetException $e) {
                 if ($e->redirect) {
                     $page->flash("{$e->getMessage()}, please see {$e->redirect}");
@@ -215,23 +141,6 @@ class TagEdit extends Extension
                     $page->flash($e->getMessage());
                 }
             }
-        }
-        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && isset($event->params['tag_edit__source'])) {
-            if (isset($event->params['tag_edit__tags']) ? !preg_match('/source[=|:]/', $event->params["tag_edit__tags"]) : true) {
-                send_event(new SourceSetEvent($event->image, $event->params['tag_edit__source']));
-            }
-        }
-        if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            $locked = isset($event->params['tag_edit__locked']) && $event->params['tag_edit__locked'] == "on";
-            send_event(new LockSetEvent($event->image, $locked));
-        }
-    }
-
-    public function onOwnerSet(OwnerSetEvent $event): void
-    {
-        global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
-            $event->image->set_owner($event->owner);
         }
     }
 
@@ -245,23 +154,6 @@ class TagEdit extends Extension
             send_event(new TagTermParseEvent($tag, $event->image->id));
         }
     }
-
-    public function onSourceSet(SourceSetEvent $event): void
-    {
-        global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
-            $event->image->set_source($event->source);
-        }
-    }
-
-    public function onLockSet(LockSetEvent $event): void
-    {
-        global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            $event->image->set_locked($event->locked);
-        }
-    }
-
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $event->image->delete_tags_from_image();
@@ -289,25 +181,7 @@ class TagEdit extends Extension
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
-        $event->add_part($this->theme->get_user_editor_html($event->image), 39);
         $event->add_part($this->theme->get_tag_editor_html($event->image), 40);
-        $event->add_part($this->theme->get_source_editor_html($event->image), 41);
-        $event->add_part($this->theme->get_lock_editor_html($event->image), 42);
-    }
-
-    public function onTagTermCheck(TagTermCheckEvent $event): void
-    {
-        if (preg_match("/^source[=|:](.*)$/i", $event->term)) {
-            $event->metatag = true;
-        }
-    }
-
-    public function onTagTermParse(TagTermParseEvent $event): void
-    {
-        if (preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
-            $source = ($matches[1] !== "none" ? $matches[1] : null);
-            send_event(new SourceSetEvent(Image::by_id($event->image_id), $source));
-        }
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
@@ -377,32 +251,6 @@ class TagEdit extends Extension
             }
             if ($tracer_enabled) {
                 $_tracer->end();
-            }
-        }
-    }
-
-    private function mass_source_edit(string $tags, string $source): void
-    {
-        $tags = Tag::explode($tags);
-
-        $last_id = -1;
-        while (true) {
-            // make sure we don't look at the same images twice.
-            // search returns high-ids first, so we want to look
-            // at images with lower IDs than the previous.
-            $search_forward = $tags;
-            if ($last_id >= 0) {
-                $search_forward[] = "id<$last_id";
-            }
-
-            $images = Search::find_images(limit: 100, tags: $search_forward);
-            if (count($images) == 0) {
-                break;
-            }
-
-            foreach ($images as $image) {
-                send_event(new SourceSetEvent($image, $source));
-                $last_id = $image->id;
             }
         }
     }

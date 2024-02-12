@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagEditInfo extends ExtensionInfo
+class PostTagsInfo extends ExtensionInfo
 {
-    public const KEY = "tag_edit";
+    public const KEY = "post_tags";
 
     public string $key = self::KEY;
     public string $name = "Tag Editor";

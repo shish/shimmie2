@@ -15,7 +15,7 @@ class PostTitlesTheme extends Themelet
         return SHM_POST_INFO(
             "Title",
             $title,
-            $can_set ? INPUT(["type" => "text", "name" => "post_title", "value" => $title]) : null
+            $can_set ? INPUT(["type" => "text", "name" => "title", "value" => $title]) : null
         );
     }
 }

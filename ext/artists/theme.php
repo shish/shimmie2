@@ -22,7 +22,7 @@ class ArtistsTheme extends Themelet
         return SHM_POST_INFO(
             "Author",
             $author,
-            INPUT(["type" => "text", "name" => "tag_edit__author", "value" => $author])
+            INPUT(["type" => "text", "name" => "author", "value" => $author])
         );
     }
 
