@@ -36,7 +36,7 @@ class ImageAdminBlockBuildingEvent extends Event
     {
         $this->add_part(
             SHM_SIMPLE_FORM(
-                make_link($path),
+                $path,
                 INPUT([
                     "type" => "submit",
                     "value" => $name,
