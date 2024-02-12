@@ -102,9 +102,10 @@ function renderCompletions(element) {
 			return (k.startsWith(w) || k.split(':').some((k) => k.startsWith(w)))
 		}
 	).slice(0, 100).forEach((key, i) => {
-		let value = completions[key];
 		let li = document.createElement('li');
-		li.innerText = key + ' (' + value + ')';
+		li.innerText = completions[key].newtag ?
+			`${key} → ${completions[key].newtag} (${completions[key].count})` :
+			`${key} (${completions[key].count})` ;
 		if(i === selected_completion) {
 			li.className = 'selected';
 		}
@@ -162,6 +163,11 @@ function hideCompletions() {
 function setCompletion(element, new_word) {
 	let text = element.value;
 	let pos = element.selectionStart;
+
+	// resolve alias before setting the word
+	if(element.completions[new_word].newtag) {
+		new_word = element.completions[new_word].newtag;
+	}
 
 	// get the word before the cursor
 	var start = text.lastIndexOf(' ', pos-1);
@@ -239,7 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			// if enter or right are pressed while a completion is selected, add the selected completion
 			else if((event.code === "Enter" || event.code == "ArrowRight") && element.selected_completion !== -1) {
 				event.preventDefault();
-				setCompletion(element, Object.keys(element.completions)[element.selected_completion]);
+				const key = Object.keys(element.completions)[element.selected_completion]
+				setCompletion(element, key);
 			}
 			// if escape is pressed, hide the completion block
 			else if(event.code === "Escape") {
