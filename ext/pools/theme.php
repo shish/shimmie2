@@ -168,13 +168,6 @@ class PoolsTheme extends Themelet
     {
         global $user;
 
-        // This could become a SHM_INPUT function that also accepts 'type' and other attributes.
-        $_hidden = function (string $name, $value) {
-            return INPUT(["type" => "hidden", "name" => $name, "value" => $value]);
-        };
-
-        $_input_id = $_hidden("pool_id", $pool->id);
-
         $editor = emptyHTML(
             SHM_SIMPLE_FORM(
                 "pool/import/{$pool->id}",
