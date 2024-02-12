@@ -38,8 +38,8 @@ class Artists extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_ARTIST) && isset($event->params["tag_edit__author"])) {
-            send_event(new AuthorSetEvent($event->image, $user, $event->params["tag_edit__author"]));
+        if ($user->can(Permissions::EDIT_IMAGE_ARTIST) && isset($event->params["author"])) {
+            send_event(new AuthorSetEvent($event->image, $user, $event->params["author"]));
         }
     }
 

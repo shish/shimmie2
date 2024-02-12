@@ -56,8 +56,8 @@ class PostTitles extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::EDIT_IMAGE_TITLE) && isset($event->params["post_title"])) {
-            send_event(new PostTitleSetEvent($event->image, $event->params["post_title"]));
+        if ($user->can(Permissions::EDIT_IMAGE_TITLE) && isset($event->params["title"])) {
+            send_event(new PostTitleSetEvent($event->image, $event->params["title"]));
         }
     }
 
