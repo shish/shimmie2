@@ -174,7 +174,7 @@ class Search
             $total = $cache->get($cache_key);
             if (is_null($total)) {
                 [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
-                $querylet = self::build_search_querylet($tag_conditions, $img_conditions, $order);
+                $querylet = self::build_search_querylet($tag_conditions, $img_conditions, null);
                 $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
                 if (SPEED_HAX && $total > 5000) {
                     // when we have a ton of images, the count
@@ -240,7 +240,7 @@ class Search
     private static function build_search_querylet(
         array $tag_conditions,
         array $img_conditions,
-        string $order,
+        ?string $order = null,
         ?int $limit = null,
         ?int $offset = null
     ): Querylet {
@@ -414,7 +414,9 @@ class Search
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
-        $query->append(new Querylet(" ORDER BY ".$order));
+        if(!is_null($order)) {
+            $query->append(new Querylet(" ORDER BY ".$order));
+        }
 
         if (!is_null($limit)) {
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
