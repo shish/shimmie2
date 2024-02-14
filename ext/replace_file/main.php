@@ -22,11 +22,18 @@ class ReplaceFile extends Extension
 
             $this->theme->display_replace_page($page, $image_id);
         }
+
         if ($event->page_matches("replace/{image_id}", method: "POST", permission: Permissions::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id($image_id);
             if (is_null($image)) {
                 throw new UploadException("Can not replace Post: No post with ID $image_id");
+            }
+
+            if(empty($event->get_POST("url")) && count($_FILES) == 0) {
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("replace/$image_id"));
+                return;
             }
 
             if (!empty($event->get_POST("url"))) {
