@@ -82,11 +82,8 @@ class PostgreSQL extends DBEngine
 
     public function init(PDO $db): void
     {
-        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            $db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
-        } else {
-            $db->exec("SET application_name TO 'shimmie [local]';");
-        }
+        $addr = array_key_exists('REMOTE_ADDR', $_SERVER) ? get_real_ip() : 'local';
+        $db->exec("SET application_name TO 'shimmie [$addr]';");
         if (defined("DATABASE_TIMEOUT")) {
             $this->set_timeout($db, DATABASE_TIMEOUT);
         }
