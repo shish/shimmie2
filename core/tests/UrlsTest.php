@@ -33,7 +33,7 @@ class UrlsTest extends TestCase
 
         global $config;
         foreach([true, false] as $nice_urls) {
-            $config->set_bool('nice_urls', $nice_urls);
+            $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             $this->assertEquals(
                 ["bar", "foo"],
@@ -55,7 +55,7 @@ class UrlsTest extends TestCase
     {
         global $config;
         foreach([true, false] as $nice_urls) {
-            $config->set_bool('nice_urls', $nice_urls);
+            $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             // basic
             $this->assertEquals(
@@ -94,7 +94,7 @@ class UrlsTest extends TestCase
     {
         global $config;
         foreach([true, false] as $nice_urls) {
-            $config->set_bool('nice_urls', $nice_urls);
+            $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             $this->assertEquals(
                 $nice_urls ? "/test/post/list/bar%20foo/1" : "/test/index.php?q=post/list/bar%20foo/1",
@@ -267,7 +267,7 @@ class UrlsTest extends TestCase
     public function tearDown(): void
     {
         global $config;
-        $config->set_bool('nice_urls', true);
+        $config->set_bool(SetupConfig::NICE_URLS, true);
         parent::tearDown();
     }
 }
