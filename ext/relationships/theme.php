@@ -14,22 +14,48 @@ class RelationshipsTheme extends Themelet
     {
         global $page, $database;
 
-        if ($image['parent_id'] !== null) {
-            $a = "<a href='".make_link("post/view/".$image['parent_id'])."'>parent post</a>";
-            $page->add_block(new Block(null, "This post belongs to a $a.", "main", 5, "ImageHasParent"));
+        $parent = Search::get_images([$image['parent_id']]);
+        if (!empty($parent)) {
+            $parent_id = $image['parent_id'];
+            $a = "<a href='".make_link("post/view/".$parent_id)."'>#$parent_id</a>";
+            $parent_summary_html = "<span>This post belongs to a parent post ($a)";
+            $parent_thumb_html = "<div class='shm-relationships-parent-thumbs'><div class='shm-parent-thumbs'>" . $this->get_parent_thumbnail_html($image) . "</div>";
+            if (Relationships::has_siblings($image->id)) {
+                $visible_siblings = Relationships::get_siblings($image->id);
+                if (!empty($visible_siblings)) {
+                    $parent_summary_html .= " and has " .count($visible_siblings) . (count($visible_siblings) > 1 ? " siblings" : " sibling");
+                    $parent_summary_html .= " (";
+                    foreach ($visible_siblings as $sibling) {
+                        $parent_summary_html .= "<a href='" . make_link('post/view/'.$sibling->id) . "'>#$sibling->id</a>" . (count($visible_siblings) > 1 ? ", " : "");
+                    }
+                    $parent_summary_html = trim($parent_summary_html, ', ');
+                    $parent_summary_html .= ")";
+                    $parent_thumb_html .= "<div class='shm-sibling-thumbs'>" . $this->get_sibling_thumbnail_html($image) . "</div>";
+                }
+            }
+            $parent_summary_html .= ".</span>";
+            $parent_summary_html .= "<a href='#' id='relationships-parent-toggle' class='shm-relationships-parent-toggle'>« hide</a>";
+            $parent_thumb_html .= "</div>";
+            $html = $parent_summary_html . $parent_thumb_html;
+            $page->add_block(new Block(null, $html, "main", 5, "PostRelationships"));
         }
 
         if (bool_escape($image['has_children'])) {
-            $ids = $database->get_col("SELECT id FROM images WHERE parent_id = :iid", ["iid" => $image->id]);
-
-            $html = "This post has <a href='".search_link(['parent='.$image->id])."'>".(count($ids) > 1 ? "child posts" : "a child post")."</a>";
-            $html .= " (post ";
-            foreach ($ids as $id) {
-                $html .= "#<a href='".make_link('post/view/'.$id)."'>{$id}</a>, ";
+            $visible_children = Relationships::get_children($image->id);
+            if (!empty($visible_children)) {
+                $child_summary_html = "<span>This post has <a href='".make_link('post/list/parent='.$image->id.'/1')."'>".(count($visible_children) > 1 ? "child posts" : "a child post")."</a>";
+                $child_summary_html .= " (post ";
+                $child_thumb_html = "<div class='shm-relationships-child-thumbs'><div class='shm-child-thumbs'>";
+                foreach ($visible_children as $child) {
+                    $child_summary_html .= "<a href='".make_link('post/view/'.$child->id)."'>#{$child->id}</a>, ";
+                    $child_thumb_html .= $this->get_child_thumbnail_html(Image::by_id($child->id));
+                }
+                $child_summary_html = rtrim($child_summary_html, ", ").").";
+                $child_summary_html .= "</span><a href='#' id='relationships-child-toggle' class='shm-relationships-child-toggle'>« hide</a>";
+                $child_thumb_html .= "</div></div>";
+                $html = $child_summary_html . $child_thumb_html;
+                $page->add_block(new Block(null, $html, "main", 5, "PostRelationships"));
             }
-            $html = rtrim($html, ", ").").";
-
-            $page->add_block(new Block(null, $html, "main", 6, "ImageHasChildren"));
         }
     }
 
@@ -69,5 +95,38 @@ class RelationshipsTheme extends Themelet
         <p>Returns posts that have no children.</p>
         </div>
         ';
+    }
+
+    private function get_parent_thumbnail_html(Image $image): HTMLElement
+    {
+        global $user;
+
+        $parent_id = $image['parent_id'];
+        $parent_image = Image::by_id($parent_id);
+
+        $html = $this->build_thumb_html($parent_image);
+
+        return $html;
+    }
+
+    private function get_child_thumbnail_html(Image $image): HTMLElement
+    {
+        $html = $this->build_thumb_html($image);
+
+        return $html;
+    }
+
+    private function get_sibling_thumbnail_html(Image $image): string
+    {
+        global $user;
+
+        $siblings = Relationships::get_siblings($image->id);
+        $html = "";
+
+        foreach ($siblings as $sibling) {
+            $html .= $this->build_thumb_html($sibling);
+        }
+
+        return $html;
     }
 }

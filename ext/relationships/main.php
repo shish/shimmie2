@@ -172,18 +172,14 @@ class Relationships extends Extension
     /**
      * @return Image[]
      */
-    public static function get_children(Image $image, int $omit = null): array
+    public static function get_children(int $image_id): array
     {
         global $database;
-        $results = $database->get_all_iterable("SELECT * FROM images WHERE parent_id = :pid ", ["pid" => $image->id]);
-        $output = [];
-        foreach ($results as $result) {
-            if ($result["id"] == $omit) {
-                continue;
-            }
-            $output[] = new Image($result);
-        }
-        return $output;
+        $child_ids = $database->get_col("SELECT id FROM images WHERE parent_id = :pid ", ["pid" => $image_id]);
+
+        $children = Search::get_images($child_ids);
+
+        return $children;
     }
 
     private function remove_parent(int $imageID): void
@@ -216,5 +212,37 @@ class Relationships extends Extension
             "UPDATE images SET has_children = :has_children WHERE id = :pid",
             ["has_children" => $children > 0, "pid" => $parent_id]
         );
+    }
+
+    public static function has_siblings(int $image_id): bool
+    {
+        global $database;
+
+        $image = Image::by_id($image_id);
+
+        $count = $database->get_one(
+            "SELECT COUNT(*) FROM images WHERE id!=:id AND parent_id=:pid",
+            ["id" => $image_id, "pid" => $image['parent_id']]
+        );
+
+        if ($count > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function get_siblings(int $image_id): array
+    {
+        global $database;
+
+        $image = Image::by_id($image_id);
+
+        $sibling_ids = $database->get_col(
+            "SELECT id FROM images WHERE id!=:id AND parent_id=:pid",
+            ["id" => $image_id, "pid" => $image['parent_id']]
+        );
+        $siblings = Search::get_images($sibling_ids);
+
+        return $siblings;
     }
 }
