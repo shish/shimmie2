@@ -177,9 +177,7 @@ class Relationships extends Extension
         global $database;
         $child_ids = $database->get_col("SELECT id FROM images WHERE parent_id = :pid ", ["pid" => $image_id]);
 
-        $children = Search::get_images($child_ids);
-
-        return $children;
+        return Search::get_images($child_ids);
     }
 
     private function remove_parent(int $imageID): void
@@ -225,12 +223,12 @@ class Relationships extends Extension
             ["id" => $image_id, "pid" => $image['parent_id']]
         );
 
-        if ($count > 0) {
-            return true;
-        }
-        return false;
+        return $count > 0;
     }
 
+    /**
+     * @return Image[]
+     */
     public static function get_siblings(int $image_id): array
     {
         global $database;
