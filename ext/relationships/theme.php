@@ -37,7 +37,7 @@ class RelationshipsTheme extends Themelet
             $parent_summary_html .= "<a href='#' id='relationships-parent-toggle' class='shm-relationships-parent-toggle'>« hide</a>";
             $parent_thumb_html .= "</div>";
             $html = $parent_summary_html . $parent_thumb_html;
-            $page->add_block(new Block(null, $html, "main", 5, "PostRelationships"));
+            $page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsParent"));
         }
 
         if (bool_escape($image['has_children'])) {
@@ -54,7 +54,7 @@ class RelationshipsTheme extends Themelet
                 $child_summary_html .= "</span><a href='#' id='relationships-child-toggle' class='shm-relationships-child-toggle'>« hide</a>";
                 $child_thumb_html .= "</div></div>";
                 $html = $child_summary_html . $child_thumb_html;
-                $page->add_block(new Block(null, $html, "main", 5, "PostRelationships"));
+                $page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsChildren"));
             }
         }
     }
