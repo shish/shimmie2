@@ -48,7 +48,7 @@ class RelationshipsTheme extends Themelet
                 $child_thumb_html = "<div class='shm-relationships-child-thumbs'><div class='shm-child-thumbs'>";
                 foreach ($visible_children as $child) {
                     $child_summary_html .= "<a href='".make_link('post/view/'.$child->id)."'>#{$child->id}</a>, ";
-                    $child_thumb_html .= $this->get_child_thumbnail_html(Image::by_id($child->id));
+                    $child_thumb_html .= $this->get_child_thumbnail_html($child);
                 }
                 $child_summary_html = rtrim($child_summary_html, ", ").").";
                 $child_summary_html .= "</span><a href='#' id='relationships-child-toggle' class='shm-relationships-child-toggle'>« hide</a>";
@@ -99,27 +99,19 @@ class RelationshipsTheme extends Themelet
 
     private function get_parent_thumbnail_html(Image $image): HTMLElement
     {
-        global $user;
-
         $parent_id = $image['parent_id'];
         $parent_image = Image::by_id($parent_id);
 
-        $html = $this->build_thumb_html($parent_image);
-
-        return $html;
+        return $this->build_thumb_html($parent_image);
     }
 
     private function get_child_thumbnail_html(Image $image): HTMLElement
     {
-        $html = $this->build_thumb_html($image);
-
-        return $html;
+        return $this->build_thumb_html($image);
     }
 
     private function get_sibling_thumbnail_html(Image $image): string
     {
-        global $user;
-
         $siblings = Relationships::get_siblings($image->id);
         $html = "";
 
