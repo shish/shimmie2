@@ -25,6 +25,29 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["exclamation%"], [$image_id_2]);
     }
 
+    public function testOrder(): void
+    {
+        $this->log_in_as_user();
+        $i1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
+        $i2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
+        $i3 = $this->post_image("tests/favicon.png", "another");
+
+        $is1 = Search::find_images(0, null, ["order=random_4123"]);
+        $ids1 = array_map(fn ($image) => $image->id, $is1);
+        $this->assertEquals(3, count($ids1));
+
+        $is2 = Search::find_images(0, null, ["order=random_4123"]);
+        $ids2 = array_map(fn ($image) => $image->id, $is2);
+        $this->assertEquals(3, count($ids1));
+
+        $is3 = Search::find_images(0, null, ["order=random_6543"]);
+        $ids3 = array_map(fn ($image) => $image->id, $is3);
+        $this->assertEquals(3, count($ids3));
+
+        $this->assertEquals($ids1, $ids2);
+        $this->assertNotEquals($ids1, $ids3);
+    }
+
     /**
      * @return int[]
      */
