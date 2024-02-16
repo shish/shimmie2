@@ -439,4 +439,19 @@ class Database
             $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");
         }
     }
+
+    /**
+     * Generates a deterministic pseudorandom order based on a seed and a column ID
+     */
+    public function seeded_random(int $seed, string $id_column): string
+    {
+        $d = $this->get_driver_id();
+        if ($d == DatabaseDriverID::MYSQL) {
+            // MySQL supports RAND(n), where n is a random seed. Use that.
+            return "RAND($seed)";
+        }
+
+        // As fallback, use MD5 as a DRBG.
+        return "MD5(CONCAT($seed, CONCAT('+', $id_column)))";
+    }
 }
