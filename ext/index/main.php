@@ -155,6 +155,8 @@ class Index extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
+        global $database;
+
         if (is_null($event->term)) {
             return;
         }
@@ -235,14 +237,14 @@ class Index extends Extension
         } elseif (preg_match("/^order[=|:]random[_]([0-9]{1,4})$/i", $event->term, $matches)) {
             // requires a seed to avoid duplicates
             // since the tag can't be changed during the parseevent, we instead generate the seed during submit using js
-            $seed = $matches[1];
-            $event->order = "RAND($seed)";
+            $seed = (int)$matches[1];
+            $event->order = $database->seeded_random($seed, "images.id");
         } elseif (preg_match("/^order[=|:]dailyshuffle$/i", $event->term, $matches)) {
             // will use today's date as seed, thus allowing for a dynamic randomized list without outside intervention.
             // This way the list will change every day, giving a more dynamic feel to the imageboard.
             // recommended to change homepage to "post/list/order:dailyshuffle/1"
-            $seed = date("Ymd");
-            $event->order = "RAND($seed)";
+            $seed = (int)date("Ymd");
+            $event->order = $database->seeded_random($seed, "images.id");
         }
 
         // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
