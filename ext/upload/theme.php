@@ -161,7 +161,7 @@ class UploadTheme extends Themelet
         $title = $config->get_string(SetupConfig::TITLE);
         $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
-        $delimiter = $config->get_bool('nice_urls') ? '?' : '&amp;';
+        $delimiter = $config->get_bool(SetupConfig::NICE_URLS) ? '?' : '&amp;';
 
         $js = 'javascript:(
             function() {

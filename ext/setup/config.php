@@ -12,4 +12,5 @@ class SetupConfig
     public const THEME = "theme";
     public const WORD_WRAP = "word_wrap";
     public const COMMENT_CAPTCHA = "comment_captcha";
+    public const NICE_URLS = "nice_urls";
 }

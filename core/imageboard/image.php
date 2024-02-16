@@ -405,7 +405,7 @@ class Image implements \ArrayAccess
                 $image_link = make_link($image_link);
             }
             $chosen = $image_link;
-        } elseif ($config->get_bool('nice_urls', false)) {
+        } elseif ($config->get_bool(SetupConfig::NICE_URLS, false)) {
             $chosen = make_link($nice);
         } else {
             $chosen = make_link($plain);

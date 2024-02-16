@@ -186,10 +186,14 @@ class PostTags extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        $tags = $event->image->get_tag_list();
-        $tags = str_replace("/", "", $tags);
-        $tags = ltrim($tags, ".");
-        $event->replace('$tags', $tags);
+        // get_tag_list can trigger a database query,
+        // so we only want to do it if we need to
+        if (str_contains($event->link, '$tags')) {
+            $tags = $event->image->get_tag_list();
+            $tags = str_replace("/", "", $tags);
+            $tags = ltrim($tags, ".");
+            $event->replace('$tags', $tags);
+        }
     }
 
     private function mass_tag_edit(string $search, string $replace, bool $commit): void

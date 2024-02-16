@@ -369,7 +369,7 @@ class Setup extends Extension
         $sb->add_text_option("contact_link", "<br>Contact URL: ");
         $sb->add_choice_option(SetupConfig::THEME, $themes, "<br>Theme: ");
         //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
-        $sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
+        $sb->add_bool_option(SetupConfig::NICE_URLS, "<br>Nice URLs: ");
         $sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>");
 
         $sb = $event->panel->create_new_block("Remote API Integration");
