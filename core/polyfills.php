@@ -488,7 +488,7 @@ function parse_shorthand_int(string $limit): int
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
  */
-function to_shorthand_int(int $int): string
+function to_shorthand_int(int|float $int): string
 {
     assert($int >= 0);
 

@@ -77,6 +77,8 @@ class ET extends Extension
             $ver .= "+";
         }
 
+        $disk_total = false_throws(disk_total_space("./"));
+        $disk_free = false_throws(disk_free_space("./"));
         $info = [
             "about" => [
                 'title' => $config->get_string(SetupConfig::TITLE),
@@ -103,8 +105,8 @@ class ET extends Extension
             ],
             "media" => [
                 "memory_limit" => to_shorthand_int($config->get_int(MediaConfig::MEM_LIMIT)),
-                "disk_use" => to_shorthand_int((int)disk_total_space("./") - (int)disk_free_space("./")),
-                "disk_total" => to_shorthand_int((int)disk_total_space("./")),
+                "disk_use" => to_shorthand_int($disk_total - $disk_free),
+                "disk_total" => to_shorthand_int($disk_total),
             ],
             "thumbnails" => [
                 "engine" => $config->get_string(ImageConfig::THUMB_ENGINE),
