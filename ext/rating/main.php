@@ -165,6 +165,11 @@ class Ratings extends Extension
         }
     }
 
+    public function onUploadRatingBuilding(UploadRatingBuildingEvent $event): void
+    {
+        $event->part = (string)$this->theme->get_upload_rater_html($event->suffix);
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
@@ -204,7 +209,7 @@ class Ratings extends Extension
     {
         global $user;
         $event->add_part(
-            $this->theme->get_rater_html(
+            $this->theme->get_image_rater_html(
                 $event->image->id,
                 $event->image['rating'],
                 $user->can(Permissions::EDIT_IMAGE_RATING)
