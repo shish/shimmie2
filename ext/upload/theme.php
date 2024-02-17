@@ -94,6 +94,7 @@ class UploadTheme extends Themelet
         $upload_list = emptyHTML();
         $upload_count = $config->get_int(UploadConfig::COUNT);
         $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
+        $ratings_enabled = Extension::is_enabled(RatingsInfo::KEY);
         $accept = $this->get_accept();
 
         $upload_list->appendChild(
@@ -103,8 +104,11 @@ class UploadTheme extends Themelet
                 TH($tl_enabled ? "or URL" : null),
                 TH("Post-Specific Tags"),
                 TH("Post-Specific Source"),
+                TH($ratings_enabled ? "Rating" : null),
             )
         );
+
+
 
         for ($i = 0; $i < $upload_count; $i++) {
             $upload_list->appendChild(
@@ -145,6 +149,9 @@ class UploadTheme extends Themelet
                             "name" => "source{$i}",
                             "value" => ($i == 0) ? @$_GET['source'] : null,
                         ])
+                    ),
+                    TD(
+                        $ratings_enabled ? rawHTML(send_event(new UploadRatingBuildingEvent((string)$i))->part) : null
                     ),
                 )
             );
