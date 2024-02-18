@@ -30,6 +30,7 @@ class TagCondition
     public function __construct(
         public string $tag,
         public bool $positive = true,
+        public bool $disjunctive = false,
     ) {
     }
 }
@@ -39,6 +40,7 @@ class ImgCondition
     public function __construct(
         public Querylet $qlet,
         public bool $positive = true,
+        public bool $disjunctive = false,
     ) {
     }
 }
@@ -310,8 +312,11 @@ class Search
             static::$_search_path[] = "general";
             $positive_tag_id_array = [];
             $positive_wildcard_id_array = [];
+            $positive_disjunctive_id_array = [];
+            $negative_disjunctive_id_array = [];
             $negative_tag_id_array = [];
             $all_nonexistent_negatives = true;
+            $all_nonexistent_positive_disjunctives = true;
 
             foreach ($tag_conditions as $tq) {
                 $tag_ids = self::tag_or_wildcard_to_ids($tq->tag);
@@ -319,21 +324,43 @@ class Search
 
                 if ($tq->positive) {
                     $all_nonexistent_negatives = false;
-                    if ($tag_count == 0) {
-                        # one of the positive tags had zero results, therefor there
-                        # can be no results; "where 1=0" should shortcut things
-                        static::$_search_path[] = "invalid_tag";
-                        return new Querylet("SELECT images.id FROM images WHERE 1=0");
-                    } elseif ($tag_count == 1) {
-                        // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
-                        $positive_tag_id_array[] = $tag_ids[0];
+                    if ($tq->disjunctive) {
+                        if ($tag_count > 0) {
+                            $all_nonexistent_positive_disjunctives = false;
+                            $positive_disjunctive_id_array = array_merge($positive_disjunctive_id_array, $tag_ids);
+                        }
                     } else {
-                        // Terms that resolve to multiple tags act as an OR within themselves
-                        // and as an AND in relation to all other terms,
-                        $positive_wildcard_id_array[] = $tag_ids;
+                        $all_nonexistent_positive_disjunctives = false;
+                        if ($tag_count == 0) {
+                            # one of the positive tags had zero results, therefor there
+                            # can be no results; "where 1=0" should shortcut things
+                            static::$_search_path[] = "invalid_tag";
+                            return new Querylet("SELECT images.* FROM images WHERE 1=0");
+                        } elseif ($tag_count == 1) {
+                            // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
+                            $positive_tag_id_array[] = $tag_ids[0];
+                        } else {
+                            // Terms that resolve to multiple tags act as an OR within themselves
+                            // and as an AND in relation to all other terms,
+                            $positive_wildcard_id_array[] = $tag_ids;
+                        }
                     }
                 } else {
-                    if ($tag_count > 0) {
+                    $all_nonexistent_positive_disjunctives = false;
+                    if ($tq->disjunctive) {
+                        $all_nonexistent_negatives = false;
+                        if ($tag_count == 0) {
+                            // A negative disjunctive tag with no results sets the disjunctive section to include all images
+                            // so an impossible sub-query is run to ensure no results are excepted by the disjunctive sub-queries
+                            $negative_disjunctive_id_array = ["= -1"];
+                        } elseif ($tag_count == 1) {
+                            $negative_disjunctive_id_array[] = "= " . $tag_ids[0];
+                        } else {
+                            // Wildcards within a negative disjunctive should act as an AND within themselves
+                            $negative_disjunctive_id_list = join(', ', $tag_ids);
+                            $negative_disjunctive_id_array[] = "IN ($negative_disjunctive_id_list)";
+                        }
+                    } elseif ($tag_count > 0) {
                         $all_nonexistent_negatives = false;
                         // Unlike positive criteria, negative criteria are all handled in an OR fashion,
                         // so we can just compile them all into a single sub-query.
@@ -342,12 +369,33 @@ class Search
                 }
             }
 
-            assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array || $all_nonexistent_negatives, _get_query());
+            // If all the tags are nonexistent positive disjunctives, we can speed up the query if none of the image conditions are disjunctives, which can increase the working set
+            if ($all_nonexistent_positive_disjunctives) {
+                $no_disjunctive_img_conditions = true;
+                foreach ($img_conditions as $iq) {
+                    if ($iq->disjunctive) {
+                        $no_disjunctive_img_conditions = false;
+                        break;
+                    }
+                }
+            }
+
+            assert($all_nonexistent_negatives || $all_nonexistent_positive_disjunctives || $positive_tag_id_array
+                || $positive_wildcard_id_array || $positive_disjunctive_id_array || $negative_tag_id_array
+                || $negative_disjunctive_id_array, _get_query());
 
             if ($all_nonexistent_negatives) {
                 static::$_search_path[] = "all_nonexistent_negatives";
                 $query->append(new Querylet("SELECT images.id FROM images WHERE 1=1"));
-            } elseif (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
+            } elseif ($all_nonexistent_positive_disjunctives) {
+                static::$_search_path[] = "all_nonexistent_positive_disjunctives";
+                if ($no_disjunctive_img_conditions) {
+                    $query->append(new Querylet("SELECT images.id FROM images WHERE 1=0"));
+                } else {
+                    $query->append(new Querylet("SELECT images.id FROM images WHERE 1=1"));
+                }
+            } elseif (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array) || !empty($positive_disjunctive_id_array)
+                || !empty($negative_disjunctive_id_array)) {
                 static::$_search_path[] = "some_positives";
                 $inner_joins = [];
                 if (!empty($positive_tag_id_array)) {
@@ -361,9 +409,14 @@ class Search
                         $inner_joins[] = "IN ($positive_tag_id_list)";
                     }
                 }
+                $positive_disjunctive_id_list = "";
+                if (!empty($positive_disjunctive_id_array)) {
+                    $positive_disjunctive_id_list = join(', ', $positive_disjunctive_id_array);
+                }
+                $negative_disjunctive_inner_joins = $negative_disjunctive_id_array;
 
                 $first = array_shift($inner_joins);
-                $sub_query = "SELECT DISTINCT it.image_id FROM image_tags it ";
+                $sub_query = "SELECT it.image_id FROM image_tags it";
                 $i = 0;
                 foreach ($inner_joins as $inner_join) {
                     $i++;
@@ -373,11 +426,35 @@ class Search
                     $negative_tag_id_list = join(', ', $negative_tag_id_array);
                     $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
                 }
-                $sub_query .= "WHERE it.tag_id $first ";
+                // postgreSQL requires a bool WHERE expression
+                if (is_null($first)) {
+                    $sub_query .= " WHERE 1=1";
+                } else {
+                    $sub_query .= " WHERE it.tag_id $first";
+                }
+
                 if (!empty($negative_tag_id_array)) {
                     $sub_query .= " AND negative.image_id IS NULL";
                 }
                 $sub_query .= " GROUP BY it.image_id ";
+                // Compose the disjunctive tags query, but do not add it to this sub query, because it must be grouped together with any other disjuctives
+                $disjunctive_tags_query = "";
+                if (!empty($positive_disjunctive_id_list) || !empty($negative_disjunctive_inner_joins)) {
+                    if (!empty($positive_disjunctive_id_list)) {
+                        $disjunctive_tags_query .= " SELECT disjunct.image_id FROM image_tags disjunct WHERE disjunct.tag_id IN ($positive_disjunctive_id_list)";
+                    }
+                    if (!empty($positive_disjunctive_id_list) && !empty($negative_disjunctive_inner_joins)) {
+                        $disjunctive_tags_query .= " UNION";
+                    }
+                    if (!empty($negative_disjunctive_inner_joins)) {
+                        $disjunctive_tags_query .= " (SELECT disjunct.image_id FROM image_tags disjunct EXCEPT SELECT DISTINCT disjunct.image_id FROM image_tags disjunct";
+                        foreach ($negative_disjunctive_inner_joins as $jn_inner_join) {
+                            $i++;
+                            $disjunctive_tags_query .= " INNER JOIN image_tags it$i ON it$i.image_id = disjunct.image_id AND it$i.tag_id $jn_inner_join ";
+                        }
+                        $disjunctive_tags_query .= ")";
+                    }
+                }
 
                 $query->append(new Querylet("
                     SELECT images.id
@@ -397,9 +474,8 @@ class Search
                 throw new InvalidInput("No criteria specified");
             }
         }
-
         /*
-         * Merge all the image metadata searches into one generic querylet
+         * Merge all the regular image metadata searches into one generic querylet
          * and append to the base querylet with "AND blah"
          */
         if (!empty($img_conditions)) {
@@ -407,17 +483,54 @@ class Search
             $img_sql = "";
             $img_vars = [];
             foreach ($img_conditions as $iq) {
-                if ($n++ > 0) {
-                    $img_sql .= " AND";
+                if (!$iq->disjunctive) {
+                    if ($n++ > 0) {
+                        $img_sql .= " AND";
+                    }
+                    if (!$iq->positive) {
+                        $img_sql .= " NOT";
+                    }
+                    $img_sql .= " (" . $iq->qlet->sql . ")";
+                    $img_vars = array_merge($img_vars, $iq->qlet->variables);
                 }
-                if (!$iq->positive) {
-                    $img_sql .= " NOT";
-                }
-                $img_sql .= " (" . $iq->qlet->sql . ")";
-                $img_vars = array_merge($img_vars, $iq->qlet->variables);
             }
-            $query->append(new Querylet(" AND"));
-            $query->append(new Querylet($img_sql, $img_vars));
+            if ($n > 0) {
+                $query->append(new Querylet(" AND"));
+                $query->append(new Querylet($img_sql, $img_vars));
+            }
+        }
+        /*
+         * Merge all the disjunctives into an operation.
+         * UNION ALL is used instead of OR for efficiency.
+         */
+
+        if (!empty($img_conditions) || !empty($disjunctive_tags_query)) {
+            $n = 0;
+            $img_vars = [];
+            $img_sql = " AND images.id IN (";
+            if (!empty($disjunctive_tags_query)) {
+                $img_sql .= "SELECT images.id FROM images INNER JOIN (";
+                $img_sql .= $disjunctive_tags_query;
+                $img_sql .= ") a on a.image_id = images.id";
+                $n++;
+            }
+            foreach ($img_conditions as $iq) {
+                if ($iq->disjunctive) {
+                    if ($n++ > 0) {
+                        $img_sql .= " UNION ALL";
+                    }
+                    $img_sql .= " SELECT images.id from images WHERE";
+                    if (!$iq->positive) {
+                        $img_sql .= " NOT";
+                    }
+                    $img_sql .= " (" . $iq->qlet->sql . ")";
+                    $img_vars = array_merge($img_vars, $iq->qlet->variables);
+                }
+            }
+            $img_sql .= ")";
+            if ($n > 0) {
+                $query->append(new Querylet($img_sql, $img_vars));
+            }
         }
 
         if (!$count) {
@@ -429,10 +542,9 @@ class Search
         }
 
         if (!is_null($limit)) {
-            $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
-            $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
+            $query->append(new Querylet(" LIMIT :limit", ["limit" => $limit]));
+            $query->append(new Querylet(" OFFSET :offset", ["offset" => $offset]));
         }
-
         return $query;
     }
 }
