@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 require_once "config.php";
-require_once "events/upload_rating_building_event.php";
 
 /**
  * Occurs when some data is being uploaded.
@@ -37,9 +36,6 @@ class DataUploadEvent extends Event
         assert(is_string($metadata["filename"]));
         assert(is_array($metadata["tags"]));
         assert(is_string($metadata["source"]) || is_null($metadata["source"]));
-        if (Extension::is_enabled(RatingsInfo::KEY)) {
-            assert(is_string($metadata['rating']));
-        }
 
         // DB limits to 255 char filenames
         $metadata['filename'] = substr($metadata['filename'], 0, 255);
@@ -241,8 +237,7 @@ class Upload extends Extension
                 $slot = int_escape(substr($name, 4));
                 $tags = $this->tags_for_upload_slot($event->POST, $slot);
                 $source = $this->source_for_upload_slot($event->POST, $slot);
-                $rating = $this->rating_for_upload_slot($event->POST, $slot);
-                $results = array_merge($results, $this->try_upload($file, $tags, $source, $rating));
+                $results = array_merge($results, $this->try_upload($file, $tags, $source));
             }
 
             $urls = array_filter($event->POST, function ($value, $key) {
@@ -252,8 +247,7 @@ class Upload extends Extension
                 $slot = int_escape(substr($name, 3));
                 $tags = $this->tags_for_upload_slot($event->POST, $slot);
                 $source = $this->source_for_upload_slot($event->POST, $slot);
-                $rating = $this->rating_for_upload_slot($event->POST, $slot);
-                $results = array_merge($results, $this->try_transload($value, $tags, $source, $rating));
+                $results = array_merge($results, $this->try_transload($value, $tags, $source));
             }
 
             $this->theme->display_upload_status($page, $results);
@@ -294,22 +288,6 @@ class Upload extends Extension
     }
 
     /**
-     * @param array<string, mixed> $params
-     */
-    private function rating_for_upload_slot(array $params, int $id): ?string
-    {
-        if (Extension::is_enabled(RatingsInfo::KEY) && (!empty($params["rating"]) || !empty($params["rating$id"]))) {
-            if($params["rating$id"] != "?") {
-                return $params["rating$id"];
-            }
-            if($params["rating"] != "?") {
-                return $params["rating"];
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns a descriptive error message for the specified PHP error code.
      *
      * This is a helper function based on the one from the online PHP Documentation
@@ -345,7 +323,7 @@ class Upload extends Extension
      * @param string[] $tags
      * @return UploadResult[]
      */
-    private function try_upload(array $file, array $tags, ?string $source = null, ?string $rating = null): array
+    private function try_upload(array $file, array $tags, ?string $source = null): array
     {
         global $page, $config, $database;
 
@@ -374,12 +352,11 @@ class Upload extends Extension
                     throw new UploadException($this->upload_error_message($error));
                 }
 
-                $new_images = $database->with_savepoint(function () use ($tmp_name, $name, $tags, $source, $rating) {
+                $new_images = $database->with_savepoint(function () use ($tmp_name, $name, $tags, $source) {
                     $event = send_event(new DataUploadEvent($tmp_name, [
                         'filename' => pathinfo($name, PATHINFO_BASENAME),
                         'tags' => $tags,
                         'source' => $source,
-                        'rating' => $rating,
                     ]));
                     if (count($event->images) == 0) {
                         throw new UploadException("MIME type not supported: " . $event->mime);
@@ -401,7 +378,7 @@ class Upload extends Extension
      * @param string[] $tags
      * @return UploadResult[]
      */
-    private function try_transload(string $url, array $tags, string $source = null, ?string $rating = null): array
+    private function try_transload(string $url, array $tags, string $source = null): array
     {
         global $page, $config, $user, $database;
 
@@ -425,9 +402,6 @@ class Upload extends Extension
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
             $metadata['source'] = $source;
-            if (Extension::is_enabled(RatingsInfo::KEY)) {
-                $metadata['rating'] = $rating;
-            }
 
             $new_images = $database->with_savepoint(function () use ($tmp_filename, $metadata) {
                 $event = send_event(new DataUploadEvent($tmp_filename, $metadata));
