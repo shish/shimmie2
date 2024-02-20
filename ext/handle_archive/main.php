@@ -35,7 +35,7 @@ class ArchiveFileHandler extends DataHandlerExtension
             exec($cmd);
             if (file_exists($tmpdir)) {
                 try {
-                    $results = add_dir($tmpdir, $event->metadata['tags']);
+                    $results = add_dir($tmpdir, Tag::explode($event->metadata['tags']));
                     foreach ($results as $r) {
                         if(is_a($r, UploadError::class)) {
                             $page->flash($r->name." failed: ".$r->error);

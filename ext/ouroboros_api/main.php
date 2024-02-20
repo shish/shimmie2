@@ -338,7 +338,7 @@ class OuroborosAPI extends Extension
             }
         }
         $meta = [];
-        $meta['tags'] = Tag::explode($post->tags);
+        $meta['tags'] = $post->tags;
         $meta['source'] = $post->source;
         if (Extension::is_enabled(RatingsInfo::KEY) !== false) {
             $meta['rating'] = $post->rating;
@@ -358,12 +358,12 @@ class OuroborosAPI extends Extension
                 $this->sendResponse(500, "Transloading failed: $e");
                 return;
             }
-            $meta['hash'] = md5_file($meta['file']);
+            $meta['hash'] = \Safe\md5_file($meta['file']);
         } else {
             // Use file
             $meta['file'] = $post->file['tmp_name'];
             $meta['filename'] = $post->file['name'];
-            $meta['hash'] = md5_file($meta['file']);
+            $meta['hash'] = \Safe\md5_file($meta['file']);
         }
         if (!empty($md5) && $md5 !== $meta['hash']) {
             $this->sendResponse(420, self::ERROR_POST_CREATE_MD5);
@@ -390,10 +390,9 @@ class OuroborosAPI extends Extension
                 }
             }
         }
-        $meta['extension'] = pathinfo($meta['filename'], PATHINFO_EXTENSION);
         try {
             $image = $database->with_savepoint(function () use ($meta) {
-                $dae = send_event(new DataUploadEvent($meta['file'], $meta));
+                $dae = send_event(new DataUploadEvent($meta['file'], basename($meta['file']), 0, $meta));
                 return $dae->images[0];
             });
             $this->sendResponse(200, make_link('post/view/' . $image->id), true);

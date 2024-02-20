@@ -22,18 +22,14 @@ class PostOwner extends Extension
     /** @var PostOwnerTheme */
     protected Themelet $theme;
 
-    public function onImageAddition(ImageAdditionEvent $event): void
-    {
-        // FIXME: send an event instead of implicit default owner?
-    }
-
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $page, $user;
-        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && isset($event->params['owner'])) {
-            $owner = User::by_name($event->params['owner']);
-            if ($owner instanceof User) {
-                send_event(new OwnerSetEvent($event->image, $owner));
+        $owner = $event->get_param('owner');
+        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && !is_null($owner)) {
+            $owner_ob = User::by_name($owner);
+            if (!is_null($owner_ob)) {
+                send_event(new OwnerSetEvent($event->image, $owner_ob));
             } else {
                 throw new UserNotFound("Error: No user with that name was found.");
             }

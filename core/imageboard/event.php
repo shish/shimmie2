@@ -10,14 +10,12 @@ namespace Shimmie2;
 class ImageAdditionEvent extends Event
 {
     /**
-     * Inserts a new image into the database with its associated
-     * information.
-     *
-     * @param mixed[] $metadata
+     * A new image is being added to the database - just the image,
+     * metadata will come later with ImageInfoSetEvent (and if that
+     * fails, then the image addition transaction will be rolled back)
      */
     public function __construct(
         public Image $image,
-        public array $metadata,
     ) {
         parent::__construct();
     }

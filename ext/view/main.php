@@ -66,12 +66,7 @@ class ViewPost extends Extension
             $image_id = int_escape($event->req_POST('image_id'));
             $image = Image::by_id_ex($image_id);
             if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-                // currently all post metadata is string => string - in the future
-                // we might want to have a more complex type system, but for now
-                // we just filter out non-string keys
-                /** @var array<string, string> */
-                $kvs = array_filter($event->POST, 'is_string', ARRAY_FILTER_USE_KEY);
-                send_event(new ImageInfoSetEvent($image, $kvs));
+                send_event(new ImageInfoSetEvent($image, 0, only_strings($event->POST)));
                 $page->set_mode(PageMode::REDIRECT);
 
                 if ($event->get_GET('search')) {

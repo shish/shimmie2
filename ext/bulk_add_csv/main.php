@@ -56,9 +56,8 @@ class BulkAddCSV extends Extension
     {
         global $database;
         $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
-            $event = send_event(new DataUploadEvent($tmpname, [
-                'filename' => pathinfo($filename, PATHINFO_BASENAME),
-                'tags' => $tags,
+            $event = send_event(new DataUploadEvent($tmpname, basename($filename), 0, [
+                'tags' => Tag::implode($tags),
                 'source' => $source,
                 'rating' => $rating,
             ]));
