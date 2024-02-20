@@ -20,7 +20,7 @@ class NumericScoreVote
     #[Field]
     public function post(): Image
     {
-        return Image::by_id($this->image_id);
+        return Image::by_id_ex($this->image_id);
     }
 
     #[Field]
@@ -205,13 +205,13 @@ class NumericScore extends Extension
             if ($event->page_matches("popular_by_day")) {
                 $sql .= " AND EXTRACT(MONTH FROM posted) = :month AND EXTRACT(DAY FROM posted) = :day";
                 $args = array_merge($args, ["month" => $month, "day" => $day]);
-                $current = date("F jS, Y", strtotime_ex($totaldate)).
+                $current = date("F jS, Y", \Safe\strtotime($totaldate)).
                 $name = "day";
                 $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m\\&\\d\\a\\y\\=d";
             } elseif ($event->page_matches("popular_by_month")) {
                 $sql .=	" AND EXTRACT(MONTH FROM posted) = :month";
                 $args = array_merge($args, ["month" => $month]);
-                $current = date("F Y", strtotime_ex($totaldate));
+                $current = date("F Y", \Safe\strtotime($totaldate));
                 $name = "month";
                 $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m";
             } elseif ($event->page_matches("popular_by_year")) {

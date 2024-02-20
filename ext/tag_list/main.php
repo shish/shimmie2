@@ -235,7 +235,7 @@ class TagList extends Extension
             md5("tc" . $tags_min . $starts_with . VERSION)
         );
         if (file_exists($cache_key)) {
-            return file_get_contents_ex($cache_key);
+            return \Safe\file_get_contents($cache_key);
         }
 
         $tag_data = $database->get_all("
@@ -288,7 +288,7 @@ class TagList extends Extension
             md5("ta" . $tags_min . $starts_with . VERSION)
         );
         if (file_exists($cache_key)) {
-            return file_get_contents_ex($cache_key);
+            return \Safe\file_get_contents($cache_key);
         }
 
         $tag_data = $database->get_pairs("
@@ -368,7 +368,7 @@ class TagList extends Extension
             md5("tp" . $tags_min . VERSION)
         );
         if (file_exists($cache_key)) {
-            return file_get_contents_ex($cache_key);
+            return \Safe\file_get_contents($cache_key);
         }
 
         $tag_data = $database->get_all("

@@ -119,7 +119,7 @@ class Notes extends Extension
             $page->set_mode(PageMode::DATA);
             if (!$user->can(Permissions::NOTES_CREATE)) {
                 $note_id = $this->add_new_note();
-                $page->set_data(json_encode_ex([
+                $page->set_data(\Safe\json_encode([
                     'status' => 'success',
                     'note_id' => $note_id,
                 ]));
@@ -129,14 +129,14 @@ class Notes extends Extension
             $page->set_mode(PageMode::DATA);
             if (!$user->can(Permissions::NOTES_EDIT)) {
                 $this->update_note();
-                $page->set_data(json_encode_ex(['status' => 'success']));
+                $page->set_data(\Safe\json_encode(['status' => 'success']));
             }
         }
         if ($event->page_matches("note/delete_note")) {
             $page->set_mode(PageMode::DATA);
             if ($user->can(Permissions::NOTES_ADMIN)) {
                 $this->delete_note();
-                $page->set_data(json_encode_ex(['status' => 'success']));
+                $page->set_data(\Safe\json_encode(['status' => 'success']));
             }
         }
         if ($event->page_matches("note/nuke_notes")) {
@@ -243,7 +243,7 @@ class Notes extends Extension
     {
         global $database, $user;
 
-        $note = json_decode(file_get_contents_ex('php://input'), true);
+        $note = json_decode(\Safe\file_get_contents('php://input'), true);
 
         $database->execute(
             "
@@ -304,7 +304,7 @@ class Notes extends Extension
     {
         global $database;
 
-        $note = json_decode(file_get_contents_ex('php://input'), true);
+        $note = json_decode(\Safe\file_get_contents('php://input'), true);
 
         // validate parameters
         if (empty($note['note'])) {
@@ -323,7 +323,7 @@ class Notes extends Extension
     {
         global $user, $database;
 
-        $note = json_decode(file_get_contents_ex('php://input'), true);
+        $note = json_decode(\Safe\file_get_contents('php://input'), true);
         $database->execute("
 			UPDATE notes SET enable = :enable
 			WHERE image_id = :image_id AND id = :id
@@ -367,7 +367,7 @@ class Notes extends Extension
 
         $images = [];
         foreach ($image_ids as $id) {
-            $images[] = Image::by_id($id);
+            $images[] = Image::by_id_ex($id);
         }
 
         $this->theme->display_note_list($images, $pageNumber + 1, $totalPages);
@@ -393,7 +393,7 @@ class Notes extends Extension
 
         $images = [];
         while ($row = $result->fetch()) {
-            $images[] = Image::by_id($row["image_id"]);
+            $images[] = Image::by_id_ex($row["image_id"]);
         }
 
         $this->theme->display_note_requests($images, $pageNumber + 1, $totalPages);

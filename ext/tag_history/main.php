@@ -205,10 +205,7 @@ class TagHistory extends Extension
         $stored_image_id = (int)$result['image_id'];
         $stored_tags = $result['tags'];
 
-        $image = Image::by_id($stored_image_id);
-        if (!$image instanceof Image) {
-            throw new ImageNotFound("Error: cannot find any image with the ID = ". $stored_image_id);
-        }
+        $image = Image::by_id_ex($stored_image_id);
 
         log_debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
         // all should be ok so we can revert by firing the SetUserTags event.

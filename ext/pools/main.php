@@ -281,7 +281,7 @@ class Pools extends Extension
             $result = $database->execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $pool_id]);
             $images = [];
             while ($row = $result->fetch()) {
-                $images[] = Image::by_id((int) $row["image_id"]);
+                $images[] = Image::by_id_ex((int) $row["image_id"]);
             }
             $this->theme->edit_pool($page, $pool, $images);
         }
@@ -831,7 +831,7 @@ class Pools extends Extension
 
         $images = [];
         foreach ($result as $singleResult) {
-            $images[] = Image::by_id((int) $singleResult["image_id"]);
+            $images[] = Image::by_id_ex((int) $singleResult["image_id"]);
         }
 
         $this->theme->view_pool($pool, $images, $pageNumber + 1, $totalPages);

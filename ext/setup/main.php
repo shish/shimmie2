@@ -326,7 +326,7 @@ class Setup extends Extension
 
         if ($event->page_starts_with("nicedebug")) {
             $page->set_mode(PageMode::DATA);
-            $page->set_data(json_encode_ex([
+            $page->set_data(\Safe\json_encode([
                 "args" => $event->args,
             ]));
         }
@@ -354,9 +354,12 @@ class Setup extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $themes = [];
-        foreach (glob_ex("themes/*") as $theme_dirname) {
+        foreach (\Safe\glob("themes/*") as $theme_dirname) {
             $name = str_replace("themes/", "", $theme_dirname);
             $human = str_replace("_", " ", $name);
+            // while phpstan-safe-rule isn't enabled, phpstan can't tell
+            // that \Safe\glob() returns string[]
+            // @phpstan-ignore-next-line
             $human = ucwords($human);
             $themes[$human] = $name;
         }
@@ -405,7 +408,7 @@ class Setup extends Extension
             }
         }
         log_warning("setup", "Configuration updated");
-        foreach (glob_ex("data/cache/*.css") as $css_cache) {
+        foreach (\Safe\glob("data/cache/*.css") as $css_cache) {
             unlink($css_cache);
         }
         log_warning("setup", "Cache cleared");

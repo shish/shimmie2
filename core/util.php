@@ -194,7 +194,7 @@ function get_session_ip(Config $config): string
 {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = get_real_ip();
-    $addr = inet_ntop_ex(inet_pton_ex($addr) & inet_pton_ex($mask));
+    $addr = \Safe\inet_ntop(inet_pton_ex($addr) & inet_pton_ex($mask));
     return $addr;
 }
 
@@ -299,7 +299,7 @@ function fetch_url(string $url, string $mfile): array
     if ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) === "curl" && function_exists("curl_init")) {
         $ch = curl_init($url);
         assert($ch !== false);
-        $fp = false_throws(fopen($mfile, "w"));
+        $fp = \Safe\fopen($mfile, "w");
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         # curl_setopt($ch, CURLOPT_VERBOSE, 1);
@@ -318,7 +318,7 @@ function fetch_url(string $url, string $mfile): array
 
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header_text = trim(substr($response, 0, $header_size));
-        $headers = http_parse_headers(implode("\n", false_throws(preg_split('/\R/', $header_text))));
+        $headers = http_parse_headers(implode("\n", \Safe\preg_split('/\R/', $header_text)));
         $body = substr($response, $header_size);
 
         curl_close($ch);
@@ -340,7 +340,7 @@ function fetch_url(string $url, string $mfile): array
         }
         $length = 0;
         while (!feof($fp_in) && $length <= $config->get_int(UploadConfig::SIZE)) {
-            $data = false_throws(fread($fp_in, 8192));
+            $data = \Safe\fread($fp_in, 8192);
             $length += strlen($data);
             fwrite($fp_out, $data);
         }
@@ -421,7 +421,7 @@ function get_dir_contents(string $dir): array
         return [];
     }
     return array_diff(
-        false_throws(scandir($dir)),
+        \Safe\scandir($dir),
         ['..', '.']
     );
 }
@@ -783,6 +783,6 @@ function shm_tempnam(string $prefix = ""): string
     if(!is_dir("data/temp")) {
         mkdir("data/temp");
     }
-    $temp = false_throws(realpath("data/temp"));
-    return false_throws(tempnam($temp, $prefix));
+    $temp = \Safe\realpath("data/temp");
+    return \Safe\tempnam($temp, $prefix);
 }

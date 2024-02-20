@@ -72,7 +72,7 @@ class MySQL extends DBEngine
 
     public function get_version(PDO $db): string
     {
-        return false_throws($db->query('select version()'))->fetch()[0];
+        return $db->execute('select version()')->fetch()[0];
     }
 }
 
@@ -121,14 +121,14 @@ class PostgreSQL extends DBEngine
 
     public function get_version(PDO $db): string
     {
-        return false_throws($db->query('select version()'))->fetch()[0];
+        return $db->execute('select version()')->fetch()[0];
     }
 }
 
 // shimmie functions for export to sqlite
 function _unix_timestamp(string $date): int
 {
-    return strtotime_ex($date);
+    return \Safe\strtotime($date);
 }
 function _now(): string
 {
@@ -228,6 +228,6 @@ class SQLite extends DBEngine
 
     public function get_version(PDO $db): string
     {
-        return false_throws($db->query('select sqlite_version()'))->fetch()[0];
+        return $db->execute('select sqlite_version()')->fetch()[0];
     }
 }

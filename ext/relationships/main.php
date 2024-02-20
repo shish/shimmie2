@@ -216,7 +216,7 @@ class Relationships extends Extension
     {
         global $database;
 
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
 
         $count = $database->get_one(
             "SELECT COUNT(*) FROM images WHERE id!=:id AND parent_id=:pid",
@@ -233,7 +233,7 @@ class Relationships extends Extension
     {
         global $database;
 
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
 
         $sibling_ids = $database->get_col(
             "SELECT id FROM images WHERE id!=:id AND parent_id=:pid",

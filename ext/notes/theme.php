@@ -62,7 +62,7 @@ class NotesTheme extends Themelet
             ];
         }
         $page->add_html_header("<script type='text/javascript'>
-        window.notes = ".json_encode_ex($to_json).";
+        window.notes = ".\Safe\json_encode($to_json).";
         window.notes_image_id = $image_id;
         window.notes_admin = ".($adminOptions ? "true" : "false").";
         </script>");

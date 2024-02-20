@@ -80,7 +80,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
     public function testRejectHuge(): void
     {
         // FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
-        file_put_contents("data/huge.jpg", file_get_contents_ex("tests/pbx_screenshot.jpg") . str_repeat("U", 1024 * 1024 * 3));
+        file_put_contents("data/huge.jpg", \Safe\file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024 * 1024 * 3));
         $e = $this->assertException(UploadException::class, function () {
             $this->post_image("data/huge.jpg", "test");
         });

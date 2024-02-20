@@ -10,7 +10,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "s"));
 
         # search for it in various ways
@@ -31,7 +31,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $config->set_array("ext_rating_anonymous_privs", ["s", "q"]);
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "e"));
 
         # the explicit image shouldn't show up in anon's searches
@@ -46,10 +46,10 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         // post a safe image and an explicit image
         $this->log_in_as_user();
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
-        $image_e = Image::by_id($image_id_e);
+        $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_s = Image::by_id($image_id_s);
+        $image_s = Image::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
 
         // user is allowed to see all
@@ -84,13 +84,13 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_s = Image::by_id($image_id_s);
+        $image_s = Image::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
         $image_id_q = $this->post_image("tests/favicon.png", "favicon");
-        $image_q = Image::by_id($image_id_q);
+        $image_q = Image::by_id_ex($image_id_q);
         send_event(new RatingSetEvent($image_q, "q"));
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
-        $image_e = Image::by_id($image_id_e);
+        $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
         $config->set_array("ext_rating_user_privs", ["s", "q"]);

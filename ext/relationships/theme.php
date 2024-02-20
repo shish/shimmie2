@@ -100,7 +100,7 @@ class RelationshipsTheme extends Themelet
     private function get_parent_thumbnail_html(Image $image): HTMLElement
     {
         $parent_id = $image['parent_id'];
-        $parent_image = Image::by_id($parent_id);
+        $parent_image = Image::by_id_ex($parent_id);
 
         return $this->build_thumb_html($parent_image);
     }

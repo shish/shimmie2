@@ -103,7 +103,7 @@ class AutoTagger extends Extension
         if ($event->page_matches("auto_tag/import", method: "POST", permission: Permissions::MANAGE_AUTO_TAG)) {
             if (count($_FILES) > 0) {
                 $tmp = $_FILES['auto_tag_file']['tmp_name'];
-                $contents = file_get_contents_ex($tmp);
+                $contents = \Safe\file_get_contents($tmp);
                 $count = $this->add_auto_tag_csv($contents);
                 log_info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
                 $page->set_mode(PageMode::REDIRECT);
@@ -243,7 +243,7 @@ class AutoTagger extends Extension
             $image_ids = $database->get_col_iterable("SELECT image_id FROM  image_tags WHERE tag_id = :tag_id", ["tag_id" => $tag_id]);
             foreach ($image_ids as $image_id) {
                 $image_id = (int) $image_id;
-                $image = Image::by_id($image_id);
+                $image = Image::by_id_ex($image_id);
                 send_event(new TagSetEvent($image, $image->get_tag_array()));
             }
         }

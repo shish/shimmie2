@@ -18,7 +18,7 @@ class SVGFileHandler extends DataHandlerExtension
         global $page;
         if ($event->page_matches("get_svg/{id}")) {
             $id = $event->get_iarg('id');
-            $image = Image::by_id($id);
+            $image = Image::by_id_ex($id);
             $hash = $image->hash;
 
             $page->set_mime(MimeType::SVG);
@@ -26,7 +26,7 @@ class SVGFileHandler extends DataHandlerExtension
 
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = file_get_contents_ex(warehouse_path(Image::IMAGE_DIR, $hash));
+            $dirtySVG = \Safe\file_get_contents(warehouse_path(Image::IMAGE_DIR, $hash));
             $cleanSVG = $sanitizer->sanitize($dirtySVG);
             $page->set_data($cleanSVG);
         }
@@ -41,7 +41,7 @@ class SVGFileHandler extends DataHandlerExtension
             // then sanitise it before touching it
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = file_get_contents_ex($event->tmpname);
+            $dirtySVG = \Safe\file_get_contents($event->tmpname);
             $cleanSVG = false_throws($sanitizer->sanitize($dirtySVG));
             $event->hash = md5($cleanSVG);
             $new_tmpname = shm_tempnam("svg");
@@ -103,7 +103,7 @@ class MiniSVGParser
     {
         $xml_parser = xml_parser_create();
         xml_set_element_handler($xml_parser, [$this, "startElement"], [$this, "endElement"]);
-        $this->valid = bool_escape(xml_parse($xml_parser, file_get_contents_ex($file), true));
+        $this->valid = bool_escape(xml_parse($xml_parser, \Safe\file_get_contents($file), true));
         xml_parser_free($xml_parser);
     }
 
