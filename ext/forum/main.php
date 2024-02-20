@@ -102,7 +102,7 @@ class Forum extends Extension
         if ($event->page_matches("forum/index", paged: true)) {
             $pageNumber = $event->get_iarg('page_num', 1) - 1;
             $this->show_last_threads($page, $pageNumber, $user->can(Permissions::FORUM_ADMIN));
-            if (!$user->can(Permissions::FORUM_CREATE_THREAD)) {
+            if (!$user->can(Permissions::FORUM_CREATE)) {
                 $this->theme->display_new_thread_composer($page);
             }
         }
@@ -119,7 +119,7 @@ class Forum extends Extension
             if ($user->can(Permissions::FORUM_ADMIN)) {
                 $this->theme->add_actions_block($page, $threadID);
             }
-            if (!$user->can(Permissions::FORUM_CREATE_THREAD)) {
+            if (!$user->can(Permissions::FORUM_CREATE)) {
                 $this->theme->display_new_post_composer($page, $threadID);
             }
         }
@@ -128,7 +128,7 @@ class Forum extends Extension
         }
         if ($event->page_matches("forum/create")) {
             $redirectTo = "forum/index";
-            if (!$user->can(Permissions::FORUM_CREATE_THREAD)) {
+            if (!$user->can(Permissions::FORUM_CREATE)) {
                 $errors = $this->sanity_check_new_thread();
 
                 if (count($errors) > 0) {
@@ -167,7 +167,7 @@ class Forum extends Extension
         if ($event->page_matches("forum/answer")) {
             $threadID = int_escape($event->req_POST("threadID"));
             $total_pages = $this->get_total_pages_for_thread($threadID);
-            if (!$user->can(Permissions::FORUM_CREATE_THREAD)) {
+            if (!$user->can(Permissions::FORUM_CREATE)) {
                 $errors = $this->sanity_check_new_post();
 
                 if (count($errors) > 0) {
