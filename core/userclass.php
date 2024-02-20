@@ -127,12 +127,10 @@ new UserClass("hellbanned", "user", [
     Permissions::HELLBANNED => true,
 ]);
 
-new UserClass("admin", "base", [
+new UserClass("admin", "user", [
     Permissions::CHANGE_SETTING => true,
-    Permissions::CHANGE_USER_SETTING => true,
     Permissions::CHANGE_OTHER_USER_SETTING => true,
     Permissions::OVERRIDE_CONFIG => true,
-    Permissions::BIG_SEARCH => true,
 
     Permissions::MANAGE_EXTENSION_LIST => true,
     Permissions::MANAGE_ALIAS_LIST => true,
@@ -150,19 +148,12 @@ new UserClass("admin", "base", [
     Permissions::EDIT_USER_CLASS => true,
     Permissions::DELETE_USER => true,
 
-    Permissions::CREATE_COMMENT => true,
     Permissions::DELETE_COMMENT => true,
     Permissions::BYPASS_COMMENT_CHECKS => true,
 
     Permissions::REPLACE_IMAGE => true,
-    Permissions::CREATE_IMAGE => true,
-    Permissions::EDIT_IMAGE_TAG => true,
-    Permissions::EDIT_IMAGE_SOURCE => true,
     Permissions::EDIT_IMAGE_OWNER => true,
     Permissions::EDIT_IMAGE_LOCK => true,
-    Permissions::EDIT_IMAGE_TITLE => true,
-    Permissions::EDIT_IMAGE_RELATIONSHIPS => true,
-    Permissions::EDIT_IMAGE_ARTIST => true,
     Permissions::BULK_EDIT_IMAGE_TAG => true,
     Permissions::BULK_EDIT_IMAGE_SOURCE => true,
     Permissions::DELETE_IMAGE => true,
@@ -173,7 +164,6 @@ new UserClass("admin", "base", [
     Permissions::IGNORE_DOWNTIME => true,
     Permissions::VIEW_REGISTRATIONS => true,
 
-    Permissions::CREATE_IMAGE_REPORT => true,
     Permissions::VIEW_IMAGE_REPORT => true,
 
     Permissions::WIKI_ADMIN => true,
@@ -184,13 +174,10 @@ new UserClass("admin", "base", [
 
     Permissions::MANAGE_ADMINTOOLS => true,
 
-    Permissions::SEND_PM => true,
-    Permissions::READ_PM => true,
     Permissions::VIEW_OTHER_PMS => true, # hm
     Permissions::EDIT_FEATURE => true,
     Permissions::BULK_EDIT_VOTE => true,
     Permissions::EDIT_OTHER_VOTE => true,
-    Permissions::CREATE_VOTE => true,
     Permissions::VIEW_SYSINFO => true,
 
     Permissions::HELLBANNED => false,
@@ -198,20 +185,15 @@ new UserClass("admin", "base", [
 
     Permissions::PROTECTED => true,
 
-    Permissions::EDIT_IMAGE_RATING => true,
     Permissions::BULK_EDIT_IMAGE_RATING => true,
 
     Permissions::VIEW_TRASH => true,
-
-    Permissions::PERFORM_BULK_ACTIONS => true,
 
     Permissions::BULK_ADD => true,
     Permissions::EDIT_FILES => true,
     Permissions::EDIT_TAG_CATEGORIES => true,
     Permissions::RESCAN_MEDIA => true,
     Permissions::SEE_IMAGE_VIEW_COUNTS => true,
-
-    Permissions::EDIT_FAVOURITES => true,
 
     Permissions::ARTISTS_ADMIN => true,
     Permissions::BLOTTER_ADMIN => true,
@@ -229,10 +211,8 @@ new UserClass("admin", "base", [
 
     Permissions::BULK_IMPORT => true,
     Permissions::BULK_EXPORT => true,
-    Permissions::BULK_DOWNLOAD => true,
     Permissions::BULK_PARENT_CHILD => true,
 
-    Permissions::SET_PRIVATE_IMAGE => true,
     Permissions::SET_OTHERS_PRIVATE_IMAGES => true,
 ]);
 
