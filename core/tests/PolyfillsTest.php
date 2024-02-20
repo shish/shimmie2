@@ -85,10 +85,11 @@ class PolyfillsTest extends TestCase
 
     public function test_truncate(): void
     {
-        $this->assertEquals("test words", truncate("test words", 10));
-        $this->assertEquals("test...", truncate("test...", 9));
-        $this->assertEquals("test...", truncate("test...", 6));
-        $this->assertEquals("te...", truncate("te...", 2));
+        $this->assertEquals("test words", truncate("test words", 10), "No truncation if string is short enough");
+        $this->assertEquals("test...", truncate("test words", 9), "Truncate when string is too long");
+        $this->assertEquals("test...", truncate("test words", 7), "Truncate to the same breakpoint");
+        $this->assertEquals("te...", truncate("test words", 5), "Breakpoints past the limit don't matter");
+        $this->assertEquals("o...", truncate("oneVeryLongWord", 4), "Hard-break if there are no breakpoints");
     }
 
     public function test_to_shorthand_int(): void
