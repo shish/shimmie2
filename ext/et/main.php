@@ -77,6 +77,8 @@ class ET extends Extension
             $ver .= "+";
         }
 
+        $disk_total = \Safe\disk_total_space("./");
+        $disk_free = \Safe\disk_free_space("./");
         $info = [
             "about" => [
                 'title' => $config->get_string(SetupConfig::TITLE),
@@ -103,8 +105,8 @@ class ET extends Extension
             ],
             "media" => [
                 "memory_limit" => to_shorthand_int($config->get_int(MediaConfig::MEM_LIMIT)),
-                "disk_use" => to_shorthand_int((int)disk_total_space("./") - (int)disk_free_space("./")),
-                "disk_total" => to_shorthand_int((int)disk_total_space("./")),
+                "disk_use" => to_shorthand_int($disk_total - $disk_free),
+                "disk_total" => to_shorthand_int($disk_total),
             ],
             "thumbnails" => [
                 "engine" => $config->get_string(ImageConfig::THUMB_ENGINE),
@@ -118,10 +120,12 @@ class ET extends Extension
 
         if (file_exists(".git")) {
             try {
-                $commitHash = trim(exec_ex('git log --pretty="%h" -n1 HEAD'));
-                $commitBranch = trim(exec_ex('git rev-parse --abbrev-ref HEAD'));
-                $commitOrigin = trim(exec_ex('git config --get remote.origin.url'));
+                $commitHash = trim(\Safe\exec('git log --pretty="%h" -n1 HEAD'));
+                $commitBranch = trim(\Safe\exec('git rev-parse --abbrev-ref HEAD'));
+                $commitOrigin = trim(\Safe\exec('git config --get remote.origin.url'));
                 $commitOrigin = preg_replace("#//.*@#", "//xxx@", $commitOrigin);
+                $info['versions']['shimmie'] .= $commitHash;
+                $info['versions']['origin'] = "$commitOrigin ($commitBranch)";
                 $info['git'] = [
                     'commit' => $commitHash,
                     'branch' => $commitBranch,
@@ -144,7 +148,7 @@ class ET extends Extension
         foreach ($info as $title => $section) {
             $data .= "$title:\n";
             foreach ($section as $k => $v) {
-                $data .= "  $k: " . json_encode_ex($v, JSON_UNESCAPED_SLASHES) . "\n";
+                $data .= "  $k: " . \Safe\json_encode($v, JSON_UNESCAPED_SLASHES) . "\n";
             }
             $data .= "\n";
         }

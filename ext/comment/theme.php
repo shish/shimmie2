@@ -254,11 +254,7 @@ class CommentListTheme extends Themelet
             $h_ip = $user->can(Permissions::VIEW_IP) ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
             $h_del = "";
             if ($user->can(Permissions::DELETE_COMMENT)) {
-                $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
-                $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview") ?: "Delete <corrupt comment>";
-                $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
-                $h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
-                $h_del = " - <a onclick='$h_delete_script' href='$h_delete_link'>Del</a>";
+                $h_del = " - " . $this->delete_link($i_comment_id, $i_image_id, $comment->owner_name, $tfe->stripped);
             }
             $html = "
 				<div class=\"comment $hb\" id=\"c$i_comment_id\">
@@ -271,6 +267,15 @@ class CommentListTheme extends Themelet
 			";
         }
         return $html;
+    }
+
+    protected function delete_link(int $comment_id, int $image_id, string $owner, string $text): string
+    {
+        $comment_preview = substr(html_unescape($text), 0, 50);
+        $j_delete_confirm_message = json_encode("Delete comment by {$owner}:\n$comment_preview") ?: "Delete <corrupt comment>";
+        $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
+        $h_delete_link = make_link("comment/delete/$comment_id/$image_id");
+        return "<a onclick='$h_delete_script' href='$h_delete_link'>Del</a>";
     }
 
     protected function build_postbox(int $image_id): string

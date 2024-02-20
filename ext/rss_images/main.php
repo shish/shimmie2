@@ -112,7 +112,7 @@ class RSSImages extends Extension
         $tags = html_escape($image->get_tag_list());
         $thumb_url = $image->get_thumb_link();
         $image_url = $image->get_image_link();
-        $posted = date(DATE_RSS, strtotime_ex($image->posted));
+        $posted = date(DATE_RSS, \Safe\strtotime($image->posted));
         $content = html_escape(
             "<div>" .
             "<p>" . $this->theme->build_thumb_html($image) . "</p>" .

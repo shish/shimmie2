@@ -39,7 +39,7 @@ class CBZFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        $fp = false_throws(fopen($tmpname, "r"));
+        $fp = \Safe\fopen($tmpname, "r");
         $head = fread($fp, 4);
         fclose($fp);
         return $head == "PK\x03\x04";

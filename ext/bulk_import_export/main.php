@@ -126,7 +126,7 @@ class BulkImportExport extends DataHandlerExtension
                     $zip->addFile($img_loc, $image->hash);
                 }
 
-                $json_data = json_encode_ex($json_data, JSON_PRETTY_PRINT);
+                $json_data = \Safe\json_encode($json_data, JSON_PRETTY_PRINT);
                 $zip->addFromString(self::EXPORT_INFO_FILE_NAME, $json_data);
 
                 $zip->close();
@@ -163,7 +163,7 @@ class BulkImportExport extends DataHandlerExtension
         $info = $zip->getStream(self::EXPORT_INFO_FILE_NAME);
         if ($info !== false) {
             try {
-                $json_string = false_throws(stream_get_contents($info));
+                $json_string = \Safe\stream_get_contents($info);
                 $json_data = json_decode($json_string);
                 return $json_data;
             } finally {

@@ -22,7 +22,7 @@ class RegenThumb extends Extension
         global $page, $user;
 
         if ($event->page_matches("regen_thumb/one/{image_id}", method: "POST", permission: Permissions::DELETE_IMAGE)) {
-            $image = Image::by_id($event->get_iarg('image_id'));
+            $image = Image::by_id_ex($event->get_iarg('image_id'));
 
             $this->regenerate_thumbnail($image);
 

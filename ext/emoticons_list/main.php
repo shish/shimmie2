@@ -15,7 +15,7 @@ class EmoticonList extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("emote/list")) {
-            $this->theme->display_emotes(glob_ex("ext/emoticons/default/*"));
+            $this->theme->display_emotes(\Safe\glob("ext/emoticons/default/*"));
         }
     }
 }

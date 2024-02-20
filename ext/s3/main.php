@@ -131,7 +131,7 @@ class S3 extends Extension
         global $config, $page, $user;
         if ($event->page_matches("s3/sync/{image_id}", method: "POST", permission: Permissions::DELETE_IMAGE)) {
             $id = $event->get_iarg('image_id');
-            $this->sync_post(Image::by_id($id));
+            $this->sync_post(Image::by_id_ex($id));
             log_info("s3", "Manual resync for >>$id", "File re-sync'ed");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$id"));
@@ -237,7 +237,7 @@ class S3 extends Extension
             $client->putObject([
                 'Bucket' => $image_bucket,
                 'Key' => $key,
-                'Body' => file_get_contents_ex($image->get_image_filename()),
+                'Body' => \Safe\file_get_contents($image->get_image_filename()),
                 'ACL' => 'public-read',
                 'ContentType' => $image->get_mime(),
                 'ContentDisposition' => "inline; filename=\"$friendly\"",

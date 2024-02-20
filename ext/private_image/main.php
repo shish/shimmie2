@@ -45,10 +45,7 @@ class PrivateImage extends Extension
 
         if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: Permissions::SET_PRIVATE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id($image_id);
-            if ($image == null) {
-                throw new ImageNotFound("Post not found.");
-            }
+            $image = Image::by_id_ex($image_id);
             if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to private.");
             }
@@ -60,10 +57,7 @@ class PrivateImage extends Extension
 
         if ($event->page_matches("publicize_image/{image_id}", method: "POST")) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id($image_id);
-            if ($image == null) {
-                throw new ImageNotFound("Post not found.");
-            }
+            $image = Image::by_id_ex($image_id);
             if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to public.");
             }

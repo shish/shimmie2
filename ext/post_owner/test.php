@@ -10,7 +10,7 @@ class PostOwnerTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
 
         $this->log_in_as_admin();
         send_event(new ImageInfoSetEvent($image, ["owner" => self::$admin_name]));

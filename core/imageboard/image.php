@@ -175,6 +175,15 @@ class Image implements \ArrayAccess
         return ($row ? new Image($row) : null);
     }
 
+    public static function by_id_ex(int $post_id): Image
+    {
+        $maybe_post = static::by_id($post_id);
+        if(!is_null($maybe_post)) {
+            return $maybe_post;
+        }
+        throw new ImageNotFound("Image $post_id not found");
+    }
+
     public static function by_hash(string $hash): ?Image
     {
         global $database;

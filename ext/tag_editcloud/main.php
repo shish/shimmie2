@@ -163,7 +163,7 @@ class TagEditCloud extends Extension
             }
 
             $size = sprintf("%.2f", max($row['scaled'], 0.5));
-            $js = html_escape('tageditcloud_toggle_tag(this,'.json_encode_ex($full_tag).')'); //Ugly, but it works
+            $js = html_escape('tageditcloud_toggle_tag(this,'.\Safe\json_encode($full_tag).')'); //Ugly, but it works
 
             if (in_array($row['tag'], $image->get_tag_array())) {
                 if ($used_first) {

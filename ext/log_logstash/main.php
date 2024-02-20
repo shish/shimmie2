@@ -59,7 +59,7 @@ class LogLogstash extends Extension
             if (!$fp) {
                 return;
             }
-            fwrite($fp, json_encode_ex($data));
+            fwrite($fp, \Safe\json_encode($data));
             fclose($fp);
         } catch (\Exception $e) {
             // we can't log that logging is broken

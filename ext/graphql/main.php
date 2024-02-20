@@ -29,14 +29,14 @@ class MetadataInput
     public static function update_post_metadata(int $post_id, MetadataInput $metadata): Image
     {
         global $user;
-        $image = Image::by_id($post_id);
+        $image = Image::by_id_ex($post_id);
         if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
             send_event(new ImageInfoSetEvent($image, [
                 'tags' => $metadata->tags,
                 'source' => $metadata->source,
             ]));
         }
-        return Image::by_id($post_id);
+        return Image::by_id_ex($post_id);
     }
 }
 
@@ -108,13 +108,13 @@ class GraphQL extends Extension
             // sleep(1);
             $page->set_mode(PageMode::DATA);
             $page->set_mime("application/json");
-            $page->set_data(json_encode_ex($body, JSON_UNESCAPED_UNICODE));
+            $page->set_data(\Safe\json_encode($body, JSON_UNESCAPED_UNICODE));
         }
         if ($event->page_matches("graphql_upload")) {
             $this->cors();
             $page->set_mode(PageMode::DATA);
             $page->set_mime("application/json");
-            $page->set_data(json_encode_ex(self::handle_uploads()));
+            $page->set_data(\Safe\json_encode(self::handle_uploads()));
         }
     }
 
@@ -203,7 +203,7 @@ class GraphQL extends Extension
                 $body['stats'] = get_debug_info_arr();
                 $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);
                 $body['stats']['graphql_execute_time'] = round($t3 - $t2, 2);
-                echo json_encode_ex($body, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                echo \Safe\json_encode($body, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
                 return Command::SUCCESS;
             });
         $event->app->register('graphql:schema')

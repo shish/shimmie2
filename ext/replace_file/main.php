@@ -15,20 +15,13 @@ class ReplaceFile extends Extension
 
         if ($event->page_matches("replace/{image_id}", method: "GET", permission: Permissions::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id($image_id);
-            if (is_null($image)) {
-                throw new UploadException("Can not replace Post: No post with ID $image_id");
-            }
-
+            $image = Image::by_id_ex($image_id);
             $this->theme->display_replace_page($page, $image_id);
         }
 
         if ($event->page_matches("replace/{image_id}", method: "POST", permission: Permissions::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id($image_id);
-            if (is_null($image)) {
-                throw new UploadException("Can not replace Post: No post with ID $image_id");
-            }
+            $image = Image::by_id_ex($image_id);
 
             if(empty($event->get_POST("url")) && count($_FILES) == 0) {
                 $page->set_mode(PageMode::REDIRECT);
@@ -85,7 +78,7 @@ class ReplaceFile extends Extension
 
         // update metadata and save metadata to DB
         $event->image->hash = $event->new_hash;
-        $event->image->filesize = filesize_ex($target);
+        $event->image->filesize = \Safe\filesize($target);
         $event->image->set_mime(MimeType::get_for_file($target));
         send_event(new MediaCheckPropertiesEvent($image));
         $image->save_to_db();

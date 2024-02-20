@@ -23,7 +23,7 @@ class AutoComplete extends Extension
 
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::JSON);
-            $page->set_data(json_encode_ex($res));
+            $page->set_data(\Safe\json_encode($res));
         }
     }
 

@@ -34,11 +34,7 @@ class ViewPost extends Extension
                 $query = null;
             }
 
-            $image = Image::by_id($image_id);
-            if (is_null($image)) {
-                $this->theme->display_error(404, "Post not found", "Post $image_id could not be found");
-                return;
-            }
+            $image = Image::by_id_ex($image_id);
 
             if ($event->page_matches("post/next/{image_id}")) {
                 $image = $image->get_next($search_terms);
@@ -64,16 +60,11 @@ class ViewPost extends Extension
             }
 
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id($image_id);
-
-            if (!is_null($image)) {
-                send_event(new DisplayingImageEvent($image));
-            } else {
-                $this->theme->display_error(404, "Post not found", "No post in the database has the ID #$image_id");
-            }
+            $image = Image::by_id_ex($image_id);
+            send_event(new DisplayingImageEvent($image));
         } elseif ($event->page_matches("post/set", method: "POST")) {
             $image_id = int_escape($event->req_POST('image_id'));
-            $image = Image::by_id($image_id);
+            $image = Image::by_id_ex($image_id);
             if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
                 // currently all post metadata is string => string - in the future
                 // we might want to have a more complex type system, but for now

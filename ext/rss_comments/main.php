@@ -40,7 +40,7 @@ class RSSComments extends Extension
                 $comment_id = $comment['comment_id'];
                 $link = make_http(make_link("post/view/$image_id"));
                 $owner = html_escape($comment['user_name']);
-                $posted = date(DATE_RSS, strtotime_ex($comment['posted']));
+                $posted = date(DATE_RSS, \Safe\strtotime($comment['posted']));
                 $comment = html_escape($comment['comment']);
                 $content = html_escape("$owner: $comment");
 

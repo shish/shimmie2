@@ -59,18 +59,14 @@ class RotateImage extends Extension
         if ($event->page_matches("rotate/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id($image_id);
-            if (is_null($image)) {
-                $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
-            } else {
-                /* Check if options were given to rotate an image. */
-                $deg = int_escape($event->req_POST('rotate_deg'));
+            $image = Image::by_id_ex($image_id);
+            /* Check if options were given to rotate an image. */
+            $deg = int_escape($event->req_POST('rotate_deg'));
 
-                /* Attempt to rotate the image */
-                $this->rotate_image($image_id, $deg);
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/".$image_id));
-            }
+            /* Attempt to rotate the image */
+            $this->rotate_image($image_id, $deg);
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/".$image_id));
         }
     }
 
@@ -83,7 +79,7 @@ class RotateImage extends Extension
             throw new ImageRotateException("Invalid options for rotation angle. ($deg)");
         }
 
-        $image_obj = Image::by_id($image_id);
+        $image_obj = Image::by_id_ex($image_id);
         $hash = $image_obj->hash;
 
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
@@ -91,8 +87,11 @@ class RotateImage extends Extension
             throw new ImageRotateException("$image_filename does not exist.");
         }
 
-        $info = false_throws(getimagesize($image_filename));
+        $info = \Safe\getimagesize($image_filename);
 
+        // we need to fully-enable phpstan-safe-rules to get the
+        // full type hint
+        // @phpstan-ignore-next-line
         $memory_use = Media::calc_memory_use($info);
         $memory_limit = get_memory_limit();
 
@@ -102,7 +101,7 @@ class RotateImage extends Extension
 
 
         /* Attempt to load the image */
-        $image = imagecreatefromstring(file_get_contents_ex($image_filename));
+        $image = imagecreatefromstring(\Safe\file_get_contents($image_filename));
         if ($image == false) {
             throw new ImageRotateException("Could not load image: ".$image_filename);
         }
@@ -154,7 +153,7 @@ class RotateImage extends Extension
             throw new ImageRotateException("Could not save image: ".$tmp_filename);
         }
 
-        $new_hash = md5_file_ex($tmp_filename);
+        $new_hash = \Safe\md5_file($tmp_filename);
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_hash);
         if (!@copy($tmp_filename, $target)) {

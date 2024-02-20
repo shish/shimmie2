@@ -73,8 +73,8 @@ class NumericScoreTheme extends Themelet
             $pop_images .= $this->build_thumb_html($image)."\n";
         }
 
-        $b_dte = make_link("popular_by_$name", date($fmt, strtotime_ex("-1 $name", strtotime_ex($totaldate))));
-        $f_dte = make_link("popular_by_$name", date($fmt, strtotime_ex("+1 $name", strtotime_ex($totaldate))));
+        $b_dte = make_link("popular_by_$name", date($fmt, \Safe\strtotime("-1 $name", \Safe\strtotime($totaldate))));
+        $f_dte = make_link("popular_by_$name", date($fmt, \Safe\strtotime("+1 $name", \Safe\strtotime($totaldate))));
 
         $html = "\n".
             "<h3 style='text-align: center;'>\n".

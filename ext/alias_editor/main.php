@@ -97,7 +97,7 @@ class AliasEditor extends Extension
         if ($event->page_matches("alias/import", method: "POST", permission: Permissions::MANAGE_ALIAS_LIST)) {
             if (count($_FILES) > 0) {
                 $tmp = $_FILES['alias_file']['tmp_name'];
-                $contents = file_get_contents_ex($tmp);
+                $contents = \Safe\file_get_contents($tmp);
                 $this->add_alias_csv($contents);
                 log_info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
                 $page->set_mode(PageMode::REDIRECT);
