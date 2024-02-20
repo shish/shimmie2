@@ -27,10 +27,9 @@ function add_dir(string $base, array $extra_tags = []): array
         $tags = array_merge(path_to_tags($short_path), $extra_tags);
         try {
             $more_results = $database->with_savepoint(function () use ($full_path, $filename, $tags) {
-                $dae = send_event(new DataUploadEvent($full_path, [
+                $dae = send_event(new DataUploadEvent($full_path, basename($full_path), 0, [
                     'filename' => pathinfo($filename, PATHINFO_BASENAME),
-                    'tags' => $tags,
-                    'source' => null,
+                    'tags' => Tag::implode($tags),
                 ]));
                 $results = [];
                 foreach($dae->images as $image) {

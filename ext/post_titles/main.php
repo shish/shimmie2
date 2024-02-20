@@ -55,9 +55,9 @@ class PostTitles extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
-
-        if ($user->can(Permissions::EDIT_IMAGE_TITLE) && isset($event->params["title"])) {
-            send_event(new PostTitleSetEvent($event->image, $event->params["title"]));
+        $title = $event->get_param('title');
+        if ($user->can(Permissions::EDIT_IMAGE_TITLE) && !is_null($title)) {
+            send_event(new PostTitleSetEvent($event->image, $title));
         }
     }
 

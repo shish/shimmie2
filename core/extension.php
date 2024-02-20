@@ -341,7 +341,8 @@ abstract class DataHandlerExtension extends Extension
                     // we can just send a TagSetEvent - in the future we might
                     // want a dedicated MergeEvent?
                     if(!empty($event->metadata['tags'])) {
-                        send_event(new TagSetEvent($existing, array_merge($existing->get_tag_array(), $event->metadata['tags'])));
+                        $tags = Tag::explode($existing->get_tag_list() . " " . $event->metadata['tags']);
+                        send_event(new TagSetEvent($existing, $tags));
                     }
                     $event->images[] = $existing;
                     return;
@@ -357,11 +358,9 @@ abstract class DataHandlerExtension extends Extension
             $image->tmp_file = $filename;
             $image->filesize = \Safe\filesize($filename);
             $image->hash = \Safe\md5_file($filename);
-            $image->filename = (($pos = strpos($event->metadata['filename'], '?')) !== false) ? substr($event->metadata['filename'], 0, $pos) : $event->metadata['filename'];
-            $image->set_mime(MimeType::get_for_file($filename, get_file_ext($event->metadata["filename"]) ?? null));
-            if (empty($image->get_mime())) {
-                throw new UploadException("Unable to determine MIME for $filename");
-            }
+            // DB limits to 255 char filenames
+            $image->filename = substr($event->filename, -250);
+            $image->set_mime($event->mime);
             try {
                 send_event(new MediaCheckPropertiesEvent($image));
             } catch (MediaException $e) {
@@ -369,8 +368,8 @@ abstract class DataHandlerExtension extends Extension
             }
             $image->save_to_db(); // Ensure the image has a DB-assigned ID
 
-            // Let everybody else know, so that TagEdit can set tags, Ratings can set ratings, etc
-            $iae = send_event(new ImageAdditionEvent($image, $event->metadata));
+            $iae = send_event(new ImageAdditionEvent($image));
+            send_event(new ImageInfoSetEvent($image, $event->slot, $event->metadata));
 
             // If everything is OK, then move the file to the archive
             $filename = warehouse_path(Image::IMAGE_DIR, $event->hash);

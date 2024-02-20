@@ -121,19 +121,20 @@ class PostTags extends Extension
             });
     }
 
-    public function onImageAddition(ImageAdditionEvent $event): void
-    {
-        if(!empty($event->metadata['tags'])) {
-            send_event(new TagSetEvent($event->image, $event->metadata['tags']));
-        }
-    }
-
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $page, $user;
-        if ($user->can(Permissions::EDIT_IMAGE_TAG) && isset($event->params['tags'])) {
+        if (
+            $user->can(Permissions::EDIT_IMAGE_TAG) && (
+                isset($event->params['tags'])
+                || isset($event->params["tags{$event->slot}"])
+            )
+        ) {
+            $common_tags = $event->params['tags'] ?? "";
+            $my_tags = $event->params["tags{$event->slot}"] ?? "";
+            $tags = Tag::explode("$common_tags $my_tags");
             try {
-                send_event(new TagSetEvent($event->image, Tag::explode($event->params['tags'])));
+                send_event(new TagSetEvent($event->image, $tags));
             } catch (TagSetException $e) {
                 if ($e->redirect) {
                     $page->flash("{$e->getMessage()}, please see {$e->redirect}");
