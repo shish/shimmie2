@@ -47,7 +47,7 @@ class NotesTheme extends Themelet
     /**
      * @param Note[] $recovered_notes
      */
-    public function display_note_system(Page $page, int $image_id, array $recovered_notes, bool $adminOptions): void
+    public function display_note_system(Page $page, int $image_id, array $recovered_notes, bool $adminOptions, bool $editOptions): void
     {
         $to_json = [];
         foreach ($recovered_notes as $note) {
@@ -65,6 +65,7 @@ class NotesTheme extends Themelet
         window.notes = ".\Safe\json_encode($to_json).";
         window.notes_image_id = $image_id;
         window.notes_admin = ".($adminOptions ? "true" : "false").";
+        window.notes_edit = ".($editOptions ? "true" : "false").";
         </script>");
     }
 
