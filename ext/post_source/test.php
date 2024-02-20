@@ -10,7 +10,7 @@ class PostSourceTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
 
         send_event(new ImageInfoSetEvent($image, ["source" => "example.com"]));
         send_event(new ImageInfoSetEvent($image, ["source" => "http://example.com"]));

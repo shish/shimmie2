@@ -52,14 +52,16 @@
 		"sabre/cache": "^2.0.1",
 		"naroga/redis-cache": "dev-master",
 		"aws/aws-sdk-php": "^3.294",
-		"symfony/console": "6.4.x-dev"
+		"symfony/console": "6.4.x-dev",
+		"thecodingmachine/safe": "2.5.0"
     },
 
 	"require-dev" : {
 		"phpunit/phpunit" : "10.5.3",
 		"friendsofphp/php-cs-fixer" : "3.41.1",
 		"scrutinizer/ocular": "1.9",
-		"phpstan/phpstan": "1.10.50"
+		"phpstan/phpstan": "1.10.50",
+		"thecodingmachine/phpstan-safe-rule": "^1.2"
 	},
 	"suggest": {
 		"ext-memcache": "memcache caching",

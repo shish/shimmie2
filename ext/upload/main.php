@@ -45,8 +45,8 @@ class DataUploadEvent extends Event
     {
         assert(is_readable($tmpname));
         $this->tmpname = $tmpname;
-        $this->hash = md5_file_ex($tmpname);
-        $this->size = filesize_ex($tmpname);
+        $this->hash = \Safe\md5_file($tmpname);
+        $this->size = \Safe\filesize($tmpname);
         $mime = $mime ?? MimeType::get_for_file($tmpname, get_file_ext($this->metadata["filename"]) ?? null);
         if (empty($mime)) {
             throw new UploadException("Could not determine mime type");

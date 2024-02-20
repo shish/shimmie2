@@ -79,7 +79,7 @@ class Media extends Extension
         global $page, $user;
 
         if ($event->page_matches("media_rescan/{image_id}", method: "POST", permission: Permissions::RESCAN_MEDIA)) {
-            $image = Image::by_id($event->get_iarg('image_id'));
+            $image = Image::by_id_ex($event->get_iarg('image_id'));
 
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();
@@ -702,7 +702,7 @@ class Media extends Extension
             $new_width = $width;
         }
 
-        $image = imagecreatefromstring(file_get_contents_ex($image_filename));
+        $image = imagecreatefromstring(\Safe\file_get_contents($image_filename));
         if ($image === false) {
             throw new MediaException("Could not load image: " . $image_filename);
         }
@@ -850,7 +850,12 @@ class Media extends Extension
             "-y", "-i", escapeshellarg($filename),
             "-vstats"
         ]));
-        $output = null_throws(false_throws(shell_exec($cmd . " 2>&1")));
+        // \Safe\shell_exec is a little broken
+        // https://github.com/thecodingmachine/safe/issues/281
+        $output = shell_exec($cmd . " 2>&1");
+        if(is_null($output) || $output === false) {
+            throw new MediaException("Failed to execute command: $cmd");
+        }
         // error_log("Getting size with `$cmd`");
 
         $regex_sizes = "/Video: .* ([0-9]{1,4})x([0-9]{1,4})/";

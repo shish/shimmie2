@@ -22,8 +22,8 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         // check that the image is original
-        $image = Image::by_id($image_id);
-        $old_hash = md5_file_ex("tests/pbx_screenshot.jpg");
+        $image = Image::by_id_ex($image_id);
+        $old_hash = \Safe\md5_file("tests/pbx_screenshot.jpg");
         //$this->assertEquals("pbx_screenshot.jpg", $image->filename);
         $this->assertEquals("image/jpeg", $image->get_mime());
         $this->assertEquals(19774, $image->filesize);
@@ -34,7 +34,7 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
         // create a copy because the file is deleted after upload
         $tmpfile = shm_tempnam("test");
         copy("tests/favicon.png", $tmpfile);
-        $new_hash = md5_file_ex($tmpfile);
+        $new_hash = \Safe\md5_file($tmpfile);
         $_FILES = [
             'data' => [
                 'name' => 'favicon.png',
@@ -52,7 +52,7 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
 
         // check that the image was replaced
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
         // $this->assertEquals("favicon.png", $image->filename); // TODO should we update filename?
         $this->assertEquals("image/png", $image->get_mime());
         $this->assertEquals(246, $image->filesize);

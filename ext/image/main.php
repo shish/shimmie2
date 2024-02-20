@@ -131,7 +131,7 @@ class ImageIO extends Extension
             ->setDescription('Delete a specific post')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $post_id = (int)$input->getArgument('id');
-                $image = Image::by_id($post_id);
+                $image = Image::by_id_ex($post_id);
                 send_event(new ImageDeletionEvent($image));
                 return Command::SUCCESS;
             });
@@ -152,7 +152,7 @@ class ImageIO extends Extension
     {
         $u_name = url_escape($event->display_user->name);
         $i_image_count = Search::count_images(["user={$event->display_user->name}"]);
-        $i_days_old = ((time() - strtotime_ex($event->display_user->join_date)) / 86400) + 1;
+        $i_days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
         $images_link = search_link(["user=$u_name"]);
         $event->add_stats("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
@@ -226,60 +226,51 @@ class ImageIO extends Extension
     {
         global $config, $page;
 
-        $image = Image::by_id($image_id);
-        if (!is_null($image)) {
-            if ($type == "thumb") {
-                $mime = $config->get_string(ImageConfig::THUMB_MIME);
-                $file = $image->get_thumb_filename();
-            } else {
-                $mime = $image->get_mime();
-                $file = $image->get_image_filename();
-            }
-            if (!file_exists($file)) {
-                http_response_code(404);
-                die();
-            }
+        $image = Image::by_id_ex($image_id);
 
-            $page->set_mime($mime);
-
-
-            if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
-                $if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
-            } else {
-                $if_modified_since = "";
-            }
-            $gmdate_mod = gmdate('D, d M Y H:i:s', false_throws(filemtime($file))) . ' GMT';
-
-            if ($if_modified_since == $gmdate_mod) {
-                $page->set_mode(PageMode::DATA);
-                $page->set_code(304);
-                $page->set_data("");
-            } else {
-                $page->set_mode(PageMode::FILE);
-                $page->add_http_header("Last-Modified: $gmdate_mod");
-                if ($type != "thumb") {
-                    $page->set_filename($image->get_nice_image_name(), 'inline');
-                }
-
-                $page->set_file($file);
-
-                if ($config->get_int(ImageConfig::EXPIRES)) {
-                    $expires = date(DATE_RFC1123, time() + $config->get_int(ImageConfig::EXPIRES));
-                } else {
-                    $expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
-                }
-                $page->add_http_header('Expires: ' . $expires);
-            }
-
-            send_event(new ImageDownloadingEvent($image, $file, $mime, $params));
+        if ($type == "thumb") {
+            $mime = $config->get_string(ImageConfig::THUMB_MIME);
+            $file = $image->get_thumb_filename();
         } else {
-            $page->set_title("Not Found");
-            $page->set_heading("Not Found");
-            $page->add_block(new Block("Navigation", "<a href='" . make_link() . "'>Index</a>", "left", 0));
-            $page->add_block(new Block(
-                "Post not in database",
-                "The requested image was not found in the database"
-            ));
+            $mime = $image->get_mime();
+            $file = $image->get_image_filename();
         }
+        if (!file_exists($file)) {
+            http_response_code(404);
+            die();
+        }
+
+        $page->set_mime($mime);
+
+
+        if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+            $if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+        } else {
+            $if_modified_since = "";
+        }
+        $gmdate_mod = gmdate('D, d M Y H:i:s', \Safe\filemtime($file)) . ' GMT';
+
+        if ($if_modified_since == $gmdate_mod) {
+            $page->set_mode(PageMode::DATA);
+            $page->set_code(304);
+            $page->set_data("");
+        } else {
+            $page->set_mode(PageMode::FILE);
+            $page->add_http_header("Last-Modified: $gmdate_mod");
+            if ($type != "thumb") {
+                $page->set_filename($image->get_nice_image_name(), 'inline');
+            }
+
+            $page->set_file($file);
+
+            if ($config->get_int(ImageConfig::EXPIRES)) {
+                $expires = date(DATE_RFC1123, time() + $config->get_int(ImageConfig::EXPIRES));
+            } else {
+                $expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
+            }
+            $page->add_http_header('Expires: ' . $expires);
+        }
+
+        send_event(new ImageDownloadingEvent($image, $file, $mime, $params));
     }
 }

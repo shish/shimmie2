@@ -69,7 +69,7 @@ class _SafeOuroborosImage
         // meta
         $this->change = intval($img->id); //DaFug is this even supposed to do? ChangeID?
         // Should be JSON specific, just strip this when converting to XML
-        $this->created_at = ['n' => 123456789, 's' => strtotime_ex($img->posted), 'json_class' => 'Time'];
+        $this->created_at = ['n' => 123456789, 's' => \Safe\strtotime($img->posted), 'json_class' => 'Time'];
         $this->id = intval($img->id);
         $this->parent_id = null;
 
@@ -409,7 +409,7 @@ class OuroborosAPI extends Extension
     protected function postShow(int $id = null): void
     {
         if (!is_null($id)) {
-            $post = new _SafeOuroborosImage(Image::by_id($id));
+            $post = new _SafeOuroborosImage(Image::by_id_ex($id));
             $this->sendData('post', [$post]);
         } else {
             $this->sendResponse(424, 'ID is mandatory');
@@ -514,7 +514,7 @@ class OuroborosAPI extends Extension
                 $response['location'] = $response['reason'];
                 unset($response['reason']);
             }
-            $response = json_encode_ex($response);
+            $response = \Safe\json_encode($response);
         } elseif ($this->type == 'xml') {
             // Seriously, XML sucks...
             $xml = new \XMLWriter();
@@ -543,7 +543,7 @@ class OuroborosAPI extends Extension
         global $page;
         $response = '';
         if ($this->type == 'json') {
-            $response = json_encode_ex($data);
+            $response = \Safe\json_encode($data);
         } elseif ($this->type == 'xml') {
             $xml = new \XMLWriter();
             $xml->openMemory();
@@ -572,7 +572,7 @@ class OuroborosAPI extends Extension
     private function createItemXML(\XMLWriter $xml, string $type, _SafeOuroborosTag|_SafeOuroborosImage $item): void
     {
         $xml->startElement($type);
-        foreach (json_decode(json_encode_ex($item)) as $key => $val) {
+        foreach (json_decode(\Safe\json_encode($item)) as $key => $val) {
             if ($key == 'created_at' && $type == 'post') {
                 $xml->writeAttribute($key, $val['s']);
             } else {

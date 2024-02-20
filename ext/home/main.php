@@ -28,7 +28,7 @@ class Home extends Extension
         $counters = [];
         $counters["None"] = "none";
         $counters["Text-only"] = "text-only";
-        foreach (glob_ex("ext/home/counters/*") as $counter_dirname) {
+        foreach (\Safe\glob("ext/home/counters/*") as $counter_dirname) {
             $name = str_replace("ext/home/counters/", "", $counter_dirname);
             $counters[ucfirst($name)] = $name;
         }

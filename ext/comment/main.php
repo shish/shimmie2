@@ -320,7 +320,7 @@ class CommentList extends Extension
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        $i_days_old = ((time() - strtotime_ex($event->display_user->join_date)) / 86400) + 1;
+        $i_days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
         $i_comment_count = Comment::count_comments_by_user($event->display_user);
         $h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
         $event->add_stats("Comments made: $i_comment_count, $h_comment_rate per day");
@@ -597,7 +597,7 @@ class CommentList extends Extension
         }
 
         // advanced sanity checks
-        elseif (strlen($comment) / strlen(false_throws(gzcompress($comment))) > 10) {
+        elseif (strlen($comment) / strlen(\Safe\gzcompress($comment)) > 10) {
             throw new CommentPostingException("Comment too repetitive~");
         } elseif ($user->is_anonymous() && ($_POST['hash'] != $this->get_hash())) {
             $page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");

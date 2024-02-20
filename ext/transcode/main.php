@@ -209,17 +209,13 @@ class TranscodeImage extends Extension
 
         if ($event->page_matches("transcode/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
-            $image_obj = Image::by_id($image_id);
-            if (is_null($image_obj)) {
-                $this->theme->display_error(404, "Post not found", "No image in the database has the ID #$image_id");
-            } else {
-                try {
-                    $this->transcode_and_replace_image($image_obj, $event->req_POST('transcode_mime'));
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("post/view/".$image_id));
-                } catch (ImageTranscodeException $e) {
-                    $this->theme->display_transcode_error($page, "Error Transcoding", $e->getMessage());
-                }
+            $image_obj = Image::by_id_ex($image_id);
+            try {
+                $this->transcode_and_replace_image($image_obj, $event->req_POST('transcode_mime'));
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("post/view/".$image_id));
+            } catch (ImageTranscodeException $e) {
+                $this->theme->display_transcode_error($page, "Error Transcoding", $e->getMessage());
             }
         }
     }
@@ -382,7 +378,7 @@ class TranscodeImage extends Extension
 
         $tmp_name = shm_tempnam("transcode");
 
-        $image = false_throws(imagecreatefromstring(file_get_contents_ex($source_name)));
+        $image = false_throws(imagecreatefromstring(\Safe\file_get_contents($source_name)));
         try {
             $result = false;
             switch ($target_mime) {

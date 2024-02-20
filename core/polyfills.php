@@ -579,8 +579,8 @@ function parse_to_milliseconds(string $input): int
  */
 function autodate(string $date, bool $html = true): string
 {
-    $cpu = date('c', strtotime_ex($date));
-    $hum = date('F j, Y; H:i', strtotime_ex($date));
+    $cpu = date('c', \Safe\strtotime($date));
+    $hum = date('F j, Y; H:i', \Safe\strtotime($date));
     return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
 }
 
@@ -677,7 +677,7 @@ function validate_input(array $inputs): array
         } elseif (in_array('bool', $flags)) {
             $outputs[$key] = bool_escape($value);
         } elseif (in_array('date', $flags)) {
-            $outputs[$key] = date("Y-m-d H:i:s", strtotime_ex(trim($value)));
+            $outputs[$key] = date("Y-m-d H:i:s", \Safe\strtotime(trim($value)));
         } elseif (in_array('string', $flags)) {
             if (in_array('trim', $flags)) {
                 $value = trim($value);

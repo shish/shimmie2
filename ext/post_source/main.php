@@ -73,7 +73,7 @@ class PostSource extends Extension
     {
         if (preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
             $source = ($matches[1] !== "none" ? $matches[1] : null);
-            send_event(new SourceSetEvent(Image::by_id($event->image_id), $source));
+            send_event(new SourceSetEvent(Image::by_id_ex($event->image_id), $source));
         }
     }
 
