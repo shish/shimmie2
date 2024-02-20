@@ -104,7 +104,7 @@ class CustomCommentListTheme extends CommentListTheme
         $h_name = html_escape($comment->owner_name);
         //$h_poster_ip = html_escape($comment->poster_ip);
         if ($trim) {
-            $h_comment = strlen($tfe->stripped) > 52 ? substr($tfe->stripped, 0, 50)."..." : $tfe->stripped;
+            $h_comment = truncate($tfe->stripped, 50);
         } else {
             $h_comment = $tfe->formatted;
         }

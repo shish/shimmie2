@@ -431,25 +431,26 @@ function clamp(int $val, ?int $min = null, ?int $max = null): int
     return $val;
 }
 
-/**
- * Original PHP code by Chirp Internet: www.chirp.com.au
- * Please acknowledge use of this code by including this header.
- */
 function truncate(string $string, int $limit, string $break = " ", string $pad = "..."): string
 {
-    // return with no change if string is shorter than $limit
-    if (strlen($string) <= $limit) {
+    $e = "UTF-8";
+    $strlen = mb_strlen($string, $e);
+    $padlen = mb_strlen($pad, $e);
+    assert($limit > $padlen, "Can't truncate to a length less than the padding length");
+
+    // if string is shorter or equal to limit, leave it alone
+    if($strlen <= $limit) {
         return $string;
     }
 
-    // is $break present between $limit and the end of the string?
-    if (false !== ($breakpoint = strpos($string, $break, $limit))) {
-        if ($breakpoint < strlen($string) - 1) {
-            $string = substr($string, 0, $breakpoint) . $pad;
-        }
+    // if there is a break point between 0 and $limit, truncate to that
+    $breakpoint = mb_strrpos($string, $break, -($strlen - $limit + $padlen), $e);
+    if ($breakpoint !== false) {
+        return mb_substr($string, 0, $breakpoint, $e) . $pad;
     }
 
-    return $string;
+    // if there is no break point, cut mid-word
+    return mb_substr($string, 0, $limit - $padlen, $e) . $pad;
 }
 
 /**

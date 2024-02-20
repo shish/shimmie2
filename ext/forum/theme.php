@@ -226,13 +226,7 @@ class ForumTheme extends Themelet
 
         foreach ($threads as $thread) {
             $titleSubString = $config->get_int('forumTitleSubString');
-
-            if ($titleSubString < strlen($thread["title"])) {
-                $title = substr($thread["title"], 0, $titleSubString);
-                $title = $title."...";
-            } else {
-                $title = $thread["title"];
-            }
+            $title = truncate($thread["title"], $titleSubString);
 
             $tbody->appendChild(
                 TR(
