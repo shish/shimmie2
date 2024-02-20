@@ -103,7 +103,11 @@ class CustomCommentListTheme extends CommentListTheme
         //$i_uid = $comment->owner_id;
         $h_name = html_escape($comment->owner_name);
         //$h_poster_ip = html_escape($comment->poster_ip);
-        $h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
+        if ($trim) {
+            $h_comment = strlen($tfe->stripped) > 52 ? substr($tfe->stripped, 0, 50)."..." : $tfe->stripped;
+        } else {
+            $h_comment = $tfe->formatted;
+        }
         $i_comment_id = $comment->comment_id;
         $i_image_id = $comment->image_id;
         $h_posted = autodate($comment->posted);

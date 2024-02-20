@@ -209,7 +209,11 @@ class CommentListTheme extends Themelet
         $i_uid = $comment->owner_id;
         $h_name = html_escape($comment->owner_name);
         $h_timestamp = autodate($comment->posted);
-        $h_comment = ($trim ? truncate($tfe->stripped, 50) : $tfe->formatted);
+        if ($trim) {
+            $h_comment = strlen($tfe->stripped) > 52 ? substr($tfe->stripped, 0, 50)."..." : $tfe->stripped;
+        } else {
+            $h_comment = $tfe->formatted;
+        }
         $i_comment_id = $comment->comment_id;
         $i_image_id = $comment->image_id;
 
