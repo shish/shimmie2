@@ -203,8 +203,9 @@ and of course start organising your images :-)
             //
             BR(),
             P('Wildcard searches are possible as well using * for "any one, more, or none" and ? for "any one".'),
-            SHM_COMMAND_EXAMPLE("tagn*", 'Returns posts that are tagged with "tagname", "tagnot", or anything else that starts with "tagn".'),
-            SHM_COMMAND_EXAMPLE("tagn?me", 'Returns posts that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", has one character, and ends with "me".'),
+            SHM_COMMAND_EXAMPLE("tag*", 'Returns posts that are tagged with "tag", "tags", "tagme", "tagname", or anything else that starts with "tag".'),
+            SHM_COMMAND_EXAMPLE("*name", 'Returns posts that are tagged with "name", "tagname", "othertagname" or anything else that ends with "name".'),
+            SHM_COMMAND_EXAMPLE("tagn?me", 'Returns posts that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", then has one character, and ends with "me".'),
             //
             //
             //
