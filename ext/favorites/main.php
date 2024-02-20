@@ -93,12 +93,13 @@ class Favorites extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
+        $action = $event->get_param("favorite_action");
         if (
             $user->can(Permissions::EDIT_FAVOURITES) &&
-            in_array('favorite_action', $event->params) &&
-            (($event->params['favorite_action'] == "set") || ($event->params['favorite_action'] == "unset"))
+            !is_null($action) &&
+            ($action == "set" || $action == "unset")
         ) {
-            send_event(new FavoriteSetEvent($event->image->id, $user, ($event->params['favorite_action'] == "set")));
+            send_event(new FavoriteSetEvent($event->image->id, $user, $action == "set"));
         }
     }
 

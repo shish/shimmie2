@@ -31,7 +31,7 @@ class MetadataInput
         global $user;
         $image = Image::by_id_ex($post_id);
         if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            send_event(new ImageInfoSetEvent($image, [
+            send_event(new ImageInfoSetEvent($image, 0, [
                 'tags' => $metadata->tags,
                 'source' => $metadata->source,
             ]));
@@ -176,9 +176,8 @@ class GraphQL extends Extension
         if (!empty($_POST["source$n"])) {
             $source = $_POST["source$n"];
         }
-        $event = $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source) {
-            return send_event(new DataUploadEvent($tmpname, [
-                'filename' => $filename,
+        $event = $database->with_savepoint(function () use ($tmpname, $filename, $n, $tags, $source) {
+            return send_event(new DataUploadEvent($tmpname, $filename, $n, [
                 'tags' => Tag::explode($tags),
                 'source' => $source,
             ]));

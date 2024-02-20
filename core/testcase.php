@@ -257,10 +257,9 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
         // post things
         protected function post_image(string $filename, string $tags): int
         {
-            $dae = send_event(new DataUploadEvent($filename, [
+            $dae = send_event(new DataUploadEvent($filename, basename($filename), 0, [
                 "filename" => $filename,
-                "tags" => Tag::explode($tags),
-                "source" => null,
+                "tags" => $tags,
             ]));
             if(count($dae->images) == 0) {
                 throw new \Exception("Upload failed :(");

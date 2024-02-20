@@ -13,7 +13,7 @@ class PostOwnerTest extends ShimmiePHPUnitTestCase
         $image = Image::by_id_ex($image_id);
 
         $this->log_in_as_admin();
-        send_event(new ImageInfoSetEvent($image, ["owner" => self::$admin_name]));
+        send_event(new ImageInfoSetEvent($image, 0, ["owner" => self::$admin_name]));
 
         $this->log_in_as_user();
         $this->get_page("post/view/$image_id");

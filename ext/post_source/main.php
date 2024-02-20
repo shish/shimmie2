@@ -32,19 +32,16 @@ class PostSource extends Extension
         }
     }
 
-    public function onImageAddition(ImageAdditionEvent $event): void
-    {
-        if(!empty($event->metadata['source'])) {
-            send_event(new SourceSetEvent($event->image, $event->metadata['source']));
-        }
-    }
-
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $page, $user;
-        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && isset($event->params['source'])) {
+        global $config, $page, $user;
+        $source = $event->get_param('source');
+        if(is_null($source) && $config->get_bool(UploadConfig::TLSOURCE)) {
+            $source = $event->get_param('url');
+        }
+        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && !is_null($source)) {
             if (isset($event->params['tags']) ? !preg_match('/source[=|:]/', $event->params["tags"]) : true) {
-                send_event(new SourceSetEvent($event->image, $event->params['source']));
+                send_event(new SourceSetEvent($event->image, $source));
             }
         }
     }

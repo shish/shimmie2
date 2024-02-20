@@ -22,13 +22,6 @@ class PostLock extends Extension
     /** @var PostLockTheme */
     protected Themelet $theme;
 
-    public function onImageAddition(ImageAdditionEvent $event): void
-    {
-        if (!empty($event->metadata['locked'])) {
-            send_event(new LockSetEvent($event->image, $event->metadata['locked']));
-        }
-    }
-
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $page, $user;
@@ -36,7 +29,7 @@ class PostLock extends Extension
             throw new PermissionDenied("Error: This image is locked and cannot be edited.");
         }
         if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            $locked = isset($event->params['locked']) && $event->params['locked'] == "on";
+            $locked = $event->get_param('locked') == "on";
             send_event(new LockSetEvent($event->image, $locked));
         }
     }

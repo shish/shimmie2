@@ -158,13 +158,6 @@ class Ratings extends Extension
         $sb->end_table();
     }
 
-    public function onImageAddition(ImageAdditionEvent $event): void
-    {
-        if(!empty($event->metadata['rating'])) {
-            send_event(new RatingSetEvent($event->image, $event->metadata['rating']));
-        }
-    }
-
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
@@ -216,8 +209,8 @@ class Ratings extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_RATING) && isset($event->params["rating"])) {
-            $rating = $event->params["rating"];
+        $rating = $event->get_param('rating');
+        if ($user->can(Permissions::EDIT_IMAGE_RATING) && !is_null($rating)) {
             if (Ratings::rating_is_valid($rating)) {
                 send_event(new RatingSetEvent($event->image, $rating));
             }

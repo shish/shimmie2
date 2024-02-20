@@ -209,6 +209,22 @@ function format_text(string $string): string
 }
 
 /**
+ * Take a map of string to string-or-array, return only the string-to-string subset
+ *
+ * @param array<string, string|string[]> $map
+ * @return array<string, string>
+ */
+function only_strings(array $map): array
+{
+    $out = [];
+    foreach ($map as $k => $v) {
+        if (is_string($v)) {
+            $out[$k] = $v;
+        }
+    }
+    return $out;
+}
+/**
  * Generates the path to a file under the data folder based on the file's hash.
  * This process creates subfolders based on octet pairs from the file's hash.
  * The calculated folder follows this pattern data/$base/octet_pairs/$hash
