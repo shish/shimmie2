@@ -26,8 +26,9 @@ class ArchiveFileHandler extends DataHandlerExtension
     {
         if ($this->supported_mime($event->mime)) {
             global $config, $page;
-            $tmp = sys_get_temp_dir();
-            $tmpdir = "$tmp/shimmie-archive-{$event->hash}";
+            $tmpdir = shm_tempnam("archive");
+            unlink($tmpdir);
+            mkdir($tmpdir, 0755, true);
             $cmd = $config->get_string('archive_extract_command');
             $cmd = str_replace('%f', $event->tmpname, $cmd);
             $cmd = str_replace('%d', $tmpdir, $cmd);
