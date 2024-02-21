@@ -8,8 +8,8 @@ chown('/app/data', 'shimmie');
 chgrp('/app/data', 'shimmie');
 
 // Look at docker environment variables
-$MAX_FILE_UPLOADS = getenv('MAX_FILE_UPLOADS') ?: "20";
-$UPLOAD_MAX_FILESIZE = getenv('UPLOAD_MAX_FILESIZE') ?: '20M';
+$MAX_FILE_UPLOADS = getenv('MAX_FILE_UPLOADS') ?: "100";
+$UPLOAD_MAX_FILESIZE = getenv('UPLOAD_MAX_FILESIZE') ?: '100M';
 $MAX_TOTAL_UPLOAD = ini_parse_quantity($UPLOAD_MAX_FILESIZE) * intval($MAX_FILE_UPLOADS);
 
 // Generate a config file for whatever web server we are using today
