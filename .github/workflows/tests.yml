@@ -130,6 +130,7 @@ jobs:
         php-version: ${{ matrix.php }}
         coverage: pcov
         extensions: mbstring
+        ini-file: development
     - name: Set up database
       run: ./tests/setup-db.sh "${{ matrix.database }}"
     - name: Check versions
