@@ -39,12 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	$("img.shm-main-image").click(function(e) {
 		switch(shm_cookie_get("ui-image-zoom")) {
-			case "full": zoom("width"); break;
+			case "full": zoom("both"); break;
 			default: zoom("full"); break;
 		}
 	});
 
 	if(shm_cookie_get("ui-image-zoom")) {
 		zoom(shm_cookie_get("ui-image-zoom"));
+	}
+	else {
+		zoom("both");
 	}
 });
