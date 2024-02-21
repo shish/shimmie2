@@ -48,10 +48,13 @@ function renderNotes() {
 		noteDiv.style.height = note.height * scale + 'px';
 		let text = document.createElement('div');
 		text.innerText = note.note;
-		noteDiv.addEventListener('click', (e) => {
-			noteBeingEdited = note.note_id;
-			renderNotes();
-		});
+		// only add listener if user has edit permissions
+		if (window.notes_edit) {
+			noteDiv.addEventListener('click', (e) => {
+				noteBeingEdited = note.note_id;
+				renderNotes();
+			});
+		}
 		noteDiv.appendChild(text);
 		notesContainer.appendChild(noteDiv);
 
