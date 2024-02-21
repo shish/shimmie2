@@ -44,7 +44,6 @@ class UserClass
     #[Field(type: "[Permission!]!")]
     public function permissions(): array
     {
-        global $_all_false;
         $perms = [];
         foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
             if ($this->can($v)) {
@@ -90,6 +89,7 @@ foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v)
 $_all_true[Permissions::HELLBANNED] = false;
 new UserClass("base", null, $_all_false);
 new UserClass("admin", null, $_all_true);
+unset($_all_true);
 unset($_all_false);
 
 // Ghost users can't do anything
