@@ -162,25 +162,7 @@ class Index extends Extension
         }
 
         $matches = [];
-        // check for tags first as tag based searches are more common.
-        if (preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $count = $matches[2];
-            $event->add_querylet(
-                new Querylet("EXISTS (
-				              SELECT 1
-				              FROM image_tags it
-				              LEFT JOIN tags t ON it.tag_id = t.id
-				              WHERE images.id = it.image_id
-				              GROUP BY image_id
-				              HAVING COUNT(*) $cmp $count
-				)")
-            );
-        } elseif (preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
-            $cmp = preg_replace('/^:/', '=', $matches[1]);
-            $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
-            $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
-        } elseif (preg_match("/^filesize([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+[kmg]?b?)$/i", $event->term, $matches)) {
+        if (preg_match("/^filesize([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+[kmg]?b?)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $val = parse_shorthand_int($matches[2]);
             $event->add_querylet(new Querylet("images.filesize $cmp :val{$event->id}", ["val{$event->id}" => $val]));
@@ -201,34 +183,11 @@ class Index extends Extension
         } elseif (preg_match("/^(filename|name)[=|:](.+)$/i", $event->term, $matches)) {
             $filename = strtolower($matches[2]);
             $event->add_querylet(new Querylet("lower(images.filename) LIKE :filename{$event->id}", ["filename{$event->id}" => "%$filename%"]));
-        } elseif (preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
-            $source = strtolower($matches[2]);
-
-            if (preg_match("/^(any|none)$/i", $source)) {
-                $not = ($source == "any" ? "NOT" : "");
-                $event->add_querylet(new Querylet("images.source IS $not NULL"));
-            } else {
-                $event->add_querylet(new Querylet('images.source LIKE :src', ["src" => "%$source%"]));
-            }
         } elseif (preg_match("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9-]*)$/i", $event->term, $matches)) {
             // TODO Make this able to search = without needing a time component.
             $cmp = ltrim($matches[1], ":") ?: "=";
             $val = $matches[2];
             $event->add_querylet(new Querylet("images.posted $cmp :posted{$event->id}", ["posted{$event->id}" => $val]));
-        } elseif (preg_match("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i", $event->term, $matches)) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
-            $event->add_querylet(new Querylet("width $cmp :width{$event->id} AND height $cmp :height{$event->id}", $args));
-        } elseif (preg_match("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("width $cmp :width{$event->id}", ["width{$event->id}" => int_escape($matches[2])]));
-        } elseif (preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("height $cmp :height{$event->id}", ["height{$event->id}" => int_escape($matches[2])]));
-        } elseif (preg_match("/^length([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(.+)$/i", $event->term, $matches)) {
-            $value = parse_to_milliseconds($matches[2]);
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("length $cmp :length{$event->id}", ["length{$event->id}" => $value]));
         } elseif (preg_match("/^order[=|:](id|width|height|length|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)) {
             $ord = strtolower($matches[1]);
             $default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";

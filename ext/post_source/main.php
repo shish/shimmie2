@@ -59,6 +59,30 @@ class PostSource extends Extension
         $event->add_part($this->theme->get_source_editor_html($event->image), 41);
     }
 
+    public function onSearchTermParse(SearchTermParseEvent $event): void
+    {
+        global $database;
+
+        if (is_null($event->term)) {
+            return;
+        }
+
+        if (preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $count = $matches[2];
+            $event->add_querylet(
+                new Querylet("EXISTS (
+				              SELECT 1
+				              FROM image_tags it
+				              LEFT JOIN tags t ON it.tag_id = t.id
+				              WHERE images.id = it.image_id
+				              GROUP BY image_id
+				              HAVING COUNT(*) $cmp $count
+				)")
+            );
+        }
+    }
+
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if (preg_match("/^source[=|:](.*)$/i", $event->term)) {
