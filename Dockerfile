@@ -22,9 +22,8 @@ RUN apt update && \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
     php${PHP_VERSION}-memcached \
-    curl imagemagick zip unzip unit unit-php gettext && \
+    curl imagemagick zip unzip unit unit-php && \
     rm -rf /var/lib/apt/lists/*
-RUN ln -sf /dev/stderr /var/log/unit.log
 
 # Install dev packages
 # Things which are only needed during development - Composer has 100MB of
@@ -68,10 +67,10 @@ FROM base AS run
 EXPOSE 8000
 # HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
 ARG BUILD_TIME=unknown BUILD_HASH=unknown
-ENV UID=1000 GID=1000 UPLOAD_MAX_FILESIZE=50M MAX_FILE_UPLOADS=100
+ENV UID=1000 GID=1000
 COPY --from=build /app /app
 WORKDIR /app
 RUN echo "_d('BUILD_TIME', '$BUILD_TIME');" >> core/sys_config.php && \
     echo "_d('BUILD_HASH', '$BUILD_HASH');" >> core/sys_config.php
 ENTRYPOINT ["/app/.docker/entrypoint.sh"]
-CMD ["unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
+CMD ["php", "/app/.docker/run.php"]

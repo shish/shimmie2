@@ -23,12 +23,10 @@
 	},
 
 	"updateContentCommand": "composer install",
-	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
+	"postCreateCommand": "php ./.docker/run.php",
 	"containerEnv": {
 		"UID": "2000",
 		"GID": "2000",
-		"UPLOAD_MAX_FILESIZE": "50M",
-		"MAX_FILE_UPLOADS": "100",
 		"INSTALL_DSN": "sqlite:data/shimmie.dev.sqlite"
 	},
 	"customizations": {
