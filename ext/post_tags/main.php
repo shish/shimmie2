@@ -145,6 +145,26 @@ class PostTags extends Extension
         }
     }
 
+    public function onSearchTermParse(SearchTermParseEvent $event): void
+    {
+        global $database;
+
+        if (is_null($event->term)) {
+            return;
+        }
+
+        if (preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
+            $source = strtolower($matches[2]);
+
+            if (preg_match("/^(any|none)$/i", $source)) {
+                $not = ($source == "any" ? "NOT" : "");
+                $event->add_querylet(new Querylet("images.source IS $not NULL"));
+            } else {
+                $event->add_querylet(new Querylet('images.source LIKE :src', ["src" => "%$source%"]));
+            }
+        }
+    }
+
     public function onTagSet(TagSetEvent $event): void
     {
         global $user;

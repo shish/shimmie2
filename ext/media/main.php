@@ -237,8 +237,6 @@ class Media extends Extension
         //        }
     }
 
-    public const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio)|(image)|(unknown))$/i";
-
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term)) {
@@ -246,13 +244,31 @@ class Media extends Extension
         }
 
         $matches = [];
-        if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
+        if (preg_match("/^content[=|:]((video)|(audio)|(image)|(unknown))$/i", $event->term, $matches)) {
             $field = $matches[1];
             if ($field === "unknown") {
                 $event->add_querylet(new Querylet("video IS NULL OR audio IS NULL OR image IS NULL"));
             } else {
                 $event->add_querylet(new Querylet("$field = :true", ["true" => true]));
             }
+        } elseif (preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
+            $cmp = preg_replace('/^:/', '=', $matches[1]);
+            $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
+            $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
+        } elseif (preg_match("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i", $event->term, $matches)) {
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
+            $event->add_querylet(new Querylet("width $cmp :width{$event->id} AND height $cmp :height{$event->id}", $args));
+        } elseif (preg_match("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $event->add_querylet(new Querylet("width $cmp :width{$event->id}", ["width{$event->id}" => int_escape($matches[2])]));
+        } elseif (preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $event->add_querylet(new Querylet("height $cmp :height{$event->id}", ["height{$event->id}" => int_escape($matches[2])]));
+        } elseif (preg_match("/^length([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(.+)$/i", $event->term, $matches)) {
+            $value = parse_to_milliseconds($matches[2]);
+            $cmp = ltrim($matches[1], ":") ?: "=";
+            $event->add_querylet(new Querylet("length $cmp :length{$event->id}", ["length{$event->id}" => $value]));
         }
     }
 
@@ -263,13 +279,6 @@ class Media extends Extension
             $block->header = "Media";
             $block->body = $this->theme->get_help_html();
             $event->add_block($block);
-        }
-    }
-
-    public function onTagTermCheck(TagTermCheckEvent $event): void
-    {
-        if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term)) {
-            $event->metatag = true;
         }
     }
 
