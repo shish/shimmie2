@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+require_once "core/urls.php";
+
 /**
  * Shimmie Installer
  *
@@ -126,13 +128,15 @@ function ask_questions(): void
     $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
     $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
 
+    $data_href = get_base_href();
+
     die_nicely(
         "Install Options",
         <<<EOD
     $warn_msg
     $err_msg
 
-    <form action="index.php" method="POST">
+    <form action="$data_href/index.php" method="POST">
 		<table class='form' style="margin: 1em auto;">
 			<tr>
 				<th>Type:</th>
