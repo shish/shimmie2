@@ -145,7 +145,3 @@ jobs:
         else
             vendor/bin/phpunit --configuration tests/phpunit.xml
         fi
-    - name: Upload coverage
-      if: matrix.php == '8.3'
-      run: |
-          vendor/bin/ocular code-coverage:upload --format=php-clover data/coverage.clover
