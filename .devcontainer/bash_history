@@ -1,0 +1,5 @@
+./vendor/bin/php-cs-fixer fix && ./vendor/bin/phpunit --config tests/phpunit.xml && ./vendor/bin/phpstan analyse --memory-limit 1G -c tests/phpstan.neon
+./vendor/bin/php-cs-fixer fix
+./vendor/bin/phpunit --config tests/phpunit.xml
+./vendor/bin/phpstan analyse --memory-limit 1G -c tests/phpstan.neon
+php ./.docker/run.php
