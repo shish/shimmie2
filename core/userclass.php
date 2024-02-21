@@ -116,7 +116,7 @@ new UserClass("user", "base", [
     Permissions::PERFORM_BULK_ACTIONS => true,
     Permissions::BULK_DOWNLOAD => true,
     Permissions::CHANGE_USER_SETTING => true,
-    Permissions::FORUM_CREATE_THREAD => true,
+    Permissions::FORUM_CREATE => true,
     Permissions::NOTES_CREATE => true,
     Permissions::NOTES_EDIT => true,
     Permissions::POOLS_CREATE => true,

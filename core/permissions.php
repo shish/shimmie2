@@ -120,7 +120,7 @@ abstract class Permissions
     public const BYPASS_IMAGE_APPROVAL = "bypass_image_approval";
 
     public const FORUM_ADMIN = "forum_admin";
-    public const FORUM_CREATE_THREAD = "forum_create_thread";
+    public const FORUM_CREATE = "forum_create";
 
     public const NOTES_ADMIN = "notes_admin";
     public const NOTES_CREATE = "notes_create";
