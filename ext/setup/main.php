@@ -277,7 +277,7 @@ class SetupBlock extends Block
      */
     public function add_multichoice_option(string $name, array $options, string $label = null, bool $table_row = false): void
     {
-        $current = $this->config->get_array($name);
+        $current = $this->config->get_array($name, []);
 
         $html = "<select id='$name' name='_config_{$name}[]' multiple size='5'>";
         foreach ($options as $optname => $optval) {

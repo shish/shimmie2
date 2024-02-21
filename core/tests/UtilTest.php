@@ -163,4 +163,35 @@ class UtilTest extends TestCase
             path_to_tags("/category:/tag/baz.jpg")
         );
     }
+
+    public function test_contact_link(): void
+    {
+        $this->assertEquals(
+            "mailto:asdf@example.com",
+            contact_link("asdf@example.com")
+        );
+        $this->assertEquals(
+            "http://example.com",
+            contact_link("http://example.com")
+        );
+        $this->assertEquals(
+            "https://foo.com/bar",
+            contact_link("foo.com/bar")
+        );
+        $this->assertEquals(
+            "john",
+            contact_link("john")
+        );
+    }
+
+    public function test_get_user(): void
+    {
+        // TODO: HTTP_AUTHORIZATION
+        // TODO: cookie user + session
+        // fallback to anonymous
+        $this->assertEquals(
+            "Anonymous",
+            _get_user()->name
+        );
+    }
 }
