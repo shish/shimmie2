@@ -61,7 +61,7 @@ class Home extends Extension
                 $length = strlen($strtotal);
                 for ($n = 0; $n < $length; $n++) {
                     $cur = $strtotal[$n];
-                    $counter_text .= "<img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />";
+                    $counter_text .= "<img class='counter-img' alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />";
                 }
             }
         }
