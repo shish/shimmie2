@@ -12,6 +12,7 @@ class UtilTest extends TestCase
 {
     public function test_get_theme(): void
     {
+        assert(false);
         $this->assertEquals("default", get_theme());
     }
 
