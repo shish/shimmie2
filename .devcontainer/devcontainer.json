@@ -23,7 +23,7 @@
 	},
 
 	"updateContentCommand": "composer install",
-	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock",
+	"postCreateCommand": "./.docker/entrypoint.sh unitd --no-daemon --control unix:/var/run/control.unit.sock --log /dev/stderr",
 	"containerEnv": {
 		"UID": "2000",
 		"GID": "2000",
