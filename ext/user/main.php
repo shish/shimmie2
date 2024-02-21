@@ -144,7 +144,7 @@ class UserPage extends Extension
         $config->set_default_string("avatar_gravatar_default", "");
         $config->set_default_string("avatar_gravatar_rating", "g");
         $config->set_default_bool("login_tac_bbcode", true);
-        $config->set_default_bool("user_email_required", true);
+        $config->set_default_bool("user_email_required", false);
     }
 
     public function onUserLogin(UserLoginEvent $event): void
