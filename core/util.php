@@ -21,10 +21,10 @@ function get_theme(): string
     return $theme;
 }
 
-function contact_link(): ?string
+function contact_link(?string $contact=null): ?string
 {
     global $config;
-    $text = $config->get_string('contact_link');
+    $text = $contact ?? $config->get_string('contact_link');
     if (is_null($text)) {
         return null;
     }
@@ -42,7 +42,7 @@ function contact_link(): ?string
     }
 
     if (str_contains($text, "/")) {
-        return "http://$text";
+        return "https://$text";
     }
 
     return $text;
