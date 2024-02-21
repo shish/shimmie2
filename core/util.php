@@ -151,6 +151,9 @@ function check_im_version(): int
 function is_trusted_proxy(): bool
 {
     $ra = $_SERVER['REMOTE_ADDR'] ?? "0.0.0.0";
+    if(!defined("TRUSTED_PROXIES")) {
+        return false;
+    }
     // @phpstan-ignore-next-line - TRUSTED_PROXIES is defined in config
     foreach(TRUSTED_PROXIES as $proxy) {
         if(ip_in_range($ra, $proxy)) {
