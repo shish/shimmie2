@@ -23,7 +23,7 @@
 	},
 
 	"updateContentCommand": "composer install",
-	"postCreateCommand": "php ./.docker/run.php",
+	"postCreateCommand": "./.docker/entrypoint.sh php ./.docker/run.php",
 	"containerEnv": {
 		"UID": "2000",
 		"GID": "2000",
