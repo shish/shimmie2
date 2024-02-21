@@ -119,6 +119,7 @@ new UserClass("user", "base", [
     Permissions::FORUM_CREATE => true,
     Permissions::NOTES_CREATE => true,
     Permissions::NOTES_EDIT => true,
+    Permissions::NOTES_REQUEST => true,
     Permissions::POOLS_CREATE => true,
     Permissions::POOLS_UPDATE => true,
 ]);
