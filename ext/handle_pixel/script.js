@@ -38,9 +38,17 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	$("img.shm-main-image").click(function(e) {
-		switch(shm_cookie_get("ui-image-zoom")) {
-			case "full": zoom("both"); break;
-			default: zoom("full"); break;
+		var val = $(".shm-zoomer")[0].value;
+		var cookie = shm_cookie_get("ui-image-zoom");
+
+		if (val == "full" && cookie == "full"){
+			zoom("both", false);
+		}
+		else if (val != "full"){
+			zoom("full", false);
+		}
+		else {
+			zoom(cookie, false);
 		}
 	});
 
