@@ -156,6 +156,9 @@ function is_trusted_proxy(): bool
     }
     // @phpstan-ignore-next-line - TRUSTED_PROXIES is defined in config
     foreach(TRUSTED_PROXIES as $proxy) {
+        if($ra === $proxy) { // check for "unix:" before checking IPs
+            return true;
+        }
         if(ip_in_range($ra, $proxy)) {
             return true;
         }
@@ -169,6 +172,10 @@ function is_trusted_proxy(): bool
 function get_real_ip(): string
 {
     $ip = $_SERVER['REMOTE_ADDR'];
+
+    if($ip == "unix:") {
+        $ip = "0.0.0.0";
+    }
 
     if(is_trusted_proxy()) {
         if (isset($_SERVER['HTTP_X_REAL_IP'])) {
