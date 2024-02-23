@@ -1,0 +1,4 @@
+#filter-list{padding:revert; text-align:left;}
+.thumb.filtered{display:unset}
+.thumb.filtered.filtered-active{display:none;}
+.filter-inactive,.filter-inactive:hover{text-decoration: line-through;}
