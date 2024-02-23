@@ -87,6 +87,10 @@ class CustomCommentListTheme extends CommentListTheme
         } else {
             $h_comment = $tfe->formatted;
         }
+        $h_comment = preg_replace("/(^|>)(&gt;[^<\n]*)(<|\n|$)/", '${1}<span class=\'greentext\'>${2}</span>${3}', $h_comment);
+        // handles discrepency in comment page and homepage
+        $h_comment = str_replace("<br>", "", $h_comment);
+        $h_comment = str_replace("\n", "<br>", $h_comment);
         $i_comment_id = $comment->comment_id;
         $i_image_id = $comment->image_id;
 
