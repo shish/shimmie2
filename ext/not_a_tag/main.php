@@ -109,7 +109,7 @@ class NotATag extends Extension
         global $user;
         if ($event->parent === "tags") {
             if ($user->can(Permissions::BAN_IMAGE)) {
-                $event->add_nav_link("untags", new Link('untag/list/1'), "UnTags");
+                $event->add_nav_link("untags", new Link('untag/list'), "UnTags");
             }
         }
     }
@@ -118,7 +118,7 @@ class NotATag extends Extension
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
-            $event->add_link("UnTags", make_link("untag/list/1"));
+            $event->add_link("UnTags", make_link("untag/list"));
         }
     }
 
@@ -126,32 +126,30 @@ class NotATag extends Extension
     {
         global $database, $page, $user;
 
-        if ($event->page_matches("untag", permission: Permissions::BAN_IMAGE)) {
-            if ($event->page_matches("untag/add", method: "POST")) {
-                $input = validate_input(["c_tag" => "string", "c_redirect" => "string"]);
-                $database->execute(
-                    "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
-                    ["tag" => $input['c_tag'], "redirect" => $input['c_redirect']]
-                );
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(referer_or(make_link()));
-            }
-            if ($event->page_matches("untag/remove", method: "POST")) {
-                $input = validate_input(["d_tag" => "string"]);
-                $database->execute(
-                    "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",
-                    ["tag" => $input['d_tag']]
-                );
-                $page->flash("Post ban removed");
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(referer_or(make_link()));
-            }
-            if ($event->page_matches("untag/list")) {
-                $t = new NotATagTable($database->raw_db());
-                $t->token = $user->get_auth_token();
-                $t->inputs = $event->GET;
-                $this->theme->display_crud("UnTags", $t->table($t->query()), $t->paginator());
-            }
+        if ($event->page_matches("untag/add", method: "POST", permission: Permissions::BAN_IMAGE)) {
+            $input = validate_input(["c_tag" => "string", "c_redirect" => "string"]);
+            $database->execute(
+                "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
+                ["tag" => $input['c_tag'], "redirect" => $input['c_redirect']]
+            );
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(referer_or(make_link()));
+        }
+        if ($event->page_matches("untag/remove", method: "POST", permission: Permissions::BAN_IMAGE)) {
+            $input = validate_input(["d_tag" => "string"]);
+            $database->execute(
+                "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",
+                ["tag" => $input['d_tag']]
+            );
+            $page->flash("Post ban removed");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(referer_or(make_link()));
+        }
+        if ($event->page_matches("untag/list")) {
+            $t = new NotATagTable($database->raw_db());
+            $t->token = $user->get_auth_token();
+            $t->inputs = $event->GET;
+            $this->theme->display_crud("UnTags", $t->table($t->query()), $t->paginator());
         }
     }
 }
