@@ -141,6 +141,7 @@ class PostTags extends Extension
                 } else {
                     $page->flash($e->getMessage());
                 }
+                throw $e;
             }
         }
     }

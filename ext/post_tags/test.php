@@ -42,8 +42,8 @@ class PostTagsTest extends ShimmiePHPUnitTestCase
     public function testTagEdit_tooLong(): void
     {
         $this->log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", str_repeat("a", 500));
-        $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: tagme");
+        $this->assertException(TagSetException::class, function () {
+            $this->post_image("tests/pbx_screenshot.jpg", str_repeat("a", 500));
+        });
     }
 }
