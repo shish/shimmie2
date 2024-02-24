@@ -160,3 +160,6 @@ TABLE.tag_list>TBODY>TR>TD:after {
 .thumb {
 	margin: 16px;
 }
+.greentext {
+	color: green;
+}
