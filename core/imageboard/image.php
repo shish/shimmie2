@@ -465,15 +465,6 @@ class Image implements \ArrayAccess
     }
 
     /**
-     * Get the original filename.
-     */
-    #[Field(name: "filename")]
-    public function get_filename(): string
-    {
-        return $this->filename;
-    }
-
-    /**
      * Get the image's extension.
      */
     #[Field(name: "ext")]
