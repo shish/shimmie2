@@ -6,6 +6,21 @@ namespace Shimmie2;
 
 use GQLA\Query;
 
+/**
+ * A small chunk of SQL code + parameters, to be used in a larger query
+ *
+ * eg
+ *
+ * $q = new Querylet("SELECT * FROM images");
+ * $q->append(new Querylet(" WHERE id = :id", ["id" => 123]));
+ * $q->append(new Querylet(" AND rating = :rating", ["rating" => "safe"]));
+ * $q->append(new Querylet(" ORDER BY id DESC"));
+ *
+ * becomes
+ *
+ * SELECT * FROM images WHERE id = :id AND rating = :rating ORDER BY id DESC
+ * ["id" => 123, "rating" => "safe"]
+ */
 class Querylet
 {
     /**
@@ -25,6 +40,9 @@ class Querylet
     }
 }
 
+/**
+ * When somebody has searched for a tag, "cat", "cute", "-angry", etc
+ */
 class TagCondition
 {
     public function __construct(
@@ -34,6 +52,10 @@ class TagCondition
     }
 }
 
+/**
+ * When somebody has searched for a specific image property, like "rating:safe",
+ * "id:123", "width:100", etc
+ */
 class ImgCondition
 {
     public function __construct(
@@ -45,10 +67,19 @@ class ImgCondition
 
 class Search
 {
-    /** @var list<string> */
+    /**
+     * The search code is dark and full of horrors, and it's not always clear
+     * what's going on. This is a list of the steps that the search code took
+     * to find the images that it returned.
+     *
+     * @var list<string>
+     */
     public static array $_search_path = [];
 
     /**
+     * Build a search query for a given set of tags and return
+     * the results as a PDOStatement (raw SQL rows)
+     *
      * @param list<string> $tags
      */
     private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): \FFSPHP\PDOStatement
@@ -203,10 +234,13 @@ class Search
     /**
      * Turn a human input string into a an abstract search query
      *
+     * (This is only public for testing purposes, nobody should be calling this
+     * directly from outside this class)
+     *
      * @param string[] $terms
      * @return array{0: TagCondition[], 1: ImgCondition[], 2: string}
      */
-    private static function terms_to_conditions(array $terms): array
+    public static function terms_to_conditions(array $terms): array
     {
         global $config;
 
@@ -234,10 +268,13 @@ class Search
     /**
      * Turn an abstract search query into an SQL Querylet
      *
+     * (This is only public for testing purposes, nobody should be calling this
+     * directly from outside this class)
+     *
      * @param TagCondition[] $tag_conditions
      * @param ImgCondition[] $img_conditions
      */
-    private static function build_search_querylet(
+    public static function build_search_querylet(
         array $tag_conditions,
         array $img_conditions,
         ?string $order = null,

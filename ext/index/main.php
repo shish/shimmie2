@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 require_once "config.php";
@@ -149,6 +150,46 @@ class Index extends Extension
                 foreach ($items as $item) {
                     $output->writeln($item->hash);
                 }
+                return Command::SUCCESS;
+            });
+        $event->app->register('debug:search')
+            ->addArgument('query', InputArgument::REQUIRED)
+            ->addOption('count', null, InputOption::VALUE_NONE, 'Generate a count-only query')
+            ->addOption('page', null, InputOption::VALUE_REQUIRED, 'Page number', default: 1)
+            ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Number of results per page', default: 25)
+            ->setDescription('Show the SQL generated for a given search query')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $search = Tag::explode($input->getArgument('query'), false);
+                $page = $input->getOption('page');
+                $limit = $input->getOption('limit');
+                $count = $input->getOption('count');
+
+                [$tag_conditions, $img_conditions, $order] = Search::terms_to_conditions($search);
+                if($count) {
+                    $order = null;
+                    $page = null;
+                    $limit = null;
+                }
+
+                $q = Search::build_search_querylet(
+                    $tag_conditions,
+                    $img_conditions,
+                    $order,
+                    $limit,
+                    (int)(($page - 1) * $limit),
+                );
+
+                $sql_str = $q->sql;
+                $sql_str = preg_replace("/\s+/", " ", $sql_str);
+                foreach($q->variables as $key => $val) {
+                    if(is_string($val)) {
+                        $sql_str = str_replace(":$key", "'$val'", $sql_str);
+                    } else {
+                        $sql_str = str_replace(":$key", (string)$val, $sql_str);
+                    }
+                }
+                $output->writeln(trim($sql_str));
+
                 return Command::SUCCESS;
             });
     }
