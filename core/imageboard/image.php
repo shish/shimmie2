@@ -130,7 +130,9 @@ class Image implements \ArrayAccess
     public function offsetExists(mixed $offset): bool
     {
         assert(is_string($offset));
-        return array_key_exists($offset, static::$prop_types);
+        // property_exists is a workaround for
+        // https://github.com/webonyx/graphql-php/pull/1531
+        return array_key_exists($offset, static::$prop_types) || property_exists($this, $offset);
     }
     public function offsetGet(mixed $offset): mixed
     {
@@ -139,7 +141,9 @@ class Image implements \ArrayAccess
             $known = implode(", ", array_keys(static::$prop_types));
             throw new \OutOfBoundsException("Undefined dynamic property: $offset (Known: $known)");
         }
-        return $this->dynamic_props[$offset] ?? null;
+        // property lookup is a workaround for
+        // https://github.com/webonyx/graphql-php/pull/1531
+        return $this->dynamic_props[$offset] ?? $this->$offset ?? null;
     }
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -462,15 +466,6 @@ class Image implements \ArrayAccess
     public function get_thumb_filename(): string
     {
         return warehouse_path(self::THUMBNAIL_DIR, $this->hash);
-    }
-
-    /**
-     * Get the original filename.
-     */
-    #[Field(name: "filename")]
-    public function get_filename(): string
-    {
-        return $this->filename;
     }
 
     /**
