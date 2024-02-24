@@ -128,7 +128,7 @@ class ImageBan extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(Permissions::BAN_IMAGE)) {
-                $event->add_nav_link("image_bans", new Link('image_hash_ban/list/1'), "Post Bans", NavLink::is_active(["image_hash_ban"]));
+                $event->add_nav_link("image_bans", new Link('image_hash_ban/list'), "Post Bans", NavLink::is_active(["image_hash_ban"]));
             }
         }
     }
@@ -137,7 +137,7 @@ class ImageBan extends Extension
     {
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
-            $event->add_link("Post Bans", make_link("image_hash_ban/list/1"));
+            $event->add_link("Post Bans", make_link("image_hash_ban/list"));
         }
     }
 
