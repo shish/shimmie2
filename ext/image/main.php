@@ -203,7 +203,7 @@ class ImageIO extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        $fname = $event->image->get_filename();
+        $fname = $event->image->filename;
         $base_fname = basename($fname, '.' . $event->image->get_ext());
 
         $event->replace('$id', (string)$event->image->id);
