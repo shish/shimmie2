@@ -49,13 +49,65 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
                         ],
                         'width' => 640,
                         'owner' => [
-                            'id' => 'user:'.$image->get_owner()->id,
+                            'id' => 'user:' . $image->get_owner()->id,
                             'name' => self::$user_name,
                         ],
                     ],
-                ]
-                ,
+                ],
             ],
         ], $result, var_export($result, true));
+    }
+
+    public function testMutation(): void
+    {
+        $this->log_in_as_user();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+
+        $result = $this->graphql("mutation {
+            update_post_metadata(
+                post_id: 1,
+                metadata: [
+                    {key: \"tags\", value: \"newtag\"},
+                    {key: \"source\", value: \"https://example.com\"}
+                ]
+            ) {
+                id
+                tags
+                source
+            }
+        }");
+
+        $this->assertEquals([
+            'data' => [
+                'update_post_metadata' => [
+                    'id' => "post:$image_id",
+                    'tags' => [
+                        'newtag',
+                    ],
+                    'source' => "https://example.com",
+                ],
+            ],
+        ], $result, var_export($result, true));
+    }
+
+    public function testUpload(): void
+    {
+        global $database;
+
+        $this->log_in_as_user();
+        $_FILES = [
+            'data0' => [
+                'name' => 'puppy-hugs.jpg',
+                'type' => 'image/jpeg',
+                'tmp_name' => 'tests/bedroom_workshop.jpg',
+                'error' => 0,
+                'size' => 271386,
+            ],
+        ];
+        $page = $this->post_page("graphql_upload", ["tags" => "foo", "tags0" => "bar"]);
+        $this->assertEquals(200, $page->code);
+        $this->assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
+        $id = $database->get_one("SELECT id FROM images");
+        $this->assertEquals("{\"results\":[{\"image_ids\":[$id]}]}", $page->data);
     }
 }

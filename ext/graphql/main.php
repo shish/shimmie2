@@ -19,23 +19,24 @@ class MetadataInput
 {
     public function __construct(
         #[\GQLA\Field]
-        public string $tags,
+        public string $key,
         #[\GQLA\Field]
-        public string $source,
+        public string $value,
     ) {
     }
 
-    #[\GQLA\Mutation]
-    public static function update_post_metadata(int $post_id, MetadataInput $metadata): Image
+    /**
+     * @param array<MetadataInput> $metadata
+     */
+    #[\GQLA\Mutation(args: ["post_id" => "Int!", "metadata" => "[MetadataInput!]!"])]
+    public static function update_post_metadata(int $post_id, array $metadata): Image
     {
-        global $user;
         $image = Image::by_id_ex($post_id);
-        if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
-            send_event(new ImageInfoSetEvent($image, 0, [
-                'tags' => $metadata->tags,
-                'source' => $metadata->source,
-            ]));
+        $pairs = [];
+        foreach ($metadata as $m) {
+            $pairs[$m->key] = $m->value;
         }
+        send_event(new ImageInfoSetEvent($image, 0, $pairs));
         return Image::by_id_ex($post_id);
     }
 }
@@ -129,8 +130,7 @@ class GraphQL extends Extension
             return ["error" => "User cannot create posts"];
         }
 
-        $common_tags = $_POST['common_tags'];
-        $common_source = $_POST['common_source'];
+        $metadata = only_strings($_POST);
 
         $results = [];
         for ($n = 0; $n < 100; $n++) {
@@ -141,7 +141,7 @@ class GraphQL extends Extension
                 break;
             }
             try {
-                $results[] = ["image_ids" => self::handle_upload($n, $common_tags, $common_source)];
+                $results[] = ["image_ids" => self::handle_upload($n, $metadata)];
             } catch(\Exception $e) {
                 $results[] = ["error" => $e->getMessage()];
             }
@@ -150,9 +150,10 @@ class GraphQL extends Extension
     }
 
     /**
+     * @param array<string, string> $metadata
      * @return int[]
      */
-    private static function handle_upload(int $n, string $common_tags, string $common_source): array
+    private static function handle_upload(int $n, array $metadata): array
     {
         global $database;
         if (!empty($_POST["url$n"])) {
@@ -167,20 +168,12 @@ class GraphQL extends Extension
                 case UPLOAD_ERR_INI_SIZE:
                     throw new UploadException("File larger than PHP can handle");
                 default:
-                    throw new UploadException("Mystery error: $ec");
+                    throw new UploadException("Mystery error: ".var_export($ec, true));
             }
         }
 
-        $tags = trim($common_tags . " " . $_POST["tags$n"]);
-        $source = $common_source;
-        if (!empty($_POST["source$n"])) {
-            $source = $_POST["source$n"];
-        }
-        $event = $database->with_savepoint(function () use ($tmpname, $filename, $n, $tags, $source) {
-            return send_event(new DataUploadEvent($tmpname, $filename, $n, [
-                'tags' => Tag::explode($tags),
-                'source' => $source,
-            ]));
+        $event = $database->with_savepoint(function () use ($tmpname, $filename, $n, $metadata) {
+            return send_event(new DataUploadEvent($tmpname, $filename, $n, $metadata));
         });
 
         return array_map(fn ($im) => $im->id, $event->images);
