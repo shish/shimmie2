@@ -130,9 +130,7 @@ class Image implements \ArrayAccess
     public function offsetExists(mixed $offset): bool
     {
         assert(is_string($offset));
-        // property_exists is a workaround for
-        // https://github.com/webonyx/graphql-php/pull/1531
-        return array_key_exists($offset, static::$prop_types) || property_exists($this, $offset);
+        return array_key_exists($offset, static::$prop_types);
     }
     public function offsetGet(mixed $offset): mixed
     {
@@ -141,9 +139,7 @@ class Image implements \ArrayAccess
             $known = implode(", ", array_keys(static::$prop_types));
             throw new \OutOfBoundsException("Undefined dynamic property: $offset (Known: $known)");
         }
-        // property lookup is a workaround for
-        // https://github.com/webonyx/graphql-php/pull/1531
-        return $this->dynamic_props[$offset] ?? $this->$offset ?? null;
+        return $this->dynamic_props[$offset] ?? null;
     }
     public function offsetSet(mixed $offset, mixed $value): void
     {
