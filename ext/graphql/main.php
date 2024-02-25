@@ -40,6 +40,37 @@ class MetadataInput
     }
 }
 
+function shmFieldResolver(
+    mixed $objectValue,
+    mixed $args,
+    mixed $context,
+    \GraphQL\Type\Definition\ResolveInfo $info
+): mixed {
+    $fieldName = $info->fieldName;
+    $property = null;
+
+    if (is_array($objectValue)) {
+        if (isset($objectValue[$fieldName])) {
+            $property = $objectValue[$fieldName];
+        }
+    } elseif ($objectValue instanceof \ArrayAccess) {
+        if (isset($objectValue->{$fieldName})) {
+            $property = $objectValue->{$fieldName};
+        } elseif (isset($objectValue[$fieldName])) {
+            $property = $objectValue[$fieldName];
+        }
+
+    } elseif (is_object($objectValue)) {
+        if (isset($objectValue->{$fieldName})) {
+            $property = $objectValue->{$fieldName};
+        }
+    }
+
+    return $property instanceof \Closure
+        ? $property($objectValue, $args, $context, $info)
+        : $property;
+}
+
 class GraphQL extends Extension
 {
     public static function get_schema(): Schema
@@ -90,6 +121,7 @@ class GraphQL extends Extension
             $t1 = ftime();
             $server = new StandardServer([
                 'schema' => $this->get_schema(),
+                'fieldResolver' => "\Shimmie2\shmFieldResolver",
             ]);
             $t2 = ftime();
             $resp = $server->executeRequest();
@@ -197,7 +229,7 @@ class GraphQL extends Extension
                 $schema = $this->get_schema();
                 $t2 = ftime();
                 $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
-                $body = GQL::executeQuery($schema, $query)->toArray($debug);
+                $body = GQL::executeQuery($schema, $query, fieldResolver: "\Shimmie2\shmFieldResolver")->toArray($debug);
                 $t3 = ftime();
                 $body['stats'] = get_debug_info_arr();
                 $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);

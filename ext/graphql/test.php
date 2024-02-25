@@ -16,13 +16,23 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
         $this->assertTrue(true);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    protected function graphql(string $query): array
+    {
+        $schema = GraphQL::get_schema();
+        $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
+        return GQL::executeQuery($schema, $query, fieldResolver: "\Shimmie2\shmFieldResolver")->toArray($debug);
+    }
+
     public function testQuery(): void
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
-        $image = Image::by_id_ex($image_id);
+        $image = Image::by_id($image_id);
 
-        $query = '{
+        $result = $this->graphql('{
             posts(limit: 3, offset: 0) {
                 id
                 post_id
@@ -33,10 +43,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
                     name
                 }
             }
-        }';
-        $schema = GraphQL::get_schema();
-        $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
-        $result = GQL::executeQuery($schema, $query)->toArray($debug);
+        }');
 
         $this->assertEquals([
             'data' => [
