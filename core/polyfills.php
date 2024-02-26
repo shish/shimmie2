@@ -237,22 +237,6 @@ function find_header(array $headers, string $name): ?string
     return $header;
 }
 
-if (!function_exists('mb_strlen')) {
-    // TODO: we should warn the admin that they are missing multibyte support
-    /** @noinspection PhpUnusedParameterInspection */
-    function mb_strlen(string $str, string $encoding): int
-    {
-        return strlen($str);
-    }
-    function mb_internal_encoding(string $encoding): void
-    {
-    }
-    function mb_strtolower(string $str): string
-    {
-        return strtolower($str);
-    }
-}
-
 /**
  * @return class-string[]
  */
