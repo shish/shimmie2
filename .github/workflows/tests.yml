@@ -31,7 +31,7 @@ jobs:
       with:
         php-version: 8.3
     - name: Format
-      run: ./vendor/bin/php-cs-fixer fix && git diff --exit-code
+      run: composer format && git diff --exit-code
 
   static:
     name: Static Analysis
@@ -50,10 +50,7 @@ jobs:
     - name: Install PHP dependencies
       run: composer install --prefer-dist --no-progress
     - name: PHPStan
-      uses: php-actions/phpstan@v3
-      with:
-        configuration: tests/phpstan.neon
-        memory_limit: 1G
+      run: composer stan
 
   upgrade:
     name: Upgrade from 2.9 ${{ matrix.database }}
@@ -140,9 +137,4 @@ jobs:
     - name: Install PHP dependencies
       run: composer install --no-progress
     - name: Run test suite
-      run: |
-        if [[ "${{ matrix.php }}" == "8.3" ]]; then
-            vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
-        else
-            vendor/bin/phpunit --configuration tests/phpunit.xml
-        fi
+      run: composer test
