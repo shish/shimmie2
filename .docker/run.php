@@ -7,10 +7,22 @@ if (!is_dir('/app/data')) {
 chown('/app/data', 'shimmie');
 chgrp('/app/data', 'shimmie');
 
-// Look at docker environment variables
-$MAX_FILE_UPLOADS = getenv('MAX_FILE_UPLOADS') ?: "100";
-$UPLOAD_MAX_FILESIZE = getenv('UPLOAD_MAX_FILESIZE') ?: '100M';
-$MAX_TOTAL_UPLOAD = ini_parse_quantity($UPLOAD_MAX_FILESIZE) * intval($MAX_FILE_UPLOADS);
+// Get php.ini settings from PHP_INI_XXX environment variables
+$php_ini = [];
+foreach(getenv() as $key => $value) {
+    if (strpos($key, 'PHP_INI_') === 0) {
+        $php_ini_key = strtolower(substr($key, 8));
+        $php_ini[$php_ini_key] = $value;
+    }
+}
+// deprecated one-off special configs
+$php_ini['max_file_uploads'] ??= getenv('MAX_FILE_UPLOADS') ?: "100";
+$php_ini['upload_max_filesize'] ??= getenv('UPLOAD_MAX_FILESIZE') ?: '100M';
+// this one needs to be calculated for the web server itself
+$php_ini['post_max_size'] ??= (string)(
+    ini_parse_quantity($php_ini['max_file_uploads']) *
+    intval($php_ini['upload_max_filesize'])
+);
 
 // Generate a config file for whatever web server we are using today
 $config = [
@@ -68,12 +80,7 @@ $config = [
             "script" => "index.php",
             "working_directory" => "/app/",
             "options" => [
-                "admin" => [
-                    "memory_limit" => "256M",
-                    "max_file_uploads" => "$MAX_FILE_UPLOADS",
-                    "upload_max_filesize" => "$UPLOAD_MAX_FILESIZE",
-                    "post_max_size" => "$MAX_TOTAL_UPLOAD",
-                ]
+                "admin" => $php_ini
             ],
             "processes" => [
                 "max" => 8,
@@ -84,7 +91,7 @@ $config = [
     ],
     "settings" => [
         "http" => [
-            "max_body_size" => $MAX_TOTAL_UPLOAD,
+            "max_body_size" => (int)$php_ini['post_max_size'],
             "static" => [
                 "mime_types" => [
                     "application/sourcemap" => [".map"]
@@ -93,7 +100,14 @@ $config = [
         ]
     ]
 ];
-file_put_contents('/var/lib/unit/conf.json', json_encode($config, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+file_put_contents(
+    '/var/lib/unit/conf.json',
+    json_encode($config, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)
+);
 
 // Start the web server
-pcntl_exec('/usr/sbin/unitd', ['--no-daemon', '--control', 'unix:/var/run/control.unit.sock', '--log', '/dev/stderr']);
+pcntl_exec('/usr/sbin/unitd', [
+    '--no-daemon',
+    '--control', 'unix:/var/run/control.unit.sock',
+    '--log', '/dev/stderr'
+]);
