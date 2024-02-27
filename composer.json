@@ -75,5 +75,15 @@
 		"ext-zlib": "anti-spam",
 		"ext-xml": "some extensions",
 		"ext-gd": "GD-based thumbnailing"
-	}
+	},
+	"scripts": {
+		"check": [
+		    "@format",
+		    "@stan",
+		    "@test"
+		],
+		"format": "php-cs-fixer fix",
+		"stan": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon",
+		"test": "phpunit --config tests/phpunit.xml"
+	  }
 }

@@ -10,9 +10,9 @@ Testing:
 ========
 Github Actions will be running three sets of automated tests, all of which you can run for yourself:
 
-- `./vendor/bin/php-cs-fixer fix` - keeping a single style for the whole project
-- `./vendor/bin/phpunit --config tests/phpunit.xml` - unit testing
-- `./vendor/bin/phpstan analyse --memory-limit 1G -c tests/phpstan.neon` - type checking
+- `composer format` - keeping a single style for the whole project
+- `composer test` - unit testing
+- `composer stan` - type checking
 
 The `main` branch is locked down so it can't accept pull requests that don't pass these
 
