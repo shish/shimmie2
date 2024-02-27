@@ -20,8 +20,8 @@ $php_ini['max_file_uploads'] ??= getenv('MAX_FILE_UPLOADS') ?: "100";
 $php_ini['upload_max_filesize'] ??= getenv('UPLOAD_MAX_FILESIZE') ?: '100M';
 // this one needs to be calculated for the web server itself
 $php_ini['post_max_size'] ??= (string)(
-    ini_parse_quantity($php_ini['max_file_uploads']) *
-    intval($php_ini['upload_max_filesize'])
+    ini_parse_quantity($php_ini['upload_max_filesize']) *
+    intval($php_ini['max_file_uploads'])
 );
 
 // Generate a config file for whatever web server we are using today
