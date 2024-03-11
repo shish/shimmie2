@@ -34,16 +34,9 @@ class RandomList extends Extension
 
             // set vars
             $images_per_page = $config->get_int("random_images_list_count", 12);
-            $random_images = [];
-
-            // generate random posts
-            for ($i = 0; $i < $images_per_page; $i++) {
-                $random_image = Image::by_random($search_terms);
-                if (!$random_image) {
-                    continue;
-                }
-                $random_images[] = $random_image;
-            }
+			
+			// generate random posts
+            $random_images = Image::by_random_multi($search_terms, $images_per_page);
 
             $this->theme->set_page($search_terms);
             $this->theme->display_page($page, $random_images);

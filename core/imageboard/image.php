@@ -217,6 +217,24 @@ class Image implements \ArrayAccess
             return null;
         }
     }
+	
+	public static function by_random_multi(array $tags=[], int $limit_range=1): array
+    {
+        $max = Image::count_images($tags);
+        if ($max < 1) {
+            return null;
+        }		// From Issue #22 - opened by HungryFeline on May 30, 2011.
+        if ($limit_range > 0 && $max > $limit_range) {
+            $max = $limit_range;
+        }
+        $rand = mt_rand(0, $max-1);
+        $set = Search::find_images($rand, $limit_range, $tags, true);
+        if (count($set) > 0) {
+            return $set;
+        } else {
+            return null;
+        }
+    }
 
     /*
      * Accessors & mutators
