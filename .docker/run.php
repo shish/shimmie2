@@ -91,7 +91,7 @@ $config = [
     ],
     "settings" => [
         "http" => [
-            "max_body_size" => (int)$php_ini['post_max_size'],
+            "max_body_size" => ini_parse_quantity($php_ini['post_max_size']),
             "static" => [
                 "mime_types" => [
                     "application/sourcemap" => [".map"]
