@@ -31,7 +31,7 @@ class TagList extends Extension
     {
         global $config, $page;
 
-        if ($event->page_matches("tags/{sub}")) {
+        if ($event->page_matches("tags/{sub}", method: "GET")) {
             $this->theme->set_navigation($this->build_navigation());
             $sub = $event->get_arg('sub');
 
