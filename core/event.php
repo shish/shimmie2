@@ -217,10 +217,10 @@ class PageRequestEvent extends Event
         // if we matched the method and the path, but the page requires
         // authentication and the user is not authenticated, then complain
         if($authed && $this->is_authed === false) {
-            throw new PermissionDenied("Permission Denied");
+            throw new PermissionDenied("Permission Denied: Missing CSRF Token");
         }
         if($permission !== null && !$user->can($permission)) {
-            throw new PermissionDenied("Permission Denied");
+            throw new PermissionDenied("Permission Denied: {$user->name} lacks permission {$permission}");
         }
 
         return true;
