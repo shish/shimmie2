@@ -160,10 +160,6 @@ class TagCategories extends Extension
     {
         global $user, $database;
 
-        if (!$user->can(Permissions::EDIT_TAG_CATEGORIES)) {
-            return;
-        }
-
         if (!isset($_POST['tc_status']) and
            !isset($_POST['tc_category']) and
            !isset($_POST['tc_display_singular']) and
