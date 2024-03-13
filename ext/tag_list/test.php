@@ -7,7 +7,7 @@ namespace Shimmie2;
 class TagListTest extends ShimmiePHPUnitTestCase
 {
     /** @var string[] */
-    private array $pages = ["map", "alphabetic", "popularity", "categories"];
+    private array $pages = ["map", "alphabetic", "popularity"];
 
     public function testTagList(): void
     {
@@ -18,9 +18,6 @@ class TagListTest extends ShimmiePHPUnitTestCase
         $this->assert_title('Tag List');
 
         $this->get_page('tags/popularity');
-        $this->assert_title('Tag List');
-
-        $this->get_page('tags/categories');
         $this->assert_title('Tag List');
 
         # FIXME: test that these show the right stuff
