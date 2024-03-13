@@ -103,6 +103,9 @@ class TagCategoriesTheme extends Themelet
         ';
 
         // add html to stuffs
+        $page->set_title("Tag Categories");
+        $page->set_heading("Tag Categories");
+        $page->add_block(new NavBlock());
         $page->add_block(new Block("Editing", $html, "main", 10));
     }
 
