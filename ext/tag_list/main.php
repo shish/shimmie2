@@ -53,21 +53,25 @@ class TagList extends Extension
             }
 
             switch ($sub) {
-                default:
                 case 'map':
                     $this->theme->set_heading("Tag Map");
                     $this->theme->set_tag_list($this->build_tag_map($starts_with, $tags_min));
+                    $this->theme->display_page($page);
                     break;
                 case 'alphabetic':
                     $this->theme->set_heading("Alphabetic Tag List");
                     $this->theme->set_tag_list($this->build_tag_alphabetic($starts_with, $tags_min));
+                    $this->theme->display_page($page);
                     break;
                 case 'popularity':
                     $this->theme->set_heading("Tag List by Popularity");
                     $this->theme->set_tag_list($this->build_tag_popularity($tags_min));
+                    $this->theme->display_page($page);
+                    break;
+                default:
+                    // don't display anything
                     break;
             }
-            $this->theme->display_page($page);
         } elseif ($event->page_matches("tags")) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("tags/map"));
