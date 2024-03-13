@@ -74,6 +74,8 @@ class TagCategories extends Extension
         }
         if ($event->page_matches("tags/categories", method: "POST", permission: Permissions::EDIT_TAG_CATEGORIES)) {
             $this->page_update();
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("tags/categories"));
         }
     }
 
