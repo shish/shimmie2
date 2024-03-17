@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Output\OutputInterface;
+
 class RegenThumb extends Extension
 {
     /** @var RegenThumbTheme */
@@ -159,5 +163,22 @@ class RegenThumb extends Extension
 
                 break;
         }
+    }
+
+    public function onCliGen(CliGenEvent $event): void
+    {
+        $event->app->register('regen-thumb')
+            ->addArgument('id_or_hash', InputArgument::REQUIRED)
+            ->setDescription("Regenerate a post's thumbnail")
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $uid = $input->getArgument('id_or_hash');
+                $image = Image::by_id_or_hash($uid);
+                if ($image) {
+                    send_event(new ThumbnailGenerationEvent($image, true));
+                } else {
+                    $output->writeln("No post with ID '$uid'\n");
+                }
+                return Command::SUCCESS;
+            });
     }
 }
