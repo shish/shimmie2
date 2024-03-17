@@ -50,7 +50,7 @@ class TagCategoriesTheme extends Themelet
                     <td>Color</td>
                     <td>
                         <span>'.$tag_color.'</span><div class="tc_colorswatch" style="background-color:'.$tag_color.'"></div>
-                        <input type="text" name="tc_color" style="display:none" value="'.$tag_color.'">
+                        <input type="color" name="tc_color" style="display:none" value="'.$tag_color.'">
                     </td>
                 </tr>
                 </table>
