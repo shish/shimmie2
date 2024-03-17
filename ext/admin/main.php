@@ -110,19 +110,6 @@ class AdminPage extends Extension
                 $output->writeln($user->get_auth_token());
                 return Command::SUCCESS;
             });
-        $event->app->register('regen-thumb')
-            ->addArgument('id_or_hash', InputArgument::REQUIRED)
-            ->setDescription("Regenerate a post's thumbnail")
-            ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $uid = $input->getArgument('id_or_hash');
-                $image = Image::by_id_or_hash($uid);
-                if ($image) {
-                    send_event(new ThumbnailGenerationEvent($image, true));
-                } else {
-                    $output->writeln("No post with ID '$uid'\n");
-                }
-                return Command::SUCCESS;
-            });
         $event->app->register('cache:get')
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription("Get a cache value")
