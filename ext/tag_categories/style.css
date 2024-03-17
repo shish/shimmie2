@@ -23,11 +23,24 @@
 	width:60%;
 }
 .tagcategoryblock td:last-child span {
+	width:7ch;
 	padding:0.24rem 0.7rem 0.5rem 0;
-	display:block;
+	display:inline-block;
 }
 .tagcategoryblock button {
 	width:100%;
 	margin-top:0.4rem;
 	padding:0.2rem 0.6rem;
+}
+
+.tagcategoryblock input[type="color"] {
+	height: 22px;
+}
+
+.tagcategoryblock .tc_colorswatch {
+	display:inline-block;
+	vertical-align:middle;
+	height:1.25rem;
+	width:1.25rem;
+	border-radius:4px;
 }
