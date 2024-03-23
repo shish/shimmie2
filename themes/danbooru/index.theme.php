@@ -62,7 +62,7 @@ class CustomIndexTheme extends IndexTheme
         $h_query = html_escape($query);
         $table = "<div class='shm-image-list' data-query='$h_query'>";
         foreach ($images as $image) {
-            $table .= "\t<span class=\"thumb\">" . $this->build_thumb_html($image) . "</span>\n";
+            $table .= $this->build_thumb_html($image) . "\n";
         }
         $table .= "</div>";
         return $table;
