@@ -180,6 +180,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
      * @param string $order
      * @param int $limit
      * @param int $start
+     * @param bool $count
      * @param int[] $res
      * @param string[] $path
      */
@@ -189,15 +190,26 @@ class SearchTest extends ShimmiePHPUnitTestCase
         string $order = "id DESC",
         int $limit = 9999,
         int $start = 0,
+        bool $count = false,
         array $res = [],
         array $path = null,
     ): void {
         global $database;
 
         $tcs = array_map(
-            fn ($tag) => ($tag[0] == "-") ?
-                new TagCondition(substr($tag, 1), false) :
-                new TagCondition($tag),
+            function ($tag) {
+                $positive = true;
+                $disjunctive = false;
+                if ($tag[0] == "~") {
+                    $tag = substr($tag, 1);
+                    $disjunctive = true;
+                }
+                if ($tag[0] == "-") {
+                    $tag = substr($tag, 1);
+                    $positive = false;
+                }
+                return new TagCondition($tag, $positive, $disjunctive);
+            },
             $tcs
         );
 
@@ -214,7 +226,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $build_search_querylet->setAccessible(true); // Use this if you are running PHP older than 8.1.0
 
         $obj = new Search();
-        $querylet = $build_search_querylet->invokeArgs($obj, [$tcs, $ics, $order, $limit, $start]);
+        $querylet = $build_search_querylet->invokeArgs($obj, [$tcs, $ics, $order, $limit, $start, $count]);
 
         $results = $database->get_all($querylet->sql, $querylet->variables);
 
@@ -449,6 +461,104 @@ class SearchTest extends ShimmiePHPUnitTestCase
             tcs: ["-not_a_tag", "-also_not_a_tag"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["general", "all_nonexistent_negatives"],
+        );
+    }
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_Disjunctive(): void
+    {
+        $image_ids = $this->testUpload();
+        // multiple disjunctive tags, should return all results matching either
+        $this->assert_BSQ(
+            tcs: ["~bedroom", "~phone"],
+            res: [$image_ids[1], $image_ids[0]],
+            path: ["general", "some_positives"],
+        );
+    }
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_DisjunctiveOneNotValid(): void
+    {
+        $image_ids = $this->testUpload();
+        // one disjunctive tags that does't exist, should return one result
+        $this->assert_BSQ(
+            tcs: ["~bedroom", "~not_a_tag"],
+            res: [$image_ids[1]],
+            path: ["general", "some_positives"],
+        );
+    }
+
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_DisjunctiveMultipleNotValid(): void
+    {
+        $image_ids = $this->testUpload();
+        // negative disjunctive tags that don't exist, should return no results
+        $this->assert_BSQ(
+            tcs: ["~not_a_tag", "~also_not_a_tag"],
+            res: [],
+            path: ["general", "all_nonexistent_positive_disjunctives"],
+        );
+    }
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_DisjunctiveSubtractMultiple(): void
+    {
+        $image_ids = $this->testUpload();
+        // negative disjunctive tags, should return the result not matching "phone"
+        $this->assert_BSQ(
+            tcs: ["~-computer", "~-phone"],
+            res: [$image_ids[1]],
+            path: ["general", "some_positives"],
+        );
+    }
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_DisjunctiveSubtractMultipleNotValid(): void
+    {
+        $image_ids = $this->testUpload();
+        // negative disjunctive tags that don't exist, should return all results
+        $this->assert_BSQ(
+            tcs: ["~-not_a_tag", "~-also_not_a_tag"],
+            res: [$image_ids[1], $image_ids[0]],
+            path: ["general", "some_positives"],
+        );
+    }
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_MatchInDisjunctive(): void
+    {
+        $image_ids = $this->testUpload();
+        // multiple disjunctive tags and a regular tag, should return the result matching the regular tag
+        $this->assert_BSQ(
+            tcs: ["~computer", "~phone", "bedroom"],
+            res: [$image_ids[1]],
+            path: ["general", "some_positives"],
+        );
+    }
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_SubtractFromDisjunctive(): void
+    {
+        $image_ids = $this->testUpload();
+        // multiple disjunctive tags and a subtraction, should return the result not matching the subtract
+        $this->assert_BSQ(
+            tcs: ["~bedroom", "~phone", "-bedroom"],
+            res: [$image_ids[0]],
+            path: ["general", "some_positives"],
+        );
+    }
+
+    #[Depends('testUpload')]
+    public function testBSQ_GeneralPath_DisjunctiveImageCondition(): void
+    {
+        $image_ids = $this->testUpload();
+        // a disjunctive tag which doesn't exist, and an image condition, should return the result matching the image condition
+        $this->assert_BSQ(
+            tcs: ["~not_a_tag"],
+            ics: ["~id={$image_ids[1]}"],
+            res: [$image_ids[1]],
+            path: ["general", "all_nonexistent_positive_disjunctives"],
         );
     }
 

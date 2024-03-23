@@ -249,7 +249,7 @@ class Index extends Extension
 
         // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
         if ($event->order === null && $event->img_conditions == [] && $event->tag_conditions == []) {
-            $event->add_tag_condition(new TagCondition($event->term, $event->positive));
+            $event->add_tag_condition(new TagCondition($event->term, $event->positive, $event->disjunctive));
         }
     }
 
