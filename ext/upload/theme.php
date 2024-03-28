@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+require_once "events/upload_common_building_event.php";
+require_once "events/upload_specific_building_event.php";
+require_once "events/upload_header_building_event.php";
+
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\{TABLE,TR,TH,TD};
@@ -44,18 +48,17 @@ class UploadTheme extends Themelet
         $max_total_kb = to_shorthand_int($max_total_size);
         $upload_list = $this->build_upload_list();
 
+        $common_fields = emptyHTML();
+        $ucbe = send_event(new UploadCommonBuildingEvent());
+        foreach ($ucbe->get_parts() as $part) {
+            $common_fields->appendChild($part);
+        }
+
         $form = SHM_FORM("upload", multipart: true, form_id: "file_upload");
         $form->appendChild(
             TABLE(
                 ["id" => "large_upload_form", "class" => "form"],
-                TR(
-                    TH(["width" => "20"], "Common Tags"),
-                    TD(["colspan" => "6"], INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags"]))
-                ),
-                TR(
-                    TH(["width" => "20"], "Common Source"),
-                    TD(["colspan" => "6"], INPUT(["name" => "source", "type" => "text", "placeholder" => "https://..."]))
-                ),
+                $common_fields,
                 $upload_list,
                 TR(
                     TD(["colspan" => "7"], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))
@@ -96,17 +99,30 @@ class UploadTheme extends Themelet
         $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
         $accept = $this->get_accept();
 
+        $headers = emptyHTML();
+        $uhbe = send_event(new UploadHeaderBuildingEvent());
+        foreach ($uhbe->get_parts() as $part) {
+            $headers->appendChild(
+                TH("Post-Specific $part")
+            );
+        }
+
         $upload_list->appendChild(
             TR(
                 ["class" => "header"],
                 TH(["colspan" => 2], "Select File"),
                 TH($tl_enabled ? "or URL" : null),
-                TH("Post-Specific Tags"),
-                TH("Post-Specific Source"),
+                $headers,
             )
         );
 
         for ($i = 0; $i < $upload_count; $i++) {
+            $specific_fields = emptyHTML();
+            $usfbe = send_event(new UploadSpecificBuildingEvent((string)$i));
+            foreach ($usfbe->get_parts() as $part) {
+                $specific_fields->appendChild($part);
+            }
+
             $upload_list->appendChild(
                 TR(
                     TD(
@@ -131,21 +147,7 @@ class UploadTheme extends Themelet
                             "value" => ($i == 0) ? @$_GET['url'] : null,
                         ]) : null
                     ),
-                    TD(
-                        INPUT([
-                            "type" => "text",
-                            "name" => "tags{$i}",
-                            "class" => "autocomplete_tags",
-                            "value" => ($i == 0) ? @$_GET['tags'] : null,
-                        ])
-                    ),
-                    TD(
-                        INPUT([
-                            "type" => "text",
-                            "name" => "source{$i}",
-                            "value" => ($i == 0) ? @$_GET['source'] : null,
-                        ])
-                    ),
+                    $specific_fields,
                 )
             );
         }

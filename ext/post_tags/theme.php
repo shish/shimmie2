@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{joinHTML, A, TEXTAREA};
+use function MicroHTML\{joinHTML, A, TEXTAREA, TR, TH, TD, INPUT};
 
 class PostTagsTheme extends Themelet
 {
@@ -51,6 +51,26 @@ class PostTagsTheme extends Themelet
             link: Extension::is_enabled(TagHistoryInfo::KEY) ?
                 make_link("tag_history/{$image->id}") :
                 null,
+        );
+    }
+
+    public function get_upload_common_html(): HTMLElement
+    {
+        return TR(
+            TH(["width" => "20"], "Common Tags"),
+            TD(["colspan" => "6"], INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags"]))
+        );
+    }
+
+    public function get_upload_specific_html(string $suffix): HTMLElement
+    {
+        return TD(
+            INPUT([
+                "type" => "text",
+                "name" => "tags{$suffix}",
+                "class" => "autocomplete_tags",
+                "value" => ($suffix == 0) ? @$_GET['tags'] : null,
+            ])
         );
     }
 }
