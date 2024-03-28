@@ -99,14 +99,11 @@ class S3 extends Extension
                 return Command::SUCCESS;
             });
         $event->app->register('s3:sync')
-            ->addArgument('start', InputArgument::REQUIRED)
-            ->addArgument('end', InputArgument::REQUIRED)
-            ->setDescription('Sync a range of images to S3')
+            ->addArgument('query', InputArgument::REQUIRED)
+            ->setDescription('Search for some images, and sync them to s3')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $start = (int)$input->getArgument('start');
-                $end = (int)$input->getArgument('end');
-                $output->writeln("Syncing range: $start - $end");
-                foreach(Search::find_images_iterable(tags: ["order=id", "id>=$start", "id<=$end"]) as $image) {
+                $query = Tag::explode($input->getArgument('query'));
+                foreach(Search::find_images_iterable(tags: $query) as $image) {
                     if($this->sync_post($image)) {
                         print("{$image->id}: {$image->hash}\n");
                     } else {

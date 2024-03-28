@@ -124,10 +124,10 @@ function renderEditor(noteDiv, note) {
 	function _commit() {
 		noteDiv.classList.remove("dragging");
 		dragStart = null;
-		note.x1 = noteDiv.offsetLeft / scale;
-		note.y1 = noteDiv.offsetTop / scale;
-		note.width = noteDiv.offsetWidth / scale;
-		note.height = noteDiv.offsetHeight / scale;
+		note.x1 = Math.round(noteDiv.offsetLeft / scale);
+		note.y1 = Math.round(noteDiv.offsetTop / scale);
+		note.width = Math.round(noteDiv.offsetWidth / scale);
+		note.height = Math.round(noteDiv.offsetHeight / scale);
 		renderNotes();
 	}
 	noteDiv.addEventListener('mouseup', _commit);

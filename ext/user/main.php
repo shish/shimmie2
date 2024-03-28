@@ -377,8 +377,7 @@ class UserPage extends Extension
     {
         global $user, $page, $config;
 
-        ksort($event->stats);
-        $this->theme->display_user_page($event->display_user, $event->stats);
+        $this->theme->display_user_page($event->display_user, $event->get_parts());
 
         if (!$user->is_anonymous()) {
             if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
@@ -391,8 +390,7 @@ class UserPage extends Extension
 
         if ($user->id == $event->display_user->id) {
             $ubbe = send_event(new UserBlockBuildingEvent());
-            ksort($ubbe->parts);
-            $this->theme->display_user_links($page, $user, $ubbe->parts);
+            $this->theme->display_user_links($page, $user, $ubbe->get_parts());
         }
         if (
             ($user->can(Permissions::VIEW_IP) || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
@@ -606,8 +604,7 @@ class UserPage extends Extension
             $this->theme->display_login_block($page);
         } else {
             $ubbe = send_event(new UserBlockBuildingEvent());
-            ksort($ubbe->parts);
-            $this->theme->display_user_block($page, $user, $ubbe->parts);
+            $this->theme->display_user_block($page, $user, $ubbe->get_parts());
         }
     }
 
