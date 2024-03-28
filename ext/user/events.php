@@ -6,25 +6,22 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-class UserBlockBuildingEvent extends Event
+/**
+ * @extends PartListBuildingEvent<array{name: string|HTMLElement, link: string}>
+ */
+class UserBlockBuildingEvent extends PartListBuildingEvent
 {
-    /** @var array<int, array{name: string|HTMLElement, link: string}> */
-    public array $parts = [];
-
     public function add_link(string|HTMLElement $name, string $link, int $position = 50): void
     {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = ["name" => $name, "link" => $link];
+        $this->add_part(["name" => $name, "link" => $link], $position);
     }
 }
 
-class UserOperationsBuildingEvent extends Event
+/**
+ * @extends PartListBuildingEvent<string>
+ */
+class UserOperationsBuildingEvent extends PartListBuildingEvent
 {
-    /** @var string[] */
-    public array $parts = [];
-
     public function __construct(public User $user, public BaseConfig $user_config)
     {
         parent::__construct();
@@ -32,15 +29,15 @@ class UserOperationsBuildingEvent extends Event
 
     public function add_html(string $html): void
     {
-        $this->parts[] = $html;
+        $this->add_part($html);
     }
 }
 
-class UserPageBuildingEvent extends Event
+/**
+ * @extends PartListBuildingEvent<string>
+ */
+class UserPageBuildingEvent extends PartListBuildingEvent
 {
-    /** @var array<int, string> */
-    public array $stats = [];
-
     public function __construct(public User $display_user)
     {
         parent::__construct();
@@ -48,10 +45,7 @@ class UserPageBuildingEvent extends Event
 
     public function add_stats(string $html, int $position = 50): void
     {
-        while (isset($this->stats[$position])) {
-            $position++;
-        }
-        $this->stats[$position] = $html;
+        $this->add_part($html, $position);
     }
 }
 
