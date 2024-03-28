@@ -20,13 +20,18 @@ class RatingsTheme extends Themelet
         return SHM_SELECT($name, !empty($ratings) ? $ratings : Ratings::get_ratings_dict(), required: true, selected_options: $selected_options);
     }
 
-    public function get_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
+    public function get_image_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement
     {
         return SHM_POST_INFO(
             "Rating",
             A(["href" => search_link(["rating=$rating"])], Ratings::rating_to_human($rating)),
             $can_rate ? $this->get_selection_rater_html("rating", selected_options: [$rating]) : null
         );
+    }
+
+    public function get_upload_specific_rater_html(string $suffix): HTMLElement
+    {
+        return TD($this->get_selection_rater_html(name:"rating${suffix}", selected_options: ["?"]));
     }
 
     /**
