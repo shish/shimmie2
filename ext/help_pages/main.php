@@ -15,11 +15,12 @@ class HelpPageListBuildingEvent extends Event
     }
 }
 
-class HelpPageBuildingEvent extends Event
+/**
+ * @extends PartListBuildingEvent<Block>
+ */
+class HelpPageBuildingEvent extends PartListBuildingEvent
 {
     public string $key;
-    /** @var array<int,Block> */
-    public array $blocks = [];
 
     public function __construct(string $key)
     {
@@ -29,10 +30,7 @@ class HelpPageBuildingEvent extends Event
 
     public function add_block(Block $block, int $position = 50): void
     {
-        while (array_key_exists($position, $this->blocks)) {
-            $position++;
-        }
-        $this->blocks[$position] = $block;
+        $this->add_part($block, $position);
     }
 }
 
@@ -58,8 +56,7 @@ class HelpPages extends Extension
 
             $this->theme->display_help_page($title);
             $hpbe = send_event(new HelpPageBuildingEvent($name));
-            ksort($hpbe->blocks);
-            foreach ($hpbe->blocks as $block) {
+            foreach ($hpbe->get_parts() as $block) {
                 $page->add_block($block);
             }
         } elseif ($event->page_matches("help")) {

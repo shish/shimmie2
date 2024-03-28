@@ -97,12 +97,10 @@ class ViewPost extends Extension
         $this->theme->display_meta_headers($image);
 
         $iibbe = send_event(new ImageInfoBoxBuildingEvent($image, $user));
-        ksort($iibbe->parts);
-        $this->theme->display_page($image, $iibbe->parts);
+        $this->theme->display_page($image, $iibbe->get_parts());
 
         $iabbe = send_event(new ImageAdminBlockBuildingEvent($image, $user, "view"));
-        ksort($iabbe->parts);
-        $this->theme->display_admin_block($page, $iabbe->parts);
+        $this->theme->display_admin_block($page, $iabbe->get_parts());
     }
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void

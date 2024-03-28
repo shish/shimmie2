@@ -131,7 +131,7 @@ class NumericScore extends Extension
         $link_up = search_link(["upvoted_by={$event->display_user->name}"]);
         $n_down = Search::count_images(["downvoted_by={$event->display_user->name}"]);
         $link_down = search_link(["downvoted_by={$event->display_user->name}"]);
-        $event->add_stats("<a href='$link_up'>$n_up Upvotes</a> / <a href='$link_down'>$n_down Downvotes</a>");
+        $event->add_part("<a href='$link_up'>$n_up Upvotes</a> / <a href='$link_down'>$n_down Downvotes</a>");
     }
 
     public function onPageRequest(PageRequestEvent $event): void

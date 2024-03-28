@@ -336,7 +336,7 @@ class UserPageTheme extends Themelet
                 ));
             }
 
-            foreach ($event->parts as $part) {
+            foreach ($event->get_parts() as $part) {
                 $html .= $part;
             }
         }

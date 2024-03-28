@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\rawHTML;
+
 class UserConfigTheme extends Themelet
 {
-    public function get_user_operations(string $key): string
+    public function get_user_operations(string $key): HTMLElement
     {
         $html = "
                 <p>".make_form(make_link("user_admin/reset_api_key"))."
@@ -24,7 +28,7 @@ class UserConfigTheme extends Themelet
                     </table>
                 </form>
             ";
-        return $html;
+        return rawHTML($html);
     }
 
 
