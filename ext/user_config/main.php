@@ -166,7 +166,7 @@ class UserConfig extends Extension
                 $key = generate_key();
                 $event->user_config->set_string(self::API_KEY, $key);
             }
-            $event->add_html($this->theme->get_user_operations($key));
+            $event->add_part($this->theme->get_user_operations($key));
         }
     }
 

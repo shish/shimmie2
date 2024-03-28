@@ -340,22 +340,22 @@ class UserPage extends Extension
             $h_class = $event->display_user->class->name;
         }
 
-        $event->add_stats("Joined: $h_join_date", 10);
+        $event->add_part("Joined: $h_join_date", 10);
         if ($user->name == $event->display_user->name) {
-            $event->add_stats("Current IP: " . get_real_ip(), 80);
+            $event->add_part("Current IP: " . get_real_ip(), 80);
         }
-        $event->add_stats("Class: $h_class", 90);
+        $event->add_part("Class: $h_class", 90);
 
         $av = $event->display_user->get_avatar_html();
         if ($av) {
-            $event->add_stats($av, 0);
+            $event->add_part($av, 0);
         } elseif (
             (
                 $config->get_string("avatar_host") == "gravatar"
             ) &&
             ($user->id == $event->display_user->id)
         ) {
-            $event->add_stats(
+            $event->add_part(
                 "No avatar? This gallery uses <a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the" .
                 "<br>same email address here and there to have your avatar synced<br>",
                 0
@@ -377,8 +377,7 @@ class UserPage extends Extension
     {
         global $user, $page, $config;
 
-        ksort($event->stats);
-        $this->theme->display_user_page($event->display_user, $event->stats);
+        $this->theme->display_user_page($event->display_user, $event->get_parts());
 
         if (!$user->is_anonymous()) {
             if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
@@ -391,8 +390,7 @@ class UserPage extends Extension
 
         if ($user->id == $event->display_user->id) {
             $ubbe = send_event(new UserBlockBuildingEvent());
-            ksort($ubbe->parts);
-            $this->theme->display_user_links($page, $user, $ubbe->parts);
+            $this->theme->display_user_links($page, $user, $ubbe->get_parts());
         }
         if (
             ($user->can(Permissions::VIEW_IP) || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
@@ -606,8 +604,7 @@ class UserPage extends Extension
             $this->theme->display_login_block($page);
         } else {
             $ubbe = send_event(new UserBlockBuildingEvent());
-            ksort($ubbe->parts);
-            $this->theme->display_user_block($page, $user, $ubbe->parts);
+            $this->theme->display_user_block($page, $user, $ubbe->get_parts());
         }
     }
 

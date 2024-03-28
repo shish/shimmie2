@@ -87,7 +87,7 @@ class Favorites extends Extension
         $i_days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_favorites_rate = sprintf("%.1f", ($i_favorites_count / $i_days_old));
         $favorites_link = search_link(["favorited_by={$event->display_user->name}"]);
-        $event->add_stats("<a href='$favorites_link'>Posts favorited</a>: $i_favorites_count, $h_favorites_rate per day");
+        $event->add_part("<a href='$favorites_link'>Posts favorited</a>: $i_favorites_count, $h_favorites_rate per day");
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void

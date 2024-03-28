@@ -155,7 +155,7 @@ class ImageIO extends Extension
         $i_days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
         $images_link = search_link(["user=$u_name"]);
-        $event->add_stats("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
+        $event->add_part("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
