@@ -197,7 +197,7 @@ class Ratings extends Extension
     {
         global $user;
         $event->add_part(
-            $this->theme->get_rater_html(
+            $this->theme->get_image_rater_html(
                 $event->image->id,
                 $event->image['rating'],
                 $user->can(Permissions::EDIT_IMAGE_RATING)
@@ -208,11 +208,27 @@ class Ratings extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $user;
-        $rating = $event->get_param('rating');
-        if ($user->can(Permissions::EDIT_IMAGE_RATING) && !is_null($rating)) {
+        global $page, $user;
+        if (
+            $user->can(Permissions::EDIT_IMAGE_RATING) && (
+                isset($event->params['rating'])
+                || isset($event->params["rating{$event->slot}"])
+            )
+        ) {
+            $common_rating = $event->params['rating'] ?? "";
+            $my_rating = $event->params["rating{$event->slot}"] ?? "";
+            $rating = Ratings::rating_is_valid($my_rating) ? $my_rating : $common_rating;
             if (Ratings::rating_is_valid($rating)) {
-                send_event(new RatingSetEvent($event->image, $rating));
+                try {
+                    send_event(new RatingSetEvent($event->image, $rating));
+                } catch (TagSetException $e) {
+                    if ($e->redirect) {
+                        $page->flash("{$e->getMessage()}, please see {$e->redirect}");
+                    } else {
+                        $page->flash($e->getMessage());
+                    }
+                    throw $e;
+                }
             }
         }
     }
@@ -385,6 +401,16 @@ class Ratings extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }
+    }
+
+    public function onUploadHeaderBuilding(UploadHeaderBuildingEvent $event): void
+    {
+        $event->add_part("Rating");
+    }
+
+    public function onUploadSpecificBuilding(UploadSpecificBuildingEvent $event): void
+    {
+        $event->add_part($this->theme->get_upload_specific_rater_html($event->suffix));
     }
 
     /**
