@@ -17,10 +17,9 @@ class FeaturedTest extends ShimmiePHPUnitTestCase
         # FIXME: test that regular users can't feature things
 
         // Admin can feature things
-        // FIXME: use Event rather than modifying database
-        // $this->log_in_as_admin();
-        // send_event(new SetFeaturedEvent($image_id));
-        $config->set_int("featured_id", $image_id);
+        $this->log_in_as_admin();
+        $page = $this->post_page("featured_image/set/$image_id");
+        $this->assertEquals(302, $page->code);
 
         $this->get_page("post/list");
         $this->assert_text("Featured Post");
