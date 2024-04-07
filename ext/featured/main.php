@@ -18,8 +18,8 @@ class Featured extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
-        if ($event->page_matches("featured_image/set", method: "POST", permission: Permissions::EDIT_FEATURE)) {
-            $id = int_escape($event->req_POST('image_id'));
+        if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: Permissions::EDIT_FEATURE)) {
+            $id = $event->get_iarg('image_id');
             $config->set_int("featured_id", $id);
             log_info("featured", "Featured post set to >>$id", "Featured post set");
             $page->set_mode(PageMode::REDIRECT);

@@ -98,6 +98,21 @@ class PostSource extends Extension
         }
     }
 
+    public function onUploadHeaderBuilding(UploadHeaderBuildingEvent $event): void
+    {
+        $event->add_part("Source", 11);
+    }
+
+    public function onUploadCommonBuilding(UploadCommonBuildingEvent $event): void
+    {
+        $event->add_part($this->theme->get_upload_common_html(), 11);
+    }
+
+    public function onUploadSpecificBuilding(UploadSpecificBuildingEvent $event): void
+    {
+        $event->add_part($this->theme->get_upload_specific_html($event->suffix), 11);
+    }
+
     private function mass_source_edit(string $tags, string $source): void
     {
         $tags = Tag::explode($tags);

@@ -51,4 +51,23 @@ class PostSourceTheme extends Themelet
         }
         return rawHTML("Unknown");
     }
+
+    public function get_upload_common_html(): HTMLElement
+    {
+        return TR(
+            TH(["width" => "20"], "Common Source"),
+            TD(["colspan" => "6"], INPUT(["name" => "source", "type" => "text", "placeholder" => "https://..."]))
+        );
+    }
+
+    public function get_upload_specific_html(string $suffix): HTMLElement
+    {
+        return TD(
+            INPUT([
+                "type" => "text",
+                "name" => "source{$suffix}",
+                "value" => ($suffix == 0) ? @$_GET['source'] : null,
+            ])
+        );
+    }
 }
