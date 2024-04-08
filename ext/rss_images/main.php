@@ -24,17 +24,12 @@ class RSSImages extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config;
-        if ($event->page_starts_with("rss/images")) {
-            if ($event->page_matches("rss/images/{search}/{page}")) {
-                $search_terms = Tag::explode($event->get_arg('search'));
-                $page_number = int_escape($event->get_arg('page'));
-            } elseif ($event->page_matches("rss/images/{page}")) {
-                $search_terms = [];
-                $page_number = int_escape($event->get_arg('page'));
-            } else {
-                $search_terms = [];
-                $page_number = 1;
-            }
+        if (
+            $event->page_matches("rss/images", paged: true)
+            || $event->page_matches("rss/images/{search}", paged: true)
+        ) {
+            $search_terms = Tag::explode($event->get_arg('search', ""));
+            $page_number = $event->get_iarg('page_num', 1);
             $page_size = $config->get_int(IndexConfig::IMAGES);
             if (SPEED_HAX && $page_number > 9) {
                 return;
