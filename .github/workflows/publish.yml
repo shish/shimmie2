@@ -10,7 +10,9 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - 'v*'
+      - 'v2.*'
+    branches:
+      - 'v2.*'
 
 jobs:
   publish:
