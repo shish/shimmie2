@@ -31,7 +31,7 @@ class RatingsTheme extends Themelet
 
     public function get_upload_specific_rater_html(string $suffix): HTMLElement
     {
-        return TD($this->get_selection_rater_html(name:"rating${suffix}", selected_options: ["?"]));
+        return TD($this->get_selection_rater_html(name:"rating{$suffix}", selected_options: ["?"]));
     }
 
     /**
