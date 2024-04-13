@@ -9,8 +9,8 @@ on:
     types: completed
   workflow_dispatch:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - 'branch-2.*'
 
 jobs:
   publish:
@@ -23,13 +23,22 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.workflow_run.head_sha }}
+        fetch-tags: true
+        fetch-depth: 0
     - name: Checkout main commit
       if: ${{ github.event_name != 'workflow_run' }}
       uses: actions/checkout@v4
+      with:
+        fetch-tags: true
+        fetch-depth: 0
     - name: Set build vars
       run: |
         echo "BUILD_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
         echo "BUILD_HASH=$GITHUB_SHA" >> $GITHUB_ENV
+    - name: Get tags
+      id: get-tags
+      shell: bash
+      run: ./.github/get-tags.py >> $GITHUB_OUTPUT
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@main
       with:
@@ -39,4 +48,4 @@ jobs:
         cache: ${{ github.event_name != 'schedule' }}
         buildoptions: "--build-arg RUN_TESTS=false"
         buildargs: BUILD_TIME,BUILD_HASH
-        tag_semver: true
+        tags: "${{ steps.get-tags.outputs.tags }}"
