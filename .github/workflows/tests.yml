@@ -148,7 +148,7 @@ jobs:
     - static
     - upgrade
     - test
-    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/branch-2')
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/branch-2')
     steps:
     - name: Checkout
       uses: actions/checkout@v4
