@@ -79,7 +79,7 @@ class Blocks extends Extension
             $page->set_redirect(make_link("blocks/list"));
         }
         if ($event->page_matches("blocks/update", method: "POST", permission: Permissions::MANAGE_BLOCKS)) {
-            if (!empty($event->req_POST('delete'))) {
+            if (!is_null($event->get_POST('delete'))) {
                 $database->execute("
                         DELETE FROM blocks
                         WHERE id=:id
