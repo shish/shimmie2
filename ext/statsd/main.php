@@ -30,17 +30,17 @@ class StatsDInterface extends Extension
     {
         $this->_stats("overall");
 
-        if ($event->page_matches("post/view")) {  # 40%
+        if ($event->page_starts_with("post/view")) {  # 40%
             $this->_stats("post-view");
-        } elseif ($event->page_matches("post/list")) {  # 30%
+        } elseif ($event->page_starts_with("post/list")) {  # 30%
             $this->_stats("post-list");
-        } elseif ($event->page_matches("user")) {
+        } elseif ($event->page_starts_with("user")) {
             $this->_stats("user");
-        } elseif ($event->page_matches("upload")) {
+        } elseif ($event->page_starts_with("upload")) {
             $this->_stats("upload");
-        } elseif ($event->page_matches("rss")) {
+        } elseif ($event->page_starts_with("rss")) {
             $this->_stats("rss");
-        } elseif ($event->page_matches("api")) {
+        } elseif ($event->page_starts_with("api")) {
             $this->_stats("api");
         } else {
             $this->_stats("other");
