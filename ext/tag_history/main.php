@@ -356,7 +356,7 @@ class TagHistory extends Extension
 				FROM tag_histories
 				WHERE image_id='.$image_id.'
 				AND NOT ('.implode(" AND ", $select_code).')
-				ORDER BY date_set DESC LIMIT 1
+				ORDER BY date_set DESC, id DESC LIMIT 1
 			', $select_args);
 
             if (!empty($row)) {
