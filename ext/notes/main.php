@@ -75,6 +75,21 @@ class Notes extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
+    {
+        $event->add_nav_link("note", new Link('note/requests'), "Notes");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
+    {
+        if ($event->parent == "note") {
+            $event->add_nav_link("note_requests", new Link('note/requests'), "Requests");
+            $event->add_nav_link("note_list", new Link('note/list'), "List");
+            $event->add_nav_link("note_updated", new Link('note/updated'), "Updates");
+            $event->add_nav_link("note_help", new Link('ext_doc/notes'), "Help");
+        }
+    }
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
