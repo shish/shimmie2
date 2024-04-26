@@ -233,7 +233,7 @@ class Notes extends Extension
             SELECT *
             FROM notes
             WHERE enable = :enable AND image_id = :image_id
-            ORDER BY date ASC
+            ORDER BY date ASC, id ASC
         ", ['enable' => '1', 'image_id' => $imageID]);
     }
 
@@ -363,7 +363,7 @@ class Notes extends Extension
 			SELECT DISTINCT image_id
 			FROM notes
 			WHERE enable = :enable
-			ORDER BY date DESC LIMIT :limit OFFSET :offset",
+			ORDER BY date DESC, id DESC LIMIT :limit OFFSET :offset",
             ['enable' => 1, 'offset' => $pageNumber * $notesPerPage, 'limit' => $notesPerPage]
         );
 
@@ -387,7 +387,7 @@ class Notes extends Extension
             "
 				SELECT DISTINCT image_id
 				FROM note_request
-				ORDER BY date DESC LIMIT :limit OFFSET :offset",
+				ORDER BY date DESC, id DESC LIMIT :limit OFFSET :offset",
             ["offset" => $pageNumber * $requestsPerPage, "limit" => $requestsPerPage]
         );
 
@@ -441,7 +441,7 @@ class Notes extends Extension
             "FROM note_histories AS h " .
             "INNER JOIN users AS u " .
             "ON u.id = h.user_id " .
-            "ORDER BY date DESC LIMIT :limit OFFSET :offset",
+            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
             ['offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
@@ -462,7 +462,7 @@ class Notes extends Extension
             "INNER JOIN users AS u " .
             "ON u.id = h.user_id " .
             "WHERE note_id = :note_id " .
-            "ORDER BY date DESC LIMIT :limit OFFSET :offset",
+            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
             ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
