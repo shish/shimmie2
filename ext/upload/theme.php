@@ -54,12 +54,16 @@ class UploadTheme extends Themelet
             $common_fields->appendChild($part);
         }
 
+        $cap = $config->get_int(UploadConfig::CAPTCHA);
+        $h_captcha = $cap > 0 ? captcha_get_html($cap == 1) : "";
+
         $form = SHM_FORM("upload", multipart: true, form_id: "file_upload");
         $form->appendChild(
             TABLE(
                 ["id" => "large_upload_form", "class" => "form"],
                 $common_fields,
                 $upload_list,
+                $h_captcha,
                 TR(
                     TD(["colspan" => "7"], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))
                 ),
