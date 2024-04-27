@@ -167,7 +167,7 @@ class PageRequestEvent extends Event
 
     public function page_starts_with(string $name): bool
     {
-        return (count($this->args) >= 1) && ($this->args[0] == $name);
+        return str_starts_with($this->path, $name);
     }
 
     /**
