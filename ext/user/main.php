@@ -145,6 +145,7 @@ class UserPage extends Extension
         $config->set_default_string("avatar_gravatar_rating", "g");
         $config->set_default_bool("login_tac_bbcode", true);
         $config->set_default_bool("user_email_required", false);
+        $config->set_default_bool('signup_captcha', true);
     }
 
     public function onUserLogin(UserLoginEvent $event): void
@@ -419,6 +420,7 @@ class UserPage extends Extension
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
         $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
         $sb->add_bool_option("user_email_required", "Require email address", true);
+        $sb->add_bool_option("signup_captcha", "Require CAPTCHA for signup", true);
         $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
         $sb->add_choice_option(
             "user_loginshowprofile",
@@ -520,7 +522,7 @@ class UserPage extends Extension
         if (User::by_name($name)) {
             throw new UserCreationException("That username is already taken");
         }
-        if (!captcha_check()) {
+        if ($config->get_bool("signup_captcha") && !captcha_check(true)) {
             throw new UserCreationException("Error in captcha");
         }
         if ($event->password != $event->password2) {

@@ -73,6 +73,8 @@ class UserPageTheme extends Themelet
             !$user->can(Permissions::CREATE_OTHER_USER)
         );
 
+        $h_captcha = $config->get_bool("signup_captcha") ? captcha_get_html(false) : "";
+
         $form = SHM_SIMPLE_FORM(
             "user_admin/create",
             TABLE(
@@ -95,7 +97,7 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type" => 'email', "name" => 'email', "required" => $email_required]))
                     ),
                     TR(
-                        TD(["colspan" => "2"], rawHTML(captcha_get_html()))
+                        TD(["colspan" => "2"], rawHTML($h_captcha))
                     ),
                 ),
                 TFOOT(

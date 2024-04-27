@@ -129,7 +129,7 @@ class CommentList extends Extension
         $config->set_default_int('comment_limit', 10);
         $config->set_default_int('comment_list_count', 10);
         $config->set_default_int('comment_count', 5);
-        $config->set_default_bool('comment_captcha', false);
+        $config->set_default_bool('comment_captcha', true);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -358,8 +358,8 @@ class CommentList extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Comment Options");
-        $sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments: ");
-        $sb->add_label("<br>Limit to ");
+        $sb->start_table();
+        $sb->add_label("Limit to ");
         $sb->add_int_option("comment_limit");
         $sb->add_label(" comments per ");
         $sb->add_int_option("comment_window");
@@ -370,8 +370,9 @@ class CommentList extends Extension
         $sb->add_label("<br>Show ");
         $sb->add_int_option("comment_list_count");
         $sb->add_label(" comments per image on the list");
-        $sb->add_label("<br>Make samefags public ");
-        $sb->add_bool_option("comment_samefags_public");
+        $sb->add_bool_option("comment_samefags_public", "Make samefags public", true);
+        $sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments", true);
+        $sb->end_table();
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
@@ -615,7 +616,7 @@ class CommentList extends Extension
         }
 
         // rate-limited external service checks last
-        elseif ($config->get_bool('comment_captcha') && !captcha_check()) {
+        elseif ($config->get_bool('comment_captcha') && !captcha_check(true)) {
             throw new CommentPostingException("Error in captcha");
         } elseif ($user->is_anonymous() && $this->is_spam_akismet($comment)) {
             throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
