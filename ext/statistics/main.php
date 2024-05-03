@@ -8,6 +8,8 @@ class Statistics extends Extension
 {
     /** @var StatisticsTheme */
     protected Themelet $theme;
+    /** @var String[] */
+    private array $unlisted = ['anonymous', 'ghost', 'hellbanned'];
 
     public function onPageRequest(PageRequestEvent $event): void
     {
@@ -16,7 +18,7 @@ class Statistics extends Extension
             $base_href = get_base_href();
             $sitename = $config->get_string(SetupConfig::TITLE);
             $theme_name = $config->get_string(SetupConfig::THEME);
-            $anon_id = $config->get_int("anon_id");
+            $unlisted = "'".implode("','", $this->unlisted)."'";
 
             $limit = 10;
             if ($event->page_matches("stats/100")) {
@@ -24,7 +26,7 @@ class Statistics extends Extension
             }
 
             if (Extension::is_enabled(TagHistoryInfo::KEY)) {
-                $tag_tally = $this->get_tag_stats($anon_id);
+                $tag_tally = $this->get_tag_stats($this->unlisted);
                 arsort($tag_tally, $flags = SORT_NUMERIC);
                 $tag_table = $this->theme->build_table($tag_tally, "Taggers", "Top $limit taggers", $limit);
             } else {
@@ -32,7 +34,7 @@ class Statistics extends Extension
             }
 
             $upload_tally = [];
-            foreach ($this->get_upload_stats($anon_id) as $name) {
+            foreach ($this->get_upload_stats($unlisted) as $name) {
                 array_key_exists($name, $upload_tally) ? $upload_tally[$name] += 1 : $upload_tally[$name] = 1;
 
             }
@@ -41,7 +43,7 @@ class Statistics extends Extension
 
             if (Extension::is_enabled(CommentListInfo::KEY)) {
                 $comment_tally = [];
-                foreach ($this->get_comment_stats($anon_id) as $name) {
+                foreach ($this->get_comment_stats($unlisted) as $name) {
                     array_key_exists($name, $comment_tally) ? $comment_tally[$name] += 1 : $comment_tally[$name] = 1;
 
                 }
@@ -53,7 +55,7 @@ class Statistics extends Extension
 
             if (Extension::is_enabled(FavoritesInfo::KEY)) {
                 $favorite_tally = [];
-                foreach ($this->get_favorite_stats($anon_id) as $name) {
+                foreach ($this->get_favorite_stats($unlisted) as $name) {
                     array_key_exists($name, $favorite_tally) ? $favorite_tally[$name] += 1 : $favorite_tally[$name] = 1;
 
                 }
@@ -86,18 +88,19 @@ class Statistics extends Extension
     }
 
     /**
+     * @param String[] $unlisted
      * @return array<string, int>
      */
-    private function get_tag_stats(int $anon_id): array
+    private function get_tag_stats(array $unlisted): array
     {
         global $database;
         // Returns the username and tags from each tag history entry. This includes Anonymous tag histories to prevent their tagging being ignored and credited to the next user to edit.
-        $tag_stats = $database->get_all("SELECT users.id,users.name,tag_histories.tags,tag_histories.image_id FROM tag_histories INNER JOIN users ON users.id = tag_histories.user_id WHERE 1=1;");
+        $tag_stats = $database->get_all("SELECT users.class,users.name,tag_histories.tags,tag_histories.image_id FROM tag_histories INNER JOIN users ON users.id = tag_histories.user_id WHERE 1=1 ORDER BY users.id;");
 
         // Group tag history entries by image id
         $tag_histories = [];
         foreach ($tag_stats as $ts) {
-            $tag_history = ['uid' => $ts['id'], 'name' => $ts['name'], 'tags' => $ts['tags']];
+            $tag_history = ['class' => $ts['class'], 'name' => $ts['name'], 'tags' => $ts['tags']];
             $id = $ts['image_id'];
             array_key_exists($id, $tag_histories) ? array_push($tag_histories[$id], $tag_history) : $tag_histories[$id] = [$tag_history];
         }
@@ -107,7 +110,7 @@ class Statistics extends Extension
             $prev = [];
             foreach ($image as $change) {
                 $curr = explode(' ', $change['tags']);
-                if ($change['uid'] != $anon_id) {
+                if (!in_array($change['class'], $unlisted)) {
                     $name = (string)$change['name'];
                     $tag_tally[$name] += count(array_diff($curr, $prev));
                 }
@@ -120,30 +123,30 @@ class Statistics extends Extension
     /**
      * @return array<string>
      */
-    private function get_upload_stats(int $anon_id): array
+    private function get_upload_stats(string $unlisted): array
     {
         global $database;
-        // Returns the username of each post, as an array. Excludes Anonymous
-        return $database->get_col("SELECT users.name FROM images INNER JOIN users ON users.id = images.owner_id WHERE images.owner_id <> $anon_id;");
+        // Returns the username of each post, as an array.
+        return $database->get_col("SELECT users.name FROM images INNER JOIN users ON users.id = images.owner_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
     }
 
     /**
      * @return array<string>
      */
-    private function get_comment_stats(int $anon_id): array
+    private function get_comment_stats(string $unlisted): array
     {
         global $database;
-        // Returns the username of each comment, as an array. Excludes Anonymous
-        return $database->get_col("SELECT users.name FROM comments INNER JOIN users ON users.id = comments.owner_id WHERE comments.owner_id <> $anon_id;");
+        // Returns the username of each comment, as an array.
+        return $database->get_col("SELECT users.name FROM comments INNER JOIN users ON users.id = comments.owner_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
     }
 
     /**
      * @return array<string>
      */
-    private function get_favorite_stats(int $anon_id): array
+    private function get_favorite_stats(string $unlisted): array
     {
         global $database;
-        // Returns the username of each favorite, as an array. Excludes Anonymous
-        return $database->get_col("SELECT users.name FROM user_favorites INNER JOIN users ON users.id = user_favorites.user_id WHERE user_favorites.user_id <> $anon_id;");
+        // Returns the username of each favorite, as an array.
+        return $database->get_col("SELECT users.name FROM user_favorites INNER JOIN users ON users.id = user_favorites.user_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
     }
 }
