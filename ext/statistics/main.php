@@ -91,13 +91,13 @@ class Statistics extends Extension
     private function get_tag_stats(int $anon_id): array
     {
         global $database;
-        // Returns the username and tags from each tag history entry. Excludes Anonymous
-        $tag_stats = $database->get_all("SELECT users.name,tag_histories.tags,tag_histories.image_id FROM tag_histories INNER JOIN users ON users.id = tag_histories.user_id WHERE tag_histories.user_id <> $anon_id;");
+        // Returns the username and tags from each tag history entry. This includes Anonymous tag histories to prevent their tagging being ignored and credited to the next user to edit.
+        $tag_stats = $database->get_all("SELECT users.id,users.name,tag_histories.tags,tag_histories.image_id FROM tag_histories INNER JOIN users ON users.id = tag_histories.user_id WHERE 1=1;");
 
         // Group tag history entries by image id
         $tag_histories = [];
         foreach ($tag_stats as $ts) {
-            $tag_history = ['name' => $ts['name'], 'tags' => $ts['tags']];
+            $tag_history = ['uid' => $ts['id'], 'name' => $ts['name'], 'tags' => $ts['tags']];
             $id = $ts['image_id'];
             array_key_exists($id, $tag_histories) ? array_push($tag_histories[$id], $tag_history) : $tag_histories[$id] = [$tag_history];
         }
@@ -108,8 +108,10 @@ class Statistics extends Extension
             $prev = [];
             foreach ($image as $change) {
                 $curr = explode(' ', $change['tags']);
-                $name = (string)$change['name'];
-                $tag_tally[$name] += count(array_diff($curr, $prev));
+                if ($change['uid'] != $anon_id) {
+                    $name = (string)$change['name'];
+                    $tag_tally[$name] += count(array_diff($curr, $prev));
+                }
                 $prev = $curr;
             }
         }
