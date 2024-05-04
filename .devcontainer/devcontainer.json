@@ -23,7 +23,7 @@
 	},
 
 	"updateContentCommand": "composer install && cp ./.devcontainer/bash_history /root/.bash_history",
-	"postCreateCommand": "./.docker/entrypoint.sh php ./.docker/run.php",
+	"postStartCommand": "./.docker/entrypoint.sh php ./.docker/run.php",
 	"containerEnv": {
 		"UID": "2000",
 		"GID": "2000",
