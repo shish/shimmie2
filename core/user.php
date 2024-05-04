@@ -171,12 +171,6 @@ class User
         return ($this->id === $config->get_int('anon_id'));
     }
 
-    public function is_logged_in(): bool
-    {
-        global $config;
-        return ($this->id !== $config->get_int('anon_id'));
-    }
-
     public function set_class(string $class): void
     {
         global $database;

@@ -68,20 +68,18 @@ class BulkActions extends Extension
     {
         global $page, $user;
 
-        if ($user->is_logged_in()) {
-            $babbe = new BulkActionBlockBuildingEvent();
-            $babbe->search_terms = $event->search_terms;
+        $babbe = new BulkActionBlockBuildingEvent();
+        $babbe->search_terms = $event->search_terms;
 
-            send_event($babbe);
+        send_event($babbe);
 
-            if (sizeof($babbe->actions) == 0) {
-                return;
-            }
-
-            usort($babbe->actions, [$this, "sort_blocks"]);
-
-            $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
+        if (sizeof($babbe->actions) == 0) {
+            return;
         }
+
+        usort($babbe->actions, [$this, "sort_blocks"]);
+
+        $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void

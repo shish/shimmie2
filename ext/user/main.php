@@ -393,7 +393,10 @@ class UserPage extends Extension
             $this->theme->display_user_links($page, $user, $ubbe->get_parts());
         }
         if (
-            ($user->can(Permissions::VIEW_IP) || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
+            (
+                $user->can(Permissions::VIEW_IP) ||  # user can view all IPS
+                ($user->id == $event->display_user->id)  # or user is viewing themselves
+            ) &&
             ($event->display_user->id != $config->get_int('anon_id')) # don't show anon's IP list, it is le huge
         ) {
             $this->theme->display_ip_list(
