@@ -260,9 +260,8 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        $engine = $config->get_string(TranscodeConfig::ENGINE);
-
         if ($user->can(Permissions::EDIT_FILES)) {
+            $engine = $config->get_string(TranscodeConfig::ENGINE);
             $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode Image", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_mimes($engine)));
         }
     }
