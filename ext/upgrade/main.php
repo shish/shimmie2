@@ -208,6 +208,45 @@ class Upgrade extends Extension
             $this->set_version("db_version", 21);
             $database->begin_transaction();
         }
+
+        if ($this->get_version("db_version") < 22) {
+            log_info("upgrade", "Adding permissions table");
+            $permissions = ["change_setting", "override_config", "change_user_setting", "change_other_user_setting", "big_search", "manage_extension_list", "manage_permission_list", "manage_alias_list", "manage_auto_tag", "mass_tag_edit", "view_ip", "ban_ip", "create_user", "create_other_user", "edit_user_name", "edit_user_password", "edit_user_info", "edit_user_class", "delete_user", "create_comment", "delete_comment", "bypass_comment_checks", "replace_image", "create_image", "edit_image_tag", "edit_image_source", "edit_image_owner", "edit_image_lock", "edit_image_title", "edit_image_relationships", "edit_image_artist", "bulk_edit_image_tag", "bulk_edit_image_source", "delete_image", "ban_image", "view_eventlog", "ignore_downtime", "view_registrations", "create_image_report", "view_image_report", "wiki_admin", "edit_wiki_page", "delete_wiki_page", "manage_blocks", "manage_admintools", "send_pm", "read_pm", "view_other_pms", "edit_feature", "create_vote", "bulk_edit_vote", "edit_other_vote", "view_sysinfo", "hellbanned", "view_hellbanned", "protected", "edit_image_rating", "bulk_edit_image_rating", "view_trash", "perform_bulk_actions", "bulk_add", "edit_files", "edit_tag_categories", "rescan_media", "see_image_view_counts", "edit_favourites", "artists_admin", "blotter_admin", "tips_admin", "cron_admin", "approve_image", "approve_comment", "bypass_image_approval", "forum_admin", "forum_create", "notes_admin", "notes_create", "notes_edit", "notes_request", "pools_admin", "pools_create", "pools_update", "set_private_image", "set_others_private_images", "cron_run", "bulk_import", "bulk_export", "bulk_download", "bulk_parent_child"];
+            $perms_query = implode(" BOOLEAN,\n", $permissions);
+            $perms_query .= " BOOLEAN,\n";
+
+
+            // id is needed to keep dependencies in order when loading
+            $database->create_table("permissions", "
+                id SCORE_AIPK,
+                class VARCHAR(32) NOT NULL UNIQUE,
+                parent VARCHAR(32) NULL,
+                core BOOLEAN,
+                {$perms_query}
+                ");
+            $database->execute("CREATE INDEX permissions_class_idx ON permissions(class)", []);
+
+            $database->standardise_boolean("permissions", "core");
+            foreach($permissions as $p) {
+                $database->standardise_boolean("permissions", $p);
+            }
+
+            // add default classes
+            $database->execute("INSERT INTO permissions (class, core) VALUES ('base', TRUE)");
+            // admin is a placeholder class which is overridden in UserClass->can()
+            $database->execute("INSERT INTO permissions (class, core) VALUES ('admin', TRUE)");
+            $database->execute("INSERT INTO permissions (class, parent, core, read_pm) VALUES ('ghost', 'base', TRUE, TRUE)");
+            $database->execute("INSERT INTO permissions (class, parent, core, create_user) VALUES ('anonymous', 'base', TRUE, TRUE)");
+            $database->execute("INSERT INTO permissions (class, parent, core, big_search, create_image, create_comment, edit_image_tag, edit_image_source, edit_image_title, edit_image_relationships, edit_image_artist, create_image_report, edit_image_rating, edit_favourites, create_vote, send_pm, read_pm, set_private_image, perform_bulk_actions, bulk_download, change_user_setting, forum_create, notes_create, notes_edit, notes_request, pools_create, pools_update) VALUES ('user', 'base', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)");
+            $database->execute("INSERT INTO permissions (class, parent, core, hellbanned) VALUES ('hellbanned', 'user', TRUE, TRUE)");
+
+            // All user's classes must exist in the permissions table. prevent deletion of a class if any users have that class.
+            // This code is optional and SQLite doesn't support altering tables to add foreign keys.
+            if ($database->get_driver_id() != DatabaseDriverID::SQLITE) {
+                $database->execute("ALTER TABLE users ADD FOREIGN KEY (class) REFERENCES permissions(class) ON DELETE RESTRICT");
+            }
+            $this->set_version("db_version", 22);
+        }
     }
 
     public function get_priority(): int

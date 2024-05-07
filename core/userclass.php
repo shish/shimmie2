@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use FFSPHP\PDO;
+
 use GQLA\Type;
 use GQLA\Field;
 
@@ -19,21 +21,29 @@ class UserClass
     #[Field]
     public ?string $name = null;
     public ?UserClass $parent = null;
+    public bool $core = false;
 
     /** @var array<string, bool> */
     public array $abilities = [];
 
-    /**
-     * @param array<string, bool> $abilities
-     */
-    public function __construct(string $name, string $parent = null, array $abilities = [])
+    public function __construct(string $name)
     {
-        $this->name = $name;
-        $this->abilities = $abilities;
+        global $database;
 
-        if (!is_null($parent)) {
-            $this->parent = static::$known_classes[$parent];
+        $this->name = $name;
+        $class = $database->execute("SELECT * FROM permissions WHERE class = :class", ["class" => $name])->fetch(PDO::FETCH_ASSOC);
+
+        if (!is_null($class["parent"])) {
+            $this->parent = static::$known_classes[$class["parent"]];
         }
+        $this->core = (bool)$class["core"];
+
+        unset($class["id"]);
+        unset($class["class"]);
+        unset($class["parent"]);
+        unset($class["core"]);
+
+        $this->abilities = $class;
 
         static::$known_classes[$name] = $this;
     }
@@ -58,10 +68,16 @@ class UserClass
      */
     public function can(string $ability): bool
     {
-        if (array_key_exists($ability, $this->abilities)) {
-            return $this->abilities[$ability];
+        // hellbanned is a snowflake, it isn't really a "permission" so much as
+        // "a special behaviour which applies to one particular user class"
+        if ($this->name == "admin" && $ability != "hellbanned") {
+            return true;
+        } elseif (array_key_exists($ability, $this->abilities) && $this->abilities[$ability]) {
+            return true;
         } elseif (!is_null($this->parent)) {
             return $this->parent->can($ability);
+        } elseif (array_key_exists($ability, $this->abilities)) {
+            return false;
         } else {
             $min_dist = 9999;
             $min_ability = null;
@@ -75,63 +91,20 @@ class UserClass
             throw new ServerError("Unknown ability '$ability'. Did the developer mean '$min_ability'?");
         }
     }
+
+    // clear and load classes from the database.
+    public static function loadClasses(): void
+    {
+        global $database;
+
+        // clear any existing classes to avoid complications with parent classes
+        foreach(static::$known_classes as $k => $v) {
+            unset(static::$known_classes[$k]);
+        }
+
+        $classes = $database->get_col("SELECT class FROM permissions WHERE 1=1 ORDER BY id");
+        foreach($classes as $class) {
+            new UserClass($class);
+        }
+    }
 }
-
-$_all_false = [];
-$_all_true = [];
-foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
-    assert(is_string($v));
-    $_all_false[$v] = false;
-    $_all_true[$v] = true;
-}
-// hellbanned is a snowflake, it isn't really a "permission" so much as
-// "a special behaviour which applies to one particular user class"
-$_all_true[Permissions::HELLBANNED] = false;
-new UserClass("base", null, $_all_false);
-new UserClass("admin", null, $_all_true);
-unset($_all_true);
-unset($_all_false);
-
-// Ghost users can't do anything
-new UserClass("ghost", "base", [
-    Permissions::READ_PM => true,
-]);
-
-// Anonymous users can't do anything by default, but
-// the admin might grant them some permissions
-new UserClass("anonymous", "base", [
-    Permissions::CREATE_USER => true,
-]);
-
-new UserClass("user", "base", [
-    Permissions::BIG_SEARCH => true,
-    Permissions::CREATE_IMAGE => true,
-    Permissions::CREATE_COMMENT => true,
-    Permissions::EDIT_IMAGE_TAG => true,
-    Permissions::EDIT_IMAGE_SOURCE => true,
-    Permissions::EDIT_IMAGE_TITLE => true,
-    Permissions::EDIT_IMAGE_RELATIONSHIPS => true,
-    Permissions::EDIT_IMAGE_ARTIST => true,
-    Permissions::CREATE_IMAGE_REPORT => true,
-    Permissions::EDIT_IMAGE_RATING => true,
-    Permissions::EDIT_FAVOURITES => true,
-    Permissions::CREATE_VOTE => true,
-    Permissions::SEND_PM => true,
-    Permissions::READ_PM => true,
-    Permissions::SET_PRIVATE_IMAGE => true,
-    Permissions::PERFORM_BULK_ACTIONS => true,
-    Permissions::BULK_DOWNLOAD => true,
-    Permissions::CHANGE_USER_SETTING => true,
-    Permissions::FORUM_CREATE => true,
-    Permissions::NOTES_CREATE => true,
-    Permissions::NOTES_EDIT => true,
-    Permissions::NOTES_REQUEST => true,
-    Permissions::POOLS_CREATE => true,
-    Permissions::POOLS_UPDATE => true,
-]);
-
-new UserClass("hellbanned", "user", [
-    Permissions::HELLBANNED => true,
-]);
-
-@include_once "data/config/user-classes.conf.php";
