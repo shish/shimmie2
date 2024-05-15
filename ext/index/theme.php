@@ -277,6 +277,12 @@ and of course start organising your images :-)
             P("Direction can be either asc or desc, indicating ascending (123) or descending (321) order."),
             SHM_COMMAND_EXAMPLE("order:id_asc", "Returns posts sorted by ID, smallest first."),
             SHM_COMMAND_EXAMPLE("order:width_desc", "Returns posts sorted by width, largest first."),
+            //
+            //
+            //
+            HR(),
+            H3("Limit the number of search results"),
+            SHM_COMMAND_EXAMPLE("limit=100", "Only returns the first 100 results"),
         );
     }
 }
