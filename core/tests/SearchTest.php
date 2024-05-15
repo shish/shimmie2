@@ -180,6 +180,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
      * @param string $order
      * @param int $limit
      * @param int $start
+     * @param bool $count
      * @param int[] $res
      * @param string[] $path
      */
@@ -189,6 +190,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         string $order = "id DESC",
         int $limit = 9999,
         int $start = 0,
+        bool $count = false,
         array $res = [],
         array $path = null,
     ): void {
@@ -214,7 +216,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $build_search_querylet->setAccessible(true); // Use this if you are running PHP older than 8.1.0
 
         $obj = new Search();
-        $querylet = $build_search_querylet->invokeArgs($obj, [$tcs, $ics, $order, $limit, $start]);
+        $querylet = $build_search_querylet->invokeArgs($obj, [$tcs, $ics, $order, $limit, $start, $count]);
 
         $results = $database->get_all($querylet->sql, $querylet->variables);
 
