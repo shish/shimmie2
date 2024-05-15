@@ -82,7 +82,7 @@ class Search
      *
      * @param list<string> $tags
      */
-    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): \FFSPHP\PDOStatement
+    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = [], bool $random = false): \FFSPHP\PDOStatement
     {
         global $database, $user;
 
@@ -99,7 +99,7 @@ class Search
             }
         }
 
-        [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
+        [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags, $random);
         $querylet = self::build_search_querylet($tag_conditions, $img_conditions, $order, $limit, $start);
         return $database->get_all_iterable($querylet->sql, $querylet->variables);
     }
@@ -111,7 +111,7 @@ class Search
      * @return Image[]
      */
     #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
-    public static function find_images(int $offset = 0, ?int $limit = null, array $tags = []): array
+    public static function find_images(int $offset = 0, ?int $limit = null, array $tags = [], bool $random = false): array
     {
         $result = self::find_images_internal($offset, $limit, $tags);
 
@@ -240,7 +240,7 @@ class Search
      * @param string[] $terms
      * @return array{0: TagCondition[], 1: ImgCondition[], 2: string}
      */
-    public static function terms_to_conditions(array $terms): array
+    public static function terms_to_conditions(array $terms, bool $random = false): array
     {
         global $config;
 
@@ -260,8 +260,13 @@ class Search
             $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
         }
 
-        $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
-
+		if ($random == true) {
+			$order = "RAND()";
+		}
+		else {
+			$order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
+		}
+		
         return [$tag_conditions, $img_conditions, $order];
     }
 
