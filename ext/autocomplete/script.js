@@ -36,14 +36,14 @@ function updateCompletions(element) {
 		clearTimeout(element.completer_timeout);
 		element.completer_timeout = null;
 	}
-	if(word === '' || word === '-') {
+	if(word === '' || word === '-' || word === '~' || word === '~-') {
 		element.completions = {};
 		renderCompletions(element);
 	}
 	else {
 		element.completer_timeout = setTimeout(() => {
-			const wordWithoutMinus = word.replace(/^-/, '');
-			fetch((document.body.getAttribute("data-base-href") ?? "") + '/api/internal/autocomplete?s=' + wordWithoutMinus).then(
+			const wordWithoutOperand = word.replace(/^~/, '').replace(/^-/, '');
+			fetch((document.body.getAttribute("data-base-href") ?? "") + '/api/internal/autocomplete?s=' + wordWithoutOperand).then(
 				(response) => response.json()
 			).then((json) => {
 				if(element.selected_completion !== -1) {
@@ -98,7 +98,7 @@ function renderCompletions(element) {
 	Object.keys(completions).filter(
 		(key) => {
 			let k = key.toLowerCase();
-			let w = word.replace(/^-/, '').toLowerCase();
+			let w = word.replace(/^~/, '').replace(/^-/, '').toLowerCase();
 			return (k.startsWith(w) || k.split(':').some((k) => k.startsWith(w)))
 		}
 	).slice(0, 100).forEach((key, i) => {
@@ -183,7 +183,12 @@ function setCompletion(element, new_word) {
 	}
 
 	// replace the word with the completion
-	if(text[start] === '-') {
+	if(text[start] === '~') {
+		new_word = '~' + new_word;
+		if(text[start+1] === '-') {
+			new_word = '-' + new_word;
+		}
+	} else if(text[start] === '-') {
 		new_word = '-' + new_word;
 	}
 	new_word += ' ';

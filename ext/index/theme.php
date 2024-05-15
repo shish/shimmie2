@@ -207,6 +207,11 @@ and of course start organising your images :-)
             SHM_COMMAND_EXAMPLE("*name", 'Returns posts that are tagged with "name", "tagname", "othertagname" or anything else that ends with "name".'),
             SHM_COMMAND_EXAMPLE("tagn?me", 'Returns posts that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", then has one character, and ends with "me".'),
             //
+            BR(),
+            P('Tags and attributes can be prefaced with a tilde (~) to indicate that only one of them needs to match something. This can be combined with negative signs and wildcards.'),
+            SHM_COMMAND_EXAMPLE("~tagname ~othertagname", 'Returns posts that are tagged with "tagname", "othertagname", or both.'),
+            SHM_COMMAND_EXAMPLE("~-othertagname ~tagn*", 'Returns posts that are not tagged with "othertagname", or are tagged with anything that starts with "tagn".'),
+            //
             //
             //
             HR(),
