@@ -110,6 +110,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($get_args));
             $_GET = $get_args;
             $_POST = $post_args;
+            $_COOKIE['shm_accepted_terms'] = "true";
             $page = new Page();
             send_event(new PageRequestEvent($method, $page_name, $get_args, $post_args));
             if ($page->mode == PageMode::REDIRECT) {
