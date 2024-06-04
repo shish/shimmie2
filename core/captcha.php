@@ -10,7 +10,7 @@ namespace Shimmie2;
 
 use ReCaptcha\ReCaptcha;
 
-function captcha_get_html(): string
+function captcha_get_html(bool $anon_only): string
 {
     global $config, $user;
 
@@ -19,7 +19,7 @@ function captcha_get_html(): string
     }
 
     $captcha = "";
-    if ($user->is_anonymous() && $config->get_bool("comment_captcha")) {
+    if (!$anon_only || $user->is_anonymous()) {
         $r_publickey = $config->get_string("api_recaptcha_pubkey");
         if (!empty($r_publickey)) {
             $captcha = "
@@ -33,7 +33,7 @@ function captcha_get_html(): string
     return $captcha;
 }
 
-function captcha_check(): bool
+function captcha_check(bool $anon_only): bool
 {
     global $config, $user;
 
@@ -41,25 +41,27 @@ function captcha_check(): bool
         return true;
     }
 
-    if ($user->is_anonymous() && $config->get_bool("comment_captcha")) {
-        $r_privatekey = $config->get_string('api_recaptcha_privkey');
-        if (!empty($r_privatekey)) {
-            $recaptcha = new ReCaptcha($r_privatekey);
-            $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", get_real_ip());
-
-            if (!$resp->isSuccess()) {
-                log_info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));
-                return false;
-            }
-        } /*else {
-            session_start();
-            $securimg = new \Securimage();
-            if ($securimg->check($_POST['captcha_code']) === false) {
-                log_info("core", "Captcha failed (Securimage)");
-                return false;
-            }
-        }*/
+    if ($anon_only && !$user->is_anonymous()) {
+        return true;
     }
+
+    $r_privatekey = $config->get_string('api_recaptcha_privkey');
+    if (!empty($r_privatekey)) {
+        $recaptcha = new ReCaptcha($r_privatekey);
+        $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", get_real_ip());
+
+        if (!$resp->isSuccess()) {
+            log_info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));
+            return false;
+        }
+    } /*else {
+        session_start();
+        $securimg = new \Securimage();
+        if ($securimg->check($_POST['captcha_code']) === false) {
+            log_info("core", "Captcha failed (Securimage)");
+            return false;
+        }
+    }*/
 
     return true;
 }
