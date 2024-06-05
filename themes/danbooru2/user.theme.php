@@ -65,12 +65,18 @@ class CustomUserPageTheme extends UserPageTheme
 
     public function display_signup_page(Page $page): void
     {
-        global $config;
+        global $config, $user;
         $tac = $config->get_string("login_tac", "");
 
         $tac = send_event(new TextFormattingEvent($tac))->formatted;
 
         $reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
+
+        $email_required = (
+            $config->get_bool("user_email_required") &&
+            !$user->can(Permissions::CREATE_OTHER_USER)
+        );
+        $email_text = $email_required ? "Email" : "Email (Optional)";
 
         if (empty($tac)) {
             $html = "";
@@ -84,8 +90,8 @@ class CustomUserPageTheme extends UserPageTheme
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
-				$reca;
+				<tr><td>$email_text</td><td><input type='text' name='email'></td></tr>
+				$reca
 				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
 			</table>
 		</form>
