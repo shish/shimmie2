@@ -210,7 +210,7 @@ class UserPage extends Extension
                 new UserCreationEvent(
                     $event->req_POST("name"),
                     $event->req_POST("pass1"),
-                    $event->req_POST("pass1"),
+                    $event->req_POST("pass2"),
                     $event->req_POST("email"),
                     false
                 )

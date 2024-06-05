@@ -62,6 +62,7 @@ class UserPageTest extends ShimmiePHPUnitTestCase
             $this->post_page('user_admin/create_other', [
                 'name' => 'testnew',
                 'pass1' => 'testnew',
+                'pass2' => 'testnew',
                 'email' => '',
             ]);
         });
@@ -71,6 +72,7 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         $this->post_page('user_admin/create_other', [
             'name' => 'testnew',
             'pass1' => 'testnew',
+            'pass2' => 'testnew',
             'email' => '',
         ]);
         $this->assertEquals(302, $page->code);
