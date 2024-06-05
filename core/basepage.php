@@ -557,6 +557,7 @@ class BasePage
         $body_attrs = [
             "data-userclass" => $user->class->name,
             "data-base-href" => get_base_href(),
+            "data-base-link" => make_link(""),
         ];
 
         print emptyHTML(

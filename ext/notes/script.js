@@ -150,7 +150,7 @@ function renderEditor(noteDiv, note) {
 	save.innerText = 'Save';
 	save.addEventListener('click', () => {
 		if(note.note_id == null) {
-			fetch('/note/create_note', {
+			fetch(shm_make_link('note/create_note'), {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -169,7 +169,7 @@ function renderEditor(noteDiv, note) {
 				alert(error);
 			});
 		} else {
-			fetch('/note/update_note', {
+			fetch(shm_make_link('note/update_note'), {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -205,7 +205,7 @@ function renderEditor(noteDiv, note) {
 		deleteNote.innerText = 'Delete';
 		deleteNote.addEventListener('click', () => {
 			// TODO: delete note from server
-			fetch('/note/delete_note', {
+			fetch(shm_make_link('note/delete_note'), {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
