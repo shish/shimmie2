@@ -88,7 +88,7 @@ function renderEditor(noteDiv, note) {
 		dragStart = {
 			x: e.pageX,
 			y: e.pageY,
-			mode: getArea(e.offsetX, e.offsetY, noteDiv.offsetWidth, noteDiv.offsetHeight),
+			mode: getArea(e.offsetX, e.offsetY, noteDiv.clientWidth, noteDiv.clientHeight),
 		};
 		noteDiv.classList.add("dragging");
 	});
@@ -113,7 +113,7 @@ function renderEditor(noteDiv, note) {
 				noteDiv.style.width = (note.width * scale) + (e.pageX - dragStart.x) + 'px';
 			}
 		} else {
-			let area = getArea(e.offsetX, e.offsetY, noteDiv.offsetWidth, noteDiv.offsetHeight);
+			let area = getArea(e.offsetX, e.offsetY, noteDiv.clientWidth, noteDiv.clientHeight);
 			if(area == "c") {
 				noteDiv.style.cursor = 'move';
 			} else {
@@ -126,8 +126,8 @@ function renderEditor(noteDiv, note) {
 		dragStart = null;
 		note.x1 = Math.round(noteDiv.offsetLeft / scale);
 		note.y1 = Math.round(noteDiv.offsetTop / scale);
-		note.width = Math.round(noteDiv.offsetWidth / scale);
-		note.height = Math.round(noteDiv.offsetHeight / scale);
+		note.width = Math.round(noteDiv.clientWidth / scale);
+		note.height = Math.round(noteDiv.clientHeight / scale);
 		renderNotes();
 	}
 	noteDiv.addEventListener('mouseup', _commit);
