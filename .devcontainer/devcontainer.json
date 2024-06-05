@@ -25,8 +25,6 @@
 	"updateContentCommand": "composer install && cp ./.devcontainer/bash_history /root/.bash_history",
 	"postStartCommand": "./.docker/entrypoint.sh php ./.docker/run.php",
 	"containerEnv": {
-		"UID": "2000",
-		"GID": "2000",
 		"INSTALL_DSN": "sqlite:data/shimmie.dev.sqlite",
 		"HISTFILE": "/root/.bash_history"
 	},
