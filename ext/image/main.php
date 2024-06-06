@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function MicroHTML\{INPUT, emptyHTML};
+use function MicroHTML\{INPUT, emptyHTML, STYLE};
 
 require_once "config.php";
 
@@ -86,7 +86,7 @@ class ImageIO extends Extension
 
         $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH, 192);
         $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT, 192);
-        $page->add_html_header("<style>:root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}</style>");
+        $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST", permission: Permissions::DELETE_IMAGE)) {
             global $page, $user;

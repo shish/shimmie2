@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{LINK};
+
 class RSSImages extends Extension
 {
     public function onPostListBuilding(PostListBuildingEvent $event): void
@@ -13,11 +15,19 @@ class RSSImages extends Extension
 
         if (count($event->search_terms) > 0) {
             $search = url_escape(Tag::implode($event->search_terms));
-            $page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-                "title=\"$title - Posts with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
+            $page->add_html_header(LINK([
+                'rel' => 'alternate',
+                'type' => 'application/rss+xml',
+                'title' => "$title - Posts with tags: $search",
+                'href' => make_link("rss/images/$search/1")
+            ]));
         } else {
-            $page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-                "title=\"$title - Posts\" href=\"".make_link("rss/images/1")."\" />");
+            $page->add_html_header(LINK([
+                'rel' => 'alternate',
+                'type' => 'application/rss+xml',
+                'title' => "$title - Posts",
+                'href' => make_link("rss/images/1")
+            ]));
         }
     }
 

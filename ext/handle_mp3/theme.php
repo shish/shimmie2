@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{SCRIPT};
+
 class MP3FileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
@@ -20,7 +22,10 @@ class MP3FileHandlerTheme extends Themelet
 
 			<p><a href='$ilink' id='audio-download'>Download</a>";
 
-        $page->add_html_header("<script src='{$data_href}/ext/handle_mp3/lib/jsmediatags.min.js' type='text/javascript'></script>");
+        $page->add_html_header(SCRIPT([
+            'src' => "$data_href/ext/handle_mp3/lib/jsmediatags.min.js",
+            'type' => 'text/javascript'
+        ]));
         $page->add_block(new Block("Music", $html, "main", 10));
     }
 }

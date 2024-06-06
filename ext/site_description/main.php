@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{META};
+
 class SiteDescription extends Extension
 {
     public function onPageRequest(PageRequestEvent $event): void
@@ -11,11 +13,17 @@ class SiteDescription extends Extension
         global $config, $page;
         if (!empty($config->get_string("site_description"))) {
             $description = $config->get_string("site_description");
-            $page->add_html_header("<meta name=\"description\" content=\"$description\">");
+            $page->add_html_header(META([
+                'name' => 'description',
+                'content' => $description
+            ]));
         }
         if (!empty($config->get_string("site_keywords"))) {
             $keywords = $config->get_string("site_keywords");
-            $page->add_html_header("<meta name=\"keywords\" content=\"$keywords\">");
+            $page->add_html_header(META([
+                'name' => 'keywords',
+                'content' => $keywords
+            ]));
         }
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\LINK;
+
 class RSSComments extends Extension
 {
     public function onPostListBuilding(PostListBuildingEvent $event): void
@@ -11,8 +13,12 @@ class RSSComments extends Extension
         global $config, $page;
         $title = $config->get_string(SetupConfig::TITLE);
 
-        $page->add_html_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
-            "title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
+        $page->add_html_header(LINK([
+            'rel' => 'alternate',
+            'type' => 'application/rss+xml',
+            'title' => "$title - Comments",
+            'href' => make_link("rss/comments")
+        ]));
     }
 
     public function onPageRequest(PageRequestEvent $event): void
