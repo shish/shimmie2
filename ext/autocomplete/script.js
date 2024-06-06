@@ -18,6 +18,30 @@ function getCurrentWord(element) {
 }
 
 /**
+ * foo => ['', 'foo']
+ * -foo => ['-', 'foo']
+ * "-foo" => ['', '-foo']
+ * "-foo => ['', '-foo']  <-- even if the user is still typing and hasn't put the end quote yet
+ *
+ * @param {string} word
+ */
+function splitOperands(word) {
+	const matches = word.match(/^([-]*)"?(.*?)"?$/);
+	return [matches[1], matches[2]];
+}
+
+/**
+ * Quote a word if it uses any operands
+ */
+function quoteIfNeeded(word) {
+	const [ops, term] = splitOperands(word);
+	if(ops !== '') {
+		word = '"' + word + '"';
+	}
+	return word;
+}
+
+/**
  * Whenever input changes, look at what word is currently
  * being typed, and fetch completions for it.
  *
@@ -28,22 +52,21 @@ function updateCompletions(element) {
 	// highlightCompletion(element, -1);
 	element.selected_completion = -1;
 
-	// get the word before the cursor
-	var word = getCurrentWord(element);
-
-	// search for completions
+	// cancel any pending completions
 	if(element.completer_timeout !== null) {
 		clearTimeout(element.completer_timeout);
 		element.completer_timeout = null;
 	}
-	if(word === '' || word === '-') {
+
+	// get the word before the cursor
+	var [ops, word] = splitOperands(getCurrentWord(element));
+	if(word === '') {
 		element.completions = {};
 		renderCompletions(element);
 	}
 	else {
 		element.completer_timeout = setTimeout(() => {
-			const wordWithoutMinus = word.replace(/^-/, '');
-			fetch(shm_make_link('api/internal/autocomplete', {s: wordWithoutMinus})).then(
+			fetch(shm_make_link('api/internal/autocomplete', {s: word}).then(
 				(response) => response.json()
 			).then((json) => {
 				if(element.selected_completion !== -1) {
@@ -98,7 +121,8 @@ function renderCompletions(element) {
 	Object.keys(completions).filter(
 		(key) => {
 			let k = key.toLowerCase();
-			let w = word.replace(/^-/, '').toLowerCase();
+			let [ops, term] = splitOperands(word);
+			let w = term.toLowerCase();
 			return (k.startsWith(w) || k.split(':').some((k) => k.startsWith(w)))
 		}
 	).slice(0, 100).forEach((key, i) => {
@@ -183,10 +207,8 @@ function setCompletion(element, new_word) {
 	}
 
 	// replace the word with the completion
-	if(text[start] === '-') {
-		new_word = '-' + new_word;
-	}
-	new_word += ' ';
+	const [old_ops, old_word] = splitOperands(getCurrentWord(element));
+	new_word = old_ops + quoteIfNeeded(new_word) + ' ';
 	element.value = text.substring(0, start) + new_word + text.substring(end);
 	element.selectionStart = start + new_word.length;
 	element.selectionEnd = start + new_word.length;
