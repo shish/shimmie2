@@ -18,7 +18,7 @@ use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
 
-use function MicroHTML\A;
+use function MicroHTML\{A, STYLE};
 
 class UserNameColumn extends TextColumn
 {
@@ -160,9 +160,9 @@ class UserPage extends Extension
         $this->show_user_info();
 
         if ($user->can(Permissions::VIEW_HELLBANNED)) {
-            $page->add_html_header("<style>DIV.hb, TR.hb TD {border: 1px solid red !important;}</style>");
+            $page->add_html_header(STYLE("DIV.hb, TR.hb TD {border: 1px solid red !important;}"));
         } elseif (!$user->can(Permissions::HELLBANNED)) {
-            $page->add_html_header("<style>.hb {display: none !important;}</style>");
+            $page->add_html_header(STYLE(".hb {display: none !important;}"));
         }
 
         if ($event->page_matches("user_admin/login", method: "GET")) {

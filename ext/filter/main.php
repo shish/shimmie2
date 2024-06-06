@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\SCRIPT;
+
 class Filter extends Extension
 {
     /** @var FilterTheme */
@@ -19,10 +21,10 @@ class Filter extends Extension
     {
         global $page;
         $this->theme->addFilterBox();
-        $page->add_html_header("<script>
+        $page->add_html_header(SCRIPT("
         Array.from(document.getElementsByClassName('thumb')).forEach(function(post) {
             post.style.display='none';
-        });</script>");
+        });"));
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
