@@ -105,6 +105,9 @@ class Notes extends Extension
         if ($event->page_matches("note/history/{note_id}", paged: true)) {
             $this->get_history($event->get_iarg('note_id'), $event->get_iarg('page_num', 1) - 1);
         }
+        if ($event->page_matches("note_history/{image_id}", paged: true)) {
+            $this->get_image_history($event->get_iarg('image_id'), $event->get_iarg('page_num', 1) - 1);
+        }
         if ($event->page_matches("note/revert/{noteID}/{reviewID}", permission: Permissions::NOTES_EDIT)) {
             $noteID = $event->get_iarg('noteID');
             $reviewID = $event->get_iarg('reviewID');
@@ -150,6 +153,11 @@ class Notes extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event): void
+    {
+        $event->add_disallow("note_history");
+    }
+
 
     /*
      * HERE WE LOAD THE NOTES IN THE IMAGE
@@ -181,6 +189,8 @@ class Notes extends Extension
         if ($user->can(Permissions::NOTES_REQUEST)) {
             $event->add_part($this->theme->request_button($event->image->id));
         }
+
+        $event->add_button("View Note History", "note_history/{$event->image->id}", 20);
     }
 
 
@@ -470,6 +480,27 @@ class Notes extends Extension
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
 
         $this->theme->display_history($histories, $pageNumber + 1, $totalPages);
+    }
+
+    private function get_image_history(int $imageID, int $pageNumber): void
+    {
+        global $config, $database;
+
+        $historiesPerPage = $config->get_int('notesHistoriesPerPage');
+
+        $histories = $database->get_all(
+            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
+            "FROM note_histories AS h " .
+            "INNER JOIN users AS u " .
+            "ON u.id = h.user_id " .
+            "WHERE image_id = :image_id " .
+            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
+            ['image_id' => $imageID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
+        );
+
+        $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id", ['image_id' => $imageID]) / $historiesPerPage);
+
+        $this->theme->display_image_history($histories, $imageID, $pageNumber + 1, $totalPages);
     }
 
     /**
