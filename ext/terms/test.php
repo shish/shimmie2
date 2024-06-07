@@ -24,4 +24,10 @@ class TermsTest extends ShimmiePHPUnitTestCase
         $this->request('GET', 'post/list', cookies: ['shm_accepted_terms' => 'true']);
         $this->assert_no_text("terms-modal-enter");
     }
+
+    public function testWiki(): void
+    {
+        $this->request('GET', 'wiki/rules');
+        $this->assert_no_text("terms-modal-enter");
+    }
 }
