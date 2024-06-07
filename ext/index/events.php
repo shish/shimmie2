@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+const TAG_OPERANDS = [
+    "-" => "negative",
+];
+
 /*
  * SearchTermParseEvent:
  * Signal that a search term needs parsing
@@ -12,7 +16,7 @@ class SearchTermParseEvent extends Event
 {
     public int $id = 0;
     public ?string $term = null;
-    public bool $positive = true;
+    public bool $negative = false;
     /** @var string[] */
     public array $context = [];
     /** @var ImgCondition[] */
@@ -28,25 +32,32 @@ class SearchTermParseEvent extends Event
     {
         parent::__construct();
 
-        if ($term == "-" || $term == "*") {
+        // pull any operands off the start of the search term
+        while(is_string($term) && !empty($term) && array_key_exists($term[0], TAG_OPERANDS)) {
+            $operand = TAG_OPERANDS[$term[0]];
+            $term = substr($term, 1);
+            $this->$operand = true;
+        }
+
+        // if the term is in quotes, strip them
+        if(is_string($term) && !empty($term) && $term[0] == '"' && $term[strlen($term) - 1] == '"') {
+            $term = substr($term, 1);
+            $term = substr($term, 0, -1);
+        }
+
+        // if what's left is empty, it's not a valid search term
+        if ($term === "" || $term === "*") {
             throw new SearchTermParseException("'$term' is not a valid search term");
         }
 
-        $positive = true;
-        if (is_string($term) && !empty($term) && ($term[0] == '-')) {
-            $positive = false;
-            $term = substr($term, 1);
-        }
-
         $this->id = $id;
-        $this->positive = $positive;
         $this->term = $term;
         $this->context = $context;
     }
 
     public function add_querylet(Querylet $q): void
     {
-        $this->add_img_condition(new ImgCondition($q, $this->positive));
+        $this->add_img_condition(new ImgCondition($q, !$this->negative));
     }
 
     public function add_img_condition(ImgCondition $c): void
