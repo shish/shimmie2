@@ -91,6 +91,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
         /**
          * @param array<string, mixed> $get_args
          * @param array<string, mixed> $post_args
+         * @param array<string, string> $cookies
          */
         protected static function request(
             string $method,
