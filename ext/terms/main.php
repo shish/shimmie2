@@ -29,8 +29,15 @@ class Terms extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link(explode('/', $event->path, 2)[1]));
         } else {
-            // run on all pages unless logged in or cookie exists
-            if ($user->is_anonymous() && !isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'accepted_terms'])) {
+            // run on all pages unless any of:
+            // - user is logged in
+            // - cookie exists
+            // - user is viewing the wiki (because that's where the privacy policy / TOS / etc are)
+            if (
+                $user->is_anonymous()
+                && !$page->get_cookie('accepted_terms')
+                && !$event->page_starts_with("wiki")
+            ) {
                 $sitename = $config->get_string(SetupConfig::TITLE);
                 $body = format_text($config->get_string("terms_message"));
                 $this->theme->display_page($page, $sitename, $event->path, $body);
