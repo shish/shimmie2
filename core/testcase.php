@@ -91,12 +91,14 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
         /**
          * @param array<string, mixed> $get_args
          * @param array<string, mixed> $post_args
+         * @param array<string, string> $cookies
          */
         protected static function request(
             string $method,
             string $page_name,
             array $get_args = [],
-            array $post_args = []
+            array $post_args = [],
+            array $cookies = ["shm_accepted_terms" => "true"],
         ): Page {
             // use a fresh page
             global $page;
@@ -110,7 +112,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($get_args));
             $_GET = $get_args;
             $_POST = $post_args;
-            $_COOKIE['shm_accepted_terms'] = "true";
+            $_COOKIE = $cookies;
             $page = new Page();
             send_event(new PageRequestEvent($method, $page_name, $get_args, $post_args));
             if ($page->mode == PageMode::REDIRECT) {
