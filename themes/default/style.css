@@ -127,6 +127,11 @@ UL {
 	text-align: left;
 }
 
+CODE {
+	background: #BBB;
+	font-size: 0.9rem;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *             the navigation bar, and all its blocks             *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

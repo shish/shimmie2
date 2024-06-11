@@ -192,20 +192,20 @@ class NotesTheme extends Themelet
     {
         return '<p>Search for posts with notes.</p>
         <div class="command_example">
-        <pre>note=noted</pre>
+        <code>note=noted</code>
         <p>Returns posts with a note matching "noted".</p>
         </div>
         <div class="command_example">
-        <pre>notes>0</pre>
+        <code>notes>0</code>
         <p>Returns posts with 1 or more notes.</p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <div class="command_example">
-        <pre>notes_by=username</pre>
+        <code>notes_by=username</code>
         <p>Returns posts with note(s) by "username".</p>
         </div>
         <div class="command_example">
-        <pre>notes_by_user_id=123</pre>
+        <code>notes_by_user_id=123</code>
         <p>Returns posts with note(s) by user 123.</p>
         </div>
         ';
