@@ -165,6 +165,10 @@ font-size:0.8rem;
 FOOTER > DIV {
 margin: 1rem 2rem;
 }
+CODE {
+background: #DEDEDE;
+font-size: 0.9rem;
+}
 form {
 margin:0;
 }

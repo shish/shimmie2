@@ -21,7 +21,7 @@ class MimeSystemTheme extends Themelet
         return '<p>Search for posts by extension</p>
 
         <div class="command_example">
-        <pre>ext=jpg</pre>
+        <code>ext=jpg</code>
         <p>Returns posts with the extension "jpg".</p>
         </div>
 
@@ -33,7 +33,7 @@ class MimeSystemTheme extends Themelet
         <p>Search for posts by MIME type</p>
 
         <div class="command_example">
-        <pre>mime=image/jpeg</pre>
+        <code>mime=image/jpeg</code>
         <p>Returns posts that have the MIME type "image/jpeg".</p>
         </div>
 

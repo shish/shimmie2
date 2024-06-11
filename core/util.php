@@ -708,7 +708,7 @@ function _fatal_error(\Exception $e): void
 		<p><b>Message:</b> '.html_escape($message).'
 		'.$q.'
 		<p><b>Version:</b> '.$version.' (on '.$phpver.')
-        <p><b>Stack Trace:</b></p><pre>'.$e->getTraceAsString().'</pre>
+        <p><b>Stack Trace:</b></p><pre><code>'.$e->getTraceAsString().'</code></pre>
 	</body>
 </html>
 ';

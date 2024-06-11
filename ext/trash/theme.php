@@ -10,7 +10,7 @@ class TrashTheme extends Themelet
     {
         return '<p>Search for posts in the trash.</p>
         <div class="command_example">
-        <pre>in:trash</pre>
+        <code>in:trash</code>
         <p>Returns posts that are in the trash.</p>
         </div>
         ';

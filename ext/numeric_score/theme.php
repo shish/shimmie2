@@ -95,38 +95,38 @@ class NumericScoreTheme extends Themelet
     {
         return '<p>Search for posts that have received numeric scores by the score or by the scorer.</p>
         <div class="command_example">
-        <pre>score=1</pre>
+        <code>score=1</code>
         <p>Returns posts with a score of 1.</p>
         </div>
         <div class="command_example">
-        <pre>score>0</pre>
+        <code>score>0</code>
         <p>Returns posts with a score of 1 or more.</p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
 
         <div class="command_example">
-        <pre>upvoted_by=username</pre>
+        <code>upvoted_by=username</code>
         <p>Returns posts upvoted by "username".</p>
         </div>
         <div class="command_example">
-        <pre>upvoted_by_id=123</pre>
+        <code>upvoted_by_id=123</code>
         <p>Returns posts upvoted by user 123.</p>
         </div>
         <div class="command_example">
-        <pre>downvoted_by=username</pre>
+        <code>downvoted_by=username</code>
         <p>Returns posts downvoted by "username".</p>
         </div>
         <div class="command_example">
-        <pre>downvoted_by_id=123</pre>
+        <code>downvoted_by_id=123</code>
         <p>Returns posts downvoted by user 123.</p>
         </div>
 
         <div class="command_example">
-        <pre>order:score_desc</pre>
+        <code>order:score_desc</code>
         <p>Sorts the search results by score, descending.</p>
         </div>
         <div class="command_example">
-        <pre>order:score_asc</pre>
+        <code>order:score_asc</code>
         <p>Sorts the search results by score, ascending.</p>
         </div>
         ';
