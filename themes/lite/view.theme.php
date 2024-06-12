@@ -58,11 +58,12 @@ class CustomViewPostTheme extends ViewPostTheme
         }
 
         if (Extension::is_enabled(RatingsInfo::KEY)) {
-            if ($image['rating'] === null || $image['rating'] == "?") {
-                $image['rating'] = "?";
+            $rating = $image['rating'];
+            if ($rating === null) {
+                $rating = "?";
             }
-            $h_rating = Ratings::rating_to_human($image['rating']);
-            $html .= "<br>Rating: $h_rating";
+            $h_rating = Ratings::rating_to_human($rating);
+            $html .= "<br>Rating: <a href='".search_link(["rating=$rating"])."'>$h_rating</a>";
         }
 
         return $html;
