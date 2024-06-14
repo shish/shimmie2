@@ -125,7 +125,7 @@ class CommentListTheme extends Themelet
             $html .= $this->comment_to_html($comment, true);
         }
         $html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
-        $page->add_block(new Block("Comments", $html, "left", 50, "comment-list-recent"));
+        $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-recent"));
     }
 
     /**
