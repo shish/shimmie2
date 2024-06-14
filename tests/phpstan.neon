@@ -8,7 +8,6 @@ parameters:
     - ../themes
   dynamicConstantNames:
     - DEBUG
-    - SPEED_HAX
     - TRUSTED_PROXIES
     - TIMEZONE
     - BASE_HREF

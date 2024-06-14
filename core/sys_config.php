@@ -14,7 +14,7 @@ namespace Shimmie2;
  * Do NOT change them in this file. These are the defaults only!
  *
  * Example:
- *  define("SPEED_HAX", true);
+ *  define("DEBUG", true);
  */
 
 function _d(string $name, mixed $value): void
@@ -29,7 +29,6 @@ _d("DATABASE_TIMEOUT", 10000);  // int      Time to wait for each statement to c
 _d("CACHE_DSN", null);          // string   cache connection details
 _d("DEBUG", false);             // boolean  print various debugging details
 _d("COOKIE_PREFIX", 'shm');     // string   if you run multiple galleries with non-shared logins, give them different prefixes
-_d("SPEED_HAX", false);         // boolean  do some questionable things in the name of performance
 _d("WH_SPLITS", 1);             // int      how many levels of subfolders to put in the warehouse
 _d("VERSION", "2.12.0-alpha");  // string   shimmie version
 _d("TIMEZONE", null);           // string   timezone

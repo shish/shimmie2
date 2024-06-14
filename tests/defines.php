@@ -14,7 +14,6 @@ define("DATABASE_TIMEOUT", 10000);
 define("CACHE_DSN", null);
 define("DEBUG", false);
 define("COOKIE_PREFIX", 'shm');
-define("SPEED_HAX", false);
 define("WH_SPLITS", 1);
 define("VERSION", 'unit-tests');
 define("TRACE_FILE", null);
