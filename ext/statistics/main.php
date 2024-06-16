@@ -26,9 +26,17 @@ class Statistics extends Extension
             }
 
             if (Extension::is_enabled(TagHistoryInfo::KEY)) {
-                $tag_tally = $this->get_tag_stats($this->unlisted);
-                arsort($tag_tally, $flags = SORT_NUMERIC);
-                $tag_table = $this->theme->build_table($tag_tally, "Taggers", "Top $limit taggers", $limit);
+                $tallies = $this->get_tag_stats($this->unlisted);
+                arsort($tallies[0], SORT_NUMERIC);
+                $stats = [];
+                foreach ($tallies[0] as $name => $tag_diff) {
+                    $entries = "";
+                    if (isset($tallies[1][$name])) {
+                        $entries = " <span class='tag_count' title='Total edits'>" . $tallies[1][$name] . "</span>";
+                    }
+                    $stats[$name] = "<span title='Tags changed (ignoring aliases)'>$tag_diff</span>$entries";
+                }
+                $tag_table = $this->theme->build_table($stats, "Taggers", "Top $limit taggers", $limit);
             } else {
                 $tag_table = null;
             }
@@ -38,7 +46,7 @@ class Statistics extends Extension
                 array_key_exists($name, $upload_tally) ? $upload_tally[$name] += 1 : $upload_tally[$name] = 1;
 
             }
-            arsort($upload_tally, $flags = SORT_NUMERIC);
+            arsort($upload_tally, SORT_NUMERIC);
             $upload_table = $this->theme->build_table($upload_tally, "Uploaders", "Top $limit uploaders", $limit);
 
             if (Extension::is_enabled(CommentListInfo::KEY)) {
@@ -47,7 +55,7 @@ class Statistics extends Extension
                     array_key_exists($name, $comment_tally) ? $comment_tally[$name] += 1 : $comment_tally[$name] = 1;
 
                 }
-                arsort($comment_tally, $flags = SORT_NUMERIC);
+                arsort($comment_tally, SORT_NUMERIC);
                 $comment_table = $this->theme->build_table($comment_tally, "Commenters", "Top $limit commenters", $limit);
             } else {
                 $comment_table = null;
@@ -59,7 +67,7 @@ class Statistics extends Extension
                     array_key_exists($name, $favorite_tally) ? $favorite_tally[$name] += 1 : $favorite_tally[$name] = 1;
 
                 }
-                arsort($favorite_tally, $flags = SORT_NUMERIC);
+                arsort($favorite_tally, SORT_NUMERIC);
                 $favorite_table = $this->theme->build_table($favorite_tally, "Favoriters", "Top $limit favoriters", $limit);
             } else {
                 $favorite_table = null;
@@ -89,7 +97,7 @@ class Statistics extends Extension
 
     /**
      * @param String[] $unlisted
-     * @return array<string, int>
+     * @return array<array<string, int>>
      */
     private function get_tag_stats(array $unlisted): array
     {
@@ -104,20 +112,46 @@ class Statistics extends Extension
             $id = $ts['image_id'];
             array_key_exists($id, $tag_histories) ? array_push($tag_histories[$id], $tag_history) : $tag_histories[$id] = [$tag_history];
         }
+
+        // Grab alias list so we can ignore those changes
+        // While this strategy may discount some change made before those aliases were implemented, it is preferable over crediting the changes made by an alias to whoever edits the tags next.
+        $alias_db = $database->get_all(
+            "
+					SELECT *
+					FROM aliases
+					WHERE 1=1
+				"
+        );
+        $aliases = [];
+        foreach ($alias_db as $alias) {
+            $aliases[$alias['oldtag']] = $alias['newtag'];
+        }
+
         // Count changes made in each tag history and tally tags for users
         $tag_tally = [];
+        $change_tally = [];
         foreach ($tag_histories as $i => $image) {
             $prev = [];
             foreach ($image as $change) {
                 $curr = explode(' ', $change['tags']);
+                foreach ($curr as $i => $tag) {
+                    if (array_key_exists($tag, $aliases)) {
+                        $curr[$i] = $aliases[$tag];
+                    }
+                }
                 if (!in_array($change['class'], $unlisted)) {
                     $name = (string)$change['name'];
+                    if (!isset($tag_tally[$name])) {
+                        $tag_tally[$name] = 0;
+                        $change_tally[$name] = 0;
+                    }
                     $tag_tally[$name] += count(array_diff($curr, $prev));
+                    $change_tally[$name] += 1;
                 }
                 $prev = $curr;
             }
         }
-        return $tag_tally;
+        return [$tag_tally, $change_tally];
     }
 
     /**
