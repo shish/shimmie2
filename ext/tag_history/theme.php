@@ -135,9 +135,9 @@ class TagHistoryTheme extends Themelet
         $th = new TagHistory();
         $pt = $th->get_previous_tags($image_id, $current_id);
         if ($pt) {
-            $previous_tags = Tag::explode($pt["tags"]);
+            $previous_tags = explode(" ", $pt["tags"]);
         }
-        $current_tags = Tag::explode($current_tags);
+        $current_tags = explode(" ", $current_tags);
         if ($pt) {
             $tags = array_unique(array_merge($current_tags, $previous_tags));
             sort($tags);
