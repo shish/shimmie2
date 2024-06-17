@@ -43,7 +43,7 @@ class StatisticsTheme extends Themelet
                 TR(
                     TD([], $n),
                     TD([], rawHTML((string)$value)),
-                    TD([], $user)
+                    TD([], rawHTML('<a class="username" href="'.make_link('user/'.$user).'">'.$user.'</a>'))
                 )
             );
             $n++;
