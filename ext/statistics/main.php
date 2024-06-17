@@ -95,7 +95,7 @@ class Statistics extends Extension
     {
         global $database;
         // Returns the username and tags from each tag history entry. This includes Anonymous tag histories to prevent their tagging being ignored and credited to the next user to edit.
-        $tag_stats = $database->get_all("SELECT users.class,users.name,tag_histories.tags,tag_histories.image_id FROM tag_histories INNER JOIN users ON users.id = tag_histories.user_id WHERE 1=1 ORDER BY users.id;");
+        $tag_stats = $database->get_all("SELECT users.class,users.name,tag_histories.tags,tag_histories.image_id FROM tag_histories INNER JOIN users ON users.id = tag_histories.user_id WHERE 1=1 ORDER BY tag_histories.id;");
 
         // Group tag history entries by image id
         $tag_histories = [];
