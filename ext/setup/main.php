@@ -344,7 +344,6 @@ class Setup extends Extension
             $this->theme->display_page($page, $panel);
         } elseif ($event->page_matches("setup/save", method: "POST", permission: Permissions::CHANGE_SETTING)) {
             send_event(new ConfigSaveEvent($config, $event->POST));
-            $config->save();
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("setup"));
@@ -407,11 +406,8 @@ class Setup extends Extension
                 }
             }
         }
+        $config->save();
         log_warning("setup", "Configuration updated");
-        foreach (\Safe\glob("data/cache/*.css") as $css_cache) {
-            unlink($css_cache);
-        }
-        log_warning("setup", "Cache cleared");
     }
 
     public function onCliGen(CliGenEvent $event): void
