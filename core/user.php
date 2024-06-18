@@ -251,8 +251,14 @@ class User
     public function get_auth_token(): string
     {
         global $config;
-        $salt = DATABASE_DSN;
+
+        $salt = $config->get_string("csrf_salt");
+        if (is_null($salt)) {
+            $salt = bin2hex(random_bytes(32));
+            send_event(new ConfigSaveEvent($config, ["_type_csrf_salt" => "string", "_config_csrf_salt" => $salt]));
+        }
+
         $addr = get_session_ip($config);
-        return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
+        return sha1(sha1($this->passhash . $addr) . "-salty-csrf-" . $salt);
     }
 }
