@@ -240,19 +240,22 @@ class User
     /**
      * Get an auth token to be used in POST forms
      *
-     * password = secret, avoid storing directly
-     * passhash = bcrypt(password), so someone who gets to the database can't get passwords
-     * sesskey  = md5(passhash . IP), so if it gets sniffed it can't be used from another IP,
-     *            and it can't be used to get the passhash to generate new sesskeys
-     * authtok  = md5(sesskey, salt), presented to the user in web forms, to make sure that
-     *            the form was generated within the session. Salted and re-hashed so that
-     *            reading a web page from the user's cache doesn't give access to the session key
+     * the token is based on
+     * - the user's password, so that only this user can use the token
+     * - the session IP, to reduce the blast radius of guessed passwords
+     * - a salt known only to the server, so that clients or attackers
+     *   can't generate their own tokens even if they know the first two
      */
     public function get_auth_token(): string
     {
         global $config;
-        $salt = DATABASE_DSN;
-        $addr = get_session_ip($config);
-        return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
+
+        $salt = $config->get_string("csrf_salt");
+        if (is_null($salt)) {
+            $salt = bin2hex(random_bytes(32));
+            send_event(new ConfigSaveEvent($config, ["_type_csrf_salt" => "string", "_config_csrf_salt" => $salt]));
+        }
+
+        return hash("sha3-256", $this->passhash . get_session_ip($config) . $salt);
     }
 }
