@@ -69,6 +69,12 @@ class BaseThemelet
                 $custom_classes .= "shm-thumb-has_child ";
             }
         }
+        if(Extension::is_enabled(RatingsInfo::KEY) && Extension::is_enabled(RatingsBlurInfo::KEY)) {
+            $rb = new RatingsBlur();
+            if ($rb->blur($image['rating'])) {
+                $custom_classes .= "blur ";
+            }
+        }
 
         $attrs = [
             "href" => $view_link,

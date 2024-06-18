@@ -41,7 +41,7 @@ function contact_link(?string $contact = null): ?string
         return "mailto:$text";
     }
 
-    if (str_contains($text, "/")) {
+    if (str_contains($text, "/") && mb_substr($text, 0, 1) != "/") {
         return "https://$text";
     }
 
