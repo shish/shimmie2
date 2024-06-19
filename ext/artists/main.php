@@ -32,7 +32,9 @@ class Artists extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
+        global $config;
         Image::$prop_types["author"] = ImagePropType::STRING;
+        $config->set_default_int("artistsPerPage", 20);
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
@@ -120,7 +122,6 @@ class Artists extends Extension
 					");
             $database->execute("ALTER TABLE images ADD COLUMN author VARCHAR(255) NULL");
 
-            $config->set_int("artistsPerPage", 20);
             $this->set_version("ext_artists_version", 1);
         }
     }
