@@ -208,7 +208,6 @@ function get_session_ip(Config $config): string
     return $addr;
 }
 
-
 /**
  * A shorthand way to send a TextFormattingEvent and get the results.
  */
@@ -802,6 +801,20 @@ function generate_key(int $length = 20): string
     }
 
     return $randomString;
+}
+
+/**
+ * Generate and store a named salt for hashing
+ */
+function generate_salt(string $name): string
+{
+    global $config;
+    $salt = $config->get_string("{$name}_salt");
+    if (is_null($salt)) {
+        $salt = bin2hex(random_bytes(32));
+        $config->set_string("{$name}_salt", $salt);
+    }
+    return $salt;
 }
 
 function shm_tempnam(string $prefix = ""): string
