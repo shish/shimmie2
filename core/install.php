@@ -314,7 +314,8 @@ function create_tables(Database $db): void
 
 function write_config(string $dsn): void
 {
-    $file_content = "<" . "?php\ndefine('DATABASE_DSN', '$dsn');\n";
+    $secret = bin2hex(random_bytes(16));
+    $file_content = "<" . "?php\ndefine('DATABASE_DSN', '$dsn');\ndefine('SECRET', '$secret');\n";
 
     if (!file_exists("data/config")) {
         mkdir("data/config", 0755, true);
