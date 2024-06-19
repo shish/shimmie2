@@ -11,13 +11,6 @@ namespace Shimmie2;
  */
 interface Config
 {
-    /**
-     * Save the list of name:value pairs to wherever they came from,
-     * so that the next time a page is loaded it will use the new
-     * configuration.
-     */
-    public function save(string $name = null): void;
-
     //@{ /*--------------------------------- SET ------------------------------------------------------*/
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -143,6 +136,13 @@ abstract class BaseConfig implements Config
 {
     /** @var array<string, mixed> */
     public array $values = [];
+
+    /**
+     * Save the list of name:value pairs to wherever they came from,
+     * so that the next time a page is loaded it will use the new
+     * configuration.
+     */
+    abstract protected function save(string $name): void;
 
     public function set_int(string $name, ?int $value): void
     {
@@ -341,35 +341,29 @@ class DatabaseConfig extends BaseConfig
         return $values;
     }
 
-    public function save(string $name = null): void
+    protected function save(string $name): void
     {
         global $cache;
 
-        if (is_null($name)) {
-            reset($this->values); // rewind the array to the first element
-            foreach ($this->values as $name => $value) {
-                $this->save($name);
-            }
-        } else {
-            $query = "DELETE FROM {$this->table_name} WHERE name = :name";
-            $args = ["name" => $name];
-            $cols = ["name","value"];
-            $params = [":name",":value"];
-            if (!empty($this->sub_column) && !empty($this->sub_value)) {
-                $query .= " AND $this->sub_column = :sub_value";
-                $args["sub_value"] = $this->sub_value;
-                $cols[] = $this->sub_column;
-                $params[] = ":sub_value";
-            }
-
-            $this->database->execute($query, $args);
-
-            $args["value"] = $this->values[$name];
-            $this->database->execute(
-                "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
-                $args
-            );
+        $query = "DELETE FROM {$this->table_name} WHERE name = :name";
+        $args = ["name" => $name];
+        $cols = ["name","value"];
+        $params = [":name",":value"];
+        if (!empty($this->sub_column) && !empty($this->sub_value)) {
+            $query .= " AND $this->sub_column = :sub_value";
+            $args["sub_value"] = $this->sub_value;
+            $cols[] = $this->sub_column;
+            $params[] = ":sub_value";
         }
+
+        $this->database->execute($query, $args);
+
+        $args["value"] = $this->values[$name];
+        $this->database->execute(
+            "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
+            $args
+        );
+
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here
         $cache->set($this->cache_name, $this->values);

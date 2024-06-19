@@ -406,7 +406,6 @@ class Setup extends Extension
                 }
             }
         }
-        $config->save();
         log_warning("setup", "Configuration updated");
     }
 
