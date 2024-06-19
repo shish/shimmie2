@@ -44,6 +44,8 @@ class UserPageBuildingEvent extends PartListBuildingEvent
 
 class UserCreationEvent extends Event
 {
+    public ?User $user;
+
     public function __construct(
         public string $username,
         public string $password,

@@ -115,7 +115,7 @@ class LoginResult
         try {
             $uce = send_event(new UserCreationEvent($username, $password1, $password2, $email, true));
             return new LoginResult(
-                User::by_name($username),
+                $uce->user,
                 UserPage::get_session_id($username),
                 null
             );
@@ -499,7 +499,7 @@ class UserPage extends Extension
 
     public function onUserCreation(UserCreationEvent $event): void
     {
-        global $config, $page, $user;
+        global $config, $database, $page, $user;
 
         $name = $event->username;
         //$pass = $event->password;
@@ -538,10 +538,25 @@ class UserPage extends Extension
             throw new UserCreationException("Email address is required");
         }
 
-        $new_user = $this->create_user($event);
+        $email = (!empty($event->email)) ? $event->email : null;
+
+        // if there are currently no admins, the new user should be one
+        $need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
+        $class = $need_admin ? 'admin' : 'user';
+
+        $database->execute(
+            "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
+            ["username" => $event->username, "hash" => '', "email" => $email, "class" => $class]
+        );
+        $new_user = User::by_name($event->username);
+        $new_user->set_password($event->password);
+        log_info("user", "Created User @{$event->username}");
+
         if ($event->login) {
             send_event(new UserLoginEvent($new_user));
         }
+
+        $event->user = $new_user;
     }
 
     public const USER_SEARCH_REGEX = "/^(?:poster|user)(!?)[=|:](.*)$/i";
@@ -662,29 +677,6 @@ class UserPage extends Extension
         } else {
             throw new ServerError("Email sending not implemented");
         }
-    }
-
-    private function create_user(UserCreationEvent $event): User
-    {
-        global $database;
-
-        $email = (!empty($event->email)) ? $event->email : null;
-
-        // if there are currently no admins, the new user should be one
-        $need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
-        $class = $need_admin ? 'admin' : 'user';
-
-        $database->execute(
-            "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
-            ["username" => $event->username, "hash" => '', "email" => $email, "class" => $class]
-        );
-        $uid = $database->get_last_insert_id('users_id_seq');
-        $new_user = User::by_name($event->username);
-        $new_user->set_password($event->password);
-
-        log_info("user", "Created User #$uid ({$event->username})");
-
-        return $new_user;
     }
 
     public static function get_session_id(string $name): string
