@@ -389,20 +389,25 @@ class Setup extends Extension
             if (substr($_name, 0, 6) == "_type_") {
                 $name = substr($_name, 6);
                 $type = $event->values["_type_$name"];
-                $value = isset($event->values["_config_$name"]) ? $event->values["_config_$name"] : null;
-                switch ($type) {
-                    case "string":
-                        $config->set_string($name, $value);
-                        break;
-                    case "int":
-                        $config->set_int($name, parse_shorthand_int((string)$value));
-                        break;
-                    case "bool":
-                        $config->set_bool($name, bool_escape($value));
-                        break;
-                    case "array":
-                        $config->set_array($name, $value);
-                        break;
+                if(isset($event->values["_config_$name"])) {
+                    $value = $event->values["_config_$name"];
+                    switch ($type) {
+                        case "string":
+                            $config->set_string($name, $value);
+                            break;
+                        case "int":
+                            $config->set_int($name, parse_shorthand_int((string)$value));
+                            break;
+                        case "bool":
+                            $config->set_bool($name, bool_escape($value));
+                            break;
+                        case "array":
+                            $config->set_array($name, $value);
+                            break;
+                    }
+                }
+                else {
+                    $config->delete($name);
                 }
             }
         }
