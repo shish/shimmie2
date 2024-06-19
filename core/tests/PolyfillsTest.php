@@ -46,6 +46,8 @@ class PolyfillsTest extends TestCase
         $this->assertTrue(bool_escape(true));
         $this->assertFalse(bool_escape(false));
 
+        $this->assertFalse(bool_escape(null));
+
         $this->assertTrue(bool_escape("true"));
         $this->assertFalse(bool_escape("false"));
 
