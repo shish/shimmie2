@@ -233,6 +233,7 @@ function only_strings(array $map): array
     }
     return $out;
 }
+
 /**
  * Generates the path to a file under the data folder based on the file's hash.
  * This process creates subfolders based on octet pairs from the file's hash.
