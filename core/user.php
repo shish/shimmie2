@@ -85,12 +85,9 @@ class User
         global $cache, $config, $database;
         $row = $cache->get("user-session:$name-$session");
         if (is_null($row)) {
-            if ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
-                $query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
-            } else {
-                $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
-            }
-            $row = $database->get_row($query, ["name" => $name, "ip" => get_session_ip($config), "sess" => $session]);
+            $args = ["name" => $name, "ip" => get_session_ip($config), "sess" => $session];
+            $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
+            $row = $database->get_row($query, $args);
             $cache->set("user-session:$name-$session", $row, 600);
         }
         return is_null($row) ? null : new User($row);
