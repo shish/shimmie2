@@ -53,7 +53,7 @@ class TaggerXML extends Extension
         ];
 
         // Match
-        $match = "concat(:p, tag) LIKE :sq";
+        $match = "(:p || tag) LIKE :sq";
         // Exclude
         //		$exclude = $event->get_arg('exclude')? "AND NOT IN ".$this->image_tags($event->get_arg('exclude')) : null;
 
