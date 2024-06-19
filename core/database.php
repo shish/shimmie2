@@ -452,6 +452,6 @@ class Database
         }
 
         // As fallback, use MD5 as a DRBG.
-        return "MD5(CONCAT($seed, CONCAT('+', $id_column)))";
+        return "MD5($seed || '+' || $id_column)";
     }
 }

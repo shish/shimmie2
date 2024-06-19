@@ -154,10 +154,6 @@ function _md5(string $a): string
 {
     return md5($a);
 }
-function _concat(string $a, string $b): string
-{
-    return $a . $b;
-}
 function _lower(string $a): string
 {
     return strtolower($a);
@@ -185,7 +181,6 @@ class SQLite extends DBEngine
         $db->sqliteCreateFunction('log', 'Shimmie2\_log');
         $db->sqliteCreateFunction('isnull', 'Shimmie2\_isnull', 1);
         $db->sqliteCreateFunction('md5', 'Shimmie2\_md5', 1);
-        $db->sqliteCreateFunction('concat', 'Shimmie2\_concat', 2);
         $db->sqliteCreateFunction('lower', 'Shimmie2\_lower', 1);
         $db->sqliteCreateFunction('rand', 'Shimmie2\_rand', 0);
         $db->sqliteCreateFunction('ln', 'Shimmie2\_ln', 1);
