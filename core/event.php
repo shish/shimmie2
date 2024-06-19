@@ -63,7 +63,6 @@ class PageRequestEvent extends Event
      */
     private array $named_args = [];
     public int $page_num;
-    private bool $is_authed;
 
     /**
      * @param string $method The HTTP method used to make the request
@@ -87,10 +86,6 @@ class PageRequestEvent extends Event
         $this->path = $path;
         $this->GET = $get;
         $this->POST = $post;
-        $this->is_authed = (
-            defined("UNITTEST")
-            || (isset($_POST["auth_token"]) && $_POST["auth_token"] == $user->get_auth_token())
-        );
 
         // break the path into parts
         $this->args = explode('/', $path);
@@ -218,8 +213,13 @@ class PageRequestEvent extends Event
 
         // if we matched the method and the path, but the page requires
         // authentication and the user is not authenticated, then complain
-        if($authed && $this->is_authed === false) {
-            throw new PermissionDenied("Permission Denied: Missing CSRF Token");
+        if($authed && !defined("UNITTEST")) {
+            if(!isset($this->POST["auth_token"])) {
+                throw new PermissionDenied("Permission Denied: Missing CSRF Token");
+            }
+            if($this->POST["auth_token"] != $user->get_auth_token()) {
+                throw new PermissionDenied("Permission Denied: Invalid CSRF Token (Go back, refresh the page, and try again?)");
+            }
         }
         if($permission !== null && !$user->can($permission)) {
             throw new PermissionDenied("Permission Denied: {$user->name} lacks permission {$permission}");
