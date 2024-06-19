@@ -73,7 +73,6 @@ class Featured extends Extension
         global $config;
         if ($event->image->id == $config->get_int("featured_id")) {
             $config->set_int("featured_id", 0);
-            $config->save();
         }
     }
 

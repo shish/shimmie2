@@ -22,22 +22,22 @@ interface Config
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_int(string $name, ?int $value): void;
+    public function set_int(string $name, int $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_float(string $name, ?float $value): void;
+    public function set_float(string $name, float $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_string(string $name, ?string $value): void;
+    public function set_string(string $name, string $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_bool(string $name, ?bool $value): void;
+    public function set_bool(string $name, bool $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -45,6 +45,11 @@ interface Config
      * @param mixed[] $value
      */
     public function set_array(string $name, array $value): void;
+
+    /**
+     * Delete a configuration option.
+     */
+    public function delete(string $name): void;
     //@} /*--------------------------------------------------------------------------------------------*/
 
     //@{ /*-------------------------------- SET DEFAULT -----------------------------------------------*/
@@ -141,54 +146,56 @@ interface Config
  */
 abstract class BaseConfig implements Config
 {
-    /** @var array<string, mixed> */
+    /** @var array<string, string> */
     public array $values = [];
 
-    public function set_int(string $name, ?int $value): void
+    public function set_int(string $name, int $value): void
     {
-        $this->values[$name] = is_null($value) ? null : $value;
+        $this->values[$name] = (string)$value;
         $this->save($name);
     }
 
-    public function set_float(string $name, ?float $value): void
+    public function set_float(string $name, float $value): void
+    {
+        $this->values[$name] = (string)$value;
+        $this->save($name);
+    }
+
+    public function set_string(string $name, string $value): void
     {
         $this->values[$name] = $value;
         $this->save($name);
     }
 
-    public function set_string(string $name, ?string $value): void
-    {
-        $this->values[$name] = $value;
-        $this->save($name);
-    }
-
-    public function set_bool(string $name, ?bool $value): void
+    public function set_bool(string $name, bool $value): void
     {
         $this->values[$name] = $value ? 'Y' : 'N';
         $this->save($name);
     }
 
-    public function set_array(string $name, ?array $value): void
+    public function set_array(string $name, array $value): void
     {
-        if ($value != null) {
-            $this->values[$name] = implode(",", $value);
-        } else {
-            $this->values[$name] = null;
-        }
+        $this->values[$name] = implode(",", $value);
+        $this->save($name);
+    }
+
+    public function delete(string $name): void
+    {
+        unset($this->values[$name]);
         $this->save($name);
     }
 
     public function set_default_int(string $name, int $value): void
     {
         if (is_null($this->get($name))) {
-            $this->values[$name] = $value;
+            $this->values[$name] = (string)$value;
         }
     }
 
     public function set_default_float(string $name, float $value): void
     {
         if (is_null($this->get($name))) {
-            $this->values[$name] = $value;
+            $this->values[$name] = (string)$value;
         }
     }
 
@@ -240,11 +247,7 @@ abstract class BaseConfig implements Config
      */
     public function get_string(string $name, ?string $default = null): ?string
     {
-        $val = $this->get($name, $default);
-        if (!is_string($val) && !is_null($val)) {
-            throw new ServerError("$name is not a string: $val");
-        }
-        return $val;
+        return $this->get($name, $default);
     }
 
     /**
@@ -335,7 +338,11 @@ class DatabaseConfig extends BaseConfig
         }
 
         foreach ($this->database->get_all($query, $args) as $row) {
-            $values[$row["name"]] = $row["value"];
+            // versions prior to 2.12 would store null
+            // instead of deleting the row
+            if(!is_null($row["value"])) {
+                $values[$row["name"]] = $row["value"];
+            }
         }
 
         return $values;
@@ -364,12 +371,15 @@ class DatabaseConfig extends BaseConfig
 
             $this->database->execute($query, $args);
 
-            $args["value"] = $this->values[$name];
-            $this->database->execute(
-                "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
-                $args
-            );
+            if(isset($this->values[$name])) {
+                $args["value"] = $this->values[$name];
+                $this->database->execute(
+                    "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
+                    $args
+                );
+            }
         }
+
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here
         $cache->set($this->cache_name, $this->values);
