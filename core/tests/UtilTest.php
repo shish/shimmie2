@@ -45,6 +45,12 @@ class UtilTest extends TestCase
         $this->assertEquals(20, strlen(generate_key()));
     }
 
+    public function test_generate_salt(): void
+    {
+        $this->assertEquals(generate_salt('a'), generate_salt('a'));
+        $this->assertNotEquals(generate_salt('a'), generate_salt('b'));
+    }
+
     public function test_warehouse_path(): void
     {
         $hash = "7ac19c10d6859415";
