@@ -44,6 +44,7 @@ class MySQL extends DBEngine
     public function init(PDO $db): void
     {
         $db->exec("SET NAMES utf8;");
+        $db->exec("SET SESSION sql_mode='ANSI,TRADITIONAL';");
     }
 
     public function scoreql_to_sql(string $data): string
