@@ -83,14 +83,15 @@ class User
     public static function by_session(string $name, string $session): ?User
     {
         global $cache, $config, $database;
-        $row = $cache->get("user-session:$name-$session");
-        if (is_null($row)) {
-            $args = ["name" => $name, "ip" => get_session_ip($config), "sess" => $session];
-            $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
-            $row = $database->get_row($query, $args);
-            $cache->set("user-session:$name-$session", $row, 600);
+        $user = $cache->get("user-session-obj:$name-$session");
+        if (is_null($user)) {
+            $user_by_name = User::by_name($name);
+            if($user_by_name->get_session_id() === $session) {
+                $user = $user_by_name;
+            }
+            $cache->set("user-session-obj:$name-$session", $user, 600);
         }
-        return is_null($row) ? null : new User($row);
+        return $user;
     }
 
     public static function by_id(int $id): ?User
