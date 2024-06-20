@@ -249,7 +249,7 @@ class User
     public function get_auth_token(): string
     {
         global $config;
-        $salt = DATABASE_DSN;
+        $salt = SECRET;
         $addr = get_session_ip($config);
         return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
     }
