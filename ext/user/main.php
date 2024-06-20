@@ -95,7 +95,7 @@ class LoginResult
         if (!is_null($duser)) {
             return new LoginResult(
                 $duser,
-                UserPage::get_session_id($duser->name),
+                $duser->get_session_id(),
                 null
             );
         } else {
@@ -116,7 +116,7 @@ class LoginResult
             $uce = send_event(new UserCreationEvent($username, $password1, $password2, $email, true));
             return new LoginResult(
                 $uce->user,
-                UserPage::get_session_id($username),
+                $uce->user->get_session_id(),
                 null
             );
         } catch (UserCreationException $ex) {
@@ -198,7 +198,7 @@ class UserPage extends Extension
                         true
                     )
                 );
-                $this->set_login_cookie($uce->username);
+                $uce->user->set_login_cookie();
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
             } catch (UserCreationException $ex) {
@@ -269,7 +269,7 @@ class UserPage extends Extension
                     // FIXME: send_event()
                     $duser->set_password($input['pass1']);
                     if ($duser->id == $user->id) {
-                        $this->set_login_cookie($duser->name);
+                        $duser->set_login_cookie();
                     }
                     $page->flash("Password changed");
                     $this->redirect_to_user($duser);
@@ -633,7 +633,7 @@ class UserPage extends Extension
         $duser = User::by_name_and_pass($name, $pass);
         if (!is_null($duser)) {
             send_event(new UserLoginEvent($duser));
-            $this->set_login_cookie($duser->name);
+            $duser->set_login_cookie();
             $page->set_mode(PageMode::REDIRECT);
 
             // Try returning to previous page
@@ -677,33 +677,6 @@ class UserPage extends Extension
         } else {
             throw new ServerError("Email sending not implemented");
         }
-    }
-
-    public static function get_session_id(string $name): string
-    {
-        global $config;
-        $addr = get_session_ip($config);
-        $hash = User::by_name($name)->passhash;
-        return md5($hash . $addr);
-    }
-
-    private function set_login_cookie(string $name): void
-    {
-        global $config, $page;
-
-
-        $page->add_cookie(
-            "user",
-            $name,
-            time() + 60 * 60 * 24 * 365,
-            '/'
-        );
-        $page->add_cookie(
-            "session",
-            $this->get_session_id($name),
-            time() + 60 * 60 * 24 * $config->get_int('login_memory'),
-            '/'
-        );
     }
 
     private function user_can_edit_user(User $a, User $b): bool
