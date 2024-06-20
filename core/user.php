@@ -252,4 +252,32 @@ class User
         $addr = get_session_ip($config);
         return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
     }
+
+
+    public function get_session_id(): string
+    {
+        global $config;
+        $addr = get_session_ip($config);
+        $hash = $this->passhash;
+        return md5($hash . $addr);
+    }
+
+    public function set_login_cookie(): void
+    {
+        global $config, $page;
+
+        $page->add_cookie(
+            "user",
+            $this->name,
+            time() + 60 * 60 * 24 * 365,
+            '/'
+        );
+        $page->add_cookie(
+            "session",
+            $this->get_session_id(),
+            time() + 60 * 60 * 24 * $config->get_int('login_memory'),
+            '/'
+        );
+    }
+
 }
