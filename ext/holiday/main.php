@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\LINK;
+
 class Holiday extends Extension
 {
     public function onInitExt(InitExtEvent $event): void
@@ -22,9 +24,11 @@ class Holiday extends Extension
     {
         global $config, $page;
         if (date('d/m') == '01/04' && $config->get_bool("holiday_aprilfools")) {
-            $page->add_html_header(
-                "<link rel='stylesheet' href='".get_base_href()."/ext/holiday/stylesheets/aprilfools.css' type='text/css'>"
-            );
+            $page->add_html_header(LINK([
+                'rel' => 'stylesheet',
+                'href' => get_base_href() . '/ext/holiday/stylesheets/aprilfools.css',
+                'type' => 'text/css'
+            ]));
         }
     }
 }
