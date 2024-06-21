@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use function MicroHTML\{TD,TH,TR};
 
+require_once "config.php";
+
 class ImageViewCounter extends Extension
 {
     /** @var ImageViewCounterTheme */
