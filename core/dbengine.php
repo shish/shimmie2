@@ -147,10 +147,6 @@ function _log(float $a, ?float $b = null): float
         return log($b, $a);
     }
 }
-function _isnull(mixed $a): bool
-{
-    return is_null($a);
-}
 function _md5(string $a): string
 {
     return md5($a);
@@ -180,7 +176,6 @@ class SQLite extends DBEngine
         $db->sqliteCreateFunction('now', 'Shimmie2\_now', 0);
         $db->sqliteCreateFunction('floor', 'Shimmie2\_floor', 1);
         $db->sqliteCreateFunction('log', 'Shimmie2\_log');
-        $db->sqliteCreateFunction('isnull', 'Shimmie2\_isnull', 1);
         $db->sqliteCreateFunction('md5', 'Shimmie2\_md5', 1);
         $db->sqliteCreateFunction('lower', 'Shimmie2\_lower', 1);
         $db->sqliteCreateFunction('rand', 'Shimmie2\_rand', 0);
