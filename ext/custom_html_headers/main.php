@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class CustomHtmlHeaders extends Extension
 {
     # Adds setup block for custom <head> content
@@ -44,7 +46,7 @@ class CustomHtmlHeaders extends Extension
 
         $header = $config->get_string('custom_html_headers', '');
         if ($header != '') {
-            $page->add_html_header($header);
+            $page->add_html_header(rawHTML($header));
         }
     }
 

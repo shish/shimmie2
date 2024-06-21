@@ -125,7 +125,7 @@ class CommentListTheme extends Themelet
             $html .= $this->comment_to_html($comment, true);
         }
         $html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
-        $page->add_block(new Block("Comments", $html, "left", 50, "comment-list-recent"));
+        $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-recent"));
     }
 
     /**
@@ -306,20 +306,20 @@ class CommentListTheme extends Themelet
     {
         return '<p>Search for posts containing a certain number of comments, or comments by a particular individual.</p>
         <div class="command_example">
-        <pre>comments=1</pre>
+        <code>comments=1</code>
         <p>Returns posts with exactly 1 comment.</p>
         </div>
         <div class="command_example">
-        <pre>comments>0</pre>
+        <code>comments>0</code>
         <p>Returns posts with 1 or more comments. </p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <div class="command_example">
-        <pre>commented_by:username</pre>
+        <code>commented_by:username</code>
         <p>Returns posts that have been commented on by "username". </p>
         </div>
         <div class="command_example">
-        <pre>commented_by_userno:123</pre>
+        <code>commented_by_userno:123</code>
         <p>Returns posts that have been commented on by user 123. </p>
         </div>
         ';

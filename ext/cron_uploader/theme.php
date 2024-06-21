@@ -102,7 +102,7 @@ class CronUploaderTheme extends Themelet
                         <li style='text-align: left;'>You can inherit categories by creating a folder that ends with \";\". For instance category;\\tag1 would result in the tag category:tag1. This allows creating a category folder, then creating many subfolders that will use that category.</li>
                     </ol>
                     The cron uploader works by importing files from the queue folder whenever this url is visited:
-                <br/><pre><a href='$cron_url'>$cron_url</a></pre>
+                <br/><code><a href='$cron_url'>$cron_url</a></code>
 
             <ul>
                 <li>If an import is already running, another cannot start until it is done.</li>
