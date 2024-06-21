@@ -74,7 +74,7 @@ class ImageIO extends Extension
                     $config->set_string(ImageConfig::THUMB_MIME, MimeType::JPEG);
                     break;
             }
-            $config->set_string("thumb_type", null);
+            $config->delete("thumb_type");
 
             $this->set_version(ImageConfig::VERSION, 1);
         }
