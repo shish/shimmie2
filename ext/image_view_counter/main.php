@@ -78,14 +78,18 @@ class ImageViewCounter extends Extension
     {
         global $database, $config;
 
-        if ($config->get_bool("image_viewcounter_installed") == false) { //todo
+        if ($config->get_bool("image_viewcounter_installed")) {
+            $this->set_version(ImageViewCounterConfig::VERSION, 1);
+            $config->delete("image_viewcounter_installed");
+        }
+        if ($this->get_version(ImageViewCounterConfig::VERSION) < 1) {
             $database->create_table("image_views", "
                 id SCORE_AIPK,
                 image_id INTEGER NOT NULL,
                 user_id INTEGER NOT NULL,
                 timestamp INTEGER NOT NULL,
                 ipaddress SCORE_INET NOT NULL");
-            $config->set_bool("image_viewcounter_installed", true);
+            $this->set_version(ImageViewCounterConfig::VERSION, 1);
         }
     }
 
