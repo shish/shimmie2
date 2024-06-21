@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\INPUT;
+use function MicroHTML\{INPUT,SCRIPT};
 
 /**
  * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
@@ -61,12 +61,15 @@ class NotesTheme extends Themelet
                 'note_id' => $note["id"],
             ];
         }
-        $page->add_html_header("<script type='text/javascript'>
-        window.notes = ".\Safe\json_encode($to_json).";
-        window.notes_image_id = $image_id;
-        window.notes_admin = ".($adminOptions ? "true" : "false").";
-        window.notes_edit = ".($editOptions ? "true" : "false").";
-        </script>");
+        $page->add_html_header(SCRIPT(
+            ["type" => "text/javascript"],
+            "
+            window.notes = ".\Safe\json_encode($to_json).";
+            window.notes_image_id = $image_id;
+            window.notes_admin = ".($adminOptions ? "true" : "false").";
+            window.notes_edit = ".($editOptions ? "true" : "false").";
+            "
+        ));
     }
 
     /**

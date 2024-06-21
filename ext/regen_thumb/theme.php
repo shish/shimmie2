@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\INPUT;
+use function MicroHTML\META;
 
 class RegenThumbTheme extends Themelet
 {
@@ -15,7 +15,7 @@ class RegenThumbTheme extends Themelet
     {
         $page->set_title("Thumbnail Regenerated");
         $page->set_heading("Thumbnail Regenerated");
-        $page->add_html_header("<meta http-equiv=\"cache-control\" content=\"no-cache\">");
+        $page->add_html_header(META(['http-equiv' => 'cache-control', 'content' => 'no-cache']));
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Thumbnail", $this->build_thumb_html($image)));
     }

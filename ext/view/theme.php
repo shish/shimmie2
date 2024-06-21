@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, DIV, BR};
+use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, DIV, BR, META, LINK};
 
 class ViewPostTheme extends Themelet
 {
@@ -14,12 +14,12 @@ class ViewPostTheme extends Themelet
     {
         global $page;
 
-        $h_metatags = str_replace(" ", ", ", html_escape($image->get_tag_list()));
-        $page->add_html_header("<meta name=\"keywords\" content=\"$h_metatags\">");
-        $page->add_html_header("<meta property=\"og:title\" content=\"$h_metatags\">");
-        $page->add_html_header("<meta property=\"og:type\" content=\"article\">");
-        $page->add_html_header("<meta property=\"og:image\" content=\"".make_http($image->get_thumb_link())."\">");
-        $page->add_html_header("<meta property=\"og:url\" content=\"".make_http(make_link("post/view/{$image->id}"))."\">");
+        $h_metatags = str_replace(" ", ", ", $image->get_tag_list());
+        $page->add_html_header(META(["name" => "keywords", "content" => $h_metatags]));
+        $page->add_html_header(META(["property" => "og:title", "content" => $h_metatags]));
+        $page->add_html_header(META(["property" => "og:type", "content" => "article"]));
+        $page->add_html_header(META(["property" => "og:image", "content" => make_http($image->get_thumb_link())]));
+        $page->add_html_header(META(["property" => "og:url", "content" => make_http(make_link("post/view/{$image->id}"))]));
     }
 
     /**
@@ -38,8 +38,8 @@ class ViewPostTheme extends Themelet
 
         $query = $this->get_query();
         if(!$this->is_ordered_search()) {
-            $page->add_html_header("<link id='nextlink' rel='next' href='".make_link("post/next/{$image->id}", $query)."'>");
-            $page->add_html_header("<link id='prevlink' rel='previous' href='".make_link("post/prev/{$image->id}", $query)."'>");
+            $page->add_html_header(LINK(["id" => "nextlink", "rel" => "next", "href" => make_link("post/next/{$image->id}", $query)]));
+            $page->add_html_header(LINK(["id" => "prevlink", "rel" => "previous", "href" => make_link("post/prev/{$image->id}", $query)]));
         }
     }
 

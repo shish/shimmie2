@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML,rawHTML,HTML,HEAD,BODY};
+use function MicroHTML\{emptyHTML,rawHTML,HTML,HEAD,BODY,TITLE, LINK, SCRIPT};
 
 require_once "core/event.php";
 
@@ -131,7 +131,7 @@ class BasePage
     public string $subheading = "";
     public bool $left_enabled = true;
 
-    /** @var string[] */
+    /** @var HTMLElement[] */
     public array $html_headers = [];
 
     /** @var string[] */
@@ -180,17 +180,6 @@ class BasePage
     }
 
     /**
-     * Add a line to the HTML head section.
-     */
-    public function add_html_header(string $line, int $position = 50): void
-    {
-        while (isset($this->html_headers[$position])) {
-            $position++;
-        }
-        $this->html_headers[$position] = $line;
-    }
-
-    /**
      * Add a http header to be sent to the client.
      */
     public function add_http_header(string $line, int $position = 50): void
@@ -223,16 +212,25 @@ class BasePage
     }
 
     /**
+     * Add a line to the HTML head section.
+     */
+    public function add_html_header(HTMLElement $line, int $position = 50): void
+    {
+        while (isset($this->html_headers[$position])) {
+            $position++;
+        }
+        $this->html_headers[$position] = $line;
+    }
+
+    /**
      * Get all the HTML headers that are currently set and return as a string.
      */
-    public function get_all_html_headers(): string
+    public function get_all_html_headers(): HTMLElement
     {
-        $data = '';
         ksort($this->html_headers);
-        foreach ($this->html_headers as $line) {
-            $data .= "\t\t" . $line . "\n";
-        }
-        return $data;
+        return emptyHTML(
+            ...$this->html_headers
+        );
     }
 
     /**
@@ -384,8 +382,15 @@ class BasePage
         $theme_name = $config->get_string(SetupConfig::THEME, 'default');
 
         # static handler will map these to themes/foo/static/bar.ico or ext/static_files/static/bar.ico
-        $this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
-        $this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
+        $this->add_html_header(LINK([
+            'rel' => 'icon',
+            'type' => 'image/x-icon',
+            'href' => "$data_href/favicon.ico"
+        ]), 41);
+        $this->add_html_header(LINK([
+            'rel' => 'apple-touch-icon',
+            'href' => "$data_href/apple-touch-icon.png"
+        ]), 42);
 
         //We use $config_latest to make sure cache is reset if config is ever updated.
         $config_latest = 0;
@@ -394,13 +399,24 @@ class BasePage
         }
 
         $css_cache_file = $this->get_css_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
+        $this->add_html_header(LINK([
+            'rel' => 'stylesheet',
+            'href' => "$data_href/$css_cache_file",
+            'type' => 'text/css'
+        ]), 43);
 
         $initjs_cache_file = $this->get_initjs_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<script src='$data_href/$initjs_cache_file' type='text/javascript'></script>", 44);
+        $this->add_html_header(SCRIPT([
+            'src' => "$data_href/$initjs_cache_file",
+            'type' => 'text/javascript'
+        ]));
 
         $js_cache_file = $this->get_js_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
+        $this->add_html_header(SCRIPT([
+            'defer' => true,
+            'src' => "$data_href/$js_cache_file",
+            'type' => 'text/javascript'
+        ]));
     }
 
     private function get_css_cache_file(string $theme_name, int $config_latest): string
@@ -549,10 +565,15 @@ class BasePage
      */
     public function render(): void
     {
-        global $config, $user;
+        print (string)$this->html_html(
+            $this->head_html(),
+            $this->body_html()
+        );
+    }
 
-        $head = $this->head_html();
-        $body = $this->body_html();
+    public function html_html(HTMLElement $head, string|HTMLElement $body): HTMLElement
+    {
+        global $user;
 
         $body_attrs = [
             "data-userclass" => $user->class->name,
@@ -560,24 +581,22 @@ class BasePage
             "data-base-link" => make_link(""),
         ];
 
-        print emptyHTML(
+        return emptyHTML(
             rawHTML("<!doctype html>"),
             HTML(
                 ["lang" => "en"],
-                HEAD(rawHTML($head)),
-                BODY($body_attrs, rawHTML($body))
+                HEAD($head),
+                BODY($body_attrs, rawHTML((string)$body))
             )
         );
     }
 
-    protected function head_html(): string
+    protected function head_html(): HTMLElement
     {
-        $html_header_html = $this->get_all_html_headers();
-
-        return "
-        <title>{$this->title}</title>
-        $html_header_html
-        ";
+        return emptyHTML(
+            TITLE($this->title),
+            $this->get_all_html_headers(),
+        );
     }
 
     protected function body_html(): string

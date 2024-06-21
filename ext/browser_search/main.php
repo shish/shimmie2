@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\LINK;
+
 class BrowserSearch extends Extension
 {
     public function onInitExt(InitExtEvent $event): void
@@ -20,7 +22,12 @@ class BrowserSearch extends Extension
         // We need to build the data for the header
         $search_title = $config->get_string(SetupConfig::TITLE);
         $search_file_url = make_link('browser_search.xml');
-        $page->add_html_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
+        $page->add_html_header(LINK([
+            'rel' => 'search',
+            'type' => 'application/opensearchdescription+xml',
+            'title' => $search_title,
+            'href' => $search_file_url
+        ]));
 
         // The search.xml file that is generated on the fly
         if ($event->page_matches("browser_search.xml")) {
