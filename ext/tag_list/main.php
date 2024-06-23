@@ -275,7 +275,7 @@ class TagList extends Extension
             $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
 
-        if (SPEED_HAX) {
+        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
             file_put_contents($cache_key, $html);
         }
 
@@ -349,7 +349,7 @@ class TagList extends Extension
             $html .= "<a href='$link'>$h_tag</a>\n";
         }
 
-        if (SPEED_HAX) {
+        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
             file_put_contents($cache_key, $html);
         }
 
@@ -358,7 +358,7 @@ class TagList extends Extension
 
     private function build_tag_popularity(int $tags_min): string
     {
-        global $database;
+        global $config, $database;
 
         // Make sure that the value of $tags_min is at least 1.
         // Otherwise the database will complain if you try to do: LOG(0)
@@ -396,7 +396,7 @@ class TagList extends Extension
             $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
         }
 
-        if (SPEED_HAX) {
+        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
             file_put_contents($cache_key, $html);
         }
 

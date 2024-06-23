@@ -20,7 +20,7 @@ abstract class Permissions
     public const CHANGE_USER_SETTING = "change_user_setting";
     public const CHANGE_OTHER_USER_SETTING = "change_other_user_setting";
 
-    /** search for more than 3 tags at once (only applies if SPEED_HAX is active) */
+    /** search for more than 3 tags at once (only applies if Speed Hax is active) */
     public const BIG_SEARCH = "big_search";
 
     /** enable or disable extensions */
