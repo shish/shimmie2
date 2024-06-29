@@ -27,7 +27,9 @@ class Biography extends Extension
     {
         global $page, $user, $user_config;
         if ($event->page_matches("biography", method: "POST")) {
-            $user_config->set_string("biography", $event->get_POST('biography'));
+            $bio = $event->get_POST('biography');
+            log_info("biography", "Set biography to $bio");
+            $user_config->set_string("biography", $bio);
             $page->flash("Bio Updated");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(referer_or(make_link()));
