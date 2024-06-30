@@ -166,6 +166,18 @@ function is_trusted_proxy(): bool
     return false;
 }
 
+function is_bot(): bool
+{
+    $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
+    return (
+        str_contains($ua, "Googlebot")
+        || str_contains($ua, "YandexBot")
+        || str_contains($ua, "bingbot")
+        || str_contains($ua, "msnbot")
+        || str_contains($ua, "PetalBot")
+    );
+}
+
 /**
  * Get real IP if behind a reverse proxy
  */
