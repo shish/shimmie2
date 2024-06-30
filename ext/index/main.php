@@ -45,15 +45,9 @@ class Index extends Extension
 
             $fast_page_limit = 500;
 
-            $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
             if (
                 SPEED_HAX
-                && (
-                    str_contains($ua, "Googlebot")
-                    || str_contains($ua, "YandexBot")
-                    || str_contains($ua, "bingbot")
-                    || str_contains($ua, "msnbot")
-                )
+                && is_bot()
                 && (
                     $count_search_terms > 1
                     || ($count_search_terms == 1 && $search_terms[0][0] == "-")
