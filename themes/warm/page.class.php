@@ -25,7 +25,7 @@ class Page extends BasePage
                     $left_block_html .= $block->get_html(true);
                     break;
                 case "head":
-                    $head_block_html .= "<td style='width: 250px;'><small>".$block->get_html(false)."</small></td>";
+                    $head_block_html .= "<span style='width: 250px;'><small>".$block->get_html(false)."</small></span>";
                     break;
                 case "main":
                     $main_block_html .= $block->get_html(false);
@@ -44,15 +44,11 @@ class Page extends BasePage
 
         return <<<EOD
 		<header>
-			<table id="header" class="bgtop" style="width: 100%; height: 113px;">
-				<tr>
-					<td style="text-align: center;">
-						<h1><a href="$data_href/$main_page">{$site_name}</a></h1>
-						<!-- <p>[Navigation links go here] -->
-					</td>
-					$head_block_html
-				</tr>
-			</table>
+			<div style="text-align: center;">
+				<h1><a href="$data_href/$main_page">{$site_name}</a></h1>
+				<!-- <p>[Navigation links go here] -->
+			</div>
+			$head_block_html
 			$sub_block_html
 		</header>
 		<nav>

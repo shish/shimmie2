@@ -37,10 +37,8 @@ class Page extends BasePage
 
         if ($this->left_enabled) {
             $left = "<nav>$left_block_html</nav>";
-            $withleft = "withleft";
         } else {
             $left = "";
-            $withleft = "";
         }
 
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
@@ -53,7 +51,7 @@ class Page extends BasePage
 			$sub_block_html
 		</header>
 		$left
-		<article class="$withleft">
+		<article>
 			$flash_html
 			$main_block_html
 		</article>

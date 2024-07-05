@@ -52,14 +52,21 @@
 	font-family: sans-serif;
 }
 
+HEADER {
+	grid-column: 1 / 3;
+	grid-row: 1;
+}
 HEADER H1 {
 	max-height: 3em;
 	overflow: hidden;
 }
 BODY {
+	display: grid;
+	grid-template-columns: 216px auto;
+	grid-gap: 0 10px;
 	background: var(--page);
 	color: var(--text);
-	margin: 0;
+	margin: 0;	
 }
 H1 {
 	background: var(--title);
@@ -105,11 +112,14 @@ TABLE.zebra TR:nth-child(odd) {background: var(--zebra-odd);}
 TABLE.zebra TR:nth-child(even) {background: var(--zebra-even);}
 
 FOOTER {
+	grid-column: 1 / 3;
+	grid-row: 3;
 	clear: both;
 	font-size: 0.7rem;
 	text-align: center;
 	background: var(--title);
 	border: 1px solid var(--title-border);
+	margin-top: 0;
 }
 
 A {
@@ -137,8 +147,8 @@ CODE {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 NAV {
-	width: 200px;
-	float: left;
+	grid-column: 1;
+	grid-row: 2;
 	text-align: center;
 	margin-left: 16px;
 }
@@ -193,9 +203,10 @@ TABLE.tag_list>TBODY>TR>TD:after {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 ARTICLE {
-	margin-left: 226px;
+	grid-column: 2;
+	grid-row: 2;
 	margin-right: 16px;
-	margin-top: 16px;
+	margin-top: 0;
 	text-align: center;
 	height: 1%;
 }
@@ -204,6 +215,39 @@ ARTICLE TABLE {
 	margin: auto;
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                       mobile screens                           *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+@media screen and (width <= 800px) {
+	BODY {
+		grid-template-columns: auto;
+	}
+	HEADER {
+		grid-column: 1;
+		grid-row: 1;
+	}
+	ARTICLE {
+		grid-column: 1;
+		grid-row: 2;
+		margin-right: 0;
+	}
+	NAV {
+		grid-column: 1;
+		grid-row: 3;
+		margin: auto;
+	}
+	FOOTER {
+		grid-column: 1;
+		grid-row: 4;
+	}
+	#image-list .blockbody {
+		margin: 0;
+	}
+	.shm-image-list {
+		justify-content: center;
+	}
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                     specific page types                        *

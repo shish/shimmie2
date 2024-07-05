@@ -32,10 +32,12 @@ class Page extends BasePage
 			<b>{$site_name}</b> ";
 
         // Custom links: These appear on the menu.
-        $custom_links = "";
+        $custom_links = "<div class='bar'>";
         foreach ($nav_links as $nav_link) {
             $custom_links .= $this->navlinks($nav_link->link, $nav_link->description, $nav_link->active);
         }
+        $custom_links .= "</div>";
+
         $menu .= "{$custom_links}</div>";
 
         $left_block_html = "";
