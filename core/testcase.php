@@ -46,6 +46,8 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             foreach ($database->get_col("SELECT id FROM images") as $image_id) {
                 send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
             }
+            // Reload users from the database in case they were modified
+            UserClass::loadClasses();
 
             $_tracer->end();  # setUp
             $_tracer->begin("test");
