@@ -302,6 +302,22 @@ class TagHistory extends Extension
     }
 
     /**
+     * @return array<string, mixed>|null
+     */
+    public function get_previous_tags(int $image_id, int $id): ?array
+    {
+        global $database;
+        $row = $database->get_row("
+				SELECT tags
+				FROM tag_histories
+				WHERE image_id = :image_id AND id < :id
+				ORDER BY id DESC
+				LIMIT 1
+		", ["image_id" => $image_id, "id" => $id]);
+        return ($row ? $row : null);
+    }
+
+    /**
      * This function attempts to revert all changes by a given IP within an (optional) timeframe.
      */
     public function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
