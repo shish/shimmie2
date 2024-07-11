@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use _PHPStan_39fe102d2\Nette\Neon\Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Input\InputOption;
@@ -81,7 +82,7 @@ class Index extends Extension
                 }
             }
             if (is_null($images)) {
-                $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
+                $images = Search::find_images(offset: ($page_number - 1) * $page_size, limit: $page_size, tags: $search_terms);
             }
 
             $count_images = count($images);
@@ -158,24 +159,22 @@ class Index extends Extension
                 $limit = $input->getOption('limit');
                 $count = $input->getOption('count');
 
-                [$tag_conditions, $img_conditions, $order] = Search::terms_to_conditions($search);
-                if($count) {
-                    $order = null;
-                    $page = null;
-                    $limit = null;
-                }
 
-                $q = Search::build_search_querylet(
-                    $tag_conditions,
-                    $img_conditions,
-                    $order,
+                $queryBuilder = Search::build_search_query_from_terms(
+                    $search,
                     $limit,
-                    (int)(($page - 1) * $limit),
+                    (int)(($page - 1) * $limit)
                 );
+
+                if($count) {
+                    $q = $queryBuilder->renderForCount();
+                } else {
+                    $q = $queryBuilder->render();
+                }
 
                 $sql_str = $q->sql;
                 $sql_str = preg_replace("/\s+/", " ", $sql_str);
-                foreach($q->variables as $key => $val) {
+                foreach($q->parameters as $key => $val) {
                     if(is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);
                     } else {
@@ -239,10 +238,13 @@ class Index extends Extension
             // recommended to change homepage to "post/list/order:dailyshuffle/1"
             $seed = (int)date("Ymd");
             $event->order = $database->seeded_random($seed, "images.id");
+        } elseif (preg_match("/^limit[=:](\d+)$/i", $event->term, $matches)) {
+            $limit = intval($matches[1]);
+            $event->limit = $limit;
         }
 
         // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
-        if ($event->order === null && $event->img_conditions == [] && $event->tag_conditions == []) {
+        if ($event->order === null && $event->limit === null && $event->img_conditions == [] && $event->tag_conditions == []) {
             $event->add_tag_condition(new TagCondition($event->term, $event->positive));
         }
     }

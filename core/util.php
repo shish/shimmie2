@@ -824,3 +824,30 @@ function shm_tempnam(string $prefix = ""): string
     $temp = \Safe\realpath("data/temp");
     return \Safe\tempnam($temp, $prefix);
 }
+
+// Acquired from https://stackoverflow.com/questions/139474/how-can-i-capture-the-result-of-var-dump-to-a-string
+function return_var_dump(mixed...$args): string
+{
+    ob_start();
+    try {
+        var_dump(...$args);
+        $output = ob_get_clean();
+        if($output === false) {
+            return "";
+        }
+        return $output;
+    } catch (\Throwable $ex) {
+        // PHP8 ArgumentCountError for 0 arguments, probably..
+        // in php<8 this was just a warning
+        ob_end_clean();
+        throw $ex;
+    }
+}
+
+function var_dump_format(mixed $input, ?string $title = null): void
+{
+    if(!empty($title)) {
+        echo "<h2>$title</h2>";
+    }
+    echo "<pre>".html_escape(return_var_dump($input))."</pre><br/>";
+}

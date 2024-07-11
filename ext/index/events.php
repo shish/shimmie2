@@ -19,7 +19,8 @@ class SearchTermParseEvent extends Event
     public array $img_conditions = [];
     /** @var TagCondition[] */
     public array $tag_conditions = [];
-    public ?string $order = null;
+    public null|string|QueryBuilderOrder $order = null;
+    public ?int $limit = null;
 
     /**
      * @param string[] $context
