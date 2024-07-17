@@ -88,17 +88,21 @@ class ImageIO extends Extension
         $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT, 192);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
-        if ($event->page_matches("image/delete", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+        if ($event->page_matches("image/delete", method: "POST")) {
             global $page, $user;
             $image = Image::by_id(int_escape($event->req_POST('image_id')));
             if ($image) {
-                send_event(new ImageDeletionEvent($image));
+                if (can_delete_image($image)) {
+                    send_event(new ImageDeletionEvent($image));
 
-                if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
-                    redirect_to_next_image($image, $event->get_GET('search'));
+                    if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
+                        redirect_to_next_image($image, $event->get_GET('search'));
+                    } else {
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(referer_or(make_link(), ['post/view']));
+                    }
                 } else {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(referer_or(make_link(), ['post/view']));
+                    throw new PermissionDenied("Permission Denied: {$user->name} lacks permission");
                 }
             }
         } elseif ($event->page_matches("image/{image_id}/{filename}")) {
@@ -114,7 +118,7 @@ class ImageIO extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::DELETE_IMAGE)) {
+        if (can_delete_image($event->image)) {
             $form = SHM_FORM("image/delete", form_id: "image_delete_form");
             $form->appendChild(emptyHTML(
                 INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),

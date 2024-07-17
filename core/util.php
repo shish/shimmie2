@@ -210,6 +210,19 @@ function get_session_ip(Config $config): string
 
 
 /**
+ * Check if the user is allowed to delete a specific image.
+ */
+function can_delete_image(Image $image): bool
+{
+    global $config, $user;
+    if ($config->get_bool("delete_own_posts") && !$user->is_anonymous() && $image->owner_id == $user->id) {
+        return true;
+    }
+    return $user->can(Permissions::DELETE_IMAGE);
+}
+
+
+/**
  * A shorthand way to send a TextFormattingEvent and get the results.
  */
 function format_text(string $string): string
