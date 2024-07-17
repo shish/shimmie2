@@ -137,6 +137,7 @@ class UserPage extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
+        $config->set_default_bool("delete_own_posts", true);
         $config->set_default_bool("login_signup_enabled", true);
         $config->set_default_int("login_memory", 365);
         $config->set_default_string("avatar_host", "none");
@@ -419,6 +420,7 @@ class UserPage extends Extension
 
         $sb = $event->panel->create_new_block("User Options");
         $sb->start_table();
+        $sb->add_bool_option("delete_own_posts", "Allow deleting own posts", true);
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
         $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
         $sb->add_bool_option("user_email_required", "Require email address", true);
