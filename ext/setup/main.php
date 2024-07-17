@@ -406,7 +406,12 @@ class Setup extends Extension
                             break;
                     }
                 } else {
-                    $config->delete($name);
+                    // browsers don't send empty checkboxes, false value must be stored in case default is true
+                    if ($type == "bool") {
+                        $config->set_bool($name, false);
+                    } else {
+                        $config->delete($name);
+                    }
                 }
             }
         }
