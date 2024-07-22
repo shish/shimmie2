@@ -34,6 +34,7 @@ class BBCodeInfo extends ExtensionInfo
    Link tags:
    <ul>
      <li>[img]url[/img]
+     <li>[img]site://_images/image.jpg[/img]
      <li>[url]<a href=\"{self::SHIMMIE_URL}\">https://code.shishnet.org/</a>[/url]
      <li>[url=<a href=\"{self::SHIMMIE_URL}\">https://code.shishnet.org/</a>]some text[/url]
      <li>[url]site://ext_doc/bbcode[/url]
