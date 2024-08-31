@@ -114,7 +114,7 @@ EOD;
             }
             $html .= "</section>";
         }
-        return $html;
+        return $html ?? "";
     }
 
     public function navlinks(Link $link, HTMLElement|string $desc, bool $active): ?string

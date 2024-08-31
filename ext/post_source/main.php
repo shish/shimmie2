@@ -7,9 +7,9 @@ namespace Shimmie2;
 class SourceSetEvent extends Event
 {
     public Image $image;
-    public ?string $source;
+    public string $source;
 
-    public function __construct(Image $image, string $source = null)
+    public function __construct(Image $image, string $source)
     {
         parent::__construct();
         $this->image = $image;
@@ -93,7 +93,7 @@ class PostSource extends Extension
     public function onTagTermParse(TagTermParseEvent $event): void
     {
         if (preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
-            $source = ($matches[1] !== "none" ? $matches[1] : null);
+            $source = ($matches[1] !== "none" ? $matches[1] : "");
             send_event(new SourceSetEvent(Image::by_id_ex($event->image_id), $source));
         }
     }

@@ -37,6 +37,7 @@ class WordFilter extends Extension
                 $search = "/\\b" . str_replace("/", "\\/", $search) . "\\b/i";
                 $text = preg_replace_ex($search, $replace, $text);
             }
+            assert(is_string($text));
         }
         return $text;
     }

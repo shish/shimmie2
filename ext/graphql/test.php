@@ -30,7 +30,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
-        $image = Image::by_id($image_id);
+        $image = Image::by_id_ex($image_id);
 
         $result = $this->graphql('{
             posts(limit: 3, offset: 0) {

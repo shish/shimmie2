@@ -64,7 +64,6 @@ class UserConfig extends Extension
     public static function get_for_user(int $id): Config
     {
         global $database;
-
         $user = User::by_id($id);
         $user_config = new DatabaseConfig($database, "user_config", "user_id", "$id");
         send_event(new InitUserConfigEvent($user, $user_config));
