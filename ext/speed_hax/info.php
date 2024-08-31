@@ -15,7 +15,7 @@ class SpeedHaxInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::ADMIN;
     public string $description = "Show performance tweak options. Read the documentation.";
     public ?string $documentation =
-"Many of these changes reduce the correctness of the software and increase admin workload for the sake of speed. You almost certainly don't want to set some of them, but if you do (e.g. you're trying to run a site with 10,000 concurrent users on a single server), it can be a huge help.
+        "Many of these changes reduce the correctness of the software and increase admin workload for the sake of speed. You almost certainly don't want to set some of them, but if you do (e.g. you're trying to run a site with 10,000 concurrent users on a single server), it can be a huge help.
 <br><br>
 <ul>
 <li><code>Don't auto-upgrade database</code>: Database schema upgrades are no longer automatic; you'll need to run <code>php index.php db-upgrade</code> from the CLI each time you update the code.</li>
