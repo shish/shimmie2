@@ -24,7 +24,7 @@ class UserOperationsBuildingEvent extends PartListBuildingEvent
 {
     public function __construct(
         public User $user,
-        public BaseConfig $user_config,
+        public Config $user_config,
     ) {
         parent::__construct();
     }
