@@ -69,7 +69,7 @@ class BaseThemelet
                 $custom_classes .= "shm-thumb-has_child ";
             }
         }
-        if(Extension::is_enabled(RatingsInfo::KEY) && Extension::is_enabled(RatingsBlurInfo::KEY)) {
+        if (Extension::is_enabled(RatingsInfo::KEY) && Extension::is_enabled(RatingsBlurInfo::KEY)) {
             $rb = new RatingsBlur();
             if ($rb->blur($image['rating'])) {
                 $custom_classes .= "blur ";
@@ -85,7 +85,7 @@ class BaseThemelet
             "data-mime" => $image->get_mime(),
             "data-post-id" => $id,
         ];
-        if(Extension::is_enabled(RatingsInfo::KEY)) {
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
             $attrs["data-rating"] = $image['rating'];
         }
 

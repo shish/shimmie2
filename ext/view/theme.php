@@ -37,7 +37,7 @@ class ViewPostTheme extends Themelet
         //$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 
         $query = $this->get_query();
-        if(!$this->is_ordered_search()) {
+        if (!$this->is_ordered_search()) {
             $page->add_html_header(LINK(["id" => "nextlink", "rel" => "next", "href" => make_link("post/next/{$image->id}", $query)]));
             $page->add_html_header(LINK(["id" => "prevlink", "rel" => "previous", "href" => make_link("post/prev/{$image->id}", $query)]));
         }
@@ -69,10 +69,10 @@ class ViewPostTheme extends Themelet
      */
     protected function is_ordered_search(): bool
     {
-        if(isset($_GET['search'])) {
+        if (isset($_GET['search'])) {
             $tags = Tag::explode($_GET['search']);
-            foreach($tags as $tag) {
-                if(preg_match("/^order[=:]/", $tag) == 1) {
+            foreach ($tags as $tag) {
+                if (preg_match("/^order[=:]/", $tag) == 1) {
                     return true;
                 }
             }
@@ -83,7 +83,7 @@ class ViewPostTheme extends Themelet
     protected function build_pin(Image $image): HTMLElement
     {
         $query = $this->get_query();
-        if($this->is_ordered_search()) {
+        if ($this->is_ordered_search()) {
             return A(["href" => make_link()], "Index");
         } else {
             return joinHTML(" | ", [
@@ -119,7 +119,7 @@ class ViewPostTheme extends Themelet
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
         }
 
-        if(
+        if (
             (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
             $user->can(Permissions::EDIT_IMAGE_TAG)
         ) {

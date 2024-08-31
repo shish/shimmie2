@@ -159,7 +159,7 @@ class Index extends Extension
                 $count = $input->getOption('count');
 
                 [$tag_conditions, $img_conditions, $order] = Search::terms_to_conditions($search);
-                if($count) {
+                if ($count) {
                     $order = null;
                     $page = null;
                     $limit = null;
@@ -175,8 +175,8 @@ class Index extends Extension
 
                 $sql_str = $q->sql;
                 $sql_str = preg_replace("/\s+/", " ", $sql_str);
-                foreach($q->variables as $key => $val) {
-                    if(is_string($val)) {
+                foreach ($q->variables as $key => $val) {
+                    if (is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);
                     } else {
                         $sql_str = str_replace(":$key", (string)$val, $sql_str);

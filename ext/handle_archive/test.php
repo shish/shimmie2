@@ -20,7 +20,7 @@ class ArchiveFileHandlerTest extends ShimmiePHPUnitTestCase
 
     public function tearDown(): void
     {
-        if(file_exists("tests/test.zip")) {
+        if (file_exists("tests/test.zip")) {
             unlink("tests/test.zip");
         }
 
