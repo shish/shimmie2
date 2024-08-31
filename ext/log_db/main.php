@@ -200,8 +200,11 @@ class MessageColumn extends Column
     protected function scan_entities(string $line): string
     {
         $line = preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
+        assert(is_string($line));
         $line = preg_replace_callback("/Post #(\d+)/s", [$this, "link_image"], $line);
+        assert(is_string($line));
         $line = preg_replace_callback("/>>(\d+)/s", [$this, "link_image"], $line);
+        assert(is_string($line));
         return $line;
     }
 

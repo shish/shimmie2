@@ -304,7 +304,9 @@ class Pools extends Extension
                             WHERE pool_id=:pid AND i.id=:iid",
                     ["pid" => $pool_id, "iid" => (int) $row['image_id']]
                 );
-                $images[] = ($image ? new Image($image) : null);
+                if ($image) {
+                    $images[] = new Image($image);
+                }
             }
 
             $this->theme->edit_order($page, $pool, $images);
