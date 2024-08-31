@@ -85,8 +85,10 @@ class User
         global $cache, $config, $database;
         $user = $cache->get("user-session-obj:$name-$session");
         if (is_null($user)) {
-            $user_by_name = User::by_name($name);
-            if (is_null($user_by_name)) {
+            try {
+                $user_by_name = User::by_name($name);
+            }
+            catch(UserNotFound $e) {
                 return null;
             }
             if ($user_by_name->get_session_id() === $session) {
@@ -97,7 +99,7 @@ class User
         return $user;
     }
 
-    public static function by_id(int $id): ?User
+    public static function by_id(int $id): User
     {
         global $cache, $database;
         if ($id === 1) {
@@ -110,72 +112,57 @@ class User
         if ($id === 1) {
             $cache->set('user-id:'.$id, $row, 600);
         }
-        return is_null($row) ? null : new User($row);
-    }
-
-    public static function by_id_ex(int $id): User
-    {
-        $u = User::by_id($id);
-        if (is_null($u)) {
+        if(is_null($row)) {
             throw new UserNotFound("Can't find any user with ID $id");
-        } else {
-            return $u;
         }
+        return new User($row);
     }
 
     #[Query(name: "user")]
-    public static function by_name(string $name): ?User
+    public static function by_name(string $name): User
     {
         global $database;
         $row = $database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name" => $name]);
-        return is_null($row) ? null : new User($row);
-    }
-
-    public static function by_name_ex(string $name): User
-    {
-        $u = User::by_name($name);
-        if (is_null($u)) {
+        if (is_null($row)) {
             throw new UserNotFound("Can't find any user named $name");
         } else {
-            return $u;
+            return new User($row);
         }
     }
 
     public static function name_to_id(string $name): int
     {
-        $u = User::by_name($name);
-        if (is_null($u)) {
-            throw new UserNotFound("Can't find any user named $name");
-        } else {
-            return $u->id;
-        }
+        return User::by_name($name)->id;
     }
 
-    public static function by_name_and_pass(string $name, string $pass): ?User
+    public static function by_name_and_pass(string $name, string $pass): User
     {
-        $my_user = User::by_name($name);
-
-        // If user tried to log in as "foo bar" and failed, try "foo_bar"
-        if (!$my_user && str_contains($name, " ")) {
-            $my_user = User::by_name(str_replace(" ", "_", $name));
+        try {
+            $my_user = User::by_name($name);
+        }
+        catch(UserNotFound $e) {
+            // If user tried to log in as "foo bar" and failed, try "foo_bar"
+            try {
+                $my_user = User::by_name(str_replace(" ", "_", $name));
+            }
+            catch(UserNotFound $e) {
+                log_warning("core-user", "Failed to log in as $name (Invalid username)");
+                throw $e;
+            }
         }
 
-        if ($my_user) {
-            if ($my_user->passhash == md5(strtolower($name) . $pass)) {
-                log_info("core-user", "Migrating from md5 to bcrypt for $name");
-                $my_user->set_password($pass);
-            }
-            assert(!is_null($my_user->passhash));
-            if (password_verify($pass, $my_user->passhash)) {
-                log_info("core-user", "Logged in as $name ({$my_user->class->name})");
-                return $my_user;
-            } else {
-                log_warning("core-user", "Failed to log in as $name (Invalid password)");
-            }
+        if ($my_user->passhash == md5(strtolower($name) . $pass)) {
+            log_info("core-user", "Migrating from md5 to bcrypt for $name");
+            $my_user->set_password($pass);
+        }
+        assert(!is_null($my_user->passhash));
+        if (password_verify($pass, $my_user->passhash)) {
+            log_info("core-user", "Logged in as $name ({$my_user->class->name})");
+            return $my_user;
         } else {
-            log_warning("core-user", "Failed to log in as $name (Invalid username)");
+            log_warning("core-user", "Failed to log in as $name (Invalid password)");
+            throw new UserNotFound("Can't find anybody with that username and password");
         }
-        return null;
     }
 
 
@@ -203,8 +190,12 @@ class User
     public function set_name(string $name): void
     {
         global $database;
-        if (User::by_name($name)) {
+        try {
+            User::by_name($name);
             throw new InvalidInput("Desired username is already in use");
+        }
+        catch (UserNotFound $e) {
+            // if user is not found, we're good
         }
         $old_name = $this->name;
         $this->name = $name;

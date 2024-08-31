@@ -38,11 +38,7 @@ class CliApp extends \Symfony\Component\Console\Application
         if ($input->hasParameterOption(['--user', '-u'])) {
             $name = $input->getParameterOption(['--user', '-u']);
             $user = User::by_name($name);
-            if (is_null($user)) {
-                die("Unknown user '$name'\n");
-            } else {
-                send_event(new UserLoginEvent($user));
-            }
+            send_event(new UserLoginEvent($user));
         }
 
         $log_level = SCORE_LOG_WARNING;
