@@ -5,143 +5,10 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 /**
- * Interface Config
- *
- * An abstract interface for altering a name:value pair list.
+ * Common methods for manipulating a map of config values,
+ * loading and saving is left to the concrete implementation
  */
-interface Config
-{
-    //@{ /*--------------------------------- SET ------------------------------------------------------*/
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
-    public function set_int(string $name, int $value): void;
-
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
-    public function set_float(string $name, float $value): void;
-
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
-    public function set_string(string $name, string $value): void;
-
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
-    public function set_bool(string $name, bool $value): void;
-
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     *
-     * @param mixed[] $value
-     */
-    public function set_array(string $name, array $value): void;
-
-    /**
-     * Delete a configuration option.
-     */
-    public function delete(string $name): void;
-    //@} /*--------------------------------------------------------------------------------------------*/
-
-    //@{ /*-------------------------------- SET DEFAULT -----------------------------------------------*/
-    /**
-     * Set a configuration option to a new value, if there is no value currently.
-     *
-     * Extensions should generally call these from their InitExtEvent handlers.
-     * This has the advantage that the values will show up in the "advanced" setup
-     * page where they can be modified, while calling get_* with a "default"
-     * parameter won't show up.
-     */
-    public function set_default_int(string $name, int $value): void;
-
-    /**
-     * Set a configuration option to a new value, if there is no value currently.
-     *
-     * Extensions should generally call these from their InitExtEvent handlers.
-     * This has the advantage that the values will show up in the "advanced" setup
-     * page where they can be modified, while calling get_* with a "default"
-     * parameter won't show up.
-     */
-    public function set_default_float(string $name, float $value): void;
-
-    /**
-     * Set a configuration option to a new value, if there is no value currently.
-     *
-     * Extensions should generally call these from their InitExtEvent handlers.
-     * This has the advantage that the values will show up in the "advanced" setup
-     * page where they can be modified, while calling get_* with a "default"
-     * parameter won't show up.
-     */
-    public function set_default_string(string $name, string $value): void;
-
-    /**
-     * Set a configuration option to a new value, if there is no value currently.
-     *
-     * Extensions should generally call these from their InitExtEvent handlers.
-     * This has the advantage that the values will show up in the "advanced" setup
-     * page where they can be modified, while calling get_* with a "default"
-     * parameter won't show up.
-     */
-    public function set_default_bool(string $name, bool $value): void;
-
-    /**
-     * Set a configuration option to a new value, if there is no value currently.
-     *
-     * Extensions should generally call these from their InitExtEvent handlers.
-     * This has the advantage that the values will show up in the "advanced" setup
-     * page where they can be modified, while calling get_* with a "default"
-     * parameter won't show up.
-     *
-     * @param mixed[] $value
-     */
-    public function set_default_array(string $name, array $value): void;
-    //@} /*--------------------------------------------------------------------------------------------*/
-
-    //@{ /*--------------------------------- GET ------------------------------------------------------*/
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     */
-    public function get_int(string $name, ?int $default = null): ?int;
-
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     */
-    public function get_float(string $name, ?float $default = null): ?float;
-
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     *
-     * @template T of string|null
-     * @param T $default
-     * @return T|string
-     */
-    public function get_string(string $name, ?string $default = null): ?string;
-
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     */
-    public function get_bool(string $name, ?bool $default = null): ?bool;
-
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     *
-     * @param mixed[] $default
-     * @return mixed[]
-     */
-    public function get_array(string $name, ?array $default = []): ?array;
-    //@} /*--------------------------------------------------------------------------------------------*/
-}
-
-
-/**
- * Class BaseConfig
- *
- * Common methods for manipulating the list, loading and saving is
- * left to the concrete implementation
- */
-abstract class BaseConfig implements Config
+abstract class Config
 {
     /** @var array<string, string> */
     public array $values = [];
@@ -153,42 +20,70 @@ abstract class BaseConfig implements Config
      */
     abstract protected function save(string $name): void;
 
+    /**
+     * Set a configuration option to a new value, regardless of what the value is at the moment.
+     */
     public function set_int(string $name, int $value): void
     {
         $this->values[$name] = (string)$value;
         $this->save($name);
     }
 
+    /**
+     * Set a configuration option to a new value, regardless of what the value is at the moment.
+     */
     public function set_float(string $name, float $value): void
     {
         $this->values[$name] = (string)$value;
         $this->save($name);
     }
 
+    /**
+     * Set a configuration option to a new value, regardless of what the value is at the moment.
+     */
     public function set_string(string $name, string $value): void
     {
         $this->values[$name] = $value;
         $this->save($name);
     }
 
+    /**
+     * Set a configuration option to a new value, regardless of what the value is at the moment.
+     */
     public function set_bool(string $name, bool $value): void
     {
         $this->values[$name] = $value ? 'Y' : 'N';
         $this->save($name);
     }
 
+    /**
+     * Set a configuration option to a new value, regardless of what the value is at the moment.
+     *
+     * @param mixed[] $value
+     */
     public function set_array(string $name, array $value): void
     {
         $this->values[$name] = implode(",", $value);
         $this->save($name);
     }
 
+    /**
+     * Delete a configuration option.
+     */
     public function delete(string $name): void
     {
         unset($this->values[$name]);
         $this->save($name);
     }
 
+    /**
+     * Set a configuration option to a new value, if there is no value currently.
+     *
+     * Extensions should generally call these from their InitExtEvent handlers.
+     * This has the advantage that the values will show up in the "advanced" setup
+     * page where they can be modified, while calling get_* with a "default"
+     * parameter won't show up.
+     */
     public function set_default_int(string $name, int $value): void
     {
         if (is_null($this->get($name))) {
@@ -196,6 +91,14 @@ abstract class BaseConfig implements Config
         }
     }
 
+    /**
+     * Set a configuration option to a new value, if there is no value currently.
+     *
+     * Extensions should generally call these from their InitExtEvent handlers.
+     * This has the advantage that the values will show up in the "advanced" setup
+     * page where they can be modified, while calling get_* with a "default"
+     * parameter won't show up.
+     */
     public function set_default_float(string $name, float $value): void
     {
         if (is_null($this->get($name))) {
@@ -203,6 +106,14 @@ abstract class BaseConfig implements Config
         }
     }
 
+    /**
+     * Set a configuration option to a new value, if there is no value currently.
+     *
+     * Extensions should generally call these from their InitExtEvent handlers.
+     * This has the advantage that the values will show up in the "advanced" setup
+     * page where they can be modified, while calling get_* with a "default"
+     * parameter won't show up.
+     */
     public function set_default_string(string $name, string $value): void
     {
         if (is_null($this->get($name))) {
@@ -210,6 +121,14 @@ abstract class BaseConfig implements Config
         }
     }
 
+    /**
+     * Set a configuration option to a new value, if there is no value currently.
+     *
+     * Extensions should generally call these from their InitExtEvent handlers.
+     * This has the advantage that the values will show up in the "advanced" setup
+     * page where they can be modified, while calling get_* with a "default"
+     * parameter won't show up.
+     */
     public function set_default_bool(string $name, bool $value): void
     {
         if (is_null($this->get($name))) {
@@ -217,6 +136,16 @@ abstract class BaseConfig implements Config
         }
     }
 
+    /**
+     * Set a configuration option to a new value, if there is no value currently.
+     *
+     * Extensions should generally call these from their InitExtEvent handlers.
+     * This has the advantage that the values will show up in the "advanced" setup
+     * page where they can be modified, while calling get_* with a "default"
+     * parameter won't show up.
+     *
+     * @param mixed[] $value
+     */
     public function set_default_array(string $name, array $value): void
     {
         if (is_null($this->get($name))) {
@@ -225,6 +154,8 @@ abstract class BaseConfig implements Config
     }
 
     /**
+     * Pick a value out of the table by name, cast to the appropriate data type.
+     *
      * @template T of int|null
      * @param T $default
      * @return T|int
@@ -235,6 +166,8 @@ abstract class BaseConfig implements Config
     }
 
     /**
+     * Pick a value out of the table by name, cast to the appropriate data type.
+     *
      * @template T of float|null
      * @param T $default
      * @return T|float
@@ -245,6 +178,8 @@ abstract class BaseConfig implements Config
     }
 
     /**
+     * Pick a value out of the table by name, cast to the appropriate data type.
+     *
      * @template T of string|null
      * @param T $default
      * @return T|string
@@ -255,6 +190,8 @@ abstract class BaseConfig implements Config
     }
 
     /**
+     * Pick a value out of the table by name, cast to the appropriate data type.
+     *
      * @template T of bool|null
      * @param T $default
      * @return T|bool
@@ -265,6 +202,8 @@ abstract class BaseConfig implements Config
     }
 
     /**
+     * Pick a value out of the table by name, cast to the appropriate data type.
+     *
      * @template T of array<string>|null
      * @param T $default
      * @return T|array<string>
@@ -293,8 +232,6 @@ abstract class BaseConfig implements Config
 
 
 /**
- * Class DatabaseConfig
- *
  * Loads the config list from a table in a given database, the table should
  * be called config and have the schema:
  *
@@ -305,7 +242,7 @@ abstract class BaseConfig implements Config
  *  );
  * \endcode
  */
-class DatabaseConfig extends BaseConfig
+class DatabaseConfig extends Config
 {
     private Database $database;
     private string $table_name;
