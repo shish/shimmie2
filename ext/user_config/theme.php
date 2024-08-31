@@ -75,7 +75,7 @@ class UserConfigTheme extends Themelet
     {
         $h = $block->header;
         $b = $block->body;
-        $i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
+        $i = preg_replace_ex('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
         $html = "
 			<section class='setupblock'>
 				<b class='shm-toggler' data-toggle-sel='#$i'>$h</b>
