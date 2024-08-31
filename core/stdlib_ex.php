@@ -32,3 +32,12 @@ function filter_var_ex(mixed $variable, int $filter = FILTER_DEFAULT, mixed $opt
 {
     return false_throws(filter_var($variable, $filter, $options));
 }
+
+function preg_replace_ex(string $pattern, string $replacement, string $subject, int $limit = -1, ?int &$count = null): string
+{
+    $res = preg_replace($pattern, $replacement, $subject, $limit, $count);
+    if (is_null($res)) {
+        throw new \Exception("preg_replace failed");
+    }
+    return $res;
+}
