@@ -44,7 +44,7 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $database->execute("SAVEPOINT test_start");
             self::log_out();
             foreach ($database->get_col("SELECT id FROM images") as $image_id) {
-                send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
+                send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
             }
 
             $_tracer->end();  # setUp
@@ -223,38 +223,36 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertEquals($results, $ids);
         }
 
-        protected function assertException(string $type, callable $function): \Exception|null
+        protected function assertException(string $type, callable $function): \Exception
         {
-            $exception = null;
             try {
                 call_user_func($function);
-            } catch (\Exception $e) {
-                $exception = $e;
+                self::fail("Expected exception of type $type, but none was thrown");
+            } catch (\Exception $exception) {
+                self::assertThat(
+                    $exception,
+                    new \PHPUnit\Framework\Constraint\Exception($type),
+                    "Expected exception of type $type, but got " . get_class($exception)
+                );
+                return $exception;
             }
-
-            self::assertThat(
-                $exception,
-                new \PHPUnit\Framework\Constraint\Exception($type),
-                "Expected exception of type $type, but got " . ($exception ? get_class($exception) : "none")
-            );
-            return $exception;
         }
 
         // user things
         protected static function log_in_as_admin(): void
         {
-            send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
+            send_event(new UserLoginEvent(User::by_name_ex(self::$admin_name)));
         }
 
         protected static function log_in_as_user(): void
         {
-            send_event(new UserLoginEvent(User::by_name(self::$user_name)));
+            send_event(new UserLoginEvent(User::by_name_ex(self::$user_name)));
         }
 
         protected static function log_out(): void
         {
             global $config;
-            send_event(new UserLoginEvent(User::by_id($config->get_int("anon_id", 0))));
+            send_event(new UserLoginEvent(User::by_id_ex($config->get_int("anon_id", 0))));
         }
 
         // post things
