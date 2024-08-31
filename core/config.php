@@ -112,6 +112,10 @@ interface Config
 
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
+     *
+     * @template T of string|null
+     * @param T $default
+     * @return T|string
      */
     public function get_string(string $name, ?string $default = null): ?string;
 

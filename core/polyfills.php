@@ -693,7 +693,9 @@ function validate_input(array $inputs): array
  */
 function sanitize_path(string $path): string
 {
-    return preg_replace('|[\\\\/]+|S', DIRECTORY_SEPARATOR, $path);
+    $r = \Safe\preg_replace('|[\\\\/]+|S', DIRECTORY_SEPARATOR, $path);
+    assert(is_string($r));
+    return $r;
 }
 
 /**

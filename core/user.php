@@ -86,6 +86,9 @@ class User
         $user = $cache->get("user-session-obj:$name-$session");
         if (is_null($user)) {
             $user_by_name = User::by_name($name);
+            if (is_null($user_by_name)) {
+                return null;
+            }
             if ($user_by_name->get_session_id() === $session) {
                 $user = $user_by_name;
             }
@@ -110,12 +113,32 @@ class User
         return is_null($row) ? null : new User($row);
     }
 
+    public static function by_id_ex(int $id): User
+    {
+        $u = User::by_id($id);
+        if (is_null($u)) {
+            throw new UserNotFound("Can't find any user with ID $id");
+        } else {
+            return $u;
+        }
+    }
+
     #[Query(name: "user")]
     public static function by_name(string $name): ?User
     {
         global $database;
         $row = $database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name" => $name]);
         return is_null($row) ? null : new User($row);
+    }
+
+    public static function by_name_ex(string $name): User
+    {
+        $u = User::by_name($name);
+        if (is_null($u)) {
+            throw new UserNotFound("Can't find any user named $name");
+        } else {
+            return $u;
+        }
     }
 
     public static function name_to_id(string $name): int
@@ -142,6 +165,7 @@ class User
                 log_info("core-user", "Migrating from md5 to bcrypt for $name");
                 $my_user->set_password($pass);
             }
+            assert(!is_null($my_user->passhash));
             if (password_verify($pass, $my_user->passhash)) {
                 log_info("core-user", "Logged in as $name ({$my_user->class->name})");
                 return $my_user;
