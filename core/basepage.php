@@ -303,7 +303,7 @@ class BasePage
                 if (!is_null($this->filename)) {
                     header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
                 }
-                assert($this->file, "file should not be null with PageMode::FILE");
+                assert(!is_null($this->file), "file should not be null with PageMode::FILE");
 
                 // https://gist.github.com/codler/3906826
                 $size = \Safe\filesize($this->file); // File size

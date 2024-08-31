@@ -71,8 +71,10 @@ class Database
         if (is_null($this->db)) {
             $this->db = new PDO($this->dsn);
             $this->connect_engine();
+            assert(!is_null($this->db));
             $this->get_engine()->init($this->db);
             $this->begin_transaction();
+            assert(!is_null($this->db));
         }
         return $this->db;
     }
@@ -155,6 +157,7 @@ class Database
     {
         if (is_null($this->engine)) {
             $this->connect_engine();
+            assert(!is_null($this->engine));
         }
         return $this->engine;
     }
@@ -182,7 +185,8 @@ class Database
         global $_tracer, $tracer_enabled;
         $dur = ftime() - $start;
         // trim whitespace
-        $query = preg_replace('/[\n\t ]+/m', ' ', $query);
+        $query = \Safe\preg_replace('/[\n\t ]+/m', ' ', $query);
+        assert(is_string($query));
         $query = trim($query);
         if ($tracer_enabled) {
             $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query" => $query, "args" => $args, "method" => $method]);

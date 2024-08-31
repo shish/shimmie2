@@ -6,10 +6,10 @@ namespace Shimmie2;
 
 class Link
 {
-    public ?string $page;
+    public string $page;
     public ?string $query;
 
-    public function __construct(?string $page = null, ?string $query = null)
+    public function __construct(string $page, ?string $query = null)
     {
         $this->page = $page;
         $this->query = $query;
@@ -61,8 +61,12 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
         $parts['path'] = "$install_dir/index.php";
         $query = empty($query) ? "q=$page" : "q=$page&$query";
     }
-    $parts['query'] = $query;  // http_build_query($query);
-    $parts['fragment'] = $fragment;  // http_build_query($hash);
+    if (!is_null($query)) {
+        $parts['query'] = $query;  // http_build_query($query);
+    }
+    if (!is_null($fragment)) {
+        $parts['fragment'] = $fragment;  // http_build_query($hash);
+    }
 
     return unparse_url($parts);
 }
