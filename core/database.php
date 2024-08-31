@@ -185,7 +185,7 @@ class Database
         global $_tracer, $tracer_enabled;
         $dur = ftime() - $start;
         // trim whitespace
-        $query = \Safe\preg_replace('/[\n\t ]+/m', ' ', $query);
+        $query = \Safe\preg_replace_ex('/[\n\t ]+/m', ' ', $query);
         assert(is_string($query));
         $query = trim($query);
         if ($tracer_enabled) {
