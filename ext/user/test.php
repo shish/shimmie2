@@ -66,7 +66,7 @@ class UserPageTest extends ShimmiePHPUnitTestCase
                 'email' => '',
             ]);
         });
-        $this->assertNull(User::by_name('testnew'), "Anon can't create others");
+        $this->assertException(UserNotFound::class, function () {User::by_name('testnew');});
 
         $this->log_in_as_admin();
         $this->post_page('user_admin/create_other', [
@@ -76,6 +76,6 @@ class UserPageTest extends ShimmiePHPUnitTestCase
             'email' => '',
         ]);
         $this->assertEquals(302, $page->code);
-        $this->assertNotNull(User::by_name('testnew'), "Admin can create others");
+        $this->assertNotNull(User::by_name('testnew'));
     }
 }

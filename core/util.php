@@ -747,7 +747,6 @@ function _get_user(): User
     if (is_null($my_user)) {
         $my_user = User::by_id($config->get_int("anon_id", 0));
     }
-    assert(!is_null($my_user));
 
     return $my_user;
 }

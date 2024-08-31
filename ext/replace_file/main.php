@@ -67,12 +67,10 @@ class ReplaceFile extends Extension
         $image->remove_image_only(); // Actually delete the old image file from disk
 
         $target = warehouse_path(Image::IMAGE_DIR, $event->new_hash);
-        if (!@copy($event->tmp_filename, $target)) {
-            $errors = error_get_last();
-            throw new ImageReplaceException(
-                "Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): ".
-                "{$errors['type']} / {$errors['message']}"
-            );
+        try {
+            \Safe\copy($event->tmp_filename, $target);
+        } catch (\Exception $e) {
+            throw new ImageReplaceException("Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): {$e->getMessage()}");
         }
         unlink($event->tmp_filename);
 

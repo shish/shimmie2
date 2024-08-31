@@ -313,13 +313,8 @@ class TagHistory extends Extension
 
         if (!is_null($name)) {
             $duser = User::by_name($name);
-            if (is_null($duser)) {
-                $this->theme->add_status($name, "user not found");
-                return;
-            } else {
-                $select_code[] = 'user_id = :user_id';
-                $select_args['user_id'] = $duser->id;
-            }
+            $select_code[] = 'user_id = :user_id';
+            $select_args['user_id'] = $duser->id;
         }
 
         if (!is_null($ip)) {

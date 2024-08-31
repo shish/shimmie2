@@ -628,7 +628,9 @@ function validate_input(array $inputs): array
         if (in_array('user_id', $flags)) {
             $id = int_escape($value);
             if (in_array('exists', $flags)) {
-                if (is_null(User::by_id($id))) {
+                try {
+                    User::by_id($id);
+                } catch (UserNotFound $e) {
                     throw new InvalidInput("User #$id does not exist");
                 }
             }
