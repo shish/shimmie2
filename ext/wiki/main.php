@@ -66,7 +66,7 @@ class WikiPage
     /**
      * @param array<string, mixed> $row
      */
-    public function __construct(array $row = null)
+    public function __construct(?array $row = null)
     {
         //assert(!empty($row));
         global $database;

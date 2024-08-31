@@ -26,7 +26,7 @@ class UserClass
     /**
      * @param array<string, bool> $abilities
      */
-    public function __construct(string $name, string $parent = null, array $abilities = [])
+    public function __construct(string $name, ?string $parent = null, array $abilities = [])
     {
         $this->name = $name;
         $this->abilities = $abilities;

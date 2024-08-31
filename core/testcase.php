@@ -162,7 +162,7 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertEquals($code, $page->code);
         }
 
-        protected function page_to_text(string $section = null): string
+        protected function page_to_text(?string $section = null): string
         {
             global $page;
             if ($page->mode == PageMode::PAGE) {
@@ -184,12 +184,12 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
         /**
          * Assert that the page contains the given text somewhere in the blocks
          */
-        protected function assert_text(string $text, string $section = null): void
+        protected function assert_text(string $text, ?string $section = null): void
         {
             $this->assertStringContainsString($text, $this->page_to_text($section));
         }
 
-        protected function assert_no_text(string $text, string $section = null): void
+        protected function assert_no_text(string $text, ?string $section = null): void
         {
             $this->assertStringNotContainsString($text, $this->page_to_text($section));
         }

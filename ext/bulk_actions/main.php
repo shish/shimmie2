@@ -17,7 +17,7 @@ class BulkActionBlockBuildingEvent extends Event
     /** @var string[] */
     public array $search_terms = [];
 
-    public function add_action(string $action, string $button_text, string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40): void
+    public function add_action(string $action, string $button_text, ?string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40): void
     {
         if (!empty($access_key)) {
             assert(strlen($access_key) == 1);
