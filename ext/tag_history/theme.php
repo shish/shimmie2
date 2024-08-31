@@ -132,10 +132,30 @@ class TagHistoryTheme extends Themelet
             : null;
         $setter = A(["href" => make_link("user/" . url_escape($name))], $name);
 
-        $current_tags = Tag::explode($current_tags);
+        $th = new TagHistory();
+        $pt = $th->get_previous_tags($image_id, $current_id);
+        if ($pt) {
+            $previous_tags = explode(" ", $pt["tags"]);
+        }
+        $current_tags = explode(" ", $current_tags);
+        if ($pt) {
+            $tags = array_unique(array_merge($current_tags, $previous_tags));
+            sort($tags);
+        } else {
+            $tags = $current_tags;
+        }
         $taglinks = SPAN();
-        foreach ($current_tags as $tag) {
-            $taglinks->appendChild(A(["href" => search_link([$tag])], $tag));
+        foreach ($tags as $tag) {
+            $class = "";
+            if ($pt) {
+                if (!in_array($tag, $previous_tags)) {
+                    $class = "added-tag";
+                }
+                if (!in_array($tag, $current_tags)) {
+                    $class = "deleted-tag";
+                }
+            }
+            $taglinks->appendChild(A(["href" => search_link([$tag]), "class" => $class], $tag));
             $taglinks->appendChild(" ");
         }
 
