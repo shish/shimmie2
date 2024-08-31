@@ -101,8 +101,8 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
     private function create_test_user(string $username): void
     {
-        send_event(new UserCreationEvent($username, $username, $username, "$username@test.com", false));
-        send_event(new UserLoginEvent(User::by_name($username)));
+        $uce = send_event(new UserCreationEvent($username, $username, $username, "$username@test.com", false));
+        send_event(new UserLoginEvent($uce->get_user()));
     }
 
     private function delete_test_user(string $username): void

@@ -86,11 +86,11 @@ class Image implements \ArrayAccess
                 // we only want the key=>value ones
                 if (is_numeric($name)) {
                     continue;
-                } elseif(property_exists($this, $name)) {
+                } elseif (property_exists($this, $name)) {
                     $t = (new \ReflectionProperty($this, $name))->getType();
                     assert(!is_null($t));
-                    if(is_a($t, \ReflectionNamedType::class)) {
-                        if(is_null($value)) {
+                    if (is_a($t, \ReflectionNamedType::class)) {
+                        if (is_null($value)) {
                             $this->$name = null;
                         } else {
                             $this->$name = match($t->getName()) {
@@ -102,7 +102,7 @@ class Image implements \ArrayAccess
                         }
 
                     }
-                } elseif(array_key_exists($name, static::$prop_types)) {
+                } elseif (array_key_exists($name, static::$prop_types)) {
                     if (is_null($value)) {
                         $value = null;
                     } else {
@@ -118,7 +118,7 @@ class Image implements \ArrayAccess
                     // it isn't static and it isn't a known prop_type -
                     // maybe from an old extension that has since been
                     // disabled? Just ignore it.
-                    if(defined('UNITTEST')) {
+                    if (defined('UNITTEST')) {
                         throw new \Exception("Unknown column $name in images table");
                     }
                 }
@@ -135,7 +135,7 @@ class Image implements \ArrayAccess
     public function offsetGet(mixed $offset): mixed
     {
         assert(is_string($offset));
-        if(!$this->offsetExists($offset)) {
+        if (!$this->offsetExists($offset)) {
             $known = implode(", ", array_keys(static::$prop_types));
             throw new \OutOfBoundsException("Undefined dynamic property: $offset (Known: $known)");
         }
@@ -178,7 +178,7 @@ class Image implements \ArrayAccess
     public static function by_id_ex(int $post_id): Image
     {
         $maybe_post = static::by_id($post_id);
-        if(!is_null($maybe_post)) {
+        if (!is_null($maybe_post)) {
             return $maybe_post;
         }
         throw new ImageNotFound("Image $post_id not found");
@@ -265,7 +265,6 @@ class Image implements \ArrayAccess
     public function get_owner(): User
     {
         $user = User::by_id($this->owner_id);
-        assert(!is_null($user));
         return $user;
     }
 
@@ -450,7 +449,7 @@ class Image implements \ArrayAccess
      */
     public function get_image_filename(): string
     {
-        if(!is_null($this->tmp_file)) {
+        if (!is_null($this->tmp_file)) {
             return $this->tmp_file;
         }
         return warehouse_path(self::IMAGE_DIR, $this->hash);
@@ -632,8 +631,8 @@ class Image implements \ArrayAccess
     {
         $img_del = @unlink($this->get_image_filename());
         $thumb_del = @unlink($this->get_thumb_filename());
-        if($img_del && $thumb_del) {
-            if(!$quiet) {
+        if ($img_del && $thumb_del) {
+            if (!$quiet) {
                 log_info("core_image", "Deleted files for Post #{$this->id} ({$this->hash})");
             }
         } else {

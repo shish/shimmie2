@@ -113,11 +113,11 @@ class TagCategoriesTheme extends Themelet
     {
         return '<p>Search for posts containing a certain number of tags with the specified tag category.</p>
         <div class="command_example">
-        <pre>persontags=1</pre>
+        <code>persontags=1</code>
         <p>Returns posts with exactly 1 tag with the tag category "person".</p>
         </div>
         <div class="command_example">
-        <pre>cattags>0</pre>
+        <code>cattags>0</code>
         <p>Returns posts with 1 or more tags with the tag category "cat". </p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>

@@ -16,7 +16,7 @@ class CustomHtmlHeadersInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::ADMIN;
     public string $description = "Allows admins to modify & set custom <head> content";
     public ?string $documentation =
-"When you go to board config you can find a block named Custom HTML Headers.
+        "When you go to board config you can find a block named Custom HTML Headers.
 <br>In that block you can simply place any thing you can place within &lt;head&gt;&lt;/head&gt;
 <br>
 <br>This can be useful if you want to add website tracking code or other javascript.

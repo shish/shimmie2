@@ -91,8 +91,8 @@ class ImageBan extends Extension
 
         if ($event->page_matches("image_hash_ban/add", method: "POST", permission: Permissions::BAN_IMAGE)) {
             $input = validate_input(["c_hash" => "optional,string", "c_reason" => "string", "c_image_id" => "optional,int"]);
-            $image = isset($input['c_image_id']) ? Image::by_id($input['c_image_id']) : null;
-            $hash = isset($input["c_hash"]) ? $input["c_hash"] : $image->hash;
+            $image = isset($input['c_image_id']) ? Image::by_id_ex($input['c_image_id']) : null;
+            $hash = isset($input["c_hash"]) ? $input["c_hash"] : ($image ? $image->hash : null);
             $reason = isset($input['c_reason']) ? $input['c_reason'] : "DNP";
 
             if ($hash) {

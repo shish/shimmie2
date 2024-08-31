@@ -68,7 +68,9 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         // If user prefers to see all images, going to the safe image
         // and clicking next should show the explicit image
         $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["s", "q", "e"]);
-        $this->assertEquals($image_s->get_next()->id, $image_id_e);
+        $next = $image_s->get_next();
+        $this->assertNotNull($next);
+        $this->assertEquals($next->id, $image_id_e);
 
         // If the user prefers to see only safe images by default, then
         // going to the safe image and clicking next should not show

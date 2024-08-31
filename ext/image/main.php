@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function MicroHTML\{INPUT, emptyHTML};
+use function MicroHTML\{INPUT, emptyHTML, STYLE};
 
 require_once "config.php";
 
@@ -74,7 +74,7 @@ class ImageIO extends Extension
                     $config->set_string(ImageConfig::THUMB_MIME, MimeType::JPEG);
                     break;
             }
-            $config->set_string("thumb_type", null);
+            $config->delete("thumb_type");
 
             $this->set_version(ImageConfig::VERSION, 1);
         }
@@ -86,7 +86,7 @@ class ImageIO extends Extension
 
         $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH, 192);
         $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT, 192);
-        $page->add_html_header("<style>:root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}</style>");
+        $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST", permission: Permissions::DELETE_IMAGE)) {
             global $page, $user;
@@ -213,7 +213,7 @@ class ImageIO extends Extension
         $event->replace('$filesize', to_shorthand_int($event->image->filesize));
         $event->replace('$filename', $base_fname);
         $event->replace('$ext', $event->image->get_ext());
-        if(isset($event->image->posted)) {
+        if (isset($event->image->posted)) {
             $event->replace('$date', autodate($event->image->posted, false));
         }
         $event->replace("\\n", "\n");
@@ -244,7 +244,7 @@ class ImageIO extends Extension
 
 
         if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
-            $if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+            $if_modified_since = preg_replace_ex('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
         } else {
             $if_modified_since = "";
         }

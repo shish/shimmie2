@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{PRE};
+use function MicroHTML\{CODE};
 
 class ETServer extends Extension
 {
@@ -28,7 +28,7 @@ class ETServer extends Extension
                 foreach ($database->get_all("SELECT responded, data FROM registration ORDER BY responded DESC") as $row) {
                     $page->add_block(new Block(
                         $row["responded"],
-                        PRE(["style" => "text-align: left; overflow: scroll;"], $row["data"]),
+                        CODE(["style" => "text-align: left; overflow: scroll;"], $row["data"]),
                         "main",
                         $n++
                     ));

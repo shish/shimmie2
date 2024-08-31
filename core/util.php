@@ -151,19 +151,32 @@ function check_im_version(): int
 function is_trusted_proxy(): bool
 {
     $ra = $_SERVER['REMOTE_ADDR'] ?? "0.0.0.0";
-    if(!defined("TRUSTED_PROXIES")) {
+    if (!defined("TRUSTED_PROXIES")) {
         return false;
     }
     // @phpstan-ignore-next-line - TRUSTED_PROXIES is defined in config
-    foreach(TRUSTED_PROXIES as $proxy) {
-        if($ra === $proxy) { // check for "unix:" before checking IPs
+    foreach (TRUSTED_PROXIES as $proxy) {
+        // @phpstan-ignore-next-line - TRUSTED_PROXIES is defined in config
+        if ($ra === $proxy) { // check for "unix:" before checking IPs
             return true;
         }
-        if(ip_in_range($ra, $proxy)) {
+        if (ip_in_range($ra, $proxy)) {
             return true;
         }
     }
     return false;
+}
+
+function is_bot(): bool
+{
+    $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
+    return (
+        str_contains($ua, "Googlebot")
+        || str_contains($ua, "YandexBot")
+        || str_contains($ua, "bingbot")
+        || str_contains($ua, "msnbot")
+        || str_contains($ua, "PetalBot")
+    );
 }
 
 /**
@@ -173,13 +186,13 @@ function get_real_ip(): string
 {
     $ip = $_SERVER['REMOTE_ADDR'];
 
-    if($ip == "unix:") {
+    if ($ip == "unix:") {
         $ip = "0.0.0.0";
     }
 
-    if(is_trusted_proxy()) {
+    if (is_trusted_proxy()) {
         if (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            if(filter_var_ex($ip, FILTER_VALIDATE_IP)) {
+            if (filter_var_ex($ip, FILTER_VALIDATE_IP)) {
                 $ip = $_SERVER['HTTP_X_REAL_IP'];
             }
         }
@@ -187,7 +200,7 @@ function get_real_ip(): string
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             $last_ip = $ips[count($ips) - 1];
-            if(filter_var_ex($last_ip, FILTER_VALIDATE_IP)) {
+            if (filter_var_ex($last_ip, FILTER_VALIDATE_IP)) {
                 $ip = $last_ip;
             }
         }
@@ -354,7 +367,7 @@ function fetch_url(string $url, string $mfile): array
         $s_url = escapeshellarg($url);
         $s_mfile = escapeshellarg($mfile);
         system("wget --no-check-certificate $s_url --output-document=$s_mfile");
-        if(!file_exists($mfile)) {
+        if (!file_exists($mfile)) {
             throw new FetchException("wget failed");
         }
         $headers = [];
@@ -689,7 +702,7 @@ function _fatal_error(\Exception $e): void
         $code = is_a($e, SCoreException::class) ? $e->http_code : 500;
 
         $q = "";
-        if(is_a($e, DatabaseException::class)) {
+        if (is_a($e, DatabaseException::class)) {
             $q .= "<p><b>Query:</b> " . html_escape($query);
             $q .= "<p><b>Args:</b> " . html_escape(var_export($e->args, true));
         }
@@ -708,7 +721,7 @@ function _fatal_error(\Exception $e): void
 		<p><b>Message:</b> '.html_escape($message).'
 		'.$q.'
 		<p><b>Version:</b> '.$version.' (on '.$phpver.')
-        <p><b>Stack Trace:</b></p><pre>'.$e->getTraceAsString().'</pre>
+        <p><b>Stack Trace:</b></p><pre><code>'.$e->getTraceAsString().'</code></pre>
 	</body>
 </html>
 ';
@@ -734,7 +747,6 @@ function _get_user(): User
     if (is_null($my_user)) {
         $my_user = User::by_id($config->get_int("anon_id", 0));
     }
-    assert(!is_null($my_user));
 
     return $my_user;
 }
@@ -806,7 +818,7 @@ function generate_key(int $length = 20): string
 
 function shm_tempnam(string $prefix = ""): string
 {
-    if(!is_dir("data/temp")) {
+    if (!is_dir("data/temp")) {
         mkdir("data/temp");
     }
     $temp = \Safe\realpath("data/temp");

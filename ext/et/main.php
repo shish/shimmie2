@@ -67,13 +67,13 @@ class ET extends Extension
         }
 
         $ver = VERSION;
-        if(defined("BUILD_TIME")) {
+        if (defined("BUILD_TIME")) {
             $ver .= "-" . substr(str_replace("-", "", constant("BUILD_TIME")), 0, 8);
         }
-        if(defined("BUILD_HASH")) {
+        if (defined("BUILD_HASH")) {
             $ver .= "-" . substr(constant("BUILD_HASH"), 0, 7);
         }
-        if(file_exists(".git")) {
+        if (file_exists(".git")) {
             $ver .= "+";
         }
 
@@ -123,7 +123,7 @@ class ET extends Extension
                 $commitHash = trim(\Safe\exec('git log --pretty="%h" -n1 HEAD'));
                 $commitBranch = trim(\Safe\exec('git rev-parse --abbrev-ref HEAD'));
                 $commitOrigin = trim(\Safe\exec('git config --get remote.origin.url'));
-                $commitOrigin = preg_replace("#//.*@#", "//xxx@", $commitOrigin);
+                $commitOrigin = preg_replace_ex("#//.*@#", "//xxx@", $commitOrigin);
                 $info['versions']['shimmie'] .= $commitHash;
                 $info['versions']['origin'] = "$commitOrigin ($commitBranch)";
                 $info['git'] = [

@@ -196,13 +196,13 @@ class Tag
 
     public static function sanitize(string $tag): string
     {
-        $tag = preg_replace("/\s/", "", $tag);                # whitespace
+        $tag = preg_replace_ex("/\s/", "", $tag);                # whitespace
         assert($tag !== null);
-        $tag = preg_replace('/\x20[\x0e\x0f]/', '', $tag);    # unicode RTL
+        $tag = preg_replace_ex('/\x20[\x0e\x0f]/', '', $tag);    # unicode RTL
         assert($tag !== null);
-        $tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
+        $tag = preg_replace_ex("/\.+/", ".", $tag);              # strings of dots?
         assert($tag !== null);
-        $tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
+        $tag = preg_replace_ex("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
         assert($tag !== null);
         $tag = trim($tag, ", \t\n\r\0\x0B");
 

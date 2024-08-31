@@ -84,7 +84,7 @@ try {
         ob_implicit_flush(true);
         $app = new CliApp();
         send_event(new CliGenEvent($app));
-        if($app->run() !== 0) {
+        if ($app->run() !== 0) {
             throw new \Exception("CLI command failed");
         }
     } else {
@@ -105,7 +105,7 @@ try {
     if ($database->is_transaction_open()) {
         $database->rollback();
     }
-    if(is_a($e, \Shimmie2\UserError::class)) {
+    if (is_a($e, \Shimmie2\UserError::class)) {
         $page->set_mode(PageMode::PAGE);
         $page->set_code($e->http_code);
         $page->set_title("Error");

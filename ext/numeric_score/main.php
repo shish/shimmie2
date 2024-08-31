@@ -199,18 +199,36 @@ class NumericScore extends Extension
 
             $totaldate = $year."/".$month."/".$day;
 
-            $sql = "SELECT id FROM images WHERE EXTRACT(YEAR FROM posted) = :year";
+            if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
+                $sql = "SELECT id FROM images WHERE strftime('%Y', posted) = cast(:year as text)";
+                $month = str_pad(strval($month), 2, "0", STR_PAD_LEFT);
+                $day = str_pad(strval($day), 2, "0", STR_PAD_LEFT);
+            } else {
+                $sql = "SELECT id FROM images WHERE EXTRACT(YEAR FROM posted) = :year";
+            }
             $args = ["limit" => $config->get_int(IndexConfig::IMAGES), "year" => $year];
 
             if ($event->page_matches("popular_by_day")) {
-                $sql .= " AND EXTRACT(MONTH FROM posted) = :month AND EXTRACT(DAY FROM posted) = :day";
+                if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
+                    $sql .= " AND strftime('%m', posted) = cast(:month as text) AND strftime('%d', posted) = cast(:day as text)";
+                } else {
+                    $sql .= " AND EXTRACT(MONTH FROM posted) = :month AND EXTRACT(DAY FROM posted) = :day";
+                }
                 $args = array_merge($args, ["month" => $month, "day" => $day]);
-                $current = date("F jS, Y", \Safe\strtotime($totaldate)).
+                $current = date("F jS, Y", \Safe\strtotime($totaldate));
                 $name = "day";
                 $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m\\&\\d\\a\\y\\=d";
             } elseif ($event->page_matches("popular_by_month")) {
-                $sql .=	" AND EXTRACT(MONTH FROM posted) = :month";
+                if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
+                    $sql .=	" AND strftime('%m', posted) = cast(:month as text)";
+                } else {
+                    $sql .=	" AND EXTRACT(MONTH FROM posted) = :month";
+                }
                 $args = array_merge($args, ["month" => $month]);
+                // PHP's -1 month and +1 month functionality break when modifying dates that are on the 31st of the month.
+                // See Example #3 on https://www.php.net/manual/en/datetime.modify.php
+                // To get around this, set the day to 1 when doing month work.
+                $totaldate = $year."/".$month."/01";
                 $current = date("F Y", \Safe\strtotime($totaldate));
                 $name = "month";
                 $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m";
@@ -225,7 +243,6 @@ class NumericScore extends Extension
             $sql .= " AND NOT numeric_score=0 ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
 
             //filter images by score != 0 + date > limit to max images on one page > order from highest to lowest score
-
             $ids = $database->get_col($sql, $args);
             $images = Search::get_images($ids);
             $this->theme->view_popular($images, $totaldate, $current, $name, $fmt);
@@ -310,22 +327,12 @@ class NumericScore extends Extension
             $event->add_querylet(new Querylet("numeric_score $cmp $score"));
         } elseif (preg_match("/^upvoted_by[=|:](.*)$/i", $event->term, $matches)) {
             $duser = User::by_name($matches[1]);
-            if (is_null($duser)) {
-                throw new SearchTermParseException(
-                    "Can't find the user named ".html_escape($matches[1])
-                );
-            }
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
                 ["ns_user_id" => $duser->id]
             ));
         } elseif (preg_match("/^downvoted_by[=|:](.*)$/i", $event->term, $matches)) {
             $duser = User::by_name($matches[1]);
-            if (is_null($duser)) {
-                throw new SearchTermParseException(
-                    "Can't find the user named ".html_escape($matches[1])
-                );
-            }
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
                 ["ns_user_id" => $duser->id]

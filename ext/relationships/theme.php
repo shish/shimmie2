@@ -66,7 +66,7 @@ class RelationshipsTheme extends Themelet
         return SHM_POST_INFO(
             "Parent",
             strval($image['parent_id']) ?: "None",
-            !$user->is_anonymous() ? INPUT(["type" => "number", "name" => "parent", "value" => $image['parent_id']]) : null
+            $user->can(Permissions::EDIT_IMAGE_RELATIONSHIPS) ? INPUT(["type" => "number", "name" => "parent", "value" => $image['parent_id']]) : null
         );
     }
 
@@ -75,23 +75,23 @@ class RelationshipsTheme extends Themelet
     {
         return '<p>Search for posts that have parent/child relationships.</p>
         <div class="command_example">
-        <pre>parent=any</pre>
+        <code>parent=any</code>
         <p>Returns posts that have a parent.</p>
         </div>
         <div class="command_example">
-        <pre>parent=none</pre>
+        <code>parent=none</code>
         <p>Returns posts that have no parent.</p>
         </div>
         <div class="command_example">
-        <pre>parent=123</pre>
+        <code>parent=123</code>
         <p>Returns posts that have image 123 set as parent.</p>
         </div>
         <div class="command_example">
-        <pre>child=any</pre>
+        <code>child=any</code>
         <p>Returns posts that have at least 1 child.</p>
         </div>
         <div class="command_example">
-        <pre>child=none</pre>
+        <code>child=none</code>
         <p>Returns posts that have no children.</p>
         </div>
         ';

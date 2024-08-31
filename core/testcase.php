@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
+if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
     abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         protected static string $anon_name = "anonymous";
@@ -44,7 +44,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $database->execute("SAVEPOINT test_start");
             self::log_out();
             foreach ($database->get_col("SELECT id FROM images") as $image_id) {
-                send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
+                send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
             }
 
             $_tracer->end();  # setUp
@@ -223,21 +223,19 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertEquals($results, $ids);
         }
 
-        protected function assertException(string $type, callable $function): \Exception|null
+        protected function assertException(string $type, callable $function): \Exception
         {
-            $exception = null;
             try {
                 call_user_func($function);
-            } catch (\Exception $e) {
-                $exception = $e;
+                self::fail("Expected exception of type $type, but none was thrown");
+            } catch (\Exception $exception) {
+                self::assertThat(
+                    $exception,
+                    new \PHPUnit\Framework\Constraint\Exception($type),
+                    "Expected exception of type $type, but got " . get_class($exception)
+                );
+                return $exception;
             }
-
-            self::assertThat(
-                $exception,
-                new \PHPUnit\Framework\Constraint\Exception($type),
-                "Expected exception of type $type, but got " . ($exception ? get_class($exception) : "none")
-            );
-            return $exception;
         }
 
         // user things
@@ -264,7 +262,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
                 "filename" => $filename,
                 "tags" => $tags,
             ]));
-            if(count($dae->images) == 0) {
+            if (count($dae->images) == 0) {
                 throw new \Exception("Upload failed :(");
             }
             return $dae->images[0]->id;

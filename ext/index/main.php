@@ -46,15 +46,9 @@ class Index extends Extension
             $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::FAST_PAGE_LIMIT));
             $fast_page_limit = 500;
 
-            $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
             if (
                 $speed_hax
-                && (
-                    str_contains($ua, "Googlebot")
-                    || str_contains($ua, "YandexBot")
-                    || str_contains($ua, "bingbot")
-                    || str_contains($ua, "msnbot")
-                )
+                && is_bot()
                 && (
                     $count_search_terms > 1
                     || ($count_search_terms == 1 && $search_terms[0][0] == "-")
@@ -166,7 +160,7 @@ class Index extends Extension
                 $count = $input->getOption('count');
 
                 [$tag_conditions, $img_conditions, $order] = Search::terms_to_conditions($search);
-                if($count) {
+                if ($count) {
                     $order = null;
                     $page = null;
                     $limit = null;
@@ -181,9 +175,9 @@ class Index extends Extension
                 );
 
                 $sql_str = $q->sql;
-                $sql_str = preg_replace("/\s+/", " ", $sql_str);
-                foreach($q->variables as $key => $val) {
-                    if(is_string($val)) {
+                $sql_str = preg_replace_ex("/\s+/", " ", $sql_str);
+                foreach ($q->variables as $key => $val) {
+                    if (is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);
                     } else {
                         $sql_str = str_replace(":$key", (string)$val, $sql_str);
@@ -250,6 +244,7 @@ class Index extends Extension
 
         // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
         if ($event->order === null && $event->img_conditions == [] && $event->tag_conditions == []) {
+            assert(is_string($event->term));
             $event->add_tag_condition(new TagCondition($event->term, $event->positive));
         }
     }

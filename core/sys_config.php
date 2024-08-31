@@ -37,3 +37,4 @@ _d("BASE_HREF", null);          // string   force a specific base URL (default i
 _d("TRACE_FILE", null);         // string   file to log performance data into
 _d("TRACE_THRESHOLD", 0.0);     // float    log pages which take more time than this many seconds
 _d("TRUSTED_PROXIES", []);      // array    trust "X-Real-IP" / "X-Forwarded-For" / "X-Forwarded-Proto" headers from these IP ranges
+_d("SECRET", DATABASE_DSN);     // string   A secret bit of data used to salt some hashes

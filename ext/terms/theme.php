@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{emptyHTML, TITLE, META, rawHTML};
+
 class TermsTheme extends Themelet
 {
     public function display_page(Page $page, string $sitename, string $path, string $body): void

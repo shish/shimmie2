@@ -181,14 +181,16 @@ abstract class ExtensionInfo
     {
         if ($this->supported === null) {
             $this->check_support();
+            assert(!is_null($this->supported));
         }
         return $this->supported;
     }
 
     public function get_support_info(): string
     {
-        if ($this->supported === null) {
+        if ($this->support_info === null) {
             $this->check_support();
+            assert(!is_null($this->support_info));
         }
         return $this->support_info;
     }
@@ -340,7 +342,7 @@ abstract class DataHandlerExtension extends Extension
                     // Right now tags are the only thing that get merged, so
                     // we can just send a TagSetEvent - in the future we might
                     // want a dedicated MergeEvent?
-                    if(!empty($event->metadata['tags'])) {
+                    if (!empty($event->metadata['tags'])) {
                         $tags = Tag::explode($existing->get_tag_list() . " " . $event->metadata['tags']);
                         send_event(new TagSetEvent($existing, $tags));
                     }
@@ -373,12 +375,10 @@ abstract class DataHandlerExtension extends Extension
 
             // If everything is OK, then move the file to the archive
             $filename = warehouse_path(Image::IMAGE_DIR, $event->hash);
-            if (!@copy($event->tmpname, $filename)) {
-                $errors = error_get_last();
-                throw new UploadException(
-                    "Failed to copy file from uploads ({$event->tmpname}) to archive ($filename): ".
-                    "{$errors['type']} / {$errors['message']}"
-                );
+            try {
+                \Safe\copy($event->tmpname, $filename);
+            } catch (\Exception $e) {
+                throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($filename): ".$e->getMessage());
             }
 
             $event->images[] = $iae->image;

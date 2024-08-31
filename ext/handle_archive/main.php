@@ -38,10 +38,10 @@ class ArchiveFileHandler extends DataHandlerExtension
                 try {
                     $results = add_dir($tmpdir, Tag::explode($event->metadata['tags']));
                     foreach ($results as $r) {
-                        if(is_a($r, UploadError::class)) {
+                        if (is_a($r, UploadError::class)) {
                             $page->flash($r->name." failed: ".$r->error);
                         }
-                        if(is_a($r, UploadSuccess::class)) {
+                        if (is_a($r, UploadSuccess::class)) {
                             $event->images[] = Image::by_id_ex($r->image_id);
                         }
                     }

@@ -50,10 +50,10 @@ class NumericScoreTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(404, $page->code);
 
         # test errors
-        $this->assertException(SearchTermParseException::class, function () {
+        $this->assertException(UserNotFound::class, function () {
             $this->get_page("post/list/upvoted_by=asdfasdf/1");
         });
-        $this->assertException(SearchTermParseException::class, function () {
+        $this->assertException(UserNotFound::class, function () {
             $this->get_page("post/list/downvoted_by=asdfasdf/1");
         });
 

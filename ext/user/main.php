@@ -9,7 +9,6 @@ require_once "events.php";
 use GQLA\Field;
 use GQLA\Type;
 use GQLA\Mutation;
-
 use MicroHTML\HTMLElement;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\EnumColumn;
@@ -18,7 +17,7 @@ use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
 
-use function MicroHTML\A;
+use function MicroHTML\{A, STYLE};
 
 class UserNameColumn extends TextColumn
 {
@@ -91,17 +90,16 @@ class LoginResult
     public static function login(string $username, string $password): LoginResult
     {
         global $config;
-        $duser = User::by_name_and_pass($username, $password);
-        if (!is_null($duser)) {
+        try {
+            $duser = User::by_name_and_pass($username, $password);
             return new LoginResult(
                 $duser,
-                UserPage::get_session_id($duser->name),
+                $duser->get_session_id(),
                 null
             );
-        } else {
-            $anon = User::by_id($config->get_int("anon_id", 0));
+        } catch (UserNotFound $ex) {
             return new LoginResult(
-                $anon,
+                User::by_id($config->get_int("anon_id", 0)),
                 null,
                 "No user found"
             );
@@ -115,8 +113,8 @@ class LoginResult
         try {
             $uce = send_event(new UserCreationEvent($username, $password1, $password2, $email, true));
             return new LoginResult(
-                User::by_name($username),
-                UserPage::get_session_id($username),
+                $uce->get_user(),
+                $uce->get_user()->get_session_id(),
                 null
             );
         } catch (UserCreationException $ex) {
@@ -160,9 +158,9 @@ class UserPage extends Extension
         $this->show_user_info();
 
         if ($user->can(Permissions::VIEW_HELLBANNED)) {
-            $page->add_html_header("<style>DIV.hb, TR.hb TD {border: 1px solid red !important;}</style>");
+            $page->add_html_header(STYLE("DIV.hb, TR.hb TD {border: 1px solid red !important;}"));
         } elseif (!$user->can(Permissions::HELLBANNED)) {
-            $page->add_html_header("<style>.hb {display: none !important;}</style>");
+            $page->add_html_header(STYLE(".hb {display: none !important;}"));
         }
 
         if ($event->page_matches("user_admin/login", method: "GET")) {
@@ -198,7 +196,7 @@ class UserPage extends Extension
                         true
                     )
                 );
-                $this->set_login_cookie($uce->username);
+                $uce->get_user()->set_login_cookie();
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
             } catch (UserCreationException $ex) {
@@ -269,7 +267,7 @@ class UserPage extends Extension
                     // FIXME: send_event()
                     $duser->set_password($input['pass1']);
                     if ($duser->id == $user->id) {
-                        $this->set_login_cookie($duser->name);
+                        $duser->set_login_cookie();
                     }
                     $page->flash("Password changed");
                     $this->redirect_to_user($duser);
@@ -311,11 +309,14 @@ class UserPage extends Extension
         }
 
         if ($event->page_matches("user/{name}")) {
-            $display_user = User::by_name($event->get_arg('name'));
-            if (!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
+            try {
+                $display_user = User::by_name($event->get_arg('name'));
+                if ($display_user->id == $config->get_int("anon_id")) {
+                    throw new UserNotFound("No such user");
+                }
                 $e = send_event(new UserPageBuildingEvent($display_user));
                 $this->display_stats($e);
-            } else {
+            } catch (UserNotFound $ex) {
                 $this->theme->display_error(
                     404,
                     "No Such User",
@@ -323,7 +324,7 @@ class UserPage extends Extension
                     "site, it might be bug report time..."
                 );
             }
-        } elseif($event->page_matches("user")) {
+        } elseif ($event->page_matches("user")) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user/" . $user->name));
         }
@@ -333,27 +334,27 @@ class UserPage extends Extension
     {
         global $user, $config;
 
-        $h_join_date = autodate($event->display_user->join_date);
-        if ($event->display_user->can(Permissions::HELLBANNED)) {
-            $h_class = $event->display_user->class->parent->name;
+        $duser = $event->display_user;
+        $h_join_date = autodate($duser->join_date);
+        $class = $duser->class;
+        if ($duser->can(Permissions::HELLBANNED) && $class->parent) {
+            $h_class = $class->parent->name;
         } else {
-            $h_class = $event->display_user->class->name;
+            $h_class = $class->name;
         }
 
         $event->add_part("Joined: $h_join_date", 10);
-        if ($user->name == $event->display_user->name) {
+        if ($user->name == $duser->name) {
             $event->add_part("Current IP: " . get_real_ip(), 80);
         }
         $event->add_part("Class: $h_class", 90);
 
-        $av = $event->display_user->get_avatar_html();
+        $av = $duser->get_avatar_html();
         if ($av) {
             $event->add_part($av, 0);
         } elseif (
-            (
-                $config->get_string("avatar_host") == "gravatar"
-            ) &&
-            ($user->id == $event->display_user->id)
+            ($config->get_string("avatar_host") == "gravatar") &&
+            ($user->id == $duser->id)
         ) {
             $event->add_part(
                 "No avatar? This gallery uses <a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the" .
@@ -499,7 +500,7 @@ class UserPage extends Extension
 
     public function onUserCreation(UserCreationEvent $event): void
     {
-        global $config, $page, $user;
+        global $config, $database, $page, $user;
 
         $name = $event->username;
         //$pass = $event->password;
@@ -520,8 +521,11 @@ class UserPage extends Extension
                 "letters, numbers, dash, and underscore"
             );
         }
-        if (User::by_name($name)) {
+        try {
+            User::by_name($name);
             throw new UserCreationException("That username is already taken");
+        } catch (UserNotFound $ex) {
+            // user not found is good
         }
         if (!captcha_check()) {
             throw new UserCreationException("Error in captcha");
@@ -538,10 +542,25 @@ class UserPage extends Extension
             throw new UserCreationException("Email address is required");
         }
 
-        $new_user = $this->create_user($event);
+        $email = (!empty($event->email)) ? $event->email : null;
+
+        // if there are currently no admins, the new user should be one
+        $need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
+        $class = $need_admin ? 'admin' : 'user';
+
+        $database->execute(
+            "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
+            ["username" => $event->username, "hash" => '', "email" => $email, "class" => $class]
+        );
+        $new_user = User::by_name($event->username);
+        $new_user->set_password($event->password);
+        log_info("user", "Created User @{$event->username}");
+
         if ($event->login) {
             send_event(new UserLoginEvent($new_user));
         }
+
+        $event->set_user($new_user);
     }
 
     public const USER_SEARCH_REGEX = "/^(?:poster|user)(!?)[=|:](.*)$/i";
@@ -574,11 +593,6 @@ class UserPage extends Extension
         $matches = [];
         if (preg_match(self::USER_SEARCH_REGEX, $event->term, $matches)) {
             $duser = User::by_name($matches[2]);
-            if (is_null($duser)) {
-                throw new SearchTermParseException(
-                    "Can't find the user named " . html_escape($matches[2])
-                );
-            }
             $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= {$duser->id}"));
         } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
             $user_id = int_escape($matches[2]);
@@ -616,19 +630,15 @@ class UserPage extends Extension
         global $config, $page;
 
         $duser = User::by_name_and_pass($name, $pass);
-        if (!is_null($duser)) {
-            send_event(new UserLoginEvent($duser));
-            $this->set_login_cookie($duser->name);
-            $page->set_mode(PageMode::REDIRECT);
+        send_event(new UserLoginEvent($duser));
+        $duser->set_login_cookie();
+        $page->set_mode(PageMode::REDIRECT);
 
-            // Try returning to previous page
-            if ($config->get_int("user_loginshowprofile", 0)) {
-                $page->set_redirect(referer_or(make_link(), ["user/"]));
-            } else {
-                $page->set_redirect(make_link("user"));
-            }
+        // Try returning to previous page
+        if ($config->get_int("user_loginshowprofile", 0)) {
+            $page->set_redirect(referer_or(make_link(), ["user/"]));
         } else {
-            $this->theme->display_error(401, "Error", "No user with those details was found");
+            $page->set_redirect(make_link("user"));
         }
     }
 
@@ -655,63 +665,11 @@ class UserPage extends Extension
     private function page_recover(string $username): void
     {
         $my_user = User::by_name($username);
-        if (is_null($my_user)) {
-            $this->theme->display_error(404, "Error", "There's no user with that name");
-        } elseif (is_null($my_user->email)) {
+        if (is_null($my_user->email)) {
             $this->theme->display_error(400, "Error", "That user has no registered email address");
         } else {
             throw new ServerError("Email sending not implemented");
         }
-    }
-
-    private function create_user(UserCreationEvent $event): User
-    {
-        global $database;
-
-        $email = (!empty($event->email)) ? $event->email : null;
-
-        // if there are currently no admins, the new user should be one
-        $need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
-        $class = $need_admin ? 'admin' : 'user';
-
-        $database->execute(
-            "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
-            ["username" => $event->username, "hash" => '', "email" => $email, "class" => $class]
-        );
-        $uid = $database->get_last_insert_id('users_id_seq');
-        $new_user = User::by_name($event->username);
-        $new_user->set_password($event->password);
-
-        log_info("user", "Created User #$uid ({$event->username})");
-
-        return $new_user;
-    }
-
-    public static function get_session_id(string $name): string
-    {
-        global $config;
-        $addr = get_session_ip($config);
-        $hash = User::by_name($name)->passhash;
-        return md5($hash . $addr);
-    }
-
-    private function set_login_cookie(string $name): void
-    {
-        global $config, $page;
-
-
-        $page->add_cookie(
-            "user",
-            $name,
-            time() + 60 * 60 * 24 * 365,
-            '/'
-        );
-        $page->add_cookie(
-            "session",
-            $this->get_session_id($name),
-            time() + 60 * 60 * 24 * $config->get_int('login_memory'),
-            '/'
-        );
     }
 
     private function user_can_edit_user(User $a, User $b): bool

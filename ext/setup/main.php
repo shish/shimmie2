@@ -49,9 +49,9 @@ class SetupPanel
 {
     /** @var SetupBlock[]  */
     public array $blocks = [];
-    public BaseConfig $config;
+    public Config $config;
 
-    public function __construct(BaseConfig $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
@@ -68,9 +68,9 @@ class SetupBlock extends Block
 {
     public ?string $header;
     public ?string $body;
-    public BaseConfig $config;
+    public Config $config;
 
-    public function __construct(string $title, BaseConfig $config)
+    public function __construct(string $title, Config $config)
     {
         parent::__construct($title, "", "main", 50);
         $this->config = $config;
@@ -239,7 +239,7 @@ class SetupBlock extends Block
 
     public function add_shorthand_int_option(string $name, string $label = null, bool $table_row = false): void
     {
-        $val = to_shorthand_int($this->config->get_int($name));
+        $val = to_shorthand_int($this->config->get_int($name, 0));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
@@ -344,7 +344,6 @@ class Setup extends Extension
             $this->theme->display_page($page, $panel);
         } elseif ($event->page_matches("setup/save", method: "POST", permission: Permissions::CHANGE_SETTING)) {
             send_event(new ConfigSaveEvent($config, $event->POST));
-            $config->save();
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("setup"));
@@ -390,28 +389,33 @@ class Setup extends Extension
             if (substr($_name, 0, 6) == "_type_") {
                 $name = substr($_name, 6);
                 $type = $event->values["_type_$name"];
-                $value = isset($event->values["_config_$name"]) ? $event->values["_config_$name"] : null;
-                switch ($type) {
-                    case "string":
-                        $config->set_string($name, $value);
-                        break;
-                    case "int":
-                        $config->set_int($name, parse_shorthand_int((string)$value));
-                        break;
-                    case "bool":
-                        $config->set_bool($name, bool_escape($value));
-                        break;
-                    case "array":
-                        $config->set_array($name, $value);
-                        break;
+                if (isset($event->values["_config_$name"])) {
+                    $value = $event->values["_config_$name"];
+                    switch ($type) {
+                        case "string":
+                            $config->set_string($name, $value);
+                            break;
+                        case "int":
+                            $config->set_int($name, parse_shorthand_int((string)$value));
+                            break;
+                        case "bool":
+                            $config->set_bool($name, bool_escape($value));
+                            break;
+                        case "array":
+                            $config->set_array($name, $value);
+                            break;
+                    }
+                } else {
+                    // browsers don't send empty checkboxes, false value must be stored in case default is true
+                    if ($type == "bool") {
+                        $config->set_bool($name, false);
+                    } else {
+                        $config->delete($name);
+                    }
                 }
             }
         }
         log_warning("setup", "Configuration updated");
-        foreach (\Safe\glob("data/cache/*.css") as $css_cache) {
-            unlink($css_cache);
-        }
-        log_warning("setup", "Cache cleared");
     }
 
     public function onCliGen(CliGenEvent $event): void

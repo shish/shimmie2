@@ -161,7 +161,7 @@ class BlotterTheme extends Themelet
         $i_color = $config->get_string("blotter_color", "#FF0000");
         $position = $config->get_string("blotter_position", "subheading");
         $entries_list = "";
-        foreach($entries as $entry) {
+        foreach ($entries as $entry) {
             /**
              * Blotter entries
              */

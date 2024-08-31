@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML};
+use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
 
 /**
  * Class BaseThemelet
@@ -69,7 +69,7 @@ class BaseThemelet
                 $custom_classes .= "shm-thumb-has_child ";
             }
         }
-        if(Extension::is_enabled(RatingsInfo::KEY) && Extension::is_enabled(RatingsBlurInfo::KEY)) {
+        if (Extension::is_enabled(RatingsInfo::KEY) && Extension::is_enabled(RatingsBlurInfo::KEY)) {
             $rb = new RatingsBlur();
             if ($rb->blur($image['rating'])) {
                 $custom_classes .= "blur ";
@@ -85,7 +85,7 @@ class BaseThemelet
             "data-mime" => $image->get_mime(),
             "data-post-id" => $id,
         ];
-        if(Extension::is_enabled(RatingsInfo::KEY)) {
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
             $attrs["data-rating"] = $image['rating'];
         }
 
@@ -112,15 +112,15 @@ class BaseThemelet
         $body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
         $page->add_block(new Block(null, $body, "main", 90, "paginator"));
 
-        $page->add_html_header("<link rel='first' href='".make_http(make_link($base.'/1', $query))."'>");
+        $page->add_html_header(LINK(['rel' => 'first', 'href' => make_link($base.'/1', $query)]));
         if ($page_number < $total_pages) {
-            $page->add_html_header("<link rel='prefetch' href='".make_http(make_link($base.'/'.($page_number + 1), $query))."'>");
-            $page->add_html_header("<link rel='next' href='".make_http(make_link($base.'/'.($page_number + 1), $query))."'>");
+            $page->add_html_header(LINK(['rel' => 'prefetch', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
+            $page->add_html_header(LINK(['rel' => 'next', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
         }
         if ($page_number > 1) {
-            $page->add_html_header("<link rel='previous' href='".make_http(make_link($base.'/'.($page_number - 1), $query))."'>");
+            $page->add_html_header(LINK(['rel' => 'previous', 'href' => make_link($base.'/'.($page_number - 1), $query)]));
         }
-        $page->add_html_header("<link rel='last' href='".make_http(make_link($base.'/'.$total_pages, $query))."'>");
+        $page->add_html_header(LINK(['rel' => 'last', 'href' => make_link($base.'/'.$total_pages, $query)]));
     }
 
     private function gen_page_link(string $base_url, ?string $query, int $page, string $name): HTMLElement

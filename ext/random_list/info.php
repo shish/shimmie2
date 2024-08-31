@@ -15,6 +15,6 @@ class RandomListInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Allows displaying a page with random posts";
     public ?string $documentation =
-"Random post list can be accessed through www.yoursite.com/random
+        "Random post list can be accessed through www.yoursite.com/random
 It is recommended that you create a link to this page so users know it exists.";
 }

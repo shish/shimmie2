@@ -47,7 +47,7 @@ class BulkAdd extends Extension
                 $dir = $input->getArgument('directory');
                 $bae = send_event(new BulkAddEvent($dir));
                 foreach ($bae->results as $r) {
-                    if(is_a($r, UploadError::class)) {
+                    if (is_a($r, UploadError::class)) {
                         $output->writeln($r->name." failed: ".$r->error);
                     } else {
                         $output->writeln($r->name." ok");

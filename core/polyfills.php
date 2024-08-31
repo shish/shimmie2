@@ -40,7 +40,7 @@ function array_iunique(array $array): array
 function ip_in_range(string $IP, string $CIDR): bool
 {
     $parts = explode("/", $CIDR);
-    if(count($parts) == 1) {
+    if (count($parts) == 1) {
         $parts[1] = "32";
     }
     list($net, $mask) = $parts;
@@ -159,7 +159,7 @@ function flush_output(): void
 function stream_file(string $file, int $start, int $end): void
 {
     $fp = fopen($file, 'r');
-    if(!$fp) {
+    if (!$fp) {
         throw new \Exception("Failed to open $file");
     }
     try {
@@ -168,7 +168,7 @@ function stream_file(string $file, int $start, int $end): void
         while (!feof($fp) && ($p = ftell($fp)) <= $end) {
             if ($p + $buffer > $end) {
                 $buffer = $end - $p + 1;
-                assert($buffer >= 0);
+                assert($buffer >= 1);
             }
             echo fread($fp, $buffer);
             flush_output();
@@ -423,7 +423,7 @@ function truncate(string $string, int $limit, string $break = " ", string $pad =
     assert($limit > $padlen, "Can't truncate to a length less than the padding length");
 
     // if string is shorter or equal to limit, leave it alone
-    if($strlen <= $limit) {
+    if ($strlen <= $limit) {
         return $string;
     }
 
@@ -628,7 +628,9 @@ function validate_input(array $inputs): array
         if (in_array('user_id', $flags)) {
             $id = int_escape($value);
             if (in_array('exists', $flags)) {
-                if (is_null(User::by_id($id))) {
+                try {
+                    User::by_id($id);
+                } catch (UserNotFound $e) {
                     throw new InvalidInput("User #$id does not exist");
                 }
             }
@@ -693,7 +695,8 @@ function validate_input(array $inputs): array
  */
 function sanitize_path(string $path): string
 {
-    return preg_replace('|[\\\\/]+|S', DIRECTORY_SEPARATOR, $path);
+    $r = preg_replace_ex('|[\\\\/]+|S', DIRECTORY_SEPARATOR, $path);
+    return $r;
 }
 
 /**

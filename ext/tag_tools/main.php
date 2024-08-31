@@ -18,7 +18,7 @@ class TagTools extends Extension
     public function onAdminAction(AdminActionEvent $event): void
     {
         global $database;
-        switch($event->action) {
+        switch ($event->action) {
             case "set_tag_case":
                 $database->execute(
                     "UPDATE tags SET tag=:tag1 WHERE LOWER(tag) = LOWER(:tag2)",
