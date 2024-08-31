@@ -244,7 +244,7 @@ class ImageIO extends Extension
 
 
         if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
-            $if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+            $if_modified_since = preg_replace_ex('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
         } else {
             $if_modified_since = "";
         }
