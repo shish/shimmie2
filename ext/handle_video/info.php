@@ -15,7 +15,7 @@ class VideoFileHandlerInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Handle FLV, MP4, OGV and WEBM video files.";
     public ?string $documentation =
-"Based heavily on \"Handle MP3\" by Shish.<br><br>
+        "Based heavily on \"Handle MP3\" by Shish.<br><br>
 FLV: Flash player<br>
 MP4: HTML5 with Flash fallback<br>
 OGV, WEBM: HTML5<br>

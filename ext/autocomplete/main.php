@@ -87,7 +87,7 @@ class AutoComplete extends Extension
                 $SQLarr
             );
             $ret = [];
-            foreach($rows as $row) {
+            foreach ($rows as $row) {
                 $ret[(string)$row['tag']] = [
                     "newtag" => $row["newtag"],
                     "count" => $row["count"],

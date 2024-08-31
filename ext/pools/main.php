@@ -553,7 +553,7 @@ class Pools extends Extension
     {
         global $database, $user;
 
-        if(!$user->can(Permissions::POOLS_UPDATE)) {
+        if (!$user->can(Permissions::POOLS_UPDATE)) {
             $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
             // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.

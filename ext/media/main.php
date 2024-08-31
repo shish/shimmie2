@@ -862,7 +862,7 @@ class Media extends Extension
         // \Safe\shell_exec is a little broken
         // https://github.com/thecodingmachine/safe/issues/281
         $output = shell_exec($cmd . " 2>&1");
-        if(is_null($output) || $output === false) {
+        if (is_null($output) || $output === false) {
             throw new MediaException("Failed to execute command: $cmd");
         }
         // error_log("Getting size with `$cmd`");

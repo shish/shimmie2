@@ -7,9 +7,9 @@
  */
 function false_throws(mixed $x, ?callable $errorgen = null): mixed
 {
-    if($x === false) {
+    if ($x === false) {
         $msg = "Unexpected false";
-        if($errorgen) {
+        if ($errorgen) {
             $msg = $errorgen();
         }
         throw new \Exception($msg);

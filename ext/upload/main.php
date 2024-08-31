@@ -319,7 +319,7 @@ class Upload extends Extension
                     }
                     return $event->images;
                 });
-                foreach($new_images as $image) {
+                foreach ($new_images as $image) {
                     $results[] = new UploadSuccess($name, $image->id);
                 }
             } catch (UploadException $ex) {
@@ -361,7 +361,7 @@ class Upload extends Extension
                 }
                 return $event->images;
             });
-            foreach($new_images as $image) {
+            foreach ($new_images as $image) {
                 $results[] = new UploadSuccess($url, $image->id);
             }
         } catch (UploadException $ex) {

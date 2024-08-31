@@ -389,7 +389,7 @@ class Setup extends Extension
             if (substr($_name, 0, 6) == "_type_") {
                 $name = substr($_name, 6);
                 $type = $event->values["_type_$name"];
-                if(isset($event->values["_config_$name"])) {
+                if (isset($event->values["_config_$name"])) {
                     $value = $event->values["_config_$name"];
                     switch ($type) {
                         case "string":

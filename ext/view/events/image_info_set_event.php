@@ -38,10 +38,10 @@ class ImageInfoSetEvent extends Event
      */
     public function get_param(string $name): ?string
     {
-        if(!empty($this->params["$name{$this->slot}"])) {
+        if (!empty($this->params["$name{$this->slot}"])) {
             return $this->params["$name{$this->slot}"];
         }
-        if(!empty($this->params[$name])) {
+        if (!empty($this->params[$name])) {
             return $this->params[$name];
         }
         return null;

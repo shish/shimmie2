@@ -240,7 +240,7 @@ class PrivMsg extends Extension
                 }
                 $pmo = PM::from_row($pm);
                 $this->theme->display_message($page, $from_user, $user, $pmo);
-                if($user->can(Permissions::SEND_PM)) {
+                if ($user->can(Permissions::SEND_PM)) {
                     $this->theme->display_composer($page, $user, $from_user, "Re: ".$pmo->subject);
                 }
             } else {

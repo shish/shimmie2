@@ -36,7 +36,7 @@ class PostSource extends Extension
     {
         global $config, $page, $user;
         $source = $event->get_param('source');
-        if(is_null($source) && $config->get_bool(UploadConfig::TLSOURCE)) {
+        if (is_null($source) && $config->get_bool(UploadConfig::TLSOURCE)) {
             $source = $event->get_param('url');
         }
         if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && !is_null($source)) {

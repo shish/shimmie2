@@ -56,7 +56,7 @@ class ExtManagerTheme extends Themelet
                 continue;
             }
 
-            if($extension->category !== $last_cat) {
+            if ($extension->category !== $last_cat) {
                 $last_cat = $extension->category;
                 $categories[] = $last_cat;
                 $tbody->appendChild(
@@ -101,7 +101,7 @@ class ExtManagerTheme extends Themelet
             ));
         }
 
-        if($editable) {
+        if ($editable) {
             foreach ($extensions as $extension) {
                 if ($extension->visibility === ExtensionVisibility::HIDDEN && !$extension->core) {
                     $form->appendChild(INPUT([
