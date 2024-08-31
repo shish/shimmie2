@@ -327,22 +327,12 @@ class NumericScore extends Extension
             $event->add_querylet(new Querylet("numeric_score $cmp $score"));
         } elseif (preg_match("/^upvoted_by[=|:](.*)$/i", $event->term, $matches)) {
             $duser = User::by_name($matches[1]);
-            if (is_null($duser)) {
-                throw new SearchTermParseException(
-                    "Can't find the user named ".html_escape($matches[1])
-                );
-            }
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
                 ["ns_user_id" => $duser->id]
             ));
         } elseif (preg_match("/^downvoted_by[=|:](.*)$/i", $event->term, $matches)) {
             $duser = User::by_name($matches[1]);
-            if (is_null($duser)) {
-                throw new SearchTermParseException(
-                    "Can't find the user named ".html_escape($matches[1])
-                );
-            }
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
                 ["ns_user_id" => $duser->id]

@@ -241,18 +241,18 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
         // user things
         protected static function log_in_as_admin(): void
         {
-            send_event(new UserLoginEvent(User::by_name_ex(self::$admin_name)));
+            send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
         }
 
         protected static function log_in_as_user(): void
         {
-            send_event(new UserLoginEvent(User::by_name_ex(self::$user_name)));
+            send_event(new UserLoginEvent(User::by_name(self::$user_name)));
         }
 
         protected static function log_out(): void
         {
             global $config;
-            send_event(new UserLoginEvent(User::by_id_ex($config->get_int("anon_id", 0))));
+            send_event(new UserLoginEvent(User::by_id($config->get_int("anon_id", 0))));
         }
 
         // post things

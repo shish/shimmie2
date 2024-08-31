@@ -239,7 +239,7 @@ class SetupBlock extends Block
 
     public function add_shorthand_int_option(string $name, string $label = null, bool $table_row = false): void
     {
-        $val = to_shorthand_int($this->config->get_int($name));
+        $val = to_shorthand_int($this->config->get_int($name, 0));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
