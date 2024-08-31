@@ -86,7 +86,7 @@ class User
         $user = $cache->get("user-session-obj:$name-$session");
         if (is_null($user)) {
             $user_by_name = User::by_name($name);
-            if($user_by_name->get_session_id() === $session) {
+            if ($user_by_name->get_session_id() === $session) {
                 $user = $user_by_name;
             }
             $cache->set("user-session-obj:$name-$session", $user, 600);

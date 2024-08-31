@@ -32,7 +32,7 @@ class UrlsTest extends TestCase
         };
 
         global $config;
-        foreach([true, false] as $nice_urls) {
+        foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             $this->assertEquals(
@@ -54,7 +54,7 @@ class UrlsTest extends TestCase
     public function test_make_link(): void
     {
         global $config;
-        foreach([true, false] as $nice_urls) {
+        foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             // basic
@@ -93,7 +93,7 @@ class UrlsTest extends TestCase
     public function test_search_link(): void
     {
         global $config;
-        foreach([true, false] as $nice_urls) {
+        foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             $this->assertEquals(

@@ -15,7 +15,7 @@ class FeaturedInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Bring a specific image to the users' attentions";
     public ?string $documentation =
-"Once enabled, a new \"feature this\" button will appear next
+        "Once enabled, a new \"feature this\" button will appear next
 to the other post control buttons (delete, rotate, etc).
 Clicking it will set the image as the site's current feature,
 which will be shown in the side bar of the post list.

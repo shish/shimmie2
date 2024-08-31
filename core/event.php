@@ -93,8 +93,8 @@ class PageRequestEvent extends Event
 
     public function get_GET(string $key): ?string
     {
-        if(array_key_exists($key, $this->GET)) {
-            if(is_array($this->GET[$key])) {
+        if (array_key_exists($key, $this->GET)) {
+            if (is_array($this->GET[$key])) {
                 throw new UserError("GET parameter {$key} is an array, expected single value");
             }
             return $this->GET[$key];
@@ -106,7 +106,7 @@ class PageRequestEvent extends Event
     public function req_GET(string $key): string
     {
         $value = $this->get_GET($key);
-        if($value === null) {
+        if ($value === null) {
             throw new UserError("Missing GET parameter {$key}");
         }
         return $value;
@@ -114,8 +114,8 @@ class PageRequestEvent extends Event
 
     public function get_POST(string $key): ?string
     {
-        if(array_key_exists($key, $this->POST)) {
-            if(is_array($this->POST[$key])) {
+        if (array_key_exists($key, $this->POST)) {
+            if (is_array($this->POST[$key])) {
                 throw new UserError("POST parameter {$key} is an array, expected single value");
             }
             return $this->POST[$key];
@@ -127,7 +127,7 @@ class PageRequestEvent extends Event
     public function req_POST(string $key): string
     {
         $value = $this->get_POST($key);
-        if($value === null) {
+        if ($value === null) {
             throw new UserError("Missing POST parameter {$key}");
         }
         return $value;
@@ -138,8 +138,8 @@ class PageRequestEvent extends Event
      */
     public function get_POST_array(string $key): ?array
     {
-        if(array_key_exists($key, $this->POST)) {
-            if(!is_array($this->POST[$key])) {
+        if (array_key_exists($key, $this->POST)) {
+            if (!is_array($this->POST[$key])) {
                 throw new UserError("POST parameter {$key} is a single value, expected array");
             }
             return $this->POST[$key];
@@ -154,7 +154,7 @@ class PageRequestEvent extends Event
     public function req_POST_array(string $key): array
     {
         $value = $this->get_POST_array($key);
-        if($value === null) {
+        if ($value === null) {
             throw new UserError("Missing POST parameter {$key}");
         }
         return $value;
@@ -179,10 +179,10 @@ class PageRequestEvent extends Event
     ): bool {
         global $user;
 
-        if($paged) {
-            if($this->page_matches("$name/{page_num}", $method, $authed, $permission, false)) {
+        if ($paged) {
+            if ($this->page_matches("$name/{page_num}", $method, $authed, $permission, false)) {
                 $pn = $this->get_arg("page_num");
-                if(is_numberish($pn)) {
+                if (is_numberish($pn)) {
                     return true;
                 }
             }
@@ -192,7 +192,7 @@ class PageRequestEvent extends Event
         $authed = $authed ?? $method == "POST";
 
         // method check is fast so do that first
-        if($method !== null && $this->method !== $method) {
+        if ($method !== null && $this->method !== $method) {
             return false;
         }
 
@@ -213,15 +213,15 @@ class PageRequestEvent extends Event
 
         // if we matched the method and the path, but the page requires
         // authentication and the user is not authenticated, then complain
-        if($authed && !defined("UNITTEST")) {
-            if(!isset($this->POST["auth_token"])) {
+        if ($authed && !defined("UNITTEST")) {
+            if (!isset($this->POST["auth_token"])) {
                 throw new PermissionDenied("Permission Denied: Missing CSRF Token");
             }
-            if($this->POST["auth_token"] != $user->get_auth_token()) {
+            if ($this->POST["auth_token"] != $user->get_auth_token()) {
                 throw new PermissionDenied("Permission Denied: Invalid CSRF Token (Go back, refresh the page, and try again?)");
             }
         }
-        if($permission !== null && !$user->can($permission)) {
+        if ($permission !== null && !$user->can($permission)) {
             throw new PermissionDenied("Permission Denied: {$user->name} lacks permission {$permission}");
         }
 
@@ -233,9 +233,9 @@ class PageRequestEvent extends Event
      */
     public function get_arg(string $n, ?string $default = null): string
     {
-        if(array_key_exists($n, $this->named_args)) {
+        if (array_key_exists($n, $this->named_args)) {
             return rawurldecode($this->named_args[$n]);
-        } elseif($default !== null) {
+        } elseif ($default !== null) {
             return $default;
         } else {
             throw new UserError("Page argument {$n} is missing");
@@ -244,12 +244,12 @@ class PageRequestEvent extends Event
 
     public function get_iarg(string $n, ?int $default = null): int
     {
-        if(array_key_exists($n, $this->named_args)) {
-            if(is_numberish($this->named_args[$n]) === false) {
+        if (array_key_exists($n, $this->named_args)) {
+            if (is_numberish($this->named_args[$n]) === false) {
                 throw new UserError("Page argument {$n} exists but is not numeric");
             }
             return int_escape($this->named_args[$n]);
-        } elseif($default !== null) {
+        } elseif ($default !== null) {
             return $default;
         } else {
             throw new UserError("Page argument {$n} is missing");

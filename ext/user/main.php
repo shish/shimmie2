@@ -9,7 +9,6 @@ require_once "events.php";
 use GQLA\Field;
 use GQLA\Type;
 use GQLA\Mutation;
-
 use MicroHTML\HTMLElement;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\EnumColumn;
@@ -323,7 +322,7 @@ class UserPage extends Extension
                     "site, it might be bug report time..."
                 );
             }
-        } elseif($event->page_matches("user")) {
+        } elseif ($event->page_matches("user")) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user/" . $user->name));
         }

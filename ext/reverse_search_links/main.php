@@ -23,7 +23,7 @@ class ReverseSearchLinks extends Extension
 
         // only support image types
         $supported_types = [MimeType::JPEG, MimeType::GIF, MimeType::PNG, MimeType::WEBP];
-        if(in_array($event->image->get_mime(), $supported_types)) {
+        if (in_array($event->image->get_mime(), $supported_types)) {
             $this->theme->reverse_search_block($page, $event->image);
         }
     }

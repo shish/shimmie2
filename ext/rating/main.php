@@ -246,7 +246,7 @@ class Ratings extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        if(!is_null($event->image['rating'])) {
+        if (!is_null($event->image['rating'])) {
             $event->replace('$rating', $this->rating_to_human($event->image['rating']));
         }
     }

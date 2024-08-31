@@ -15,7 +15,7 @@ class ArchiveFileHandlerInfo extends ExtensionInfo
     public string $description = "Allow users to upload archives (zip, etc)";
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public ?string $documentation =
-"Note: requires exec() access and an external unzip command
+        "Note: requires exec() access and an external unzip command
 <p>Any command line unzipper should work, some examples:
 <p>unzip: <code>unzip -d \"%d\" \"%f\"</code>
 <br>7-zip: <code>7zr x -o\"%d\" \"%f\"</code>";

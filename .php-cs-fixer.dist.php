@@ -8,11 +8,13 @@ $_phpcs_finder = PhpCsFixer\Finder::create()
 ;
 
 $_phpcs_config = new PhpCsFixer\Config();
-return $_phpcs_config->setRules([
-        '@PSR12' => true,
-        //'strict_param' => true,
-        'array_syntax' => ['syntax' => 'short'],
-    ])
-    ->setFinder($_phpcs_finder)
+return $_phpcs_config
+  ->setRules([
+    '@PSR12' => true,
+    //'strict_param' => true,
+    'array_syntax' => ['syntax' => 'short'],
+  ])
+  ->setFinder($_phpcs_finder)
 	->setCacheFile("data/php-cs-fixer.cache")
+  ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
 ;
