@@ -731,7 +731,7 @@ class NavLink
     /**
      * @param string[] $pages_matched
      */
-    public static function is_active(array $pages_matched, string $url = null): bool
+    public static function is_active(array $pages_matched, ?string $url = null): bool
     {
         /**
          * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)

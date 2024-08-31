@@ -181,7 +181,7 @@ class SetupBlock extends Block
         }
     }
 
-    public function add_text_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_text_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -191,7 +191,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_longtext_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_longtext_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -202,7 +202,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row, true);
     }
 
-    public function add_bool_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_bool_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $checked = $this->config->get_bool($name) ? " checked" : "";
 
@@ -221,13 +221,13 @@ class SetupBlock extends Block
         $this->format_option($name, $html, null, $table_row);
     }
 
-    //	public function add_hidden_option($name, $label=null) {
+    //	public function add_hidden_option($name) {
     //		global $config;
     //		$val = $config->get_string($name);
     //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
     //	}
 
-    public function add_int_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_int_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = $this->config->get_int($name);
 
@@ -237,7 +237,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_shorthand_int_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_shorthand_int_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = to_shorthand_int($this->config->get_int($name, 0));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6'>\n";
@@ -249,7 +249,7 @@ class SetupBlock extends Block
     /**
      * @param array<string,string|int> $options
      */
-    public function add_choice_option(string $name, array $options, string $label = null, bool $table_row = false): void
+    public function add_choice_option(string $name, array $options, ?string $label = null, bool $table_row = false): void
     {
         if (is_int(array_values($options)[0])) {
             $current = $this->config->get_int($name);
@@ -275,7 +275,7 @@ class SetupBlock extends Block
     /**
      * @param array<string,string> $options
      */
-    public function add_multichoice_option(string $name, array $options, string $label = null, bool $table_row = false): void
+    public function add_multichoice_option(string $name, array $options, ?string $label = null, bool $table_row = false): void
     {
         $current = $this->config->get_array($name, []);
 
@@ -294,7 +294,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_color_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_color_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 

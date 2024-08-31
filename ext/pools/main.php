@@ -45,7 +45,7 @@ class PoolCreationEvent extends Event
 
     public function __construct(
         string $title,
-        User $pool_user = null,
+        ?User $pool_user = null,
         bool $public = false,
         string $description = ""
     ) {

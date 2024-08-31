@@ -136,7 +136,7 @@ function get_thumbnail_max_size_scaled(): array
 }
 
 
-function create_image_thumb(Image $image, string $engine = null): void
+function create_image_thumb(Image $image, ?string $engine = null): void
 {
     global $config;
     create_scaled_image(

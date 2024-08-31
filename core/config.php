@@ -253,8 +253,8 @@ class DatabaseConfig extends Config
     public function __construct(
         Database $database,
         string $table_name = "config",
-        string $sub_column = null,
-        string $sub_value = null
+        ?string $sub_column = null,
+        ?string $sub_value = null
     ) {
         global $cache;
 
