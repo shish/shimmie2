@@ -265,7 +265,6 @@ class Image implements \ArrayAccess
     public function get_owner(): User
     {
         $user = User::by_id($this->owner_id);
-        assert(!is_null($user));
         return $user;
     }
 

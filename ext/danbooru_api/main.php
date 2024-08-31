@@ -80,14 +80,12 @@ class DanbooruApi extends Extension
         if (isset($_REQUEST['login']) && isset($_REQUEST['password'])) {
             // Get this user from the db, if it fails the user becomes anonymous
             // Code borrowed from /ext/user
-            $name = $_REQUEST['login'];
-            $pass = $_REQUEST['password'];
-            $duser = User::by_name_and_pass($name, $pass);
-            if (!is_null($duser)) {
-                $user = $duser;
-            } else {
+            try {
+                $name = $_REQUEST['login'];
+                $pass = $_REQUEST['password'];
+                $user = User::by_name_and_pass($name, $pass);
+            } catch (UserNotFound $e) {
                 $user = User::by_id($config->get_int("anon_id", 0));
-                assert(!is_null($user));
             }
             send_event(new UserLoginEvent($user));
         }
