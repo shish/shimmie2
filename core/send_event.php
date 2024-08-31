@@ -19,18 +19,19 @@ $_shm_event_listeners = [];
 
 function _load_event_listeners(): void
 {
-    global $_shm_event_listeners;
+    global $_shm_event_listeners, $config;
 
     $ver = preg_replace_ex("/[^a-zA-Z0-9\.]/", "_", VERSION);
     $key = md5(Extension::get_enabled_extensions_as_string());
 
+    $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_EVENT_LISTENERS));
     $cache_path = data_path("cache/event_listeners/el.$ver.$key.php");
-    if (SPEED_HAX && file_exists($cache_path)) {
+    if ($speed_hax && file_exists($cache_path)) {
         require_once($cache_path);
     } else {
         _set_event_listeners();
 
-        if (SPEED_HAX) {
+        if ($speed_hax) {
             _dump_event_listeners($_shm_event_listeners, $cache_path);
         }
     }

@@ -16,17 +16,66 @@ require_once "config.php";
 class ConfigSaveEvent extends Event
 {
     public Config $config;
-    /** @var array<string, mixed> $values */
+    /** @var array<string, null|string|int|boolean|array<string>> $values */
     public array $values;
 
     /**
-     * @param array<string, mixed> $values
+     * @param array<string, null|string|int|boolean|array<string>> $values
      */
     public function __construct(Config $config, array $values)
     {
         parent::__construct();
         $this->config = $config;
         $this->values = $values;
+    }
+
+    /**
+     * Convert POST data to settings data, eg
+     * 
+     *     $_POST = [
+     *         "_type_mynull" => "string",
+     *         "_type_mystring" => "string",
+     *         "_config_mystring" => "hello world!",
+     *         "_type_myint" => "int",
+     *         "_config_myint" => "42KB",
+     *     ]
+     * 
+     * becomes
+     * 
+     *     $config = [
+     *         "mynull" => null,
+     *         "mystring" => "hello world!",
+     *         "myint" => 43008,
+     *     ]
+     * 
+     * @param array<string, string|string[]> $post
+     * @return array<string, null|string|int|boolean|array<string>>
+     */
+    public static function postToSettings(array $post): array
+    {
+        $settings = [];
+        foreach ($post as $key => $type) {
+            if (str_starts_with($key, "_type_")) {
+                $key = str_replace("_type_", "", $key);
+                $value = $post["_config_$key"] ?? null;
+                if ($type === "string") {
+                    $settings[$key] = $value;
+                } elseif ($type === "int") {
+                    assert(is_string($value));
+                    $settings[$key] = $value ? parse_shorthand_int($value) : null;
+                } elseif ($type === "bool") {
+                    $settings[$key] = $value === "on";
+                } elseif ($type === "array") {
+                    $settings[$key] = $value;
+                } else {
+                    if (is_array($value)) {
+                        $value = implode(", ", $value);
+                    }
+                    throw new InvalidInput("Invalid type '$value' for key '$key'");
+                }
+            }
+        }
+        return $settings;
     }
 }
 
@@ -343,7 +392,7 @@ class Setup extends Extension
             send_event(new SetupBuildingEvent($panel));
             $this->theme->display_page($page, $panel);
         } elseif ($event->page_matches("setup/save", method: "POST", permission: Permissions::CHANGE_SETTING)) {
-            send_event(new ConfigSaveEvent($config, $event->POST));
+            send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("setup"));
@@ -385,30 +434,15 @@ class Setup extends Extension
     public function onConfigSave(ConfigSaveEvent $event): void
     {
         $config = $event->config;
-        foreach ($event->values as $_name => $junk) {
-            if (substr($_name, 0, 6) == "_type_") {
-                $name = substr($_name, 6);
-                $type = $event->values["_type_$name"];
-                if (isset($event->values["_config_$name"])) {
-                    $value = $event->values["_config_$name"];
-                    switch ($type) {
-                        case "string":
-                            $config->set_string($name, $value);
-                            break;
-                        case "int":
-                            $config->set_int($name, parse_shorthand_int((string)$value));
-                            break;
-                        case "bool":
-                            $config->set_bool($name, bool_escape($value));
-                            break;
-                        case "array":
-                            $config->set_array($name, $value);
-                            break;
-                    }
-                } else {
-                    $config->delete($name);
-                }
-            }
+        foreach ($event->values as $key => $value) {
+            match(true) {
+                is_null($value) => $config->delete($key),
+                is_string($value) => $config->set_string($key, $value),
+                is_int($value) => $config->set_int($key, $value),
+                is_bool($value) => $config->set_bool($key, $value),
+                is_array($value) => $config->set_array($key, $value),
+                _ => throw new InvalidInput("Invalid value type"),
+            };
         }
         log_warning("setup", "Configuration updated");
     }

@@ -146,7 +146,7 @@ class UserConfig extends Extension
             }
 
             $target_config = UserConfig::get_for_user($duser->id);
-            send_event(new ConfigSaveEvent($target_config, $event->POST));
+            send_event(new ConfigSaveEvent($target_config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user_config"));

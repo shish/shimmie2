@@ -55,7 +55,7 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
 
     $parts = [];
     $install_dir = get_base_href();
-    if (SPEED_HAX || $config->get_bool(SetupConfig::NICE_URLS, false)) {
+    if ($config->get_bool(SetupConfig::NICE_URLS, false)) {
         $parts['path'] = "$install_dir/$page";
     } else {
         $parts['path'] = "$install_dir/index.php";

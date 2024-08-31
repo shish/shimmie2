@@ -21,10 +21,6 @@ class Filter extends Extension
     {
         global $page;
         $this->theme->addFilterBox();
-        $page->add_html_header(SCRIPT("
-        Array.from(document.getElementsByClassName('thumb')).forEach(function(post) {
-            post.style.display='none';
-        });"));
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void

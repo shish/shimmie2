@@ -71,7 +71,7 @@ try {
         ]
     );
 
-    if (!SPEED_HAX) {
+    if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::NO_AUTO_DB_UPGRADE)) {
         send_event(new DatabaseUpgradeEvent());
     }
     send_event(new InitExtEvent());
