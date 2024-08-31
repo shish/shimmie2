@@ -90,17 +90,16 @@ class LoginResult
     public static function login(string $username, string $password): LoginResult
     {
         global $config;
-        $duser = User::by_name_and_pass($username, $password);
-        if (!is_null($duser)) {
+        try {
+            $duser = User::by_name_and_pass($username, $password);
             return new LoginResult(
                 $duser,
                 $duser->get_session_id(),
                 null
             );
-        } else {
-            $anon = User::by_id($config->get_int("anon_id", 0));
+        } catch (UserNotFound $ex) {
             return new LoginResult(
-                $anon,
+                User::by_id($config->get_int("anon_id", 0)),
                 null,
                 "No user found"
             );
@@ -311,7 +310,7 @@ class UserPage extends Extension
 
         if ($event->page_matches("user/{name}")) {
             $display_user = User::by_name($event->get_arg('name'));
-            if (!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
+            if ($display_user->id != $config->get_int("anon_id")) {
                 $e = send_event(new UserPageBuildingEvent($display_user));
                 $this->display_stats($e);
             } else {
@@ -519,8 +518,11 @@ class UserPage extends Extension
                 "letters, numbers, dash, and underscore"
             );
         }
-        if (User::by_name($name)) {
+        try {
+            User::by_name($name);
             throw new UserCreationException("That username is already taken");
+        } catch (UserNotFound $ex) {
+            // user not found is good
         }
         if (!captcha_check()) {
             throw new UserCreationException("Error in captcha");
@@ -588,11 +590,6 @@ class UserPage extends Extension
         $matches = [];
         if (preg_match(self::USER_SEARCH_REGEX, $event->term, $matches)) {
             $duser = User::by_name($matches[2]);
-            if (is_null($duser)) {
-                throw new SearchTermParseException(
-                    "Can't find the user named " . html_escape($matches[2])
-                );
-            }
             $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= {$duser->id}"));
         } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
             $user_id = int_escape($matches[2]);
@@ -630,19 +627,15 @@ class UserPage extends Extension
         global $config, $page;
 
         $duser = User::by_name_and_pass($name, $pass);
-        if (!is_null($duser)) {
-            send_event(new UserLoginEvent($duser));
-            $duser->set_login_cookie();
-            $page->set_mode(PageMode::REDIRECT);
+        send_event(new UserLoginEvent($duser));
+        $duser->set_login_cookie();
+        $page->set_mode(PageMode::REDIRECT);
 
-            // Try returning to previous page
-            if ($config->get_int("user_loginshowprofile", 0)) {
-                $page->set_redirect(referer_or(make_link(), ["user/"]));
-            } else {
-                $page->set_redirect(make_link("user"));
-            }
+        // Try returning to previous page
+        if ($config->get_int("user_loginshowprofile", 0)) {
+            $page->set_redirect(referer_or(make_link(), ["user/"]));
         } else {
-            $this->theme->display_error(401, "Error", "No user with those details was found");
+            $page->set_redirect(make_link("user"));
         }
     }
 
@@ -669,9 +662,7 @@ class UserPage extends Extension
     private function page_recover(string $username): void
     {
         $my_user = User::by_name($username);
-        if (is_null($my_user)) {
-            $this->theme->display_error(404, "Error", "There's no user with that name");
-        } elseif (is_null($my_user->email)) {
+        if (is_null($my_user->email)) {
             $this->theme->display_error(400, "Error", "That user has no registered email address");
         } else {
             throw new ServerError("Email sending not implemented");

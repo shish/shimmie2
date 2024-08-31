@@ -28,11 +28,7 @@ class PostOwner extends Extension
         $owner = $event->get_param('owner');
         if ($user->can(Permissions::EDIT_IMAGE_OWNER) && !is_null($owner)) {
             $owner_ob = User::by_name($owner);
-            if (!is_null($owner_ob)) {
-                send_event(new OwnerSetEvent($event->image, $owner_ob));
-            } else {
-                throw new UserNotFound("Error: No user with that name was found.");
-            }
+            send_event(new OwnerSetEvent($event->image, $owner_ob));
         }
     }
 
