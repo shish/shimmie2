@@ -440,7 +440,7 @@ class Ratings extends Extension
      * @param ImageRating[]|null $ratings
      * @return array<string, string>
      */
-    public static function get_ratings_dict(array $ratings = null): array
+    public static function get_ratings_dict(?array $ratings = null): array
     {
         if (!isset($ratings)) {
             $ratings = self::get_sorted_ratings();

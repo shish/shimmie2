@@ -34,7 +34,7 @@ class ForumTheme extends Themelet
 
 
 
-    public function display_new_thread_composer(Page $page, string $threadText = null, string $threadTitle = null): void
+    public function display_new_thread_composer(Page $page, ?string $threadText = null, ?string $threadTitle = null): void
     {
         global $config, $user;
         $max_characters = $config->get_int('forumMaxCharsPerPost');

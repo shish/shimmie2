@@ -399,7 +399,7 @@ class OuroborosAPI extends Extension
     /**
      * Wrapper for getting a single post
      */
-    protected function postShow(int $id = null): void
+    protected function postShow(?int $id = null): void
     {
         if (!is_null($id)) {
             $post = new _SafeOuroborosImage(Image::by_id_ex($id));

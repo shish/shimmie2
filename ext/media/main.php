@@ -548,7 +548,7 @@ class Media extends Extension
         int $new_width,
         int $new_height,
         string $output_filename,
-        string $output_mime = null,
+        ?string $output_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,

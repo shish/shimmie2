@@ -28,7 +28,7 @@ class CliApp extends \Symfony\Component\Console\Application
         return $definition;
     }
 
-    public function run(InputInterface $input = null, OutputInterface $output = null): int
+    public function run(?InputInterface $input = null, ?OutputInterface $output = null): int
     {
         global $user;
 
