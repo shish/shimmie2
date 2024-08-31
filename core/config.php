@@ -268,10 +268,10 @@ abstract class BaseConfig implements Config
     public function get_array(string $name, ?array $default = null): ?array
     {
         $val = $this->get($name);
-        if(is_null($val)) {
+        if (is_null($val)) {
             return $default;
         }
-        if(empty($val)) {
+        if (empty($val)) {
             return [];
         }
         return explode(",", $val);
@@ -340,7 +340,7 @@ class DatabaseConfig extends BaseConfig
         foreach ($this->database->get_all($query, $args) as $row) {
             // versions prior to 2.12 would store null
             // instead of deleting the row
-            if(!is_null($row["value"])) {
+            if (!is_null($row["value"])) {
                 $values[$row["name"]] = $row["value"];
             }
         }
@@ -365,7 +365,7 @@ class DatabaseConfig extends BaseConfig
 
         $this->database->execute($query, $args);
 
-        if(isset($this->values[$name])) {
+        if (isset($this->values[$name])) {
             $args["value"] = $this->values[$name];
             $this->database->execute(
                 "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",

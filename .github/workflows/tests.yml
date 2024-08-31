@@ -15,7 +15,7 @@ on:
 jobs:
   format:
     name: Format
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -29,16 +29,12 @@ jobs:
       run: composer validate
     - name: Install PHP dependencies
       run: composer install --prefer-dist --no-progress
-    - name: Set up PHP
-      uses: shivammathur/setup-php@master
-      with:
-        php-version: 8.3
     - name: Format
       run: composer format && git diff --exit-code
 
   static:
     name: Static Analysis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -61,7 +57,7 @@ jobs:
       matrix:
         php: ['8.3']
         database: ['pgsql', 'mysql', 'sqlite']
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout current
       uses: actions/checkout@v4
@@ -78,7 +74,7 @@ jobs:
           vendor
         key: vendor-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
     - name: Set up PHP
-      uses: shivammathur/setup-php@master
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php }}
     - name: Set up database
@@ -110,9 +106,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.1', '8.2', '8.3']
+        php: ['8.2', '8.3']
         database: ['pgsql', 'mysql', 'sqlite']
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -125,7 +121,7 @@ jobs:
           vendor
         key: vendor-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
     - name: Set up PHP
-      uses: shivammathur/setup-php@master
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php }}
         coverage: pcov
@@ -144,7 +140,7 @@ jobs:
 
   publish:
     name: Publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
     - format
     - static

@@ -67,13 +67,13 @@ class ET extends Extension
         }
 
         $ver = VERSION;
-        if(defined("BUILD_TIME")) {
+        if (defined("BUILD_TIME")) {
             $ver .= "-" . substr(str_replace("-", "", constant("BUILD_TIME")), 0, 8);
         }
-        if(defined("BUILD_HASH")) {
+        if (defined("BUILD_HASH")) {
             $ver .= "-" . substr(constant("BUILD_HASH"), 0, 7);
         }
-        if(file_exists(".git")) {
+        if (file_exists(".git")) {
             $ver .= "+";
         }
 

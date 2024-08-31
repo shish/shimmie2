@@ -7,7 +7,6 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-
 use function MicroHTML\{BUTTON,P};
 
 class ApprovalTheme extends Themelet

@@ -30,7 +30,7 @@ class PoolsTheme extends Themelet
         foreach ($navIDs as $poolID => $poolInfo) {
             $div = DIV(SHM_A("pool/view/" . $poolID, $poolInfo["info"]->title));
 
-            if(!empty($poolInfo["nav"])) {
+            if (!empty($poolInfo["nav"])) {
                 if (!empty($poolInfo["nav"]["prev"])) {
                     $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
                 }

@@ -108,7 +108,7 @@ class WikiTheme extends Themelet
         $formatted_body = rawHTML(Wiki::format_tag_wiki_page($page));
 
         $edit = TR();
-        if(Wiki::can_edit($user, $page)) {
+        if (Wiki::can_edit($user, $page)) {
             $edit->appendChild(TD(FORM(
                 ["action" => make_link("wiki/$u_title/edit", "revision={$page->revision}")],
                 INPUT(["type" => "submit", "value" => "Edit"])

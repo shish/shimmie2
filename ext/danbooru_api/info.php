@@ -14,7 +14,7 @@ class DanbooruApiInfo extends ExtensionInfo
     public string $description = "Allow Danbooru apps like Danbooru Uploader for Firefox to communicate with Shimmie";
     public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public ?string $documentation =
-"<b>Notes</b>:
+        "<b>Notes</b>:
  <br>danbooru API based on documentation from danbooru 1.0 -
  http://attachr.com/7569
  <br>I've only been able to test add_post and find_tags because I use the
