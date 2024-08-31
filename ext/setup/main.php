@@ -49,9 +49,9 @@ class SetupPanel
 {
     /** @var SetupBlock[]  */
     public array $blocks = [];
-    public BaseConfig $config;
+    public Config $config;
 
-    public function __construct(BaseConfig $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
@@ -68,9 +68,9 @@ class SetupBlock extends Block
 {
     public ?string $header;
     public ?string $body;
-    public BaseConfig $config;
+    public Config $config;
 
-    public function __construct(string $title, BaseConfig $config)
+    public function __construct(string $title, Config $config)
     {
         parent::__construct($title, "", "main", 50);
         $this->config = $config;
