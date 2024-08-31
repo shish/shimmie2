@@ -123,7 +123,7 @@ class ET extends Extension
                 $commitHash = trim(\Safe\exec('git log --pretty="%h" -n1 HEAD'));
                 $commitBranch = trim(\Safe\exec('git rev-parse --abbrev-ref HEAD'));
                 $commitOrigin = trim(\Safe\exec('git config --get remote.origin.url'));
-                $commitOrigin = preg_replace("#//.*@#", "//xxx@", $commitOrigin);
+                $commitOrigin = preg_replace_ex("#//.*@#", "//xxx@", $commitOrigin);
                 $info['versions']['shimmie'] .= $commitHash;
                 $info['versions']['origin'] = "$commitOrigin ($commitBranch)";
                 $info['git'] = [

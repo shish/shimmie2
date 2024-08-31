@@ -174,7 +174,7 @@ class Index extends Extension
                 );
 
                 $sql_str = $q->sql;
-                $sql_str = preg_replace("/\s+/", " ", $sql_str);
+                $sql_str = preg_replace_ex("/\s+/", " ", $sql_str);
                 foreach ($q->variables as $key => $val) {
                     if (is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);
@@ -243,6 +243,7 @@ class Index extends Extension
 
         // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
         if ($event->order === null && $event->img_conditions == [] && $event->tag_conditions == []) {
+            assert(is_string($event->term));
             $event->add_tag_condition(new TagCondition($event->term, $event->positive));
         }
     }

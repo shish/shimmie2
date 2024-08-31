@@ -32,7 +32,7 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         # enabled, no image = no text
         $config->set_bool("show_random_block", true);
         $page = $this->get_page("post/list");
-        $this->assertNull($page->find_block("Random Post"));
+        $this->assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
 
         # enabled, image = text
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
@@ -42,11 +42,11 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         # disabled, image = no text
         $config->set_bool("show_random_block", false);
         $page = $this->get_page("post/list");
-        $this->assertNull($page->find_block("Random Post"));
+        $this->assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
 
         # disabled, no image = no image
         $this->delete_image($image_id);
         $page = $this->get_page("post/list");
-        $this->assertNull($page->find_block("Random Post"));
+        $this->assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
     }
 }

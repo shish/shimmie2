@@ -63,7 +63,9 @@ class S3 extends Extension
             ) as $row) {
                 if ($row['action'] == "S") {
                     $image = Image::by_hash($row['hash']);
-                    $this->sync_post($image);
+                    if ($image) {
+                        $this->sync_post($image);
+                    }
                 } elseif ($row['action'] == "D") {
                     $this->remove_file($row['hash']);
                 }
@@ -87,8 +89,10 @@ class S3 extends Extension
                 ) as $row) {
                     if ($row['action'] == "S") {
                         $image = Image::by_hash($row['hash']);
-                        $output->writeln("SYN {$row['hash']} ($image->id)");
-                        $this->sync_post($image);
+                        if ($image) {
+                            $output->writeln("SYN {$row['hash']} ($image->id)");
+                            $this->sync_post($image);
+                        }
                     } elseif ($row['action'] == "D") {
                         $output->writeln("DEL {$row['hash']}");
                         $this->remove_file($row['hash']);

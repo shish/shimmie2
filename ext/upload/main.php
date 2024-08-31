@@ -351,7 +351,7 @@ class Upload extends Extension
 
             // Parse metadata
             $s_filename = find_header($headers, 'Content-Disposition');
-            $h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
+            $h_filename = ($s_filename ? preg_replace_ex('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
             $filename = $h_filename ?: basename($url);
 
             $new_images = $database->with_savepoint(function () use ($tmp_filename, $filename, $slot, $metadata) {

@@ -113,8 +113,8 @@ class LoginResult
         try {
             $uce = send_event(new UserCreationEvent($username, $password1, $password2, $email, true));
             return new LoginResult(
-                $uce->user,
-                $uce->user->get_session_id(),
+                $uce->get_user(),
+                $uce->get_user()->get_session_id(),
                 null
             );
         } catch (UserCreationException $ex) {
@@ -196,7 +196,7 @@ class UserPage extends Extension
                         true
                     )
                 );
-                $uce->user->set_login_cookie();
+                $uce->get_user()->set_login_cookie();
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
             } catch (UserCreationException $ex) {
@@ -334,27 +334,27 @@ class UserPage extends Extension
     {
         global $user, $config;
 
-        $h_join_date = autodate($event->display_user->join_date);
-        if ($event->display_user->can(Permissions::HELLBANNED)) {
-            $h_class = $event->display_user->class->parent->name;
+        $duser = $event->display_user;
+        $h_join_date = autodate($duser->join_date);
+        $class = $duser->class;
+        if ($duser->can(Permissions::HELLBANNED) && $class->parent) {
+            $h_class = $class->parent->name;
         } else {
-            $h_class = $event->display_user->class->name;
+            $h_class = $class->name;
         }
 
         $event->add_part("Joined: $h_join_date", 10);
-        if ($user->name == $event->display_user->name) {
+        if ($user->name == $duser->name) {
             $event->add_part("Current IP: " . get_real_ip(), 80);
         }
         $event->add_part("Class: $h_class", 90);
 
-        $av = $event->display_user->get_avatar_html();
+        $av = $duser->get_avatar_html();
         if ($av) {
             $event->add_part($av, 0);
         } elseif (
-            (
-                $config->get_string("avatar_host") == "gravatar"
-            ) &&
-            ($user->id == $event->display_user->id)
+            ($config->get_string("avatar_host") == "gravatar") &&
+            ($user->id == $duser->id)
         ) {
             $event->add_part(
                 "No avatar? This gallery uses <a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the" .
@@ -560,7 +560,7 @@ class UserPage extends Extension
             send_event(new UserLoginEvent($new_user));
         }
 
-        $event->user = $new_user;
+        $event->set_user($new_user);
     }
 
     public const USER_SEARCH_REGEX = "/^(?:poster|user)(!?)[=|:](.*)$/i";
