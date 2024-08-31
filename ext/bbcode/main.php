@@ -29,6 +29,7 @@ class BBCode extends FormatterExtension
         $text = preg_replace_ex('!\[url\]((?:https?|ftp|irc|mailto)://.*?)\[/url\]!s', '<a href="$1">$1</a>', $text);
         $text = preg_replace_ex('!\[email\](.*?)\[/email\]!s', '<a href="mailto:$1">$1</a>', $text);
         $text = preg_replace_ex('!\[img\](https?:\/\/.*?)\[/img\]!s', '<img alt="user image" src="$1">', $text);
+        $text = preg_replace_ex('!\[img\]site://(.*?)(#c\d+)?\[/img\]!s', '<img alt="user image" src="'.make_link('$1$2').'">', $text);
         $text = preg_replace_ex('!\[\[([^\|\]]+)\|([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$2</a>', $text);
         $text = preg_replace_ex('!\[\[([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$1</a>', $text);
         $text = preg_replace_ex("!\n\s*\n!", "\n\n", $text);

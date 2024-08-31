@@ -93,6 +93,11 @@ class User
             if ($user_by_name->get_session_id() === $session) {
                 $user = $user_by_name;
             }
+            // For 2.12, check old session IDs and convert to new IDs
+            if(md5($user_by_name->passhash . get_session_ip($config)) === $session) {
+                $user = $user_by_name;
+                $user->set_login_cookie();
+            }
             $cache->set("user-session-obj:$name-$session", $user, 600);
         }
         return $user;
@@ -265,9 +270,7 @@ class User
     public function get_session_id(): string
     {
         global $config;
-        $addr = get_session_ip($config);
-        $hash = $this->passhash;
-        return md5($hash . $addr);
+        return hash("sha3-256", $this->passhash . get_session_ip($config) . SECRET);
     }
 
     public function set_login_cookie(): void
