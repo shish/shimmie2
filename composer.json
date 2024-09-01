@@ -35,7 +35,6 @@
 		"ext-pdo": "*",
 		"ext-json": "*",
 		"ext-fileinfo": "*",
-		"flexihash/flexihash": "^2.0",
 		"ifixit/php-akismet": "^1.0",
 		"google/recaptcha": "^1.1",
 		"shish/eventtracer-php": "^2.0",
