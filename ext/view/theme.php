@@ -18,8 +18,13 @@ class ViewPostTheme extends Themelet
         $page->add_html_header(META(["name" => "keywords", "content" => $h_metatags]));
         $page->add_html_header(META(["property" => "og:title", "content" => $h_metatags]));
         $page->add_html_header(META(["property" => "og:type", "content" => "article"]));
-        $page->add_html_header(META(["property" => "og:image", "content" => make_http($image->get_thumb_link())]));
+        $page->add_html_header(META(["property" => "og:image", "content" => make_http($image->get_image_link())]));
         $page->add_html_header(META(["property" => "og:url", "content" => make_http(make_link("post/view/{$image->id}"))]));
+        $page->add_html_header(META(["property" => "og:image:width", "content" => $image->width]));
+        $page->add_html_header(META(["property" => "og:image:height", "content" => $image->height]));
+        $page->add_html_header(META(["property" => "twitter:title", "content" => $h_metatags]));
+        $page->add_html_header(META(["property" => "twitter:card", "content" => "summary_large_image"]));
+        $page->add_html_header(META(["property" => "twitter:image:src", "content" => make_http($image->get_image_link())]));
     }
 
     /**
