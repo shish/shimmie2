@@ -8,6 +8,7 @@ use FFSPHP\PDO;
 use FFSPHP\PDOStatement;
 
 require_once __DIR__ . '/exceptions.php';
+require_once __DIR__ . '/stdlib_ex.php';
 
 enum DatabaseDriverID: string
 {
