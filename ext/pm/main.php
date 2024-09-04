@@ -293,7 +293,7 @@ class PrivMsg extends Extension
         global $database;
 
         return cache_get_or_set(
-            "pm-count:{$user->id}",
+            "pm-count-{$user->id}",
             fn () => $database->get_one("
                 SELECT count(*)
                 FROM private_message
