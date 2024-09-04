@@ -87,6 +87,9 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
  *   can parse it for ourselves
  * - <input type='hidden' name='q' value='post/list'> generates
  *   q=post%2Flist
+ * - When apache is reverse-proxying https://external.com/img/index.php
+ *   to http://internal:8000/index.php, get_base_href() should return
+ *   /img, however the URL in REQUEST_URI is /index.php, not /img/index.php
  *
  * This function should always return strings with no leading slashes
  */
@@ -94,14 +97,14 @@ function _get_query(?string $uri = null): string
 {
     $parsed_url = parse_url($uri ?? $_SERVER['REQUEST_URI'] ?? "");
 
-    // if we're looking at http://site.com/$INSTALL_DIR/index.php,
+    // if we're looking at http://site.com/.../index.php,
     // then get the query from the "q" parameter
-    if (($parsed_url["path"] ?? "") == (get_base_href() . "/index.php")) {
-        // $q = $_GET["q"] ?? "";
+    if (str_ends_with($parsed_url["path"] ?? "", "/index.php")) {
         // default to looking at the root
         $q = "";
-        // (we need to manually parse the query string because PHP's $_GET
-        // does an extra round of URL decoding, which we don't want)
+        // We can't just do `$q = $_GET["q"] ?? "";`, we need to manually
+        // parse the query string because PHP's $_GET does an extra round
+        // of URL decoding, which we don't want
         foreach (explode('&', $parsed_url['query'] ?? "") as $z) {
             $qps = explode('=', $z, 2);
             if (count($qps) == 2 && $qps[0] == "q") {
@@ -118,7 +121,15 @@ function _get_query(?string $uri = null): string
     // if we're looking at http://site.com/$INSTALL_DIR/$PAGE,
     // then get the query from the path
     else {
-        $q = substr($parsed_url["path"] ?? "", strlen(get_base_href() . "/"));
+        $base = get_base_href() . "/";
+        $q = $parsed_url["path"] ?? "";
+
+        // sometimes our public URL is /img/foo/bar but after
+        // reverse-proxying shimmie only sees /foo/bar, so only
+        // strip off the /img if it's actually there
+        if (str_starts_with($q, $base)) {
+            $q = substr($q, strlen($base));
+        }
     }
 
     assert(!str_starts_with($q, "/"));
