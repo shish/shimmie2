@@ -121,7 +121,7 @@ function _get_query(?string $uri = null): string
     // if we're looking at http://site.com/$INSTALL_DIR/$PAGE,
     // then get the query from the path
     else {
-        $base = get_base_href() . "/";
+        $base = get_base_href();
         $q = $parsed_url["path"] ?? "";
 
         // sometimes our public URL is /img/foo/bar but after
@@ -130,6 +130,10 @@ function _get_query(?string $uri = null): string
         if (str_starts_with($q, $base)) {
             $q = substr($q, strlen($base));
         }
+
+        // whether we are /img/foo/bar or /foo/bar, we still
+        // want to remove the leading slash
+        $q = ltrim($q, "/");
     }
 
     assert(!str_starts_with($q, "/"));

@@ -128,6 +128,20 @@ class UrlsTest extends TestCase
             'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
         );
 
+        // even when we are /test/... publicly, and generating /test/... URLs,
+        // we should still be able to handle URLs at the root because that's
+        // what apache sends us when it is reverse-proxying a subdirectory
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
+        );
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/index.php?q=tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
+        );
+
         $this->assertEquals(
             "tasty/cake%20pie",
             _get_query("/test/index.php?q=tasty/cake%20pie"),
