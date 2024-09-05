@@ -524,7 +524,7 @@ function get_debug_info(): string
 {
     $d = get_debug_info_arr();
 
-    $debug = "<br>Took {$d['time']} seconds (db:{$d['dbtime']}) and {$d['mem_mb']}MB of RAM";
+    $debug = "Took {$d['time']} seconds (db:{$d['dbtime']}) and {$d['mem_mb']}MB of RAM";
     $debug .= "; Used {$d['files']} files and {$d['query_count']} queries";
     $debug .= "; Sent {$d['event_count']} events";
     $debug .= "; {$d['cache_hits']} cache hits and {$d['cache_misses']} misses";

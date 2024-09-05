@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML,rawHTML,HTML,HEAD,BODY,TITLE, LINK, SCRIPT, B};
+use function MicroHTML\{emptyHTML, rawHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, joinHTML, BR};
 
 require_once "core/event.php";
 
@@ -650,22 +650,21 @@ class BasePage
         return emptyHTML();
     }
 
-    protected function footer_html(): string
+    protected function footer_html(): HTMLElement
     {
         $debug = get_debug_info();
         $contact_link = contact_link();
-        $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
-
-        return "
-			Media &copy; their respective owners,
-			<a href=\"https://code.shishnet.org/shimmie2/\">Shimmie</a> &copy;
-			<a href=\"https://www.shishnet.org/\">Shish</a> &amp;
-			<a href=\"https://github.com/shish/shimmie2/graphs/contributors\">The Team</a>
-			2007-2024,
-			based on the Danbooru concept.
-			$debug
-			$contact
-        ";
+        return joinHTML("", [
+            "Media © their respective owners, ",
+            A(["href" => "https://code.shishnet.org/shimmie2/"], "Shimmie"),
+            " © ",
+            A(["href" => "https://www.shishnet.org/"], "Shish"),
+            " & ",
+            A(["href" => "https://github.com/shish/shimmie2/graphs/contributors"], "The Team"),
+            " 2007-2024, based on the Danbooru concept.",
+            BR(), $debug,
+            $contact_link ? emptyHTML(BR(), A(["href" => $contact_link], "Contact")) : ""
+        ]);
     }
 }
 
