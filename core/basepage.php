@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML,rawHTML,HTML,HEAD,BODY,TITLE, LINK, SCRIPT};
+use function MicroHTML\{emptyHTML,rawHTML,HTML,HEAD,BODY,TITLE, LINK, SCRIPT, B};
 
 require_once "core/event.php";
 
@@ -623,7 +623,7 @@ class BasePage
         }
 
         $footer_html = $this->footer_html();
-        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
+        $flash_html = $this->flash_html();
         return "
             <header>
                 <h1>{$this->heading}</h1>
@@ -640,6 +640,14 @@ class BasePage
                 $footer_html
             </footer>
         ";
+    }
+
+    protected function flash_html(): HTMLElement
+    {
+        if($this->flash) {
+            return B(["id" => "flash"], rawHTML(nl2br(html_escape(implode("\n", $this->flash)))));
+        }
+        return emptyHTML();
     }
 
     protected function footer_html(): string
