@@ -72,7 +72,7 @@ class Page extends BasePage
             $custom_sublinks .= "</div>";
         }
 
-        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
+        $flash_html = $this->flash_html();
 
         if (!$this->left_enabled) {
             $left_block_html = "";
