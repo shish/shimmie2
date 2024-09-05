@@ -123,7 +123,7 @@ class Page extends BasePage
             $withleft = "noleft";
         }
 
-        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
+        $flash_html = $this->flash_html();
         $footer_html = $this->footer_html();
 
         return <<<EOD
