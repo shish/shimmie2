@@ -162,23 +162,35 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertEquals($code, $page->code);
         }
 
+        /**
+         * @param array<Block> $blocks
+         * @param ?string $section
+         * @return string
+         */
+        private function blocks_to_text(array $blocks, ?string $section): string
+        {
+            $text = "";
+            foreach ($blocks as $block) {
+                if (is_null($section) || $section == $block->section) {
+                    $text .= $block->header . "\n";
+                    $text .= $block->body . "\n\n";
+                }
+            }
+            return $text;
+        }
+
         protected function page_to_text(?string $section = null): string
         {
             global $page;
-            if ($page->mode == PageMode::PAGE) {
-                $text = $page->title . "\n";
-                foreach ($page->blocks as $block) {
-                    if (is_null($section) || $section == $block->section) {
-                        $text .= $block->header . "\n";
-                        $text .= $block->body . "\n\n";
-                    }
-                }
-                return $text;
-            } elseif ($page->mode == PageMode::DATA) {
-                return $page->data;
-            } else {
-                $this->fail("Page mode is {$page->mode->name} (only PAGE and DATA are supported)");
-            }
+
+            return match($page->mode) {
+                PageMode::PAGE => $page->title . "\n" . $this->blocks_to_text($page->blocks, $section),
+                PageMode::DATA => $page->data,
+                PageMode::REDIRECT => $this->fail("Page mode is REDIRECT ($page->redirect) (only PAGE and DATA are supported)"),
+                PageMode::FILE => $this->fail("Page mode is FILE ($page->file) (only PAGE and DATA are supported)"),
+                PageMode::MANUAL => $this->fail("Page mode is MANUAL (only PAGE and DATA are supported)"),
+                default => $this->fail("Unknown page mode {$page->mode->name}"),  // just for phpstan
+            };
         }
 
         /**
