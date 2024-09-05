@@ -648,7 +648,7 @@ function validate_input(array $inputs): array
             $outputs[$key] = $value;
         } elseif (in_array('user_class', $flags)) {
             if (!array_key_exists($value, UserClass::$known_classes)) {
-                throw new InvalidInput("Invalid user class: ".html_escape($value));
+                throw new InvalidInput("Invalid user class: $value");
             }
             $outputs[$key] = $value;
         } elseif (in_array('email', $flags)) {
@@ -658,7 +658,7 @@ function validate_input(array $inputs): array
         } elseif (in_array('int', $flags)) {
             $value = trim($value);
             if (empty($value) || !is_numeric($value)) {
-                throw new InvalidInput("Invalid int: ".html_escape($value));
+                throw new InvalidInput("Invalid int: $value");
             }
             $outputs[$key] = (int)$value;
         } elseif (in_array('bool', $flags)) {
