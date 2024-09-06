@@ -14,7 +14,6 @@ class HelpPagesTheme extends Themelet
         global $page;
 
         $page->set_title("Help Pages");
-        $page->set_heading("Help Pages");
 
         $nav_block = new Block("Help", "", "left", 0);
         foreach ($pages as $link => $desc) {
@@ -31,7 +30,6 @@ class HelpPagesTheme extends Themelet
         global $page;
 
         $page->set_title("Help - $title");
-        $page->set_heading("Help - $title");
         $page->add_block(new NavBlock());
     }
 }

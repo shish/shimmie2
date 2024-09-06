@@ -185,7 +185,6 @@ class BaseThemelet
     {
         global $page;
         $page->set_title($title);
-        $page->set_heading($title);
         $page->add_block(new NavBlock());
         $page->add_block(new Block("$title Table", emptyHTML($table, $paginator)));
     }

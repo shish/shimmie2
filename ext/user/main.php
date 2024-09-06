@@ -760,7 +760,6 @@ class UserPage extends Extension
         global $user, $config, $database;
 
         $page->set_title("Error");
-        $page->set_heading("Error");
         $page->add_block(new NavBlock());
 
         $duser = User::by_id($uid);

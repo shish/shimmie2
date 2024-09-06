@@ -10,7 +10,6 @@ class CustomUserPageTheme extends UserPageTheme
     {
         global $config;
         $page->set_title("Login");
-        $page->set_heading("Login");
         $page->disable_left();
         $html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>

@@ -28,7 +28,6 @@ class CustomCommentListTheme extends CommentListTheme
         $nav = "$h_prev | $h_index | $h_next";
 
         $page->set_title("Comments");
-        $page->set_heading("Comments");
         $page->add_block(new Block("Navigation", $nav, "left"));
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 

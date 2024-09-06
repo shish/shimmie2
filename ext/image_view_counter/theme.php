@@ -19,7 +19,7 @@ class ImageViewCounterTheme extends Themelet
 
         $nav_html = "<a href=".make_link().">Index</a>";
 
-        $page->set_heading($config->get_string(SetupConfig::TITLE));
+        $page->set_title($config->get_string(SetupConfig::TITLE));
         $page->add_block(new Block("Navigation", $nav_html, "left", 10));
         $page->add_block(new Block(null, $pop_images, "main", 30));
     }
