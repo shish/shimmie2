@@ -157,6 +157,9 @@ class BasePage
     public function set_title(string $title): void
     {
         $this->title = $title;
+        if($this->heading === "") {
+            $this->heading = $title;
+        }
     }
 
     public function set_heading(string $heading): void

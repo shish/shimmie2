@@ -39,7 +39,6 @@ class CommentListTheme extends Themelet
         $nav = $h_prev.' | '.$h_index.' | '.$h_next;
 
         $page->set_title("Comments");
-        $page->set_heading("Comments");
         $page->add_block(new Block("Navigation", $nav, "left", 0));
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 

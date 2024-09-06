@@ -21,7 +21,6 @@ class CustomCommentListTheme extends CommentListTheme
 
         $page_title = $config->get_string(SetupConfig::TITLE);
         $page->set_title($page_title);
-        $page->set_heading($page_title);
         $page->disable_left();
         $page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
         $page->add_block(new Block(null, "<hr>", "main", 80));

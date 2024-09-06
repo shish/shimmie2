@@ -43,7 +43,6 @@ class TranscodeVideoTheme extends Themelet
     public function display_transcode_error(Page $page, string $title, string $message): void
     {
         $page->set_title("Transcode Video");
-        $page->set_heading("Transcode Video");
         $page->add_block(new NavBlock());
         $page->add_block(new Block($title, $message));
     }

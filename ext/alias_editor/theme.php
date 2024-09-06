@@ -31,7 +31,6 @@ class AliasEditorTheme extends Themelet
         $bulk_html = emptyHTML($bulk_form);
 
         $page->set_title("Alias List");
-        $page->set_heading("Alias List");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Aliases", $html));
 

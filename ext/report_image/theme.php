@@ -55,7 +55,6 @@ class ReportImageTheme extends Themelet
 		";
 
         $page->set_title("Reported Posts");
-        $page->set_heading("Reported Posts");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Reported Posts", $html));
     }

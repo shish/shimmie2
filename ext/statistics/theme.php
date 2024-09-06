@@ -25,8 +25,7 @@ class StatisticsTheme extends Themelet
             $favorite_table,
         );
 
-        $page->set_title(html_escape("Stats"));
-        $page->set_heading(html_escape("Stats - Top $limit"));
+        $page->set_title("Stats - Top $limit");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Stats", $html, "main", 20));
     }

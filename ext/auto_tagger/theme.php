@@ -32,7 +32,6 @@ class AutoTaggerTheme extends Themelet
 		";
 
         $page->set_title("Auto-Tag List");
-        $page->set_heading("Auto-Tag List");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Auto-Tag", $html));
         if ($can_manage) {

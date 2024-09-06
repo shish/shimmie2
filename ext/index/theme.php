@@ -165,7 +165,6 @@ and of course start organising your images :-)
         */
 
         $page->set_title($page_title);
-        $page->set_heading($page_title);
     }
 
     /**
