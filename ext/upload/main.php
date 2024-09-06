@@ -219,15 +219,13 @@ class Upload extends Extension
 
         if ($event->page_matches("upload", method: "GET", permission: Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
-                $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
-                return;
+                throw new ServerError("Can't upload images: disk nearly full");
             }
             $this->theme->display_page($page);
         }
         if ($event->page_matches("upload", method: "POST", permission: Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
-                $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
-                return;
+                throw new ServerError("Can't upload images: disk nearly full");
             }
             $results = [];
 

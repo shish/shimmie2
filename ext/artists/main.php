@@ -179,7 +179,7 @@ class Artists extends Extension
             if (!$user->is_anonymous()) {
                 $this->theme->new_artist_composer();
             } else {
-                $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
+                throw new PermissionDenied("You must be registered and logged in to create a new artist.");
             }
         }
         if ($event->page_matches("artist/new_artist")) {
@@ -189,14 +189,10 @@ class Artists extends Extension
         if ($event->page_matches("artist/create")) {
             if (!$user->is_anonymous()) {
                 $newArtistID = $this->add_artist();
-                if ($newArtistID == -1) {
-                    $this->theme->display_error(400, "Error", "Error when entering artist data.");
-                } else {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(make_link("artist/view/" . $newArtistID));
-                }
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("artist/view/" . $newArtistID));
             } else {
-                $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
+                throw new PermissionDenied("You must be registered and logged in to create a new artist.");
             }
         }
         if ($event->page_matches("artist/view/{artistID}")) {
@@ -235,7 +231,7 @@ class Artists extends Extension
                 $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
                 $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
             } else {
-                $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");
+                throw new PermissionDenied("You must be registered and logged in to edit an artist.");
             }
         }
         if ($event->page_matches("artist/edit_artist")) {
@@ -637,7 +633,7 @@ class Artists extends Extension
 
         $name = $inputs["name"];
         if (str_contains($name, " ")) {
-            return -1;
+            throw new InvalidInput("Artist name cannot contain spaces");
         }
 
         $notes = $inputs["notes"];

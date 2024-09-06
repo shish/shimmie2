@@ -35,11 +35,7 @@ class ExtManager extends Extension
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("ext_manager"));
             } else {
-                $this->theme->display_error(
-                    500,
-                    "File Operation Failed",
-                    "The config file (data/config/extensions.conf.php) isn't writable by the web server :("
-                );
+                throw new ServerError("The config file (data/config/extensions.conf.php) isn't writable by the web server :(");
             }
         } elseif ($event->page_matches("ext_manager", method: "GET")) {
             $is_admin = $user->can(Permissions::MANAGE_EXTENSION_LIST);

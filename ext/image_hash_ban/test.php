@@ -29,7 +29,7 @@ class ImageBanTest extends ShimmiePHPUnitTestCase
         send_event(new ImageDeletionEvent(Image::by_id_ex($image_id), true));
 
         // Check deleted
-        $this->assertException(ImageNotFound::class, function () use ($image_id) {
+        $this->assertException(PostNotFound::class, function () use ($image_id) {
             $this->get_page("post/view/$image_id");
         });
 
