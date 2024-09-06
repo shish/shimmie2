@@ -69,10 +69,10 @@ class Page extends BasePage
                     $left_block_html[] = $this->block_html($block, true);
                     break;
                 case "user":
-                    $user_block_html[] = rawHTML($block->body ?? "");
+                    $user_block_html[] = $block->body;
                     break;
                 case "subheading":
-                    $sub_block_html[] = rawHTML($block->body ?? "");
+                    $sub_block_html[] = $block->body;
                     break;
                 case "main":
                     if ($block->header == "Posts") {

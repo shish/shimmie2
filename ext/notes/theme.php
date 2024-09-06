@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{INPUT,SCRIPT};
+use function MicroHTML\{INPUT,SCRIPT,rawHTML};
 
 /**
  * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
@@ -89,7 +89,7 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "note/list", null, $pageNumber, $totalPages);
 
         $page->set_title("Notes");
-        $page->add_block(new Block("Notes", $pool_images, "main", 20));
+        $page->add_block(new Block("Notes", rawHTML($pool_images), "main", 20));
     }
 
     /**
@@ -109,7 +109,7 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "requests/list", null, $pageNumber, $totalPages);
 
         $page->set_title("Note Requests");
-        $page->add_block(new Block("Note Requests", $pool_images, "main", 20));
+        $page->add_block(new Block("Note Requests", rawHTML($pool_images), "main", 20));
     }
 
     /**
@@ -167,7 +167,7 @@ class NotesTheme extends Themelet
         $html = $this->get_history($histories);
 
         $page->set_title("Note Updates");
-        $page->add_block(new Block("Note Updates", $html, "main", 10));
+        $page->add_block(new Block("Note Updates", rawHTML($html), "main", 10));
 
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
@@ -182,7 +182,7 @@ class NotesTheme extends Themelet
         $html = $this->get_history($histories);
 
         $page->set_title("Note History");
-        $page->add_block(new Block("Note History", $html, "main", 10));
+        $page->add_block(new Block("Note History", rawHTML($html), "main", 10));
 
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }

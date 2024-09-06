@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{SCRIPT};
+use function MicroHTML\{SCRIPT, rawHTML};
 
 class MP3FileHandlerTheme extends Themelet
 {
@@ -26,6 +26,6 @@ class MP3FileHandlerTheme extends Themelet
             'src' => "$data_href/ext/handle_mp3/lib/jsmediatags.min.js",
             'type' => 'text/javascript'
         ]));
-        $page->add_block(new Block("Music", $html, "main", 10));
+        $page->add_block(new Block("Music", rawHTML($html), "main", 10));
     }
 }

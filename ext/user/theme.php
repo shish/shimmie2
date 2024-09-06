@@ -31,7 +31,7 @@ class UserPageTheme extends Themelet
         $page->add_block(new NavBlock());
         $page->add_block(new Block(
             "Login There",
-            "There should be a login box to the left"
+            rawHTML("There should be a login box to the left")
         ));
     }
 
@@ -147,7 +147,7 @@ class UserPageTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Create User", (string)$form, "main", 75));
+        $page->add_block(new Block("Create User", $form, "main", 75));
     }
 
     public function display_signups_disabled(Page $page): void
@@ -156,7 +156,7 @@ class UserPageTheme extends Themelet
         $page->add_block(new NavBlock());
         $page->add_block(new Block(
             "Signups Disabled",
-            "The board admin has disabled the ability to create new accounts~"
+            rawHTML("The board admin has disabled the ability to create new accounts~")
         ));
     }
 
@@ -248,11 +248,11 @@ class UserPageTheme extends Themelet
 
         $page->set_title(html_escape($duser->name)."'s Page");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
+        $page->add_block(new Block("Stats", rawHTML(join("<br>", $stats)), "main", 10));
     }
 
 
-    public function build_operations(User $duser, UserOperationsBuildingEvent $event): string
+    public function build_operations(User $duser, UserOperationsBuildingEvent $event): HTMLElement
     {
         global $config, $user;
         $html = emptyHTML();
@@ -333,10 +333,10 @@ class UserPageTheme extends Themelet
             }
 
             foreach ($event->get_parts() as $part) {
-                $html .= $part;
+                $html->appendChild($part);
             }
         }
-        return (string)$html;
+        return $html;
     }
 
     public function get_help_html(): HTMLElement

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class ImageRelationshipSetEvent extends Event
 {
     public int $child_id;
@@ -96,7 +98,7 @@ class Relationships extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Relationships", $this->theme->get_help_html()));
+            $event->add_section("Relationships", $this->theme->get_help_html());
         }
     }
 

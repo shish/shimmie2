@@ -255,7 +255,7 @@ class Ratings extends Extension
     {
         if ($event->key === HelpPages::SEARCH) {
             $ratings = self::get_sorted_ratings();
-            $event->add_block(new Block("Ratings", $this->theme->get_help_html($ratings)));
+            $event->add_section("Ratings", $this->theme->get_help_html($ratings));
         }
     }
 

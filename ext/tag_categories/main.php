@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 require_once "config.php";
 
 class TagCategories extends Extension
@@ -111,7 +113,7 @@ class TagCategories extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Tag Categories", $this->theme->get_help_html()));
+            $event->add_section("Tag Categories", $this->theme->get_help_html());
         }
     }
 

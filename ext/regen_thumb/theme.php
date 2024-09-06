@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\META;
+use function MicroHTML\{META,rawHTML};
 
 class RegenThumbTheme extends Themelet
 {
@@ -61,6 +61,6 @@ class RegenThumbTheme extends Themelet
 				</table>
             </form></p>
             		";
-        $page->add_block(new Block("Regen Thumbnails", $html));
+        $page->add_block(new Block("Regen Thumbnails", rawHTML($html)));
     }
 }

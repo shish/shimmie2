@@ -485,7 +485,7 @@ class Pools extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Pools", $this->theme->get_help_html()));
+            $event->add_section("Pools", $this->theme->get_help_html());
         }
     }
 

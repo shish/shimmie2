@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{joinHTML, A, TEXTAREA, TR, TH, TD, INPUT};
+use function MicroHTML\{joinHTML, A, TEXTAREA, TR, TH, TD, INPUT, rawHTML};
 
 class PostTagsTheme extends Themelet
 {
@@ -22,7 +22,7 @@ class PostTagsTheme extends Themelet
 			</table>
 		</form>
 		";
-        $page->add_block(new Block("Mass Tag Edit", $html));
+        $page->add_block(new Block("Mass Tag Edit", rawHTML($html)));
     }
 
     public function get_tag_editor_html(Image $image): HTMLElement

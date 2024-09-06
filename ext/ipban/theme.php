@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\emptyHTML;
+use function MicroHTML\rawHTML;
 
 class IPBanTheme extends Themelet
 {
@@ -22,6 +22,6 @@ class IPBanTheme extends Themelet
 		";
         $page->set_title("IP Bans");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Edit IP Bans", $html));
+        $page->add_block(new Block("Edit IP Bans", rawHTML($html)));
     }
 }

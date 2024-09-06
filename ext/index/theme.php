@@ -6,8 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\emptyHTML;
-use function MicroHTML\{BR,H3,HR,P,META};
+use function MicroHTML\{BR,H3,HR,P,META,rawHTML,emptyHTML};
 
 class IndexTheme extends Themelet
 {
@@ -42,7 +41,7 @@ and of course start organising your images :-)
 ";
         $page->set_title("Welcome to Shimmie ".VERSION);
         $page->set_heading("Welcome to Shimmie");
-        $page->add_block(new Block("Nothing here yet!", $text, "main", 0));
+        $page->add_block(new Block("Nothing here yet!", rawHTML($text), "main", 0));
     }
 
     /**
@@ -70,14 +69,14 @@ and of course start organising your images :-)
     public function display_admin_block(array $parts): void
     {
         global $page;
-        $page->add_block(new Block("List Controls", join("<br>", $parts), "left", 50));
+        $page->add_block(new Block("List Controls", rawHTML(join("<br>", $parts)), "left", 50));
     }
 
 
     /**
      * @param string[] $search_terms
      */
-    protected function build_navigation(int $page_number, int $total_pages, array $search_terms): string
+    protected function build_navigation(int $page_number, int $total_pages, array $search_terms): HTMLElement
     {
         $prev = $page_number - 1;
         $next = $page_number + 1;
@@ -96,13 +95,13 @@ and of course start organising your images :-)
 			</form>
 		";
 
-        return $h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search;
+        return rawHTML($h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search);
     }
 
     /**
      * @param Image[] $images
      */
-    protected function build_table(array $images, ?string $query): string
+    protected function build_table(array $images, ?string $query): HTMLElement
     {
         $h_query = html_escape($query);
         $table = "<div class='shm-image-list' data-query='$h_query'>";
@@ -110,7 +109,7 @@ and of course start organising your images :-)
             $table .= $this->build_thumb_html($image);
         }
         $table .= "</div>";
-        return $table;
+        return rawHTML($table);
     }
 
     protected function display_shortwiki(Page $page): void
@@ -137,7 +136,7 @@ and of course start organising your images :-)
                     $st = $tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
                 }
                 $short_wiki_description = '<h2>'.$st.'&nbsp;<a href="'.$wikiLink.'"><sup>ⓘ</sup></a></h2>'.$short_wiki_description;
-                $page->add_block(new Block(null, $short_wiki_description, "main", 0, "short-wiki-description"));
+                $page->add_block(new Block(null, rawHTML($short_wiki_description), "main", 0, "short-wiki-description"));
             }
         }
     }

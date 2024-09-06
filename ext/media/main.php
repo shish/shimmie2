@@ -275,7 +275,7 @@ class Media extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Media", $this->theme->get_help_html()));
+            $event->add_section("Media", $this->theme->get_help_html());
         }
     }
 

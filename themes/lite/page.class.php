@@ -109,15 +109,13 @@ class Page extends BasePage
         $h = $block->header;
         $i = $block->id;
         if ($h == "Paginator") {
-            return rawHTML($block->body ?? "");
+            return $block->body;
         }
         $html = SECTION(["id" => $i]);
         if (!is_null($block->header)) {
             $html->appendChild(DIV(["class" => "navtop navside tab shm-toggler", "data-toggle-sel" => "#{$i}"], $block->header));
         }
-        if (!is_null($block->body)) {
-            $html->appendChild(DIV(["class" => "navside tab".($hidable ? " blockbody" : "")], rawHTML($block->body)));
-        }
+        $html->appendChild(DIV(["class" => "navside tab".($hidable ? " blockbody" : "")], $block->body));
         return $html;
     }
 

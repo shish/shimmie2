@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class NumericScoreTheme extends Themelet
 {
     public function get_voter(Image $image): void
@@ -47,7 +49,7 @@ class NumericScoreTheme extends Themelet
 			</div>
 			";
         }
-        $page->add_block(new Block("Post Score", $html, "left", 20));
+        $page->add_block(new Block("Post Score", rawHTML($html), "left", 20));
     }
 
     public function get_nuller(User $duser): void
@@ -58,7 +60,7 @@ class NumericScoreTheme extends Themelet
 			<input type='submit' value='Delete all votes by this user'>
 			</form>
 		";
-        $page->add_block(new Block("Votes", $html, "main", 80));
+        $page->add_block(new Block("Votes", rawHTML($html), "main", 80));
     }
 
     /**
@@ -86,8 +88,8 @@ class NumericScoreTheme extends Themelet
         $nav_html = "<a href=".make_link().">Index</a>";
 
         $page->set_title($config->get_string(SetupConfig::TITLE));
-        $page->add_block(new Block("Navigation", $nav_html, "left", 10));
-        $page->add_block(new Block(null, $html, "main", 30));
+        $page->add_block(new Block("Navigation", rawHTML($nav_html), "left", 10));
+        $page->add_block(new Block(null, rawHTML($html), "main", 30));
     }
 
 

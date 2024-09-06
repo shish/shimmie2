@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class ImageViewCounterTheme extends Themelet
 {
     /**
@@ -17,11 +19,9 @@ class ImageViewCounterTheme extends Themelet
             $pop_images .= $this->build_thumb_html($image) . "\n";
         }
 
-        $nav_html = "<a href=".make_link().">Index</a>";
-
         $page->set_title($config->get_string(SetupConfig::TITLE));
-        $page->add_block(new Block("Navigation", $nav_html, "left", 10));
-        $page->add_block(new Block(null, $pop_images, "main", 30));
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block(null, rawHTML($pop_images), "main", 30));
     }
 
     public function get_help_html(): string

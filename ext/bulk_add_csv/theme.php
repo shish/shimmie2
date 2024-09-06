@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class BulkAddCSVTheme extends Themelet
 {
     /** @var Block[] */
@@ -41,11 +43,11 @@ class BulkAddCSVTheme extends Themelet
 				</table>
 			</form>
 		";
-        $page->add_block(new Block("Bulk Add CSV", $html));
+        $page->add_block(new Block("Bulk Add CSV", rawHTML($html)));
     }
 
     public function add_status(string $title, string $body): void
     {
-        $this->messages[] = new Block($title, $body);
+        $this->messages[] = new Block($title, rawHTML($body));
     }
 }

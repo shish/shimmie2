@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\INPUT;
+use function MicroHTML\{INPUT,rawHTML};
 
 class FavoritesTheme extends Themelet
 {
@@ -27,7 +27,7 @@ class FavoritesTheme extends Themelet
             $html .= "<br><a href='".make_link("user/$username")."'>$username</a>";
         }
 
-        $page->add_block(new Block("Favorited By", $html, "left", 25));
+        $page->add_block(new Block("Favorited By", rawHTML($html), "left", 25));
     }
 
     public function get_help_html(): string

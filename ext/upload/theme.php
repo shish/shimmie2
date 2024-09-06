@@ -26,14 +26,14 @@ class UploadTheme extends Themelet
 {
     public function display_block(Page $page): void
     {
-        $b = new Block("Upload", (string)$this->build_upload_block(), "left", 20);
+        $b = new Block("Upload", $this->build_upload_block(), "left", 20);
         $b->is_content = false;
         $page->add_block($b);
     }
 
     public function display_full(Page $page): void
     {
-        $page->add_block(new Block("Upload", "Disk nearly full, uploads disabled", "left", 20));
+        $page->add_block(new Block("Upload", rawHTML("Disk nearly full, uploads disabled"), "left", 20));
     }
 
     public function display_page(Page $page): void
@@ -226,12 +226,12 @@ class UploadTheme extends Themelet
             $page->set_title("Upload Status");
             $page->add_block(new NavBlock());
             foreach ($errors as $error) {
-                $page->add_block(new Block($error->name, format_text($error->error)));
+                $page->add_block(new Block($error->name, rawHTML(format_text($error->error))));
             }
         } elseif (count($successes) == 0) {
             $page->set_title("No images uploaded");
             $page->add_block(new NavBlock());
-            $page->add_block(new Block("No images uploaded", "Upload attempted, but nothing succeeded and nothing failed?"));
+            $page->add_block(new Block("No images uploaded", rawHTML("Upload attempted, but nothing succeeded and nothing failed?")));
         } elseif (count($successes) == 1) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/{$successes[0]->image_id}"));

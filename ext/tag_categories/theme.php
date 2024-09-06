@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class TagCategoriesTheme extends Themelet
 {
     /**
@@ -105,7 +107,7 @@ class TagCategoriesTheme extends Themelet
         // add html to stuffs
         $page->set_title("Tag Categories");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Editing", $html, "main", 10));
+        $page->add_block(new Block("Editing", rawHTML($html), "main", 10));
     }
 
     public function get_help_html(): string

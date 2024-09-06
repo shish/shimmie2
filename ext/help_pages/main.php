@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\rawHTML;
+
 class HelpPageListBuildingEvent extends Event
 {
     /** @var array<string,string> */
@@ -31,6 +35,14 @@ class HelpPageBuildingEvent extends PartListBuildingEvent
     public function add_block(Block $block, int $position = 50): void
     {
         $this->add_part($block, $position);
+    }
+
+    public function add_section(string $title, string|HTMLElement $html): void
+    {
+        if (is_string($html)) {
+            $html = rawHTML($html);
+        }
+        $this->add_block(new Block($title, $html));
     }
 }
 
@@ -96,13 +108,12 @@ class HelpPages extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key == "licenses") {
-            $block = new Block(
+            $event->add_section(
                 "Software Licenses",
                 "The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license."
             );
-            $event->add_block($block);
 
-            $block = new Block(
+            $event->add_section(
                 ExtensionInfo::LICENSE_GPLV2,
                 "<pre>                    GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
@@ -444,9 +455,8 @@ consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.</pre>"
             );
-            $event->add_block($block);
 
-            $block = new Block(
+            $event->add_section(
                 ExtensionInfo::LICENSE_MIT,
                 "<pre>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the \"Software\"), to deal
@@ -466,10 +476,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</pre>"
             );
-            $event->add_block($block);
 
-
-            $block = new Block(
+            $event->add_section(
                 ExtensionInfo::LICENSE_WTFPL,
                 "<pre>            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                     Version 2, December 2004
@@ -487,7 +495,6 @@ SOFTWARE.</pre>"
 
 </pre>"
             );
-            $event->add_block($block);
         }
     }
 }

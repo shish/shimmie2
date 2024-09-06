@@ -210,13 +210,9 @@ class TranscodeImage extends Extension
         if ($event->page_matches("transcode/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
             $image_obj = Image::by_id_ex($image_id);
-            try {
-                $this->transcode_and_replace_image($image_obj, $event->req_POST('transcode_mime'));
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/".$image_id));
-            } catch (ImageTranscodeException $e) {
-                $this->theme->display_transcode_error($page, "Error Transcoding", $e->getMessage());
-            }
+            $this->transcode_and_replace_image($image_obj, $event->req_POST('transcode_mime'));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/".$image_id));
         }
     }
 

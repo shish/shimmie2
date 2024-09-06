@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 use function MicroHTML\DIV;
 use function MicroHTML\A;
 use function MicroHTML\IMG;
@@ -15,11 +17,11 @@ class RandomImageTheme extends Themelet
         $page->add_block(new Block("Random Post", $this->build_random_html($image), "left", 8));
     }
 
-    public function build_random_html(Image $image, ?string $query = null): string
+    public function build_random_html(Image $image, ?string $query = null): HTMLElement
     {
         $tsize = get_thumbnail_size($image->width, $image->height);
 
-        return (string)DIV(
+        return DIV(
             ["style" => "text-align: center;"],
             A(
                 ["href" => make_link("post/view/{$image->id}", $query)],

@@ -71,7 +71,7 @@ class Artists extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Artist", $this->theme->get_help_html()));
+            $event->add_section("Artist", $this->theme->get_help_html());
         }
     }
 

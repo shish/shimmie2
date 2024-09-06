@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 abstract class PrivateImageConfig
 {
     public const VERSION = "ext_private_image_version";
@@ -152,7 +154,7 @@ class PrivateImage extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Private Posts", $this->theme->get_help_html()));
+            $event->add_section("Private Posts", $this->theme->get_help_html());
         }
     }
 

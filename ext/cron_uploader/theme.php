@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 use function MicroHTML\LABEL;
 use function MicroHTML\TABLE;
 use function MicroHTML\TBODY;
@@ -112,9 +114,9 @@ class CronUploaderTheme extends Themelet
         ";
 
 
-        $block = new Block("Cron Uploader", $info_html, "main", 10);
-        $block_install = new Block("Setup Guide", $install_html, "main", 30);
-        $block_usage = new Block("Usage Guide", $usage_html, "main", 20);
+        $block = new Block("Cron Uploader", rawHTML($info_html), "main", 10);
+        $block_install = new Block("Setup Guide", rawHTML($install_html), "main", 30);
+        $block_usage = new Block("Usage Guide", rawHTML($usage_html), "main", 20);
         $page->add_block($block);
         $page->add_block($block_install);
         $page->add_block($block_usage);
@@ -125,12 +127,12 @@ class CronUploaderTheme extends Themelet
                 $log_html .= "<tr><th>{$entry["date_sent"]}</th><td>{$entry["message"]}</td></tr>";
             }
             $log_html .= "</table>";
-            $block = new Block("Log", $log_html, "main", 40);
+            $block = new Block("Log", rawHTML($log_html), "main", 40);
             $page->add_block($block);
         }
     }
 
-    public function get_user_options(): string
+    public function get_user_options(): HTMLElement
     {
         $form = SHM_SIMPLE_FORM(
             "user_admin/cron_uploader",
@@ -161,7 +163,7 @@ class CronUploaderTheme extends Themelet
             )
         );
         $html = emptyHTML($form);
-        return (string)$html;
+        return $html;
     }
 
     /**
@@ -196,6 +198,6 @@ class CronUploaderTheme extends Themelet
             ."<table class='form'><tr><td>"
             ."<input type='submit' value='Clear failed folder'></td></tr></table></form>";
         $html .= "</table>\n";
-        $page->add_block(new Block("Cron Upload", $html));
+        $page->add_block(new Block("Cron Upload", rawHTML($html)));
     }
 }

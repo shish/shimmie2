@@ -8,6 +8,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function MicroHTML\rawHTML;
+
 require_once "config.php";
 
 /*
@@ -115,44 +117,44 @@ class SetupPanel
 
 class SetupBlock extends Block
 {
-    public ?string $header;
-    public ?string $body;
+    public ?string $str_body;
     public Config $config;
 
     public function __construct(string $title, Config $config)
     {
-        parent::__construct($title, "", "main", 50);
+        parent::__construct($title, rawHTML(""), "main", 50);
         $this->config = $config;
+        $this->str_body = "";
     }
 
     public function add_label(string $text): void
     {
-        $this->body .= $text;
+        $this->str_body .= $text;
     }
 
     public function start_table(): void
     {
-        $this->body .= "<table class='form'>";
+        $this->str_body .= "<table class='form'>";
     }
     public function end_table(): void
     {
-        $this->body .= "</table>";
+        $this->str_body .= "</table>";
     }
     public function start_table_row(): void
     {
-        $this->body .= "<tr>";
+        $this->str_body .= "<tr>";
     }
     public function end_table_row(): void
     {
-        $this->body .= "</tr>";
+        $this->str_body .= "</tr>";
     }
     public function start_table_head(): void
     {
-        $this->body .= "<thead>";
+        $this->str_body .= "<thead>";
     }
     public function end_table_head(): void
     {
-        $this->body .= "</thead>";
+        $this->str_body .= "</thead>";
     }
     public function add_table_header(string $content, int $colspan = 2): void
     {
@@ -165,30 +167,30 @@ class SetupBlock extends Block
 
     public function start_table_cell(int $colspan = 1): void
     {
-        $this->body .= "<td colspan='$colspan'>";
+        $this->str_body .= "<td colspan='$colspan'>";
     }
     public function end_table_cell(): void
     {
-        $this->body .= "</td>";
+        $this->str_body .= "</td>";
     }
     public function add_table_cell(string $content, int $colspan = 1): void
     {
         $this->start_table_cell($colspan);
-        $this->body .= $content;
+        $this->str_body .= $content;
         $this->end_table_cell();
     }
     public function start_table_header_cell(int $colspan = 1, string $align = 'right'): void
     {
-        $this->body .= "<th colspan='$colspan' style='text-align: $align'>";
+        $this->str_body .= "<th colspan='$colspan' style='text-align: $align'>";
     }
     public function end_table_header_cell(): void
     {
-        $this->body .= "</th>";
+        $this->str_body .= "</th>";
     }
     public function add_table_header_cell(string $content, int $colspan = 1): void
     {
         $this->start_table_header_cell($colspan);
-        $this->body .= $content;
+        $this->str_body .= $content;
         $this->end_table_header_cell();
     }
 
@@ -206,7 +208,7 @@ class SetupBlock extends Block
             $this->start_table_header_cell($label_row ? 2 : 1, $label_row ? 'center' : 'right');
         }
         if (!is_null($label)) {
-            $this->body .= "<label for='{$name}'>{$label}</label>";
+            $this->str_body .= "<label for='{$name}'>{$label}</label>";
         }
 
         if ($table_row) {
@@ -221,7 +223,7 @@ class SetupBlock extends Block
         if ($table_row) {
             $this->start_table_cell($label_row ? 2 : 1);
         }
-        $this->body .= $html;
+        $this->str_body .= $html;
         if ($table_row) {
             $this->end_table_cell();
         }
@@ -273,7 +275,7 @@ class SetupBlock extends Block
     //	public function add_hidden_option($name) {
     //		global $config;
     //		$val = $config->get_string($name);
-    //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
+    //		$this->str_body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
     //	}
 
     public function add_int_option(string $name, ?string $label = null, bool $table_row = false): void

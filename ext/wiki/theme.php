@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 use function MicroHTML\{FORM, INPUT, TABLE, TR, TD, emptyHTML, rawHTML, BR, TEXTAREA, DIV, HR, P, A};
 
 class WikiTheme extends Themelet
@@ -44,7 +46,7 @@ class WikiTheme extends Themelet
 
         $page->set_title(html_escape($wiki_page->title));
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Wiki Index", $tfe->formatted, "left", 20));
+        $page->add_block(new Block("Wiki Index", rawHTML($tfe->formatted), "left", 20));
         $page->add_block(new Block($title_html, $this->create_display_html($wiki_page)));
     }
 
@@ -62,7 +64,7 @@ class WikiTheme extends Themelet
         $html .= "</table>";
         $page->set_title(html_escape($title));
         $page->add_block(new NavBlock());
-        $page->add_block(new Block(html_escape($title), $html));
+        $page->add_block(new Block(html_escape($title), rawHTML($html)));
     }
 
     public function display_page_editor(Page $page, WikiPage $wiki_page): void
@@ -72,7 +74,7 @@ class WikiTheme extends Themelet
         $page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
     }
 
-    protected function create_edit_html(WikiPage $page): string
+    protected function create_edit_html(WikiPage $page): HTMLElement
     {
         global $user;
 
@@ -85,7 +87,7 @@ class WikiTheme extends Themelet
             emptyHTML();
 
         $u_title = url_escape($page->title);
-        return (string)SHM_SIMPLE_FORM(
+        return SHM_SIMPLE_FORM(
             "wiki/$u_title/save",
             INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision + 1]),
             TEXTAREA(["name" => "body", "style" => "width: 100%", "rows" => 20], $page->body),
@@ -95,7 +97,7 @@ class WikiTheme extends Themelet
         );
     }
 
-    protected function create_display_html(WikiPage $page): string
+    protected function create_display_html(WikiPage $page): HTMLElement
     {
         global $user;
 
@@ -125,7 +127,7 @@ class WikiTheme extends Themelet
             )));
         }
 
-        return (string)DIV(
+        return DIV(
             ["class" => "wiki-page"],
             $formatted_body,
             HR(),
