@@ -62,10 +62,7 @@ class MimeSystem extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "File Types";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_block(new Block("File Types", $this->theme->get_help_html()));
         }
     }
 

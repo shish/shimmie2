@@ -119,10 +119,7 @@ class Trash extends Extension
         global $user;
         if ($event->key === HelpPages::SEARCH) {
             if ($user->can(Permissions::VIEW_TRASH)) {
-                $block = new Block();
-                $block->header = "Trash";
-                $block->body = $this->theme->get_help_html();
-                $event->add_block($block);
+                $event->add_block(new Block("Trash", $this->theme->get_help_html()));
             }
         }
     }

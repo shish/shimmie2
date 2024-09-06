@@ -228,7 +228,7 @@ class UserPage extends Extension
             }
             $page->set_title("Users");
             $page->add_block(new NavBlock());
-            $page->add_block(new Block(body: emptyHTML($t->table($t->query()), $t->paginator())));
+            $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
         if ($event->page_matches("user_admin/classes", method: "GET")) {
             $this->theme->display_user_classes(
@@ -599,10 +599,7 @@ class UserPage extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Users";
-            $block->body = (string) $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_block(new Block("Users", $this->theme->get_help_html()));
         }
     }
 

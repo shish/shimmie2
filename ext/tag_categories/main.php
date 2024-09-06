@@ -111,10 +111,7 @@ class TagCategories extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Tag Categories";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_block(new Block("Tag Categories", $this->theme->get_help_html()));
         }
     }
 

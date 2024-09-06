@@ -121,7 +121,7 @@ class ImageBan extends Extension
             $t->inputs = $event->GET;
             $page->set_title("Post Bans");
             $page->add_block(new NavBlock());
-            $page->add_block(new Block(body: emptyHTML($t->table($t->query()), $t->paginator())));
+            $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }
 
