@@ -8,12 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
 
-/**
- * Class BaseThemelet
- *
- * A collection of common functions for theme parts
- */
-class BaseThemelet
+class CommonElementsTheme extends Themelet
 {
     /**
      * Generic thumbnail code; returns HTML rather than adding

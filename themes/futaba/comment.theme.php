@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\rawHTML;
 
-class CustomCommentListTheme extends CommentListTheme
+class FutabaCommentListTheme extends CommentListTheme
 {
     public int $inner_id = 0;
     public bool $post_page = true;

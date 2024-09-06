@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\rawHTML;
 
-class CustomUserPageTheme extends UserPageTheme
+class LiteUserPageTheme extends UserPageTheme
 {
     public function display_login_page(Page $page): void
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CustomUploadTheme extends UploadTheme
+class Danbooru2UploadTheme extends UploadTheme
 {
     public function display_block(Page $page): void
     {

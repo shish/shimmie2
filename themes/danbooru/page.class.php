@@ -50,7 +50,7 @@ Tips
   back and forward to other themes all you like.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-class Page extends BasePage
+class DanbooruPage extends Page
 {
     public function body_html(): HTMLElement
     {

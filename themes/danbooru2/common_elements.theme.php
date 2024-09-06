@@ -6,9 +6,9 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, B, DIV, joinHTML};
+use function MicroHTML\{A,B,DIV,joinHTML};
 
-class Themelet extends BaseThemelet
+class Danbooru2CommonElementsTheme extends CommonElementsTheme
 {
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
@@ -56,18 +56,18 @@ class Themelet extends BaseThemelet
         }
         $pages_html = joinHTML(" ", $pages);
 
-        if ($first_html) {
+        if ($start > 2) {
             $pdots = "...";
         } else {
             $pdots = "";
         }
 
-        if ($last_html) {
+        if ($total_pages > $end + 1) {
             $ndots = "...";
         } else {
             $ndots = "";
         }
 
-        return DIV(["id" => 'paginator'], joinHTML(" ", [$prev_html, $first_html, $pdots, $pages_html, $ndots, $last_html, $next_html]));
+        return DIV(["id" => "paginator"], joinHTML(" ", [$prev_html, $first_html, $pdots, $pages_html, $ndots, $last_html, $next_html]));
     }
 }

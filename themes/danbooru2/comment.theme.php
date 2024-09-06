@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\rawHTML;
 
-class CustomCommentListTheme extends CommentListTheme
+class Danbooru2CommentListTheme extends CommentListTheme
 {
     /**
      * @param array<array{0: Image, 1: Comment[]}> $images

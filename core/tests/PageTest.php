@@ -6,13 +6,13 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-require_once "core/basepage.php";
+require_once "core/page.php";
 
-class BasePageTest extends TestCase
+class PageTest extends TestCase
 {
     public function test_page(): void
     {
-        $page = new BasePage();
+        $page = new Page();
         $page->set_mode(PageMode::PAGE);
         ob_start();
         $page->display();
@@ -22,7 +22,7 @@ class BasePageTest extends TestCase
 
     public function test_file(): void
     {
-        $page = new BasePage();
+        $page = new Page();
         $page->set_mode(PageMode::FILE);
         $page->set_file("tests/pbx_screenshot.jpg");
         ob_start();
@@ -33,7 +33,7 @@ class BasePageTest extends TestCase
 
     public function test_data(): void
     {
-        $page = new BasePage();
+        $page = new Page();
         $page->set_mode(PageMode::DATA);
         $page->set_data("hello world");
         ob_start();
@@ -44,7 +44,7 @@ class BasePageTest extends TestCase
 
     public function test_redirect(): void
     {
-        $page = new BasePage();
+        $page = new Page();
         $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect("/new/page");
         ob_start();

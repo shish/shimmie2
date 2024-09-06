@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\rawHTML;
 
-class CustomViewPostTheme extends ViewPostTheme
+class LiteViewPostTheme extends ViewPostTheme
 {
     /**
      * @param HTMLElement[] $editor_parts

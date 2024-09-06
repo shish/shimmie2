@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-class CustomViewPostTheme extends ViewPostTheme
+class FutabaViewPostTheme extends ViewPostTheme
 {
     /**
      * @param HTMLElement[] $editor_parts
