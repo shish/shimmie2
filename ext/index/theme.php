@@ -60,7 +60,7 @@ and of course start organising your images :-)
         if (count($images) > 0) {
             $this->display_page_images($page, $images);
         } else {
-            $this->display_error(404, "No posts Found", "No posts were found to match the search criteria");
+            throw new PostNotFound("No posts were found to match the search criteria");
         }
     }
 

@@ -103,7 +103,7 @@ class AliasEditor extends Extension
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("alias/list"));
             } else {
-                $this->theme->display_error(400, "No File Specified", "You have to upload a file");
+                throw new InvalidInput("No File Specified");
             }
         }
     }

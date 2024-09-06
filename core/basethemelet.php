@@ -16,28 +16,6 @@ use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
 class BaseThemelet
 {
     /**
-     * Generic error message display
-     */
-    public function display_error(int $code, string $title, string $message): void
-    {
-        global $page;
-        $page->set_code($code);
-        $page->set_title($title);
-        $page->set_heading($title);
-        $has_nav = false;
-        foreach ($page->blocks as $block) {
-            if ($block->header == "Navigation") {
-                $has_nav = true;
-                break;
-            }
-        }
-        if (!$has_nav) {
-            $page->add_block(new NavBlock());
-        }
-        $page->add_block(new Block("Error", $message));
-    }
-
-    /**
      * Generic thumbnail code; returns HTML rather than adding
      * a block since thumbs tend to go inside blocks...
      */
