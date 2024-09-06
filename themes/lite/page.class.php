@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\{emptyHTML, HEADER, FOOTER};
+
 /**
  * Name: Lite Theme
  * Author: Zach Hall <zach@sosguy.net>
@@ -17,7 +19,7 @@ use MicroHTML\HTMLElement;
 
 class Page extends BasePage
 {
-    public function body_html(): string
+    public function body_html(): HTMLElement
     {
         global $config;
 
@@ -84,18 +86,16 @@ class Page extends BasePage
 
         $footer_html = $this->footer_html();
 
-        return <<<EOD
-		<header>
-			$menu
-			$custom_sublinks
-			$sub_block_html
-		</header>
-		$left_block_html
-		$main_block_html
-		<footer>
-		    $footer_html
-		</footer>
-EOD;
+        return emptyHTML(
+            HEADER(
+                $menu,
+                $custom_sublinks,
+                $sub_block_html
+            ),
+            $left_block_html,
+            $main_block_html,
+            FOOTER($footer_html)
+        );
     } /* end of function display_page() */
 
     public function block_to_html(Block $block, bool $hidable = false): string
