@@ -158,12 +158,4 @@ class BaseThemelet
             ' >>'
         );
     }
-
-    public function display_crud(string $title, HTMLElement $table, HTMLElement $paginator): void
-    {
-        global $page;
-        $page->set_title($title);
-        $page->add_block(new NavBlock());
-        $page->add_block(new Block("$title Table", emptyHTML($table, $paginator)));
-    }
 }
