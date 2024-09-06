@@ -20,6 +20,6 @@ class TermsTheme extends Themelet
 				</form>
 			</dialog>
 		</div>";
-        $page->add_block(new Block(null, $html, "main", 1));
+        $page->add_block(new Block(null, rawHTML($html), "main", 1));
     }
 }

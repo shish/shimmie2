@@ -32,7 +32,6 @@ class TagList extends Extension
         global $config, $page;
 
         if ($event->page_matches("tags/{sub}", method: "GET")) {
-            $this->theme->set_navigation($this->build_navigation());
             $sub = $event->get_arg('sub');
 
             if ($event->get_GET('starts_with')) {
@@ -217,16 +216,6 @@ class TagList extends Extension
         $html .= "</span>\n<p><hr>";
 
         return $html;
-    }
-
-    private function build_navigation(): string
-    {
-        $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_map = "<a href='".make_link("tags/map")."'>Map</a>";
-        $h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
-        $h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
-        $h_all = "<a href='".modify_current_url(["mincount" => 1])."'>Show All</a>";
-        return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>&nbsp;<br>$h_all";
     }
 
     private function build_tag_map(string $starts_with, int $tags_min): string

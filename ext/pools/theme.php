@@ -126,7 +126,7 @@ class PoolsTheme extends Themelet
 
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
-        $page->add_block(new Block("Search", $search, "left", 10));
+        $page->add_block(new Block("Search", rawHTML($search), "left", 10));
 
         if (!is_null($pool)) {
             if ($pool->public || $user->can(Permissions::POOLS_ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
@@ -135,7 +135,7 @@ class PoolsTheme extends Themelet
                 }
             }
             $tfe = send_event(new TextFormattingEvent($pool->description));
-            $page->add_block(new Block(html_escape($pool->title), $tfe->formatted, "main", 10));
+            $page->add_block(new Block(html_escape($pool->title), rawHTML($tfe->formatted), "main", 10));
         }
     }
 

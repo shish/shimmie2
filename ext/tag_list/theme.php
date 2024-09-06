@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, BR, rawHTML, emptyHTML};
+
 class TagListTheme extends Themelet
 {
     public string $heading = "";
     public string $list = "";
-    public ?string $navigation;
     private mixed $tagcategories = null;
 
     public function set_heading(string $text): void
@@ -21,17 +22,29 @@ class TagListTheme extends Themelet
         $this->list = $list;
     }
 
-    public function set_navigation(string $nav): void
-    {
-        $this->navigation = $nav;
-    }
-
     public function display_page(Page $page): void
     {
         $page->set_title("Tag List");
         $page->set_heading($this->heading);
-        $page->add_block(new Block("Tags", $this->list));
-        $page->add_block(new Block("Navigation", $this->navigation, "left", 0));
+        $page->add_block(new Block("Tags", rawHTML($this->list)));
+
+        $nav = emptyHTML(
+            A(["href" => make_link()], "Index"),
+            BR(),
+            rawHTML("&nbsp;"),
+            BR(),
+            A(["href" => make_link("tags/map")], "Map"),
+            BR(),
+            A(["href" => make_link("tags/alphabetic")], "Alphabetic"),
+            BR(),
+            A(["href" => make_link("tags/popularity")], "Popularity"),
+            BR(),
+            rawHTML("&nbsp;"),
+            BR(),
+            A(["href" => modify_current_url(["mincount" => 1])], "Show All"),
+        );
+
+        $page->add_block(new Block("Navigation", $nav, "left", 0));
     }
 
     // =======================================================================
@@ -113,11 +126,11 @@ class TagListTheme extends Themelet
             } else {
                 $category_display_name = html_escape($tag_category_dict[$category]['display_multiple']);
             }
-            $page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", 9));
+            $page->add_block(new Block($category_display_name, rawHTML($tag_categories_html[$category]), "left", 9));
         }
 
         if ($main_html !== null) {
-            $page->add_block(new Block("Tags", $main_html, "left", 10));
+            $page->add_block(new Block("Tags", rawHTML($main_html), "left", 10));
         }
     }
 
@@ -162,7 +175,7 @@ class TagListTheme extends Themelet
             $config->get_string(TagListConfig::RELATED_SORT)
         );
 
-        $page->add_block(new Block($block_name, $main_html, "left", 10));
+        $page->add_block(new Block($block_name, rawHTML($main_html), "left", 10));
     }
 
     /**
@@ -178,7 +191,7 @@ class TagListTheme extends Themelet
         );
         $main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 
-        $page->add_block(new Block("Popular Tags", $main_html, "left", 60));
+        $page->add_block(new Block("Popular Tags", rawHTML($main_html), "left", 60));
     }
 
     /**
@@ -195,7 +208,7 @@ class TagListTheme extends Themelet
         );
         $main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 
-        $page->add_block(new Block("Refine Search", $main_html, "left", 60));
+        $page->add_block(new Block("Refine Search", rawHTML($main_html), "left", 60));
     }
 
     /**

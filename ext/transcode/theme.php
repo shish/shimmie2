@@ -39,11 +39,4 @@ class TranscodeImageTheme extends Themelet
         }
         return $html."</select>";
     }
-
-    public function display_transcode_error(Page $page, string $title, string $message): void
-    {
-        $page->set_title("Transcode Image");
-        $page->add_block(new NavBlock());
-        $page->add_block(new Block($title, $message));
-    }
 }

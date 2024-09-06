@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{UL, LI};
+use function MicroHTML\{UL, LI, rawHTML};
 
 class BulkAddTheme extends Themelet
 {
@@ -49,6 +49,6 @@ class BulkAddTheme extends Themelet
 				</table>
 			</form>
 		";
-        $page->add_block(new Block("Bulk Add", $html));
+        $page->add_block(new Block("Bulk Add", rawHTML($html)));
     }
 }

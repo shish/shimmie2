@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 require_once "mime_map.php";
 require_once "file_extension.php";
 require_once "mime_type.php";
@@ -62,7 +64,7 @@ class MimeSystem extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("File Types", $this->theme->get_help_html()));
+            $event->add_section("File Types", $this->theme->get_help_html());
         }
     }
 

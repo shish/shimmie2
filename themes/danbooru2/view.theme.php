@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\rawHTML;
+
 class CustomViewPostTheme extends ViewPostTheme
 {
     /**
@@ -20,7 +22,7 @@ class CustomViewPostTheme extends ViewPostTheme
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 15));
     }
 
-    private function build_information(Image $image): string
+    private function build_information(Image $image): HTMLElement
     {
         $h_owner = html_escape($image->get_owner()->name);
         $h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
@@ -62,10 +64,10 @@ class CustomViewPostTheme extends ViewPostTheme
             $html .= "<br>Rating: <a href='".search_link(["rating=$rating"])."'>$h_rating</a>";
         }
 
-        return $html;
+        return rawHTML($html);
     }
 
-    protected function build_navigation(Image $image): string
+    protected function build_navigation(Image $image): HTMLElement
     {
         //$h_pin = $this->build_pin($image);
         $h_search = "
@@ -76,6 +78,6 @@ class CustomViewPostTheme extends ViewPostTheme
 			</form>
 		";
 
-        return "$h_search";
+        return rawHTML($h_search);
     }
 }

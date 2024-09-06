@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 /**
  * @phpstan-type BlotterEntry array{id:int,entry_date:string,entry_text:string,important:bool}
  */
@@ -17,8 +19,8 @@ class BlotterTheme extends Themelet
         global $page;
         $html = $this->get_html_for_blotter_editor($entries);
         $page->set_title("Blotter Editor");
-        $page->add_block(new Block("Welcome to the Blotter Editor!", $html, "main", 10));
-        $page->add_block(new Block("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0));
+        $page->add_block(new Block("Welcome to the Blotter Editor!", rawHTML($html), "main", 10));
+        $page->add_block(new NavBlock());
     }
 
     /**
@@ -29,7 +31,7 @@ class BlotterTheme extends Themelet
         global $page;
         $html = $this->get_html_for_blotter_page($entries);
         $page->set_title("Blotter");
-        $page->add_block(new Block("Blotter Entries", $html, "main", 10));
+        $page->add_block(new Block("Blotter Entries", rawHTML($html), "main", 10));
     }
 
     /**
@@ -40,7 +42,7 @@ class BlotterTheme extends Themelet
         global $page, $config;
         $html = $this->get_html_for_blotter($entries);
         $position = $config->get_string("blotter_position", "subheading");
-        $page->add_block(new Block(null, $html, $position, 20));
+        $page->add_block(new Block(null, rawHTML($html), $position, 20));
     }
 
     /**

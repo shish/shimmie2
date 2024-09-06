@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class FourOhFour extends Extension
 {
     public function onPageRequest(PageRequestEvent $event): void
@@ -15,7 +17,7 @@ class FourOhFour extends Extension
             $page->set_code(404);
             $page->set_title("404 - No Handler Found");
             $page->add_block(new NavBlock());
-            $page->add_block(new Block("Explanation", "No handler could be found for the page '{$event->path}'"));
+            $page->add_block(new Block("Explanation", rawHTML("No handler could be found for the page '{$event->path}'")));
         }
     }
 

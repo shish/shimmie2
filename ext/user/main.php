@@ -599,7 +599,7 @@ class UserPage extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Users", $this->theme->get_help_html()));
+            $event->add_section("Users", $this->theme->get_help_html());
         }
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class CustomUploadTheme extends UploadTheme
 {
     public function display_block(Page $page): void
@@ -13,6 +15,6 @@ class CustomUploadTheme extends UploadTheme
 
     public function display_full(Page $page): void
     {
-        $page->add_block(new Block("Upload", "Disk nearly full, uploads disabled", "head", 20));
+        $page->add_block(new Block("Upload", rawHTML("Disk nearly full, uploads disabled"), "head", 20));
     }
 }

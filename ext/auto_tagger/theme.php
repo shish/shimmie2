@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\rawHTML;
+
 class AutoTaggerTheme extends Themelet
 {
     /**
@@ -33,9 +35,9 @@ class AutoTaggerTheme extends Themelet
 
         $page->set_title("Auto-Tag List");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Auto-Tag", $html));
+        $page->add_block(new Block("Auto-Tag", rawHTML($html)));
         if ($can_manage) {
-            $page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
+            $page->add_block(new Block("Bulk Upload", rawHTML($bulk_html), "main", 51));
         }
     }
 }

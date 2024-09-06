@@ -6,8 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\emptyHTML;
-use function MicroHTML\{INPUT,P};
+use function MicroHTML\{INPUT,P,rawHTML,emptyHTML};
 
 /**
  * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:string,name:string,notes:string,type:string,posts:int}
@@ -72,7 +71,7 @@ class ArtistsTheme extends Themelet
         }
 
         if ($html) {
-            $page->add_block(new Block("Manage Artists", $html, "left", 10));
+            $page->add_block(new Block("Manage Artists", rawHTML($html), "left", 10));
         }
     }
 
@@ -137,7 +136,7 @@ class ArtistsTheme extends Themelet
 		';
 
         global $page;
-        $page->add_block(new Block("Edit artist", $html, "main", 10));
+        $page->add_block(new Block("Edit artist", rawHTML($html), "main", 10));
     }
 
     public function new_artist_composer(): void
@@ -156,7 +155,7 @@ class ArtistsTheme extends Themelet
 		";
 
         $page->set_title("Artists");
-        $page->add_block(new Block("Artists", $html, "main", 10));
+        $page->add_block(new Block("Artists", rawHTML($html), "main", 10));
     }
 
     /**
@@ -235,7 +234,7 @@ class ArtistsTheme extends Themelet
         $html .= "</tbody></table>";
 
         $page->set_title("Artists");
-        $page->add_block(new Block("Artists", $html, "main", 10));
+        $page->add_block(new Block("Artists", rawHTML($html), "main", 10));
 
         $this->display_paginator($page, "artist/list", null, $pageNumber, $totalPages);
     }
@@ -254,7 +253,7 @@ class ArtistsTheme extends Themelet
 		';
 
         global $page;
-        $page->add_block(new Block("Artist Aliases", $html, "main", 20));
+        $page->add_block(new Block("Artist Aliases", rawHTML($html), "main", 20));
     }
 
     public function show_new_member_composer(int $artistID): void
@@ -271,7 +270,7 @@ class ArtistsTheme extends Themelet
 		';
 
         global $page;
-        $page->add_block(new Block("Artist members", $html, "main", 30));
+        $page->add_block(new Block("Artist members", rawHTML($html), "main", 30));
     }
 
     public function show_new_url_composer(int $artistID): void
@@ -288,7 +287,7 @@ class ArtistsTheme extends Themelet
 		';
 
         global $page;
-        $page->add_block(new Block("Artist URLs", $html, "main", 40));
+        $page->add_block(new Block("Artist URLs", rawHTML($html), "main", 40));
     }
 
     /**
@@ -307,7 +306,7 @@ class ArtistsTheme extends Themelet
 		';
 
         global $page;
-        $page->add_block(new Block("Edit Alias", $html, "main", 10));
+        $page->add_block(new Block("Edit Alias", rawHTML($html), "main", 10));
     }
 
     /**
@@ -326,7 +325,7 @@ class ArtistsTheme extends Themelet
 		';
 
         global $page;
-        $page->add_block(new Block("Edit URL", $html, "main", 10));
+        $page->add_block(new Block("Edit URL", rawHTML($html), "main", 10));
     }
 
     /**
@@ -345,7 +344,7 @@ class ArtistsTheme extends Themelet
 		';
 
         global $page;
-        $page->add_block(new Block("Edit Member", $html, "main", 10));
+        $page->add_block(new Block("Edit Member", rawHTML($html), "main", 10));
     }
 
     /**
@@ -407,7 +406,7 @@ class ArtistsTheme extends Themelet
 		</table>";
 
         $page->set_title("Artist");
-        $page->add_block(new Block("Artist", $html, "main", 10));
+        $page->add_block(new Block("Artist", rawHTML($html), "main", 10));
 
         //we show the images for the artist
         $artist_images = "";
@@ -419,7 +418,7 @@ class ArtistsTheme extends Themelet
                 '</span>';
         }
 
-        $page->add_block(new Block("Artist Posts", $artist_images, "main", 20));
+        $page->add_block(new Block("Artist Posts", rawHTML($artist_images), "main", 20));
     }
 
     /**

@@ -66,21 +66,17 @@ class UserConfigTheme extends Themelet
 
         $page->set_title("User Options");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("User Options", $table));
+        $page->add_block(new Block("User Options", rawHTML($table)));
         $page->set_mode(PageMode::PAGE);
     }
 
     protected function sb_to_html(SetupBlock $block): string
     {
-        $h = $block->header;
-        $b = $block->body;
-        $i = preg_replace_ex('/[^a-zA-Z0-9]/', '_', $h ?? "") . "-setup";
-        $html = "
+        return "
 			<section class='setupblock'>
-				<b class='shm-toggler' data-toggle-sel='#$i'>$h</b>
-				<br><div id='$i'>$b</div>
+				<b>{$block->header}</b>
+				<br>{$block->str_body}
 			</section>
 		";
-        return $html;
     }
 }

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{DIV, H3, SECTION, rawHTML};
+use function MicroHTML\{A, DIV, H3, SECTION, rawHTML};
 
 /**
  * Class Block
@@ -23,7 +23,7 @@ class Block
     /**
      * The content of the block.
      */
-    public ?string $body;
+    public HTMLElement $body;
 
     /**
      * Where the block should be placed. The default theme supports
@@ -49,15 +49,15 @@ class Block
      */
     public bool $is_content = true;
 
-    public function __construct(?string $header, string|HTMLElement|null $body, string $section = "main", int $position = 50, ?string $id = null)
+    public function __construct(?string $header, HTMLElement $body, string $section = "main", int $position = 50, ?string $id = null)
     {
         $this->header = $header;
-        $this->body = (string)$body;
+        $this->body = $body;
         $this->section = $section;
         $this->position = $position;
 
         if (is_null($id)) {
-            $id = (empty($header) ? md5($this->body ?? '') : $header) . $section;
+            $id = (empty($header) ? 'unknown' : $header) . $section;
         }
         $str_id = preg_replace_ex('/[^\w-]/', '', str_replace(' ', '_', $id));
         $this->id = $str_id;
@@ -77,6 +77,6 @@ class NavBlock extends Block
 {
     public function __construct()
     {
-        parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
+        parent::__construct("Navigation", A(["href" => make_link()], "Index"), "left", 0);
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class ReverseSearchLinksTheme extends Themelet
 {
     public function reverse_search_block(Page $page, Image $image): void
@@ -29,6 +31,6 @@ class ReverseSearchLinksTheme extends Themelet
             }
         }
 
-        $page->add_block(new Block("Reverse Image Search", $html, "main", 20));
+        $page->add_block(new Block("Reverse Image Search", rawHTML($html), "main", 20));
     }
 }

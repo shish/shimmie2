@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\IMG;
+use function MicroHTML\{IMG,rawHTML};
 
 class PixelFileHandlerTheme extends Themelet
 {
@@ -46,7 +46,7 @@ class PixelFileHandlerTheme extends Themelet
                     }
                 }
                 if ($head) {
-                    $page->add_block(new Block("EXIF Info", $head, "left"));
+                    $page->add_block(new Block("EXIF Info", rawHTML($head), "left"));
                 }
             }
         }

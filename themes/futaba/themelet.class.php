@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class Themelet extends BaseThemelet
 {
     /**
@@ -15,7 +17,7 @@ class Themelet extends BaseThemelet
             $total_pages = 1;
         }
         $body = $this->futaba_build_paginator($page_number, $total_pages, $base, $query);
-        $page->add_block(new Block(null, $body, "main", 90));
+        $page->add_block(new Block(null, rawHTML($body), "main", 90));
     }
 
     /**

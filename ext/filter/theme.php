@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{META};
+use function MicroHTML\{META,rawHTML};
 
 class FilterTheme extends Themelet
 {
@@ -24,6 +24,6 @@ class FilterTheme extends Themelet
         <a id='re-enable-all-filters' style='display: none;' href='#'>Re-enable all</a>
         ";
         $page->add_html_header(META(['id' => 'filter-tags', 'tags' => $tags]));
-        $page->add_block(new Block("Filters", $html, "left", 10));
+        $page->add_block(new Block("Filters", rawHTML($html), "left", 10));
     }
 }

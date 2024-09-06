@@ -157,7 +157,7 @@ class Favorites extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Favorites", $this->theme->get_help_html()));
+            $event->add_section("Favorites", $this->theme->get_help_html());
         }
     }
 

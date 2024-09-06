@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\rawHTML;
+
 class CustomCommentListTheme extends CommentListTheme
 {
     public int $inner_id = 0;
@@ -23,7 +27,7 @@ class CustomCommentListTheme extends CommentListTheme
         $page->set_title($page_title);
         $page->disable_left();
         $page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
-        $page->add_block(new Block(null, "<hr>", "main", 80));
+        $page->add_block(new Block(null, rawHTML("<hr>"), "main", 80));
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
         $this->post_page = false;
 
@@ -53,7 +57,7 @@ class CustomCommentListTheme extends CommentListTheme
             $html .=   "<div class='commentset'>$comment_html</div>";
             $html .= "</div>";
 
-            $page->add_block(new Block(null, $html, "main", $position++));
+            $page->add_block(new Block(null, rawHTML($html), "main", $position++));
         }
     }
 
@@ -63,9 +67,9 @@ class CustomCommentListTheme extends CommentListTheme
         parent::display_recent_comments($comments);
     }
 
-    public function build_upload_box(): string
+    public function build_upload_box(): HTMLElement
     {
-        return "[[ insert upload-and-comment extension here ]]";
+        return rawHTML("[[ insert upload-and-comment extension here ]]");
     }
 
 

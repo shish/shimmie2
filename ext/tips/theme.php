@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 /**
  * @phpstan-type Tip array{id: int, image: string, text: string, enable: bool}
  */
@@ -47,7 +49,7 @@ class TipsTheme extends Themelet
 
         $page->set_title("Tips List");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Add Tip", $html, "main", 10));
+        $page->add_block(new Block("Add Tip", rawHTML($html), "main", 10));
     }
 
     /**
@@ -62,7 +64,7 @@ class TipsTheme extends Themelet
             $img = "<img src=".$url.url_escape($tip['image'])." /> ";
         }
         $html = "<div id='tips'>".$img.html_escape($tip['text'])."</div>";
-        $page->add_block(new Block(null, $html, "subheading", 10));
+        $page->add_block(new Block(null, rawHTML($html), "subheading", 10));
     }
 
     /**
@@ -109,6 +111,6 @@ class TipsTheme extends Themelet
         }
         $html .= "</tbody></table>";
 
-        $page->add_block(new Block("All Tips", $html, "main", 20));
+        $page->add_block(new Block("All Tips", rawHTML($html), "main", 20));
     }
 }

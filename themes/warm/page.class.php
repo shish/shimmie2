@@ -35,7 +35,7 @@ class Page extends BasePage
                     $main_block_html[] = $this->block_html($block, false);
                     break;
                 case "subheading":
-                    $sub_block_html[] = rawHTML($block->body ?? "");
+                    $sub_block_html[] = $block->body;
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";

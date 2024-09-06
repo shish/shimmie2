@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class CustomUserPageTheme extends UserPageTheme
 {
     /**
@@ -16,7 +18,7 @@ class CustomUserPageTheme extends UserPageTheme
         foreach ($parts as $part) {
             $html .= "<a href='{$part["link"]}'>{$part["name"]}</a> | ";
         }
-        $page->add_block(new Block("Logged in as $h_name", $html, "head", 90));
+        $page->add_block(new Block("Logged in as $h_name", rawHTML($html), "head", 90));
     }
 
     public function display_login_block(Page $page): void
@@ -34,6 +36,6 @@ class CustomUserPageTheme extends UserPageTheme
         if ($config->get_bool("login_signup_enabled")) {
             $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
         }
-        $page->add_block(new Block("Login", $html, "head", 90));
+        $page->add_block(new Block("Login", rawHTML($html), "head", 90));
     }
 }
