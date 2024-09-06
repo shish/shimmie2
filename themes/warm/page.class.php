@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{DIV, LI, A, TD, SMALL, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, EM, HEADER, H1, NAV};
+
 class Page extends BasePage
 {
-    public function body_html(): string
+    public function body_html(): HTMLElement
     {
         global $config;
 
@@ -14,24 +18,24 @@ class Page extends BasePage
         $data_href = get_base_href();
         $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
 
-        $left_block_html = "";
-        $main_block_html = "";
-        $head_block_html = "";
-        $sub_block_html = "";
+        $left_block_html = [];
+        $main_block_html = [];
+        $head_block_html = [];
+        $sub_block_html = [];
 
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html .= $block->get_html(true);
+                    $left_block_html[] = $block->get_html(true);
                     break;
                 case "head":
-                    $head_block_html .= "<td style='width: 250px;'><small>".$block->get_html(false)."</small></td>";
+                    $head_block_html[] = TD(["style" => "width: 250px;"], SMALL($block->get_html(false)));
                     break;
                 case "main":
-                    $main_block_html .= $block->get_html(false);
+                    $main_block_html[] = $block->get_html(false);
                     break;
                 case "subheading":
-                    $sub_block_html .= $block->body;
+                    $sub_block_html[] = rawHTML($block->body);
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -42,29 +46,27 @@ class Page extends BasePage
         $flash_html = $this->flash_html();
         $footer_html = $this->footer_html();
 
-        return <<<EOD
-		<header>
-			<table id="header" class="bgtop" style="width: 100%; height: 113px;">
-				<tr>
-					<td style="text-align: center;">
-						<h1><a href="$data_href/$main_page">{$site_name}</a></h1>
-						<!-- <p>[Navigation links go here] -->
-					</td>
-					$head_block_html
-				</tr>
-			</table>
-			$sub_block_html
-		</header>
-		<nav>
-			$left_block_html
-		</nav>
-		<article>
-			$flash_html
-			$main_block_html
-		</article>
-		<footer>
-		    $footer_html
-		</footer>
-EOD;
+        return emptyHTML(
+            HEADER(
+                TABLE(
+                    ["id" => "header", "class" => "bgtop", "style" => "width: 100%; height: 113px;"],
+                    TR(
+                        TD(
+                            ["style" => "text-align: center;"],
+                            H1(A(["href" => "$data_href/$main_page"], $site_name))
+                            // Navigation links go here
+                        ),
+                        ...$head_block_html
+                    )
+                ),
+                ...$sub_block_html
+            ),
+            NAV(...$left_block_html),
+            ARTICLE(
+                $flash_html,
+                ...$main_block_html
+            ),
+            FOOTER($footer_html)
+        );
     }
 }

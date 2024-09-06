@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{emptyHTML, TITLE, LINK};
+use function MicroHTML\{emptyHTML, rawHTML, TITLE, LINK};
 
 class DowntimeTheme extends Themelet
 {
@@ -15,7 +15,7 @@ class DowntimeTheme extends Themelet
     {
         $page->add_block(new Block(
             "Downtime",
-            "<span style='font-size: 1.5rem; text-align: center;'><b>DOWNTIME MODE IS ON!</b></span>",
+            rawHTML("<span style='font-size: 1.5rem; text-align: center;'><b>DOWNTIME MODE IS ON!</b></span>"),
             "left",
             0
         ));
@@ -36,7 +36,7 @@ class DowntimeTheme extends Themelet
             TITLE("Downtime"),
             LINK(["rel" => "stylesheet", "href" => "$data_href/themes/$theme_name/style.css", "type" => "text/css"])
         );
-        $body = <<<EOD
+        $body = rawHTML(<<<EOD
 <div id="downtime">
 	<section>
 		<h1 style="text-align: center;">Down for Maintenance</h1>
@@ -63,7 +63,7 @@ class DowntimeTheme extends Themelet
 		</div>
 	</section>
 </div>
-EOD;
+EOD);
         $page->set_mode(PageMode::DATA);
         $page->set_code(503);
         $page->set_data((string)$page->html_html($head, $body));
