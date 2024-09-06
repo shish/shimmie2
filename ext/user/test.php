@@ -16,8 +16,9 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Joined:");
         $this->assert_no_text("Operations");
 
-        $this->get_page('user/MauMau');
-        $this->assert_title("No Such User");
+        $this->assertException(UserNotFound::class, function () {
+            $this->get_page('user/MauMau');
+        });
 
         $this->log_in_as_user();
         // should be on the user page

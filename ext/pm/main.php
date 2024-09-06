@@ -231,7 +231,7 @@ class PrivMsg extends Extension
             $pm_id = $event->get_iarg('pm_id');
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
-                $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
+                throw new ObjectNotFound("No such PM");
             } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
                 $from_user = User::by_id((int)$pm["from_id"]);
                 if ($pm["to_id"] == $user->id) {
@@ -251,7 +251,7 @@ class PrivMsg extends Extension
             $pm_id = int_escape($event->req_POST("pm_id"));
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
-                $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
+                throw new ObjectNotFound("No such PM");
             } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
                 $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
                 $cache->delete("pm-count-{$user->id}");

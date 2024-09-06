@@ -28,7 +28,7 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
          */
         public function setUp(): void
         {
-            global $database, $_tracer;
+            global $database, $_tracer, $page;
             $_tracer->begin($this->name());
             $_tracer->begin("setUp");
             $class = str_replace("Test", "", get_class($this));
@@ -46,6 +46,7 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
             foreach ($database->get_col("SELECT id FROM images") as $image_id) {
                 send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
             }
+            $page = new Page();
 
             $_tracer->end();  # setUp
             $_tracer->begin("test");
