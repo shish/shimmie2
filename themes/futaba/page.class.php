@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{DIV, LI, A, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, HR, HEADER, H1, NAV};
 
-class Page extends BasePage
+class FutabaPage extends Page
 {
     public function body_html(): HTMLElement
     {

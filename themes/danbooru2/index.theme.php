@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\rawHTML;
 
-class CustomIndexTheme extends IndexTheme
+class Danbooru2IndexTheme extends IndexTheme
 {
     /**
      * @param Image[] $images

@@ -17,7 +17,7 @@ use function MicroHTML\{emptyHTML, HEADER, FOOTER, DIV, SCRIPT, A, B, IMG, NAV, 
  * 	       some other sites, packaged in a light blue color.
  */
 
-class Page extends BasePage
+class LitePage extends Page
 {
     public function body_html(): HTMLElement
     {

@@ -21,6 +21,23 @@ function get_theme(): string
     return $theme;
 }
 
+function get_theme_class(string $class): ?object
+{
+    $theme = ucfirst(get_theme());
+    $options = [
+        "\\Shimmie2\\$theme$class",
+        "\\Shimmie2\\Custom$class",
+        "\\Shimmie2\\$class",
+    ];
+    foreach ($options as $option) {
+        if (class_exists($option)) {
+            return new $option();
+        }
+    }
+    return null;
+}
+
+
 function contact_link(?string $contact = null): ?string
 {
     global $config;
@@ -597,7 +614,6 @@ function _load_theme_files(): void
 {
     $theme = get_theme();
     require_once('themes/'.$theme.'/page.class.php');
-    require_once('themes/'.$theme.'/themelet.class.php');
     require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/theme.php"));
     require_all(zglob('themes/'.$theme.'/{'.Extension::get_enabled_extensions_as_string().'}.theme.php'));
 }

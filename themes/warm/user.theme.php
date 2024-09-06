@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\rawHTML;
 
-class CustomUserPageTheme extends UserPageTheme
+class WarmUserPageTheme extends UserPageTheme
 {
     /**
      * @param array<array{link: string, name: string}> $parts

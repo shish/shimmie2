@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\rawHTML;
 
-class Themelet extends BaseThemelet
+class FutabaCommonElementsTheme extends CommonElementsTheme
 {
     /**
      * Add a generic paginator.

@@ -22,9 +22,9 @@
   </testsuites>
   <source>
     <include>
-      <directory suffix=".php">../core</directory>
-      <directory suffix=".php">../ext</directory>
-      <directory suffix=".php">../themes/default</directory>
+      <directory suffix=".php">../core/</directory>
+      <directory suffix=".php">../ext/</directory>
+      <directory suffix=".php">../themes/</directory>
     </include>
   </source>
 </phpunit>
