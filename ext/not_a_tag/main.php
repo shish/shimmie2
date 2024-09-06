@@ -153,7 +153,7 @@ class NotATag extends Extension
             $t->inputs = $event->GET;
             $page->set_title("UnTags");
             $page->add_block(new NavBlock());
-            $page->add_block(new Block(body: emptyHTML($t->table($t->query()), $t->paginator())));
+            $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }
 }
