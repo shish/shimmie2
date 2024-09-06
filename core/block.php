@@ -62,21 +62,6 @@ class Block
         $str_id = preg_replace_ex('/[^\w-]/', '', str_replace(' ', '_', $id));
         $this->id = $str_id;
     }
-
-    /**
-     * Get the HTML for this block.
-     */
-    public function get_html(bool $hidable = false): HTMLElement
-    {
-        $block = SECTION(['id' => $this->id]);
-        if (!empty($this->header)) {
-            $block->appendChild(H3(["data-toggle-sel" => "#{$this->id}", "class" => $hidable ? "shm-toggler" : ""], $this->header));
-        }
-        if (!empty($this->body)) {
-            $block->appendChild(DIV(['class' => "blockbody"], rawHTML($this->body)));
-        }
-        return $block;
-    }
 }
 
 

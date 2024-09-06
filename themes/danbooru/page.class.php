@@ -66,7 +66,7 @@ class Page extends BasePage
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html[] = $block->get_html(true);
+                    $left_block_html[] = $this->block_html($block, true);
                     break;
                 case "user":
                     $user_block_html[] = rawHTML($block->body ?? "");
@@ -78,7 +78,7 @@ class Page extends BasePage
                     if ($block->header == "Posts") {
                         $block->header = "&nbsp;";
                     }
-                    $main_block_html[] = $block->get_html(false);
+                    $main_block_html[] = $this->block_html($block, false);
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
