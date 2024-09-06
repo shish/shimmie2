@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{DIV, H3, SECTION, rawHTML};
+
 /**
  * Class Block
  *
@@ -45,7 +49,7 @@ class Block
      */
     public bool $is_content = true;
 
-    public function __construct(?string $header = null, string|\MicroHTML\HTMLElement|null $body = null, string $section = "main", int $position = 50, ?string $id = null)
+    public function __construct(?string $header = null, string|HTMLElement|null $body = null, string $section = "main", int $position = 50, ?string $id = null)
     {
         $this->header = $header;
         $this->body = (string)$body;
@@ -62,21 +66,16 @@ class Block
     /**
      * Get the HTML for this block.
      */
-    public function get_html(bool $hidable = false): string
+    public function get_html(bool $hidable = false): HTMLElement
     {
-        $h = $this->header;
-        $b = $this->body;
-        $i = $this->id;
-        $html = "<section id='$i'>";
-        $h_toggler = $hidable ? " shm-toggler" : "";
-        if (!empty($h)) {
-            $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
+        $block = SECTION(['id' => $this->id]);
+        if (!empty($this->header)) {
+            $block->appendChild(H3(["data-toggle-sel" => "#{$this->id}", "class" => $hidable ? "shm-toggler" : ""], $this->header));
         }
-        if (!empty($b)) {
-            $html .= "<div class='blockbody'>$b</div>";
+        if (!empty($this->body)) {
+            $block->appendChild(DIV(['class' => "blockbody"], rawHTML($this->body)));
         }
-        $html .= "</section>\n";
-        return $html;
+        return $block;
     }
 }
 
