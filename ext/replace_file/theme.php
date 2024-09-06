@@ -58,7 +58,6 @@ class ReplaceFileTheme extends Themelet
         );
 
         $page->set_title("Replace File");
-        $page->set_heading("Replace File");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Upload Replacement File", $html, "main", 20));
     }

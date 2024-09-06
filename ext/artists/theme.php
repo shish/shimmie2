@@ -156,7 +156,6 @@ class ArtistsTheme extends Themelet
 		";
 
         $page->set_title("Artists");
-        $page->set_heading("Artists");
         $page->add_block(new Block("Artists", $html, "main", 10));
     }
 
@@ -236,7 +235,6 @@ class ArtistsTheme extends Themelet
         $html .= "</tbody></table>";
 
         $page->set_title("Artists");
-        $page->set_heading("Artists");
         $page->add_block(new Block("Artists", $html, "main", 10));
 
         $this->display_paginator($page, "artist/list", null, $pageNumber, $totalPages);
@@ -409,7 +407,6 @@ class ArtistsTheme extends Themelet
 		</table>";
 
         $page->set_title("Artist");
-        $page->set_heading("Artist");
         $page->add_block(new Block("Artist", $html, "main", 10));
 
         //we show the images for the artist

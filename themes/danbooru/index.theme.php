@@ -26,7 +26,6 @@ class CustomIndexTheme extends IndexTheme
 
         $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
         $page->set_title($page_title);
-        $page->set_heading($page_title);
         $page->add_block(new Block("Search", $nav, "left", 0));
         if (count($images) > 0) {
             if ($query) {

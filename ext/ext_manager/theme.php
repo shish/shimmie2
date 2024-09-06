@@ -122,7 +122,6 @@ class ExtManagerTheme extends Themelet
         }
 
         $page->set_title("Extensions");
-        $page->set_heading("Extensions");
         $page->add_block(new Block("Navigation", \MicroHTML\joinHTML(BR(), $cat_html), "left", 0));
         $page->add_block(new Block("Extension Manager", $form));
     }

@@ -38,7 +38,6 @@ class SetupTheme extends Themelet
 			";
 
         $page->set_title("Shimmie Setup");
-        $page->set_heading("Shimmie Setup");
         $page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
         $page->add_block(new Block("Setup", $table));
     }
@@ -79,7 +78,6 @@ class SetupTheme extends Themelet
 			";
 
         $page->set_title("Shimmie Setup");
-        $page->set_heading("Shimmie Setup");
         $page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
         $page->add_block(new Block("Setup", $table));
     }

@@ -25,8 +25,7 @@ class ForumTheme extends Themelet
             $html = $this->make_thread_list($threads, $showAdminOptions);
         }
 
-        $page->set_title(html_escape("Forum"));
-        $page->set_heading(html_escape("Forum"));
+        $page->set_title("Forum");
         $page->add_block(new Block("Forum", $html, "main", 10));
 
         $this->display_paginator($page, "forum/index", null, $pageNumber, $totalPages);
@@ -76,7 +75,6 @@ class ForumTheme extends Themelet
 
         $blockTitle = "Write a new thread";
         $page->set_title(html_escape($blockTitle));
-        $page->set_heading(html_escape($blockTitle));
         $page->add_block(new Block($blockTitle, $html, "main", 120));
     }
 
@@ -192,7 +190,6 @@ class ForumTheme extends Themelet
         $this->display_paginator($page, "forum/view/".$threadID, null, $pageNumber, $totalPages);
 
         $page->set_title(html_escape($threadTitle));
-        $page->set_heading(html_escape($threadTitle));
         $page->add_block(new Block($threadTitle, $html, "main", 20));
     }
 

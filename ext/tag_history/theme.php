@@ -40,7 +40,6 @@ class TagHistoryTheme extends Themelet
         $history_html = $this->history_list($history, false);
 
         $page->set_title("Global Tag History");
-        $page->set_heading("Global Tag History");
         $page->add_block(new Block("Tag History", $history_html, "main", 10));
 
         $h_prev = ($page_number <= 1) ? "Prev" :

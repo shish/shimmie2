@@ -89,7 +89,6 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "note/list", null, $pageNumber, $totalPages);
 
         $page->set_title("Notes");
-        $page->set_heading("Notes");
         $page->add_block(new Block("Notes", $pool_images, "main", 20));
     }
 
@@ -110,7 +109,6 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "requests/list", null, $pageNumber, $totalPages);
 
         $page->set_title("Note Requests");
-        $page->set_heading("Note Requests");
         $page->add_block(new Block("Note Requests", $pool_images, "main", 20));
     }
 
@@ -169,7 +167,6 @@ class NotesTheme extends Themelet
         $html = $this->get_history($histories);
 
         $page->set_title("Note Updates");
-        $page->set_heading("Note Updates");
         $page->add_block(new Block("Note Updates", $html, "main", 10));
 
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
@@ -185,7 +182,6 @@ class NotesTheme extends Themelet
         $html = $this->get_history($histories);
 
         $page->set_title("Note History");
-        $page->set_heading("Note History");
         $page->add_block(new Block("Note History", $html, "main", 10));
 
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
