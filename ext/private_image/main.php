@@ -152,10 +152,7 @@ class PrivateImage extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Private Posts";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_block(new Block("Private Posts", $this->theme->get_help_html()));
         }
     }
 
