@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML, rawHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, joinHTML, BR, H1, HEADER as HTML_HEADER, NAV, ARTICLE, FOOTER};
+use function MicroHTML\{emptyHTML, rawHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, joinHTML, BR, H1, HEADER as HTML_HEADER, NAV, ARTICLE, FOOTER, SECTION, H3, DIV};
 
 require_once "core/event.php";
 
@@ -611,13 +611,13 @@ class BasePage
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html[] = $block->get_html(true);
+                    $left_block_html[] = $this->block_html($block, true);
                     break;
                 case "main":
-                    $main_block_html[] = $block->get_html(false);
+                    $main_block_html[] = $this->block_html($block, false);
                     break;
                 case "subheading":
-                    $sub_block_html[] = $block->get_html(false);
+                    $sub_block_html[] = $this->block_html($block, false);
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -643,6 +643,18 @@ class BasePage
                 $footer_html
             )
         );
+    }
+
+    protected function block_html(Block $block, bool $hidable): HTMLElement
+    {
+        $html = SECTION(['id' => $block->id]);
+        if (!empty($block->header)) {
+            $html->appendChild(H3(["data-toggle-sel" => "#{$block->id}", "class" => $hidable ? "shm-toggler" : ""], $block->header));
+        }
+        if (!empty($block->body)) {
+            $html->appendChild(DIV(['class' => "blockbody"], rawHTML($block->body)));
+        }
+        return $html;
     }
 
     protected function flash_html(): HTMLElement
