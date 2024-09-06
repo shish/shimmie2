@@ -17,7 +17,7 @@ use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
 
-use function MicroHTML\{A, STYLE};
+use function MicroHTML\{A, STYLE, emptyHTML};
 
 class UserNameColumn extends TextColumn
 {
@@ -226,7 +226,9 @@ class UserPage extends Extension
                 // $t->columns[] = $col;
                 array_splice($t->columns, 2, 0, [$col]);
             }
-            $this->theme->display_crud("Users", $t->table($t->query()), $t->paginator());
+            $page->set_title("Users");
+            $page->add_block(new NavBlock());
+            $page->add_block(new Block(body: emptyHTML($t->table($t->query()), $t->paginator())));
         }
         if ($event->page_matches("user_admin/classes", method: "GET")) {
             $this->theme->display_user_classes(

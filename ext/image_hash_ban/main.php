@@ -119,7 +119,9 @@ class ImageBan extends Extension
             $t = new HashBanTable($database->raw_db());
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
-            $this->theme->display_crud("Post Bans", $t->table($t->query()), $t->paginator());
+            $page->set_title("Post Bans");
+            $page->add_block(new NavBlock());
+            $page->add_block(new Block(body: emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }
 
