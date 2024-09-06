@@ -17,7 +17,7 @@ use MicroHTML\HTMLElement;
 
 class Page extends BasePage
 {
-    public function body_html(): string
+    public function body_html(): HTMLElement
     {
         global $config;
 
