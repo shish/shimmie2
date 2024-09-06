@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\{emptyHTML, HEADER, FOOTER, DIV, SCRIPT, A, B, IMG, NAV, ARTICLE, rawHTML, SECTION};
+
 /**
  * Name: Lite Theme
  * Author: Zach Hall <zach@sosguy.net>
@@ -17,7 +19,7 @@ use MicroHTML\HTMLElement;
 
 class Page extends BasePage
 {
-    public function body_html(): string
+    public function body_html(): HTMLElement
     {
         global $config;
 
@@ -26,36 +28,43 @@ class Page extends BasePage
         $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = get_base_href();
 
-        $menu = "<div class='menu'>
-			<script type='text/javascript' src='{$data_href}/themes/{$theme_name}/wz_tooltip.js'></script>
-			<a href='".make_link()."' onmouseover='Tip(&#39;Home&#39;, BGCOLOR, &#39;#C3D2E0&#39;, FADEIN, 100)' onmouseout='UnTip()'><img alt='' src='{$data_href}/favicon.ico' style='position: relative; top: 3px;'></a>
-			<b>{$site_name}</b> ";
+        $menu = DIV(
+            ["class"=>"menu"],
+            SCRIPT(["type"=>"text/javascript", "src"=>"{$data_href}/themes/{$theme_name}/wz_tooltip.js"]),
+            A(
+                [
+                    "href"=>make_link(),
+                    "onmouseover"=>'Tip("Home", BGCOLOR, "#C3D2E0", FADEIN, 100)',
+                    "onmouseout"=>'UnTip()'
+                ],
+                IMG(["alt"=>"", "src"=>"{$data_href}/favicon.ico", "style"=>"position: relative; top: 3px;"])
+            ),
+            B($site_name)
+        );
 
         // Custom links: These appear on the menu.
-        $custom_links = "";
         foreach ($nav_links as $nav_link) {
-            $custom_links .= $this->navlinks($nav_link->link, $nav_link->description, $nav_link->active);
+            $menu->appendChild($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active));
         }
-        $menu .= "{$custom_links}</div>";
 
-        $left_block_html = "";
-        $main_block_html = "";
-        $sub_block_html  = "";
-        $user_block_html = "";
+        $left_block_html = [];
+        $main_block_html = [];
+        $sub_block_html  = [];
+        $user_block_html = [];
 
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html .= $this->block_to_html($block, true);
+                    $left_block_html[] = $this->block_to_html($block, true);
                     break;
                 case "main":
-                    $main_block_html .= $this->block_to_html($block, false);
+                    $main_block_html[] = $this->block_to_html($block, false);
                     break;
                 case "user":
-                    $user_block_html .= $block->body;
+                    $user_block_html[] = $block->body;
                     break;
                 case "subheading":
-                    $sub_block_html .= $this->block_to_html($block, false);
+                    $sub_block_html[] = $this->block_to_html($block, false);
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -63,69 +72,60 @@ class Page extends BasePage
             }
         }
 
-        $custom_sublinks = "";
+        $custom_sublinks = null;
         if (!empty($sub_links)) {
-            $custom_sublinks = "<div class='sbar'>";
+            $custom_sublinks = DIV(["class"=>"sbar"]);
             foreach ($sub_links as $nav_link) {
-                $custom_sublinks .= $this->navlinks($nav_link->link, $nav_link->description, $nav_link->active);
+                $custom_sublinks->appendChild($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active));
             }
-            $custom_sublinks .= "</div>";
         }
 
         $flash_html = $this->flash_html();
 
         if (!$this->left_enabled) {
-            $left_block_html = "";
-            $main_block_html = "<article id='body_noleft'>{$main_block_html}</article>";
+            $left_block_el = emptyHTML();
+            $main_block_el = ARTICLE(["id"=>"body_noleft"], ...$main_block_html);
         } else {
-            $left_block_html = "<nav>{$left_block_html}</nav>";
-            $main_block_html = "<article>$flash_html{$main_block_html}</article>";
+            $left_block_el = NAV(...$left_block_html);
+            $main_block_el = ARTICLE($flash_html, ...$main_block_html);
         }
 
         $footer_html = $this->footer_html();
 
-        return <<<EOD
-		<header>
-			$menu
-			$custom_sublinks
-			$sub_block_html
-		</header>
-		$left_block_html
-		$main_block_html
-		<footer>
-		    $footer_html
-		</footer>
-EOD;
+        return emptyHTML(
+            HEADER(
+                $menu,
+                $custom_sublinks,
+                ...$sub_block_html
+            ),
+            $left_block_el,
+            $main_block_el,
+            FOOTER($footer_html)
+        );
     } /* end of function display_page() */
 
-    public function block_to_html(Block $block, bool $hidable = false): string
+    public function block_to_html(Block $block, bool $hidable = false): HTMLElement
     {
         $h = $block->header;
-        $b = $block->body;
         $i = $block->id;
-        $html = $b;
-        if ($h != "Paginator") {
-            $html = "<section id='{$i}'>";
-            if (!is_null($h)) {
-                $html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#{$i}'>{$h}</div>";
-            }
-            if (!is_null($b)) {
-                $html .= "<div class='navside tab".($hidable ? " blockbody" : "")."'>$b</div>";
-            }
-            $html .= "</section>";
+        if($h == "Paginator") {
+            return rawHTML($block->body ?? "");
         }
-        return $html ?? "";
+        $html = SECTION(["id"=>$i]);
+        if (!is_null($block->header)) {
+            $html->appendChild(DIV(["class"=>"navtop navside tab shm-toggler", "data-toggle-sel"=>"#{$i}"], $block->header));
+        }
+        if (!is_null($block->body)) {
+            $html->appendChild(DIV(["class"=>"navside tab".($hidable ? " blockbody" : "")], rawHTML($block->body)));
+        }
+        return $html;
     }
 
-    public function navlinks(Link $link, HTMLElement|string $desc, bool $active): ?string
+    public function navlinks(Link $link, HTMLElement|string $desc, bool $active): HTMLElement
     {
-        $html = null;
-        if ($active) {
-            $html = "<a class='tab-selected' href='{$link->make_link()}'>{$desc}</a>";
-        } else {
-            $html = "<a class='tab' href='{$link->make_link()}'>{$desc}</a>";
-        }
-
-        return $html;
+        return A([
+            "class" => $active ? "tab-selected" : "tab",
+            "href" => $link->make_link(),
+        ], $desc);
     }
 }
