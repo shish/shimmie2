@@ -78,7 +78,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->get_page("post/list/pool=$pool_id/1");
         $this->assert_text("Pool");
 
-        $this->get_page("post/list/pool_by_name=demo_pool/1");
+        $this->get_page("post/list/pool_by_name=foo/1");
         $this->assert_text("Pool");
     }
 

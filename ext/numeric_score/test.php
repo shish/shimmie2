@@ -46,8 +46,9 @@ class NumericScoreTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
 
         # and downvote
-        $page = $this->get_page("post/list/downvoted_by=test/1");
-        $this->assertEquals(404, $page->code);
+        $this->assertException(PostNotFound::class, function () {
+            $this->get_page("post/list/downvoted_by=test/1");
+        });
 
         # test errors
         $this->assertException(UserNotFound::class, function () {
@@ -56,10 +57,11 @@ class NumericScoreTest extends ShimmiePHPUnitTestCase
         $this->assertException(UserNotFound::class, function () {
             $this->get_page("post/list/downvoted_by=asdfasdf/1");
         });
-
-        $page = $this->get_page("post/list/upvoted_by_id=0/1");
-        $this->assertEquals(404, $page->code);
-        $page = $this->get_page("post/list/downvoted_by_id=0/1");
-        $this->assertEquals(404, $page->code);
+        $this->assertException(PostNotFound::class, function () {
+            $this->get_page("post/list/upvoted_by_id=0/1");
+        });
+        $this->assertException(PostNotFound::class, function () {
+            $this->get_page("post/list/downvoted_by_id=0/1");
+        });
     }
 }
