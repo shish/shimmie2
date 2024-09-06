@@ -52,7 +52,7 @@ $database = new Database(DATABASE_DSN);
 $config = new DatabaseConfig($database);
 _load_extension_files();
 _load_theme_files();
-$page = new Page();
+$page = get_theme_class("Page");
 _load_event_listeners();
 $_tracer->end();
 

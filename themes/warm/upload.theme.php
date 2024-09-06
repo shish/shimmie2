@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\rawHTML;
 
-class CustomUploadTheme extends UploadTheme
+class WarmUploadTheme extends UploadTheme
 {
     public function display_block(Page $page): void
     {

@@ -51,7 +51,7 @@ Tips
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-class Page extends BasePage
+class Danbooru2Page extends Page
 {
     public function body_html(): HTMLElement
     {

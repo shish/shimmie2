@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{A, TABLE, TR, TD, SMALL, rawHTML, emptyHTML, ARTICLE, FOOTER, HEADER, H1, NAV};
 
-class Page extends BasePage
+class WarmPage extends Page
 {
     public function body_html(): HTMLElement
     {

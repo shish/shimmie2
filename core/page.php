@@ -36,14 +36,12 @@ class Cookie
 }
 
 /**
- * Class Page
- *
  * A data structure for holding all the bits of data that make up a page.
  *
  * The various extensions all add whatever they want to this structure,
  * then Layout turns it into HTML.
  */
-class BasePage
+class Page
 {
     public PageMode $mode = PageMode::PAGE;
     private string $mime;

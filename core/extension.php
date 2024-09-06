@@ -28,31 +28,9 @@ abstract class Extension
     public function __construct(?string $class = null)
     {
         $class = $class ?? get_called_class();
-        $this->theme = $this->get_theme_object($class);
+        $this->theme = Themelet::get_for_extension_class($class);
         $this->info = ExtensionInfo::get_for_extension_class($class);
         $this->key = $this->info->key;
-    }
-
-    /**
-     * Find the theme object for a given extension.
-     */
-    private function get_theme_object(string $base): Themelet
-    {
-        $base = str_replace("Shimmie2\\", "", $base);
-        $custom = "Shimmie2\Custom{$base}Theme";
-        $normal = "Shimmie2\\{$base}Theme";
-
-        if (class_exists($custom)) {
-            $c = new $custom();
-            assert(is_a($c, Themelet::class));
-            return $c;
-        } elseif (class_exists($normal)) {
-            $n = new $normal();
-            assert(is_a($n, Themelet::class));
-            return $n;
-        } else {
-            return new Themelet();
-        }
     }
 
     /**

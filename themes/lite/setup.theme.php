@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CustomSetupTheme extends SetupTheme
+class LiteSetupTheme extends SetupTheme
 {
     protected function sb_to_html(SetupBlock $block): string
     {
