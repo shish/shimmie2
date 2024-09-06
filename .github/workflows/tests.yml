@@ -175,9 +175,7 @@ jobs:
         push: true
         platforms: |
           linux/amd64
-          linux/arm64
         build-args: |
-          RUN_TESTS=false
           BUILD_TIME=${{ env.BUILD_TIME }}
           BUILD_HASH=${{ env.BUILD_HASH }}
         no-cache: ${{ github.event_name == 'schedule' }}
