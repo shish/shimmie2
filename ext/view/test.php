@@ -90,10 +90,10 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $image_id_1 = $this->post_image("tests/favicon.png", "test");
         $idp1 = $image_id_1 + 1;
 
-        $this->assertException(ImageNotFound::class, function () use ($idp1) {
+        $this->assertException(PostNotFound::class, function () use ($idp1) {
             $this->get_page("post/view/$idp1");
         });
-        $this->assertException(ImageNotFound::class, function () {
+        $this->assertException(PostNotFound::class, function () {
             $this->get_page('post/view/-1');
         });
     }
