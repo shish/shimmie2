@@ -26,13 +26,13 @@ class Page extends BasePage
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html[] = $block->get_html(true);
+                    $left_block_html[] = $this->block_html($block, true);
                     break;
                 case "head":
-                    $head_block_html[] = TD(["style" => "width: 250px;"], SMALL($block->get_html(false)));
+                    $head_block_html[] = TD(["style" => "width: 250px;"], SMALL($this->block_html($block, false)));
                     break;
                 case "main":
-                    $main_block_html[] = $block->get_html(false);
+                    $main_block_html[] = $this->block_html($block, false);
                     break;
                 case "subheading":
                     $sub_block_html[] = rawHTML($block->body ?? "");
