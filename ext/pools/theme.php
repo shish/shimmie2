@@ -110,7 +110,6 @@ class PoolsTheme extends Themelet
         global $page, $user;
 
         $page->set_title($heading);
-        $page->set_heading($heading);
 
         $poolnav = emptyHTML(
             SHM_A("pool/list", "Pool Index"),

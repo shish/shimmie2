@@ -16,7 +16,6 @@ class BulkAddTheme extends Themelet
     public function display_upload_results(Page $page, array $results): void
     {
         $page->set_title("Adding folder");
-        $page->set_heading("Adding folder");
         $page->add_block(new NavBlock());
         $html = UL();
         foreach ($results as $r) {

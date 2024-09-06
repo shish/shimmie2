@@ -19,7 +19,6 @@ class ETTheme extends Themelet
         global $page;
 
         $page->set_title("System Info");
-        $page->set_heading("System Info");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Information:", $this->build_data_form($yaml)));
     }

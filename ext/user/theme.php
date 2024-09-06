@@ -28,7 +28,6 @@ class UserPageTheme extends Themelet
     public function display_login_page(Page $page): void
     {
         $page->set_title("Login");
-        $page->set_heading("Login");
         $page->add_block(new NavBlock());
         $page->add_block(new Block(
             "Login There",
@@ -110,7 +109,6 @@ class UserPageTheme extends Themelet
         );
 
         $page->set_title("Create Account");
-        $page->set_heading("Create Account");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Signup", $html));
     }
@@ -155,7 +153,6 @@ class UserPageTheme extends Themelet
     public function display_signups_disabled(Page $page): void
     {
         $page->set_title("Signups Disabled");
-        $page->set_heading("Signups Disabled");
         $page->add_block(new NavBlock());
         $page->add_block(new Block(
             "Signups Disabled",
@@ -250,7 +247,6 @@ class UserPageTheme extends Themelet
         $stats[] = 'User ID: '.$duser->id;
 
         $page->set_title(html_escape($duser->name)."'s Page");
-        $page->set_heading(html_escape($duser->name)."'s Page");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
     }
@@ -412,7 +408,6 @@ class UserPageTheme extends Themelet
         }
 
         $page->set_title("User Classes");
-        $page->set_heading("User Classes");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Classes", $table, "main", 10));
     }

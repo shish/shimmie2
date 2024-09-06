@@ -82,7 +82,6 @@ class UploadTheme extends Themelet
         );
 
         $page->set_title("Upload");
-        $page->set_heading("Upload");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Upload", $html, "main", 20));
         if ($tl_enabled) {
@@ -225,14 +224,12 @@ class UploadTheme extends Themelet
 
         if (count($errors) > 0) {
             $page->set_title("Upload Status");
-            $page->set_heading("Upload Status");
             $page->add_block(new NavBlock());
             foreach ($errors as $error) {
                 $page->add_block(new Block($error->name, format_text($error->error)));
             }
         } elseif (count($successes) == 0) {
             $page->set_title("No images uploaded");
-            $page->set_heading("No images uploaded");
             $page->add_block(new NavBlock());
             $page->add_block(new Block("No images uploaded", "Upload attempted, but nothing succeeded and nothing failed?"));
         } elseif (count($successes) == 1) {
