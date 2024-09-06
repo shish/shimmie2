@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML, rawHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, joinHTML, BR};
+use function MicroHTML\{emptyHTML, rawHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, joinHTML, BR, H1, HEADER as HTML_HEADER, NAV, ARTICLE, FOOTER};
 
 require_once "core/event.php";
 
@@ -586,7 +586,7 @@ class BasePage
             HTML(
                 ["lang" => "en"],
                 HEAD($head),
-                BODY($body_attrs, rawHTML((string)$body))
+                BODY($body_attrs, $body)
             )
         );
     }
@@ -599,22 +599,22 @@ class BasePage
         );
     }
 
-    protected function body_html(): string
+    protected function body_html(): HTMLElement
     {
-        $left_block_html = "";
-        $main_block_html = "";
-        $sub_block_html  = "";
+        $left_block_html = [];
+        $main_block_html = [];
+        $sub_block_html = [];
 
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html .= $block->get_html(true);
+                    $left_block_html[] = $block->get_html(true);
                     break;
                 case "main":
-                    $main_block_html .= $block->get_html(false);
+                    $main_block_html[] = $block->get_html(false);
                     break;
                 case "subheading":
-                    $sub_block_html .= $block->get_html(false);
+                    $sub_block_html[] = $block->get_html(false);
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -624,22 +624,22 @@ class BasePage
 
         $footer_html = $this->footer_html();
         $flash_html = $this->flash_html();
-        return "
-            <header>
-                <h1>{$this->heading}</h1>
-                $sub_block_html
-            </header>
-            <nav>
-                $left_block_html
-            </nav>
-            <article>
-                $flash_html
-                $main_block_html
-            </article>
-            <footer>
+        return emptyHTML(
+            HTML_HEADER(
+                H1($this->heading),
+                ...$sub_block_html
+            ),
+            NAV(
+                ...$left_block_html
+            ),
+            ARTICLE(
+                $flash_html,
+                ...$main_block_html
+            ),
+            FOOTER(
                 $footer_html
-            </footer>
-        ";
+            )
+        );
     }
 
     protected function flash_html(): HTMLElement
