@@ -198,7 +198,7 @@ class NotesTheme extends Themelet
 
         $page->set_title("Note History #$imageID");
         $page->set_heading("Note History #$imageID");
-        $page->add_block(new Block("Note History #$imageID", $html, "main", 10));
+        $page->add_block(new Block("Note History #$imageID", rawHTML($html), "main", 10));
 
         $this->display_paginator($page, "note_history/$imageID", null, $pageNumber, $totalPages);
     }
