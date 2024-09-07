@@ -134,6 +134,9 @@ class Search
         }
 
         $params = SearchParameters::from_terms($tags);
+        if($params->limit !== null) {
+            $limit = $limit ? min($params->limit, $limit) : $params->limit;
+        }
         $querylet = self::build_search_querylet($params, $limit, $start);
         return $database->get_all_iterable($querylet->sql, $querylet->variables);
     }
@@ -453,7 +456,9 @@ class Search
 
         if (!is_null($limit)) {
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
-            $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
+            if(!is_null($offset)) {
+                $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
+            }
         }
 
         return $query;
