@@ -61,4 +61,26 @@ class IndexTest extends ShimmiePHPUnitTestCase
         }
         $this->assertTrue(true);
     }
+
+    public function test_operands(): void
+    {
+        $e = new SearchTermParseEvent(0, null, []);
+        $this->assertFalse($e->negative);
+
+        $e = new SearchTermParseEvent(1, "foo", ["foo"]);
+        $this->assertEquals("foo", $e->term);
+        $this->assertFalse($e->negative);
+
+        $e = new SearchTermParseEvent(1, "-foo", ["-foo"]);
+        $this->assertEquals("foo", $e->term);
+        $this->assertTrue($e->negative);
+
+        $this->assertException(SearchTermParseException::class, function () {
+            new SearchTermParseEvent(1, "", []);
+        });
+
+        $this->assertException(SearchTermParseException::class, function () {
+            new SearchTermParseEvent(1, "*", []);
+        });
+    }
 }
