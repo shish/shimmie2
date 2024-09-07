@@ -57,7 +57,7 @@ class DanbooruIndexTheme extends IndexTheme
 				<input type='hidden' name='q' value='post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
-			<div id='search_completions'></div>");
+		");
     }
 
     protected function build_table(array $images, ?string $query): HTMLElement

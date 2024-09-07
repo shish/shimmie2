@@ -42,7 +42,7 @@ class Danbooru2IndexTheme extends IndexTheme
 				<input type='submit' value='Go' style='width:20%'>
 				<input type='hidden' name='q' value='post/list'>
 			</form>
-			<div id='search_completions'></div>");
+		");
     }
 
     /**
