@@ -16,7 +16,7 @@ class RatingsInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::METADATA;
     public string $description = "Allow users to rate images \"safe\", \"questionable\" or \"explicit\"";
     public ?string $documentation =
-"This shimmie extension provides filter:
+        "This shimmie extension provides filter:
 <ul>
   <li>rating = (safe|questionable|explicit|unknown)
     <ul>

@@ -42,6 +42,7 @@ FOOTER {
 A, A:visited {text-decoration: none; color: #0000EE;}
 A:hover {text-decoration: underline; color: #DD0000;}
 HR {border: none; border-top: 1px solid #D9BFB7; height: 0; clear: both;}
+CODE {background: #DEDEDE; font-size: 0.9rem;}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *             the navigation bar, and all its blocks             *

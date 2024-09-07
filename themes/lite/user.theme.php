@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CustomUserPageTheme extends UserPageTheme
+use function MicroHTML\rawHTML;
+
+class LiteUserPageTheme extends UserPageTheme
 {
     public function display_login_page(Page $page): void
     {
         global $config;
         $page->set_title("Login");
-        $page->set_heading("Login");
         $page->disable_left();
         $html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>
@@ -30,7 +31,7 @@ class CustomUserPageTheme extends UserPageTheme
         if ($config->get_bool("login_signup_enabled")) {
             $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
         }
-        $page->add_block(new Block("Login", $html, "main", 90));
+        $page->add_block(new Block("Login", rawHTML($html), "main", 90));
     }
 
     /**
@@ -58,7 +59,7 @@ class CustomUserPageTheme extends UserPageTheme
             }
             $html .= "<a href='{$part["link"]}' class='tab'>{$part["name"]}</a>";
         }
-        $b = new Block("User Links", $html, "user", 90);
+        $b = new Block("User Links", rawHTML($html), "user", 90);
         $b->is_content = false;
         $page->add_block($b);
     }
@@ -88,7 +89,7 @@ class CustomUserPageTheme extends UserPageTheme
         $html .= "</td></tr>";
         $html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
 
-        $page->add_block(new Block("IPs", $html));
+        $page->add_block(new Block("IPs", rawHTML($html)));
     }
 
     /**

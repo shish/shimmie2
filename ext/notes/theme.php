@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\INPUT;
+use function MicroHTML\{INPUT,SCRIPT,rawHTML};
 
 /**
  * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
@@ -61,12 +61,15 @@ class NotesTheme extends Themelet
                 'note_id' => $note["id"],
             ];
         }
-        $page->add_html_header("<script type='text/javascript'>
-        window.notes = ".\Safe\json_encode($to_json).";
-        window.notes_image_id = $image_id;
-        window.notes_admin = ".($adminOptions ? "true" : "false").";
-        window.notes_edit = ".($editOptions ? "true" : "false").";
-        </script>");
+        $page->add_html_header(SCRIPT(
+            ["type" => "text/javascript"],
+            "
+            window.notes = ".\Safe\json_encode($to_json).";
+            window.notes_image_id = $image_id;
+            window.notes_admin = ".($adminOptions ? "true" : "false").";
+            window.notes_edit = ".($editOptions ? "true" : "false").";
+            "
+        ));
     }
 
     /**
@@ -86,8 +89,7 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "note/list", null, $pageNumber, $totalPages);
 
         $page->set_title("Notes");
-        $page->set_heading("Notes");
-        $page->add_block(new Block("Notes", $pool_images, "main", 20));
+        $page->add_block(new Block("Notes", rawHTML($pool_images), "main", 20));
     }
 
     /**
@@ -107,8 +109,7 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "requests/list", null, $pageNumber, $totalPages);
 
         $page->set_title("Note Requests");
-        $page->set_heading("Note Requests");
-        $page->add_block(new Block("Note Requests", $pool_images, "main", 20));
+        $page->add_block(new Block("Note Requests", rawHTML($pool_images), "main", 20));
     }
 
     /**
@@ -166,8 +167,7 @@ class NotesTheme extends Themelet
         $html = $this->get_history($histories);
 
         $page->set_title("Note Updates");
-        $page->set_heading("Note Updates");
-        $page->add_block(new Block("Note Updates", $html, "main", 10));
+        $page->add_block(new Block("Note Updates", rawHTML($html), "main", 10));
 
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
@@ -182,8 +182,7 @@ class NotesTheme extends Themelet
         $html = $this->get_history($histories);
 
         $page->set_title("Note History");
-        $page->set_heading("Note History");
-        $page->add_block(new Block("Note History", $html, "main", 10));
+        $page->add_block(new Block("Note History", rawHTML($html), "main", 10));
 
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
@@ -192,20 +191,20 @@ class NotesTheme extends Themelet
     {
         return '<p>Search for posts with notes.</p>
         <div class="command_example">
-        <pre>note=noted</pre>
+        <code>note=noted</code>
         <p>Returns posts with a note matching "noted".</p>
         </div>
         <div class="command_example">
-        <pre>notes>0</pre>
+        <code>notes>0</code>
         <p>Returns posts with 1 or more notes.</p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <div class="command_example">
-        <pre>notes_by=username</pre>
+        <code>notes_by=username</code>
         <p>Returns posts with note(s) by "username".</p>
         </div>
         <div class="command_example">
-        <pre>notes_by_user_id=123</pre>
+        <code>notes_by_user_id=123</code>
         <p>Returns posts with note(s) by user 123.</p>
         </div>
         ';

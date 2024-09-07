@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Page extends BasePage
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{DIV, LI, A, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, HR, HEADER, H1, NAV};
+
+class FutabaPage extends Page
 {
-    public function body_html(): string
+    public function body_html(): HTMLElement
     {
-        $left_block_html = "";
-        $main_block_html = "";
-        $sub_block_html = "";
+        $left_block_html = [];
+        $main_block_html = [];
+        $sub_block_html = [];
 
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html .= $block->get_html(true);
+                    $left_block_html[] = $this->block_html($block, true);
                     break;
                 case "main":
-                    $main_block_html .= $block->get_html(false);
+                    $main_block_html[] = $this->block_html($block, false);
                     break;
                 case "subheading":
-                    $sub_block_html .= $block->body;
+                    $sub_block_html[] = $block->body;
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -30,35 +34,35 @@ class Page extends BasePage
         }
 
         if (empty($this->subheading)) {
-            $subheading = "";
+            $subheading = null;
         } else {
-            $subheading = "<div id='subtitle'>{$this->subheading}</div>";
+            $subheading = DIV(["id" => "subtitle"], $this->subheading);
         }
 
         if ($this->left_enabled) {
-            $left = "<nav>$left_block_html</nav>";
+            $left = NAV(...$left_block_html);
         } else {
-            $left = "";
+            $left = null;
         }
 
-        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
+        $flash_html = $this->flash_html();
         $footer_html = $this->footer_html();
 
-        return <<<EOD
-		<header>
-			<h1>{$this->heading}</h1>
-			$subheading
-			$sub_block_html
-		</header>
-		$left
-		<article>
-			$flash_html
-			$main_block_html
-		</article>
-		<footer>
-			<hr>
-			$footer_html
-		</footer>
-EOD;
+        return emptyHTML(
+            HEADER(
+                H1($this->heading),
+                $subheading,
+                ...$sub_block_html
+            ),
+            $left,
+            ARTICLE(
+                $flash_html,
+                ...$main_block_html
+            ),
+            FOOTER(
+                HR(),
+                $footer_html
+            )
+        );
     }
 }

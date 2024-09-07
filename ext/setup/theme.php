@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\rawHTML;
+
 class SetupTheme extends Themelet
 {
     /*
@@ -38,9 +42,8 @@ class SetupTheme extends Themelet
 			";
 
         $page->set_title("Shimmie Setup");
-        $page->set_heading("Shimmie Setup");
         $page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
-        $page->add_block(new Block("Setup", $table));
+        $page->add_block(new Block("Setup", rawHTML($table)));
     }
 
     /**
@@ -79,30 +82,26 @@ class SetupTheme extends Themelet
 			";
 
         $page->set_title("Shimmie Setup");
-        $page->set_heading("Shimmie Setup");
         $page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
-        $page->add_block(new Block("Setup", $table));
+        $page->add_block(new Block("Setup", rawHTML($table)));
     }
 
-    protected function build_navigation(): string
+    protected function build_navigation(): HTMLElement
     {
-        return "
+        return rawHTML("
 			<a href='".make_link()."'>Index</a>
 			<br><a href='https://github.com/shish/shimmie2/wiki/Settings'>Help</a>
 			<br><a href='".make_link("setup/advanced")."'>Advanced</a>
-		";
+		");
     }
 
     protected function sb_to_html(SetupBlock $block): string
     {
-        $h = $block->header;
-        $b = $block->body;
-        $html = "
+        return "
 			<section class='setupblock'>
-				<b>$h</b>
-				<br>$b
+				<b>{$block->header}</b>
+				<br>{$block->str_body}
 			</section>
 		";
-        return $html;
     }
 }

@@ -28,8 +28,8 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         global $config;
         $config->set_int("upload_min_height", 900);
         $config->set_int("upload_min_width", 900);
-        $config->set_int("upload_max_height", -1);
-        $config->set_int("upload_max_width", -1);
+        $config->delete("upload_max_height");
+        $config->delete("upload_max_width");
         $config->set_string("upload_ratios", "4:3 16:9");
 
         $this->log_in_as_user();
@@ -57,10 +57,10 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
     public function testResLimitRatio(): void
     {
         global $config;
-        $config->set_int("upload_min_height", -1);
-        $config->set_int("upload_min_width", -1);
-        $config->set_int("upload_max_height", -1);
-        $config->set_int("upload_max_width", -1);
+        $config->delete("upload_min_height");
+        $config->delete("upload_min_width");
+        $config->delete("upload_max_height");
+        $config->delete("upload_max_width");
         $config->set_string("upload_ratios", "16:9");
 
         $e = $this->assertException(UploadException::class, function () {
@@ -74,11 +74,11 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
     public function tearDown(): void
     {
         global $config;
-        $config->set_int("upload_min_height", -1);
-        $config->set_int("upload_min_width", -1);
-        $config->set_int("upload_max_height", -1);
-        $config->set_int("upload_max_width", -1);
-        $config->set_string("upload_ratios", "");
+        $config->delete("upload_min_height");
+        $config->delete("upload_min_width");
+        $config->delete("upload_max_height");
+        $config->delete("upload_max_width");
+        $config->delete("upload_ratios");
 
         parent::tearDown();
     }

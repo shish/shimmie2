@@ -8,6 +8,8 @@ use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
+use function MicroHTML\{emptyHTML};
+
 class NotATagTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
@@ -149,7 +151,9 @@ class NotATag extends Extension
             $t = new NotATagTable($database->raw_db());
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
-            $this->theme->display_crud("UnTags", $t->table($t->query()), $t->paginator());
+            $page->set_title("UnTags");
+            $page->add_block(new NavBlock());
+            $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }
 }

@@ -32,7 +32,7 @@ class UrlsTest extends TestCase
         };
 
         global $config;
-        foreach([true, false] as $nice_urls) {
+        foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             $this->assertEquals(
@@ -54,7 +54,7 @@ class UrlsTest extends TestCase
     public function test_make_link(): void
     {
         global $config;
-        foreach([true, false] as $nice_urls) {
+        foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             // basic
@@ -93,7 +93,7 @@ class UrlsTest extends TestCase
     public function test_search_link(): void
     {
         global $config;
-        foreach([true, false] as $nice_urls) {
+        foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
             $this->assertEquals(
@@ -125,6 +125,20 @@ class UrlsTest extends TestCase
         $this->assertEquals(
             "tasty/cake",
             _get_query("/test/index.php?q=tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
+        );
+
+        // even when we are /test/... publicly, and generating /test/... URLs,
+        // we should still be able to handle URLs at the root because that's
+        // what apache sends us when it is reverse-proxying a subdirectory
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
+        );
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/index.php?q=tasty/cake"),
             'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
         );
 

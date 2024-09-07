@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class ReverseSearchLinksTheme extends Themelet
 {
     public function reverse_search_block(Page $page, Image $image): void
@@ -22,13 +24,13 @@ class ReverseSearchLinksTheme extends Themelet
         $enabled_services = $config->get_array(ReverseSearchLinksConfig::ENABLED_SERVICES);
 
         $html = "";
-        foreach($links as $name => $link) {
+        foreach ($links as $name => $link) {
             if (in_array($name, $enabled_services)) {
                 $icon_link = make_link("/ext/reverse_search_links/icons/" . strtolower($name) . ".ico");
                 $html .= "<a href='$link' class='reverse_image_link' rel='nofollow'><img title='Search with $name' src='$icon_link' alt='$name icon'></a>";
             }
         }
 
-        $page->add_block(new Block("Reverse Image Search", $html, "main", 20));
+        $page->add_block(new Block("Reverse Image Search", rawHTML($html), "main", 20));
     }
 }

@@ -57,7 +57,7 @@ class ObjectNotFound extends UserError
     public int $http_code = 404;
 }
 
-class ImageNotFound extends ObjectNotFound
+class PostNotFound extends ObjectNotFound
 {
 }
 

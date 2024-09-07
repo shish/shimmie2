@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class LinkImageTheme extends Themelet
 {
     /**
@@ -18,7 +20,7 @@ class LinkImageTheme extends Themelet
 
         $page->add_block(new Block(
             "Link to Post",
-            "
+            rawHTML("
 			<table><tr>
 
 			<td><fieldset>
@@ -55,13 +57,13 @@ class LinkImageTheme extends Themelet
 			</fieldset></td>
 
 			</tr></table>
-			",
+			"),
             "main",
             50
         ));
     }
 
-    protected function url(string $url, string $content, string $type): string
+    protected function url(string $url, ?string $content, string $type): string
     {
         if (empty($content)) {
             $content = $url;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class Notes extends Extension
 {
     /** @var NotesTheme */
@@ -11,7 +13,11 @@ class Notes extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
+        global $config;
         Image::$prop_types["notes"] = ImagePropType::INT;
+        $config->set_default_int("notesNotesPerPage", 20);
+        $config->set_default_int("notesRequestsPerPage", 20);
+        $config->set_default_int("notesHistoriesPerPage", 20);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -66,10 +72,6 @@ class Notes extends Extension
 					FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
 					");
             $database->execute("CREATE INDEX note_histories_image_id_idx ON note_histories(image_id)", []);
-
-            $config->set_int("notesNotesPerPage", 20);
-            $config->set_int("notesRequestsPerPage", 20);
-            $config->set_int("notesHistoriesPerPage", 20);
 
             $this->set_version("ext_notes_version", 1);
         }
@@ -198,10 +200,7 @@ class Notes extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Notes";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_section("Notes", $this->theme->get_help_html());
         }
     }
 

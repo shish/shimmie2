@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class NumericScoreTheme extends Themelet
 {
     public function get_voter(Image $image): void
@@ -47,7 +49,7 @@ class NumericScoreTheme extends Themelet
 			</div>
 			";
         }
-        $page->add_block(new Block("Post Score", $html, "left", 20));
+        $page->add_block(new Block("Post Score", rawHTML($html), "left", 20));
     }
 
     public function get_nuller(User $duser): void
@@ -58,7 +60,7 @@ class NumericScoreTheme extends Themelet
 			<input type='submit' value='Delete all votes by this user'>
 			</form>
 		";
-        $page->add_block(new Block("Votes", $html, "main", 80));
+        $page->add_block(new Block("Votes", rawHTML($html), "main", 80));
     }
 
     /**
@@ -85,9 +87,9 @@ class NumericScoreTheme extends Themelet
 
         $nav_html = "<a href=".make_link().">Index</a>";
 
-        $page->set_heading($config->get_string(SetupConfig::TITLE));
-        $page->add_block(new Block("Navigation", $nav_html, "left", 10));
-        $page->add_block(new Block(null, $html, "main", 30));
+        $page->set_title($config->get_string(SetupConfig::TITLE));
+        $page->add_block(new Block("Navigation", rawHTML($nav_html), "left", 10));
+        $page->add_block(new Block(null, rawHTML($html), "main", 30));
     }
 
 
@@ -95,38 +97,38 @@ class NumericScoreTheme extends Themelet
     {
         return '<p>Search for posts that have received numeric scores by the score or by the scorer.</p>
         <div class="command_example">
-        <pre>score=1</pre>
+        <code>score=1</code>
         <p>Returns posts with a score of 1.</p>
         </div>
         <div class="command_example">
-        <pre>score>0</pre>
+        <code>score>0</code>
         <p>Returns posts with a score of 1 or more.</p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
 
         <div class="command_example">
-        <pre>upvoted_by=username</pre>
+        <code>upvoted_by=username</code>
         <p>Returns posts upvoted by "username".</p>
         </div>
         <div class="command_example">
-        <pre>upvoted_by_id=123</pre>
+        <code>upvoted_by_id=123</code>
         <p>Returns posts upvoted by user 123.</p>
         </div>
         <div class="command_example">
-        <pre>downvoted_by=username</pre>
+        <code>downvoted_by=username</code>
         <p>Returns posts downvoted by "username".</p>
         </div>
         <div class="command_example">
-        <pre>downvoted_by_id=123</pre>
+        <code>downvoted_by_id=123</code>
         <p>Returns posts downvoted by user 123.</p>
         </div>
 
         <div class="command_example">
-        <pre>order:score_desc</pre>
+        <code>order:score_desc</code>
         <p>Sorts the search results by score, descending.</p>
         </div>
         <div class="command_example">
-        <pre>order:score_asc</pre>
+        <code>order:score_asc</code>
         <p>Sorts the search results by score, ascending.</p>
         </div>
         ';

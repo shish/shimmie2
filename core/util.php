@@ -21,6 +21,23 @@ function get_theme(): string
     return $theme;
 }
 
+function get_theme_class(string $class): ?object
+{
+    $theme = ucfirst(get_theme());
+    $options = [
+        "\\Shimmie2\\$theme$class",
+        "\\Shimmie2\\Custom$class",
+        "\\Shimmie2\\$class",
+    ];
+    foreach ($options as $option) {
+        if (class_exists($option)) {
+            return new $option();
+        }
+    }
+    return null;
+}
+
+
 function contact_link(?string $contact = null): ?string
 {
     global $config;
@@ -41,7 +58,7 @@ function contact_link(?string $contact = null): ?string
         return "mailto:$text";
     }
 
-    if (str_contains($text, "/")) {
+    if (str_contains($text, "/") && mb_substr($text, 0, 1) != "/") {
         return "https://$text";
     }
 
@@ -151,19 +168,32 @@ function check_im_version(): int
 function is_trusted_proxy(): bool
 {
     $ra = $_SERVER['REMOTE_ADDR'] ?? "0.0.0.0";
-    if(!defined("TRUSTED_PROXIES")) {
+    if (!defined("TRUSTED_PROXIES")) {
         return false;
     }
     // @phpstan-ignore-next-line - TRUSTED_PROXIES is defined in config
-    foreach(TRUSTED_PROXIES as $proxy) {
-        if($ra === $proxy) { // check for "unix:" before checking IPs
+    foreach (TRUSTED_PROXIES as $proxy) {
+        // @phpstan-ignore-next-line - TRUSTED_PROXIES is defined in config
+        if ($ra === $proxy) { // check for "unix:" before checking IPs
             return true;
         }
-        if(ip_in_range($ra, $proxy)) {
+        if (ip_in_range($ra, $proxy)) {
             return true;
         }
     }
     return false;
+}
+
+function is_bot(): bool
+{
+    $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
+    return (
+        str_contains($ua, "Googlebot")
+        || str_contains($ua, "YandexBot")
+        || str_contains($ua, "bingbot")
+        || str_contains($ua, "msnbot")
+        || str_contains($ua, "PetalBot")
+    );
 }
 
 /**
@@ -173,13 +203,13 @@ function get_real_ip(): string
 {
     $ip = $_SERVER['REMOTE_ADDR'];
 
-    if($ip == "unix:") {
+    if ($ip == "unix:") {
         $ip = "0.0.0.0";
     }
 
-    if(is_trusted_proxy()) {
+    if (is_trusted_proxy()) {
         if (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            if(filter_var_ex($ip, FILTER_VALIDATE_IP)) {
+            if (filter_var_ex($ip, FILTER_VALIDATE_IP)) {
                 $ip = $_SERVER['HTTP_X_REAL_IP'];
             }
         }
@@ -187,7 +217,7 @@ function get_real_ip(): string
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             $last_ip = $ips[count($ips) - 1];
-            if(filter_var_ex($last_ip, FILTER_VALIDATE_IP)) {
+            if (filter_var_ex($last_ip, FILTER_VALIDATE_IP)) {
                 $ip = $last_ip;
             }
         }
@@ -273,44 +303,6 @@ function data_path(string $filename, bool $create = true): string
     return $filename;
 }
 
-function load_balance_url(string $tmpl, string $hash, int $n = 0): string
-{
-    static $flexihashes = [];
-    $matches = [];
-    if (preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
-        $pre = $matches[1];
-        $opts = $matches[2];
-        $post = $matches[3];
-
-        if (isset($flexihashes[$opts])) {
-            $flexihash = $flexihashes[$opts];
-        } else {
-            $flexihash = new \Flexihash\Flexihash();
-            foreach (explode(",", $opts) as $opt) {
-                $parts = explode("=", $opt);
-                $parts_count = count($parts);
-                $opt_val = "";
-                $opt_weight = 0;
-                if ($parts_count === 2) {
-                    $opt_val = $parts[0];
-                    $opt_weight = (int)$parts[1];
-                } elseif ($parts_count === 1) {
-                    $opt_val = $parts[0];
-                    $opt_weight = 1;
-                }
-                $flexihash->addTarget($opt_val, $opt_weight);
-            }
-            $flexihashes[$opts] = $flexihash;
-        }
-
-        // $choice = $flexihash->lookup($pre.$post);
-        $choices = $flexihash->lookupList($hash, $n + 1);  // hash doesn't change
-        $choice = $choices[$n];
-        $tmpl = $pre . $choice . $post;
-    }
-    return $tmpl;
-}
-
 class FetchException extends \Exception
 {
 }
@@ -354,7 +346,7 @@ function fetch_url(string $url, string $mfile): array
         $s_url = escapeshellarg($url);
         $s_mfile = escapeshellarg($mfile);
         system("wget --no-check-certificate $s_url --output-document=$s_mfile");
-        if(!file_exists($mfile)) {
+        if (!file_exists($mfile)) {
             throw new FetchException("wget failed");
         }
         $headers = [];
@@ -549,7 +541,7 @@ function get_debug_info(): string
 {
     $d = get_debug_info_arr();
 
-    $debug = "<br>Took {$d['time']} seconds (db:{$d['dbtime']}) and {$d['mem_mb']}MB of RAM";
+    $debug = "Took {$d['time']} seconds (db:{$d['dbtime']}) and {$d['mem_mb']}MB of RAM";
     $debug .= "; Used {$d['files']} files and {$d['query_count']} queries";
     $debug .= "; Sent {$d['event_count']} events";
     $debug .= "; {$d['cache_hits']} cache hits and {$d['cache_misses']} misses";
@@ -622,7 +614,6 @@ function _load_theme_files(): void
 {
     $theme = get_theme();
     require_once('themes/'.$theme.'/page.class.php');
-    require_once('themes/'.$theme.'/themelet.class.php');
     require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/theme.php"));
     require_all(zglob('themes/'.$theme.'/{'.Extension::get_enabled_extensions_as_string().'}.theme.php'));
 }
@@ -689,7 +680,7 @@ function _fatal_error(\Exception $e): void
         $code = is_a($e, SCoreException::class) ? $e->http_code : 500;
 
         $q = "";
-        if(is_a($e, DatabaseException::class)) {
+        if (is_a($e, DatabaseException::class)) {
             $q .= "<p><b>Query:</b> " . html_escape($query);
             $q .= "<p><b>Args:</b> " . html_escape(var_export($e->args, true));
         }
@@ -708,7 +699,7 @@ function _fatal_error(\Exception $e): void
 		<p><b>Message:</b> '.html_escape($message).'
 		'.$q.'
 		<p><b>Version:</b> '.$version.' (on '.$phpver.')
-        <p><b>Stack Trace:</b></p><pre>'.$e->getTraceAsString().'</pre>
+        <p><b>Stack Trace:</b></p><pre><code>'.$e->getTraceAsString().'</code></pre>
 	</body>
 </html>
 ';
@@ -734,7 +725,6 @@ function _get_user(): User
     if (is_null($my_user)) {
         $my_user = User::by_id($config->get_int("anon_id", 0));
     }
-    assert(!is_null($my_user));
 
     return $my_user;
 }
@@ -806,9 +796,93 @@ function generate_key(int $length = 20): string
 
 function shm_tempnam(string $prefix = ""): string
 {
-    if(!is_dir("data/temp")) {
+    if (!is_dir("data/temp")) {
         mkdir("data/temp");
     }
     $temp = \Safe\realpath("data/temp");
     return \Safe\tempnam($temp, $prefix);
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Load balancing                                                            *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function load_balance_url(string $tmpl, string $hash, int $n = 0): string
+{
+    $matches = [];
+    if (preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
+        $pre = $matches[1];
+        $opts = $matches[2];
+        $post = $matches[3];
+
+        $nodes = parse_load_balancer_config($opts);
+        $choice = choose_load_balancer_node($nodes, $hash, $n);
+
+        $tmpl = $pre . $choice . $post;
+    }
+    return $tmpl;
+}
+
+/**
+ * "foo=1,bar=2,baz=3" -> ['foo' => 1, 'bar' => 2, 'baz' => 3]
+ *
+ * @param string $s
+ * @throws \Shimmie2\InvalidInput
+ * @return array<string, int>
+ */
+function parse_load_balancer_config(string $s): array
+{
+    $nodes = [];
+
+    foreach (explode(",", $s) as $opt) {
+        $parts = explode("=", $opt);
+        $parts_count = count($parts);
+        if ($parts_count === 2) {
+            $opt_val = $parts[0];
+            $opt_weight = (int)$parts[1];
+        } elseif ($parts_count === 1) {
+            $opt_val = $parts[0];
+            $opt_weight = 1;
+        } else {
+            throw new InvalidInput("Invalid load balancer weights: $s");
+        }
+        $nodes[$opt_val] = $opt_weight;
+    }
+
+    return $nodes;
+}
+
+/**
+ * Choose a node from a list of nodes based on a key.
+ *
+ * @param array<string, int> $nodes
+ * @param string $key
+ * @param int $n
+ * @return string
+ */
+function choose_load_balancer_node(array $nodes, string $key, int $n = 0): string
+{
+    if (count($nodes) === 0) {
+        throw new InvalidInput("No load balancer nodes to choose from");
+    }
+
+    // create a list of [score, node] pairs
+    $results = [];
+    foreach ($nodes as $node => $weight) {
+        // hash the node + key as an unsigned 32-bit integer
+        $u32hash = hexdec(hash("murmur3a", "$node: $key"));
+        // turn that into a float between 0 and 1
+        $f32hash = ($u32hash + 1) / (1 << 32);
+        // $hash * $weight gives an exponential bias to higher-weighted nodes,
+        // 1/log($hash)*$weight gives a uniform distribution across the range
+        $score = (1.0 / -log($f32hash)) * $weight;
+        $results[] = [$score, $node];
+    }
+
+    // sort by score, highest first
+    rsort($results);
+
+    // return the highest node, fall back to the second-highest, etc
+    return $results[$n % count($results)][1];
 }

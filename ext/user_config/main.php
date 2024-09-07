@@ -61,12 +61,10 @@ class UserConfig extends Extension
         $user_config = self::get_for_user($event->user->id);
     }
 
-    public static function get_for_user(int $id): BaseConfig
+    public static function get_for_user(int $id): Config
     {
         global $database;
-
         $user = User::by_id($id);
-
         $user_config = new DatabaseConfig($database, "user_config", "user_id", "$id");
         send_event(new InitUserConfigEvent($user, $user_config));
         return $user_config;
@@ -148,8 +146,7 @@ class UserConfig extends Extension
             }
 
             $target_config = UserConfig::get_for_user($duser->id);
-            send_event(new ConfigSaveEvent($target_config, $event->POST));
-            $target_config->save();
+            send_event(new ConfigSaveEvent($target_config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user_config"));

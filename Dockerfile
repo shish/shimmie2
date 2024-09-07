@@ -4,7 +4,6 @@ ARG PHP_VERSION=8.2
 # base
 # ├── dev-tools
 # │   ├── build
-# │   │   └── tests
 # │   └── devcontainer
 # └── run (copies built artifacts out of build)
 
@@ -22,7 +21,7 @@ RUN apt update && \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
     php${PHP_VERSION}-memcached \
-    curl imagemagick zip unzip unit unit-php && \
+    curl rsync imagemagick zip unzip unit unit-php && \
     rm -rf /var/lib/apt/lists/*
 
 # Install dev packages
@@ -42,19 +41,6 @@ COPY composer.json composer.lock /app/
 WORKDIR /app
 RUN composer install --no-dev --no-progress
 COPY . /app/
-
-# Tests in their own image.
-# Re-run composer install to get dev dependencies
-FROM build AS tests
-RUN composer install --no-progress
-COPY . /app/
-ARG RUN_TESTS=true
-RUN [ $RUN_TESTS = false ] || (\
-    echo '=== Installing ===' && mkdir -p data/config && INSTALL_DSN="sqlite:data/shimmie.sqlite" php index.php && \
-    echo '=== Smoke Test ===' && php index.php get-page /post/list && \
-    echo '=== Unit Tests ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml && \
-    echo '=== Coverage ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
-    echo '=== Cleaning ===' && rm -rf data)
 
 # Devcontainer target
 # Contains all of the build and debug tools, but no code, since

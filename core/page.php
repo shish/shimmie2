@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML,rawHTML,HTML,HEAD,BODY};
+use function MicroHTML\{emptyHTML, rawHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, joinHTML, BR, H1, HEADER as HTML_HEADER, NAV, ARTICLE, FOOTER, SECTION, H3, DIV};
 
 require_once "core/event.php";
 
@@ -36,14 +36,12 @@ class Cookie
 }
 
 /**
- * Class Page
- *
  * A data structure for holding all the bits of data that make up a page.
  *
  * The various extensions all add whatever they want to this structure,
  * then Layout turns it into HTML.
  */
-class BasePage
+class Page
 {
     public PageMode $mode = PageMode::PAGE;
     private string $mime;
@@ -101,7 +99,7 @@ class BasePage
     public function set_filename(string $filename, string $disposition = "attachment"): void
     {
         $max_len = 250;
-        if(strlen($filename) > $max_len) {
+        if (strlen($filename) > $max_len) {
             // remove extension, truncate filename, apply extension
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
             $filename = substr($filename, 0, $max_len - strlen($ext) - 1) . '.' . $ext;
@@ -131,7 +129,7 @@ class BasePage
     public string $subheading = "";
     public bool $left_enabled = true;
 
-    /** @var string[] */
+    /** @var HTMLElement[] */
     public array $html_headers = [];
 
     /** @var string[] */
@@ -157,6 +155,9 @@ class BasePage
     public function set_title(string $title): void
     {
         $this->title = $title;
+        if ($this->heading === "") {
+            $this->heading = $title;
+        }
     }
 
     public function set_heading(string $heading): void
@@ -177,17 +178,6 @@ class BasePage
     public function disable_left(): void
     {
         $this->left_enabled = false;
-    }
-
-    /**
-     * Add a line to the HTML head section.
-     */
-    public function add_html_header(string $line, int $position = 50): void
-    {
-        while (isset($this->html_headers[$position])) {
-            $position++;
-        }
-        $this->html_headers[$position] = $line;
     }
 
     /**
@@ -223,16 +213,25 @@ class BasePage
     }
 
     /**
+     * Add a line to the HTML head section.
+     */
+    public function add_html_header(HTMLElement $line, int $position = 50): void
+    {
+        while (isset($this->html_headers[$position])) {
+            $position++;
+        }
+        $this->html_headers[$position] = $line;
+    }
+
+    /**
      * Get all the HTML headers that are currently set and return as a string.
      */
-    public function get_all_html_headers(): string
+    public function get_all_html_headers(): HTMLElement
     {
-        $data = '';
         ksort($this->html_headers);
-        foreach ($this->html_headers as $line) {
-            $data .= "\t\t" . $line . "\n";
-        }
-        return $data;
+        return emptyHTML(
+            ...$this->html_headers
+        );
     }
 
     /**
@@ -247,14 +246,14 @@ class BasePage
      * Find a block which contains the given text
      * (Useful for unit tests)
      */
-    public function find_block(string $text): ?Block
+    public function find_block(string $text): Block
     {
         foreach ($this->blocks as $block) {
             if ($block->header == $text) {
                 return $block;
             }
         }
-        return null;
+        throw new \Exception("Block not found: $text");
     }
 
     // ==============================================
@@ -305,7 +304,7 @@ class BasePage
                 if (!is_null($this->filename)) {
                     header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
                 }
-                assert($this->file, "file should not be null with PageMode::FILE");
+                assert(!is_null($this->file), "file should not be null with PageMode::FILE");
 
                 // https://gist.github.com/codler/3906826
                 $size = \Safe\filesize($this->file); // File size
@@ -384,8 +383,15 @@ class BasePage
         $theme_name = $config->get_string(SetupConfig::THEME, 'default');
 
         # static handler will map these to themes/foo/static/bar.ico or ext/static_files/static/bar.ico
-        $this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
-        $this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
+        $this->add_html_header(LINK([
+            'rel' => 'icon',
+            'type' => 'image/x-icon',
+            'href' => "$data_href/favicon.ico"
+        ]), 41);
+        $this->add_html_header(LINK([
+            'rel' => 'apple-touch-icon',
+            'href' => "$data_href/apple-touch-icon.png"
+        ]), 42);
 
         //We use $config_latest to make sure cache is reset if config is ever updated.
         $config_latest = 0;
@@ -394,13 +400,24 @@ class BasePage
         }
 
         $css_cache_file = $this->get_css_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
+        $this->add_html_header(LINK([
+            'rel' => 'stylesheet',
+            'href' => "$data_href/$css_cache_file",
+            'type' => 'text/css'
+        ]), 43);
 
         $initjs_cache_file = $this->get_initjs_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<script src='$data_href/$initjs_cache_file' type='text/javascript'></script>", 44);
+        $this->add_html_header(SCRIPT([
+            'src' => "$data_href/$initjs_cache_file",
+            'type' => 'text/javascript'
+        ]));
 
         $js_cache_file = $this->get_js_cache_file($theme_name, $config_latest);
-        $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
+        $this->add_html_header(SCRIPT([
+            'defer' => true,
+            'src' => "$data_href/$js_cache_file",
+            'type' => 'text/javascript'
+        ]));
     }
 
     private function get_css_cache_file(string $theme_name, int $config_latest): string
@@ -417,7 +434,7 @@ class BasePage
         $css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
         if (!file_exists($css_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
-            foreach($css_files as $css) {
+            foreach ($css_files as $css) {
                 $mcss->addSource($css);
             }
             $mcss->save($css_cache_file);
@@ -440,7 +457,7 @@ class BasePage
         $js_cache_file = data_path("cache/initscript/{$theme_name}.{$js_latest}.{$js_md5}.js");
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
-            foreach($js_files as $js) {
+            foreach ($js_files as $js) {
                 $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);
@@ -468,7 +485,7 @@ class BasePage
         $js_cache_file = data_path("cache/script/{$theme_name}.{$js_latest}.{$js_md5}.js");
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
-            foreach($js_files as $js) {
+            foreach ($js_files as $js) {
                 $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);
@@ -549,10 +566,15 @@ class BasePage
      */
     public function render(): void
     {
-        global $config, $user;
+        print (string)$this->html_html(
+            $this->head_html(),
+            $this->body_html()
+        );
+    }
 
-        $head = $this->head_html();
-        $body = $this->body_html();
+    public function html_html(HTMLElement $head, string|HTMLElement $body): HTMLElement
+    {
+        global $user;
 
         $body_attrs = [
             "data-userclass" => $user->class->name,
@@ -560,42 +582,40 @@ class BasePage
             "data-base-link" => make_link(""),
         ];
 
-        print emptyHTML(
+        return emptyHTML(
             rawHTML("<!doctype html>"),
             HTML(
                 ["lang" => "en"],
-                HEAD(rawHTML($head)),
-                BODY($body_attrs, rawHTML($body))
+                HEAD($head),
+                BODY($body_attrs, $body)
             )
         );
     }
 
-    protected function head_html(): string
+    protected function head_html(): HTMLElement
     {
-        $html_header_html = $this->get_all_html_headers();
-
-        return "
-        <title>{$this->title}</title>
-        $html_header_html
-        ";
+        return emptyHTML(
+            TITLE($this->title),
+            $this->get_all_html_headers(),
+        );
     }
 
-    protected function body_html(): string
+    protected function body_html(): HTMLElement
     {
-        $left_block_html = "";
-        $main_block_html = "";
-        $sub_block_html  = "";
+        $left_block_html = [];
+        $main_block_html = [];
+        $sub_block_html = [];
 
         foreach ($this->blocks as $block) {
             switch ($block->section) {
                 case "left":
-                    $left_block_html .= $block->get_html(true);
+                    $left_block_html[] = $this->block_html($block, true);
                     break;
                 case "main":
-                    $main_block_html .= $block->get_html(false);
+                    $main_block_html[] = $this->block_html($block, false);
                     break;
                 case "subheading":
-                    $sub_block_html .= $block->get_html(false);
+                    $sub_block_html[] = $this->block_html($block, false);
                     break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -604,41 +624,60 @@ class BasePage
         }
 
         $footer_html = $this->footer_html();
-        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
-        return "
-            <header>
-                <h1>{$this->heading}</h1>
-                $sub_block_html
-            </header>
-            <nav>
-                $left_block_html
-            </nav>
-            <article>
-                $flash_html
-                $main_block_html
-            </article>
-            <footer>
+        $flash_html = $this->flash_html();
+        return emptyHTML(
+            HTML_HEADER(
+                H1($this->heading),
+                ...$sub_block_html
+            ),
+            NAV(
+                ...$left_block_html
+            ),
+            ARTICLE(
+                $flash_html,
+                ...$main_block_html
+            ),
+            FOOTER(
                 $footer_html
-            </footer>
-        ";
+            )
+        );
     }
 
-    protected function footer_html(): string
+    protected function block_html(Block $block, bool $hidable): HTMLElement
+    {
+        $html = SECTION(['id' => $block->id]);
+        if (!empty($block->header)) {
+            $html->appendChild(H3(["data-toggle-sel" => "#{$block->id}", "class" => $hidable ? "shm-toggler" : ""], $block->header));
+        }
+        if (!empty($block->body)) {
+            $html->appendChild(DIV(['class' => "blockbody"], $block->body));
+        }
+        return $html;
+    }
+
+    protected function flash_html(): HTMLElement
+    {
+        if ($this->flash) {
+            return B(["id" => "flash"], rawHTML(nl2br(html_escape(implode("\n", $this->flash)))));
+        }
+        return emptyHTML();
+    }
+
+    protected function footer_html(): HTMLElement
     {
         $debug = get_debug_info();
         $contact_link = contact_link();
-        $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
-
-        return "
-			Media &copy; their respective owners,
-			<a href=\"https://code.shishnet.org/shimmie2/\">Shimmie</a> &copy;
-			<a href=\"https://www.shishnet.org/\">Shish</a> &amp;
-			<a href=\"https://github.com/shish/shimmie2/graphs/contributors\">The Team</a>
-			2007-2024,
-			based on the Danbooru concept.
-			$debug
-			$contact
-        ";
+        return joinHTML("", [
+            "Media © their respective owners, ",
+            A(["href" => "https://code.shishnet.org/shimmie2/"], "Shimmie"),
+            " © ",
+            A(["href" => "https://www.shishnet.org/"], "Shish"),
+            " & ",
+            A(["href" => "https://github.com/shish/shimmie2/graphs/contributors"], "The Team"),
+            " 2007-2024, based on the Danbooru concept.",
+            BR(), $debug,
+            $contact_link ? emptyHTML(BR(), A(["href" => $contact_link], "Contact")) : ""
+        ]);
     }
 }
 
@@ -712,7 +751,7 @@ class NavLink
     /**
      * @param string[] $pages_matched
      */
-    public static function is_active(array $pages_matched, string $url = null): bool
+    public static function is_active(array $pages_matched, ?string $url = null): bool
     {
         /**
          * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)

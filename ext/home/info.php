@@ -15,7 +15,7 @@ class HomeInfo extends ExtensionInfo
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public string $description = "Displays a front page with logo, search box and post count";
     public ?string $documentation =
-"Once enabled, the page will show up at the URL \"home\", so if you want
+        "Once enabled, the page will show up at the URL \"home\", so if you want
 this to be the front page of your site, you should go to \"Board Config\"
 and set \"Front Page\" to \"home\".
 <p>The images used for the numbers can be changed from the board config

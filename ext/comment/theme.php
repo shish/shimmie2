@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class CommentListTheme extends Themelet
 {
     private bool $show_anon_id = false;
@@ -39,8 +41,7 @@ class CommentListTheme extends Themelet
         $nav = $h_prev.' | '.$h_index.' | '.$h_next;
 
         $page->set_title("Comments");
-        $page->set_heading("Comments");
-        $page->add_block(new Block("Navigation", $nav, "left", 0));
+        $page->add_block(new Block("Navigation", rawHTML($nav), "left", 0));
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 
         // parts for each image
@@ -90,7 +91,7 @@ class CommentListTheme extends Themelet
 				</tr></table>
 			';
 
-            $page->add_block(new Block($image->id.': '.$image->get_tag_list(), $html, "main", $position++, "comment-list-list"));
+            $page->add_block(new Block($image->id.': '.$image->get_tag_list(), rawHTML($html), "main", $position++, "comment-list-list"));
         }
     }
 
@@ -108,7 +109,7 @@ class CommentListTheme extends Themelet
 				</table>
 			</form>
 		";
-        $page->add_block(new Block("Mass Comment Delete", $html));
+        $page->add_block(new Block("Mass Comment Delete", rawHTML($html)));
     }
 
     /**
@@ -125,7 +126,7 @@ class CommentListTheme extends Themelet
             $html .= $this->comment_to_html($comment, true);
         }
         $html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
-        $page->add_block(new Block("Comments", $html, "left", 50, "comment-list-recent"));
+        $page->add_block(new Block("Comments", rawHTML($html), "left", 70, "comment-list-recent"));
     }
 
     /**
@@ -144,7 +145,7 @@ class CommentListTheme extends Themelet
         if ($postbox) {
             $html .= $this->build_postbox($image->id);
         }
-        $page->add_block(new Block("Comments", $html, "main", 30, "comment-list-image"));
+        $page->add_block(new Block("Comments", rawHTML($html), "main", 30, "comment-list-image"));
     }
 
     /**
@@ -164,7 +165,7 @@ class CommentListTheme extends Themelet
         } else {
             $html .= "<p><a href='".make_link("comment/beta-search/{$user->name}/1")."'>More</a></p>";
         }
-        $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
+        $page->add_block(new Block("Comments", rawHTML($html), "left", 70, "comment-list-user"));
     }
 
     /**
@@ -181,7 +182,7 @@ class CommentListTheme extends Themelet
         if (empty($html)) {
             $html = '<p>No comments by this user.</p>';
         }
-        $page->add_block(new Block("Comments", $html, "main", 70, "comment-list-user"));
+        $page->add_block(new Block("Comments", rawHTML($html), "main", 70, "comment-list-user"));
 
 
         $prev = $page_number - 1;
@@ -196,7 +197,7 @@ class CommentListTheme extends Themelet
         $h_next = ($page_number >= $total_pages) ? "Next" : "<a href='$next'>Next</a>";
 
         $page->set_title(html_escape($user->name)."'s comments");
-        $page->add_block(new Block("Navigation", $h_prev.' | '.$h_index.' | '.$h_next, "left", 0));
+        $page->add_block(new Block("Navigation", rawHTML($h_prev.' | '.$h_index.' | '.$h_next), "left", 0));
         $this->display_paginator($page, "comment/beta-search/{$user->name}", null, $page_number, $total_pages);
     }
 
@@ -306,20 +307,20 @@ class CommentListTheme extends Themelet
     {
         return '<p>Search for posts containing a certain number of comments, or comments by a particular individual.</p>
         <div class="command_example">
-        <pre>comments=1</pre>
+        <code>comments=1</code>
         <p>Returns posts with exactly 1 comment.</p>
         </div>
         <div class="command_example">
-        <pre>comments>0</pre>
+        <code>comments>0</code>
         <p>Returns posts with 1 or more comments. </p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <div class="command_example">
-        <pre>commented_by:username</pre>
+        <code>commented_by:username</code>
         <p>Returns posts that have been commented on by "username". </p>
         </div>
         <div class="command_example">
-        <pre>commented_by_userno:123</pre>
+        <code>commented_by_userno:123</code>
         <p>Returns posts that have been commented on by user 123. </p>
         </div>
         ';

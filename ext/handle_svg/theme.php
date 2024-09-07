@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class SVGFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
@@ -21,6 +23,6 @@ class SVGFileHandlerTheme extends Themelet
 			    data-height='{$image->height}'
 			    />
 		";
-        $page->add_block(new Block("Image", $html, "main", 10));
+        $page->add_block(new Block("Image", rawHTML($html), "main", 10));
     }
 }

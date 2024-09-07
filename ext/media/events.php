@@ -27,7 +27,7 @@ class MediaResizeEvent extends Event
         int $target_width,
         int $target_height,
         string $resize_type = Media::RESIZE_TYPE_FIT,
-        string $target_mime = null,
+        ?string $target_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         int $target_quality = 80,
         bool $minimize = false,

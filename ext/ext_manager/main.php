@@ -35,11 +35,7 @@ class ExtManager extends Extension
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("ext_manager"));
             } else {
-                $this->theme->display_error(
-                    500,
-                    "File Operation Failed",
-                    "The config file (data/config/extensions.conf.php) isn't writable by the web server :("
-                );
+                throw new ServerError("The config file (data/config/extensions.conf.php) isn't writable by the web server :(");
             }
         } elseif ($event->page_matches("ext_manager", method: "GET")) {
             $is_admin = $user->can(Permissions::MANAGE_EXTENSION_LIST);
@@ -49,7 +45,7 @@ class ExtManager extends Extension
         if ($event->page_matches("ext_doc/{ext}")) {
             $ext = $event->get_arg('ext');
             $info = ExtensionInfo::get_by_key($ext);
-            if($info) {
+            if ($info) {
                 $this->theme->display_doc($page, $info);
             }
         } elseif ($event->page_matches("ext_doc")) {
@@ -97,7 +93,7 @@ class ExtManager extends Extension
             $extensions = array_filter($extensions, fn ($x) => Extension::is_enabled($x->key));
         }
         usort($extensions, function ($a, $b) {
-            if($a->category->name !== $b->category->name) {
+            if ($a->category->name !== $b->category->name) {
                 return $a->category->name <=> $b->category->name;
             }
             if ($a->beta !== $b->beta) {

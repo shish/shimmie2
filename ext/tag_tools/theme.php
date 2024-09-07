@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\INPUT;
+use function MicroHTML\{INPUT,rawHTML};
 
 class TagToolsTheme extends Themelet
 {
@@ -35,13 +35,13 @@ class TagToolsTheme extends Themelet
         $html = "";
         $html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
         $html .= $this->button("Recount tag use", "recount_tag_use", false);
-        $page->add_block(new Block("Misc Admin Tools", $html));
+        $page->add_block(new Block("Misc Admin Tools", rawHTML($html)));
 
         $html = (string)SHM_SIMPLE_FORM(
             "admin/set_tag_case",
             INPUT(["type" => 'text', "name" => 'tag', "placeholder" => 'Enter tag with correct case', "autocomplete" => 'off']),
             SHM_SUBMIT('Set Tag Case'),
         );
-        $page->add_block(new Block("Set Tag Case", $html));
+        $page->add_block(new Block("Set Tag Case", rawHTML($html)));
     }
 }

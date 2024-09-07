@@ -8,6 +8,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function MicroHTML\rawHTML;
+
 require_once "config.php";
 
 /*
@@ -16,17 +18,66 @@ require_once "config.php";
 class ConfigSaveEvent extends Event
 {
     public Config $config;
-    /** @var array<string, mixed> $values */
+    /** @var array<string, null|string|int|boolean|array<string>> $values */
     public array $values;
 
     /**
-     * @param array<string, mixed> $values
+     * @param array<string, null|string|int|boolean|array<string>> $values
      */
     public function __construct(Config $config, array $values)
     {
         parent::__construct();
         $this->config = $config;
         $this->values = $values;
+    }
+
+    /**
+     * Convert POST data to settings data, eg
+     *
+     *     $_POST = [
+     *         "_type_mynull" => "string",
+     *         "_type_mystring" => "string",
+     *         "_config_mystring" => "hello world!",
+     *         "_type_myint" => "int",
+     *         "_config_myint" => "42KB",
+     *     ]
+     *
+     * becomes
+     *
+     *     $config = [
+     *         "mynull" => null,
+     *         "mystring" => "hello world!",
+     *         "myint" => 43008,
+     *     ]
+     *
+     * @param array<string, string|string[]> $post
+     * @return array<string, null|string|int|boolean|array<string>>
+     */
+    public static function postToSettings(array $post): array
+    {
+        $settings = [];
+        foreach ($post as $key => $type) {
+            if (str_starts_with($key, "_type_")) {
+                $key = str_replace("_type_", "", $key);
+                $value = $post["_config_$key"] ?? null;
+                if ($type === "string") {
+                    $settings[$key] = $value;
+                } elseif ($type === "int") {
+                    assert(is_string($value));
+                    $settings[$key] = $value ? parse_shorthand_int($value) : null;
+                } elseif ($type === "bool") {
+                    $settings[$key] = $value === "on";
+                } elseif ($type === "array") {
+                    $settings[$key] = $value;
+                } else {
+                    if (is_array($value)) {
+                        $value = implode(", ", $value);
+                    }
+                    throw new InvalidInput("Invalid type '$value' for key '$key'");
+                }
+            }
+        }
+        return $settings;
     }
 }
 
@@ -49,9 +100,9 @@ class SetupPanel
 {
     /** @var SetupBlock[]  */
     public array $blocks = [];
-    public BaseConfig $config;
+    public Config $config;
 
-    public function __construct(BaseConfig $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
@@ -66,44 +117,44 @@ class SetupPanel
 
 class SetupBlock extends Block
 {
-    public ?string $header;
-    public ?string $body;
-    public BaseConfig $config;
+    public ?string $str_body;
+    public Config $config;
 
-    public function __construct(string $title, BaseConfig $config)
+    public function __construct(string $title, Config $config)
     {
-        parent::__construct($title, "", "main", 50);
+        parent::__construct($title, rawHTML(""), "main", 50);
         $this->config = $config;
+        $this->str_body = "";
     }
 
     public function add_label(string $text): void
     {
-        $this->body .= $text;
+        $this->str_body .= $text;
     }
 
     public function start_table(): void
     {
-        $this->body .= "<table class='form'>";
+        $this->str_body .= "<table class='form'>";
     }
     public function end_table(): void
     {
-        $this->body .= "</table>";
+        $this->str_body .= "</table>";
     }
     public function start_table_row(): void
     {
-        $this->body .= "<tr>";
+        $this->str_body .= "<tr>";
     }
     public function end_table_row(): void
     {
-        $this->body .= "</tr>";
+        $this->str_body .= "</tr>";
     }
     public function start_table_head(): void
     {
-        $this->body .= "<thead>";
+        $this->str_body .= "<thead>";
     }
     public function end_table_head(): void
     {
-        $this->body .= "</thead>";
+        $this->str_body .= "</thead>";
     }
     public function add_table_header(string $content, int $colspan = 2): void
     {
@@ -116,30 +167,30 @@ class SetupBlock extends Block
 
     public function start_table_cell(int $colspan = 1): void
     {
-        $this->body .= "<td colspan='$colspan'>";
+        $this->str_body .= "<td colspan='$colspan'>";
     }
     public function end_table_cell(): void
     {
-        $this->body .= "</td>";
+        $this->str_body .= "</td>";
     }
     public function add_table_cell(string $content, int $colspan = 1): void
     {
         $this->start_table_cell($colspan);
-        $this->body .= $content;
+        $this->str_body .= $content;
         $this->end_table_cell();
     }
     public function start_table_header_cell(int $colspan = 1, string $align = 'right'): void
     {
-        $this->body .= "<th colspan='$colspan' style='text-align: $align'>";
+        $this->str_body .= "<th colspan='$colspan' style='text-align: $align'>";
     }
     public function end_table_header_cell(): void
     {
-        $this->body .= "</th>";
+        $this->str_body .= "</th>";
     }
     public function add_table_header_cell(string $content, int $colspan = 1): void
     {
         $this->start_table_header_cell($colspan);
-        $this->body .= $content;
+        $this->str_body .= $content;
         $this->end_table_header_cell();
     }
 
@@ -157,7 +208,7 @@ class SetupBlock extends Block
             $this->start_table_header_cell($label_row ? 2 : 1, $label_row ? 'center' : 'right');
         }
         if (!is_null($label)) {
-            $this->body .= "<label for='{$name}'>{$label}</label>";
+            $this->str_body .= "<label for='{$name}'>{$label}</label>";
         }
 
         if ($table_row) {
@@ -172,7 +223,7 @@ class SetupBlock extends Block
         if ($table_row) {
             $this->start_table_cell($label_row ? 2 : 1);
         }
-        $this->body .= $html;
+        $this->str_body .= $html;
         if ($table_row) {
             $this->end_table_cell();
         }
@@ -181,7 +232,7 @@ class SetupBlock extends Block
         }
     }
 
-    public function add_text_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_text_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -191,7 +242,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_longtext_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_longtext_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -202,7 +253,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row, true);
     }
 
-    public function add_bool_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_bool_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $checked = $this->config->get_bool($name) ? " checked" : "";
 
@@ -221,13 +272,13 @@ class SetupBlock extends Block
         $this->format_option($name, $html, null, $table_row);
     }
 
-    //	public function add_hidden_option($name, $label=null) {
+    //	public function add_hidden_option($name) {
     //		global $config;
     //		$val = $config->get_string($name);
-    //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
+    //		$this->str_body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
     //	}
 
-    public function add_int_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_int_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = $this->config->get_int($name);
 
@@ -237,9 +288,9 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_shorthand_int_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_shorthand_int_option(string $name, ?string $label = null, bool $table_row = false): void
     {
-        $val = to_shorthand_int($this->config->get_int($name));
+        $val = to_shorthand_int($this->config->get_int($name, 0));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
@@ -249,7 +300,7 @@ class SetupBlock extends Block
     /**
      * @param array<string,string|int> $options
      */
-    public function add_choice_option(string $name, array $options, string $label = null, bool $table_row = false): void
+    public function add_choice_option(string $name, array $options, ?string $label = null, bool $table_row = false): void
     {
         if (is_int(array_values($options)[0])) {
             $current = $this->config->get_int($name);
@@ -275,7 +326,7 @@ class SetupBlock extends Block
     /**
      * @param array<string,string> $options
      */
-    public function add_multichoice_option(string $name, array $options, string $label = null, bool $table_row = false): void
+    public function add_multichoice_option(string $name, array $options, ?string $label = null, bool $table_row = false): void
     {
         $current = $this->config->get_array($name, []);
 
@@ -294,7 +345,7 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_color_option(string $name, string $label = null, bool $table_row = false): void
+    public function add_color_option(string $name, ?string $label = null, bool $table_row = false): void
     {
         $val = html_escape($this->config->get_string($name));
 
@@ -343,8 +394,7 @@ class Setup extends Extension
             send_event(new SetupBuildingEvent($panel));
             $this->theme->display_page($page, $panel);
         } elseif ($event->page_matches("setup/save", method: "POST", permission: Permissions::CHANGE_SETTING)) {
-            send_event(new ConfigSaveEvent($config, $event->POST));
-            $config->save();
+            send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("setup"));
@@ -386,32 +436,16 @@ class Setup extends Extension
     public function onConfigSave(ConfigSaveEvent $event): void
     {
         $config = $event->config;
-        foreach ($event->values as $_name => $junk) {
-            if (substr($_name, 0, 6) == "_type_") {
-                $name = substr($_name, 6);
-                $type = $event->values["_type_$name"];
-                $value = isset($event->values["_config_$name"]) ? $event->values["_config_$name"] : null;
-                switch ($type) {
-                    case "string":
-                        $config->set_string($name, $value);
-                        break;
-                    case "int":
-                        $config->set_int($name, parse_shorthand_int((string)$value));
-                        break;
-                    case "bool":
-                        $config->set_bool($name, bool_escape($value));
-                        break;
-                    case "array":
-                        $config->set_array($name, $value);
-                        break;
-                }
-            }
+        foreach ($event->values as $key => $value) {
+            match(true) {
+                is_null($value) => $config->delete($key),
+                is_string($value) => $config->set_string($key, $value),
+                is_int($value) => $config->set_int($key, $value),
+                is_bool($value) => $config->set_bool($key, $value),
+                is_array($value) => $config->set_array($key, $value),
+            };
         }
         log_warning("setup", "Configuration updated");
-        foreach (\Safe\glob("data/cache/*.css") as $css_cache) {
-            unlink($css_cache);
-        }
-        log_warning("setup", "Cache cleared");
     }
 
     public function onCliGen(CliGenEvent $event): void

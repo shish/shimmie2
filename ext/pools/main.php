@@ -45,7 +45,7 @@ class PoolCreationEvent extends Event
 
     public function __construct(
         string $title,
-        User $pool_user = null,
+        ?User $pool_user = null,
         bool $public = false,
         string $description = ""
     ) {
@@ -304,7 +304,9 @@ class Pools extends Extension
                             WHERE pool_id=:pid AND i.id=:iid",
                     ["pid" => $pool_id, "iid" => (int) $row['image_id']]
                 );
-                $images[] = ($image ? new Image($image) : null);
+                if ($image) {
+                    $images[] = new Image($image);
+                }
             }
 
             $this->theme->edit_order($page, $pool, $images);
@@ -483,7 +485,7 @@ class Pools extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Pools", $this->theme->get_help_html()));
+            $event->add_section("Pools", $this->theme->get_help_html());
         }
     }
 
@@ -553,7 +555,7 @@ class Pools extends Extension
     {
         global $database, $user;
 
-        if(!$user->can(Permissions::POOLS_UPDATE)) {
+        if (!$user->can(Permissions::POOLS_UPDATE)) {
             $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
             // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.

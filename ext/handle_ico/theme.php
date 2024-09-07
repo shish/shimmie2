@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class IcoFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
@@ -14,6 +16,6 @@ class IcoFileHandlerTheme extends Themelet
 			<img id='main_image' class='shm-main-image' alt='main image' src='$ilink'
 			data-width='{$image->width}' data-height='{$image->height}'>
 		";
-        $page->add_block(new Block("Image", $html, "main", 10));
+        $page->add_block(new Block("Image", rawHTML($html), "main", 10));
     }
 }

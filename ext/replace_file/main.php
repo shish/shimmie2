@@ -23,7 +23,7 @@ class ReplaceFile extends Extension
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
 
-            if(empty($event->get_POST("url")) && count($_FILES) == 0) {
+            if (empty($event->get_POST("url")) && count($_FILES) == 0) {
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("replace/$image_id"));
                 return;
@@ -36,7 +36,7 @@ class ReplaceFile extends Extension
             } elseif (count($_FILES) > 0) {
                 send_event(new ImageReplaceEvent($image, $_FILES["data"]['tmp_name']));
             }
-            if($event->get_POST("source")) {
+            if ($event->get_POST("source")) {
                 send_event(new SourceSetEvent($image, $event->req_POST("source")));
             }
             $cache->delete("thumb-block:{$image_id}");
@@ -67,12 +67,10 @@ class ReplaceFile extends Extension
         $image->remove_image_only(); // Actually delete the old image file from disk
 
         $target = warehouse_path(Image::IMAGE_DIR, $event->new_hash);
-        if (!@copy($event->tmp_filename, $target)) {
-            $errors = error_get_last();
-            throw new ImageReplaceException(
-                "Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): ".
-                "{$errors['type']} / {$errors['message']}"
-            );
+        try {
+            \Safe\copy($event->tmp_filename, $target);
+        } catch (\Exception $e) {
+            throw new ImageReplaceException("Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): {$e->getMessage()}");
         }
         unlink($event->tmp_filename);
 

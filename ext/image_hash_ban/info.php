@@ -16,5 +16,5 @@ class ImageBanInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
     public string $description = "Ban images based on their hash";
     public ?string $documentation =
-"Based on the ResolutionLimit and IPban extensions by Shish";
+        "Based on the ResolutionLimit and IPban extensions by Shish";
 }

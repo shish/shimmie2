@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{A, DIV, H3, SECTION, rawHTML};
+
 /**
  * Class Block
  *
@@ -19,7 +23,7 @@ class Block
     /**
      * The content of the block.
      */
-    public ?string $body;
+    public HTMLElement $body;
 
     /**
      * Where the block should be placed. The default theme supports
@@ -45,39 +49,18 @@ class Block
      */
     public bool $is_content = true;
 
-    public function __construct(string $header = null, string|\MicroHTML\HTMLElement $body = null, string $section = "main", int $position = 50, string $id = null)
+    public function __construct(?string $header, HTMLElement $body, string $section = "main", int $position = 50, ?string $id = null)
     {
         $this->header = $header;
-        $this->body = (string)$body;
+        $this->body = $body;
         $this->section = $section;
         $this->position = $position;
 
         if (is_null($id)) {
-            $id = (empty($header) ? md5($this->body ?? '') : $header) . $section;
+            $id = (empty($header) ? 'unknown' : $header) . $section;
         }
-        $str_id = preg_replace('/[^\w-]/', '', str_replace(' ', '_', $id));
-        assert(is_string($str_id));
+        $str_id = preg_replace_ex('/[^\w-]/', '', str_replace(' ', '_', $id));
         $this->id = $str_id;
-    }
-
-    /**
-     * Get the HTML for this block.
-     */
-    public function get_html(bool $hidable = false): string
-    {
-        $h = $this->header;
-        $b = $this->body;
-        $i = $this->id;
-        $html = "<section id='$i'>";
-        $h_toggler = $hidable ? " shm-toggler" : "";
-        if (!empty($h)) {
-            $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
-        }
-        if (!empty($b)) {
-            $html .= "<div class='blockbody'>$b</div>";
-        }
-        $html .= "</section>\n";
-        return $html;
     }
 }
 
@@ -94,6 +77,6 @@ class NavBlock extends Block
 {
     public function __construct()
     {
-        parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
+        parent::__construct("Navigation", A(["href" => make_link()], "Index"), "left", 0);
     }
 }

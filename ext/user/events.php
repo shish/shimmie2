@@ -24,7 +24,7 @@ class UserOperationsBuildingEvent extends PartListBuildingEvent
 {
     public function __construct(
         public User $user,
-        public BaseConfig $user_config,
+        public Config $user_config,
     ) {
         parent::__construct();
     }
@@ -44,6 +44,8 @@ class UserPageBuildingEvent extends PartListBuildingEvent
 
 class UserCreationEvent extends Event
 {
+    private ?User $user;
+
     public function __construct(
         public string $username,
         public string $password,
@@ -52,6 +54,19 @@ class UserCreationEvent extends Event
         public bool $login
     ) {
         parent::__construct();
+    }
+
+    public function set_user(User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function get_user(): User
+    {
+        if (is_null($this->user)) {
+            throw new \Exception("User not created");
+        }
+        return $this->user;
     }
 }
 

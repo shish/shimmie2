@@ -3,9 +3,10 @@
 	padding-left: 16pt;
 }
 
-.command_example pre {
+.command_example code {
     padding:4pt;
     border: dashed 2px black;
+    background: inherit;
 }
 
 .command_example p {
@@ -13,7 +14,7 @@
 }
 
 @media (min-width: 750px) {
-    .command_example pre {
+    .command_example code {
         display: table-cell;
         width: 256px;
     }

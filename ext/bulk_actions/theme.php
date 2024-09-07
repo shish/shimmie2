@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class BulkActionsTheme extends Themelet
 {
     /**
@@ -48,7 +50,7 @@ class BulkActionsTheme extends Themelet
         if (!$hasQuery) {
             $body .= "</div>";
         }
-        $block = new Block("Bulk Actions", $body, "left", 30);
+        $block = new Block("Bulk Actions", rawHTML($body), "left", 30);
         $page->add_block($block);
     }
 

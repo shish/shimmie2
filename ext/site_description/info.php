@@ -17,5 +17,5 @@ class SiteDescriptionInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public string $description = "A description for search engines";
     public ?string $documentation =
-"This extension sets the \"description\" meta tag in the header of pages so that search engines can pick it up";
+        "This extension sets the \"description\" meta tag in the header of pages so that search engines can pick it up";
 }

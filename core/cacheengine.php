@@ -116,7 +116,7 @@ function loadCache(?string $dsn): CacheInterface
     $c = null;
     if ($dsn && !isset($_GET['DISABLE_CACHE'])) {
         $url = parse_url($dsn);
-        if($url) {
+        if ($url) {
             if ($url['scheme'] == "memcached" || $url['scheme'] == "memcache") {
                 $memcache = new \Memcached();
                 $memcache->addServer($url['host'], $url['port']);
@@ -135,7 +135,7 @@ function loadCache(?string $dsn): CacheInterface
             }
         }
     }
-    if(is_null($c)) {
+    if (is_null($c)) {
         $c = new \Sabre\Cache\Memory();
     }
     global $_tracer;

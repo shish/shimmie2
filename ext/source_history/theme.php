@@ -28,7 +28,7 @@ class SourceHistoryTheme extends Themelet
         $page->set_title('Post '.$image_id.' Source History');
         $page->set_heading('Source History: '.$image_id);
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Source History", $history_html, "main", 10));
+        $page->add_block(new Block("Source History", rawHTML($history_html), "main", 10));
     }
 
     /**
@@ -39,8 +39,7 @@ class SourceHistoryTheme extends Themelet
         $history_html = $this->history_list($history, false);
 
         $page->set_title("Global Source History");
-        $page->set_heading("Global Source History");
-        $page->add_block(new Block("Source History", $history_html, "main", 10));
+        $page->add_block(new Block("Source History", rawHTML($history_html), "main", 10));
 
         $h_prev = ($page_number <= 1) ? "Prev" :
             '<a href="'.make_link('source_history/all/'.($page_number - 1)).'">Prev</a>';
@@ -48,7 +47,7 @@ class SourceHistoryTheme extends Themelet
         $h_next = '<a href="'.make_link('source_history/all/'.($page_number + 1)).'">Next</a>';
 
         $nav = $h_prev.' | '.$h_index.' | '.$h_next;
-        $page->add_block(new Block("Navigation", $nav, "left"));
+        $page->add_block(new Block("Navigation", rawHTML($nav), "left"));
     }
 
     /**
@@ -75,7 +74,7 @@ class SourceHistoryTheme extends Themelet
 				</table>
 			</form>
 		";
-        $page->add_block(new Block("Mass Source Revert", $html));
+        $page->add_block(new Block("Mass Source Revert", rawHTML($html)));
     }
 
     /*
@@ -85,7 +84,7 @@ class SourceHistoryTheme extends Themelet
     {
         global $page;
         $html = implode("\n", $this->messages);
-        $page->add_block(new Block("Bulk Revert Results", $html));
+        $page->add_block(new Block("Bulk Revert Results", rawHTML($html)));
     }
 
     public function add_status(string $title, string $body): void

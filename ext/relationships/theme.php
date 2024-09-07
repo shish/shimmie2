@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TR, TH, TD, emptyHTML, DIV, INPUT};
+use function MicroHTML\{TR, TH, TD, emptyHTML, DIV, INPUT, rawHTML};
 
 class RelationshipsTheme extends Themelet
 {
@@ -37,7 +37,7 @@ class RelationshipsTheme extends Themelet
             $parent_summary_html .= "<a href='#' id='relationships-parent-toggle' class='shm-relationships-parent-toggle'>« hide</a>";
             $parent_thumb_html .= "</div>";
             $html = $parent_summary_html . $parent_thumb_html;
-            $page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsParent"));
+            $page->add_block(new Block(null, rawHTML($html), "main", 5, "PostRelationshipsParent"));
         }
 
         if (bool_escape($image['has_children'])) {
@@ -54,7 +54,7 @@ class RelationshipsTheme extends Themelet
                 $child_summary_html .= "</span><a href='#' id='relationships-child-toggle' class='shm-relationships-child-toggle'>« hide</a>";
                 $child_thumb_html .= "</div></div>";
                 $html = $child_summary_html . $child_thumb_html;
-                $page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsChildren"));
+                $page->add_block(new Block(null, rawHTML($html), "main", 5, "PostRelationshipsChildren"));
             }
         }
     }
@@ -66,7 +66,7 @@ class RelationshipsTheme extends Themelet
         return SHM_POST_INFO(
             "Parent",
             strval($image['parent_id']) ?: "None",
-            !$user->is_anonymous() ? INPUT(["type" => "number", "name" => "parent", "value" => $image['parent_id']]) : null
+            $user->can(Permissions::EDIT_IMAGE_RELATIONSHIPS) ? INPUT(["type" => "number", "name" => "parent", "value" => $image['parent_id']]) : null
         );
     }
 
@@ -75,23 +75,23 @@ class RelationshipsTheme extends Themelet
     {
         return '<p>Search for posts that have parent/child relationships.</p>
         <div class="command_example">
-        <pre>parent=any</pre>
+        <code>parent=any</code>
         <p>Returns posts that have a parent.</p>
         </div>
         <div class="command_example">
-        <pre>parent=none</pre>
+        <code>parent=none</code>
         <p>Returns posts that have no parent.</p>
         </div>
         <div class="command_example">
-        <pre>parent=123</pre>
+        <code>parent=123</code>
         <p>Returns posts that have image 123 set as parent.</p>
         </div>
         <div class="command_example">
-        <pre>child=any</pre>
+        <code>child=any</code>
         <p>Returns posts that have at least 1 child.</p>
         </div>
         <div class="command_example">
-        <pre>child=none</pre>
+        <code>child=none</code>
         <p>Returns posts that have no children.</p>
         </div>
         ';

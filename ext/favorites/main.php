@@ -44,7 +44,7 @@ class Favorites extends Extension
                 ["user_id" => $user_id, "image_id" => $image_id]
             ) > 0;
 
-            if($is_favorited) {
+            if ($is_favorited) {
                 $event->add_button("Un-Favorite", "favourite/remove/{$event->image->id}");
             } else {
                 $event->add_button("Favorite", "favourite/add/{$event->image->id}");
@@ -157,7 +157,7 @@ class Favorites extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("Favorites", $this->theme->get_help_html()));
+            $event->add_section("Favorites", $this->theme->get_help_html());
         }
     }
 

@@ -12,11 +12,11 @@ class PrivateImageTheme extends Themelet
     {
         return '<p>Search for posts that are private/public.</p>
         <div class="command_example">
-        <pre>private:yes</pre>
+        <code>private:yes</code>
         <p>Returns posts that are private, restricted to yourself if you are not an admin.</p>
         </div>
         <div class="command_example">
-        <pre>private:no</pre>
+        <code>private:no</code>
         <p>Returns posts that are public.</p>
         </div>
         ';

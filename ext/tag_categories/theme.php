@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class TagCategoriesTheme extends Themelet
 {
     /**
@@ -104,20 +106,19 @@ class TagCategoriesTheme extends Themelet
 
         // add html to stuffs
         $page->set_title("Tag Categories");
-        $page->set_heading("Tag Categories");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Editing", $html, "main", 10));
+        $page->add_block(new Block("Editing", rawHTML($html), "main", 10));
     }
 
     public function get_help_html(): string
     {
         return '<p>Search for posts containing a certain number of tags with the specified tag category.</p>
         <div class="command_example">
-        <pre>persontags=1</pre>
+        <code>persontags=1</code>
         <p>Returns posts with exactly 1 tag with the tag category "person".</p>
         </div>
         <div class="command_example">
-        <pre>cattags>0</pre>
+        <code>cattags>0</code>
         <p>Returns posts with 1 or more tags with the tag category "cat". </p>
         </div>
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>

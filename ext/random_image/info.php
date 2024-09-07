@@ -15,7 +15,7 @@ class RandomImageInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Do things with a random post";
     public ?string $documentation =
-"<b>Viewing a random post</b>
+        "<b>Viewing a random post</b>
 <br>Visit <code>/random_image/view</code>
 <p><b>Downloading a random post</b>
 <br>Link to <code>/random_image/download</code>. This will give

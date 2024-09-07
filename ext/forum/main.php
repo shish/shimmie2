@@ -17,6 +17,15 @@ class Forum extends Extension
     /** @var ForumTheme */
     protected Themelet $theme;
 
+    public function onInitExt(InitExtEvent $event): void
+    {
+        global $config;
+        $config->set_default_int("forumTitleSubString", 25);
+        $config->set_default_int("forumThreadsPerPage", 15);
+        $config->set_default_int("forumPostsPerPage", 15);
+        $config->set_default_int("forumMaxCharsPerPost", 512);
+    }
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
@@ -45,12 +54,6 @@ class Forum extends Extension
 					FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
             $database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", []);
-
-            $config->set_int("forumTitleSubString", 25);
-            $config->set_int("forumThreadsPerPage", 15);
-            $config->set_int("forumPostsPerPage", 15);
-
-            $config->set_int("forumMaxCharsPerPost", 512);
 
             $this->set_version("forum_version", 3);
         }

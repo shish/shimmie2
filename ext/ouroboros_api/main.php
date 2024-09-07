@@ -201,7 +201,6 @@ class _SafeOuroborosTag
 
 class OuroborosAPI extends Extension
 {
-    private ?PageRequestEvent $event;
     private ?string $type;
 
     public const HEADER_HTTP_200 = 'OK';
@@ -246,7 +245,6 @@ class OuroborosAPI extends Extension
         global $page, $user;
 
         if (preg_match("%\.(xml|json)$%", implode('/', $event->args), $matches) === 1) {
-            $this->event = $event;
             $this->type = $matches[1];
             if ($this->type == 'json') {
                 $page->set_mime('application/json; charset=utf-8');
@@ -257,7 +255,7 @@ class OuroborosAPI extends Extension
             $this->tryAuth();
 
             if ($event->page_matches('post')) {
-                if ($this->match('create')) {
+                if ($this->match($event, 'create')) {
                     // Create
                     if ($user->can(Permissions::CREATE_IMAGE)) {
                         $md5 = !empty($_REQUEST['md5']) ? filter_var_ex($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
@@ -265,13 +263,13 @@ class OuroborosAPI extends Extension
                     } else {
                         $this->sendResponse(403, 'You cannot create new posts');
                     }
-                } elseif ($this->match('update')) {
+                } elseif ($this->match($event, 'update')) {
                     throw new ServerError("update not implemented");
-                } elseif ($this->match('show')) {
+                } elseif ($this->match($event, 'show')) {
                     // Show
                     $id = !empty($_REQUEST['id']) ? (int)filter_var_ex($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
                     $this->postShow($id);
-                } elseif ($this->match('index') || $this->match('list')) {
+                } elseif ($this->match($event, 'index') || $this->match($event, 'list')) {
                     // List
                     $limit = !empty($_REQUEST['limit']) ? intval(
                         filter_var_ex($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
@@ -286,7 +284,7 @@ class OuroborosAPI extends Extension
                     $this->postIndex($limit, $p, $tags);
                 }
             } elseif ($event->page_matches('tag')) {
-                if ($this->match('index') || $this->match('list')) {
+                if ($this->match($event, 'index') || $this->match($event, 'list')) {
                     $limit = !empty($_REQUEST['limit']) ? intval(
                         filter_var_ex($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 50;
@@ -297,18 +295,12 @@ class OuroborosAPI extends Extension
                         $_REQUEST['order'],
                         FILTER_SANITIZE_STRING
                     ) : 'date';
-                    $id = !empty($_REQUEST['id']) ? intval(
-                        filter_var_ex($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT)
-                    ) : null;
-                    $after_id = !empty($_REQUEST['after_id']) ? intval(
-                        filter_var_ex($_REQUEST['after_id'], FILTER_SANITIZE_NUMBER_INT)
-                    ) : null;
                     $name = !empty($_REQUEST['name']) ? filter_var_ex($_REQUEST['name'], FILTER_SANITIZE_STRING) : '';
                     $name_pattern = !empty($_REQUEST['name_pattern']) ? filter_var_ex(
                         $_REQUEST['name_pattern'],
                         FILTER_SANITIZE_STRING
                     ) : '';
-                    $this->tagIndex($limit, $p, $order, $id, $after_id, $name, $name_pattern);
+                    $this->tagIndex($limit, $p, $order, $name, $name_pattern);
                 }
             }
         } elseif ($event->page_matches('post/show')) {
@@ -337,17 +329,18 @@ class OuroborosAPI extends Extension
                 return;
             }
         }
+        /** @var array<string, string> $meta */
         $meta = [];
         $meta['tags'] = $post->tags;
-        $meta['source'] = $post->source;
+        $meta['source'] = $post->source ?? '';
         if (Extension::is_enabled(RatingsInfo::KEY) !== false) {
             $meta['rating'] = $post->rating;
         }
         // Check where we should try for the file
-        if (empty($post->file) && !empty($post->file_url) && filter_var_ex(
-            $post->file_url,
-            FILTER_VALIDATE_URL
-        ) !== false
+        if (
+            empty($post->file) &&
+            !empty($post->file_url) &&
+            filter_var_ex($post->file_url, FILTER_VALIDATE_URL) !== false
         ) {
             // Transload from source
             $meta['file'] = shm_tempnam('transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
@@ -361,6 +354,7 @@ class OuroborosAPI extends Extension
             $meta['hash'] = \Safe\md5_file($meta['file']);
         } else {
             // Use file
+            assert(!is_null($post->file));
             $meta['file'] = $post->file['tmp_name'];
             $meta['filename'] = $post->file['name'];
             $meta['hash'] = \Safe\md5_file($meta['file']);
@@ -379,7 +373,7 @@ class OuroborosAPI extends Extension
                     send_event(new TagSetEvent($img, $merged));
 
                     // This is really the only thing besides tags we should care
-                    if (isset($meta['source'])) {
+                    if (!empty($meta['source'])) {
                         send_event(new SourceSetEvent($img, $meta['source']));
                     }
                     $this->sendResponse(200, self::OK_POST_CREATE_UPDATE . ' ID: ' . $img->id);
@@ -405,7 +399,7 @@ class OuroborosAPI extends Extension
     /**
      * Wrapper for getting a single post
      */
-    protected function postShow(int $id = null): void
+    protected function postShow(?int $id = null): void
     {
         if (!is_null($id)) {
             $post = new _SafeOuroborosImage(Image::by_id_ex($id));
@@ -437,7 +431,7 @@ class OuroborosAPI extends Extension
      * Tag
      */
 
-    protected function tagIndex(int $limit, int $page, string $order, int $id, int $after_id, string $name, string $name_pattern): void
+    protected function tagIndex(int $limit, int $page, string $order, string $name, string $name_pattern): void
     {
         global $database, $config;
         $start = ($page - 1) * $limit;
@@ -624,8 +618,8 @@ class OuroborosAPI extends Extension
     /**
      * Helper for matching API methods from event
      */
-    private function match(string $page): bool
+    private function match(PageRequestEvent $event, string $page): bool
     {
-        return (preg_match("%{$page}\.(xml|json)$%", implode('/', $this->event->args), $matches) === 1);
+        return (preg_match("%{$page}\.(xml|json)$%", implode('/', $event->args), $matches) === 1);
     }
 }

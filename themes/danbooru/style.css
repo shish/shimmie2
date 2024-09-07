@@ -117,6 +117,10 @@ font-size:0.9em;
 padding-left:10px;
 padding-top:8px;
 }
+CODE {
+background: #DEDEDE;
+font-size: 0.9rem;
+}
 form {
 margin:0;
 }

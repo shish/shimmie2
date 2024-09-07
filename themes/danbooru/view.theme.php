@@ -6,7 +6,9 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-class CustomViewPostTheme extends ViewPostTheme
+use function MicroHTML\rawHTML;
+
+class DanbooruViewPostTheme extends ViewPostTheme
 {
     /**
      * @param HTMLElement[] $editor_parts
@@ -21,7 +23,7 @@ class CustomViewPostTheme extends ViewPostTheme
         $page->add_block(new Block(null, $this->build_pin($image), "main", 11));
     }
 
-    private function build_stats(Image $image): string
+    private function build_stats(Image $image): HTMLElement
     {
         $h_owner = html_escape($image->get_owner()->name);
         $h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
@@ -53,13 +55,14 @@ class CustomViewPostTheme extends ViewPostTheme
         }
 
         if (Extension::is_enabled(RatingsInfo::KEY)) {
-            if ($image['rating'] === null || $image['rating'] == "?") {
-                $image['rating'] = "?";
+            $rating = $image['rating'];
+            if ($rating === null) {
+                $rating = "?";
             }
-            $h_rating = Ratings::rating_to_human($image['rating']);
-            $html .= "<br>Rating: $h_rating";
+            $h_rating = Ratings::rating_to_human($rating);
+            $html .= "<br>Rating: <a href='".search_link(["rating=$rating"])."'>$h_rating</a>";
         }
 
-        return $html;
+        return rawHTML($html);
     }
 }
