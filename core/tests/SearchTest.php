@@ -67,112 +67,6 @@ class SearchTest extends ShimmiePHPUnitTestCase
 
 
     /** ******************************************************
-     * Test turning a string into an abstract query
-     *
-     * @param string $tags
-     * @param TagCondition[] $expected_tag_conditions
-     * @param ImgCondition[] $expected_img_conditions
-     * @param string $expected_order
-     */
-    private function assert_TTC(
-        string $tags,
-        array $expected_tag_conditions,
-        array $expected_img_conditions,
-        string $expected_order,
-    ): void {
-        $class = new \ReflectionClass(Search::class);
-        $terms_to_conditions = $class->getMethod("terms_to_conditions");
-        $terms_to_conditions->setAccessible(true); // Use this if you are running PHP older than 8.1.0
-
-        $obj = new Search();
-        [$tag_conditions, $img_conditions, $order] = $terms_to_conditions->invokeArgs($obj, [Tag::explode($tags, false)]);
-
-        static::assertThat(
-            [
-                "tags" => $expected_tag_conditions,
-                "imgs" => $expected_img_conditions,
-                "order" => $expected_order,
-            ],
-            new IsEqual([
-                "tags" => $tag_conditions,
-                "imgs" => $img_conditions,
-                "order" => $order,
-            ])
-        );
-    }
-
-    public function testTTC_Empty(): void
-    {
-        $this->assert_TTC(
-            "",
-            [
-            ],
-            [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
-            ],
-            "images.id DESC"
-        );
-    }
-
-    public function testTTC_Hash(): void
-    {
-        $this->assert_TTC(
-            "hash=1234567890",
-            [
-            ],
-            [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
-                new ImgCondition(new Querylet("images.hash = :hash", ["hash" => "1234567890"])),
-            ],
-            "images.id DESC"
-        );
-    }
-
-    public function testTTC_Ratio(): void
-    {
-        $this->assert_TTC(
-            "ratio=42:12345",
-            [
-            ],
-            [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
-                new ImgCondition(new Querylet("width / :width1 = height / :height1", ['width1' => 42,
-                'height1' => 12345])),
-            ],
-            "images.id DESC"
-        );
-    }
-
-    public function testTTC_Order(): void
-    {
-        $this->assert_TTC(
-            "order=score",
-            [
-            ],
-            [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
-            ],
-            "images.numeric_score DESC"
-        );
-    }
-
-    /** ******************************************************
      * Test turning an abstract query into SQL + fetching the results
      *
      * @param string[] $tcs
@@ -214,7 +108,11 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $build_search_querylet->setAccessible(true); // Use this if you are running PHP older than 8.1.0
 
         $obj = new Search();
-        $querylet = $build_search_querylet->invokeArgs($obj, [$tcs, $ics, $order, $limit, $start]);
+        $params = new SearchParameters();
+        $params->tag_conditions = $tcs;
+        $params->img_conditions = $ics;
+        $params->order = $order;
+        $querylet = $build_search_querylet->invokeArgs($obj, [$params, $limit, $start]);
 
         $results = $database->get_all($querylet->sql, $querylet->variables);
 

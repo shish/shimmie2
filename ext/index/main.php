@@ -161,17 +161,15 @@ class Index extends Extension
                 $limit = $input->getOption('limit');
                 $count = $input->getOption('count');
 
-                [$tag_conditions, $img_conditions, $order] = Search::terms_to_conditions($search);
+                $params = SearchParameters::from_terms($search);
                 if ($count) {
-                    $order = null;
+                    $params->order = null;
                     $page = null;
                     $limit = null;
                 }
 
                 $q = Search::build_search_querylet(
-                    $tag_conditions,
-                    $img_conditions,
-                    $order,
+                    $params,
                     $limit,
                     (int)(($page - 1) * $limit),
                 );
