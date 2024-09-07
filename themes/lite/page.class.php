@@ -43,7 +43,7 @@ class LitePage extends Page
         );
 
         // Custom links: These appear on the menu.
-        $custom_links = DIV(["class"=>"bar"]);
+        $custom_links = DIV(["class" => "bar"]);
         foreach ($nav_links as $nav_link) {
             $custom_links->appendChild($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active));
         }
