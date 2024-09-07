@@ -240,10 +240,12 @@ class Index extends Extension
             // recommended to change homepage to "post/list/order:dailyshuffle/1"
             $seed = (int)date("Ymd");
             $event->order = $database->seeded_random($seed, "images.id");
+        } elseif (preg_match("/^limit[=:](\d+)$/i", $event->term, $matches)) {
+            $event->limit = intval($matches[1]);
         }
 
         // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
-        if ($event->order === null && $event->img_conditions == [] && $event->tag_conditions == []) {
+        if ($event->order === null && $event->limit === null && $event->img_conditions == [] && $event->tag_conditions == []) {
             assert(is_string($event->term));
             $event->add_tag_condition(new TagCondition($event->term, !$event->negative));
         }
