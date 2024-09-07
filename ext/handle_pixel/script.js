@@ -4,27 +4,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		var img = $('.shm-main-image');
 
+		/* get dimensions for the image when zoomed out to fit the screen */
+		zoom_height = Math.min(window.innerHeight * 0.8, img.data('height'));
+		// check max width of parent element when the image isn't extending it
+		img.css('display', 'none');
+		zoom_width = Math.min(img.parent().width(), img.data('width'));
+		img.css('display', '');
+		// keep the image in ratio
+		if(zoom_width / zoom_height > img.data('width') / img.data('height')) {
+			zoom_width = img.data('width') * (zoom_height / img.data('height'))
+		} else {
+			zoom_height = img.data('height') * (zoom_width / img.data('width'))
+		}
+
 		if(zoom_type === "full") {
-			img.css('max-width', img.data('width') + 'px');
-			img.css('max-height', img.data('height') + 'px');
+			img.attr('width', img.data('width'));
+			img.attr('height', img.data('height'));
 		}
 		if(zoom_type === "width") {
-			img.css('max-width', '95%');
-			img.css('max-height', img.data('height') + 'px');
+			img.attr('width', zoom_width);
+			img.attr('height', img.data('height'));
 		}
 		if(zoom_type === "height") {
-			img.css('max-width', img.data('width') + 'px');
-			img.css('max-height', (window.innerHeight * 0.95) + 'px');
+			img.attr('width', img.data('width'));
+			img.attr('height', zoom_height);
 		}
 		if(zoom_type === "both") {
-			img.css('max-width', '95%');
-			img.css('max-height', (window.innerHeight * 0.95) + 'px');
+			img.attr('width', zoom_width);
+			img.attr('height', zoom_height);
 		}
 
-		const zoomed_height_diff = Math.round(window.innerHeight * 0.95 - img.height());
-		const zoomed_width_diff = Math.round(img.parent().width() * 0.95 - img.width());
+		const zoom_height_diff = Math.round(zoom_height - img.data('height'));
+		const zoom_width_diff = Math.round(zoom_width - img.data('width'));
 
-		if (zoomed_height_diff > 0 && zoomed_width_diff > 0) {
+		if (zoom_height_diff == 0 && zoom_width_diff == 0) {
 			img.css('cursor', '');
 		} else if (zoom_type == "full") {
 			img.css('cursor', 'zoom-out');
