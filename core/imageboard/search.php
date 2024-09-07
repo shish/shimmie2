@@ -72,6 +72,7 @@ class SearchParameters
     /** @var ImgCondition[] */
     public array $img_conditions = [];
     public ?string $order = null;
+    public ?int $limit = null;
 
     /**
      * Turn a human input string into a an abstract search query
@@ -87,9 +88,10 @@ class SearchParameters
         $stpen = 0;  // search term parse event number
         foreach (array_merge([null], $terms) as $term) {
             $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
-            $sp->order ??= $stpe->order;
             $sp->img_conditions = array_merge($sp->img_conditions, $stpe->img_conditions);
             $sp->tag_conditions = array_merge($sp->tag_conditions, $stpe->tag_conditions);
+            $sp->order ??= $stpe->order;
+            $sp->limit ??= $stpe->limit;
         }
 
         $sp->order ??= "images.".$config->get_string(IndexConfig::ORDER);
@@ -134,6 +136,9 @@ class Search
         }
 
         $params = SearchParameters::from_terms($tags);
+        if ($params->limit !== null) {
+            $limit = $limit ? min($params->limit, $limit) : $params->limit;
+        }
         $querylet = self::build_search_querylet($params, $limit, $start);
         return $database->get_all_iterable($querylet->sql, $querylet->variables);
     }
@@ -453,7 +458,9 @@ class Search
 
         if (!is_null($limit)) {
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
-            $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
+            if (!is_null($offset)) {
+                $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
+            }
         }
 
         return $query;
