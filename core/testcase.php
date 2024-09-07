@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
+if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
     abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         protected static string $anon_name = "anonymous";
@@ -28,7 +28,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
          */
         public function setUp(): void
         {
-            global $database, $_tracer;
+            global $database, $_tracer, $page;
             $_tracer->begin($this->name());
             $_tracer->begin("setUp");
             $class = str_replace("Test", "", get_class($this));
@@ -44,10 +44,11 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $database->execute("SAVEPOINT test_start");
             self::log_out();
             foreach ($database->get_col("SELECT id FROM images") as $image_id) {
-                send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
+                send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
             }
             // Reload users from the database in case they were modified
             UserClass::loadClasses();
+            $page = new Page();
 
             $_tracer->end();  # setUp
             $_tracer->begin("test");
@@ -93,12 +94,14 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
         /**
          * @param array<string, mixed> $get_args
          * @param array<string, mixed> $post_args
+         * @param array<string, string> $cookies
          */
         protected static function request(
             string $method,
             string $page_name,
             array $get_args = [],
-            array $post_args = []
+            array $post_args = [],
+            array $cookies = ["shm_accepted_terms" => "true"],
         ): Page {
             // use a fresh page
             global $page;
@@ -112,6 +115,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($get_args));
             $_GET = $get_args;
             $_POST = $post_args;
+            $_COOKIE = $cookies;
             $page = new Page();
             send_event(new PageRequestEvent($method, $page_name, $get_args, $post_args));
             if ($page->mode == PageMode::REDIRECT) {
@@ -161,34 +165,46 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertEquals($code, $page->code);
         }
 
-        protected function page_to_text(string $section = null): string
+        /**
+         * @param array<Block> $blocks
+         * @param ?string $section
+         * @return string
+         */
+        private function blocks_to_text(array $blocks, ?string $section): string
+        {
+            $text = "";
+            foreach ($blocks as $block) {
+                if (is_null($section) || $section == $block->section) {
+                    $text .= $block->header . "\n";
+                    $text .= $block->body . "\n\n";
+                }
+            }
+            return $text;
+        }
+
+        protected function page_to_text(?string $section = null): string
         {
             global $page;
-            if ($page->mode == PageMode::PAGE) {
-                $text = $page->title . "\n";
-                foreach ($page->blocks as $block) {
-                    if (is_null($section) || $section == $block->section) {
-                        $text .= $block->header . "\n";
-                        $text .= $block->body . "\n\n";
-                    }
-                }
-                return $text;
-            } elseif ($page->mode == PageMode::DATA) {
-                return $page->data;
-            } else {
-                $this->fail("Page mode is {$page->mode->name} (only PAGE and DATA are supported)");
-            }
+
+            return match($page->mode) {
+                PageMode::PAGE => $page->title . "\n" . $this->blocks_to_text($page->blocks, $section),
+                PageMode::DATA => $page->data,
+                PageMode::REDIRECT => $this->fail("Page mode is REDIRECT ($page->redirect) (only PAGE and DATA are supported)"),
+                PageMode::FILE => $this->fail("Page mode is FILE ($page->file) (only PAGE and DATA are supported)"),
+                PageMode::MANUAL => $this->fail("Page mode is MANUAL (only PAGE and DATA are supported)"),
+                default => $this->fail("Unknown page mode {$page->mode->name}"),  // just for phpstan
+            };
         }
 
         /**
          * Assert that the page contains the given text somewhere in the blocks
          */
-        protected function assert_text(string $text, string $section = null): void
+        protected function assert_text(string $text, ?string $section = null): void
         {
             $this->assertStringContainsString($text, $this->page_to_text($section));
         }
 
-        protected function assert_no_text(string $text, string $section = null): void
+        protected function assert_no_text(string $text, ?string $section = null): void
         {
             $this->assertStringNotContainsString($text, $this->page_to_text($section));
         }
@@ -222,21 +238,19 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
             $this->assertEquals($results, $ids);
         }
 
-        protected function assertException(string $type, callable $function): \Exception|null
+        protected function assertException(string $type, callable $function): \Exception
         {
-            $exception = null;
             try {
                 call_user_func($function);
-            } catch (\Exception $e) {
-                $exception = $e;
+                self::fail("Expected exception of type $type, but none was thrown");
+            } catch (\Exception $exception) {
+                self::assertThat(
+                    $exception,
+                    new \PHPUnit\Framework\Constraint\Exception($type),
+                    "Expected exception of type $type, but got " . get_class($exception)
+                );
+                return $exception;
             }
-
-            self::assertThat(
-                $exception,
-                new \PHPUnit\Framework\Constraint\Exception($type),
-                "Expected exception of type $type, but got " . ($exception ? get_class($exception) : "none")
-            );
-            return $exception;
         }
 
         // user things
@@ -263,7 +277,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
                 "filename" => $filename,
                 "tags" => $tags,
             ]));
-            if(count($dae->images) == 0) {
+            if (count($dae->images) == 0) {
                 throw new \Exception("Upload failed :(");
             }
             return $dae->images[0]->id;

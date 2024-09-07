@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CustomCommentListTheme extends CommentListTheme
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\rawHTML;
+
+class FutabaCommentListTheme extends CommentListTheme
 {
     public int $inner_id = 0;
     public bool $post_page = true;
@@ -21,10 +25,9 @@ class CustomCommentListTheme extends CommentListTheme
 
         $page_title = $config->get_string(SetupConfig::TITLE);
         $page->set_title($page_title);
-        $page->set_heading($page_title);
         $page->disable_left();
         $page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
-        $page->add_block(new Block(null, "<hr>", "main", 80));
+        $page->add_block(new Block(null, rawHTML("<hr>"), "main", 80));
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
         $this->post_page = false;
 
@@ -54,7 +57,7 @@ class CustomCommentListTheme extends CommentListTheme
             $html .=   "<div class='commentset'>$comment_html</div>";
             $html .= "</div>";
 
-            $page->add_block(new Block(null, $html, "main", $position++));
+            $page->add_block(new Block(null, rawHTML($html), "main", $position++));
         }
     }
 
@@ -64,9 +67,9 @@ class CustomCommentListTheme extends CommentListTheme
         parent::display_recent_comments($comments);
     }
 
-    public function build_upload_box(): string
+    public function build_upload_box(): HTMLElement
     {
-        return "[[ insert upload-and-comment extension here ]]";
+        return rawHTML("[[ insert upload-and-comment extension here ]]");
     }
 
 
@@ -87,14 +90,14 @@ class CustomCommentListTheme extends CommentListTheme
         } else {
             $h_comment = $tfe->formatted;
         }
-        $h_comment = preg_replace("/(^|>)(&gt;[^<\n]*)(<|\n|$)/", '${1}<span class=\'greentext\'>${2}</span>${3}', $h_comment);
+        $h_comment = preg_replace_ex("/(^|>)(&gt;[^<\n]*)(<|\n|$)/", '${1}<span class=\'greentext\'>${2}</span>${3}', $h_comment);
         // handles discrepency in comment page and homepage
         $h_comment = str_replace("<br>", "", $h_comment);
         $h_comment = str_replace("\n", "<br>", $h_comment);
         $i_comment_id = $comment->comment_id;
         $i_image_id = $comment->image_id;
 
-        $h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
+        $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
         $h_date = $comment->posted;
         $h_del = "";
         if ($user->can(Permissions::DELETE_COMMENT)) {

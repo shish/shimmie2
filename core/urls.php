@@ -6,10 +6,10 @@ namespace Shimmie2;
 
 class Link
 {
-    public ?string $page;
+    public string $page;
     public ?string $query;
 
-    public function __construct(?string $page = null, ?string $query = null)
+    public function __construct(string $page, ?string $query = null)
     {
         $this->page = $page;
         $this->query = $query;
@@ -29,7 +29,7 @@ class Link
  */
 function search_link(array $terms = [], int $page = 1): string
 {
-    if($terms) {
+    if ($terms) {
         $q = url_escape(Tag::implode($terms));
         return make_link("post/list/$q/$page");
     } else {
@@ -55,14 +55,18 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
 
     $parts = [];
     $install_dir = get_base_href();
-    if (SPEED_HAX || $config->get_bool(SetupConfig::NICE_URLS, false)) {
+    if ($config->get_bool(SetupConfig::NICE_URLS, false)) {
         $parts['path'] = "$install_dir/$page";
     } else {
         $parts['path'] = "$install_dir/index.php";
         $query = empty($query) ? "q=$page" : "q=$page&$query";
     }
-    $parts['query'] = $query;  // http_build_query($query);
-    $parts['fragment'] = $fragment;  // http_build_query($hash);
+    if (!is_null($query)) {
+        $parts['query'] = $query;  // http_build_query($query);
+    }
+    if (!is_null($fragment)) {
+        $parts['fragment'] = $fragment;  // http_build_query($hash);
+    }
 
     return unparse_url($parts);
 }
@@ -83,6 +87,9 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
  *   can parse it for ourselves
  * - <input type='hidden' name='q' value='post/list'> generates
  *   q=post%2Flist
+ * - When apache is reverse-proxying https://external.com/img/index.php
+ *   to http://internal:8000/index.php, get_base_href() should return
+ *   /img, however the URL in REQUEST_URI is /index.php, not /img/index.php
  *
  * This function should always return strings with no leading slashes
  */
@@ -90,23 +97,23 @@ function _get_query(?string $uri = null): string
 {
     $parsed_url = parse_url($uri ?? $_SERVER['REQUEST_URI'] ?? "");
 
-    // if we're looking at http://site.com/$INSTALL_DIR/index.php,
+    // if we're looking at http://site.com/.../index.php,
     // then get the query from the "q" parameter
-    if(($parsed_url["path"] ?? "") == (get_base_href() . "/index.php")) {
-        // $q = $_GET["q"] ?? "";
+    if (str_ends_with($parsed_url["path"] ?? "", "/index.php")) {
         // default to looking at the root
         $q = "";
-        // (we need to manually parse the query string because PHP's $_GET
-        // does an extra round of URL decoding, which we don't want)
-        foreach(explode('&', $parsed_url['query'] ?? "") as $z) {
+        // We can't just do `$q = $_GET["q"] ?? "";`, we need to manually
+        // parse the query string because PHP's $_GET does an extra round
+        // of URL decoding, which we don't want
+        foreach (explode('&', $parsed_url['query'] ?? "") as $z) {
             $qps = explode('=', $z, 2);
-            if(count($qps) == 2 && $qps[0] == "q") {
+            if (count($qps) == 2 && $qps[0] == "q") {
                 $q = $qps[1];
             }
         }
         // if we have no slashes, but do have an encoded
         // slash, then we _probably_ encoded too much
-        if(!str_contains($q, "/") && str_contains($q, "%2F")) {
+        if (!str_contains($q, "/") && str_contains($q, "%2F")) {
             $q = rawurldecode($q);
         }
     }
@@ -114,7 +121,19 @@ function _get_query(?string $uri = null): string
     // if we're looking at http://site.com/$INSTALL_DIR/$PAGE,
     // then get the query from the path
     else {
-        $q = substr($parsed_url["path"] ?? "", strlen(get_base_href() . "/"));
+        $base = get_base_href();
+        $q = $parsed_url["path"] ?? "";
+
+        // sometimes our public URL is /img/foo/bar but after
+        // reverse-proxying shimmie only sees /foo/bar, so only
+        // strip off the /img if it's actually there
+        if (str_starts_with($q, $base)) {
+            $q = substr($q, strlen($base));
+        }
+
+        // whether we are /img/foo/bar or /foo/bar, we still
+        // want to remove the leading slash
+        $q = ltrim($q, "/");
     }
 
     assert(!str_starts_with($q, "/"));
@@ -140,9 +159,9 @@ function get_base_href(?array $server_settings = null): string
         return BASE_HREF;
     }
     $server_settings = $server_settings ?? $_SERVER;
-    if(str_ends_with($server_settings['PHP_SELF'], 'index.php')) {
+    if (str_ends_with($server_settings['PHP_SELF'], 'index.php')) {
         $self = $server_settings['PHP_SELF'];
-    } elseif(isset($server_settings['SCRIPT_FILENAME']) && isset($server_settings['DOCUMENT_ROOT'])) {
+    } elseif (isset($server_settings['SCRIPT_FILENAME']) && isset($server_settings['DOCUMENT_ROOT'])) {
         $self = substr($server_settings['SCRIPT_FILENAME'], strlen(rtrim($server_settings['DOCUMENT_ROOT'], "/")));
     } else {
         die("PHP_SELF or SCRIPT_FILENAME need to be set");

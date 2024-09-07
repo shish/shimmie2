@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function MicroHTML\rawHTML;
+
 require_once "config.php";
 require_once "events.php";
 
@@ -43,17 +45,12 @@ class Index extends Extension
             $page_number = $event->get_iarg('page_num', 1);
             $page_size = $config->get_int(IndexConfig::IMAGES);
 
+            $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::FAST_PAGE_LIMIT));
             $fast_page_limit = 500;
 
-            $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
             if (
-                SPEED_HAX
-                && (
-                    str_contains($ua, "Googlebot")
-                    || str_contains($ua, "YandexBot")
-                    || str_contains($ua, "bingbot")
-                    || str_contains($ua, "msnbot")
-                )
+                $speed_hax
+                && is_bot()
                 && (
                     $count_search_terms > 1
                     || ($count_search_terms == 1 && $search_terms[0][0] == "-")
@@ -63,7 +60,7 @@ class Index extends Extension
                 $fast_page_limit = 10;
             }
 
-            if (SPEED_HAX && $page_number > $fast_page_limit && !$user->can("big_search")) {
+            if ($speed_hax && $page_number > $fast_page_limit && !$user->can("big_search")) {
                 throw new PermissionDenied(
                     "Only $fast_page_limit pages of results are searchable - " .
                     "if you want to find older results, use more specific search terms"
@@ -71,12 +68,12 @@ class Index extends Extension
             }
 
             $total_pages = (int)ceil(Search::count_images($search_terms) / $config->get_int(IndexConfig::IMAGES));
-            if (SPEED_HAX && $total_pages > $fast_page_limit && !$user->can("big_search")) {
+            if ($speed_hax && $total_pages > $fast_page_limit && !$user->can("big_search")) {
                 $total_pages = $fast_page_limit;
             }
 
             $images = null;
-            if (SPEED_HAX) {
+            if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_FIRST_FEW)) {
                 if ($count_search_terms === 0 && ($page_number < 10)) {
                     // extra caching for the first few post/list pages
                     $images = cache_get_or_set(
@@ -165,7 +162,7 @@ class Index extends Extension
                 $count = $input->getOption('count');
 
                 [$tag_conditions, $img_conditions, $order] = Search::terms_to_conditions($search);
-                if($count) {
+                if ($count) {
                     $order = null;
                     $page = null;
                     $limit = null;
@@ -180,9 +177,9 @@ class Index extends Extension
                 );
 
                 $sql_str = $q->sql;
-                $sql_str = preg_replace("/\s+/", " ", $sql_str);
-                foreach($q->variables as $key => $val) {
-                    if(is_string($val)) {
+                $sql_str = preg_replace_ex("/\s+/", " ", $sql_str);
+                foreach ($q->variables as $key => $val) {
+                    if (is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);
                     } else {
                         $sql_str = str_replace(":$key", (string)$val, $sql_str);
@@ -249,6 +246,7 @@ class Index extends Extension
 
         // If we've reached this far, and nobody else has done anything with this term, then treat it as a tag
         if ($event->order === null && $event->img_conditions == [] && $event->tag_conditions == []) {
+            assert(is_string($event->term));
             $event->add_tag_condition(new TagCondition($event->term, $event->positive));
         }
     }

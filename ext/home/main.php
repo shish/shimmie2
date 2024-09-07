@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 class Home extends Extension
 {
     /** @var HomeTheme */
@@ -40,7 +42,7 @@ class Home extends Extension
     }
 
 
-    private function get_body(): string
+    private function get_body(): HTMLElement
     {
         // returns just the contents of the body
         global $config;

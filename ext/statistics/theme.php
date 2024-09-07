@@ -25,14 +25,13 @@ class StatisticsTheme extends Themelet
             $favorite_table,
         );
 
-        $page->set_title(html_escape("Stats"));
-        $page->set_heading(html_escape("Stats - Top $limit"));
+        $page->set_title("Stats - Top $limit");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Stats", $html, "main", 20));
     }
 
     /**
-     * @param array<string, int> $data
+     * @param array<string, int|string> $data
      */
     public function build_table(array $data, string $id, string $title, ?int $limit = 10): HTMLElement
     {
@@ -42,8 +41,8 @@ class StatisticsTheme extends Themelet
             $rows->appendChild(
                 TR(
                     TD([], $n),
-                    TD([], $value),
-                    TD([], $user)
+                    TD([], rawHTML((string)$value)),
+                    TD([], rawHTML('<a class="username" href="'.make_link('user/'.$user).'">'.$user.'</a>'))
                 )
             );
             $n++;

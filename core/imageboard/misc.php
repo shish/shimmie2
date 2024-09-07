@@ -32,7 +32,7 @@ function add_dir(string $base, array $extra_tags = []): array
                     'tags' => Tag::implode($tags),
                 ]));
                 $results = [];
-                foreach($dae->images as $image) {
+                foreach ($dae->images as $image) {
                     $results[] = new UploadSuccess($filename, $image->id);
                 }
                 return $results;
@@ -136,7 +136,7 @@ function get_thumbnail_max_size_scaled(): array
 }
 
 
-function create_image_thumb(Image $image, string $engine = null): void
+function create_image_thumb(Image $image, ?string $engine = null): void
 {
     global $config;
     create_scaled_image(

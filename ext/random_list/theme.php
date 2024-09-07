@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\rawHTML;
+
 class RandomListTheme extends Themelet
 {
     /** @var string[] */
@@ -37,7 +41,7 @@ class RandomListTheme extends Themelet
             $html .= "<br/><br/>No posts were found to match the search criteria";
         }
 
-        $page->add_block(new Block("Random Posts", $html));
+        $page->add_block(new Block("Random Posts", rawHTML($html)));
 
         $nav = $this->build_navigation($this->search_terms);
         $page->add_block(new Block("Navigation", $nav, "left", 0));
@@ -46,7 +50,7 @@ class RandomListTheme extends Themelet
     /**
      * @param string[] $search_terms
      */
-    protected function build_navigation(array $search_terms): string
+    protected function build_navigation(array $search_terms): HTMLElement
     {
         $h_search_string = html_escape(Tag::implode($search_terms));
         $h_search_link = make_link("random");
@@ -58,6 +62,6 @@ class RandomListTheme extends Themelet
 			</form>
 		";
 
-        return $h_search;
+        return rawHTML($h_search);
     }
 }

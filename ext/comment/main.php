@@ -236,7 +236,8 @@ class CommentList extends Extension
         if ($event->page_matches("comment/list", paged: true)) {
             $threads_per_page = 10;
 
-            $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
+            $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS));
+            $where = $speed_hax ? "WHERE posted > now() - interval '24 hours'" : "";
 
             $total_pages = cache_get_or_set("comment_pages", fn () => (int)ceil($database->get_one("
                 SELECT COUNT(c1)
@@ -397,10 +398,7 @@ class CommentList extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Comments";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_section("Comments", $this->theme->get_help_html());
         }
     }
 

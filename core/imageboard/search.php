@@ -84,7 +84,7 @@ class Search
      */
     private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): \FFSPHP\PDOStatement
     {
-        global $database, $user;
+        global $config, $database, $user;
 
         if ($start < 0) {
             $start = 0;
@@ -93,9 +93,10 @@ class Search
             $limit = 1;
         }
 
-        if (SPEED_HAX) {
-            if (!$user->can(Permissions::BIG_SEARCH) and count($tags) > 3) {
-                throw new PermissionDenied("Anonymous users may only search for up to 3 tags at a time");
+        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_int(SpeedHaxConfig::BIG_SEARCH) > 0) {
+            $anon_limit = $config->get_int(SpeedHaxConfig::BIG_SEARCH);
+            if (!$user->can(Permissions::BIG_SEARCH) and count($tags) > $anon_limit) {
+                throw new PermissionDenied("Anonymous users may only search for up to $anon_limit tags at a time");
             }
         }
 
@@ -146,7 +147,7 @@ class Search
     public static function get_images(array $ids): array
     {
         $visible_images = [];
-        foreach(Search::find_images(tags: ["id=" . implode(",", $ids)]) as $image) {
+        foreach (Search::find_images(tags: ["id=" . implode(",", $ids)]) as $image) {
             $visible_images[$image->id] = $image;
         }
         $visible_ids = array_keys($visible_images);
@@ -182,15 +183,16 @@ class Search
      */
     public static function count_images(array $tags = []): int
     {
-        global $cache, $database;
+        global $cache, $config, $database;
         $tag_count = count($tags);
 
-        // SPEED_HAX ignores the fact that extensions can add img_conditions
+        // speed_hax ignores the fact that extensions can add img_conditions
         // even when there are no tags being searched for
-        if (SPEED_HAX && $tag_count === 0) {
+        $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::LIMIT_COMPLEX));
+        if ($speed_hax && $tag_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();
-        } elseif (SPEED_HAX && $tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
+        } elseif ($speed_hax && $tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
             if (!str_starts_with($tags[0], "-")) {
                 // one positive tag - we can look that up directly
                 $total = self::count_tag($tags[0]);
@@ -207,7 +209,7 @@ class Search
                 [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
                 $querylet = self::build_search_querylet($tag_conditions, $img_conditions, null);
                 $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
-                if (SPEED_HAX && $total > 5000) {
+                if ($speed_hax && $total > 5000) {
                     // when we have a ton of images, the count
                     // won't change dramatically very often
                     $cache->set($cache_key, $total, 3600);
@@ -451,7 +453,7 @@ class Search
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
-        if(!is_null($order)) {
+        if (!is_null($order)) {
             $query->append(new Querylet(" ORDER BY ".$order));
         }
 

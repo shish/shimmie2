@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class Notes extends Extension
 {
     /** @var NotesTheme */
@@ -11,7 +13,11 @@ class Notes extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
+        global $config;
         Image::$prop_types["notes"] = ImagePropType::INT;
+        $config->set_default_int("notesNotesPerPage", 20);
+        $config->set_default_int("notesRequestsPerPage", 20);
+        $config->set_default_int("notesHistoriesPerPage", 20);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -67,11 +73,22 @@ class Notes extends Extension
 					");
             $database->execute("CREATE INDEX note_histories_image_id_idx ON note_histories(image_id)", []);
 
-            $config->set_int("notesNotesPerPage", 20);
-            $config->set_int("notesRequestsPerPage", 20);
-            $config->set_int("notesHistoriesPerPage", 20);
-
             $this->set_version("ext_notes_version", 1);
+        }
+    }
+
+    public function onPageNavBuilding(PageNavBuildingEvent $event): void
+    {
+        $event->add_nav_link("note", new Link('note/requests'), "Notes");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
+    {
+        if ($event->parent == "note") {
+            $event->add_nav_link("note_requests", new Link('note/requests'), "Requests");
+            $event->add_nav_link("note_list", new Link('note/list'), "List");
+            $event->add_nav_link("note_updated", new Link('note/updated'), "Updates");
+            $event->add_nav_link("note_help", new Link('ext_doc/notes'), "Help");
         }
     }
 
@@ -89,6 +106,9 @@ class Notes extends Extension
         }
         if ($event->page_matches("note/history/{note_id}", paged: true)) {
             $this->get_history($event->get_iarg('note_id'), $event->get_iarg('page_num', 1) - 1);
+        }
+        if ($event->page_matches("note_history/{image_id}", paged: true)) {
+            $this->get_image_history($event->get_iarg('image_id'), $event->get_iarg('page_num', 1) - 1);
         }
         if ($event->page_matches("note/revert/{noteID}/{reviewID}", permission: Permissions::NOTES_EDIT)) {
             $noteID = $event->get_iarg('noteID');
@@ -135,6 +155,11 @@ class Notes extends Extension
         }
     }
 
+    public function onRobotsBuilding(RobotsBuildingEvent $event): void
+    {
+        $event->add_disallow("note_history");
+    }
+
 
     /*
      * HERE WE LOAD THE NOTES IN THE IMAGE
@@ -166,6 +191,8 @@ class Notes extends Extension
         if ($user->can(Permissions::NOTES_REQUEST)) {
             $event->add_part($this->theme->request_button($event->image->id));
         }
+
+        $event->add_button("View Note History", "note_history/{$event->image->id}", 20);
     }
 
 
@@ -198,10 +225,7 @@ class Notes extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Notes";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_section("Notes", $this->theme->get_help_html());
         }
     }
 
@@ -219,7 +243,7 @@ class Notes extends Extension
             SELECT *
             FROM notes
             WHERE enable = :enable AND image_id = :image_id
-            ORDER BY date ASC
+            ORDER BY date ASC, id ASC
         ", ['enable' => '1', 'image_id' => $imageID]);
     }
 
@@ -349,7 +373,7 @@ class Notes extends Extension
 			SELECT DISTINCT image_id
 			FROM notes
 			WHERE enable = :enable
-			ORDER BY date DESC LIMIT :limit OFFSET :offset",
+			ORDER BY date DESC, id DESC LIMIT :limit OFFSET :offset",
             ['enable' => 1, 'offset' => $pageNumber * $notesPerPage, 'limit' => $notesPerPage]
         );
 
@@ -373,7 +397,7 @@ class Notes extends Extension
             "
 				SELECT DISTINCT image_id
 				FROM note_request
-				ORDER BY date DESC LIMIT :limit OFFSET :offset",
+				ORDER BY date DESC, id DESC LIMIT :limit OFFSET :offset",
             ["offset" => $pageNumber * $requestsPerPage, "limit" => $requestsPerPage]
         );
 
@@ -427,7 +451,7 @@ class Notes extends Extension
             "FROM note_histories AS h " .
             "INNER JOIN users AS u " .
             "ON u.id = h.user_id " .
-            "ORDER BY date DESC LIMIT :limit OFFSET :offset",
+            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
             ['offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
@@ -448,13 +472,34 @@ class Notes extends Extension
             "INNER JOIN users AS u " .
             "ON u.id = h.user_id " .
             "WHERE note_id = :note_id " .
-            "ORDER BY date DESC LIMIT :limit OFFSET :offset",
+            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
             ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
 
         $this->theme->display_history($histories, $pageNumber + 1, $totalPages);
+    }
+
+    private function get_image_history(int $imageID, int $pageNumber): void
+    {
+        global $config, $database;
+
+        $historiesPerPage = $config->get_int('notesHistoriesPerPage');
+
+        $histories = $database->get_all(
+            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
+            "FROM note_histories AS h " .
+            "INNER JOIN users AS u " .
+            "ON u.id = h.user_id " .
+            "WHERE image_id = :image_id " .
+            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
+            ['image_id' => $imageID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
+        );
+
+        $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id", ['image_id' => $imageID]) / $historiesPerPage);
+
+        $this->theme->display_image_history($histories, $imageID, $pageNumber + 1, $totalPages);
     }
 
     /**

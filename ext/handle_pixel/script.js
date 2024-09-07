@@ -21,6 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			img.css('max-height', (window.innerHeight * 0.95) + 'px');
 		}
 
+		const zoomed_height_diff = Math.round(window.innerHeight * 0.95 - img.height());
+		const zoomed_width_diff = Math.round(img.parent().width() * 0.95 - img.width());
+
+		if (zoomed_height_diff > 0 && zoomed_width_diff > 0) {
+			img.css('cursor', '');
+		} else if (zoom_type == "full") {
+			img.css('cursor', 'zoom-out');
+		} else {
+			img.css('cursor', 'zoom-in');
+		}
+
 		$(".shm-zoomer").val(zoom_type);
 
 		if (save_cookie) {

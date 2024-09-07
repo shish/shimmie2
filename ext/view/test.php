@@ -41,8 +41,9 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $image_id_3 = $this->post_image("tests/favicon.png", "test");
 
         // Front image: no next, has prev
-        $page = $this->get_page("post/next/$image_id_1");
-        $this->assertEquals(404, $page->code);
+        $this->assertException(PostNotFound::class, function () use ($image_id_1) {
+            $this->get_page("post/next/$image_id_1");
+        });
         $page = $this->get_page("post/prev/$image_id_1");
         $this->assertEquals("/test/post/view/$image_id_2", $page->redirect);
 
@@ -62,8 +63,9 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         // Last image has next, no prev
         $page = $this->get_page("post/next/$image_id_3");
         $this->assertEquals("/test/post/view/$image_id_2", $page->redirect);
-        $page = $this->get_page("post/prev/$image_id_3");
-        $this->assertEquals(404, $page->code);
+        $this->assertException(PostNotFound::class, function () use ($image_id_3) {
+            $this->get_page("post/prev/$image_id_3");
+        });
     }
 
     public function testPrevNextDisabledWhenOrdered(): void
@@ -90,10 +92,10 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $image_id_1 = $this->post_image("tests/favicon.png", "test");
         $idp1 = $image_id_1 + 1;
 
-        $this->assertException(ImageNotFound::class, function () use ($idp1) {
+        $this->assertException(PostNotFound::class, function () use ($idp1) {
             $this->get_page("post/view/$idp1");
         });
-        $this->assertException(ImageNotFound::class, function () {
+        $this->assertException(PostNotFound::class, function () {
             $this->get_page('post/view/-1');
         });
     }

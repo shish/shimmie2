@@ -14,7 +14,6 @@ class AdminPageTheme extends Themelet
         global $page;
 
         $page->set_title("Admin Tools");
-        $page->set_heading("Admin Tools");
         $page->add_block(new NavBlock());
     }
 }

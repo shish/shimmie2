@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class PrivMsgTheme extends Themelet
 {
     /**
@@ -57,7 +59,7 @@ class PrivMsgTheme extends Themelet
 				</tbody>
 			</table>
 		";
-        $page->add_block(new Block("Private Messages", $html, "main", 40, "private-messages"));
+        $page->add_block(new Block("Private Messages", rawHTML($html), "main", 40, "private-messages"));
     }
 
     public function display_composer(Page $page, User $from, User $to, string $subject = ""): void
@@ -77,7 +79,7 @@ $form
 </table>
 </form>
 EOD;
-        $page->add_block(new Block("Write a PM", $html, "main", 50));
+        $page->add_block(new Block("Write a PM", rawHTML($html), "main", 50));
     }
 
     public function display_message(Page $page, User $from, User $to, PM $pm): void
@@ -85,6 +87,6 @@ EOD;
         $page->set_title("Private Message");
         $page->set_heading(html_escape($pm->subject));
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Message from {$from->name}", format_text($pm->message), "main", 10));
+        $page->add_block(new Block("Message from {$from->name}", rawHTML(format_text($pm->message)), "main", 10));
     }
 }

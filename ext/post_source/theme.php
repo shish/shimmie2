@@ -36,7 +36,7 @@ class PostSourceTheme extends Themelet
         );
     }
 
-    protected function format_source(string $source = null): HTMLElement
+    protected function format_source(?string $source = null): HTMLElement
     {
         if (!empty($source)) {
             if (!str_contains($source, "://")) {

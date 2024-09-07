@@ -16,7 +16,7 @@ class BBCodeInfo extends ExtensionInfo
     public bool $core = true;
     public string $description = "Turns BBCode into HTML";
     public ?string $documentation =
-"  Basic formatting tags:
+        "  Basic formatting tags:
    <ul>
      <li>[b]<b>bold</b>[/b]
      <li>[i]<i>italic</i>[/i]
@@ -34,6 +34,7 @@ class BBCodeInfo extends ExtensionInfo
    Link tags:
    <ul>
      <li>[img]url[/img]
+     <li>[img]site://_images/image.jpg[/img]
      <li>[url]<a href=\"{self::SHIMMIE_URL}\">https://code.shishnet.org/</a>[/url]
      <li>[url=<a href=\"{self::SHIMMIE_URL}\">https://code.shishnet.org/</a>]some text[/url]
      <li>[url]site://ext_doc/bbcode[/url]
@@ -51,7 +52,7 @@ class BBCodeInfo extends ExtensionInfo
      <li>[ul]Unordered list[/ul]
      <li>[ol]Ordered list[/ol]
      <li>[li]List Item[/li]
-     <li>[code]<pre>print(\"Hello World!\");</pre>[/code]
+     <li>[code]<pre><code>print(\"Hello World!\");</code></pre>[/code]
      <li>[spoiler]<span style=\"background-color:#000; color:#000;\">Voldemort is bad</span>[/spoiler]
      <li>[quote]<blockquote><small>To be or not to be...</small></blockquote>[/quote]
      <li>[quote=Shakespeare]<blockquote><em>Shakespeare said:</em><br><small>... That is the question</small></blockquote>[/quote]

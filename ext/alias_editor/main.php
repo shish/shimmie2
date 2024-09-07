@@ -103,7 +103,7 @@ class AliasEditor extends Extension
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("alias/list"));
             } else {
-                $this->theme->display_error(400, "No File Specified", "You have to upload a file");
+                throw new InvalidInput("No File Specified");
             }
         }
     }
@@ -175,6 +175,8 @@ class AliasEditor extends Extension
         foreach (explode("\n", $csv) as $line) {
             $parts = str_getcsv($line);
             if (count($parts) == 2) {
+                assert(is_string($parts[0]));
+                assert(is_string($parts[1]));
                 send_event(new AddAliasEvent($parts[0], $parts[1]));
                 $i++;
             }

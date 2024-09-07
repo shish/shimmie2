@@ -302,6 +302,22 @@ class TagHistory extends Extension
     }
 
     /**
+     * @return array<string, mixed>|null
+     */
+    public function get_previous_tags(int $image_id, int $id): ?array
+    {
+        global $database;
+        $row = $database->get_row("
+				SELECT tags
+				FROM tag_histories
+				WHERE image_id = :image_id AND id < :id
+				ORDER BY id DESC
+				LIMIT 1
+		", ["image_id" => $image_id, "id" => $id]);
+        return ($row ? $row : null);
+    }
+
+    /**
      * This function attempts to revert all changes by a given IP within an (optional) timeframe.
      */
     public function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
@@ -313,13 +329,8 @@ class TagHistory extends Extension
 
         if (!is_null($name)) {
             $duser = User::by_name($name);
-            if (is_null($duser)) {
-                $this->theme->add_status($name, "user not found");
-                return;
-            } else {
-                $select_code[] = 'user_id = :user_id';
-                $select_args['user_id'] = $duser->id;
-            }
+            $select_code[] = 'user_id = :user_id';
+            $select_args['user_id'] = $duser->id;
         }
 
         if (!is_null($ip)) {
@@ -356,7 +367,7 @@ class TagHistory extends Extension
 				FROM tag_histories
 				WHERE image_id='.$image_id.'
 				AND NOT ('.implode(" AND ", $select_code).')
-				ORDER BY date_set DESC LIMIT 1
+				ORDER BY date_set DESC, id DESC LIMIT 1
 			', $select_args);
 
             if (!empty($row)) {

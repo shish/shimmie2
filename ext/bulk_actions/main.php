@@ -17,7 +17,7 @@ class BulkActionBlockBuildingEvent extends Event
     /** @var string[] */
     public array $search_terms = [];
 
-    public function add_action(string $action, string $button_text, string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40): void
+    public function add_action(string $action, string $button_text, ?string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40): void
     {
         if (!empty($access_key)) {
             assert(strlen($access_key) == 1);
@@ -68,20 +68,18 @@ class BulkActions extends Extension
     {
         global $page, $user;
 
-        if ($user->is_logged_in()) {
-            $babbe = new BulkActionBlockBuildingEvent();
-            $babbe->search_terms = $event->search_terms;
+        $babbe = new BulkActionBlockBuildingEvent();
+        $babbe->search_terms = $event->search_terms;
 
-            send_event($babbe);
+        send_event($babbe);
 
-            if (sizeof($babbe->actions) == 0) {
-                return;
-            }
-
-            usort($babbe->actions, [$this, "sort_blocks"]);
-
-            $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
+        if (sizeof($babbe->actions) == 0) {
+            return;
         }
+
+        usort($babbe->actions, [$this, "sort_blocks"]);
+
+        $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void

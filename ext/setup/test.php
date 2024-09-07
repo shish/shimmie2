@@ -6,6 +6,45 @@ namespace Shimmie2;
 
 class SetupTest extends ShimmiePHPUnitTestCase
 {
+    public function testParseSettings(): void
+    {
+        $this->assertEquals(
+            [
+                "mynull" => null,
+                "mystring" => "hello world!",
+                "myint" => 42 * 1024,
+                "mybool_true" => true,
+                "mybool_false" => false,
+                "myarray" => ["hello", "world"],
+            ],
+            ConfigSaveEvent::postToSettings([
+                // keys in POST that don't start with _type or _config are ignored
+                "some_post" => "value",
+                // _type with no _config means the value is null
+                "_type_mynull" => "string",
+                // strings left as-is
+                "_type_mystring" => "string",
+                "_config_mystring" => "hello world!",
+                // ints parsed from human-readable form
+                "_type_myint" => "int",
+                "_config_myint" => "42KB",
+                // HTML booleans (HTML checkboxes are "on" or undefined, there is no "off")
+                "_type_mybool_true" => "bool",
+                "_config_mybool_true" => "on",
+                "_type_mybool_false" => "bool",
+                // Arrays are... passed as arrays? Does this work?
+                "_type_myarray" => "array",
+                "_config_myarray" => ["hello", "world"],
+            ])
+        );
+
+        $this->assertException(InvalidInput::class, function () {
+            ConfigSaveEvent::postToSettings([
+                "_type_myint" => "cake",
+                "_config_myint" => "tasty",
+            ]);
+        });
+    }
     public function testNiceUrlsTest(): void
     {
         # XXX: this only checks that the text is "ok", to check

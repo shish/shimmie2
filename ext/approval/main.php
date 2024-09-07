@@ -153,7 +153,7 @@ class Approval extends Extension
         global $user, $config;
         if ($event->key === HelpPages::SEARCH) {
             if ($user->can(Permissions::APPROVE_IMAGE) &&  $config->get_bool(ApprovalConfig::IMAGES)) {
-                $event->add_block(new Block("Approval", $this->theme->get_help_html()));
+                $event->add_section("Approval", $this->theme->get_help_html());
             }
         }
     }

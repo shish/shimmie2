@@ -24,7 +24,7 @@ class SearchTermParseEvent extends Event
     /**
      * @param string[] $context
      */
-    public function __construct(int $id, string $term = null, array $context = [])
+    public function __construct(int $id, ?string $term = null, array $context = [])
     {
         parent::__construct();
 

@@ -16,8 +16,9 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         $this->assert_text("Joined:");
         $this->assert_no_text("Operations");
 
-        $this->get_page('user/MauMau');
-        $this->assert_title("No Such User");
+        $this->assertException(UserNotFound::class, function () {
+            $this->get_page('user/MauMau');
+        });
 
         $this->log_in_as_user();
         // should be on the user page
@@ -62,18 +63,20 @@ class UserPageTest extends ShimmiePHPUnitTestCase
             $this->post_page('user_admin/create_other', [
                 'name' => 'testnew',
                 'pass1' => 'testnew',
+                'pass2' => 'testnew',
                 'email' => '',
             ]);
         });
-        $this->assertNull(User::by_name('testnew'), "Anon can't create others");
+        $this->assertException(UserNotFound::class, function () {User::by_name('testnew');});
 
         $this->log_in_as_admin();
         $this->post_page('user_admin/create_other', [
             'name' => 'testnew',
             'pass1' => 'testnew',
+            'pass2' => 'testnew',
             'email' => '',
         ]);
         $this->assertEquals(302, $page->code);
-        $this->assertNotNull(User::by_name('testnew'), "Admin can create others");
+        $this->assertNotNull(User::by_name('testnew'));
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 use function MicroHTML\LABEL;
 use function MicroHTML\TABLE;
 use function MicroHTML\TBODY;
@@ -37,7 +39,6 @@ class CronUploaderTheme extends Themelet
         $info_html = "";
 
         $page->set_title("Cron Uploader");
-        $page->set_heading("Cron Uploader");
 
         if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
             $info_html .= "<b style='color:red'>THIS EXTENSION REQUIRES USER API KEYS TO BE ENABLED IN <a href=''>BOARD ADMIN</a></b><br/>";
@@ -102,7 +103,7 @@ class CronUploaderTheme extends Themelet
                         <li style='text-align: left;'>You can inherit categories by creating a folder that ends with \";\". For instance category;\\tag1 would result in the tag category:tag1. This allows creating a category folder, then creating many subfolders that will use that category.</li>
                     </ol>
                     The cron uploader works by importing files from the queue folder whenever this url is visited:
-                <br/><pre><a href='$cron_url'>$cron_url</a></pre>
+                <br/><code><a href='$cron_url'>$cron_url</a></code>
 
             <ul>
                 <li>If an import is already running, another cannot start until it is done.</li>
@@ -113,9 +114,9 @@ class CronUploaderTheme extends Themelet
         ";
 
 
-        $block = new Block("Cron Uploader", $info_html, "main", 10);
-        $block_install = new Block("Setup Guide", $install_html, "main", 30);
-        $block_usage = new Block("Usage Guide", $usage_html, "main", 20);
+        $block = new Block("Cron Uploader", rawHTML($info_html), "main", 10);
+        $block_install = new Block("Setup Guide", rawHTML($install_html), "main", 30);
+        $block_usage = new Block("Usage Guide", rawHTML($usage_html), "main", 20);
         $page->add_block($block);
         $page->add_block($block_install);
         $page->add_block($block_usage);
@@ -126,12 +127,12 @@ class CronUploaderTheme extends Themelet
                 $log_html .= "<tr><th>{$entry["date_sent"]}</th><td>{$entry["message"]}</td></tr>";
             }
             $log_html .= "</table>";
-            $block = new Block("Log", $log_html, "main", 40);
+            $block = new Block("Log", rawHTML($log_html), "main", 40);
             $page->add_block($block);
         }
     }
 
-    public function get_user_options(): string
+    public function get_user_options(): HTMLElement
     {
         $form = SHM_SIMPLE_FORM(
             "user_admin/cron_uploader",
@@ -162,7 +163,7 @@ class CronUploaderTheme extends Themelet
             )
         );
         $html = emptyHTML($form);
-        return (string)$html;
+        return $html;
     }
 
     /**
@@ -197,6 +198,6 @@ class CronUploaderTheme extends Themelet
             ."<table class='form'><tr><td>"
             ."<input type='submit' value='Clear failed folder'></td></tr></table></form>";
         $html .= "</table>\n";
-        $page->add_block(new Block("Cron Upload", $html));
+        $page->add_block(new Block("Cron Upload", rawHTML($html)));
     }
 }

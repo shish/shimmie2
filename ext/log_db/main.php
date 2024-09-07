@@ -200,8 +200,11 @@ class MessageColumn extends Column
     protected function scan_entities(string $line): string
     {
         $line = preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
+        assert(is_string($line));
         $line = preg_replace_callback("/Post #(\d+)/s", [$this, "link_image"], $line);
+        assert(is_string($line));
         $line = preg_replace_callback("/>>(\d+)/s", [$this, "link_image"], $line);
+        assert(is_string($line));
         return $line;
     }
 
@@ -277,11 +280,13 @@ class LogDatabase extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $user;
+        global $database, $page, $user;
         if ($event->page_matches("log/view", permission: Permissions::VIEW_EVENTLOG)) {
             $t = new LogTable($database->raw_db());
             $t->inputs = $event->GET;
-            $this->theme->display_crud("Event Log", $t->table($t->query()), $t->paginator());
+            $page->set_title("Event Log");
+            $page->add_block(new NavBlock());
+            $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }
 

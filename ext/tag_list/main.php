@@ -32,7 +32,6 @@ class TagList extends Extension
         global $config, $page;
 
         if ($event->page_matches("tags/{sub}", method: "GET")) {
-            $this->theme->set_navigation($this->build_navigation());
             $sub = $event->get_arg('sub');
 
             if ($event->get_GET('starts_with')) {
@@ -219,16 +218,6 @@ class TagList extends Extension
         return $html;
     }
 
-    private function build_navigation(): string
-    {
-        $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_map = "<a href='".make_link("tags/map")."'>Map</a>";
-        $h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
-        $h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
-        $h_all = "<a href='".modify_current_url(["mincount" => 1])."'>Show All</a>";
-        return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>&nbsp;<br>$h_all";
-    }
-
     private function build_tag_map(string $starts_with, int $tags_min): string
     {
         global $config, $database;
@@ -275,7 +264,7 @@ class TagList extends Extension
             $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
 
-        if (SPEED_HAX) {
+        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
             file_put_contents($cache_key, $html);
         }
 
@@ -349,7 +338,7 @@ class TagList extends Extension
             $html .= "<a href='$link'>$h_tag</a>\n";
         }
 
-        if (SPEED_HAX) {
+        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
             file_put_contents($cache_key, $html);
         }
 
@@ -358,7 +347,7 @@ class TagList extends Extension
 
     private function build_tag_popularity(int $tags_min): string
     {
-        global $database;
+        global $config, $database;
 
         // Make sure that the value of $tags_min is at least 1.
         // Otherwise the database will complain if you try to do: LOG(0)
@@ -396,7 +385,7 @@ class TagList extends Extension
             $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
         }
 
-        if (SPEED_HAX) {
+        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
             file_put_contents($cache_key, $html);
         }
 

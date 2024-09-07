@@ -20,13 +20,12 @@ class ForumTheme extends Themelet
     public function display_thread_list(Page $page, array $threads, bool $showAdminOptions, int $pageNumber, int $totalPages): void
     {
         if (count($threads) == 0) {
-            $html = "There are no threads to show.";
+            $html = rawHTML("There are no threads to show.");
         } else {
             $html = $this->make_thread_list($threads, $showAdminOptions);
         }
 
-        $page->set_title(html_escape("Forum"));
-        $page->set_heading(html_escape("Forum"));
+        $page->set_title("Forum");
         $page->add_block(new Block("Forum", $html, "main", 10));
 
         $this->display_paginator($page, "forum/index", null, $pageNumber, $totalPages);
@@ -34,7 +33,7 @@ class ForumTheme extends Themelet
 
 
 
-    public function display_new_thread_composer(Page $page, string $threadText = null, string $threadTitle = null): void
+    public function display_new_thread_composer(Page $page, ?string $threadText = null, ?string $threadTitle = null): void
     {
         global $config, $user;
         $max_characters = $config->get_int('forumMaxCharsPerPost');
@@ -76,7 +75,6 @@ class ForumTheme extends Themelet
 
         $blockTitle = "Write a new thread";
         $page->set_title(html_escape($blockTitle));
-        $page->set_heading(html_escape($blockTitle));
         $page->add_block(new Block($blockTitle, $html, "main", 120));
     }
 
@@ -192,7 +190,6 @@ class ForumTheme extends Themelet
         $this->display_paginator($page, "forum/view/".$threadID, null, $pageNumber, $totalPages);
 
         $page->set_title(html_escape($threadTitle));
-        $page->set_heading(html_escape($threadTitle));
         $page->add_block(new Block($threadTitle, $html, "main", 20));
     }
 

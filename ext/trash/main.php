@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 abstract class TrashConfig
 {
     public const VERSION = "ext_trash_version";
@@ -119,10 +121,7 @@ class Trash extends Extension
         global $user;
         if ($event->key === HelpPages::SEARCH) {
             if ($user->can(Permissions::VIEW_TRASH)) {
-                $block = new Block();
-                $block->header = "Trash";
-                $block->body = $this->theme->get_help_html();
-                $event->add_block($block);
+                $event->add_section("Trash", $this->theme->get_help_html());
             }
         }
     }

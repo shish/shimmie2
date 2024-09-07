@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\INPUT;
+use function MicroHTML\{INPUT,rawHTML};
 
 /**
  * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}
@@ -55,9 +55,8 @@ class ReportImageTheme extends Themelet
 		";
 
         $page->set_title("Reported Posts");
-        $page->set_heading("Reported Posts");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Reported Posts", $html));
+        $page->add_block(new Block("Reported Posts", rawHTML($html)));
     }
 
     /**
@@ -93,7 +92,7 @@ class ReportImageTheme extends Themelet
 				<input type='submit' value='Report'>
 			</form>
 		";
-        $page->add_block(new Block("Report Post", $html, "left"));
+        $page->add_block(new Block("Report Post", rawHTML($html), "left"));
     }
 
     public function get_nuller(User $duser): void
@@ -104,6 +103,6 @@ class ReportImageTheme extends Themelet
             INPUT(["type" => 'hidden', "name" => 'user_id', "value" => $duser->id]),
             SHM_SUBMIT('Delete all reports by this user')
         );
-        $page->add_block(new Block("Reports", $html, "main", 80));
+        $page->add_block(new Block("Reports", rawHTML($html), "main", 80));
     }
 }

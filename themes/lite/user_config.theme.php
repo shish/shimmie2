@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CustomUserConfigTheme extends UserConfigTheme
+class LiteUserConfigTheme extends UserConfigTheme
 {
     protected function sb_to_html(SetupBlock $block): string
     {

@@ -83,20 +83,27 @@ class User
     public static function by_session(string $name, string $session): ?User
     {
         global $cache, $config, $database;
-        $row = $cache->get("user-session:$name-$session");
-        if (is_null($row)) {
-            if ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
-                $query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
-            } else {
-                $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
+        $user = $cache->get("user-session-obj:$name-$session");
+        if (is_null($user)) {
+            try {
+                $user_by_name = User::by_name($name);
+            } catch (UserNotFound $e) {
+                return null;
             }
-            $row = $database->get_row($query, ["name" => $name, "ip" => get_session_ip($config), "sess" => $session]);
-            $cache->set("user-session:$name-$session", $row, 600);
+            if ($user_by_name->get_session_id() === $session) {
+                $user = $user_by_name;
+            }
+            // For 2.12, check old session IDs and convert to new IDs
+            if (md5($user_by_name->passhash . get_session_ip($config)) === $session) {
+                $user = $user_by_name;
+                $user->set_login_cookie();
+            }
+            $cache->set("user-session-obj:$name-$session", $user, 600);
         }
-        return is_null($row) ? null : new User($row);
+        return $user;
     }
 
-    public static function by_id(int $id): ?User
+    public static function by_id(int $id): User
     {
         global $cache, $database;
         if ($id === 1) {
@@ -109,51 +116,55 @@ class User
         if ($id === 1) {
             $cache->set('user-id:'.$id, $row, 600);
         }
-        return is_null($row) ? null : new User($row);
+        if (is_null($row)) {
+            throw new UserNotFound("Can't find any user with ID $id");
+        }
+        return new User($row);
     }
 
     #[Query(name: "user")]
-    public static function by_name(string $name): ?User
+    public static function by_name(string $name): User
     {
         global $database;
         $row = $database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name" => $name]);
-        return is_null($row) ? null : new User($row);
+        if (is_null($row)) {
+            throw new UserNotFound("Can't find any user named $name");
+        } else {
+            return new User($row);
+        }
     }
 
     public static function name_to_id(string $name): int
     {
-        $u = User::by_name($name);
-        if (is_null($u)) {
-            throw new UserNotFound("Can't find any user named $name");
-        } else {
-            return $u->id;
-        }
+        return User::by_name($name)->id;
     }
 
-    public static function by_name_and_pass(string $name, string $pass): ?User
+    public static function by_name_and_pass(string $name, string $pass): User
     {
-        $my_user = User::by_name($name);
-
-        // If user tried to log in as "foo bar" and failed, try "foo_bar"
-        if (!$my_user && str_contains($name, " ")) {
-            $my_user = User::by_name(str_replace(" ", "_", $name));
+        try {
+            $my_user = User::by_name($name);
+        } catch (UserNotFound $e) {
+            // If user tried to log in as "foo bar" and failed, try "foo_bar"
+            try {
+                $my_user = User::by_name(str_replace(" ", "_", $name));
+            } catch (UserNotFound $e) {
+                log_warning("core-user", "Failed to log in as $name (Invalid username)");
+                throw $e;
+            }
         }
 
-        if ($my_user) {
-            if ($my_user->passhash == md5(strtolower($name) . $pass)) {
-                log_info("core-user", "Migrating from md5 to bcrypt for $name");
-                $my_user->set_password($pass);
-            }
-            if (password_verify($pass, $my_user->passhash)) {
-                log_info("core-user", "Logged in as $name ({$my_user->class->name})");
-                return $my_user;
-            } else {
-                log_warning("core-user", "Failed to log in as $name (Invalid password)");
-            }
+        if ($my_user->passhash == md5(strtolower($name) . $pass)) {
+            log_info("core-user", "Migrating from md5 to bcrypt for $name");
+            $my_user->set_password($pass);
+        }
+        assert(!is_null($my_user->passhash));
+        if (password_verify($pass, $my_user->passhash)) {
+            log_info("core-user", "Logged in as $name ({$my_user->class->name})");
+            return $my_user;
         } else {
-            log_warning("core-user", "Failed to log in as $name (Invalid username)");
+            log_warning("core-user", "Failed to log in as $name (Invalid password)");
+            throw new UserNotFound("Can't find anybody with that username and password");
         }
-        return null;
     }
 
 
@@ -171,12 +182,6 @@ class User
         return ($this->id === $config->get_int('anon_id'));
     }
 
-    public function is_logged_in(): bool
-    {
-        global $config;
-        return ($this->id !== $config->get_int('anon_id'));
-    }
-
     public function set_class(string $class): void
     {
         global $database;
@@ -187,8 +192,11 @@ class User
     public function set_name(string $name): void
     {
         global $database;
-        if (User::by_name($name)) {
+        try {
+            User::by_name($name);
             throw new InvalidInput("Desired username is already in use");
+        } catch (UserNotFound $e) {
+            // if user is not found, we're good
         }
         $old_name = $this->name;
         $this->name = $name;
@@ -246,19 +254,41 @@ class User
     /**
      * Get an auth token to be used in POST forms
      *
-     * password = secret, avoid storing directly
-     * passhash = bcrypt(password), so someone who gets to the database can't get passwords
-     * sesskey  = md5(passhash . IP), so if it gets sniffed it can't be used from another IP,
-     *            and it can't be used to get the passhash to generate new sesskeys
-     * authtok  = md5(sesskey, salt), presented to the user in web forms, to make sure that
-     *            the form was generated within the session. Salted and re-hashed so that
-     *            reading a web page from the user's cache doesn't give access to the session key
+     * the token is based on
+     * - the user's password, so that only this user can use the token
+     * - the session IP, to reduce the blast radius of guessed passwords
+     * - a salt known only to the server, so that clients or attackers
+     *   can't generate their own tokens even if they know the first two
      */
     public function get_auth_token(): string
     {
         global $config;
-        $salt = DATABASE_DSN;
-        $addr = get_session_ip($config);
-        return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
+        return hash("sha3-256", $this->passhash . get_session_ip($config) . SECRET);
     }
+
+
+    public function get_session_id(): string
+    {
+        global $config;
+        return hash("sha3-256", $this->passhash . get_session_ip($config) . SECRET);
+    }
+
+    public function set_login_cookie(): void
+    {
+        global $config, $page;
+
+        $page->add_cookie(
+            "user",
+            $this->name,
+            time() + 60 * 60 * 24 * 365,
+            '/'
+        );
+        $page->add_cookie(
+            "session",
+            $this->get_session_id(),
+            time() + 60 * 60 * 24 * $config->get_int('login_memory'),
+            '/'
+        );
+    }
+
 }

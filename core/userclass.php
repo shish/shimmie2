@@ -19,7 +19,7 @@ class UserClass
     public static array $known_classes = [];
 
     #[Field]
-    public ?string $name = null;
+    public string $name;
     public ?UserClass $parent = null;
     public bool $core = false;
 

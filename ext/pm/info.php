@@ -16,7 +16,7 @@ class PrivMsgInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::FEATURE;
     public string $description = "Allow users to send messages to eachother";
     public ?string $documentation =
-"PMs show up on a user's profile page, readable by that user
+        "PMs show up on a user's profile page, readable by that user
 as well as board admins. To send a PM, visit another user's
 profile page and a box will be shown.";
 }

@@ -6,7 +6,9 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-class CustomViewPostTheme extends ViewPostTheme
+use function MicroHTML\rawHTML;
+
+class Danbooru2ViewPostTheme extends ViewPostTheme
 {
     /**
      * @param HTMLElement[] $editor_parts
@@ -20,7 +22,7 @@ class CustomViewPostTheme extends ViewPostTheme
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 15));
     }
 
-    private function build_information(Image $image): string
+    private function build_information(Image $image): HTMLElement
     {
         $h_owner = html_escape($image->get_owner()->name);
         $h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
@@ -54,30 +56,28 @@ class CustomViewPostTheme extends ViewPostTheme
         }
 
         if (Extension::is_enabled(RatingsInfo::KEY)) {
-            if ($image['rating'] === null || $image['rating'] == "?") {
-                $image['rating'] = "?";
+            $rating = $image['rating'];
+            if ($rating === null) {
+                $rating = "?";
             }
-            // @phpstan-ignore-next-line - ???
-            if (Extension::is_enabled(RatingsInfo::KEY)) {
-                $h_rating = Ratings::rating_to_human($image['rating']);
-                $html .= "<br>Rating: $h_rating";
-            }
+            $h_rating = Ratings::rating_to_human($rating);
+            $html .= "<br>Rating: <a href='".search_link(["rating=$rating"])."'>$h_rating</a>";
         }
 
-        return $html;
+        return rawHTML($html);
     }
 
-    protected function build_navigation(Image $image): string
+    protected function build_navigation(Image $image): HTMLElement
     {
         //$h_pin = $this->build_pin($image);
         $h_search = "
 			<form action='".search_link()."' method='GET'>
-				<input name='search' type='text'  style='width:75%'>
+				<input name='search' type='text' class='autocomplete_tags' style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
 				<input type='hidden' name='q' value='post/list'>
 			</form>
 		";
 
-        return "$h_search";
+        return rawHTML($h_search);
     }
 }

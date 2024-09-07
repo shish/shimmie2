@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{UL, LI};
+use function MicroHTML\{UL, LI, rawHTML};
 
 class BulkAddTheme extends Themelet
 {
@@ -16,7 +16,6 @@ class BulkAddTheme extends Themelet
     public function display_upload_results(Page $page, array $results): void
     {
         $page->set_title("Adding folder");
-        $page->set_heading("Adding folder");
         $page->add_block(new NavBlock());
         $html = UL();
         foreach ($results as $r) {
@@ -50,6 +49,6 @@ class BulkAddTheme extends Themelet
 				</table>
 			</form>
 		";
-        $page->add_block(new Block("Bulk Add", $html));
+        $page->add_block(new Block("Bulk Add", rawHTML($html)));
     }
 }

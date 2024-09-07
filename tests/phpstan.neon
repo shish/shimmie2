@@ -1,6 +1,6 @@
 parameters:
   errorFormat: raw
-  level: 7
+  level: 8
   paths:
     - ../core
     - ../ext
@@ -8,7 +8,6 @@ parameters:
     - ../themes
   dynamicConstantNames:
     - DEBUG
-    - SPEED_HAX
     - TRUSTED_PROXIES
     - TIMEZONE
     - BASE_HREF

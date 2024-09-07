@@ -16,7 +16,7 @@ class PostTagsInfo extends ExtensionInfo
     public ExtensionCategory $category = ExtensionCategory::METADATA;
     public string $description = "Allow images to have tags assigned to them";
     public ?string $documentation =
-"  Here is a list of the tagging metatags available out of the box;
+        "  Here is a list of the tagging metatags available out of the box;
    Shimmie extensions may provide other metatags:
    <ul>
      <li>source=(*, none) eg -- using this metatag will ignore anything set in the \"Source\" box

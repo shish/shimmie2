@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{LINK};
+
 class RSSImages extends Extension
 {
     public function onPostListBuilding(PostListBuildingEvent $event): void
@@ -13,11 +15,19 @@ class RSSImages extends Extension
 
         if (count($event->search_terms) > 0) {
             $search = url_escape(Tag::implode($event->search_terms));
-            $page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-                "title=\"$title - Posts with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
+            $page->add_html_header(LINK([
+                'rel' => 'alternate',
+                'type' => 'application/rss+xml',
+                'title' => "$title - Posts with tags: $search",
+                'href' => make_link("rss/images/$search/1")
+            ]));
         } else {
-            $page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-                "title=\"$title - Posts\" href=\"".make_link("rss/images/1")."\" />");
+            $page->add_html_header(LINK([
+                'rel' => 'alternate',
+                'type' => 'application/rss+xml',
+                'title' => "$title - Posts",
+                'href' => make_link("rss/images/1")
+            ]));
         }
     }
 
@@ -31,7 +41,7 @@ class RSSImages extends Extension
             $search_terms = Tag::explode($event->get_arg('search', ""));
             $page_number = $event->get_iarg('page_num', 1);
             $page_size = $config->get_int(IndexConfig::IMAGES);
-            if (SPEED_HAX && $page_number > 9) {
+            if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::RSS_LIMIT) && $page_number > 9) {
                 return;
             }
             $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);

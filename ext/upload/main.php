@@ -219,15 +219,13 @@ class Upload extends Extension
 
         if ($event->page_matches("upload", method: "GET", permission: Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
-                $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
-                return;
+                throw new ServerError("Can't upload images: disk nearly full");
             }
             $this->theme->display_page($page);
         }
         if ($event->page_matches("upload", method: "POST", permission: Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
-                $this->theme->display_error(507, "Error", "Can't upload images: disk nearly full");
-                return;
+                throw new ServerError("Can't upload images: disk nearly full");
             }
             $results = [];
 
@@ -319,7 +317,7 @@ class Upload extends Extension
                     }
                     return $event->images;
                 });
-                foreach($new_images as $image) {
+                foreach ($new_images as $image) {
                     $results[] = new UploadSuccess($name, $image->id);
                 }
             } catch (UploadException $ex) {
@@ -351,7 +349,7 @@ class Upload extends Extension
 
             // Parse metadata
             $s_filename = find_header($headers, 'Content-Disposition');
-            $h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
+            $h_filename = ($s_filename ? preg_replace_ex('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
             $filename = $h_filename ?: basename($url);
 
             $new_images = $database->with_savepoint(function () use ($tmp_filename, $filename, $slot, $metadata) {
@@ -361,7 +359,7 @@ class Upload extends Extension
                 }
                 return $event->images;
             });
-            foreach($new_images as $image) {
+            foreach ($new_images as $image) {
                 $results[] = new UploadSuccess($url, $image->id);
             }
         } catch (UploadException $ex) {

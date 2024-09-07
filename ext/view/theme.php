@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, DIV, BR};
+use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, rawHTML, DIV, BR, META, LINK};
 
 class ViewPostTheme extends Themelet
 {
@@ -14,12 +14,17 @@ class ViewPostTheme extends Themelet
     {
         global $page;
 
-        $h_metatags = str_replace(" ", ", ", html_escape($image->get_tag_list()));
-        $page->add_html_header("<meta name=\"keywords\" content=\"$h_metatags\">");
-        $page->add_html_header("<meta property=\"og:title\" content=\"$h_metatags\">");
-        $page->add_html_header("<meta property=\"og:type\" content=\"article\">");
-        $page->add_html_header("<meta property=\"og:image\" content=\"".make_http($image->get_thumb_link())."\">");
-        $page->add_html_header("<meta property=\"og:url\" content=\"".make_http(make_link("post/view/{$image->id}"))."\">");
+        $h_metatags = str_replace(" ", ", ", $image->get_tag_list());
+        $page->add_html_header(META(["name" => "keywords", "content" => $h_metatags]));
+        $page->add_html_header(META(["property" => "og:title", "content" => $h_metatags]));
+        $page->add_html_header(META(["property" => "og:type", "content" => "article"]));
+        $page->add_html_header(META(["property" => "og:image", "content" => make_http($image->get_image_link())]));
+        $page->add_html_header(META(["property" => "og:url", "content" => make_http(make_link("post/view/{$image->id}"))]));
+        $page->add_html_header(META(["property" => "og:image:width", "content" => $image->width]));
+        $page->add_html_header(META(["property" => "og:image:height", "content" => $image->height]));
+        $page->add_html_header(META(["property" => "twitter:title", "content" => $h_metatags]));
+        $page->add_html_header(META(["property" => "twitter:card", "content" => "summary_large_image"]));
+        $page->add_html_header(META(["property" => "twitter:image:src", "content" => make_http($image->get_image_link())]));
     }
 
     /**
@@ -37,9 +42,9 @@ class ViewPostTheme extends Themelet
         //$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 
         $query = $this->get_query();
-        if(!$this->is_ordered_search()) {
-            $page->add_html_header("<link id='nextlink' rel='next' href='".make_link("post/next/{$image->id}", $query)."'>");
-            $page->add_html_header("<link id='prevlink' rel='previous' href='".make_link("post/prev/{$image->id}", $query)."'>");
+        if (!$this->is_ordered_search()) {
+            $page->add_html_header(LINK(["id" => "nextlink", "rel" => "next", "href" => make_link("post/next/{$image->id}", $query)]));
+            $page->add_html_header(LINK(["id" => "prevlink", "rel" => "previous", "href" => make_link("post/prev/{$image->id}", $query)]));
         }
     }
 
@@ -69,10 +74,10 @@ class ViewPostTheme extends Themelet
      */
     protected function is_ordered_search(): bool
     {
-        if(isset($_GET['search'])) {
+        if (isset($_GET['search'])) {
             $tags = Tag::explode($_GET['search']);
-            foreach($tags as $tag) {
-                if(preg_match("/^order[=:]/", $tag) == 1) {
+            foreach ($tags as $tag) {
+                if (preg_match("/^order[=:]/", $tag) == 1) {
                     return true;
                 }
             }
@@ -83,7 +88,7 @@ class ViewPostTheme extends Themelet
     protected function build_pin(Image $image): HTMLElement
     {
         $query = $this->get_query();
-        if($this->is_ordered_search()) {
+        if ($this->is_ordered_search()) {
             return A(["href" => make_link()], "Index");
         } else {
             return joinHTML(" | ", [
@@ -94,7 +99,7 @@ class ViewPostTheme extends Themelet
         }
     }
 
-    protected function build_navigation(Image $image): string
+    protected function build_navigation(Image $image): HTMLElement
     {
         $h_pin = $this->build_pin($image);
         $h_search = "
@@ -105,7 +110,7 @@ class ViewPostTheme extends Themelet
 			</form>
 		";
 
-        return "$h_pin<br>$h_search";
+        return rawHTML("$h_pin<br>$h_search");
     }
 
     /**
@@ -119,7 +124,7 @@ class ViewPostTheme extends Themelet
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
         }
 
-        if(
+        if (
             (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
             $user->can(Permissions::EDIT_IMAGE_TAG)
         ) {

@@ -7,9 +7,9 @@
  */
 function false_throws(mixed $x, ?callable $errorgen = null): mixed
 {
-    if($x === false) {
+    if ($x === false) {
         $msg = "Unexpected false";
-        if($errorgen) {
+        if ($errorgen) {
             $msg = $errorgen();
         }
         throw new \Exception($msg);
@@ -31,4 +31,13 @@ function dir_ex(string $directory): \Directory
 function filter_var_ex(mixed $variable, int $filter = FILTER_DEFAULT, mixed $options = null): mixed
 {
     return false_throws(filter_var($variable, $filter, $options));
+}
+
+function preg_replace_ex(string $pattern, string $replacement, string $subject, int $limit = -1, ?int &$count = null): string
+{
+    $res = preg_replace($pattern, $replacement, $subject, $limit, $count);
+    if (is_null($res)) {
+        throw new \Exception("preg_replace failed");
+    }
+    return $res;
 }

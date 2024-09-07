@@ -15,6 +15,6 @@ class GoogleAnalyticsInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Integrates Google Analytics tracking";
     public ?string $documentation =
-"User has to enter their Google Analytics ID in the Board Config to use this extension.";
+        "User has to enter their Google Analytics ID in the Board Config to use this extension.";
     public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\rawHTML;
+
 class CBZFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
@@ -27,6 +29,6 @@ class CBZFileHandlerTheme extends Themelet
             <script src='{$data_href}/ext/handle_cbz/comic.js'></script>
             <script>window.comic = new Comic('comicMain', '$ilink');</script>
         ";
-        $page->add_block(new Block("Comic", $html, "main", 10, "comicBlock"));
+        $page->add_block(new Block("Comic", rawHTML($html), "main", 10, "comicBlock"));
     }
 }

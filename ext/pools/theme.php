@@ -30,7 +30,7 @@ class PoolsTheme extends Themelet
         foreach ($navIDs as $poolID => $poolInfo) {
             $div = DIV(SHM_A("pool/view/" . $poolID, $poolInfo["info"]->title));
 
-            if(!empty($poolInfo["nav"])) {
+            if (!empty($poolInfo["nav"])) {
                 if (!empty($poolInfo["nav"]["prev"])) {
                     $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
                 }
@@ -58,7 +58,7 @@ class PoolsTheme extends Themelet
         $pool_rows = [];
         foreach ($pools as $pool) {
             $pool_link = SHM_A("pool/view/" . $pool->id, $pool->title);
-            $user_link = SHM_A("user/" . url_escape($pool->user_name), $pool->user_name);
+            $user_link = SHM_A("user/" . url_escape($pool->user_name), $pool->user_name ?? "No Name");
 
             $pool_rows[] = TR(
                 TD(["class" => "left"], $pool_link),
@@ -75,7 +75,7 @@ class PoolsTheme extends Themelet
         );
 
         $order_arr = ['created' => 'Recently created', 'updated' => 'Last updated', 'name' => 'Name', 'count' => 'Post Count'];
-        $order_selected = $page->get_cookie('ui-order-pool');
+        $order_selected = $page->get_cookie('ui-order-pool') ?? "";
         $order_sel = SHM_SELECT("order_pool", $order_arr, selected_options: [$order_selected], attrs: ["id" => "order_pool"]);
 
         $this->display_top(null, "Pools");
@@ -110,7 +110,6 @@ class PoolsTheme extends Themelet
         global $page, $user;
 
         $page->set_title($heading);
-        $page->set_heading($heading);
 
         $poolnav = emptyHTML(
             SHM_A("pool/list", "Pool Index"),
@@ -127,7 +126,7 @@ class PoolsTheme extends Themelet
 
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
-        $page->add_block(new Block("Search", $search, "left", 10));
+        $page->add_block(new Block("Search", rawHTML($search), "left", 10));
 
         if (!is_null($pool)) {
             if ($pool->public || $user->can(Permissions::POOLS_ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
@@ -136,7 +135,7 @@ class PoolsTheme extends Themelet
                 }
             }
             $tfe = send_event(new TextFormattingEvent($pool->description));
-            $page->add_block(new Block(html_escape($pool->title), $tfe->formatted, "main", 10));
+            $page->add_block(new Block(html_escape($pool->title), rawHTML($tfe->formatted), "main", 10));
         }
     }
 

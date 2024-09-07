@@ -8,11 +8,11 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{emptyHTML};
 use function MicroHTML\A;
+use function MicroHTML\CODE;
+use function MicroHTML\DIV;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
-use function MicroHTML\DIV;
 use function MicroHTML\OPTION;
-use function MicroHTML\PRE;
 use function MicroHTML\P;
 use function MicroHTML\SELECT;
 use function MicroHTML\SPAN;
@@ -87,7 +87,7 @@ function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement
 {
     return DIV(
         ["class" => "command_example"],
-        PRE($ex),
+        CODE($ex),
         P($desc)
     );
 }
@@ -163,14 +163,14 @@ function SHM_POST_INFO(
     HTMLElement|string|null $edit = null,
     string|null $link = null,
 ): HTMLElement {
-    if(!is_null($view) && !is_null($edit)) {
+    if (!is_null($view) && !is_null($edit)) {
         $show = emptyHTML(
             SPAN(["class" => "view"], $view),
             SPAN(["class" => "edit"], $edit),
         );
-    } elseif(!is_null($edit)) {
+    } elseif (!is_null($edit)) {
         $show = $edit;
-    } elseif(!is_null($view)) {
+    } elseif (!is_null($view)) {
         $show = $view;
     } else {
         $show = "???";

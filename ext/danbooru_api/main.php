@@ -80,14 +80,12 @@ class DanbooruApi extends Extension
         if (isset($_REQUEST['login']) && isset($_REQUEST['password'])) {
             // Get this user from the db, if it fails the user becomes anonymous
             // Code borrowed from /ext/user
-            $name = $_REQUEST['login'];
-            $pass = $_REQUEST['password'];
-            $duser = User::by_name_and_pass($name, $pass);
-            if (!is_null($duser)) {
-                $user = $duser;
-            } else {
+            try {
+                $name = $_REQUEST['login'];
+                $pass = $_REQUEST['password'];
+                $user = User::by_name_and_pass($name, $pass);
+            } catch (UserNotFound $e) {
                 $user = User::by_id($config->get_int("anon_id", 0));
-                assert(!is_null($user));
             }
             send_event(new UserLoginEvent($user));
         }
@@ -139,8 +137,7 @@ class DanbooruApi extends Extension
             $tags = Tag::explode($GET['tags']);
             assert(!is_null($start) && !is_null($tags));
         }
-        */
-        else {
+        */ else {
             $start = isset($GET['after_id']) ? int_escape($GET['offset']) : 0;
             $sqlresult = $database->get_all(
                 "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= :id ORDER BY id DESC",
@@ -319,7 +316,7 @@ class DanbooruApi extends Extension
             assert($file !== false);
             try {
                 fetch_url($source, $file);
-            } catch(FetchException $e) {
+            } catch (FetchException $e) {
                 $page->set_code(409);
                 $page->add_http_header("X-Danbooru-Errors: $e");
                 return;

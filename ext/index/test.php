@@ -31,12 +31,14 @@ class IndexTest extends ShimmiePHPUnitTestCase
         $this->get_page('post/list/1');
         $this->assert_title("Shimmie");
 
-        $this->get_page('post/list/99999');
-        $this->assert_response(404);
+        $this->assertException(PostNotFound::class, function () {
+            $this->get_page('post/view/99999');
+        });
 
         # No results: 404
-        $this->get_page('post/list/maumaumau/1');
-        $this->assert_response(404);
+        $this->assertException(PostNotFound::class, function () {
+            $this->get_page('post/list/maumaumau/1');
+        });
 
         # One result: 302
         $this->get_page("post/list/pbx/1");

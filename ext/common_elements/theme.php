@@ -6,37 +6,10 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML};
+use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
 
-/**
- * Class BaseThemelet
- *
- * A collection of common functions for theme parts
- */
-class BaseThemelet
+class CommonElementsTheme extends Themelet
 {
-    /**
-     * Generic error message display
-     */
-    public function display_error(int $code, string $title, string $message): void
-    {
-        global $page;
-        $page->set_code($code);
-        $page->set_title($title);
-        $page->set_heading($title);
-        $has_nav = false;
-        foreach ($page->blocks as $block) {
-            if ($block->header == "Navigation") {
-                $has_nav = true;
-                break;
-            }
-        }
-        if (!$has_nav) {
-            $page->add_block(new NavBlock());
-        }
-        $page->add_block(new Block("Error", $message));
-    }
-
     /**
      * Generic thumbnail code; returns HTML rather than adding
      * a block since thumbs tend to go inside blocks...
@@ -69,6 +42,12 @@ class BaseThemelet
                 $custom_classes .= "shm-thumb-has_child ";
             }
         }
+        if (Extension::is_enabled(RatingsInfo::KEY) && Extension::is_enabled(RatingsBlurInfo::KEY)) {
+            $rb = new RatingsBlur();
+            if ($rb->blur($image['rating'])) {
+                $custom_classes .= "blur ";
+            }
+        }
 
         $attrs = [
             "href" => $view_link,
@@ -79,7 +58,7 @@ class BaseThemelet
             "data-mime" => $image->get_mime(),
             "data-post-id" => $id,
         ];
-        if(Extension::is_enabled(RatingsInfo::KEY)) {
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
             $attrs["data-rating"] = $image['rating'];
         }
 
@@ -106,15 +85,15 @@ class BaseThemelet
         $body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
         $page->add_block(new Block(null, $body, "main", 90, "paginator"));
 
-        $page->add_html_header("<link rel='first' href='".make_http(make_link($base.'/1', $query))."'>");
+        $page->add_html_header(LINK(['rel' => 'first', 'href' => make_link($base.'/1', $query)]));
         if ($page_number < $total_pages) {
-            $page->add_html_header("<link rel='prefetch' href='".make_http(make_link($base.'/'.($page_number + 1), $query))."'>");
-            $page->add_html_header("<link rel='next' href='".make_http(make_link($base.'/'.($page_number + 1), $query))."'>");
+            $page->add_html_header(LINK(['rel' => 'prefetch', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
+            $page->add_html_header(LINK(['rel' => 'next', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
         }
         if ($page_number > 1) {
-            $page->add_html_header("<link rel='previous' href='".make_http(make_link($base.'/'.($page_number - 1), $query))."'>");
+            $page->add_html_header(LINK(['rel' => 'previous', 'href' => make_link($base.'/'.($page_number - 1), $query)]));
         }
-        $page->add_html_header("<link rel='last' href='".make_http(make_link($base.'/'.$total_pages, $query))."'>");
+        $page->add_html_header(LINK(['rel' => 'last', 'href' => make_link($base.'/'.$total_pages, $query)]));
     }
 
     private function gen_page_link(string $base_url, ?string $query, int $page, string $name): HTMLElement
@@ -173,14 +152,5 @@ class BaseThemelet
             $pages_html,
             ' >>'
         );
-    }
-
-    public function display_crud(string $title, HTMLElement $table, HTMLElement $paginator): void
-    {
-        global $page;
-        $page->set_title($title);
-        $page->set_heading($title);
-        $page->add_block(new NavBlock());
-        $page->add_block(new Block("$title Table", emptyHTML($table, $paginator)));
     }
 }

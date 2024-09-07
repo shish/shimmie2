@@ -43,7 +43,7 @@ function updateCompletions(element) {
 	else {
 		element.completer_timeout = setTimeout(() => {
 			const wordWithoutMinus = word.replace(/^-/, '');
-			fetch((document.body.getAttribute("data-base-href") ?? "") + '/api/internal/autocomplete?s=' + wordWithoutMinus).then(
+			fetch(shm_make_link('api/internal/autocomplete', {s: wordWithoutMinus})).then(
 				(response) => response.json()
 			).then((json) => {
 				if(element.selected_completion !== -1) {

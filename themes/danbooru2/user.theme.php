@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CustomUserPageTheme extends UserPageTheme
+use function MicroHTML\rawHTML;
+
+class Danbooru2UserPageTheme extends UserPageTheme
 {
     public function display_login_page(Page $page): void
     {
         global $config;
         $page->set_title("Login");
-        $page->set_heading("Login");
         $page->disable_left();
         $html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>
@@ -30,7 +31,7 @@ class CustomUserPageTheme extends UserPageTheme
         if ($config->get_bool("login_signup_enabled")) {
             $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
         }
-        $page->add_block(new Block("Login", $html, "main", 90));
+        $page->add_block(new Block("Login", rawHTML($html), "main", 90));
     }
 
     /**
@@ -58,19 +59,25 @@ class CustomUserPageTheme extends UserPageTheme
             }
             $html .= "<li><a href='{$part["link"]}'>{$part["name"]}</a>";
         }
-        $b = new Block("User Links", $html, "user", 90);
+        $b = new Block("User Links", rawHTML($html), "user", 90);
         $b->is_content = false;
         $page->add_block($b);
     }
 
     public function display_signup_page(Page $page): void
     {
-        global $config;
+        global $config, $user;
         $tac = $config->get_string("login_tac", "");
 
         $tac = send_event(new TextFormattingEvent($tac))->formatted;
 
         $reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
+
+        $email_required = (
+            $config->get_bool("user_email_required") &&
+            !$user->can(Permissions::CREATE_OTHER_USER)
+        );
+        $email_text = $email_required ? "Email" : "Email (Optional)";
 
         if (empty($tac)) {
             $html = "";
@@ -84,17 +91,16 @@ class CustomUserPageTheme extends UserPageTheme
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
-				$reca;
+				<tr><td>$email_text</td><td><input type='text' name='email'></td></tr>
+				$reca
 				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
 			</table>
 		</form>
 		";
 
         $page->set_title("Create Account");
-        $page->set_heading("Create Account");
         $page->disable_left();
-        $page->add_block(new Block("Signup", $html));
+        $page->add_block(new Block("Signup", rawHTML($html)));
     }
 
     /**
@@ -116,7 +122,7 @@ class CustomUserPageTheme extends UserPageTheme
         $html .= "</td></tr>";
         $html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
 
-        $page->add_block(new Block("IPs", $html));
+        $page->add_block(new Block("IPs", rawHTML($html)));
     }
 
     /**

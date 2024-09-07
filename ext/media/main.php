@@ -252,7 +252,7 @@ class Media extends Extension
                 $event->add_querylet(new Querylet("$field = :true", ["true" => true]));
             }
         } elseif (preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
-            $cmp = preg_replace('/^:/', '=', $matches[1]);
+            $cmp = preg_replace_ex('/^:/', '=', $matches[1]);
             $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
             $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
         } elseif (preg_match("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i", $event->term, $matches)) {
@@ -275,10 +275,7 @@ class Media extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Media";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_section("Media", $this->theme->get_help_html());
         }
     }
 
@@ -548,7 +545,7 @@ class Media extends Extension
         int $new_width,
         int $new_height,
         string $output_filename,
-        string $output_mime = null,
+        ?string $output_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         string $resize_type = self::RESIZE_TYPE_FIT,
         int $output_quality = 80,
@@ -862,7 +859,7 @@ class Media extends Extension
         // \Safe\shell_exec is a little broken
         // https://github.com/thecodingmachine/safe/issues/281
         $output = shell_exec($cmd . " 2>&1");
-        if(is_null($output) || $output === false) {
+        if (is_null($output) || $output === false) {
             throw new MediaException("Failed to execute command: $cmd");
         }
         // error_log("Getting size with `$cmd`");

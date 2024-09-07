@@ -190,7 +190,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         int $limit = 9999,
         int $start = 0,
         array $res = [],
-        array $path = null,
+        ?array $path = null,
     ): void {
         global $database;
 
