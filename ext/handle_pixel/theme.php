@@ -17,6 +17,8 @@ class PixelFileHandlerTheme extends Themelet
             'class' => 'shm-main-image',
             'id' => 'main_image',
             'src' => $image->get_image_link(),
+            'width' => $image->width,
+            'height' => $image->height,
             'data-width' => $image->width,
             'data-height' => $image->height,
             'data-mime' => $image->get_mime(),
