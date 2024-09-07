@@ -65,6 +65,39 @@ class ImgCondition
     }
 }
 
+class SearchParameters
+{
+    /** @var TagCondition[] */
+    public array $tag_conditions = [];
+    /** @var ImgCondition[] */
+    public array $img_conditions = [];
+    public ?string $order = null;
+
+    /**
+     * Turn a human input string into a an abstract search query
+     *
+     * @param string[] $terms
+     */
+    public static function from_terms(array $terms): SearchParameters
+    {
+        global $config;
+
+        $sp = new SearchParameters();
+
+        $stpen = 0;  // search term parse event number
+        foreach (array_merge([null], $terms) as $term) {
+            $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
+            $sp->order ??= $stpe->order;
+            $sp->img_conditions = array_merge($sp->img_conditions, $stpe->img_conditions);
+            $sp->tag_conditions = array_merge($sp->tag_conditions, $stpe->tag_conditions);
+        }
+
+        $sp->order ??= "images.".$config->get_string(IndexConfig::ORDER);
+
+        return $sp;
+    }
+}
+
 class Search
 {
     /**
@@ -100,8 +133,8 @@ class Search
             }
         }
 
-        [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
-        $querylet = self::build_search_querylet($tag_conditions, $img_conditions, $order, $limit, $start);
+        $params = SearchParameters::from_terms($tags);
+        $querylet = self::build_search_querylet($params, $limit, $start);
         return $database->get_all_iterable($querylet->sql, $querylet->variables);
     }
 
@@ -206,8 +239,8 @@ class Search
             $cache_key = "image-count:" . md5(Tag::implode($tags));
             $total = $cache->get($cache_key);
             if (is_null($total)) {
-                [$tag_conditions, $img_conditions, $order] = self::terms_to_conditions($tags);
-                $querylet = self::build_search_querylet($tag_conditions, $img_conditions, null);
+                $params = SearchParameters::from_terms($tags);
+                $querylet = self::build_search_querylet($params);
                 $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
                 if ($speed_hax && $total > 5000) {
                     // when we have a ton of images, the count
@@ -234,57 +267,18 @@ class Search
     }
 
     /**
-     * Turn a human input string into a an abstract search query
-     *
-     * (This is only public for testing purposes, nobody should be calling this
-     * directly from outside this class)
-     *
-     * @param string[] $terms
-     * @return array{0: TagCondition[], 1: ImgCondition[], 2: string}
-     */
-    public static function terms_to_conditions(array $terms): array
-    {
-        global $config;
-
-        $tag_conditions = [];
-        $img_conditions = [];
-        $order = null;
-
-        /*
-         * Turn a bunch of strings into a bunch of TagCondition
-         * and ImgCondition objects
-         */
-        $stpen = 0;  // search term parse event number
-        foreach (array_merge([null], $terms) as $term) {
-            $stpe = send_event(new SearchTermParseEvent($stpen++, $term, $terms));
-            $order ??= $stpe->order;
-            $img_conditions = array_merge($img_conditions, $stpe->img_conditions);
-            $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
-        }
-
-        $order = ($order ?: "images.".$config->get_string(IndexConfig::ORDER));
-
-        return [$tag_conditions, $img_conditions, $order];
-    }
-
-    /**
      * Turn an abstract search query into an SQL Querylet
      *
      * (This is only public for testing purposes, nobody should be calling this
      * directly from outside this class)
-     *
-     * @param TagCondition[] $tag_conditions
-     * @param ImgCondition[] $img_conditions
      */
     public static function build_search_querylet(
-        array $tag_conditions,
-        array $img_conditions,
-        ?string $order = null,
+        SearchParameters $params,
         ?int $limit = null,
         ?int $offset = null
     ): Querylet {
         // no tags, do a simple search
-        if (count($tag_conditions) === 0) {
+        if (count($params->tag_conditions) === 0) {
             static::$_search_path[] = "no_tags";
             $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
         }
@@ -293,24 +287,24 @@ class Search
         // and do the offset / limit there, which is 10x faster than fetching
         // all the image_tags and doing the offset / limit on the result.
         elseif (
-            count($tag_conditions) === 1
-            && $tag_conditions[0]->positive
+            count($params->tag_conditions) === 1
+            && $params->tag_conditions[0]->positive
             // We can only do this if img_conditions is empty, because
             // we're going to apply the offset / limit to the image_tags
             // subquery, and applying extra conditions to the top-level
             // query might reduce the total results below the target limit
-            && empty($img_conditions)
+            && empty($params->img_conditions)
             // We can only do this if we're sorting by ID, because
             // we're going to be using the image_tags table, which
             // only has image_id and tag_id, not any other columns
-            && ($order == "id DESC" || $order == "images.id DESC")
+            && ($params->order == "id DESC" || $params->order == "images.id DESC")
             // This is only an optimisation if we are applying limit
             // and offset
             && !is_null($limit)
             && !is_null($offset)
         ) {
             static::$_search_path[] = "fast";
-            $tc = $tag_conditions[0];
+            $tc = $params->tag_conditions[0];
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
             $tag_array = self::tag_or_wildcard_to_ids($tc->tag);
@@ -346,7 +340,7 @@ class Search
             $negative_tag_id_array = [];
             $all_nonexistent_negatives = true;
 
-            foreach ($tag_conditions as $tq) {
+            foreach ($params->tag_conditions as $tq) {
                 $tag_ids = self::tag_or_wildcard_to_ids($tq->tag);
                 $tag_count = count($tag_ids);
 
@@ -435,11 +429,11 @@ class Search
          * Merge all the image metadata searches into one generic querylet
          * and append to the base querylet with "AND blah"
          */
-        if (!empty($img_conditions)) {
+        if (!empty($params->img_conditions)) {
             $n = 0;
             $img_sql = "";
             $img_vars = [];
-            foreach ($img_conditions as $iq) {
+            foreach ($params->img_conditions as $iq) {
                 if ($n++ > 0) {
                     $img_sql .= " AND";
                 }
@@ -453,8 +447,8 @@ class Search
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
-        if (!is_null($order)) {
-            $query->append(new Querylet(" ORDER BY ".$order));
+        if (!is_null($params->order)) {
+            $query->append(new Querylet(" ORDER BY ".$params->order));
         }
 
         if (!is_null($limit)) {
