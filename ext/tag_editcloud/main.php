@@ -97,7 +97,7 @@ class TagEditCloud extends Extension
 					JOIN image_tags it2 USING(image_id)
 					JOIN tags t1 ON it1.tag_id = t1.id
 					JOIN tags t2 ON it2.tag_id = t2.id
-					WHERE t1.count >= :tag_min2 AND t1.tag_id IN ($relevant_tag_ids)
+					WHERE t1.count >= :tag_min2 AND t1.id IN ($relevant_tag_ids)
 					GROUP BY t2.tag
 					ORDER BY count DESC
 					LIMIT :limit",
@@ -109,14 +109,14 @@ class TagEditCloud extends Extension
                 if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                     $tag_data = $database->get_all(
                         "
-                                        SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
-                                        FROM tags
-                                        WHERE count >= :tag_min2
-                                        ORDER BY SUM(count) OVER (PARTITION BY SUBSTRING_INDEX(tag, ':', 1)) DESC, CASE
-                                            WHEN tag LIKE '%:%' THEN 1
-                                            ELSE 2
-                                        END, tag
-                                        LIMIT :limit",
+                        SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
+                        FROM tags
+                        WHERE count >= :tag_min2
+                        ORDER BY SUM(count) OVER (PARTITION BY SUBSTRING_INDEX(tag, ':', 1)) DESC, CASE
+                            WHEN tag LIKE '%:%' THEN 1
+                            ELSE 2
+                        END, tag
+                        LIMIT :limit",
                         ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count]
                     );
                     break;
