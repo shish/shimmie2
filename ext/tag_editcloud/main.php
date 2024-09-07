@@ -40,7 +40,18 @@ class TagEditCloud extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sort_by = ['Alphabetical' => 'a','Popularity' => 'p','Relevance' => 'r','Categories' => 'c'];
+        global $database;
+        $sort_by = [
+            'Alphabetical' => 'a',
+            'Popularity' => 'p',
+            'Relevance' => 'r',
+        ];
+        if (
+            Extension::is_enabled(TagCategoriesInfo::KEY)
+            && $database->get_driver_id() == DatabaseDriverID::MYSQL
+        ) {
+            $sort_by['Categories'] = 'c';
+        }
 
         $sb = $event->panel->create_new_block("Tag Edit Cloud");
         $sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
