@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, TABLE, TR, TD, SMALL, rawHTML, emptyHTML, ARTICLE, FOOTER, HEADER, H1, NAV};
+use function MicroHTML\{A, TABLE, TR, TD, SMALL, rawHTML, emptyHTML, DIV, ARTICLE, FOOTER, HEADER, H1, NAV};
 
 class WarmPage extends Page
 {
@@ -48,17 +48,12 @@ class WarmPage extends Page
 
         return emptyHTML(
             HEADER(
-                TABLE(
-                    ["id" => "header", "class" => "bgtop", "style" => "width: 100%; height: 113px;"],
-                    TR(
-                        TD(
-                            ["style" => "text-align: center;"],
-                            H1(A(["href" => "$data_href/$main_page"], $site_name))
-                            // Navigation links go here
-                        ),
-                        ...$head_block_html
-                    )
+                DIV(
+                    ["style" => "text-align: center;"],
+                    H1(A(["href" => "$data_href/$main_page"], $site_name))
+                    // Navigation links go here
                 ),
+                ...$head_block_html,
                 ...$sub_block_html
             ),
             NAV(...$left_block_html),

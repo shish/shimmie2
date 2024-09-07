@@ -41,10 +41,8 @@ class FutabaPage extends Page
 
         if ($this->left_enabled) {
             $left = NAV(...$left_block_html);
-            $withleft = "withleft";
         } else {
-            $left = "";
-            $withleft = "noleft";
+            $left = null;
         }
 
         $flash_html = $this->flash_html();
@@ -58,7 +56,6 @@ class FutabaPage extends Page
             ),
             $left,
             ARTICLE(
-                ["class" => $withleft],
                 $flash_html,
                 ...$main_block_html
             ),

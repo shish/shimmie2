@@ -187,6 +187,22 @@ class NotesTheme extends Themelet
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
 
+    /**
+     * @param NoteHistory[] $histories
+     */
+    public function display_image_history(array $histories, int $imageID, int $pageNumber, int $totalPages): void
+    {
+        global $page;
+
+        $html = $this->get_history($histories);
+
+        $page->set_title("Note History #$imageID");
+        $page->set_heading("Note History #$imageID");
+        $page->add_block(new Block("Note History #$imageID", rawHTML($html), "main", 10));
+
+        $this->display_paginator($page, "note_history/$imageID", null, $pageNumber, $totalPages);
+    }
+
     public function get_help_html(): string
     {
         return '<p>Search for posts with notes.</p>
