@@ -60,13 +60,13 @@ class UserConfigTheme extends Themelet
 			".make_form(make_link("user_config/save"))."
 			    <input type='hidden' name='id' value='".$user->id."'>
 				<div class='setupblocks'>$setupblock_html</div>
-				<input type='submit' value='Save Settings'>
+				<input class='setupsubmit' type='submit' value='Save Settings'>
 			</form>
 			";
 
         $page->set_title("User Options");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("User Options", rawHTML($table)));
+        $page->add_block(new Block(null, rawHTML($table), id: "Setupmain"));
         $page->set_mode(PageMode::PAGE);
     }
 
@@ -74,8 +74,8 @@ class UserConfigTheme extends Themelet
     {
         return "
 			<section class='setupblock'>
-				<b>{$block->header}</b>
-				<br>{$block->str_body}
+				<h3>{$block->header}</h3>
+				<div class='blockbody'>{$block->str_body}</div>
 			</section>
 		";
     }

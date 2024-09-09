@@ -39,12 +39,6 @@ class FutabaPage extends Page
             $subheading = DIV(["id" => "subtitle"], $this->subheading);
         }
 
-        if ($this->left_enabled) {
-            $left = NAV(...$left_block_html);
-        } else {
-            $left = null;
-        }
-
         $flash_html = $this->flash_html();
         $footer_html = $this->footer_html();
 
@@ -55,7 +49,7 @@ class FutabaPage extends Page
                 $subheading,
                 ...$sub_block_html
             ),
-            $left,
+            NAV(...$left_block_html),
             ARTICLE(
                 $flash_html,
                 ...$main_block_html

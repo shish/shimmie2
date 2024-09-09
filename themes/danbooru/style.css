@@ -76,6 +76,12 @@ BODY.layout-grid {
 	grid-template-columns: 150px auto;
 	grid-gap: 0 20px;
 }
+BODY.layout-no-left NAV {
+	display: none;
+}
+BODY.layout-no-left ARTICLE {
+	margin-left: 1rem;
+}
 
 h1 {
 	font-size: 2em;
@@ -304,7 +310,6 @@ div#paginator a:hover {
 	border: 1px solid #AAAAAA;
 	margin: 16px;
 	padding: 8px;
-	width: 350px;
 }
 
 .comment .username {
@@ -379,7 +384,7 @@ ul.flat-list li a {
 }
 
 @media screen and (width <=800px) {
-	BODY {
+	BODY.layout-grid {
 		grid-template-columns: auto;
 	}
 

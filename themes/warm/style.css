@@ -17,6 +17,13 @@ BODY.layout-grid {
 	grid-template-columns: 250px auto;
 	grid-gap: 16px;
 }
+BODY.layout-no-left NAV {
+	display: none;
+}
+BODY.layout-no-left ARTICLE {
+	margin-left: 1rem;
+}
+
 HEADER {
 	display: grid;
 	grid-template-columns: auto 250px 250px;
@@ -178,7 +185,7 @@ ARTICLE TABLE {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 @media screen and (width <= 800px) {
-	BODY {
+	BODY.layout-grid {
 		grid-template-columns: auto;
 	}
 	HEADER {

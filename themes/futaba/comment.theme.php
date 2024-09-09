@@ -25,7 +25,7 @@ class FutabaCommentListTheme extends CommentListTheme
 
         $page_title = $config->get_string(SetupConfig::TITLE);
         $page->set_title($page_title);
-        $page->disable_left();
+        $page->set_layout("no-left");
         $page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
         $page->add_block(new Block(null, rawHTML("<hr>"), "main", 80));
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);

@@ -12,7 +12,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
     {
         global $config;
         $page->set_title("Login");
-        $page->disable_left();
+        $page->set_layout("no-left");
         $html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>
 				<table summary='Login Form'>
@@ -99,7 +99,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
 		";
 
         $page->set_title("Create Account");
-        $page->disable_left();
+        $page->set_layout("no-left");
         $page->add_block(new Block("Signup", rawHTML($html)));
     }
 
@@ -131,7 +131,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
     public function display_user_page(User $duser, array $stats): void
     {
         global $page;
-        $page->disable_left();
+        $page->set_layout("no-left");
         parent::display_user_page($duser, $stats);
     }
 }
