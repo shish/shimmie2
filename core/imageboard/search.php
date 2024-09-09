@@ -450,11 +450,11 @@ class Search
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
-        if (!is_null($params->order)) {
+        if (!is_null($params->order) && $count === false) {
             $query->append(new Querylet(" ORDER BY ".$params->order));
         }
 
-        if (!is_null($limit)) {
+        if (!is_null($limit) && $count == false) {
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
             $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
         }
