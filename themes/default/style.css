@@ -65,7 +65,7 @@ BODY {
 	color: var(--text);
 	margin: 0;	
 }
-BODY.grid {
+BODY.layout-grid {
 	display: grid;
 	grid-template-columns: 216px auto;
 	grid-gap: 0 10px;

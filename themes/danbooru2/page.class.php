@@ -123,7 +123,7 @@ class Danbooru2Page extends Page
         $footer_html = $this->footer_html();
 
         return BODY(
-            $this->body_attrs("grid"),
+            $this->body_attrs(),
             HEADER(
                 $title_link,
                 UL(["id" => "navbar", "class" => "flat-list"], $custom_links),

@@ -16,7 +16,7 @@ BODY {
 	margin: 0;
 	margin-bottom: 8px;
 }
-BODY.grid {
+BODY.layout-grid {
 	display: grid;
 	grid-template-columns: 200px auto;
 	grid-gap: 0 16px;

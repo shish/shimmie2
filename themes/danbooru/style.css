@@ -71,7 +71,7 @@ body {
 	line-height: normal;
 }
 
-BODY.grid {
+BODY.layout-grid {
 	display: grid;
 	grid-template-columns: 150px auto;
 	grid-gap: 0 20px;

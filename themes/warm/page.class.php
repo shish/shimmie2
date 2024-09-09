@@ -47,7 +47,7 @@ class WarmPage extends Page
         $footer_html = $this->footer_html();
 
         return BODY(
-            $this->body_attrs("grid"),
+            $this->body_attrs(),
             HEADER(
                 DIV(
                     ["style" => "text-align: center;"],

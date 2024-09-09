@@ -128,6 +128,7 @@ class Page
     public string $heading = "";
     public string $subheading = "";
     public bool $left_enabled = true;
+    public string $layout = "grid";
 
     /** @var HTMLElement[] */
     public array $html_headers = [];
@@ -598,11 +599,11 @@ class Page
     /**
      * @return array<string, string>
      */
-    public function body_attrs(string $class): array
+    public function body_attrs(): array
     {
         global $user;
         return [
-            "class" => $class,
+            "class" => "layout-{$this->layout}",
             "data-userclass" => $user->class->name,
             "data-base-href" => get_base_href(),
             "data-base-link" => make_link(""),
@@ -635,7 +636,7 @@ class Page
         $footer_html = $this->footer_html();
         $flash_html = $this->flash_html();
         return BODY(
-            $this->body_attrs("grid"),
+            $this->body_attrs(),
             HTML_HEADER(
                 H1($this->heading),
                 ...$sub_block_html

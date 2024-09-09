@@ -49,7 +49,7 @@ class FutabaPage extends Page
         $footer_html = $this->footer_html();
 
         return BODY(
-            $this->body_attrs("grid"),
+            $this->body_attrs(),
             HEADER(
                 H1($this->heading),
                 $subheading,
