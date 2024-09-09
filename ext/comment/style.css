@@ -10,9 +10,9 @@
 .comment .info {
 	visibility: hidden;
 	text-align: center;
-	padding: 8px;
-	background: #DDD;
-	border: 1px solid #CCC;
+	padding: var(--block-padding);
+	background: var(--block);
+	border: 1px solid var(--block-border);
 	position: absolute;
 	top: 0;
 	left: -195px;
@@ -32,13 +32,21 @@
 	width: 100%;
 }
 
-#comment-list-list .blockbody,
-#comment-list-recent .blockbody,
-#comment-list-image .blockbody,
-#comment-list-user .blockbody {
-	background: none;
-	border: none;
-	box-shadow: none;
-	margin: 0;
-	padding: 0;
+#comment-list-recent .more {
+	display: block;
+	padding-top: 8px;
+}
+.comment_big_list {
+	display: flex;
+	gap: 1em;
+}
+.comment_big_list .thumb {
+	flex: 0;
+}
+.comment_big_list .comment_list {
+	flex: 1;
+	border-left: 1px solid var(--block-border);
+}
+.comment_big_list .comment {
+	margin-left: 0;
 }

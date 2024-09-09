@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{BODY, DIV, LI, A, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, EM, HEADER, H1, NAV};
+use function MicroHTML\{BODY, DIV, LI, A, IMG, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, EM, HEADER, H1, NAV};
 
 /**
  * Name: Danbooru 2 Theme
@@ -109,16 +109,11 @@ class Danbooru2Page extends Page
             }
         }
 
-        $title_link = H1(["id" => "site-title"], A(["href" => make_link($main_page)], $site_name));
-
-        if ($this->left_enabled) {
-            $left = NAV(...$left_block_html);
-            $withleft = "withleft";
-        } else {
-            $left = "";
-            $withleft = "noleft";
-        }
-
+        $title_link = H1(
+            ["id" => "site-title"],
+            IMG(["src" => "/favicon.ico", "alt" => "", "class" => "logo"]),
+            A(["href" => make_link($main_page)], $site_name)
+        );
         $flash_html = $this->flash_html();
         $footer_html = $this->footer_html();
 
@@ -131,9 +126,8 @@ class Danbooru2Page extends Page
             ),
             $subheading,
             emptyHTML(...$sub_block_html),
-            $left,
+            NAV(...$left_block_html),
             ARTICLE(
-                ["class" => $withleft],
                 $flash_html,
                 ...$main_block_html
             ),

@@ -19,6 +19,9 @@
 	--zebra-header: #DDD;
 	--zebra-odd: #EFEFEF;
 	--zebra-even: #E0E0E0;
+
+	--border-radius: 0.75rem;
+	--block-padding: 0.5rem;
 }
   
 @media (prefers-color-scheme: dark) {
@@ -52,50 +55,82 @@
 	font-family: sans-serif;
 }
 
+H1, H2, H3 {
+	margin: 0;
+	text-align: center;
+	word-break: break-all;
+	/* not sure why top-padding appears visually larger than other padding in headers...
+	reducing top-padding to compensate */
+	padding: calc(var(--block-padding) * 0.5) var(--block-padding) var(--block-padding) var(--block-padding);
+}
+
+BODY {
+	background: var(--page);
+	color: var(--text);
+	margin: 1rem;
+}
+BODY.layout-grid {
+	display: grid;
+	grid-template-columns: 15rem auto;
+	grid-gap: 1rem;
+}
+
 HEADER {
 	grid-column: 1 / 3;
 	grid-row: 1;
 }
 HEADER H1 {
-	max-height: 3em;
+	max-height: 3rem;
 	overflow: hidden;
-}
-BODY {
-	background: var(--page);
-	color: var(--text);
-	margin: 0;	
-}
-BODY.layout-grid {
-	display: grid;
-	grid-template-columns: 216px auto;
-	grid-gap: 0 10px;
-}
-H1 {
 	background: var(--title);
 	border: 1px solid var(--title-border);
-	text-align: center;
+	border-radius: var(--border-radius);
 }
-H1 A {
+HEADER H1 A {
 	color: var(--text);
 }
-H3 {
-	text-align: center;
-	margin: 0;
+
+SECTION {
+	margin-bottom: 1rem;
+	border-radius: var(--border-radius);
+}
+SECTION:last-child {
+	margin-bottom: 0;
 }
 SECTION>H3 {
 	background: var(--header);
 	border: 1px solid var(--header-border);
 }
-SECTION>.blockbody, .comment, .setupblock {
+SECTION>:first-child {
+	border-top-left-radius: var(--border-radius);
+	border-top-right-radius: var(--border-radius);
+}
+SECTION>:last-child {
+	border-bottom-left-radius: var(--border-radius);
+	border-bottom-right-radius: var(--border-radius);
+}
+SECTION>.blockbody {
 	background: var(--block);
 	border: 1px solid var(--block-border);
+	border-top: none;
+	padding: var(--block-padding);
 }
-SECTION>.blockbody, H1, SECTION>H3, FOOTER, .comment, .setupblock {
-	margin: 8px;
-	padding: 8px;
-	border-radius: 12px;
+H1, SECTION, FOOTER {
 	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
+FOOTER {
+	grid-column: 1 / 3;
+	grid-row: 3;
+	clear: both;
+	font-size: 0.7rem;
+	text-align: center;
+	background: var(--title);
+	border: 1px solid var(--title-border);
+	border-radius: var(--border-radius);
+	padding: var(--block-padding);
+	margin-top: 0;
+}
+
 THEAD {
 	font-weight: bold;
 }
@@ -112,17 +147,6 @@ TABLE.zebra TFOOT TR:first-child TD, TABLE.zebra TFOOT TR:first-child TH {border
 TABLE.zebra TR TD {border-bottom: 1px solid var(--zebra-header);}
 TABLE.zebra TR:nth-child(odd) {background: var(--zebra-odd);}
 TABLE.zebra TR:nth-child(even) {background: var(--zebra-even);}
-
-FOOTER {
-	grid-column: 1 / 3;
-	grid-row: 3;
-	clear: both;
-	font-size: 0.7rem;
-	text-align: center;
-	background: var(--title);
-	border: 1px solid var(--title-border);
-	margin-top: 0;
-}
 
 A {
 	text-decoration: none;
@@ -152,7 +176,6 @@ NAV {
 	grid-column: 1;
 	grid-row: 2;
 	text-align: center;
-	margin-left: 16px;
 }
 NAV .blockbody {
 	font-size: 0.85rem;
@@ -194,10 +217,12 @@ TABLE.tag_list>TBODY>TR>TD:after {
 	content: ")";
 }
 
+#paginator {
+	box-shadow: none;
+}
 #paginator .blockbody {
 	background: none;
 	border: none;
-	box-shadow: none;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -207,8 +232,6 @@ TABLE.tag_list>TBODY>TR>TD:after {
 ARTICLE {
 	grid-column: 2;
 	grid-row: 2;
-	margin-right: 16px;
-	margin-top: 0;
 	text-align: center;
 	height: 1%;
 }
@@ -222,7 +245,7 @@ ARTICLE TABLE {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 @media screen and (width <= 800px) {
-	BODY {
+	BODY.layout-grid {
 		grid-template-columns: auto;
 	}
 	HEADER {
@@ -266,11 +289,21 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
+.comment {
+	padding: var(--block-padding);
+	border-bottom: 1px solid var(--block-border);
+}
+.comment:first-child {
+	padding-top: 0;
+}
+.comment:last-child {
+	border-bottom: none;
+}
 .thumb IMG {
 	border: 1px solid var(--block-border);
 	background: var(--block);
-	padding: 8px;
-	border-radius: 12px;
+	padding: var(--block-padding);
+	border-radius: var(--border-radius);
 	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
 

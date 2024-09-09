@@ -15,7 +15,7 @@ class DanbooruCommentListTheme extends CommentListTheme
     {
         global $config, $page, $user;
 
-        $page->disable_left();
+        $page->set_layout("no-left");
 
         // parts for the whole page
         $prev = $page_number - 1;

@@ -1,11 +1,11 @@
-#image-list .blockbody {
+SECTION#image-list {
+	box-shadow: none;
+}
+SECTION#image-list .blockbody {
 	background: none;
 	border: none;
-	box-shadow: none;
-	margin: 0px;
 	padding: 0px;
 	text-align: left;
-	margin: 0 10px 10px 0;
 }
 .shm-image-list {
 	display: grid;

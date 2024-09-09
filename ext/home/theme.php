@@ -29,7 +29,7 @@ class HomeTheme extends Themelet
     public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, string $num_comma, string $counter_text): HTMLElement
     {
         global $page;
-        $page->layout = "front-page";
+        $page->set_layout("front-page");
 
         $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
         $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";

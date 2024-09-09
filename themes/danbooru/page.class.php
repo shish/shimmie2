@@ -75,9 +75,6 @@ class DanbooruPage extends Page
                     $sub_block_html[] = $block->body;
                     break;
                 case "main":
-                    if ($block->header == "Posts") {
-                        $block->header = "&nbsp;";
-                    }
                     $main_block_html[] = $this->block_html($block, false);
                     break;
                 default:
@@ -109,15 +106,6 @@ class DanbooruPage extends Page
         }
 
         $title_link = H1(["id" => "site-title"], A(["href" => make_link($main_page)], $site_name));
-
-        if ($this->left_enabled) {
-            $left = NAV(...$left_block_html);
-            $withleft = "withleft";
-        } else {
-            $left = "";
-            $withleft = "noleft";
-        }
-
         $flash_html = $this->flash_html();
         $footer_html = $this->footer_html();
 
@@ -130,9 +118,8 @@ class DanbooruPage extends Page
             ),
             $subheading,
             emptyHTML(...$sub_block_html),
-            $left,
+            NAV(...$left_block_html),
             ARTICLE(
-                ["class" => $withleft],
                 $flash_html,
                 ...$main_block_html
             ),

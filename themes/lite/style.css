@@ -16,6 +16,13 @@ BODY.layout-grid {
 	grid-template-columns: 210px auto;
 	grid-gap: 0 16px;
 }
+BODY.layout-no-left NAV {
+	display: none;
+}
+BODY.layout-no-left ARTICLE {
+	margin-left: 1em;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 3                            menu bar                            *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -39,8 +46,6 @@ a.tab:hover, a.tab:active, .tab-selected {
 	display: inline-block;
 }
 .tab, .tab-selected, .tframe, #tips {
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
 	cursor:default;
 	margin-right:2px;
@@ -76,8 +81,6 @@ a.tab:hover, a.tab:active, .tab-selected {
 	font-size:85%;
 	border:1px solid #C3D2E0;
 	margin-bottom:5px;
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
 }
 .navside.navtop, .shm-image-list, #Statsmain {
 	text-align:left;
@@ -141,8 +144,6 @@ TABLE.zebra TR:nth-child(even) {background: #F0F7FF;}
 TABLE.image_info {margin: auto;}
 
 INPUT, TEXTAREA, button {
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
 	cursor:default;
 	margin-right:2px;
@@ -255,8 +256,6 @@ TABLE.tag_list>TBODY>TR>TD:after {
 	border-left: 1px solid #C3D2E0;
 }
 .paginator A {
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
 	color: #000;
 	border:1px solid #C8D1DB;
 	cursor:default;
@@ -279,7 +278,7 @@ ARTICLE {
 	text-align: center;
 	height: 1%;
 }
-ARTICLE.body_noleft {
+BODY.layout-no-left ARTICLE {
 	margin-left: 4px;
 	margin-right: 16px;
 	margin-bottom:16px;
@@ -297,7 +296,7 @@ ARTICLE TABLE {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 @media screen and (width <= 800px) {
-	BODY {
+	BODY.layout-grid {
 		grid-template-columns: auto;
 	}
 	HEADER {
@@ -350,10 +349,8 @@ ARTICLE TABLE {
 
 .setupblock {
 	text-align: center;
-	width: 350px;
 }
 .setupblock TEXTAREA {
-	width: 300px;
 	font-size: 0.75rem;
 }
 

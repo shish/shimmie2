@@ -21,6 +21,13 @@ BODY.layout-grid {
 	grid-template-columns: 200px auto;
 	grid-gap: 0 16px;
 }
+BODY.layout-no-left NAV {
+	display: none;
+}
+BODY.layout-no-left ARTICLE {
+	margin-left: 1rem;
+}
+
 H1 {
 	text-align: center;
 }
@@ -129,7 +136,7 @@ TABLE.tag_list>TBODY>TR>TD:after {
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 @media screen and (width <= 800px) {
-	BODY {
+	BODY.layout-grid {
 		grid-template-columns: auto;
 	}
 	HEADER {
@@ -200,7 +207,6 @@ TABLE.tag_list>TBODY>TR>TD:after {
 	border: 1px solid #AAA;
 	padding: 8px;
 	margin: 16px;
-	width: 350px;
 }
 
 .paginator {

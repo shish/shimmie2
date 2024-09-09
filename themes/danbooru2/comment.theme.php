@@ -15,7 +15,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
     {
         global $config, $page, $user;
 
-        $page->disable_left();
+        $page->set_layout("no-left");
 
         // parts for the whole page
         $prev = $page_number - 1;
@@ -54,7 +54,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
             $p = autodate($image->posted);
 
             $r = Extension::is_enabled(RatingsInfo::KEY) ? "<b>Rating</b> ".Ratings::rating_to_human($image['rating']) : "";
-            $comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
+            $comment_html =   "<b>Date</b> $p $s <b>Uploader</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
 
             $comment_count = count($comments);
             if ($comment_limit > 0 && $comment_count > $comment_limit) {

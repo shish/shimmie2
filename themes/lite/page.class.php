@@ -83,15 +83,6 @@ class LitePage extends Page
         }
 
         $flash_html = $this->flash_html();
-
-        if (!$this->left_enabled) {
-            $left_block_el = emptyHTML();
-            $main_block_el = ARTICLE(["id" => "body_noleft"], ...$main_block_html);
-        } else {
-            $left_block_el = NAV(...$left_block_html);
-            $main_block_el = ARTICLE($flash_html, ...$main_block_html);
-        }
-
         $footer_html = $this->footer_html();
 
         return BODY(
@@ -101,8 +92,11 @@ class LitePage extends Page
                 $custom_sublinks,
                 ...$sub_block_html
             ),
-            $left_block_el,
-            $main_block_el,
+            NAV(...$left_block_html),
+            ARTICLE(
+                $flash_html,
+                ...$main_block_html
+            ),
             FOOTER($footer_html)
         );
     } /* end of function display_page() */
