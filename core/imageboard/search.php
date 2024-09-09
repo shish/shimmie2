@@ -240,8 +240,8 @@ class Search
             $total = $cache->get($cache_key);
             if (is_null($total)) {
                 $params = SearchParameters::from_terms($tags);
-                $querylet = self::build_search_querylet($params);
-                $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
+                $querylet = self::build_search_querylet($params, count: true);
+                $total = (int)$database->get_one($querylet->sql, $querylet->variables);
                 if ($speed_hax && $total > 5000) {
                     // when we have a ton of images, the count
                     // won't change dramatically very often
@@ -275,12 +275,15 @@ class Search
     public static function build_search_querylet(
         SearchParameters $params,
         ?int $limit = null,
-        ?int $offset = null
+        ?int $offset = null,
+        bool $count = false,
     ): Querylet {
+        $columns = $count ? "COUNT(*)" : "images.*";
+
         // no tags, do a simple search
         if (count($params->tag_conditions) === 0) {
             static::$_search_path[] = "no_tags";
-            $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
+            $query = new Querylet("SELECT $columns FROM images WHERE 1=1");
         }
 
         // one tag sorted by ID - we can fetch this from the image_tags table,
@@ -311,11 +314,11 @@ class Search
             if (count($tag_array) == 0) {
                 // if wildcard expanded to nothing, take a shortcut
                 static::$_search_path[] = "invalid_tag";
-                $query = new Querylet("SELECT images.* FROM images WHERE 1=0");
+                $query = new Querylet("SELECT $columns FROM images WHERE 1=0");
             } else {
                 $set = implode(', ', $tag_array);
                 $query = new Querylet("
-                    SELECT images.*
+                    SELECT $columns
                     FROM images INNER JOIN (
                         SELECT DISTINCT it.image_id
                         FROM image_tags it
@@ -350,7 +353,7 @@ class Search
                         # one of the positive tags had zero results, therefor there
                         # can be no results; "where 1=0" should shortcut things
                         static::$_search_path[] = "invalid_tag";
-                        return new Querylet("SELECT images.* FROM images WHERE 1=0");
+                        return new Querylet("SELECT $columns FROM images WHERE 1=0");
                     } elseif ($tag_count == 1) {
                         // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
                         $positive_tag_id_array[] = $tag_ids[0];
@@ -373,7 +376,7 @@ class Search
 
             if ($all_nonexistent_negatives) {
                 static::$_search_path[] = "all_nonexistent_negatives";
-                $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
+                $query = new Querylet("SELECT $columns FROM images WHERE 1=1");
             } elseif (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
                 static::$_search_path[] = "some_positives";
                 $inner_joins = [];
@@ -407,7 +410,7 @@ class Search
                 $sub_query .= " GROUP BY it.image_id ";
 
                 $query = new Querylet("
-                    SELECT images.*
+                    SELECT $columns
                     FROM images
                     INNER JOIN ($sub_query) a on a.image_id = images.id
                 ");
@@ -415,7 +418,7 @@ class Search
                 static::$_search_path[] = "only_negative_tags";
                 $negative_tag_id_list = join(', ', $negative_tag_id_array);
                 $query = new Querylet("
-                    SELECT images.*
+                    SELECT $columns
                     FROM images
                     LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)
                     WHERE negative.image_id IS NULL
@@ -447,11 +450,11 @@ class Search
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
-        if (!is_null($params->order)) {
+        if (!is_null($params->order) && $count === false) {
             $query->append(new Querylet(" ORDER BY ".$params->order));
         }
 
-        if (!is_null($limit)) {
+        if (!is_null($limit) && $count == false) {
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
             $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
         }
