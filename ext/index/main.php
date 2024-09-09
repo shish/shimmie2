@@ -172,6 +172,7 @@ class Index extends Extension
                     $params,
                     $limit,
                     (int)(($page - 1) * $limit),
+                    $count,
                 );
 
                 $sql_str = $q->sql;
