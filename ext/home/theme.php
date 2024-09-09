@@ -6,11 +6,11 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML, TITLE, META, rawHTML};
+use function MicroHTML\{BODY, emptyHTML, TITLE, META, rawHTML};
 
 class HomeTheme extends Themelet
 {
-    public function display_page(Page $page, string $sitename, string $base_href, string $theme_name, HTMLElement $body): void
+    public function display_page(Page $page, string $sitename, HTMLElement $body): void
     {
         $page->set_mode(PageMode::DATA);
         $page->add_auto_html_headers();
@@ -28,6 +28,8 @@ class HomeTheme extends Themelet
 
     public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, string $num_comma, string $counter_text): HTMLElement
     {
+        global $page;
+
         $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
         $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";
         $counter_html = empty($counter_text) ? "" : "<div class='space' id='counter'>$counter_text</div>";
@@ -41,7 +43,9 @@ class HomeTheme extends Themelet
 				</form>
 			</div>
 		";
-        return rawHTML("
+        return BODY(
+            $page->body_attrs("home"),
+            rawHTML("
 		<div id='front-page'>
 			<h1><a style='text-decoration: none;' href='".make_link()."'><span>$sitename</span></a></h1>
 			$main_links_html
@@ -54,6 +58,7 @@ class HomeTheme extends Themelet
 				Running <a href='https://code.shishnet.org/shimmie2/'>Shimmie2</a>
 				</small></small>
 			</div>
-		</div>");
+		</div>")
+        );
     }
 }

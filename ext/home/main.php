@@ -15,13 +15,11 @@ class Home extends Extension
     {
         global $config, $page;
         if ($event->page_matches("home")) {
-            $base_href = get_base_href();
             $sitename = $config->get_string(SetupConfig::TITLE);
-            $theme_name = $config->get_string(SetupConfig::THEME);
 
             $body = $this->get_body();
 
-            $this->theme->display_page($page, $sitename, $base_href, $theme_name, $body);
+            $this->theme->display_page($page, $sitename, $body);
         }
     }
 
