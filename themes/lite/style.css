@@ -8,11 +8,13 @@
 	font-size: 14px;
 }
 BODY {
+	background: #F0F7FF;
+	margin: 0;
+}
+BODY.grid {
 	display: grid;
 	grid-template-columns: 210px auto;
 	grid-gap: 0 16px;
-	background: #F0F7FF;
-	margin: 0;
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 3                            menu bar                            *

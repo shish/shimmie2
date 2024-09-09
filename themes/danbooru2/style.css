@@ -107,11 +107,13 @@ HEADER ul#subnavbar li:first-child {
 margin-left: -0.6rem;
 }
 body {
-display: grid;
-grid-template-columns: 11.5rem auto;
-grid-gap: 0 2rem;
 background-color: var(--page);
 color: var(--text);
+}
+BODY.grid {
+	display: grid;
+	grid-template-columns: 11.5rem auto;
+	grid-gap: 0 2rem;
 }
 h1 {
 margin-top:0;

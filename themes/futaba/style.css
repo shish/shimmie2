@@ -8,9 +8,6 @@
 }
 
 BODY {
-	display: grid;
-	grid-template-columns: 200px auto;
-	grid-gap: 0 16px;
 	margin: 0;
 	background: #FFFFEE url(fade.png) top center repeat-x;
 	color: #800000;
@@ -18,6 +15,11 @@ BODY {
 	padding-right: 5px;
 	margin: 0;
 	margin-bottom: 8px;
+}
+BODY.grid {
+	display: grid;
+	grid-template-columns: 200px auto;
+	grid-gap: 0 16px;
 }
 H1 {
 	text-align: center;
