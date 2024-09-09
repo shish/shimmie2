@@ -1,5 +1,6 @@
 .setupblocks {
 	column-width: 400px;
+	column-gap: 1em;
 	max-width: 1200px;
 	margin: auto;
 }
@@ -7,9 +8,7 @@
 
 .setupblock {
 	break-inside: avoid;
-	column-break-inside: avoid;
 	text-align: center;
-	width: 90%;
 }
 .setupblock TEXTAREA {
 	width: 100%;
