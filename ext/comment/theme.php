@@ -85,10 +85,10 @@ class CommentListTheme extends Themelet
             }
 
             $html  = '
-				<table class="comment_list_table"><tr>
-					<td width="220">'.$thumb_html.'</td>
-					<td>'.$comment_html.'</td>
-				</tr></table>
+				<div class="comment_big_list">
+					'.$thumb_html.'
+					<div class="comment_list">'.$comment_html.'</div>
+				</div>
 			';
 
             $page->add_block(new Block($image->id.': '.$image->get_tag_list(), rawHTML($html), "main", $position++, "comment-list-list"));

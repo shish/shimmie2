@@ -127,8 +127,7 @@ class Page
     public string $title = "";
     public string $heading = "";
     public string $subheading = "";
-    public bool $left_enabled = true;
-    public string $layout = "grid";
+    protected string $layout = "grid";
 
     /** @var HTMLElement[] */
     public array $html_headers = [];
@@ -176,9 +175,9 @@ class Page
         $this->flash[] = $message;
     }
 
-    public function disable_left(): void
+    public function set_layout(string $layout): void
     {
-        $this->left_enabled = false;
+        $this->layout = $layout;
     }
 
     /**
@@ -680,13 +679,12 @@ class Page
         $contact_link = contact_link();
         return joinHTML("", [
             "Media © their respective owners, ",
-            A(["href" => "https://code.shishnet.org/shimmie2/"], "Shimmie"),
+            A(["href" => "https://code.shishnet.org/shimmie2/", "title" => $debug], "Shimmie"),
             " © ",
             A(["href" => "https://www.shishnet.org/"], "Shish"),
             " & ",
             A(["href" => "https://github.com/shish/shimmie2/graphs/contributors"], "The Team"),
             " 2007-2024, based on the Danbooru concept.",
-            BR(), $debug,
             $contact_link ? emptyHTML(BR(), A(["href" => $contact_link], "Contact")) : ""
         ]);
     }

@@ -37,13 +37,13 @@ class SetupTheme extends Themelet
         $table = "
 			".make_form(make_link("setup/save"))."
 				<div class='setupblocks'>$setupblock_html</div>
-				<input type='submit' value='Save Settings'>
+				<input class='setupsubmit' type='submit' value='Save Settings'>
 			</form>
 			";
 
         $page->set_title("Shimmie Setup");
         $page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
-        $page->add_block(new Block("Setup", rawHTML($table)));
+        $page->add_block(new Block(null, rawHTML($table), id: "Setupmain"));
     }
 
     /**
@@ -99,8 +99,8 @@ class SetupTheme extends Themelet
     {
         return "
 			<section class='setupblock'>
-				<b>{$block->header}</b>
-				<br>{$block->str_body}
+				<h3>{$block->header}</h3>
+				<div class='blockbody'>{$block->str_body}</div>
 			</section>
 		";
     }

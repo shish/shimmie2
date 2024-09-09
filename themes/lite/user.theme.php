@@ -12,7 +12,7 @@ class LiteUserPageTheme extends UserPageTheme
     {
         global $config;
         $page->set_title("Login");
-        $page->disable_left();
+        $page->set_layout("no-left");
         $html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>
 				<table summary='Login Form'>
@@ -66,7 +66,7 @@ class LiteUserPageTheme extends UserPageTheme
 
     public function display_signup_page(Page $page): void
     {
-        $page->disable_left();
+        $page->set_layout("no-left");
         parent::display_signup_page($page);
     }
 
@@ -98,7 +98,7 @@ class LiteUserPageTheme extends UserPageTheme
     public function display_user_page(User $duser, array $stats): void
     {
         global $page;
-        $page->disable_left();
+        $page->set_layout("no-left");
         parent::display_user_page($duser, $stats);
     }
 }

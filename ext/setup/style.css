@@ -16,10 +16,12 @@
 	resize: vertical;
 }
 
-#Setupmain .blockbody {
+#Setupmain {
+	box-shadow: none;
+}
+#Setupmain>.blockbody {
 	background: none;
 	border: none;
-	box-shadow: none;
 	margin: 0;
 	padding: 0;
 }
@@ -28,4 +30,9 @@
 }
 .setupblock .form TH {
 	font-weight: normal;
+}
+.setupsubmit {
+	margin-top: 1em;
+	padding: 1em;
+	width: 100%;
 }

@@ -1,3 +1,6 @@
+.bbcode {
+	word-break: break-all;
+}
 .bbcode BLOCKQUOTE {
 	border: 1px solid black;
 	padding: 8px;

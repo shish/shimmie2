@@ -14,7 +14,7 @@ class DanbooruUploadTheme extends UploadTheme
 
     public function display_page(Page $page): void
     {
-        $page->disable_left();
+        $page->set_layout("no-left");
         parent::display_page($page);
     }
 }
