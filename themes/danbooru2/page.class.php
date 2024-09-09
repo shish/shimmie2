@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{DIV, LI, A, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, EM, HEADER, H1, NAV};
+use function MicroHTML\{BODY, DIV, LI, A, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, EM, HEADER, H1, NAV};
 
 /**
  * Name: Danbooru 2 Theme
@@ -122,7 +122,8 @@ class Danbooru2Page extends Page
         $flash_html = $this->flash_html();
         $footer_html = $this->footer_html();
 
-        return emptyHTML(
+        return BODY(
+            $this->body_attrs("grid"),
             HEADER(
                 $title_link,
                 UL(["id" => "navbar", "class" => "flat-list"], $custom_links),

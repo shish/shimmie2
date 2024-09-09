@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML, HEADER, FOOTER, DIV, SCRIPT, A, B, IMG, NAV, ARTICLE, rawHTML, SECTION};
+use function MicroHTML\{BODY, emptyHTML, HEADER, FOOTER, DIV, SCRIPT, A, B, IMG, NAV, ARTICLE, rawHTML, SECTION};
 
 /**
  * Name: Lite Theme
@@ -94,7 +94,8 @@ class LitePage extends Page
 
         $footer_html = $this->footer_html();
 
-        return emptyHTML(
+        return BODY(
+            $this->body_attrs("grid"),
             HEADER(
                 $menu,
                 $custom_sublinks,
