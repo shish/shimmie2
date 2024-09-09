@@ -53,7 +53,7 @@ Tips
 
 class Danbooru2Page extends Page
 {
-    public function body_html(): HTMLElement
+    protected function body_html(): HTMLElement
     {
         global $config;
 
@@ -135,7 +135,7 @@ class Danbooru2Page extends Page
         );
     }
 
-    public function navlinks(Link $link, HTMLElement|string $desc, bool $active): HTMLElement
+    private function navlinks(Link $link, HTMLElement|string $desc, bool $active): HTMLElement
     {
         return A([
             "class" => $active ? "current-page" : "tab",

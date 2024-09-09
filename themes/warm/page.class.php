@@ -10,7 +10,7 @@ use function MicroHTML\{BODY, A, TABLE, TR, TD, SMALL, rawHTML, emptyHTML, DIV, 
 
 class WarmPage extends Page
 {
-    public function body_html(): HTMLElement
+    protected function body_html(): HTMLElement
     {
         global $config;
 

@@ -19,7 +19,7 @@ use function MicroHTML\{BODY, emptyHTML, HEADER, FOOTER, DIV, SCRIPT, A, B, IMG,
 
 class LitePage extends Page
 {
-    public function body_html(): HTMLElement
+    protected function body_html(): HTMLElement
     {
         global $config;
 
@@ -116,7 +116,7 @@ class LitePage extends Page
         return $html;
     }
 
-    public function navlinks(Link $link, HTMLElement|string $desc, bool $active): HTMLElement
+    private function navlinks(Link $link, HTMLElement|string $desc, bool $active): HTMLElement
     {
         return A([
             "class" => $active ? "tab-selected" : "tab",
