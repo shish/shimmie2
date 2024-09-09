@@ -115,7 +115,7 @@ class ExtManagerTheme extends Themelet
 
         $cat_html = [
             A(["href" => make_link()], "Index"),
-            BR(),
+            " ",
         ];
         foreach ($categories as $cat) {
             $cat_html[] = A(["href" => "#".$cat->value], $cat->value);

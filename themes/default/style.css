@@ -61,12 +61,14 @@ HEADER H1 {
 	overflow: hidden;
 }
 BODY {
-	display: grid;
-	grid-template-columns: 216px auto;
-	grid-gap: 0 10px;
 	background: var(--page);
 	color: var(--text);
 	margin: 0;	
+}
+BODY.grid {
+	display: grid;
+	grid-template-columns: 216px auto;
+	grid-gap: 0 10px;
 }
 H1 {
 	background: var(--title);

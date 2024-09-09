@@ -572,32 +572,38 @@ class Page
         );
     }
 
-    public function html_html(HTMLElement $head, string|HTMLElement $body): HTMLElement
+    public function html_html(HTMLElement $head, HTMLElement $body): HTMLElement
     {
-        global $user;
-
-        $body_attrs = [
-            "data-userclass" => $user->class->name,
-            "data-base-href" => get_base_href(),
-            "data-base-link" => make_link(""),
-        ];
-
         return emptyHTML(
             rawHTML("<!doctype html>"),
             HTML(
                 ["lang" => "en"],
-                HEAD($head),
-                BODY($body_attrs, $body)
+                $head,
+                $body,
             )
         );
     }
 
     protected function head_html(): HTMLElement
     {
-        return emptyHTML(
+        return HEAD(
             TITLE($this->title),
             $this->get_all_html_headers(),
         );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function body_attrs(string $class): array
+    {
+        global $user;
+        return [
+            "class" => $class,
+            "data-userclass" => $user->class->name,
+            "data-base-href" => get_base_href(),
+            "data-base-link" => make_link(""),
+        ];
     }
 
     protected function body_html(): HTMLElement
@@ -625,7 +631,8 @@ class Page
 
         $footer_html = $this->footer_html();
         $flash_html = $this->flash_html();
-        return emptyHTML(
+        return BODY(
+            $this->body_attrs("grid"),
             HTML_HEADER(
                 H1($this->heading),
                 ...$sub_block_html
