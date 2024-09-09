@@ -578,8 +578,11 @@ class Page
             rawHTML("<!doctype html>"),
             HTML(
                 ["lang" => "en"],
+                "\n",
                 $head,
+                "\n",
                 $body,
+                "\n",
             )
         );
     }
@@ -659,7 +662,7 @@ class Page
         if (!empty($block->body)) {
             $html->appendChild(DIV(['class' => "blockbody"], $block->body));
         }
-        return $html;
+        return emptyHTML("\n", $html);
     }
 
     protected function flash_html(): HTMLElement
