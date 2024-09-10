@@ -229,6 +229,7 @@ class ResizeImage extends Extension
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
 
         $info = \Safe\getimagesize($image_filename);
+        assert(!is_null($info));
         if (($image_obj->width != $info[0]) || ($image_obj->height != $info[1])) {
             throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
         }
