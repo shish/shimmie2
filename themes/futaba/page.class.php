@@ -10,7 +10,7 @@ use function MicroHTML\{BODY, DIV, LI, A, rawHTML, emptyHTML, UL, ARTICLE, FOOTE
 
 class FutabaPage extends Page
 {
-    public function body_html(): HTMLElement
+    protected function body_html(): HTMLElement
     {
         $left_block_html = [];
         $main_block_html = [];

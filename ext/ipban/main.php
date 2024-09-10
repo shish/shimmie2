@@ -8,7 +8,6 @@ use MicroCRUD\ActionColumn;
 use MicroCRUD\InetColumn;
 use MicroCRUD\StringColumn;
 use MicroCRUD\DateColumn;
-use MicroCRUD\TextColumn;
 use MicroCRUD\EnumColumn;
 use MicroCRUD\Table;
 
@@ -36,7 +35,7 @@ class IPBanTable extends Table
                 "Ghost" => "ghost",
                 "Anon Ghost" => "anon-ghost"
             ]),
-            new TextColumn("reason", "Reason"),
+            new BBCodeColumn("reason", "Reason"),
             new StringColumn("banner", "Banner"),
             new DateColumn("added", "Added"),
             new DateColumn("expires", "Expires"),

@@ -7,7 +7,6 @@ namespace Shimmie2;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\StringColumn;
 use MicroCRUD\DateColumn;
-use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
 use function MicroHTML\{INPUT,emptyHTML};
@@ -24,7 +23,7 @@ class HashBanTable extends Table
         $this->limit = 1000000;
         $this->set_columns([
             new StringColumn("hash", "Hash"),
-            new TextColumn("reason", "Reason"),
+            new BBCodeColumn("reason", "Reason"),
             new DateColumn("date", "Date"),
             new ActionColumn("hash"),
         ]);
