@@ -4,6 +4,7 @@
 	"type"    : "project",
 	"license" : "GPL-2.0-or-later",
 	"minimum-stability" : "dev",
+	"prefer-stable": true,
 
 	"config": {
 		"platform": {
@@ -43,6 +44,7 @@
 		"shish/microcrud": "^2.0",
 		"shish/microhtml": "^2.2",
 		"shish/gqla": "^1.0",
+		"shish/safe": "^2.6.2",
 		"enshrined/svg-sanitize": "^0.16",
 		"bower-asset/jquery": "^1.12",
 		"bower-asset/jquery-timeago": "^1.5",
@@ -51,15 +53,13 @@
 		"sabre/cache": "^2.0.1",
 		"naroga/redis-cache": "dev-master",
 		"aws/aws-sdk-php": "^3.294",
-		"symfony/console": "6.4.x-dev",
-		"thecodingmachine/safe": "2.5.0"
+		"symfony/console": "6.4.x-dev"
     },
 
 	"require-dev" : {
 		"phpunit/phpunit" : "^11.0",
 		"friendsofphp/php-cs-fixer" : "^3.64",
-		"phpstan/phpstan": "^1.12",
-		"thecodingmachine/phpstan-safe-rule": "^1.2"
+		"phpstan/phpstan": "^1.12"
 	},
 	"suggest": {
 		"ext-memcache": "memcache caching",
