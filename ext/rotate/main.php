@@ -88,10 +88,8 @@ class RotateImage extends Extension
         }
 
         $info = \Safe\getimagesize($image_filename);
+        assert(!is_null($info));
 
-        // we need to fully-enable phpstan-safe-rules to get the
-        // full type hint
-        // @phpstan-ignore-next-line
         $memory_use = Media::calc_memory_use($info);
         $memory_limit = get_memory_limit();
 
