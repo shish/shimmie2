@@ -53,7 +53,7 @@ class User
         $this->email = $row['email'];
         $this->join_date = $row['joindate'];
         $this->passhash = $row['pass'];
-
+        //var_dump(array_keys(UserClass::$known_classes));
         if (array_key_exists($row["class"], UserClass::$known_classes)) {
             $this->class = UserClass::$known_classes[$row["class"]];
         } else {
