@@ -24,6 +24,7 @@ class SearchTermParseEvent extends Event
     /** @var TagCondition[] */
     public array $tag_conditions = [];
     public ?string $order = null;
+    public ?int $limit = null;
 
     /**
      * @param string[] $context
