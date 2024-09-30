@@ -17,7 +17,10 @@ class ET extends Extension
     {
         global $user;
         if ($event->page_matches("system_info", permission: Permissions::VIEW_SYSINFO)) {
-            $this->theme->display_info_page($this->to_yaml($this->get_info()));
+            $this->theme->display_info_page(
+                $this->to_yaml($this->get_site_info()),
+                $this->to_yaml($this->get_system_info()),
+            );
         }
     }
 
@@ -44,17 +47,15 @@ class ET extends Extension
         $event->app->register('info')
             ->setDescription('List a bunch of info')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                print($this->to_yaml($this->get_info()));
+                print($this->to_yaml($this->get_site_info()));
                 return Command::SUCCESS;
             });
     }
 
     /**
-     * Collect the information and return it in a keyed array.
-     *
      * @return array<string, mixed>
      */
-    private function get_info(): array
+    private function get_site_info(): array
     {
         global $config, $database;
 
@@ -140,17 +141,48 @@ class ET extends Extension
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    private function get_system_info(): array
+    {
+        global $config, $database;
+
+        $info = [
+            "server" => $_SERVER,
+            "env" => $_ENV,
+            "get" => $_GET,
+            "cookie" => $_COOKIE,
+            // These don't apply to "GET /system_info"
+            // "post" => $_POST,
+            // "files" => $_FILES,
+            // "session" => $_SESSION,
+            // "request" => $_REQUEST,
+            "php" => [
+                "extensions" => get_loaded_extensions(),
+            ],
+            "php_ini" => ini_get_all(),
+        ];
+        return $info;
+    }
+
+    /**
      * @param array<string, mixed> $info
      */
     private function to_yaml(array $info): string
     {
         $data = "";
         foreach ($info as $title => $section) {
-            $data .= "$title:\n";
-            foreach ($section as $k => $v) {
-                $data .= "  $k: " . \Safe\json_encode($v, JSON_UNESCAPED_SLASHES) . "\n";
+            if (!empty($section)) {
+                $data .= "$title:\n";
+                foreach ($section as $k => $v) {
+                    try {
+                        $data .= "  $k: " . \Safe\json_encode($v, JSON_UNESCAPED_SLASHES) . "\n";
+                    } catch (\Exception $e) {
+                        $data .= "  $k: \"(encode error)\"\n";
+                    }
+                }
+                $data .= "\n";
             }
-            $data .= "\n";
         }
         return $data;
     }
