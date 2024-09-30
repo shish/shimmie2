@@ -209,7 +209,7 @@ function get_real_ip(): string
 
     if (is_trusted_proxy()) {
         if (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            if (filter_var_ex($ip, FILTER_VALIDATE_IP)) {
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
                 $ip = $_SERVER['HTTP_X_REAL_IP'];
             }
         }
@@ -217,7 +217,7 @@ function get_real_ip(): string
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             $last_ip = $ips[count($ips) - 1];
-            if (filter_var_ex($last_ip, FILTER_VALIDATE_IP)) {
+            if (filter_var($last_ip, FILTER_VALIDATE_IP)) {
                 $ip = $last_ip;
             }
         }
