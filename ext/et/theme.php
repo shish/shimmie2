@@ -14,13 +14,17 @@ class ETTheme extends Themelet
     /*
      * Create a page showing info
      */
-    public function display_info_page(string $yaml): void
+    public function display_info_page(string $yaml, string $extra): void
     {
         global $page;
 
         $page->set_title("System Info");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Information:", $this->build_data_form($yaml)));
+        $page->add_block(new Block("Site Information", $this->build_data_form($yaml)));
+        $page->add_block(new Block("System Information", TEXTAREA(
+            ["name" => 'data', "style" => "width: 100%; height: 20em;"],
+            $extra
+        )));
     }
 
     protected function build_data_form(string $yaml): \MicroHTML\HTMLElement
