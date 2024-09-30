@@ -179,7 +179,7 @@ class SourceHistory extends Extension
         }
 
         if (isset($_POST['revert_ip']) && !empty($_POST['revert_ip'])) {
-            $revert_ip = filter_var_ex($_POST['revert_ip'], FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
+            $revert_ip = filter_var($_POST['revert_ip'], FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
 
             if ($revert_ip === false) {
                 // invalid ip given.
