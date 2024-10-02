@@ -9,14 +9,14 @@ class BanWordsInfo extends ExtensionInfo
     public const KEY = "ban_words";
 
     public string $key = self::KEY;
-    public string $name = "Comment Word Ban";
+    public string $name = "Word Ban";
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
-    public string $description = "For stopping spam and other comment abuse";
+    public string $description = "For stopping spam and other abuse in comments, tags and sources";
     public ?string $documentation =
         "Allows an administrator to ban certain words
-from comments. This can be a very simple but effective way
+from comments, tags and sources. This can be a very simple but effective way
 of stopping spam; just add \"viagra\", \"porn\", etc to the
 banned words list.
 <p>Regex bans are also supported, allowing more complicated
