@@ -44,12 +44,10 @@ function postPeekAddPeeker() {
 
             var width = parseInt(parent.dataset["width"]);
             var height = parseInt(parent.dataset["height"]);
-            var ratio = width/height;
-
 
             linkElement.onmouseenter = function(e) {
                 let imgElement = document.createElement("IMG");
-                imgElement.src = item.src.replace("thumb/", "image/");
+                imgElement.src = item.src.replace("thumb/", "image/").replace("_thumbs/", "_images/");
                 imgElement.style.width = "100%";
                 imgElement.style.aheight = "100%";
 
