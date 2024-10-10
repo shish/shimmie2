@@ -82,7 +82,8 @@
 		    "@test"
 		],
 		"format": "php-cs-fixer fix",
-		"stan": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon",
+		"stan-ci": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=github",
+		"stan": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=raw",
 		"test": "phpunit --config tests/phpunit.xml"
 	  }
 }
