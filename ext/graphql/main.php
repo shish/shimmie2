@@ -88,7 +88,7 @@ class GraphQL extends Extension
         $pat = $config->get_string("graphql_cors_pattern");
 
         if ($pat && isset($_SERVER['HTTP_ORIGIN'])) {
-            if (preg_match("#$pat#", $_SERVER['HTTP_ORIGIN'])) {
+            if (\Safe\preg_match("#$pat#", $_SERVER['HTTP_ORIGIN'])) {
                 header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
                 header('Access-Control-Allow-Credentials: true');
                 header('Access-Control-Max-Age: 86400');

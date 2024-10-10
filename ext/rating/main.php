@@ -289,7 +289,7 @@ class Ratings extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if (preg_match($this->search_regexp, $event->term)) {
+        if ($event->matches($this->search_regexp)) {
             $event->metatag = true;
         }
     }
@@ -298,10 +298,10 @@ class Ratings extends Extension
     {
         global $user;
 
-        if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
-            $ratings = $matches[1] ? $matches[1] : $matches[2][0];
+        if ($matches = $event->matches($this->search_regexp)) {
+            $ratings = strtolower($matches[1] ? $matches[1] : $matches[2][0]);
 
-            if (count($matches) > 2 && in_array($matches[2], self::UNRATED_KEYWORDS)) {
+            if (count($matches) > 2 && in_array(strtolower($matches[2]), self::UNRATED_KEYWORDS)) {
                 $ratings = "?";
             }
 
@@ -512,7 +512,7 @@ class Ratings extends Extension
     private function no_rating_query(array $context): bool
     {
         foreach ($context as $term) {
-            if (preg_match("/^rating[=|:]/", $term)) {
+            if (\Safe\preg_match("/^rating[=|:]/", $term)) {
                 return false;
             }
         }

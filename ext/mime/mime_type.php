@@ -80,7 +80,7 @@ class MimeType
 
     public static function is_mime(string $value): bool
     {
-        return preg_match(self::REGEX_MIME_TYPE, $value) === 1;
+        return \Safe\preg_match(self::REGEX_MIME_TYPE, $value) === 1;
     }
 
     public static function add_parameters(string $mime, string ...$parameters): string
@@ -144,7 +144,7 @@ class MimeType
 
                 while (!feof($fh) && $is_anim_gif < 2) {
                     $chunk =  ($chunk ? substr($chunk, -20) : "") . fread($fh, 1024 * 100); //read 100kb at a time
-                    $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+                    $is_anim_gif += \Safe\preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
                 }
             } finally {
                 @fclose($fh);

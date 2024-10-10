@@ -177,7 +177,7 @@ class PostTags extends Extension
         if ($matches = $event->matches("/^(source)[=|:](.*)$/i")) {
             $source = strtolower($matches[2]);
 
-            if (preg_match("/^(any|none)$/i", $source)) {
+            if (\Safe\preg_match("/^(any|none)$/i", $source)) {
                 $not = ($source == "any" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.source IS $not NULL"));
             } else {
