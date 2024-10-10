@@ -250,7 +250,7 @@ class Notes extends Extension
     {
         global $database, $user;
 
-        $note = json_decode(\Safe\file_get_contents('php://input'), true);
+        $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
 
         $database->execute(
             "
@@ -311,7 +311,7 @@ class Notes extends Extension
     {
         global $database;
 
-        $note = json_decode(\Safe\file_get_contents('php://input'), true);
+        $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
 
         // validate parameters
         if (empty($note['note'])) {
@@ -330,7 +330,7 @@ class Notes extends Extension
     {
         global $user, $database;
 
-        $note = json_decode(\Safe\file_get_contents('php://input'), true);
+        $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
         $database->execute("
 			UPDATE notes SET enable = :enable
 			WHERE image_id = :image_id AND id = :id

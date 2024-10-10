@@ -352,7 +352,7 @@ class NumericScore extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if (preg_match("/^vote[=|:](up|down|remove)$/i", $event->term)) {
+        if ($event->matches("/^vote[=|:](up|down|remove)$/i")) {
             $event->metatag = true;
         }
     }

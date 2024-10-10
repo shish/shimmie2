@@ -770,7 +770,7 @@ class NavLink
         $re1 = '.*?';
         $re2 = '((?:[a-z][a-z_]+))';
 
-        if (preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
+        if (\Safe\preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
             $url = $matches[1][0];
         }
 

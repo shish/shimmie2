@@ -58,7 +58,7 @@ class Relationships extends Extension
     {
         global $user;
         if ($user->can(Permissions::EDIT_IMAGE_RELATIONSHIPS)) {
-            if (isset($event->params['tags']) ? !preg_match('/parent[=|:]/', $event->params["tags"]) : true) { //Ignore parent if tags contain parent metatag
+            if (isset($event->params['tags']) ? !\Safe\preg_match('/parent[=|:]/', $event->params["tags"]) : true) { //Ignore parent if tags contain parent metatag
                 if (isset($event->params["parent"]) ? ctype_digit($event->params["parent"]) : false) {
                     send_event(new ImageRelationshipSetEvent($event->image->id, (int) $event->params["parent"]));
                 } else {
@@ -78,7 +78,7 @@ class Relationships extends Extension
         if ($matches = $event->matches("/^parent[=|:]([0-9]+|any|none)$/")) {
             $parentID = $matches[1];
 
-            if (preg_match("/^(any|none)$/", $parentID)) {
+            if (\Safe\preg_match("/^(any|none)$/", $parentID)) {
                 $not = ($parentID == "any" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.parent_id IS $not NULL"));
             } else {

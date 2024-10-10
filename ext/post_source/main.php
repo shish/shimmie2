@@ -40,7 +40,7 @@ class PostSource extends Extension
             $source = $event->get_param('url');
         }
         if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && !is_null($source)) {
-            if (isset($event->params['tags']) ? !preg_match('/source[=|:]/', $event->params["tags"]) : true) {
+            if (isset($event->params['tags']) ? !\Safe\preg_match('/source[=|:]/', $event->params["tags"]) : true) {
                 send_event(new SourceSetEvent($event->image, $source));
             }
         }
@@ -81,7 +81,7 @@ class PostSource extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if (preg_match("/^source[=|:](.*)$/i", $event->term)) {
+        if ($event->matches("/^source[=|:](.*)$/i")) {
             $event->metatag = true;
         }
     }

@@ -494,7 +494,7 @@ class Pools extends Extension
         if ($matches = $event->matches("/^pool[=|:]([0-9]+|any|none)$/i")) {
             $poolID = $matches[1];
 
-            if (preg_match("/^(any|none)$/", $poolID)) {
+            if (\Safe\preg_match("/^(any|none)$/", $poolID)) {
                 $not = ($poolID == "none" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.id $not IN (SELECT DISTINCT image_id FROM pool_images)"));
             } else {
@@ -518,7 +518,7 @@ class Pools extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if (preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term)) {
+        if ($event->matches("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i")) {
             $event->metatag = true;
         }
     }
