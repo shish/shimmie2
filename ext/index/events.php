@@ -71,6 +71,21 @@ class SearchTermParseEvent extends Event
     {
         $this->tag_conditions[] = $c;
     }
+
+    /**
+     * @return array<string>|null
+     */
+    public function matches(string $regex): ?array
+    {
+        $matches = [];
+        if (is_null($this->term)) {
+            return null;
+        }
+        if (\Safe\preg_match($regex, $this->term, $matches) === 1) {
+            return $matches;
+        }
+        return null;
+    }
 }
 
 class SearchTermParseException extends InvalidInput

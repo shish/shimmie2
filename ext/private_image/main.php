@@ -95,13 +95,11 @@ class PrivateImage extends Extension
         }
     }
 
-    public const SEARCH_REGEXP = "/^private:(yes|no|any)/";
+    public const SEARCH_REGEXP = "/^private:(yes|no|any)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user, $user_config;
         $show_private = $user_config->get_bool(PrivateImageConfig::USER_VIEW_DEFAULT);
-
-        $matches = [];
 
         if (is_null($event->term) && $this->no_private_query($event->context)) {
             if ($show_private) {
@@ -118,14 +116,10 @@ class PrivateImage extends Extension
             }
         }
 
-        if (is_null($event->term)) {
-            return;
-        }
-
-        if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
+        if ($matches = $event->matches(self::SEARCH_REGEXP)) {
             $params = [];
             $query = "";
-            switch ($matches[1]) {
+            switch (strtolower($matches[1])) {
                 case "no":
                     $query .= "private != :true";
                     $params["true"] = true;
