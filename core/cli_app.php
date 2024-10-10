@@ -54,7 +54,7 @@ class CliApp extends \Symfony\Component\Console\Application
             }
         }
         if (!defined("CLI_LOG_LEVEL")) {
-            define("CLI_LOG_LEVEL", $log_level);
+            \Safe\define("CLI_LOG_LEVEL", $log_level);
         }
 
         return parent::run($input, $output);

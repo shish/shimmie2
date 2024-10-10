@@ -61,8 +61,7 @@ class ImageReplaceEvent extends Event
     ) {
         parent::__construct();
         $this->old_hash = $image->hash;
-        $hash = md5_file($tmp_filename);
-        assert($hash !== false, "Failed to hash file $tmp_filename");
+        $hash = \Safe\md5_file($tmp_filename);
         $this->new_hash = $hash;
     }
 }
