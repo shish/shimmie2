@@ -158,7 +158,7 @@ class PrivateImage extends Extension
     private function no_private_query(array $context): bool
     {
         foreach ($context as $term) {
-            if (preg_match(self::SEARCH_REGEXP, $term)) {
+            if (\Safe\preg_match(self::SEARCH_REGEXP, $term)) {
                 return false;
             }
         }

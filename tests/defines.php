@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function Safe\define;
+
 define("UNITTEST", true);
 $_all_exts = glob('ext/*');
 assert($_all_exts !== false);

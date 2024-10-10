@@ -18,7 +18,7 @@ class LinkScan extends Extension
         $search = $event->get_GET('search') ?? $event->get_POST('search') ?? "";
         if ($event->page_matches("post/list") && !empty($search)) {
             $trigger = $config->get_string("link_scan_trigger", "https?://");
-            if (preg_match("#.*{$trigger}.*#", $search)) {
+            if (\Safe\preg_match("#.*{$trigger}.*#", $search)) {
                 $ids = $this->scan($search);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(search_link(["id=".implode(",", $ids)]));
@@ -34,14 +34,14 @@ class LinkScan extends Extension
     {
         $ids = [];
         $matches = [];
-        preg_match_all("/post\/view\/(\d+)/", $text, $matches);
+        \Safe\preg_match_all("/post\/view\/(\d+)/", $text, $matches);
         foreach ($matches[1] as $match) {
             $img = Image::by_id((int)$match);
             if ($img) {
                 $ids[] = $img->id;
             }
         }
-        preg_match_all("/\b([0-9a-fA-F]{32})\b/", $text, $matches);
+        \Safe\preg_match_all("/\b([0-9a-fA-F]{32})\b/", $text, $matches);
         foreach ($matches[1] as $match) {
             $img = Image::by_hash($match);
             if ($img) {

@@ -26,13 +26,13 @@ class VarnishPurger extends Extension
         $port = $config->get_int('varnish_port');
         $protocol = $config->get_string('varnish_protocol');
         $url = $protocol . '://'. $host . '/' . $path;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_PORT, $port);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PURGE");
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        $result = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $ch = \Safe\curl_init();
+        \Safe\curl_setopt($ch, CURLOPT_URL, $url);
+        \Safe\curl_setopt($ch, CURLOPT_PORT, $port);
+        \Safe\curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PURGE");
+        \Safe\curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        $result = \Safe\curl_exec($ch);
+        $httpCode = \Safe\curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpCode != 200) {
             throw new ServerError('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
         }

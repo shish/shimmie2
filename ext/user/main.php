@@ -508,7 +508,7 @@ class UserPage extends Extension
         if (strlen($name) < 1) {
             throw new UserCreationException("Username must be at least 1 character");
         }
-        if (!preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
+        if (!\Safe\preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
             throw new UserCreationException(
                 "Username contains invalid characters. Allowed characters are " .
                 "letters, numbers, dash, and underscore"
@@ -566,8 +566,8 @@ class UserPage extends Extension
     {
         foreach ($context as $term) {
             if (
-                preg_match(self::USER_SEARCH_REGEX, $term) ||
-                preg_match(self::USER_ID_SEARCH_REGEX, $term)
+                \Safe\preg_match(self::USER_SEARCH_REGEX, $term) ||
+                \Safe\preg_match(self::USER_ID_SEARCH_REGEX, $term)
             ) {
                 return true;
             }

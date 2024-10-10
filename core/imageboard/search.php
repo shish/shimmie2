@@ -225,7 +225,7 @@ class Search
         if ($speed_hax && $tag_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();
-        } elseif ($speed_hax && $tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
+        } elseif ($speed_hax && $tag_count === 1 && !\Safe\preg_match("/[:=><\*\?]/", $tags[0])) {
             if (!str_starts_with($tags[0], "-")) {
                 // one positive tag - we can look that up directly
                 $total = self::count_tag($tags[0]);

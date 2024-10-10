@@ -77,7 +77,7 @@ class ViewPostTheme extends Themelet
         if (isset($_GET['search'])) {
             $tags = Tag::explode($_GET['search']);
             foreach ($tags as $tag) {
-                if (preg_match("/^order[=:]/", $tag) == 1) {
+                if (\Safe\preg_match("/^order[=:]/", $tag) == 1) {
                     return true;
                 }
             }

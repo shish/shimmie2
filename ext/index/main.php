@@ -222,7 +222,7 @@ class Index extends Extension
             $event->add_querylet(new Querylet("images.posted $cmp :posted{$event->id}", ["posted{$event->id}" => $val]));
         } elseif ($matches = $event->matches("/^order[=|:](id|width|height|length|filesize|filename)[_]?(desc|asc)?$/i")) {
             $ord = strtolower($matches[1]);
-            $default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
+            $default_order_for_column = \Safe\preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
             $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
             $event->order = "images.$ord $sort";
         } elseif ($matches = $event->matches("/^order[=|:]random[_]([0-9]{1,4})$/i")) {

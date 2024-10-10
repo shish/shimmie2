@@ -860,8 +860,8 @@ class Media extends Extension
         // error_log("Getting size with `$cmd`");
 
         $regex_sizes = "/Video: .* ([0-9]{1,4})x([0-9]{1,4})/";
-        if (preg_match($regex_sizes, $output, $regs)) {
-            if (preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
+        if (\Safe\preg_match($regex_sizes, $output, $regs)) {
+            if (\Safe\preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
                 $size = [(int)$regs[2], (int)$regs[1]];
             } else {
                 $size = [(int)$regs[1], (int)$regs[2]];

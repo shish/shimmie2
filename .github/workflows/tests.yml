@@ -49,7 +49,7 @@ jobs:
     - name: Install PHP dependencies
       run: composer install --prefer-dist --no-progress
     - name: PHPStan
-      run: composer stan
+      run: composer stan-ci
 
   upgrade:
     name: Upgrade from 2.9 ${{ matrix.database }}
