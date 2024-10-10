@@ -319,36 +319,35 @@ class NumericScore extends Extension
             return;
         }
 
-        $matches = [];
-        if (preg_match("/^score([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(-?\d+)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^score([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(-?\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $score = $matches[2];
             $event->add_querylet(new Querylet("numeric_score $cmp $score"));
-        } elseif (preg_match("/^upvoted_by[=|:](.*)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^upvoted_by[=|:](.*)$/i")) {
             $duser = User::by_name($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
                 ["ns_user_id" => $duser->id]
             ));
-        } elseif (preg_match("/^downvoted_by[=|:](.*)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^downvoted_by[=|:](.*)$/i")) {
             $duser = User::by_name($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
                 ["ns_user_id" => $duser->id]
             ));
-        } elseif (preg_match("/^upvoted_by_id[=|:](\d+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^upvoted_by_id[=|:](\d+)$/i")) {
             $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
                 ["ns_user_id" => $iid]
             ));
-        } elseif (preg_match("/^downvoted_by_id[=|:](\d+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^downvoted_by_id[=|:](\d+)$/i")) {
             $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
                 ["ns_user_id" => $iid]
             ));
-        } elseif (preg_match("/^order[=|:](?:numeric_)?(score)(?:_(desc|asc))?$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^order[=|:](?:numeric_)?(score)(?:_(desc|asc))?$/i")) {
             $default_order_for_column = "DESC";
             $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
             $event->order = "images.numeric_score $sort";
@@ -366,7 +365,7 @@ class NumericScore extends Extension
     {
         $matches = [];
 
-        if (preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
+        if ($matches = $event->matches("/^vote[=|:](up|down|remove)$/")) {
             global $user;
             $score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
             if ($user->can(Permissions::CREATE_VOTE)) {

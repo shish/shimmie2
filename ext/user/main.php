@@ -583,14 +583,13 @@ class UserPage extends Extension
             return;
         }
 
-        $matches = [];
-        if (preg_match(self::USER_SEARCH_REGEX, $event->term, $matches)) {
+        if ($matches = $event->matches(self::USER_SEARCH_REGEX)) {
             $duser = User::by_name($matches[2]);
             $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= {$duser->id}"));
-        } elseif (preg_match(self::USER_ID_SEARCH_REGEX, $event->term, $matches)) {
+        } elseif ($matches = $event->matches(self::USER_ID_SEARCH_REGEX)) {
             $user_id = int_escape($matches[2]);
             $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= $user_id"));
-        } elseif ($user->can(Permissions::VIEW_IP) && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
+        } elseif ($user->can(Permissions::VIEW_IP) && $matches = $event->matches("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i")) {
             $user_ip = $matches[1]; // FIXME: ip_escape?
             $event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
         }

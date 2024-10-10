@@ -67,7 +67,7 @@ class PostSource extends Extension
             return;
         }
 
-        if (preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $count = $matches[2];
             $event->add_querylet(
@@ -92,7 +92,7 @@ class PostSource extends Extension
 
     public function onTagTermParse(TagTermParseEvent $event): void
     {
-        if (preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^source[=|:](.*)$/i")) {
             $source = ($matches[1] !== "none" ? $matches[1] : "");
             send_event(new SourceSetEvent(Image::by_id_ex($event->image_id), $source));
         }

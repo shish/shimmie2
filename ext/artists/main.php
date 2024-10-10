@@ -61,8 +61,7 @@ class Artists extends Extension
             return;
         }
 
-        $matches = [];
-        if (preg_match("/^(author|artist)[=|:](.*)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^(author|artist)[=|:](.*)$/i")) {
             $char = $matches[2];
             $event->add_querylet(new Querylet("author = :author_char", ["author_char" => $char]));
         }

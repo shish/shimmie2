@@ -73,6 +73,18 @@ class TagTermCheckEvent extends Event
         parent::__construct();
         $this->term  = $term;
     }
+
+    /**
+     * @return array<string>|null
+     */
+    public function matches(string $regex): ?array
+    {
+        $matches = [];
+        if (\Safe\preg_match($regex, $this->term, $matches) === 1) {
+            return $matches;
+        }
+        return null;
+    }
 }
 
 /**
@@ -88,6 +100,18 @@ class TagTermParseEvent extends Event
         parent::__construct();
         $this->term = $term;
         $this->image_id = $image_id;
+    }
+
+    /**
+     * @return array<string>|null
+     */
+    public function matches(string $regex): ?array
+    {
+        $matches = [];
+        if (\Safe\preg_match($regex, $this->term, $matches) === 1) {
+            return $matches;
+        }
+        return null;
     }
 }
 
@@ -154,7 +178,7 @@ class PostTags extends Extension
             return;
         }
 
-        if (preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^(source)[=|:](.*)$/i")) {
             $source = strtolower($matches[2]);
 
             if (preg_match("/^(any|none)$/i", $source)) {

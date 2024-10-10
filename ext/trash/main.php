@@ -95,7 +95,7 @@ class Trash extends Extension
         }
     }
 
-    public const SEARCH_REGEXP = "/^in:trash$/";
+    public const SEARCH_REGEXP = "/^in:(trash)$/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user;
@@ -109,7 +109,7 @@ class Trash extends Extension
         if (is_null($event->term)) {
             return;
         }
-        if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
+        if ($event->matches(self::SEARCH_REGEXP)) {
             if ($user->can(Permissions::VIEW_TRASH)) {
                 $event->add_querylet(new Querylet("trash = :true", ["true" => true]));
             }

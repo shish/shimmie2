@@ -79,8 +79,7 @@ class Relationships extends Extension
             return;
         }
 
-        $matches = [];
-        if (preg_match("/^parent[=|:]([0-9]+|any|none)$/", $event->term, $matches)) {
+        if ($matches = $event->matches("/^parent[=|:]([0-9]+|any|none)$/")) {
             $parentID = $matches[1];
 
             if (preg_match("/^(any|none)$/", $parentID)) {
@@ -89,7 +88,7 @@ class Relationships extends Extension
             } else {
                 $event->add_querylet(new Querylet("images.parent_id = :pid", ["pid" => $parentID]));
             }
-        } elseif (preg_match("/^child[=|:](any|none)$/", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^child[=|:](any|none)$/")) {
             $not = ($matches[1] == "any" ? "=" : "!=");
             $event->add_querylet(new Querylet("images.has_children $not :true", ["true" => true]));
         }
@@ -104,23 +103,21 @@ class Relationships extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if (preg_match("/^(parent|child)[=|:](.*)$/i", $event->term)) {
+        if ($event->matches("/^(parent|child)[=|:](.*)$/i")) {
             $event->metatag = true;
         }
     }
 
     public function onTagTermParse(TagTermParseEvent $event): void
     {
-        $matches = [];
-
-        if (preg_match("/^parent[=|:]([0-9]+|none)$/", $event->term, $matches)) {
+        if ($matches = $event->matches("/^parent[=|:]([0-9]+|none)$/")) {
             $parentID = $matches[1];
             if ($parentID == "none" || $parentID == "0") {
                 $this->remove_parent($event->image_id);
             } else {
                 send_event(new ImageRelationshipSetEvent($event->image_id, (int)$parentID));
             }
-        } elseif (preg_match("/^child[=|:]([0-9]+)$/", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^child[=|:]([0-9]+)$/")) {
             $childID = $matches[1];
             send_event(new ImageRelationshipSetEvent((int)$childID, $event->image_id));
         }

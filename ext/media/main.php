@@ -243,29 +243,28 @@ class Media extends Extension
             return;
         }
 
-        $matches = [];
-        if (preg_match("/^content[=|:]((video)|(audio)|(image)|(unknown))$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^content[=|:]((video)|(audio)|(image)|(unknown))$/i")) {
             $field = $matches[1];
             if ($field === "unknown") {
                 $event->add_querylet(new Querylet("video IS NULL OR audio IS NULL OR image IS NULL"));
             } else {
                 $event->add_querylet(new Querylet("$field = :true", ["true" => true]));
             }
-        } elseif (preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i")) {
             $cmp = preg_replace_ex('/^:/', '=', $matches[1]);
             $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
             $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
-        } elseif (preg_match("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
             $event->add_querylet(new Querylet("width $cmp :width{$event->id} AND height $cmp :height{$event->id}", $args));
-        } elseif (preg_match("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $event->add_querylet(new Querylet("width $cmp :width{$event->id}", ["width{$event->id}" => int_escape($matches[2])]));
-        } elseif (preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $event->add_querylet(new Querylet("height $cmp :height{$event->id}", ["height{$event->id}" => int_escape($matches[2])]));
-        } elseif (preg_match("/^length([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(.+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^length([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(.+)$/i")) {
             $value = parse_to_milliseconds($matches[2]);
             $cmp = ltrim($matches[1], ":") ?: "=";
             $event->add_querylet(new Querylet("length $cmp :length{$event->id}", ["length{$event->id}" => $value]));
