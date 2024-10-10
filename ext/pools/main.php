@@ -491,12 +491,7 @@ class Pools extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if (is_null($event->term)) {
-            return;
-        }
-
-        $matches = [];
-        if (preg_match("/^pool[=|:]([0-9]+|any|none)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^pool[=|:]([0-9]+|any|none)$/i")) {
             $poolID = $matches[1];
 
             if (preg_match("/^(any|none)$/", $poolID)) {
@@ -505,7 +500,7 @@ class Pools extends Extension
             } else {
                 $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
             }
-        } elseif (preg_match("/^pool_by_name[=|:](.*)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^pool_by_name[=|:](.*)$/i")) {
             $poolTitle = str_replace("_", " ", $matches[1]);
 
             $pool = $this->get_single_pool_from_title($poolTitle);
@@ -514,7 +509,7 @@ class Pools extends Extension
                 $poolID = $pool->id;
             }
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
-        } elseif (preg_match("/^pool_id[=|:](.*)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^pool_id[=|:](.*)$/i")) {
             $poolID = str_replace("_", " ", $matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
         }
@@ -530,9 +525,9 @@ class Pools extends Extension
 
     public function onTagTermParse(TagTermParseEvent $event): void
     {
-        $matches = [];
-        if (preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term, $matches)) {
-            global $user;
+        global $user;
+
+        if ($matches = $event->matches("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i")) {
             $poolTag = (string) str_replace("_", " ", $matches[1]);
 
             $pool = null;

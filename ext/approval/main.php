@@ -123,23 +123,18 @@ class Approval extends Extension
         }
     }
 
-    public const SEARCH_REGEXP = "/^approved:(yes|no)/";
+    public const SEARCH_REGEXP = "/^approved:(yes|no)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $user, $config;
 
         if ($config->get_bool(ApprovalConfig::IMAGES)) {
-            $matches = [];
-
             if (is_null($event->term) && $this->no_approval_query($event->context)) {
                 $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
             }
 
-            if (is_null($event->term)) {
-                return;
-            }
-            if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
-                if ($user->can(Permissions::APPROVE_IMAGE) && $matches[1] == "no") {
+            if ($matches = $event->matches(self::SEARCH_REGEXP)) {
+                if ($user->can(Permissions::APPROVE_IMAGE) && strtolower($matches[1]) == "no") {
                     $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
                 } else {
                     $event->add_querylet(new Querylet("approved = :true", ["true" => true]));

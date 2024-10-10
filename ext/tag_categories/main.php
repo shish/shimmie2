@@ -83,13 +83,9 @@ class TagCategories extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if (is_null($event->term)) {
-            return;
-        }
+        global $database;
 
-        $matches = [];
-        if (preg_match("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i", $event->term, $matches)) {
-            global $database;
+        if ($matches = $event->matches("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i")) {
             $type = strtolower($matches[1]);
             $cmp = ltrim($matches[2], ":") ?: "=";
             $count = $matches[3];
