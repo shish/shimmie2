@@ -1,5 +1,4 @@
 parameters:
-  errorFormat: raw
   level: 8
   paths:
     - ../core
