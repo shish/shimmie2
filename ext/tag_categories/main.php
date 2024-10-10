@@ -87,8 +87,7 @@ class TagCategories extends Extension
             return;
         }
 
-        $matches = [];
-        if (preg_match("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i")) {
             global $database;
             $type = strtolower($matches[1]);
             $cmp = ltrim($matches[2], ":") ?: "=";

@@ -74,12 +74,11 @@ class MimeSystem extends Extension
             return;
         }
 
-        $matches = [];
         // check for tags first as tag based searches are more common.
-        if (preg_match("/^ext[=|:]([a-zA-Z0-9]+)$/i", $event->term, $matches)) {
+        if ($matches = $event->matches("/^ext[=|:]([a-zA-Z0-9]+)$/i")) {
             $ext = strtolower($matches[1]);
             $event->add_querylet(new Querylet('images.ext = :ext', ["ext" => $ext]));
-        } elseif (preg_match("/^mime[=|:](.+)$/i", $event->term, $matches)) {
+        } elseif ($matches = $event->matches("/^mime[=|:](.+)$/i")) {
             $mime = strtolower($matches[1]);
             $event->add_querylet(new Querylet("images.mime = :mime", ["mime" => $mime]));
         }
