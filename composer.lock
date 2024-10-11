@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27bc81d9619cb6a701e6093a4dd448ad",
+    "content-hash": "787c91267affa8d5fac0e43cf9ab08f8",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5216,6 +5216,61 @@
                 }
             ],
             "time": "2024-07-03T05:13:08+00:00"
+        },
+        {
+            "name": "shish/phpstan-safe-rule",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shish/phpstan-safe-rule.git",
+                "reference": "a5041fd41543fc49a7d036a563304b8aba8760f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shish/phpstan-safe-rule/zipball/a5041fd41543fc49a7d036a563304b8aba8760f5",
+                "reference": "a5041fd41543fc49a7d036a563304b8aba8760f5",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2",
+                "phpstan/phpstan": "^1.0",
+                "shish/safe": "^2.0"
+            },
+            "replace": {
+                "thecodingmachine/phpstan-safe-rule": "1.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11.0",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "phpstan-safe-rule.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TheCodingMachine\\Safe\\PHPStan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Négrier",
+                    "email": "d.negrier@thecodingmachine.com"
+                }
+            ],
+            "description": "A PHPStan rule to detect safety issues. Must be used in conjunction with shish/safe",
+            "support": {
+                "source": "https://github.com/shish/phpstan-safe-rule/tree/v1.3.0"
+            },
+            "time": "2024-10-08T18:43:14+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
