@@ -126,7 +126,7 @@ class Database
     public function rollback(): bool
     {
         if ($this->is_transaction_open()) {
-            return $this->get_db()->rollback();
+            return $this->get_db()->rollBack();
         } else {
             throw new ServerError("Unable to call rollback() as there is no transaction currently open.");
         }
