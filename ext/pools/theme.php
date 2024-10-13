@@ -96,7 +96,7 @@ class PoolsTheme extends Themelet
     {
         $form = SHM_SIMPLE_FORM("pool/create", TABLE(
             TR(TD("Title:"), TD(INPUT(["type" => "text", "name" => "title"]))),
-            TR(TD("Public?:"), TD(INPUT(["type" => "checkbox", "name" => "public", "value" => "Y", "checked" => "checked"]))),
+            TR(TD("Public?:"), TD("Yes", INPUT(["type" => "radio", "name" => "public", "value" => "Y", "checked" => "checked"]), "No", INPUT(["type" => "radio", "name" => "public", "value" => "N"]))),
             TR(TD("Description:"), TD(TEXTAREA(["name" => "description"]))),
             TR(TD(["colspan" => "2"], SHM_SUBMIT("Create")))
         ));
