@@ -295,6 +295,7 @@ class Database
      * Execute an SQL query and return the first column of each row as a single iterable object.
      *
      * @param QueryArgs $args
+     * @return \Generator<mixed>
      */
     public function get_col_iterable(string $query, array $args = []): \Generator
     {
@@ -325,6 +326,7 @@ class Database
      * Execute an SQL query and return the the first column => the second column as an iterable object.
      *
      * @param QueryArgs $args
+     * @return \Generator<mixed>
      */
     public function get_pairs_iterable(string $query, array $args = []): \Generator
     {
