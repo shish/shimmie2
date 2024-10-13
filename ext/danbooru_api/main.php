@@ -46,15 +46,15 @@ class DanbooruApi extends Extension
             // No XML data is returned from this function
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::TEXT);
-            $this->api_add_post();
+            $this->api_add_post($event);
         } elseif ($event->page_matches("api/danbooru/find_posts") || $event->page_matches("api/danbooru/post/index.xml")) {
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::XML_APPLICATION);
-            $page->set_data((string)$this->api_find_posts($event->GET));
+            $page->set_data((string)$this->api_find_posts($event));
         } elseif ($event->page_matches("api/danbooru/find_tags")) {
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::XML_APPLICATION);
-            $page->set_data((string)$this->api_find_tags($event->GET));
+            $page->set_data((string)$this->api_find_tags($event));
         }
 
         // Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper
@@ -73,16 +73,16 @@ class DanbooruApi extends Extension
      * Authenticates a user based on the contents of the login and password parameters
      * or makes them anonymous. Does not set any cookies or anything permanent.
      */
-    private function authenticate_user(): void
+    private function authenticate_user(PageRequestEvent $event): void
     {
         global $config, $user;
 
-        if (isset($_REQUEST['login']) && isset($_REQUEST['password'])) {
+        if ($event->get_POST('login') && $event->get_POST('password')) {
             // Get this user from the db, if it fails the user becomes anonymous
             // Code borrowed from /ext/user
             try {
-                $name = $_REQUEST['login'];
-                $pass = $_REQUEST['password'];
+                $name = $event->req_POST('login');
+                $pass = $event->req_POST('password');
                 $user = User::by_name_and_pass($name, $pass);
             } catch (UserNotFound $e) {
                 $user = User::by_id($config->get_int("anon_id", 0));
@@ -100,12 +100,12 @@ class DanbooruApi extends Extension
      * - name: A comma delimited list of tag names.
      * - tags: any typical tag query. See Tag#parse_query for details.
      * - after_id: limit results to tags with an id number after after_id. Useful if you only want to refresh
-
-     * @param array<string, mixed> $GET
      */
-    private function api_find_tags(array $GET): HTMLElement
+    private function api_find_tags(PageRequestEvent $event): HTMLElement
     {
         global $database;
+        $GET = only_strings($event->GET);
+
         $results = [];
         if (isset($GET['id'])) {
             $idlist = explode(",", $GET['id']);
@@ -172,14 +172,13 @@ class DanbooruApi extends Extension
      * - limit: limit
      * - page: page number
      * - after_id: limit results to posts added after this id
-     *
-     * @param array<string, mixed> $GET
      */
-    private function api_find_posts(array $GET): HTMLElement
+    private function api_find_posts(PageRequestEvent $event): HTMLElement
     {
+        $GET = only_strings($event->GET);
         $results = [];
 
-        $this->authenticate_user();
+        $this->authenticate_user($event);
         $start = 0;
 
         if (isset($GET['md5'])) {
@@ -277,13 +276,13 @@ class DanbooruApi extends Extension
      * Get:
      * - Redirected to the newly uploaded post.
      */
-    private function api_add_post(): void
+    private function api_add_post(PageRequestEvent $event): void
     {
         global $database, $user, $page;
 
         // Check first if a login was supplied, if it wasn't check if the user is logged in via cookie
         // If all that fails, it's an anonymous upload
-        $this->authenticate_user();
+        $this->authenticate_user($event);
         // Now we check if a file was uploaded or a url was provided to transload
         // Much of this code is borrowed from /ext/upload
 
@@ -313,7 +312,6 @@ class DanbooruApi extends Extension
         } elseif (isset($_REQUEST['source']) || isset($_REQUEST['post']['source'])) {    // A url was provided
             $source = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
             $file = shm_tempnam("transload");
-            assert($file !== false);
             try {
                 fetch_url($source, $file);
             } catch (FetchException $e) {
@@ -329,11 +327,10 @@ class DanbooruApi extends Extension
         }
 
         // Get tags out of url
-        $posttags = Tag::explode(isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags']);
+        $posttags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags'];
 
         // Was an md5 supplied? Does it match the file hash?
-        $hash = md5_file($file);
-        assert($hash !== false);
+        $hash = \Safe\md5_file($file);
         if (isset($_REQUEST['md5']) && strtolower($_REQUEST['md5']) != $hash) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: md5 mismatch");
