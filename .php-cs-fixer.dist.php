@@ -15,6 +15,6 @@ return $_phpcs_config
     'array_syntax' => ['syntax' => 'short'],
   ])
   ->setFinder($_phpcs_finder)
-	->setCacheFile("data/php-cs-fixer.cache")
-  ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+  ->setCacheFile("data/php-cs-fixer.cache")
+  //->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
 ;
