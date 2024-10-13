@@ -326,7 +326,7 @@ class Database
      * Execute an SQL query and return the the first column => the second column as an iterable object.
      *
      * @param QueryArgs $args
-     * @return \Generator<mixed>
+     * @return \Generator<string, mixed>
      */
     public function get_pairs_iterable(string $query, array $args = []): \Generator
     {
