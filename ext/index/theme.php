@@ -177,7 +177,7 @@ and of course start organising your images :-)
                 $page->add_html_header(META(["name" => "robots", "content" => "noindex, nofollow"]));
             }
             $query = url_escape(Tag::implode($this->search_terms));
-            $page->add_block(new Block(null, $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
+            $page->add_block(new Block(null, $this->build_table($images, "?search=$query"), "main", 10, "image-list"));
             $this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, true);
         } else {
             $page->add_block(new Block(null, $this->build_table($images, null), "main", 10, "image-list"));
