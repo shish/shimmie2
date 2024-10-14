@@ -420,23 +420,38 @@ function clamp(int $val, ?int $min = null, ?int $max = null): int
 function truncate(string $string, int $limit, string $break = " ", string $pad = "..."): string
 {
     $e = "UTF-8";
-    $strlen = mb_strlen($string, $e);
     $padlen = mb_strlen($pad, $e);
     assert($limit > $padlen, "Can't truncate to a length less than the padding length");
 
-    // if string is shorter or equal to limit, leave it alone
-    if ($strlen <= $limit) {
+    /*
+     * Truncate tentatively, and then check if the lengths stayed the same.
+     *
+     * This approach is faster than calling mb_strlen and checking against the limit, as mb_strlen
+     * has O(n) cost which will slow down significantly for long texts. mb_substr also has O(n)
+     * cost, but bounded to $limit, which is usually small.
+     *
+     * strlen has O(1) cost so it's the fastest way to check if anything happened.
+     */
+    $truncated = mb_substr($string, 0, $limit, $e);
+    if (strlen($truncated) == strlen($string)) {
         return $string;
     }
 
-    // if there is a break point between 0 and $limit, truncate to that
-    $breakpoint = mb_strrpos($string, $break, -($strlen - $limit + $padlen), $e);
+    // We've already determined it is too long. Now truncate again to add space for the pad text.
+    $truncated = mb_substr($truncated, 0, $limit - $padlen, $e);
+
+    /*
+     * If there is a break point, truncate to that.
+     *
+     * We do not need to use the slower mb_* functions for this - if $break is a well-formed UTF-8
+     * sequence, this will always result in properly formed UTF-8.
+     */
+    $breakpoint = strrpos($truncated, $break);
     if ($breakpoint !== false) {
-        return mb_substr($string, 0, $breakpoint, $e) . $pad;
+        $truncated = substr($truncated, 0, $breakpoint);
     }
 
-    // if there is no break point, cut mid-word
-    return mb_substr($string, 0, $limit - $padlen, $e) . $pad;
+    return $truncated . $pad;
 }
 
 /**
