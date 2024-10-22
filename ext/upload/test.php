@@ -24,7 +24,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
             'data0' => [
                 'name' => ['puppy-hugs.jpg'],
                 'type' => ['image/jpeg'],
-                'tmp_name' => ['tests/bedroom_workshop.jpg'],
+                'tmp_name' => ['tests/bedroom_workshop.avif'],
                 'error' => [0],
                 'size' => [271386],
             ],

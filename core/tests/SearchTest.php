@@ -15,7 +15,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "question. colon_thing exclamation%");
 
         $this->assert_search_results(["question?"], [$image_id_1]);
         $this->assert_search_results(["question."], [$image_id_2]);
@@ -29,7 +29,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $i1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
-        $i2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
+        $i2 = $this->post_image("tests/bedroom_workshop.avif", "question. colon_thing exclamation%");
         $i3 = $this->post_image("tests/favicon.png", "another");
 
         $is1 = Search::find_images(0, null, ["order=random_4123"]);
@@ -55,7 +55,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "thing computer screenshot pbx phone");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "thing computer computing bedroom workshop");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "thing computer computing bedroom workshop");
         $this->log_out();
 
         # make sure both uploads were ok
