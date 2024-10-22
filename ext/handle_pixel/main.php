@@ -6,7 +6,13 @@ namespace Shimmie2;
 
 class PixelFileHandler extends DataHandlerExtension
 {
-    protected array $SUPPORTED_MIME = [MimeType::JPEG, MimeType::GIF, MimeType::PNG, MimeType::WEBP];
+    protected array $SUPPORTED_MIME = [
+		MimeType::JPEG,
+		MimeType::GIF,
+		MimeType::PNG,
+		MimeType::WEBP,
+		MimeType::AVIF,
+	];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
@@ -37,7 +43,7 @@ class PixelFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_WEBP];
+        $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_WEBP, IMAGETYPE_AVIF];
         $info = getimagesize($tmpname);
         return $info && in_array($info[2], $valid);
     }

@@ -14,7 +14,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
 
         $this->log_in_as_user();
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        $this->post_image("tests/bedroom_workshop.jpg", "thing computer computing bedroom workshop");
+        $this->post_image("tests/bedroom_workshop.avif", "thing computer computing bedroom workshop");
         $this->log_out();
 
         $this->get_page('post/list');

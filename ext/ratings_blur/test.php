@@ -19,7 +19,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->get_page("post/list");
         $this->assert_no_text("blur");
 
-        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
+        $image_id_e = $this->post_image("tests/bedroom_workshop.avif", "bedroom");
         $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
@@ -37,7 +37,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         // create a new user to simulate inheriting the global default without manually setting the user default
         $this->create_test_user($this->username);
 
-        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
+        $image_id_e = $this->post_image("tests/bedroom_workshop.avif", "bedroom");
         $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
@@ -76,7 +76,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         // don't blur explict, blur safe
         $user_config->set_array(RatingsBlurConfig::USER_DEFAULTS, ["s"]);
 
-        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
+        $image_id_e = $this->post_image("tests/bedroom_workshop.avif", "bedroom");
         $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 

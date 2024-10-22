@@ -37,7 +37,7 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "test2");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "test2");
         $image_id_3 = $this->post_image("tests/favicon.png", "test");
 
         // Front image: no next, has prev

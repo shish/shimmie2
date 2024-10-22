@@ -69,7 +69,7 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $this->assert_text('"onetag","multi tag"');
 
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "onetag");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "onetag");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "onetag");
         $this->get_page("post/list/onetag/1"); # searching for an aliased tag should find its aliases
         $this->assert_title("multi tag");
         $this->assert_no_text("No Posts Found");
