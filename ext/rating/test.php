@@ -45,7 +45,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
 
         // post a safe image and an explicit image
         $this->log_in_as_user();
-        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_e = $this->post_image("tests/bedroom_workshop.avif", "pbx");
         $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -91,7 +91,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $image_id_q = $this->post_image("tests/favicon.png", "favicon");
         $image_q = Image::by_id_ex($image_id_q);
         send_event(new RatingSetEvent($image_q, "q"));
-        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
+        $image_id_e = $this->post_image("tests/bedroom_workshop.avif", "bedroom");
         $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 

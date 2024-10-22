@@ -20,7 +20,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
 
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "pbx");
         $image_id_3 = $this->post_image("tests/favicon.png", "pbx");
 
         $image_1 = Image::by_id_ex($image_id_1);
@@ -135,7 +135,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "pbx");
         $image_id_3 = $this->post_image("tests/favicon.png", "pbx");
 
         $image_1 = Image::by_id_ex($image_id_1);

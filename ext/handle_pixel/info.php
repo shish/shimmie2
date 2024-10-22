@@ -13,6 +13,6 @@ class PixelFileHandlerInfo extends ExtensionInfo
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
-    public string $description = "Handle JPEG, PNG, GIF, WEBP, etc files";
+    public string $description = "Handle JPEG, PNG, GIF, and similar files";
     public bool $core = true;
 }

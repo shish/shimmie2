@@ -39,7 +39,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "pbx");
         $this->assertNotNull($image_id_1);
         $this->assertNotNull($image_id_2);
 
@@ -166,7 +166,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_2 = $this->post_image("tests/bedroom_workshop.avif", "pbx");
         $this->assertNotNull($image_id_1);
         $this->assertNotNull($image_id_2);
 

@@ -10,7 +10,7 @@ class DanbooruApiTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_admin();
 
-        $image_id = $this->post_image("tests/bedroom_workshop.jpg", "data");
+        $image_id = $this->post_image("tests/bedroom_workshop.avif", "data");
 
         $this->get_page("api/danbooru/find_posts");
         $this->get_page("api/danbooru/find_posts", ["id" => $image_id]);
