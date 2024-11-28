@@ -16,9 +16,9 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $config->set_string("upload_ratios", "4:3 16:9");
 
         $this->log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         //$this->assert_response(302);
-        $this->assertTrue(true);  // no exceptions
+        $this->assertNotNull(Image::by_id($image_id));
     }
 
     public function testResLimitSmall(): void

@@ -40,8 +40,6 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
-        $this->assertNotNull($image_id_1);
-        $this->assertNotNull($image_id_2);
 
         $this->get_page("pool/new");
 
@@ -52,6 +50,8 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         ]);
         $pool_id = (int)(explode("/", $page->redirect)[4]);
         send_event(new PoolAddPostsEvent($pool_id, [$image_id_1, $image_id_2]));
+
+        $this->assertGreaterThan(0, $pool_id);
 
         return [$pool_id, [$image_id_1, $image_id_2]];
     }
@@ -167,8 +167,6 @@ class PoolsTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
-        $this->assertNotNull($image_id_1);
-        $this->assertNotNull($image_id_2);
 
         $this->get_page("pool/new");
 
