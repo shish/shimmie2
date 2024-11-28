@@ -117,9 +117,7 @@ class UserConfig extends Extension
 
                 if (!empty($user_id)) {
                     $user = User::by_id($user_id);
-                    if ($user !== null) {
-                        send_event(new UserLoginEvent($user));
-                    }
+                    send_event(new UserLoginEvent($user));
                 }
             }
 

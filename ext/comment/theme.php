@@ -22,12 +22,6 @@ class CommentListTheme extends Themelet
     {
         global $config, $page, $user;
 
-        // aaaaaaargh php
-        assert(is_array($images));
-        assert(is_numeric($page_number));
-        assert(is_numeric($total_pages));
-        assert(is_bool($can_post));
-
         // parts for the whole page
         $prev = $page_number - 1;
         $next = $page_number + 1;
