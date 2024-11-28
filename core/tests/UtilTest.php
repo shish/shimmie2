@@ -17,20 +17,17 @@ class UtilTest extends TestCase
 
     public function test_get_memory_limit(): void
     {
-        get_memory_limit();
-        $this->assertTrue(true);
+        $this->assertGreaterThan(0, get_memory_limit());
     }
 
     public function test_check_gd_version(): void
     {
-        check_gd_version();
-        $this->assertTrue(true);
+        $this->assertGreaterThanOrEqual(0, check_gd_version());
     }
 
     public function test_check_im_version(): void
     {
-        check_im_version();
-        $this->assertTrue(true);
+        $this->assertGreaterThanOrEqual(0, check_im_version());
     }
 
     public function test_human_filesize(): void
