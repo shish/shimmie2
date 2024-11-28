@@ -708,6 +708,7 @@ class Media extends Extension
             throw new MediaException("Could not load image: " . $image_filename);
         }
 
+        assert($new_width > 0 && $new_height > 0);
         $image_resized = imagecreatetruecolor($new_width, $new_height);
         if ($image_resized === false) {
             throw new MediaException("Could not create output image with dimensions $new_width x $new_height ");

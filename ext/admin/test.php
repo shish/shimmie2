@@ -35,7 +35,7 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
     public function testCliGen(): void
     {
         $app = new CliApp();
-        send_event(new CliGenEvent($app));
-        $this->assertTrue(true); // TODO: check for more than "no crash"?
+        $e = send_event(new CliGenEvent($app));
+        $this->assertFalse($e->stop_processing);
     }
 }

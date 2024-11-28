@@ -8,13 +8,13 @@ class HelpPagesTest extends ShimmiePHPUnitTestCase
 {
     public function test_list(): void
     {
-        send_event(new HelpPageListBuildingEvent());
-        $this->assertTrue(true);
+        $e = send_event(new HelpPageListBuildingEvent());
+        $this->assertGreaterThan(0, count($e->pages));
     }
 
     public function test_page(): void
     {
-        send_event(new HelpPageBuildingEvent("test"));
-        $this->assertTrue(true);
+        $e = send_event(new HelpPageBuildingEvent("test"));
+        $this->assertEqual(0, count($e->get_parts()));
     }
 }
