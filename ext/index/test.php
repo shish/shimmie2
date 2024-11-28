@@ -54,12 +54,12 @@ class IndexTest extends ShimmiePHPUnitTestCase
     public function test_nav(): void
     {
         send_event(new UserLoginEvent(User::by_name(self::$user_name)));
-        send_event(new PageNavBuildingEvent());
+        $e = send_event(new PageNavBuildingEvent());
+        $this->assertGreaterThan(0, count($e->parts));
         // just a few common parents
         foreach (["help", "posts", "system", "user"] as $parent) {
             send_event(new PageSubNavBuildingEvent($parent));
         }
-        $this->assertTrue(true);
     }
 
     public function test_operands(): void

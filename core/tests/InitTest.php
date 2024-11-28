@@ -10,13 +10,13 @@ class InitTest extends TestCase
 {
     public function testInitExt(): void
     {
-        send_event(new InitExtEvent());
-        $this->assertTrue(true);
+        $e = send_event(new InitExtEvent());
+        $this->assertFalse($e->stop_processing);
     }
 
     public function testDatabaseUpgrade(): void
     {
         send_event(new DatabaseUpgradeEvent());
-        $this->assertTrue(true);
+        $this->assertFalse($e->stop_processing);
     }
 }

@@ -13,8 +13,6 @@ class FavoriteSetEvent extends Event
     public function __construct(int $image_id, User $user, bool $do_set)
     {
         parent::__construct();
-        assert(is_int($image_id));
-        assert(is_bool($do_set));
 
         $this->image_id = $image_id;
         $this->user = $user;

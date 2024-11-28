@@ -16,8 +16,8 @@ class PageTest extends TestCase
         $page->set_mode(PageMode::PAGE);
         ob_start();
         $page->display();
+        $this->assertGreaterThan(0, ob_get_length());
         ob_end_clean();
-        $this->assertTrue(true);  // doesn't crash
     }
 
     public function test_file(): void
@@ -27,8 +27,8 @@ class PageTest extends TestCase
         $page->set_file("tests/pbx_screenshot.jpg");
         ob_start();
         $page->display();
+        $this->assertGreaterThan(0, ob_get_length());
         ob_end_clean();
-        $this->assertTrue(true);  // doesn't crash
     }
 
     public function test_data(): void
@@ -38,8 +38,8 @@ class PageTest extends TestCase
         $page->set_data("hello world");
         ob_start();
         $page->display();
+        $this->assertGreaterThan(0, ob_get_length());
         ob_end_clean();
-        $this->assertTrue(true);  // doesn't crash
     }
 
     public function test_redirect(): void
@@ -49,15 +49,15 @@ class PageTest extends TestCase
         $page->set_redirect("/new/page");
         ob_start();
         $page->display();
+        $this->assertGreaterThan(0, ob_get_length());
         ob_end_clean();
-        $this->assertTrue(true);  // doesn't crash
     }
 
     public function test_subNav(): void
     {
         // the default theme doesn't send this, so let's have
         // a random test manually
-        send_event(new PageSubNavBuildingEvent("system"));
-        $this->assertTrue(true);  // doesn't crash
+        $e = send_event(new PageSubNavBuildingEvent("system"));
+        $this->assertGreaterThan(0, count($e->links));
     }
 }

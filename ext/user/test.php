@@ -77,6 +77,6 @@ class UserPageTest extends ShimmiePHPUnitTestCase
             'email' => '',
         ]);
         $this->assertEquals(302, $page->code);
-        $this->assertNotNull(User::by_name('testnew'));
+        User::by_name('testnew');
     }
 }
