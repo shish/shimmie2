@@ -13,7 +13,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
     {
         $schema = GraphQL::get_schema();
         $schema->assertValid();
-        $this->assertTrue(true);
+        $this->assertNotEmpty($schema->getTypeMap());
     }
 
     /**
