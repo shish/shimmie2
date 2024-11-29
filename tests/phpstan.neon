@@ -13,5 +13,5 @@ parameters:
     - STATSD_HOST
     - TRACE_FILE
     - UNITTEST
-#includes:
-#  - ../vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
+includes:
+  - ../vendor/shish/phpstan-safe-rule/phpstan-safe-rule.neon
