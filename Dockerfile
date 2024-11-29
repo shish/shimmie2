@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.2
+ARG PHP_VERSION=8.4
 
 # Tree of layers:
 # base
@@ -9,27 +9,31 @@ ARG PHP_VERSION=8.2
 
 # Install base packages
 # Things which all stages (build, test, run) need
-FROM debian:bookworm AS base
+FROM debian:sid AS base
 COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /ffprobe /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
     apt install -y curl && \
     curl --output /usr/share/keyrings/nginx-keyring.gpg https://unit.nginx.org/keys/nginx-keyring.gpg && \
     echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages.nginx.org/unit/debian/ bookworm unit' > /etc/apt/sources.list.d/unit.list && \
-    apt update && apt install -y --no-install-recommends \
+    echo 'deb https://deb.debian.org/debian experimental main' > /etc/apt/sources.list.d/experimental.list && \
+    rm -rf /var/lib/apt/lists/*
+RUN apt update && apt -t experimental install -y --no-install-recommends \
     php${PHP_VERSION}-cli \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
-    php${PHP_VERSION}-memcached \
     curl rsync imagemagick zip unzip unit unit-php && \
     rm -rf /var/lib/apt/lists/*
+# php8.4-memcached is broken in debian experimental
+    #    php${PHP_VERSION}-memcached \
 
 # Install dev packages
 # Things which are only needed during development - Composer has 100MB of
 # dependencies, so let's avoid including that in the final image
 FROM base AS dev-tools
+# php8.4-xdebug is broken in debian experimental
 RUN apt update && apt upgrade -y && \
-    apt install -y composer php${PHP_VERSION}-xdebug git procps net-tools vim && \
+    apt install -y composer git procps net-tools vim && \
     rm -rf /var/lib/apt/lists/*
 ENV XDEBUG_MODE=coverage
 
