@@ -262,7 +262,7 @@ and of course start organising your images :-)
             //
             BR(),
             P("Searching for posts by source."),
-            SHM_COMMAND_EXAMPLE("source=https:///google.com/", 'Returns posts with a source of "https://google.com/".'),
+            SHM_COMMAND_EXAMPLE("source=https://google.com/", 'Returns posts with a source of "https://google.com/".'),
             SHM_COMMAND_EXAMPLE("source=any", "Returns posts with a source set."),
             SHM_COMMAND_EXAMPLE("source=none", "Returns posts without a source set."),
             //
