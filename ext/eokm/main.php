@@ -20,10 +20,10 @@ class Eokm extends Extension
         if ($username && $password) {
             $ch = \Safe\curl_init("https://api.eokmhashdb.nl/v1/check/md5");
             // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/xml', $additionalHeaders));
-            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $event->image->hash);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $return = curl_exec($ch);
