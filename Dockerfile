@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.2
+ARG PHP_VERSION=8.3
 
 # Tree of layers:
 # base
@@ -9,13 +9,13 @@ ARG PHP_VERSION=8.2
 
 # Install base packages
 # Things which all stages (build, test, run) need
-FROM debian:bookworm AS base
+FROM ubuntu:24.04 AS base
 COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /ffprobe /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
     apt install -y curl && \
     curl --output /usr/share/keyrings/nginx-keyring.gpg https://unit.nginx.org/keys/nginx-keyring.gpg && \
-    echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages.nginx.org/unit/debian/ bookworm unit' > /etc/apt/sources.list.d/unit.list && \
+    echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages.nginx.org/unit/ubuntu/ noble unit' > /etc/apt/sources.list.d/unit.list && \
     apt update && apt install -y --no-install-recommends \
     php${PHP_VERSION}-cli \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
