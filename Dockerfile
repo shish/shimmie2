@@ -7,32 +7,28 @@
 
 # Install base packages
 # Things which all stages (build, test, run) need
-FROM alpine:3.21 AS base
-RUN apk add --no-cache \
-	unit-php83 php83 \
-	php83-gd php83-zip php83-xml php83-mbstring php83-curl php83-fileinfo php83-simplexml php83-dom \
-	php83-pdo php83-pdo_pgsql php83-pdo_mysql php83-pdo_sqlite \
-	php83-pecl-memcached \
-    ffmpeg curl rsync imagemagick zip unzip
-#RUN apt update && \
-#    apt upgrade -y && \
-#    apt install -y --no-install-recommends \
-#    php${PHP_VERSION}-cli \
-#    php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
-#    php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
-#    php${PHP_VERSION}-memcached \
-#    curl rsync imagemagick zip unzip unit unit-php && \
-#    rm -rf /var/lib/apt/lists/*
+FROM unit:php8.3 AS base
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends \
+    curl rsync imagemagick zip unzip libpq-dev libpng-dev libzip-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN pecl install redis-6.1.0 && docker-php-ext-enable redis
+RUN pecl install apcu-5.1.24 && docker-php-ext-enable apcu
+RUN apt-get update && apt-get install -y libmemcached-dev libssl-dev zlib1g-dev && \
+    pecl install memcached-3.3.0 && docker-php-ext-enable memcached
+RUN docker-php-ext-install mysqli pgsql pdo pdo_mysql pdo_pgsql gd zip pcntl
 
 # Install dev packages
 # Things which are only needed during development - Composer has 100MB of
 # dependencies, so let's avoid including that in the final image
 FROM base AS dev-tools
-RUN apk add composer php-xdebug git procps net-tools vim
-#RUN apt update && apt upgrade -y && \
-#    apt install -y composer php${PHP_VERSION}-xdebug git procps net-tools vim && \
-#    rm -rf /var/lib/apt/lists/*
-ENV XDEBUG_MODE=coverage
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+# php8.3-xdebug
+RUN apt update && apt upgrade -y && \
+    apt install -y git procps net-tools vim && \
+    rm -rf /var/lib/apt/lists/*
+RUN pecl install xdebug-3.4.0 && docker-php-ext-enable xdebug
 
 # "Build" shimmie (composer install)
 # Done in its own stage so that we don't meed to include all the
