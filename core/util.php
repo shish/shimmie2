@@ -308,6 +308,7 @@ class FetchException extends \Exception
 }
 
 /**
+ * @param non-empty-string $url
  * @return array<string, string|string[]>
  */
 function fetch_url(string $url, string $mfile): array
@@ -319,12 +320,12 @@ function fetch_url(string $url, string $mfile): array
         assert($ch !== false);
         $fp = \Safe\fopen($mfile, "w");
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        # curl_setopt($ch, CURLOPT_VERBOSE, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        # curl_setopt($ch, CURLOPT_VERBOSE, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_REFERER, $url);
         curl_setopt($ch, CURLOPT_USERAGENT, "Shimmie-".VERSION);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $response = curl_exec($ch);
         if ($response === false) {

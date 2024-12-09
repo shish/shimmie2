@@ -31,7 +31,9 @@ class ReplaceFile extends Extension
 
             if (!empty($event->get_POST("url"))) {
                 $tmp_filename = shm_tempnam("transload");
-                fetch_url($event->req_POST("url"), $tmp_filename);
+                $url = $event->req_POST("url");
+                assert(!empty($url));
+                fetch_url($url, $tmp_filename);
                 send_event(new ImageReplaceEvent($image, $tmp_filename));
             } elseif (count($_FILES) > 0) {
                 send_event(new ImageReplaceEvent($image, $_FILES["data"]['tmp_name']));
