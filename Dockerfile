@@ -13,10 +13,12 @@ FROM ubuntu:24.04 AS base
 COPY --from=mwader/static-ffmpeg:6.1 /ffmpeg /ffprobe /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y curl && \
-    curl --output /usr/share/keyrings/nginx-keyring.gpg https://unit.nginx.org/keys/nginx-keyring.gpg && \
-    echo 'deb [signed-by=/usr/share/keyrings/nginx-keyring.gpg] https://packages.nginx.org/unit/ubuntu/ noble unit' > /etc/apt/sources.list.d/unit.list && \
-    apt update && apt install -y --no-install-recommends \
+    apt install -y ca-certificates
+COPY .docker/nginx-keyring.gpg /usr/share/keyrings/nginx-keyring.gpg
+COPY .docker/unit.list /etc/apt/sources.list.d/unit.list
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends \
     php${PHP_VERSION}-cli \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
