@@ -62,11 +62,12 @@
 		"phpstan/phpstan": "^1.12"
 	},
 	"suggest": {
-		"ext-memcache": "memcache caching",
-		"ext-memcached": "memcached caching",
-		"ext-apc": "apc caching",
-		"ext-apcu": "apc caching",
-		"ext-redis": "redis caching",
+		"ext-pdo_sqlite": "database - sqlite",
+		"ext-pdo_mysql": "database - mysql",
+		"ext-pdo_pgsql": "database - postgres",
+		"ext-memcached": "cache - memcache",
+		"ext-apcu": "cache - apc",
+		"ext-redis": "cache - redis",
 		"ext-curl": "some extensions",
 		"ext-ctype": "some extensions",
 		"ext-json": "some extensions",
