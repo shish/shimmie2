@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Sets up a base test environment:
  * - Loads the code
