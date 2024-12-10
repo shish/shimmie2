@@ -11,13 +11,15 @@ FROM unit:php8.3 AS base
 RUN apt update && \
     apt upgrade -y && \
     apt install -y --no-install-recommends \
-    curl rsync imagemagick zip unzip libpq-dev libpng-dev libzip-dev && \
+    curl rsync imagemagick zip unzip libpq-dev libpng-dev libjpeg-dev libzip-dev libwebp-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN pecl install redis-6.1.0 && docker-php-ext-enable redis
 RUN pecl install apcu-5.1.24 && docker-php-ext-enable apcu
 RUN apt-get update && apt-get install -y libmemcached-dev libssl-dev zlib1g-dev && \
     pecl install memcached-3.3.0 && docker-php-ext-enable memcached
-RUN docker-php-ext-install mysqli pgsql pdo pdo_mysql pdo_pgsql gd zip pcntl
+RUN docker-php-ext-configure gd --with-jpeg --with-webp && \
+    docker-php-ext-install gd
+RUN docker-php-ext-install mysqli pgsql pdo pdo_mysql pdo_pgsql zip pcntl
 
 # Install dev packages
 # Things which are only needed during development - Composer has 100MB of
