@@ -8,6 +8,7 @@
 # Install base packages
 # Things which all stages (build, test, run) need
 FROM unit:php8.3 AS base
+COPY --from=mwader/static-ffmpeg:7.1 /ffmpeg /ffprobe /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
     apt install -y --no-install-recommends \
@@ -26,7 +27,6 @@ RUN docker-php-ext-install mysqli pgsql pdo pdo_mysql pdo_pgsql zip pcntl
 # dependencies, so let's avoid including that in the final image
 FROM base AS dev-tools
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-# php8.3-xdebug
 RUN apt update && apt upgrade -y && \
     apt install -y git procps net-tools vim && \
     rm -rf /var/lib/apt/lists/*
