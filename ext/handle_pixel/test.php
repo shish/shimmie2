@@ -29,6 +29,8 @@ class PixelFileHandlerTest extends ShimmiePHPUnitTestCase
             ["jpeg"],
             ["png"],
             ["gif"],
+            ["webp"],
+            ["avif"],
         ];
     }
 
