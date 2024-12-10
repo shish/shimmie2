@@ -28,6 +28,11 @@ class MimeMap
             self::MAP_EXT => [FileExtension::AVI],
             self::MAP_MIME => [MimeType::AVI, 'video/avi', 'video/msvideo'],
         ],
+        MimeType::AVIF => [
+            self::MAP_NAME => "AVIF",
+            self::MAP_EXT => [FileExtension::AVIF],
+            self::MAP_MIME => [MimeType::AVIF],
+        ],
         MimeType::ASF => [
             self::MAP_NAME => "ASF/WMV",
             self::MAP_EXT => [FileExtension::ASF, FileExtension::ASX, FileExtension::WMA, FileExtension::WMV],

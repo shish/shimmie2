@@ -11,6 +11,7 @@ class FileExtension
     public const ASF = 'asf';
     public const ASX = 'asx';
     public const AVI = 'avi';
+    public const AVIF = 'avif';
     public const BMP = 'bmp';
     public const BZIP = 'bz';
     public const BZIP2 = 'bz2';

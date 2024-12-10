@@ -27,7 +27,8 @@ abstract class MediaEngine
             MimeType::GIF,
             MimeType::JPEG,
             MimeType::PNG,
-            MimeType::WEBP
+            MimeType::WEBP,
+            MimeType::AVIF,
         ],
         MediaEngine::IMAGICK => [
             MimeType::GIF,
@@ -35,6 +36,7 @@ abstract class MediaEngine
             MimeType::PNG,
             MimeType::WEBP,
             MimeType::WEBP_LOSSLESS,
+            MimeType::AVIF,
         ],
         MediaEngine::FFMPEG => [
             MimeType::JPEG,
@@ -54,6 +56,7 @@ abstract class MediaEngine
             MimeType::TGA,
             MimeType::WEBP,
             MimeType::WEBP_LOSSLESS,
+            MimeType::AVIF,
         ],
         MediaEngine::IMAGICK => [
             MimeType::BMP,
@@ -67,6 +70,7 @@ abstract class MediaEngine
             MimeType::WEBP,
             MimeType::WEBP_LOSSLESS,
             MimeType::ICO,
+            MimeType::AVIF,
         ],
         MediaEngine::FFMPEG => [
             MimeType::AVI,
@@ -80,6 +84,7 @@ abstract class MediaEngine
             MimeType::JPEG,
             MimeType::GIF,
             MimeType::PNG,
+            MimeType::AVIF,
         ],
     ];
     public const RESIZE_TYPE_SUPPORT = [

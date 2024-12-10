@@ -12,6 +12,7 @@ class MimeType
     public const ANI = 'application/riff+ani';
     public const ASF = 'video/x-ms-asf';
     public const AVI = 'video/x-msvideo';
+    public const AVIF = 'image/avif';
     // Went with mime types from http://fileformats.archiveteam.org/wiki/Comic_Book_Archive
     public const COMIC_ZIP = 'application/vnd.comicbook+zip';
     public const COMIC_RAR = 'application/vnd.comicbook-rar';
