@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function zoom(zoom_type, save_cookie) {
 		save_cookie = save_cookie === undefined ? true : save_cookie;
 
-		var img = $('.shm-main-image');
+		var img = $('.shm-click-to-scale');
 
 		/* get dimensions for the image when zoomed out to fit the screen */
 		zoom_height = Math.min(window.innerHeight * 0.8, img.data('height'));

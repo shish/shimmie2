@@ -14,7 +14,7 @@ class PixelFileHandlerTheme extends Themelet
 
         $html = IMG([
             'alt' => 'main image',
-            'class' => 'shm-main-image',
+            'class' => 'shm-main-image shm-click-to-scale',
             'id' => 'main_image',
             'src' => $image->get_image_link(),
             'width' => $image->width,
