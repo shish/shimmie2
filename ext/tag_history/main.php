@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
 class TagHistory extends Extension
 {
     /** @var TagHistoryTheme */
@@ -216,7 +214,7 @@ class TagHistory extends Extension
         $page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 
-    protected function process_bulk_revert_request(): void
+    private function process_bulk_revert_request(): void
     {
         if (isset($_POST['revert_name']) && !empty($_POST['revert_name'])) {
             $revert_name = $_POST['revert_name'];
@@ -258,7 +256,7 @@ class TagHistory extends Extension
     /**
      * @return array<string, mixed>|null
      */
-    public function get_tag_history_from_revert(int $revert_id): ?array
+    private function get_tag_history_from_revert(int $revert_id): ?array
     {
         global $database;
         $row = $database->get_row("
@@ -272,7 +270,7 @@ class TagHistory extends Extension
     /**
      * @return array<string, mixed>
      */
-    public function get_tag_history_from_id(int $image_id): array
+    private function get_tag_history_from_id(int $image_id): array
     {
         global $database;
         return $database->get_all(
@@ -289,7 +287,7 @@ class TagHistory extends Extension
     /**
      * @return array<string, mixed>
      */
-    public function get_global_tag_history(int $page_id): array
+    private function get_global_tag_history(int $page_id): array
     {
         global $database;
         return $database->get_all("
@@ -304,7 +302,7 @@ class TagHistory extends Extension
     /**
      * @return array<string, mixed>|null
      */
-    public function get_previous_tags(int $image_id, int $id): ?array
+    public static function get_previous_tags(int $image_id, int $id): ?array
     {
         global $database;
         $row = $database->get_row("
@@ -320,7 +318,7 @@ class TagHistory extends Extension
     /**
      * This function attempts to revert all changes by a given IP within an (optional) timeframe.
      */
-    public function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
+    private function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
     {
         global $database;
 
@@ -388,9 +386,8 @@ class TagHistory extends Extension
                 $stored_tags = $result['tags'];
 
                 $image = Image::by_id($stored_image_id);
-                if (!$image instanceof Image) {
+                if (is_null($image)) {
                     continue;
-                    //throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
                 }
 
                 log_debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
