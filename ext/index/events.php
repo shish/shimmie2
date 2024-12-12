@@ -35,7 +35,7 @@ class SearchTermParseEvent extends Event
 
         if ($term !== null) {
             // pull any operands off the start of the search term
-            while (is_string($term) && !empty($term) && array_key_exists($term[0], TAG_OPERANDS)) {
+            while (!empty($term) && array_key_exists($term[0], TAG_OPERANDS)) {
                 $operand = TAG_OPERANDS[$term[0]];
                 $term = substr($term, 1);
                 $this->$operand = true;
