@@ -170,7 +170,7 @@ class SourceHistory extends Extension
         $page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 
-    protected function process_bulk_revert_request(): void
+    private function process_bulk_revert_request(): void
     {
         if (isset($_POST['revert_name']) && !empty($_POST['revert_name'])) {
             $revert_name = $_POST['revert_name'];
@@ -212,7 +212,7 @@ class SourceHistory extends Extension
     /**
      * @return array<string, mixed>|null
      */
-    public function get_source_history_from_revert(int $revert_id): ?array
+    private function get_source_history_from_revert(int $revert_id): ?array
     {
         global $database;
         $row = $database->get_row("
@@ -226,7 +226,7 @@ class SourceHistory extends Extension
     /**
      * @return array<string, mixed>
      */
-    public function get_source_history_from_id(int $image_id): array
+    private function get_source_history_from_id(int $image_id): array
     {
         global $database;
         return $database->get_all(
@@ -243,7 +243,7 @@ class SourceHistory extends Extension
     /**
      * @return array<string, mixed>
      */
-    public function get_global_source_history(int $page_id): array
+    private function get_global_source_history(int $page_id): array
     {
         global $database;
         return $database->get_all("
@@ -258,7 +258,7 @@ class SourceHistory extends Extension
     /**
      * This function attempts to revert all changes by a given IP within an (optional) timeframe.
      */
-    public function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
+    private function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
     {
         global $database;
 
