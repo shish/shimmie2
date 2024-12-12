@@ -281,7 +281,8 @@ class NumericScore extends Extension
 
         // vote recounting is pretty heavy, and often hits statement timeouts
         // if you try to recount all the images in one go
-        foreach (array_chunk($image_ids, 20) as $chunk) {
+        shm_set_timeout(null);
+        foreach (array_chunk($image_ids, 100) as $chunk) {
             $id_list = implode(",", $chunk);
             $database->execute(
                 "DELETE FROM numeric_score_votes WHERE user_id=:user_id AND image_id IN (".$id_list.")",
