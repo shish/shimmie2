@@ -109,7 +109,7 @@ class TagTermParseEvent extends Event
     {
         $matches = [];
         if (\Safe\preg_match($regex, $this->term, $matches) === 1) {
-            return $matches;
+            return array_values($matches);
         }
         return null;
     }
