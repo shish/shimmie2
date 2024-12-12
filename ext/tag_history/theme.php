@@ -131,8 +131,7 @@ class TagHistoryTheme extends Themelet
             : null;
         $setter = A(["href" => make_link("user/" . url_escape($name))], $name);
 
-        $th = new TagHistory();
-        $pt = $th->get_previous_tags($image_id, $current_id);
+        $pt = TagHistory::get_previous_tags($image_id, $current_id);
         if ($pt) {
             $previous_tags = explode(" ", $pt["tags"]);
         }
