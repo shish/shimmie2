@@ -7,8 +7,27 @@
 
 # Install base packages
 # Things which all stages (build, test, run) need
-FROM unit:php8.3 AS base
+FROM php:8.3-cli-bookworm AS base
+
+# copy individual files from unit:php rather than inheriting
+# `FROM unit:php` because we don't want to inherit EXPOSE settings
+COPY --from=unit:php8.3 /var/lib/unit /var/lib/unit/
+COPY --from=unit:php8.3 /usr/lib/unit /usr/lib/unit/
+COPY --from=unit:php8.3 /usr/sbin/unitd /usr/sbin/unitd
+RUN true \
+    && groupadd --gid 999 unit \
+    && useradd \
+         --uid 999 \
+         --gid unit \
+         --no-create-home \
+         --home /nonexistent \
+         --comment "unit user" \
+         --shell /bin/false \
+         unit \
+    && ln -sf /dev/stderr /var/log/unit.log
+
 COPY --from=mwader/static-ffmpeg:7.1 /ffmpeg /ffprobe /usr/local/bin/
+
 RUN apt update && \
     apt upgrade -y && \
     apt install -y --no-install-recommends \
