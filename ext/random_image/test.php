@@ -19,7 +19,7 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         $this->assertEquals("Post $image_id: test", $page->title);
 
         $page = $this->get_page("random_image/download");
-        $this->assertNotNull($page->data);
+        $this->assertEquals($page->mode, PageMode::FILE);
         # FIXME: assert($raw == file(blah.jpg))
     }
 
@@ -37,7 +37,7 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         # enabled, image = text
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
         $page = $this->get_page("post/list");
-        $this->assertNotNull($page->find_block("Random Post"));
+        $page->find_block("Random Post"); // will throw if missing
 
         # disabled, image = no text
         $config->set_bool("show_random_block", false);

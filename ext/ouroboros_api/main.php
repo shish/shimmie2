@@ -419,9 +419,6 @@ class OuroborosAPI extends Extension
         $results = Search::find_images(max($start, 0), min($limit, 100), $tags);
         $posts = [];
         foreach ($results as $img) {
-            if (!is_object($img)) {
-                continue;
-            }
             $posts[] = new _SafeOuroborosImage($img);
         }
         $this->sendData('post', $posts, max($start, 0));
