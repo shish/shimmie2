@@ -131,6 +131,26 @@ class TagCategories extends Extension
         return $tc_keyed_dict;
     }
 
+    public static function getTagCategory(string $tag): ?string
+    {
+        $tag_category_dict = static::getKeyedDict();
+        $tag_split = explode(':', $tag, 2);
+        if (count($tag_split) > 1 && array_key_exists($tag_split[0], $tag_category_dict)) {
+            return $tag_split[0];
+        }
+        return null;
+    }
+
+    public static function getTagBody(string $tag): string
+    {
+        $tag_category_dict = static::getKeyedDict();
+        $tag_split = explode(':', $tag, 2);
+        if (count($tag_split) > 1 && array_key_exists($tag_split[0], $tag_category_dict)) {
+            return $tag_split[1];
+        }
+        return $tag;
+    }
+
     public static function getTagHtml(string $h_tag, string $extra_text = ''): string
     {
         $h_tag_no_underscores = str_replace("_", " ", $h_tag);

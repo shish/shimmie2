@@ -28,6 +28,13 @@ class Themelet
         return self::$common;
     }
 
+    public function build_tag(string $tag, bool $show_underscores = true, bool $show_category = true): HTMLElement
+    {
+        $c = self::get_common();
+        assert(is_a($c, CommonElementsTheme::class));
+        return $c->build_tag($tag, $show_underscores, $show_category);
+    }
+
     public function build_thumb(Image $image): HTMLElement
     {
         $c = self::get_common();
