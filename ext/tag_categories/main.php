@@ -131,7 +131,7 @@ class TagCategories extends Extension
         return $tc_keyed_dict;
     }
 
-    public static function getTagCategory(string $tag): ?string
+    public static function get_tag_category(string $tag): ?string
     {
         $tag_category_dict = static::getKeyedDict();
         $tag_split = explode(':', $tag, 2);
@@ -141,7 +141,7 @@ class TagCategories extends Extension
         return null;
     }
 
-    public static function getTagBody(string $tag): string
+    public static function get_tag_body(string $tag): string
     {
         $tag_category_dict = static::getKeyedDict();
         $tag_split = explode(':', $tag, 2);
