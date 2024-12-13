@@ -220,15 +220,6 @@ class TagList extends Extension
     {
         global $config, $database;
 
-        // check if we have a cached version
-        $cache_key = warehouse_path(
-            "cache/tag_cloud",
-            md5("tc" . $tags_min . $starts_with . VERSION)
-        );
-        if (file_exists($cache_key)) {
-            return \Safe\file_get_contents($cache_key);
-        }
-
         $tag_data = $database->get_all("
             SELECT
                 tag,
@@ -257,25 +248,12 @@ class TagList extends Extension
             $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
 
-        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
-            file_put_contents($cache_key, $html);
-        }
-
         return $html;
     }
 
     private function build_tag_alphabetic(string $starts_with, int $tags_min): string
     {
         global $config, $database;
-
-        // check if we have a cached version
-        $cache_key = warehouse_path(
-            "cache/tag_alpha",
-            md5("ta" . $tags_min . $starts_with . VERSION)
-        );
-        if (file_exists($cache_key)) {
-            return \Safe\file_get_contents($cache_key);
-        }
 
         $tag_data = $database->get_pairs("
             SELECT tag, count
@@ -325,10 +303,6 @@ class TagList extends Extension
             $html .= "<a href='$link'>$h_tag</a>\n";
         }
 
-        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
-            file_put_contents($cache_key, $html);
-        }
-
         return $html;
     }
 
@@ -340,15 +314,6 @@ class TagList extends Extension
         // Otherwise the database will complain if you try to do: LOG(0)
         if ($tags_min < 1) {
             $tags_min = 1;
-        }
-
-        // check if we have a cached version
-        $cache_key = warehouse_path(
-            "cache/tag_popul",
-            md5("tp" . $tags_min . VERSION)
-        );
-        if (file_exists($cache_key)) {
-            return \Safe\file_get_contents($cache_key);
         }
 
         $tag_data = $database->get_all("
@@ -370,10 +335,6 @@ class TagList extends Extension
             }
             $link = search_link([$row['tag']]);
             $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
-        }
-
-        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_TAG_LISTS)) {
-            file_put_contents($cache_key, $html);
         }
 
         return $html;

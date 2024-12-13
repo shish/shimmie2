@@ -8,7 +8,6 @@ abstract class SpeedHaxConfig
 {
     public const NO_AUTO_DB_UPGRADE = "speed_hax_no_auto_db_upgrade";
     public const CACHE_EVENT_LISTENERS = "speed_hax_cache_listeners";
-    public const CACHE_TAG_LISTS = "speed_hax_cache_tag_lists";
     public const PURGE_COOKIE = "speed_hax_purge_cookie";
     public const RECENT_COMMENTS = "speed_hax_recent_comments";
     public const BIG_SEARCH = "speed_hax_big_search";
@@ -26,7 +25,6 @@ class SpeedHax extends Extension
 
         $config->set_default_bool(SpeedHaxConfig::NO_AUTO_DB_UPGRADE, false);
         $config->set_default_bool(SpeedHaxConfig::CACHE_EVENT_LISTENERS, false);
-        $config->set_default_bool(SpeedHaxConfig::CACHE_TAG_LISTS, false);
         $config->set_default_bool(SpeedHaxConfig::PURGE_COOKIE, false);
         $config->set_default_bool(SpeedHaxConfig::RECENT_COMMENTS, false);
         $config->set_default_int(SpeedHaxConfig::BIG_SEARCH, 0);
@@ -42,7 +40,6 @@ class SpeedHax extends Extension
         $sb->start_table();
         $sb->add_bool_option(SpeedHaxConfig::NO_AUTO_DB_UPGRADE, "Don't auto-upgrade database: ", false);
         $sb->add_bool_option(SpeedHaxConfig::CACHE_EVENT_LISTENERS, "<br>Cache event listeners: ", false);
-        $sb->add_bool_option(SpeedHaxConfig::CACHE_TAG_LISTS, "<br>Cache tag lists: ", false);
         $sb->add_bool_option(SpeedHaxConfig::PURGE_COOKIE, "<br>Purge cookie on logout: ", false);
         $sb->add_bool_option(SpeedHaxConfig::RECENT_COMMENTS, "<br>List only recent comments: ", false);
         $sb->add_int_option(SpeedHaxConfig::BIG_SEARCH, "<br>Anonymous search tag limit: ", false);
