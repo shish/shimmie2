@@ -395,18 +395,13 @@ class Wiki extends Extension
         global $database, $config;
 
         $row = $database->get_row("
-                SELECT *
-                FROM tags
-                WHERE tag = :title
-                    ", ["title" => $page->title]);
+            SELECT *
+            FROM tags
+            WHERE tag = :title
+        ", ["title" => $page->title]);
 
         if (!empty($row)) {
             $template = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
-
-            //CATEGORIES
-            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-                $tag_category_dict = TagCategories::getKeyedDict();
-            }
 
             //ALIASES
             $aliases = $database->get_col("
@@ -414,7 +409,7 @@ class Wiki extends Extension
                 FROM aliases
                 WHERE newtag = :title
                 ORDER BY oldtag ASC
-                    ", ["title" => $row["tag"]]);
+            ", ["title" => $row["tag"]]);
 
             if (!empty($aliases)) {
                 $template = str_replace("{aliases}", implode(", ", $aliases), $template);
@@ -431,23 +426,20 @@ class Wiki extends Extension
                     SELECT additional_tags
                     FROM auto_tag
                     WHERE tag = :title
-                        ", ["title" => $row["tag"]]);
+                ", ["title" => $row["tag"]]);
 
                 if (!empty($auto_tags)) {
                     $auto_tags = Tag::explode($auto_tags);
                     $f_auto_tags = [];
-
-                    $tag_list_t = new TagListTheme();
 
                     foreach ($auto_tags as $a_tag) {
                         $a_row = $database->get_row("
                             SELECT *
                             FROM tags
                             WHERE tag = :title
-                                ", ["title" => $a_tag]);
+                        ", ["title" => $a_tag]);
 
-                        $tag_html = $tag_list_t->return_tag($a_row, $tag_category_dict ?? []);
-                        $f_auto_tags[] = $tag_html[1];
+                        $f_auto_tags[] = TagListTheme::return_tag($a_row)[1];
                     }
 
                     $template = str_replace("{autotags}", implode(", ", $f_auto_tags), $template);
