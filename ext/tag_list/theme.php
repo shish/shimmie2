@@ -178,13 +178,17 @@ class TagListTheme extends Themelet
     {
         global $config;
 
-        $main_html = $this->get_tag_list_html(
-            $tag_infos,
-            $config->get_string(TagListConfig::POPULAR_SORT)
+        $main_html = emptyHTML(
+            $this->get_tag_list_html(
+                $tag_infos,
+                $config->get_string(TagListConfig::POPULAR_SORT)
+            ),
+            rawHTML("&nbsp;"),
+            BR(),
+            A(["class" => "more", "href" => make_link("tags")], "Full List")
         );
-        $main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 
-        $page->add_block(new Block("Refine Search", rawHTML($main_html), "left", 60));
+        $page->add_block(new Block("Refine Search", $main_html, "left", 60));
     }
 
     /**

@@ -32,7 +32,9 @@ class CommonElementsTheme extends Themelet
             }
         }
 
-        return A($props, $show_underscores ? str_replace("_", " ", $body) : $body);
+        $body = $show_underscores ? $body : str_replace("_", " ", $body);
+
+        return A($props, $body);
     }
 
     /**
