@@ -92,9 +92,7 @@ class TagListTheme extends Themelet
         $tag_categories_count = [];
 
         foreach ($tag_infos as $row) {
-            $split = self::return_tag($row, $tag_category_dict);
-            $category = $split[0];
-            $tag_html = $split[1];
+            [$category, $tag_html] = static::return_tag($row);
             if (!isset($tag_categories_html[$category])) {
                 $tag_categories_html[$category] = $this->get_tag_list_preamble();
             }
@@ -120,9 +118,9 @@ class TagListTheme extends Themelet
 
         foreach (array_keys($tag_categories_html) as $category) {
             if ($tag_categories_count[$category] < 2) {
-                $category_display_name = html_escape($tag_category_dict[$category]['display_singular']);
+                $category_display_name = $tag_category_dict[$category]['display_singular'];
             } else {
-                $category_display_name = html_escape($tag_category_dict[$category]['display_multiple']);
+                $category_display_name = $tag_category_dict[$category]['display_multiple'];
             }
             $page->add_block(new Block($category_display_name, rawHTML($tag_categories_html[$category]), "left", 9));
         }
@@ -141,17 +139,10 @@ class TagListTheme extends Themelet
             asort($tag_infos);
         }
 
-        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-            $tag_category_dict = TagCategories::getKeyedDict();
-        } else {
-            $tag_category_dict = [];
-        }
         $main_html = $this->get_tag_list_preamble();
 
         foreach ($tag_infos as $row) {
-            $split = $this->return_tag($row, $tag_category_dict);
-            //$category = $split[0];
-            $tag_html = $split[1];
+            $tag_html = static::return_tag($row)[1];
             $main_html .= "<tr>$tag_html</tr>";
         }
 
@@ -210,12 +201,13 @@ class TagListTheme extends Themelet
 
     /**
      * @param array{tag: string, count: int} $row
-     * @param array<string, array{color: string}> $tag_category_dict
      * @return array{0: string, 1: string}
      */
-    public function return_tag(array $row, array $tag_category_dict): array
+    public static function return_tag(array $row): array
     {
         global $config;
+
+        $tag_category_dict = TagCategories::getKeyedDict();
 
         $display_html = '';
         $tag = $row['tag'];
