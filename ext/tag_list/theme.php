@@ -201,7 +201,11 @@ class TagListTheme extends Themelet
     {
         global $config;
 
-        $tag_category_dict = TagCategories::getKeyedDict();
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
+            $tag_category_dict = TagCategories::getKeyedDict();
+        } else {
+            $tag_category_dict = [];
+        }
 
         $display_html = '';
         $tag = $row['tag'];
