@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
 require_once "config.php";
 
 class TagCategories extends Extension
@@ -116,25 +114,28 @@ class TagCategories extends Extension
     /**
      * @return array<string, array{category: string, display_singular: string, display_multiple: string, color: string}>
      */
-    public function getKeyedDict(): array
+    public static function getKeyedDict(): array
     {
         global $database;
-        $tc_dict = $database->get_all('SELECT * FROM image_tag_categories');
-        $tc_keyed_dict = [];
+        static $tc_keyed_dict = null;
 
-        foreach ($tc_dict as $row) {
-            $tc_keyed_dict[(string)$row['category']] = $row;
+        if (is_null($tc_keyed_dict)) {
+            $tc_keyed_dict = [];
+            $tc_dict = $database->get_all('SELECT * FROM image_tag_categories');
+
+            foreach ($tc_dict as $row) {
+                $tc_keyed_dict[(string)$row['category']] = $row;
+            }
         }
 
         return $tc_keyed_dict;
     }
 
-    /**
-     * @param array<string, array{color: string}> $tag_category_dict
-     */
-    public function getTagHtml(string $h_tag, array $tag_category_dict, string $extra_text = ''): string
+    public static function getTagHtml(string $h_tag, string $extra_text = ''): string
     {
         $h_tag_no_underscores = str_replace("_", " ", $h_tag);
+
+        $tag_category_dict = static::getKeyedDict();
 
         // we found a tag, see if it's valid!
         $h_tag_split = explode(':', $h_tag, 2);

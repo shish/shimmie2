@@ -405,8 +405,7 @@ class Wiki extends Extension
 
             //CATEGORIES
             if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-                $tagcategories = new TagCategories();
-                $tag_category_dict = $tagcategories->getKeyedDict();
+                $tag_category_dict = TagCategories::getKeyedDict();
             }
 
             //ALIASES
