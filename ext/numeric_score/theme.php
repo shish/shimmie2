@@ -72,7 +72,7 @@ class NumericScoreTheme extends Themelet
 
         $pop_images = "";
         foreach ($images as $image) {
-            $pop_images .= $this->build_thumb_html($image)."\n";
+            $pop_images .= $this->build_thumb($image)."\n";
         }
 
         $b_dte = make_link("popular_by_$name", date($fmt, \Safe\strtotime("-1 $name", \Safe\strtotime($totaldate))));

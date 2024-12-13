@@ -48,7 +48,7 @@ class CommentListTheme extends Themelet
             $image = $pair[0];
             $comments = $pair[1];
 
-            $thumb_html = $this->build_thumb_html($image);
+            $thumb_html = $this->build_thumb($image);
             $comment_html = "";
 
             $comment_count = count($comments);

@@ -53,7 +53,7 @@ class Danbooru2IndexTheme extends IndexTheme
         $h_query = html_escape($query);
         $table = "<div class='shm-image-list' data-query='$h_query'>";
         foreach ($images as $image) {
-            $table .= $this->build_thumb_html($image) . "\n";
+            $table .= $this->build_thumb($image) . "\n";
         }
         $table .= "</div>";
         return rawHTML($table);

@@ -26,7 +26,7 @@ class ReplaceFileTheme extends Themelet
         $max_kb = to_shorthand_int($max_size);
 
         $image = Image::by_id_ex($image_id);
-        $thumbnail = $this->build_thumb_html($image);
+        $thumbnail = $this->build_thumb($image);
 
         $form = SHM_FORM("replace/".$image_id, multipart: true);
         $form->appendChild(emptyHTML(

@@ -80,7 +80,7 @@ class NotesTheme extends Themelet
         global $page;
         $pool_images = '';
         foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
+            $thumb_html = $this->build_thumb($image);
 
             $pool_images .= '<span class="thumb">'.
                             '    <a href="$image_link">'.$thumb_html.'</a>'.
@@ -101,7 +101,7 @@ class NotesTheme extends Themelet
 
         $pool_images = '';
         foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
+            $thumb_html = $this->build_thumb($image);
             $pool_images .= '<span class="thumb">'.
                             '    <a href="$image_link">'.$thumb_html.'</a>'.
                             '</span>';

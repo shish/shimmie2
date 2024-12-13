@@ -411,7 +411,7 @@ class ArtistsTheme extends Themelet
         //we show the images for the artist
         $artist_images = "";
         foreach ($images as $image) {
-            $thumb_html = $this->build_thumb_html($image);
+            $thumb_html = $this->build_thumb($image);
 
             $artist_images .= '<span class="thumb">'.
                 '<a href="$image_link">'.$thumb_html.'</a>'.

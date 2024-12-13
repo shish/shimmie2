@@ -43,7 +43,7 @@ class DanbooruCommentListTheme extends CommentListTheme
             $image = $pair[0];
             $comments = $pair[1];
 
-            $thumb_html = $this->build_thumb_html($image);
+            $thumb_html = $this->build_thumb($image);
 
             $s = "&nbsp;&nbsp;&nbsp;";
             $un = $image->get_owner()->name;

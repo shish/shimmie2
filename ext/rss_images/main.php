@@ -120,7 +120,7 @@ class RSSImages extends Extension
         $posted = date(DATE_RSS, \Safe\strtotime($image->posted));
         $content = html_escape(
             "<div>" .
-            "<p>" . $this->theme->build_thumb_html($image) . "</p>" .
+            "<p>" . $this->theme->build_thumb($image) . "</p>" .
             "</div>"
         );
 
