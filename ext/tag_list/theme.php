@@ -109,24 +109,18 @@ class TagListTheme extends Themelet
         }
 
         asort($tag_categories_html);
-        if (isset($tag_categories_html[' '])) {
-            $main_html = $tag_categories_html[' '];
-        } else {
-            $main_html = null;
-        }
-        unset($tag_categories_html[' ']);
-
         foreach (array_keys($tag_categories_html) as $category) {
-            if ($tag_categories_count[$category] < 2) {
+            if ($category == '') {
+                $category_display_name = 'Tags';
+                $prio = 10;
+            } elseif ($tag_categories_count[$category] < 2) {
                 $category_display_name = $tag_category_dict[$category]['display_singular'];
+                $prio = 9;
             } else {
                 $category_display_name = $tag_category_dict[$category]['display_multiple'];
+                $prio = 9;
             }
-            $page->add_block(new Block($category_display_name, rawHTML($tag_categories_html[$category]), "left", 9));
-        }
-
-        if ($main_html !== null) {
-            $page->add_block(new Block("Tags", rawHTML($main_html), "left", 10));
+            $page->add_block(new Block($category_display_name, rawHTML($tag_categories_html[$category]), "left", $prio));
         }
     }
 
