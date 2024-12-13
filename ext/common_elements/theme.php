@@ -20,14 +20,14 @@ class CommonElementsTheme extends Themelet
         $body = $tag;
 
         if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-            $category = TagCategories::getTagCategory($tag);
+            $category = TagCategories::get_tag_category($tag);
             if (!is_null($category)) {
                 $tag_category_dict = TagCategories::getKeyedDict();
                 $props["class"] = "tag tag_category_$category";
                 $props["style"] = "color:".$tag_category_dict[$category]['color'].";";
 
                 if ($show_category === false) {
-                    $body = TagCategories::getTagBody($tag);
+                    $body = TagCategories::get_tag_body($tag);
                 }
             }
         }
