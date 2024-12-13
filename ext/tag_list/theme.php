@@ -11,23 +11,19 @@ use function MicroHTML\{A, BR, rawHTML, emptyHTML, joinHTML, TABLE, COLGROUP, CO
 class TagListTheme extends Themelet
 {
     public string $heading = "";
-    public string $list = "";
 
     public function set_heading(string $text): void
     {
         $this->heading = $text;
     }
 
-    public function set_tag_list(string $list): void
+    public function display_page(HTMLElement $list): void
     {
-        $this->list = $list;
-    }
+        global $page;
 
-    public function display_page(Page $page): void
-    {
         $page->set_title("Tag List");
         $page->set_heading($this->heading);
-        $page->add_block(new Block("Tags", rawHTML($this->list)));
+        $page->add_block(new Block("Tags", $list));
 
         $nav = joinHTML(
             BR(),
