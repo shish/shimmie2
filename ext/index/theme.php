@@ -124,10 +124,7 @@ and of course start organising your images :-)
                 $short_wiki_description = '';
                 if ($wikiPage->id != -1) {
                     // only show first line of wiki
-                    $short_wiki_description = explode("\n", $wikiPage->body, 2)[0];
-
-                    $tfe = send_event(new TextFormattingEvent($short_wiki_description));
-                    $short_wiki_description = $tfe->formatted;
+                    $short_wiki_description = format_text(explode("\n", $wikiPage->body, 2)[0]);
                 }
                 $wikiLink = make_link("wiki/$st");
                 if (Extension::is_enabled(TagCategoriesInfo::KEY)) {

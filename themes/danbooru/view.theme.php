@@ -16,7 +16,7 @@ class DanbooruViewPostTheme extends ViewPostTheme
     public function display_page(Image $image, array $editor_parts): void
     {
         global $page;
-        $page->set_heading(html_escape($image->get_tag_list()));
+        $page->set_heading($image->get_tag_list());
         $page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
         $page->add_block(new Block("Statistics", $this->build_stats($image), "left", 15));
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));

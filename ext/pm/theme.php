@@ -85,7 +85,7 @@ EOD;
     public function display_message(Page $page, User $from, User $to, PM $pm): void
     {
         $page->set_title("Private Message");
-        $page->set_heading(html_escape($pm->subject));
+        $page->set_heading($pm->subject);
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Message from {$from->name}", rawHTML(format_text($pm->message)), "main", 10));
     }

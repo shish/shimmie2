@@ -14,7 +14,7 @@ class FutabaViewPostTheme extends ViewPostTheme
     public function display_page(Image $image, array $editor_parts): void
     {
         global $page;
-        $page->set_heading(html_escape($image->get_tag_list()));
+        $page->set_heading($image->get_tag_list());
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
     }
 }
