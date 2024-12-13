@@ -10,6 +10,15 @@ use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
 
 class CommonElementsTheme extends Themelet
 {
+    public function build_tag(string $tag): HTMLElement
+    {
+        return A([
+            "href" => search_link([$tag]),
+            "class" => "tag",
+            "title" => "View all posts tagged $tag"
+        ], $tag);
+    }
+
     /**
      * Generic thumbnail code; returns HTML rather than adding
      * a block since thumbs tend to go inside blocks...
