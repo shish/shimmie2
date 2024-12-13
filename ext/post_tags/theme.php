@@ -31,11 +31,7 @@ class PostTagsTheme extends Themelet
 
         $tag_links = [];
         foreach ($image->get_tag_array() as $tag) {
-            $tag_links[] = A([
-                "href" => search_link([$tag]),
-                "class" => "tag",
-                "title" => "View all posts tagged $tag"
-            ], $tag);
+            $tag_links[] = $this->build_tag($tag);
         }
 
         return SHM_POST_INFO(
