@@ -10,11 +10,16 @@ use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
 
 class CommonElementsTheme extends Themelet
 {
-    public function build_tag(string $tag, bool $show_underscores = true, bool $show_category = true): HTMLElement
-    {
+    public function build_tag(
+        string $tag,
+        bool $show_underscores = true,
+        bool $show_category = true,
+        ?string $style = null,
+    ): HTMLElement {
         $props = [
             "href" => search_link([$tag]),
             "class" => "tag",
+            "style" => $style,
             "title" => "View all posts tagged $tag"
         ];
         $body = $tag;

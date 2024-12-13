@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{emptyHTML, BR, SPAN, A, P, HR};
+use function MicroHTML\rawHTML;
+
 require_once "config.php";
 
 class TagList extends Extension
@@ -52,18 +57,15 @@ class TagList extends Extension
             switch ($sub) {
                 case 'map':
                     $this->theme->set_heading("Tag Map");
-                    $this->theme->set_tag_list($this->build_tag_map($starts_with, $tags_min));
-                    $this->theme->display_page($page);
+                    $this->theme->display_page($this->build_tag_map($starts_with, $tags_min));
                     break;
                 case 'alphabetic':
                     $this->theme->set_heading("Alphabetic Tag List");
-                    $this->theme->set_tag_list($this->build_tag_alphabetic($starts_with, $tags_min));
-                    $this->theme->display_page($page);
+                    $this->theme->display_page($this->build_tag_alphabetic($starts_with, $tags_min));
                     break;
                 case 'popularity':
                     $this->theme->set_heading("Tag List by Popularity");
-                    $this->theme->set_tag_list($this->build_tag_popularity($tags_min));
-                    $this->theme->display_page($page);
+                    $this->theme->display_page($this->build_tag_popularity($tags_min));
                     break;
                 default:
                     // don't display anything
@@ -195,7 +197,7 @@ class TagList extends Extension
         return $results;
     }
 
-    private function build_az(int $tags_min): string
+    private function build_az(int $tags_min): HTMLElement
     {
         global $database;
 
@@ -207,16 +209,14 @@ class TagList extends Extension
 			ORDER BY LOWER(substr(tag, 1, 1))
 		", ["tags_min" => $tags_min]);
 
-        $html = "<span class='atoz'>";
+        $html = SPAN(["class" => "atoz"]);
         foreach ($tag_data as $a) {
-            $html .= " <a href='".modify_current_url(["starts_with" => $a])."'>$a</a>";
+            $html->appendChild(A(["href" => modify_current_url(["starts_with" => $a])], $a));
         }
-        $html .= "</span>\n<p><hr>";
-
-        return $html;
+        return emptyHTML($html, P(), HR());
     }
 
-    private function build_tag_map(string $starts_with, int $tags_min): string
+    private function build_tag_map(string $starts_with, int $tags_min): HTMLElement
     {
         global $config, $database;
 
@@ -230,28 +230,23 @@ class TagList extends Extension
             ORDER BY LOWER(tag)
         ", ["tags_min" => $tags_min, "starts_with" => $starts_with]);
 
-        $html = "";
+        $html = emptyHTML();
         if ($config->get_bool(TagListConfig::PAGES)) {
-            $html .= $this->build_az($tags_min);
+            $html->appendChild($this->build_az($tags_min));
         }
         foreach ($tag_data as $row) {
-            $h_tag = html_escape($row['tag']);
-            $size = sprintf("%.2f", (float)$row['scaled']);
-            $link = search_link([$row['tag']]);
-            if ($size < 0.5) {
-                $size = 0.5;
-            }
-            $h_tag_no_underscores = str_replace("_", " ", $h_tag);
-            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-                $h_tag_no_underscores = TagCategories::getTagHtml($h_tag);
-            }
-            $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
+            $tag = $row['tag'];
+            $scale = (float)$row['scaled'];
+            $size = sprintf("%.2f", $scale < 0.5 ? 0.5 : $scale);
+            $html->appendChild(rawHTML("&nbsp;"));
+            $html->appendChild($this->theme->build_tag($tag, style: "font-size: {$size}em"));
+            $html->appendChild(rawHTML("&nbsp;"));
         }
 
         return $html;
     }
 
-    private function build_tag_alphabetic(string $starts_with, int $tags_min): string
+    private function build_tag_alphabetic(string $starts_with, int $tags_min): HTMLElement
     {
         global $config, $database;
 
@@ -263,9 +258,9 @@ class TagList extends Extension
             ORDER BY LOWER(tag)
         ", ["tags_min" => $tags_min, "starts_with" => $starts_with]);
 
-        $html = "";
+        $html = emptyHTML();
         if ($config->get_bool(TagListConfig::PAGES)) {
-            $html .= $this->build_az($tags_min);
+            $html->appendChild($this->build_az($tags_min));
         }
 
         /*
@@ -287,26 +282,26 @@ class TagList extends Extension
         # postres utf8 string sort ignores punctuation, so we get "aza, a-zb, azc"
         # which breaks down into "az, a-, az" :(
         ksort($tag_data, SORT_STRING | SORT_FLAG_CASE);
+        $n = 0;
         foreach ($tag_data as $tag => $count) {
             // In PHP, $array["10"] sets the array key as int(10), not string("10")...
             $tag = (string)$tag;
             if ($lastLetter != mb_strtolower(substr($tag, 0, strlen($starts_with) + 1))) {
                 $lastLetter = mb_strtolower(substr($tag, 0, strlen($starts_with) + 1));
-                $h_lastLetter = html_escape($lastLetter);
-                $html .= "<p>$h_lastLetter<br>";
+                if ($n++ > 0) {
+                    $html->appendChild(BR());
+                    $html->appendChild(BR());
+                }
+                $html->appendChild($lastLetter);
+                $html->appendChild(BR());
             }
-            $link = search_link([$tag]);
-            $h_tag = html_escape($tag);
-            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-                $h_tag = TagCategories::getTagHtml($h_tag, "&nbsp;($count)");
-            }
-            $html .= "<a href='$link'>$h_tag</a>\n";
+            $html->appendChild($this->theme->build_tag($tag));
         }
 
         return $html;
     }
 
-    private function build_tag_popularity(int $tags_min): string
+    private function build_tag_popularity(int $tags_min): HTMLElement
     {
         global $config, $database;
 
@@ -323,18 +318,21 @@ class TagList extends Extension
             ORDER BY count DESC, tag ASC
         ", ["tags_min" => $tags_min]);
 
-        $html = "Results grouped by log<sub>10</sub>(n)";
+        $html = emptyHTML(rawHTML("Results grouped by log<sub>10</sub>(n)"));
         $lastLog = "";
         foreach ($tag_data as $row) {
-            $h_tag = html_escape($row['tag']);
+            $tag = $row['tag'];
             $count = $row['count'];
             $scaled = $row['scaled'];
             if ($lastLog != $scaled) {
                 $lastLog = $scaled;
-                $html .= "<p>$lastLog<br>";
+                $html->appendChild(BR());
+                $html->appendChild(BR());
+                $html->appendChild("$lastLog");
+                $html->appendChild(BR());
             }
-            $link = search_link([$row['tag']]);
-            $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
+            $html->appendChild($this->theme->build_tag($tag));
+            $html->appendChild(rawHTML("&nbsp;($count)&nbsp;&nbsp;"));
         }
 
         return $html;
