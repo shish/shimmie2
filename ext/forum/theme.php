@@ -74,7 +74,7 @@ class ForumTheme extends Themelet
         );
 
         $blockTitle = "Write a new thread";
-        $page->set_title(html_escape($blockTitle));
+        $page->set_title($blockTitle);
         $page->add_block(new Block($blockTitle, $html, "main", 120));
     }
 
@@ -156,7 +156,7 @@ class ForumTheme extends Themelet
                             DIV(["class" => "postDate"], SMALL(rawHTML(autodate($post['date'])))),
                             DIV(["class" => "postNumber"], " #".$post_number),
                             BR(),
-                            DIV(["class" => "postMessage"], rawHTML(send_event(new TextFormattingEvent($post["message"]))->formatted))
+                            DIV(["class" => "postMessage"], rawHTML(format_text($post["message"])))
                         )
                     ),
                     TR(
@@ -189,7 +189,7 @@ class ForumTheme extends Themelet
 
         $this->display_paginator($page, "forum/view/".$threadID, null, $pageNumber, $totalPages);
 
-        $page->set_title(html_escape($threadTitle));
+        $page->set_title($threadTitle);
         $page->add_block(new Block($threadTitle, $html, "main", 20));
     }
 
