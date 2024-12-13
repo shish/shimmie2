@@ -67,9 +67,6 @@ class Danbooru2UserPageTheme extends UserPageTheme
     public function display_signup_page(Page $page): void
     {
         global $config, $user;
-        $tac = $config->get_string("login_tac", "");
-
-        $tac = send_event(new TextFormattingEvent($tac))->formatted;
 
         $reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
@@ -79,6 +76,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
         );
         $email_text = $email_required ? "Email" : "Email (Optional)";
 
+        $tac = format_text($config->get_string("login_tac", ""));
         if (empty($tac)) {
             $html = "";
         } else {

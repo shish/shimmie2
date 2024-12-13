@@ -64,7 +64,7 @@ class UserPageTheme extends Themelet
         $tac = $config->get_string("login_tac", "");
 
         if ($config->get_bool("login_tac_bbcode")) {
-            $tac = send_event(new TextFormattingEvent($tac))->formatted;
+            $tac = format_text($tac);
         }
 
         $email_required = (
@@ -246,7 +246,7 @@ class UserPageTheme extends Themelet
         global $page;
         $stats[] = 'User ID: '.$duser->id;
 
-        $page->set_title(html_escape($duser->name)."'s Page");
+        $page->set_title("{$duser->name}'s Page");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Stats", rawHTML(join("<br>", $stats)), "main", 10));
     }

@@ -67,12 +67,10 @@ class DanbooruUserPageTheme extends UserPageTheme
     public function display_signup_page(Page $page): void
     {
         global $config;
-        $tac = $config->get_string("login_tac", "");
-
-        $tac = send_event(new TextFormattingEvent($tac))->formatted;
 
         $reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
+        $tac = format_text($config->get_string("login_tac", ""));
         if (empty($tac)) {
             $html = "";
         } else {

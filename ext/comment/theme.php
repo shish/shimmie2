@@ -190,7 +190,7 @@ class CommentListTheme extends Themelet
         $h_index = "<a href='".make_link()."'>Index</a>";
         $h_next = ($page_number >= $total_pages) ? "Next" : "<a href='$next'>Next</a>";
 
-        $page->set_title(html_escape($user->name)."'s comments");
+        $page->set_title("{$user->name}'s comments");
         $page->add_block(new Block("Navigation", rawHTML($h_prev.' | '.$h_index.' | '.$h_next), "left", 0));
         $this->display_paginator($page, "comment/beta-search/{$user->name}", null, $page_number, $total_pages);
     }

@@ -151,8 +151,8 @@ class ExtManagerTheme extends Themelet
             P(A(["href" => make_link("ext_manager")], "Back to the list"))
         );
 
-        $page->set_title("Documentation for " . html_escape($info->name));
-        $page->set_heading(html_escape($info->name));
+        $page->set_title("Documentation for {$info->name}");
+        $page->set_heading($info->name);
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Documentation", $html));
     }
