@@ -241,7 +241,7 @@ class TagListTheme extends Themelet
             $link = html_escape(str_replace('$tag', url_escape($tag), $config->get_string(TagListConfig::INFO_LINK)));
             $display_html .= '<td class="tag_info_link_cell"> <a class="tag_info_link'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">?</a></td>';
         }
-        $link = $this->tag_link($row['tag']);
+        $link = search_link([$row['tag']]);
         $display_html .= '<td class="tag_name_cell"> <a class="tag_name'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">'.$h_tag_no_underscores.'</a></td>';
 
         if ($config->get_bool("tag_list_numbers")) {
@@ -277,7 +277,7 @@ class TagListTheme extends Themelet
             return "";
         } else {
             $tags = array_diff($tags, [$tag, "-$tag"]);
-            return "<a href='".$this->tag_link(join(' ', $tags))."' title='Remove' rel='nofollow'>R</a>";
+            return "<a href='".search_link($tags)."' title='Remove' rel='nofollow'>R</a>";
         }
     }
 
@@ -290,7 +290,7 @@ class TagListTheme extends Themelet
             return "";
         } else {
             $tags = array_diff($tags, ["-$tag"]) + [$tag];
-            return "<a href='".$this->tag_link(join(' ', $tags))."' title='Add' rel='nofollow'>A</a>";
+            return "<a href='".search_link($tags)."' title='Add' rel='nofollow'>A</a>";
         }
     }
 
@@ -303,12 +303,7 @@ class TagListTheme extends Themelet
             return "";
         } else {
             $tags = array_diff($tags, [$tag]) + ["-$tag"];
-            return "<a href='".$this->tag_link(join(' ', $tags))."' title='Subtract' rel='nofollow'>S</a>";
+            return "<a href='".search_link($tags)."' title='Subtract' rel='nofollow'>S</a>";
         }
-    }
-
-    public function tag_link(string $tag): string
-    {
-        return search_link([$tag]);
     }
 }

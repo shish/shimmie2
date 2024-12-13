@@ -246,7 +246,7 @@ class TagList extends Extension
         foreach ($tag_data as $row) {
             $h_tag = html_escape($row['tag']);
             $size = sprintf("%.2f", (float)$row['scaled']);
-            $link = $this->theme->tag_link($row['tag']);
+            $link = search_link([$row['tag']]);
             if ($size < 0.5) {
                 $size = 0.5;
             }
@@ -317,7 +317,7 @@ class TagList extends Extension
                 $h_lastLetter = html_escape($lastLetter);
                 $html .= "<p>$h_lastLetter<br>";
             }
-            $link = $this->theme->tag_link($tag);
+            $link = search_link([$tag]);
             $h_tag = html_escape($tag);
             if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $h_tag = TagCategories::getTagHtml($h_tag, "&nbsp;($count)");
@@ -368,7 +368,7 @@ class TagList extends Extension
                 $lastLog = $scaled;
                 $html .= "<p>$lastLog<br>";
             }
-            $link = $this->theme->tag_link($row['tag']);
+            $link = search_link([$row['tag']]);
             $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
         }
 
