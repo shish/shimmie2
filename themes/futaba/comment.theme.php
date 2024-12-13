@@ -53,7 +53,7 @@ class FutabaCommentListTheme extends CommentListTheme
             $html .= "File: <a href=\"".make_link("post/view/{$image->id}")."\">$h_filename</a> - ($h_filesize, {$w}x{$h}) - ";
             $html .= html_escape($image->get_tag_list());
             $html .= "<div style='text-align: left'>";
-            $html .=   "<div style='float: left;'>" . $this->build_thumb_html($image) . "</div>";
+            $html .=   "<div style='float: left;'>" . $this->build_thumb($image) . "</div>";
             $html .=   "<div class='commentset'>$comment_html</div>";
             $html .= "</div>";
 

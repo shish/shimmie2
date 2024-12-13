@@ -33,7 +33,7 @@ class RandomListTheme extends Themelet
             $html .= "<div class='shm-image-list'>";
 
             foreach ($images as $image) {
-                $html .= $this->build_thumb_html($image);
+                $html .= $this->build_thumb($image);
             }
 
             $html .= "</div>";

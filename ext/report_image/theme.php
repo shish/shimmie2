@@ -22,7 +22,7 @@ class ReportImageTheme extends Themelet
         foreach ($reports as $report) {
             $image = $report['image'];
             $h_reason = format_text($report['reason']);
-            $image_link = $this->build_thumb_html($image);
+            $image_link = $this->build_thumb($image);
 
             $reporter_name = html_escape($report['reporter_name']);
             $userlink = "<a href='".make_link("user/$reporter_name")."'>$reporter_name</a>";
