@@ -10,6 +10,7 @@ class TagListConfig
     public const POPULAR_TAG_LIST_LENGTH = "popular_tag_list_length";
     public const TAGS_MIN = "tags_min";
     public const INFO_LINK = "info_link";
+    public const SHOW_NUMBERS = "tag_list_numbers";
     public const IMAGE_TYPE = "tag_list_image_type";
     public const RELATED_SORT = "tag_list_related_sort";
     public const POPULAR_SORT = "tag_list_popular_sort";
