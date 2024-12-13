@@ -11,8 +11,6 @@ class TagList extends Extension
     /** @var TagListTheme */
     protected Themelet $theme;
 
-    private mixed $tagcategories = null;
-
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
@@ -245,11 +243,6 @@ class TagList extends Extension
         if ($config->get_bool(TagListConfig::PAGES)) {
             $html .= $this->build_az($tags_min);
         }
-        $tag_category_dict = [];
-        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-            $this->tagcategories = new TagCategories();
-            $tag_category_dict = $this->tagcategories->getKeyedDict();
-        }
         foreach ($tag_data as $row) {
             $h_tag = html_escape($row['tag']);
             $size = sprintf("%.2f", (float)$row['scaled']);
@@ -259,7 +252,7 @@ class TagList extends Extension
             }
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
             if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-                $h_tag_no_underscores = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict);
+                $h_tag_no_underscores = TagCategories::getTagHtml($h_tag);
             }
             $html .= "&nbsp;<a style='font-size: {$size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
         }
@@ -312,12 +305,6 @@ class TagList extends Extension
         */
         mb_internal_encoding('UTF-8');
 
-        $tag_category_dict = [];
-        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-            $this->tagcategories = new TagCategories();
-            $tag_category_dict = $this->tagcategories->getKeyedDict();
-        }
-
         $lastLetter = "";
         # postres utf8 string sort ignores punctuation, so we get "aza, a-zb, azc"
         # which breaks down into "az, a-, az" :(
@@ -333,7 +320,7 @@ class TagList extends Extension
             $link = $this->theme->tag_link($tag);
             $h_tag = html_escape($tag);
             if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-                $h_tag = $this->tagcategories->getTagHtml($h_tag, $tag_category_dict, "&nbsp;($count)");
+                $h_tag = TagCategories::getTagHtml($h_tag, "&nbsp;($count)");
             }
             $html .= "<a href='$link'>$h_tag</a>\n";
         }

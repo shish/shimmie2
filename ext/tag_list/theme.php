@@ -10,7 +10,6 @@ class TagListTheme extends Themelet
 {
     public string $heading = "";
     public string $list = "";
-    private mixed $tagcategories = null;
 
     public function set_heading(string $text): void
     {
@@ -85,8 +84,7 @@ class TagListTheme extends Themelet
         }
 
         if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-            $this->tagcategories = new TagCategories();
-            $tag_category_dict = $this->tagcategories->getKeyedDict();
+            $tag_category_dict = TagCategories::getKeyedDict();
         } else {
             $tag_category_dict = [];
         }
@@ -144,8 +142,7 @@ class TagListTheme extends Themelet
         }
 
         if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-            $this->tagcategories = new TagCategories();
-            $tag_category_dict = $this->tagcategories->getKeyedDict();
+            $tag_category_dict = TagCategories::getKeyedDict();
         } else {
             $tag_category_dict = [];
         }

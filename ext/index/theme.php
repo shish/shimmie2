@@ -128,9 +128,7 @@ and of course start organising your images :-)
                 }
                 $wikiLink = make_link("wiki/$st");
                 if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
-                    $tagcategories = new TagCategories();
-                    $tag_category_dict = $tagcategories->getKeyedDict();
-                    $st = $tagcategories->getTagHtml(html_escape($st), $tag_category_dict);
+                    $st = TagCategories::getTagHtml(html_escape($st));
                 }
                 $short_wiki_description = '<h2>'.$st.'&nbsp;<a href="'.$wikiLink.'"><sup>ⓘ</sup></a></h2>'.$short_wiki_description;
                 $page->add_block(new Block(null, rawHTML($short_wiki_description), "main", 0, "short-wiki-description"));
