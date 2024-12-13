@@ -16,7 +16,7 @@ class ImageViewCounterTheme extends Themelet
         global $page, $config;
         $pop_images = "";
         foreach ($images as $image) {
-            $pop_images .= $this->build_thumb_html($image) . "\n";
+            $pop_images .= $this->build_thumb($image) . "\n";
         }
 
         $page->set_title($config->get_string(SetupConfig::TITLE));

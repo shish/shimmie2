@@ -102,12 +102,12 @@ class RelationshipsTheme extends Themelet
         $parent_id = $image['parent_id'];
         $parent_image = Image::by_id_ex($parent_id);
 
-        return $this->build_thumb_html($parent_image);
+        return $this->build_thumb($parent_image);
     }
 
     private function get_child_thumbnail_html(Image $image): HTMLElement
     {
-        return $this->build_thumb_html($image);
+        return $this->build_thumb($image);
     }
 
     private function get_sibling_thumbnail_html(Image $image): string
@@ -116,7 +116,7 @@ class RelationshipsTheme extends Themelet
         $html = "";
 
         foreach ($siblings as $sibling) {
-            $html .= $this->build_thumb_html($sibling);
+            $html .= $this->build_thumb($sibling);
         }
 
         return $html;

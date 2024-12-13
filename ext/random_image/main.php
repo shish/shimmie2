@@ -31,7 +31,7 @@ class RandomImage extends Extension
             } elseif ($action === "widget") {
                 $page->set_mode(PageMode::DATA);
                 $page->set_mime(MimeType::HTML);
-                $page->set_data($this->theme->build_thumb_html($image));
+                $page->set_data($this->theme->build_thumb($image));
             }
         }
     }

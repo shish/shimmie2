@@ -14,7 +14,7 @@ class CommonElementsTheme extends Themelet
      * Generic thumbnail code; returns HTML rather than adding
      * a block since thumbs tend to go inside blocks...
      */
-    public function build_thumb_html(Image $image): HTMLElement
+    public function build_thumb(Image $image): HTMLElement
     {
         global $config;
 
