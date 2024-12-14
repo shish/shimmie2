@@ -244,7 +244,7 @@ class OuroborosAPI extends Extension
     {
         global $page, $user;
 
-        if (\Safe\preg_match("%\.(xml|json)$%", implode('/', $event->args), $matches) === 1) {
+        if (preg_match("%\.(xml|json)$%", implode('/', $event->args), $matches)) {
             $this->type = $matches[1];
             if ($this->type == 'json') {
                 $page->set_mime('application/json; charset=utf-8');
@@ -617,6 +617,6 @@ class OuroborosAPI extends Extension
      */
     private function match(PageRequestEvent $event, string $page): bool
     {
-        return (\Safe\preg_match("%{$page}\.(xml|json)$%", implode('/', $event->args), $matches) === 1);
+        return (preg_match("%{$page}\.(xml|json)$%", implode('/', $event->args), $matches) === 1);
     }
 }
