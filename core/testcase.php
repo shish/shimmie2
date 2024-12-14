@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
+try {
     abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         protected static string $anon_name = "anonymous";
@@ -289,7 +289,9 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
             }
         }
     }
-} else {
+}
+// @phpstan-ignore-next-line
+catch (\Throwable $e) {
     abstract class ShimmiePHPUnitTestCase
     {
     }
