@@ -767,10 +767,7 @@ class NavLink
          */
         $url = $url ?? _get_query();
 
-        $re1 = '.*?';
-        $re2 = '((?:[a-z][a-z_]+))';
-
-        if (\Safe\preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
+        if (preg_match_all("/.*?((?:[a-z][a-z_]+))/is", $url, $matches) > 0) {
             $url = $matches[1][0];
         }
 

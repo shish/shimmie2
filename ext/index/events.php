@@ -81,7 +81,7 @@ class SearchTermParseEvent extends Event
         if (is_null($this->term)) {
             return null;
         }
-        if (\Safe\preg_match($regex, $this->term, $matches) === 1) {
+        if (\Safe\preg_match($regex, $this->term, $matches)) {
             return $matches;
         }
         return null;

@@ -87,7 +87,7 @@ xanax
         foreach ($this->get_words() as $word) {
             if ($word[0] == '/') {
                 // lines that start with slash are regex
-                if (\Safe\preg_match($word, $comment) === 1) {
+                if (\Safe\preg_match($word, $comment)) {
                     throw $ex;
                 }
             } else {
