@@ -238,6 +238,7 @@ function find_header(array $headers, string $name): ?string
 }
 
 /**
+ * @param class-string $parent
  * @return class-string[]
  */
 function get_subclasses_of(string $parent): array
@@ -245,6 +246,7 @@ function get_subclasses_of(string $parent): array
     $result = [];
     foreach (get_declared_classes() as $class) {
         $rclass = new \ReflectionClass($class);
+        // @phpstan-ignore-next-line
         if (!$rclass->isAbstract() && is_subclass_of($class, $parent)) {
             $result[] = $class;
         }
@@ -260,7 +262,7 @@ function get_subclasses_of(string $parent): array
 function zglob(string $pattern): array
 {
     $results = [];
-    if (preg_match('/(.*)\{(.*)\}(.*)/', $pattern, $matches)) {
+    if (\preg_match('/(.*)\{(.*)\}(.*)/', $pattern, $matches)) {
         $braced = explode(",", $matches[2]);
         foreach ($braced as $b) {
             $sub_pattern = $matches[1].$b.$matches[3];
@@ -562,11 +564,8 @@ function parse_to_milliseconds(string $input): int
     } else {
         foreach (TIME_UNITS::CONVERSION as $unit => $conversion) {
             if (preg_match('/([0-9]+)'.$unit.'/i', $input, $match)) {
-                $length = $match[1];
-                if (is_numeric($length)) {
-                    $length = floatval($length);
-                    $output += $length * $current_multiplier;
-                }
+                $length = (float)$match[1];
+                $output += $length * $current_multiplier;
             }
             $current_multiplier *= $conversion;
         }

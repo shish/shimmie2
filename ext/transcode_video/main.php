@@ -185,7 +185,7 @@ class TranscodeVideo extends Extension
             return false;
         }
 
-        if ($image->video == null || ($image->video === true && empty($image->video_codec))) {
+        if ($image->video === null || ($image->video === true && empty($image->video_codec))) {
             // If image predates the media system, or the video codec support, run a media check
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();

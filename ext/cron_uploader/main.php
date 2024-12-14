@@ -479,7 +479,7 @@ class CronUploader extends Extension
     {
         $info = pathinfo($path);
 
-        if (array_key_exists("basename", $info) && in_array(strtolower($info['basename']), self::SKIPPABLE_FILES)) {
+        if (in_array(strtolower($info['basename']), self::SKIPPABLE_FILES)) {
             return true;
         }
 

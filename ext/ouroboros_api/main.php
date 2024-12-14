@@ -201,7 +201,7 @@ class _SafeOuroborosTag
 
 class OuroborosAPI extends Extension
 {
-    private ?string $type;
+    private string $type;
 
     public const HEADER_HTTP_200 = 'OK';
     public const MSG_HTTP_200 = 'Request was successful';

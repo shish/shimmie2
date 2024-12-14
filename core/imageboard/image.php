@@ -129,11 +129,13 @@ class Image implements \ArrayAccess
 
     public function offsetExists(mixed $offset): bool
     {
+        // @phpstan-ignore-next-line
         assert(is_string($offset));
         return array_key_exists($offset, static::$prop_types);
     }
     public function offsetGet(mixed $offset): mixed
     {
+        // @phpstan-ignore-next-line
         assert(is_string($offset));
         if (!$this->offsetExists($offset)) {
             $known = implode(", ", array_keys(static::$prop_types));
@@ -148,6 +150,7 @@ class Image implements \ArrayAccess
     }
     public function offsetUnset(mixed $offset): void
     {
+        // @phpstan-ignore-next-line
         assert(is_string($offset));
         unset($this->dynamic_props[$offset]);
     }
@@ -198,7 +201,7 @@ class Image implements \ArrayAccess
     }
 
     /**
-     * @param string[] $tags
+     * @param list<string> $tags
      */
     public static function by_random(array $tags = [], int $limit_range = 0): ?Image
     {
@@ -228,7 +231,7 @@ class Image implements \ArrayAccess
      * Rather than simply $this_id + 1, one must take into account
      * deleted images and search queries
      *
-     * @param string[] $tags
+     * @param list<string> $tags
      */
     public function get_next(array $tags = [], bool $next = true): ?Image
     {
@@ -251,7 +254,7 @@ class Image implements \ArrayAccess
     /**
      * The reverse of get_next
      *
-     * @param string[] $tags
+     * @param list<string> $tags
      */
     public function get_prev(array $tags = []): ?Image
     {
@@ -342,7 +345,7 @@ class Image implements \ArrayAccess
     /**
      * Get this image's tags as an array.
      *
-     * @return string[]
+     * @return list<string>
      */
     #[Field(name: "tags", type: "[string!]!")]
     public function get_tag_array(): array

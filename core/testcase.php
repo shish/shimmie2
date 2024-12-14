@@ -223,7 +223,7 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
         }
 
         /**
-         * @param string[] $tags
+         * @param list<string> $tags
          * @param int[] $results
          */
         protected function assert_search_results(array $tags, array $results): void
