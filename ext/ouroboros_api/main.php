@@ -442,7 +442,7 @@ class OuroborosAPI extends Extension
                         WHERE count >= :tags_min
                         ORDER BY LOWER(substr(tag, 1, 1)) LIMIT :start, :max_items
                     ",
-                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
+                    ['tags_min' => $config->get_int(TagMapConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
             case 'count':
@@ -454,7 +454,7 @@ class OuroborosAPI extends Extension
                         WHERE count >= :tags_min
                         ORDER BY count DESC, tag ASC LIMIT :start, :max_items
                     ",
-                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
+                    ['tags_min' => $config->get_int(TagMapConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
         }

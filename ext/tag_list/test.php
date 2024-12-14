@@ -6,37 +6,12 @@ namespace Shimmie2;
 
 class TagListTest extends ShimmiePHPUnitTestCase
 {
-    /** @var string[] */
-    private array $pages = ["map", "alphabetic", "popularity"];
-
-    public function testTagList(): void
+    public function testIndex(): void
     {
-        $this->get_page('tags/map');
-        $this->assert_title('Tag List');
-
-        $this->get_page('tags/alphabetic');
-        $this->assert_title('Tag List');
-
-        $this->get_page('tags/popularity');
-        $this->assert_title('Tag List');
-
-        # FIXME: test that these show the right stuff
-    }
-
-    public function testMinCount(): void
-    {
-        foreach ($this->pages as $page) {
-            $this->get_page("tags/$page", ["mincount" => 999999]);
-            $this->assert_title("Tag List");
-
-            $this->get_page("tags/$page", ["mincount" => 1]);
-            $this->assert_title("Tag List");
-
-            $this->get_page("tags/$page", ["mincount" => 0]);
-            $this->assert_title("Tag List");
-
-            $this->get_page("tags/$page", ["mincount" => -1]);
-            $this->assert_title("Tag List");
-        }
+        $this->log_in_as_user();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $page = $this->get_page("post/view/$image_id");
+        $this->assert_title("Post $image_id: pbx");
+        $this->assert_text("pbx");
     }
 }
