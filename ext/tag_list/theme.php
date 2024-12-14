@@ -37,13 +37,30 @@ class TagListTheme extends Themelet
 
     /**
      * @param array<array{tag: string, count: int}> $tag_infos
+     * @param string[] $search
+     */
+    private function get_tag_list_html(array $tag_infos, string $sort, array $search = []): HTMLElement
+    {
+        if ($sort === TagListConfig::SORT_ALPHABETICAL) {
+            usort($tag_infos, fn ($a, $b) => strcasecmp($a['tag'], $b['tag']));
+        }
+
+        $table = $this->get_tag_list_preamble();
+        foreach ($tag_infos as $row) {
+            $table->appendChild(self::build_tag_row($row, $search));
+        }
+        return $table;
+    }
+
+    /**
+     * @param array<array{tag: string, count: int}> $tag_infos
      */
     public function display_split_related_block(Page $page, array $tag_infos): void
     {
         global $config;
 
         if ($config->get_string(TagListConfig::RELATED_SORT) == TagListConfig::SORT_ALPHABETICAL) {
-            asort($tag_infos);
+            usort($tag_infos, fn ($a, $b) => strcasecmp($a['tag'], $b['tag']));
         }
 
         if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
@@ -68,7 +85,7 @@ class TagListTheme extends Themelet
             $tag_categories_count[$category] += 1;
         }
 
-        asort($tag_categories_html);
+        ksort($tag_categories_html);
         foreach (array_keys($tag_categories_html) as $category) {
             if ($category == '') {
                 $category_display_name = 'Tags';
@@ -82,23 +99,6 @@ class TagListTheme extends Themelet
             }
             $page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", $prio));
         }
-    }
-
-    /**
-     * @param array<array{tag: string, count: int}> $tag_infos
-     * @param string[] $search
-     */
-    private function get_tag_list_html(array $tag_infos, string $sort, array $search = []): HTMLElement
-    {
-        if ($sort == TagListConfig::SORT_ALPHABETICAL) {
-            asort($tag_infos);
-        }
-
-        $table = $this->get_tag_list_preamble();
-        foreach ($tag_infos as $row) {
-            $table->appendChild(self::build_tag_row($row, $search));
-        }
-        return $table;
     }
 
     /**
