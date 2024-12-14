@@ -134,4 +134,5 @@ new UserClass("hellbanned", "user", [
     Permissions::HELLBANNED => true,
 ]);
 
+// @phpstan-ignore-next-line
 @include_once "data/config/user-classes.conf.php";

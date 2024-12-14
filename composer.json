@@ -59,7 +59,7 @@
 	"require-dev" : {
 		"phpunit/phpunit" : "^11.0",
 		"friendsofphp/php-cs-fixer" : "^3.64",
-		"phpstan/phpstan": "^1.12"
+		"phpstan/phpstan": "^2.0"
 	},
 	"suggest": {
 		"ext-pdo_sqlite": "database - sqlite",
