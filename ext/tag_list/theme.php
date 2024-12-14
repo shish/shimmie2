@@ -6,43 +6,10 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, BR, rawHTML, emptyHTML, joinHTML, TABLE, COLGROUP, COL, THEAD, TH, TR, TD, SPAN};
+use function MicroHTML\{A, BR, rawHTML, emptyHTML, TABLE, COLGROUP, COL, THEAD, TH, TR, TD, SPAN};
 
 class TagListTheme extends Themelet
 {
-    public string $heading = "";
-
-    public function set_heading(string $text): void
-    {
-        $this->heading = $text;
-    }
-
-    public function display_page(HTMLElement $list): void
-    {
-        global $page;
-
-        $page->set_title("Tag List");
-        $page->set_heading($this->heading);
-        $page->add_block(new Block("Tags", $list));
-
-        $nav = joinHTML(
-            BR(),
-            [
-                A(["href" => make_link()], "Index"),
-                rawHTML("&nbsp;"),
-                A(["href" => make_link("tags/map")], "Map"),
-                A(["href" => make_link("tags/alphabetic")], "Alphabetic"),
-                A(["href" => make_link("tags/popularity")], "Popularity"),
-                rawHTML("&nbsp;"),
-                A(["href" => modify_current_url(["mincount" => 1])], "Show All"),
-            ]
-        );
-
-        $page->add_block(new Block("Navigation", $nav, "left", 0));
-    }
-
-    // =======================================================================
-
     protected function get_tag_list_preamble(): HTMLElement
     {
         global $config;
