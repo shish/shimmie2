@@ -1,5 +1,6 @@
 vendor
 .git
+.sl
 *.phar
 data
 images
