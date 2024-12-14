@@ -281,13 +281,14 @@ class Database
      * Execute an SQL query and return the first column of each row.
      *
      * @param QueryArgs $args
-     * @return array<mixed>
+     * @return list<mixed>
      */
     public function get_col(string $query, array $args = []): array
     {
         $_start = ftime();
         $res = $this->_execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
+        // @phpstan-ignore-next-line -- this is a list, but fetchAll is typed as array
         return $res;
     }
 

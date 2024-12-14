@@ -951,6 +951,8 @@ class Media extends Extension
         $a = (int)hexdec(substr($hex, 0, 2));
         $b = (int)hexdec(substr($hex, 2, 2));
         $c = (int)hexdec(substr($hex, 4, 2));
+        // hexdec(2-digits) will only be int<0, 255>, but phpstan doesn't know that
+        // @phpstan-ignore-next-line
         $col = imagecolorallocate($im, $a, $b, $c);
         assert($col !== false);
         return $col;
