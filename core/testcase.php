@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
+if (!class_exists("\\PHPUnit\\Framework\\TestCase")) {
+    abstract class ShimmiePHPUnitTestCase
+    {
+    }
+} else {
     abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         protected static string $anon_name = "anonymous";
@@ -288,9 +292,5 @@ if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
                 send_event(new ImageDeletionEvent($img, true));
             }
         }
-    }
-} else {
-    abstract class ShimmiePHPUnitTestCase
-    {
     }
 }
