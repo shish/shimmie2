@@ -9,10 +9,15 @@ chgrp('/app/data', 'shimmie');
 
 // Get php.ini settings from PHP_INI_XXX environment variables
 $php_ini = [];
+$shm_env = [];
 foreach(getenv() as $key => $value) {
     if (strpos($key, 'PHP_INI_') === 0) {
         $php_ini_key = strtolower(substr($key, 8));
         $php_ini[$php_ini_key] = $value;
+    }
+    if (strpos($key, 'SHM_ENV_') === 0) {
+        $shm_env_key = strtolower(substr($key, 8));
+        $shm_env[$shm_env_key] = $value;
     }
 }
 // deprecated one-off special configs
@@ -86,7 +91,8 @@ $config = [
                 "max" => 8,
                 "spare" => 2,
                 "idle_timeout" => 60
-            ]
+            ],
+			"environment" => $shm_env
         ]
     ],
     "settings" => [
