@@ -37,7 +37,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
         $page = $this->get_page('ip_ban/list');
         $this->assertStringContainsString(
             "42.42.42.42",
-            (string)$page->find_block("Edit IP Bans")->body
+            (string)$page->find_block(null)->body
         );
 
         // Delete ban
@@ -48,7 +48,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
         $page = $this->get_page('ip_ban/list');
         $this->assertStringNotContainsString(
             "42.42.42.42",
-            (string)$page->find_block("Edit IP Bans")->body
+            (string)$page->find_block(null)->body
         );
     }
 

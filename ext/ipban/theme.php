@@ -15,13 +15,13 @@ class IPBanTheme extends Themelet
         $html = "
 			<a href='".make_link("ip_ban/list", "r__size=1000000")."'>Show All Active</a> /
 			<a href='".make_link("ip_ban/list", "r_all=on&r__size=1000000")."'>Show EVERYTHING</a>
-			
+
 			$table
-			
+
 			$paginator
 		";
         $page->set_title("IP Bans");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Edit IP Bans", rawHTML($html)));
+        $page->add_block(new Block(null, rawHTML($html)));
     }
 }
