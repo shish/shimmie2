@@ -7,6 +7,7 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\{A, BR, rawHTML, emptyHTML, TABLE, COLGROUP, COL, THEAD, TH, TR, TD, SPAN};
+use function MicroHTML\joinHTML;
 
 class TagListTheme extends Themelet
 {
@@ -85,8 +86,9 @@ class TagListTheme extends Themelet
 
     /**
      * @param array<array{tag: string, count: int}> $tag_infos
+     * @param string[] $search
      */
-    private function get_tag_list_html(array $tag_infos, string $sort): HTMLElement
+    private function get_tag_list_html(array $tag_infos, string $sort, array $search = []): HTMLElement
     {
         if ($sort == TagListConfig::SORT_ALPHABETICAL) {
             asort($tag_infos);
@@ -94,7 +96,7 @@ class TagListTheme extends Themelet
 
         $table = $this->get_tag_list_preamble();
         foreach ($tag_infos as $row) {
-            $table->appendChild(self::build_tag_row($row));
+            $table->appendChild(self::build_tag_row($row, $search));
         }
         return $table;
     }
@@ -144,7 +146,8 @@ class TagListTheme extends Themelet
         $main_html = emptyHTML(
             $this->get_tag_list_html(
                 $tag_infos,
-                $config->get_string(TagListConfig::POPULAR_SORT)
+                $config->get_string(TagListConfig::POPULAR_SORT),
+                $search
             ),
             rawHTML("&nbsp;"),
             BR(),
@@ -156,8 +159,9 @@ class TagListTheme extends Themelet
 
     /**
      * @param array{tag: string, count: int} $row
+     * @param string[] $search
      */
-    public function build_tag_row(array $row): HTMLElement
+    protected function build_tag_row(array $row, array $search = []): HTMLElement
     {
         global $config;
 
@@ -192,7 +196,11 @@ class TagListTheme extends Themelet
 
         $tr->appendChild(TD(
             ["class" => "tag_name_cell"],
-            $this->build_tag($tag, show_underscores: false, show_category: false)
+            emptyHTML(
+                $this->build_tag($tag, show_underscores: false, show_category: false),
+                " ",
+                $search ? $this->ars($search, $tag) : emptyHTML(),
+            )
         ));
 
         if ($config->get_bool(TagListConfig::SHOW_NUMBERS)) {
@@ -208,56 +216,57 @@ class TagListTheme extends Themelet
     /**
      * @param string[] $tags
      */
-    protected function ars(string $tag, array $tags): string
+    protected function ars(array $tags, string $tag): HTMLElement
     {
         // FIXME: a better fix would be to make sure the inputs are correct
         $tag = strtolower($tag);
         $tags = array_map("strtolower", $tags);
-        $html = "";
-        $html .= " <span class='ars'>(";
-        $html .= $this->get_add_link($tags, $tag);
-        $html .= $this->get_remove_link($tags, $tag);
-        $html .= $this->get_subtract_link($tags, $tag);
-        $html .= ")</span>";
-        return $html;
+        return SPAN(
+            ["class" => "ars"],
+            joinHTML(
+                " ",
+                [
+                    $this->get_add_link($tags, $tag),
+                    $this->get_remove_link($tags, $tag),
+                    $this->get_subtract_link($tags, $tag),
+                ]
+            ),
+        );
     }
 
     /**
-     * @param string[] $tags
+     * @param string[] $search
      */
-    protected function get_remove_link(array $tags, string $tag): string
+    protected function get_remove_link(array $search, string $tag): ?HTMLElement
     {
-        if (!in_array($tag, $tags) && !in_array("-$tag", $tags)) {
-            return "";
-        } else {
-            $tags = array_diff($tags, [$tag, "-$tag"]);
-            return "<a href='".search_link($tags)."' title='Remove' rel='nofollow'>R</a>";
+        if (in_array($tag, $search) || in_array("-$tag", $search)) {
+            $new_search = array_diff($search, [$tag, "-$tag"]);
+            return A(["href" => search_link($new_search), "title" => "Remove", "rel" => "nofollow",], "[x]");
         }
+        return null;
     }
 
     /**
-     * @param string[] $tags
+     * @param string[] $search
      */
-    protected function get_add_link(array $tags, string $tag): string
+    protected function get_add_link(array $search, string $tag): ?HTMLElement
     {
-        if (in_array($tag, $tags)) {
-            return "";
-        } else {
-            $tags = array_diff($tags, ["-$tag"]) + [$tag];
-            return "<a href='".search_link($tags)."' title='Add' rel='nofollow'>A</a>";
+        if (!in_array($tag, $search)) {
+            $new_search = array_merge(array_diff($search, ["-$tag"]), [$tag]);
+            return A(["href" => search_link($new_search), "title" => "Add", "rel" => "nofollow"], "[+]");
         }
+        return null;
     }
 
     /**
-     * @param string[] $tags
+     * @param string[] $search
      */
-    protected function get_subtract_link(array $tags, string $tag): string
+    protected function get_subtract_link(array $search, string $tag): ?HTMLElement
     {
-        if (in_array("-$tag", $tags)) {
-            return "";
-        } else {
-            $tags = array_diff($tags, [$tag]) + ["-$tag"];
-            return "<a href='".search_link($tags)."' title='Subtract' rel='nofollow'>S</a>";
+        if (!in_array("-$tag", $search)) {
+            $search = array_merge(array_diff($search, [$tag]), ["-$tag"]);
+            return A(["href" => search_link($search), "title" => "Subtract", "rel" => "nofollow"], "[-]");
         }
+        return null;
     }
 }
