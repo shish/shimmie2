@@ -41,11 +41,7 @@ class TagList extends Extension
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
             $type = $config->get_string(TagListConfig::IMAGE_TYPE);
             if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
-                if (Extension::is_enabled(TagCategoriesInfo::KEY) and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
-                    $this->add_split_tags_block($page, $event->image);
-                } else {
-                    $this->add_tags_block($page, $event->image);
-                }
+                $this->add_tags_block($page, $event->image);
             }
             if ($type == TagListConfig::TYPE_RELATED || $type == TagListConfig::TYPE_BOTH) {
                 $this->add_related_block($page, $event->image);
@@ -159,41 +155,23 @@ class TagList extends Extension
         }
     }
 
-    private function add_split_tags_block(Page $page, Image $image): void
-    {
-        global $database;
-
-        $query = "
-			SELECT tags.tag, tags.count
-			FROM tags, image_tags
-			WHERE tags.id = image_tags.tag_id
-			AND image_tags.image_id = :image_id
-			ORDER BY tags.count DESC
-		";
-        $args = ["image_id" => $image->id];
-
-        $tags = $database->get_all($query, $args);
-        if (count($tags) > 0) {
-            $this->theme->display_split_related_block($page, $tags);
-        }
-    }
-
     private function add_tags_block(Page $page, Image $image): void
     {
-        global $database;
+        global $config, $database;
 
-        $query = "
+        $tags = $database->get_all("
 			SELECT tags.tag, tags.count
 			FROM tags, image_tags
 			WHERE tags.id = image_tags.tag_id
 			AND image_tags.image_id = :image_id
 			ORDER BY tags.count DESC
-		";
-        $args = ["image_id" => $image->id];
-
-        $tags = $database->get_all($query, $args);
+		", ["image_id" => $image->id]);
         if (count($tags) > 0) {
-            $this->theme->display_related_block($page, $tags, "Tags");
+            if (Extension::is_enabled(TagCategoriesInfo::KEY) and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
+                $this->theme->display_split_related_block($page, $tags);
+            } else {
+                $this->theme->display_related_block($page, $tags, "Tags");
+            }
         }
     }
 
@@ -240,18 +218,16 @@ class TagList extends Extension
      */
     private function add_refine_block(Page $page, array $search): void
     {
-        global $config;
+        global $cache, $config, $database;
 
         if (count($search) > 5) {
             return;
         }
 
-        $wild_tags = $search;
-
         $related_tags = self::get_related_tags($search, $config->get_int(TagListConfig::LENGTH));
 
         if (!empty($related_tags)) {
-            $this->theme->display_refine_block($page, $related_tags, $wild_tags);
+            $this->theme->display_refine_block($page, $related_tags, $search);
         }
     }
 
@@ -263,7 +239,6 @@ class TagList extends Extension
     {
         global $cache, $database;
 
-        $wild_tags = $search;
         $cache_key = "related_tags:" . md5(Tag::implode($search));
         $related_tags = $cache->get($cache_key);
 
@@ -272,7 +247,7 @@ class TagList extends Extension
 
             $starting_tags = [];
             $tags_ok = true;
-            foreach ($wild_tags as $tag) {
+            foreach ($search as $tag) {
                 if ($tag[0] == "-" || str_starts_with($tag, "tagme")) {
                     continue;
                 }
