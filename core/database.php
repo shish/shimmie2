@@ -398,22 +398,12 @@ class Database
      */
     public function count_tables(): int
     {
-        if ($this->get_engine()->id === DatabaseDriverID::MYSQL) {
-            return count(
-                $this->get_all("SHOW TABLES")
-            );
-        } elseif ($this->get_engine()->id === DatabaseDriverID::PGSQL) {
-            return count(
-                $this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
-            );
-        } elseif ($this->get_engine()->id === DatabaseDriverID::SQLITE) {
-            return count(
-                $this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
-            );
-        } else {
-            $did = (string)$this->get_engine()->id;
-            throw new ServerError("Can't count tables for database type {$did}");
-        }
+        $sql = match ($this->get_engine()->id) {
+            DatabaseDriverID::MYSQL => "SHOW TABLES",
+            DatabaseDriverID::PGSQL => "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
+            DatabaseDriverID::SQLITE => "SELECT name FROM sqlite_master WHERE type = 'table'",
+        };
+        return count($this->get_col($sql));
     }
 
     public function raw_db(): PDO
