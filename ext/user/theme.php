@@ -61,14 +61,14 @@ class UserPageTheme extends Themelet
     public function display_signup_page(Page $page): void
     {
         global $config, $user;
-        $tac = $config->get_string(UserPageConfig::LOGIN_TAC, "");
+        $tac = $config->get_string(UserAccountsConfig::LOGIN_TAC, "");
 
-        if ($config->get_bool(UserPageConfig::LOGIN_TAC_BBCODE)) {
+        if ($config->get_bool(UserAccountsConfig::LOGIN_TAC_BBCODE)) {
             $tac = format_text($tac);
         }
 
         $email_required = (
-            $config->get_bool(UserPageConfig::USER_EMAIL_REQUIRED) &&
+            $config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
             !$user->can(Permissions::CREATE_OTHER_USER)
         );
 
@@ -190,7 +190,7 @@ class UserPageTheme extends Themelet
 
         $html = emptyHTML();
         $html->appendChild($form);
-        if ($config->get_bool(UserPageConfig::SIGNUP_ENABLED) && $user->can(Permissions::CREATE_USER)) {
+        if ($config->get_bool(UserAccountsConfig::SIGNUP_ENABLED) && $user->can(Permissions::CREATE_USER)) {
             $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
 
