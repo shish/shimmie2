@@ -130,7 +130,7 @@ class PrivateImage extends Extension
 
                     // Admins can view others private images, but they have to specify the user
                     if (!$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES) ||
-                        !UserPage::has_user_query($event->context)) {
+                        !UserAccounts::has_user_query($event->context)) {
                         $query .= " AND owner_id = :private_owner_id";
                         $params["private_owner_id"] = $user->id;
                     }

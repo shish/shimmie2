@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UserPageTest extends ShimmiePHPUnitTestCase
+class UserAccountsTest extends ShimmiePHPUnitTestCase
 {
     public function testUserPage(): void
     {

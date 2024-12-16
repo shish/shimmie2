@@ -48,7 +48,7 @@ $config->set_bool("nice_urls", true);
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 $user = User::by_id($config->get_int("anon_id", 0));
-$userPage = new UserPage();
+$userPage = new UserAccounts();
 $userPage->onUserCreation(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
 $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@test.com", false));
 // in mysql, CREATE TABLE commits transactions, so after the database
