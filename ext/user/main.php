@@ -99,7 +99,7 @@ class LoginResult
             );
         } catch (UserNotFound $ex) {
             return new LoginResult(
-                User::by_id($config->get_int(UserPageConfig::ANON_ID, 0)),
+                User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)),
                 null,
                 "No user found"
             );
@@ -119,7 +119,7 @@ class LoginResult
             );
         } catch (UserCreationException $ex) {
             return new LoginResult(
-                User::by_id($config->get_int(UserPageConfig::ANON_ID, 0)),
+                User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)),
                 null,
                 $ex->getMessage()
             );
@@ -135,14 +135,15 @@ class UserPage extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_bool(UserPageConfig::SIGNUP_ENABLED, true);
-        $config->set_default_int(UserPageConfig::LOGIN_MEMORY, 365);
+        $config->set_default_bool(UserAccountsConfig::SIGNUP_ENABLED, true);
+        $config->set_default_int(UserAccountsConfig::LOGIN_MEMORY, 365);
+        $config->set_default_bool(UserAccountsConfig::LOGIN_TAC_BBCODE, true);
+        $config->set_default_bool(UserAccountsConfig::USER_EMAIL_REQUIRED, false);
+
         $config->set_default_string(AvatarConfig::HOST, "none");
         $config->set_default_int(AvatarConfig::GRAVATAR_SIZE, 80);
         $config->set_default_string(AvatarConfig::GRAVATAR_DEFAULT, "");
         $config->set_default_string(AvatarConfig::GRAVATAR_RATING, "g");
-        $config->set_default_bool(UserPageConfig::LOGIN_TAC_BBCODE, true);
-        $config->set_default_bool(UserPageConfig::USER_EMAIL_REQUIRED, false);
     }
 
     public function onUserLogin(UserLoginEvent $event): void
@@ -174,7 +175,7 @@ class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/create", method: "GET", permission: Permissions::CREATE_USER)) {
             global $config, $page, $user;
-            if (!$config->get_bool(UserPageConfig::SIGNUP_ENABLED)) {
+            if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled($page);
                 return;
             }
@@ -182,7 +183,7 @@ class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: Permissions::CREATE_USER)) {
             global $config, $page, $user;
-            if (!$config->get_bool(UserPageConfig::SIGNUP_ENABLED)) {
+            if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled($page);
                 return;
             }
@@ -312,7 +313,7 @@ class UserPage extends Extension
 
         if ($event->page_matches("user/{name}")) {
             $display_user = User::by_name($event->get_arg('name'));
-            if ($display_user->id == $config->get_int(UserPageConfig::ANON_ID)) {
+            if ($display_user->id == $config->get_int(UserAccountsConfig::ANON_ID)) {
                 throw new UserNotFound("No such user");
             }
             $e = send_event(new UserPageBuildingEvent($display_user));
@@ -414,8 +415,8 @@ class UserPage extends Extension
         $sb = $event->panel->create_new_block("User Options");
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
-        $sb->add_bool_option(UserPageConfig::SIGNUP_ENABLED, "Allow new signups", true);
-        $sb->add_bool_option(UserPageConfig::USER_EMAIL_REQUIRED, "Require email address", true);
+        $sb->add_bool_option(UserAccountsConfig::SIGNUP_ENABLED, "Allow new signups", true);
+        $sb->add_bool_option(UserAccountsConfig::USER_EMAIL_REQUIRED, "Require email address", true);
         $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
         $sb->add_choice_option(
             "user_loginshowprofile",
@@ -502,7 +503,7 @@ class UserPage extends Extension
         if (!$user->can(Permissions::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (!$config->get_bool(UserPageConfig::SIGNUP_ENABLED) && !$user->can(Permissions::CREATE_OTHER_USER)) {
+        if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED) && !$user->can(Permissions::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
         if (strlen($name) < 1) {
@@ -530,7 +531,7 @@ class UserPage extends Extension
             // Users who can create other users (ie, admins) are exempt
             // from the email requirement
             !$user->can(Permissions::CREATE_OTHER_USER) &&
-            ($config->get_bool(UserPageConfig::USER_EMAIL_REQUIRED) && empty($event->email))
+            ($config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) && empty($event->email))
         ) {
             throw new UserCreationException("Email address is required");
         }
@@ -630,11 +631,11 @@ class UserPage extends Extension
     private function page_logout(): void
     {
         global $page, $config;
-        $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int(UserPageConfig::LOGIN_MEMORY), "/");
+        $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
-            $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int(UserPageConfig::LOGIN_MEMORY), "/");
+            $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         }
         log_info("user", "Logged out");
         $page->set_mode(PageMode::REDIRECT);
@@ -760,7 +761,7 @@ class UserPage extends Extension
         } else {
             $database->execute(
                 "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                ["new_owner_id" => $config->get_int(UserPageConfig::ANON_ID), "old_owner_id" => $uid]
+                ["new_owner_id" => $config->get_int(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
             );
         }
 

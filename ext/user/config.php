@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UserPageConfig extends ConfigGroup
+class UserAccountsConfig extends ConfigGroup
 {
     public const ANON_ID = "anon_id";
     public const SIGNUP_ENABLED = "login_signup_enabled";
