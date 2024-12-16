@@ -6,7 +6,6 @@ namespace Shimmie2;
 
 use GQLA\Type;
 use GQLA\Field;
-use GQLA\Query;
 use GQLA\Mutation;
 
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
@@ -125,19 +124,19 @@ class CommentList extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_int('comment_window', 5);
-        $config->set_default_int('comment_limit', 10);
-        $config->set_default_int('comment_list_count', 10);
-        $config->set_default_int('comment_count', 5);
-        $config->set_default_bool('comment_captcha', false);
+        $config->set_default_int(CommentConfig::WINDOW, 5);
+        $config->set_default_int(CommentConfig::LIMIT, 10);
+        $config->set_default_int(CommentConfig::LIST_COUNT, 10);
+        $config->set_default_int(CommentConfig::COUNT, 5);
+        $config->set_default_bool(CommentConfig::CAPTCHA, false);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
-        if ($this->get_version("ext_comments_version") < 3) {
+        if ($this->get_version(CommentConfig::VERSION) < 3) {
             // shortcut to latest
-            if ($this->get_version("ext_comments_version") < 1) {
+            if ($this->get_version(CommentConfig::VERSION) < 1) {
                 $database->create_table("comments", "
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
@@ -151,11 +150,11 @@ class CommentList extends Extension
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);
                 $database->execute("CREATE INDEX comments_owner_id_idx ON comments(owner_id)", []);
                 $database->execute("CREATE INDEX comments_posted_idx ON comments(posted)", []);
-                $this->set_version("ext_comments_version", 3);
+                $this->set_version(CommentConfig::VERSION, 3);
             }
 
             // the whole history
-            if ($this->get_version("ext_comments_version") < 1) {
+            if ($this->get_version(CommentConfig::VERSION) < 1) {
                 $database->create_table("comments", "
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
@@ -165,17 +164,17 @@ class CommentList extends Extension
 					comment TEXT NOT NULL
 				");
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);
-                $this->set_version("ext_comments_version", 1);
+                $this->set_version(CommentConfig::VERSION, 1);
             }
 
-            if ($this->get_version("ext_comments_version") == 1) {
+            if ($this->get_version(CommentConfig::VERSION) == 1) {
                 $database->execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
                 $database->execute("CREATE INDEX comments_posted ON comments(posted)");
-                $this->set_version("ext_comments_version", 2);
+                $this->set_version(CommentConfig::VERSION, 2);
             }
 
-            if ($this->get_version("ext_comments_version") == 2) {
-                $this->set_version("ext_comments_version", 3);
+            if ($this->get_version(CommentConfig::VERSION) == 2) {
+                $this->set_version(CommentConfig::VERSION, 3);
                 $database->execute("ALTER TABLE comments ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
                 $database->execute("ALTER TABLE comments ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
             }
@@ -310,7 +309,7 @@ class CommentList extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $cache, $config;
-        $cc = $config->get_int("comment_count");
+        $cc = $config->get_int(CommentConfig::COUNT);
         if ($cc > 0) {
             $recent = cache_get_or_set("recent_comments", fn () => $this->get_recent_comments($cc), 60);
             if (count($recent) > 0) {
@@ -477,8 +476,8 @@ class CommentList extends Extension
             return false;
         }
 
-        $window = $config->get_int('comment_window');
-        $max = $config->get_int('comment_limit');
+        $window = $config->get_int(CommentConfig::WINDOW);
+        $max = $config->get_int(CommentConfig::LIMIT);
 
         if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
             $window_sql = "interval $window minute";
@@ -511,7 +510,7 @@ class CommentList extends Extension
     private function is_spam_akismet(string $text): bool
     {
         global $config, $user;
-        $key = $config->get_string('comment_wordpress_key');
+        $key = $config->get_string(CommentConfig::WORDPRESS_KEY);
         if (!is_null($key) && strlen($key) > 0) {
             $comment = [
                 'author'       => $user->name,
@@ -608,7 +607,7 @@ class CommentList extends Extension
         }
 
         // rate-limited external service checks last
-        elseif ($config->get_bool('comment_captcha') && !captcha_check()) {
+        elseif ($config->get_bool(CommentConfig::CAPTCHA) && !captcha_check()) {
             throw new CommentPostingException("Error in captcha");
         } elseif ($user->is_anonymous() && $this->is_spam_akismet($comment)) {
             throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");

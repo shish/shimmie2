@@ -99,7 +99,7 @@ class LoginResult
             );
         } catch (UserNotFound $ex) {
             return new LoginResult(
-                User::by_id($config->get_int("anon_id", 0)),
+                User::by_id($config->get_int(UserPageConfig::ANON_ID, 0)),
                 null,
                 "No user found"
             );
@@ -119,7 +119,7 @@ class LoginResult
             );
         } catch (UserCreationException $ex) {
             return new LoginResult(
-                User::by_id($config->get_int("anon_id", 0)),
+                User::by_id($config->get_int(UserPageConfig::ANON_ID, 0)),
                 null,
                 $ex->getMessage()
             );
@@ -135,14 +135,14 @@ class UserPage extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_bool("login_signup_enabled", true);
-        $config->set_default_int("login_memory", 365);
-        $config->set_default_string("avatar_host", "none");
-        $config->set_default_int("avatar_gravatar_size", 80);
-        $config->set_default_string("avatar_gravatar_default", "");
-        $config->set_default_string("avatar_gravatar_rating", "g");
-        $config->set_default_bool("login_tac_bbcode", true);
-        $config->set_default_bool("user_email_required", false);
+        $config->set_default_bool(UserPageConfig::SIGNUP_ENABLED, true);
+        $config->set_default_int(UserPageConfig::LOGIN_MEMORY, 365);
+        $config->set_default_string(UserPageConfig::AVATAR_HOST, "none");
+        $config->set_default_int(UserPageConfig::AVATAR_GRAVATAR_SIZE, 80);
+        $config->set_default_string(UserPageConfig::AVATAR_GRAVATAR_DEFAULT, "");
+        $config->set_default_string(UserPageConfig::AVATAR_GRAVATAR_RATING, "g");
+        $config->set_default_bool(UserPageConfig::LOGIN_TAC_BBCODE, true);
+        $config->set_default_bool(UserPageConfig::USER_EMAIL_REQUIRED, false);
     }
 
     public function onUserLogin(UserLoginEvent $event): void
@@ -174,7 +174,7 @@ class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/create", method: "GET", permission: Permissions::CREATE_USER)) {
             global $config, $page, $user;
-            if (!$config->get_bool("login_signup_enabled")) {
+            if (!$config->get_bool(UserPageConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled($page);
                 return;
             }
@@ -182,7 +182,7 @@ class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: Permissions::CREATE_USER)) {
             global $config, $page, $user;
-            if (!$config->get_bool("login_signup_enabled")) {
+            if (!$config->get_bool(UserPageConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled($page);
                 return;
             }
@@ -312,7 +312,7 @@ class UserPage extends Extension
 
         if ($event->page_matches("user/{name}")) {
             $display_user = User::by_name($event->get_arg('name'));
-            if ($display_user->id == $config->get_int("anon_id")) {
+            if ($display_user->id == $config->get_int(UserPageConfig::ANON_ID)) {
                 throw new UserNotFound("No such user");
             }
             $e = send_event(new UserPageBuildingEvent($display_user));
@@ -346,7 +346,7 @@ class UserPage extends Extension
         if ($av) {
             $event->add_part($av, 0);
         } elseif (
-            ($config->get_string("avatar_host") == "gravatar") &&
+            ($config->get_string(UserPageConfig::AVATAR_HOST) == "gravatar") &&
             ($user->id == $duser->id)
         ) {
             $event->add_part(
@@ -414,8 +414,8 @@ class UserPage extends Extension
         $sb = $event->panel->create_new_block("User Options");
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
-        $sb->add_bool_option("login_signup_enabled", "Allow new signups", true);
-        $sb->add_bool_option("user_email_required", "Require email address", true);
+        $sb->add_bool_option(UserPageConfig::SIGNUP_ENABLED, "Allow new signups", true);
+        $sb->add_bool_option(UserPageConfig::USER_EMAIL_REQUIRED, "Require email address", true);
         $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
         $sb->add_choice_option(
             "user_loginshowprofile",
@@ -426,9 +426,9 @@ class UserPage extends Extension
             "On log in/out",
             true
         );
-        $sb->add_choice_option("avatar_host", $hosts, "Avatars", true);
+        $sb->add_choice_option(UserPageConfig::AVATAR_HOST, $hosts, "Avatars", true);
 
-        if ($config->get_string("avatar_host") == "gravatar") {
+        if ($config->get_string(UserPageConfig::AVATAR_HOST) == "gravatar") {
             $sb->start_table_row();
             $sb->start_table_cell(2);
             $sb->add_label("<div style='text-align: center'><b>Gravatar Options</b></div>");
@@ -436,7 +436,7 @@ class UserPage extends Extension
             $sb->end_table_row();
 
             $sb->add_choice_option(
-                "avatar_gravatar_type",
+                UserPageConfig::AVATAR_GRAVATAR_TYPE,
                 [
                     'Default' => 'default',
                     'Wavatar' => 'wavatar',
@@ -447,7 +447,7 @@ class UserPage extends Extension
                 true
             );
             $sb->add_choice_option(
-                "avatar_gravatar_rating",
+                UserPageConfig::AVATAR_GRAVATAR_RATING,
                 ['G' => 'g', 'PG' => 'pg', 'R' => 'r', 'X' => 'x'],
                 "Rating",
                 true
@@ -502,7 +502,7 @@ class UserPage extends Extension
         if (!$user->can(Permissions::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (!$config->get_bool("login_signup_enabled") && !$user->can(Permissions::CREATE_OTHER_USER)) {
+        if (!$config->get_bool(UserPageConfig::SIGNUP_ENABLED) && !$user->can(Permissions::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
         if (strlen($name) < 1) {
@@ -530,7 +530,7 @@ class UserPage extends Extension
             // Users who can create other users (ie, admins) are exempt
             // from the email requirement
             !$user->can(Permissions::CREATE_OTHER_USER) &&
-            ($config->get_bool("user_email_required") && empty($event->email))
+            ($config->get_bool(UserPageConfig::USER_EMAIL_REQUIRED) && empty($event->email))
         ) {
             throw new UserCreationException("Email address is required");
         }
@@ -630,11 +630,11 @@ class UserPage extends Extension
     private function page_logout(): void
     {
         global $page, $config;
-        $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int('login_memory'), "/");
+        $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int(UserPageConfig::LOGIN_MEMORY), "/");
         if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
-            $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int('login_memory'), "/");
+            $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int(UserPageConfig::LOGIN_MEMORY), "/");
         }
         log_info("user", "Logged out");
         $page->set_mode(PageMode::REDIRECT);
@@ -760,7 +760,7 @@ class UserPage extends Extension
         } else {
             $database->execute(
                 "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
+                ["new_owner_id" => $config->get_int(UserPageConfig::ANON_ID), "old_owner_id" => $uid]
             );
         }
 

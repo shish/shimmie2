@@ -10,14 +10,14 @@ class CommentListTest extends ShimmiePHPUnitTestCase
     {
         global $config;
         parent::setUp();
-        $config->set_int("comment_limit", 100);
+        $config->set_int(CommentConfig::LIMIT, 100);
         $this->log_out();
     }
 
     public function tearDown(): void
     {
         global $config;
-        $config->set_int("comment_limit", 10);
+        $config->set_int(CommentConfig::LIMIT, 10);
         parent::tearDown();
     }
 
