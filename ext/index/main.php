@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function MicroHTML\rawHTML;
 
-require_once "config.php";
 require_once "events.php";
 
 class Index extends Extension

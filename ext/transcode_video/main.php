@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "config.php";
 /*
 * This is used by the image transcoding code when there is an error while transcoding
 */

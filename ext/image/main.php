@@ -10,8 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function MicroHTML\{INPUT, emptyHTML, STYLE};
 
-require_once "config.php";
-
 /**
  * A class to handle adding / getting / removing image files from the disk.
  */

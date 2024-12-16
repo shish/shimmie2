@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SetupConfig
+class SetupConfig extends ConfigGroup
 {
     public const TITLE = "title";
     public const FRONT_PAGE = "front_page";

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class MediaConfig
+class MediaConfig extends ConfigGroup
 {
     public const FFMPEG_PATH = "media_ffmpeg_path";
     public const FFPROBE_PATH = "media_ffprobe_path";

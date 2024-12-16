@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagListConfig
+class TagListConfig extends ConfigGroup
 {
     public const LENGTH = "tag_list_length";
     public const POPULAR_TAG_LIST_LENGTH = "popular_tag_list_length";

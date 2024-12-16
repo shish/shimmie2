@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class ImageViewCounterConfig
+class ImageViewCounterConfig extends ConfigGroup
 {
     public const VERSION =          'ext_image_view_counter';
 }

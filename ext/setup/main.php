@@ -10,8 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function MicroHTML\rawHTML;
 
-require_once "config.php";
-
 /*
  * Sent when the setup screen's 'set' button has been activated
  */

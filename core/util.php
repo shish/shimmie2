@@ -600,7 +600,8 @@ function _load_core_files(): void
     require_all(array_merge(
         zglob("core/*.php"),
         zglob("core/imageboard/*.php"),
-        zglob("ext/*/info.php")
+        zglob("ext/*/info.php"),
+        zglob("ext/*/config.php"),
     ));
 }
 
