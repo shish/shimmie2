@@ -323,4 +323,17 @@ class DatabaseConfig extends Config
 
 abstract class ConfigGroup
 {
+    public static function get_group_for_entry_by_name(string $name): ?ConfigGroup
+    {
+        foreach (get_subclasses_of(ConfigGroup::class) as $class) {
+            $config = new $class();
+            assert(is_a($config, ConfigGroup::class));
+            foreach ((new \ReflectionClass($class))->getConstants() as $const => $value) {
+                if ($value === $name) {
+                    return $config;
+                }
+            }
+        }
+        return null;
+    }
 }
