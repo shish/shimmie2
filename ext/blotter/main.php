@@ -12,16 +12,16 @@ class Blotter extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_int("blotter_recent", 5);
-        $config->set_default_string("blotter_color", "FF0000");
-        $config->set_default_string("blotter_position", "subheading");
+        $config->set_default_int(BlotterConfig::RECENT, 5);
+        $config->set_default_string(BlotterConfig::COLOR, "FF0000");
+        $config->set_default_string(BlotterConfig::POSITION, "subheading");
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
-        if ($this->get_version("blotter_version") < 1) {
+        if ($this->get_version(BlotterConfig::VERSION) < 1) {
             $database->create_table("blotter", "
                 id SCORE_AIPK,
                 entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -34,11 +34,11 @@ class Blotter extends Extension
                 ["text" => "Installed the blotter extension!", "important" => true]
             );
             log_info("blotter", "Installed tables for blotter extension.");
-            $this->set_version("blotter_version", 2);
+            $this->set_version(BlotterConfig::VERSION, 2);
         }
-        if ($this->get_version("blotter_version") < 2) {
+        if ($this->get_version(BlotterConfig::VERSION) < 2) {
             $database->standardise_boolean("blotter", "important");
-            $this->set_version("blotter_version", 2);
+            $this->set_version(BlotterConfig::VERSION, 2);
         }
     }
 
@@ -110,7 +110,7 @@ class Blotter extends Extension
         global $database, $config;
         $entries = $database->get_all(
             'SELECT * FROM blotter ORDER BY id DESC LIMIT :limit',
-            ["limit" => $config->get_int("blotter_recent", 5)]
+            ["limit" => $config->get_int(BlotterConfig::RECENT, 5)]
         );
         $this->theme->display_blotter($entries);
     }

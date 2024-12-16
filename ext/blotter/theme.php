@@ -41,7 +41,7 @@ class BlotterTheme extends Themelet
     {
         global $page, $config;
         $html = $this->get_html_for_blotter($entries);
-        $position = $config->get_string("blotter_position", "subheading");
+        $position = $config->get_string(BlotterConfig::POSITION, "subheading");
         $page->add_block(new Block(null, rawHTML($html), $position, 20));
     }
 
@@ -127,7 +127,7 @@ class BlotterTheme extends Themelet
          * This one displays a list of all blotter entries.
          */
         global $config;
-        $i_color = $config->get_string("blotter_color", "#FF0000");
+        $i_color = $config->get_string(BlotterConfig::COLOR, "#FF0000");
         $html = "<pre>";
 
         $num_entries = count($entries);
@@ -158,8 +158,8 @@ class BlotterTheme extends Themelet
     private function get_html_for_blotter(array $entries): string
     {
         global $config;
-        $i_color = $config->get_string("blotter_color", "#FF0000");
-        $position = $config->get_string("blotter_position", "subheading");
+        $i_color = $config->get_string(BlotterConfig::COLOR, "#FF0000");
+        $position = $config->get_string(BlotterConfig::POSITION, "subheading");
         $entries_list = "";
         foreach ($entries as $entry) {
             /**

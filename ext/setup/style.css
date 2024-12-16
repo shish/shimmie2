@@ -16,6 +16,10 @@
 	resize: vertical;
 }
 
+.advanced_settings INPUT {
+	width: 100%;
+}
+
 #Setupmain {
 	box-shadow: none;
 }

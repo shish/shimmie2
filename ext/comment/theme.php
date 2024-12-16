@@ -41,8 +41,8 @@ class CommentListTheme extends Themelet
         // parts for each image
         $position = 10;
 
-        $comment_limit = $config->get_int("comment_list_count", 10);
-        $comment_captcha = $config->get_bool('comment_captcha');
+        $comment_limit = $config->get_int(CommentConfig::LIST_COUNT, 10);
+        $comment_captcha = $config->get_bool(CommentConfig::CAPTCHA);
 
         foreach ($images as $pair) {
             $image = $pair[0];
@@ -222,7 +222,7 @@ class CommentListTheme extends Themelet
                 }
                 #if($user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-                if ($user->can(Permissions::VIEW_IP) || $config->get_bool("comment_samefags_public", false)) {
+                if ($user->can(Permissions::VIEW_IP) || $config->get_bool(CommentConfig::SHOW_REPEAT_ANONS, false)) {
                     if ($this->anon_map[$comment->poster_ip] != $this->anon_id) {
                         $anoncode2 = '<sup>('.$this->anon_map[$comment->poster_ip].')</sup>';
                     }

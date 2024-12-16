@@ -6,6 +6,15 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\INPUT;
+use function MicroHTML\TABLE;
+use function MicroHTML\TBODY;
+use function MicroHTML\TD;
+use function MicroHTML\TEXTAREA;
+use function MicroHTML\TFOOT;
+use function MicroHTML\TH;
+use function MicroHTML\THEAD;
+use function MicroHTML\TR;
 use function MicroHTML\rawHTML;
 
 class SetupTheme extends Themelet
@@ -51,39 +60,57 @@ class SetupTheme extends Themelet
      */
     public function display_advanced(Page $page, array $options): void
     {
-        $h_rows = "";
+        $rows = TBODY();
         ksort($options);
         foreach ($options as $name => $value) {
+            $ext = ConfigGroup::get_group_for_entry_by_name($name);
+            if ($ext) {
+                $ext_name = \Safe\preg_replace("#Shimmie2.(.*)Config#", '$1', $ext::class);
+            } else {
+                $ext_name = "";
+            }
+
             if (is_null($value)) {
                 $value = '';
             }
 
-            $h_name = html_escape($name);
-            $h_value = html_escape((string)$value);
-
-            $h_box = "";
+            $valbox = TD();
             if (is_string($value) && str_contains($value, "\n")) {
-                $h_box .= "<textarea cols='50' rows='4' name='_config_$h_name'>$h_value</textarea>";
+                $valbox->appendChild(TEXTAREA(
+                    ['name' => "_config_$name", 'cols' => 50, 'rows' => 4],
+                    $value,
+                ));
             } else {
-                $h_box .= "<input type='text' name='_config_$h_name' value='$h_value'>";
+                $valbox->appendChild(INPUT(
+                    ['type' => 'text', 'name' => "_config_$name", 'value' => $value],
+                ));
             }
-            $h_box .= "<input type='hidden' name='_type_$h_name' value='string'>";
-            $h_rows .= "<tr><td>$h_name</td><td>$h_box</td></tr>";
+            $valbox->appendChild(INPUT(
+                ['type' => 'hidden', 'name' => '_type_' . $name, 'value' => 'string'],
+            ));
+
+            $rows->appendChild(TR(TD($ext_name), TD($name), $valbox));
         }
 
-        $table = "
-			".make_form(make_link("setup/save"))."
-				<table id='settings' class='zebra'>
-					<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
-					<tbody>$h_rows</tbody>
-					<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>
-				</table>
-			</form>
-			";
+        $table = SHM_SIMPLE_FORM(
+            "setup/save",
+            TABLE(
+                ['id' => 'settings', 'class' => 'zebra advanced_settings'],
+                THEAD(TR(
+                    TH(['width' => '20%'], 'Group'),
+                    TH(['width' => '20%'], 'Name'),
+                    TH('Value'),
+                )),
+                $rows,
+                TFOOT(TR(
+                    TD(["colspan" => 3], INPUT(['type' => 'submit', 'value' => 'Save Settings']))
+                )),
+            )
+        );
 
         $page->set_title("Shimmie Setup");
         $page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
-        $page->add_block(new Block("Setup", rawHTML($table)));
+        $page->add_block(new Block("Setup", $table));
     }
 
     protected function build_navigation(): HTMLElement
