@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class CronUploaderConfig
+class CronUploaderConfig extends ConfigGroup
 {
     public const DEFAULT_PATH = "cron_uploader";
 

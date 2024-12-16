@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class PostTitlesConfig
+class PostTitlesConfig extends ConfigGroup
 {
     public const VERSION = "ext_post_titles_version";
     public const DEFAULT_TO_FILENAME = "post_titles_default_to_filename";

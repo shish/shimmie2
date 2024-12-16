@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "config.php";
 require_once "events/post_title_set_event.php";
 
 class PostTitles extends Extension

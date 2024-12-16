@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TranscodeConfig
+class TranscodeConfig extends ConfigGroup
 {
     public const VERSION = "ext_transcode_version";
     public const ENGINE = "transcode_engine";

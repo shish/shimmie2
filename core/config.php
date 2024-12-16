@@ -320,3 +320,7 @@ class DatabaseConfig extends Config
         $this->database->notify($this->cache_name);
     }
 }
+
+abstract class ConfigGroup
+{
+}

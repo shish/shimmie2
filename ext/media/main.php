@@ -8,7 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-require_once "config.php";
 require_once "events.php";
 require_once "media_engine.php";
 require_once "video_codecs.php";

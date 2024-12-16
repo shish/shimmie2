@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UploadConfig
+class UploadConfig extends ConfigGroup
 {
     public const COUNT = "upload_count";
     public const SIZE = "upload_size";
