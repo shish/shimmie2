@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "config.php";
-
 class CronUploader extends Extension
 {
     /** @var CronUploaderTheme */
