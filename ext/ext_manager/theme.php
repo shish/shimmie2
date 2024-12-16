@@ -123,7 +123,7 @@ class ExtManagerTheme extends Themelet
 
         $page->set_title("Extensions");
         $page->add_block(new Block("Navigation", \MicroHTML\joinHTML(BR(), $cat_html), "left", 0));
-        $page->add_block(new Block("Extension Manager", $form));
+        $page->add_block(new Block(null, $form));
     }
 
     public function display_doc(Page $page, ExtensionInfo $info): void
@@ -154,6 +154,6 @@ class ExtManagerTheme extends Themelet
         $page->set_title("Documentation for {$info->name}");
         $page->set_heading($info->name);
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Documentation", $html));
+        $page->add_block(new Block(null, $html));
     }
 }

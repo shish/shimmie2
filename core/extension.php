@@ -273,6 +273,10 @@ abstract class ExtensionInfo
     }
 }
 
+abstract class ExtensionConfig
+{
+}
+
 /**
  * Class FormatterExtension
  *

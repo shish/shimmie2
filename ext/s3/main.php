@@ -10,8 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function MicroHTML\INPUT;
 
-require_once "config.php";
-
 class S3 extends Extension
 {
     public int $synced = 0;
