@@ -421,6 +421,13 @@ class OuroborosAPI extends Extension
     protected function tagIndex(int $limit, int $page, string $order, string $name, string $name_pattern): void
     {
         global $database, $config;
+
+        // This class will only exist if the tag map plugin is enabled
+        $tags_min = 0;
+        if (class_exists('\Shimmie2\TagMapConfig')) {
+            $tags_min = $config->get_int(TagMapConfig::TAGS_MIN);
+        }
+
         $start = ($page - 1) * $limit;
         switch ($order) {
             case 'name':
@@ -432,7 +439,7 @@ class OuroborosAPI extends Extension
                         WHERE count >= :tags_min
                         ORDER BY LOWER(substr(tag, 1, 1)) LIMIT :start, :max_items
                     ",
-                    ['tags_min' => $config->get_int(TagMapConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
+                    ['tags_min' => $tags_min, 'start' => $start, 'max_items' => $limit]
                 );
                 break;
             case 'count':
@@ -444,7 +451,7 @@ class OuroborosAPI extends Extension
                         WHERE count >= :tags_min
                         ORDER BY count DESC, tag ASC LIMIT :start, :max_items
                     ",
-                    ['tags_min' => $config->get_int(TagMapConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
+                    ['tags_min' => $tags_min, 'start' => $start, 'max_items' => $limit]
                 );
                 break;
         }
