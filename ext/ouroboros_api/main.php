@@ -151,10 +151,7 @@ class OuroborosPost extends _SafeOuroborosImage
             );
         }
         if (array_key_exists('description', $post)) {
-            $this->description = filter_var_ex(
-                $post['description'],
-                FILTER_SANITIZE_STRING
-            );
+            $this->description = $post['description'];
         }
         if (array_key_exists('is_rating_locked', $post)) {
             assert(
@@ -255,7 +252,7 @@ class OuroborosAPI extends Extension
                 // Create
                 $this->tryAuth();
                 if ($user->can(Permissions::CREATE_IMAGE)) {
-                    $md5 = !empty($_REQUEST['md5']) ? filter_var_ex($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
+                    $md5 = isset($_REQUEST['md5']) && preg_match("%^[0-9A-Fa-f]{32}$%", $_REQUEST['md5']) ? strtolower($_REQUEST['md5']) : null;
                     $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                 } else {
                     $this->sendResponse(403, 'You cannot create new posts');
@@ -263,39 +260,37 @@ class OuroborosAPI extends Extension
             } elseif ($event_args == 'post/show') {
                 // Show
                 $this->tryAuth();
-                $id = !empty($_REQUEST['id']) ? (int)filter_var_ex($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
+                $id = int_escape(@$_REQUEST['id']);
                 $this->postShow($id);
             } elseif ($event_args == 'post/index' || $event_args == 'post/list') {
                 // List
                 $this->tryAuth();
-                $limit = !empty($_REQUEST['limit']) ? intval(
-                    filter_var_ex($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
-                ) : 45;
-                $p = !empty($_REQUEST['page']) ? intval(
-                    filter_var_ex($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
-                ) : 1;
-                $tags = !empty($_REQUEST['tags']) ? filter_var_ex($_REQUEST['tags'], FILTER_SANITIZE_STRING) : [];
-                if (is_string($tags)) {
-                    $tags = Tag::explode($tags);
+                $limit = int_escape(@$_REQUEST['limit']);
+                if ($limit <= 0) {
+                    $limit = 45;
                 }
+                $p = int_escape(@$_REQUEST['page']);
+                if ($p <= 0) {
+                    $p = 1;
+                }
+                $tags = Tag::explode(@$_REQUEST['tags'] ?: '');
                 $this->postIndex($limit, $p, $tags);
             } elseif ($event_args == 'tag/index' || $event_args == 'tag/list') {
                 $this->tryAuth();
-                $limit = !empty($_REQUEST['limit']) ? intval(
-                    filter_var_ex($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT)
-                ) : 50;
-                $p = !empty($_REQUEST['page']) ? intval(
-                    filter_var_ex($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
-                ) : 1;
-                $order = (!empty($_REQUEST['order']) && ($_REQUEST['order'] == 'date' || $_REQUEST['order'] == 'count' || $_REQUEST['order'] == 'name')) ? filter_var_ex(
-                    $_REQUEST['order'],
-                    FILTER_SANITIZE_STRING
-                ) : 'date';
-                $name = !empty($_REQUEST['name']) ? filter_var_ex($_REQUEST['name'], FILTER_SANITIZE_STRING) : '';
-                $name_pattern = !empty($_REQUEST['name_pattern']) ? filter_var_ex(
-                    $_REQUEST['name_pattern'],
-                    FILTER_SANITIZE_STRING
-                ) : '';
+                $limit = int_escape(@$_REQUEST['limit']);
+                if ($limit <= 0) {
+                    $limit = 50;
+                }
+                $p = int_escape(@$_REQUEST['page']);
+                if ($p <= 0) {
+                    $p = 1;
+                }
+                $order = @$_REQUEST['order'];
+                if (!in_array($order, ['date', 'count', 'name'])) {
+                    $order = 'date';
+                }
+                $name = @$_REQUEST['name'] ?: '';
+                $name_pattern = @$_REQUEST['name_pattern'] ?: '';
                 $this->tagIndex($limit, $p, $order, $name, $name_pattern);
             }
         } elseif ($event->page_matches('post/show')) {
@@ -335,7 +330,7 @@ class OuroborosAPI extends Extension
         if (
             empty($post->file) &&
             !empty($post->file_url) &&
-            filter_var_ex($post->file_url, FILTER_VALIDATE_URL) !== false
+            filter_var_ex($post->file_url, FILTER_VALIDATE_URL)
         ) {
             // Transload from source
             $meta['file'] = shm_tempnam('transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
