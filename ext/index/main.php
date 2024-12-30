@@ -224,7 +224,7 @@ class Index extends Extension
             $default_order_for_column = \Safe\preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
             $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
             $event->order = "images.$ord $sort";
-        } elseif ($matches = $event->matches("/^order[=|:]random[_]([0-9]{1,4})$/i")) {
+        } elseif ($matches = $event->matches("/^order[=|:]random[_]([0-9]{1,8})$/i")) {
             // requires a seed to avoid duplicates
             // since the tag can't be changed during the parseevent, we instead generate the seed during submit using js
             $seed = (int)$matches[1];
