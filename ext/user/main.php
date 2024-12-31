@@ -413,6 +413,7 @@ class UserPage extends Extension
 
         $hosts = [
             "None" => "none",
+            "Post id" => "post",
             "Gravatar" => "gravatar"
         ];
 
@@ -459,6 +460,15 @@ class UserPage extends Extension
             );
         }
         $sb->end_table();
+    }
+
+    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
+    {
+        global $config;
+        if ($config->get_string("avatar_host") === "post"){
+            $sb = $event->panel->create_new_block("Avatar");
+            $sb->add_int_option("avatar_post_id", 'Avatar post ID: ');
+        }
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void

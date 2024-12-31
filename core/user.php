@@ -238,7 +238,11 @@ class User
     {
         // FIXME: configurable
         global $config;
-        if ($config->get_string("avatar_host") === "gravatar") {
+        $avatar_host = $config->get_string("avatar_host");
+        if ($avatar_host === "post"){
+            return $this->get_avatar_post_link();
+        }
+        elseif ($avatar_host === "gravatar") {
             if (!empty($this->email)) {
                 $hash = md5(strtolower($this->email));
                 $s = $config->get_string("avatar_gravatar_size");
@@ -248,6 +252,21 @@ class User
                 return "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
             }
         }
+        return null;
+    }
+
+    public function get_avatar_post_link() : ?string {
+        global $database;
+        $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$this->id);
+        $id = $user_config->get_int("avatar_post_id");
+        if ($id === 0) {
+            return null;
+        }
+        $image = Image::by_id($id);
+        if ($image) {
+            return $image->get_thumb_link();
+        }
+        $user_config->set_int("avatar_post_id", 0);
         return null;
     }
 
