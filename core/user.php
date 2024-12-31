@@ -259,7 +259,7 @@ class User
         global $database;
         $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$this->id);
         $id = $user_config->get_int("avatar_post_id");
-        if ($id === 0) {
+        if (is_null($id) || $id === 0) {
             return null;
         }
         $image = Image::by_id($id);
