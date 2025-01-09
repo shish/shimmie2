@@ -243,12 +243,7 @@ class CommentListTheme extends Themelet
 			</div>
 			";
         } else {
-            $h_avatar = "";
-            if (!empty($comment->owner_email)) {
-                $hash = md5(strtolower($comment->owner_email));
-                $cb = date("Y-m-d");
-                $h_avatar = "<img alt='avatar' src=\"//www.gravatar.com/avatar/$hash.jpg?cacheBreak=$cb\"><br>";
-            }
+            $h_avatar = $comment->get_owner()->get_avatar_html();
             $h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
             $h_ip = $user->can(Permissions::VIEW_IP) ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
             $h_del = "";
