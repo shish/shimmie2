@@ -20,7 +20,12 @@ namespace Shimmie2;
 function _d(string $name, mixed $value): void
 {
     if (!defined($name)) {
-        define($name, $value);
+        if ($_ENV["SHM_ENV_$name"]) {
+            // fixme: convert from string to appropriate data type
+            define($name, $_ENV["SHM_ENV_$name"]);
+        } else {
+            define($name, $value);
+        }
     }
 }
 
