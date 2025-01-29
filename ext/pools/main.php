@@ -6,18 +6,6 @@ namespace Shimmie2;
 
 use function MicroHTML\{INPUT};
 
-abstract class PoolsConfig
-{
-    public const MAX_IMPORT_RESULTS = "poolsMaxImportResults";
-    public const IMAGES_PER_PAGE = "poolsImagesPerPage";
-    public const LISTS_PER_PAGE = "poolsListsPerPage";
-    public const UPDATED_PER_PAGE = "poolsUpdatedPerPage";
-    public const INFO_ON_VIEW_IMAGE = "poolsInfoOnViewImage";
-    public const ADDER_ON_VIEW_IMAGE = "poolsAdderOnViewImage";
-    public const SHOW_NAV_LINKS = "poolsShowNavLinks";
-    public const AUTO_INCREMENT_ORDER = "poolsAutoIncrementOrder";
-}
-
 class PoolAddPostsEvent extends Event
 {
     public int $pool_id;
@@ -346,8 +334,8 @@ class Pools extends Extension
                 while ($row = $result->fetch()) {
                     $database->execute(
                         "
-                                UPDATE pool_images 
-                                SET image_order=:ord 
+                                UPDATE pool_images
+                                SET image_order=:ord
                                 WHERE pool_id = :pid AND image_id = :iid",
                         ["ord" => $image_order, "pid" => $pool_id, "iid" => (int) $row['image_id']]
                     );

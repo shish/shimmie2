@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class ReverseSearchLinksConfig
-{
-    public const ENABLED_SERVICES = "ext_reverse_search_links_enabled_services";
-}
-
 class ReverseSearchLinks extends Extension
 {
     /** @var ReverseSearchLinksTheme */

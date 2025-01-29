@@ -100,14 +100,6 @@ class WikiPage
     }
 }
 
-abstract class WikiConfig
-{
-    public const TAG_PAGE_TEMPLATE = "wiki_tag_page_template";
-    public const EMPTY_TAGINFO = "wiki_empty_taginfo";
-    public const TAG_SHORTWIKIS = "shortwikis_on_tags";
-    public const ENABLE_REVISIONS = "wiki_revisions";
-}
-
 class Wiki extends Extension
 {
     /** @var WikiTheme */

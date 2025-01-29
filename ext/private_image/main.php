@@ -4,15 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
-abstract class PrivateImageConfig
-{
-    public const VERSION = "ext_private_image_version";
-    public const USER_SET_DEFAULT = "user_private_image_set_default";
-    public const USER_VIEW_DEFAULT = "user_private_image_view_default";
-}
-
 class PrivateImage extends Extension
 {
     /** @var PrivateImageTheme */

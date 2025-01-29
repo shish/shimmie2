@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
-abstract class TrashConfig
-{
-    public const VERSION = "ext_trash_version";
-}
-
 class Trash extends Extension
 {
     /** @var TrashTheme */
