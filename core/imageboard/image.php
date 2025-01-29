@@ -345,22 +345,24 @@ class Image implements \ArrayAccess
     /**
      * Get this image's tags as an array.
      *
-     * @return list<string>
+     * @return array<string>
      */
     #[Field(name: "tags", type: "[string!]!")]
     public function get_tag_array(): array
     {
         global $database;
         if (!isset($this->tag_array)) {
-            $this->tag_array = $database->get_col("
+            $tarr = $database->get_col("
                 SELECT tag
                 FROM image_tags
                 JOIN tags ON image_tags.tag_id = tags.id
                 WHERE image_id=:id
                 ORDER BY tag
             ", ["id" => $this->id]);
-            sort($this->tag_array);
+            sort($tarr);
+            $this->tag_array = $tarr;
         }
+        assert(is_array($this->tag_array));
         return $this->tag_array;
     }
 
