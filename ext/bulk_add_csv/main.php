@@ -87,23 +87,18 @@ class BulkAddCSV extends Extension
         $list = "";
         $csvhandle = \Safe\fopen($csvfile, "r");
 
-        while (($csvdata = fgetcsv($csvhandle, 0, ",")) !== false) {
+        while (($csvdata = \Safe\fgetcsv($csvhandle, 0, ",")) !== false) {
             if (count($csvdata) != 5) {
                 if (strlen($list) > 0) {
                     $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum $csvfile</b><br>".$list);
-                    fclose($csvhandle);
-                    return;
                 } else {
                     $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum $csvfile</b><br>Check <a href=\"" . make_link("ext_doc/bulk_add_csv") . "\">here</a> for the expected format");
-                    fclose($csvhandle);
-                    return;
                 }
+                fclose($csvhandle);
+                return;
             }
-            $fullpath = $csvdata[0];
-            $tags = Tag::explode(trim($csvdata[1]));
-            $source = $csvdata[2];
-            $rating = $csvdata[3];
-            $thumbfile = $csvdata[4];
+            [$fullpath, $tags_string, $source, $rating, $thumbfile] = $csvdata;
+            $tags = Tag::explode(trim($tags_string));
             $shortpath = pathinfo($fullpath, PATHINFO_BASENAME);
             $list .= "<br>".html_escape("$shortpath (".implode(", ", $tags).")... ");
             if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
