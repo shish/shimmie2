@@ -69,12 +69,6 @@ class RatingSetEvent extends Event
     }
 }
 
-abstract class RatingsConfig
-{
-    public const VERSION = "ext_ratings2_version";
-    public const USER_DEFAULTS = "ratings_default";
-}
-
 class Ratings extends Extension
 {
     /** @var RatingsTheme */
