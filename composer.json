@@ -44,7 +44,7 @@
 		"shish/microcrud": "^2.0",
 		"shish/microhtml": "^2.2",
 		"shish/gqla": "^1.0",
-		"shish/safe": "^2.6.2",
+		"thecodingmachine/safe": "dev-pr503",
 		"enshrined/svg-sanitize": "^0.16",
 		"bower-asset/jquery": "^1.12",
 		"bower-asset/jquery-timeago": "^1.5",
