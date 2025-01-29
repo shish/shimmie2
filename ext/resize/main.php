@@ -6,16 +6,6 @@ namespace Shimmie2;
 
 use function MicroHTML\{rawHTML};
 
-abstract class ResizeConfig
-{
-    public const ENABLED = 'resize_enabled';
-    public const UPLOAD = 'resize_upload';
-    public const ENGINE = 'resize_engine';
-    public const DEFAULT_WIDTH = 'resize_default_width';
-    public const DEFAULT_HEIGHT = 'resize_default_height';
-    public const GET_ENABLED = 'resize_get_enabled';
-}
-
 class ImageResizeException extends ServerError
 {
 }

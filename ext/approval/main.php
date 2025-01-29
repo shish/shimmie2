@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class ApprovalConfig
-{
-    public const VERSION = "ext_approval_version";
-    public const IMAGES = "approve_images";
-    public const COMMENTS = "approve_comments";
-}
-
 class Approval extends Extension
 {
     /** @var ApprovalTheme */
