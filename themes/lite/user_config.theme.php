@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\DIV;
+
 class LiteUserConfigTheme extends UserConfigTheme
 {
-    protected function sb_to_html(SetupBlock $block): string
+    protected function sb_to_html(SetupBlock $block): HTMLElement
     {
-        $html = parent::sb_to_html($block);
-        return "<div class='tframe'>$html</div>";
+        return DIV(["class" => "tframe"], parent::sb_to_html($block));
     }
 }
