@@ -51,9 +51,9 @@
 		"bower-asset/js-cookie": "^2.1",
 		"psr/simple-cache": "^1.0",
 		"sabre/cache": "^2.0.1",
-		"naroga/redis-cache": "dev-master",
+		"naroga/redis-cache": "^1.2",
 		"aws/aws-sdk-php": "^3.294",
-		"symfony/console": "6.4.x-dev"
+		"symfony/console": "^7.2"
     },
 
 	"require-dev" : {
