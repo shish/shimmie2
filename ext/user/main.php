@@ -136,6 +136,10 @@ class UserPage extends Extension
     {
         global $config;
         $config->set_default_bool(UserAccountsConfig::SIGNUP_ENABLED, true);
+        $config->set_default_string(
+            UserAccountsConfig::SIGNUP_DISABLED_MESSAGE,
+            "The board admin has disabled the ability to sign up for new accounts"
+        );
         $config->set_default_int(UserAccountsConfig::LOGIN_MEMORY, 365);
         $config->set_default_bool(UserAccountsConfig::LOGIN_TAC_BBCODE, true);
         $config->set_default_bool(UserAccountsConfig::USER_EMAIL_REQUIRED, false);
