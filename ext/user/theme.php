@@ -152,11 +152,12 @@ class UserPageTheme extends Themelet
 
     public function display_signups_disabled(Page $page): void
     {
+        global $config;
         $page->set_title("Signups Disabled");
         $page->add_block(new NavBlock());
         $page->add_block(new Block(
             "Signups Disabled",
-            rawHTML("The board admin has disabled the ability to create new accounts~")
+            rawHTML(format_text($config->get_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE))),
         ));
     }
 
