@@ -6,6 +6,10 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\DIV;
+use function MicroHTML\H3;
+use function MicroHTML\INPUT;
+use function MicroHTML\SECTION;
 use function MicroHTML\rawHTML;
 
 class UserConfigTheme extends Themelet
@@ -47,36 +51,30 @@ class UserConfigTheme extends Themelet
     {
         usort($panel->blocks, "Shimmie2\blockcmp");
 
-        /*
-         * Try and keep the two columns even; count the line breaks in
-         * each an calculate where a block would work best
-         */
-        $setupblock_html = "";
+        $blocks = DIV(["class" => "setupblocks"]);
         foreach ($panel->blocks as $block) {
-            $setupblock_html .= $this->sb_to_html($block);
+            $blocks->appendChild($this->sb_to_html($block));
         }
 
-        $table = "
-			".make_form(make_link("user_config/save"))."
-			    <input type='hidden' name='id' value='".$user->id."'>
-				<div class='setupblocks'>$setupblock_html</div>
-				<input class='setupsubmit' type='submit' value='Save Settings'>
-			</form>
-			";
+        $table = SHM_SIMPLE_FORM(
+            "user_config/save",
+            INPUT(['type' => 'hidden', 'name' => 'id', 'value' => $user->id]),
+            $blocks,
+            INPUT(['class' => 'setupsubmit', 'type' => 'submit', 'value' => 'Save Settings'])
+        );
 
         $page->set_title("User Options");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block(null, rawHTML($table), id: "Setupmain"));
+        $page->add_block(new Block(null, $table, id: "Setupmain"));
         $page->set_mode(PageMode::PAGE);
     }
 
-    protected function sb_to_html(SetupBlock $block): string
+    protected function sb_to_html(SetupBlock $block): HTMLElement
     {
-        return "
-			<section class='setupblock'>
-				<h3>{$block->header}</h3>
-				<div class='blockbody'>{$block->str_body}</div>
-			</section>
-		";
+        return SECTION(
+            ["class" => "setupblock"],
+            H3($block->header),
+            DIV(["class" => "blockbody"], $block->get_html())
+        );
     }
 }

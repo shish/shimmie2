@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
@@ -115,7 +116,7 @@ class SetupPanel
 
 class SetupBlock extends Block
 {
-    public ?string $str_body;
+    public string $str_body;
     public Config $config;
 
     public function __construct(string $title, Config $config)
@@ -123,6 +124,11 @@ class SetupBlock extends Block
         parent::__construct($title, rawHTML(""), "main", 50);
         $this->config = $config;
         $this->str_body = "";
+    }
+
+    public function get_html(): HTMLElement
+    {
+        return rawHTML($this->str_body);
     }
 
     public function add_label(string $text): void
