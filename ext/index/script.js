@@ -34,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		var query = list.getAttribute("data-query");
 		if(query) {
 			list.querySelectorAll(".shm-thumb-link").forEach(function(thumb) {
-				thumb.setAttribute("href", thumb.getAttribute("href") + query);
+				const href = thumb.getAttribute("href");
+				const join = href.indexOf("?") === -1 ? "?" : "&";
+				thumb.setAttribute("href", href + join + query);
 			});
 		}
 	});
