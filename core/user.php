@@ -266,7 +266,7 @@ class User
         if ($image) {
             return $image->get_thumb_link();
         }
-        $user_config->set_int("avatar_post_id", 0);
+        $user_config->delete("avatar_post_id");
         return null;
     }
 
