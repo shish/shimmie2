@@ -413,7 +413,7 @@ class UserPage extends Extension
 
         $hosts = [
             "None" => "none",
-            "Post id" => "post",
+            "Post ID" => "post",
             "Gravatar" => "gravatar"
         ];
 
