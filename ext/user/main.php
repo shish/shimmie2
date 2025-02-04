@@ -465,7 +465,7 @@ class UserPage extends Extension
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
         global $config;
-        if ($config->get_string("avatar_host") === "post"){
+        if ($config->get_string("avatar_host") === "post") {
             $sb = $event->panel->create_new_block("Avatar");
             $sb->add_int_option("avatar_post_id", 'Avatar post ID: ');
         }
