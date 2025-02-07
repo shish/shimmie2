@@ -339,23 +339,19 @@ class UserPage extends Extension
         }
 
         if ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
-            if (!$user->is_anonymous()) {
-                $image_id = int_escape($event->get_arg('image_id'));
-                $this->theme->display_avatar_edit_page($page, $image_id);
-            }
+            $image_id = int_escape($event->get_arg('image_id'));
+            $this->theme->display_avatar_edit_page($page, $image_id);
         }
 
         if ($event->page_matches("save_avatar", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
-            if (!$user->is_anonymous()) {
-                $settings = ConfigSaveEvent::postToSettings($event->POST);
-                send_event(new ConfigSaveEvent($user_config, $settings));
-                $page->flash("Image set as avatar");
-                $page->set_mode(PageMode::REDIRECT);
-                if (key_exists(AvatarConfig::POST_AVATAR_ID, $settings) && is_int($settings[AvatarConfig::POST_AVATAR_ID])) {
-                    $page->set_redirect(make_link("post/view/".$settings[AvatarConfig::POST_AVATAR_ID]));
-                } else {
-                    $page->set_redirect(make_link("user_config"));
-                }
+            $settings = ConfigSaveEvent::postToSettings($event->POST);
+            send_event(new ConfigSaveEvent($user_config, $settings));
+            $page->flash("Image set as avatar");
+            $page->set_mode(PageMode::REDIRECT);
+            if (key_exists(AvatarConfig::POST_AVATAR_ID, $settings) && is_int($settings[AvatarConfig::POST_AVATAR_ID])) {
+                $page->set_redirect(make_link("post/view/".$settings[AvatarConfig::POST_AVATAR_ID]));
+            } else {
+                $page->set_redirect(make_link("user_config"));
             }
         }
     }
@@ -541,7 +537,7 @@ class UserPage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
-        if ($config->get_string(AvatarConfig::HOST) === "post" && !$user->is_anonymous()) {
+        if ($config->get_string(AvatarConfig::HOST) === "post" && $user->can(Permissions::CHANGE_USER_SETTING)) {
             $event->add_button("Set Image As Avatar", "set_avatar/".$event->image->id);
         }
     }
