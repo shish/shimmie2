@@ -47,8 +47,8 @@ class SVGFileHandler extends DataHandlerExtension
             $new_tmpname = shm_tempnam("svg");
             file_put_contents($new_tmpname, $cleanSVG);
             $event->set_tmpname($new_tmpname);
-
             parent::onDataUpload($event);
+            unlink($new_tmpname);
         }
     }
 
