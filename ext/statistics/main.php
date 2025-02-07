@@ -77,12 +77,6 @@ class Statistics extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $sb = $event->panel->create_new_block("Stats Page");
-        $sb->add_longtext_option("stats_text", "<br>Page Text:<br>");
-    }
-
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("stats", new Link('stats'), "Stats");
