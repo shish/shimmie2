@@ -146,8 +146,9 @@ class WikiTheme extends Themelet
 
         $edit = TR();
         if (Wiki::can_edit($user, $page)) {
-            $edit->appendChild(TD(FORM(
-                ["action" => make_link("wiki/$u_title/edit", "revision={$page->revision}")],
+            $edit->appendChild(TD(SHM_SIMPLE_FORM(
+                "wiki/$u_title/edit",
+                INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
                 INPUT(["type" => "submit", "value" => "Edit"])
             )));
         }

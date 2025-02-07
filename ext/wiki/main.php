@@ -182,7 +182,12 @@ class Wiki extends Extension
             $title = $event->get_arg('title');
             $action = $event->get_arg('action');
 
-            if ($action == "save") {
+            if ($action == "edit") {
+                // we're only here because making a form do a GET request is a
+                // pain, so we accept the POST and do a GET redirect
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("wiki/$title/edit"));
+            } elseif ($action == "save") {
                 $rev = int_escape($event->req_POST('revision'));
                 $body = $event->req_POST('body');
                 $lock = $user->can(Permissions::WIKI_ADMIN) && ($event->get_POST('lock') == "on");
