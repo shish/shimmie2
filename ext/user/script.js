@@ -1,6 +1,6 @@
 // only run on the right page
 if (window.location.pathname.startsWith("/set_avatar") // clean urls
-    || /q=([^&#=]*)/.exec(window.location.search)[1].startsWith("set_avatar")) // ?q= urls
+    || window.location.search.startsWith("?q=set_avatar")) // ?q= urls
 {
 let image;
 let zoom_slider;

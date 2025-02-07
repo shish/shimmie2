@@ -1,3 +1,7 @@
+.avatar-editor .avatar-container {
+	border: 2px solid var(--text);
+}
+
 #Statsmain .avatar-container, .avatar-editor .avatar-container{
 	margin: 0 auto;
 	width: min(var(--pavatar-width),192px);
