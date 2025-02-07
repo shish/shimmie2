@@ -97,13 +97,10 @@ function get_memory_limit(): int
     global $config;
 
     // thumbnail generation requires lots of memory
-    $default_limit = 8 * 1024 * 1024;	// 8 MB of memory is PHP's default.
-    $shimmie_limit = $config->get_int(MediaConfig::MEM_LIMIT);
-
-    if ($shimmie_limit < 3 * 1024 * 1024) {
-        // we aren't going to fit, override
-        $shimmie_limit = $default_limit;
-    }
+    $shimmie_limit = max(
+        $config->get_int(MediaConfig::MEM_LIMIT),
+        8 * 1024 * 1024 // don't go below 8MB
+    );
 
     /*
     Get PHP's configured memory limit.
@@ -111,28 +108,23 @@ function get_memory_limit(): int
 
     https://ca2.php.net/manual/en/ini.core.php#ini.memory-limit
     */
-    $memory = parse_shorthand_int(ini_get("memory_limit"));
+    $php_limit = parse_shorthand_int(ini_get("memory_limit"));
 
-    if ($memory == -1) {
-        // No memory limit.
-        // Return the larger of the set limits.
-        return max($shimmie_limit, $default_limit);
-    } else {
-        // PHP has a memory limit set.
-        if ($shimmie_limit > $memory) {
-            // Shimmie wants more memory than what PHP is currently set for.
-
-            // Attempt to set PHP's memory limit.
-            if (ini_set("memory_limit", "$shimmie_limit") === false) {
-                /*  We can't change PHP's limit, oh well, return whatever its currently set to */
-                return $memory;
-            }
-            $memory = parse_shorthand_int(ini_get("memory_limit"));
-        }
-
-        // PHP's memory limit is more than Shimmie needs.
-        return $memory; // return the current setting
+    // If there's no system limit, or the system limit is higher
+    // than what shimmie needs, use shimmie's limit as a soft max
+    if ($php_limit === -1 || $php_limit === null || $php_limit >= $shimmie_limit) {
+        return $shimmie_limit;
     }
+
+    // If the system limit is less than Shimmie needs, try to
+    // raise the limit
+    if (ini_set("memory_limit", "$shimmie_limit") !== false) {
+        $php_limit = parse_shorthand_int(ini_get("memory_limit")) ?? $shimmie_limit;
+    }
+
+    // Whether we managed to raise the limit, or we're stuck with
+    // what we've got, return the current setting
+    return $php_limit;
 }
 
 /**
