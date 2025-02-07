@@ -1,6 +1,6 @@
 TABLE#threadPosts {
 	table-layout:fixed;
-	word-wrap:break-word;
+	overflow-wrap:anywhere;
 	text-align:left;
 	width: 100%;
 }

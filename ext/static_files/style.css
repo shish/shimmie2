@@ -17,6 +17,10 @@ TABLE.form SELECT,
 TABLE.form TEXTAREA,
 TABLE.form BUTTON {width: 100%;}
 
+H1, H2, H3 {
+	overflow-wrap: anywhere;
+}
+
 *[onclick],
 H3[class~="shm-toggler"] {
 	cursor: pointer;

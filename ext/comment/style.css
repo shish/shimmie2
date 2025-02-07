@@ -2,7 +2,7 @@
 .comment {
 	text-align: left;
 	position: relative;
-	word-wrap: break-word;
+	overflow-wrap: anywhere;
 }
 .comment IMG {
 	max-width: 100%;

@@ -1,5 +1,5 @@
 .bbcode {
-	word-break: break-all;
+	overflow-wrap: anywhere;
 }
 .bbcode BLOCKQUOTE {
 	border: 1px solid black;
