@@ -185,19 +185,19 @@ and of course start organising your images :-)
         return emptyHTML(
             H3("Tag Searching"),
             P("Searching is largely based on tags, with a number of special keywords available that allow searching based on properties of the posts."),
-            SHM_COMMAND_EXAMPLE("tagname", 'Returns posts that are tagged with "tagname".'),
-            SHM_COMMAND_EXAMPLE("tagname othertagname", 'Returns posts that are tagged with "tagname" and "othertagme".'),
+            SHM_COMMAND_EXAMPLE("tag_name", 'Returns posts that are tagged with "tag_name".'),
+            SHM_COMMAND_EXAMPLE("tag_name other_tag_name", 'Returns posts that are tagged with "tag_name" and "other_tag_name".'),
             //
             BR(),
             P("Most tags and keywords can be prefaced with a negative sign (-) to indicate that you want to search for posts that do not match something."),
-            SHM_COMMAND_EXAMPLE("-tagname", 'Returns posts that are not tagged with "tagname".'),
-            SHM_COMMAND_EXAMPLE("-tagname -othertagname", 'Returns posts that are not tagged with "tagname" or "othertagname".'),
-            SHM_COMMAND_EXAMPLE("tagname -othertagname", 'Returns posts that are tagged with "tagname", but are not tagged with "othertagname".'),
+            SHM_COMMAND_EXAMPLE("-tag_name", 'Returns posts that are not tagged with "tagname".'),
+            SHM_COMMAND_EXAMPLE("-tag_name -other_tag_name", 'Returns posts that are not tagged with "tag_name" or "other_tag_name".'),
+            SHM_COMMAND_EXAMPLE("tag_name -other_tag_name", 'Returns posts that are tagged with "tag_name", but are not tagged with "other_tag_name".'),
             //
             BR(),
             P('Wildcard searches are possible as well using *.'),
-            SHM_COMMAND_EXAMPLE("tag*", 'Returns posts that are tagged with "tag", "tags", "tagme", "tagname", or anything else that starts with "tag".'),
-            SHM_COMMAND_EXAMPLE("*name", 'Returns posts that are tagged with "name", "tagname", "othertagname" or anything else that ends with "name".'),
+            SHM_COMMAND_EXAMPLE("tag*", 'Returns posts that are tagged with "tag", "tags", "tagme", "tag_name", or anything else that starts with "tag".'),
+            SHM_COMMAND_EXAMPLE("*name", 'Returns posts that are tagged with "name", "tag_name", "other_tag_name" or anything else that ends with "name".'),
             //
             HR(),
             H3("Comparing values (<, <=, >, >=, or =)"),
