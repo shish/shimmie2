@@ -150,6 +150,11 @@ class UserPage extends Extension
         $config->set_default_string(AvatarConfig::GRAVATAR_RATING, "g");
     }
 
+    public function onInitUserConfig(InitUserConfigEvent $event): void
+    {
+        $event->user_config->set_default_int(AvatarConfig::POST_AVATAR_SCALE, 100);
+    }
+
     public function onUserLogin(UserLoginEvent $event): void
     {
         global $user;
@@ -158,7 +163,7 @@ class UserPage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $page, $user;
+        global $config, $database, $page, $user, $user_config;
 
         $this->show_user_info();
 
@@ -326,6 +331,33 @@ class UserPage extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user/" . $user->name));
         }
+
+        if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
+            $image_id = int_escape($event->get_arg('image_id'));
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("set_avatar/$image_id"));
+        }
+
+        if ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
+            if (!$user->is_anonymous()) {
+                $image_id = int_escape($event->get_arg('image_id'));
+                $this->theme->display_avatar_edit_page($page, $image_id);
+            }
+        }
+
+        if ($event->page_matches("save_avatar", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
+            if (!$user->is_anonymous()) {
+                $settings = ConfigSaveEvent::postToSettings($event->POST);
+                send_event(new ConfigSaveEvent($user_config, $settings));
+                $page->flash("Image set as avatar");
+                $page->set_mode(PageMode::REDIRECT);
+                if (key_exists(AvatarConfig::POST_AVATAR_ID, $settings) && is_int($settings[AvatarConfig::POST_AVATAR_ID])) {
+                    $page->set_redirect(make_link("post/view/".$settings[AvatarConfig::POST_AVATAR_ID]));
+                } else {
+                    $page->set_redirect(make_link("user_config"));
+                }
+            }
+        }
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
@@ -464,10 +496,18 @@ class UserPage extends Extension
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
-        global $config;
-        if ($config->get_string("avatar_host") === "post") {
+        global $config, $user_config;
+        if ($config->get_string(AvatarConfig::HOST) === "post") {
             $sb = $event->panel->create_new_block("Avatar");
-            $sb->add_int_option("avatar_post_id", 'Avatar post ID: ');
+            $sb->add_int_option(AvatarConfig::POST_AVATAR_ID, 'Avatar post ID: ');
+            $image_id = $user_config->get_int(AvatarConfig::POST_AVATAR_ID, null);
+            if (!is_null($image_id)) {
+                $sb->add_label("<br><a href=".make_link("set_avatar/$image_id").">Change cropping</a>");
+            }
+            $sb->add_label("<br>Manual position and scale:<br>");
+            $sb->add_int_option(AvatarConfig::POST_AVATAR_SCALE, "scale%: ");
+            $sb->add_int_option(AvatarConfig::POST_AVATAR_X, "X%: ");
+            $sb->add_int_option(AvatarConfig::POST_AVATAR_Y, "Y%: ");
         }
     }
 
@@ -496,6 +536,14 @@ class UserPage extends Extension
             $event->add_link("User Classes", make_link("user_admin/classes"), 98);
         }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
+    }
+
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    {
+        global $user, $config;
+        if ($config->get_string(AvatarConfig::HOST) === "post" && !$user->is_anonymous()) {
+            $event->add_button("Set Image As Avatar", "set_avatar/".$event->image->id);
+        }
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
