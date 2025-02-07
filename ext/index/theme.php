@@ -195,12 +195,9 @@ and of course start organising your images :-)
             SHM_COMMAND_EXAMPLE("tagname -othertagname", 'Returns posts that are tagged with "tagname", but are not tagged with "othertagname".'),
             //
             BR(),
-            P('Wildcard searches are possible as well using * for "any one, more, or none" and ? for "any one".'),
+            P('Wildcard searches are possible as well using *.'),
             SHM_COMMAND_EXAMPLE("tag*", 'Returns posts that are tagged with "tag", "tags", "tagme", "tagname", or anything else that starts with "tag".'),
             SHM_COMMAND_EXAMPLE("*name", 'Returns posts that are tagged with "name", "tagname", "othertagname" or anything else that ends with "name".'),
-            SHM_COMMAND_EXAMPLE("tagn?me", 'Returns posts that are tagged with "tagname", "tagnome", or anything else that starts with "tagn", then has one character, and ends with "me".'),
-            //
-            //
             //
             HR(),
             H3("Comparing values (<, <=, >, >=, or =)"),
@@ -244,8 +241,6 @@ and of course start organising your images :-)
             SHM_COMMAND_EXAMPLE("id=1234", "Find the 1234th thing uploaded."),
             SHM_COMMAND_EXAMPLE("id>1234", "Find more recently posted things."),
             //
-            //
-            //
             HR(),
             H3("Post attributes."),
             P("Searching by MD5 hash."),
@@ -260,8 +255,6 @@ and of course start organising your images :-)
             SHM_COMMAND_EXAMPLE("source=https://google.com/", 'Returns posts with a source of "https://google.com/".'),
             SHM_COMMAND_EXAMPLE("source=any", "Returns posts with a source set."),
             SHM_COMMAND_EXAMPLE("source=none", "Returns posts without a source set."),
-            //
-            //
             //
             HR(),
             H3("Sorting search results"),
