@@ -124,6 +124,10 @@ class ForumTheme extends Themelet
 
         $tbody = TBODY();
         foreach ($posts as $post) {
+            /** @var BuildAvatarEvent $avatar_e */
+            $avatar_e = send_event(new BuildAvatarEvent(User::by_name($post["user_name"])));
+            $avatar = $avatar_e->html;
+
             $current_post++;
 
             $post_number = (($pageNumber - 1) * $posts_per_page) + $current_post;
@@ -148,7 +152,7 @@ class ForumTheme extends Themelet
                             BR(),
                             SUP(["class" => "user_rank"], $post["user_class"]),
                             BR(),
-                            rawHTML(User::by_name($post["user_name"])->get_avatar_html()),
+                            $avatar,
                             BR()
                         ),
                         TD(

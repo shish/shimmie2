@@ -23,10 +23,13 @@ class PostOwnerTheme extends Themelet
         );
         // SHM_POST_INFO returns a TR, let's sneakily append
         // a TD with the avatar in it
+        /** @var BuildAvatarEvent $avatar_e */
+        $avatar_e = send_event(new BuildAvatarEvent($image->get_owner()));
+        $avatar = $avatar_e->html;
         $info->appendChild(
             TD(
                 ["width" => "80px", "rowspan" => "4"],
-                rawHTML($image->get_owner()->get_avatar_html())
+                $avatar
             )
         );
         return $info;

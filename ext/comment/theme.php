@@ -243,7 +243,9 @@ class CommentListTheme extends Themelet
 			</div>
 			";
         } else {
-            $h_avatar = $comment->get_owner()->get_avatar_html();
+            /** @var BuildAvatarEvent $avatar_e */
+            $avatar_e = send_event(new BuildAvatarEvent($comment->get_owner()));
+            $h_avatar = $avatar_e->html;
             $h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
             $h_ip = $user->can(Permissions::VIEW_IP) ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
             $h_del = "";

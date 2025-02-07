@@ -7,9 +7,6 @@ namespace Shimmie2;
 use GQLA\Type;
 use GQLA\Field;
 use GQLA\Query;
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\INPUT;
 
 /**
  * Class User
@@ -218,102 +215,6 @@ class User
         global $database;
         $database->execute("UPDATE users SET email=:email WHERE id=:id", ["email" => $address, "id" => $this->id]);
         log_info("core-user", 'Set email for '.$this->name);
-    }
-
-    /**
-     * Get a snippet of HTML which will render the user's avatar, be that
-     * a local file, a remote file, a gravatar, a something else, etc.
-     */
-    public function get_avatar_html(): string
-    {
-
-        global $config;
-        $avatar_host = $config->get_string(AvatarConfig::HOST);
-        if ($avatar_host === "post") {
-            return $this->get_avatar_post_html();
-        } elseif ($avatar_host === "gravatar") {
-            $url = $this->get_gravatar_url();
-            if (!empty($url)) {
-                return "<img alt='avatar' class=\"avatar gravatar\" src=\"$url\">";
-            }
-        }
-        return "";
-    }
-
-    public function get_avatar_post_html(): string
-    {
-        global $database, $config;
-        $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$this->id);
-        $id = $user_config->get_int(AvatarConfig::POST_AVATAR_ID, 0);
-        if ($id === 0) {
-            return "";
-        }
-        $image = Image::by_id($id);
-        if ($image) {
-            $scale = $user_config->get_int(AvatarConfig::POST_AVATAR_SCALE, 100) / 100;
-            $x = $user_config->get_int(AvatarConfig::POST_AVATAR_X, 0);
-            $y = $user_config->get_int(AvatarConfig::POST_AVATAR_Y, 0);
-
-            $ar = $image->width / $image->height;
-
-            $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT);
-            $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH);
-            $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
-            $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
-
-            $style = "style=\"--pavatar-height:{$h}px;--pavatar-width:{$w}px;\"";
-
-            $url = $image->get_thumb_link();
-            return "<div class='avatar-container' $style>
-                <img alt='avatar' id\"pavatar\" class=\"avatar pavatar\" style=\"transform:scale($scale);translate:$x% $y%;\" src=\"$url\">
-            </div>";
-        }
-        $user_config->delete(AvatarConfig::POST_AVATAR_ID);
-        return "";
-    }
-
-    #[Field(name: "avatar_url")]
-    public function get_avatar_url(): ?string
-    {
-        // FIXME: configurable
-        global $config;
-        $avatar_host = $config->get_string(AvatarConfig::HOST);
-        if ($avatar_host === "post") {
-            return $this->get_avatar_post_url();
-        } elseif ($avatar_host === "gravatar") {
-            return $this->get_gravatar_url();
-        }
-        return null;
-    }
-
-    public function get_gravatar_url(): ?string
-    {
-        global $config;
-        if (!empty($this->email)) {
-            $hash = md5(strtolower($this->email));
-            $s = $config->get_string("avatar_gravatar_size");
-            $d = urlencode($config->get_string("avatar_gravatar_default"));
-            $r = $config->get_string("avatar_gravatar_rating");
-            $cb = date("Y-m-d");
-            return "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
-        }
-        return null;
-    }
-
-    public function get_avatar_post_url(): ?string
-    {
-        global $database;
-        $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$this->id);
-        $id = $user_config->get_int(AvatarConfig::POST_AVATAR_ID, 0);
-        if ($id === 0) {
-            return null;
-        }
-        $image = Image::by_id($id);
-        if ($image) {
-            return $image->get_thumb_link();
-        }
-        $user_config->delete(AvatarConfig::POST_AVATAR_ID);
-        return null;
     }
 
     /**

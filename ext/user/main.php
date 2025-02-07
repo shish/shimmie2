@@ -143,16 +143,6 @@ class UserPage extends Extension
         $config->set_default_int(UserAccountsConfig::LOGIN_MEMORY, 365);
         $config->set_default_bool(UserAccountsConfig::LOGIN_TAC_BBCODE, true);
         $config->set_default_bool(UserAccountsConfig::USER_EMAIL_REQUIRED, false);
-
-        $config->set_default_string(AvatarConfig::HOST, "none");
-        $config->set_default_int(AvatarConfig::GRAVATAR_SIZE, 80);
-        $config->set_default_string(AvatarConfig::GRAVATAR_DEFAULT, "");
-        $config->set_default_string(AvatarConfig::GRAVATAR_RATING, "g");
-    }
-
-    public function onInitUserConfig(InitUserConfigEvent $event): void
-    {
-        $event->user_config->set_default_int(AvatarConfig::POST_AVATAR_SCALE, 100);
     }
 
     public function onUserLogin(UserLoginEvent $event): void
@@ -163,7 +153,7 @@ class UserPage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $page, $user, $user_config;
+        global $config, $database, $page, $user;
 
         $this->show_user_info();
 
@@ -331,29 +321,6 @@ class UserPage extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user/" . $user->name));
         }
-
-        if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
-            $image_id = int_escape($event->get_arg('image_id'));
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("set_avatar/$image_id"));
-        }
-
-        if ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
-            $image_id = int_escape($event->get_arg('image_id'));
-            $this->theme->display_avatar_edit_page($page, $image_id);
-        }
-
-        if ($event->page_matches("save_avatar", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
-            $settings = ConfigSaveEvent::postToSettings($event->POST);
-            send_event(new ConfigSaveEvent($user_config, $settings));
-            $page->flash("Image set as avatar");
-            $page->set_mode(PageMode::REDIRECT);
-            if (key_exists(AvatarConfig::POST_AVATAR_ID, $settings) && is_int($settings[AvatarConfig::POST_AVATAR_ID])) {
-                $page->set_redirect(make_link("post/view/".$settings[AvatarConfig::POST_AVATAR_ID]));
-            } else {
-                $page->set_redirect(make_link("user_config"));
-            }
-        }
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
@@ -375,18 +342,29 @@ class UserPage extends Extension
         }
         $event->add_part("Class: $h_class", 90);
 
-        $av = $duser->get_avatar_html();
+        /** @var BuildAvatarEvent $avatar_e */
+        $avatar_e = send_event(new BuildAvatarEvent($duser));
+        $av = $avatar_e->html;
         if ($av) {
-            $event->add_part($av, 0);
-        } elseif (
-            ($config->get_string(AvatarConfig::HOST) == "gravatar") &&
-            ($user->id == $duser->id)
-        ) {
-            $event->add_part(
-                "No avatar? This gallery uses <a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the" .
-                "<br>same email address here and there to have your avatar synced<br>",
-                0
-            );
+            $event->add_part((string)$av, 0);
+        } else {
+            $part = "";
+            if (Extension::is_enabled(AvatarPostInfo::KEY)) {
+                $part .= "No avatar?<br>You can set any post as avatar by clicking \"Set Image As Avatar\" in the Post Controls on any post." .
+                "<br>Or by setting it manually in your <a href='".make_link("user_config")."'>user config</a>";
+            }
+            if (Extension::is_enabled(AvatarGravatarInfo::KEY)) {
+                if (empty($part)) {
+                    $part .= "<br>No avatar? This gallery uses ";
+                } else {
+                    $part .= "<br>This gallery also uses ";
+                }
+                $part .= "<a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the" .
+                "<br>same email address here and there to have your avatar synced<br>";
+            }
+            if (!empty($part)) {
+                $event->add_part($part, 0);
+            }
         }
     }
 
@@ -439,12 +417,6 @@ class UserPage extends Extension
     {
         global $config;
 
-        $hosts = [
-            "None" => "none",
-            "Post ID" => "post",
-            "Gravatar" => "gravatar"
-        ];
-
         $sb = $event->panel->create_new_block("User Options");
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
@@ -460,51 +432,7 @@ class UserPage extends Extension
             "On log in/out",
             true
         );
-        $sb->add_choice_option(AvatarConfig::HOST, $hosts, "Avatars", true);
-
-        if ($config->get_string(AvatarConfig::HOST) == "gravatar") {
-            $sb->start_table_row();
-            $sb->start_table_cell(2);
-            $sb->add_label("<div style='text-align: center'><b>Gravatar Options</b></div>");
-            $sb->end_table_cell();
-            $sb->end_table_row();
-
-            $sb->add_choice_option(
-                AvatarConfig::GRAVATAR_TYPE,
-                [
-                    'Default' => 'default',
-                    'Wavatar' => 'wavatar',
-                    'Monster ID' => 'monsterid',
-                    'Identicon' => 'identicon'
-                ],
-                "Type",
-                true
-            );
-            $sb->add_choice_option(
-                AvatarConfig::GRAVATAR_RATING,
-                ['G' => 'g', 'PG' => 'pg', 'R' => 'r', 'X' => 'x'],
-                "Rating",
-                true
-            );
-        }
         $sb->end_table();
-    }
-
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
-    {
-        global $config, $user_config;
-        if ($config->get_string(AvatarConfig::HOST) === "post") {
-            $sb = $event->panel->create_new_block("Avatar");
-            $sb->add_int_option(AvatarConfig::POST_AVATAR_ID, 'Avatar post ID: ');
-            $image_id = $user_config->get_int(AvatarConfig::POST_AVATAR_ID, null);
-            if (!is_null($image_id)) {
-                $sb->add_label("<br><a href=".make_link("set_avatar/$image_id").">Change cropping</a>");
-            }
-            $sb->add_label("<br>Manual position and scale:<br>");
-            $sb->add_int_option(AvatarConfig::POST_AVATAR_SCALE, "scale%: ");
-            $sb->add_int_option(AvatarConfig::POST_AVATAR_X, "X%: ");
-            $sb->add_int_option(AvatarConfig::POST_AVATAR_Y, "Y%: ");
-        }
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
@@ -532,14 +460,6 @@ class UserPage extends Extension
             $event->add_link("User Classes", make_link("user_admin/classes"), 98);
         }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
-    }
-
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
-    {
-        global $user, $config;
-        if ($config->get_string(AvatarConfig::HOST) === "post" && $user->can(Permissions::CHANGE_USER_SETTING)) {
-            $event->add_button("Set Image As Avatar", "set_avatar/".$event->image->id);
-        }
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
