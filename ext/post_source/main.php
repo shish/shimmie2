@@ -65,12 +65,13 @@ class PostSource extends Extension
 
         if ($matches = $event->matches("/^(source)[=|:](.*)$/i")) {
             $source = strtolower($matches[2]);
+            $source = preg_replace_ex('/^https?:/', '', $source);
 
             if (\Safe\preg_match("/^(any|none)$/i", $source)) {
                 $not = ($source == "any" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.source IS $not NULL"));
             } else {
-                $event->add_querylet(new Querylet('images.source LIKE :src', ["src" => "%$source%"]));
+                $event->add_querylet(new Querylet('LOWER(images.source) LIKE :src', ["src" => "%$source%"]));
             }
         }
     }
