@@ -28,8 +28,7 @@ abstract class Event
 
 /**
  * A wake-up call for extensions. Upon recieving an InitExtEvent an extension
- * should check that it's database tables are there and install them if not,
- * and set any defaults with Config::set_default_int() and such.
+ * should set any defaults with Config::set_default_int() and such.
  *
  * This event is sent before $user is set to anything
  */
@@ -345,6 +344,13 @@ class LogEvent extends Event
     }
 }
 
+/**
+ * A signal that extensions should check their database tables and update
+ * them if needed. By default this is sent at the start of every request,
+ * but there is a speed_hax option to disable this (which requires that
+ * the admin manually trigger the upgrade via CLI after each software
+ * update)
+ */
 class DatabaseUpgradeEvent extends Event
 {
 }
