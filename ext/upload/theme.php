@@ -43,7 +43,7 @@ class UploadTheme extends Themelet
         $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
         $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
-        $max_total_size = parse_shorthand_int(ini_get('post_max_size') ?: "0");
+        $max_total_size = parse_shorthand_int(ini_get('post_max_size') ?: "0") ?? 0;
         $max_total_kb = to_shorthand_int($max_total_size);
         $upload_list = $this->build_upload_list();
 
@@ -251,7 +251,7 @@ class UploadTheme extends Themelet
 
         $max_size = $config->get_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
-        $max_total_size = parse_shorthand_int(ini_get('post_max_size') ?: "0");
+        $max_total_size = parse_shorthand_int(ini_get('post_max_size') ?: "0") ?? 0;
         $max_total_kb = to_shorthand_int($max_total_size);
 
         // <input type='hidden' name='max_file_size' value='$max_size' />

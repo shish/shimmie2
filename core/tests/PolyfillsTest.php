@@ -105,7 +105,8 @@ class PolyfillsTest extends TestCase
 
     public function test_parse_shorthand_int(): void
     {
-        $this->assertEquals(-1, parse_shorthand_int("foo"));
+        $this->assertEquals(null, parse_shorthand_int("foo"));
+        $this->assertEquals(-1, parse_shorthand_int("-1"));
         $this->assertEquals(33554432, parse_shorthand_int("32M"));
         $this->assertEquals(44441, parse_shorthand_int("43.4KB"));
         $this->assertEquals(1231231231, parse_shorthand_int("1231231231"));
