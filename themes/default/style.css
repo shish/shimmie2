@@ -58,7 +58,6 @@
 H1, H2, H3 {
 	margin: 0;
 	text-align: center;
-	word-break: break-all;
 	/* not sure why top-padding appears visually larger than other padding in headers...
 	reducing top-padding to compensate */
 	padding: calc(var(--block-padding) * 0.5) var(--block-padding) var(--block-padding) var(--block-padding);
