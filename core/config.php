@@ -162,7 +162,11 @@ abstract class Config
      */
     public function get_int(string $name, ?int $default = null): ?int
     {
-        return (int)($this->get($name, $default));
+        $val = $this->get($name, $default);
+        if (is_null($val) || !is_numeric($val)) {
+            return $default;
+        }
+        return (int)$val;
     }
 
     /**
@@ -174,7 +178,11 @@ abstract class Config
      */
     public function get_float(string $name, ?float $default = null): ?float
     {
-        return (float)($this->get($name, $default));
+        $val = $this->get($name, $default);
+        if (is_null($val) || !is_numeric($val)) {
+            return $default;
+        }
+        return (float)$val;
     }
 
     /**
@@ -198,7 +206,11 @@ abstract class Config
      */
     public function get_bool(string $name, ?bool $default = null): ?bool
     {
-        return bool_escape($this->get($name, $default));
+        $val = $this->get($name, $default);
+        if (is_null($val)) {
+            return $default;
+        }
+        return bool_escape($val);
     }
 
     /**
