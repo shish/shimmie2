@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 /**
  * Class Extension
  *
@@ -289,6 +291,27 @@ abstract class FormatterExtension extends Extension
     abstract public function format(string $text): string;
     abstract public function strip(string $text): string;
 }
+
+/**
+ * Class AvatarExtension
+ *
+ * Several extensions have this in common, make a common API.
+ */
+abstract class AvatarExtension extends Extension
+{
+    public function onBuildAvatar(BuildAvatarEvent $event): void
+    {
+        global $cache;
+        $html = $this->avatar_html($event->user);
+        if ($html) {
+            $event->setAvatar($html);
+            $event->stop_processing = true;
+        }
+    }
+
+    abstract public function avatar_html(User $user): HTMLElement|false;
+}
+
 
 /**
  * Class DataHandlerExtension
