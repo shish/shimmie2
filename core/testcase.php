@@ -226,14 +226,14 @@ try {
          * @param list<string> $tags
          * @param int[] $results
          */
-        protected function assert_search_results(array $tags, array $results): void
+        protected function assert_search_results(array $tags, array $results, string $message = ''): void
         {
             $images = Search::find_images(0, null, $tags);
             $ids = [];
             foreach ($images as $image) {
                 $ids[] = $image->id;
             }
-            $this->assertEquals($results, $ids);
+            $this->assertEquals($results, $ids, $message);
         }
 
         protected function assertException(string $type, callable $function): \Exception
