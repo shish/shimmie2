@@ -226,10 +226,49 @@ class User
      */
     public function get_avatar_html(): string
     {
-        $url = $this->get_avatar_url();
-        if (!empty($url)) {
-            return "<img alt='avatar' class=\"avatar gravatar\" src=\"$url\">";
+
+        global $config;
+        $avatar_host = $config->get_string(AvatarConfig::HOST);
+        if ($avatar_host === "post") {
+            return $this->get_avatar_post_html();
+        } elseif ($avatar_host === "gravatar") {
+            $url = $this->get_gravatar_url();
+            if (!empty($url)) {
+                return "<img alt='avatar' class=\"avatar gravatar\" src=\"$url\">";
+            }
         }
+        return "";
+    }
+
+    public function get_avatar_post_html(): string
+    {
+        global $database, $config;
+        $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$this->id);
+        $id = $user_config->get_int(AvatarConfig::POST_AVATAR_ID, 0);
+        if ($id === 0) {
+            return "";
+        }
+        $image = Image::by_id($id);
+        if ($image) {
+            $scale = $user_config->get_int(AvatarConfig::POST_AVATAR_SCALE, 100) / 100;
+            $x = $user_config->get_int(AvatarConfig::POST_AVATAR_X, 0);
+            $y = $user_config->get_int(AvatarConfig::POST_AVATAR_Y, 0);
+
+            $ar = $image->width / $image->height;
+
+            $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT);
+            $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH);
+            $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
+            $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
+
+            $style = "style=\"--pavatar-height:{$h}px;--pavatar-width:{$w}px;\"";
+
+            $url = $image->get_thumb_link();
+            return "<div class='avatar-container' $style>
+                <img alt='avatar' id\"pavatar\" class=\"avatar pavatar\" style=\"transform:scale($scale);translate:$x% $y%;\" src=\"$url\">
+            </div>";
+        }
+        $user_config->delete(AvatarConfig::POST_AVATAR_ID);
         return "";
     }
 
@@ -238,27 +277,34 @@ class User
     {
         // FIXME: configurable
         global $config;
-        $avatar_host = $config->get_string("avatar_host");
+        $avatar_host = $config->get_string(AvatarConfig::HOST);
         if ($avatar_host === "post") {
-            return $this->get_avatar_post_link();
+            return $this->get_avatar_post_url();
         } elseif ($avatar_host === "gravatar") {
-            if (!empty($this->email)) {
-                $hash = md5(strtolower($this->email));
-                $s = $config->get_string("avatar_gravatar_size");
-                $d = urlencode($config->get_string("avatar_gravatar_default"));
-                $r = $config->get_string("avatar_gravatar_rating");
-                $cb = date("Y-m-d");
-                return "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
-            }
+            return $this->get_gravatar_url();
         }
         return null;
     }
 
-    public function get_avatar_post_link(): ?string
+    public function get_gravatar_url(): ?string
+    {
+        global $config;
+        if (!empty($this->email)) {
+            $hash = md5(strtolower($this->email));
+            $s = $config->get_string("avatar_gravatar_size");
+            $d = urlencode($config->get_string("avatar_gravatar_default"));
+            $r = $config->get_string("avatar_gravatar_rating");
+            $cb = date("Y-m-d");
+            return "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
+        }
+        return null;
+    }
+
+    public function get_avatar_post_url(): ?string
     {
         global $database;
         $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$this->id);
-        $id = $user_config->get_int("avatar_post_id", 0);
+        $id = $user_config->get_int(AvatarConfig::POST_AVATAR_ID, 0);
         if ($id === 0) {
             return null;
         }
@@ -266,7 +312,7 @@ class User
         if ($image) {
             return $image->get_thumb_link();
         }
-        $user_config->delete("avatar_post_id");
+        $user_config->delete(AvatarConfig::POST_AVATAR_ID);
         return null;
     }
 
