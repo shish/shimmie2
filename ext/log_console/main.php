@@ -19,7 +19,7 @@ class LogConsole extends Extension
         $sb = $event->panel->create_new_block("Logging (Console)");
         $sb->add_bool_option(LogConsoleConfig::LOG_ACCESS, "Log page requests: ");
         $sb->add_bool_option(LogConsoleConfig::COLOUR, "<br>Log with colour: ");
-        $sb->add_choice_option(LogConsoleConfig::LEVEL, LOGGING_LEVEL_NAMES_TO_LEVELS, "<br>Debug Level: ");
+        $sb->add_choice_option(LogConsoleConfig::LEVEL, LOGGING_LEVEL_NAMES_TO_LEVELS, "<br>Log Level: ");
     }
 
     public function onPageRequest(PageRequestEvent $event): void
