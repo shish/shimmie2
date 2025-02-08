@@ -21,6 +21,7 @@
 	height: min(var(--pavatar-height),96px);
 	max-width: 96px;
 	max-height: 96px;
+	text-align: center;
 }
 
 .avatar {

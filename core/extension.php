@@ -309,7 +309,7 @@ abstract class AvatarExtension extends Extension
         }
     }
 
-    abstract public function avatar_html(User $user): HTMLElement|false;
+    abstract public function avatar_html(User $user): HTMLElement|null;
 }
 
 

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{rawHTML,DIV,IMG,LABEL,INPUT};
+use function MicroHTML\{DIV,IMG,LABEL,INPUT};
 
 class AvatarPostTheme extends Themelet
 {
