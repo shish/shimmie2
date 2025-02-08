@@ -30,14 +30,10 @@ class AvatarPost extends AvatarExtension
             $image_id = int_escape($event->get_arg('image_id'));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("set_avatar/$image_id"));
-        }
-
-        if ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
+        } elseif ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
             $this->theme->display_avatar_edit_page($page, $image_id);
-        }
-
-        if ($event->page_matches("save_avatar", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
+        } elseif ($event->page_matches("save_avatar", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
             $settings = ConfigSaveEvent::postToSettings($event->POST);
             send_event(new ConfigSaveEvent($user_config, $settings));
             $page->flash("Image set as avatar");
@@ -81,18 +77,18 @@ class AvatarPost extends AvatarExtension
         }
     }
 
-    public function avatar_html(User $user): HTMLElement|false
+    public function avatar_html(User $user): HTMLElement|null
     {
-        return cache_get_or_set("Pavatar-{$user->id}", fn () => $this->get_avatar_post_html($user), 60);
+        return cache_get_or_set("Pavatar-{$user->id}", fn () => $this->get_avatar_html($user), 60);
     }
 
-    public function get_avatar_post_html(User $user): HTMLElement|false
+    public function get_avatar_html(User $user): HTMLElement|null
     {
         global $database, $config;
         $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$user->id);
         $id = $user_config->get_int(AvatarPostConfig::AVATAR_ID, 0);
         if ($id === 0) {
-            return false;
+            return null;
         }
         $image = Image::by_id($id);
         if ($image) {
@@ -120,22 +116,6 @@ class AvatarPost extends AvatarExtension
                     "src" => $url
                 ])
             );
-        }
-        $user_config->delete(AvatarPostConfig::AVATAR_ID);
-        return false;
-    }
-
-    public function get_avatar_post_url(User $user): ?string
-    {
-        global $database;
-        $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$user->id);
-        $id = $user_config->get_int(AvatarPostConfig::AVATAR_ID, 0);
-        if ($id === 0) {
-            return null;
-        }
-        $image = Image::by_id($id);
-        if ($image) {
-            return $image->get_thumb_link();
         }
         $user_config->delete(AvatarPostConfig::AVATAR_ID);
         return null;

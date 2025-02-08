@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{rawHTML,emptyHTML,DIV,IMG};
+use function MicroHTML\IMG;
 
 class AvatarGravatar extends AvatarExtension
 {
@@ -26,21 +26,8 @@ class AvatarGravatar extends AvatarExtension
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         global $config;
-
-        $hosts = [
-            "None" => "none",
-            "Post ID" => "post",
-            "Gravatar" => "gravatar"
-        ];
-
         $sb = $event->panel->create_new_block("Gravatar Avatar");
         $sb->start_table();
-        $sb->start_table_row();
-        $sb->start_table_cell(2);
-        $sb->add_label("<div style='text-align: center'><b>Gravatar Options</b></div>");
-        $sb->end_table_cell();
-        $sb->end_table_row();
-
         $sb->add_choice_option(
             AvatarGravatarConfig::GRAVATAR_TYPE,
             [
@@ -62,7 +49,7 @@ class AvatarGravatar extends AvatarExtension
         $sb->end_table();
     }
 
-    public function avatar_html(User $user): HTMLElement|false
+    public function avatar_html(User $user): HTMLElement|null
     {
         global $config;
 
@@ -75,6 +62,6 @@ class AvatarGravatar extends AvatarExtension
             $url = "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
             return IMG(["alt" => "avatar", "class" => "avatar gravatar", "src" => $url]);
         }
-        return false;
+        return null;
     }
 }

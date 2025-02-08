@@ -83,6 +83,17 @@ function stop_image_drag() {
     }
 }
 
+function drag_init() {
+    image.addEventListener('mousedown', start_image_drag);
+    document.addEventListener('mousemove', image_drag);
+    document.addEventListener('mouseup', stop_image_drag);
+
+    // Touch events for mobile
+    image.addEventListener('touchstart', start_image_drag);
+    document.addEventListener('touchmove', image_drag);
+    document.addEventListener('touchend', stop_image_drag);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     zoom_slider = document.getElementById("zoom-slider");
     image = document.getElementById("avatar-edit");
@@ -95,14 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     image.cy = 0;
     image.style.cursor = "grab";
     zoom_init();
-
-    image.addEventListener('mousedown', start_image_drag);
-    document.addEventListener('mousemove', image_drag);
-    document.addEventListener('mouseup', stop_image_drag);
-
-    // Touch events for mobile
-    image.addEventListener('touchstart', start_image_drag);
-    document.addEventListener('touchmove', image_drag);
-    document.addEventListener('touchend', stop_image_drag);
+    drag_init();
 });
 }
