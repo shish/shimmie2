@@ -9,8 +9,6 @@ use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function MicroHTML\rawHTML;
-
 require_once "events.php";
 
 class Index extends Extension
@@ -108,7 +106,7 @@ class Index extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Index Options");
+        $sb = $event->panel->create_new_block("Post List");
         $sb->position = 20;
 
         $sb->add_label("Show ");

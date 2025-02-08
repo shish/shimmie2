@@ -417,7 +417,7 @@ class UserPage extends Extension
     {
         global $config;
 
-        $sb = $event->panel->create_new_block("User Options");
+        $sb = $event->panel->create_new_block("User");
         $sb->start_table();
         $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
         $sb->add_bool_option(UserAccountsConfig::SIGNUP_ENABLED, "Allow new signups", true);
