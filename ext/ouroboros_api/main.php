@@ -353,25 +353,23 @@ class OuroborosAPI extends Extension
             $this->sendResponse(420, self::ERROR_POST_CREATE_MD5);
             return;
         }
-        if (!empty($meta['hash'])) {
-            $img = Image::by_hash($meta['hash']);
-            if (!is_null($img)) {
-                $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
-                if ($handler == ImageConfig::COLLISION_MERGE) {
-                    $postTags = Tag::explode($post->tags);
-                    $merged = array_merge($postTags, $img->get_tag_array());
-                    send_event(new TagSetEvent($img, $merged));
+        $img = Image::by_hash($meta['hash']);
+        if (!is_null($img)) {
+            $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+            if ($handler == ImageConfig::COLLISION_MERGE) {
+                $postTags = Tag::explode($post->tags);
+                $merged = array_merge($postTags, $img->get_tag_array());
+                send_event(new TagSetEvent($img, $merged));
 
-                    // This is really the only thing besides tags we should care
-                    if (!empty($meta['source'])) {
-                        send_event(new SourceSetEvent($img, $meta['source']));
-                    }
-                    $this->sendResponse(200, self::OK_POST_CREATE_UPDATE . ' ID: ' . $img->id);
-                    return;
-                } else {
-                    $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
-                    return;
+                // This is really the only thing besides tags we should care
+                if (!empty($meta['source'])) {
+                    send_event(new SourceSetEvent($img, $meta['source']));
                 }
+                $this->sendResponse(200, self::OK_POST_CREATE_UPDATE . ' ID: ' . $img->id);
+                return;
+            } else {
+                $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
+                return;
             }
         }
         try {

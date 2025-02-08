@@ -82,7 +82,6 @@ class SearchTermParseEvent extends Event
             return null;
         }
         if (\Safe\preg_match($regex, $this->term, $matches)) {
-            // @phpstan-ignore-next-line
             return $matches;
         }
         return null;

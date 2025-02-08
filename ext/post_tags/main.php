@@ -81,7 +81,6 @@ class TagTermCheckEvent extends Event
     {
         $matches = [];
         if (\Safe\preg_match($regex, $this->term, $matches)) {
-            // @phpstan-ignore-next-line
             return $matches;
         }
         return null;
