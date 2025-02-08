@@ -11,7 +11,7 @@ class LogNet extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string("log_net_host", "127.0.0.1:35353");
+        $config->set_default_string(LogNetConfig::HOST, "127.0.0.1:35353");
     }
 
     public function onLog(LogEvent $event): void
@@ -21,7 +21,6 @@ class LogNet extends Extension
         if ($event->priority > 10) {
             $this->count++;
             if ($this->count < 10) {
-                // TODO: colour based on event->priority
                 $username = ($user && $user->name) ? $user->name : "Anonymous";
                 $str = sprintf("%-15s %-10s: %s", get_real_ip(), $username, $event->message);
                 $this->msg($str);
@@ -34,7 +33,7 @@ class LogNet extends Extension
     private function msg(string $data): void
     {
         global $config;
-        $host = $config->get_string("log_net_host");
+        $host = $config->get_string(LogNetConfig::HOST);
 
         if (!$host) {
             return;

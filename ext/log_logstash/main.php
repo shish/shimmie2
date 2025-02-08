@@ -9,7 +9,7 @@ class LogLogstash extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string("log_logstash_host", "127.0.0.1:1234");
+        $config->set_default_string(LogLogstashConfig::HOST, "127.0.0.1:1234");
     }
 
     public function onLog(LogEvent $event): void
@@ -46,7 +46,7 @@ class LogLogstash extends Extension
     {
         global $config;
 
-        $host = $config->get_string("log_logstash_host");
+        $host = $config->get_string(LogLogstashConfig::HOST);
         if (!$host) {
             return;
         }

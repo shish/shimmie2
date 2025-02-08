@@ -45,7 +45,7 @@ class VideoFileHandler extends DataHandlerExtension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Video Options");
+        $sb = $event->panel->create_new_block("Video Handler");
         $sb->start_table();
         $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, "Autoplay", true);
         $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_LOOP, "Loop", true);

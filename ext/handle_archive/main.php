@@ -16,7 +16,7 @@ class ArchiveFileHandler extends DataHandlerExtension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Archive Handler Options");
+        $sb = $event->panel->create_new_block("Archive Handler");
         $sb->add_text_option("archive_tmp_dir", "Temporary folder: ");
         $sb->add_text_option("archive_extract_command", "<br>Extraction command: ");
         $sb->add_label("<br>%f for archive, %d for temporary directory");

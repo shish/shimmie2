@@ -357,7 +357,7 @@ class CommentList extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Comment Options");
+        $sb = $event->panel->create_new_block("Comments");
         $sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments: ");
         $sb->add_label("<br>Limit to ");
         $sb->add_int_option("comment_limit");
