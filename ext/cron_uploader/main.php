@@ -39,13 +39,7 @@ class CronUploader extends Extension
             $sb->start_table();
             $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
             $sb->add_bool_option(CronUploaderConfig::STOP_ON_ERROR, "Stop On Error", true);
-            $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, [
-            LOGGING_LEVEL_NAMES[SCORE_LOG_DEBUG] => SCORE_LOG_DEBUG,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_INFO] => SCORE_LOG_INFO,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_WARNING] => SCORE_LOG_WARNING,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_ERROR] => SCORE_LOG_ERROR,
-            LOGGING_LEVEL_NAMES[SCORE_LOG_CRITICAL] => SCORE_LOG_CRITICAL,
-        ], "Output Log Level: ", true);
+            $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, LOGGING_LEVEL_NAMES_TO_LEVELS, "Output Log Level: ", true);
             $sb->add_bool_option(CronUploaderConfig::INCLUDE_ALL_LOGS, "Include All Logs", true);
             $sb->end_table();
             $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
