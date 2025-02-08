@@ -159,7 +159,7 @@ class ImageIO extends Extension
     {
         global $config;
 
-        $sb = $event->panel->create_new_block("Post Options");
+        $sb = $event->panel->create_new_block("Post Manager");
         $sb->start_table();
         $sb->position = 30;
         // advanced only
