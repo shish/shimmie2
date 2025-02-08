@@ -16,14 +16,6 @@ class LogConsole extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $fp = @fopen("/dev/tty", "w");
-        if ($fp) {
-            fclose($fp);
-        } else {
-            $sb = $event->panel->create_new_block("Logging (Console)");
-            $sb->add_label("This extension requires a terminal (<code>/dev/tty</code>) to work.<br>If you're using docker, add the <code>-t</code> flag to your <code>docker run</code> command.");
-            return;
-        }
         $sb = $event->panel->create_new_block("Logging (Console)");
         $sb->add_bool_option(LogConsoleConfig::LOG_ACCESS, "Log page requests: ");
         $sb->add_bool_option(LogConsoleConfig::COLOUR, "<br>Log with colour: ");
@@ -95,7 +87,7 @@ class LogConsole extends Extension
             $str = "$str\n";
         }
         if (!defined("UNITTEST") && PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
-            $fp = @fopen("/dev/stdout", "w");
+            $fp = @fopen("php://stdout", "w");
             if ($fp) {
                 fwrite($fp, $str);
                 fclose($fp);
