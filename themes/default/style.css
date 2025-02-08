@@ -163,7 +163,7 @@ UL {
 }
 
 CODE {
-	background: #BBB;
+	background: var(--header);
 	font-size: 0.9rem;
 }
 
