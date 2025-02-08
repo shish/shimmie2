@@ -9,10 +9,6 @@ require_once "events/image_info_box_building_event.php";
 require_once "events/image_info_set_event.php";
 require_once "events/image_admin_block_building_event.php";
 
-use function MicroHTML\TR;
-use function MicroHTML\TH;
-use function MicroHTML\TD;
-
 class ViewPost extends Extension
 {
     /** @var ViewPostTheme */
