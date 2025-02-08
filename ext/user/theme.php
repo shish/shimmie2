@@ -176,11 +176,11 @@ class UserPageTheme extends Themelet
                 TBODY(
                     TR(
                         TH(LABEL(["for" => "user"], "Name")),
-                        TD(INPUT(["id" => "user", "type" => "text", "name" => "user", "autocomplete" => "username"]))
+                        TD(INPUT(["id" => "user", "type" => "text", "name" => "user", "autocomplete" => "username", "required" => true]))
                     ),
                     TR(
                         TH(LABEL(["for" => "pass"], "Password")),
-                        TD(INPUT(["id" => "pass", "type" => "password", "name" => "pass", "autocomplete" => "current-password"]))
+                        TD(INPUT(["id" => "pass", "type" => "password", "name" => "pass", "autocomplete" => "current-password", "required" => true]))
                     )
                 ),
                 TFOOT(
