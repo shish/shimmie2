@@ -2222,16 +2222,16 @@
         },
         {
             "name": "thecodingmachine/safe",
-            "version": "v3.0.0-beta1",
+            "version": "v3.0.0-beta2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thecodingmachine/safe.git",
-                "reference": "9ca504de13245007bfec75b668c1267c5104357c"
+                "reference": "47a1689030ef07e70c58b102aeb969e4373a6afc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thecodingmachine/safe/zipball/9ca504de13245007bfec75b668c1267c5104357c",
-                "reference": "9ca504de13245007bfec75b668c1267c5104357c",
+                "url": "https://api.github.com/repos/thecodingmachine/safe/zipball/47a1689030ef07e70c58b102aeb969e4373a6afc",
+                "reference": "47a1689030ef07e70c58b102aeb969e4373a6afc",
                 "shasum": ""
             },
             "require": {
@@ -2342,7 +2342,7 @@
             "description": "PHP core functions that throw exceptions instead of returning FALSE on error",
             "support": {
                 "issues": "https://github.com/thecodingmachine/safe/issues",
-                "source": "https://github.com/thecodingmachine/safe/tree/v3.0.0-beta1"
+                "source": "https://github.com/thecodingmachine/safe/tree/v3.0.0-beta2"
             },
             "funding": [
                 {
@@ -2358,7 +2358,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T22:54:03+00:00"
+            "time": "2025-02-09T12:26:15+00:00"
         },
         {
             "name": "webonyx/graphql-php",
