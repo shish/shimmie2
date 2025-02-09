@@ -262,7 +262,7 @@ function get_subclasses_of(string $parent): array
 function zglob(string $pattern): array
 {
     $results = [];
-    if (\preg_match('/(.*)\{(.*)\}(.*)/', $pattern, $matches)) {
+    if (\Safe\preg_match('/(.*)\{(.*)\}(.*)/', $pattern, $matches)) {
         $braced = explode(",", $matches[2]);
         foreach ($braced as $b) {
             $sub_pattern = $matches[1].$b.$matches[3];
@@ -459,7 +459,7 @@ function truncate(string $string, int $limit, string $break = " ", string $pad =
  */
 function parse_shorthand_int(string $limit): ?int
 {
-    if (preg_match('/^(-?[\d\.]+)([tgmk])?b?$/i', (string)$limit, $m)) {
+    if (\Safe\preg_match('/^(-?[\d\.]+)([tgmk])?b?$/i', (string)$limit, $m)) {
         $value = (float)$m[1];
         if (isset($m[2])) {
             switch (strtolower($m[2])) {
@@ -554,7 +554,7 @@ function parse_to_milliseconds(string $input): int
     $output = 0;
     $current_multiplier = 1;
 
-    if (preg_match('/^([0-9]+)$/i', $input, $match)) {
+    if (\Safe\preg_match('/^([0-9]+)$/i', $input, $match)) {
         // If just a number, then we treat it as milliseconds
         $length = $match[0];
         if (is_numeric($length)) {
@@ -563,7 +563,7 @@ function parse_to_milliseconds(string $input): int
         }
     } else {
         foreach (TIME_UNITS::CONVERSION as $unit => $conversion) {
-            if (preg_match('/([0-9]+)'.$unit.'/i', $input, $match)) {
+            if (\Safe\preg_match('/([0-9]+)'.$unit.'/i', $input, $match)) {
                 $length = (float)$match[1];
                 $output += $length * $current_multiplier;
             }
@@ -588,7 +588,7 @@ function autodate(string $date, bool $html = true): string
  */
 function isValidDateTime(string $dateTime): bool
 {
-    if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
+    if (\Safe\preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
         if (checkdate((int)$matches[2], (int)$matches[3], (int)$matches[1])) {
             return true;
         }
@@ -602,7 +602,7 @@ function isValidDateTime(string $dateTime): bool
  */
 function isValidDate(string $date): bool
 {
-    if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
+    if (\Safe\preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
         // checkdate wants (month, day, year)
         if (checkdate((int)$matches[2], (int)$matches[3], (int)$matches[1])) {
             return true;
@@ -653,7 +653,7 @@ function validate_input(array $inputs): array
             // @phpstan-ignore-next-line - phpstan thinks $value can never be empty?
             if (strlen($value) < 1) {
                 throw new InvalidInput("Username must be at least 1 character");
-            } elseif (!preg_match('/^[a-zA-Z0-9-_]+$/', $value)) {
+            } elseif (!\Safe\preg_match('/^[a-zA-Z0-9-_]+$/', $value)) {
                 throw new InvalidInput(
                     "Username contains invalid characters. Allowed characters are ".
                     "letters, numbers, dash, and underscore"

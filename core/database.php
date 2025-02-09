@@ -82,7 +82,7 @@ class Database
 
     private function connect_engine(): void
     {
-        if (preg_match("/^([^:]*)/", $this->dsn, $matches)) {
+        if (\Safe\preg_match("/^([^:]*)/", $this->dsn, $matches)) {
             $db_proto = $matches[1];
         } else {
             throw new ServerError("Can't figure out database engine");

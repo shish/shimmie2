@@ -244,7 +244,7 @@ class OuroborosAPI extends Extension
     {
         global $page, $user;
 
-        if (preg_match("%(.*)\.(xml|json)$%", implode('/', $event->args), $matches) === 1) {
+        if (\Safe\preg_match("%(.*)\.(xml|json)$%", implode('/', $event->args), $matches)) {
             $event_args = $matches[1];
             $this->type = $matches[2];
 
@@ -252,7 +252,7 @@ class OuroborosAPI extends Extension
                 // Create
                 $this->tryAuth();
                 if ($user->can(Permissions::CREATE_IMAGE)) {
-                    $md5 = isset($_REQUEST['md5']) && preg_match("%^[0-9A-Fa-f]{32}$%", $_REQUEST['md5']) ? strtolower($_REQUEST['md5']) : null;
+                    $md5 = isset($_REQUEST['md5']) && \Safe\preg_match("%^[0-9A-Fa-f]{32}$%", $_REQUEST['md5']) ? strtolower($_REQUEST['md5']) : null;
                     $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                 } else {
                     $this->sendResponse(403, 'You cannot create new posts');
