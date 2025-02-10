@@ -333,6 +333,28 @@ class DatabaseConfig extends Config
     }
 }
 
+class TempDatabaseConfig extends DatabaseConfig
+{
+    private $snapshot = [];
+
+    public function __construct(Database $database)
+    {
+        parent::__construct($database);
+    }
+
+    public function snapshot(): void
+    {
+        $this->snapshot = $this->values;
+    }
+
+    public function rollback(): void
+    {
+        $this->values = $this->snapshot;
+    }
+
+    protected function save(string $name): void {}
+}
+
 abstract class ConfigGroup
 {
     public static function get_group_for_entry_by_name(string $name): ?ConfigGroup

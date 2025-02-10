@@ -38,7 +38,7 @@ $cache = loadCache(CACHE_DSN);
 $database = new Database(getenv("TEST_DSN") ?: "sqlite::memory:");
 create_dirs();
 create_tables($database);
-$config = new DatabaseConfig($database);
+$config = new TempDatabaseConfig($database);
 _load_extension_files();
 _load_theme_files();
 $page = new Page();
@@ -57,4 +57,5 @@ $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@te
 if ($database->is_transaction_open()) {
     $database->commit();
 }
+$config->snapshot();
 $_tracer->end();

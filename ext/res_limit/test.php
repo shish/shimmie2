@@ -66,18 +66,4 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         });
         $this->assertEquals("Post needs to be in one of these ratios: 16:9", $e->getMessage());
     }
-
-    # reset to defaults, otherwise this can interfere with
-    # other extensions' test suites
-    public function tearDown(): void
-    {
-        global $config;
-        $config->delete("upload_min_height");
-        $config->delete("upload_min_width");
-        $config->delete("upload_max_height");
-        $config->delete("upload_max_width");
-        $config->delete("upload_ratios");
-
-        parent::tearDown();
-    }
 }
