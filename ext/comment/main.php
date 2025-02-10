@@ -546,7 +546,6 @@ class CommentList extends Extension
 			WHERE image_id=:image_id AND comment=:comment
 		", ["image_id" => $image_id, "comment" => $comment]);
     }
-    // do some checks
 
     private function add_comment_wrapper(int $image_id, User $user, string $comment): void
     {
@@ -579,7 +578,7 @@ class CommentList extends Extension
 
         // basic sanity checks
         if (!$user->can(Permissions::CREATE_COMMENT)) {
-            throw new CommentPostingException("Anonymous posting has been disabled");
+            throw new CommentPostingException("You do not have permission to add comments");
         } elseif (is_null(Image::by_id($image_id))) {
             throw new CommentPostingException("The image does not exist");
         } elseif (trim($comment) == "") {

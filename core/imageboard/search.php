@@ -128,7 +128,11 @@ class Search
 
         if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_int(SpeedHaxConfig::BIG_SEARCH) > 0) {
             $anon_limit = $config->get_int(SpeedHaxConfig::BIG_SEARCH);
-            if (!$user->can(Permissions::BIG_SEARCH) and count($tags) > $anon_limit) {
+            $counted_tags = $tags;
+            // exclude tags which start with "id>", "id<", or "order:id_"
+            // because those are added internally for post/next and post/prev
+            $counted_tags = array_filter($counted_tags, fn ($tag) => !\Safe\preg_match("/^id[><]|^order:id_/", $tag));
+            if (!$user->can(Permissions::BIG_SEARCH) and count($counted_tags) > $anon_limit) {
                 throw new PermissionDenied("Anonymous users may only search for up to $anon_limit tags at a time");
             }
         }
