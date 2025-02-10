@@ -85,7 +85,7 @@ class AvatarPost extends AvatarExtension
     public function get_avatar_html(User $user): HTMLElement|null
     {
         global $database, $config;
-        $user_config = new DatabaseConfig($database, "user_config", "user_id", (string)$user->id);
+        $user_config = UserConfig::get_for_user($user);
         $id = $user_config->get_int(AvatarPostConfig::AVATAR_ID, 0);
         if ($id === 0) {
             return null;
