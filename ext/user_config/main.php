@@ -58,14 +58,13 @@ class UserConfig extends Extension
     {
         global $user_config;
 
-        $user_config = self::get_for_user($event->user->id);
+        $user_config = self::get_for_user($event->user);
     }
 
-    public static function get_for_user(int $id): Config
+    public static function get_for_user(User $user): Config
     {
         global $database;
-        $user = User::by_id($id);
-        $user_config = new DatabaseConfig($database, "user_config", "user_id", "$id");
+        $user_config = new DatabaseConfig($database, "user_config", "user_id", "{$user->id}");
         send_event(new InitUserConfigEvent($user, $user_config));
         return $user_config;
     }
@@ -143,7 +142,7 @@ class UserConfig extends Extension
                 throw new PermissionDenied("You do not have permission to change other user's settings");
             }
 
-            $target_config = UserConfig::get_for_user($duser->id);
+            $target_config = UserConfig::get_for_user($duser);
             send_event(new ConfigSaveEvent($target_config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
