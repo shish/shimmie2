@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-_d("STATSD_HOST", null);
-
 class StatsDInterface extends Extension
 {
     /** @var array<string, string> */
@@ -28,6 +26,8 @@ class StatsDInterface extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
+        global $config;
+
         $this->_stats("overall");
 
         if ($event->page_starts_with("post/view")) {  # 40%
@@ -46,9 +46,9 @@ class StatsDInterface extends Extension
             $this->_stats("other");
         }
 
-        // @phpstan-ignore-next-line
-        if (STATSD_HOST) {
-            $this->send(STATSD_HOST, StatsDInterface::$stats, 1.0);
+        $host = $config->get_string("statsd_host", null);
+        if (!is_null($host)) {
+            $this->send($host, StatsDInterface::$stats, 1.0);
         }
 
         StatsDInterface::$stats = [];
