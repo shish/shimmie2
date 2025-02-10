@@ -13,5 +13,8 @@ parameters:
     - STATSD_HOST
     - TRACE_FILE
     - UNITTEST
-#includes:
-#  - ../vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
+  ignoreErrors:
+    -
+      message: '#Function .* is unsafe to use.*$#'
+includes:
+  - ../vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon

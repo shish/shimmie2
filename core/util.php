@@ -378,7 +378,7 @@ function path_to_tags(string $path): array
 {
     $matches = [];
     $tags = [];
-    if (preg_match("/\d+ - (.+)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
+    if (\Safe\preg_match("/\d+ - (.+)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
         $tags = explode(" ", $matches[1]);
     }
 
@@ -805,7 +805,7 @@ function shm_tempnam(string $prefix = ""): string
 function load_balance_url(string $tmpl, string $hash, int $n = 0): string
 {
     $matches = [];
-    if (preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
+    if (\Safe\preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
         $pre = $matches[1];
         $opts = $matches[2];
         $post = $matches[3];
