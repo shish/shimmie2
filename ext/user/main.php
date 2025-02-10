@@ -347,7 +347,7 @@ class UserPage extends Extension
         $av = $avatar_e->html;
         if ($av) {
             $event->add_part((string)$av, 0);
-        } else {
+        } elseif ($duser->id == $user->id) {
             $part = "";
             if (Extension::is_enabled(AvatarPostInfo::KEY)) {
                 $part .= "No avatar?<br>You can set any post as avatar by clicking \"Set Image As Avatar\" in the Post Controls on any post." .
