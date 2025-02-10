@@ -13,8 +13,7 @@ class Biography extends Extension
     {
         global $page, $user;
         $duser = $event->display_user;
-        $duser_config = UserConfig::get_for_user($event->display_user);
-        $bio = $duser_config->get_string("biography", "");
+        $bio = $duser->get_config()->get_string("biography", "");
 
         if ($user->id == $duser->id) {
             $this->theme->display_composer($page, $bio);
@@ -25,11 +24,11 @@ class Biography extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user, $user_config;
+        global $page, $user;
         if ($event->page_matches("biography", method: "POST")) {
             $bio = $event->get_POST('biography');
             log_info("biography", "Set biography to $bio");
-            $user_config->set_string("biography", $bio);
+            $user->get_config()->set_string("biography", $bio);
             $page->flash("Bio Updated");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(referer_or(make_link()));
