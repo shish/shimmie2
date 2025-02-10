@@ -399,7 +399,7 @@ class UserPageTheme extends Themelet
 
             $doc = $perm->getDocComment();
             if ($doc) {
-                $doc = preg_replace_ex('/\/\*\*|\n\s*\*\s*|\*\//', '', $doc);
+                $doc = \Safe\preg_replace('/\/\*\*|\n\s*\*\s*|\*\//', '', $doc);
                 $row->appendChild(TD(["style" => "text-align: left;"], $doc));
             } else {
                 $row->appendChild(TD(""));

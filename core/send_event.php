@@ -21,7 +21,7 @@ function _load_event_listeners(): void
 {
     global $_shm_event_listeners, $config;
 
-    $ver = preg_replace_ex("/[^a-zA-Z0-9\.]/", "_", VERSION);
+    $ver = \Safe\preg_replace("/[^a-zA-Z0-9\.]/", "_", VERSION);
     $key = md5(Extension::get_enabled_extensions_as_string());
 
     $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_EVENT_LISTENERS));

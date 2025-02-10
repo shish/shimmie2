@@ -246,7 +246,7 @@ class Media extends Extension
                 $event->add_querylet(new Querylet("$field = :true", ["true" => true]));
             }
         } elseif ($matches = $event->matches("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i")) {
-            $cmp = preg_replace_ex('/^:/', '=', $matches[1]);
+            $cmp = \Safe\preg_replace('/^:/', '=', $matches[1]);
             $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
             $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
         } elseif ($matches = $event->matches("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i")) {

@@ -59,7 +59,7 @@ class Block
         if (is_null($id)) {
             $id = (empty($header) ? 'unknown' : $header) . $section;
         }
-        $str_id = preg_replace_ex('/[^\w-]/', '', str_replace(' ', '_', $id));
+        $str_id = \Safe\preg_replace('/[^\w-]/', '', str_replace(' ', '_', $id));
         $this->id = $str_id;
     }
 }
