@@ -13,7 +13,7 @@ class Biography extends Extension
     {
         global $page, $user;
         $duser = $event->display_user;
-        $duser_config = UserConfig::get_for_user($event->display_user->id);
+        $duser_config = UserConfig::get_for_user($event->display_user);
         $bio = $duser_config->get_string("biography", "");
 
         if ($user->id == $duser->id) {

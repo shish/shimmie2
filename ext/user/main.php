@@ -386,7 +386,7 @@ class UserPage extends Extension
 
         if (!$user->is_anonymous()) {
             if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
-                $user_config = UserConfig::get_for_user($event->display_user->id);
+                $user_config = UserConfig::get_for_user($event->display_user);
 
                 $uobe = send_event(new UserOperationsBuildingEvent($event->display_user, $user_config));
                 $page->add_block(new Block("Operations", $this->theme->build_operations($event->display_user, $uobe), "main", 60));
