@@ -354,8 +354,7 @@ class Page
                 break;
             case PageMode::REDIRECT:
                 if ($this->flash) {
-                    $this->redirect .= str_contains($this->redirect, "?") ? "&" : "?";
-                    $this->redirect .= "flash=" . url_escape(implode("\n", $this->flash));
+                    $this->redirect = modify_url($this->redirect, ["flash" => implode("\n", $this->flash)]);
                 }
                 header('Location: ' . $this->redirect);
                 print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
