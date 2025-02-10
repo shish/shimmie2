@@ -10,7 +10,7 @@ class TagToolsTest extends ShimmiePHPUnitTestCase
     {
         // Create a problem
         $ts = time(); // we need a tag that hasn't been used before
-        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::ADMIN_NAME)));
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase$ts");
 
         // Validate problem
@@ -39,7 +39,7 @@ class TagToolsTest extends ShimmiePHPUnitTestCase
 
         // Create a problem
         $ts = time(); // we need a tag that hasn't been used before
-        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::ADMIN_NAME)));
         $database->execute(
             "INSERT INTO tags(tag, count) VALUES(:tag, :count)",
             ["tag" => "tes$ts", "count" => 42]

@@ -11,16 +11,16 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase
         // Send from admin to user
         $this->log_in_as_admin();
         send_event(new SendPMEvent(new PM(
-            User::by_name(self::$admin_name)->id,
+            User::by_name(self::ADMIN_NAME)->id,
             "0.0.0.0",
-            User::by_name(self::$user_name)->id,
+            User::by_name(self::USER_NAME)->id,
             "message demo to test",
             "test body"
         )));
 
         // Check that user can see own messages
         $this->log_in_as_user();
-        $this->get_page("user/" . self::$user_name);
+        $this->get_page("user/" . self::USER_NAME);
         $this->assert_text("message demo to test");
 
         // FIXME: read PM
@@ -42,15 +42,15 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase
         // Send from admin to user
         $this->log_in_as_admin();
         send_event(new SendPMEvent(new PM(
-            User::by_name(self::$admin_name)->id,
+            User::by_name(self::ADMIN_NAME)->id,
             "0.0.0.0",
-            User::by_name(self::$user_name)->id,
+            User::by_name(self::USER_NAME)->id,
             "message demo to test",
             "test body"
         )));
 
         // Check that admin can see user's messages
-        $this->get_page("user/" . self::$user_name);
+        $this->get_page("user/" . self::USER_NAME);
         $this->assert_text("message demo to test");
     }
 }

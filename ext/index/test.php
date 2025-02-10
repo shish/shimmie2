@@ -53,7 +53,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     // SOMEWHERE because the default theme doesn't use them.
     public function test_nav(): void
     {
-        send_event(new UserLoginEvent(User::by_name(self::$user_name)));
+        send_event(new UserLoginEvent(User::by_name(self::USER_NAME)));
         $e = send_event(new PageNavBuildingEvent());
         $this->assertGreaterThan(0, count($e->links));
         // just a few common parents

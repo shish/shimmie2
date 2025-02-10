@@ -20,10 +20,9 @@ catch (\Throwable $e) {
 
 abstract class ShimmiePHPUnitTestCase extends TestBase
 {
-    protected static string $anon_name = "anonymous";
-    protected static string $admin_name = "demo";
-    protected static string $user_name = "test";
-    protected string $wipe_time = "test";
+    protected const ANON_NAME = "anonymous";
+    protected const ADMIN_NAME = "demo";
+    protected const USER_NAME = "test";
     /** @var array<string, string> */
     private array $config_snapshot = [];
 
@@ -271,12 +270,12 @@ abstract class ShimmiePHPUnitTestCase extends TestBase
     // user things
     protected static function log_in_as_admin(): void
     {
-        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::ADMIN_NAME)));
     }
 
     protected static function log_in_as_user(): void
     {
-        send_event(new UserLoginEvent(User::by_name(self::$user_name)));
+        send_event(new UserLoginEvent(User::by_name(self::USER_NAME)));
     }
 
     protected static function log_out(): void
