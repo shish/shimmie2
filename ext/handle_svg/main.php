@@ -88,7 +88,7 @@ class SVGFileHandler extends DataHandlerExtension
         }
 
         $msp = new MiniSVGParser($tmpname);
-        return bool_escape($msp->valid);
+        return $msp->valid;
     }
 }
 
@@ -103,7 +103,7 @@ class MiniSVGParser
     {
         $xml_parser = xml_parser_create();
         xml_set_element_handler($xml_parser, [$this, "startElement"], [$this, "endElement"]);
-        $this->valid = bool_escape(xml_parse($xml_parser, \Safe\file_get_contents($file), true));
+        $this->valid = xml_parse($xml_parser, \Safe\file_get_contents($file), true) === 1;
         xml_parser_free($xml_parser);
     }
 

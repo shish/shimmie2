@@ -128,7 +128,7 @@ class Relationships extends Extension
     {
         global $database;
 
-        if (bool_escape($event->image['has_children'])) {
+        if ($event->image['has_children']) {
             $database->execute("UPDATE images SET parent_id = NULL WHERE parent_id = :iid", ["iid" => $event->image->id]);
         }
 
