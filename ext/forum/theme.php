@@ -233,7 +233,7 @@ class ForumTheme extends Themelet
                 TR(
                     TD(
                         ["class" => "left"],
-                        bool_escape($thread["sticky"]) ? "Sticky: " : "",
+                        $thread["sticky"] ? "Sticky: " : "",
                         A(["href" => make_link("forum/view/".$thread["id"])], $title)
                     ),
                     TD(

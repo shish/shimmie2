@@ -333,7 +333,7 @@ function url_escape(?string $input): string
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  */
-function bool_escape(mixed $input): bool
+function bool_escape(string $input): bool
 {
     /*
      Sometimes, I don't like PHP -- this, is one of those times...
@@ -341,26 +341,15 @@ function bool_escape(mixed $input): bool
      Yay for Got'chas!
      https://php.net/manual/en/filter.filters.validate.php
     */
-    if (is_bool($input)) {
-        return $input;
-    } elseif (is_int($input)) {
-        return ($input === 1);
-    } else {
-        $value = filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if (!is_null($value)) {
-            return $value;
-        } else {
-            $input = strtolower(trim($input));
-            return (
-                $input === "y" ||
-                $input === "yes" ||
-                $input === "t" ||
-                $input === "true" ||
-                $input === "on" ||
-                $input === "1"
-            );
-        }
-    }
+    $input = strtolower(trim($input));
+    return (
+        $input === "y" ||
+        $input === "yes" ||
+        $input === "t" ||
+        $input === "true" ||
+        $input === "on" ||
+        $input === "1"
+    );
 }
 
 /**
