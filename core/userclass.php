@@ -7,9 +7,6 @@ namespace Shimmie2;
 use GQLA\Type;
 use GQLA\Field;
 
-/**
- * Class UserClass
- */
 #[Type(name: "UserClass")]
 class UserClass
 {
@@ -92,17 +89,21 @@ new UserClass("admin", null, $_all_true);
 unset($_all_true);
 unset($_all_false);
 
-// Ghost users can't do anything
+// Ghost users can log in and do read-only stuff
+// with their own account, but no writing
 new UserClass("ghost", "base", [
     Permissions::READ_PM => true,
 ]);
 
-// Anonymous users can't do anything by default, but
-// the admin might grant them some permissions
+// Anonymous users can't do anything except sign
+// up to become regular users
 new UserClass("anonymous", "base", [
     Permissions::CREATE_USER => true,
 ]);
 
+// Users can control themselves, upload new content,
+// and do basic edits (tags, source, title) on other
+// people's content
 new UserClass("user", "base", [
     Permissions::BIG_SEARCH => true,
     Permissions::CREATE_IMAGE => true,
@@ -130,6 +131,9 @@ new UserClass("user", "base", [
     Permissions::POOLS_UPDATE => true,
 ]);
 
+// Hellbanning is a special case where a user can do all
+// of the normal user actions, but their posts are hidden
+// from everyone else
 new UserClass("hellbanned", "user", [
     Permissions::HELLBANNED => true,
 ]);
