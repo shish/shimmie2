@@ -23,11 +23,6 @@ function inet_pton_ex(string $ip_address): string
     return false_throws(inet_pton($ip_address));
 }
 
-function dir_ex(string $directory): \Directory
-{
-    return false_throws(dir($directory));
-}
-
 function filter_var_ex(mixed $variable, int $filter = FILTER_DEFAULT, mixed $options = 0): mixed
 {
     return false_throws(filter_var($variable, $filter, $options));

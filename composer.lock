@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b096365aec6dbb8dcd672d052a13a061",
+    "content-hash": "ad98efb89d64a6e7ab898ce96bb09a01",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.339.9",
+            "version": "3.339.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e443779facb8cd0bba30383753a7a451db83acd6"
+                "reference": "85b90f70f88739f4f363c1af7c230e294af3dbd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e443779facb8cd0bba30383753a7a451db83acd6",
-                "reference": "e443779facb8cd0bba30383753a7a451db83acd6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/85b90f70f88739f4f363c1af7c230e294af3dbd0",
+                "reference": "85b90f70f88739f4f363c1af7c230e294af3dbd0",
                 "shasum": ""
             },
             "require": {
@@ -153,16 +153,16 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.339.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.339.10"
             },
-            "time": "2025-02-07T19:14:31+00:00"
+            "time": "2025-02-10T19:24:07+00:00"
         },
         {
             "name": "bower-asset/jquery",
             "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jquery/jquery-dist.git",
+                "url": "git@github.com:jquery/jquery-dist.git",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
