@@ -88,7 +88,7 @@ class TipsTheme extends Themelet
         $html .= "</tr></thead>";
 
         foreach ($tips as $tip) {
-            $tip_enable = bool_escape($tip['enable']) ? "Yes" : "No";
+            $tip_enable = $tip['enable'] ? "Yes" : "No";
             $set_link = "<a href='".make_link("tips/status/".$tip['id'])."'>".$tip_enable."</a>";
 
             $html .= "<tr>".

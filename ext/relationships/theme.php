@@ -40,7 +40,7 @@ class RelationshipsTheme extends Themelet
             $page->add_block(new Block(null, rawHTML($html), "main", 5, "PostRelationshipsParent"));
         }
 
-        if (bool_escape($image['has_children'])) {
+        if ($image['has_children']) {
             $visible_children = Relationships::get_children($image->id);
             if (!empty($visible_children)) {
                 $child_summary_html = "<span>This post has <a href='".make_link('post/list/parent='.$image->id.'/1')."'>".(count($visible_children) > 1 ? "child posts" : "a child post")."</a>";
