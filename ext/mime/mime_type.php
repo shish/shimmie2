@@ -232,7 +232,7 @@ class MimeType
 
         $output = self::OCTET_STREAM;
 
-        $finfo = false_throws(finfo_open(FILEINFO_MIME_TYPE));
+        $finfo = \Safe\finfo_open(FILEINFO_MIME_TYPE);
         $type = finfo_file($finfo, $file);
         finfo_close($finfo);
 
