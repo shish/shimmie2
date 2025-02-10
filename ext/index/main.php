@@ -173,7 +173,7 @@ class Index extends Extension
                 );
 
                 $sql_str = $q->sql;
-                $sql_str = preg_replace_ex("/\s+/", " ", $sql_str);
+                $sql_str = \Safe\preg_replace("/\s+/", " ", $sql_str);
                 foreach ($q->variables as $key => $val) {
                     if (is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);

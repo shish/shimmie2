@@ -65,7 +65,7 @@ class PostSource extends Extension
 
         if ($matches = $event->matches("/^(source)[=|:](.*)$/i")) {
             $source = strtolower($matches[2]);
-            $source = preg_replace_ex('/^https?:/', '', $source);
+            $source = \Safe\preg_replace('/^https?:/', '', $source);
 
             if (\Safe\preg_match("/^(any|none)$/i", $source)) {
                 $not = ($source == "any" ? "NOT" : "");
