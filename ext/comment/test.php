@@ -14,13 +14,6 @@ class CommentListTest extends ShimmiePHPUnitTestCase
         $this->log_out();
     }
 
-    public function tearDown(): void
-    {
-        global $config;
-        $config->set_int(CommentConfig::LIMIT, 10);
-        parent::tearDown();
-    }
-
     public function testCommentsPage(): void
     {
         global $user;
