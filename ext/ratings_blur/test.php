@@ -30,7 +30,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
     public function testRatingBlurGlobalConfig(): void
     {
-        global $config, $user_config;
+        global $config;
 
         // change global setting: don't blur explict, only blur safe
         $config->set_array(RatingsBlurConfig::GLOBAL_DEFAULTS, ["s"]);
@@ -67,14 +67,14 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
     public function testRatingBlurUserConfig(): void
     {
-        global $config, $user_config;
+        global $config, $user;
         // set global default to blur all, so we can test it is overriden
         $config->set_array(RatingsBlurConfig::GLOBAL_DEFAULTS, array_keys(ImageRating::$known_ratings));
 
         $this->log_in_as_user();
 
         // don't blur explict, blur safe
-        $user_config->set_array(RatingsBlurConfig::USER_DEFAULTS, ["s"]);
+        $user->get_config()->set_array(RatingsBlurConfig::USER_DEFAULTS, ["s"]);
 
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
         $image_e = Image::by_id_ex($image_id_e);
@@ -93,7 +93,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->assert_text("blur");
 
         // don't blur any
-        $user_config->set_array(RatingsBlurConfig::USER_DEFAULTS, [RatingsBlurConfig::NULL_OPTION]);
+        $user->get_config()->set_array(RatingsBlurConfig::USER_DEFAULTS, [RatingsBlurConfig::NULL_OPTION]);
 
         $this->get_page("post/list");
         $this->assert_no_text("blur");
@@ -122,10 +122,10 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
     // that it doesn't mess with other unrelated tests
     public function tearDown(): void
     {
-        global $user_config;
+        global $user;
 
         $this->log_in_as_user();
-        $user_config->set_array(RatingsBlurConfig::USER_DEFAULTS, RatingsBlurConfig::DEFAULT_OPTIONS);
+        $user->get_config()->set_array(RatingsBlurConfig::USER_DEFAULTS, RatingsBlurConfig::DEFAULT_OPTIONS);
 
         parent::tearDown();
     }
