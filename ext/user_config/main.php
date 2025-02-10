@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-/** @var Config */
-global $user_config;
-
-
 // The user object doesn't exist until after database setup operations and the first wave of InitExtEvents,
 // so we can't reliably access this data until then. This event is triggered by the system after all of that is done.
 class InitUserConfigEvent extends Event
@@ -54,21 +50,6 @@ class UserConfig extends Extension
         $config->set_default_bool(self::ENABLE_API_KEYS, false);
     }
 
-    public function onUserLogin(UserLoginEvent $event): void
-    {
-        global $user_config;
-
-        $user_config = self::get_for_user($event->user);
-    }
-
-    public static function get_for_user(User $user): Config
-    {
-        global $database;
-        $user_config = new DatabaseConfig($database, "user_config", "user_id", "{$user->id}");
-        send_event(new InitUserConfigEvent($user, $user_config));
-        return $user_config;
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -105,7 +86,7 @@ class UserConfig extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $user, $database, $config, $page, $user_config;
+        global $user, $database, $config, $page;
 
         if ($config->get_bool(self::ENABLE_API_KEYS)) {
             if ($event->get_GET("api_key") && $user->is_anonymous()) {
@@ -121,7 +102,7 @@ class UserConfig extends Extension
             }
 
             if ($event->page_matches("user_admin/reset_api_key", method: "POST")) {
-                $user_config->set_string(self::API_KEY, "");
+                $user->get_config()->set_string(self::API_KEY, "");
 
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
@@ -129,7 +110,7 @@ class UserConfig extends Extension
         }
 
         if ($event->page_matches("user_config", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
-            $uobe = send_event(new UserOptionsBuildingEvent($user, new SetupPanel($user_config)));
+            $uobe = send_event(new UserOptionsBuildingEvent($user, new SetupPanel($user->get_config())));
             $this->theme->display_user_config_page($page, $uobe->user, $uobe->panel);
         }
         if ($event->page_matches("user_config/save", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
@@ -142,8 +123,7 @@ class UserConfig extends Extension
                 throw new PermissionDenied("You do not have permission to change other user's settings");
             }
 
-            $target_config = UserConfig::get_for_user($duser);
-            send_event(new ConfigSaveEvent($target_config, ConfigSaveEvent::postToSettings($event->POST)));
+            send_event(new ConfigSaveEvent($duser->get_config(), ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user_config"));

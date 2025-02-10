@@ -12,7 +12,7 @@ class AvatarPostTheme extends Themelet
 {
     public function display_avatar_edit_page(Page $page, int $image_id): void
     {
-        global $user, $user_config;
+        global $user;
         /** @var BuildAvatarEvent $avatar_e */
         $avatar_e = send_event(new BuildAvatarEvent($user));
         $current = $avatar_e->html;

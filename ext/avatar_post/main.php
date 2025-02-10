@@ -25,7 +25,7 @@ class AvatarPost extends AvatarExtension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user, $user_config;
+        global $page, $user;
         if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
             $page->set_mode(PageMode::REDIRECT);
@@ -35,7 +35,7 @@ class AvatarPost extends AvatarExtension
             $this->theme->display_avatar_edit_page($page, $image_id);
         } elseif ($event->page_matches("save_avatar", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
             $settings = ConfigSaveEvent::postToSettings($event->POST);
-            send_event(new ConfigSaveEvent($user_config, $settings));
+            send_event(new ConfigSaveEvent($user->get_config(), $settings));
             $page->flash("Image set as avatar");
             $page->set_mode(PageMode::REDIRECT);
             if (key_exists(AvatarPostConfig::AVATAR_ID, $settings) && is_int($settings[AvatarPostConfig::AVATAR_ID])) {
@@ -48,10 +48,10 @@ class AvatarPost extends AvatarExtension
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
-        global $config, $user_config;
+        global $config, $user;
         $sb = $event->panel->create_new_block("Avatar");
         $sb->add_int_option(AvatarPostConfig::AVATAR_ID, 'Avatar post ID: ');
-        $image_id = $user_config->get_int(AvatarPostConfig::AVATAR_ID, null);
+        $image_id = $user->get_config()->get_int(AvatarPostConfig::AVATAR_ID, null);
         if (!is_null($image_id)) {
             $sb->add_label("<br><a href=".make_link("set_avatar/$image_id").">Change cropping</a>");
         }
@@ -85,7 +85,7 @@ class AvatarPost extends AvatarExtension
     public function get_avatar_html(User $user): HTMLElement|null
     {
         global $database, $config;
-        $user_config = UserConfig::get_for_user($user);
+        $user_config = $user->get_config();
         $id = $user_config->get_int(AvatarPostConfig::AVATAR_ID, 0);
         if ($id === 0) {
             return null;
