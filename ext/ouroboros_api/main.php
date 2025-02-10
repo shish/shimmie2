@@ -139,37 +139,25 @@ class OuroborosPost extends _SafeOuroborosImage
             $this->rating = $post['rating'];
         }
         if (array_key_exists('source', $post)) {
-            $this->file_url = filter_var_ex(
+            $this->file_url = false_throws(filter_var(
                 urldecode($post['source']),
                 FILTER_SANITIZE_URL
-            );
+            ));
         }
         if (array_key_exists('sourceurl', $post)) {
-            $this->source = filter_var_ex(
+            $this->source = false_throws(filter_var(
                 urldecode($post['sourceurl']),
                 FILTER_SANITIZE_URL
-            );
+            ));
         }
         if (array_key_exists('description', $post)) {
             $this->description = $post['description'];
         }
         if (array_key_exists('is_rating_locked', $post)) {
-            assert(
-                $post['is_rating_locked'] == 'true' ||
-                $post['is_rating_locked'] == 'false' ||
-                $post['is_rating_locked'] == '1' ||
-                $post['is_rating_locked'] == '0'
-            );
-            $this->is_rating_locked = $post['is_rating_locked'];
+            $this->is_rating_locked = bool_escape($post['is_rating_locked']);
         }
         if (array_key_exists('is_note_locked', $post)) {
-            assert(
-                $post['is_note_locked'] == 'true' ||
-                $post['is_note_locked'] == 'false' ||
-                $post['is_note_locked'] == '1' ||
-                $post['is_note_locked'] == '0'
-            );
-            $this->is_note_locked = $post['is_note_locked'];
+            $this->is_note_locked = bool_escape($post['is_note_locked']);
         }
         if (array_key_exists('parent_id', $post)) {
             $this->parent_id = int_escape($post['parent_id']);
@@ -327,11 +315,7 @@ class OuroborosAPI extends Extension
             $meta['rating'] = $post->rating;
         }
         // Check where we should try for the file
-        if (
-            empty($post->file) &&
-            !empty($post->file_url) &&
-            filter_var_ex($post->file_url, FILTER_VALIDATE_URL)
-        ) {
+        if (empty($post->file) && !empty($post->file_url)) {
             // Transload from source
             $meta['file'] = shm_tempnam('transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
             $meta['filename'] = basename($post->file_url);

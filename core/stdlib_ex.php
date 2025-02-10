@@ -28,11 +28,6 @@ function dir_ex(string $directory): \Directory
     return false_throws(dir($directory));
 }
 
-function filter_var_ex(mixed $variable, int $filter = FILTER_DEFAULT, mixed $options = 0): mixed
-{
-    return false_throws(filter_var($variable, $filter, $options));
-}
-
 function preg_replace_ex(string $pattern, string $replacement, string $subject, int $limit = -1): string
 {
     $res = preg_replace($pattern, $replacement, $subject, $limit);
