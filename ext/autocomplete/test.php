@@ -12,7 +12,7 @@ class AutoCompleteTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "link");
         send_event(new AddAliasEvent("prince_zelda", "link"));
 
-        send_event(new UserLoginEvent(User::by_name(self::$anon_name)));
+        $this->log_out();
         $page = $this->get_page('api/internal/autocomplete', ["s" => "not-a-tag"]);
         $this->assertEquals(200, $page->code);
         $this->assertEquals(PageMode::DATA, $page->mode);

@@ -57,7 +57,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
                         'width' => 640,
                         'owner' => [
                             'id' => 'user:' . $image->get_owner()->id,
-                            'name' => self::$user_name,
+                            'name' => self::USER_NAME,
                         ],
                     ],
                 ],
