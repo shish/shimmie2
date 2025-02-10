@@ -28,6 +28,8 @@ class User
     #[Field]
     public UserClass $class;
     private ?Config $config = null;
+    /** @var array<int, User> */
+    private static array $by_id_cache = [];
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     * Initialisation                                               *
@@ -128,6 +130,21 @@ class User
             throw new UserNotFound("Can't find any user with ID $id");
         }
         return new User($row);
+    }
+
+    /**
+     * Fetch a user with in-memory caching, which most internal systems
+     * will ignore and get out-of-sync with the database. This should
+     * only be used in situations where we are dealing with long lists
+     * of read-only users where the same user might appear many times,
+     * eg the comment list on an image page.
+     */
+    public static function by_id_dangerously_cached(int $id): User
+    {
+        if (!array_key_exists($id, self::$by_id_cache)) {
+            self::$by_id_cache[$id] = User::by_id($id);
+        }
+        return self::$by_id_cache[$id];
     }
 
     #[Query(name: "user")]
