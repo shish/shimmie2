@@ -372,7 +372,7 @@ class TranscodeImage extends Extension
 
         $tmp_name = shm_tempnam("transcode");
 
-        $image = false_throws(imagecreatefromstring(\Safe\file_get_contents($source_name)));
+        $image = \Safe\imagecreatefromstring(\Safe\file_get_contents($source_name));
         try {
             $result = false;
             switch ($target_mime) {
