@@ -226,7 +226,7 @@ function get_session_ip(Config $config): string
 {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = get_real_ip();
-    $addr = \Safe\inet_ntop(inet_pton_ex($addr) & inet_pton_ex($mask));
+    $addr = \Safe\inet_ntop(\Safe\inet_pton($addr) & \Safe\inet_pton($mask));
     return $addr;
 }
 
