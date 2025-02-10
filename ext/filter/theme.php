@@ -10,11 +10,11 @@ class FilterTheme extends Themelet
 {
     public function addFilterBox(): void
     {
-        global $config, $page, $user, $user_config;
+        global $config, $page, $user;
 
         // If user is not able to set their own filters, use the default filters.
         if ($user->can(Permissions::CHANGE_USER_SETTING)) {
-            $tags = $user_config->get_string("filter_tags");
+            $tags = $user->get_config()->get_string("filter_tags");
         } else {
             $tags = $config->get_string("filter_tags");
         }

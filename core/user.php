@@ -27,6 +27,7 @@ class User
     public ?string $passhash;
     #[Field]
     public UserClass $class;
+    private ?Config $config = null;
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     * Initialisation                                               *
@@ -56,6 +57,16 @@ class User
         } else {
             throw new ServerError("User '{$this->name}' has invalid class '{$row["class"]}'");
         }
+    }
+
+    public function get_config(): Config
+    {
+        global $database;
+        if (is_null($this->config)) {
+            $this->config = new DatabaseConfig($database, "user_config", "user_id", "{$this->id}");
+            send_event(new InitUserConfigEvent($this, $this->config));
+        }
+        return $this->config;
     }
 
     #[Query]

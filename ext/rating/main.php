@@ -464,10 +464,10 @@ class Ratings extends Extension
      */
     public static function get_user_default_ratings(): array
     {
-        global $user_config, $user;
+        global $user;
 
         $available = self::get_user_class_privs($user);
-        $selected = $user_config->get_array(RatingsConfig::USER_DEFAULTS);
+        $selected = $user->get_config()->get_array(RatingsConfig::USER_DEFAULTS);
 
         return array_intersect($available, $selected);
     }

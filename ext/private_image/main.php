@@ -34,7 +34,7 @@ class PrivateImage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user, $user_config;
+        global $page, $user;
 
         if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: Permissions::SET_PRIVATE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
@@ -68,8 +68,8 @@ class PrivateImage extends Extension
             $set_default = array_key_exists("set_default", $event->POST);
             $view_default = array_key_exists("view_default", $event->POST);
 
-            $user_config->set_bool(PrivateImageConfig::USER_SET_DEFAULT, $set_default);
-            $user_config->set_bool(PrivateImageConfig::USER_VIEW_DEFAULT, $view_default);
+            $user->get_config()->set_bool(PrivateImageConfig::USER_SET_DEFAULT, $set_default);
+            $user->get_config()->set_bool(PrivateImageConfig::USER_VIEW_DEFAULT, $view_default);
 
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user"));
@@ -89,8 +89,8 @@ class PrivateImage extends Extension
     public const SEARCH_REGEXP = "/^private:(yes|no|any)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $user, $user_config;
-        $show_private = $user_config->get_bool(PrivateImageConfig::USER_VIEW_DEFAULT);
+        global $user;
+        $show_private = $user->get_config()->get_bool(PrivateImageConfig::USER_VIEW_DEFAULT);
 
         if (is_null($event->term) && $this->no_private_query($event->context)) {
             if ($show_private) {
@@ -190,8 +190,8 @@ class PrivateImage extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        global $user, $user_config;
-        if ($user_config->get_bool(PrivateImageConfig::USER_SET_DEFAULT) && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
+        global $user;
+        if ($user->get_config()->get_bool(PrivateImageConfig::USER_SET_DEFAULT) && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
             self::privatize_image($event->image->id);
         }
     }

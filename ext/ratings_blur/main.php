@@ -59,9 +59,9 @@ class RatingsBlur extends Extension
 
     public function blur(string $rating): bool
     {
-        global $user_config;
+        global $user;
 
-        $blur_ratings = $user_config->get_array(RatingsBlurConfig::USER_DEFAULTS);
+        $blur_ratings = $user->get_config()->get_array(RatingsBlurConfig::USER_DEFAULTS);
         if (in_array(RatingsBlurConfig::NULL_OPTION, $blur_ratings)) {
             return false;
         }
