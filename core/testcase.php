@@ -24,6 +24,8 @@ abstract class ShimmiePHPUnitTestCase extends TestBase
     protected static string $admin_name = "demo";
     protected static string $user_name = "test";
     protected string $wipe_time = "test";
+    /** @var array<string, string> */
+    private array $config_snapshot = [];
 
     /**
      * Start a DB transaction for each test class
@@ -41,7 +43,7 @@ abstract class ShimmiePHPUnitTestCase extends TestBase
      */
     public function setUp(): void
     {
-        global $database, $_tracer, $page;
+        global $database, $_tracer, $page, $config;
         $_tracer->begin($this->name());
         $_tracer->begin("setUp");
         $class = str_replace("Test", "", get_class($this));
@@ -60,6 +62,7 @@ abstract class ShimmiePHPUnitTestCase extends TestBase
             send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
         }
         $page = new Page();
+        $this->config_snapshot = $config->values;
 
         $_tracer->end();  # setUp
         $_tracer->begin("test");
@@ -67,8 +70,9 @@ abstract class ShimmiePHPUnitTestCase extends TestBase
 
     public function tearDown(): void
     {
-        global $_tracer, $database;
+        global $_tracer, $config, $database;
         $database->execute("ROLLBACK TO test_start");
+        $config->values = $this->config_snapshot;
         $_tracer->end();  # test
         $_tracer->end();  # $this->getName()
     }

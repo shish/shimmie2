@@ -33,11 +33,4 @@ class ApprovalTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
         $this->assert_search_results(["some_tag"], [$image_id]);
     }
-
-    public function tearDown(): void
-    {
-        global $config;
-        $config->set_bool(ApprovalConfig::IMAGES, false);
-        parent::tearDown();
-    }
 }

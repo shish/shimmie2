@@ -107,9 +107,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
     // that it doesn't mess with other unrelated tests
     public function tearDown(): void
     {
-        global $config, $user_config;
-        $config->set_array("ext_rating_user_privs", ["?", "s", "q", "e"]);
-        $config->set_array("ext_rating_anonymous_privs", ["?", "s", "q", "e"]);
+        global $user_config;
 
         $this->log_in_as_user();
         $user_config->set_array(RatingsConfig::USER_DEFAULTS, ["?", "s", "q", "e"]);
