@@ -17,12 +17,6 @@ function false_throws(mixed $x, ?callable $errorgen = null): mixed
     return $x;
 }
 
-# https://github.com/thecodingmachine/safe/pull/428
-function inet_pton_ex(string $ip_address): string
-{
-    return false_throws(inet_pton($ip_address));
-}
-
 function dir_ex(string $directory): \Directory
 {
     return false_throws(dir($directory));
