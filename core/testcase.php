@@ -67,8 +67,9 @@ abstract class ShimmiePHPUnitTestCase extends TestBase
 
     public function tearDown(): void
     {
-        global $_tracer, $database;
+        global $_tracer, $config, $database;
         $database->execute("ROLLBACK TO test_start");
+        $config->rollback();
         $_tracer->end();  # test
         $_tracer->end();  # $this->getName()
     }

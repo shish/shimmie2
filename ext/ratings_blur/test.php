@@ -122,8 +122,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
     // that it doesn't mess with other unrelated tests
     public function tearDown(): void
     {
-        global $config, $user_config;
-        $config->set_array(RatingsBlurConfig::GLOBAL_DEFAULTS, RatingsBlurConfig::DEFAULT_OPTIONS);
+        global $user_config;
 
         $this->log_in_as_user();
         $user_config->set_array(RatingsBlurConfig::USER_DEFAULTS, RatingsBlurConfig::DEFAULT_OPTIONS);

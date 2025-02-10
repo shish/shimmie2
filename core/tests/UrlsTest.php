@@ -281,7 +281,7 @@ class UrlsTest extends TestCase
     public function tearDown(): void
     {
         global $config;
-        $config->set_bool(SetupConfig::NICE_URLS, true);
+        $config->rollback();
         parent::tearDown();
     }
 }
