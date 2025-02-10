@@ -10,14 +10,14 @@ class BiographyTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_user();
         $this->post_page("biography", ["biography" => "My bio goes here"]);
-        $this->get_page("user/" . self::$user_name);
+        $this->get_page("user/" . self::USER_NAME);
         $this->assert_text("My bio goes here");
 
         $this->log_in_as_admin();
-        $this->get_page("user/" . self::$user_name);
+        $this->get_page("user/" . self::USER_NAME);
         $this->assert_text("My bio goes here");
 
-        $this->get_page("user/" . self::$admin_name);
+        $this->get_page("user/" . self::ADMIN_NAME);
         $this->assert_no_text("My bio goes here");
     }
 }
