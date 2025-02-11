@@ -16,8 +16,3 @@ function false_throws(mixed $x, ?callable $errorgen = null): mixed
     }
     return $x;
 }
-
-function dir_ex(string $directory): \Directory
-{
-    return false_throws(dir($directory));
-}
