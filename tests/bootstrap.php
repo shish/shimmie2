@@ -19,6 +19,7 @@ require_once "tests/defines.php";
 require_once "core/sys_config.php";
 require_once "core/polyfills.php";
 require_once "core/util.php";
+require_once "core/tests/ShimmiePHPUnitTestCase.php";
 
 $_SERVER['SCRIPT_FILENAME'] = '/var/www/html/test/index.php';
 $_SERVER['DOCUMENT_ROOT'] = '/var/www/html';
