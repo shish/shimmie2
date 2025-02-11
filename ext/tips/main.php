@@ -112,7 +112,7 @@ class Tips extends Extension
         $data_href = get_base_href();
         $url = $data_href."/ext/tips/images/";
 
-        $dirPath = dir_ex('./ext/tips/images');
+        $dirPath = \Safe\dir('./ext/tips/images');
         $images = [];
         while (($file = $dirPath->read()) !== false) {
             if ($file[0] != ".") {

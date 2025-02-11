@@ -79,7 +79,7 @@ function full_copy(string $source, string $target): void
     if (is_dir($source)) {
         @mkdir($target);
 
-        $d = dir_ex($source);
+        $d = \Safe\dir($source);
 
         while (true) {
             $entry = $d->read();
@@ -805,4 +805,21 @@ function cache_get_or_set(string $key, callable $callback, ?int $ttl = null): mi
         $cache->set($key, $value, $ttl);
     }
     return $value;
+}
+
+/**
+ * @template T
+ * @param T|false $x
+ * @return T
+ */
+function false_throws(mixed $x, ?callable $errorgen = null): mixed
+{
+    if ($x === false) {
+        $msg = "Unexpected false";
+        if ($errorgen) {
+            $msg = $errorgen();
+        }
+        throw new \Exception($msg);
+    }
+    return $x;
 }
