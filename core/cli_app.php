@@ -41,16 +41,16 @@ class CliApp extends \Symfony\Component\Console\Application
             send_event(new UserLoginEvent($user));
         }
 
-        $log_level = SCORE_LOG_WARNING;
+        $log_level = LogLevel::WARNING->value;
         if (true === $input->hasParameterOption(['--quiet', '-q'], true)) {
-            $log_level = SCORE_LOG_ERROR;
+            $log_level = LogLevel::ERROR->value;
         } else {
             if ($input->hasParameterOption('-vvv', true) || $input->hasParameterOption('--verbose=3', true) || 3 === $input->getParameterOption('--verbose', false, true)) {
-                $log_level = SCORE_LOG_DEBUG;
+                $log_level = LogLevel::DEBUG->value;
             } elseif ($input->hasParameterOption('-vv', true) || $input->hasParameterOption('--verbose=2', true) || 2 === $input->getParameterOption('--verbose', false, true)) {
-                $log_level = SCORE_LOG_DEBUG;
+                $log_level = LogLevel::DEBUG->value;
             } elseif ($input->hasParameterOption('-v', true) || $input->hasParameterOption('--verbose=1', true) || $input->hasParameterOption('--verbose', true) || $input->getParameterOption('--verbose', false, true)) {
-                $log_level = SCORE_LOG_INFO;
+                $log_level = LogLevel::INFO->value;
             }
         }
         if (!defined("CLI_LOG_LEVEL")) {
