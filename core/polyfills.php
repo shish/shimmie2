@@ -353,15 +353,6 @@ function bool_escape(string|bool|int $input): bool
 }
 
 /**
- * Some functions require a callback function for escaping,
- * but we might not want to alter the data
- */
-function no_escape(string $input): string
-{
-    return $input;
-}
-
-/**
  * Given a 1-indexed numeric-ish thing, return a zero-indexed
  * number between 0 and $max
  */
