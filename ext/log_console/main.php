@@ -11,7 +11,7 @@ class LogConsole extends Extension
         global $config;
         $config->set_default_bool(LogConsoleConfig::LOG_ACCESS, true);
         $config->set_default_bool(LogConsoleConfig::COLOUR, true);
-        $config->set_default_int(LogConsoleConfig::LEVEL, SCORE_LOG_INFO);
+        $config->set_default_int(LogConsoleConfig::LEVEL, LogLevel::INFO->value);
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
@@ -19,7 +19,7 @@ class LogConsole extends Extension
         $sb = $event->panel->create_new_block("Logging (Console)");
         $sb->add_bool_option(LogConsoleConfig::LOG_ACCESS, "Log page requests: ");
         $sb->add_bool_option(LogConsoleConfig::COLOUR, "<br>Log with colour: ");
-        $sb->add_choice_option(LogConsoleConfig::LEVEL, LOGGING_LEVEL_NAMES_TO_LEVELS, "<br>Log Level: ");
+        $sb->add_choice_option(LogConsoleConfig::LEVEL, LogLevel::names_to_levels(), "<br>Log Level: ");
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -32,7 +32,7 @@ class LogConsole extends Extension
         ) {
             $this->log(new LogEvent(
                 "access",
-                SCORE_LOG_INFO,
+                LogLevel::INFO->value,
                 "{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}"
             ));
         }
@@ -67,19 +67,19 @@ class LogConsole extends Extension
 
         $levelName = "[unknown]";
         $color = "\033[0;35m"; # purple for unknown levels
-        if ($event->priority >= SCORE_LOG_CRITICAL) {
+        if ($event->priority >= LogLevel::CRITICAL->value) {
             $levelName = "[critical]";
             $color = "\033[0;31m"; # red
-        } elseif ($event->priority >= SCORE_LOG_ERROR) {
+        } elseif ($event->priority >= LogLevel::ERROR->value) {
             $levelName = "[error]";
             $color = "\033[0;91m"; # high intensity red
-        } elseif ($event->priority >= SCORE_LOG_WARNING) {
+        } elseif ($event->priority >= LogLevel::WARNING->value) {
             $levelName = "[warning]";
             $color = "\033[0;33m"; # yellow
-        } elseif ($event->priority >= SCORE_LOG_INFO) {
+        } elseif ($event->priority >= LogLevel::INFO->value) {
             $levelName = "[info]";
             $color = ""; # none for info
-        } elseif ($event->priority >= SCORE_LOG_DEBUG) {
+        } elseif ($event->priority >= LogLevel::DEBUG->value) {
             $levelName = "[debug]";
             $color = "\033[0;94m"; # high intensity blue
         }

@@ -118,16 +118,9 @@ class MessageColumn extends Column
             ])
         );
 
-        $options = [
-            "Debug" => SCORE_LOG_DEBUG,
-            "Info" => SCORE_LOG_INFO,
-            "Warning" => SCORE_LOG_WARNING,
-            "Error" => SCORE_LOG_ERROR,
-            "Critical" => SCORE_LOG_CRITICAL,
-        ];
         $s = SELECT(["name" => "r_{$this->name}[]"]);
         $s->appendChild(OPTION(["value" => ""], '-'));
-        foreach ($options as $k => $v) {
+        foreach (LogLevel::names_to_levels() as $k => $v) {
             $attrs = ["value" => $v];
             if ($v == @$inputs["r_{$this->name}"][1]) {
                 $attrs["selected"] = true;
@@ -155,24 +148,14 @@ class MessageColumn extends Column
 
     public function display(array $row): HTMLElement
     {
-        $c = "#000";
-        switch ($row['priority']) {
-            case SCORE_LOG_DEBUG:
-                $c = "#999";
-                break;
-            case SCORE_LOG_INFO:
-                $c = "#000";
-                break;
-            case SCORE_LOG_WARNING:
-                $c = "#800";
-                break;
-            case SCORE_LOG_ERROR:
-                $c = "#C00";
-                break;
-            case SCORE_LOG_CRITICAL:
-                $c = "#F00";
-                break;
-        }
+        $c = match ($row['priority']) {
+            LogLevel::DEBUG->value => "#999",
+            LogLevel::INFO->value => "#000",
+            LogLevel::WARNING->value => "#800",
+            LogLevel::ERROR->value => "#C00",
+            LogLevel::CRITICAL->value => "#F00",
+            default => "#000",
+        };
         return SPAN(["style" => "color: $c"], rawHTML($this->scan_entities($row[$this->name])));
     }
 
@@ -223,7 +206,7 @@ class LogDatabase extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_int("log_db_priority", SCORE_LOG_INFO);
+        $config->set_default_int(LogDatabaseConfig::LEVEL, LogLevel::INFO->value);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -248,7 +231,7 @@ class LogDatabase extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
         $sb = $event->panel->create_new_block("Logging (Database)");
-        $sb->add_choice_option(LogDatabaseConfig::LEVEL, LOGGING_LEVEL_NAMES_TO_LEVELS, "Log Level: ");
+        $sb->add_choice_option(LogDatabaseConfig::LEVEL, LogLevel::names_to_levels(), "Log Level: ");
     }
 
     public function onPageRequest(PageRequestEvent $event): void

@@ -27,7 +27,7 @@ class CronUploader extends Extension
         );
         $event->user_config->set_default_bool(CronUploaderConfig::INCLUDE_ALL_LOGS, false);
         $event->user_config->set_default_bool(CronUploaderConfig::STOP_ON_ERROR, false);
-        $event->user_config->set_default_int(CronUploaderConfig::LOG_LEVEL, SCORE_LOG_INFO);
+        $event->user_config->set_default_int(CronUploaderConfig::LOG_LEVEL, LogLevel::INFO->value);
     }
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
@@ -39,7 +39,7 @@ class CronUploader extends Extension
             $sb->start_table();
             $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
             $sb->add_bool_option(CronUploaderConfig::STOP_ON_ERROR, "Stop On Error", true);
-            $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, LOGGING_LEVEL_NAMES_TO_LEVELS, "Output Log Level: ", true);
+            $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, LogLevel::names_to_levels(), "Output Log Level: ", true);
             $sb->add_bool_option(CronUploaderConfig::INCLUDE_ALL_LOGS, "Include All Logs", true);
             $sb->end_table();
             $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
@@ -116,7 +116,7 @@ class CronUploader extends Extension
             $all = $user->get_config()->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
             if ($event->priority >= $user->get_config()->get_int(CronUploaderConfig::LOG_LEVEL) &&
                 ($event->section == self::NAME || $all)) {
-                $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LOGGING_LEVEL_NAMES[$event->priority] . "] " . $event->message;
+                $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LogLevel::from($event->priority)->name . "] " . $event->message;
 
                 echo $output . "\r\n";
                 flush_output();
@@ -325,7 +325,7 @@ class CronUploader extends Extension
             throw new UserError("User not present. Please specify the api_key for the user to run cron upload as.");
         }
 
-        $this->log_message(SCORE_LOG_INFO, "Logged in as user {$user->name}");
+        log_info(self::NAME, "Logged in as user {$user->name}");
 
         if (!$user->can(Permissions::CRON_RUN)) {
             throw new PermissionDenied("User does not have permission to run cron upload");
@@ -357,11 +357,11 @@ class CronUploader extends Extension
                     break;
                 } else {
                     $remaining = $max_time - $execution_time;
-                    $this->log_message(SCORE_LOG_DEBUG, "Max run time remaining: $remaining");
+                    log_debug(self::NAME, "Max run time remaining: $remaining");
                 }
                 try {
                     $result = $database->with_savepoint(function () use ($img, $output_subdir) {
-                        $this->log_message(SCORE_LOG_INFO, "Adding file: {$img[0]} - tags: {$img[2]}");
+                        log_info(self::NAME, "Adding file: {$img[0]} - tags: {$img[2]}");
                         $result = $this->add_image($img[0], $img[1], $img[2]);
                         $this->move_uploaded($img[0], $img[1], $output_subdir, false);
                         return $result;
@@ -373,8 +373,8 @@ class CronUploader extends Extension
                     }
                 } catch (\Exception $e) {
                     $failed++;
-                    $this->log_message(SCORE_LOG_ERROR, "(" . gettype($e) . ") " . $e->getMessage());
-                    $this->log_message(SCORE_LOG_ERROR, $e->getTraceAsString());
+                    log_error(self::NAME, "(" . gettype($e) . ") " . $e->getMessage());
+                    log_error(self::NAME, $e->getTraceAsString());
                     if ($user->get_config()->get_bool(CronUploaderConfig::STOP_ON_ERROR)) {
                         break;
                     } else {
@@ -385,13 +385,13 @@ class CronUploader extends Extension
 
             // Throw exception if there's nothing in the queue
             if ($merged + $failed + $added === 0) {
-                $this->log_message(SCORE_LOG_WARNING, "Your queue is empty so nothing could be uploaded.");
+                log_warning(self::NAME, "Your queue is empty so nothing could be uploaded.");
                 return false;
             }
 
-            $this->log_message(SCORE_LOG_INFO, "Items added: $added");
-            $this->log_message(SCORE_LOG_INFO, "Items merged: $merged");
-            $this->log_message(SCORE_LOG_INFO, "Items failed: $failed");
+            log_info(self::NAME, "Items added: $added");
+            log_info(self::NAME, "Items merged: $merged");
+            log_info(self::NAME, "Items failed: $failed");
 
 
             return true;
@@ -437,7 +437,7 @@ class CronUploader extends Extension
         // move file to correct dir
         rename($path, $newFile);
 
-        $this->log_message(SCORE_LOG_INFO, $info . "Post \"$filename\" moved from queue to \"$newDir\".");
+        log_info(self::NAME, $info . "Post \"$filename\" moved from queue to \"$newDir\".");
     }
 
     /**
@@ -459,7 +459,7 @@ class CronUploader extends Extension
         } else {
             $infomsg = "Post uploaded. ID: {$event->images[0]->id} - Filename: {$filename}";
         }
-        $this->log_message(SCORE_LOG_INFO, $infomsg);
+        log_info(self::NAME, $infomsg);
 
         return $event;
     }
@@ -487,7 +487,7 @@ class CronUploader extends Extension
         $base = $this->get_queue_dir();
 
         if (!is_dir($base)) {
-            $this->log_message(SCORE_LOG_WARNING, "Post Queue Directory could not be found at \"$base\".");
+            log_warning(self::NAME, "Post Queue Directory could not be found at \"$base\".");
             return;
         }
 
@@ -504,12 +504,6 @@ class CronUploader extends Extension
                 ];
             }
         }
-    }
-
-
-    private function log_message(int $severity, string $message): void
-    {
-        log_msg(self::NAME, $severity, $message);
     }
 
     private function get_log_file(): string
