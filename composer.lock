@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b096365aec6dbb8dcd672d052a13a061",
+    "content-hash": "de3608f8b3f37290c3094938506bbd00",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.339.9",
+            "version": "3.339.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e443779facb8cd0bba30383753a7a451db83acd6"
+                "reference": "85b90f70f88739f4f363c1af7c230e294af3dbd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e443779facb8cd0bba30383753a7a451db83acd6",
-                "reference": "e443779facb8cd0bba30383753a7a451db83acd6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/85b90f70f88739f4f363c1af7c230e294af3dbd0",
+                "reference": "85b90f70f88739f4f363c1af7c230e294af3dbd0",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.339.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.339.10"
             },
-            "time": "2025-02-07T19:14:31+00:00"
+            "time": "2025-02-10T19:24:07+00:00"
         },
         {
             "name": "bower-asset/jquery",
@@ -2222,16 +2222,16 @@
         },
         {
             "name": "thecodingmachine/safe",
-            "version": "v3.0.0-beta2",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thecodingmachine/safe.git",
-                "reference": "47a1689030ef07e70c58b102aeb969e4373a6afc"
+                "reference": "1b99e649415872997e43c771c55ba9b08d601329"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thecodingmachine/safe/zipball/47a1689030ef07e70c58b102aeb969e4373a6afc",
-                "reference": "47a1689030ef07e70c58b102aeb969e4373a6afc",
+                "url": "https://api.github.com/repos/thecodingmachine/safe/zipball/1b99e649415872997e43c771c55ba9b08d601329",
+                "reference": "1b99e649415872997e43c771c55ba9b08d601329",
                 "shasum": ""
             },
             "require": {
@@ -2239,10 +2239,9 @@
             },
             "require-dev": {
                 "php-parallel-lint/php-parallel-lint": "^1.4",
-                "phpstan/phpstan": "^1",
+                "phpstan/phpstan": "^2",
                 "phpunit/phpunit": "^10",
-                "squizlabs/php_codesniffer": "^3.2",
-                "thecodingmachine/phpstan-strict-rules": "^1.0"
+                "squizlabs/php_codesniffer": "^3.2"
             },
             "type": "library",
             "autoload": {
@@ -2342,7 +2341,7 @@
             "description": "PHP core functions that throw exceptions instead of returning FALSE on error",
             "support": {
                 "issues": "https://github.com/thecodingmachine/safe/issues",
-                "source": "https://github.com/thecodingmachine/safe/tree/v3.0.0-beta2"
+                "source": "https://github.com/thecodingmachine/safe/tree/v3.0.0"
             },
             "funding": [
                 {
@@ -2358,7 +2357,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-09T12:26:15+00:00"
+            "time": "2025-02-11T00:27:22+00:00"
         },
         {
             "name": "webonyx/graphql-php",
@@ -5893,30 +5892,29 @@
         },
         {
             "name": "thecodingmachine/phpstan-safe-rule",
-            "version": "dev-master",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thecodingmachine/phpstan-safe-rule.git",
-                "reference": "489a0407453de9457b40d314b61038b9b2fe9a86"
+                "reference": "33dcbc3228c55ea4c364ecf74a3661cf7b7f168d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thecodingmachine/phpstan-safe-rule/zipball/489a0407453de9457b40d314b61038b9b2fe9a86",
-                "reference": "489a0407453de9457b40d314b61038b9b2fe9a86",
+                "url": "https://api.github.com/repos/thecodingmachine/phpstan-safe-rule/zipball/33dcbc3228c55ea4c364ecf74a3661cf7b7f168d",
+                "reference": "33dcbc3228c55ea4c364ecf74a3661cf7b7f168d",
                 "shasum": ""
             },
             "require": {
                 "nikic/php-parser": "^5",
                 "php": "^8.1",
                 "phpstan/phpstan": "^2.0",
-                "thecodingmachine/safe": "^1.0 || ^2.0 || ^3.0"
+                "thecodingmachine/safe": "^1.2 || ^2.0 || ^3.0"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.1",
-                "phpunit/phpunit": "^9.6",
+                "phpunit/phpunit": "^10.4",
                 "squizlabs/php_codesniffer": "^3.4"
             },
-            "default-branch": true,
             "type": "phpstan-extension",
             "extra": {
                 "phpstan": {
@@ -5946,9 +5944,9 @@
             "description": "A PHPStan rule to detect safety issues. Must be used in conjunction with thecodingmachine/safe",
             "support": {
                 "issues": "https://github.com/thecodingmachine/phpstan-safe-rule/issues",
-                "source": "https://github.com/thecodingmachine/phpstan-safe-rule/tree/master"
+                "source": "https://github.com/thecodingmachine/phpstan-safe-rule/tree/v1.4.0"
             },
-            "time": "2025-02-10T01:12:34+00:00"
+            "time": "2025-02-11T12:41:29+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -6003,9 +6001,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "thecodingmachine/phpstan-safe-rule": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
