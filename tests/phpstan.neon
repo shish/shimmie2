@@ -10,7 +10,6 @@ parameters:
     - TRUSTED_PROXIES
     - TIMEZONE
     - BASE_HREF
-    - STATSD_HOST
     - TRACE_FILE
     - UNITTEST
   ignoreErrors:

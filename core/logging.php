@@ -8,28 +8,27 @@ namespace Shimmie2;
 * Logging convenience                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-define("SCORE_LOG_CRITICAL", 50);
-define("SCORE_LOG_ERROR", 40);
-define("SCORE_LOG_WARNING", 30);
-define("SCORE_LOG_INFO", 20);
-define("SCORE_LOG_DEBUG", 10);
-define("SCORE_LOG_NOTSET", 0);
+enum LogLevel: int
+{
+    case NOT_SET = 0;
+    case DEBUG = 10;
+    case INFO = 20;
+    case WARNING = 30;
+    case ERROR = 40;
+    case CRITICAL = 50;
 
-const LOGGING_LEVEL_NAMES = [
-    SCORE_LOG_NOTSET => "Not Set",
-    SCORE_LOG_DEBUG => "Debug",
-    SCORE_LOG_INFO => "Info",
-    SCORE_LOG_WARNING => "Warning",
-    SCORE_LOG_ERROR => "Error",
-    SCORE_LOG_CRITICAL => "Critical",
-];
-const LOGGING_LEVEL_NAMES_TO_LEVELS = [
-    LOGGING_LEVEL_NAMES[SCORE_LOG_DEBUG] => SCORE_LOG_DEBUG,
-    LOGGING_LEVEL_NAMES[SCORE_LOG_INFO] => SCORE_LOG_INFO,
-    LOGGING_LEVEL_NAMES[SCORE_LOG_WARNING] => SCORE_LOG_WARNING,
-    LOGGING_LEVEL_NAMES[SCORE_LOG_ERROR] => SCORE_LOG_ERROR,
-    LOGGING_LEVEL_NAMES[SCORE_LOG_CRITICAL] => SCORE_LOG_CRITICAL,
-];
+    /**
+     * @return array<string, int>
+     */
+    public static function names_to_levels(): array
+    {
+        $ret = [];
+        foreach (LogLevel::cases() as $case) {
+            $ret[$case->name] = $case->value;
+        }
+        return $ret;
+    }
+}
 
 /**
  * A shorthand way to send a LogEvent
@@ -38,13 +37,13 @@ const LOGGING_LEVEL_NAMES_TO_LEVELS = [
  * When taking action, a log event should be stored by the server
  * Quite often, both of these happen at once, hence log_*() having $flash
  */
-function log_msg(string $section, int $priority, string $message, ?string $flash = null): void
+function log_msg(string $section, LogLevel $priority, string $message, ?string $flash = null): void
 {
     global $page;
-    send_event(new LogEvent($section, $priority, $message));
+    send_event(new LogEvent($section, $priority->value, $message));
     $threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
 
-    if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && ($priority >= $threshold)) {
+    if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && ($priority->value >= $threshold)) {
         print date("c")." $section: $message\n";
         ob_flush();
     }
@@ -56,23 +55,23 @@ function log_msg(string $section, int $priority, string $message, ?string $flash
 // More shorthand ways of logging
 function log_debug(string $section, string $message, ?string $flash = null): void
 {
-    log_msg($section, SCORE_LOG_DEBUG, $message, $flash);
+    log_msg($section, LogLevel::DEBUG, $message, $flash);
 }
 function log_info(string $section, string $message, ?string $flash = null): void
 {
-    log_msg($section, SCORE_LOG_INFO, $message, $flash);
+    log_msg($section, LogLevel::INFO, $message, $flash);
 }
 function log_warning(string $section, string $message, ?string $flash = null): void
 {
-    log_msg($section, SCORE_LOG_WARNING, $message, $flash);
+    log_msg($section, LogLevel::WARNING, $message, $flash);
 }
 function log_error(string $section, string $message, ?string $flash = null): void
 {
-    log_msg($section, SCORE_LOG_ERROR, $message, $flash);
+    log_msg($section, LogLevel::ERROR, $message, $flash);
 }
 function log_critical(string $section, string $message, ?string $flash = null): void
 {
-    log_msg($section, SCORE_LOG_CRITICAL, $message, $flash);
+    log_msg($section, LogLevel::CRITICAL, $message, $flash);
 }
 
 
