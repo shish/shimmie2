@@ -79,7 +79,7 @@ function full_copy(string $source, string $target): void
     if (is_dir($source)) {
         @mkdir($target);
 
-        $d = dir_ex($source);
+        $d = \Safe\dir($source);
 
         while (true) {
             $entry = $d->read();
