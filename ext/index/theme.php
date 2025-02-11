@@ -245,6 +245,7 @@ and of course start organising your images :-)
             H3("Post attributes."),
             P("Searching by MD5 hash."),
             SHM_COMMAND_EXAMPLE("hash=0D3512CAA964B2BA5D7851AF5951F33B", "Returns post with MD5 hash 0D3512CAA964B2BA5D7851AF5951F33B."),
+            SHM_COMMAND_EXAMPLE("md5=0D3512CAA964B2BA5D7851AF5951F33B", "Same as above."),
             //
             BR(),
             P("Searching by file name."),
