@@ -38,7 +38,7 @@ function die_nicely(string $title, string $body, int $code = 0): void
     exit($code);
 }
 
-$min_php = "8.1";
+$min_php = "8.3";
 if (version_compare(phpversion(), $min_php, ">=") === false) {
     die_nicely("Not Supported", "
         Shimmie does not support versions of PHP lower than $min_php
