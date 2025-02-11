@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\A;
+use function MicroHTML\BR;
+use function MicroHTML\DIV;
+use function MicroHTML\INPUT;
+use function MicroHTML\SPAN;
+use function MicroHTML\SUP;
+use function MicroHTML\TEXTAREA;
+use function MicroHTML\emptyHTML;
 use function MicroHTML\rawHTML;
 
 class CommentListTheme extends Themelet
@@ -178,13 +188,8 @@ class CommentListTheme extends Themelet
         }
         $page->add_block(new Block("Comments", rawHTML($html), "main", 70, "comment-list-user"));
 
-
         $prev = $page_number - 1;
         $next = $page_number + 1;
-
-        //$search_terms = array('I','have','no','idea','what','this','does!');
-        //$u_tags = url_escape(Tag::implode($search_terms));
-        //$query = empty($u_tags) ? "" : '/'.$u_tags;
 
         $h_prev = ($page_number <= 1) ? "Prev" : "<a href='$prev'>Prev</a>";
         $h_index = "<a href='".make_link()."'>Index</a>";
@@ -195,28 +200,15 @@ class CommentListTheme extends Themelet
         $this->display_paginator($page, "comment/beta-search/{$user->name}", null, $page_number, $total_pages);
     }
 
-    protected function comment_to_html(Comment $comment, bool $trim = false): string
+    protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
         global $config, $user;
 
-        $tfe = send_event(new TextFormattingEvent($comment->comment));
-
-        $i_uid = $comment->owner_id;
-        $h_name = html_escape($comment->owner_name);
-        $h_timestamp = autodate($comment->posted);
-        if ($trim) {
-            $h_comment = truncate($tfe->stripped, 50);
-        } else {
-            $h_comment = $tfe->formatted;
-        }
-        $i_comment_id = $comment->comment_id;
-        $i_image_id = $comment->image_id;
-
-        if ($i_uid == $config->get_int("anon_id")) {
+        if ($comment->owner_id == $config->get_int("anon_id")) {
             $anoncode = "";
             $anoncode2 = "";
             if ($this->show_anon_id) {
-                $anoncode = '<sup>'.$this->anon_id.'</sup>';
+                $anoncode = SUP($this->anon_id);
                 if (!array_key_exists($comment->poster_ip, $this->anon_map)) {
                     $this->anon_map[$comment->poster_ip] = $this->anon_id;
                 }
@@ -224,74 +216,83 @@ class CommentListTheme extends Themelet
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
                 if ($user->can(Permissions::VIEW_IP) || $config->get_bool(CommentConfig::SHOW_REPEAT_ANONS, false)) {
                     if ($this->anon_map[$comment->poster_ip] != $this->anon_id) {
-                        $anoncode2 = '<sup>('.$this->anon_map[$comment->poster_ip].')</sup>';
+                        $anoncode2 = SUP("(" . $this->anon_map[$comment->poster_ip] . ")");
                     }
                 }
             }
-            $h_userlink = "<span class='username'>" . $h_name . $anoncode . $anoncode2 . "</span>";
+            $userlink = SPAN(["class" => "username"], $comment->owner_name, $anoncode, $anoncode2);
             $this->anon_id++;
         } else {
-            $h_userlink = '<a class="username" href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>';
+            $userlink = A(["class" => "username", "href" => make_link("user/{$comment->owner_name}")], $comment->owner_name);
         }
 
+        $tfe = send_event(new TextFormattingEvent($comment->comment));
         $hb = ($comment->owner_class == "hellbanned" ? "hb" : "");
         if ($trim) {
-            $html = "
-			<div class=\"comment $hb\">
-				$h_userlink: $h_comment
-				<a href=\"".make_link("post/view/$i_image_id", null, "c$i_comment_id")."\">&gt;&gt;&gt;</a>
-			</div>
-			";
+            $html = DIV(
+                ["class" => "comment $hb"],
+                $userlink,
+                ": ",
+                truncate($tfe->stripped, 50),
+                A(["href" => make_link("post/view/{$comment->image_id}", null, "c{$comment->comment_id}")], ">>>")
+            );
         } else {
-            /** @var BuildAvatarEvent $avatar_e */
-            $avatar_e = send_event(new BuildAvatarEvent($comment->get_owner()));
-            $h_avatar = $avatar_e->html;
-            $h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
-            $h_ip = $user->can(Permissions::VIEW_IP) ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
-            $h_del = "";
-            if ($user->can(Permissions::DELETE_COMMENT)) {
-                $h_del = " - " . $this->delete_link($i_comment_id, $i_image_id, $comment->owner_name, $tfe->stripped);
-            }
-            $html = "
-				<div class=\"comment $hb\" id=\"c$i_comment_id\">
-					<div class=\"info\">
-					$h_avatar
-					$h_timestamp$h_reply$h_ip$h_del
-					</div>
-					$h_userlink: $h_comment
-				</div>
-			";
+            /** @var BuildAvatarEvent $bae */
+            $bae = send_event(new BuildAvatarEvent($comment->get_owner()));
+            $html = DIV(
+                ["class" => "comment $hb", "id" => "c{$comment->comment_id}"],
+                DIV(
+                    ["class" => "info"],
+                    emptyHTML(
+                        $bae->html ? emptyHTML($bae->html, BR()) : null
+                    ),
+                    emptyHTML(
+                        rawHTML(autodate($comment->posted)),
+                        " - ",
+                        A(["href" => "javascript:replyTo({$comment->image_id}, {$comment->comment_id}, '{$comment->owner_name}')"], "Reply"),
+                    ),
+                    emptyHTML(
+                        $user->can(Permissions::VIEW_IP) ? rawHTML("<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
+                        $user->can(Permissions::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped)) : null,
+                    ),
+                ),
+                $userlink,
+                ": ",
+                rawHTML($tfe->formatted)
+            );
         }
         return $html;
     }
 
-    protected function delete_link(int $comment_id, int $image_id, string $owner, string $text): string
+    protected function delete_link(int $comment_id, int $image_id, string $owner, string $text): HTMLElement
     {
-        $comment_preview = substr(html_unescape($text), 0, 50);
-        $j_delete_confirm_message = json_encode("Delete comment by {$owner}:\n$comment_preview") ?: "Delete <corrupt comment>";
-        $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
-        $h_delete_link = make_link("comment/delete/$comment_id/$image_id");
-        return "<a onclick='$h_delete_script' href='$h_delete_link'>Del</a>";
+        $comment_preview = truncate($text, 50);
+        $j_delete_confirm_message = json_encode("Delete comment by {$owner}:\n$comment_preview") ?: json_encode("Delete <corrupt comment>");
+        return A([
+            "onclick" => "return confirm($j_delete_confirm_message);",
+            "href" => make_link("comment/delete/$comment_id/$image_id"),
+        ], "Del");
     }
 
-    protected function build_postbox(int $image_id): string
+    protected function build_postbox(int $image_id): HTMLElement
     {
         global $config;
 
         $hash = CommentList::get_hash();
         $h_captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
-        return '
-		<div class="comment comment_add">
-			'.make_form(make_link("comment/add")).'
-				<input type="hidden" name="image_id" value="'.$image_id.'" />
-				<input type="hidden" name="hash" value="'.$hash.'" />
-				<textarea id="comment_on_'.$image_id.'" name="comment" rows="5" cols="50"></textarea>
-				'.$h_captcha.'
-				<br><input type="submit" value="Post Comment" />
-			</form>
-		</div>
-		';
+        return DIV(
+            ["class" => "comment comment_add"],
+            SHM_SIMPLE_FORM(
+                "comment/add",
+                INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
+                INPUT(["type" => "hidden", "name" => "hash", "value" => $hash]),
+                TEXTAREA(["id" => "comment_on_$image_id", "name" => "comment", "rows" => 5, "cols" => 50]),
+                rawHTML($h_captcha),
+                BR(),
+                INPUT(["type" => "submit", "value" => "Post Comment"])
+            ),
+        );
     }
 
     public function get_help_html(): string
