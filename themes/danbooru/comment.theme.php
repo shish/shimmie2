@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 use function MicroHTML\rawHTML;
 
 class DanbooruCommentListTheme extends CommentListTheme
@@ -95,7 +97,7 @@ class DanbooruCommentListTheme extends CommentListTheme
         // no recent comments in this theme
     }
 
-    protected function comment_to_html(Comment $comment, bool $trim = false): string
+    protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
         global $user;
 
@@ -120,14 +122,14 @@ class DanbooruCommentListTheme extends CommentListTheme
         }
         //$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
         if ($trim) {
-            return "<p class='comment'>$h_userlink $h_del<br/>$h_posted<br/>$h_comment</p>";
+            return rawHTML("<p class='comment'>$h_userlink $h_del<br/>$h_posted<br/>$h_comment</p>");
         } else {
-            return "
+            return rawHTML("
 				<table class='comment'><tr>
 					<td class='meta'>$h_userlink<br/>$h_posted$h_del</td>
 					<td>$h_comment</td>
 				</tr></table>
-			";
+			");
         }
     }
 }
