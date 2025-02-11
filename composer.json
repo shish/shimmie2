@@ -56,7 +56,7 @@
         "phpunit/phpunit": "^11.0",
         "friendsofphp/php-cs-fixer": "^3.64",
         "phpstan/phpstan": "^2.0",
-        "thecodingmachine/phpstan-safe-rule": "dev-master"
+        "thecodingmachine/phpstan-safe-rule": "^1.4"
     },
     "suggest": {
         "ext-pdo_sqlite": "database - sqlite",
