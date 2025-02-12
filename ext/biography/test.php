@@ -9,7 +9,7 @@ class BiographyTest extends ShimmiePHPUnitTestCase
     public function testBio(): void
     {
         $this->log_in_as_user();
-        $this->post_page("biography", ["biography" => "My bio goes here"]);
+        $this->post_page("user/" . self::USER_NAME . "/biography", ["biography" => "My bio goes here"]);
         $this->get_page("user/" . self::USER_NAME);
         $this->assert_text("My bio goes here");
 
