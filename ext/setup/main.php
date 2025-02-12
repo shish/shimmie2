@@ -106,9 +106,10 @@ class SetupPanel
         $this->config = $config;
     }
 
-    public function create_new_block(string $title): SetupBlock
+    public function create_new_block(string $title, int $position = 50): SetupBlock
     {
         $block = new SetupBlock($title, $this->config);
+        $block->position = $position;
         $this->blocks[] = $block;
         return $block;
     }
@@ -417,8 +418,7 @@ class Setup extends Extension
             $themes[$human] = $name;
         }
 
-        $sb = $event->panel->create_new_block("General");
-        $sb->position = 0;
+        $sb = $event->panel->create_new_block("General", 0);
         $sb->add_text_option(SetupConfig::TITLE, "Site title: ");
         $sb->add_text_option(SetupConfig::FRONT_PAGE, "<br>Front page: ");
         $sb->add_text_option(SetupConfig::MAIN_PAGE, "<br>Main page: ");
