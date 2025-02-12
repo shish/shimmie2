@@ -15,8 +15,8 @@ class Biography extends Extension
         $duser = $event->display_user;
         $bio = $duser->get_config()->get_string("biography", "");
 
-        if ($user->id == $duser->id) {
-            $this->theme->display_composer($page, $bio);
+        if ($user->id == $duser->id || $user->can(Permissions::EDIT_USER_INFO)) {
+            $this->theme->display_composer($page, $duser, $bio);
         } else {
             $this->theme->display_biography($page, $bio);
         }
@@ -25,13 +25,18 @@ class Biography extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("biography", method: "POST")) {
-            $bio = $event->get_POST('biography');
-            log_info("biography", "Set biography to $bio");
-            $user->get_config()->set_string("biography", $bio);
-            $page->flash("Bio Updated");
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link()));
+        if ($event->page_matches("user/{name}/biography", method: "POST")) {
+            $duser = User::by_name($event->get_arg("name"));
+            if ($user->id == $duser->id || $user->can(Permissions::EDIT_USER_INFO)) {
+                $bio = $event->req_POST('biography');
+                log_info("biography", "Set biography to $bio");
+                $duser->get_config()->set_string("biography", $bio);
+                $page->flash("Bio Updated");
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(referer_or(make_link()));
+            } else {
+                throw new PermissionDenied("You do not have permission to edit this user's biography");
+            }
         }
     }
 }
