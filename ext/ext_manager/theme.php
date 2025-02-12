@@ -34,13 +34,7 @@ class ExtManagerTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             "ext_manager/set",
             TABLE(
-                ["id" => 'extensions', "class" => 'zebra'],
-                THEAD(TR(
-                    $editable ? TH("Enabled") : null,
-                    TH("Name"),
-                    TH("Docs"),
-                    TH("Description")
-                )),
+                ["id" => 'extensions', "class" => 'zebra form'],
                 $tbody,
                 $editable ? TFOOT(TR(TD(["colspan" => '5'], INPUT(["type" => 'submit', "value" => 'Set Extensions'])))) : null
             )
@@ -62,7 +56,8 @@ class ExtManagerTheme extends Themelet
                 $tbody->appendChild(
                     TR(
                         ["class" => 'category', "id" => $extension->category->value],
-                        TH(["colspan" => '5'], BR(), $last_cat->value)
+                        TD(),
+                        TD(["colspan" => '5'], BR(), B($last_cat->value))
                     )
                 );
             }
