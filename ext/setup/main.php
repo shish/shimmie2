@@ -372,7 +372,6 @@ class Setup extends Extension
         $config->set_default_string(SetupConfig::FRONT_PAGE, "post/list");
         $config->set_default_string(SetupConfig::MAIN_PAGE, "post/list");
         $config->set_default_string(SetupConfig::THEME, "default");
-        $config->set_default_bool(SetupConfig::WORD_WRAP, true);
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -423,7 +422,7 @@ class Setup extends Extension
         $sb->add_text_option(SetupConfig::TITLE, "Site title: ");
         $sb->add_text_option(SetupConfig::FRONT_PAGE, "<br>Front page: ");
         $sb->add_text_option(SetupConfig::MAIN_PAGE, "<br>Main page: ");
-        $sb->add_text_option("contact_link", "<br>Contact URL: ");
+        $sb->add_text_option(SetupConfig::CONTACT_LINK, "<br>Contact URL: ");
         $sb->add_choice_option(SetupConfig::THEME, $themes, "<br>Theme: ");
         //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
         $sb->add_bool_option(SetupConfig::NICE_URLS, "<br>Nice URLs: ");
