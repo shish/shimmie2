@@ -159,9 +159,8 @@ class ImageIO extends Extension
     {
         global $config;
 
-        $sb = $event->panel->create_new_block("Post Manager");
+        $sb = $event->panel->create_new_block("Post Manager", 30);
         $sb->start_table();
-        $sb->position = 30;
         // advanced only
         //$sb->add_text_option(ImageConfig::ILINK, "Image link: ");
         //$sb->add_text_option(ImageConfig::TLINK, "<br>Thumbnail link: ");
