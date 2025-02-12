@@ -145,8 +145,7 @@ class Upload extends Extension
         $tes["fopen"] = "fopen";
         $tes["WGet"] = "wget";
 
-        $sb = $event->panel->create_new_block("Upload");
-        $sb->position = 10;
+        $sb = $event->panel->create_new_block("Upload", 10);
         // Output the limits from PHP so the user has an idea of what they can set.
         $sb->add_int_option(UploadConfig::COUNT, "Max uploads: ");
         $sb->add_label("<i>PHP Limit = " . ini_get('max_file_uploads') . "</i>");
