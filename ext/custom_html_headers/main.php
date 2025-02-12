@@ -33,14 +33,7 @@ class CustomHtmlHeaders extends Extension
         $config->set_default_string("sitename_in_title", "none");
     }
 
-    # Load Analytics tracking code on page request
     public function onPageRequest(PageRequestEvent $event): void
-    {
-        $this->handle_custom_html_headers();
-        $this->handle_modified_page_title();
-    }
-
-    private function handle_custom_html_headers(): void
     {
         global $config, $page;
 
@@ -48,25 +41,16 @@ class CustomHtmlHeaders extends Extension
         if ($header != '') {
             $page->add_html_header(rawHTML($header));
         }
-    }
 
-    private function handle_modified_page_title(): void
-    {
-        global $config, $page;
-
-        // get config values
+        // check sitename is not already in title (can occur on index & other pages)
         $site_title = $config->get_string(SetupConfig::TITLE);
         $sitename_in_title = $config->get_string("sitename_in_title");
-
-        // sitename is already in title (can occur on index & other pages)
-        if (str_contains($page->title, $site_title)) {
-            return;
-        }
-
-        if ($sitename_in_title == "prefix") {
-            $page->title = "$site_title - $page->title";
-        } elseif ($sitename_in_title == "suffix") {
-            $page->title = "$page->title - $site_title";
+        if (!str_contains($page->title, $site_title)) {
+            if ($sitename_in_title == "prefix") {
+                $page->title = "$site_title - $page->title";
+            } elseif ($sitename_in_title == "suffix") {
+                $page->title = "$page->title - $site_title";
+            }
         }
     }
 }
