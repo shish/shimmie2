@@ -7,7 +7,8 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 /**
- * Class Extension
+ * An Extension is a class that can be loaded by the system to add new
+ * functionality. It can hook into events, and provide new features.
  *
  * send_event(BlahEvent()) -> onBlah($event)
  *
@@ -207,8 +208,6 @@ abstract class ExtensionInfo
             }
         }
 
-        // Additional checks here as needed
-
         $this->supported = empty($this->support_info);
     }
 
@@ -276,9 +275,15 @@ abstract class ExtensionInfo
 }
 
 /**
- * Class FormatterExtension
+ * A common base class for text formatting extensions
  *
- * Several extensions have this in common, make a common API.
+ * format()
+ *   should take the input text and return an HTML string, eg
+ *   "[b]bold[/b]" -> "<b>bold</b>"
+ *
+ * strip()
+ *   should take the input text and return a plain text string, eg
+ *   "[b]bold[/b]" -> "bold"
  */
 abstract class FormatterExtension extends Extension
 {
@@ -293,15 +298,17 @@ abstract class FormatterExtension extends Extension
 }
 
 /**
- * Class AvatarExtension
+ * A common base class for avatar extensions
  *
- * Several extensions have this in common, make a common API.
+ * avatar_html()
+ *   Should return an HTMLElement representing an
+ *   avatar, and it should have the CSS property
+ *   of "display:inline-block" to emulate an <img>
  */
 abstract class AvatarExtension extends Extension
 {
     public function onBuildAvatar(BuildAvatarEvent $event): void
     {
-        global $cache;
         $html = $this->avatar_html($event->user);
         if ($html) {
             $event->setAvatar($html);
@@ -314,10 +321,21 @@ abstract class AvatarExtension extends Extension
 
 
 /**
- * Class DataHandlerExtension
+ * A common base class for data handler extensions
  *
- * This too is a common class of extension with many methods in common,
- * so we have a base class to extend from.
+ * $SUPPORTED_MIME
+ *   An array of MIME types that this extension can handle, eg
+ *   ["image/jpeg", "image/png"]
+ *
+ * media_check_properties()
+ *   ...?
+ *
+ * check_contents()
+ *   should check the contents of the given file and confirm
+ *   that it is a valid file of the supported type
+ *
+ * create_thumb()
+ *   ...?
  */
 abstract class DataHandlerExtension extends Extension
 {
@@ -336,7 +354,7 @@ abstract class DataHandlerExtension extends Extension
 
             $existing = Image::by_hash(\Safe\md5_file($event->tmpname));
             if (!is_null($existing)) {
-                if ($config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER) == ImageConfig::COLLISION_MERGE) {
+                if ($config->get_string(UploadConfig::COLLISION_HANDLER) == 'merge') {
                     // Right now tags are the only thing that get merged, so
                     // we can just send a TagSetEvent - in the future we might
                     // want a dedicated MergeEvent?

@@ -22,17 +22,10 @@ class RotateImage extends Extension
 {
     public const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool('rotate_enabled', true);
-        $config->set_default_int('rotate_default_deg', 180);
-    }
-
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
-        if ($user->can(Permissions::EDIT_FILES) && $config->get_bool("rotate_enabled")
+        if ($user->can(Permissions::EDIT_FILES)
                 && MimeType::matches_array($event->image->get_mime(), self::SUPPORTED_MIME)) {
             /* Add a link to rotate the image */
             $event->add_part(SHM_SIMPLE_FORM(
@@ -41,15 +34,6 @@ class RotateImage extends Extension
                 INPUT(["type" => 'submit', "value" => 'Rotate', "id" => "rotatebutton"]),
             ));
         }
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $sb = $event->panel->create_new_block("Image Rotate");
-        $sb->add_bool_option("rotate_enabled", "Allow rotating images: ");
-        $sb->add_label("<br>Default Orientation: ");
-        $sb->add_int_option("rotate_default_deg");
-        $sb->add_label(" deg");
     }
 
     public function onPageRequest(PageRequestEvent $event): void

@@ -91,8 +91,8 @@ class _SafeOuroborosImage
         $this->has_notes = false;
 
         // thumb
-        $this->preview_height = $config->get_int(ImageConfig::THUMB_HEIGHT);
-        $this->preview_width = $config->get_int(ImageConfig::THUMB_WIDTH);
+        $this->preview_height = $config->get_int(ThumbnailConfig::HEIGHT);
+        $this->preview_width = $config->get_int(ThumbnailConfig::WIDTH);
         $this->preview_url = make_http($img->get_thumb_link());
 
         // sample (use the full image here)
@@ -299,8 +299,8 @@ class OuroborosAPI extends Extension
     protected function postCreate(OuroborosPost $post, ?string $md5 = ''): void
     {
         global $config, $database;
-        $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
-        if (!empty($md5) && !($handler == ImageConfig::COLLISION_MERGE)) {
+        $handler = $config->get_string(UploadConfig::COLLISION_HANDLER);
+        if (!empty($md5) && !($handler == 'merge')) {
             $img = Image::by_hash($md5);
             if (!is_null($img)) {
                 $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
@@ -339,8 +339,8 @@ class OuroborosAPI extends Extension
         }
         $img = Image::by_hash($meta['hash']);
         if (!is_null($img)) {
-            $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
-            if ($handler == ImageConfig::COLLISION_MERGE) {
+            $handler = $config->get_string(UploadConfig::COLLISION_HANDLER);
+            if ($handler == 'merge') {
                 $postTags = Tag::explode($post->tags);
                 $merged = array_merge($postTags, $img->get_tag_array());
                 send_event(new TagSetEvent($img, $merged));
@@ -578,7 +578,7 @@ class OuroborosAPI extends Extension
             if (!is_null($duser)) {
                 $user = $duser;
             } else {
-                $user = User::by_id($config->get_int("anon_id", 0));
+                $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0));
             }
             send_event(new UserLoginEvent($user));
         } elseif (isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'session']) &&
@@ -591,7 +591,7 @@ class OuroborosAPI extends Extension
             if (!is_null($duser)) {
                 $user = $duser;
             } else {
-                $user = User::by_id($config->get_int("anon_id", 0));
+                $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0));
             }
             send_event(new UserLoginEvent($user));
         }

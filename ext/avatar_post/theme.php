@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{DIV,IMG,LABEL,INPUT};
+use function MicroHTML\{BR,DIV,IMG,LABEL,INPUT};
 
 class AvatarPostTheme extends Themelet
 {
@@ -33,6 +33,7 @@ class AvatarPostTheme extends Themelet
         return DIV(
             ["class" => "avatar-editor"],
             LABEL("drag the image to move, slide to zoom"),
+            BR(),
             DIV(
                 ["class" => "avatar-container", "style" => "--pavatar-width:192px;--pavatar-height:192px;"],
                 IMG(["alt" => "avatar", "id" => "avatar-edit", "class" => "avatar gravatar", "src" => $url])
@@ -44,14 +45,14 @@ class AvatarPostTheme extends Themelet
             // simulate user config page
             SHM_SIMPLE_FORM(
                 "save_avatar",
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostConfig::AVATAR_ID, "value" => $image->id]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostConfig::AVATAR_ID, "value" => "int"]),
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostConfig::AVATAR_SCALE, "id" => "avatar-post-scale", "value" => 100]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostConfig::AVATAR_SCALE, "value" => "int"]),
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostConfig::AVATAR_X, "id" => "avatar-post-x", "value" => 0]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostConfig::AVATAR_X, "value" => "int"]),
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostConfig::AVATAR_Y, "id" => "avatar-post-y", "value" => 0]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostConfig::AVATAR_Y, "value" => "int"]),
+                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_ID, "value" => $image->id]),
+                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_ID, "value" => "int"]),
+                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_SCALE, "id" => "avatar-post-scale", "value" => 100]),
+                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_SCALE, "value" => "int"]),
+                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_X, "id" => "avatar-post-x", "value" => 0]),
+                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_X, "value" => "int"]),
+                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_Y, "id" => "avatar-post-y", "value" => 0]),
+                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_Y, "value" => "int"]),
                 INPUT(["type" => "submit", "value" => "Set avatar"]),
             )
         );

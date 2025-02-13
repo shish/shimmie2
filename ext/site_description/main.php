@@ -11,15 +11,15 @@ class SiteDescription extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
-        if (!empty($config->get_string("site_description"))) {
-            $description = $config->get_string("site_description");
+        if (!empty($config->get_string(SiteDescriptionConfig::DESCRIPTION))) {
+            $description = $config->get_string(SiteDescriptionConfig::DESCRIPTION);
             $page->add_html_header(META([
                 'name' => 'description',
                 'content' => $description
             ]));
         }
-        if (!empty($config->get_string("site_keywords"))) {
-            $keywords = $config->get_string("site_keywords");
+        if (!empty($config->get_string(SiteDescriptionConfig::KEYWORDS))) {
+            $keywords = $config->get_string(SiteDescriptionConfig::KEYWORDS);
             $page->add_html_header(META([
                 'name' => 'keywords',
                 'content' => $keywords
@@ -29,8 +29,6 @@ class SiteDescription extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Site Description");
-        $sb->add_text_option("site_description", "Description: ");
-        $sb->add_text_option("site_keywords", "<br>Keywords: ");
+        $event->panel->add_config_group(new SiteDescriptionConfig());
     }
 }

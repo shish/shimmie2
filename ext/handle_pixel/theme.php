@@ -31,7 +31,7 @@ class PixelFileHandlerTheme extends Themelet
     {
         global $page;
 
-        if (function_exists(ImageIO::EXIF_READ_FUNCTION)) {
+        if (function_exists("exif_read_data")) {
             # FIXME: only read from jpegs?
             $exif = @exif_read_data($image->get_image_filename(), "IFD0", true);
             if ($exif) {

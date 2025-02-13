@@ -68,10 +68,7 @@ class TagMap extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Tag Map");
-        $sb->add_int_option(TagMapConfig::TAGS_MIN, "Only show tags used at least ");
-        $sb->add_label(" times");
-        $sb->add_bool_option(TagMapConfig::PAGES, "<br>Paged tag lists: ");
+        $event->panel->add_config_group(new TagMapConfig());
     }
 
     /**

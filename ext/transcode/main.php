@@ -68,7 +68,7 @@ class TranscodeImage extends Extension
     {
         $mime = str_replace(".", "_", $mime);
         $mime = str_replace("/", "_", $mime);
-        return TranscodeConfig::UPLOAD_PREFIX.$mime;
+        return "transcode_upload_".$mime;
     }
 
     private static function get_mapping(string $mime): ?string
@@ -148,21 +148,14 @@ class TranscodeImage extends Extension
         $engine = $config->get_string(TranscodeConfig::ENGINE);
 
 
-        $sb = $event->panel->create_new_block("Image Transcode");
-        $sb->start_table();
-        $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images", true);
-        $sb->add_bool_option(TranscodeConfig::GET_ENABLED, "Enable GET args", true);
-        $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
+        $sb = $event->panel->add_config_group(new TranscodeConfig());
+
         foreach (self::INPUT_MIMES as $display => $mime) {
             if (MediaEngine::is_input_supported($engine, $mime)) {
                 $outputs = $this->get_supported_output_mimes($engine, $mime);
-                $sb->add_choice_option(self::get_mapping_name($mime), $outputs, "$display", true);
+                $sb->add_choice_option(self::get_mapping_name($mime), $outputs, "<br>$display");
             }
         }
-        $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality", true);
-        $sb->add_color_option(TranscodeConfig::ALPHA_COLOR, "Alpha Conversion Color", true);
-        $sb->end_table();
     }
 
     public function onDataUpload(DataUploadEvent $event): void

@@ -8,17 +8,18 @@ class ResolutionLimit extends Extension
 {
     public function get_priority(): int
     {
+        // early, to veto ImageUploadEvent
         return 40;
-    } // early, to veto ImageUploadEvent
+    }
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         global $config;
-        $min_w = $config->get_int("upload_min_width", -1);
-        $min_h = $config->get_int("upload_min_height", -1);
-        $max_w = $config->get_int("upload_max_width", -1);
-        $max_h = $config->get_int("upload_max_height", -1);
-        $rs = $config->get_string("upload_ratios", "");
+        $min_w = $config->get_int(ResolutionLimitConfig::MIN_WIDTH, -1);
+        $min_h = $config->get_int(ResolutionLimitConfig::MIN_HEIGHT, -1);
+        $max_w = $config->get_int(ResolutionLimitConfig::MAX_WIDTH, -1);
+        $max_h = $config->get_int(ResolutionLimitConfig::MAX_HEIGHT, -1);
+        $rs = $config->get_string(ResolutionLimitConfig::RATIOS, "");
         $ratios = trim($rs) ? explode(" ", $rs) : [];
 
         $image = $event->image;
@@ -54,8 +55,7 @@ class ResolutionLimit extends Extension
             }
             if ($valids > 0 && !$ok) {
                 throw new UploadException(
-                    "Post needs to be in one of these ratios: ".
-                    $config->get_string("upload_ratios", "")
+                    "Post needs to be in one of these ratios: $rs"
                 );
             }
         }
@@ -63,24 +63,6 @@ class ResolutionLimit extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Resolution Limits");
-
-        $sb->add_label("Min ");
-        $sb->add_int_option("upload_min_width");
-        $sb->add_label(" x ");
-        $sb->add_int_option("upload_min_height");
-        $sb->add_label(" px");
-
-        $sb->add_label("<br>Max ");
-        $sb->add_int_option("upload_max_width");
-        $sb->add_label(" x ");
-        $sb->add_int_option("upload_max_height");
-        $sb->add_label(" px");
-
-        $sb->add_label("<br>(-1 for no limit)");
-
-        $sb->add_label("<br>Ratios ");
-        $sb->add_text_option("upload_ratios");
-        $sb->add_label("<br>(eg. '4:3 16:9', blank for no limit)");
+        $event->panel->add_config_group(new ResolutionLimitConfig());
     }
 }

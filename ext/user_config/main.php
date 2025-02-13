@@ -41,13 +41,12 @@ class UserConfig extends Extension
     protected Themelet $theme;
 
     public const VERSION = "ext_user_config_version";
-    public const ENABLE_API_KEYS = "ext_user_config_enable_api_keys";
     public const API_KEY = "api_key";
 
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_bool(self::ENABLE_API_KEYS, false);
+        $config->set_default_bool(UserAccountsConfig::ENABLE_API_KEYS, false);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -88,7 +87,7 @@ class UserConfig extends Extension
     {
         global $user, $database, $config, $page;
 
-        if ($config->get_bool(self::ENABLE_API_KEYS)) {
+        if ($config->get_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             if ($event->get_GET("api_key") && $user->is_anonymous()) {
                 $user_id = $database->get_one(
                     "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
@@ -134,7 +133,7 @@ class UserConfig extends Extension
     {
         global $config;
 
-        if ($config->get_bool(self::ENABLE_API_KEYS)) {
+        if ($config->get_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             $key = $event->user_config->get_string(self::API_KEY, "");
             if (empty($key)) {
                 $key = generate_key();

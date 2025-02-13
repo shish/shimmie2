@@ -65,7 +65,7 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
 {
     global $config;
 
-    $fit = $config->get_string(ImageConfig::THUMB_FIT);
+    $fit = $config->get_string(ThumbnailConfig::FIT);
 
     if (in_array($fit, [
             Media::RESIZE_TYPE_FILL,
@@ -73,7 +73,7 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
             Media::RESIZE_TYPE_FIT_BLUR,
             Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT
         ])) {
-        return [$config->get_int(ImageConfig::THUMB_WIDTH), $config->get_int(ImageConfig::THUMB_HEIGHT)];
+        return [$config->get_int(ThumbnailConfig::WIDTH), $config->get_int(ThumbnailConfig::HEIGHT)];
     }
 
     if ($orig_width === 0) {
@@ -94,8 +94,8 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
     if ($use_dpi_scaling) {
         list($max_width, $max_height) = get_thumbnail_max_size_scaled();
     } else {
-        $max_width = $config->get_int(ImageConfig::THUMB_WIDTH);
-        $max_height = $config->get_int(ImageConfig::THUMB_HEIGHT);
+        $max_width = $config->get_int(ThumbnailConfig::WIDTH);
+        $max_height = $config->get_int(ThumbnailConfig::HEIGHT);
     }
 
     $output = get_scaled_by_aspect_ratio($orig_width, $orig_height, $max_width, $max_height);
@@ -129,9 +129,9 @@ function get_thumbnail_max_size_scaled(): array
 {
     global $config;
 
-    $scaling = $config->get_int(ImageConfig::THUMB_SCALING);
-    $max_width  = $config->get_int(ImageConfig::THUMB_WIDTH) * ($scaling / 100);
-    $max_height = $config->get_int(ImageConfig::THUMB_HEIGHT) * ($scaling / 100);
+    $scaling = $config->get_int(ThumbnailConfig::SCALING);
+    $max_width  = $config->get_int(ThumbnailConfig::WIDTH) * ($scaling / 100);
+    $max_height = $config->get_int(ThumbnailConfig::HEIGHT) * ($scaling / 100);
     return [$max_width, $max_height];
 }
 
@@ -145,7 +145,7 @@ function create_image_thumb(Image $image, ?string $engine = null): void
         get_thumbnail_max_size_scaled(),
         $image->get_mime(),
         $engine,
-        $config->get_string(ImageConfig::THUMB_FIT)
+        $config->get_string(ThumbnailConfig::FIT)
     );
 }
 
@@ -163,13 +163,13 @@ function create_scaled_image(
 ): void {
     global $config;
     if (empty($engine)) {
-        $engine = $config->get_string(ImageConfig::THUMB_ENGINE);
+        $engine = $config->get_string(ThumbnailConfig::ENGINE);
     }
     if (empty($resize_type)) {
-        $resize_type = $config->get_string(ImageConfig::THUMB_FIT);
+        $resize_type = $config->get_string(ThumbnailConfig::FIT);
     }
 
-    $output_mime = $config->get_string(ImageConfig::THUMB_MIME);
+    $output_mime = $config->get_string(ThumbnailConfig::MIME);
 
     send_event(new MediaResizeEvent(
         $engine,
@@ -180,8 +180,8 @@ function create_scaled_image(
         $tsize[1],
         $resize_type,
         $output_mime,
-        $config->get_string(ImageConfig::THUMB_ALPHA_COLOR),
-        $config->get_int(ImageConfig::THUMB_QUALITY),
+        $config->get_string(ThumbnailConfig::ALPHA_COLOR),
+        $config->get_int(ThumbnailConfig::QUALITY),
         true,
         true
     ));

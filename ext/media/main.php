@@ -90,27 +90,7 @@ class Media extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Media Engine Commands");
-
-        //        if (self::imagick_available()) {
-        //            try {
-        //                $image = new Imagick(realpath('tests/favicon.png'));
-        //                $image->clear();
-        //                $sb->add_label("ImageMagick detected");
-        //            } catch (ImagickException $e) {
-        //                $sb->add_label("<b style='color:red'>ImageMagick not detected</b>");
-        //            }
-        //        } else {
-        $sb->start_table();
-
-        $sb->add_text_option(MediaConfig::CONVERT_PATH, "convert", true);
-        //        }
-
-        $sb->add_text_option(MediaConfig::FFMPEG_PATH, "ffmpeg", true);
-        $sb->add_text_option(MediaConfig::FFPROBE_PATH, "ffprobe", true);
-
-        $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "Mem limit", true);
-        $sb->end_table();
+        $event->panel->add_config_group(new MediaConfig());
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void

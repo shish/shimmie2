@@ -49,34 +49,7 @@ class TagList extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Popular / Related Tag List");
-        $sb->add_int_option(TagListConfig::LENGTH, "Show top ");
-        $sb->add_label(" related tags");
-        $sb->add_int_option(TagListConfig::POPULAR_TAG_LIST_LENGTH, "<br>Show top ");
-        $sb->add_label(" popular tags");
-        $sb->start_table();
-        $sb->add_text_option(TagListConfig::INFO_LINK, "Tag info link", true);
-        $sb->add_text_option(TagListConfig::OMIT_TAGS, "Omit tags", true);
-        $sb->add_choice_option(
-            TagListConfig::IMAGE_TYPE,
-            TagListConfig::TYPE_CHOICES,
-            "Post tag list",
-            true
-        );
-        $sb->add_choice_option(
-            TagListConfig::RELATED_SORT,
-            TagListConfig::SORT_CHOICES,
-            "Sort related list by",
-            true
-        );
-        $sb->add_choice_option(
-            TagListConfig::POPULAR_SORT,
-            TagListConfig::SORT_CHOICES,
-            "Sort popular list by",
-            true
-        );
-        $sb->add_bool_option("tag_list_numbers", "Show tag counts", true);
-        $sb->end_table();
+        $event->panel->add_config_group(new TagListConfig());
     }
 
     /**

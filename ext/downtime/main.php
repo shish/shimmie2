@@ -16,9 +16,7 @@ class Downtime extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Downtime");
-        $sb->add_bool_option("downtime", "Disable non-admin access: ");
-        $sb->add_longtext_option("downtime_message", "<br>");
+        $event->panel->add_config_group(new DowntimeConfig());
     }
 
     public function onPageRequest(PageRequestEvent $event): void

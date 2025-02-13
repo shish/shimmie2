@@ -123,10 +123,7 @@ class Wiki extends Extension
     // Add a block to the Board Config / Setup
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Wiki");
-        $sb->add_longtext_option(WikiConfig::TAG_PAGE_TEMPLATE, "Tag page template: ");
-        $sb->add_text_option(WikiConfig::EMPTY_TAGINFO, "Empty list text: ");
-        $sb->add_bool_option(WikiConfig::TAG_SHORTWIKIS, "<br/>Show shortwiki entry when searching for a single tag: ");
+        $event->panel->add_config_group(new WikiConfig());
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -377,7 +374,7 @@ class Wiki extends Extension
             // correct the default
             global $config;
             $row["title"] = $title;
-            $row["owner_id"] = $config->get_int("anon_id", 0);
+            $row["owner_id"] = $config->get_int(UserAccountsConfig::ANON_ID, 0);
         }
 
         assert(!empty($row));

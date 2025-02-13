@@ -230,8 +230,7 @@ class LogDatabase extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Logging (Database)");
-        $sb->add_choice_option(LogDatabaseConfig::LEVEL, LogLevel::names_to_levels(), "Log Level: ");
+        $event->panel->add_config_group(new LogDatabaseConfig());
     }
 
     public function onPageRequest(PageRequestEvent $event): void

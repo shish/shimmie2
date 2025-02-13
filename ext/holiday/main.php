@@ -11,19 +11,18 @@ class Holiday extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_bool("holiday_aprilfools", false);
+        $config->set_default_bool(HolidayConfig::APRIL_FOOLS, false);
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Holiday Theme");
-        $sb->add_bool_option("holiday_aprilfools", "Enable April Fools");
+        $event->panel->add_config_group(new HolidayConfig());
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
-        if (date('d/m') == '01/04' && $config->get_bool("holiday_aprilfools")) {
+        if (date('d/m') == '01/04' && $config->get_bool(HolidayConfig::APRIL_FOOLS)) {
             $page->add_html_header(LINK([
                 'rel' => 'stylesheet',
                 'href' => get_base_href() . '/ext/holiday/stylesheets/aprilfools.css',

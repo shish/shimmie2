@@ -12,7 +12,7 @@ class Featured extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_int('featured_id', 0);
+        $config->set_default_int(FeaturedConfig::ID, 0);
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -20,13 +20,13 @@ class Featured extends Extension
         global $config, $page, $user;
         if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: Permissions::EDIT_FEATURE)) {
             $id = $event->get_iarg('image_id');
-            $config->set_int("featured_id", $id);
+            $config->set_int(FeaturedConfig::ID, $id);
             log_info("featured", "Featured post set to >>$id", "Featured post set");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$id"));
         }
         if ($event->page_matches("featured_image/download")) {
-            $image = Image::by_id($config->get_int("featured_id"));
+            $image = Image::by_id($config->get_int(FeaturedConfig::ID));
             if (!is_null($image)) {
                 $page->set_mode(PageMode::DATA);
                 $page->set_mime($image->get_mime());
@@ -34,7 +34,7 @@ class Featured extends Extension
             }
         }
         if ($event->page_matches("featured_image/view")) {
-            $image = Image::by_id($config->get_int("featured_id"));
+            $image = Image::by_id($config->get_int(FeaturedConfig::ID));
             if (!is_null($image)) {
                 send_event(new DisplayingImageEvent($image));
             }
@@ -44,7 +44,7 @@ class Featured extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $cache, $config, $page, $user;
-        $fid = $config->get_int("featured_id");
+        $fid = $config->get_int(FeaturedConfig::ID);
         if ($fid > 0) {
             $image = cache_get_or_set(
                 "featured_image_object:$fid",
@@ -71,8 +71,8 @@ class Featured extends Extension
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $config;
-        if ($event->image->id == $config->get_int("featured_id")) {
-            $config->delete("featured_id");
+        if ($event->image->id == $config->get_int(FeaturedConfig::ID)) {
+            $config->delete(FeaturedConfig::ID);
         }
     }
 
