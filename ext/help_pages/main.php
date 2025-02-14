@@ -102,7 +102,7 @@ class HelpPages extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        $event->add_link("Help", make_link("help"));
+        $event->add_link("Help", make_link("help"), 90);
     }
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
