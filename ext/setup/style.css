@@ -38,6 +38,10 @@
 .setupblock .form TH {
 	font-weight: normal;
 }
+.setupblock .advanced {
+    color: var(--danger-color);
+    background: var(--danger-background);
+}
 .setupsubmit {
 	margin-top: 1em;
 	padding: 1em;

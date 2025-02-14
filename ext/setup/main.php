@@ -42,8 +42,8 @@ class Setup extends Extension
             $page->set_data("ok");
         }
 
-        if ($event->page_matches("setup/advanced", method: "GET", permission: Permissions::CHANGE_SETTING)) {
-            $this->theme->display_advanced($page, $config->values);
+        if ($event->page_matches("setup/raw", method: "GET", permission: Permissions::CHANGE_SETTING)) {
+            $this->theme->display_raw($page, $config->values);
         } elseif ($event->page_matches("setup", method: "GET", permission: Permissions::CHANGE_SETTING)) {
             $panel = new SetupPanel($config);
             send_event(new SetupBuildingEvent($panel));
@@ -52,7 +52,7 @@ class Setup extends Extension
             send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("setup"));
+            $page->set_redirect(referer_or(make_link("setup")));
         }
     }
 
