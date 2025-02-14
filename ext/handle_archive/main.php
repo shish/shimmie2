@@ -14,11 +14,6 @@ class ArchiveFileHandler extends DataHandlerExtension
         $config->set_default_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND, 'unzip -d "%d" "%f"');
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new ArchiveFileHandlerConfig());
-    }
-
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {

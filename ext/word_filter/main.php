@@ -18,11 +18,6 @@ class WordFilter extends Extension
         $event->stripped  = $this->filter($event->stripped);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new WordFilterConfig());
-    }
-
     private function filter(string $text): string
     {
         $map = $this->get_map();

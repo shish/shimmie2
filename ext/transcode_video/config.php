@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class TranscodeVideoConfig extends ConfigGroup
 {
+    public const KEY = "transcode_video";
     public ?string $title = "Transcode Video";
 
     #[ConfigMeta("Allow transcoding video", ConfigType::BOOL)]

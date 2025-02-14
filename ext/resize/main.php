@@ -63,11 +63,6 @@ class ResizeImage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new ResizeConfig());
-    }
-
     public function onDataUpload(DataUploadEvent $event): void
     {
         global $config, $page;

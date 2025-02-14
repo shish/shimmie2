@@ -228,11 +228,6 @@ class LogDatabase extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new LogDatabaseConfig());
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $page, $user;

@@ -120,12 +120,6 @@ class Wiki extends Extension
         $config->set_default_bool(WikiConfig::ENABLE_REVISIONS, true);
     }
 
-    // Add a block to the Board Config / Setup
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new WikiConfig());
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

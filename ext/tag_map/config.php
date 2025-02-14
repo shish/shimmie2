@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class TagMapConfig extends ConfigGroup
 {
+    public const KEY = "tag_map";
+
     #[ConfigMeta("Show tags used at least N times", ConfigType::INT)]
     public const TAGS_MIN = "tags_min";
 

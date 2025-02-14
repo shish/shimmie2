@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class CustomHtmlHeadersConfig extends ConfigGroup
 {
+    public const KEY = "custom_html_headers";
     public ?string $title = "Custom HTML Headers";
 
     #[ConfigMeta("HTML inside <head>", ConfigType::STRING, ui_type: "longtext")]

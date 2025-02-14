@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class LinkImageConfig extends ConfigGroup
 {
+    public const KEY = "link_image";
+
     #[ConfigMeta("Text format", ConfigType::STRING)]
     public const TEXT_FORMAT = 'ext_link-img_text-link_format';
 }

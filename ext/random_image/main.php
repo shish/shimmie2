@@ -36,11 +36,6 @@ class RandomImage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new RandomImageConfig());
-    }
-
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;

@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class TagListConfig extends ConfigGroup
 {
+    public const KEY = "tag_list";
+
     #[ConfigMeta("Related tags", ConfigType::INT)]
     public const LENGTH = "tag_list_length";
 

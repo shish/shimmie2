@@ -36,23 +36,22 @@ class UserConfigTheme extends Themelet
     }
 
 
-    /*
+    /**
      * Display a set of setup option blocks
-     *
-     * $panel = the container of the blocks
-     * $panel->blocks the blocks to be displayed, unsorted
      *
      * It's recommended that the theme sort the blocks before doing anything
      * else, using:  usort($panel->blocks, "blockcmp");
      *
      * The page should wrap all the options in a form which links to setup_save
+     *
+     * @param array<Block> $config_blocks
      */
-    public function display_user_config_page(Page $page, User $user, SetupPanel $panel): void
+    public function display_user_config_page(Page $page, array $config_blocks, User $user): void
     {
-        usort($panel->blocks, "Shimmie2\blockcmp");
+        usort($config_blocks, "Shimmie2\blockcmp");
 
         $blocks = DIV(["class" => "setupblocks"]);
-        foreach ($panel->blocks as $block) {
+        foreach ($config_blocks as $block) {
             $blocks->appendChild($this->sb_to_html($block));
         }
 
@@ -63,13 +62,13 @@ class UserConfigTheme extends Themelet
             INPUT(['class' => 'setupsubmit', 'type' => 'submit', 'value' => 'Save Settings'])
         );
 
+        $page->set_mode(PageMode::PAGE);
         $page->set_title("User Options");
         $page->add_block(new NavBlock());
         $page->add_block(new Block(null, $table, id: "Setupmain"));
-        $page->set_mode(PageMode::PAGE);
     }
 
-    protected function sb_to_html(SetupBlock $block): HTMLElement
+    protected function sb_to_html(Block $block): HTMLElement
     {
         return SECTION(
             ["class" => "setupblock"],

@@ -20,9 +20,4 @@ class SpeedHax extends Extension
         $config->set_default_bool(SpeedHaxConfig::CACHE_FIRST_FEW, false);
         $config->set_default_bool(SpeedHaxConfig::RSS_LIMIT, false);
     }
-
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new SpeedHaxConfig());
-    }
 }

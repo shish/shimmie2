@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class HomeConfig extends ConfigGroup
 {
+    public const KEY = "home";
     public ?string $title = "Home Page";
 
     #[ConfigMeta("Page links", ConfigType::STRING, ui_type: "longtext", help: "Use BBCode, leave blank for defaults")]

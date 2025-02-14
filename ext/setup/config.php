@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class SetupConfig extends ConfigGroup
 {
+    public const KEY = "setup";
     public ?string $title = "General";
     public ?int $position = 0;
 

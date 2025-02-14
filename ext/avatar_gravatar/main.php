@@ -22,11 +22,6 @@ class AvatarGravatar extends AvatarExtension
         $config->set_default_string(AvatarGravatarConfig::GRAVATAR_RATING, "g");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new AvatarGravatarConfig());
-    }
-
     public function avatar_html(User $user): HTMLElement|null
     {
         global $config;

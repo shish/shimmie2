@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class FilterConfig extends ConfigGroup
 {
+    public const KEY = "filter";
+
     #[ConfigMeta(
         "Default filtered tags",
         ConfigType::STRING,
@@ -15,8 +17,10 @@ class FilterConfig extends ConfigGroup
     public const TAGS = "filter_tags";
 }
 
-class FilterUserConfig extends ConfigGroup
+class FilterUserConfig extends UserConfigGroup
 {
+    public const KEY = "filter";
+
     #[ConfigMeta(
         "Default filtered tags",
         ConfigType::STRING,

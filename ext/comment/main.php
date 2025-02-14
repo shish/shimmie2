@@ -352,11 +352,6 @@ class CommentList extends Extension
         log_info("comment", "Deleting Comment #{$event->comment_id}");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new CommentConfig());
-    }
-
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i")) {

@@ -139,17 +139,6 @@ class Upload extends Extension
         );
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $sb = $event->panel->add_config_group(new UploadConfig());
-        $files = ini_get("max_file_uploads");
-        $size = ini_get("upload_max_filesize");
-        $sb->body = emptyHTML(
-            I("(System limits are set to $files uploads of $size each)"),
-            $sb->body
-        );
-    }
-
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         global $user;

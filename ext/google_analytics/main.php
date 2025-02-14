@@ -8,13 +8,6 @@ use function MicroHTML\SCRIPT;
 
 class GoogleAnalytics extends Extension
 {
-    # Add analytics to config
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new GoogleAnalyticsConfig());
-    }
-
-    # Load Analytics tracking code on page request
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

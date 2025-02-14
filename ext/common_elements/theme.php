@@ -7,6 +7,15 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
+use function MicroHTML\INPUT;
+use function MicroHTML\LABEL;
+use function MicroHTML\OPTION;
+use function MicroHTML\SELECT;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TEXTAREA;
+use function MicroHTML\TH;
+use function MicroHTML\TR;
 
 class CommonElementsTheme extends Themelet
 {
@@ -184,5 +193,93 @@ class CommonElementsTheme extends Themelet
             $pages_html,
             ' >>'
         );
+    }
+
+    public function config_group_to_block(Config $config, BaseConfigGroup $group): ?Block
+    {
+        global $user;
+
+        $title = trim($group->title ?? implode(" ", \Safe\preg_split('/(?=[A-Z])/', \Safe\preg_replace("/^Shimmie2.(.*?)(User)?Config$/", "\$1", get_class($group)))));
+        $fields = $group->get_config_fields();
+        $fields = array_filter($fields, fn ($field) => !$field->advanced || @$_GET["advanced"] == "on");
+        if (count($fields) == 0) {
+            return null;
+        }
+
+        $table = TABLE(["class" => "form"]);
+        foreach ($fields as $key => $meta) {
+            if ($meta->permission && !$user->can($meta->permission)) {
+                continue;
+            }
+
+            $row = TR(["class" => $meta->advanced ? "advanced" : ""]);
+            $row->appendChild(TH(LABEL(["for" => $key], $meta->label)));
+            switch ($meta->ui_type) {
+                case "bool":
+                    $val = $config->get_bool($key);
+                    $input = INPUT(["type" => "checkbox", "id" => $key, "name" => "_config_$key", "checked" => $val]);
+                    break;
+                case "int":
+                    $val = $config->get_int($key);
+                    $input = INPUT(["type" => "number", "id" => $key, "name" => "_config_$key", "value" => $val, "size" => 4, "step" => 1]);
+                    break;
+                case "shorthand_int":
+                    $val = to_shorthand_int($config->get_int($key, 0));
+                    $input = INPUT(["type" => "text", "id" => $key, "name" => "_config_$key", "value" => $val, "size" => 6]);
+                    break;
+                case "text":
+                    $val = $config->get_string($key);
+                    if ($meta->options) {
+                        $options = $meta->options;
+                        if (is_callable($options)) {
+                            $options = call_user_func($options);
+                        }
+                        $input = SELECT(["id" => $key, "name" => "_config_$key"]);
+                        foreach ($options as $optname => $optval) {
+                            $input->appendChild(OPTION(["value" => $optval, "selected" => $optval == $val ], $optname));
+                        }
+                    } else {
+                        $input = INPUT(["type" => "text", "id" => $key, "name" => "_config_$key", "value" => $val]);
+                    }
+                    break;
+                case "longtext":
+                    $val = $config->get_string($key, "");
+                    $rows = max(3, min(10, count(explode("\n", $val))));
+                    $input = TEXTAREA(["rows" => $rows, "id" => $key, "name" => "_config_$key"], $val);
+                    break;
+                case "color":
+                    $val = $config->get_string($key);
+                    $input = INPUT(["type" => "color", "id" => $key, "name" => "_config_$key", "value" => $val]);
+                    break;
+                case "multichoice":
+                    $val = $config->get_array($key, []);
+                    $input = SELECT(["id" => $key, "name" => "_config_{$key}[]", "multiple" => true, "size" => 5]);
+                    $options = $meta->options;
+                    if (is_callable($options)) {
+                        $options = call_user_func($options);
+                    }
+                    if (is_string($options)) {
+                        throw new \Exception("options are invalid: $options");
+                    }
+                    foreach ($options as $optname => $optval) {
+                        $input->appendChild(OPTION(["value" => $optval, "selected" => in_array($optval, $val)], $optname));
+                    }
+                    break;
+                default:
+                    throw new \Exception("Unknown ui_type: {$meta->ui_type}");
+            }
+            $row->appendChild(TD(
+                $input,
+                INPUT(["type" => "hidden", "name" => "_type_$key", "value" => strtolower($meta->type->name)])
+            ));
+            $table->appendChild($row);
+            if ($meta->help) {
+                $table->appendChild(TR(TD(["colspan" => 2, "style" => "text-align: center;"], "(" . $meta->help . ")")));
+            }
+        }
+
+        $html = $group->tweak_html($table);
+
+        return new Block($title, $html, "main", $group->position ?? 50);
     }
 }

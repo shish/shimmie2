@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class DowntimeConfig extends ConfigGroup
 {
+    public const KEY = "downtime";
+
     #[ConfigMeta("Disable non-admin access", ConfigType::BOOL)]
     public const DOWNTIME = "downtime";
 

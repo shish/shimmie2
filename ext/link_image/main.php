@@ -15,11 +15,6 @@ class LinkImage extends Extension
         $this->theme->links_block($page, $this->data($event->image));
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new LinkImageConfig());
-    }
-
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;

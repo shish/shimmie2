@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class RatingsBlurConfig extends ConfigGroup
 {
+    public const KEY = "ratings_blur";
+
     #[ConfigMeta(
         "Default blurred ratings",
         ConfigType::ARRAY,
@@ -32,8 +34,10 @@ class RatingsBlurConfig extends ConfigGroup
     }
 }
 
-class RatingsBlurUserConfig extends ConfigGroup
+class RatingsBlurUserConfig extends UserConfigGroup
 {
+    public const KEY = "ratings_blur";
+
     #[ConfigMeta(
         "Blurred ratings",
         ConfigType::ARRAY,

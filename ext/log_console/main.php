@@ -14,11 +14,6 @@ class LogConsole extends Extension
         $config->set_default_int(LogConsoleConfig::LEVEL, LogLevel::INFO->value);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new LogConsoleConfig());
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
