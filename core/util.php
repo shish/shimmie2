@@ -555,10 +555,9 @@ function get_debug_info_arr(): array
 {
     global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
 
-    if ($config->get_string("commit_hash", "unknown") == "unknown") {
-        $commit = "";
-    } else {
-        $commit = " (".$config->get_string("commit_hash").")";
+    $version = VERSION;
+    if (defined("BUILD_HASH")) {
+        $version .= "-" . substr(constant("BUILD_HASH"), 0, 7);
     }
 
     return [
@@ -571,7 +570,7 @@ function get_debug_info_arr(): array
         "event_count" => $_shm_event_count,
         "cache_hits" => $cache->get("__etc_cache_hits"),
         "cache_misses" => $cache->get("__etc_cache_misses"),
-        "version" => VERSION . $commit,
+        "version" => $version,
     ];
 }
 
