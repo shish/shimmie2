@@ -24,9 +24,6 @@ class AvatarGravatarConfig extends ConfigGroup
     ])]
     public const GRAVATAR_RATING = "avatar_gravatar_rating";
 
-    #[ConfigMeta("Size", ConfigType::INT)]
-    public const GRAVATAR_SIZE = "avatar_gravatar_size";
-
     #[ConfigMeta("Default", ConfigType::STRING, advanced: true)]
     public const GRAVATAR_DEFAULT = "avatar_gravatar_default";
 }

@@ -18,17 +18,6 @@ class AvatarPost extends AvatarExtension
         return 49;
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(AvatarPostConfig::SIZE, 128);
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new AvatarPostConfig());
-    }
-
     public function onInitUserConfig(InitUserConfigEvent $event): void
     {
         $event->user_config->set_default_int(AvatarPostUserConfig::AVATAR_SCALE, 100);
@@ -99,8 +88,8 @@ class AvatarPost extends AvatarExtension
 
         $ar = $image->width / $image->height;
 
-        $thumb_height = $config->get_int(AvatarPostConfig::SIZE);
-        $thumb_width = $config->get_int(AvatarPostConfig::SIZE);
+        $thumb_height = $config->get_int(SetupConfig::AVATAR_SIZE);
+        $thumb_width = $config->get_int(SetupConfig::AVATAR_SIZE);
         $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
         $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
 

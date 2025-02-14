@@ -18,7 +18,6 @@ class AvatarGravatar extends AvatarExtension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_int(AvatarGravatarConfig::GRAVATAR_SIZE, 128);
         $config->set_default_string(AvatarGravatarConfig::GRAVATAR_DEFAULT, "");
         $config->set_default_string(AvatarGravatarConfig::GRAVATAR_RATING, "g");
     }
@@ -34,7 +33,7 @@ class AvatarGravatar extends AvatarExtension
 
         if (!empty($user->email)) {
             $hash = md5(strtolower($user->email));
-            $s = $config->get_string(AvatarGravatarConfig::GRAVATAR_SIZE);
+            $s = $config->get_int(SetupConfig::AVATAR_SIZE);
             $d = urlencode($config->get_string(AvatarGravatarConfig::GRAVATAR_DEFAULT));
             $r = $config->get_string(AvatarGravatarConfig::GRAVATAR_RATING);
             $cb = date("Y-m-d");

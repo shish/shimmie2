@@ -12,7 +12,7 @@ class PostOwnerTheme extends Themelet
 {
     public function get_owner_editor_html(Image $image): HTMLElement
     {
-        global $user;
+        global $config, $user;
         $owner = $image->get_owner()->name;
         $date = rawHTML(autodate($image->posted));
         $ip = $user->can(Permissions::VIEW_IP) ? rawHTML(" (" . show_ip($image->owner_ip, "Post posted {$image->posted}") . ")") : "";
@@ -28,7 +28,7 @@ class PostOwnerTheme extends Themelet
         if ($avatar_e->html) {
             $info->appendChild(
                 TD(
-                    ["width" => "1%", "rowspan" => "4"],
+                    ["width" => $config->get_int(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => "4"],
                     $avatar_e->html
                 )
             );

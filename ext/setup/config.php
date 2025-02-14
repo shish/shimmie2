@@ -24,6 +24,9 @@ class SetupConfig extends ConfigGroup
     #[ConfigMeta("Theme", ConfigType::STRING, options: "Shimmie2\SetupConfig::get_theme_options")]
     public const THEME = "theme";
 
+    #[ConfigMeta("Avatar Size", ConfigType::INT)]
+    public const AVATAR_SIZE = "avatar_size";
+
     #[ConfigMeta("Nice URLs", ConfigType::BOOL, help: "Javascript inactive, can't test Nice URLs!")]
     public const NICE_URLS = "nice_urls";
 
