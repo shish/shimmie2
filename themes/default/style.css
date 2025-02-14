@@ -5,15 +5,18 @@
 	--text: #000;
 	--link-default: #0000EE;
 	--link-visited: #551A8B;
-	
+
 	--title: #BBB;
 	--title-border: #AAA;
-	
+
 	--header: #CCC;
 	--header-border: #BBB;
-	
+
 	--block: #DDD;
 	--block-border: #CCC;
+
+	--danger-color: #000;
+	--danger-background: #FAA;
 
 	--zebra-border: #CCC;
 	--zebra-header: #DDD;
@@ -23,28 +26,31 @@
 	--border-radius: 0.75rem;
 	--block-padding: 0.5rem;
 }
-  
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--page: #222;
 		--text: #CCC;
 		--link-default: #BBF;
 		--link-visited: #EAF;
-			
+
 		--title: #333;
 		--title-border: #555;
-		
+
 		--header: #444;
 		--header-border: #666;
-		
+
 		--block: #555;
 		--block-border: #777;
-	
+
+		--danger-color: #CCC;
+		--danger-background: #955;
+
 		--zebra-border: #777;
 		--zebra-header: #444;
 		--zebra-odd: #555;
 		--zebra-even: #666;
-	}	
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
