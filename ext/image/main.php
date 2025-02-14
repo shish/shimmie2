@@ -130,14 +130,6 @@ class ImageIO extends Extension
         $event->add_part("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        global $config;
-
-        $event->panel->add_config_group(new ImageConfig());
-        $event->panel->add_config_group(new ThumbnailConfig());
-    }
-
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $fname = $event->image->filename;

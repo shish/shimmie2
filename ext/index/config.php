@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class IndexConfig extends ConfigGroup
 {
+    public const KEY = "index";
     public ?string $title = "Post List";
     public ?int $position = 20;
 

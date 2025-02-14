@@ -103,11 +103,6 @@ class Index extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new IndexConfig());
-    }
-
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("posts", new Link('post/list'), "Posts", NavLink::is_active(["post","view"]), 20);

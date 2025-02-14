@@ -8,8 +8,74 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-require_once "events.php";
-require_once "panel.php";
+/*
+ * Sent when the setup screen's 'Save Settings' button has been activated
+ */
+class ConfigSaveEvent extends Event
+{
+    public Config $config;
+    /** @var array<string, null|string|int|boolean|array<string>> $values */
+    public array $values;
+
+    /**
+     * @param array<string, null|string|int|boolean|array<string>> $values
+     */
+    public function __construct(Config $config, array $values)
+    {
+        parent::__construct();
+        $this->config = $config;
+        $this->values = $values;
+    }
+
+    /**
+     * Convert POST data to settings data, eg
+     *
+     *     $_POST = [
+     *         "_type_mynull" => "string",
+     *         "_type_mystring" => "string",
+     *         "_config_mystring" => "hello world!",
+     *         "_type_myint" => "int",
+     *         "_config_myint" => "42KB",
+     *     ]
+     *
+     * becomes
+     *
+     *     $config = [
+     *         "mynull" => null,
+     *         "mystring" => "hello world!",
+     *         "myint" => 43008,
+     *     ]
+     *
+     * @param array<string, string|string[]> $post
+     * @return array<string, null|string|int|boolean|array<string>>
+     */
+    public static function postToSettings(array $post): array
+    {
+        $settings = [];
+        foreach ($post as $key => $type) {
+            if (str_starts_with($key, "_type_")) {
+                $key = str_replace("_type_", "", $key);
+                $value = $post["_config_$key"] ?? null;
+                if ($type === "string") {
+                    $settings[$key] = $value;
+                } elseif ($type === "int") {
+                    assert(is_string($value));
+                    $settings[$key] = $value ? parse_shorthand_int($value) : null;
+                } elseif ($type === "bool") {
+                    $settings[$key] = $value === "on";
+                } elseif ($type === "array") {
+                    $settings[$key] = $value;
+                } else {
+                    if (is_array($value)) {
+                        $value = implode(", ", $value);
+                    }
+                    throw new InvalidInput("Invalid type '$value' for key '$key'");
+                }
+            }
+        }
+        return $settings;
+    }
+}
 
 class Setup extends Extension
 {
@@ -42,23 +108,25 @@ class Setup extends Extension
             $page->set_data("ok");
         }
 
-        if ($event->page_matches("setup/raw", method: "GET", permission: Permissions::CHANGE_SETTING)) {
-            $this->theme->display_raw($page, $config->values);
-        } elseif ($event->page_matches("setup", method: "GET", permission: Permissions::CHANGE_SETTING)) {
-            $panel = new SetupPanel($config);
-            send_event(new SetupBuildingEvent($panel));
-            $this->theme->display_page($page, $panel);
+        if ($event->page_matches("setup", method: "GET", permission: Permissions::CHANGE_SETTING)) {
+            $blocks = [];
+            foreach (get_subclasses_of(ConfigGroup::class) as $class) {
+                $group = new $class();
+                assert(is_a($group, ConfigGroup::class));
+                if (Extension::is_enabled($group::KEY)) {
+                    $block = $this->theme->config_group_to_block($config, $group);
+                    if ($block) {
+                        $blocks[] = $block;
+                    }
+                }
+            }
+            $this->theme->display_page($page, $blocks);
         } elseif ($event->page_matches("setup/save", method: "POST", permission: Permissions::CHANGE_SETTING)) {
             send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(referer_or(make_link("setup")));
         }
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new SetupConfig());
     }
 
     public function onConfigSave(ConfigSaveEvent $event): void

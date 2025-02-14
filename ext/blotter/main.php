@@ -42,11 +42,6 @@ class Blotter extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new BlotterConfig());
-    }
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;

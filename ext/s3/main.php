@@ -14,11 +14,6 @@ class S3 extends Extension
 {
     public int $synced = 0;
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new S3Config());
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

@@ -188,12 +188,6 @@ class Pools extends Extension
         }
     }
 
-    // Add a block to the Board Config / Setup
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new PoolsConfig());
-    }
-
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("pool", new Link('pool/list'), "Pools");

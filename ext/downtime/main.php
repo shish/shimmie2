@@ -14,11 +14,6 @@ class Downtime extends Extension
         return 10;
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new DowntimeConfig());
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;

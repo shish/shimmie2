@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class ReverseSearchLinksConfig extends ConfigGroup
 {
+    public const KEY = "reverse_search_links";
+
     #[ConfigMeta("Enabled services", ConfigType::ARRAY, options: [
         'SauceNAO' => 'SauceNAO',
         'TinEye' => 'TinEye',

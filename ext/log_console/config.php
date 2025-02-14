@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class LogConsoleConfig extends ConfigGroup
 {
+    public const KEY = "log_console";
+
     #[ConfigMeta("Log HTTP requests", ConfigType::BOOL)]
     public const LOG_ACCESS = "log_console_access";
 

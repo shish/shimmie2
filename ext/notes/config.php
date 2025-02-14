@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class NotesConfig extends ConfigGroup
 {
+    public const KEY = "notes";
+
     #[ConfigMeta("Notes per page", ConfigType::INT)]
     public const NOTES_PER_PAGE = "notesNotesPerPage";
 

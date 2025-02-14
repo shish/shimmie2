@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class RatingsConfig extends ConfigGroup
 {
+    public const KEY = "ratings";
+
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_ratings2_version";
 
@@ -34,8 +36,10 @@ class RatingsConfig extends ConfigGroup
     }
 }
 
-class RatingsUserConfig extends ConfigGroup
+class RatingsUserConfig extends UserConfigGroup
 {
+    public const KEY = "ratings";
+
     #[ConfigMeta(
         "Default Ratings",
         ConfigType::ARRAY,

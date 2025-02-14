@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class ArtistsConfig extends ConfigGroup
 {
+    public const KEY = "artists";
+
     #[ConfigMeta("Artists per page", ConfigType::INT)]
     public const ARTISTS_PER_PAGE = "artistsPerPage";
 }

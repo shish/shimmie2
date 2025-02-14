@@ -20,11 +20,6 @@ class PrivateImage extends Extension
         $event->user_config->set_default_bool(PrivateImageUserConfig::VIEW_DEFAULT, true);
     }
 
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new PrivateImageUserConfig());
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;

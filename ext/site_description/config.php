@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class SiteDescriptionConfig extends ConfigGroup
 {
+    public const KEY = "site_description";
+
     #[ConfigMeta("Description", ConfigType::STRING)]
     public const DESCRIPTION = "site_description";
 

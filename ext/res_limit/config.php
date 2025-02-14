@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class ResolutionLimitConfig extends ConfigGroup
 {
+    public const KEY = "res_limit";
+
     #[ConfigMeta("Min width", ConfigType::INT)]
     public const MIN_WIDTH = "upload_min_width";
     #[ConfigMeta("Min height", ConfigType::INT)]

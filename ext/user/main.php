@@ -411,13 +411,6 @@ class UserPage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        global $config;
-
-        $event->panel->add_config_group(new UserAccountsConfig());
-    }
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;

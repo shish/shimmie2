@@ -11,25 +11,13 @@ class RatingsBlur extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-
         $config->set_default_array(RatingsBlurConfig::GLOBAL_DEFAULTS, ["e"]);
     }
 
     public function onInitUserConfig(InitUserConfigEvent $event): void
     {
         global $config;
-
         $event->user_config->set_default_array(RatingsBlurUserConfig::USER_DEFAULTS, $config->get_array(RatingsBlurConfig::GLOBAL_DEFAULTS));
-    }
-
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new RatingsBlurUserConfig());
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new RatingsBlurConfig());
     }
 
     public function blur(string $rating): bool

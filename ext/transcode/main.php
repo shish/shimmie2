@@ -141,11 +141,6 @@ class TranscodeImage extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new TranscodeImageConfig());
-    }
-
     public function onDataUpload(DataUploadEvent $event): void
     {
         global $config;

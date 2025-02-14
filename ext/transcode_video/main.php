@@ -54,11 +54,6 @@ class TranscodeVideo extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new TranscodeVideoConfig());
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
