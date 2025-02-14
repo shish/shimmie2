@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class UserAccountsConfig extends ConfigGroup
 {
+    public const KEY = "user";
+
     #[ConfigMeta("Anonymous ID", ConfigType::INT, advanced: true)]
     public const ANON_ID = "anon_id";
 

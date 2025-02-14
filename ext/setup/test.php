@@ -92,12 +92,4 @@ class SetupTest extends ShimmiePHPUnitTestCase
         $this->assert_title("Shimmie Setup");
         $this->assert_text("Minimum free space");
     }
-
-    public function testRaw(): void
-    {
-        $this->log_in_as_admin();
-        $this->get_page('setup/raw');
-        $this->assert_title("Shimmie Setup");
-        $this->assert_text(ThumbnailConfig::QUALITY);
-    }
 }

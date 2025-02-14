@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class PoolsConfig extends ConfigGroup
 {
+    public const KEY = "pools";
+
     #[ConfigMeta("Max results on import", ConfigType::INT)]
     public const MAX_IMPORT_RESULTS = "poolsMaxImportResults";
 

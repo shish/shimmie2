@@ -30,11 +30,6 @@ class VideoFileHandler extends DataHandlerExtension
         );
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new VideoFileHandlerConfig());
-    }
-
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
         $event->image->video = true;

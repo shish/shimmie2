@@ -47,11 +47,6 @@ class TagList extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new TagListConfig());
-    }
-
     /**
      * @return int[]
      */

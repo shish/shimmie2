@@ -333,16 +333,17 @@ class DatabaseConfig extends Config
     }
 }
 
-abstract class ConfigGroup
+abstract class BaseConfigGroup
 {
+    public const KEY = "";
     public ?string $title = null;
     public ?int $position = null;
 
-    public static function get_group_for_entry_by_name(string $name): ?ConfigGroup
+    public static function get_group_for_entry_by_name(string $name): ?BaseConfigGroup
     {
-        foreach (get_subclasses_of(ConfigGroup::class) as $class) {
+        foreach (get_subclasses_of(BaseConfigGroup::class) as $class) {
             $config = new $class();
-            assert(is_a($config, ConfigGroup::class));
+            assert(is_a($config, BaseConfigGroup::class));
             foreach ((new \ReflectionClass($class))->getConstants() as $const => $value) {
                 if ($value === $name) {
                     return $config;
@@ -374,6 +375,18 @@ abstract class ConfigGroup
         }
         return $fields;
     }
+
+    public function tweak_html(\MicroHTML\HTMLElement $html): \MicroHTML\HTMLElement
+    {
+        return $html;
+    }
+}
+
+abstract class ConfigGroup extends BaseConfigGroup
+{
+}
+abstract class UserConfigGroup extends BaseConfigGroup
+{
 }
 
 enum ConfigType

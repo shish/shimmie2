@@ -33,18 +33,6 @@ class CronUploader extends Extension
         $event->user_config->set_default_int(CronUploaderUserConfig::LOG_LEVEL, LogLevel::INFO->value);
     }
 
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
-    {
-        if ($event->user->can(Permissions::CRON_ADMIN)) {
-            $sb = $event->panel->add_config_group(new CronUploaderUserConfig());
-            $sb->body->appendChild(emptyHTML(
-                A(["href" => make_http(make_link("cron_upload"))], "Read the documentation"),
-                " for cron setup instructions.",
-            ));
-        }
-    }
-
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "system") {
@@ -195,7 +183,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $user_api_key = $user->get_config()->get_string(UserConfig::API_KEY, "API_KEY");
+        $user_api_key = $user->get_config()->get_string(UserConfigUserConfig::API_KEY, "API_KEY");
 
         return make_http(make_link("/cron_upload/run", "api_key=".urlencode($user_api_key)));
     }

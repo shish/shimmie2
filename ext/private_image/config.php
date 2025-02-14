@@ -6,14 +6,16 @@ namespace Shimmie2;
 
 class PrivateImageConfig extends ConfigGroup
 {
+    public const KEY = "private_image";
     public ?string $title = "Private Posts";
 
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_private_image_version";
 }
 
-class PrivateImageUserConfig extends ConfigGroup
+class PrivateImageUserConfig extends UserConfigGroup
 {
+    public const KEY = "private_image";
     public ?string $title = "Private Posts";
 
     #[ConfigMeta("Mark posts private by default", ConfigType::BOOL, permission: Permissions::SET_PRIVATE_IMAGE)]

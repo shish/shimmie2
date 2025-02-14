@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class SpeedHaxConfig extends ConfigGroup
 {
+    public const KEY = "speed_hax";
+
     #[ConfigMeta("Don't auto-upgrade database", ConfigType::BOOL)]
     public const NO_AUTO_DB_UPGRADE = "speed_hax_no_auto_db_upgrade";
 

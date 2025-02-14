@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class ForumConfig extends ConfigGroup
 {
+    public const KEY = "forum";
+
     #[ConfigMeta("Title max length", ConfigType::INT)]
     public const TITLE_SUBSTRING = "forumTitleSubString";
 

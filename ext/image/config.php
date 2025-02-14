@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class ImageConfig extends ConfigGroup
 {
+    public const KEY = "image";
     public ?string $title = "Post Manager";
 
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
@@ -35,6 +36,7 @@ class ImageConfig extends ConfigGroup
 
 class ThumbnailConfig extends ConfigGroup
 {
+    public const KEY = "image";
     public ?string $title = "Thumbnailing";
 
     #[ConfigMeta("Tooltip", ConfigType::STRING)]

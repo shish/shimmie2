@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class IPBanConfig extends ConfigGroup
 {
+    public const KEY = "ipban";
     public ?string $title = "IP Ban";
 
     #[ConfigMeta("Message for banned users", ConfigType::STRING, ui_type: "longtext", help: 'with $IP, $DATE, $ADMIN, $REASON, and $CONTACT')]

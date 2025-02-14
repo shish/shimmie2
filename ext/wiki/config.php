@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class WikiConfig extends ConfigGroup
 {
+    public const KEY = "wiki";
+
     #[ConfigMeta("Tag page template", ConfigType::STRING, ui_type: "longtext")]
     public const TAG_PAGE_TEMPLATE = "wiki_tag_page_template";
 

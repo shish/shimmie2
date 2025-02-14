@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class AvatarGravatarConfig extends ConfigGroup
 {
+    public const KEY = "avatar_gravatar";
     public ?string $title = "Avatars (Gravatar)";
 
     #[ConfigMeta("Type", ConfigType::STRING, options: [

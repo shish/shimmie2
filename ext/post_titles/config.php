@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class PostTitlesConfig extends ConfigGroup
 {
+    public const KEY = "post_titles";
+
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_post_titles_version";
 

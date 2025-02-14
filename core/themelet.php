@@ -52,4 +52,11 @@ class Themelet
         assert(is_a($c, CommonElementsTheme::class));
         $c->display_paginator($page, $base, $query, $page_number, $total_pages, $show_random);
     }
+
+    public function config_group_to_block(Config $config, BaseConfigGroup $group): ?Block
+    {
+        $c = self::get_common();
+        assert(is_a($c, CommonElementsTheme::class));
+        return $c->config_group_to_block($config, $group);
+    }
 }

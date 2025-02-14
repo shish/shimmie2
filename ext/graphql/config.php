@@ -6,6 +6,9 @@ namespace Shimmie2;
 
 class GraphQLConfig extends ConfigGroup
 {
+    public const KEY = "graphql";
+    public ?string $title = "GraphQL";
+
     #[ConfigMeta("CORS pattern", ConfigType::STRING, advanced: true)]
     public const CORS_PATTERN = "graphql_cors_pattern";
 

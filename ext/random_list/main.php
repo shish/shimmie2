@@ -53,11 +53,6 @@ class RandomList extends Extension
         $config->set_default_int(RandomListConfig::LIST_COUNT, 12);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new RandomListConfig());
-    }
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {

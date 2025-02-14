@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class CommentConfig extends ConfigGroup
 {
+    public const KEY = "comment";
+
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_comments_version";
 

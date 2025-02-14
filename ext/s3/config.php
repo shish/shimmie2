@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class S3Config extends ConfigGroup
 {
+    public const KEY = "s3";
     public ?string $title = "S3 CDN";
 
     #[ConfigMeta("Access Key ID", ConfigType::STRING)]

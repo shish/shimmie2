@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class VideoFileHandlerConfig extends ConfigGroup
 {
+    public const KEY = "handle_video";
+
     #[ConfigMeta("Autoplay", ConfigType::BOOL)]
     public const PLAYBACK_AUTOPLAY = "video_playback_autoplay";
 

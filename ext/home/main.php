@@ -23,12 +23,6 @@ class Home extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-
-        $event->panel->add_config_group(new HomeConfig());
-    }
-
     private function get_body(): HTMLElement
     {
         // returns just the contents of the body

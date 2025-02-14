@@ -66,11 +66,6 @@ class TagMap extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new TagMapConfig());
-    }
-
     /**
      * @return array<array{tag:string,scaled:float}>
      */

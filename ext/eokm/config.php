@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class EokmConfig extends ConfigGroup
 {
+    public const KEY = "eokm";
     public ?string $title = "EOKM Filter";
 
     #[ConfigMeta("Username", ConfigType::STRING)]

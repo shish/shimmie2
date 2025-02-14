@@ -15,11 +15,6 @@ class Terms extends Extension
         $config->set_default_string(TermsConfig::MESSAGE, "Cookies may be used. Please read our [url=site://wiki/privacy]privacy policy[/url] for more information.\nBy accepting to enter you agree to our [url=site://wiki/rules]rules[/url] and [url=site://wiki/terms_of_service]terms of service[/url].");
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new TermsConfig());
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;

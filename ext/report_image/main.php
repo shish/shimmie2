@@ -144,11 +144,6 @@ class ReportImage extends Extension
         $this->delete_reports_by($event->id);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new ReportImageConfig());
-    }
-
     public function delete_reports_by(int $user_id): void
     {
         global $cache, $database;

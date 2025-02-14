@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class TagEditCloudConfig extends ConfigGroup
 {
+    public const KEY = "tag_editcloud";
+
     #[ConfigMeta("Sort the tags by", ConfigType::STRING, options: "Shimmie2\TagEditCloudConfig::get_sort_options")]
     public const SORT = "tageditcloud_sort";
 
