@@ -52,23 +52,23 @@ class TranscodeImage extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_bool(TranscodeConfig::ENABLED, true);
-        $config->set_default_bool(TranscodeConfig::GET_ENABLED, false);
-        $config->set_default_bool(TranscodeConfig::UPLOAD, false);
-        $config->set_default_string(TranscodeConfig::ENGINE, MediaEngine::GD);
-        $config->set_default_int(TranscodeConfig::QUALITY, 80);
-        $config->set_default_string(TranscodeConfig::ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
+        $config->set_default_bool(TranscodeImageConfig::ENABLED, true);
+        $config->set_default_bool(TranscodeImageConfig::GET_ENABLED, false);
+        $config->set_default_bool(TranscodeImageConfig::UPLOAD, false);
+        $config->set_default_string(TranscodeImageConfig::ENGINE, MediaEngine::GD);
+        $config->set_default_int(TranscodeImageConfig::QUALITY, 80);
+        $config->set_default_string(TranscodeImageConfig::ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
 
         foreach (array_values(self::INPUT_MIMES) as $mime) {
             $config->set_default_string(self::get_mapping_name($mime), "");
         }
     }
 
-    private static function get_mapping_name(string $mime): string
+    public static function get_mapping_name(string $mime): string
     {
         $mime = str_replace(".", "_", $mime);
         $mime = str_replace("/", "_", $mime);
-        return TranscodeConfig::UPLOAD_PREFIX.$mime;
+        return "transcode_upload_".$mime;
     }
 
     private static function get_mapping(string $mime): ?string
@@ -99,7 +99,7 @@ class TranscodeImage extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        if ($this->get_version(TranscodeConfig::VERSION) < 1) {
+        if ($this->get_version(TranscodeImageConfig::VERSION) < 1) {
             $old_extensions = [];
             foreach (array_values(self::INPUT_MIMES) as $mime) {
                 $old_extensions = array_merge($old_extensions, FileExtension::get_all_for_mime($mime));
@@ -123,7 +123,7 @@ class TranscodeImage extends Extension
                 }
             }
 
-            $this->set_version(TranscodeConfig::VERSION, 1);
+            $this->set_version(TranscodeImageConfig::VERSION, 1);
         }
     }
 
@@ -133,7 +133,7 @@ class TranscodeImage extends Extension
         global $user, $config;
 
         if ($user->can(Permissions::EDIT_FILES) && $event->context != "report") {
-            $engine = $config->get_string(TranscodeConfig::ENGINE);
+            $engine = $config->get_string(TranscodeImageConfig::ENGINE);
             if ($this->can_convert_mime($engine, $event->image->get_mime())) {
                 $options = $this->get_supported_output_mimes($engine, $event->image->get_mime());
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
@@ -143,26 +143,7 @@ class TranscodeImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        global $config;
-
-        $engine = $config->get_string(TranscodeConfig::ENGINE);
-
-
-        $sb = $event->panel->create_new_block("Image Transcode");
-        $sb->start_table();
-        $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images", true);
-        $sb->add_bool_option(TranscodeConfig::GET_ENABLED, "Enable GET args", true);
-        $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
-        foreach (self::INPUT_MIMES as $display => $mime) {
-            if (MediaEngine::is_input_supported($engine, $mime)) {
-                $outputs = $this->get_supported_output_mimes($engine, $mime);
-                $sb->add_choice_option(self::get_mapping_name($mime), $outputs, "$display", true);
-            }
-        }
-        $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy Format Quality", true);
-        $sb->add_color_option(TranscodeConfig::ALPHA_COLOR, "Alpha Conversion Color", true);
-        $sb->end_table();
+        $event->panel->add_config_group(new TranscodeImageConfig());
     }
 
     public function onDataUpload(DataUploadEvent $event): void
@@ -181,7 +162,7 @@ class TranscodeImage extends Extension
             }
         }
 
-        if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
+        if ($config->get_bool(TranscodeImageConfig::UPLOAD) == true) {
             if ($event->mime === MimeType::GIF && MimeType::is_animated_gif($event->tmpname)) {
                 return;
             }
@@ -219,10 +200,10 @@ class TranscodeImage extends Extension
     {
         global $config, $user;
 
-        if ($config->get_bool(TranscodeConfig::GET_ENABLED) &&
+        if ($config->get_bool(TranscodeImageConfig::GET_ENABLED) &&
             isset($event->params['transcode']) &&
             $user->can(Permissions::EDIT_FILES) &&
-            $this->can_convert_mime($config->get_string(TranscodeConfig::ENGINE), $event->image->get_mime())) {
+            $this->can_convert_mime($config->get_string(TranscodeImageConfig::ENGINE), $event->image->get_mime())) {
             $target_mime = $event->params['transcode'];
 
             if (!MimeType::is_mime($target_mime)) {
@@ -232,7 +213,7 @@ class TranscodeImage extends Extension
                 throw new ImageTranscodeException("Unable to determine output MIME for ".$event->params['transcode']);
             }
 
-            MediaEngine::is_output_supported($config->get_string(TranscodeConfig::ENGINE), $target_mime);
+            MediaEngine::is_output_supported($config->get_string(TranscodeImageConfig::ENGINE), $target_mime);
 
             $source_mime = $event->image->get_mime();
 
@@ -256,7 +237,7 @@ class TranscodeImage extends Extension
         global $user, $config;
 
         if ($user->can(Permissions::EDIT_FILES)) {
-            $engine = $config->get_string(TranscodeConfig::ENGINE);
+            $engine = $config->get_string(TranscodeImageConfig::ENGINE);
             $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode Image", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_mimes($engine)));
         }
     }
@@ -310,7 +291,7 @@ class TranscodeImage extends Extension
     /**
      * @return array<string, string>
      */
-    private function get_supported_output_mimes(string $engine, ?string $omit_mime = null): array
+    public static function get_supported_output_mimes(string $engine, ?string $omit_mime = null): array
     {
         $output = [];
 
@@ -345,7 +326,7 @@ class TranscodeImage extends Extension
             throw new ImageTranscodeException("Source and target MIMEs are the same: ".$source_mime);
         }
 
-        $engine = $config->get_string(TranscodeConfig::ENGINE);
+        $engine = $config->get_string(TranscodeImageConfig::ENGINE);
 
         if (!$this->can_convert_mime($engine, $source_mime)) {
             throw new ImageTranscodeException("Engine $engine does not support input MIME $source_mime");
@@ -368,7 +349,7 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        $q = $config->get_int(TranscodeConfig::QUALITY);
+        $q = $config->get_int(TranscodeImageConfig::QUALITY);
 
         $tmp_name = shm_tempnam("transcode");
 
@@ -391,7 +372,7 @@ class TranscodeImage extends Extension
                         throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
                     }
                     try {
-                        $background_color = Media::hex_color_allocate($new_image, $config->get_string(TranscodeConfig::ALPHA_COLOR));
+                        $background_color = Media::hex_color_allocate($new_image, $config->get_string(TranscodeImageConfig::ALPHA_COLOR));
                         if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
                             throw new ImageTranscodeException("Could not fill background color");
                         }
@@ -417,7 +398,7 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        $q = $config->get_int(TranscodeConfig::QUALITY);
+        $q = $config->get_int(TranscodeImageConfig::QUALITY);
         $convert = $config->get_string(MediaConfig::CONVERT_PATH);
 
         if (empty($convert)) {
@@ -430,7 +411,7 @@ class TranscodeImage extends Extension
         if (Media::supports_alpha($target_mime)) {
             $args .= "none ";
         } else {
-            $args .= "\"".$config->get_string(TranscodeConfig::ALPHA_COLOR)."\" ";
+            $args .= "\"".$config->get_string(TranscodeImageConfig::ALPHA_COLOR)."\" ";
         }
         $args .= " -flatten ";
 

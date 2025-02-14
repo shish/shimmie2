@@ -191,15 +191,7 @@ class Pools extends Extension
     // Add a block to the Board Config / Setup
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Pools");
-        $sb->add_int_option(PoolsConfig::MAX_IMPORT_RESULTS, "Max results on import: ");
-        $sb->add_int_option(PoolsConfig::IMAGES_PER_PAGE, "<br>Posts per page: ");
-        $sb->add_int_option(PoolsConfig::LISTS_PER_PAGE, "<br>Index list items per page: ");
-        $sb->add_int_option(PoolsConfig::UPDATED_PER_PAGE, "<br>Updated list items per page: ");
-        $sb->add_bool_option(PoolsConfig::INFO_ON_VIEW_IMAGE, "<br>Show pool info on image: ");
-        $sb->add_bool_option(PoolsConfig::SHOW_NAV_LINKS, "<br>Show 'Prev' & 'Next' links when viewing pool images: ");
-        $sb->add_bool_option(PoolsConfig::AUTO_INCREMENT_ORDER, "<br>Autoincrement order when post is added to pool:");
-        //$sb->add_bool_option(PoolsConfig::ADDER_ON_VIEW_IMAGE, "<br>Show pool adder on image: ");
+        $event->panel->add_config_group(new PoolsConfig());
     }
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void

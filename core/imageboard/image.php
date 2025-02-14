@@ -399,7 +399,7 @@ class Image implements \ArrayAccess
     public function get_thumb_link(): string
     {
         global $config;
-        $mime = $config->get_string(ImageConfig::THUMB_MIME);
+        $mime = $config->get_string(ThumbnailConfig::MIME);
         $ext = FileExtension::get_for_mime($mime);
         return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
     }
@@ -434,7 +434,7 @@ class Image implements \ArrayAccess
     public function get_tooltip(): string
     {
         global $config;
-        return send_event(new ParseLinkTemplateEvent($config->get_string(ImageConfig::TIP), $this))->text;
+        return send_event(new ParseLinkTemplateEvent($config->get_string(ThumbnailConfig::TIP), $this))->text;
     }
 
     /**

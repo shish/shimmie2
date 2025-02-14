@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\emptyHTML;
+use function MicroHTML\A;
+
 class CronUploader extends Extension
 {
     /** @var CronUploaderTheme */
@@ -33,16 +36,11 @@ class CronUploader extends Extension
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
         if ($event->user->can(Permissions::CRON_ADMIN)) {
-            $documentation_link = make_http(make_link("cron_upload"));
-
-            $sb = $event->panel->create_new_block("Cron Uploader");
-            $sb->start_table();
-            $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
-            $sb->add_bool_option(CronUploaderConfig::STOP_ON_ERROR, "Stop On Error", true);
-            $sb->add_choice_option(CronUploaderConfig::LOG_LEVEL, LogLevel::names_to_levels(), "Output Log Level: ", true);
-            $sb->add_bool_option(CronUploaderConfig::INCLUDE_ALL_LOGS, "Include All Logs", true);
-            $sb->end_table();
-            $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
+            $sb = $event->panel->add_config_group(new CronUploaderConfig());
+            $sb->body->appendChild(emptyHTML(
+                A(["href" => make_http(make_link("cron_upload"))], "Read the documentation"),
+                " for cron setup instructions.",
+            ));
         }
     }
 
@@ -317,7 +315,7 @@ class CronUploader extends Extension
 
         $this->set_headers();
 
-        if (!$config->get_bool(UserConfig::ENABLE_API_KEYS)) {
+        if (!$config->get_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             throw new ServerError("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 

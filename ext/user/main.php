@@ -415,22 +415,7 @@ class UserPage extends Extension
     {
         global $config;
 
-        $sb = $event->panel->create_new_block("User");
-        $sb->start_table();
-        $sb->add_bool_option(UserConfig::ENABLE_API_KEYS, "Enable user API keys", true);
-        $sb->add_bool_option(UserAccountsConfig::SIGNUP_ENABLED, "Allow new signups", true);
-        $sb->add_bool_option(UserAccountsConfig::USER_EMAIL_REQUIRED, "Require email address", true);
-        $sb->add_longtext_option("login_tac", "Terms &amp; Conditions", true);
-        $sb->add_choice_option(
-            "user_loginshowprofile",
-            [
-                "Return to previous page" => 0, // 0 is default
-                "Send to user profile" => 1,
-            ],
-            "On log in/out",
-            true
-        );
-        $sb->end_table();
+        $event->panel->add_config_group(new UserAccountsConfig());
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
@@ -596,8 +581,7 @@ class UserPage extends Extension
         $duser->set_login_cookie();
         $page->set_mode(PageMode::REDIRECT);
 
-        // Try returning to previous page
-        if ($config->get_int("user_loginshowprofile", 0)) {
+        if ($config->get_string(UserAccountsConfig::LOGIN_REDIRECT, "previous")) {
             $page->set_redirect(referer_or(make_link(), ["user/"]));
         } else {
             $page->set_redirect(make_link("user"));
@@ -615,13 +599,7 @@ class UserPage extends Extension
         }
         log_info("user", "Logged out");
         $page->set_mode(PageMode::REDIRECT);
-
-        // Try forwarding to same page on logout unless user comes from registration page
-        if ($config->get_int("user_loginshowprofile", 0)) {
-            $page->set_redirect(referer_or(make_link(), ["post/"]));
-        } else {
-            $page->set_redirect(make_link());
-        }
+        $page->set_redirect(make_link());
     }
 
     private function page_recover(string $username): void

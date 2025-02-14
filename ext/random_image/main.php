@@ -38,14 +38,13 @@ class RandomImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Random Post");
-        $sb->add_bool_option("show_random_block", "Show Random Block: ");
+        $event->panel->add_config_group(new RandomImageConfig());
     }
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;
-        if ($config->get_bool("show_random_block")) {
+        if ($config->get_bool(RandomImageConfig::SHOW_RANDOM_BLOCK)) {
             $image = Image::by_random($event->search_terms);
             if (!is_null($image)) {
                 $this->theme->display_random($page, $image);

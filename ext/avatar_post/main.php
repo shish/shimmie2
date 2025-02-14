@@ -18,9 +18,20 @@ class AvatarPost extends AvatarExtension
         return 49;
     }
 
+    public function onInitExt(InitExtEvent $event): void
+    {
+        global $config;
+        $config->set_default_int(AvatarPostConfig::SIZE, 128);
+    }
+
+    public function onSetupBuilding(SetupBuildingEvent $event): void
+    {
+        $event->panel->add_config_group(new AvatarPostConfig());
+    }
+
     public function onInitUserConfig(InitUserConfigEvent $event): void
     {
-        $event->user_config->set_default_int(AvatarPostConfig::AVATAR_SCALE, 100);
+        $event->user_config->set_default_int(AvatarPostUserConfig::AVATAR_SCALE, 100);
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -38,27 +49,12 @@ class AvatarPost extends AvatarExtension
             send_event(new ConfigSaveEvent($user->get_config(), $settings));
             $page->flash("Image set as avatar");
             $page->set_mode(PageMode::REDIRECT);
-            if (key_exists(AvatarPostConfig::AVATAR_ID, $settings) && is_int($settings[AvatarPostConfig::AVATAR_ID])) {
-                $page->set_redirect(make_link("post/view/".$settings[AvatarPostConfig::AVATAR_ID]));
+            if (key_exists(AvatarPostUserConfig::AVATAR_ID, $settings) && is_int($settings[AvatarPostUserConfig::AVATAR_ID])) {
+                $page->set_redirect(make_link("post/view/".$settings[AvatarPostUserConfig::AVATAR_ID]));
             } else {
                 $page->set_redirect(make_link("user_config"));
             }
         }
-    }
-
-    public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
-    {
-        global $config, $user;
-        $sb = $event->panel->create_new_block("Avatar");
-        $sb->add_int_option(AvatarPostConfig::AVATAR_ID, 'Avatar post ID: ');
-        $image_id = $user->get_config()->get_int(AvatarPostConfig::AVATAR_ID, null);
-        if (!is_null($image_id)) {
-            $sb->add_label("<br><a href=".make_link("set_avatar/$image_id").">Change cropping</a>");
-        }
-        $sb->add_label("<br>Manual position and scale:<br>");
-        $sb->add_int_option(AvatarPostConfig::AVATAR_SCALE, "scale%: ");
-        $sb->add_int_option(AvatarPostConfig::AVATAR_X, "X%: ");
-        $sb->add_int_option(AvatarPostConfig::AVATAR_Y, "Y%: ");
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
@@ -72,7 +68,7 @@ class AvatarPost extends AvatarExtension
     public function onConfigSave(ConfigSaveEvent $event): void
     {
         global $cache, $user;
-        if (array_key_exists(AvatarPostConfig::AVATAR_ID, $event->values)) {
+        if (array_key_exists(AvatarPostUserConfig::AVATAR_ID, $event->values)) {
             $cache->delete("Pavatar-{$user->id}");
         }
     }
@@ -85,39 +81,41 @@ class AvatarPost extends AvatarExtension
     public function get_avatar_html(User $user): HTMLElement|null
     {
         global $database, $config;
+
         $user_config = $user->get_config();
-        $id = $user_config->get_int(AvatarPostConfig::AVATAR_ID, 0);
-        if ($id === 0) {
+        $id = $user_config->get_int(AvatarPostUserConfig::AVATAR_ID);
+        if ($id === null) {
             return null;
         }
         $image = Image::by_id($id);
-        if ($image) {
-            $scale = $user_config->get_int(AvatarPostConfig::AVATAR_SCALE, 100) / 100;
-            $x = $user_config->get_int(AvatarPostConfig::AVATAR_X, 0);
-            $y = $user_config->get_int(AvatarPostConfig::AVATAR_Y, 0);
-
-            $ar = $image->width / $image->height;
-
-            $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT);
-            $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH);
-            $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
-            $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
-
-            $style = "--pavatar-height:{$h}px;--pavatar-width:{$w}px;";
-
-            $url = $image->get_thumb_link();
-            return DIV(
-                ["class" => "avatar-container", "style" => $style],
-                IMG([
-                    "alt" => "avatar",
-                    "id" => "pavatar",
-                    "class" => "avatar pavatar",
-                    "style" => "transform:scale($scale);translate:$x% $y%;",
-                    "src" => $url
-                ])
-            );
+        if (!$image) {
+            $user_config->delete(AvatarPostUserConfig::AVATAR_ID);
+            return null;
         }
-        $user_config->delete(AvatarPostConfig::AVATAR_ID);
-        return null;
+
+        $scale = $user_config->get_int(AvatarPostUserConfig::AVATAR_SCALE, 100) / 100;
+        $x = $user_config->get_int(AvatarPostUserConfig::AVATAR_X, 0);
+        $y = $user_config->get_int(AvatarPostUserConfig::AVATAR_Y, 0);
+
+        $ar = $image->width / $image->height;
+
+        $thumb_height = $config->get_int(AvatarPostConfig::SIZE);
+        $thumb_width = $config->get_int(AvatarPostConfig::SIZE);
+        $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
+        $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
+
+        $style = "--pavatar-height:{$h}px;--pavatar-width:{$w}px;";
+
+        $url = $image->get_thumb_link();
+        return DIV(
+            ["class" => "avatar-container", "style" => $style],
+            IMG([
+                "alt" => "avatar",
+                "id" => "pavatar",
+                "class" => "avatar pavatar",
+                "style" => "transform:scale($scale);translate:$x% $y%;",
+                "src" => $url
+            ])
+        );
     }
 }

@@ -17,14 +17,13 @@ class LinkImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Link to Post");
-        $sb->add_text_option("ext_link-img_text-link_format", "Text Link Format: ");
+        $event->panel->add_config_group(new LinkImageConfig());
     }
 
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');
+        $config->set_default_string(LinkImageConfig::TEXT_FORMAT, '$title - $id ($ext $size $filesize)');
     }
 
     /**
@@ -34,7 +33,7 @@ class LinkImage extends Extension
     {
         global $config;
 
-        $text_link = $image->parse_link_template($config->get_string("ext_link-img_text-link_format"));
+        $text_link = $image->parse_link_template($config->get_string(LinkImageConfig::TEXT_FORMAT));
         $text_link = trim($text_link) == "" ? null : $text_link; // null blank setting so the url gets filled in on the text links.
 
         return [

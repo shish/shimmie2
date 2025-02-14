@@ -9,7 +9,7 @@ class BanWords extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string('banned_words', "
+        $config->set_default_string(BanWordsConfig::BANNED_WORDS, "
 a href=
 anal
 blowjob
@@ -59,9 +59,7 @@ xanax
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Banned Phrases");
-        $sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
-        $sb->add_longtext_option("banned_words");
+        $sb = $event->panel->add_config_group(new BanWordsConfig());
         $failed = [];
         foreach ($this->get_words() as $word) {
             if ($word[0] == '/') {
@@ -73,7 +71,7 @@ xanax
             }
         }
         if ($failed) {
-            $sb->add_label("Failed regexes: ".join(", ", $failed));
+            $sb->body->appendChild("Failed regexes: ".join(", ", $failed));
         }
     }
 
@@ -107,7 +105,7 @@ xanax
         global $config;
         $words = [];
 
-        $banned = $config->get_string("banned_words");
+        $banned = $config->get_string(BanWordsConfig::BANNED_WORDS);
         foreach (explode("\n", $banned) as $word) {
             $word = trim(strtolower($word));
             if (strlen($word) == 0) {

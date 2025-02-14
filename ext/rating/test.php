@@ -56,7 +56,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $config->set_array("ext_rating_user_privs", ["s", "q", "e"]);
 
         // user prefers safe-only by default
-        $user->get_config()->set_array(RatingsConfig::USER_DEFAULTS, ["s"]);
+        $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
 
         // search with no tags should return only safe image
         $this->assert_search_results([], [$image_id_s]);
@@ -67,7 +67,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
 
         // If user prefers to see all images, going to the safe image
         // and clicking next should show the explicit image
-        $user->get_config()->set_array(RatingsConfig::USER_DEFAULTS, ["s", "q", "e"]);
+        $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s", "q", "e"]);
         $next = $image_s->get_next();
         $this->assertNotNull($next);
         $this->assertEquals($next->id, $image_id_e);
@@ -75,7 +75,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         // If the user prefers to see only safe images by default, then
         // going to the safe image and clicking next should not show
         // the explicit image (See bug #984)
-        $user->get_config()->set_array(RatingsConfig::USER_DEFAULTS, ["s"]);
+        $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
         $this->assertEquals($image_s->get_next(), null);
     }
 
@@ -96,7 +96,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image_e, "e"));
 
         $config->set_array("ext_rating_user_privs", ["s", "q"]);
-        $user->get_config()->set_array(RatingsConfig::USER_DEFAULTS, ["s"]);
+        $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
 
         $this->assertEquals(1, Search::count_images(["rating=s"]), "UserClass has access to safe, show safe");
         $this->assertEquals(2, Search::count_images(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
@@ -110,7 +110,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         global $user;
 
         $this->log_in_as_user();
-        $user->get_config()->set_array(RatingsConfig::USER_DEFAULTS, ["?", "s", "q", "e"]);
+        $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["?", "s", "q", "e"]);
 
         parent::tearDown();
     }

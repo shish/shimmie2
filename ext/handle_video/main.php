@@ -16,7 +16,6 @@ class VideoFileHandler extends DataHandlerExtension
         MimeType::QUICKTIME,
         MimeType::WEBM,
     ];
-    protected array $SUPPORTED_MIME = self::SUPPORTED_MIME;
 
     public function onInitExt(InitExtEvent $event): void
     {
@@ -31,27 +30,9 @@ class VideoFileHandler extends DataHandlerExtension
         );
     }
 
-    /**
-     * @return array<string, string>
-     */
-    private function get_options(): array
-    {
-        $output = [];
-        foreach ($this->SUPPORTED_MIME as $mime) {
-            $output[MimeMap::get_name_for_mime($mime)] = $mime;
-        }
-        return $output;
-    }
-
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Video Handler");
-        $sb->start_table();
-        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, "Autoplay", true);
-        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_LOOP, "Loop", true);
-        $sb->add_bool_option(VideoFileHandlerConfig::PLAYBACK_MUTE, "Mute", true);
-        $sb->add_multichoice_option(VideoFileHandlerConfig::ENABLED_FORMATS, $this->get_options(), "Enabled Formats", true);
-        $sb->end_table();
+        $event->panel->add_config_group(new VideoFileHandlerConfig());
     }
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void

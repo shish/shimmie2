@@ -15,6 +15,9 @@
 	font-size: 0.75rem;
 	resize: vertical;
 }
+.setupblock SELECT[multiple] {
+	width: 100%;
+}
 
 .advanced_settings INPUT {
 	width: 100%;

@@ -12,13 +12,12 @@ class Terms extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string("terms_message", "Cookies may be used. Please read our [url=site://wiki/privacy]privacy policy[/url] for more information.\nBy accepting to enter you agree to our [url=site://wiki/rules]rules[/url] and [url=site://wiki/terms_of_service]terms of service[/url].");
+        $config->set_default_string(TermsConfig::MESSAGE, "Cookies may be used. Please read our [url=site://wiki/privacy]privacy policy[/url] for more information.\nBy accepting to enter you agree to our [url=site://wiki/rules]rules[/url] and [url=site://wiki/terms_of_service]terms of service[/url].");
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Terms & Conditions Gate");
-        $sb->add_longtext_option("terms_message", 'Message (Use BBCode)');
+        $event->panel->add_config_group(new TermsConfig());
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -39,7 +38,7 @@ class Terms extends Extension
                 && !$event->page_starts_with("wiki")
             ) {
                 $sitename = $config->get_string(SetupConfig::TITLE);
-                $body = format_text($config->get_string("terms_message"));
+                $body = format_text($config->get_string(TermsConfig::MESSAGE));
                 $this->theme->display_page($page, $sitename, $event->path, $body);
             }
         }
