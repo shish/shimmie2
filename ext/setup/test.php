@@ -88,7 +88,15 @@ class SetupTest extends ShimmiePHPUnitTestCase
     public function testAdvanced(): void
     {
         $this->log_in_as_admin();
-        $this->get_page('setup/advanced');
+        $this->get_page('setup', ['advanced' => 'on']);
+        $this->assert_title("Shimmie Setup");
+        $this->assert_text("Minimum free space");
+    }
+
+    public function testRaw(): void
+    {
+        $this->log_in_as_admin();
+        $this->get_page('setup/raw');
         $this->assert_title("Shimmie Setup");
         $this->assert_text(ThumbnailConfig::QUALITY);
     }

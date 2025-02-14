@@ -63,14 +63,14 @@ class SetupBlock extends Block
         $configs = $group->get_config_fields();
         $table = TABLE(["class" => "form"]);
         foreach ($configs as $key => $meta) {
-            if ($meta->advanced) {
+            if ($meta->advanced && @$_GET["advanced"] != "on") {
                 continue;
             }
             if ($meta->permission && !$user->can($meta->permission)) {
                 continue;
             }
 
-            $row = TR();
+            $row = TR(["class" => $meta->advanced ? "advanced" : ""]);
             $row->appendChild(TH(LABEL(["for" => $key], $meta->label)));
             switch ($meta->ui_type) {
                 case "bool":
