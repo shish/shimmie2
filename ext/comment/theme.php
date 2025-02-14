@@ -234,7 +234,7 @@ class CommentListTheme extends Themelet
                 $userlink,
                 ": ",
                 truncate($tfe->stripped, 50),
-                A(["href" => make_link("post/view/{$comment->image_id}", null, "c{$comment->comment_id}")], ">>>")
+                A(["href" => make_link("post/view/{$comment->image_id}", null, "c{$comment->comment_id}")], " >>>")
             );
         } else {
             /** @var BuildAvatarEvent $bae */

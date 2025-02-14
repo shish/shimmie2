@@ -428,12 +428,12 @@ class UserPage extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        $event->add_link("My Profile", make_link("user"));
+        $event->add_link("My Profile", make_link("user"), 0);
         if ($user->can(Permissions::EDIT_USER_PASSWORD)) {
-            $event->add_link("User List", make_link("user_admin/list"), 97);
+            $event->add_link("User List", make_link("user_admin/list"), 87);
         }
         if ($user->can(Permissions::EDIT_USER_CLASS)) {
-            $event->add_link("User Classes", make_link("user_admin/classes"), 98);
+            $event->add_link("User Classes", make_link("user_admin/classes"), 88);
         }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
     }
