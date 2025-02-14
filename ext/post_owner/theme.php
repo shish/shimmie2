@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TD, emptyHTML, rawHTML, INPUT, A};
+use function MicroHTML\{emptyHTML, rawHTML, INPUT, A};
 
 class PostOwnerTheme extends Themelet
 {
@@ -16,23 +16,10 @@ class PostOwnerTheme extends Themelet
         $owner = $image->get_owner()->name;
         $date = rawHTML(autodate($image->posted));
         $ip = $user->can(Permissions::VIEW_IP) ? rawHTML(" (" . show_ip($image->owner_ip, "Post posted {$image->posted}") . ")") : "";
-        $info = SHM_POST_INFO(
+        return SHM_POST_INFO(
             "Uploader",
             emptyHTML(A(["class" => "username", "href" => make_link("user/$owner")], $owner), $ip, ", ", $date),
             $user->can(Permissions::EDIT_IMAGE_OWNER) ? INPUT(["type" => "text", "name" => "owner", "value" => $owner]) : null
         );
-        // SHM_POST_INFO returns a TR, let's sneakily append
-        // a TD with the avatar in it
-        /** @var BuildAvatarEvent $avatar_e */
-        $avatar_e = send_event(new BuildAvatarEvent($image->get_owner()));
-        if ($avatar_e->html) {
-            $info->appendChild(
-                TD(
-                    ["width" => $config->get_int(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => "4"],
-                    $avatar_e->html
-                )
-            );
-        }
-        return $info;
     }
 }

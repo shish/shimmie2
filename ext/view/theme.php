@@ -118,7 +118,7 @@ class ViewPostTheme extends Themelet
      */
     protected function build_info(Image $image, array $editor_parts): HTMLElement
     {
-        global $user;
+        global $config, $user;
 
         if (count($editor_parts) == 0) {
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
@@ -133,6 +133,19 @@ class ViewPostTheme extends Themelet
                 INPUT(["class" => "view", "type" => "button", "value" => "Edit", "onclick" => "clearViewMode()"]),
                 INPUT(["class" => "edit", "type" => "submit", "value" => "Set"])
             ));
+        }
+
+        // SHM_POST_INFO returns a TR, let's sneakily append
+        // a TD with the avatar in it
+        /** @var BuildAvatarEvent $bae */
+        $bae = send_event(new BuildAvatarEvent($image->get_owner()));
+        if ($bae->html) {
+            array_values($editor_parts)[0]->appendChild(
+                TD(
+                    ["class" => "image-info-avatar-box", "width" => $config->get_int(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => count($editor_parts) - 2],
+                    $bae->html
+                )
+            );
         }
 
         return SHM_SIMPLE_FORM(
