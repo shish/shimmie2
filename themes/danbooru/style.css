@@ -1,3 +1,8 @@
+:root {
+	--danger-color: #000;
+	--danger-background: #FAA;
+}
+
 .withleft {
 	margin-left: 10px;
 }

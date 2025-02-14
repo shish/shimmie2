@@ -6,6 +6,9 @@
 :root {
 	font-family: sans-serif;
 	font-size: 14px;
+
+	--danger-color: #000;
+	--danger-background: #FAA;
 }
 BODY {
 	background: #F0F7FF;

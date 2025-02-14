@@ -4,6 +4,9 @@
 	--page: #FFFFFF;
 	--text: black;
 
+	--danger-color: #000;
+	--danger-background: #FAA;
+
 	--link-first: #FF3333;
 	--link-default: #006FFA;
 	--link-hover: #33CFFF;
@@ -28,6 +31,9 @@
 	:root {
 		--page: #1E1E2C;
 		--text: #E8E8EC;
+
+		--danger-color: #E8E8EC;
+		--danger-background: #955;
 
 		--link-first: #FF5A5B;
 		--link-default: #009BE9;
