@@ -65,11 +65,6 @@ class PostTitles extends Extension
         $this->set_title($event->image->id, $event->title);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new PostTitlesConfig());
-    }
-
     public function onBulkExport(BulkExportEvent $event): void
     {
         $event->fields["title"] = $event->image['title'];

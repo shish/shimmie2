@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class StatsDInterfaceConfig extends ConfigGroup
 {
+    public const KEY = "statsd";
+
     #[ConfigMeta("Host", ConfigType::STRING)]
     public const HOST = "statsd_host";
 }

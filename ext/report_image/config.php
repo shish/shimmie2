@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class ReportImageConfig extends ConfigGroup
 {
+    public const KEY = "report_image";
     public ?string $title = "Post Reports";
 
     #[ConfigMeta("Show to users", ConfigType::STRING, options: [

@@ -132,11 +132,6 @@ class Ratings extends Extension
         $event->panel->add_config_group(new RatingsUserConfig());
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new RatingsConfig());
-    }
-
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;

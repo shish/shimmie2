@@ -6,11 +6,6 @@ namespace Shimmie2;
 
 class LiveFeed extends Extension
 {
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new LiveFeedConfig());
-    }
-
     public function onUserCreation(UserCreationEvent $event): void
     {
         $this->msg("New user created: {$event->username}");

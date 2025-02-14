@@ -14,11 +14,6 @@ class Holiday extends Extension
         $config->set_default_bool(HolidayConfig::APRIL_FOOLS, false);
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new HolidayConfig());
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

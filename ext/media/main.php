@@ -88,11 +88,6 @@ class Media extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new MediaConfig());
-    }
-
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;

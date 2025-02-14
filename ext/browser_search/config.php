@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class BrowserSearchConfig extends ConfigGroup
 {
+    public const KEY = "browser_search";
+
     #[ConfigMeta("Search results order", ConfigType::STRING, options: [
         "Alphabetical" => "a",
         "Tag Count" => "t",

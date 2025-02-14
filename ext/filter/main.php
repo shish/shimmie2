@@ -21,11 +21,6 @@ class Filter extends Extension
         $this->theme->addFilterBox();
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new FilterConfig());
-    }
-
     public function onInitUserConfig(InitUserConfigEvent $event): void
     {
         global $config;

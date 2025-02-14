@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class HolidayConfig extends ConfigGroup
 {
+    public const KEY = "holiday";
     public ?string $title = "Holiday Themes";
 
     #[ConfigMeta("April Fools", ConfigType::BOOL)]

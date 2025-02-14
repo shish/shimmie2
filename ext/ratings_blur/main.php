@@ -27,11 +27,6 @@ class RatingsBlur extends Extension
         $event->panel->add_config_group(new RatingsBlurUserConfig());
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new RatingsBlurConfig());
-    }
-
     public function blur(string $rating): bool
     {
         global $user;

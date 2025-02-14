@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class UploadConfig extends ConfigGroup
 {
+    public const KEY = "upload";
+
     public ?int $position = 10;
     #[ConfigMeta("Max uploads", ConfigType::INT)]
     public const COUNT = "upload_count";
@@ -59,5 +61,15 @@ class UploadConfig extends ConfigGroup
             $output[MimeMap::get_name_for_mime($mime)] = $mime;
         }
         return $output;
+    }
+
+    public function tweak_html(\MicroHTML\HTMLElement $html): \MicroHTML\HTMLElement
+    {
+        $files = ini_get("max_file_uploads");
+        $size = ini_get("upload_max_filesize");
+        return \MicroHTML\emptyHTML(
+            \MicroHTML\I("(System limits are set to $files uploads of $size each)"),
+            $html
+        );
     }
 }

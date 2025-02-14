@@ -57,24 +57,6 @@ xanax
         $this->test_text(Tag::implode($event->new_tags), new UserError("Tags contain banned terms"));
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $sb = $event->panel->add_config_group(new BanWordsConfig());
-        $failed = [];
-        foreach ($this->get_words() as $word) {
-            if ($word[0] == '/') {
-                try {
-                    \Safe\preg_match($word, "");
-                } catch (\Exception $e) {
-                    $failed[] = $word;
-                }
-            }
-        }
-        if ($failed) {
-            $sb->body->appendChild("Failed regexes: ".join(", ", $failed));
-        }
-    }
-
     /**
      * Throws if the comment contains banned words.
      */
@@ -100,7 +82,7 @@ xanax
     /**
      * @return string[]
      */
-    private function get_words(): array
+    public static function get_words(): array
     {
         global $config;
         $words = [];

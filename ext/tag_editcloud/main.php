@@ -33,11 +33,6 @@ class TagEditCloud extends Extension
         $config->set_default_string(TagEditCloudConfig::IGNORE_TAGS, 'tagme');
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new TagEditCloudConfig());
-    }
-
     private function build_tag_map(Image $image): ?HTMLElement
     {
         global $database, $config;

@@ -8,11 +8,6 @@ use function MicroHTML\rawHTML;
 
 class CustomHtmlHeaders extends Extension
 {
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new CustomHtmlHeadersConfig());
-    }
-
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;

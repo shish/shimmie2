@@ -68,11 +68,6 @@ class Forum extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new ForumConfig());
-    }
-
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $database;

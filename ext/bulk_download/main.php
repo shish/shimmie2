@@ -23,11 +23,6 @@ class BulkDownload extends Extension
         }
     }
 
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $event->panel->add_config_group(new BulkDownloadConfig());
-    }
-
     public function onBulkAction(BulkActionEvent $event): void
     {
         global $user, $page, $config;

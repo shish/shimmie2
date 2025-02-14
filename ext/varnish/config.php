@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class VarnishPurgerConfig extends ConfigGroup
 {
+    public const KEY = "varnish";
+
     #[ConfigMeta("Varnish Host", ConfigType::STRING)]
     public const HOST = "varnish_host";
 

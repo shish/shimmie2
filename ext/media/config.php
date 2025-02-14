@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class MediaConfig extends ConfigGroup
 {
+    public const KEY = "media";
+
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_media_version";
 
