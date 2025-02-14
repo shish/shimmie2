@@ -23,20 +23,6 @@ class ReverseSearchLinks extends Extension
         }
     }
 
-
-    /**
-     * Supported reverse search services
-     *
-     * @var string[]
-     */
-    protected array $SERVICES = [
-        'SauceNAO',
-        'TinEye',
-        'trace.moe',
-        'ascii2d',
-        'Yandex'
-    ];
-
     /**
      * Set default config values
      */

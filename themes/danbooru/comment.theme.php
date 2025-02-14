@@ -38,8 +38,8 @@ class DanbooruCommentListTheme extends CommentListTheme
         // parts for each image
         $position = 10;
 
-        $comment_captcha = $config->get_bool('comment_captcha');
-        $comment_limit = $config->get_int("comment_list_count", 10);
+        $comment_captcha = $config->get_bool(CommentConfig::CAPTCHA);
+        $comment_limit = $config->get_int(CommentConfig::LIST_COUNT, 10);
 
         foreach ($images as $pair) {
             $image = $pair[0];

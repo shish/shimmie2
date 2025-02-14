@@ -83,6 +83,9 @@ function is_https_enabled(): bool
 function blockcmp(Block $a, Block $b): int
 {
     if ($a->position == $b->position) {
+        if ($a->header && $b->header) {
+            return strcasecmp($a->header, $b->header);
+        }
         return 0;
     } else {
         return ($a->position > $b->position) ? 1 : -1;
@@ -717,7 +720,7 @@ function _get_user(): User
         $my_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
     }
     if (is_null($my_user)) {
-        $my_user = User::by_id($config->get_int("anon_id", 0));
+        $my_user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0));
     }
 
     return $my_user;

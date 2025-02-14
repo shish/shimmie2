@@ -25,20 +25,9 @@ class Home extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $counters = [];
-        $counters["None"] = "none";
-        $counters["Text-only"] = "text-only";
-        foreach (\Safe\glob("ext/home/counters/*") as $counter_dirname) {
-            $name = str_replace("ext/home/counters/", "", $counter_dirname);
-            $counters[ucfirst($name)] = $name;
-        }
 
-        $sb = $event->panel->create_new_block("Home Page");
-        $sb->add_longtext_option("home_links", 'Page Links (Use BBCode, leave blank for defaults)');
-        $sb->add_longtext_option("home_text", "<br>Page Text:<br>");
-        $sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
+        $event->panel->add_config_group(new HomeConfig());
     }
-
 
     private function get_body(): HTMLElement
     {

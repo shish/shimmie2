@@ -1,0 +1,27 @@
+.avatar-editor .avatar-container {
+    border: 2px solid var(--text);
+}
+
+#Statsmain .avatar-container,
+.avatar-editor .avatar-container {
+    margin: 0 auto;
+    width: min(var(--pavatar-width), 192px);
+    height: min(var(--pavatar-height), 192px);
+    max-width: 192px;
+    max-height: 192px;
+}
+
+#Statsmain .avatar,
+.avatar-editor .avatar {
+    max-width: 192px;
+    max-height: 192px;
+}
+
+.avatar-container {
+    overflow: hidden;
+    width: var(--pavatar-width);
+    height: var(--pavatar-height);
+    max-width: 100%;
+    text-align: center;
+    display: inline-block;
+}

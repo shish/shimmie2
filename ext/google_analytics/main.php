@@ -11,9 +11,7 @@ class GoogleAnalytics extends Extension
     # Add analytics to config
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Google Analytics");
-        $sb->add_text_option("google_analytics_id", "Analytics ID: ");
-        $sb->add_label("<br>(eg. UA-xxxxxxxx-x)");
+        $event->panel->add_config_group(new GoogleAnalyticsConfig());
     }
 
     # Load Analytics tracking code on page request
@@ -21,7 +19,7 @@ class GoogleAnalytics extends Extension
     {
         global $config, $page;
 
-        $google_analytics_id = $config->get_string('google_analytics_id', '');
+        $google_analytics_id = $config->get_string(GoogleAnalyticsConfig::ANALYTICS_ID, '');
         if (stristr($google_analytics_id, "UA-")) {
             $page->add_html_header(SCRIPT(["type" => 'text/javascript'], "
                 var _gaq = _gaq || [];

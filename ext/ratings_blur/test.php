@@ -54,7 +54,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->assert_text("blur");
 
         // change global setting: don't blur any
-        $config->set_array(RatingsBlurConfig::GLOBAL_DEFAULTS, [RatingsBlurConfig::NULL_OPTION]);
+        $config->set_array(RatingsBlurConfig::GLOBAL_DEFAULTS, [RatingsBlur::NULL_OPTION]);
         // create a new user to simulate inheriting the global default without manually setting the user default
         $this->delete_test_user($this->username);
         $this->create_test_user($this->username);
@@ -74,7 +74,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
 
         // don't blur explict, blur safe
-        $user->get_config()->set_array(RatingsBlurConfig::USER_DEFAULTS, ["s"]);
+        $user->get_config()->set_array(RatingsBlurUserConfig::USER_DEFAULTS, ["s"]);
 
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
         $image_e = Image::by_id_ex($image_id_e);
@@ -93,7 +93,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->assert_text("blur");
 
         // don't blur any
-        $user->get_config()->set_array(RatingsBlurConfig::USER_DEFAULTS, [RatingsBlurConfig::NULL_OPTION]);
+        $user->get_config()->set_array(RatingsBlurUserConfig::USER_DEFAULTS, [RatingsBlur::NULL_OPTION]);
 
         $this->get_page("post/list");
         $this->assert_no_text("blur");
@@ -125,7 +125,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         global $user;
 
         $this->log_in_as_user();
-        $user->get_config()->set_array(RatingsBlurConfig::USER_DEFAULTS, RatingsBlurConfig::DEFAULT_OPTIONS);
+        $user->get_config()->set_array(RatingsBlurUserConfig::USER_DEFAULTS, ['e']);
 
         parent::tearDown();
     }

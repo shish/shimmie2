@@ -6,8 +6,18 @@ namespace Shimmie2;
 
 class BlotterConfig extends ConfigGroup
 {
+    #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "blotter_version";
-    public const COLOR = "blotter_color";
-    public const POSITION = "blotter_position";
+
+    #[ConfigMeta("Recent updates", ConfigType::INT)]
     public const RECENT = "blotter_recent";
+
+    #[ConfigMeta("Important updates", ConfigType::STRING, ui_type: "color")]
+    public const COLOR = "blotter_color";
+
+    #[ConfigMeta("Position", ConfigType::STRING, options: [
+        "Top of page" => "subheading",
+        "In navigation bar" => "left"
+    ])]
+    public const POSITION = "blotter_position";
 }

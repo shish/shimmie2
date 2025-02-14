@@ -13,7 +13,7 @@ class Blotter extends Extension
     {
         global $config;
         $config->set_default_int(BlotterConfig::RECENT, 5);
-        $config->set_default_string(BlotterConfig::COLOR, "FF0000");
+        $config->set_default_string(BlotterConfig::COLOR, "#FF0000");
         $config->set_default_string(BlotterConfig::POSITION, "subheading");
     }
 
@@ -44,10 +44,7 @@ class Blotter extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Blotter");
-        $sb->add_int_option("blotter_recent", "<br />Number of recent entries to display: ");
-        $sb->add_text_option("blotter_color", "<br />Color of important updates: (ABCDEF format) ");
-        $sb->add_choice_option("blotter_position", ["Top of page" => "subheading", "In navigation bar" => "left"], "<br>Position: ");
+        $event->panel->add_config_group(new BlotterConfig());
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
