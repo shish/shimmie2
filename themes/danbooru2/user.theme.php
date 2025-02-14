@@ -71,7 +71,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
         $reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
         $email_required = (
-            $config->get_bool("user_email_required") &&
+            $config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
             !$user->can(Permissions::CREATE_OTHER_USER)
         );
         $email_text = $email_required ? "Email" : "Email (Optional)";

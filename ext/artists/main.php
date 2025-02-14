@@ -34,7 +34,7 @@ class Artists extends Extension
     {
         global $config;
         Image::$prop_types["author"] = ImagePropType::STRING;
-        $config->set_default_int("artistsPerPage", 20);
+        $config->set_default_int(ArtistsConfig::ARTISTS_PER_PAGE, 20);
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
@@ -792,7 +792,7 @@ class Artists extends Extension
     {
         global $config, $database;
 
-        $artistsPerPage = $config->get_int("artistsPerPage");
+        $artistsPerPage = $config->get_int(ArtistsConfig::ARTISTS_PER_PAGE);
 
         $listing = $database->get_all(
             "

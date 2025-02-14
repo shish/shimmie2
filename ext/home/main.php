@@ -39,7 +39,7 @@ class Home extends Extension
         if (is_null($contact_link)) {
             $contact_link = "";
         }
-        $counter_dir = $config->get_string('home_counter', 'default');
+        $counter_dir = $config->get_string(HomeConfig::COUNTER, 'default');
 
         $total = Search::count_images();
         $num_comma = number_format($total);
@@ -56,8 +56,8 @@ class Home extends Extension
         }
 
         // get the homelinks and process them
-        if (strlen($config->get_string('home_links', '')) > 0) {
-            $main_links = $config->get_string('home_links');
+        if (strlen($config->get_string(HomeConfig::LINKS, '')) > 0) {
+            $main_links = $config->get_string(HomeConfig::LINKS);
         } else {
             $main_links = '[url=site://post/list]Posts[/url][url=site://comment/list]Comments[/url][url=site://tags]Tags[/url]';
             if (Extension::is_enabled(PoolsInfo::KEY)) {
@@ -69,7 +69,7 @@ class Home extends Extension
             $main_links .= '[url=site://ext_doc]Documentation[/url]';
         }
         $main_links = format_text($main_links);
-        $main_text = $config->get_string('home_text', '');
+        $main_text = $config->get_string(HomeConfig::TEXT, '');
 
         return $this->theme->build_body($sitename, $main_links, $main_text, $contact_link, $num_comma, $counter_text);
     }

@@ -67,6 +67,9 @@ class ThumbnailConfig extends ConfigGroup
     #[ConfigMeta("Resize type", ConfigType::STRING, options: "Shimmie2\ThumbnailConfig::get_fit_options")]
     public const FIT = 'thumb_fit';
 
+    #[ConfigMeta("Allow upscaling", ConfigType::BOOL, advanced: true)]
+    public const UPSCALE = 'thumb_upscale';
+
     #[ConfigMeta("Background color", ConfigType::STRING, ui_type: "color")]
     public const ALPHA_COLOR = 'thumb_alpha_color';
 

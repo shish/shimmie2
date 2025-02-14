@@ -100,7 +100,7 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
 
     $output = get_scaled_by_aspect_ratio($orig_width, $orig_height, $max_width, $max_height);
 
-    if ($output[2] > 1 && $config->get_bool('thumb_upscale')) {
+    if ($output[2] > 1 && $config->get_bool(ThumbnailConfig::UPSCALE)) {
         return [(int)$orig_width, (int)$orig_height];
     } else {
         return $output;

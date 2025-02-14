@@ -280,7 +280,7 @@ class User
         $page->add_cookie(
             "session",
             $this->get_session_id(),
-            time() + 60 * 60 * 24 * $config->get_int('login_memory'),
+            time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY),
             '/'
         );
     }

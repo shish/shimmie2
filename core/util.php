@@ -41,7 +41,7 @@ function get_theme_class(string $class): ?object
 function contact_link(?string $contact = null): ?string
 {
     global $config;
-    $text = $contact ?? $config->get_string('contact_link');
+    $text = $contact ?? $config->get_string(SetupConfig::CONTACT_LINK);
     if (is_null($text)) {
         return null;
     }

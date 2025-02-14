@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shimmie2;
+
+class GraphQLConfig extends ConfigGroup
+{
+    #[ConfigMeta("CORS pattern", ConfigType::STRING, advanced: true)]
+    public const CORS_PATTERN = "graphql_cors_pattern";
+
+    #[ConfigMeta("Debug", ConfigType::BOOL, advanced: true)]
+    public const DEBUG = "graphql_debug";
+}

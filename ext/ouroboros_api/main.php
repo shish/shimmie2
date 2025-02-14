@@ -581,12 +581,12 @@ class OuroborosAPI extends Extension
                 $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0));
             }
             send_event(new UserLoginEvent($user));
-        } elseif (isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'session']) &&
-            isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'user'])
+        } elseif (isset($_COOKIE[COOKIE_PREFIX . '_' . 'session']) &&
+            isset($_COOKIE[COOKIE_PREFIX . '_' . 'user'])
         ) {
             //Auth by session data from cookies
-            $session = $_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'session'];
-            $user = $_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'user'];
+            $session = $_COOKIE[COOKIE_PREFIX . '_' . 'session'];
+            $user = $_COOKIE[COOKIE_PREFIX . '_' . 'user'];
             $duser = User::by_session($user, $session);
             if (!is_null($duser)) {
                 $user = $duser;

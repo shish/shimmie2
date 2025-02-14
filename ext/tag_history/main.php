@@ -79,7 +79,7 @@ class TagHistory extends Extension
                 "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-                ["image_id" => $event->image->id, "tags" => $old_tags, "user_id" => $config->get_int('anon_id'), "user_ip" => '127.0.0.1']
+                ["image_id" => $event->image->id, "tags" => $old_tags, "user_id" => $config->get_int(UserAccountsConfig::ANON_ID), "user_ip" => '127.0.0.1']
             );
             $entries++;
         }
