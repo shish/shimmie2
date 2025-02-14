@@ -4,14 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AvatarPostConfig extends ConfigGroup
-{
-    public ?string $title = "Avatars (Post)";
-
-    #[ConfigMeta("Size", ConfigType::INT)]
-    public const SIZE = "avatar_post_size";
-}
-
 class AvatarPostUserConfig extends ConfigGroup
 {
     #[ConfigMeta("Post ID", ConfigType::INT)]

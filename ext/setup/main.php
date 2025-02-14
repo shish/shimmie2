@@ -23,6 +23,7 @@ class Setup extends Extension
         $config->set_default_string(SetupConfig::FRONT_PAGE, "post/list");
         $config->set_default_string(SetupConfig::MAIN_PAGE, "post/list");
         $config->set_default_string(SetupConfig::THEME, "default");
+        $config->set_default_int(SetupConfig::AVATAR_SIZE, 128);
     }
 
     public function onPageRequest(PageRequestEvent $event): void
