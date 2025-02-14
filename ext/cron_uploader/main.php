@@ -25,18 +25,18 @@ class CronUploader extends Extension
     public function onInitUserConfig(InitUserConfigEvent $event): void
     {
         $event->user_config->set_default_string(
-            CronUploaderConfig::DIR,
-            data_path(CronUploaderConfig::DEFAULT_PATH.DIRECTORY_SEPARATOR.$event->user->name)
+            CronUploaderUserConfig::DIR,
+            data_path(CronUploaderUserConfig::DEFAULT_PATH.DIRECTORY_SEPARATOR.$event->user->name)
         );
-        $event->user_config->set_default_bool(CronUploaderConfig::INCLUDE_ALL_LOGS, false);
-        $event->user_config->set_default_bool(CronUploaderConfig::STOP_ON_ERROR, false);
-        $event->user_config->set_default_int(CronUploaderConfig::LOG_LEVEL, LogLevel::INFO->value);
+        $event->user_config->set_default_bool(CronUploaderUserConfig::INCLUDE_ALL_LOGS, false);
+        $event->user_config->set_default_bool(CronUploaderUserConfig::STOP_ON_ERROR, false);
+        $event->user_config->set_default_int(CronUploaderUserConfig::LOG_LEVEL, LogLevel::INFO->value);
     }
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event): void
     {
         if ($event->user->can(Permissions::CRON_ADMIN)) {
-            $sb = $event->panel->add_config_group(new CronUploaderConfig());
+            $sb = $event->panel->add_config_group(new CronUploaderUserConfig());
             $sb->body->appendChild(emptyHTML(
                 A(["href" => make_http(make_link("cron_upload"))], "Read the documentation"),
                 " for cron setup instructions.",
@@ -111,8 +111,8 @@ class CronUploader extends Extension
         global $user;
 
         if (self::$IMPORT_RUNNING) {
-            $all = $user->get_config()->get_bool(CronUploaderConfig::INCLUDE_ALL_LOGS);
-            if ($event->priority >= $user->get_config()->get_int(CronUploaderConfig::LOG_LEVEL) &&
+            $all = $user->get_config()->get_bool(CronUploaderUserConfig::INCLUDE_ALL_LOGS);
+            if ($event->priority >= $user->get_config()->get_int(CronUploaderUserConfig::LOG_LEVEL) &&
                 ($event->section == self::NAME || $all)) {
                 $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LogLevel::from($event->priority)->name . "] " . $event->message;
 
@@ -185,7 +185,7 @@ class CronUploader extends Extension
     private function clear_folder(string $folder): void
     {
         global $page, $user;
-        $path = join_path($user->get_config()->get_string(CronUploaderConfig::DIR), $folder);
+        $path = join_path($user->get_config()->get_string(CronUploaderUserConfig::DIR), $folder);
         deltree($path);
         $page->flash("Cleared $path");
     }
@@ -255,7 +255,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $dir = $user->get_config()->get_string(CronUploaderConfig::DIR);
+        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
         return join_path($dir, self::QUEUE_DIR);
     }
 
@@ -263,7 +263,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $dir = $user->get_config()->get_string(CronUploaderConfig::DIR);
+        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
         return join_path($dir, self::UPLOADED_DIR);
     }
 
@@ -271,7 +271,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $dir = $user->get_config()->get_string(CronUploaderConfig::DIR);
+        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
         return join_path($dir, self::FAILED_DIR);
     }
 
@@ -280,7 +280,7 @@ class CronUploader extends Extension
         global $user;
 
         // Determine directory (none = default)
-        $dir = $user->get_config()->get_string(CronUploaderConfig::DIR);
+        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
 
         // Make the directory if it doesn't exist yet
         if (!is_dir($this->get_queue_dir())) {
@@ -300,7 +300,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $root_dir = $user->get_config()->get_string(CronUploaderConfig::DIR);
+        $root_dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
         return join_path($root_dir, ".lock");
     }
 
@@ -373,7 +373,7 @@ class CronUploader extends Extension
                     $failed++;
                     log_error(self::NAME, "(" . gettype($e) . ") " . $e->getMessage());
                     log_error(self::NAME, $e->getTraceAsString());
-                    if ($user->get_config()->get_bool(CronUploaderConfig::STOP_ON_ERROR)) {
+                    if ($user->get_config()->get_bool(CronUploaderUserConfig::STOP_ON_ERROR)) {
                         break;
                     } else {
                         $this->move_uploaded($img[0], $img[1], $output_subdir, true);
@@ -404,7 +404,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $rootDir = $user->get_config()->get_string(CronUploaderConfig::DIR);
+        $rootDir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
         $rootLength = strlen($rootDir);
         if ($rootDir[$rootLength - 1] == "/" || $rootDir[$rootLength - 1] == "\\") {
             $rootLength--;
@@ -508,7 +508,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $dir = $user->get_config()->get_string(CronUploaderConfig::DIR);
+        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
 
         return join_path($dir, "uploads.log");
     }

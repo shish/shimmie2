@@ -39,7 +39,7 @@ class SetupPanel
 
     public function add_config_group(ConfigGroup $group): SetupBlock
     {
-        $title = trim($group->title ?? implode(" ", \Safe\preg_split('/(?=[A-Z])/', \Safe\preg_replace("/^Shimmie2.(.*)Config$/", "\$1", get_class($group)))));
+        $title = trim($group->title ?? implode(" ", \Safe\preg_split('/(?=[A-Z])/', \Safe\preg_replace("/^Shimmie2.(.*?)(User)?Config$/", "\$1", get_class($group)))));
         $sb = $this->create_new_block($title, $group->position ?? 50);
         $sb->add_config_group($group);
         return $sb;
