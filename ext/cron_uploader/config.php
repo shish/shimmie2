@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CronUploaderConfig extends ConfigGroup
+class CronUploaderUserConfig extends ConfigGroup
 {
     #[ConfigMeta("Default Path", ConfigType::STRING, advanced: true)]
     public const DEFAULT_PATH = "cron_uploader";

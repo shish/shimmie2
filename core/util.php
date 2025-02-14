@@ -41,7 +41,7 @@ function get_theme_class(string $class): ?object
 function contact_link(?string $contact = null): ?string
 {
     global $config;
-    $text = $contact ?? $config->get_string('contact_link');
+    $text = $contact ?? $config->get_string(SetupConfig::CONTACT_LINK);
     if (is_null($text)) {
         return null;
     }
@@ -227,7 +227,7 @@ function get_real_ip(): string
  */
 function get_session_ip(Config $config): string
 {
-    $mask = $config->get_string("session_hash_mask", "255.255.0.0");
+    $mask = $config->get_string(UserAccountsConfig::SESSION_HASH_MASK, "255.255.0.0");
     $addr = get_real_ip();
     $addr = \Safe\inet_ntop(\Safe\inet_pton($addr) & \Safe\inet_pton($mask));
     return $addr;
@@ -555,10 +555,9 @@ function get_debug_info_arr(): array
 {
     global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
 
-    if ($config->get_string("commit_hash", "unknown") == "unknown") {
-        $commit = "";
-    } else {
-        $commit = " (".$config->get_string("commit_hash").")";
+    $version = VERSION;
+    if (defined("BUILD_HASH")) {
+        $version .= "-" . substr(constant("BUILD_HASH"), 0, 7);
     }
 
     return [
@@ -571,7 +570,7 @@ function get_debug_info_arr(): array
         "event_count" => $_shm_event_count,
         "cache_hits" => $cache->get("__etc_cache_hits"),
         "cache_misses" => $cache->get("__etc_cache_misses"),
-        "version" => VERSION . $commit,
+        "version" => $version,
     ];
 }
 

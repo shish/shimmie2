@@ -27,7 +27,7 @@ class StatsDInterface extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string("statsd_host", "telegraf:8125");
+        $config->set_default_string(StatsDInterfaceConfig::HOST, "telegraf:8125");
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -52,7 +52,7 @@ class StatsDInterface extends Extension
             $this->_stats("other");
         }
 
-        $host = $config->get_string("statsd_host", null);
+        $host = $config->get_string(StatsDInterfaceConfig::HOST, null);
         if (!is_null($host)) {
             $this->send($host, StatsDInterface::$stats, 1.0);
         }

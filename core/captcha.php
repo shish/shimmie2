@@ -20,7 +20,7 @@ function captcha_get_html(): string
 
     $captcha = "";
     if ($user->is_anonymous() && $config->get_bool(CommentConfig::CAPTCHA)) {
-        $r_publickey = $config->get_string("api_recaptcha_pubkey");
+        $r_publickey = $config->get_string(CommentConfig::RECAPTCHA_PUBKEY);
         if (!empty($r_publickey)) {
             $captcha = "
 				<div class=\"g-recaptcha\" data-sitekey=\"{$r_publickey}\"></div>
@@ -42,7 +42,7 @@ function captcha_check(): bool
     }
 
     if ($user->is_anonymous() && $config->get_bool(CommentConfig::CAPTCHA)) {
-        $r_privatekey = $config->get_string('api_recaptcha_privkey');
+        $r_privatekey = $config->get_string(CommentConfig::RECAPTCHA_PRIVKEY);
         if (!empty($r_privatekey)) {
             $recaptcha = new ReCaptcha($r_privatekey);
             $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", get_real_ip());

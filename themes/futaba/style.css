@@ -5,6 +5,9 @@
 :root {
 	font-family: arial,helvetica,sans-serif;
 	font-size: 10pt;
+
+	--danger-color: #000;
+	--danger-background: #FAA;
 }
 
 BODY {

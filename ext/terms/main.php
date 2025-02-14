@@ -24,7 +24,7 @@ class Terms extends Extension
     {
         global $config, $page, $user;
         if ($event->page_starts_with("accept_terms")) {
-            $page->add_cookie("accepted_terms", "true", time() + 60 * 60 * 24 * $config->get_int('login_memory'), "/");
+            $page->add_cookie("accepted_terms", "true", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link(explode('/', $event->path, 2)[1]));
         } else {

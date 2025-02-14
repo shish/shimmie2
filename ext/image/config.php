@@ -11,10 +11,10 @@ class ImageConfig extends ConfigGroup
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = 'ext_image_version';
 
-    #[ConfigMeta("Image URL Format", ConfigType::STRING, advanced: true)]
+    #[ConfigMeta("Image URL format", ConfigType::STRING, advanced: true)]
     public const ILINK = 'image_ilink';
 
-    #[ConfigMeta("Thumbnail URL Format", ConfigType::STRING, advanced: true)]
+    #[ConfigMeta("Thumbnail URL format", ConfigType::STRING, advanced: true)]
     public const TLINK = 'image_tlink';
 
     #[ConfigMeta("Post info", ConfigType::STRING)]
@@ -29,7 +29,7 @@ class ImageConfig extends ConfigGroup
     #[ConfigMeta("Show metadata", ConfigType::BOOL)]
     public const SHOW_META = 'image_show_meta';
 
-    #[ConfigMeta("Expires HTTP Header (Seconds)", ConfigType::INT, advanced: true)]
+    #[ConfigMeta("Expires HTTP header (Seconds)", ConfigType::INT, advanced: true)]
     public const EXPIRES = 'image_expires';
 }
 
@@ -66,6 +66,9 @@ class ThumbnailConfig extends ConfigGroup
 
     #[ConfigMeta("Resize type", ConfigType::STRING, options: "Shimmie2\ThumbnailConfig::get_fit_options")]
     public const FIT = 'thumb_fit';
+
+    #[ConfigMeta("Allow upscaling", ConfigType::BOOL, advanced: true)]
+    public const UPSCALE = 'thumb_upscale';
 
     #[ConfigMeta("Background color", ConfigType::STRING, ui_type: "color")]
     public const ALPHA_COLOR = 'thumb_alpha_color';

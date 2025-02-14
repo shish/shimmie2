@@ -33,6 +33,9 @@ class UserAccountsConfig extends ConfigGroup
     #[ConfigMeta("Login duration (days)", ConfigType::INT, advanced: true)]
     public const LOGIN_MEMORY = "login_memory";
 
-    #[ConfigMeta("Use BBCode for Login T&C", ConfigType::BOOL, advanced: true)]
+    #[ConfigMeta("Use BBCode for login T&C", ConfigType::BOOL, advanced: true)]
     public const LOGIN_TAC_BBCODE = "login_tac_bbcode";
+
+    #[ConfigMeta("Session hash mask", ConfigType::STRING, advanced: true)]
+    public const SESSION_HASH_MASK = "session_hash_mask";
 }
