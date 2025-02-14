@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TR, TH, TD, emptyHTML, rawHTML, joinHTML, DIV, INPUT, A, TEXTAREA};
+use function MicroHTML\{TD, emptyHTML, rawHTML, INPUT, A};
 
 class PostOwnerTheme extends Themelet
 {
@@ -25,13 +25,14 @@ class PostOwnerTheme extends Themelet
         // a TD with the avatar in it
         /** @var BuildAvatarEvent $avatar_e */
         $avatar_e = send_event(new BuildAvatarEvent($image->get_owner()));
-        $avatar = $avatar_e->html;
-        $info->appendChild(
-            TD(
-                ["width" => "80px", "rowspan" => "4"],
-                $avatar
-            )
-        );
+        if ($avatar_e->html) {
+            $info->appendChild(
+                TD(
+                    ["width" => "1%", "rowspan" => "4"],
+                    $avatar_e->html
+                )
+            );
+        }
         return $info;
     }
 }

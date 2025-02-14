@@ -20,7 +20,6 @@ class Index extends Extension
     {
         global $config;
         $config->set_default_int(IndexConfig::IMAGES, 24);
-        $config->set_default_bool(IndexConfig::TIPS, true);
         $config->set_default_string(IndexConfig::ORDER, "id DESC");
     }
 
@@ -106,11 +105,7 @@ class Index extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Post List", 20);
-
-        $sb->add_label("Show ");
-        $sb->add_int_option(IndexConfig::IMAGES);
-        $sb->add_label(" images on the post list");
+        $event->panel->add_config_group(new IndexConfig());
     }
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void

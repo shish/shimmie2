@@ -28,7 +28,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
 				</table>
 			</form>
 		";
-        if ($config->get_bool("login_signup_enabled")) {
+        if ($config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
             $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
         }
         $page->add_block(new Block("Login", rawHTML($html), "main", 90));
@@ -76,7 +76,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
         );
         $email_text = $email_required ? "Email" : "Email (Optional)";
 
-        $tac = format_text($config->get_string("login_tac", ""));
+        $tac = format_text($config->get_string(UserAccountsConfig::LOGIN_TAC, ""));
         if (empty($tac)) {
             $html = "";
         } else {

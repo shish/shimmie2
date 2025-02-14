@@ -8,8 +8,7 @@ class LiveFeed extends Extension
 {
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Live Feed");
-        $sb->add_text_option("livefeed_host", "IP:port to send events to: ");
+        $event->panel->add_config_group(new LiveFeedConfig());
     }
 
     public function onUserCreation(UserCreationEvent $event): void
@@ -52,7 +51,7 @@ class LiveFeed extends Extension
     {
         global $config;
 
-        $host = $config->get_string("livefeed_host", "127.0.0.1:25252");
+        $host = $config->get_string(LiveFeedConfig::HOST, "127.0.0.1:25252");
 
         if (!$host) {
             return;

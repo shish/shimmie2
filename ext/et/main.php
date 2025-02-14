@@ -110,12 +110,12 @@ class ET extends Extension
                 "disk_total" => to_shorthand_int($disk_total),
             ],
             "thumbnails" => [
-                "engine" => $config->get_string(ImageConfig::THUMB_ENGINE),
-                "quality" => $config->get_int(ImageConfig::THUMB_QUALITY),
-                "width" => $config->get_int(ImageConfig::THUMB_WIDTH),
-                "height" => $config->get_int(ImageConfig::THUMB_HEIGHT),
-                "scaling" => $config->get_int(ImageConfig::THUMB_SCALING),
-                "mime" => $config->get_string(ImageConfig::THUMB_MIME),
+                "engine" => $config->get_string(ThumbnailConfig::ENGINE),
+                "quality" => $config->get_int(ThumbnailConfig::QUALITY),
+                "width" => $config->get_int(ThumbnailConfig::WIDTH),
+                "height" => $config->get_int(ThumbnailConfig::HEIGHT),
+                "scaling" => $config->get_int(ThumbnailConfig::SCALING),
+                "mime" => $config->get_string(ThumbnailConfig::MIME),
             ],
         ];
 

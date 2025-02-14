@@ -49,19 +49,6 @@ class TagHistory extends Extension
         $event->add_button("View Tag History", "tag_history/{$event->image->id}", 20);
     }
 
-    /*
-    // disk space is cheaper than manually rebuilding history,
-    // so let's default to -1 and the user can go advanced if
-    // they /really/ want to
-    public function onSetupBuilding(SetupBuildingEvent $event) {
-        $sb = $event->panel->create_new_block("Tag History");
-        $sb->add_label("Limit to ");
-        $sb->add_int_option("history_limit");
-        $sb->add_label(" entires per image");
-        $sb->add_label("<br>(-1 for unlimited)");
-    }
-    */
-
     public function onTagSet(TagSetEvent $event): void
     {
         global $database, $config, $user;

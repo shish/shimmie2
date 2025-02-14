@@ -183,12 +183,10 @@ class CommentList extends Extension
         }
     }
 
-
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link("comment", new Link('comment/list'), "Comments");
     }
-
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
@@ -269,7 +267,6 @@ class CommentList extends Extension
                 }
                 if (
                     Extension::is_enabled(ApprovalInfo::KEY) && !is_null($image) &&
-                    $config->get_bool(ApprovalConfig::IMAGES) &&
                     $image['approved'] !== true
                 ) {
                     $image = null;
@@ -357,21 +354,7 @@ class CommentList extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Comments");
-        $sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments: ");
-        $sb->add_label("<br>Limit to ");
-        $sb->add_int_option("comment_limit");
-        $sb->add_label(" comments per ");
-        $sb->add_int_option("comment_window");
-        $sb->add_label(" minutes");
-        $sb->add_label("<br>Show ");
-        $sb->add_int_option("comment_count");
-        $sb->add_label(" recent comments on the index");
-        $sb->add_label("<br>Show ");
-        $sb->add_int_option("comment_list_count");
-        $sb->add_label(" comments per image on the list");
-        $sb->add_label("<br>Make samefags public ");
-        $sb->add_bool_option("comment_samefags_public");
+        $event->panel->add_config_group(new CommentConfig());
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event): void

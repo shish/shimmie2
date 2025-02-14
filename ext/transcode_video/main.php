@@ -39,7 +39,6 @@ class TranscodeVideo extends Extension
     {
         global $config;
         $config->set_default_bool(TranscodeVideoConfig::ENABLED, true);
-        $config->set_default_bool(TranscodeVideoConfig::UPLOAD, false);
         $config->set_default_bool(TranscodeVideoConfig::UPLOAD_TO_NATIVE_CONTAINER, false);
     }
 
@@ -57,44 +56,8 @@ class TranscodeVideo extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Video Transcode");
-        $sb->start_table();
-        $sb->add_bool_option(TranscodeVideoConfig::ENABLED, "Allow transcoding images: ", true);
-        $sb->add_bool_option(TranscodeVideoConfig::UPLOAD_TO_NATIVE_CONTAINER, "Convert videos using MPEG-4 or WEBM to their native containers:", true);
-        $sb->end_table();
+        $event->panel->add_config_group(new TranscodeVideoConfig());
     }
-
-    /*
-        public function onDataUpload(DataUploadEvent $event): void
-        {
-            global $config;
-
-            if ($config->get_bool(TranscodeVideoConfig::UPLOAD) == true) {
-                $ext = strtolower($event->type);
-
-                $ext = Media::normalize_format($ext);
-
-                if ($event->type=="gif"&&Media::is_animated_gif($event->tmpname)) {
-                    return;
-                }
-
-                if (in_array($ext, array_values(self::INPUT_FORMATS))) {
-                    $target_format = $config->get_string(TranscodeVideoConfig::UPLOAD_PREFIX.$ext);
-                    if (empty($target_format)) {
-                        return;
-                    }
-                    try {
-                        $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-                        $event->set_tmpname($new_image, Media::determine_ext($target_format));
-                    } catch (Exception $e) {
-                        log_error("transcode_video", "Error while performing upload transcode: ".$e->getMessage());
-                        // We don't want to interfere with the upload process,
-                        // so if something goes wrong the untranscoded image jsut continues
-                    }
-                }
-            }
-        }
-    */
 
     public function onPageRequest(PageRequestEvent $event): void
     {

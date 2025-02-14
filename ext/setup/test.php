@@ -90,6 +90,6 @@ class SetupTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_admin();
         $this->get_page('setup/advanced');
         $this->assert_title("Shimmie Setup");
-        $this->assert_text(ImageConfig::THUMB_QUALITY);
+        $this->assert_text(ThumbnailConfig::QUALITY);
     }
 }

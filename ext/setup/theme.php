@@ -125,7 +125,7 @@ class SetupTheme extends Themelet
         return SECTION(
             ['class' => 'setupblock'],
             H3($block->header),
-            DIV(['class' => 'blockbody'], $block->get_html()),
+            DIV(['class' => 'blockbody'], $block->body),
         );
     }
 }

@@ -46,7 +46,7 @@ class ReportImageTheme extends Themelet
 			";
         }
 
-        $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH);
+        $thumb_width = $config->get_int(ThumbnailConfig::WIDTH);
         $html = "
 			<table id='reportedimage' class='zebra'>
 				<thead><td width='$thumb_width'>Post</td><td>Reason</td><td width='128'>Action</td></thead>
@@ -68,7 +68,7 @@ class ReportImageTheme extends Themelet
 
         $i_image = $image->id;
         $html = "";
-        $public = $config->get_string("report_image_publicity");
+        $public = $config->get_string(ReportImageConfig::SHOW_INFO);
         if ($public != "none" && count($reports) > 0) {
             $html .= "<b>Current reports:</b>";
             foreach ($reports as $report) {

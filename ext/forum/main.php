@@ -20,10 +20,10 @@ class Forum extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_int("forumTitleSubString", 25);
-        $config->set_default_int("forumThreadsPerPage", 15);
-        $config->set_default_int("forumPostsPerPage", 15);
-        $config->set_default_int("forumMaxCharsPerPost", 512);
+        $config->set_default_int(ForumConfig::TITLE_SUBSTRING, 25);
+        $config->set_default_int(ForumConfig::THREADS_PER_PAGE, 15);
+        $config->set_default_int(ForumConfig::POSTS_PER_PAGE, 15);
+        $config->set_default_int(ForumConfig::MAX_CHARS_PER_POST, 512);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -70,12 +70,7 @@ class Forum extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Forum");
-        $sb->add_int_option("forumTitleSubString", "Title max long: ");
-        $sb->add_int_option("forumThreadsPerPage", "<br>Threads per page: ");
-        $sb->add_int_option("forumPostsPerPage", "<br>Posts per page: ");
-
-        $sb->add_int_option("forumMaxCharsPerPost", "<br>Max chars per post: ");
+        $event->panel->add_config_group(new ForumConfig());
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void

@@ -335,6 +335,9 @@ class DatabaseConfig extends Config
 
 abstract class ConfigGroup
 {
+    public ?string $title = null;
+    public ?int $position = null;
+
     public static function get_group_for_entry_by_name(string $name): ?ConfigGroup
     {
         foreach (get_subclasses_of(ConfigGroup::class) as $class) {
@@ -347,5 +350,65 @@ abstract class ConfigGroup
             }
         }
         return null;
+    }
+
+    /**
+     * @return array<string, ConfigMeta>
+     */
+    public function get_config_fields(): array
+    {
+        $fields = [];
+        $refl_config = new \ReflectionClass($this);
+        foreach ($refl_config->getConstants() as $const => $key) {
+            $refl_const = $refl_config->getReflectionConstant($const);
+            if (!$refl_const) {
+                continue;
+            }
+            $attributes = $refl_const->getAttributes();
+            if (count($attributes) == 0) {
+                continue;
+            }
+            /** @var ConfigMeta $meta */
+            $meta = $attributes[0]->newInstance();
+            $fields[$key] = $meta;
+        }
+        return $fields;
+    }
+}
+
+enum ConfigType
+{
+    case BOOL;
+    case INT;
+    case STRING;
+    case ARRAY;
+}
+
+#[\Attribute(\Attribute::TARGET_CLASS_CONSTANT)]
+readonly class ConfigMeta
+{
+    /** @var "bool"|"int"|"shorthand_int"|"text"|"longtext"|"multichoice"|"color" */
+    public string $ui_type;
+
+    /**
+     * @param "shorthand_int"|"longtext"|"color" $ui_type Override the default UI renderer
+     * @param array<string, string>|callable-string|null $options A list of key-value pairs, or the name of a function to call to generate pairs
+     */
+    public function __construct(
+        public string $label,
+        public ConfigType $type,
+        ?string $ui_type = null,
+        public mixed $default = null,
+        public array|string|null $options = null,
+        public ?string $permission = null,
+        public ?string $help = null,
+        public bool $advanced = false,
+    ) {
+        $this->ui_type = $ui_type ?? match($type) {
+            ConfigType::BOOL => "bool",
+            ConfigType::INT => "int",
+            ConfigType::STRING => "text",
+            ConfigType::ARRAY => "multichoice",
+        };
     }
 }

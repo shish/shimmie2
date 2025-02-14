@@ -8,17 +8,13 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\rawHTML;
 
-/* Todo:
- * 	usepref(todo2: port userpref)
- *	theme junk
- */
 class TagEditCloud extends Extension
 {
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $config;
 
-        if (!$config->get_bool("tageditcloud_disable") && $this->can_tag($event->image)) {
+        if ($this->can_tag($event->image)) {
             $html = $this->build_tag_map($event->image);
             if (!is_null($html)) {
                 $event->add_part($html, 40);
@@ -29,43 +25,17 @@ class TagEditCloud extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_bool("tageditcloud_disable", false);
-        $config->set_default_bool("tageditcloud_usedfirst", true);
-        $config->set_default_string("tageditcloud_sort", 'a');
-        $config->set_default_int("tageditcloud_minusage", 2);
-        $config->set_default_int("tageditcloud_defcount", 40);
-        $config->set_default_int("tageditcloud_maxcount", 4096);
-        $config->set_default_string("tageditcloud_ignoretags", 'tagme');
+        $config->set_default_bool(TagEditCloudConfig::USED_FIRST, true);
+        $config->set_default_string(TagEditCloudConfig::SORT, 'a');
+        $config->set_default_int(TagEditCloudConfig::MIN_USAGE, 2);
+        $config->set_default_int(TagEditCloudConfig::DEF_COUNT, 40);
+        $config->set_default_int(TagEditCloudConfig::MAX_COUNT, 4096);
+        $config->set_default_string(TagEditCloudConfig::IGNORE_TAGS, 'tagme');
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        global $database;
-        $sort_by = [
-            'Alphabetical' => 'a',
-            'Popularity' => 'p',
-            'Relevance' => 'r',
-        ];
-        if (
-            Extension::is_enabled(TagCategoriesInfo::KEY)
-            && $database->get_driver_id() == DatabaseDriverID::MYSQL
-        ) {
-            $sort_by['Categories'] = 'c';
-        }
-
-        $sb = $event->panel->create_new_block("Tag Edit Cloud");
-        $sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
-        $sb->add_choice_option("tageditcloud_sort", $sort_by, "<br>Sort the tags by:");
-        $sb->add_bool_option("tageditcloud_usedfirst", "<br>Always show used tags first: ");
-        $sb->add_label("<br><b>Alpha sort</b>:<br>Only show tags used at least ");
-        $sb->add_int_option("tageditcloud_minusage");
-        $sb->add_label(" times.<br><b>Popularity/Relevance sort</b>:<br>Show ");
-        $sb->add_int_option("tageditcloud_defcount");
-        $sb->add_label(" tags by default.<br>Show a maximum of ");
-        $sb->add_int_option("tageditcloud_maxcount");
-        $sb->add_label(" tags.");
-        $sb->add_label("<br><b>Relevance sort</b>:<br>Ignore tags (space separated): ");
-        $sb->add_text_option("tageditcloud_ignoretags");
+        $event->panel->add_config_group(new TagEditCloudConfig());
     }
 
     private function build_tag_map(Image $image): ?HTMLElement
@@ -77,13 +47,12 @@ class TagEditCloud extends Extension
         $precloud = "";
         $postcloud = "";
 
-        $sort_method = $config->get_string("tageditcloud_sort");
-        $tags_min = $config->get_int("tageditcloud_minusage");
-        $used_first = $config->get_bool("tageditcloud_usedfirst");
-        $max_count = $config->get_int("tageditcloud_maxcount");
-        $def_count = $config->get_int("tageditcloud_defcount");
-
-        $ignore_tags = Tag::explode($config->get_string("tageditcloud_ignoretags"));
+        $sort_method = $config->get_string(TagEditCloudConfig::SORT);
+        $tags_min = $config->get_int(TagEditCloudConfig::MIN_USAGE);
+        $used_first = $config->get_bool(TagEditCloudConfig::USED_FIRST);
+        $max_count = $config->get_int(TagEditCloudConfig::MAX_COUNT);
+        $def_count = $config->get_int(TagEditCloudConfig::DEF_COUNT);
+        $ignore_tags = Tag::explode($config->get_string(TagEditCloudConfig::IGNORE_TAGS));
 
         $cat_color = [];
         if (Extension::is_enabled(TagCategoriesInfo::KEY)) {

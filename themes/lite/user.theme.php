@@ -28,7 +28,7 @@ class LiteUserPageTheme extends UserPageTheme
 				</table>
 			</form>
 		";
-        if ($config->get_bool("login_signup_enabled")) {
+        if ($config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
             $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
         }
         $page->add_block(new Block("Login", rawHTML($html), "main", 90));

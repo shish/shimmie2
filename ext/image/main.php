@@ -15,47 +15,22 @@ use function MicroHTML\{INPUT, emptyHTML, STYLE};
  */
 class ImageIO extends Extension
 {
-    public const COLLISION_OPTIONS = [
-        'Error' => ImageConfig::COLLISION_ERROR,
-        'Merge' => ImageConfig::COLLISION_MERGE
-    ];
-
-    public const ON_DELETE_OPTIONS = [
-        'Return to post list' => ImageConfig::ON_DELETE_LIST,
-        'Go to next post' => ImageConfig::ON_DELETE_NEXT
-    ];
-
-    public const EXIF_READ_FUNCTION = "exif_read_data";
-
-    public const THUMBNAIL_ENGINES = [
-        'Built-in GD' => MediaEngine::GD,
-        'ImageMagick' => MediaEngine::IMAGICK
-    ];
-
-    public const THUMBNAIL_TYPES = [
-        'JPEG' => MimeType::JPEG,
-        'WEBP (Not IE compatible)' => MimeType::WEBP
-    ];
-
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string(ImageConfig::THUMB_ENGINE, MediaEngine::GD);
-        $config->set_default_int(ImageConfig::THUMB_WIDTH, 192);
-        $config->set_default_int(ImageConfig::THUMB_HEIGHT, 192);
-        $config->set_default_int(ImageConfig::THUMB_SCALING, 100);
-        $config->set_default_int(ImageConfig::THUMB_QUALITY, 75);
-        $config->set_default_string(ImageConfig::THUMB_MIME, MimeType::JPEG);
-        $config->set_default_string(ImageConfig::THUMB_FIT, Media::RESIZE_TYPE_FIT);
-        $config->set_default_string(ImageConfig::THUMB_ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
+        $config->set_default_string(ThumbnailConfig::ENGINE, MediaEngine::GD);
+        $config->set_default_int(ThumbnailConfig::WIDTH, 192);
+        $config->set_default_int(ThumbnailConfig::HEIGHT, 192);
+        $config->set_default_int(ThumbnailConfig::SCALING, 100);
+        $config->set_default_int(ThumbnailConfig::QUALITY, 75);
+        $config->set_default_string(ThumbnailConfig::MIME, MimeType::JPEG);
+        $config->set_default_string(ThumbnailConfig::FIT, Media::RESIZE_TYPE_FIT);
+        $config->set_default_string(ThumbnailConfig::ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
+        $config->set_default_string(ThumbnailConfig::TIP, '$tags // $size // $filesize');
 
-        if (function_exists(self::EXIF_READ_FUNCTION)) {
-            $config->set_default_bool(ImageConfig::SHOW_META, false);
-        }
+        $config->set_default_bool(ImageConfig::SHOW_META, false);
         $config->set_default_string(ImageConfig::ILINK, '');
         $config->set_default_string(ImageConfig::TLINK, '');
-        $config->set_default_string(ImageConfig::TIP, '$tags // $size // $filesize');
-        $config->set_default_string(ImageConfig::UPLOAD_COLLISION_HANDLER, ImageConfig::COLLISION_ERROR);
         $config->set_default_int(ImageConfig::EXPIRES, (60 * 60 * 24 * 31));	// defaults to one month
     }
 
@@ -66,10 +41,10 @@ class ImageIO extends Extension
         if ($this->get_version(ImageConfig::VERSION) < 1) {
             switch ($config->get_string("thumb_type")) {
                 case FileExtension::WEBP:
-                    $config->set_string(ImageConfig::THUMB_MIME, MimeType::WEBP);
+                    $config->set_string(ThumbnailConfig::MIME, MimeType::WEBP);
                     break;
                 case FileExtension::JPEG:
-                    $config->set_string(ImageConfig::THUMB_MIME, MimeType::JPEG);
+                    $config->set_string(ThumbnailConfig::MIME, MimeType::JPEG);
                     break;
             }
             $config->delete("thumb_type");
@@ -82,8 +57,8 @@ class ImageIO extends Extension
     {
         global $config, $page, $user;
 
-        $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH, 192);
-        $thumb_height = $config->get_int(ImageConfig::THUMB_HEIGHT, 192);
+        $thumb_width = $config->get_int(ThumbnailConfig::WIDTH, 192);
+        $thumb_height = $config->get_int(ThumbnailConfig::HEIGHT, 192);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST", permission: Permissions::DELETE_IMAGE)) {
@@ -91,7 +66,7 @@ class ImageIO extends Extension
             if ($image) {
                 send_event(new ImageDeletionEvent($image));
 
-                if ($config->get_string(ImageConfig::ON_DELETE) === ImageConfig::ON_DELETE_NEXT) {
+                if ($config->get_string(ImageConfig::ON_DELETE) === 'next') {
                     redirect_to_next_image($image, $event->get_GET('search'));
                 } else {
                     $page->set_mode(PageMode::REDIRECT);
@@ -159,42 +134,8 @@ class ImageIO extends Extension
     {
         global $config;
 
-        $sb = $event->panel->create_new_block("Post Manager", 30);
-        $sb->start_table();
-        // advanced only
-        //$sb->add_text_option(ImageConfig::ILINK, "Image link: ");
-        //$sb->add_text_option(ImageConfig::TLINK, "<br>Thumbnail link: ");
-        $sb->add_text_option(ImageConfig::TIP, "Post tooltip", true);
-        $sb->add_text_option(ImageConfig::INFO, "Post info", true);
-        $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "Upload collision handler", true);
-        $sb->add_choice_option(ImageConfig::ON_DELETE, self::ON_DELETE_OPTIONS, "On Delete", true);
-        if (function_exists(self::EXIF_READ_FUNCTION)) {
-            $sb->add_bool_option(ImageConfig::SHOW_META, "Show metadata", true);
-        }
-        $sb->end_table();
-
-        $sb = $event->panel->create_new_block("Thumbnailing");
-        $sb->start_table();
-        $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine", true);
-        $sb->add_choice_option(ImageConfig::THUMB_MIME, self::THUMBNAIL_TYPES, "Filetype", true);
-
-        $sb->add_int_option(ImageConfig::THUMB_WIDTH, "Max Width", true);
-        $sb->add_int_option(ImageConfig::THUMB_HEIGHT, "Max Height", true);
-
-        $options = [];
-        foreach (MediaEngine::RESIZE_TYPE_SUPPORT[$config->get_string(ImageConfig::THUMB_ENGINE)] as $type) {
-            $options[$type] = $type;
-        }
-
-        $sb->add_choice_option(ImageConfig::THUMB_FIT, $options, "Fit", true);
-
-        $sb->add_int_option(ImageConfig::THUMB_QUALITY, "Quality", true);
-        $sb->add_int_option(ImageConfig::THUMB_SCALING, "High-DPI Scale %", true);
-        if ($config->get_string(ImageConfig::THUMB_MIME) === MimeType::JPEG) {
-            $sb->add_color_option(ImageConfig::THUMB_ALPHA_COLOR, "Alpha Conversion Color", true);
-        }
-
-        $sb->end_table();
+        $event->panel->add_config_group(new ImageConfig());
+        $event->panel->add_config_group(new ThumbnailConfig());
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
@@ -225,7 +166,7 @@ class ImageIO extends Extension
         $image = Image::by_id_ex($image_id);
 
         if ($type == "thumb") {
-            $mime = $config->get_string(ImageConfig::THUMB_MIME);
+            $mime = $config->get_string(ThumbnailConfig::MIME);
             $file = $image->get_thumb_filename();
         } else {
             $mime = $image->get_mime();

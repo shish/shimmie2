@@ -16,13 +16,7 @@ class S3 extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        global $config;
-
-        $sb = $event->panel->create_new_block("S3 CDN");
-        $sb->add_text_option(S3Config::ACCESS_KEY_ID, "Access Key ID: ");
-        $sb->add_text_option(S3Config::ACCESS_KEY_SECRET, "<br>Access Key Secret: ");
-        $sb->add_text_option(S3Config::ENDPOINT, "<br>Endpoint: ");
-        $sb->add_text_option(S3Config::IMAGE_BUCKET, "<br>Image Bucket: ");
+        $event->panel->add_config_group(new S3Config());
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void

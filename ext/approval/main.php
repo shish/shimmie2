@@ -12,10 +12,6 @@ class Approval extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-
-        $config->set_default_bool(ApprovalConfig::IMAGES, false);
-        $config->set_default_bool(ApprovalConfig::COMMENTS, false);
-
         Image::$prop_types["approved"] = ImagePropType::BOOL;
         Image::$prop_types["approved_by_id"] = ImagePropType::INT;
     }
@@ -24,7 +20,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($config->get_bool(ApprovalConfig::IMAGES) && $user->can(Permissions::BYPASS_IMAGE_APPROVAL)) {
+        if (defined("UNITTEST") || $user->can(Permissions::BYPASS_IMAGE_APPROVAL)) {
             self::approve_image($event->image->id);
         }
     }
@@ -46,12 +42,6 @@ class Approval extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/".$image_id));
         }
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $sb = $event->panel->create_new_block("Approval");
-        $sb->add_bool_option(ApprovalConfig::IMAGES, "Posts: ");
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
@@ -121,17 +111,15 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($config->get_bool(ApprovalConfig::IMAGES)) {
-            if (is_null($event->term) && $this->no_approval_query($event->context)) {
-                $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
-            }
+        if (is_null($event->term) && $this->no_approval_query($event->context) && !defined("UNITTEST")) {
+            $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
+        }
 
-            if ($matches = $event->matches(self::SEARCH_REGEXP)) {
-                if ($user->can(Permissions::APPROVE_IMAGE) && strtolower($matches[1]) == "no") {
-                    $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
-                } else {
-                    $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
-                }
+        if ($matches = $event->matches(self::SEARCH_REGEXP)) {
+            if ($user->can(Permissions::APPROVE_IMAGE) && strtolower($matches[1]) == "no") {
+                $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
+            } else {
+                $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
             }
         }
     }
@@ -140,7 +128,7 @@ class Approval extends Extension
     {
         global $user, $config;
         if ($event->key === HelpPages::SEARCH) {
-            if ($user->can(Permissions::APPROVE_IMAGE) &&  $config->get_bool(ApprovalConfig::IMAGES)) {
+            if ($user->can(Permissions::APPROVE_IMAGE)) {
                 $event->add_section("Approval", $this->theme->get_help_html());
             }
         }
@@ -183,7 +171,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($config->get_bool(ApprovalConfig::IMAGES) && $image['approved'] === false && !$user->can(Permissions::APPROVE_IMAGE) && $user->id !== $image->owner_id) {
+        if ($image['approved'] === false && !$user->can(Permissions::APPROVE_IMAGE) && $user->id !== $image->owner_id) {
             return false;
         }
         return true;
@@ -202,7 +190,7 @@ class Approval extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
-        if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
+        if ($user->can(Permissions::APPROVE_IMAGE)) {
             if ($event->image['approved'] === true) {
                 $event->add_button("Disapprove", "disapprove_image/".$event->image->id);
             } else {
@@ -216,7 +204,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
+        if ($user->can(Permissions::APPROVE_IMAGE)) {
             if (in_array("approved:no", $event->search_terms)) {
                 $event->add_action("bulk_approve_image", "Approve", "a");
             } else {

@@ -65,23 +65,7 @@ class ResizeImage extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
     {
-        $sb = $event->panel->create_new_block("Image Resize");
-        $sb->start_table();
-        $sb->add_choice_option(ResizeConfig::ENGINE, MediaEngine::IMAGE_ENGINES, "Engine", true);
-        $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images", true);
-        $sb->add_bool_option(ResizeConfig::GET_ENABLED, "Allow GET args", true);
-        $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload", true);
-        $sb->end_table();
-        $sb->start_table();
-        $sb->add_table_header("Preset/Default Dimensions");
-        $sb->add_label("<tr><th>Width</th><td>");
-        $sb->add_int_option(ResizeConfig::DEFAULT_WIDTH);
-        $sb->add_label("</td><td>px</td></tr>");
-        $sb->add_label("<tr><th>Height</th><td>");
-        $sb->add_int_option(ResizeConfig::DEFAULT_HEIGHT);
-        $sb->add_label("</td><td>px</td></tr>");
-        $sb->add_label("<tr><td></td><td>(enter 0 for no default)</td></tr>");
-        $sb->end_table();
+        $event->panel->add_config_group(new ResizeConfig());
     }
 
     public function onDataUpload(DataUploadEvent $event): void
@@ -91,14 +75,9 @@ class ResizeImage extends Extension
         if ($config->get_bool(ResizeConfig::UPLOAD) == true
                 && $this->can_resize_mime($event->mime)) {
             $image_obj = $event->images[0];
-            $width = $height = 0;
 
-            if ($config->get_int(ResizeConfig::DEFAULT_WIDTH) !== 0) {
-                $height = $config->get_int(ResizeConfig::DEFAULT_WIDTH);
-            }
-            if ($config->get_int(ResizeConfig::DEFAULT_HEIGHT) !== 0) {
-                $height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
-            }
+            $width = $config->get_int(ResizeConfig::DEFAULT_WIDTH);
+            $height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
             $isanigif = 0;
             if ($image_obj->get_mime() == MimeType::GIF) {
                 $image_filename = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);

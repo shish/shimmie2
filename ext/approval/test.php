@@ -13,10 +13,12 @@ class ApprovalTest extends ShimmiePHPUnitTestCase
         $this->assert_search_results(["some_tag"], [$image_id]);
     }
 
+    /*
+    // Approvals are always automatic in unit-test mode,
+    // so we can't test this
     public function testApprovalNeeded(): void
     {
         global $config;
-        $config->set_bool(ApprovalConfig::IMAGES, true);
 
         // use can post but not see what they posted
         $this->log_in_as_user();
@@ -33,4 +35,5 @@ class ApprovalTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
         $this->assert_search_results(["some_tag"], [$image_id]);
     }
+    */
 }

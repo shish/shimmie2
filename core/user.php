@@ -204,7 +204,7 @@ class User
     public function is_anonymous(): bool
     {
         global $config;
-        return ($this->id === $config->get_int('anon_id'));
+        return ($this->id === $config->get_int(UserAccountsConfig::ANON_ID));
     }
 
     public function set_class(string $class): void
