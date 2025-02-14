@@ -400,7 +400,7 @@ class UserPage extends Extension
                 $user->can(Permissions::VIEW_IP) ||  # user can view all IPS
                 ($user->id == $event->display_user->id)  # or user is viewing themselves
             ) &&
-            ($event->display_user->id != $config->get_int('anon_id')) # don't show anon's IP list, it is le huge
+            ($event->display_user->id != $config->get_int(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
         ) {
             $this->theme->display_ip_list(
                 $page,
@@ -725,7 +725,7 @@ class UserPage extends Extension
         } else {
             $database->execute(
                 "UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                ["new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $uid]
+                ["new_owner_id" => $config->get_int(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
             );
         }
 

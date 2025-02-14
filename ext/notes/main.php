@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
 class Notes extends Extension
 {
     /** @var NotesTheme */
@@ -15,9 +13,9 @@ class Notes extends Extension
     {
         global $config;
         Image::$prop_types["notes"] = ImagePropType::INT;
-        $config->set_default_int("notesNotesPerPage", 20);
-        $config->set_default_int("notesRequestsPerPage", 20);
-        $config->set_default_int("notesHistoriesPerPage", 20);
+        $config->set_default_int(NotesConfig::NOTES_PER_PAGE, 20);
+        $config->set_default_int(NotesConfig::REQUESTS_PER_PAGE, 20);
+        $config->set_default_int(NotesConfig::HISTORIES_PER_PAGE, 20);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -359,7 +357,7 @@ class Notes extends Extension
     {
         global $database, $config;
 
-        $notesPerPage = $config->get_int('notesNotesPerPage');
+        $notesPerPage = $config->get_int(NotesConfig::NOTES_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
@@ -384,7 +382,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $requestsPerPage = $config->get_int('notesRequestsPerPage');
+        $requestsPerPage = $config->get_int(NotesConfig::REQUESTS_PER_PAGE);
 
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
 
@@ -438,7 +436,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $historiesPerPage = $config->get_int('notesHistoriesPerPage');
+        $historiesPerPage = $config->get_int(NotesConfig::HISTORIES_PER_PAGE);
 
         //ORDER BY IMAGE & DATE
         $histories = $database->get_all(
@@ -459,7 +457,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $historiesPerPage = $config->get_int('notesHistoriesPerPage');
+        $historiesPerPage = $config->get_int(NotesConfig::HISTORIES_PER_PAGE);
 
         $histories = $database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
@@ -480,7 +478,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $historiesPerPage = $config->get_int('notesHistoriesPerPage');
+        $historiesPerPage = $config->get_int(NotesConfig::HISTORIES_PER_PAGE);
 
         $histories = $database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .

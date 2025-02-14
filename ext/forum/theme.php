@@ -36,7 +36,7 @@ class ForumTheme extends Themelet
     public function display_new_thread_composer(Page $page, ?string $threadText = null, ?string $threadTitle = null): void
     {
         global $config, $user;
-        $max_characters = $config->get_int('forumMaxCharsPerPost');
+        $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
             "forum/create",
@@ -82,7 +82,7 @@ class ForumTheme extends Themelet
     {
         global $config;
 
-        $max_characters = $config->get_int('forumMaxCharsPerPost');
+        $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
             "forum/answer",
@@ -118,7 +118,7 @@ class ForumTheme extends Themelet
     {
         global $config, $page/*, $user*/;
 
-        $posts_per_page = $config->get_int('forumPostsPerPage');
+        $posts_per_page = $config->get_int(ForumConfig::POSTS_PER_PAGE);
 
         $current_post = 0;
 
@@ -226,7 +226,7 @@ class ForumTheme extends Themelet
         );
 
         foreach ($threads as $thread) {
-            $titleSubString = $config->get_int('forumTitleSubString');
+            $titleSubString = $config->get_int(ForumConfig::TITLE_SUBSTRING);
             $title = truncate($thread["title"], $titleSubString);
 
             $tbody->appendChild(

@@ -85,7 +85,7 @@ class GraphQL extends Extension
     private function cors(): void
     {
         global $config;
-        $pat = $config->get_string("graphql_cors_pattern");
+        $pat = $config->get_string(GraphQLConfig::CORS_PATTERN);
 
         if ($pat && isset($_SERVER['HTTP_ORIGIN'])) {
             if (\Safe\preg_match("#$pat#", $_SERVER['HTTP_ORIGIN'])) {
@@ -109,8 +109,8 @@ class GraphQL extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string('graphql_cors_pattern', "");
-        $config->set_default_bool('graphql_debug', false);
+        $config->set_default_string(GraphQLConfig::CORS_PATTERN, "");
+        $config->set_default_bool(GraphQLConfig::DEBUG, false);
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -127,7 +127,7 @@ class GraphQL extends Extension
             $resp = $server->executeRequest();
             assert(!is_array($resp));
             assert(is_a($resp, \GraphQL\Executor\ExecutionResult::class));
-            if ($config->get_bool("graphql_debug")) {
+            if ($config->get_bool(GraphQLConfig::DEBUG)) {
                 $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
                 $body = $resp->toArray($debug);
             } else {

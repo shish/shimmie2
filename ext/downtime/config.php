@@ -10,5 +10,5 @@ class DowntimeConfig extends ConfigGroup
     public const DOWNTIME = "downtime";
 
     #[ConfigMeta("Message for users", ConfigType::STRING, ui_type: "longtext")]
-    public const DOWNTIME_MESSAGE = "downtime_message";
+    public const MESSAGE = "downtime_message";
 }

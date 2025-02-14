@@ -11,7 +11,7 @@ class ArchiveFileHandler extends DataHandlerExtension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');
+        $config->set_default_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND, 'unzip -d "%d" "%f"');
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event): void
@@ -26,7 +26,7 @@ class ArchiveFileHandler extends DataHandlerExtension
             $tmpdir = shm_tempnam("archive");
             unlink($tmpdir);
             mkdir($tmpdir, 0755, true);
-            $cmd = $config->get_string('archive_extract_command');
+            $cmd = $config->get_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND);
             $cmd = str_replace('%f', $event->tmpname, $cmd);
             $cmd = str_replace('%d', $tmpdir, $cmd);
             assert(is_string($cmd));

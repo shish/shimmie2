@@ -274,7 +274,7 @@ class LogDatabase extends Extension
             return;
         }
 
-        if ($event->priority >= $config->get_int("log_db_priority")) {
+        if ($event->priority >= $config->get_int(LogDatabaseConfig::LEVEL)) {
             $database->execute("
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
 				VALUES(now(), :section, :priority, :username, :address, :message)

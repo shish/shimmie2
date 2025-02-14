@@ -9,13 +9,13 @@ class HomeConfig extends ConfigGroup
     public ?string $title = "Home Page";
 
     #[ConfigMeta("Page links", ConfigType::STRING, ui_type: "longtext", help: "Use BBCode, leave blank for defaults")]
-    public const HOME_LINKS = 'home_links';
+    public const LINKS = 'home_links';
 
     #[ConfigMeta("Page text", ConfigType::STRING, ui_type: "longtext")]
-    public const HOME_TEXT = 'home_text';
+    public const TEXT = 'home_text';
 
     #[ConfigMeta("Counter", ConfigType::STRING, options: "Shimmie2\HomeConfig::get_counter_options")]
-    public const HOME_COUNTER = 'home_counter';
+    public const COUNTER = 'home_counter';
 
     /**
      * @return array<string, string>
