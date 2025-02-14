@@ -12,6 +12,6 @@ class IndexConfig extends ConfigGroup
     #[ConfigMeta("Posts per page", ConfigType::INT)]
     public const IMAGES = "index_images";
 
-    #[ConfigMeta("Post Order", ConfigType::STRING, advanced: true)]
+    #[ConfigMeta("Post order", ConfigType::STRING, advanced: true)]
     public const ORDER = "index_order";
 }
