@@ -56,7 +56,7 @@ class SetupTheme extends Themelet
     /**
      * @param array<string, mixed> $options
      */
-    public function display_advanced(Page $page, array $options): void
+    public function display_raw(Page $page, array $options): void
     {
         $rows = TBODY();
         ksort($options);
@@ -116,7 +116,8 @@ class SetupTheme extends Themelet
         return rawHTML("
 			<a href='".make_link()."'>Index</a>
 			<br><a href='https://github.com/shish/shimmie2/wiki/Settings'>Help</a>
-			<br><a href='".make_link("setup/advanced")."'>Advanced</a>
+			<br><a href='".make_link("setup", "advanced=on")."'>Advanced</a>
+			<br><a href='".make_link("setup/raw")."'>Raw</a>
 		");
     }
 
