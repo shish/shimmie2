@@ -38,13 +38,17 @@ function die_nicely(string $title, string $body, int $code = 0): void
     exit($code);
 }
 
-$min_php = "8.1";
-if (version_compare(phpversion(), $min_php, ">=") === false) {
-    die_nicely("Not Supported", "
-        Shimmie does not support versions of PHP lower than $min_php
-        (PHP reports that it is version ".phpversion().").
-    ", 1);
+function version_check(string $min_php): void
+{
+    if (version_compare(phpversion(), $min_php, ">=") === false) {
+        die_nicely("Not Supported", "
+            Shimmie does not support versions of PHP lower than $min_php
+            (PHP reports that it is version ".phpversion().").
+        ", 1);
+    }
 }
+
+version_check("8.2");
 
 # ini_set('zend.assertions', '1');  // generate assertions
 ini_set('assert.exception', '1');  // throw exceptions when failed
