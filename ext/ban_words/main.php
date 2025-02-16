@@ -62,7 +62,7 @@ xanax
      */
     private function test_text(string $comment, SCoreException $ex): void
     {
-        $comment = strtolower($comment);
+        $comment = mb_strtolower($comment);
 
         foreach ($this->get_words() as $word) {
             if ($word[0] == '/') {
@@ -89,7 +89,7 @@ xanax
 
         $banned = $config->get_string(BanWordsConfig::BANNED_WORDS);
         foreach (explode("\n", $banned) as $word) {
-            $word = trim(strtolower($word));
+            $word = trim(mb_strtolower($word));
             if (strlen($word) == 0) {
                 // line is blank
                 continue;
