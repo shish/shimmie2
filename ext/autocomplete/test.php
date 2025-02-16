@@ -49,4 +49,25 @@ class AutoCompleteTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(PageMode::DATA, $page->mode);
         $this->assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
     }
+
+    public function testCyrillic(): void
+    {
+        $this->log_in_as_user();
+        // test Cyrillic with various capitalisation
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "СОЮЗ советских Социалистических Республик");
+        $this->log_out();
+
+        // confirm that strtolower does not work with Cyrillic, but mb_strtolower does
+        $this->assertNotEquals(strtolower("Советских"), "советских", "strtolower");
+        $this->assertEquals(mb_strtolower("Советских"), "советских", "mb_strtolower");
+
+        $page = $this->get_page('api/internal/autocomplete', ["s" => "со"]);
+        $this->assertEquals(200, $page->code);
+        $this->assertEquals(PageMode::DATA, $page->mode);
+        $this->assertEquals([
+            "союз" => ["newtag" => null, "count" => 1],
+            "советских" => ["newtag" => null, "count" => 1],
+            "социалистических" => ["newtag" => null, "count" => 1]
+        ], json_decode($page->data, true));
+    }
 }
