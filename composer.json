@@ -49,7 +49,6 @@
         "psr/simple-cache": "^1.0",
         "sabre/cache": "^2.0.1",
         "naroga/redis-cache": "^1.2",
-        "aws/aws-sdk-php": "^3.294",
         "symfony/console": "^7.2"
     },
     "require-dev": {

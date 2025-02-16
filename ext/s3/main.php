@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function MicroHTML\INPUT;
 
+require_once "S3.php";
+
 class S3 extends Extension
 {
     public int $synced = 0;
@@ -157,7 +159,7 @@ class S3 extends Extension
     }
 
     // utils
-    private function get_client(): ?\Aws\S3\S3Client
+    private function get_client(): ?\S3Client\S3
     {
         global $config;
         $access_key_id = $config->get_string(S3Config::ACCESS_KEY_ID);
@@ -166,13 +168,12 @@ class S3 extends Extension
             return null;
         }
         $endpoint = $config->get_string(S3Config::ENDPOINT);
-        $credentials = new \Aws\Credentials\Credentials($access_key_id, $access_key_secret);
-        return new \Aws\S3\S3Client([
-            'region' => 'auto',
-            'endpoint' => $endpoint,
-            'version' => 'latest',
-            'credentials' => $credentials,
-        ]);
+
+        return new \S3Client\S3(
+            $access_key_id,
+            $access_key_secret,
+            $endpoint,
+        );
     }
 
     private function hash_to_path(string $hash): string
@@ -207,7 +208,7 @@ class S3 extends Extension
         $image_bucket = $config->get_string(S3Config::IMAGE_BUCKET);
 
         $key = $this->hash_to_path($image->hash);
-        if (!$overwrite && $client->doesObjectExist($image_bucket, $key)) {
+        if (!$overwrite && $client->getObjectInfo($image_bucket, $key)->code !== 200) {
             return false;
         }
 
@@ -222,14 +223,16 @@ class S3 extends Extension
                 $friendly = $image->parse_link_template('$id - $tags.$ext');
                 $image->tag_array = $_orig_tags;
             }
-            $client->putObject([
-                'Bucket' => $image_bucket,
-                'Key' => $key,
-                'Body' => \Safe\file_get_contents($image->get_image_filename()),
-                'ACL' => 'public-read',
-                'ContentType' => $image->get_mime(),
-                'ContentDisposition' => "inline; filename=\"$friendly\"",
-            ]);
+            $client->putObject(
+                $image_bucket,
+                $key,
+                \Safe\file_get_contents($image->get_image_filename()),
+                [
+                    'ACL' => 'public-read',
+                    'ContentType' => $image->get_mime(),
+                    'ContentDisposition' => "inline; filename=\"$friendly\"",
+                ]
+            );
             $this->dequeue($image->hash);
         }
         return true;
@@ -245,10 +248,10 @@ class S3 extends Extension
         if ($this->is_busy()) {
             $this->enqueue($hash, "D");
         } else {
-            $client->deleteObject([
-                'Bucket' => $config->get_string(S3Config::IMAGE_BUCKET),
-                'Key' => $this->hash_to_path($hash),
-            ]);
+            $client->deleteObject(
+                $config->get_string(S3Config::IMAGE_BUCKET),
+                $this->hash_to_path($hash),
+            );
             $this->dequeue($hash);
         }
     }
