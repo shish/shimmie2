@@ -36,4 +36,22 @@ class BanWordsTest extends ShimmiePHPUnitTestCase
         $this->assert_no_text('ViagrA');
         $this->assert_no_text('http://something.cn/');
     }
+
+    public function testCyrillicBan(): void
+    {
+        global $config;
+        $config->set_string("banned_words", "СОЮЗ\nсоветских\nСоциалистических\n/Республик/\n");
+
+        $this->log_in_as_user();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+
+        $this->check_blocked($image_id, "СОВЕТСКИХ");
+        $this->check_blocked($image_id, "республик");
+
+        $this->get_page('comment/list');
+        $this->assert_title('Comments');
+        $this->assert_no_text('СОВЕТСКИХ');
+        $this->assert_no_text('республик');
+    }
+
 }
