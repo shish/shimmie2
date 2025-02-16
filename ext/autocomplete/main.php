@@ -34,12 +34,12 @@ class AutoComplete extends Extension
     {
         global $cache, $database;
 
-        $search = strtolower($search);
+        $search = mb_strtolower($search);
         if (
             $search == '' ||
             $search[0] == '_' ||
             $search[0] == '%' ||
-            strlen($search) > 32
+            mb_strlen($search) > 32
         ) {
             return [];
         }
