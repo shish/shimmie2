@@ -15,25 +15,6 @@ use function MicroHTML\{INPUT, emptyHTML, STYLE};
  */
 class ImageIO extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(ThumbnailConfig::ENGINE, MediaEngine::GD);
-        $config->set_default_int(ThumbnailConfig::WIDTH, 192);
-        $config->set_default_int(ThumbnailConfig::HEIGHT, 192);
-        $config->set_default_int(ThumbnailConfig::SCALING, 100);
-        $config->set_default_int(ThumbnailConfig::QUALITY, 75);
-        $config->set_default_string(ThumbnailConfig::MIME, MimeType::JPEG);
-        $config->set_default_string(ThumbnailConfig::FIT, Media::RESIZE_TYPE_FIT);
-        $config->set_default_string(ThumbnailConfig::ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
-        $config->set_default_string(ThumbnailConfig::TIP, '$tags // $size // $filesize');
-
-        $config->set_default_bool(ImageConfig::SHOW_META, false);
-        $config->set_default_string(ImageConfig::ILINK, '');
-        $config->set_default_string(ImageConfig::TLINK, '');
-        $config->set_default_int(ImageConfig::EXPIRES, (60 * 60 * 24 * 31));	// defaults to one month
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config;

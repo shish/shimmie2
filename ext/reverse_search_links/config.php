@@ -14,6 +14,6 @@ class ReverseSearchLinksConfig extends ConfigGroup
         'trace.moe' => 'trace.moe',
         'ascii2d' => 'ascii2d',
         'Yandex' => 'Yandex',
-    ], advanced: true)]
+    ], default: ['SauceNAO', 'TinEye', 'trace.moe', 'ascii2d', 'Yandex'], advanced: true)]
     public const ENABLED_SERVICES = "ext_reverse_search_links_enabled_services";
 }

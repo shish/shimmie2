@@ -25,12 +25,6 @@ class UserConfig extends Extension
     /** @var UserConfigTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool(UserAccountsConfig::ENABLE_API_KEYS, false);
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

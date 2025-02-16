@@ -9,9 +9,9 @@ class GraphQLConfig extends ConfigGroup
     public const KEY = "graphql";
     public ?string $title = "GraphQL";
 
-    #[ConfigMeta("CORS pattern", ConfigType::STRING, advanced: true)]
+    #[ConfigMeta("CORS pattern", ConfigType::STRING, default: "", advanced: true)]
     public const CORS_PATTERN = "graphql_cors_pattern";
 
-    #[ConfigMeta("Debug", ConfigType::BOOL, advanced: true)]
+    #[ConfigMeta("Debug", ConfigType::BOOL, default: false, advanced: true)]
     public const DEBUG = "graphql_debug";
 }

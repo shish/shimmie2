@@ -121,16 +121,6 @@ class CommentList extends Extension
     /** @var CommentListTheme $theme */
     public Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(CommentConfig::WINDOW, 5);
-        $config->set_default_int(CommentConfig::LIMIT, 10);
-        $config->set_default_int(CommentConfig::LIST_COUNT, 10);
-        $config->set_default_int(CommentConfig::COUNT, 5);
-        $config->set_default_bool(CommentConfig::CAPTCHA, false);
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

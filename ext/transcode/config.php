@@ -12,22 +12,22 @@ class TranscodeImageConfig extends ConfigGroup
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_transcode_version";
 
-    #[ConfigMeta("Allow transcoding images", ConfigType::BOOL)]
+    #[ConfigMeta("Allow transcoding images", ConfigType::BOOL, default: true)]
     public const ENABLED = "transcode_enabled";
 
-    #[ConfigMeta("Enable GET args", ConfigType::BOOL)]
+    #[ConfigMeta("Enable GET args", ConfigType::BOOL, default: false)]
     public const GET_ENABLED = "transcode_get_enabled";
 
-    #[ConfigMeta("Transcode on upload", ConfigType::BOOL)]
+    #[ConfigMeta("Transcode on upload", ConfigType::BOOL, default: false)]
     public const UPLOAD = "transcode_upload";
 
-    #[ConfigMeta("Engine", ConfigType::STRING, options: ["GD" => "gd", "ImageMagick" => "convert"])]
+    #[ConfigMeta("Engine", ConfigType::STRING, default: 'gd', options: ["GD" => "gd", "ImageMagick" => "convert"])]
     public const ENGINE = "transcode_engine";
 
-    #[ConfigMeta("Lossy Format Quality", ConfigType::INT)]
+    #[ConfigMeta("Lossy Format Quality", ConfigType::INT, default: 80)]
     public const QUALITY = "transcode_quality";
 
-    #[ConfigMeta("Alpha Conversion Color", ConfigType::STRING, ui_type: "color")]
+    #[ConfigMeta("Alpha Conversion Color", ConfigType::STRING, default: Media::DEFAULT_ALPHA_CONVERSION_COLOR, ui_type: "color")]
     public const ALPHA_COLOR = "transcode_alpha_color";
 
     /**

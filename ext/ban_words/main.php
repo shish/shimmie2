@@ -6,39 +6,6 @@ namespace Shimmie2;
 
 class BanWords extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(BanWordsConfig::BANNED_WORDS, "
-a href=
-anal
-blowjob
-/buy-.*-online/
-casino
-cialis
-doors.txt
-fuck
-hot video
-kaboodle.com
-lesbian
-nexium
-penis
-/pokerst.*/
-pornhub
-porno
-purchase
-sex
-sex tape
-spinnenwerk.de
-thx for all
-TRAMADOL
-ultram
-very nice site
-viagra
-xanax
-");
-    }
-
     public function onCommentPosting(CommentPostingEvent $event): void
     {
         global $user;

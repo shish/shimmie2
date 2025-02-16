@@ -11,7 +11,7 @@ class AvatarPostUserConfig extends UserConfigGroup
     #[ConfigMeta("Post ID", ConfigType::INT, advanced: true)]
     public const AVATAR_ID = "avatar_post_id";
 
-    #[ConfigMeta("Scale", ConfigType::INT, advanced: true)]
+    #[ConfigMeta("Scale", ConfigType::INT, default: 100, advanced: true)]
     public const AVATAR_SCALE = "avatar_post_scale";
 
     #[ConfigMeta("X%", ConfigType::INT, advanced: true)]

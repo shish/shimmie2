@@ -9,12 +9,6 @@ class TagHistory extends Extension
     /** @var TagHistoryTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int("history_limit", -1);
-    }
-
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
@@ -67,7 +61,7 @@ class TagHistory extends Extension
             log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
         }
 
-        $allowed = $config->get_int("history_limit");
+        $allowed = $config->get_int("history_limit", -1);
         if ($allowed == 0) {
             return;
         }

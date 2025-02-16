@@ -20,8 +20,8 @@ class TranscodeVideo extends Extension
     public const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
 
     public const FORMAT_NAMES = [
-      VideoContainers::MKV => "matroska",
-      VideoContainers::WEBM => "webm",
+        VideoContainers::MKV => "matroska",
+        VideoContainers::WEBM => "webm",
         VideoContainers::OGG => "ogg",
         VideoContainers::MP4 => "mp4",
     ];
@@ -32,14 +32,6 @@ class TranscodeVideo extends Extension
     public function get_priority(): int
     {
         return 45;
-    }
-
-
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool(TranscodeVideoConfig::ENABLED, true);
-        $config->set_default_bool(TranscodeVideoConfig::UPLOAD_TO_NATIVE_CONTAINER, false);
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void

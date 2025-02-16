@@ -90,13 +90,6 @@ class Ratings extends Extension
         $this->search_regexp = "/^rating[=|:](?:(\*|[" . $codes . "]+)|(" .
             implode("|", $search_terms) . "|".implode("|", self::UNRATED_KEYWORDS)."))$/iD";
 
-        foreach (array_keys(UserClass::$known_classes) as $key) {
-            if ($key == "base" || $key == "hellbanned") {
-                continue;
-            }
-            $config->set_default_array("ext_rating_" . $key . "_privs", array_keys(ImageRating::$known_ratings));
-        }
-
         Image::$prop_types["rating"] = ImagePropType::STRING;
     }
 
@@ -109,11 +102,6 @@ class Ratings extends Extension
             return false;
         }
         return true;
-    }
-
-    public function onInitUserConfig(InitUserConfigEvent $event): void
-    {
-        $event->user_config->set_default_array(RatingsUserConfig::DEFAULTS, self::get_user_class_privs($event->user));
     }
 
     public function onImageDownloading(ImageDownloadingEvent $event): void
@@ -415,14 +403,10 @@ class Ratings extends Extension
     public static function get_user_class_privs(User $user): array
     {
         global $config;
-        $key = "ext_rating_".$user->class->name."_privs";
-        $privs = $config->get_array($key);
-
-        // These should be set in InitExtEvent
-        if (is_null($privs)) {
-            throw new \RuntimeException("Ratings config missing: " . var_export($key, true));
-        }
-        return $privs;
+        return $config->get_array(
+            "ext_rating_".$user->class->name."_privs",
+            array_keys(ImageRating::$known_ratings)
+        );
     }
 
     /**
@@ -436,7 +420,7 @@ class Ratings extends Extension
         global $user;
 
         $available = self::get_user_class_privs($user);
-        $selected = $user->get_config()->get_array(RatingsUserConfig::DEFAULTS);
+        $selected = $user->get_config()->get_array(RatingsUserConfig::DEFAULTS, $available);
 
         return array_intersect($available, $selected);
     }

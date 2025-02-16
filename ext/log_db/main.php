@@ -203,12 +203,6 @@ class LogTable extends Table
 
 class LogDatabase extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(LogDatabaseConfig::LEVEL, LogLevel::INFO->value);
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
