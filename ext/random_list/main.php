@@ -47,12 +47,6 @@ class RandomList extends Extension
         }
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(RandomListConfig::LIST_COUNT, 12);
-    }
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {

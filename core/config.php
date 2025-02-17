@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use UV;
+
 /**
  * Common methods for manipulating a map of config values,
  * loading and saving is left to the concrete implementation
@@ -256,26 +258,25 @@ abstract class Config
  */
 class DatabaseConfig extends Config
 {
-    private Database $database;
-    private string $table_name;
-    private ?string $sub_column;
-    private ?string $sub_value;
     private string $cache_name;
 
+    /**
+     * @param array<string,string> $defaults
+     */
     public function __construct(
-        Database $database,
-        string $table_name = "config",
-        ?string $sub_column = null,
-        ?string $sub_value = null
+        private Database $database,
+        private string $table_name = "config",
+        private ?string $sub_column = null,
+        private ?string $sub_value = null,
+        array $defaults = [],
     ) {
         global $cache;
 
-        $this->database = $database;
-        $this->table_name = $table_name;
-        $this->sub_value = $sub_value;
-        $this->sub_column = $sub_column;
         $this->cache_name = empty($sub_value) ? "config" : "config_{$sub_column}_{$sub_value}";
-        $this->values = cache_get_or_set($this->cache_name, fn () => $this->get_values());
+        $this->values = array_merge(
+            $defaults,
+            cache_get_or_set($this->cache_name, fn () => $this->get_values()),
+        );
     }
 
     private function get_values(): mixed
@@ -365,7 +366,7 @@ abstract class BaseConfigGroup
             if (!$refl_const) {
                 continue;
             }
-            $attributes = $refl_const->getAttributes();
+            $attributes = $refl_const->getAttributes(ConfigMeta::class);
             if (count($attributes) == 0) {
                 continue;
             }
@@ -379,6 +380,56 @@ abstract class BaseConfigGroup
     public function tweak_html(\MicroHTML\HTMLElement $html): \MicroHTML\HTMLElement
     {
         return $html;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function get_all_defaults(): array
+    {
+        return cache_get_or_set(
+            get_called_class() . "_defaults_" . VERSION,
+            fn () => self::_get_all_defaults(),
+            60
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function _get_all_defaults(): array
+    {
+        $defaults = [];
+        $base = get_called_class();
+        foreach (get_subclasses_of($base) as $class) {
+            $refl_config = new \ReflectionClass($class);
+            $config = new $class();
+            assert(is_a($config, $base));
+            if (!Extension::is_enabled($config::KEY)) {
+                continue;
+            }
+            foreach ($refl_config->getConstants() as $const => $value) {
+                $refl_const = $refl_config->getReflectionConstant($const);
+                if (!$refl_const) {
+                    continue;
+                }
+                $attributes = $refl_const->getAttributes(ConfigMeta::class);
+                if (count($attributes) == 0) {
+                    continue;
+                }
+                /** @var ConfigMeta $meta */
+                $meta = $attributes[0]->newInstance();
+                if ($meta->default !== null) {
+                    $defaults[$value] = match ($meta->type) {
+                        ConfigType::BOOL => $meta->default ? "true" : "false",
+                        ConfigType::INT => (string)($meta->default),
+                        ConfigType::STRING => (string)($meta->default),
+                        ConfigType::ARRAY => implode(",", $meta->default),
+                    };
+                }
+            }
+        }
+        return $defaults;
     }
 }
 

@@ -15,12 +15,6 @@ class SourceHistory extends Extension
         return 40;
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int("history_limit", -1);
-    }
-
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
@@ -344,7 +338,7 @@ class SourceHistory extends Extension
             log_debug("source_history", "adding source history: [$old_source] -> [$new_source]");
         }
 
-        $allowed = $config->get_int("history_limit");
+        $allowed = $config->get_int("history_limit", -1);
         if ($allowed == 0) {
             return;
         }

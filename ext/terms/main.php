@@ -9,12 +9,6 @@ class Terms extends Extension
     /** @var TermsTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(TermsConfig::MESSAGE, "Cookies may be used. Please read our [url=site://wiki/privacy]privacy policy[/url] for more information.\nBy accepting to enter you agree to our [url=site://wiki/rules]rules[/url] and [url=site://wiki/terms_of_service]terms of service[/url].");
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;

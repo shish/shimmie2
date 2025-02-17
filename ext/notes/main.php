@@ -13,9 +13,6 @@ class Notes extends Extension
     {
         global $config;
         Image::$prop_types["notes"] = ImagePropType::INT;
-        $config->set_default_int(NotesConfig::NOTES_PER_PAGE, 20);
-        $config->set_default_int(NotesConfig::REQUESTS_PER_PAGE, 20);
-        $config->set_default_int(NotesConfig::HISTORIES_PER_PAGE, 20);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void

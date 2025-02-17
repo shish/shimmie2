@@ -22,17 +22,6 @@ class TagEditCloud extends Extension
         }
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool(TagEditCloudConfig::USED_FIRST, true);
-        $config->set_default_string(TagEditCloudConfig::SORT, 'a');
-        $config->set_default_int(TagEditCloudConfig::MIN_USAGE, 2);
-        $config->set_default_int(TagEditCloudConfig::DEF_COUNT, 40);
-        $config->set_default_int(TagEditCloudConfig::MAX_COUNT, 4096);
-        $config->set_default_string(TagEditCloudConfig::IGNORE_TAGS, 'tagme');
-    }
-
     private function build_tag_map(Image $image): ?HTMLElement
     {
         global $database, $config;

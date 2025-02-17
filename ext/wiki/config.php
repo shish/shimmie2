@@ -8,15 +8,15 @@ class WikiConfig extends ConfigGroup
 {
     public const KEY = "wiki";
 
-    #[ConfigMeta("Tag page template", ConfigType::STRING, ui_type: "longtext")]
+    #[ConfigMeta("Tag page template", ConfigType::STRING, ui_type: "longtext", default: "{body}\n\n[b]Aliases: [/b][i]{aliases}[/i]")]
     public const TAG_PAGE_TEMPLATE = "wiki_tag_page_template";
 
-    #[ConfigMeta("Empty list text", ConfigType::STRING)]
+    #[ConfigMeta("Empty list text", ConfigType::STRING, default: "none")]
     public const EMPTY_TAGINFO = "wiki_empty_taginfo";
 
-    #[ConfigMeta("Show shortwiki on search results", ConfigType::BOOL)]
+    #[ConfigMeta("Show shortwiki on search results", ConfigType::BOOL, default: false)]
     public const TAG_SHORTWIKIS = "shortwikis_on_tags";
 
-    #[ConfigMeta("Enable revisions", ConfigType::BOOL, advanced: true)]
+    #[ConfigMeta("Enable revisions", ConfigType::BOOL, default: true, advanced: true)]
     public const ENABLE_REVISIONS = "wiki_revisions";
 }

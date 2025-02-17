@@ -11,13 +11,13 @@ class UserAccountsConfig extends ConfigGroup
     #[ConfigMeta("Anonymous ID", ConfigType::INT, advanced: true)]
     public const ANON_ID = "anon_id";
 
-    #[ConfigMeta("Enable API keys", ConfigType::BOOL)]
+    #[ConfigMeta("Enable API keys", ConfigType::BOOL, default: false)]
     public const ENABLE_API_KEYS = "ext_user_config_enable_api_keys";
 
-    #[ConfigMeta("Allow new signups", ConfigType::BOOL)]
+    #[ConfigMeta("Allow new signups", ConfigType::BOOL, default: true)]
     public const SIGNUP_ENABLED = "login_signup_enabled";
 
-    #[ConfigMeta("Require email address", ConfigType::BOOL)]
+    #[ConfigMeta("Require email address", ConfigType::BOOL, default: false)]
     public const USER_EMAIL_REQUIRED = "user_email_required";
 
     #[ConfigMeta("Terms & Conditions", ConfigType::STRING, ui_type: "longtext")]
@@ -29,13 +29,13 @@ class UserAccountsConfig extends ConfigGroup
     ])]
     public const LOGIN_REDIRECT = "user_login_redirect";
 
-    #[ConfigMeta("Message when signups disabled", ConfigType::STRING, advanced: true)]
+    #[ConfigMeta("Message when signups disabled", ConfigType::STRING, default: "The board admin has disabled the ability to sign up for new accounts", advanced: true)]
     public const SIGNUP_DISABLED_MESSAGE = "login_signup_disabled_message";
 
-    #[ConfigMeta("Login duration (days)", ConfigType::INT, advanced: true)]
+    #[ConfigMeta("Login duration (days)", ConfigType::INT, default: 365, advanced: true)]
     public const LOGIN_MEMORY = "login_memory";
 
-    #[ConfigMeta("Use BBCode for login T&C", ConfigType::BOOL, advanced: true)]
+    #[ConfigMeta("Use BBCode for login T&C", ConfigType::BOOL, default: true, advanced: true)]
     public const LOGIN_TAC_BBCODE = "login_tac_bbcode";
 
     #[ConfigMeta("Session hash mask", ConfigType::STRING, advanced: true)]

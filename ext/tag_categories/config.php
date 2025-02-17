@@ -11,6 +11,8 @@ class TagCategoriesConfig extends ConfigGroup
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_tag_categories_version";
 
-    #[ConfigMeta("Split on view", ConfigType::BOOL)]
+    // whether we split out separate categories on post view by default
+    //  note: only takes effect if /post/view shows the image's exact tags
+    #[ConfigMeta("Split on view", ConfigType::BOOL, default: true)]
     public const SPLIT_ON_VIEW = "tag_categories_split_on_view";
 }

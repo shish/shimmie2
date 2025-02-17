@@ -4,32 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-// The user object doesn't exist until after database setup operations and the first wave of InitExtEvents,
-// so we can't reliably access this data until then. This event is triggered by the system after all of that is done.
-class InitUserConfigEvent extends Event
-{
-    public User $user;
-    public Config $user_config;
-
-    public function __construct(User $user, Config $user_config)
-    {
-        parent::__construct();
-        $this->user = $user;
-        $this->user_config = $user_config;
-    }
-}
-
-
 class UserConfig extends Extension
 {
     /** @var UserConfigTheme */
     protected Themelet $theme;
-
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool(UserAccountsConfig::ENABLE_API_KEYS, false);
-    }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

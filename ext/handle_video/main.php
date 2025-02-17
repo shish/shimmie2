@@ -17,19 +17,6 @@ class VideoFileHandler extends DataHandlerExtension
         MimeType::WEBM,
     ];
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-
-        $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY, true);
-        $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_LOOP, true);
-        $config->set_default_bool(VideoFileHandlerConfig::PLAYBACK_MUTE, false);
-        $config->set_default_array(
-            VideoFileHandlerConfig::ENABLED_FORMATS,
-            [MimeType::FLASH_VIDEO, MimeType::MP4_VIDEO, MimeType::OGG_VIDEO, MimeType::WEBM]
-        );
-    }
-
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
         $event->image->video = true;

@@ -23,18 +23,6 @@ class ResizeImage extends Extension
         return 55;
     }
 
-
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool(ResizeConfig::ENABLED, true);
-        $config->set_default_bool(ResizeConfig::GET_ENABLED, false);
-        $config->set_default_bool(ResizeConfig::UPLOAD, false);
-        $config->set_default_string(ResizeConfig::ENGINE, MediaEngine::GD);
-        $config->set_default_int(ResizeConfig::DEFAULT_WIDTH, 0);
-        $config->set_default_int(ResizeConfig::DEFAULT_HEIGHT, 0);
-    }
-
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;

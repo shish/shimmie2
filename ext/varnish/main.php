@@ -6,14 +6,6 @@ namespace Shimmie2;
 
 class VarnishPurger extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(VarnishPurgerConfig::HOST, '127.0.0.1');
-        $config->set_default_int(VarnishPurgerConfig::PORT, 80);
-        $config->set_default_string(VarnishPurgerConfig::PROTOCOL, 'http');
-    }
-
     private function curl_purge(string $path): void
     {
         // waiting for curl timeout adds ~5 minutes to unit tests

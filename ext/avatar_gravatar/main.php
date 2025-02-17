@@ -15,13 +15,6 @@ class AvatarGravatar extends AvatarExtension
         return 50;
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(AvatarGravatarConfig::GRAVATAR_DEFAULT, "");
-        $config->set_default_string(AvatarGravatarConfig::GRAVATAR_RATING, "g");
-    }
-
     public function avatar_html(User $user): HTMLElement|null
     {
         global $config;
