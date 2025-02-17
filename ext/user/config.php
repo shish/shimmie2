@@ -38,6 +38,6 @@ class UserAccountsConfig extends ConfigGroup
     #[ConfigMeta("Use BBCode for login T&C", ConfigType::BOOL, default: true, advanced: true)]
     public const LOGIN_TAC_BBCODE = "login_tac_bbcode";
 
-    #[ConfigMeta("Session hash mask", ConfigType::STRING, advanced: true)]
+    #[ConfigMeta("Session hash mask", ConfigType::STRING, default: "255.255.0.0", advanced: true)]
     public const SESSION_HASH_MASK = "session_hash_mask";
 }

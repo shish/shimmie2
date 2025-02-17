@@ -263,9 +263,13 @@ function get_real_ip(): string
  */
 function get_session_ip(Config $config): string
 {
-    $mask = $config->get_string(UserAccountsConfig::SESSION_HASH_MASK, "255.255.0.0");
+    $mask = $config->get_string(UserAccountsConfig::SESSION_HASH_MASK);
     $addr = get_real_ip();
-    $addr = \Safe\inet_ntop(\Safe\inet_pton($addr) & \Safe\inet_pton($mask));
+    try {
+        $addr = \Safe\inet_ntop(\Safe\inet_pton($addr) & \Safe\inet_pton($mask));
+    } catch (\Safe\Exceptions\NetworkException $e) {
+        throw new ServerError("Failed to mask IP address ($addr/$mask)");
+    }
     return $addr;
 }
 
