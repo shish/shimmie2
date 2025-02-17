@@ -10,25 +10,25 @@ class SetupConfig extends ConfigGroup
     public ?string $title = "General";
     public ?int $position = 0;
 
-    #[ConfigMeta("Site title", ConfigType::STRING)]
+    #[ConfigMeta("Site title", ConfigType::STRING, default: "Shimmie")]
     public const TITLE = "title";
 
-    #[ConfigMeta("Front page", ConfigType::STRING)]
+    #[ConfigMeta("Front page", ConfigType::STRING, default: "post/list")]
     public const FRONT_PAGE = "front_page";
 
-    #[ConfigMeta("Main page", ConfigType::STRING)]
+    #[ConfigMeta("Main page", ConfigType::STRING, default: "post/list")]
     public const MAIN_PAGE = "main_page";
 
     #[ConfigMeta("Contact URL", ConfigType::STRING)]
     public const CONTACT_LINK = "contact_link";
 
-    #[ConfigMeta("Theme", ConfigType::STRING, options: "Shimmie2\SetupConfig::get_theme_options")]
+    #[ConfigMeta("Theme", ConfigType::STRING, default: "default", options: "Shimmie2\SetupConfig::get_theme_options")]
     public const THEME = "theme";
 
-    #[ConfigMeta("Avatar Size", ConfigType::INT)]
+    #[ConfigMeta("Avatar Size", ConfigType::INT, default: 128)]
     public const AVATAR_SIZE = "avatar_size";
 
-    #[ConfigMeta("Nice URLs", ConfigType::BOOL, help: "Javascript inactive, can't test Nice URLs!")]
+    #[ConfigMeta("Nice URLs", ConfigType::BOOL, default: false, help: "Javascript inactive, can't test Nice URLs!")]
     public const NICE_URLS = "nice_urls";
 
     /**

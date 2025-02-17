@@ -17,7 +17,7 @@ class AvatarGravatarConfig extends ConfigGroup
     ])]
     public const GRAVATAR_TYPE = "avatar_gravatar_type";
 
-    #[ConfigMeta("Rating", ConfigType::STRING, options: [
+    #[ConfigMeta("Rating", ConfigType::STRING, default: 'g', options: [
         'G' => 'g',
         'PG' => 'pg',
         'R' => 'r',
@@ -25,6 +25,6 @@ class AvatarGravatarConfig extends ConfigGroup
     ])]
     public const GRAVATAR_RATING = "avatar_gravatar_rating";
 
-    #[ConfigMeta("Default", ConfigType::STRING, advanced: true)]
+    #[ConfigMeta("Default", ConfigType::STRING, default: "", advanced: true)]
     public const GRAVATAR_DEFAULT = "avatar_gravatar_default";
 }

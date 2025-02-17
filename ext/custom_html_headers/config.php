@@ -12,7 +12,7 @@ class CustomHtmlHeadersConfig extends ConfigGroup
     #[ConfigMeta("HTML inside <head>", ConfigType::STRING, ui_type: "longtext")]
     public const CUSTOM_HTML_HEADERS = "custom_html_headers";
 
-    #[ConfigMeta("Website name in <title>", ConfigType::STRING, options: [
+    #[ConfigMeta("Website name in <title>", ConfigType::STRING, default: "none", options: [
         "none" => "none",
         "as prefix" => "prefix",
         "as suffix" => "suffix"

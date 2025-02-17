@@ -8,12 +8,6 @@ class BulkDownload extends Extension
 {
     private const DOWNLOAD_ACTION_NAME = "bulk_download";
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(BulkDownloadConfig::SIZE_LIMIT, parse_shorthand_int('100MB'));
-    }
-
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\emptyHTML;
-use function MicroHTML\A;
-
 class CronUploader extends Extension
 {
     /** @var CronUploaderTheme */
@@ -21,17 +18,6 @@ class CronUploader extends Extension
     public const FAILED_DIR = "failed_to_upload";
 
     private static bool $IMPORT_RUNNING = false;
-
-    public function onInitUserConfig(InitUserConfigEvent $event): void
-    {
-        $event->user_config->set_default_string(
-            CronUploaderUserConfig::DIR,
-            data_path(CronUploaderUserConfig::DEFAULT_PATH.DIRECTORY_SEPARATOR.$event->user->name)
-        );
-        $event->user_config->set_default_bool(CronUploaderUserConfig::INCLUDE_ALL_LOGS, false);
-        $event->user_config->set_default_bool(CronUploaderUserConfig::STOP_ON_ERROR, false);
-        $event->user_config->set_default_int(CronUploaderUserConfig::LOG_LEVEL, LogLevel::INFO->value);
-    }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
@@ -173,7 +159,7 @@ class CronUploader extends Extension
     private function clear_folder(string $folder): void
     {
         global $page, $user;
-        $path = join_path($user->get_config()->get_string(CronUploaderUserConfig::DIR), $folder);
+        $path = join_path($this->get_user_dir(), $folder);
         deltree($path);
         $page->flash("Cleared $path");
     }
@@ -239,37 +225,32 @@ class CronUploader extends Extension
         );
     }
 
-    public function get_queue_dir(): string
+    private function get_user_dir(): string
     {
         global $user;
+        return $user->get_config()->get_string(
+            CronUploaderUserConfig::DIR,
+            data_path(join_path("cron_uploader", $user->name))
+        );
+    }
 
-        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
-        return join_path($dir, self::QUEUE_DIR);
+    public function get_queue_dir(): string
+    {
+        return join_path($this->get_user_dir(), self::QUEUE_DIR);
     }
 
     public function get_uploaded_dir(): string
     {
-        global $user;
-
-        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
-        return join_path($dir, self::UPLOADED_DIR);
+        return join_path($this->get_user_dir(), self::UPLOADED_DIR);
     }
 
     public function get_failed_dir(): string
     {
-        global $user;
-
-        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
-        return join_path($dir, self::FAILED_DIR);
+        return join_path($this->get_user_dir(), self::FAILED_DIR);
     }
 
     private function prep_root_dir(): string
     {
-        global $user;
-
-        // Determine directory (none = default)
-        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
-
         // Make the directory if it doesn't exist yet
         if (!is_dir($this->get_queue_dir())) {
             mkdir($this->get_queue_dir(), 0775, true);
@@ -281,15 +262,12 @@ class CronUploader extends Extension
             mkdir($this->get_failed_dir(), 0775, true);
         }
 
-        return $dir;
+        return $this->get_user_dir();
     }
 
     private function get_lock_file(): string
     {
-        global $user;
-
-        $root_dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
-        return join_path($root_dir, ".lock");
+        return join_path($this->get_user_dir(), ".lock");
     }
 
     /**
@@ -297,11 +275,13 @@ class CronUploader extends Extension
      */
     public function process_upload(): bool
     {
-        global $database, $user, $config, $_shm_load_start;
+        global $database, $user, $config, $page, $_shm_load_start;
 
         $max_time = intval(ini_get('max_execution_time')) * .8;
 
-        $this->set_headers();
+        $page->set_mode(PageMode::MANUAL);
+        $page->set_mime(MimeType::TEXT);
+        $page->send_headers();
 
         if (!$config->get_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             throw new ServerError("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
@@ -392,7 +372,7 @@ class CronUploader extends Extension
     {
         global $user;
 
-        $rootDir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
+        $rootDir = $this->get_user_dir();
         $rootLength = strlen($rootDir);
         if ($rootDir[$rootLength - 1] == "/" || $rootDir[$rootLength - 1] == "\\") {
             $rootLength--;
@@ -413,7 +393,6 @@ class CronUploader extends Extension
             $newDir = join_path($this->get_uploaded_dir(), $output_subdir, $relativeDir);
             $info = "Post successfully uploaded. ";
         }
-        $newDir = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $newDir);
 
         if (!is_dir($newDir)) {
             mkdir($newDir, 0775, true);
@@ -494,19 +473,6 @@ class CronUploader extends Extension
 
     private function get_log_file(): string
     {
-        global $user;
-
-        $dir = $user->get_config()->get_string(CronUploaderUserConfig::DIR);
-
-        return join_path($dir, "uploads.log");
-    }
-
-    private function set_headers(): void
-    {
-        global $page;
-
-        $page->set_mode(PageMode::MANUAL);
-        $page->set_mime(MimeType::TEXT);
-        $page->send_headers();
+        return join_path($this->get_user_dir(), "uploads.log");
     }
 }

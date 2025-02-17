@@ -116,19 +116,7 @@ class Pools extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        global $config;
-
         Image::$prop_types["image_order"] = ImagePropType::INT;
-
-        // Set the defaults for the pools extension
-        $config->set_default_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000);
-        $config->set_default_int(PoolsConfig::IMAGES_PER_PAGE, 20);
-        $config->set_default_int(PoolsConfig::LISTS_PER_PAGE, 20);
-        $config->set_default_int(PoolsConfig::UPDATED_PER_PAGE, 20);
-        $config->set_default_bool(PoolsConfig::INFO_ON_VIEW_IMAGE, false);
-        $config->set_default_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE, false);
-        $config->set_default_bool(PoolsConfig::SHOW_NAV_LINKS, false);
-        $config->set_default_bool(PoolsConfig::AUTO_INCREMENT_ORDER, false);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void

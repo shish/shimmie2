@@ -11,6 +11,7 @@ class RatingsBlurConfig extends ConfigGroup
     #[ConfigMeta(
         "Default blurred ratings",
         ConfigType::ARRAY,
+        default: ["e"],
         options: "Shimmie2\RatingsBlurConfig::get_global_default_options",
         help: "Unselecting all will revert to default settings, so select '[none]' to blur no images."
     )]

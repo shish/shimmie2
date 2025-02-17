@@ -14,12 +14,6 @@ class PrivateImage extends Extension
         Image::$prop_types["private"] = ImagePropType::BOOL;
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event): void
-    {
-        $event->user_config->set_default_bool(PrivateImageUserConfig::SET_DEFAULT, false);
-        $event->user_config->set_default_bool(PrivateImageUserConfig::VIEW_DEFAULT, true);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
