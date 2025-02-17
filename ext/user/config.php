@@ -29,7 +29,7 @@ class UserAccountsConfig extends ConfigGroup
     ])]
     public const LOGIN_REDIRECT = "user_login_redirect";
 
-    #[ConfigMeta("Message when signups disabled", ConfigType::STRING, default: "The board admin has disabled the ability to sign up for new accounts", advanced: true)]
+    #[ConfigMeta("Message when signups disabled", ConfigType::STRING, ui_type: "longtext", default: "The board admin has disabled the ability to sign up for new accounts", advanced: true)]
     public const SIGNUP_DISABLED_MESSAGE = "login_signup_disabled_message";
 
     #[ConfigMeta("Login duration (days)", ConfigType::INT, default: 365, advanced: true)]
