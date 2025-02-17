@@ -11,22 +11,22 @@ class CommentConfig extends ConfigGroup
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_comments_version";
 
-    #[ConfigMeta("Limit to N comments per (window) minutes", ConfigType::INT)]
+    #[ConfigMeta("Limit to N comments per (window) minutes", ConfigType::INT, default: 10)]
     public const LIMIT = "comment_limit";
 
-    #[ConfigMeta("Comment limit window (minutes)", ConfigType::INT)]
+    #[ConfigMeta("Comment limit window (minutes)", ConfigType::INT, default: 5)]
     public const WINDOW = "comment_window";
 
-    #[ConfigMeta("Show comments on post/list", ConfigType::INT)]
+    #[ConfigMeta("Show comments on post/list", ConfigType::INT, default: 5)]
     public const COUNT = "comment_count";
 
-    #[ConfigMeta("Comments per post on comments/list", ConfigType::INT)]
+    #[ConfigMeta("Comments per post on comments/list", ConfigType::INT, default: 10)]
     public const LIST_COUNT = "comment_list_count";
 
     #[ConfigMeta("Akismet API key", ConfigType::STRING)]
     public const WORDPRESS_KEY = "comment_wordpress_key";
 
-    #[ConfigMeta("Require CAPTCHA for anonymous comments", ConfigType::BOOL)]
+    #[ConfigMeta("Require CAPTCHA for anonymous comments", ConfigType::BOOL, default: false)]
     public const CAPTCHA = "comment_captcha";
 
     #[ConfigMeta("ReCAPTCHA secret key", ConfigType::STRING)]

@@ -6,14 +6,6 @@ namespace Shimmie2;
 
 class LogConsole extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool(LogConsoleConfig::LOG_ACCESS, true);
-        $config->set_default_bool(LogConsoleConfig::COLOUR, true);
-        $config->set_default_int(LogConsoleConfig::LEVEL, LogLevel::INFO->value);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

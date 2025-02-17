@@ -8,12 +8,6 @@ use function MicroHTML\rawHTML;
 
 class CustomHtmlHeaders extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(CustomHtmlHeadersConfig::SITENAME_IN_TITLE, "none");
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

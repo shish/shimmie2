@@ -9,9 +9,6 @@ class ReverseSearchLinks extends Extension
     /** @var ReverseSearchLinksTheme */
     protected Themelet $theme;
 
-    /**
-     * Show the extension block when viewing an image
-     */
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $page;
@@ -21,17 +18,5 @@ class ReverseSearchLinks extends Extension
         if (in_array($event->image->get_mime(), $supported_types)) {
             $this->theme->reverse_search_block($page, $event->image);
         }
-    }
-
-    /**
-     * Set default config values
-     */
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_array(
-            ReverseSearchLinksConfig::ENABLED_SERVICES,
-            ['SauceNAO', 'TinEye', 'trace.moe', 'ascii2d', 'Yandex']
-        );
     }
 }

@@ -17,15 +17,6 @@ class Forum extends Extension
     /** @var ForumTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(ForumConfig::TITLE_SUBSTRING, 25);
-        $config->set_default_int(ForumConfig::THREADS_PER_PAGE, 15);
-        $config->set_default_int(ForumConfig::POSTS_PER_PAGE, 15);
-        $config->set_default_int(ForumConfig::MAX_CHARS_PER_POST, 512);
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;

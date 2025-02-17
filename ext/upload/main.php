@@ -112,14 +112,8 @@ class Upload extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         global $config;
-        $config->set_default_int(UploadConfig::COUNT, 3);
-        $config->set_default_int(UploadConfig::SIZE, parse_shorthand_int('1MB'));
-        $config->set_default_int(UploadConfig::MIN_FREE_SPACE, parse_shorthand_int('100MB'));
-        $config->set_default_bool(UploadConfig::TLSOURCE, true);
-        $config->set_default_string(UploadConfig::COLLISION_HANDLER, 'error');
 
         $this->is_full = false;
-
         $min_free_space = $config->get_int(UploadConfig::MIN_FREE_SPACE);
         if ($min_free_space > 0) {
             // SHIT: fucking PHP "security" measures -_-;;;
@@ -131,12 +125,6 @@ class Upload extends Extension
                 }
             }
         }
-
-        $config->set_default_bool(UploadConfig::MIME_CHECK_ENABLED, false);
-        $config->set_default_array(
-            UploadConfig::ALLOWED_MIME_STRINGS,
-            DataHandlerExtension::get_all_supported_mimes()
-        );
     }
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void

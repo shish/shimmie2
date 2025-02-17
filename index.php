@@ -46,11 +46,18 @@ _set_up_shimmie_environment();
 $_tracer = new \EventTracer();
 $_tracer->begin("Bootstrap");
 _load_core_files();
+// Depends on core files
 $cache = loadCache(CACHE_DSN);
 $database = new Database(DATABASE_DSN);
-$config = new DatabaseConfig($database);
+// extensions depend on database (`determine_enabled_extensions()`
+// will check that the extension is compatible with the database)
 _load_extension_files();
+// $config depends on extensions (to load config.php files and
+// calculate defaults) and $cache (to cache config values)
+$config = new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults());
+// theme files depend on $config (theme name is a config value)
 _load_theme_files();
+// $page depends on theme files (to load theme-specific Page class)
 $page = get_theme_class("Page");
 _load_event_listeners();
 $_tracer->end();

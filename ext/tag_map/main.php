@@ -9,13 +9,6 @@ class TagMap extends Extension
     /** @var TagMapTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(TagMapConfig::TAGS_MIN, 3);
-        $config->set_default_bool(TagMapConfig::PAGES, false);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

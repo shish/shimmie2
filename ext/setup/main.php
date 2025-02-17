@@ -82,16 +82,6 @@ class Setup extends Extension
     /** @var SetupTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(SetupConfig::TITLE, "Shimmie");
-        $config->set_default_string(SetupConfig::FRONT_PAGE, "post/list");
-        $config->set_default_string(SetupConfig::MAIN_PAGE, "post/list");
-        $config->set_default_string(SetupConfig::THEME, "default");
-        $config->set_default_int(SetupConfig::AVATAR_SIZE, 128);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
@@ -146,14 +136,22 @@ class Setup extends Extension
 
     public function onCliGen(CliGenEvent $event): void
     {
-        $event->app->register('config:get')
-            ->addArgument('key', InputArgument::REQUIRED)
-            ->setDescription('Get a config value')
+        $event->app->register('config:defaults')
+            ->setDescription('Show defaults')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $config;
-                $output->writeln($config->get_string($input->getArgument('key')));
+                foreach (ConfigGroup::get_all_defaults() as $key => $value) {
+                    $output->writeln("$key: " . var_export($value, true));
+                }
                 return Command::SUCCESS;
             });
+            $event->app->register('config:get')
+                ->addArgument('key', InputArgument::REQUIRED)
+                ->setDescription('Get a config value')
+                ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                    global $config;
+                    $output->writeln($config->get_string($input->getArgument('key')));
+                    return Command::SUCCESS;
+                });
         $event->app->register('config:set')
             ->addArgument('key', InputArgument::REQUIRED)
             ->addArgument('value', InputArgument::REQUIRED)

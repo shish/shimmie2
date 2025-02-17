@@ -48,22 +48,6 @@ class TranscodeImage extends Extension
         return 45;
     }
 
-
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_bool(TranscodeImageConfig::ENABLED, true);
-        $config->set_default_bool(TranscodeImageConfig::GET_ENABLED, false);
-        $config->set_default_bool(TranscodeImageConfig::UPLOAD, false);
-        $config->set_default_string(TranscodeImageConfig::ENGINE, MediaEngine::GD);
-        $config->set_default_int(TranscodeImageConfig::QUALITY, 80);
-        $config->set_default_string(TranscodeImageConfig::ALPHA_COLOR, Media::DEFAULT_ALPHA_CONVERSION_COLOR);
-
-        foreach (array_values(self::INPUT_MIMES) as $mime) {
-            $config->set_default_string(self::get_mapping_name($mime), "");
-        }
-    }
-
     public static function get_mapping_name(string $mime): string
     {
         $mime = str_replace(".", "_", $mime);

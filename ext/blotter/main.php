@@ -9,14 +9,6 @@ class Blotter extends Extension
     /** @var BlotterTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(BlotterConfig::RECENT, 5);
-        $config->set_default_string(BlotterConfig::COLOR, "#FF0000");
-        $config->set_default_string(BlotterConfig::POSITION, "subheading");
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
