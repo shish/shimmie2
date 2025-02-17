@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use UV;
-
 /**
  * Common methods for manipulating a map of config values,
  * loading and saving is left to the concrete implementation
@@ -331,6 +329,21 @@ class DatabaseConfig extends Config
         // herd of race-conditioned updates, just save the updated version once here
         $cache->set($this->cache_name, $this->values);
         $this->database->notify($this->cache_name);
+    }
+}
+
+class TestConfig extends Config
+{
+    /**
+     * @param array<string, string> $values
+     */
+    public function __construct(array $values)
+    {
+        $this->values = $values;
+    }
+
+    public function save(string $name): void
+    {
     }
 }
 
