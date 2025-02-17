@@ -9,15 +9,6 @@ class TagCategories extends Extension
     /** @var TagCategoriesTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-
-        // whether we split out separate categories on post view by default
-        //  note: only takes effect if /post/view shows the image's exact tags
-        $config->set_default_bool(TagCategoriesConfig::SPLIT_ON_VIEW, true);
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

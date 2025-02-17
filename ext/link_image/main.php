@@ -15,12 +15,6 @@ class LinkImage extends Extension
         $this->theme->links_block($page, $this->data($event->image));
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(LinkImageConfig::TEXT_FORMAT, '$title - $id ($ext $size $filesize)');
-    }
-
     /**
      * @return array{thumb_src: string, image_src: string, post_link: string, text_link: string|null}
      */

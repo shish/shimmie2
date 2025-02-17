@@ -8,12 +8,6 @@ use function MicroHTML\LINK;
 
 class BrowserSearch extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(BrowserSearchConfig::RESULTS_ORDER, 'a');
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page;

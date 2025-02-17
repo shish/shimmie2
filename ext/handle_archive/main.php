@@ -8,12 +8,6 @@ class ArchiveFileHandler extends DataHandlerExtension
 {
     protected array $SUPPORTED_MIME = [MimeType::ZIP];
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND, 'unzip -d "%d" "%f"');
-    }
-
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {
