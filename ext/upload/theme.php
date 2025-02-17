@@ -40,10 +40,12 @@ class UploadTheme extends Themelet
     {
         global $config, $page;
 
+        $limits = get_upload_limits();
+
         $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
-        $max_size = $config->get_int(UploadConfig::SIZE);
+        $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
-        $max_total_size = parse_shorthand_int(ini_get('post_max_size') ?: "0") ?? 0;
+        $max_total_size = $limits['shm_post'];
         $max_total_kb = to_shorthand_int($max_total_size);
         $upload_list = $this->build_upload_list();
 
@@ -156,10 +158,11 @@ class UploadTheme extends Themelet
     protected function build_bookmarklets(): HTMLElement
     {
         global $config;
+        $limits = get_upload_limits();
         $link = make_http(make_link("upload"));
         $main_page = make_http(make_link());
         $title = $config->get_string(SetupConfig::TITLE);
-        $max_size = $config->get_int(UploadConfig::SIZE);
+        $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
         $delimiter = $config->get_bool(SetupConfig::NICE_URLS) ? '?' : '&amp;';
 
@@ -247,11 +250,13 @@ class UploadTheme extends Themelet
     {
         global $config;
 
+        $limits = get_upload_limits();
+
         $accept = $this->get_accept();
 
-        $max_size = $config->get_int(UploadConfig::SIZE);
+        $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
-        $max_total_size = parse_shorthand_int(ini_get('post_max_size') ?: "0") ?? 0;
+        $max_total_size = $limits['shm_post'];
         $max_total_kb = to_shorthand_int($max_total_size);
 
         // <input type='hidden' name='max_file_size' value='$max_size' />
