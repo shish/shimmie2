@@ -9,6 +9,8 @@ use Symfony\Component\Console\Output\{OutputInterface,ConsoleOutput};
 
 class CliApp extends \Symfony\Component\Console\Application
 {
+    public ?string $traceFile = null;
+
     public function __construct()
     {
         parent::__construct('Shimmie', VERSION);
@@ -23,6 +25,12 @@ class CliApp extends \Symfony\Component\Console\Application
             '-u',
             InputOption::VALUE_REQUIRED,
             'Log in as the given user'
+        ));
+        $definition->addOption(new InputOption(
+            '--trace',
+            '-t',
+            InputOption::VALUE_REQUIRED,
+            'Log a performance trace to the given file'
         ));
 
         return $definition;
@@ -40,6 +48,7 @@ class CliApp extends \Symfony\Component\Console\Application
             $user = User::by_name($name);
             send_event(new UserLoginEvent($user));
         }
+        $this->traceFile = $input->getParameterOption(['--trace', '-t'], null);
 
         $log_level = LogLevel::WARNING->value;
         if (true === $input->hasParameterOption(['--quiet', '-q'], true)) {

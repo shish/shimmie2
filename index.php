@@ -90,6 +90,10 @@ function main(): int
             if ($app->run() !== 0) {
                 throw new \Exception("CLI command failed");
             }
+            if ($app->traceFile !== null) {
+                $_tracer->end();
+                $_tracer->flush($app->traceFile);
+            }
         } else {
             send_event(new PageRequestEvent($_SERVER['REQUEST_METHOD'], _get_query(), $_GET, $_POST));
             $page->display();
