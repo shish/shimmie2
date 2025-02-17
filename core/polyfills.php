@@ -789,10 +789,12 @@ function stringer(mixed $s): string
  */
 function cache_get_or_set(string $key, callable $callback, ?int $ttl = null): mixed
 {
-    global $cache;
+    global $cache, $_tracer;
     $value = $cache->get($key);
     if ($value === null) {
+        $_tracer->begin("Cache Populate", ["key" => $key]);
         $value = $callback();
+        $_tracer->end();
         $cache->set($key, $value, $ttl);
     }
     return $value;
