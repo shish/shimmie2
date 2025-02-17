@@ -6,21 +6,6 @@ namespace Shimmie2;
 
 require_once "core/imageboard/image.php";
 
-class TestConfig extends Config
-{
-    /**
-     * @param array<string, string> $values
-     */
-    public function __construct(array $values)
-    {
-        $this->values = $values;
-    }
-
-    public function save(string $name): void
-    {
-    }
-}
-
 class ConfigTest extends ShimmiePHPUnitTestCase
 {
     public function testConfigGroup(): void
