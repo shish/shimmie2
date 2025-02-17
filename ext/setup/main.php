@@ -56,10 +56,12 @@ class ConfigSaveEvent extends Event
             if (str_starts_with($key, "_type_")) {
                 $key = str_replace("_type_", "", $key);
                 $value = $post["_config_$key"] ?? null;
+                if ($value === "") {
+                    $value = null;
+                }
                 if ($type === "string") {
                     $settings[$key] = $value;
                 } elseif ($type === "int") {
-                    assert(is_string($value));
                     $settings[$key] = $value ? parse_shorthand_int($value) : null;
                 } elseif ($type === "bool") {
                     $settings[$key] = $value === "on";
