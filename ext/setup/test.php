@@ -16,6 +16,10 @@ class SetupTest extends ShimmiePHPUnitTestCase
                 "mybool_true" => true,
                 "mybool_false" => false,
                 "myarray" => ["hello", "world"],
+                "emptystring" => null,
+                "emptyint" => null,
+                "emptybool" => null,
+                "emptyarray" => null,
             ],
             ConfigSaveEvent::postToSettings([
                 // keys in POST that don't start with _type or _config are ignored
@@ -35,6 +39,15 @@ class SetupTest extends ShimmiePHPUnitTestCase
                 // Arrays are... passed as arrays? Does this work?
                 "_type_myarray" => "array",
                 "_config_myarray" => ["hello", "world"],
+                // Empty things should be null
+                "_type_emptystring" => "string",
+                "_config_emptystring" => "",
+                "_type_emptyint" => "int",
+                "_config_emptyint" => "",
+                "_type_emptybool" => "bool",
+                "_config_emptybool" => "",
+                "_type_emptyarray" => "array",
+                "_config_emptyarray" => "",
             ])
         );
 
