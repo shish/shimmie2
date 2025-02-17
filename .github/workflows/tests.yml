@@ -136,7 +136,7 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-progress
       - name: Run test suite
-        run: composer run vtest
+        run: composer run test
 
   publish:
     name: Publish
