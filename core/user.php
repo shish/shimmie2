@@ -65,8 +65,13 @@ class User
     {
         global $database;
         if (is_null($this->config)) {
-            $this->config = new DatabaseConfig($database, "user_config", "user_id", "{$this->id}");
-            send_event(new InitUserConfigEvent($this, $this->config));
+            $this->config = new DatabaseConfig(
+                $database,
+                "user_config",
+                "user_id",
+                "{$this->id}",
+                defaults: UserConfigGroup::get_all_defaults()
+            );
         }
         return $this->config;
     }
