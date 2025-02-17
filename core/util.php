@@ -131,6 +131,42 @@ function get_memory_limit(): int
 }
 
 /**
+ * Get the upload limits for Shimmie
+ *
+ * files / filesize / post are PHP system limits
+ * shm_files / shm_filesize / shm_post are Shimmie limits
+ *
+ * @return array{"files": int|null, "filesize": int|null, "post": int|null, "shm_files": int, "shm_filesize": int, "shm_post": int}
+ */
+function get_upload_limits(): array
+{
+    global $config;
+
+    $ini_files = ini_get('max_file_uploads');
+    $ini_filesize = ini_get('upload_max_filesize');
+    $ini_post = ini_get('post_max_size');
+
+    $sys_files = empty($ini_files) ? null : parse_shorthand_int($ini_files);
+    $sys_filesize = empty($ini_filesize) ? null : parse_shorthand_int($ini_filesize);
+    $sys_post = empty($ini_post) ? null : parse_shorthand_int($ini_post);
+
+    $conf_files = $config->get_int(UploadConfig::COUNT);
+    $conf_filesize = $config->get_int(UploadConfig::SIZE);
+    $conf_post = ($conf_files ?? 0) * ($conf_filesize ?? 0);
+
+    $limits = [
+        'files' => $sys_files,
+        'filesize' => $sys_filesize,
+        'post' => $sys_post,
+        'shm_files' => (int)min($conf_files ?? PHP_INT_MAX, $sys_files ?? PHP_INT_MAX),
+        'shm_filesize' => (int)min($conf_filesize ?? PHP_INT_MAX, $sys_filesize ?? PHP_INT_MAX),
+        'shm_post' => (int)min($conf_post, $sys_post ?? PHP_INT_MAX),
+    ];
+
+    return $limits;
+}
+
+/**
  * Check if PHP has the GD library installed
  */
 function check_gd_version(): int

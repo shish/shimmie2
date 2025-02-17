@@ -65,10 +65,14 @@ class UploadConfig extends ConfigGroup
 
     public function tweak_html(\MicroHTML\HTMLElement $html): \MicroHTML\HTMLElement
     {
-        $files = ini_get("max_file_uploads");
-        $size = ini_get("upload_max_filesize");
+        $limits = get_upload_limits();
+
+        $files = $limits['files'] ? to_shorthand_int($limits['files']) : "unlimited";
+        $filesize = $limits['filesize'] ? to_shorthand_int($limits['filesize']) : "unlimited";
+        $post = $limits['post'] ? to_shorthand_int($limits['post']) : "unlimited";
+
         return \MicroHTML\emptyHTML(
-            \MicroHTML\I("(System limits are set to $files uploads of $size each)"),
+            \MicroHTML\I("(System limits are $files uploads of $filesize each, with a combined size of $post)"),
             $html
         );
     }
