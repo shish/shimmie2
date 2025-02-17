@@ -16,13 +16,6 @@ class Index extends Extension
     /** @var IndexTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(IndexConfig::IMAGES, 24);
-        $config->set_default_string(IndexConfig::ORDER, "id DESC");
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $config, $page, $user;

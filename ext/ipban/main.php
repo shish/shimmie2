@@ -89,18 +89,6 @@ class IPBan extends Extension
         return 10;
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(
-            "ipban_message",
-            '<p>IP <b>$IP</b> has been banned until <b>$DATE</b> by <b>$ADMIN</b> because of <b>$REASON</b>
-<p>If you couldn\'t possibly be guilty of what you\'re banned for, the person we banned probably had a dynamic IP address and so do you.
-<p>See <a href="http://whatismyipaddress.com/dynamic-static">http://whatismyipaddress.com/dynamic-static</a> for more information.
-<p>$CONTACT'
-        );
-    }
-
     public function onUserLogin(UserLoginEvent $event): void
     {
         global $cache, $config, $database, $page;

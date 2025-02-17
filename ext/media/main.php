@@ -64,15 +64,6 @@ class Media extends Extension
         return 30;
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
-        $config->set_default_int(MediaConfig::MEM_LIMIT, parse_shorthand_int('8MB'));
-        $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
-        $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
@@ -851,38 +842,7 @@ class Media extends Extension
     {
         global $config, $database;
         if ($this->get_version(MediaConfig::VERSION) < 1) {
-            $current_value = $config->get_string("thumb_ffmpeg_path");
-            if (!empty($current_value)) {
-                $config->set_string(MediaConfig::FFMPEG_PATH, $current_value);
-            } elseif ($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
-                //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
-                if (is_executable(strtok($ffmpeg, PHP_EOL))) {
-                    $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
-                }
-            }
-
-            if ($ffprobe = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffprobe')) {
-                //ffprobe exists in PATH, check if it's executable, and if so, default to it instead of static
-                if (is_executable(strtok($ffprobe, PHP_EOL))) {
-                    $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
-                }
-            }
-
-            $current_value = $config->get_string("thumb_convert_path");
-            if (!empty($current_value)) {
-                $config->set_string(MediaConfig::CONVERT_PATH, $current_value);
-            } elseif ($convert = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' convert')) {
-                //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
-                if (is_executable(strtok($convert, PHP_EOL))) {
-                    $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
-                }
-            }
-
-            $current_value = $config->get_int("thumb_mem_limit");
-            if (!empty($current_value)) {
-                $config->set_int(MediaConfig::MEM_LIMIT, $current_value);
-            }
-
+            // The stuff that was here got refactored out of existence
             $this->set_version(MediaConfig::VERSION, 1);
         }
 

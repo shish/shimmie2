@@ -9,12 +9,6 @@ class Featured extends Extension
     /** @var FeaturedTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_int(FeaturedConfig::ID, 0);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
@@ -26,7 +20,7 @@ class Featured extends Extension
             $page->set_redirect(make_link("post/view/$id"));
         }
         if ($event->page_matches("featured_image/download")) {
-            $image = Image::by_id($config->get_int(FeaturedConfig::ID));
+            $image = Image::by_id($config->get_int(FeaturedConfig::ID, 0));
             if (!is_null($image)) {
                 $page->set_mode(PageMode::DATA);
                 $page->set_mime($image->get_mime());
@@ -34,7 +28,7 @@ class Featured extends Extension
             }
         }
         if ($event->page_matches("featured_image/view")) {
-            $image = Image::by_id($config->get_int(FeaturedConfig::ID));
+            $image = Image::by_id($config->get_int(FeaturedConfig::ID, 0));
             if (!is_null($image)) {
                 send_event(new DisplayingImageEvent($image));
             }
@@ -45,7 +39,7 @@ class Featured extends Extension
     {
         global $cache, $config, $page, $user;
         $fid = $config->get_int(FeaturedConfig::ID);
-        if ($fid > 0) {
+        if (!is_null($fid)) {
             $image = cache_get_or_set(
                 "featured_image_object:$fid",
                 function () use ($fid) {
@@ -71,7 +65,7 @@ class Featured extends Extension
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $config;
-        if ($event->image->id == $config->get_int(FeaturedConfig::ID)) {
+        if ($event->image->id === $config->get_int(FeaturedConfig::ID)) {
             $config->delete(FeaturedConfig::ID);
         }
     }

@@ -105,21 +105,6 @@ class Wiki extends Extension
     /** @var WikiTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(
-            WikiConfig::TAG_PAGE_TEMPLATE,
-            "{body}
-
-[b]Aliases: [/b][i]{aliases}[/i]
-[b]Auto tags: [/b][i]{autotags}[/i]"
-        );
-        $config->set_default_string(WikiConfig::EMPTY_TAGINFO, "none");
-        $config->set_default_bool(WikiConfig::TAG_SHORTWIKIS, false);
-        $config->set_default_bool(WikiConfig::ENABLE_REVISIONS, true);
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

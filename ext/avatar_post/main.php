@@ -18,11 +18,6 @@ class AvatarPost extends AvatarExtension
         return 49;
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event): void
-    {
-        $event->user_config->set_default_int(AvatarPostUserConfig::AVATAR_SCALE, 100);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;

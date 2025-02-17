@@ -8,7 +8,7 @@ class BrowserSearchConfig extends ConfigGroup
 {
     public const KEY = "browser_search";
 
-    #[ConfigMeta("Search results order", ConfigType::STRING, options: [
+    #[ConfigMeta("Search results order", ConfigType::STRING, default: "a", options: [
         "Alphabetical" => "a",
         "Tag Count" => "t",
         "Disabled" => "n",

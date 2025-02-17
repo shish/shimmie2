@@ -106,13 +106,6 @@ class GraphQL extends Extension
         }
     }
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(GraphQLConfig::CORS_PATTERN, "");
-        $config->set_default_bool(GraphQLConfig::DEBUG, false);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

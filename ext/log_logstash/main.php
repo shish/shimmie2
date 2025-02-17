@@ -6,12 +6,6 @@ namespace Shimmie2;
 
 class LogLogstash extends Extension
 {
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(LogLogstashConfig::HOST, "127.0.0.1:1234");
-    }
-
     public function onLog(LogEvent $event): void
     {
         global $user;
