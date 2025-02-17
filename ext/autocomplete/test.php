@@ -49,4 +49,29 @@ class AutoCompleteTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(PageMode::DATA, $page->mode);
         $this->assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
     }
+
+    public function testCyrillic(): void
+    {
+        global $database;
+        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
+            $this->markTestSkipped("SQLite only partially supports Cyrillic");
+        }
+
+        $this->log_in_as_user();
+
+        // insert uppercase, lowercase, mixed case, and unrelated-words into the database
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "СОЮЗ советских Социалистических Республик");
+
+        // check that lowercase search returns all three cases of matching words
+        $page = $this->get_page('api/internal/autocomplete', ["s" => "со"]);
+        $this->assertEquals(200, $page->code);
+        $this->assertEquals(PageMode::DATA, $page->mode);
+        $this->assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
+
+        // check that uppercase search returns all three cases of matching words
+        $page = $this->get_page('api/internal/autocomplete', ["s" => "СО"]);
+        $this->assertEquals(200, $page->code);
+        $this->assertEquals(PageMode::DATA, $page->mode);
+        $this->assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
+    }
 }
