@@ -281,4 +281,25 @@ class UtilTest extends TestCase
             )
         );
     }
+
+    public function test_get_session_ipv4(): void
+    {
+        $_SERVER['REMOTE_ADDR'] = "1.2.3.4";
+        $this->assertEquals(
+            "1.2.0.0",
+            get_session_ip(new TestConfig([UserAccountsConfig::SESSION_HASH_MASK => "255.255.0.0"]))
+        );
+    }
+
+    // FIXME
+    /*
+    public function test_get_session_ipv6(): void
+    {
+        $_SERVER['REMOTE_ADDR'] = "[fe80::1]";
+        $this->assertEquals(
+            "1.2.0.0",
+            get_session_ip(new TestConfig([UserAccountsConfig::SESSION_HASH_MASK => "255.255.0.0"]))
+        );
+    }
+    */
 }
