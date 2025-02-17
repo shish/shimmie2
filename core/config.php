@@ -334,6 +334,21 @@ class DatabaseConfig extends Config
     }
 }
 
+class TestConfig extends Config
+{
+    /**
+     * @param array<string, string> $values
+     */
+    public function __construct(array $values)
+    {
+        $this->values = $values;
+    }
+
+    public function save(string $name): void
+    {
+    }
+}
+
 abstract class BaseConfigGroup
 {
     public const KEY = "";
