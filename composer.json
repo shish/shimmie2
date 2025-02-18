@@ -65,7 +65,6 @@
         "ext-apcu": "cache - apc",
         "ext-redis": "cache - redis",
         "ext-curl": "some extensions",
-        "ext-ctype": "some extensions",
         "ext-json": "some extensions",
         "ext-zip": "self-updater extension, bulk import/export",
         "ext-zlib": "anti-spam",
@@ -75,14 +74,16 @@
     "scripts": {
         "check": [
             "@format",
-            "@stan",
+            "@analyse",
             "@test"
         ],
+        "stan": [
+            "@analyse"
+        ],
         "format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
-        "stan-ci": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=github",
-        "stan": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=raw",
+        "analyse-ci": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=github",
+        "analyse": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=raw",
         "test": "phpunit --config tests/phpunit.xml",
-        "vtest": "phpunit --config tests/phpunit.xml --debug",
         "docker-run": "./.docker/run.php"
     }
 }

@@ -495,7 +495,7 @@ class Pools extends Extension
             $pool = null;
             if ($poolTag == 'lastcreated') {
                 $pool = $this->get_last_userpool($user->id);
-            } elseif (ctype_digit($poolTag)) { //If only digits, assume PoolID
+            } elseif (is_numeric($poolTag)) { //If only digits, assume PoolID
                 $pool = $this->get_single_pool((int) $poolTag);
             } else { //assume PoolTitle
                 $pool = $this->get_single_pool_from_title($poolTag);
