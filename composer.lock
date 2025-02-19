@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2d6eeda84eeaa764be7253b557e93b2",
+    "content-hash": "5b92893b2e20672ba6b67d7ec8180573",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -776,25 +776,25 @@
         },
         {
             "name": "shish/microhtml",
-            "version": "v2.2.1",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "824d8541c7f0662e26d03d65d865d8f13ea57a72"
+                "reference": "67c97a523507ad5c680e3dce3338b0c1faeef4d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/824d8541c7f0662e26d03d65d865d8f13ea57a72",
-                "reference": "824d8541c7f0662e26d03d65d865d8f13ea57a72",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/67c97a523507ad5c680e3dce3338b0c1faeef4d0",
+                "reference": "67c97a523507ad5c680e3dce3338b0c1faeef4d0",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.12",
-                "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^9.0"
+                "friendsofphp/php-cs-fixer": "^3.64",
+                "phpstan/phpstan": "^2.0",
+                "phpunit/phpunit": "^11.0"
             },
             "type": "library",
             "autoload": {
@@ -822,9 +822,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microhtml/issues",
-                "source": "https://github.com/shish/microhtml/tree/v2.2.1"
+                "source": "https://github.com/shish/microhtml/tree/v2.3.0"
             },
-            "time": "2023-08-17T16:39:06+00:00"
+            "time": "2025-02-19T17:54:29+00:00"
         },
         {
             "name": "symfony/console",
@@ -2089,16 +2089,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.69.0",
+            "version": "v3.69.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "630a59448c00729bc235d5e95cfedefeaca37523"
+                "reference": "13b0c0eede38c11cd674b080f2b485d0f14ffa9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/630a59448c00729bc235d5e95cfedefeaca37523",
-                "reference": "630a59448c00729bc235d5e95cfedefeaca37523",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/13b0c0eede38c11cd674b080f2b485d0f14ffa9f",
+                "reference": "13b0c0eede38c11cd674b080f2b485d0f14ffa9f",
                 "shasum": ""
             },
             "require": {
@@ -2180,7 +2180,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.69.0"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.69.1"
             },
             "funding": [
                 {
@@ -2188,7 +2188,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-14T16:19:23+00:00"
+            "time": "2025-02-18T23:57:43+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2428,16 +2428,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.5",
+            "version": "2.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "451b17f9665481ee502adc39be987cb71067ece2"
+                "reference": "6eaec7c6c9e90dcfe46ad1e1ffa5171e2dab641c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/451b17f9665481ee502adc39be987cb71067ece2",
-                "reference": "451b17f9665481ee502adc39be987cb71067ece2",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/6eaec7c6c9e90dcfe46ad1e1ffa5171e2dab641c",
+                "reference": "6eaec7c6c9e90dcfe46ad1e1ffa5171e2dab641c",
                 "shasum": ""
             },
             "require": {
@@ -2482,7 +2482,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-13T12:49:56+00:00"
+            "time": "2025-02-19T15:46:42+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
