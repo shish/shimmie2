@@ -156,7 +156,7 @@ class MimeType
 
 
     /**
-     * @param array<int|null> $comparison
+     * @param non-empty-array<int|null> $comparison
      */
     private static function compare_file_bytes(string $file_name, array $comparison): bool
     {
