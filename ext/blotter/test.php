@@ -29,7 +29,7 @@ class BlotterTest extends ShimmiePHPUnitTestCase
         //$this->click("Add");
         //$this->assert_text("blotter testing");
 
-        $this->get_page("blotter");
+        $this->get_page("post/list");
         //$this->assert_text("blotter testing");
 
         $this->get_page("blotter/editor");

@@ -77,6 +77,7 @@ class AdminPage extends Extension
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 global $page;
                 $query = $input->getArgument('query');
+                $query = ltrim($query, '/');
                 $args = $input->getArgument('args');
                 $_SERVER['REQUEST_METHOD'] = 'GET';
                 $_SERVER['REQUEST_URI'] = make_link($query);
