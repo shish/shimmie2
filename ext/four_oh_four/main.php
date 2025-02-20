@@ -12,12 +12,9 @@ class FourOhFour extends Extension
     {
         global $page;
         // hax.
-        if ($page->mode == PageMode::PAGE && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
+        if ($page->mode == PageMode::PAGE && $this->count_main($page->blocks) == 0) {
             log_debug("four_oh_four", "Hit 404: {$event->path}");
-            $page->set_code(404);
-            $page->set_title("404 - No Handler Found");
-            $page->add_block(new NavBlock());
-            $page->add_block(new Block("Explanation", rawHTML("No handler could be found for the page '{$event->path}'")));
+            throw new ObjectNotFound("No handler could be found for the page '{$event->path}'");
         }
     }
 
