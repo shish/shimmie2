@@ -401,7 +401,7 @@ abstract class BaseConfigGroup
     public static function get_all_defaults(): array
     {
         return cache_get_or_set(
-            get_called_class() . "_defaults_" . VERSION,
+            get_called_class() . "_defaults_" . VERSION . "_" . md5(Extension::get_enabled_extensions_as_string()),
             fn () => self::_get_all_defaults(),
             60
         );
