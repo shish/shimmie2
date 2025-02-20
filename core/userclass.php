@@ -18,7 +18,7 @@ class UserClass
     public ?UserClass $parent = null;
 
     /** @var array<string, bool> */
-    public array $abilities = [];
+    private array $abilities = [];
 
     /**
      * @param array<string, bool> $abilities
@@ -71,6 +71,19 @@ class UserClass
             }
             throw new ServerError("Unknown ability '$ability'. Did the developer mean '$min_ability'?");
         }
+    }
+
+    public function hasOwnPermission(string $permission): bool
+    {
+        return array_key_exists($permission, $this->abilities);
+    }
+
+    public function setPermission(string $permission, bool $value): void
+    {
+        if (!defined("UNITTEST")) {
+            throw new ServerError("Cannot set permission '$permission' outside of unit tests.");
+        }
+        $this->abilities[$permission] = $value;
     }
 }
 
