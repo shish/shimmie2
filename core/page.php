@@ -21,17 +21,12 @@ enum PageMode: string
 
 class Cookie
 {
-    public string $name;
-    public string $value;
-    public int $time;
-    public string $path;
-
-    public function __construct(string $name, string $value, int $time, string $path)
-    {
-        $this->name = $name;
-        $this->value = $value;
-        $this->time = $time;
-        $this->path = $path;
+    public function __construct(
+        public string $name,
+        public string $value,
+        public int $time,
+        public string $path
+    ) {
     }
 }
 
