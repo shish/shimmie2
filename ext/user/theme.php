@@ -388,7 +388,7 @@ class UserPageTheme extends Themelet
             $row->appendChild(TH($perm->getName()));
 
             foreach ($classes as $class) {
-                $opacity = array_key_exists($perm->getValue(), $class->abilities) ? 1 : 0.2;
+                $opacity = $class->hasOwnPermission($perm->getValue()) ? 1 : 0.2;
                 if ($class->can($perm->getValue())) {
                     $cell = TD(["style" => "color: green; opacity: $opacity;"], "✔");
                 } else {
