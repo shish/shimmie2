@@ -11,8 +11,9 @@ class ETServerTest extends ShimmiePHPUnitTestCase
         $this->post_page("register.php", ["data" => "test entry"]);
 
         $this->log_in_as_user();
-        $this->get_page("register.php");
-        $this->assert_no_text("test entry");
+        $this->assertException(ObjectNotFound::class, function () {
+            $this->get_page('register.php');
+        });
 
         $this->log_in_as_admin();
         $this->get_page("register.php");
