@@ -117,7 +117,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
 
         $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
         $h_del = "";
-        if ($user->can(Permissions::DELETE_COMMENT)) {
+        if ($user->can(CommentPermission::DELETE_COMMENT)) {
             $h_del = " - " . $this->delete_link($i_comment_id, $i_image_id, $comment->owner_name, $tfe->stripped);
         }
         //$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";

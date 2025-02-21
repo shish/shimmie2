@@ -225,7 +225,7 @@ class LogDatabase extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $page, $user;
-        if ($event->page_matches("log/view", permission: Permissions::VIEW_EVENTLOG)) {
+        if ($event->page_matches("log/view", permission: LogDatabasePermission::VIEW_EVENTLOG)) {
             $t = new LogTable($database->raw_db());
             $t->inputs = $event->GET;
             $page->set_title("Event Log");
@@ -238,7 +238,7 @@ class LogDatabase extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::VIEW_EVENTLOG)) {
+            if ($user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
                 $event->add_nav_link("event_log", new Link('log/view'), "Event Log");
             }
         }
@@ -247,7 +247,7 @@ class LogDatabase extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::VIEW_EVENTLOG)) {
+        if ($user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
             $event->add_link("Event Log", make_link("log/view"));
         }
     }

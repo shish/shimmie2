@@ -239,7 +239,7 @@ class OuroborosAPI extends Extension
             if ($event_args == 'post/create') {
                 // Create
                 $this->tryAuth();
-                if ($user->can(Permissions::CREATE_IMAGE)) {
+                if ($user->can(ImagePermission::CREATE_IMAGE)) {
                     $md5 = isset($_REQUEST['md5']) && \Safe\preg_match("%^[0-9A-Fa-f]{32}$%", $_REQUEST['md5']) ? strtolower($_REQUEST['md5']) : null;
                     $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                 } else {

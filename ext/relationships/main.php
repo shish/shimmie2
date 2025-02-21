@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
 class ImageRelationshipSetEvent extends Event
 {
     public int $child_id;
@@ -57,7 +55,7 @@ class Relationships extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_RELATIONSHIPS)) {
+        if ($user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)) {
             if (isset($event->params['tags']) ? !\Safe\preg_match('/parent[=|:]/', $event->params["tags"]) : true) { //Ignore parent if tags contain parent metatag
                 if (isset($event->params["parent"]) ? int_escape($event->params["parent"]) : false) {
                     send_event(new ImageRelationshipSetEvent($event->image->id, (int) $event->params["parent"]));

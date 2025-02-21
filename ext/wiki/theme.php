@@ -28,7 +28,7 @@ class WikiTheme extends Themelet
         $body_html = format_text($nav_page->body);
 
         // only the admin can edit the sidebar
-        if ($user->can(Permissions::WIKI_ADMIN)) {
+        if ($user->can(WikiPermission::ADMIN)) {
             $body_html .= "<p>(<a href='".make_link("wiki/wiki:sidebar/edit")."'>Edit</a>)";
         }
 
@@ -70,7 +70,7 @@ class WikiTheme extends Themelet
     {
         global $user;
 
-        $lock = $user->can(Permissions::WIKI_ADMIN) ?
+        $lock = $user->can(WikiPermission::ADMIN) ?
             emptyHTML(
                 BR(),
                 "Lock page: ",
@@ -152,7 +152,7 @@ class WikiTheme extends Themelet
                 INPUT(["type" => "submit", "value" => "Edit"])
             )));
         }
-        if ($user->can(Permissions::WIKI_ADMIN)) {
+        if ($user->can(WikiPermission::ADMIN)) {
             $edit->appendChild(
                 TD(SHM_SIMPLE_FORM(
                     "wiki/$u_title/delete_revision",

@@ -57,7 +57,7 @@ class ForumTheme extends Themelet
                     TD(),
                     TD(SMALL("Max characters allowed: $max_characters."))
                 ),
-                $user->can(Permissions::FORUM_ADMIN) ? TR(
+                $user->can(ForumPermission::FORUM_ADMIN) ? TR(
                     TD(),
                     TD(
                         LABEL(["for" => "sticky"], "Sticky:"),

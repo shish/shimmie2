@@ -80,7 +80,7 @@ class NumericScoreVote
     public static function create_vote(int $post_id, int $score): bool
     {
         global $user;
-        if ($user->can(Permissions::CREATE_VOTE)) {
+        if ($user->can(NumericScorePermission::CREATE_VOTE)) {
             assert($score == 0 || $score == -1 || $score == 1);
             send_event(new NumericScoreSetEvent($post_id, $user, $score));
             return true;
@@ -117,7 +117,7 @@ class NumericScore extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::CREATE_VOTE)) {
+        if ($user->can(NumericScorePermission::CREATE_VOTE)) {
             $this->theme->get_voter($event->image);
         }
     }
@@ -125,7 +125,7 @@ class NumericScore extends Extension
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
+        if ($user->can(NumericScorePermission::EDIT_OTHER_VOTE)) {
             $this->theme->get_nuller($event->display_user);
         }
 
@@ -158,7 +158,7 @@ class NumericScore extends Extension
                 $html .= "</td></tr>";
             }
             die($html);
-        } elseif ($event->page_matches("numeric_score_vote", method: "POST", permission: Permissions::CREATE_VOTE)) {
+        } elseif ($event->page_matches("numeric_score_vote", method: "POST", permission: NumericScorePermission::CREATE_VOTE)) {
             $image_id = int_escape($event->req_POST("image_id"));
             $score = int_escape($event->req_POST("vote"));
             if (($score == -1 || $score == 0 || $score == 1) && $image_id > 0) {
@@ -166,7 +166,7 @@ class NumericScore extends Extension
             }
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
-        } elseif ($event->page_matches("numeric_score/remove_votes_on", method: "POST", permission: Permissions::EDIT_OTHER_VOTE)) {
+        } elseif ($event->page_matches("numeric_score/remove_votes_on", method: "POST", permission: NumericScorePermission::EDIT_OTHER_VOTE)) {
             $image_id = int_escape($event->req_POST("image_id"));
             $database->execute(
                 "DELETE FROM numeric_score_votes WHERE image_id=:image_id",
@@ -178,7 +178,7 @@ class NumericScore extends Extension
             );
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
-        } elseif ($event->page_matches("numeric_score/remove_votes_by", method: "POST", permission: Permissions::EDIT_OTHER_VOTE)) {
+        } elseif ($event->page_matches("numeric_score/remove_votes_by", method: "POST", permission: NumericScorePermission::EDIT_OTHER_VOTE)) {
             $this->delete_votes_by(int_escape($event->req_POST('user_id')));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
@@ -364,7 +364,7 @@ class NumericScore extends Extension
 
         if ($matches = $event->matches("/^vote[=|:](up|down|remove)$/")) {
             $score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
-            if ($user->can(Permissions::CREATE_VOTE)) {
+            if ($user->can(NumericScorePermission::CREATE_VOTE)) {
                 send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
             }
         }

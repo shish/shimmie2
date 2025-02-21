@@ -144,9 +144,9 @@ class UserPage extends Extension
 
         $this->show_user_info();
 
-        if ($user->can(Permissions::VIEW_HELLBANNED)) {
+        if ($user->can(UserAccountsPermission::VIEW_HELLBANNED)) {
             $page->add_html_header(STYLE("DIV.hb, TR.hb TD {border: 1px solid red !important;}"));
-        } elseif (!$user->can(Permissions::HELLBANNED)) {
+        } elseif (!$user->can(UserAccountsPermission::HELLBANNED)) {
             $page->add_html_header(STYLE(".hb {display: none !important;}"));
         }
 
@@ -159,7 +159,7 @@ class UserPage extends Extension
         if ($event->page_matches("user_admin/recover", method: "POST")) {
             $this->page_recover($event->req_POST('username'));
         }
-        if ($event->page_matches("user_admin/create", method: "GET", permission: Permissions::CREATE_USER)) {
+        if ($event->page_matches("user_admin/create", method: "GET", permission: UserAccountsPermission::CREATE_USER)) {
             global $config, $page, $user;
             if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled($page);
@@ -167,7 +167,7 @@ class UserPage extends Extension
             }
             $this->theme->display_signup_page($page);
         }
-        if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: Permissions::CREATE_USER)) {
+        if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: UserAccountsPermission::CREATE_USER)) {
             global $config, $page, $user;
             if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled($page);
@@ -190,7 +190,7 @@ class UserPage extends Extension
                 throw new InvalidInput($ex->getMessage());
             }
         }
-        if ($event->page_matches("user_admin/create_other", method: "POST", permission: Permissions::CREATE_OTHER_USER)) {
+        if ($event->page_matches("user_admin/create_other", method: "POST", permission: UserAccountsPermission::CREATE_OTHER_USER)) {
             send_event(
                 new UserCreationEvent(
                     $event->req_POST("name"),
@@ -208,7 +208,7 @@ class UserPage extends Extension
             $t = new UserTable($database->raw_db());
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
-            if ($user->can(Permissions::DELETE_USER)) {
+            if ($user->can(UserAccountsPermission::DELETE_USER)) {
                 $col = new TextColumn("email", "Email");
                 // $t->columns[] = $col;
                 array_splice($t->columns, 2, 0, [$col]);
@@ -218,10 +218,26 @@ class UserPage extends Extension
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
         if ($event->page_matches("user_admin/classes", method: "GET")) {
+            $permissions = [];
+            foreach (get_subclasses_of(PermissionGroup::class) as $class) {
+                $refl_group = new \ReflectionClass($class);
+                foreach ($refl_group->getConstants() as $const => $key) {
+                    $refl_const = $refl_group->getReflectionConstant($const);
+                    if (!$refl_const) {
+                        continue;
+                    }
+                    $attributes = $refl_const->getAttributes(PermissionMeta::class);
+                    if (count($attributes) == 0) {
+                        continue;
+                    }
+                    $meta = $attributes[0]->newInstance();
+                    $permissions[$key] = $meta;
+                }
+            }
             $this->theme->display_user_classes(
                 $page,
                 UserClass::$known_classes,
-                (new \ReflectionClass(Permissions::class))->getReflectionConstants()
+                $permissions
             );
         }
         if ($event->page_matches("user_admin/logout", method: "GET")) {
@@ -229,7 +245,7 @@ class UserPage extends Extension
             $this->page_logout();
         }
 
-        if ($event->page_matches("user_admin/change_name", method: "POST", permission: Permissions::EDIT_USER_NAME)) {
+        if ($event->page_matches("user_admin/change_name", method: "POST", permission: UserAccountsPermission::EDIT_USER_NAME)) {
             $input = validate_input([
                 'id' => 'user_id,exists',
                 'name' => 'user_name',
@@ -288,7 +304,7 @@ class UserPage extends Extension
                 $this->redirect_to_user($duser);
             }
         }
-        if ($event->page_matches("user_admin/delete_user", method: "POST", permission: Permissions::DELETE_USER)) {
+        if ($event->page_matches("user_admin/delete_user", method: "POST", permission: UserAccountsPermission::DELETE_USER)) {
             $this->delete_user(
                 $page,
                 int_escape($event->req_POST('id')),
@@ -317,7 +333,7 @@ class UserPage extends Extension
         $duser = $event->display_user;
         $h_join_date = autodate($duser->join_date);
         $class = $duser->class;
-        if ($duser->can(Permissions::HELLBANNED) && $class->parent) {
+        if ($duser->can(UserAccountsPermission::HELLBANNED) && $class->parent) {
             $h_class = $class->parent->name;
         } else {
             $h_class = $class->name;
@@ -384,7 +400,7 @@ class UserPage extends Extension
         }
         if (
             (
-                $user->can(Permissions::VIEW_IP) ||  # user can view all IPS
+                $user->can(IPBanPermission::VIEW_IP) ||  # user can view all IPS
                 ($user->id == $event->display_user->id)  # or user is viewing themselves
             ) &&
             ($event->display_user->id != $config->get_int(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
@@ -402,7 +418,7 @@ class UserPage extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::EDIT_USER_PASSWORD)) {
+            if ($user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
                 $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
             }
         }
@@ -416,10 +432,10 @@ class UserPage extends Extension
     {
         global $user;
         $event->add_link("My Profile", make_link("user"), 0);
-        if ($user->can(Permissions::EDIT_USER_PASSWORD)) {
+        if ($user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
             $event->add_link("User List", make_link("user_admin/list"), 87);
         }
-        if ($user->can(Permissions::EDIT_USER_CLASS)) {
+        if ($user->can(UserAccountsPermission::EDIT_USER_CLASS)) {
             $event->add_link("User Classes", make_link("user_admin/classes"), 88);
         }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
@@ -428,7 +444,7 @@ class UserPage extends Extension
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::CREATE_OTHER_USER)) {
+        if ($user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
             $this->theme->display_user_creator();
         }
     }
@@ -441,10 +457,10 @@ class UserPage extends Extension
         //$pass = $event->password;
         //$email = $event->email;
 
-        if (!$user->can(Permissions::CREATE_USER)) {
+        if (!$user->can(UserAccountsPermission::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED) && !$user->can(Permissions::CREATE_OTHER_USER)) {
+        if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED) && !$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
         if (strlen($name) < 1) {
@@ -471,7 +487,7 @@ class UserPage extends Extension
         if (
             // Users who can create other users (ie, admins) are exempt
             // from the email requirement
-            !$user->can(Permissions::CREATE_OTHER_USER) &&
+            !$user->can(UserAccountsPermission::CREATE_OTHER_USER) &&
             ($config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) && empty($event->email))
         ) {
             throw new UserCreationException("Email address is required");
@@ -527,7 +543,7 @@ class UserPage extends Extension
         } elseif ($matches = $event->matches(self::USER_ID_SEARCH_REGEX)) {
             $user_id = int_escape($matches[2]);
             $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= $user_id"));
-        } elseif ($user->can(Permissions::VIEW_IP) && $matches = $event->matches("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i")) {
+        } elseif ($user->can(IPBanPermission::VIEW_IP) && $matches = $event->matches("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i")) {
             $user_ip = $matches[1]; // FIXME: ip_escape?
             $event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
         }
@@ -600,8 +616,8 @@ class UserPage extends Extension
 
         if (
             ($a->name == $b->name) ||
-            ($b->can(Permissions::PROTECTED) && $a->class->name == "admin") ||
-            (!$b->can(Permissions::PROTECTED) && $a->can(Permissions::EDIT_USER_INFO))
+            ($b->can(UserAccountsPermission::PROTECTED) && $a->class->name == "admin") ||
+            (!$b->can(UserAccountsPermission::PROTECTED) && $a->can(UserAccountsPermission::EDIT_USER_INFO))
         ) {
             return true;
         } else {

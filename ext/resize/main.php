@@ -27,7 +27,7 @@ class ResizeImage extends Extension
     {
         global $user, $config;
         if (
-            $user->can(Permissions::EDIT_FILES) &&
+            $user->can(ImagePermission::EDIT_FILES) &&
             $config->get_bool(ResizeConfig::ENABLED) &&
             $this->can_resize_mime($event->image->get_mime())
         ) {
@@ -89,7 +89,7 @@ class ResizeImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("resize/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
+        if ($event->page_matches("resize/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
@@ -109,7 +109,7 @@ class ResizeImage extends Extension
         global $config, $user;
 
         if ($config->get_bool(ResizeConfig::GET_ENABLED) &&
-            $user->can(Permissions::EDIT_FILES) &&
+            $user->can(ImagePermission::EDIT_FILES) &&
             $this->can_resize_mime($event->image->get_mime())) {
             if (isset($event->params['max_height'])) {
                 $max_height = int_escape($event->params['max_height']);

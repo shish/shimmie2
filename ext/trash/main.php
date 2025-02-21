@@ -24,7 +24,7 @@ class Trash extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("trash_restore/{image_id}", method: "POST", permission: Permissions::VIEW_TRASH)) {
+        if ($event->page_matches("trash_restore/{image_id}", method: "POST", permission: TrashPermission::VIEW_TRASH)) {
             $image_id = $event->get_iarg('image_id');
             self::set_trash($image_id, false);
             $page->set_mode(PageMode::REDIRECT);
@@ -36,7 +36,7 @@ class Trash extends Extension
     {
         global $user;
 
-        if ($image['trash'] === true && !$user->can(Permissions::VIEW_TRASH)) {
+        if ($image['trash'] === true && !$user->can(TrashPermission::VIEW_TRASH)) {
             return false;
         }
         return true;
@@ -74,7 +74,7 @@ class Trash extends Extension
     {
         global $user;
         if ($event->parent == "posts") {
-            if ($user->can(Permissions::VIEW_TRASH)) {
+            if ($user->can(TrashPermission::VIEW_TRASH)) {
                 $event->add_nav_link("posts_trash", new Link('/post/list/in%3Atrash/1'), "Trash", null, 60);
             }
         }
@@ -83,7 +83,7 @@ class Trash extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::VIEW_TRASH)) {
+        if ($user->can(TrashPermission::VIEW_TRASH)) {
             $event->add_link("Trash", search_link(["in:trash"]), 60);
         }
     }
@@ -98,7 +98,7 @@ class Trash extends Extension
         }
 
         if ($event->matches(self::SEARCH_REGEXP)) {
-            if ($user->can(Permissions::VIEW_TRASH)) {
+            if ($user->can(TrashPermission::VIEW_TRASH)) {
                 $event->add_querylet(new Querylet("trash = :true", ["true" => true]));
             }
         }
@@ -108,7 +108,7 @@ class Trash extends Extension
     {
         global $user;
         if ($event->key === HelpPages::SEARCH) {
-            if ($user->can(Permissions::VIEW_TRASH)) {
+            if ($user->can(TrashPermission::VIEW_TRASH)) {
                 $event->add_section("Trash", $this->theme->get_help_html());
             }
         }
@@ -139,7 +139,7 @@ class Trash extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if ($event->image['trash'] === true && $user->can(Permissions::VIEW_TRASH)) {
+        if ($event->image['trash'] === true && $user->can(TrashPermission::VIEW_TRASH)) {
             $event->add_button("Restore From Trash", "trash_restore/".$event->image->id);
         }
     }
@@ -148,7 +148,7 @@ class Trash extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::VIEW_TRASH) && in_array("in:trash", $event->search_terms)) {
+        if ($user->can(TrashPermission::VIEW_TRASH) && in_array("in:trash", $event->search_terms)) {
             $event->add_action("bulk_trash_restore", "(U)ndelete", "u");
         }
     }
@@ -159,7 +159,7 @@ class Trash extends Extension
 
         switch ($event->action) {
             case "bulk_trash_restore":
-                if ($user->can(Permissions::VIEW_TRASH)) {
+                if ($user->can(TrashPermission::VIEW_TRASH)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         self::set_trash($image->id, false);

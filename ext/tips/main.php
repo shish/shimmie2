@@ -60,11 +60,11 @@ class Tips extends Extension
 
         $this->getTip();
 
-        if ($event->page_matches("tips/list", permission: Permissions::TIPS_ADMIN)) {
+        if ($event->page_matches("tips/list", permission: TipsPermission::ADMIN)) {
             $this->manageTips();
             $this->getAll();
         }
-        if ($event->page_matches("tips/save", method: "POST", permission: Permissions::TIPS_ADMIN)) {
+        if ($event->page_matches("tips/save", method: "POST", permission: TipsPermission::ADMIN)) {
             send_event(new CreateTipEvent(
                 $event->get_POST("enable") == "on",
                 $event->req_POST("image"),
@@ -73,14 +73,14 @@ class Tips extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("tips/list"));
         }
-        if ($event->page_matches("tips/status/{tipID}", permission: Permissions::TIPS_ADMIN)) {
+        if ($event->page_matches("tips/status/{tipID}", permission: TipsPermission::ADMIN)) {
             // FIXME: HTTP GET CSRF
             $tipID = $event->get_iarg('tipID');
             $this->setStatus($tipID);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("tips/list"));
         }
-        if ($event->page_matches("tips/delete/{tipID}", permission: Permissions::TIPS_ADMIN)) {
+        if ($event->page_matches("tips/delete/{tipID}", permission: TipsPermission::ADMIN)) {
             // FIXME: HTTP GET CSRF
             $tipID = $event->get_iarg('tipID');
             send_event(new DeleteTipEvent($tipID));
@@ -93,7 +93,7 @@ class Tips extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::TIPS_ADMIN)) {
+            if ($user->can(TipsPermission::ADMIN)) {
                 $event->add_nav_link("tips", new Link('tips/list'), "Tips Editor");
             }
         }
@@ -102,7 +102,7 @@ class Tips extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::TIPS_ADMIN)) {
+        if ($user->can(TipsPermission::ADMIN)) {
             $event->add_link("Tips Editor", make_link("tips/list"));
         }
     }

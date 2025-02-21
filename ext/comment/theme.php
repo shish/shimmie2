@@ -214,7 +214,7 @@ class CommentListTheme extends Themelet
                 }
                 #if($user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-                if ($user->can(Permissions::VIEW_IP) || $config->get_bool(CommentConfig::SHOW_REPEAT_ANONS, false)) {
+                if ($user->can(IPBanPermission::VIEW_IP) || $config->get_bool(CommentConfig::SHOW_REPEAT_ANONS, false)) {
                     if ($this->anon_map[$comment->poster_ip] != $this->anon_id) {
                         $anoncode2 = SUP("(" . $this->anon_map[$comment->poster_ip] . ")");
                     }
@@ -252,8 +252,8 @@ class CommentListTheme extends Themelet
                         A(["href" => "javascript:replyTo({$comment->image_id}, {$comment->comment_id}, '{$comment->owner_name}')"], "Reply"),
                     ),
                     emptyHTML(
-                        $user->can(Permissions::VIEW_IP) ? rawHTML("<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
-                        $user->can(Permissions::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped)) : null,
+                        $user->can(IPBanPermission::VIEW_IP) ? rawHTML("<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
+                        $user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped)) : null,
                     ),
                 ),
                 $userlink,

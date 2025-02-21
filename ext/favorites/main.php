@@ -93,7 +93,7 @@ class Favorites extends Extension
         global $user;
         $action = $event->get_param("favorite_action");
         if (
-            $user->can(Permissions::EDIT_FAVOURITES) &&
+            $user->can(FavouritesPermission::EDIT_FAVOURITES) &&
             !is_null($action) &&
             ($action == "set" || $action == "unset")
         ) {
@@ -159,13 +159,6 @@ class Favorites extends Extension
         global $user;
         if ($event->parent == "posts") {
             $event->add_nav_link("posts_favorites", new Link("post/list/favorited_by={$user->name}/1"), "My Favorites");
-        }
-
-        if ($event->parent === "user") {
-            if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
-                $username = url_escape($user->name);
-                $event->add_nav_link("favorites", new Link("post/list/favorited_by=$username/1"), "My Favorites");
-            }
         }
     }
 

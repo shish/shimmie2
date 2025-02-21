@@ -125,7 +125,7 @@ class PostTags extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $user, $page;
-        if ($event->page_matches("tag_edit/replace", method: "POST", permission: Permissions::MASS_TAG_EDIT)) {
+        if ($event->page_matches("tag_edit/replace", method: "POST", permission: PostTagsPermission::MASS_TAG_EDIT)) {
             $this->mass_tag_edit($event->req_POST('search'), $event->req_POST('replace'), true);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("admin"));
@@ -151,7 +151,7 @@ class PostTags extends Extension
     {
         global $page, $user;
         if (
-            $user->can(Permissions::EDIT_IMAGE_TAG) && (
+            $user->can(PostTagsPermission::EDIT_IMAGE_TAG) && (
                 isset($event->params['tags'])
                 || isset($event->params["tags{$event->slot}"])
             )
@@ -195,7 +195,7 @@ class PostTags extends Extension
     public function onTagSet(TagSetEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
+        if ($user->can(PostTagsPermission::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || $user->can(PostLockPermission::EDIT_IMAGE_LOCK))) {
             $event->image->set_tags($event->new_tags);
         }
         foreach ($event->metatags as $tag) {

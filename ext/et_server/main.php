@@ -20,7 +20,7 @@ class ETServer extends Extension
                 );
                 $page->set_title("Thanks!");
                 $page->add_block(new Block("Thanks!", rawHTML("Your data has been recorded~")));
-            } elseif ($user->can(Permissions::VIEW_REGISTRATIONS)) {
+            } elseif ($user->can(ETServerPermission::VIEW_REGISTRATIONS)) {
                 $page->set_title("Registrations");
                 $n = 0;
                 foreach ($database->get_all("SELECT responded, data FROM registration ORDER BY responded DESC") as $row) {

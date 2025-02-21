@@ -132,7 +132,7 @@ class Search
             // exclude tags which start with "id>", "id<", or "order:id_"
             // because those are added internally for post/next and post/prev
             $counted_tags = array_filter($counted_tags, fn ($tag) => !\Safe\preg_match("/^id[><]|^order:id_/", $tag));
-            if (!$user->can(Permissions::BIG_SEARCH) and count($counted_tags) > $anon_limit) {
+            if (!$user->can(SpeedHaxPermission::BIG_SEARCH) and count($counted_tags) > $anon_limit) {
                 throw new PermissionDenied("Anonymous users may only search for up to $anon_limit tags at a time");
             }
         }

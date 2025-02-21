@@ -286,7 +286,7 @@ class DanbooruApi extends Extension
         // Now we check if a file was uploaded or a url was provided to transload
         // Much of this code is borrowed from /ext/upload
 
-        if (!$user->can(Permissions::CREATE_IMAGE)) {
+        if (!$user->can(ImagePermission::CREATE_IMAGE)) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: authentication error");
             return;

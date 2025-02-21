@@ -20,7 +20,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if (defined("UNITTEST") || $user->can(Permissions::BYPASS_IMAGE_APPROVAL)) {
+        if (defined("UNITTEST") || $user->can(ApprovalPermission::BYPASS_IMAGE_APPROVAL)) {
             self::approve_image($event->image->id);
         }
     }
@@ -29,14 +29,14 @@ class Approval extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("approve_image/{image_id}", method: "POST", permission: Permissions::APPROVE_IMAGE)) {
+        if ($event->page_matches("approve_image/{image_id}", method: "POST", permission: ApprovalPermission::APPROVE_IMAGE)) {
             $image_id = int_escape($event->get_arg('image_id'));
             self::approve_image($image_id);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/" . $image_id));
         }
 
-        if ($event->page_matches("disapprove_image/{image_id}", method: "POST", permission: Permissions::APPROVE_IMAGE)) {
+        if ($event->page_matches("disapprove_image/{image_id}", method: "POST", permission: ApprovalPermission::APPROVE_IMAGE)) {
             $image_id = int_escape($event->get_arg('image_id'));
             self::disapprove_image($image_id);
             $page->set_mode(PageMode::REDIRECT);
@@ -92,7 +92,7 @@ class Approval extends Extension
     {
         global $user;
         if ($event->parent == "posts") {
-            if ($user->can(Permissions::APPROVE_IMAGE)) {
+            if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
                 $event->add_nav_link("posts_unapproved", new Link('/post/list/approved%3Ano/1'), "Pending Approval", null, 60);
             }
         }
@@ -101,7 +101,7 @@ class Approval extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::APPROVE_IMAGE)) {
+        if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
             $event->add_link("Pending Approval", search_link(["approved:no"]), 60);
         }
     }
@@ -116,7 +116,7 @@ class Approval extends Extension
         }
 
         if ($matches = $event->matches(self::SEARCH_REGEXP)) {
-            if ($user->can(Permissions::APPROVE_IMAGE) && strtolower($matches[1]) == "no") {
+            if ($user->can(ApprovalPermission::APPROVE_IMAGE) && strtolower($matches[1]) == "no") {
                 $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
             } else {
                 $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
@@ -128,7 +128,7 @@ class Approval extends Extension
     {
         global $user, $config;
         if ($event->key === HelpPages::SEARCH) {
-            if ($user->can(Permissions::APPROVE_IMAGE)) {
+            if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
                 $event->add_section("Approval", $this->theme->get_help_html());
             }
         }
@@ -171,7 +171,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($image['approved'] === false && !$user->can(Permissions::APPROVE_IMAGE) && $user->id !== $image->owner_id) {
+        if ($image['approved'] === false && !$user->can(ApprovalPermission::APPROVE_IMAGE) && $user->id !== $image->owner_id) {
             return false;
         }
         return true;
@@ -190,7 +190,7 @@ class Approval extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
-        if ($user->can(Permissions::APPROVE_IMAGE)) {
+        if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
             if ($event->image['approved'] === true) {
                 $event->add_button("Disapprove", "disapprove_image/".$event->image->id);
             } else {
@@ -204,7 +204,7 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($user->can(Permissions::APPROVE_IMAGE)) {
+        if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
             if (in_array("approved:no", $event->search_terms)) {
                 $event->add_action("bulk_approve_image", "Approve", "a");
             } else {
@@ -219,7 +219,7 @@ class Approval extends Extension
 
         switch ($event->action) {
             case "bulk_approve_image":
-                if ($user->can(Permissions::APPROVE_IMAGE)) {
+                if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         self::approve_image($image->id);
@@ -229,7 +229,7 @@ class Approval extends Extension
                 }
                 break;
             case "bulk_disapprove_image":
-                if ($user->can(Permissions::APPROVE_IMAGE)) {
+                if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         self::disapprove_image($image->id);

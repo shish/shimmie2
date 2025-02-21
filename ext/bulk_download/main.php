@@ -12,7 +12,7 @@ class BulkDownload extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::BULK_DOWNLOAD)) {
+        if ($user->can(BulkDownloadPermission::BULK_DOWNLOAD)) {
             $event->add_action(BulkDownload::DOWNLOAD_ACTION_NAME, "Download ZIP");
         }
     }
@@ -21,7 +21,7 @@ class BulkDownload extends Extension
     {
         global $user, $page, $config;
 
-        if ($user->can(Permissions::BULK_DOWNLOAD) &&
+        if ($user->can(BulkDownloadPermission::BULK_DOWNLOAD) &&
             ($event->action == BulkDownload::DOWNLOAD_ACTION_NAME)) {
             $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = shm_tempnam("bulk_download");

@@ -38,7 +38,7 @@ class TranscodeVideo extends Extension
     {
         global $user;
 
-        if ($event->image->video === true && $user->can(Permissions::EDIT_FILES)) {
+        if ($event->image->video === true && $user->can(ImagePermission::EDIT_FILES)) {
             $options = self::get_output_options($event->image->get_mime(), $event->image->video_codec);
             if (!empty($options) && sizeof($options) > 1) {
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
@@ -50,7 +50,7 @@ class TranscodeVideo extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("transcode_video/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
+        if ($event->page_matches("transcode_video/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
             $image_obj = Image::by_id_ex($image_id);
             $this->transcode_and_replace_video($image_obj, $event->req_POST('transcode_format'));
@@ -63,7 +63,7 @@ class TranscodeVideo extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::EDIT_FILES)) {
+        if ($user->can(ImagePermission::EDIT_FILES)) {
             $event->add_action(
                 self::ACTION_BULK_TRANSCODE,
                 "Transcode Video",
@@ -83,7 +83,7 @@ class TranscodeVideo extends Extension
                 if (!isset($event->params['transcode_format'])) {
                     return;
                 }
-                if ($user->can(Permissions::EDIT_FILES)) {
+                if ($user->can(ImagePermission::EDIT_FILES)) {
                     $format = $event->params['transcode_format'];
                     $total = 0;
                     foreach ($event->items as $image) {

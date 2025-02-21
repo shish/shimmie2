@@ -24,10 +24,10 @@ class SourceHistory extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("source_history/revert", method: "POST", permission: Permissions::EDIT_IMAGE_TAG)) {
+        if ($event->page_matches("source_history/revert", method: "POST", permission: PostTagsPermission::EDIT_IMAGE_TAG)) {
             // this is a request to revert to a previous version of the source
             $this->process_revert_request((int)$event->req_POST('revert'));
-        } elseif ($event->page_matches("source_history/bulk_revert", method: "POST", permission: Permissions::BULK_EDIT_IMAGE_TAG)) {
+        } elseif ($event->page_matches("source_history/bulk_revert", method: "POST", permission: BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
             $this->process_bulk_revert_request();
         } elseif ($event->page_matches("source_history/all/{page}")) {
             $page_id = $event->get_iarg('page');
@@ -58,7 +58,7 @@ class SourceHistory extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
+            if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
                 $event->add_nav_link("source_history", new Link('source_history/all/1'), "Source Changes", NavLink::is_active(["source_history"]));
             }
         }
@@ -67,7 +67,7 @@ class SourceHistory extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
+        if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
             $event->add_link("Source Changes", make_link("source_history/all/1"));
         }
     }

@@ -150,7 +150,7 @@ class GraphQL extends Extension
     {
         global $user;
 
-        if (!$user->can(Permissions::CREATE_IMAGE)) {
+        if (!$user->can(ImagePermission::CREATE_IMAGE)) {
             return ["error" => "User cannot create posts"];
         }
 

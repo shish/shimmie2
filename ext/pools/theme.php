@@ -129,7 +129,7 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Search", rawHTML($search), "left", 10));
 
         if (!is_null($pool)) {
-            if ($pool->public || $user->can(Permissions::POOLS_ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
+            if ($pool->public || $user->can(PoolsPermission::ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
                 if (!$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
                     $this->sidebar_options($page, $pool, $check_all);
                 }
@@ -190,7 +190,7 @@ class PoolsTheme extends Themelet
             )
         );
 
-        if ($user->id == $pool->user_id || $user->can(Permissions::POOLS_ADMIN)) {
+        if ($user->id == $pool->user_id || $user->can(PoolsPermission::ADMIN)) {
             $editor->appendChild(
                 SCRIPT(
                     ["type" => "text/javascript"],

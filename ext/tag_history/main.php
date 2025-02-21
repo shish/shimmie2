@@ -18,10 +18,10 @@ class TagHistory extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("tag_history/revert", method: "POST", permission: Permissions::EDIT_IMAGE_TAG)) {
+        if ($event->page_matches("tag_history/revert", method: "POST", permission: PostTagsPermission::EDIT_IMAGE_TAG)) {
             // this is a request to revert to a previous version of the tags
             $this->process_revert_request((int)$event->req_POST('revert'));
-        } elseif ($event->page_matches("tag_history/bulk_revert", method: "POST", permission: Permissions::BULK_EDIT_IMAGE_TAG)) {
+        } elseif ($event->page_matches("tag_history/bulk_revert", method: "POST", permission: BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
             $this->process_bulk_revert_request();
         } elseif ($event->page_matches("tag_history/all/{page}")) {
             $page_id = $event->get_iarg('page');
@@ -109,7 +109,7 @@ class TagHistory extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
+            if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
                 $event->add_nav_link("tag_history", new Link('tag_history/all/1'), "Tag Changes", NavLink::is_active(["tag_history"]));
             }
         }
@@ -119,7 +119,7 @@ class TagHistory extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
+        if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
             $event->add_link("Tag Changes", make_link("tag_history/all/1"));
         }
     }

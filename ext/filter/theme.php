@@ -13,7 +13,7 @@ class FilterTheme extends Themelet
         global $config, $page, $user;
 
         // If user is not able to set their own filters, use the default filters.
-        if ($user->can(Permissions::CHANGE_USER_SETTING)) {
+        if ($user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $tags = $user->get_config()->get_string(
                 FilterUserConfig::TAGS,
                 $config->get_string(FilterConfig::TAGS)

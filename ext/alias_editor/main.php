@@ -65,13 +65,13 @@ class AliasEditor extends Extension
     {
         global $config, $database, $page, $user;
 
-        if ($event->page_matches("alias/add", method: "POST", permission: Permissions::MANAGE_ALIAS_LIST)) {
+        if ($event->page_matches("alias/add", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $input = validate_input(["c_oldtag" => "string", "c_newtag" => "string"]);
             send_event(new AddAliasEvent($input['c_oldtag'], $input['c_newtag']));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("alias/list"));
         }
-        if ($event->page_matches("alias/remove", method: "POST", permission: Permissions::MANAGE_ALIAS_LIST)) {
+        if ($event->page_matches("alias/remove", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $input = validate_input(["d_oldtag" => "string"]);
             send_event(new DeleteAliasEvent($input['d_oldtag']));
             $page->set_mode(PageMode::REDIRECT);
@@ -82,7 +82,7 @@ class AliasEditor extends Extension
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
             $t->size = 100;
-            if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
+            if ($user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
                 $t->create_url = make_link("alias/add");
                 $t->delete_url = make_link("alias/remove");
             }
@@ -94,7 +94,7 @@ class AliasEditor extends Extension
             $page->set_filename("aliases.csv");
             $page->set_data($this->get_alias_csv($database));
         }
-        if ($event->page_matches("alias/import", method: "POST", permission: Permissions::MANAGE_ALIAS_LIST)) {
+        if ($event->page_matches("alias/import", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             if (count($_FILES) > 0) {
                 $tmp = $_FILES['alias_file']['tmp_name'];
                 $contents = \Safe\file_get_contents($tmp);
@@ -152,7 +152,7 @@ class AliasEditor extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
+        if ($user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $event->add_link("Alias Editor", make_link("alias/list"));
         }
     }

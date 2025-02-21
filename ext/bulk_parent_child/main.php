@@ -16,7 +16,7 @@ class BulkParentChild extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::BULK_PARENT_CHILD)) {
+        if ($user->can(BulkParentChildPermission::BULK_PARENT_CHILD)) {
             $event->add_action(BulkParentChild::PARENT_CHILD_ACTION_NAME, "Set Parent Child");
         }
     }
@@ -24,7 +24,7 @@ class BulkParentChild extends Extension
     public function onBulkAction(BulkActionEvent $event): void
     {
         global $user, $page, $config;
-        if ($user->can(Permissions::BULK_PARENT_CHILD) &&
+        if ($user->can(BulkParentChildPermission::BULK_PARENT_CHILD) &&
             ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)) {
             $prev_id = null;
             foreach ($event->items as $image) {
