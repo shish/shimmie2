@@ -1,0 +1,6 @@
+.boned_color {
+	color: red;
+}
+.boned_color:after {
+	content: " 💀";
+}
