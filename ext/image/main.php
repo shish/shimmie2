@@ -42,9 +42,9 @@ class ImageIO extends Extension
         $thumb_height = $config->get_int(ThumbnailConfig::HEIGHT, 192);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
-        if ($event->page_matches("image/delete", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
-            $image = Image::by_id(int_escape($event->req_POST('image_id')));
-            if ($image) {
+        if ($event->page_matches("image/delete", method: "POST")) {
+            $image = Image::by_id_ex(int_escape($event->req_POST('image_id')));
+            if ($this->can_user_delete_image($user, $image)) {
                 send_event(new ImageDeletionEvent($image));
 
                 if ($config->get_string(ImageConfig::ON_DELETE) === 'next') {
@@ -53,6 +53,8 @@ class ImageIO extends Extension
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(referer_or(make_link(), ['post/view']));
                 }
+            } else {
+                throw new PermissionDenied("You do not have permission to delete this image.");
             }
         } elseif ($event->page_matches("image/{image_id}/{filename}")) {
             $num = $event->get_iarg('image_id');
@@ -127,6 +129,14 @@ class ImageIO extends Extension
             $event->replace('$date', autodate($event->image->posted, false));
         }
         $event->replace("\\n", "\n");
+    }
+
+    private function can_user_delete_image(User $user, Image $image): bool
+    {
+        if ($user->can(ImagePermission::DELETE_OWN_IMAGE) && $image->owner_id == $user->id) {
+            return true;
+        }
+        return $user->can(ImagePermission::DELETE_IMAGE);
     }
 
     /**
