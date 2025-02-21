@@ -25,7 +25,7 @@ class RotateImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
-        if ($user->can(Permissions::EDIT_FILES)
+        if ($user->can(ImagePermission::EDIT_FILES)
                 && MimeType::matches_array($event->image->get_mime(), self::SUPPORTED_MIME)) {
             /* Add a link to rotate the image */
             $event->add_part(SHM_SIMPLE_FORM(
@@ -40,7 +40,7 @@ class RotateImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("rotate/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
+        if ($event->page_matches("rotate/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);

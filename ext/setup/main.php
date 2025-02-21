@@ -101,7 +101,7 @@ class Setup extends Extension
             $page->set_data("ok");
         }
 
-        if ($event->page_matches("setup", method: "GET", permission: Permissions::CHANGE_SETTING)) {
+        if ($event->page_matches("setup", method: "GET", permission: SetupPermission::CHANGE_SETTING)) {
             $blocks = [];
             foreach (get_subclasses_of(ConfigGroup::class) as $class) {
                 $group = new $class();
@@ -114,7 +114,7 @@ class Setup extends Extension
                 }
             }
             $this->theme->display_page($page, $blocks);
-        } elseif ($event->page_matches("setup/save", method: "POST", permission: Permissions::CHANGE_SETTING)) {
+        } elseif ($event->page_matches("setup/save", method: "POST", permission: SetupPermission::CHANGE_SETTING)) {
             send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
@@ -171,7 +171,7 @@ class Setup extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::CHANGE_SETTING)) {
+            if ($user->can(SetupPermission::CHANGE_SETTING)) {
                 $event->add_nav_link("setup", new Link('setup'), "Board Config", null, 0);
             }
         }
@@ -180,7 +180,7 @@ class Setup extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::CHANGE_SETTING)) {
+        if ($user->can(SetupPermission::CHANGE_SETTING)) {
             $event->add_link("Board Config", make_link("setup"));
         }
     }

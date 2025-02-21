@@ -44,14 +44,14 @@ class PostTitles extends Extension
     {
         global $user;
 
-        $event->add_part($this->theme->get_title_set_html(self::get_title($event->image), $user->can(Permissions::EDIT_IMAGE_TITLE)), 10);
+        $event->add_part($this->theme->get_title_set_html(self::get_title($event->image), $user->can(PostTitlesPermission::EDIT_IMAGE_TITLE)), 10);
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $user;
         $title = $event->get_param('title');
-        if ($user->can(Permissions::EDIT_IMAGE_TITLE) && !is_null($title)) {
+        if ($user->can(PostTitlesPermission::EDIT_IMAGE_TITLE) && !is_null($title)) {
             send_event(new PostTitleSetEvent($event->image, $title));
         }
     }

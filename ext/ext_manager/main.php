@@ -28,7 +28,7 @@ class ExtManager extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("ext_manager/set", method: "POST", permission: Permissions::MANAGE_EXTENSION_LIST)) {
+        if ($event->page_matches("ext_manager/set", method: "POST", permission: ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
             if (is_writable("data/config")) {
                 $this->set_things($event->POST);
                 log_warning("ext_manager", "Active extensions changed", "Active extensions changed");
@@ -38,7 +38,7 @@ class ExtManager extends Extension
                 throw new ServerError("The config file (data/config/extensions.conf.php) isn't writable by the web server :(");
             }
         } elseif ($event->page_matches("ext_manager", method: "GET")) {
-            $is_admin = $user->can(Permissions::MANAGE_EXTENSION_LIST);
+            $is_admin = $user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST);
             $this->theme->display_table($page, $this->get_extensions($is_admin), $is_admin);
         }
 
@@ -67,7 +67,7 @@ class ExtManager extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
+            if ($user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
                 $event->add_nav_link("ext_manager", new Link('ext_manager'), "Extension Manager");
             } else {
                 $event->add_nav_link("ext_doc", new Link('ext_doc'), "Board Help");
@@ -78,7 +78,7 @@ class ExtManager extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
+        if ($user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
             $event->add_link("Extension Manager", make_link("ext_manager"));
         }
     }

@@ -13,13 +13,13 @@ class ReplaceFile extends Extension
     {
         global $cache, $page, $user;
 
-        if ($event->page_matches("replace/{image_id}", method: "GET", permission: Permissions::REPLACE_IMAGE)) {
+        if ($event->page_matches("replace/{image_id}", method: "GET", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
             $this->theme->display_replace_page($page, $image_id);
         }
 
-        if ($event->page_matches("replace/{image_id}", method: "POST", permission: Permissions::REPLACE_IMAGE)) {
+        if ($event->page_matches("replace/{image_id}", method: "POST", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
 
@@ -52,7 +52,7 @@ class ReplaceFile extends Extension
         global $user;
 
         /* In the future, could perhaps allow users to replace images that they own as well... */
-        if ($user->can(Permissions::REPLACE_IMAGE)) {
+        if ($user->can(ReplaceFilePermission::REPLACE_IMAGE)) {
             $event->add_button("Replace", "replace/{$event->image->id}");
         }
     }

@@ -25,10 +25,10 @@ class PostLock extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         global $page, $user;
-        if ($event->image->is_locked() && !$user->can(Permissions::EDIT_IMAGE_LOCK)) {
+        if ($event->image->is_locked() && !$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
             throw new PermissionDenied("Error: This image is locked and cannot be edited.");
         }
-        if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
+        if ($user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
             $locked = $event->get_param('locked') == "on";
             send_event(new LockSetEvent($event->image, $locked));
         }
@@ -37,7 +37,7 @@ class PostLock extends Extension
     public function onLockSet(LockSetEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
+        if ($user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
             $event->image->set_locked($event->locked);
         }
     }

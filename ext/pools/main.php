@@ -207,10 +207,10 @@ class Pools extends Extension
             $page_num = $event->get_iarg('page_num', 1) - 1;
             $this->list_pools($page, $page_num, $search);
         }
-        if ($event->page_matches("pool/new", method: "GET", permission: Permissions::POOLS_CREATE)) {
+        if ($event->page_matches("pool/new", method: "GET", permission: PoolsPermission::CREATE)) {
             $this->theme->new_pool_composer($page);
         }
-        if ($event->page_matches("pool/create", method: "POST", permission: Permissions::POOLS_CREATE)) {
+        if ($event->page_matches("pool/create", method: "POST", permission: PoolsPermission::CREATE)) {
             $pce = send_event(
                 new PoolCreationEvent(
                     $event->req_POST("title"),
@@ -229,7 +229,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/updated", paged: true)) {
             $this->get_history($event->get_iarg('page_num', 1) - 1);
         }
-        if ($event->page_matches("pool/revert/{history_id}", method: "POST", permission: Permissions::POOLS_UPDATE)) {
+        if ($event->page_matches("pool/revert/{history_id}", method: "POST", permission: PoolsPermission::UPDATE)) {
             $history_id = $event->get_iarg('history_id');
             $this->revert_history($history_id);
             $page->set_mode(PageMode::REDIRECT);
@@ -379,7 +379,7 @@ class Pools extends Extension
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
 
-            if ($user->can(Permissions::POOLS_ADMIN) || $user->id == $pool->user_id) {
+            if ($user->can(PoolsPermission::ADMIN) || $user->id == $pool->user_id) {
                 send_event(new PoolDeletionEvent($pool_id));
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("pool/list"));
@@ -425,9 +425,9 @@ class Pools extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $config, $database, $user;
-        if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && $user->can(Permissions::POOLS_UPDATE)) {
+        if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && $user->can(PoolsPermission::UPDATE)) {
             $pools = [];
-            if ($user->can(Permissions::POOLS_ADMIN)) {
+            if ($user->can(PoolsPermission::ADMIN)) {
                 $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
             } else {
                 $pools = $database->get_pairs("SELECT id,title FROM pools WHERE user_id=:id ORDER BY title", ["id" => $user->id]);
@@ -512,7 +512,7 @@ class Pools extends Extension
     {
         global $database, $user;
 
-        if (!$user->can(Permissions::POOLS_UPDATE)) {
+        if (!$user->can(PoolsPermission::UPDATE)) {
             $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
             // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.
@@ -559,8 +559,8 @@ class Pools extends Extension
         // OR if the user is admin
         // OR if the pool is owned by the user.
         return (
-            ($pool->public && $user->can(Permissions::POOLS_UPDATE)) ||
-            $user->can(Permissions::POOLS_ADMIN) ||
+            ($pool->public && $user->can(PoolsPermission::UPDATE)) ||
+            $user->can(PoolsPermission::ADMIN) ||
             $user->id == $pool->user_id
         );
     }
@@ -613,7 +613,7 @@ class Pools extends Extension
     {
         global $user, $database;
 
-        if (!$user->can(Permissions::POOLS_UPDATE)) {
+        if (!$user->can(PoolsPermission::UPDATE)) {
             throw new PermissionDenied("You must be registered and logged in to add a image.");
         }
         if (empty($event->title)) {
@@ -807,7 +807,7 @@ class Pools extends Extension
         $poolID = $event->pool_id;
 
         $owner_id = (int) $database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
-        if ($owner_id == $user->id || $user->can(Permissions::POOLS_ADMIN)) {
+        if ($owner_id == $user->id || $user->can(PoolsPermission::ADMIN)) {
             $database->execute("DELETE FROM pool_history WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pool_images WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pools WHERE id = :pid", ["pid" => $poolID]);

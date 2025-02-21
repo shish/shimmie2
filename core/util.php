@@ -638,6 +638,7 @@ function _load_core_files(): void
         zglob("core/imageboard/*.php"),
         zglob("ext/*/info.php"),
         zglob("ext/*/config.php"),
+        zglob("ext/*/permissions.php"),
     ));
 }
 
@@ -783,8 +784,8 @@ function show_ip(string $ip, string $ban_reason): string
     global $user;
     $u_reason = url_escape($ban_reason);
     $u_end = url_escape("+1 week");
-    $ban = $user->can(Permissions::BAN_IP) ? ", <a href='".make_link("ip_ban/list", "c_ip=$ip&c_reason=$u_reason&c_expires=$u_end", "create")."'>Ban</a>" : "";
-    $ip = $user->can(Permissions::VIEW_IP) ? $ip.$ban : "";
+    $ban = $user->can(IPBanPermission::BAN_IP) ? ", <a href='".make_link("ip_ban/list", "c_ip=$ip&c_reason=$u_reason&c_expires=$u_end", "create")."'>Ban</a>" : "";
+    $ip = $user->can(IPBanPermission::VIEW_IP) ? $ip.$ban : "";
     return $ip;
 }
 

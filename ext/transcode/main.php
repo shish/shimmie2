@@ -116,7 +116,7 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        if ($user->can(Permissions::EDIT_FILES) && $event->context != "report") {
+        if ($user->can(ImagePermission::EDIT_FILES) && $event->context != "report") {
             $engine = $config->get_string(TranscodeImageConfig::ENGINE);
             if ($this->can_convert_mime($engine, $event->image->get_mime())) {
                 $options = $this->get_supported_output_mimes($engine, $event->image->get_mime());
@@ -134,8 +134,8 @@ class TranscodeImage extends Extension
         // the post-transcode mime type instead). This is to  give user feedback on what the mime type
         // was before potential transcoding (the original) at the time of upload, and that it failed if not allowed.
         // does it break bulk image importing? ZIP? SVG? there are a few flows that are untested!
-        if ($config->get_bool(UploadConfig::MIME_CHECK_ENABLED) == true) {
-            $allowed_mimes = $config->get_array(UploadConfig::ALLOWED_MIME_STRINGS);
+        if ($config->get_bool(TranscodeImageConfig::MIME_CHECK_ENABLED) == true) {
+            $allowed_mimes = $config->get_array(TranscodeImageConfig::ALLOWED_MIME_STRINGS);
             if (!MimeType::matches_array($event->mime, $allowed_mimes)) {
                 throw new UploadException("MIME type not supported: " . $event->mime);
             }
@@ -166,7 +166,7 @@ class TranscodeImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("transcode/{image_id}", method: "POST", permission: Permissions::EDIT_FILES)) {
+        if ($event->page_matches("transcode/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
             $image_obj = Image::by_id_ex($image_id);
             $this->transcode_and_replace_image($image_obj, $event->req_POST('transcode_mime'));
@@ -181,7 +181,7 @@ class TranscodeImage extends Extension
 
         if ($config->get_bool(TranscodeImageConfig::GET_ENABLED) &&
             isset($event->params['transcode']) &&
-            $user->can(Permissions::EDIT_FILES) &&
+            $user->can(ImagePermission::EDIT_FILES) &&
             $this->can_convert_mime($config->get_string(TranscodeImageConfig::ENGINE), $event->image->get_mime())) {
             $target_mime = $event->params['transcode'];
 
@@ -215,7 +215,7 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        if ($user->can(Permissions::EDIT_FILES)) {
+        if ($user->can(ImagePermission::EDIT_FILES)) {
             $engine = $config->get_string(TranscodeImageConfig::ENGINE);
             $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode Image", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_mimes($engine)));
         }
@@ -230,7 +230,7 @@ class TranscodeImage extends Extension
                 if (!isset($event->params['transcode_mime'])) {
                     return;
                 }
-                if ($user->can(Permissions::EDIT_FILES)) {
+                if ($user->can(ImagePermission::EDIT_FILES)) {
                     $mime = $event->params['transcode_mime'];
                     $total = 0;
                     $size_difference = 0;

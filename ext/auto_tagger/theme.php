@@ -19,7 +19,7 @@ class AutoTaggerTheme extends Themelet
     {
         global $page, $user;
 
-        $can_manage = $user->can(Permissions::MANAGE_AUTO_TAG);
+        $can_manage = $user->can(AutoTaggerPermission::MANAGE_AUTO_TAG);
         $html = "
             $table
             $paginator

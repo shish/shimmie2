@@ -81,7 +81,7 @@ class TipsTheme extends Themelet
             "<th>Post</th>".
             "<th>Text</th>";
 
-        if ($user->can(Permissions::TIPS_ADMIN)) {
+        if ($user->can(TipsPermission::ADMIN)) {
             $html .= "<th>Action</th>";
         }
 
@@ -103,7 +103,7 @@ class TipsTheme extends Themelet
 
             $del_link = "<a href='".make_link("tips/delete/".$tip['id'])."'>Delete</a>";
 
-            if ($user->can(Permissions::TIPS_ADMIN)) {
+            if ($user->can(TipsPermission::ADMIN)) {
                 $html .= "<td>".$del_link."</td>";
             }
 

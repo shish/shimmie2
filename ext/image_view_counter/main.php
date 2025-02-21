@@ -55,7 +55,7 @@ class ImageViewCounter extends Extension
     {
         global $user, $database;
 
-        if ($user->can(Permissions::SEE_IMAGE_VIEW_COUNTS)) {
+        if ($user->can(ImageViewCounterPermission::SEE_IMAGE_VIEW_COUNTS)) {
             $view_count = (string)$database->get_one(
                 "SELECT COUNT(*) FROM image_views WHERE image_id =:image_id",
                 ["image_id" => $event->image->id]

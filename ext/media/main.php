@@ -68,7 +68,7 @@ class Media extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("media_rescan/{image_id}", method: "POST", permission: Permissions::RESCAN_MEDIA)) {
+        if ($event->page_matches("media_rescan/{image_id}", method: "POST", permission: MediaPermission::RESCAN_MEDIA)) {
             $image = Image::by_id_ex($event->get_iarg('image_id'));
 
             send_event(new MediaCheckPropertiesEvent($image));
@@ -82,7 +82,7 @@ class Media extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::DELETE_IMAGE)) {
+        if ($user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_button("Scan Media Properties", "media_rescan/{$event->image->id}");
         }
     }
@@ -90,7 +90,7 @@ class Media extends Extension
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::RESCAN_MEDIA)) {
+        if ($user->can(MediaPermission::RESCAN_MEDIA)) {
             $event->add_action("bulk_media_rescan", "Scan Media Properties");
         }
     }
@@ -101,7 +101,7 @@ class Media extends Extension
 
         switch ($event->action) {
             case "bulk_media_rescan":
-                if ($user->can(Permissions::RESCAN_MEDIA)) {
+                if ($user->can(MediaPermission::RESCAN_MEDIA)) {
                     $total = 0;
                     $failed = 0;
                     foreach ($event->items as $image) {

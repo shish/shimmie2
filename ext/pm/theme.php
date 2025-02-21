@@ -43,7 +43,7 @@ class PrivMsgTheme extends Themelet
                 $h_subject = "<b>$h_subject</b>";
                 $readYN = "N";
             }
-            $hb = $from->can(Permissions::HELLBANNED) ? "hb" : "";
+            $hb = $from->can(UserAccountsPermission::HELLBANNED) ? "hb" : "";
             $html .= "<tr class='$hb'>
 			<td>$readYN</td>
 			<td><a href='$pm_url'>$h_subject</a></td>

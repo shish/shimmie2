@@ -12,7 +12,7 @@ class Featured extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
-        if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: Permissions::EDIT_FEATURE)) {
+        if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: FeaturedPermission::EDIT_FEATURE)) {
             $id = $event->get_iarg('image_id');
             $config->set_int(FeaturedConfig::ID, $id);
             log_info("featured", "Featured post set to >>$id", "Featured post set");
@@ -73,7 +73,7 @@ class Featured extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::EDIT_FEATURE) && $event->context == "view") {
+        if ($user->can(FeaturedPermission::EDIT_FEATURE) && $event->context == "view") {
             $event->add_button("Feature This", "featured_image/set/{$event->image->id}");
         }
     }

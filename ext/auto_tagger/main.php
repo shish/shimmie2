@@ -69,13 +69,13 @@ class AutoTagger extends Extension
     {
         global $config, $database, $page, $user;
 
-        if ($event->page_matches("auto_tag/add", method: "POST", permission: Permissions::MANAGE_AUTO_TAG)) {
+        if ($event->page_matches("auto_tag/add", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
             send_event(new AddAutoTagEvent($input['c_tag'], $input['c_additional_tags']));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("auto_tag/list"));
         }
-        if ($event->page_matches("auto_tag/remove", method: "POST", permission: Permissions::MANAGE_AUTO_TAG)) {
+        if ($event->page_matches("auto_tag/remove", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["d_tag" => "string"]);
             send_event(new DeleteAutoTagEvent($input['d_tag']));
             $page->set_mode(PageMode::REDIRECT);
@@ -86,7 +86,7 @@ class AutoTagger extends Extension
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
             $t->size = $config->get_int(AutoTaggerConfig::ITEMS_PER_PAGE, 30);
-            if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
+            if ($user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
                 $t->create_url = make_link("auto_tag/add");
                 $t->delete_url = make_link("auto_tag/remove");
             }
@@ -98,7 +98,7 @@ class AutoTagger extends Extension
             $page->set_filename("auto_tag.csv");
             $page->set_data($this->get_auto_tag_csv($database));
         }
-        if ($event->page_matches("auto_tag/import", method: "POST", permission: Permissions::MANAGE_AUTO_TAG)) {
+        if ($event->page_matches("auto_tag/import", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             if (count($_FILES) > 0) {
                 $tmp = $_FILES['auto_tag_file']['tmp_name'];
                 $contents = \Safe\file_get_contents($tmp);
@@ -162,7 +162,7 @@ class AutoTagger extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::MANAGE_AUTO_TAG)) {
+        if ($user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $event->add_link("Auto-Tag Editor", make_link("auto_tag/list"));
         }
     }

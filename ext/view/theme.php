@@ -125,8 +125,8 @@ class ViewPostTheme extends Themelet
         }
 
         if (
-            (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
-            $user->can(Permissions::EDIT_IMAGE_TAG)
+            (!$image->is_locked() || $user->can(PostLockPermission::EDIT_IMAGE_LOCK)) &&
+            $user->can(PostTagsPermission::EDIT_IMAGE_TAG)
         ) {
             $editor_parts[] = TR(TD(
                 ["colspan" => 4],

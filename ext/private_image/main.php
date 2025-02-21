@@ -18,10 +18,10 @@ class PrivateImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: Permissions::SET_PRIVATE_IMAGE)) {
+        if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
-            if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+            if ($image->owner_id != $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to private.");
             }
 
@@ -33,7 +33,7 @@ class PrivateImage extends Extension
         if ($event->page_matches("publicize_image/{image_id}", method: "POST")) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
-            if ($image->owner_id != $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+            if ($image->owner_id != $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to public.");
             }
 
@@ -62,7 +62,7 @@ class PrivateImage extends Extension
     {
         global $user, $page;
 
-        if ($event->image['private'] === true && $event->image->owner_id != $user->id && !$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ($event->image['private'] === true && $event->image->owner_id != $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }
@@ -102,7 +102,7 @@ class PrivateImage extends Extension
                     $params["true"] = true;
 
                     // Admins can view others private images, but they have to specify the user
-                    if (!$user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES) ||
+                    if (!$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES) ||
                         !UserPage::has_user_query($event->context)) {
                         $query .= " AND owner_id = :private_owner_id";
                         $params["private_owner_id"] = $user->id;
@@ -161,7 +161,7 @@ class PrivateImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if (($user->can(Permissions::SET_PRIVATE_IMAGE) && $user->id == $event->image->owner_id) || $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+        if (($user->can(PrivateImagePermission::SET_PRIVATE_IMAGE) && $user->id == $event->image->owner_id) || $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
             if ($event->image['private'] === false) {
                 $event->add_button("Make Private", "privatize_image/".$event->image->id);
             } else {
@@ -173,7 +173,7 @@ class PrivateImage extends Extension
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         global $user;
-        if ($user->get_config()->get_bool(PrivateImageUserConfig::SET_DEFAULT) && $user->can(Permissions::SET_PRIVATE_IMAGE)) {
+        if ($user->get_config()->get_bool(PrivateImageUserConfig::SET_DEFAULT) && $user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             self::privatize_image($event->image->id);
         }
     }
@@ -182,7 +182,7 @@ class PrivateImage extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::SET_PRIVATE_IMAGE)) {
+        if ($user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             $event->add_action("bulk_privatize_image", "Make Private");
             $event->add_action("bulk_publicize_image", "Make Public");
         }
@@ -194,11 +194,11 @@ class PrivateImage extends Extension
 
         switch ($event->action) {
             case "bulk_privatize_image":
-                if ($user->can(Permissions::SET_PRIVATE_IMAGE)) {
+                if ($user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         if ($image->owner_id == $user->id ||
-                            $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+                            $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                             self::privatize_image($image->id);
                             $total++;
                         }
@@ -210,7 +210,7 @@ class PrivateImage extends Extension
                 $total = 0;
                 foreach ($event->items as $image) {
                     if ($image->owner_id == $user->id ||
-                        $user->can(Permissions::SET_OTHERS_PRIVATE_IMAGES)) {
+                        $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                         self::publicize_image($image->id);
                         $total++;
                     }

@@ -37,7 +37,7 @@ class Blocks extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::MANAGE_BLOCKS)) {
+            if ($user->can(BlocksPermission::MANAGE_BLOCKS)) {
                 $event->add_nav_link("blocks", new Link('blocks/list'), "Blocks Editor");
             }
         }
@@ -46,7 +46,7 @@ class Blocks extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::MANAGE_BLOCKS)) {
+        if ($user->can(BlocksPermission::MANAGE_BLOCKS)) {
             $event->add_link("Blocks Editor", make_link("blocks/list"));
         }
     }
@@ -70,7 +70,7 @@ class Blocks extends Extension
             }
         }
 
-        if ($event->page_matches("blocks/add", method: "POST", permission: Permissions::MANAGE_BLOCKS)) {
+        if ($event->page_matches("blocks/add", method: "POST", permission: BlocksPermission::MANAGE_BLOCKS)) {
             $database->execute("
                     INSERT INTO blocks (pages, title, area, priority, content, userclass)
                     VALUES (:pages, :title, :area, :priority, :content, :userclass)
@@ -80,7 +80,7 @@ class Blocks extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blocks/list"));
         }
-        if ($event->page_matches("blocks/update", method: "POST", permission: Permissions::MANAGE_BLOCKS)) {
+        if ($event->page_matches("blocks/update", method: "POST", permission: BlocksPermission::MANAGE_BLOCKS)) {
             if (!is_null($event->get_POST('delete'))) {
                 $database->execute("
                         DELETE FROM blocks
@@ -98,7 +98,7 @@ class Blocks extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blocks/list"));
         }
-        if ($event->page_matches("blocks/list", permission: Permissions::MANAGE_BLOCKS)) {
+        if ($event->page_matches("blocks/list", permission: BlocksPermission::MANAGE_BLOCKS)) {
             $this->theme->display_blocks($database->get_all("SELECT * FROM blocks ORDER BY area, priority"));
         }
     }

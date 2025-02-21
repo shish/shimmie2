@@ -166,7 +166,7 @@ class Wiki extends Extension
             } elseif ($action == "save") {
                 $rev = int_escape($event->req_POST('revision'));
                 $body = $event->req_POST('body');
-                $lock = $user->can(Permissions::WIKI_ADMIN) && ($event->get_POST('lock') == "on");
+                $lock = $user->can(WikiPermission::ADMIN) && ($event->get_POST('lock') == "on");
 
                 if ($this->can_edit($user, $this->get_page($title))) {
                     $wikipage = $this->get_page($title);
@@ -182,7 +182,7 @@ class Wiki extends Extension
                 }
             } elseif ($action == "delete_revision") {
                 $content = $this->get_page($title);
-                if ($user->can(Permissions::WIKI_ADMIN)) {
+                if ($user->can(WikiPermission::ADMIN)) {
                     $revision = int_escape($event->req_POST('revision'));
                     send_event(new WikiDeleteRevisionEvent($title, $revision));
                     $u_title = url_escape($title);
@@ -192,7 +192,7 @@ class Wiki extends Extension
                     throw new PermissionDenied("You are not allowed to edit this page");
                 }
             } elseif ($action == "delete_all") {
-                if ($user->can(Permissions::WIKI_ADMIN)) {
+                if ($user->can(WikiPermission::ADMIN)) {
                     send_event(new WikiDeletePageEvent($title));
                     $u_title = url_escape($title);
                     $page->set_mode(PageMode::REDIRECT);
@@ -277,7 +277,7 @@ class Wiki extends Extension
     public static function can_edit(User $user, WikiPage $page): bool
     {
         // admins can edit everything
-        if ($user->can(Permissions::WIKI_ADMIN)) {
+        if ($user->can(WikiPermission::ADMIN)) {
             return true;
         }
 
@@ -287,7 +287,7 @@ class Wiki extends Extension
         }
 
         // anon / user can edit if allowed by config
-        if ($user->can(Permissions::EDIT_WIKI_PAGE)) {
+        if ($user->can(WikiPermission::EDIT_WIKI_PAGE)) {
             return true;
         }
 

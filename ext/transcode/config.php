@@ -12,9 +12,6 @@ class TranscodeImageConfig extends ConfigGroup
     #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
     public const VERSION = "ext_transcode_version";
 
-    #[ConfigMeta("Allow transcoding images", ConfigType::BOOL, default: true)]
-    public const ENABLED = "transcode_enabled";
-
     #[ConfigMeta("Enable GET args", ConfigType::BOOL, default: false)]
     public const GET_ENABLED = "transcode_get_enabled";
 
@@ -29,6 +26,24 @@ class TranscodeImageConfig extends ConfigGroup
 
     #[ConfigMeta("Alpha Conversion Color", ConfigType::STRING, default: Media::DEFAULT_ALPHA_CONVERSION_COLOR, ui_type: "color")]
     public const ALPHA_COLOR = "transcode_alpha_color";
+
+    #[ConfigMeta("MIME checks", ConfigType::BOOL, default: false)]
+    public const MIME_CHECK_ENABLED = "mime_check_enabled";
+
+    #[ConfigMeta("Allowed MIMEs", ConfigType::ARRAY, default: [], options: "Shimmie2\TranscodeImageConfig::get_mime_options")]
+    public const ALLOWED_MIME_STRINGS = "allowed_mime_strings";
+
+    /**
+     * @return array<string, string>
+     */
+    public static function get_mime_options(): array
+    {
+        $output = [];
+        foreach (DataHandlerExtension::get_all_supported_mimes() as $mime) {
+            $output[MimeMap::get_name_for_mime($mime)] = $mime;
+        }
+        return $output;
+    }
 
     /**
      * @return array<string, ConfigMeta>

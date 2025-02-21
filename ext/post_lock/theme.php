@@ -16,7 +16,7 @@ class PostLockTheme extends Themelet
         return SHM_POST_INFO(
             "Locked",
             $image->is_locked() ? "Yes (Only admins may edit these details)" : "No",
-            $user->can(Permissions::EDIT_IMAGE_LOCK) ? INPUT(["type" => "checkbox", "name" => "locked", "checked" => $image->is_locked()]) : null
+            $user->can(PostLockPermission::EDIT_IMAGE_LOCK) ? INPUT(["type" => "checkbox", "name" => "locked", "checked" => $image->is_locked()]) : null
         );
     }
 }

@@ -25,14 +25,14 @@ class RegenThumb extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("regen_thumb/one/{image_id}", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+        if ($event->page_matches("regen_thumb/one/{image_id}", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $image = Image::by_id_ex($event->get_iarg('image_id'));
 
             $this->regenerate_thumbnail($image);
 
             $this->theme->display_results($page, $image);
         }
-        if ($event->page_matches("regen_thumb/mass", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+        if ($event->page_matches("regen_thumb/mass", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $tags = Tag::explode(strtolower($event->req_POST('tags')), false);
             $images = Search::find_images(limit: 10000, tags: $tags);
 
@@ -48,7 +48,7 @@ class RegenThumb extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::DELETE_IMAGE)) {
+        if ($user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_button("Regenerate Thumbnail", "regen_thumb/one/{$event->image->id}");
         }
     }
@@ -65,7 +65,7 @@ class RegenThumb extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::DELETE_IMAGE)) {
+        if ($user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_action("bulk_regen", "Regen Thumbnails", "", "", $this->theme->bulk_html());
         }
     }
@@ -76,7 +76,7 @@ class RegenThumb extends Extension
 
         switch ($event->action) {
             case "bulk_regen":
-                if ($user->can(Permissions::DELETE_IMAGE)) {
+                if ($user->can(ImagePermission::DELETE_IMAGE)) {
                     $force = true;
                     if (isset($event->params["bulk_regen_thumb_missing_only"])
                         && $event->params["bulk_regen_thumb_missing_only"] == "true") {

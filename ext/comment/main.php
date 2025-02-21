@@ -189,20 +189,20 @@ class CommentList extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $cache, $config, $database, $user, $page;
-        if ($event->page_matches("comment/add", method: "POST", permission: Permissions::CREATE_COMMENT)) {
+        if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $i_iid = int_escape($event->req_POST('image_id'));
             send_event(new CommentPostingEvent($i_iid, $user, $event->req_POST('comment')));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
         }
-        if ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: Permissions::DELETE_COMMENT)) {
+        if ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: CommentPermission::DELETE_COMMENT)) {
             // FIXME: post, not args
             send_event(new CommentDeletionEvent($event->get_iarg('comment_id')));
             $page->flash("Deleted comment");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(referer_or(make_link("post/view/" . $event->get_iarg('image_id'))));
         }
-        if ($event->page_matches("comment/bulk_delete", method: "POST", permission: Permissions::DELETE_COMMENT)) {
+        if ($event->page_matches("comment/bulk_delete", method: "POST", permission: CommentPermission::DELETE_COMMENT)) {
             $ip = $event->req_POST('ip');
 
             $comment_ids = $database->get_col("
@@ -267,7 +267,7 @@ class CommentList extends Extension
                 }
             }
 
-            $this->theme->display_comment_list($images, $current_page + 1, $total_pages, $user->can(Permissions::CREATE_COMMENT));
+            $this->theme->display_comment_list($images, $current_page + 1, $total_pages, $user->can(CommentPermission::CREATE_COMMENT));
         }
         if ($event->page_matches("comment/beta-search/{search}", paged: true)) {
             $search = $event->get_arg('search');
@@ -322,7 +322,7 @@ class CommentList extends Extension
         $this->theme->display_image_comments(
             $event->image,
             $this->get_comments($event->image->id),
-            $user->can(Permissions::CREATE_COMMENT)
+            $user->can(CommentPermission::CREATE_COMMENT)
         );
     }
 
@@ -519,7 +519,7 @@ class CommentList extends Extension
     {
         global $database, $page;
 
-        if (!$user->can(Permissions::BYPASS_COMMENT_CHECKS)) {
+        if (!$user->can(CommentPermission::BYPASS_COMMENT_CHECKS)) {
             // will raise an exception if anything is wrong
             $this->comment_checks($image_id, $user, $comment);
         }
@@ -545,7 +545,7 @@ class CommentList extends Extension
         global $config, $page;
 
         // basic sanity checks
-        if (!$user->can(Permissions::CREATE_COMMENT)) {
+        if (!$user->can(CommentPermission::CREATE_COMMENT)) {
             throw new CommentPostingException("You do not have permission to add comments");
         } elseif (is_null(Image::by_id($image_id))) {
             throw new CommentPostingException("The image does not exist");

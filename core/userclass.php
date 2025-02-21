@@ -35,16 +35,18 @@ class UserClass
         static::$known_classes[$name] = $this;
     }
 
+    // #[Field(type: "[Permission!]!")]
     /**
      * @return string[]
      */
-    #[Field(type: "[Permission!]!")]
     public function permissions(): array
     {
         $perms = [];
-        foreach ((new \ReflectionClass(Permissions::class))->getConstants() as $k => $v) {
-            if ($this->can($v)) {
-                $perms[] = $v;
+        foreach (get_subclasses_of(PermissionGroup::class) as $class) {
+            foreach ((new \ReflectionClass($class))->getConstants() as $k => $v) {
+                if ($this->can($v)) {
+                    $perms[] = $v;
+                }
             }
         }
         return $perms;
