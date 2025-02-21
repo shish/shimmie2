@@ -80,4 +80,57 @@ class PermManager extends Extension
         // @phpstan-ignore-next-line
         @include_once "data/config/user-classes.conf.php";
     }
+
+    public function onPageRequest(PageRequestEvent $event): void
+    {
+        global $page;
+
+        if ($event->page_matches("perm_manager", method: "GET")) {
+            $permissions = [];
+            foreach (get_subclasses_of(PermissionGroup::class) as $class) {
+                $refl_group = new \ReflectionClass($class);
+                $group = $refl_group->newInstance();
+                assert(is_a($group, PermissionGroup::class));
+                if (!Extension::is_enabled($group::KEY)) {
+                    continue;
+                }
+                foreach ($refl_group->getConstants() as $const => $key) {
+                    $refl_const = $refl_group->getReflectionConstant($const);
+                    if (!$refl_const) {
+                        continue;
+                    }
+                    $attributes = $refl_const->getAttributes(PermissionMeta::class);
+                    if (count($attributes) == 0) {
+                        continue;
+                    }
+                    $meta = $attributes[0]->newInstance();
+                    $permissions[$key] = $meta;
+                }
+            }
+            $this->theme->display_user_classes(
+                $page,
+                UserClass::$known_classes,
+                $permissions
+            );
+        }
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
+    {
+        global $user;
+        if ($event->parent === "system") {
+            if ($user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+                $event->add_nav_link("perm_manager", new Link('perm_manager'), "Permission Manager");
+            }
+        }
+    }
+
+    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
+    {
+        global $user;
+        if ($user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+            $event->add_link("Permission Manager", make_link("perm_manager"), 88);
+        }
+    }
+
 }
