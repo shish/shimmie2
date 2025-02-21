@@ -217,29 +217,6 @@ class UserPage extends Extension
             $page->add_block(new NavBlock());
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
-        if ($event->page_matches("user_admin/classes", method: "GET")) {
-            $permissions = [];
-            foreach (get_subclasses_of(PermissionGroup::class) as $class) {
-                $refl_group = new \ReflectionClass($class);
-                foreach ($refl_group->getConstants() as $const => $key) {
-                    $refl_const = $refl_group->getReflectionConstant($const);
-                    if (!$refl_const) {
-                        continue;
-                    }
-                    $attributes = $refl_const->getAttributes(PermissionMeta::class);
-                    if (count($attributes) == 0) {
-                        continue;
-                    }
-                    $meta = $attributes[0]->newInstance();
-                    $permissions[$key] = $meta;
-                }
-            }
-            $this->theme->display_user_classes(
-                $page,
-                UserClass::$known_classes,
-                $permissions
-            );
-        }
         if ($event->page_matches("user_admin/logout", method: "GET")) {
             // FIXME: security
             $this->page_logout();

@@ -353,20 +353,6 @@ abstract class BaseConfigGroup
     public ?string $title = null;
     public ?int $position = null;
 
-    public static function get_group_for_entry_by_name(string $name): ?BaseConfigGroup
-    {
-        foreach (get_subclasses_of(BaseConfigGroup::class) as $class) {
-            $config = new $class();
-            assert(is_a($config, BaseConfigGroup::class));
-            foreach ((new \ReflectionClass($class))->getConstants() as $const => $value) {
-                if ($value === $name) {
-                    return $config;
-                }
-            }
-        }
-        return null;
-    }
-
     /**
      * @return array<string, ConfigMeta>
      */
@@ -383,7 +369,6 @@ abstract class BaseConfigGroup
             if (count($attributes) == 0) {
                 continue;
             }
-            /** @var ConfigMeta $meta */
             $meta = $attributes[0]->newInstance();
             $fields[$key] = $meta;
         }
@@ -415,14 +400,14 @@ abstract class BaseConfigGroup
         $defaults = [];
         $base = get_called_class();
         foreach (get_subclasses_of($base) as $class) {
-            $refl_config = new \ReflectionClass($class);
-            $config = new $class();
-            assert(is_a($config, $base));
-            if (!Extension::is_enabled($config::KEY)) {
+            $refl_group = new \ReflectionClass($class);
+            $group = $refl_group->newInstance();
+            assert(is_a($group, $base));
+            if (!Extension::is_enabled($group::KEY)) {
                 continue;
             }
-            foreach ($refl_config->getConstants() as $const => $value) {
-                $refl_const = $refl_config->getReflectionConstant($const);
+            foreach ($refl_group->getConstants() as $const => $value) {
+                $refl_const = $refl_group->getReflectionConstant($const);
                 if (!$refl_const) {
                     continue;
                 }
@@ -430,7 +415,6 @@ abstract class BaseConfigGroup
                 if (count($attributes) == 0) {
                     continue;
                 }
-                /** @var ConfigMeta $meta */
                 $meta = $attributes[0]->newInstance();
                 if ($meta->default !== null) {
                     $defaults[$value] = match ($meta->type) {

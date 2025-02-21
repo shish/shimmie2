@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shimmie2;
+
+class PermManagerPermission extends PermissionGroup
+{
+    public const KEY = "perm_manager";
+
+    #[PermissionMeta("Manage user permissions")]
+    public const MANAGE_USER_PERMISSIONS = "manage_user_permissions";
+}

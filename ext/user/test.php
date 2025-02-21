@@ -48,12 +48,6 @@ class UserPageTest extends ShimmiePHPUnitTestCase
         $this->assert_text("demo");
     }
 
-    public function testUserClasses(): void
-    {
-        $this->get_page('user_admin/classes');
-        $this->assert_text("admin");
-    }
-
     public function testCreateOther(): void
     {
         global $page;
