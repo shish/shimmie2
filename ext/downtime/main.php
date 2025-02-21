@@ -19,7 +19,7 @@ class Downtime extends Extension
         global $config, $page, $user;
 
         if ($config->get_bool(DowntimeConfig::DOWNTIME)) {
-            if (!$user->can(Permissions::IGNORE_DOWNTIME) && !$this->is_safe_page($event)) {
+            if (!$user->can(DowntimePermission::IGNORE_DOWNTIME) && !$this->is_safe_page($event)) {
                 $msg = $config->get_string(DowntimeConfig::MESSAGE);
                 $this->theme->display_message($msg);
                 if (!defined("UNITTEST")) {  // hax D:

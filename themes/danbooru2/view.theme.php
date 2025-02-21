@@ -32,7 +32,7 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
         $h_filesize = to_shorthand_int($image->filesize);
 
         global $user;
-        if ($user->can(Permissions::VIEW_IP)) {
+        if ($user->can(IPBanPermission::VIEW_IP)) {
             $h_ownerlink .= " ($h_ip)";
         }
 

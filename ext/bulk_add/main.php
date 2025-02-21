@@ -30,7 +30,7 @@ class BulkAdd extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("bulk_add", method: "POST", permission: Permissions::BULK_ADD)) {
+        if ($event->page_matches("bulk_add", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
             $dir = $event->req_POST('dir');
             shm_set_timeout(null);
             $bae = send_event(new BulkAddEvent($dir));

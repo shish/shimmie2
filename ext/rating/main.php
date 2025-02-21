@@ -156,7 +156,7 @@ class Ratings extends Extension
             $this->theme->get_image_rater_html(
                 $event->image->id,
                 $event->image['rating'],
-                $user->can(Permissions::EDIT_IMAGE_RATING)
+                $user->can(RatingsPermission::EDIT_IMAGE_RATING)
             ),
             80
         );
@@ -166,7 +166,7 @@ class Ratings extends Extension
     {
         global $page, $user;
         if (
-            $user->can(Permissions::EDIT_IMAGE_RATING) && (
+            $user->can(RatingsPermission::EDIT_IMAGE_RATING) && (
                 isset($event->params['rating'])
                 || isset($event->params["rating{$event->slot}"])
             )
@@ -291,7 +291,7 @@ class Ratings extends Extension
                 $old = $event->params["rating_old"];
                 $new = $event->params["rating_new"];
 
-                if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
+                if ($user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
                     $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new" => $new, "old" => $old ]);
                 }
 
@@ -303,7 +303,7 @@ class Ratings extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
+        if ($user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
             $event->add_action("bulk_rate", "Set (R)ating", "r", "", (string)$this->theme->get_selection_rater_html(selected_options: ["?"]));
         }
     }
@@ -317,7 +317,7 @@ class Ratings extends Extension
                 if (!isset($event->params['rating'])) {
                     return;
                 }
-                if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
+                if ($user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
                     $rating = $event->params['rating'];
                     $total = 0;
                     foreach ($event->items as $image) {
@@ -334,7 +334,7 @@ class Ratings extends Extension
     {
         global $user, $page;
 
-        if ($event->page_matches("admin/bulk_rate", method: "POST", permission: Permissions::BULK_EDIT_IMAGE_RATING)) {
+        if ($event->page_matches("admin/bulk_rate", method: "POST", permission: RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
             $n = 0;
             while (true) {
                 $images = Search::find_images($n, 100, Tag::explode($event->req_POST("query")));

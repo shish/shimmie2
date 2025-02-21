@@ -40,7 +40,7 @@ class Artists extends Extension
     {
         global $user;
         $author = $event->get_param("author");
-        if ($user->can(Permissions::EDIT_IMAGE_ARTIST) && $author) {
+        if ($user->can(ArtistsPermission::EDIT_IMAGE_ARTIST) && $author) {
             send_event(new AuthorSetEvent($event->image, $user, $author));
         }
     }
@@ -197,7 +197,7 @@ class Artists extends Extension
             $urls = $this->get_urls($artist['id']);
 
             $userIsLogged = !$user->is_anonymous();
-            $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
+            $userIsAdmin = $user->can(ArtistsPermission::ADMIN);
 
             $images = Search::find_images(limit: 4, tags: Tag::explode($artist['name']));
 
@@ -222,7 +222,7 @@ class Artists extends Extension
             if (!$user->is_anonymous()) {
                 $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
 
-                $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
+                $userIsAdmin = $user->can(ArtistsPermission::ADMIN);
                 $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
             } else {
                 throw new PermissionDenied("You must be registered and logged in to edit an artist.");

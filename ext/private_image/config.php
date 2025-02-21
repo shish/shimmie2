@@ -18,7 +18,7 @@ class PrivateImageUserConfig extends UserConfigGroup
     public const KEY = "private_image";
     public ?string $title = "Private Posts";
 
-    #[ConfigMeta("Mark posts private by default", ConfigType::BOOL, default: false, permission: Permissions::SET_PRIVATE_IMAGE)]
+    #[ConfigMeta("Mark posts private by default", ConfigType::BOOL, default: false, permission: PrivateImagePermission::SET_PRIVATE_IMAGE)]
     public const SET_DEFAULT = "user_private_image_set_default";
 
     #[ConfigMeta("View private posts by default", ConfigType::BOOL, default: true)]

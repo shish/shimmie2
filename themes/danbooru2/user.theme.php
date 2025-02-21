@@ -72,7 +72,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
 
         $email_required = (
             $config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
-            !$user->can(Permissions::CREATE_OTHER_USER)
+            !$user->can(UserAccountsPermission::CREATE_OTHER_USER)
         );
         $email_text = $email_required ? "Email" : "Email (Optional)";
 

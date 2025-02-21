@@ -42,7 +42,7 @@ class ImageIO extends Extension
         $thumb_height = $config->get_int(ThumbnailConfig::HEIGHT, 192);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
-        if ($event->page_matches("image/delete", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+        if ($event->page_matches("image/delete", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $image = Image::by_id(int_escape($event->req_POST('image_id')));
             if ($image) {
                 send_event(new ImageDeletionEvent($image));
@@ -67,7 +67,7 @@ class ImageIO extends Extension
     {
         global $user;
 
-        if ($user->can(Permissions::DELETE_IMAGE)) {
+        if ($user->can(ImagePermission::DELETE_IMAGE)) {
             $form = SHM_FORM("image/delete", form_id: "image_delete_form");
             $form->appendChild(emptyHTML(
                 INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),

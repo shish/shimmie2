@@ -70,7 +70,7 @@ class UserConfig extends Extension
             }
         }
 
-        if ($event->page_matches("user_config", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
+        if ($event->page_matches("user_config", method: "GET", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $blocks = [];
             foreach (get_subclasses_of(UserConfigGroup::class) as $class) {
                 $group = new $class();
@@ -84,13 +84,13 @@ class UserConfig extends Extension
             }
             $this->theme->display_user_config_page($page, $blocks, $user);
         }
-        if ($event->page_matches("user_config/save", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
+        if ($event->page_matches("user_config/save", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $input = validate_input([
                 'id' => 'user_id,exists'
             ]);
             $duser = User::by_id($input['id']);
 
-            if ($user->id != $duser->id && !$user->can(Permissions::CHANGE_OTHER_USER_SETTING)) {
+            if ($user->id != $duser->id && !$user->can(UserAccountsPermission::CHANGE_OTHER_USER_SETTING)) {
                 throw new PermissionDenied("You do not have permission to change other user's settings");
             }
 

@@ -119,7 +119,7 @@ class S3 extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page, $user;
-        if ($event->page_matches("s3/sync/{image_id}", method: "POST", permission: Permissions::DELETE_IMAGE)) {
+        if ($event->page_matches("s3/sync/{image_id}", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $id = $event->get_iarg('image_id');
             $this->sync_post(Image::by_id_ex($id));
             log_info("s3", "Manual resync for >>$id", "File re-sync'ed");
@@ -131,7 +131,7 @@ class S3 extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::DELETE_IMAGE)) {
+        if ($user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_button("CDN Re-Sync", "s3/sync/{$event->image->id}");
         }
     }

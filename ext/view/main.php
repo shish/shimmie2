@@ -59,7 +59,7 @@ class ViewPost extends Extension
         } elseif ($event->page_matches("post/set", method: "POST")) {
             $image_id = int_escape($event->req_POST('image_id'));
             $image = Image::by_id_ex($image_id);
-            if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
+            if (!$image->is_locked() || $user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
                 send_event(new ImageInfoSetEvent($image, 0, only_strings($event->POST)));
                 $page->set_mode(PageMode::REDIRECT);
 

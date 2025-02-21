@@ -21,14 +21,14 @@ class AvatarPost extends AvatarExtension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $user;
-        if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
+        if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("set_avatar/$image_id"));
-        } elseif ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: Permissions::CHANGE_USER_SETTING)) {
+        } elseif ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
             $this->theme->display_avatar_edit_page($page, $image_id);
-        } elseif ($event->page_matches("save_avatar", method: "POST", permission: Permissions::CHANGE_USER_SETTING)) {
+        } elseif ($event->page_matches("save_avatar", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $settings = ConfigSaveEvent::postToSettings($event->POST);
             send_event(new ConfigSaveEvent($user->get_config(), $settings));
             $page->flash("Image set as avatar");
@@ -44,7 +44,7 @@ class AvatarPost extends AvatarExtension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user, $config;
-        if ($user->can(Permissions::CHANGE_USER_SETTING)) {
+        if ($user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $event->add_button("Set Image As Avatar", "set_avatar/".$event->image->id);
         }
     }

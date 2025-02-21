@@ -38,7 +38,7 @@ class Blotter extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::BLOTTER_ADMIN)) {
+            if ($user->can(BlotterPermission::ADMIN)) {
                 $event->add_nav_link("blotter", new Link('blotter/editor'), "Blotter Editor");
             }
         }
@@ -48,7 +48,7 @@ class Blotter extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::BLOTTER_ADMIN)) {
+        if ($user->can(BlotterPermission::ADMIN)) {
             $event->add_link("Blotter Editor", make_link("blotter/editor"));
         }
     }
@@ -56,11 +56,11 @@ class Blotter extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page, $database, $user;
-        if ($event->page_matches("blotter/editor", method: "GET", permission: Permissions::BLOTTER_ADMIN)) {
+        if ($event->page_matches("blotter/editor", method: "GET", permission: BlotterPermission::ADMIN)) {
             $entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
             $this->theme->display_editor($entries);
         }
-        if ($event->page_matches("blotter/add", method: "POST", permission: Permissions::BLOTTER_ADMIN)) {
+        if ($event->page_matches("blotter/add", method: "POST", permission: BlotterPermission::ADMIN)) {
             $entry_text = $event->req_POST('entry_text');
             $important = !is_null($event->get_POST('important'));
             // Now insert into db:
@@ -72,7 +72,7 @@ class Blotter extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blotter/editor"));
         }
-        if ($event->page_matches("blotter/remove", method: "POST", permission: Permissions::BLOTTER_ADMIN)) {
+        if ($event->page_matches("blotter/remove", method: "POST", permission: BlotterPermission::ADMIN)) {
             $id = int_escape($event->req_POST('id'));
             $database->execute("DELETE FROM blotter WHERE id=:id", ["id" => $id]);
             log_info("blotter", "Removed Entry #$id");

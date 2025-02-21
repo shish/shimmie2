@@ -34,7 +34,7 @@ class CronUploader extends Extension
     {
         if ($event->page_matches("cron_upload/run")) {
             $this->process_upload();
-        } elseif ($event->page_matches("cron_upload", permission: Permissions::CRON_RUN)) {
+        } elseif ($event->page_matches("cron_upload", permission: CronUploaderPermission::CRON_RUN)) {
             $this->display_documentation();
         }
     }
@@ -293,7 +293,7 @@ class CronUploader extends Extension
 
         log_info(self::NAME, "Logged in as user {$user->name}");
 
-        if (!$user->can(Permissions::CRON_RUN)) {
+        if (!$user->can(CronUploaderPermission::CRON_RUN)) {
             throw new PermissionDenied("User does not have permission to run cron upload");
         }
 

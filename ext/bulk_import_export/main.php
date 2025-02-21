@@ -10,13 +10,12 @@ class BulkImportExport extends DataHandlerExtension
     public const EXPORT_INFO_FILE_NAME = "export.json";
     protected array $SUPPORTED_MIME = [MimeType::ZIP];
 
-
     public function onDataUpload(DataUploadEvent $event): void
     {
         global $user, $database;
 
         if ($this->supported_mime($event->mime) &&
-            $user->can(Permissions::BULK_IMPORT)) {
+            $user->can(BulkImportExportPermission::BULK_IMPORT)) {
             $zip = new \ZipArchive();
 
             if ($zip->open($event->tmpname) === true) {
@@ -91,7 +90,7 @@ class BulkImportExport extends DataHandlerExtension
     {
         global $user;
 
-        if ($user->can(Permissions::BULK_EXPORT)) {
+        if ($user->can(BulkImportExportPermission::BULK_EXPORT)) {
             $event->add_action(self::EXPORT_ACTION_NAME, "Export");
         }
     }
@@ -100,7 +99,7 @@ class BulkImportExport extends DataHandlerExtension
     {
         global $user, $page;
 
-        if ($user->can(Permissions::BULK_EXPORT) &&
+        if ($user->can(BulkImportExportPermission::BULK_EXPORT) &&
             ($event->action == self::EXPORT_ACTION_NAME)) {
             $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = shm_tempnam("bulk_export");

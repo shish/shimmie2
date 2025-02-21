@@ -34,7 +34,7 @@ class AliasEditorTheme extends Themelet
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Aliases", $html));
 
-        if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
+        if ($user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
         }
     }

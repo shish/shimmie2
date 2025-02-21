@@ -130,7 +130,7 @@ class Upload extends Extension
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::CREATE_IMAGE)) {
+        if ($user->can(ImagePermission::CREATE_IMAGE)) {
             $event->add_nav_link("upload", new Link('upload'), "Upload");
         }
     }
@@ -161,7 +161,7 @@ class Upload extends Extension
     {
         global $cache, $page, $user;
 
-        if ($user->can(Permissions::CREATE_IMAGE)) {
+        if ($user->can(ImagePermission::CREATE_IMAGE)) {
             if ($this->is_full) {
                 $this->theme->display_full($page);
             } else {
@@ -169,13 +169,13 @@ class Upload extends Extension
             }
         }
 
-        if ($event->page_matches("upload", method: "GET", permission: Permissions::CREATE_IMAGE)) {
+        if ($event->page_matches("upload", method: "GET", permission: ImagePermission::CREATE_IMAGE)) {
             if ($this->is_full) {
                 throw new ServerError("Can't upload images: disk nearly full");
             }
             $this->theme->display_page($page);
         }
-        if ($event->page_matches("upload", method: "POST", permission: Permissions::CREATE_IMAGE)) {
+        if ($event->page_matches("upload", method: "POST", permission: ImagePermission::CREATE_IMAGE)) {
             if ($this->is_full) {
                 throw new ServerError("Can't upload images: disk nearly full");
             }

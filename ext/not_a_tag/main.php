@@ -54,7 +54,7 @@ class NotATag extends Extension
     public function onTagSet(TagSetEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::BAN_IMAGE)) {
+        if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->new_tags = $this->strip($event->new_tags);
         } else {
             $this->scan($event->new_tags);
@@ -110,7 +110,7 @@ class NotATag extends Extension
     {
         global $user;
         if ($event->parent === "tags") {
-            if ($user->can(Permissions::BAN_IMAGE)) {
+            if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
                 $event->add_nav_link("untags", new Link('untag/list'), "UnTags");
             }
         }
@@ -119,7 +119,7 @@ class NotATag extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::BAN_IMAGE)) {
+        if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->add_link("UnTags", make_link("untag/list"));
         }
     }
@@ -128,7 +128,7 @@ class NotATag extends Extension
     {
         global $database, $page, $user;
 
-        if ($event->page_matches("untag/add", method: "POST", permission: Permissions::BAN_IMAGE)) {
+        if ($event->page_matches("untag/add", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $input = validate_input(["c_tag" => "string", "c_redirect" => "string"]);
             $database->execute(
                 "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
@@ -137,7 +137,7 @@ class NotATag extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(referer_or(make_link()));
         }
-        if ($event->page_matches("untag/remove", method: "POST", permission: Permissions::BAN_IMAGE)) {
+        if ($event->page_matches("untag/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $input = validate_input(["d_tag" => "string"]);
             $database->execute(
                 "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",

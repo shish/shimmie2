@@ -57,17 +57,17 @@ class ReportImage extends Extension
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
-        if ($event->page_matches("image_report/remove", method: "POST", permission: Permissions::VIEW_IMAGE_REPORT)) {
+        if ($event->page_matches("image_report/remove", method: "POST", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {
             send_event(new RemoveReportedImageEvent(int_escape($event->req_POST('id'))));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("image_report/list"));
         }
-        if ($event->page_matches("image_report/remove_reports_by", method: "POST", permission: Permissions::VIEW_IMAGE_REPORT)) {
+        if ($event->page_matches("image_report/remove_reports_by", method: "POST", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {
             $this->delete_reports_by(int_escape($event->req_POST('user_id')));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }
-        if ($event->page_matches("image_report/list", permission: Permissions::VIEW_IMAGE_REPORT)) {
+        if ($event->page_matches("image_report/list", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {
             $this->theme->display_reported_images($page, $this->get_reported_images());
         }
     }
@@ -94,7 +94,7 @@ class ReportImage extends Extension
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
+        if ($user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
             $this->theme->get_nuller($event->display_user);
         }
     }
@@ -102,7 +102,7 @@ class ReportImage extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::CREATE_IMAGE_REPORT)) {
+        if ($user->can(ReportImagePermission::CREATE_IMAGE_REPORT)) {
             $reps = $this->get_reports($event->image);
             $this->theme->display_image_banner($event->image, $reps);
         }
@@ -113,7 +113,7 @@ class ReportImage extends Extension
     {
         global $user;
         if ($event->parent === "system") {
-            if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
+            if ($user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
                 $count = $this->count_reported_images();
                 $h_count = $count > 0 ? " ($count)" : "";
 
@@ -125,7 +125,7 @@ class ReportImage extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
+        if ($user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
             $count = $this->count_reported_images();
             $h_count = $count > 0 ? " ($count)" : "";
             $event->add_link("Reported Posts$h_count", make_link("image_report/list"));

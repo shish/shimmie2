@@ -105,26 +105,26 @@ class Notes extends Extension
         if ($event->page_matches("note_history/{image_id}", paged: true)) {
             $this->get_image_history($event->get_iarg('image_id'), $event->get_iarg('page_num', 1) - 1);
         }
-        if ($event->page_matches("note/revert/{noteID}/{reviewID}", permission: Permissions::NOTES_EDIT)) {
+        if ($event->page_matches("note/revert/{noteID}/{reviewID}", permission: NotesPermission::EDIT)) {
             $noteID = $event->get_iarg('noteID');
             $reviewID = $event->get_iarg('reviewID');
             $this->revert_history($noteID, $reviewID);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("note/updated"));
         }
-        if ($event->page_matches("note/add_request", permission: Permissions::NOTES_REQUEST)) {
+        if ($event->page_matches("note/add_request", permission: NotesPermission::REQUEST)) {
             $image_id = int_escape($event->req_POST("image_id"));
             $this->add_note_request($image_id);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
-        if ($event->page_matches("note/nuke_requests", permission: Permissions::NOTES_ADMIN)) {
+        if ($event->page_matches("note/nuke_requests", permission: NotesPermission::ADMIN)) {
             $image_id = int_escape($event->req_POST("image_id"));
             $this->nuke_requests($image_id);
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
-        if ($event->page_matches("note/create_note", permission: Permissions::NOTES_CREATE)) {
+        if ($event->page_matches("note/create_note", permission: NotesPermission::CREATE)) {
             $page->set_mode(PageMode::DATA);
             $note_id = $this->add_new_note();
             $page->set_data(\Safe\json_encode([
@@ -132,17 +132,17 @@ class Notes extends Extension
                 'note_id' => $note_id,
             ]));
         }
-        if ($event->page_matches("note/update_note", permission: Permissions::NOTES_EDIT)) {
+        if ($event->page_matches("note/update_note", permission: NotesPermission::EDIT)) {
             $page->set_mode(PageMode::DATA);
             $this->update_note();
             $page->set_data(\Safe\json_encode(['status' => 'success']));
         }
-        if ($event->page_matches("note/delete_note", permission: Permissions::NOTES_ADMIN)) {
+        if ($event->page_matches("note/delete_note", permission: NotesPermission::ADMIN)) {
             $page->set_mode(PageMode::DATA);
             $this->delete_note();
             $page->set_data(\Safe\json_encode(['status' => 'success']));
         }
-        if ($event->page_matches("note/nuke_notes", permission: Permissions::NOTES_ADMIN)) {
+        if ($event->page_matches("note/nuke_notes", permission: NotesPermission::ADMIN)) {
             $image_id = int_escape($event->req_POST("image_id"));
             $this->nuke_notes($image_id);
             $page->set_mode(PageMode::REDIRECT);
@@ -165,7 +165,7 @@ class Notes extends Extension
 
         //display form on image event
         $notes = $this->get_notes($event->image->id);
-        $this->theme->display_note_system($page, $event->image->id, $notes, $user->can(Permissions::NOTES_ADMIN), $user->can(Permissions::NOTES_EDIT));
+        $this->theme->display_note_system($page, $event->image->id, $notes, $user->can(NotesPermission::ADMIN), $user->can(NotesPermission::EDIT));
     }
 
 
@@ -175,15 +175,15 @@ class Notes extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $user;
-        if ($user->can(Permissions::NOTES_CREATE)) {
+        if ($user->can(NotesPermission::CREATE)) {
             $event->add_part($this->theme->note_button($event->image->id));
 
-            if ($user->can(Permissions::NOTES_ADMIN)) {
+            if ($user->can(NotesPermission::ADMIN)) {
                 $event->add_part($this->theme->nuke_notes_button($event->image->id));
                 $event->add_part($this->theme->nuke_requests_button($event->image->id));
             }
         }
-        if ($user->can(Permissions::NOTES_REQUEST)) {
+        if ($user->can(NotesPermission::REQUEST)) {
             $event->add_part($this->theme->request_button($event->image->id));
         }
 
