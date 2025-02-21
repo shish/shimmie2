@@ -214,7 +214,7 @@ class CommonElementsTheme extends Themelet
 
             $row = TR(["class" => $meta->advanced ? "advanced" : ""]);
             $row->appendChild(TH(LABEL(["for" => $key], $meta->label)));
-            switch ($meta->ui_type) {
+            switch ($meta->input) {
                 case "bool":
                     $val = $config->get_bool($key);
                     $input = INPUT(["type" => "checkbox", "id" => $key, "name" => "_config_$key", "checked" => $val]);
@@ -266,7 +266,7 @@ class CommonElementsTheme extends Themelet
                     }
                     break;
                 default:
-                    throw new \Exception("Unknown ui_type: {$meta->ui_type}");
+                    throw new \Exception("Unknown input: {$meta->input}");
             }
             $row->appendChild(TD(
                 $input,

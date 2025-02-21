@@ -116,23 +116,23 @@ enum ConfigType
 readonly class ConfigMeta
 {
     /** @var "bool"|"int"|"shorthand_int"|"text"|"longtext"|"multichoice"|"color" */
-    public string $ui_type;
+    public string $input;
 
     /**
-     * @param "shorthand_int"|"longtext"|"color" $ui_type Override the default UI renderer
+     * @param "shorthand_int"|"longtext"|"color" $input Override the default UI renderer
      * @param array<string, string>|callable-string|null $options A list of key-value pairs, or the name of a function to call to generate pairs
      */
     public function __construct(
         public string $label,
         public ConfigType $type,
-        ?string $ui_type = null,
+        ?string $input = null,
         public mixed $default = null,
         public array|string|null $options = null,
         public ?string $permission = null,
         public ?string $help = null,
         public bool $advanced = false,
     ) {
-        $this->ui_type = $ui_type ?? match($type) {
+        $this->input = $input ?? match($type) {
             ConfigType::BOOL => "bool",
             ConfigType::INT => "int",
             ConfigType::STRING => "text",
