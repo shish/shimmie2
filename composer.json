@@ -82,7 +82,7 @@
         ],
         "format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
         "analyse-ci": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=github",
-        "analyse": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=raw",
+        "analyse": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon --error-format=raw | sed 's/:/ /g; s/ /:/'",
         "test": "phpunit --config tests/phpunit.xml",
         "docker-run": "./.docker/run.php"
     }
