@@ -12,10 +12,10 @@ class UploadConfig extends ConfigGroup
     #[ConfigMeta("Max uploads", ConfigType::INT, default: 3)]
     public const COUNT = "upload_count";
 
-    #[ConfigMeta("Max size per file", ConfigType::INT, ui_type: "shorthand_int", default: 1 * 1024 * 1024)]
+    #[ConfigMeta("Max size per file", ConfigType::INT, input: "shorthand_int", default: 1 * 1024 * 1024)]
     public const SIZE = "upload_size";
 
-    #[ConfigMeta("Minimum free space", ConfigType::INT, ui_type: "shorthand_int", default: 100 * 1024 * 1024, advanced: true)]
+    #[ConfigMeta("Minimum free space", ConfigType::INT, input: "shorthand_int", default: 100 * 1024 * 1024, advanced: true)]
     public const MIN_FREE_SPACE = "upload_min_free_space";
 
     #[ConfigMeta("Upload collisions", ConfigType::STRING, default: 'error', options: [

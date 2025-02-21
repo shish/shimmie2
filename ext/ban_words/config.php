@@ -11,7 +11,7 @@ class BanWordsConfig extends ConfigGroup
     #[ConfigMeta(
         "Banned Phrases",
         ConfigType::STRING,
-        ui_type: "longtext",
+        input: "longtext",
         help: "One per line, lines that start with slashes are treated as regex",
         default: "
 a href=

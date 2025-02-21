@@ -13,7 +13,7 @@ class TermsConfig extends ConfigGroup
         "Message",
         ConfigType::STRING,
         default: "Cookies may be used. Please read our [url=site://wiki/privacy]privacy policy[/url] for more information.\nBy accepting to enter you agree to our [url=site://wiki/rules]rules[/url] and [url=site://wiki/terms_of_service]terms of service[/url].",
-        ui_type: "longtext"
+        input: "longtext"
     )]
     public const MESSAGE = 'terms_message';
 }
