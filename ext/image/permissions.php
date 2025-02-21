@@ -14,6 +14,9 @@ class ImagePermission extends PermissionGroup
     #[PermissionMeta("Delete post")]
     public const DELETE_IMAGE = "delete_image";
 
+    #[PermissionMeta("Delete own post")]
+    public const DELETE_OWN_IMAGE = "delete_own_image";
+
     #[PermissionMeta("Edit files")]
     public const EDIT_FILES = "edit_files";
 }
