@@ -13,14 +13,6 @@ class BoneQuality extends Extension
     /** @var BoneQualityTheme */
     protected Themelet $theme;
 
-    public function onInitExt(InitExtEvent $event): void
-    {
-        global $config;
-        $config->set_default_string(BoneQualityConfig::FAILURE_STRING, "boned");
-        $config->set_default_string(BoneQualityConfig::CHORE_SEARCHES, "tags:<5\ntagme\nartist_request\ntranslation_request");
-        $config->set_default_int(BoneQualityConfig::CHORE_THRESHOLD, 20);
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
@@ -47,14 +39,6 @@ class BoneQuality extends Extension
             $failure_string = $config->get_string(BoneQualityConfig::FAILURE_STRING);
             $this->theme->display_page($page, $failure_string, $boned, $results);
         }
-    }
-
-    public function onSetupBuilding(SetupBuildingEvent $event): void
-    {
-        $sb = $event->panel->create_new_block("Bone Quality");
-        $sb->add_text_option(BoneQualityConfig::FAILURE_STRING, "Failure word: ");
-        $sb->add_longtext_option(BoneQualityConfig::CHORE_SEARCHES, "Chore searches (newline separated): ");
-        $sb->add_int_option(BoneQualityConfig::CHORE_THRESHOLD, "Chore search threshold: ");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void

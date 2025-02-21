@@ -42,13 +42,4 @@ class BoneQualityTest extends ShimmiePHPUnitTestCase
         $this->get_page("bone_quality");
         $this->assert_no_text("Congratulations");
     }
-
-    // reset the config to defaults at the end of every test so
-    // that it doesn't mess with other unrelated tests
-    public function tearDown(): void
-    {
-        global $config;
-        $config->set_int(BoneQualityConfig::CHORE_THRESHOLD, 20);
-        parent::tearDown();
-    }
 }
