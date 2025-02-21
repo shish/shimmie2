@@ -24,7 +24,7 @@ class TranscodeImageConfig extends ConfigGroup
     #[ConfigMeta("Lossy Format Quality", ConfigType::INT, default: 80)]
     public const QUALITY = "transcode_quality";
 
-    #[ConfigMeta("Alpha Conversion Color", ConfigType::STRING, default: Media::DEFAULT_ALPHA_CONVERSION_COLOR, ui_type: "color")]
+    #[ConfigMeta("Alpha Conversion Color", ConfigType::STRING, default: Media::DEFAULT_ALPHA_CONVERSION_COLOR, input: "color")]
     public const ALPHA_COLOR = "transcode_alpha_color";
 
     #[ConfigMeta("MIME checks", ConfigType::BOOL, default: false)]
