@@ -11,6 +11,6 @@ class DowntimeConfig extends ConfigGroup
     #[ConfigMeta("Disable non-admin access", ConfigType::BOOL)]
     public const DOWNTIME = "downtime";
 
-    #[ConfigMeta("Message for users", ConfigType::STRING, ui_type: "longtext")]
+    #[ConfigMeta("Message for users", ConfigType::STRING, input: "longtext")]
     public const MESSAGE = "downtime_message";
 }
