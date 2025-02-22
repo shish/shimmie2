@@ -9,7 +9,7 @@ class PermManager extends Extension
     /** @var PermManagerTheme */
     protected Themelet $theme;
 
-    public function onInitExt(): void
+    public function onInitExt(InitExtEvent $event): void
     {
         $_all_false = [];
         $_all_true = [];
@@ -25,8 +25,6 @@ class PermManager extends Extension
         $_all_true[UserAccountsPermission::HELLBANNED] = false;
         new UserClass("base", null, $_all_false);
         new UserClass("admin", null, $_all_true);
-        unset($_all_true);
-        unset($_all_false);
 
         // Ghost users can log in and do read-only stuff
         // with their own account, but no writing
