@@ -24,9 +24,9 @@ class ResizeConfig extends ConfigGroup
     #[ConfigMeta("Resize on upload", ConfigType::BOOL, default: false)]
     public const UPLOAD = 'resize_upload';
 
-    #[ConfigMeta("Default Width (px)", ConfigType::INT, default: 0)]
+    #[ConfigMeta("Default width (px)", ConfigType::INT, default: 0)]
     public const DEFAULT_WIDTH = 'resize_default_width';
 
-    #[ConfigMeta("Default Height (px)", ConfigType::INT, default: 0)]
+    #[ConfigMeta("Default height (px)", ConfigType::INT, default: 0)]
     public const DEFAULT_HEIGHT = 'resize_default_height';
 }

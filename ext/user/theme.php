@@ -283,7 +283,7 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type" => 'password', "name" => 'pass1', "autocomplete" => 'new-password']))
                     ),
                     TR(
-                        TH("Repeat Password"),
+                        TH("Repeat password"),
                         TD(INPUT(["type" => 'password', "name" => 'pass2', "autocomplete" => 'new-password']))
                     ),
                 ),
