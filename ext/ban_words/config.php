@@ -9,7 +9,7 @@ class BanWordsConfig extends ConfigGroup
     public const KEY = "ban_words";
 
     #[ConfigMeta(
-        "Banned Phrases",
+        "Banned phrases",
         ConfigType::STRING,
         input: "longtext",
         help: "One per line, lines that start with slashes are treated as regex",

@@ -21,10 +21,10 @@ class TranscodeImageConfig extends ConfigGroup
     #[ConfigMeta("Engine", ConfigType::STRING, default: 'gd', options: ["GD" => "gd", "ImageMagick" => "convert"])]
     public const ENGINE = "transcode_engine";
 
-    #[ConfigMeta("Lossy Format Quality", ConfigType::INT, default: 80)]
+    #[ConfigMeta("Lossy format quality", ConfigType::INT, default: 80)]
     public const QUALITY = "transcode_quality";
 
-    #[ConfigMeta("Alpha Conversion Color", ConfigType::STRING, default: Media::DEFAULT_ALPHA_CONVERSION_COLOR, input: "color")]
+    #[ConfigMeta("Alpha conversion color", ConfigType::STRING, default: Media::DEFAULT_ALPHA_CONVERSION_COLOR, input: "color")]
     public const ALPHA_COLOR = "transcode_alpha_color";
 
     #[ConfigMeta("MIME checks", ConfigType::BOOL, default: false)]
