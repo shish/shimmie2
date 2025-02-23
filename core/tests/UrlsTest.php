@@ -63,12 +63,6 @@ class UrlsTest extends TestCase
                 make_link("foo")
             );
 
-            // remove leading slash from path
-            $this->assertEquals(
-                $nice_urls ? "/test/foo" : "/test/index.php?q=foo",
-                make_link("/foo")
-            );
-
             // query
             $this->assertEquals(
                 $nice_urls ? "/test/foo?a=1&b=2" : "/test/index.php?q=foo&a=1&b=2",
@@ -87,6 +81,20 @@ class UrlsTest extends TestCase
                 make_link("foo", "a=1&b=2", "cake")
             );
         }
+    }
+
+    #[Depends("test_make_link")]
+    public function test_make_link_exception(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        make_link("/foo");
+    }
+
+    #[Depends("test_make_link")]
+    public function test_make_link_double_exception(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        make_link(make_link("foo"));
     }
 
     #[Depends("test_make_link")]
