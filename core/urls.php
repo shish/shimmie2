@@ -49,9 +49,11 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
     global $config;
 
     if (is_null($page)) {
-        $page = $config->get_string(SetupConfig::MAIN_PAGE);
+        $page = trim($config->get_string(SetupConfig::MAIN_PAGE), "/");
     }
-    $page = trim($page, "/");
+    if (str_starts_with($page, "/")) {
+        throw new \InvalidArgumentException("make_link($page): page cannot start with a slash");
+    }
 
     $parts = [];
     $install_dir = get_base_href();
