@@ -80,7 +80,7 @@ class ImageViewCounter extends Extension
 
         if ($config->get_bool("image_viewcounter_installed")) {
             $this->set_version("ext_image_view_counter", 1);
-            $config->delete("image_viewcounter_installed");
+            $config->set_bool("image_viewcounter_installed", false);
         }
         if ($this->get_version("ext_image_view_counter") < 1) {
             $database->create_table("image_views", "
