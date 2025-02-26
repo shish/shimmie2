@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use PHPUnit\Framework\TestCase;
-
 require_once "core/page.php";
 
-class PageTest extends TestCase
+class PageTest extends ShimmiePHPUnitTestCase
 {
     public function test_page(): void
     {
@@ -57,7 +55,19 @@ class PageTest extends TestCase
     {
         // the default theme doesn't send this, so let's have
         // a random test manually
+
+        $this->log_in_as_admin(); // show the most links
+
         $e = send_event(new PageSubNavBuildingEvent("system"));
         $this->assertGreaterThan(0, count($e->links));
+        foreach ($e->links as $link) {
+            $link->link->make_link();
+        }
+
+        $e = send_event(new PageSubNavBuildingEvent("posts"));
+        $this->assertGreaterThan(0, count($e->links));
+        foreach ($e->links as $link) {
+            $link->link->make_link();
+        }
     }
 }
