@@ -39,7 +39,7 @@ class Blotter extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(BlotterPermission::ADMIN)) {
-                $event->add_nav_link("blotter", new Link('blotter/editor'), "Blotter Editor");
+                $event->add_nav_link("blotter", make_link('blotter/editor'), "Blotter Editor");
             }
         }
     }

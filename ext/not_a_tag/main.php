@@ -111,7 +111,7 @@ class NotATag extends Extension
         global $user;
         if ($event->parent === "tags") {
             if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
-                $event->add_nav_link("untags", new Link('untag/list'), "UnTags");
+                $event->add_nav_link("untags", make_link('untag/list'), "UnTags");
             }
         }
     }

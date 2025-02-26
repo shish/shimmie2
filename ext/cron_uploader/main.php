@@ -22,7 +22,7 @@ class CronUploader extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "system") {
-            $event->add_nav_link("cron_docs", new Link('cron_upload'), "Cron Upload");
+            $event->add_nav_link("cron_docs", make_link('cron_upload'), "Cron Upload");
         }
     }
 

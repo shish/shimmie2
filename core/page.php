@@ -689,7 +689,7 @@ class PageNavBuildingEvent extends Event
     /** @var NavLink[] */
     public array $links = [];
 
-    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50): void
+    public function add_nav_link(string $name, string $link, string $desc, ?bool $active = null, int $order = 50): void
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
     }
@@ -708,7 +708,7 @@ class PageSubNavBuildingEvent extends Event
         $this->parent = $parent;
     }
 
-    public function add_nav_link(string $name, Link $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50): void
+    public function add_nav_link(string $name, string $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50): void
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
     }
@@ -717,12 +717,12 @@ class PageSubNavBuildingEvent extends Event
 class NavLink
 {
     public string $name;
-    public Link $link;
+    public string $link;
     public string|HTMLElement $description;
     public int $order;
     public bool $active = false;
 
-    public function __construct(string $name, Link $link, string|HTMLElement $description, ?bool $active = null, int $order = 50)
+    public function __construct(string $name, string $link, string|HTMLElement $description, ?bool $active = null, int $order = 50)
     {
         global $config;
 
@@ -736,15 +736,15 @@ class NavLink
                 // This indicates the front page, so we check what's set as the front page
                 $front_page = trim($config->get_string(SetupConfig::FRONT_PAGE), "/");
 
-                if ($front_page === $link->page) {
+                if ($front_page === $link) {
                     $this->active = true;
                 } else {
-                    $this->active = self::is_active([$link->page], $front_page);
+                    $this->active = self::is_active([$link], $front_page);
                 }
-            } elseif ($query === $link->page) {
+            } elseif ($query === $link) {
                 $this->active = true;
             } else {
-                $this->active = self::is_active([$link->page]);
+                $this->active = self::is_active([$link]);
             }
         } else {
             $this->active = $active;

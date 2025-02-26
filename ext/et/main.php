@@ -29,7 +29,7 @@ class ET extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(ETPermission::VIEW_SYSINFO)) {
-                $event->add_nav_link("system_info", new Link('system_info'), "System Info", null, 10);
+                $event->add_nav_link("system_info", make_link('system_info'), "System Info", null, 10);
             }
         }
     }

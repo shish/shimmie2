@@ -352,9 +352,9 @@ class UserPage extends Extension
     {
         global $user;
         if ($user->is_anonymous()) {
-            $event->add_nav_link("user", new Link('user_admin/login'), "Account", null, 10);
+            $event->add_nav_link("user", make_link('user_admin/login'), "Account", null, 10);
         } else {
-            $event->add_nav_link("user", new Link('user'), "Account", null, 10);
+            $event->add_nav_link("user", make_link('user'), "Account", null, 10);
         }
     }
 
@@ -396,12 +396,12 @@ class UserPage extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
-                $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
+                $event->add_nav_link("user_admin", make_link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
             }
         }
 
         if ($event->parent === "user" && !$user->is_anonymous()) {
-            $event->add_nav_link("logout", new Link('user_admin/logout'), "Log Out", false, 90);
+            $event->add_nav_link("logout", make_link('user_admin/logout'), "Log Out", false, 90);
         }
     }
 

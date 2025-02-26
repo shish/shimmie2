@@ -50,7 +50,7 @@ class RandomList extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
-            $event->add_nav_link("posts_random", new Link('random'), "Shuffle");
+            $event->add_nav_link("posts_random", make_link('random'), "Shuffle");
         }
     }
 }

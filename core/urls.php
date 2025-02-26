@@ -4,23 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Link
-{
-    public string $page;
-    public ?string $query;
-
-    public function __construct(string $page, ?string $query = null)
-    {
-        $this->page = $page;
-        $this->query = $query;
-    }
-
-    public function make_link(): string
-    {
-        return make_link($this->page, $this->query);
-    }
-}
-
 /**
  * Build a link to a search page for given terms,
  * with all the appropriate escaping

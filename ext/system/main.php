@@ -15,12 +15,12 @@ class System extends Extension
             usort($e->links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
             $link = $e->links[0]->link;
 
-            $page->set_redirect($link->make_link());
+            $page->set_redirect($link);
             $page->set_mode(PageMode::REDIRECT);
         }
     }
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link("system", new Link('system'), "System");
+        $event->add_nav_link("system", make_link('system'), "System");
     }
 }
