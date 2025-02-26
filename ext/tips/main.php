@@ -94,7 +94,7 @@ class Tips extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(TipsPermission::ADMIN)) {
-                $event->add_nav_link("tips", new Link('tips/list'), "Tips Editor");
+                $event->add_nav_link("tips", make_link('tips/list'), "Tips Editor");
             }
         }
     }
