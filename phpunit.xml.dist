@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.3/phpunit.xsd"
-         bootstrap="../tests/bootstrap.php"
-         cacheDirectory="../data/phpunit.cache"
+         bootstrap="tests/bootstrap.php"
+         cacheDirectory="data/phpunit.cache"
          colors="true"
          executionOrder="depends,defects"
          shortenArraysForExportThreshold="10"
@@ -14,17 +14,17 @@
   <coverage/>
   <testsuites>
     <testsuite name="core">
-      <directory suffix="Test.php">../core/</directory>
+      <directory suffix="Test.php">core/</directory>
     </testsuite>
     <testsuite name="ext">
-      <directory suffix="test.php">../ext/</directory>
+      <directory suffix="test.php">ext/</directory>
     </testsuite>
   </testsuites>
   <source>
     <include>
-      <directory suffix=".php">../core/</directory>
-      <directory suffix=".php">../ext/</directory>
-      <directory suffix=".php">../themes/</directory>
+      <directory suffix=".php">core/</directory>
+      <directory suffix=".php">ext/</directory>
+      <directory suffix=".php">themes/</directory>
     </include>
   </source>
 </phpunit>
