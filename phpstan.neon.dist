@@ -1,10 +1,10 @@
 parameters:
   level: 8
   paths:
-    - ../core
-    - ../ext
-    - ../tests
-    - ../themes
+    - core
+    - ext
+    - tests
+    - themes
   dynamicConstantNames:
     - DEBUG
     - TRUSTED_PROXIES
@@ -16,4 +16,4 @@ parameters:
     -
       message: '#Function .* is unsafe to use.*$#'
 includes:
-  - ../vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
+  - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
