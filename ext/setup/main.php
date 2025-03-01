@@ -82,6 +82,7 @@ class ConfigSaveEvent extends Event
 
 class Setup extends Extension
 {
+    public const KEY = "setup";
     /** @var SetupTheme */
     protected Themelet $theme;
 

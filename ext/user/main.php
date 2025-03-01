@@ -129,6 +129,7 @@ class LoginResult
 
 class UserPage extends Extension
 {
+    public const KEY = "user";
     /** @var UserPageTheme $theme */
     public Themelet $theme;
 

@@ -118,6 +118,7 @@ class Comment
 
 class CommentList extends Extension
 {
+    public const KEY = "comment";
     /** @var CommentListTheme $theme */
     public Themelet $theme;
 

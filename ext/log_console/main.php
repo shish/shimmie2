@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class LogConsole extends Extension
 {
+    public const KEY = "log_console";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

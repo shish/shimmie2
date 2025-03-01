@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class SourceHistory extends Extension
 {
+    public const KEY = "source_history";
     /** @var SourceHistoryTheme */
     protected Themelet $theme;
 

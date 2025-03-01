@@ -42,6 +42,7 @@ class AdminActionEvent extends Event
 
 class AdminPage extends Extension
 {
+    public const KEY = "admin";
     /** @var AdminPageTheme */
     protected Themelet $theme;
 

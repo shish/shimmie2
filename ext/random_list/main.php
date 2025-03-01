@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class RandomList extends Extension
 {
+    public const KEY = "random_list";
     /** @var RandomListTheme */
     protected Themelet $theme;
 

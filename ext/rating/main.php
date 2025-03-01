@@ -71,6 +71,7 @@ class RatingSetEvent extends Event
 
 class Ratings extends Extension
 {
+    public const KEY = "rating";
     /** @var RatingsTheme */
     protected Themelet $theme;
 

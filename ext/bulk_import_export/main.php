@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class BulkImportExport extends DataHandlerExtension
 {
+    public const KEY = "bulk_import_export";
     public const EXPORT_ACTION_NAME = "bulk_export";
     public const EXPORT_INFO_FILE_NAME = "export.json";
     protected array $SUPPORTED_MIME = [MimeType::ZIP];

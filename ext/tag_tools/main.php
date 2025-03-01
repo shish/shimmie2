@@ -7,6 +7,7 @@ namespace Shimmie2;
 
 class TagTools extends Extension
 {
+    public const KEY = "tag_tools";
     /** @var TagToolsTheme */
     protected Themelet $theme;
 

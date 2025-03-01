@@ -8,6 +8,8 @@ require_once "events.php";
 
 class Download extends Extension
 {
+    public const KEY = "download";
+
     public function get_priority(): int
     {
         // Set near the end to give everything else a chance to process

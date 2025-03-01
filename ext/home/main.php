@@ -8,6 +8,7 @@ use MicroHTML\HTMLElement;
 
 class Home extends Extension
 {
+    public const KEY = "home";
     /** @var HomeTheme */
     protected Themelet $theme;
 

@@ -10,6 +10,7 @@ use function MicroHTML\emptyHTML;
 
 class BoneQuality extends Extension
 {
+    public const KEY = "bone_quality";
     /** @var BoneQualityTheme */
     protected Themelet $theme;
 

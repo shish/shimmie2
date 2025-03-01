@@ -34,6 +34,8 @@ class NotATagTable extends Table
 
 class NotATag extends Extension
 {
+    public const KEY = "not_a_tag";
+
     public function get_priority(): int
     {
         return 30;

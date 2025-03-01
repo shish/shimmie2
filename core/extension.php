@@ -21,7 +21,7 @@ use MicroHTML\HTMLElement;
  */
 abstract class Extension
 {
-    public string $key;
+    public const KEY = "";
     protected Themelet $theme;
     public ExtensionInfo $info;
 
@@ -32,8 +32,7 @@ abstract class Extension
     {
         $class = $class ?? get_called_class();
         $this->theme = Themelet::get_for_extension_class($class);
-        $this->info = ExtensionInfo::get_for_extension_class($class);
-        $this->key = $this->info->key;
+        $this->info = ExtensionInfo::get_by_key($class::KEY);
     }
 
     /**
@@ -54,12 +53,16 @@ abstract class Extension
             ExtensionInfo::get_core_extensions(),
             $extras
         ) as $key) {
-            $ext = ExtensionInfo::get_by_key($key);
-            if ($ext === null || !$ext->is_supported()) {
+            try {
+                $ext = ExtensionInfo::get_by_key($key);
+            } catch (\InvalidArgumentException $e) {
+                continue;
+            }
+            if (!$ext->is_supported()) {
                 continue;
             }
             // FIXME: error if one of our dependencies isn't supported
-            self::$enabled_extensions[] = $ext->key;
+            self::$enabled_extensions[] = $ext::KEY;
             if (!empty($ext->dependencies)) {
                 foreach ($ext->dependencies as $dep) {
                     self::$enabled_extensions[] = $dep;
@@ -124,6 +127,8 @@ enum ExtensionCategory: string
 
 abstract class ExtensionInfo
 {
+    public const KEY = "";
+
     // Every credit you get costs us RAM. It stops now.
     public const SHISH_NAME = "Shish";
     public const SHISH_EMAIL = "webmaster@shishnet.org";
@@ -133,8 +138,6 @@ abstract class ExtensionInfo
     public const LICENSE_GPLV2 = "GPLv2";
     public const LICENSE_MIT = "MIT";
     public const LICENSE_WTFPL = "WTFPL";
-
-    public string $key;
 
     public bool $core = false;
     public bool $beta = false;
@@ -178,20 +181,18 @@ abstract class ExtensionInfo
 
     /** @var array<string, ExtensionInfo> */
     private static array $all_info_by_key = [];
-    /** @var array<string, ExtensionInfo> */
-    private static array $all_info_by_class = [];
     /** @var string[] */
     private static array $core_extensions = [];
 
     protected function __construct()
     {
-        assert(!empty($this->key), "key field is required");
-        assert(!empty($this->name), "name field is required for extension $this->key");
+        assert(!empty($this::KEY), "KEY field is required");
+        assert(!empty($this->name), "name field is required for extension " . $this::KEY);
     }
 
     public function is_enabled(): bool
     {
-        return Extension::is_enabled($this->key);
+        return Extension::is_enabled($this::KEY);
     }
 
     private function check_support(): void
@@ -235,24 +236,12 @@ abstract class ExtensionInfo
         return self::$core_extensions;
     }
 
-    public static function get_by_key(string $key): ?ExtensionInfo
+    public static function get_by_key(string $key): ExtensionInfo
     {
         if (array_key_exists($key, self::$all_info_by_key)) {
             return self::$all_info_by_key[$key];
         } else {
-            return null;
-        }
-    }
-
-    public static function get_for_extension_class(string $base): ExtensionInfo
-    {
-        $normal = "{$base}Info";
-
-        if (array_key_exists($normal, self::$all_info_by_class)) {
-            return self::$all_info_by_class[$normal];
-        } else {
-            $infos = print_r(array_keys(self::$all_info_by_class), true);
-            throw new ExtensionNotFound("$normal not found in {$infos}");
+            throw new \InvalidArgumentException("No ExtensionInfo with key '$key'");
         }
     }
 
@@ -261,14 +250,13 @@ abstract class ExtensionInfo
         foreach (get_subclasses_of(ExtensionInfo::class) as $class) {
             $extension_info = new $class();
             assert(is_a($extension_info, ExtensionInfo::class));
-            if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
-                throw new ServerError("Extension Info $class with key $extension_info->key has already been loaded");
+            if (array_key_exists($extension_info::KEY, self::$all_info_by_key)) {
+                throw new ServerError("Extension Info $class with key " . $extension_info::KEY . " has already been loaded");
             }
 
-            self::$all_info_by_key[$extension_info->key] = $extension_info;
-            self::$all_info_by_class[$class] = $extension_info;
+            self::$all_info_by_key[$extension_info::KEY] = $extension_info;
             if ($extension_info->core === true) {
-                self::$core_extensions[] = $extension_info->key;
+                self::$core_extensions[] = $extension_info::KEY;
             }
         }
     }

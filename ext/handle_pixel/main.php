@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class PixelFileHandler extends DataHandlerExtension
 {
+    public const KEY = "handle_pixel";
     protected array $SUPPORTED_MIME = [
         MimeType::JPEG,
         MimeType::GIF,

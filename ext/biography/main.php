@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Biography extends Extension
 {
+    public const KEY = "biography";
     /** @var BiographyTheme */
     protected Themelet $theme;
 

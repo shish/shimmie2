@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class RandomImage extends Extension
 {
+    public const KEY = "random_image";
     /** @var RandomImageTheme */
     protected Themelet $theme;
 

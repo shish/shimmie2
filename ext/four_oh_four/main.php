@@ -8,6 +8,8 @@ use function MicroHTML\rawHTML;
 
 class FourOhFour extends Extension
 {
+    public const KEY = "four_oh_four";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;

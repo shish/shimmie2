@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Blotter extends Extension
 {
+    public const KEY = "blotter";
     /** @var BlotterTheme */
     protected Themelet $theme;
 
