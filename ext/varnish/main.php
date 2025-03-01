@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class VarnishPurger extends Extension
 {
+    public const KEY = "varnish";
+
     private function curl_purge(string $path): void
     {
         // waiting for curl timeout adds ~5 minutes to unit tests

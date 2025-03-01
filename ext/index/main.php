@@ -13,6 +13,7 @@ require_once "events.php";
 
 class Index extends Extension
 {
+    public const KEY = "index";
     /** @var IndexTheme */
     protected Themelet $theme;
 

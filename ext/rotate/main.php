@@ -20,6 +20,7 @@ class ImageRotateException extends SCoreException
  */
 class RotateImage extends Extension
 {
+    public const KEY = "rotate";
     public const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void

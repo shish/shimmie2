@@ -19,6 +19,7 @@ class OwnerSetEvent extends Event
 
 class PostOwner extends Extension
 {
+    public const KEY = "post_owner";
     /** @var PostOwnerTheme */
     protected Themelet $theme;
 

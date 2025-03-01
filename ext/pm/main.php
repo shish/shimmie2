@@ -146,6 +146,7 @@ class PM
 
 class PrivMsg extends Extension
 {
+    public const KEY = "pm";
     /** @var PrivMsgTheme */
     protected Themelet $theme;
 

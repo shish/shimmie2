@@ -8,6 +8,8 @@ use function MicroHTML\{META};
 
 class SiteDescription extends Extension
 {
+    public const KEY = "site_description";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

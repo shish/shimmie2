@@ -58,6 +58,7 @@ class AddAliasException extends UserError
 
 class AliasEditor extends Extension
 {
+    public const KEY = "alias_editor";
     /** @var AliasEditorTheme */
     protected Themelet $theme;
 

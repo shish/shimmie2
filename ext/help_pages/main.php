@@ -48,6 +48,7 @@ class HelpPageBuildingEvent extends PartListBuildingEvent
 
 class HelpPages extends Extension
 {
+    public const KEY = "help_pages";
     /** @var HelpPagesTheme */
     protected Themelet $theme;
     public const SEARCH = "search";

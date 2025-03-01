@@ -27,6 +27,7 @@ class AuthorSetEvent extends Event
  */
 class Artists extends Extension
 {
+    public const KEY = "artists";
     /** @var ArtistsTheme */
     protected Themelet $theme;
 

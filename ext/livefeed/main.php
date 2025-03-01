@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class LiveFeed extends Extension
 {
+    public const KEY = "livefeed";
+
     public function onUserCreation(UserCreationEvent $event): void
     {
         $this->msg("New user created: {$event->username}");

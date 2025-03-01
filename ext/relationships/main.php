@@ -20,6 +20,7 @@ class ImageRelationshipSetEvent extends Event
 
 class Relationships extends Extension
 {
+    public const KEY = "relationships";
     /** @var RelationshipsTheme */
     protected Themelet $theme;
 

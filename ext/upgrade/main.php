@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Upgrade extends Extension
 {
+    public const KEY = "upgrade";
+
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('db-upgrade')

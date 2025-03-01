@@ -38,6 +38,8 @@ function POST(...$args): HTMLElement
 
 class DanbooruApi extends Extension
 {
+    public const KEY = "danbooru_api";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;

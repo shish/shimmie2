@@ -61,6 +61,7 @@ class BulkActionEvent extends Event
 
 class BulkActions extends Extension
 {
+    public const KEY = "bulk_actions";
     /** @var BulkActionsTheme */
     protected Themelet $theme;
 

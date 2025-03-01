@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RegenThumb extends Extension
 {
+    public const KEY = "regen_thumb";
     /** @var RegenThumbTheme */
     protected Themelet $theme;
 

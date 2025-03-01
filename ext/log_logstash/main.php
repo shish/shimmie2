@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class LogLogstash extends Extension
 {
+    public const KEY = "log_logstash";
+
     public function onLog(LogEvent $event): void
     {
         global $user;

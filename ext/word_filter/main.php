@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class WordFilter extends Extension
 {
+    public const KEY = "word_filter";
+
     // before emoticon filter
     public function get_priority(): int
     {

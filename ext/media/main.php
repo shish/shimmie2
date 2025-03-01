@@ -25,6 +25,7 @@ class InsufficientMemoryException extends ServerError
 
 class Media extends Extension
 {
+    public const KEY = "media";
     /** @var MediaTheme */
     protected Themelet $theme;
 

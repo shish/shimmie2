@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class RatingsBlur extends Extension
 {
+    public const KEY = "ratings_blur";
     public const NULL_OPTION = "[none]";
 
     // Called from CommonElements::build_thumb()

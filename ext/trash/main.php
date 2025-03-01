@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Trash extends Extension
 {
+    public const KEY = "trash";
     /** @var TrashTheme */
     protected Themelet $theme;
 

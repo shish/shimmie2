@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class AutoComplete extends Extension
 {
+    public const KEY = "autocomplete";
+
     public function get_priority(): int
     {
         return 30;

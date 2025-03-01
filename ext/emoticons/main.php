@@ -9,6 +9,8 @@ namespace Shimmie2;
  */
 class Emoticons extends FormatterExtension
 {
+    public const KEY = "emoticons";
+
     public function format(string $text): string
     {
         $data_href = get_base_href();

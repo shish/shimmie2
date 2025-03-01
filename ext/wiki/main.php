@@ -102,6 +102,7 @@ class WikiPage
 
 class Wiki extends Extension
 {
+    public const KEY = "wiki";
     /** @var WikiTheme */
     protected Themelet $theme;
 

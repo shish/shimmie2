@@ -9,6 +9,7 @@ namespace Shimmie2;
 
 class MP3FileHandler extends DataHandlerExtension
 {
+    public const KEY = "handle_mp3";
     protected array $SUPPORTED_MIME = [MimeType::MP3];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
