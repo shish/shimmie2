@@ -71,6 +71,11 @@
         "ext-xml": "some extensions",
         "ext-gd": "GD-based thumbnailing"
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Shimmie2\\Tests\\": "core/tests/"
+        }
+    },
     "scripts": {
         "check": [
             "@format",
@@ -80,6 +85,7 @@
         "stan": [
             "@analyse"
         ],
+        "xstan": "rm -rf /tmp/phpstan/ && XDEBUG_MODE=debug phpstan --xdebug analyse --memory-limit 1G --error-format=raw | sed 's/:/ /g; s/ /:/'",
         "format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
         "analyse-ci": "phpstan analyse --memory-limit 1G --error-format=github",
         "analyse": "phpstan analyse --memory-limit 1G --error-format=raw | sed 's/:/ /g; s/ /:/'",

@@ -153,6 +153,7 @@ abstract class ExtensionInfo
     public array $conflicts = [];
     public ExtensionVisibility $visibility = ExtensionVisibility::DEFAULT;
     public ExtensionCategory $category = ExtensionCategory::GENERAL;
+    /** @var url-string|null */
     public ?string $link = null;
     public ?string $documentation = null;
 

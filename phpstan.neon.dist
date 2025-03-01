@@ -17,3 +17,8 @@ parameters:
       message: '#Function .* is unsafe to use.*$#'
 includes:
   - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
+services:
+  -
+    class: Shimmie2\Tests\GenericStringTypeNodeResolverExtension
+    tags:
+      - phpstan.phpDoc.typeNodeResolverExtension

@@ -87,6 +87,8 @@ class UrlsTest extends TestCase
     public function test_make_link_exception(): void
     {
         $this->expectException(\InvalidArgumentException::class);
+        // phpstan knows that page-string can't start with a '/'
+        // @phpstan-ignore-next-line
         make_link("/foo");
     }
 
@@ -94,6 +96,8 @@ class UrlsTest extends TestCase
     public function test_make_link_double_exception(): void
     {
         $this->expectException(\InvalidArgumentException::class);
+        // phpstan knows that url-string != page-string
+        // @phpstan-ignore-next-line
         make_link(make_link("foo"));
     }
 
@@ -269,20 +273,20 @@ class UrlsTest extends TestCase
     {
         unset($_SERVER['HTTP_REFERER']);
         $this->assertEquals(
-            "foo",
-            referer_or("foo")
+            "/foo",
+            referer_or("/foo")
         );
 
-        $_SERVER['HTTP_REFERER'] = "cake";
+        $_SERVER['HTTP_REFERER'] = "/cake";
         $this->assertEquals(
-            "cake",
-            referer_or("foo")
+            "/cake",
+            referer_or("/foo")
         );
 
-        $_SERVER['HTTP_REFERER'] = "cake";
+        $_SERVER['HTTP_REFERER'] = "/cake";
         $this->assertEquals(
-            "foo",
-            referer_or("foo", ["cake"])
+            "/foo",
+            referer_or("/foo", ["cake"])
         );
     }
 

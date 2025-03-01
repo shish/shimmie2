@@ -18,6 +18,9 @@ use function MicroHTML\SELECT;
 use function MicroHTML\SPAN;
 use function MicroHTML\{TABLE,THEAD,TFOOT,TR,TH,TD};
 
+/**
+ * @param page-string $target
+ */
 function SHM_FORM(string $target, bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): HTMLElement
 {
     global $user;
@@ -47,6 +50,9 @@ function SHM_FORM(string $target, bool $multipart = false, string $form_id = "",
 }
 
 /**
+ * For when you just want a <form> with default settings and some children
+ *
+ * @param page-string $target
  * @param array<string|HTMLElement|null> $children
  */
 function SHM_SIMPLE_FORM(string $target, ...$children): HTMLElement
@@ -67,6 +73,7 @@ function SHM_SUBMIT(string $text, array $args = []): HTMLElement
 }
 
 /**
+ * @param page-string $href
  * @param array<string, mixed> $args
  */
 function SHM_A(string $href, string|HTMLElement $text, string $id = "", string $class = "", array $args = []): HTMLElement
@@ -92,6 +99,9 @@ function SHM_COMMAND_EXAMPLE(string $ex, string $desc): HTMLElement
     );
 }
 
+/**
+ * @param page-string $target
+ */
 function SHM_USER_FORM(User $duser, string $target, string $title, HTMLElement $body, HTMLElement|string $foot): HTMLElement
 {
     if (is_string($foot)) {
