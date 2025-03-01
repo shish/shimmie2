@@ -181,8 +181,6 @@ abstract class ExtensionInfo
 
     /** @var array<string, ExtensionInfo> */
     private static array $all_info_by_key = [];
-    /** @var string[] */
-    private static array $core_extensions = [];
 
     protected function __construct()
     {
@@ -233,7 +231,13 @@ abstract class ExtensionInfo
      */
     public static function get_core_extensions(): array
     {
-        return self::$core_extensions;
+        return array_map(
+            fn ($info) => $info::KEY,
+            array_filter(
+                array_values(self::$all_info_by_key),
+                fn ($info) => $info->core
+            )
+        );
     }
 
     public static function get_by_key(string $key): ExtensionInfo
@@ -255,9 +259,6 @@ abstract class ExtensionInfo
             }
 
             self::$all_info_by_key[$extension_info::KEY] = $extension_info;
-            if ($extension_info->core === true) {
-                self::$core_extensions[] = $extension_info::KEY;
-            }
         }
     }
 }
