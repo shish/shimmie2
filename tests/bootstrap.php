@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 chdir(dirname(dirname(__FILE__)));
-require_once "core/sanitize_php.php";
 require_once "vendor/autoload.php";
 require_once "tests/defines.php";
 require_once "core/sys_config.php";
@@ -29,6 +28,7 @@ if (file_exists("data/test-trace.json")) {
     unlink("data/test-trace.json");
 }
 
+sanitize_php();
 global $cache, $config, $database, $user, $page, $_tracer;
 _set_up_shimmie_environment();
 $tracer_enabled = true;

@@ -8,19 +8,11 @@ namespace Shimmie2;
 * Make sure that shimmie is correctly installed                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-require_once "core/sanitize_php.php";
 require_once "core/polyfills.php";
 
-if (!file_exists("vendor/")) {
-    die_nicely(
-        "Shimmie is unable to find the composer <code>vendor</code> directory.",
-        "
-			<p>To finish installing, you need to run <code>composer install</code>
-			in the shimmie directory (<code>".getcwd()."</code>).</p>
-			<p>(If you don't have composer, <a href='https://getcomposer.org/'>get it here</a>)</p>
-		"
-    );
-}
+sanitize_php();
+version_check("8.2");
+vendor_check();
 
 if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN")) {
     require_once "core/install.php";
