@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class BulkDownload extends Extension
 {
+    public const KEY = "bulk_download";
     private const DOWNLOAD_ACTION_NAME = "bulk_download";
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void

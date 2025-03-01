@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Statistics extends Extension
 {
+    public const KEY = "statistics";
     /** @var StatisticsTheme */
     protected Themelet $theme;
     /** @var String[] */

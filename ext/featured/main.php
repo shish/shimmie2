@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Featured extends Extension
 {
+    public const KEY = "featured";
     /** @var FeaturedTheme */
     protected Themelet $theme;
 

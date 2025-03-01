@@ -8,6 +8,8 @@ use function MicroHTML\LINK;
 
 class BrowserSearch extends Extension
 {
+    public const KEY = "browser_search";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $page;

@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Trash extends Extension
 {
+    public const KEY = "trash";
     /** @var TrashTheme */
     protected Themelet $theme;
 
@@ -75,7 +76,7 @@ class Trash extends Extension
         global $user;
         if ($event->parent == "posts") {
             if ($user->can(TrashPermission::VIEW_TRASH)) {
-                $event->add_nav_link("posts_trash", make_link('post/list/in%3Atrash/1'), "Trash", null, 60);
+                $event->add_nav_link("posts_trash", search_link(['in:trash']), "Trash", null, 60);
             }
         }
     }

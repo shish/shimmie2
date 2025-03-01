@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class UserConfig extends Extension
 {
+    public const KEY = "user_config";
     /** @var UserConfigTheme */
     protected Themelet $theme;
 

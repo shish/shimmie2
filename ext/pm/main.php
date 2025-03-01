@@ -146,6 +146,7 @@ class PM
 
 class PrivMsg extends Extension
 {
+    public const KEY = "pm";
     /** @var PrivMsgTheme */
     protected Themelet $theme;
 
@@ -194,7 +195,7 @@ class PrivMsg extends Extension
             if ($user->can(PrivMsgPermission::READ_PM)) {
                 $count = $this->count_pms($user);
                 $h_count = $count > 0 ? SPAN(["class" => 'unread'], "($count)") : "";
-                $event->add_nav_link("pm", make_link('user#private-messages'), emptyHTML("Private Messages", $h_count));
+                $event->add_nav_link("pm", make_link('user', fragment: 'private-messages'), emptyHTML("Private Messages", $h_count));
             }
         }
     }
@@ -205,7 +206,7 @@ class PrivMsg extends Extension
         if ($user->can(PrivMsgPermission::READ_PM)) {
             $count = $this->count_pms($user);
             $h_count = $count > 0 ? SPAN(["class" => 'unread'], "($count)") : "";
-            $event->add_link(emptyHTML("Private Messages", $h_count), make_link("user", null, "private-messages"), 10);
+            $event->add_link(emptyHTML("Private Messages", $h_count), make_link("user", fragment: "private-messages"), 10);
         }
     }
 

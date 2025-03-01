@@ -8,6 +8,8 @@ use function MicroHTML\rawHTML;
 
 class CustomHtmlHeaders extends Extension
 {
+    public const KEY = "custom_html_headers";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

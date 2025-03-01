@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class Eokm extends Extension
 {
+    public const KEY = "eokm";
+
     public function get_priority(): int
     {
         return 40;

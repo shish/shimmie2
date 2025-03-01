@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class System extends Extension
 {
+    public const KEY = "system";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $page;

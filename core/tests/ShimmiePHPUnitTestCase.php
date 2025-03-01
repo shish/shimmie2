@@ -33,7 +33,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $_tracer->begin("setUp");
         $class = str_replace("Test", "", get_class($this));
         try {
-            if (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
+            if (defined("$class::KEY") && !ExtensionInfo::get_by_key($class::KEY)->is_supported()) {
                 $this->markTestSkipped("$class not supported with this database");
             }
         } catch (ExtensionNotFound $e) {

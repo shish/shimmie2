@@ -6,4 +6,5 @@ namespace Shimmie2;
 
 class SpeedHax extends Extension
 {
+    public const KEY = "speed_hax";
 }

@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class LinkImage extends Extension
 {
+    public const KEY = "link_image";
     /** @var LinkImageTheme */
     protected Themelet $theme;
 

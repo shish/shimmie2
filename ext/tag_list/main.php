@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class TagList extends Extension
 {
+    public const KEY = "tag_list";
     /** @var TagListTheme */
     protected Themelet $theme;
 

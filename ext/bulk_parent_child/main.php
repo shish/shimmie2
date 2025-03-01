@@ -10,6 +10,7 @@ class BulkParentChildConfig
 
 class BulkParentChild extends Extension
 {
+    public const KEY = "bulk_parent_child";
     private const PARENT_CHILD_ACTION_NAME = "bulk_parent_child";
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void

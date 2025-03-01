@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class PrivateImage extends Extension
 {
+    public const KEY = "private_image";
     /** @var PrivateImageTheme */
     protected Themelet $theme;
 

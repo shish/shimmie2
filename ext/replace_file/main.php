@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class ReplaceFile extends Extension
 {
+    public const KEY = "replace_file";
     /** @var ReplaceFileTheme */
     protected Themelet $theme;
 

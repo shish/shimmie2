@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class ResolutionLimit extends Extension
 {
+    public const KEY = "res_limit";
+
     public function get_priority(): int
     {
         // early, to veto ImageUploadEvent

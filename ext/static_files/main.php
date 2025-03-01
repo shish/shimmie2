@@ -22,6 +22,8 @@ class RobotsBuildingEvent extends Event
 
 class StaticFiles extends Extension
 {
+    public const KEY = "static_files";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;
