@@ -119,6 +119,7 @@ class TagTermParseEvent extends Event
 
 class PostTags extends Extension
 {
+    public const KEY = "post_tags";
     /** @var PostTagsTheme */
     protected Themelet $theme;
 

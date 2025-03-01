@@ -22,6 +22,7 @@ class ExtensionAuthor
 
 class ExtManager extends Extension
 {
+    public const KEY = "ext_manager";
     /** @var ExtManagerTheme */
     protected Themelet $theme;
 
@@ -45,9 +46,7 @@ class ExtManager extends Extension
         if ($event->page_matches("ext_doc/{ext}")) {
             $ext = $event->get_arg('ext');
             $info = ExtensionInfo::get_by_key($ext);
-            if ($info) {
-                $this->theme->display_doc($page, $info);
-            }
+            $this->theme->display_doc($page, $info);
         } elseif ($event->page_matches("ext_doc")) {
             $this->theme->display_table($page, $this->get_extensions(false), false);
         }
@@ -90,7 +89,7 @@ class ExtManager extends Extension
     {
         $extensions = ExtensionInfo::get_all();
         if (!$all) {
-            $extensions = array_filter($extensions, fn ($x) => Extension::is_enabled($x->key));
+            $extensions = array_filter($extensions, fn ($x) => Extension::is_enabled($x::KEY));
         }
         usort($extensions, function ($a, $b) {
             if ($a->category->name !== $b->category->name) {

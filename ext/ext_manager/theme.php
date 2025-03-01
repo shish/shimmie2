@@ -66,23 +66,23 @@ class ExtManagerTheme extends Themelet
                 ["data-ext" => $extension->name],
                 $editable ? TD(INPUT([
                     "type" => 'checkbox',
-                    "name" => "ext_{$extension->key}",
-                    "id" => "ext_{$extension->key}",
+                    "name" => "ext_" . $extension::KEY,
+                    "id" => "ext_" . $extension::KEY,
                     "checked" => ($extension->is_enabled() === true),
                     "disabled" => ($extension->is_supported() === false || $extension->core === true)
                 ])) : null,
                 TD(LABEL(
-                    ["for" => "ext_{$extension->key}"],
+                    ["for" => "ext_" . $extension::KEY],
                     (
                         ($extension->beta === true ? "[BETA] " : "").
-                        (empty($extension->name) ? $extension->key : $extension->name)
+                        (empty($extension->name) ? $extension::KEY : $extension->name)
                     )
                 )),
                 TD(
                     // TODO: A proper "docs" symbol would be preferred here.
                     $extension->documentation ?
                         A(
-                            ["href" => make_link("ext_doc/" . url_escape($extension->key))],
+                            ["href" => make_link("ext_doc/" . url_escape($extension::KEY))],
                             IMG(["src" => 'ext/ext_manager/baseline_open_in_new_black_18dp.png'])
                         ) :
                         null
@@ -101,7 +101,7 @@ class ExtManagerTheme extends Themelet
                 if ($extension->visibility === ExtensionVisibility::HIDDEN && !$extension->core) {
                     $form->appendChild(INPUT([
                         "type" => 'hidden',
-                        "name" => "ext_{$extension->key}",
+                        "name" => "ext_" . $extension::KEY,
                         "value" => ($extension->is_enabled() === true) ? "on" : "off"
                     ]));
                 }

@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BulkAddCSV extends Extension
 {
+    public const KEY = "bulk_add_csv";
     /** @var BulkAddCSVTheme */
     protected Themelet $theme;
 

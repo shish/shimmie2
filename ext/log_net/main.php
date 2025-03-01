@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class LogNet extends Extension
 {
+    public const KEY = "log_net";
     private int $count = 0;
 
     public function onLog(LogEvent $event): void

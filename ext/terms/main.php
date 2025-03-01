@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Terms extends Extension
 {
+    public const KEY = "terms";
     /** @var TermsTheme */
     protected Themelet $theme;
 

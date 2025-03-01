@@ -14,6 +14,7 @@ Todo:
 */
 class Forum extends Extension
 {
+    public const KEY = "forum";
     /** @var ForumTheme */
     protected Themelet $theme;
 

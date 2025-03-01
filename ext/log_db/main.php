@@ -203,6 +203,8 @@ class LogTable extends Table
 
 class LogDatabase extends Extension
 {
+    public const KEY = "log_db";
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

@@ -111,6 +111,7 @@ function _image_to_id(Image $image): int
 
 class Pools extends Extension
 {
+    public const KEY = "pools";
     /** @var PoolsTheme */
     protected Themelet $theme;
 

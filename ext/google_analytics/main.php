@@ -8,6 +8,8 @@ use function MicroHTML\SCRIPT;
 
 class GoogleAnalytics extends Extension
 {
+    public const KEY = "google_analytics";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $page;

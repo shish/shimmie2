@@ -62,6 +62,7 @@ class AddAutoTagException extends SCoreException
 
 class AutoTagger extends Extension
 {
+    public const KEY = "auto_tagger";
     /** @var AutoTaggerTheme */
     protected Themelet $theme;
 

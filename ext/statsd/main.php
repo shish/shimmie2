@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class StatsDInterface extends Extension
 {
+    public const KEY = "statsd";
     /** @var array<string, string> */
     public static array $stats = [];
 

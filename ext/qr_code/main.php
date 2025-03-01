@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class QRImage extends Extension
 {
+    public const KEY = "qr_code";
     /** @var QRImageTheme */
     protected Themelet $theme;
 

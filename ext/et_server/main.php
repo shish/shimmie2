@@ -8,6 +8,8 @@ use function MicroHTML\{CODE,rawHTML};
 
 class ETServer extends Extension
 {
+    public const KEY = "et_server";
+
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database, $page, $user;

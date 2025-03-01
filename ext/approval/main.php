@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class Approval extends Extension
 {
+    public const KEY = "approval";
+
     /** @var ApprovalTheme */
     protected Themelet $theme;
 

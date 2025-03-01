@@ -9,6 +9,7 @@ namespace Shimmie2;
  */
 class EmoticonList extends Extension
 {
+    public const KEY = "emoticons_list";
     /** @var EmoticonListTheme */
     protected Themelet $theme;
 

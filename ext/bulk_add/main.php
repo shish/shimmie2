@@ -24,6 +24,7 @@ class BulkAddEvent extends Event
 
 class BulkAdd extends Extension
 {
+    public const KEY = "bulk_add";
     /** @var BulkAddTheme */
     protected Themelet $theme;
 

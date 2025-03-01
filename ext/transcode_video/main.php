@@ -14,6 +14,7 @@ class VideoTranscodeException extends SCoreException
 
 class TranscodeVideo extends Extension
 {
+    public const KEY = "transcode_video";
     /** @var TranscodeVideoTheme */
     protected Themelet $theme;
 

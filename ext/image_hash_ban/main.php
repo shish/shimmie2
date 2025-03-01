@@ -60,6 +60,8 @@ class AddImageHashBanEvent extends Event
 
 class ImageBan extends Extension
 {
+    public const KEY = "image_hash_ban";
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

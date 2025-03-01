@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class LinkScan extends Extension
 {
+    public const KEY = "link_scan";
+
     public function get_priority(): int
     {
         return 10; // be able to intercept post/list

@@ -186,6 +186,7 @@ class _SafeOuroborosTag
 
 class OuroborosAPI extends Extension
 {
+    public const KEY = "ouroboros_api";
     private string $type;
 
     public const HEADER_HTTP_200 = 'OK';

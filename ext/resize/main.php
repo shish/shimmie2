@@ -15,6 +15,7 @@ class ImageResizeException extends ServerError
  */
 class ResizeImage extends Extension
 {
+    public const KEY = "resize";
     /**
      * Needs to be after the data processing extensions
      */

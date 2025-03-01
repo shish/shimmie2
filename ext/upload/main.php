@@ -97,6 +97,7 @@ class UploadSuccess extends UploadResult
  */
 class Upload extends Extension
 {
+    public const KEY = "upload";
     /** @var UploadTheme */
     protected Themelet $theme;
     public bool $is_full;

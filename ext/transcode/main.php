@@ -14,6 +14,7 @@ class ImageTranscodeException extends SCoreException
 
 class TranscodeImage extends Extension
 {
+    public const KEY = "transcode";
     /** @var TranscodeImageTheme */
     protected Themelet $theme;
 

@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class ReverseSearchLinks extends Extension
 {
+    public const KEY = "reverse_search_links";
     /** @var ReverseSearchLinksTheme */
     protected Themelet $theme;
 

@@ -22,6 +22,7 @@ class FavoriteSetEvent extends Event
 
 class Favorites extends Extension
 {
+    public const KEY = "favorites";
     /** @var FavoritesTheme */
     protected Themelet $theme;
 

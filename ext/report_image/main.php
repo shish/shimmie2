@@ -45,6 +45,7 @@ class ImageReport
  */
 class ReportImage extends Extension
 {
+    public const KEY = "report_image";
     /** @var ReportImageTheme */
     protected Themelet $theme;
 
