@@ -27,27 +27,25 @@ function _load_event_listeners(): void
     $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_EVENT_LISTENERS));
     $cache_path = data_path("cache/event_listeners/el.$ver.$key.php");
     if ($speed_hax && file_exists($cache_path)) {
-        require_once($cache_path);
+        $_shm_event_listeners = require_once($cache_path);
     } else {
-        _set_event_listeners();
+        $_shm_event_listeners = _calc_event_listeners();
 
         if ($speed_hax) {
-            _dump_event_listeners($_shm_event_listeners, $cache_path);
+            file_put_contents($cache_path, _dump_event_listeners($_shm_event_listeners));
         }
     }
 }
 
-function _clear_cached_event_listeners(): void
+/**
+ * Check which extensions are installed, supported, and active;
+ * scan them for on<EventName>() functions; return a map of them
+ *
+ * @return array<string, array<int, Extension>> $event_listeners
+ */
+function _calc_event_listeners(): array
 {
-    if (file_exists(data_path("cache/shm_event_listeners.php"))) {
-        unlink(data_path("cache/shm_event_listeners.php"));
-    }
-}
-
-function _set_event_listeners(): void
-{
-    global $_shm_event_listeners;
-    $_shm_event_listeners = [];
+    $event_listeners = [];
 
     foreach (get_subclasses_of(Extension::class) as $class) {
         /** @var Extension $extension */
@@ -62,13 +60,15 @@ function _set_event_listeners(): void
             if (substr($method, 0, 2) == "on") {
                 $event = substr($method, 2) . "Event";
                 $pos = $extension->get_priority() * 100;
-                while (isset($_shm_event_listeners[$event][$pos])) {
+                while (isset($event_listeners[$event][$pos])) {
                     $pos += 1;
                 }
-                $_shm_event_listeners[$event][$pos] = $extension;
+                $event_listeners[$event][$pos] = $extension;
             }
         }
     }
+
+    return $event_listeners;
 }
 
 function _namespaced_class_name(string $class): string
@@ -81,26 +81,30 @@ function _namespaced_class_name(string $class): string
  *
  * @param array<string, array<int, Extension>> $event_listeners
  */
-function _dump_event_listeners(array $event_listeners, string $path): void
+function _dump_event_listeners(array $event_listeners): string
 {
-    $p = "<"."?php\nnamespace Shimmie2;\n";
+    $header = "<"."?php\nnamespace Shimmie2;\n";
 
-    foreach (get_subclasses_of(Extension::class) as $class) {
-        $scn = _namespaced_class_name($class);
-        $p .= "\$$scn = new $scn(); ";
-    }
-
-    $p .= "\$_shm_event_listeners = array(\n";
+    $classes = [];
+    $listeners_str = "return array(\n";
     foreach ($event_listeners as $event => $listeners) {
-        $p .= "\t'$event' => array(\n";
+        $listeners_str .= "\t'$event' => array(\n";
         foreach ($listeners as $id => $listener) {
-            $p .= "\t\t$id => \$"._namespaced_class_name(get_class($listener)).",\n";
+            $class_name = _namespaced_class_name(get_class($listener));
+            $classes[] = $class_name;
+            $listeners_str .= "\t\t$id => \$".$class_name.",\n";
         }
-        $p .= "\t),\n";
+        $listeners_str .= "\t),\n";
     }
-    $p .= ");\n";
+    $listeners_str .= ");\n";
 
-    file_put_contents($path, $p);
+    $classes_str = "";
+    foreach ($classes as $scn) {
+        $classes_str .= "\$$scn = new $scn(); ";
+    }
+    $classes_str .= "\n";
+
+    return $header . $classes_str . $listeners_str;
 }
 
 
