@@ -141,13 +141,14 @@ class Database
         global $_tracer;
         try {
             $_tracer->begin("Savepoint $name");
-            $this->execute("SAVEPOINT $name");
+            // doing string interpolation because bound parameters don't work here
+            $this->execute("SAVEPOINT $name");  // @phpstan-ignore-line
             $ret = $callback();
-            $this->execute("RELEASE SAVEPOINT $name");
+            $this->execute("RELEASE SAVEPOINT $name");  // @phpstan-ignore-line
             $_tracer->end();
             return $ret;
         } catch (\Exception $e) {
-            $this->execute("ROLLBACK TO SAVEPOINT $name");
+            $this->execute("ROLLBACK TO SAVEPOINT $name");  // @phpstan-ignore-line
             $_tracer->end();
             throw $e;
         }
@@ -225,6 +226,7 @@ class Database
     /**
      * Execute an SQL query with no return
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      */
     public function execute(string $query, array $args = []): PDOStatement
@@ -238,6 +240,7 @@ class Database
     /**
      * Execute an SQL query and return a 2D array.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      * @return array<array<string, mixed>>
      */
@@ -252,6 +255,7 @@ class Database
     /**
      * Execute an SQL query and return a iterable object for use with generators.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      */
     public function get_all_iterable(string $query, array $args = []): PDOStatement
@@ -265,6 +269,7 @@ class Database
     /**
      * Execute an SQL query and return a single row.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      * @return array<string, mixed>
      */
@@ -279,6 +284,7 @@ class Database
     /**
      * Execute an SQL query and return the first column of each row.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      * @return list<mixed>
      */
@@ -294,6 +300,7 @@ class Database
     /**
      * Execute an SQL query and return the first column of each row as a single iterable object.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      * @return \Generator<mixed>
      */
@@ -310,6 +317,7 @@ class Database
     /**
      * Execute an SQL query and return the the first column => the second column.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      * @return array<string, mixed>
      */
@@ -325,6 +333,7 @@ class Database
     /**
      * Execute an SQL query and return the the first column => the second column as an iterable object.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      * @return \Generator<string, mixed>
      */
@@ -341,6 +350,7 @@ class Database
     /**
      * Execute an SQL query and return a single value, or null.
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      */
     public function get_one(string $query, array $args = []): mixed
@@ -354,6 +364,7 @@ class Database
     /**
      * Execute an SQL query and returns a bool indicating if any data was returned
      *
+     * @param literal-string $query
      * @param QueryArgs $args
      */
     public function exists(string $query, array $args = []): bool
@@ -390,6 +401,7 @@ class Database
             $this->connect_engine();
         }
         $data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
+        // @phpstan-ignore-next-line
         $this->execute($this->get_engine()->create_table_sql($name, $data));
     }
 
@@ -420,19 +432,19 @@ class Database
             # So we can cast directly from ENUM to BOOLEAN which gives us a
             # column of values 'true' and 'invalid but who cares lol', which
             # we can then UPDATE to be 'true' and 'false'.
-            $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");
-            $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");
+            $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");  // @phpstan-ignore-line
+            $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");  // @phpstan-ignore-line
         }
         if ($d == DatabaseDriverID::SQLITE) {
             # SQLite doesn't care about column types at all, everything is
             # text, so we can in-place replace a char with a bool
-            $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");
+            $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");  // @phpstan-ignore-line
         }
         if ($d == DatabaseDriverID::PGSQL && $include_postgres) {
-            $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");
-            $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");
-            $this->execute("ALTER TABLE $table DROP COLUMN $column");
-            $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");
+            $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");  // @phpstan-ignore-line
+            $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");  // @phpstan-ignore-line
+            $this->execute("ALTER TABLE $table DROP COLUMN $column");  // @phpstan-ignore-line
+            $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");  // @phpstan-ignore-line
         }
     }
 

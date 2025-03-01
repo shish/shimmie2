@@ -10,6 +10,9 @@ use function MicroHTML\{A,B,DIV,joinHTML};
 
 class Danbooru2CommonElementsTheme extends CommonElementsTheme
 {
+    /**
+     * @param ?query-string $query
+     */
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
         if ($total_pages == 0) {
@@ -19,11 +22,17 @@ class Danbooru2CommonElementsTheme extends CommonElementsTheme
         $page->add_block(new Block(null, $body, "main", 90));
     }
 
+    /**
+     * @param ?query-string $query
+     */
     private function gen_page_link(string $base_url, ?string $query, int $page, string $name): HTMLElement
     {
         return A(["href" => make_link("$base_url/$page", $query)], $name);
     }
 
+    /**
+     * @param ?query-string $query
+     */
     private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): HTMLElement
     {
         if ($page == $current_page) {
@@ -34,6 +43,9 @@ class Danbooru2CommonElementsTheme extends CommonElementsTheme
         return $paginator;
     }
 
+    /**
+     * @param ?query-string $query
+     */
     private function build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query): HTMLElement
     {
         $next = $current_page + 1;

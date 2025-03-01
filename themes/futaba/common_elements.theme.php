@@ -9,7 +9,7 @@ use function MicroHTML\rawHTML;
 class FutabaCommonElementsTheme extends CommonElementsTheme
 {
     /**
-     * Add a generic paginator.
+     * @param ?query-string $query
      */
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
@@ -21,7 +21,7 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
     }
 
     /**
-     * Generate a single HTML link.
+     * @param ?query-string $query
      */
     public function futaba_gen_page_link(string $base_url, ?string $query, int $page, string $name): string
     {
@@ -29,6 +29,9 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
         return "[<a href='$link'>{$name}</a>]";
     }
 
+    /**
+     * @param ?query-string $query
+     */
     public function futaba_gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): string
     {
         $paginator = "";
@@ -42,6 +45,9 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
         return $paginator;
     }
 
+    /**
+     * @param ?query-string $query
+     */
     public function futaba_build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query): string
     {
         $next = $current_page + 1;
