@@ -106,6 +106,7 @@ class NumericScoreSetEvent extends Event
 
 class NumericScore extends Extension
 {
+    public const KEY = "numeric_score";
     /** @var NumericScoreTheme */
     protected Themelet $theme;
 

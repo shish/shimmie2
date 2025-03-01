@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class ImageViewCounter extends Extension
 {
+    public const KEY = "image_view_counter";
     /** @var ImageViewCounterTheme */
     protected Themelet $theme;
     private int $view_interval = 3600; # allows views to be added each hour

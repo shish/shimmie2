@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class PermManager extends Extension
 {
+    public const KEY = "perm_manager";
     /** @var PermManagerTheme */
     protected Themelet $theme;
 

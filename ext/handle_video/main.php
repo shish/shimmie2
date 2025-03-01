@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class VideoFileHandler extends DataHandlerExtension
 {
+    public const KEY = "handle_video";
     public const SUPPORTED_MIME = [
         MimeType::ASF,
         MimeType::AVI,

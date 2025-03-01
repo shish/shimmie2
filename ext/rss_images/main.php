@@ -8,6 +8,7 @@ use function MicroHTML\{LINK};
 
 class RSSImages extends Extension
 {
+    public const KEY = "rss_images";
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;

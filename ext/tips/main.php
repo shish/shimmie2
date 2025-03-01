@@ -31,6 +31,7 @@ class DeleteTipEvent extends Event
 
 class Tips extends Extension
 {
+    public const KEY = "tips";
     /** @var TipsTheme */
     protected Themelet $theme;
 

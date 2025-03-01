@@ -15,6 +15,8 @@ use function MicroHTML\{INPUT, emptyHTML, STYLE};
  */
 class ImageIO extends Extension
 {
+    public const KEY = "image";
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config;

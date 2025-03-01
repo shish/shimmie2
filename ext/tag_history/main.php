@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class TagHistory extends Extension
 {
+    public const KEY = "tag_history";
     /** @var TagHistoryTheme */
     protected Themelet $theme;
 

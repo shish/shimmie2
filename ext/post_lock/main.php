@@ -19,6 +19,7 @@ class LockSetEvent extends Event
 
 class PostLock extends Extension
 {
+    public const KEY = "post_lock";
     /** @var PostLockTheme */
     protected Themelet $theme;
 

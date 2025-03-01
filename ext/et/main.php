@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ET extends Extension
 {
+    public const KEY = "et";
     /** @var ETTheme */
     protected Themelet $theme;
 
@@ -62,8 +63,8 @@ class ET extends Extension
         $core_exts = ExtensionInfo::get_core_extensions();
         $extra_exts = [];
         foreach (ExtensionInfo::get_all() as $info) {
-            if ($info->is_enabled() && !in_array($info->key, $core_exts)) {
-                $extra_exts[] = $info->key;
+            if ($info->is_enabled() && !in_array($info::KEY, $core_exts)) {
+                $extra_exts[] = $info::KEY;
             }
         }
 

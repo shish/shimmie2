@@ -8,6 +8,8 @@ use function MicroHTML\LINK;
 
 class RSSComments extends Extension
 {
+    public const KEY = "rss_comments";
+
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;

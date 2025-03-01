@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Filter extends Extension
 {
+    public const KEY = "filter";
     /** @var FilterTheme */
     protected Themelet $theme;
 

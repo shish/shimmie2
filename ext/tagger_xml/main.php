@@ -7,6 +7,8 @@ namespace Shimmie2;
 // Tagger AJAX back-end
 class TaggerXML extends Extension
 {
+    public const KEY = "tagger_xml";
+
     public function get_priority(): int
     {
         return 10;

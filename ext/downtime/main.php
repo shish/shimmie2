@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 class Downtime extends Extension
 {
+    public const KEY = "downtime";
     /** @var DowntimeTheme */
     protected Themelet $theme;
 

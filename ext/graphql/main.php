@@ -73,6 +73,8 @@ function shmFieldResolver(
 
 class GraphQL extends Extension
 {
+    public const KEY = "graphql";
+
     public static function get_schema(): Schema
     {
         global $_tracer;

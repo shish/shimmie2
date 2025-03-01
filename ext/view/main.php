@@ -11,6 +11,7 @@ require_once "events/image_admin_block_building_event.php";
 
 class ViewPost extends Extension
 {
+    public const KEY = "view";
     /** @var ViewPostTheme */
     protected Themelet $theme;
 

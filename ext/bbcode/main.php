@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 class BBCode extends FormatterExtension
 {
+    public const KEY = "bbcode";
+
     public function format(string $text): string
     {
         $text = $this->_format($text);

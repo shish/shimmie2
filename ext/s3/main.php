@@ -14,6 +14,7 @@ require_once "S3.php";
 
 class S3 extends Extension
 {
+    public const KEY = "s3";
     public int $synced = 0;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void

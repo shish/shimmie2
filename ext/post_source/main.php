@@ -19,6 +19,7 @@ class SourceSetEvent extends Event
 
 class PostSource extends Extension
 {
+    public const KEY = "post_source";
     /** @var PostSourceTheme */
     protected Themelet $theme;
 

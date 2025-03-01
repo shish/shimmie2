@@ -81,6 +81,7 @@ class AddIPBanEvent extends Event
 
 class IPBan extends Extension
 {
+    public const KEY = "ipban";
     /** @var IPBanTheme */
     protected Themelet $theme;
 
