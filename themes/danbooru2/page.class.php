@@ -135,11 +135,11 @@ class Danbooru2Page extends Page
         );
     }
 
-    private function navlinks(Link $link, HTMLElement|string $desc, bool $active): HTMLElement
+    private function navlinks(string $link, HTMLElement|string $desc, bool $active): HTMLElement
     {
         return A([
             "class" => $active ? "current-page" : "tab",
-            "href" => $link->make_link(),
+            "href" => $link,
         ], $desc);
     }
 }

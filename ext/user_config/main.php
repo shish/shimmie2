@@ -31,7 +31,7 @@ class UserConfig extends Extension
     {
         global $user;
         if ($event->parent === "user" && !$user->is_anonymous()) {
-            $event->add_nav_link("user_config", new Link('user_config'), "User Options", false, 40);
+            $event->add_nav_link("user_config", make_link('user_config'), "User Options", false, 40);
         }
     }
 

@@ -116,11 +116,11 @@ class LitePage extends Page
         return $html;
     }
 
-    private function navlinks(Link $link, HTMLElement|string $desc, bool $active): HTMLElement
+    private function navlinks(string $link, HTMLElement|string $desc, bool $active): HTMLElement
     {
         return A([
             "class" => $active ? "tab-selected" : "tab",
-            "href" => $link->make_link(),
+            "href" => $link,
         ], $desc);
     }
 }

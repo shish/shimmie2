@@ -60,14 +60,8 @@ class PageTest extends ShimmiePHPUnitTestCase
 
         $e = send_event(new PageSubNavBuildingEvent("system"));
         $this->assertGreaterThan(0, count($e->links));
-        foreach ($e->links as $link) {
-            $link->link->make_link();
-        }
 
         $e = send_event(new PageSubNavBuildingEvent("posts"));
         $this->assertGreaterThan(0, count($e->links));
-        foreach ($e->links as $link) {
-            $link->link->make_link();
-        }
     }
 }
