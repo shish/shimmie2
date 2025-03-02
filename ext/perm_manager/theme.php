@@ -37,7 +37,7 @@ class PermManagerTheme extends Themelet
             $row->appendChild(TH($meta->label));
 
             foreach ($classes as $class) {
-                $opacity = $class->hasOwnPermission($name) ? 1 : 0.2;
+                $opacity = $class->has_own_permission($name) ? 1 : 0.2;
                 if ($class->can($name)) {
                     $cell = TD(["style" => "color: green; opacity: $opacity;"], "✔");
                 } else {

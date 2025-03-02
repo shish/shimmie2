@@ -75,12 +75,12 @@ class UserClass
         }
     }
 
-    public function hasOwnPermission(string $permission): bool
+    public function has_own_permission(string $permission): bool
     {
         return array_key_exists($permission, $this->abilities);
     }
 
-    public function setPermission(string $permission, bool $value): void
+    public function set_permission(string $permission, bool $value): void
     {
         if (!defined("UNITTEST")) {
             throw new ServerError("Cannot set permission '$permission' outside of unit tests.");
