@@ -158,23 +158,27 @@ abstract class ExtensionInfo
 
     /** @var DatabaseDriverID[] which DBs this ext supports (blank for 'all') */
     public array $db_support = [];
-    private ?bool $supported = null;
     private ?string $support_info = null;
 
     public function is_supported(): bool
     {
-        if ($this->supported === null) {
-            $this->check_support();
-            assert(!is_null($this->supported));
-        }
-        return $this->supported;
+        return empty($this->support_info);
     }
 
     public function get_support_info(): string
     {
         if ($this->support_info === null) {
-            $this->check_support();
-            assert(!is_null($this->support_info));
+            global $database;
+            $this->support_info  = "";
+            if (!empty($this->db_support) && !in_array($database->get_driver_id(), $this->db_support)) {
+                $this->support_info .= "Database not supported. ";
+            }
+            if (!empty($this->conflicts)) {
+                $intersects = array_intersect($this->conflicts, Extension::get_enabled_extensions());
+                if (!empty($intersects)) {
+                    $this->support_info .= "Conflicts with other extension(s): " . join(", ", $intersects);
+                }
+            }
         }
         return $this->support_info;
     }
@@ -193,23 +197,6 @@ abstract class ExtensionInfo
     public function is_enabled(): bool
     {
         return Extension::is_enabled($this::KEY);
-    }
-
-    private function check_support(): void
-    {
-        global $database;
-        $this->support_info  = "";
-        if (!empty($this->db_support) && !in_array($database->get_driver_id(), $this->db_support)) {
-            $this->support_info .= "Database not supported. ";
-        }
-        if (!empty($this->conflicts)) {
-            $intersects = array_intersect($this->conflicts, Extension::get_enabled_extensions());
-            if (!empty($intersects)) {
-                $this->support_info .= "Conflicts with other extension(s): " . join(", ", $intersects);
-            }
-        }
-
-        $this->supported = empty($this->support_info);
     }
 
     /**
