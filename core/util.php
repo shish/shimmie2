@@ -644,7 +644,6 @@ function _load_core_files(): void
 
 function _load_extension_files(): void
 {
-    ExtensionInfo::load_all_extension_info();
     Extension::determine_enabled_extensions();
     require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php"));
 }
