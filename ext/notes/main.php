@@ -256,7 +256,7 @@ class Notes extends Extension
                 'enable' => 1,
                 'image_id' => $note['image_id'],
                 'user_id' => $user->id,
-                'user_ip' => get_real_ip(),
+                'user_ip' => Network::get_real_ip(),
                 'x1' => $note['x1'],
                 'y1' => $note['y1'],
                 'height' => $note['height'],
@@ -267,7 +267,7 @@ class Notes extends Extension
 
         $noteID = $database->get_last_insert_id('notes_id_seq');
 
-        log_info("notes", "Note added {$noteID} by {$user->name}");
+        Log::info("notes", "Note added {$noteID} by {$user->name}");
 
         $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id) WHERE id=:id", ['id' => $note['image_id']]);
 
@@ -300,7 +300,7 @@ class Notes extends Extension
 
         $resultID = $database->get_last_insert_id('note_request_id_seq');
 
-        log_info("notes", "Note requested {$resultID} by {$user->name}");
+        Log::info("notes", "Note requested {$resultID} by {$user->name}");
     }
 
     private function update_note(): void
@@ -332,14 +332,14 @@ class Notes extends Extension
 			WHERE image_id = :image_id AND id = :id
 		", ['enable' => 0, 'image_id' => $note["image_id"], 'id' => $note["note_id"]]);
 
-        log_info("notes", "Note deleted {$note["note_id"]} by {$user->name}");
+        Log::info("notes", "Note deleted {$note["note_id"]} by {$user->name}");
     }
 
     private function nuke_notes(int $image_id): void
     {
         global $database, $user;
         $database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id' => $image_id]);
-        log_info("notes", "Notes deleted from {$image_id} by {$user->name}");
+        Log::info("notes", "Notes deleted from {$image_id} by {$user->name}");
     }
 
     private function nuke_requests(int $image_id): void
@@ -348,7 +348,7 @@ class Notes extends Extension
 
         $database->execute("DELETE FROM note_request WHERE image_id = :image_id", ['image_id' => $image_id]);
 
-        log_info("notes", "Requests deleted from {$image_id} by {$user->name}");
+        Log::info("notes", "Requests deleted from {$image_id} by {$user->name}");
     }
 
     private function get_notes_list(int $pageNumber): void
@@ -420,7 +420,7 @@ class Notes extends Extension
                 'review_id' => $reviewID,
                 'image_id' => $imageID,
                 'user_id' => $user->id,
-                'user_ip' => get_real_ip(),
+                'user_ip' => Network::get_real_ip(),
                 'x1' => $noteX1,
                 'y1' => $noteY1,
                 'height' => $noteHeight,

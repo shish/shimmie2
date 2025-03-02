@@ -9,7 +9,7 @@ class XMLSitemapTest extends ShimmiePHPUnitTestCase
     public function testBasic(): void
     {
         // check empty DB
-        @unlink(data_path("cache/sitemap.xml"));
+        @unlink(Filesystem::data_path("cache/sitemap.xml"));
         $page = $this->get_page('sitemap.xml');
         $this->assertEquals(200, $page->code);
 
@@ -17,7 +17,7 @@ class XMLSitemapTest extends ShimmiePHPUnitTestCase
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         // check DB with one image
-        @unlink(data_path("cache/sitemap.xml"));
+        @unlink(Filesystem::data_path("cache/sitemap.xml"));
         $page = $this->get_page('sitemap.xml');
         $this->assertEquals(200, $page->code);
 

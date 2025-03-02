@@ -120,7 +120,7 @@ class IPBan extends Extension
 
         // Check if our current IP is in either of the ban lists
         $active_ban_id = (
-            $this->find_active_ban(get_real_ip(), $ips, $networks)
+            $this->find_active_ban(Network::get_real_ip(), $ips, $networks)
         );
 
         // If an active ban is found, act on it
@@ -220,7 +220,7 @@ class IPBan extends Extension
         $database->execute($sql, ["ip" => $event->ip, "mode" => $event->mode, "reason" => $event->reason, "expires" => $event->expires, "admin_id" => $user->id]);
         $cache->delete("ip_bans");
         $cache->delete("network_bans");
-        log_info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
+        Log::info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
     public function onRemoveIPBan(RemoveIPBanEvent $event): void
@@ -231,7 +231,7 @@ class IPBan extends Extension
             $database->execute("DELETE FROM bans WHERE id = :id", ["id" => $event->id]);
             $cache->delete("ip_bans");
             $cache->delete("network_bans");
-            log_info("ipban", "Removed {$ban['ip']}'s ban");
+            Log::info("ipban", "Removed {$ban['ip']}'s ban");
         }
     }
 
@@ -337,7 +337,7 @@ class IPBan extends Extension
             $active_ban_id = $ips[$remote];
         } else {
             foreach ($networks as $range => $ban_id) {
-                if (ip_in_range($remote, $range)) {
+                if (Network::ip_in_range($remote, $range)) {
                     $active_ban_id = $ban_id;
                 }
             }

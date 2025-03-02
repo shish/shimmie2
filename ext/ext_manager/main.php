@@ -32,7 +32,7 @@ class ExtManager extends Extension
         if ($event->page_matches("ext_manager/set", method: "POST", permission: ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
             if (is_writable("data/config")) {
                 $this->set_things($event->POST);
-                log_warning("ext_manager", "Active extensions changed", "Active extensions changed");
+                Log::warning("ext_manager", "Active extensions changed", "Active extensions changed");
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("ext_manager"));
             } else {

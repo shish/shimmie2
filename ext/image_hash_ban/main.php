@@ -81,7 +81,7 @@ class ImageBan extends Extension
         global $database;
         $row = $database->get_row("SELECT * FROM image_bans WHERE hash = :hash", ["hash" => $event->hash]);
         if ($row) {
-            log_info("image_hash_ban", "Attempted to upload a blocked image ({$event->hash} - {$row['reason']})");
+            Log::info("image_hash_ban", "Attempted to upload a blocked image ({$event->hash} - {$row['reason']})");
             throw new UploadException("Post {$row["hash"]} has been banned, reason: {$row["reason"]}");
         }
     }
@@ -151,7 +151,7 @@ class ImageBan extends Extension
             "INSERT INTO image_bans (hash, reason, date) VALUES (:hash, :reason, now())",
             ["hash" => $event->hash, "reason" => $event->reason]
         );
-        log_info("image_hash_ban", "Banned hash {$event->hash} because '{$event->reason}'");
+        Log::info("image_hash_ban", "Banned hash {$event->hash} because '{$event->reason}'");
     }
 
     public function onRemoveImageHashBan(RemoveImageHashBanEvent $event): void

@@ -19,7 +19,7 @@ class SpeedHaxInfo extends ExtensionInfo
 <br><br>
 <ul>
 <li><code>Don't auto-upgrade database</code>: Database schema upgrades are no longer automatic; you'll need to run <code>php index.php db-upgrade</code> from the CLI each time you update the code.</li>
-<li><code>Cache event listeners</code>: Mapping from Events to Extensions is cached - you'll need to delete <code>data/cache/shm_event_listeners.php</code> after each code change, and after enabling or disabling any extensions.</li>
+<li><code>Cache event listeners</code>: Mapping from Events to Extensions is cached.</li>
 <li><code>Purge cookie on logout</code>: Clears the <code>user</code> cookie when a user logs out, to keep as few versions of content as possible.</li>
 <li><code>List only recent comments</code>: Only comments from the past 24 hours show up in <code>/comment/list</code>.</li>
 <li><code>Fast page limit</code>: We only show the first 500 pages of results for any query, except for the most simple (no tags, or one positive tag). Web crawlers are blocked from creating too many nonsense searches by limiting to 10 pages.</li>

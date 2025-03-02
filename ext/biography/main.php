@@ -30,7 +30,7 @@ class Biography extends Extension
             $duser = User::by_name($event->get_arg("name"));
             if ($user->id == $duser->id || $user->can(UserAccountsPermission::EDIT_USER_INFO)) {
                 $bio = $event->req_POST('biography');
-                log_info("biography", "Set biography to $bio");
+                Log::info("biography", "Set biography to $bio");
                 $duser->get_config()->set_string("biography", $bio);
                 $page->flash("Bio Updated");
                 $page->set_mode(PageMode::REDIRECT);

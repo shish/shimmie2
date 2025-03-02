@@ -94,7 +94,7 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type" => 'email', "name" => 'email', "required" => $email_required]))
                     ),
                     TR(
-                        TD(["colspan" => "2"], rawHTML(captcha_get_html()))
+                        TD(["colspan" => "2"], rawHTML(Captcha::get_html()))
                     ),
                 ),
                 TFOOT(

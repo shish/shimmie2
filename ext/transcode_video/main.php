@@ -99,7 +99,7 @@ class TranscodeVideo extends Extension
                                 $total++;
                             }
                         } catch (\Exception $e) {
-                            log_error("transcode_video", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
+                            Log::error("transcode_video", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
                         }
                     }
                     $page->flash("Transcoded $total items");
@@ -144,7 +144,7 @@ class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item $image->id because its video codec is not known");
         }
 
-        $original_file = warehouse_path(Image::IMAGE_DIR, $image->hash);
+        $original_file = Filesystem::warehouse_path(Image::IMAGE_DIR, $image->hash);
         $tmp_filename = shm_tempnam("transcode_video");
         $tmp_filename = $this->transcode_video($original_file, $image->video_codec, $target_mime, $tmp_filename);
         send_event(new ImageReplaceEvent($image, $tmp_filename));

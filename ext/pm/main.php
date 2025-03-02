@@ -139,7 +139,7 @@ class PM
         if (!$user->can(PrivMsgPermission::SEND_PM)) {
             return false;
         }
-        send_event(new SendPMEvent(new PM($user->id, get_real_ip(), $to_user_id, $subject, $message)));
+        send_event(new SendPMEvent(new PM($user->id, Network::get_real_ip(), $to_user_id, $subject, $message)));
         return true;
     }
 }
@@ -173,7 +173,7 @@ class PrivMsg extends Extension
         }
 
         if ($this->get_version("pm_version") < 2) {
-            log_info("pm", "Adding foreign keys to private messages");
+            Log::info("pm", "Adding foreign keys to private messages");
             $database->execute("delete from private_message where to_id not in (select id from users);");
             $database->execute("delete from private_message where from_id not in (select id from users);");
             $database->execute("ALTER TABLE private_message
@@ -256,7 +256,7 @@ class PrivMsg extends Extension
             } elseif (($pm["to_id"] == $user->id) || $user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
                 $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
                 $cache->delete("pm-count-{$user->id}");
-                log_info("pm", "Deleted PM #$pm_id", "PM deleted");
+                Log::info("pm", "Deleted PM #$pm_id", "PM deleted");
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(referer_or(make_link()));
             }
@@ -266,7 +266,7 @@ class PrivMsg extends Extension
             $from_id = $user->id;
             $subject = $event->req_POST("subject");
             $message = $event->req_POST("message");
-            send_event(new SendPMEvent(new PM($from_id, get_real_ip(), $to_id, $subject, $message)));
+            send_event(new SendPMEvent(new PM($from_id, Network::get_real_ip(), $to_id, $subject, $message)));
             $page->flash("PM sent");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(referer_or(make_link()));
@@ -286,7 +286,7 @@ class PrivMsg extends Extension
             "toid" => $event->pm->to_id, "subject" => $event->pm->subject, "message" => $event->pm->message]
         );
         $cache->delete("pm-count-{$event->pm->to_id}");
-        log_info("pm", "Sent PM to User #{$event->pm->to_id}");
+        Log::info("pm", "Sent PM to User #{$event->pm->to_id}");
     }
 
     private function count_pms(User $user): int

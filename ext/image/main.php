@@ -50,7 +50,7 @@ class ImageIO extends Extension
                 send_event(new ImageDeletionEvent($image));
 
                 if ($config->get_string(ImageConfig::ON_DELETE) === 'next') {
-                    redirect_to_next_image($image, $event->get_GET('search'));
+                    $this->redirect_to_next_image($image, $event->get_GET('search'));
                 } else {
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(referer_or(make_link(), ['post/view']));
@@ -97,7 +97,7 @@ class ImageIO extends Extension
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         send_event(new ThumbnailGenerationEvent($event->image));
-        log_info("image", "Uploaded >>{$event->image->id} ({$event->image->hash})");
+        Log::info("image", "Uploaded >>{$event->image->id} ({$event->image->hash})");
     }
 
     public function onImageDeletion(ImageDeletionEvent $event): void
@@ -131,6 +131,30 @@ class ImageIO extends Extension
             $event->replace('$date', autodate($event->image->posted, false));
         }
         $event->replace("\\n", "\n");
+    }
+
+    private function redirect_to_next_image(Image $image, ?string $search = null): void
+    {
+        global $page;
+
+        if (!is_null($search)) {
+            $search_terms = Tag::explode($search);
+            $query = "search=" . url_escape($search);
+        } else {
+            $search_terms = [];
+            $query = null;
+        }
+
+        $target_image = $image->get_next($search_terms);
+
+        if ($target_image === null) {
+            $redirect_target = referer_or(search_link(), ['post/view']);
+        } else {
+            $redirect_target = make_link("post/view/{$target_image->id}", null, $query);
+        }
+
+        $page->set_mode(PageMode::REDIRECT);
+        $page->set_redirect($redirect_target);
     }
 
     private function can_user_delete_image(User $user, Image $image): bool

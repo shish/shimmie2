@@ -271,7 +271,7 @@ class LogDatabase extends Extension
 				VALUES(now(), :section, :priority, :username, :address, :message)
 			", [
                 "section" => $event->section, "priority" => $event->priority, "username" => $username,
-                "address" => get_real_ip(), "message" => $event->message
+                "address" => Network::get_real_ip(), "message" => $event->message
             ]);
         }
     }

@@ -27,7 +27,7 @@ class SVGFileHandler extends DataHandlerExtension
 
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = \Safe\file_get_contents(warehouse_path(Image::IMAGE_DIR, $hash));
+            $dirtySVG = \Safe\file_get_contents(Filesystem::warehouse_path(Image::IMAGE_DIR, $hash));
             $cleanSVG = $sanitizer->sanitize($dirtySVG);
             $page->set_data($cleanSVG);
         }
@@ -70,13 +70,13 @@ class SVGFileHandler extends DataHandlerExtension
         try {
             // Normally we require imagemagick, but for unit tests we can use a no-op engine
             if (defined('UNITTEST')) {
-                create_image_thumb($image);
+                ThumbnailUtil::create_image_thumb($image);
             } else {
-                create_image_thumb($image, MediaEngine::IMAGICK);
+                ThumbnailUtil::create_image_thumb($image, MediaEngine::IMAGICK);
             }
             return true;
         } catch (MediaException $e) {
-            log_warning("handle_svg", "Could not generate thumbnail. " . $e->getMessage());
+            Log::warning("handle_svg", "Could not generate thumbnail. " . $e->getMessage());
             copy("ext/handle_svg/thumb.jpg", $image->get_thumb_filename());
             return false;
         }

@@ -71,9 +71,30 @@
         "ext-xml": "some extensions",
         "ext-gd": "GD-based thumbnailing"
     },
-    "autoload-dev": {
+    "autoload": {
+        "files": [
+            "core/Util/microhtml.php",
+            "core/Util/polyfills.php",
+            "core/Util/urls.php",
+            "core/Util/util.php"
+        ],
         "psr-4": {
-            "Shimmie2\\Tests\\": "core/tests/"
+            "Shimmie2\\": [
+                "core/",
+                "core/Cache/",
+                "core/Config/",
+                "core/Crud/",
+                "core/Database/",
+                "core/Events/",
+                "core/Exceptions/",
+                "core/Extension/",
+                "core/ImageBoard/",
+                "core/Page/",
+                "core/Search/",
+                "core/Testing/",
+                "core/User/",
+                "core/Util/"
+            ]
         }
     },
     "scripts": {

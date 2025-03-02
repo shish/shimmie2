@@ -104,7 +104,7 @@ class AutoTagger extends Extension
                 $tmp = $_FILES['auto_tag_file']['tmp_name'];
                 $contents = \Safe\file_get_contents($tmp);
                 $count = $this->add_auto_tag_csv($contents);
-                log_info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
+                Log::info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("auto_tag/list"));
             } else {
@@ -136,7 +136,7 @@ class AutoTagger extends Extension
             }
             $this->set_version(AutoTaggerConfig::VERSION, 1);
 
-            log_info(AutoTaggerInfo::KEY, "extension installed");
+            Log::info(AutoTaggerInfo::KEY, "extension installed");
         }
     }
 
@@ -214,7 +214,7 @@ class AutoTagger extends Extension
                 "UPDATE auto_tag set additional_tags=:existing_tags where tag=:tag",
                 ["tag" => $tag, "existing_tags" => Tag::implode($existing_tags)]
             );
-            log_info(
+            Log::info(
                 AutoTaggerInfo::KEY,
                 "Updated auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
@@ -227,7 +227,7 @@ class AutoTagger extends Extension
                 ["tag" => $tag, "additional_tags" => Tag::implode($additional_tags)]
             );
 
-            log_info(
+            Log::info(
                 AutoTaggerInfo::KEY,
                 "Added auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );

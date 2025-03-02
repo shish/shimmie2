@@ -8,6 +8,7 @@ namespace Shimmie2;
 * Make sure that shimmie is correctly installed                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+$_shm_load_start = microtime(true);
 if (!file_exists("vendor/")) {
     die("
         <p>Shimmie is unable to find the composer <code>vendor</code> directory.</p>
@@ -18,14 +19,11 @@ if (!file_exists("vendor/")) {
 }
 require_once "vendor/autoload.php";
 
-require_once "core/polyfills.php";
-
 sanitize_php();
 version_check("8.2");
 
 if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN")) {
-    require_once "core/install.php";
-    install();
+    Installer::install();
     exit;
 }
 
@@ -36,26 +34,25 @@ if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN"))
 
 @include_once "data/config/shimmie.conf.php";
 @include_once "data/config/extensions.conf.php";
-require_once "core/sys_config.php";
-require_once "core/util.php";
-require_once "core/microhtml.php";
 
 global $cache, $config, $database, $user, $page, $_tracer;
 _set_up_shimmie_environment();
 $_tracer = new \EventTracer();
+$_tracer->complete($_shm_load_start * 1000000, (ftime() - $_shm_load_start) * 1000000, "Autoload");
 $_tracer->begin("Bootstrap");
-_load_core_files();
+_load_ext_files();
 // Depends on core files
-$cache = loadCache(CACHE_DSN);
-$database = new Database(DATABASE_DSN);
-// $config depends on extensions (to load config.php files and
+$cache = load_cache(SysConfig::getCacheDsn());
+$database = new Database(SysConfig::getDatabaseDsn());
+// $config depends on _load_ext_files (to load config.php files and
 // calculate defaults) and $cache (to cache config values)
 $config = new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults());
 // theme files depend on $config (theme name is a config value)
 _load_theme_files();
 // $page depends on theme files (to load theme-specific Page class)
 $page = get_theme_class("Page");
-_load_event_listeners();
+// $_shm_event_bus depends on ext/*/main.php being loaded
+$_shm_event_bus = new EventBus();
 $_tracer->end();
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -64,7 +61,7 @@ $_tracer->end();
 
 function main(): int
 {
-    global $cache, $config, $database, $user, $page, $_tracer;
+    global $cache, $config, $database, $user, $page, $_tracer, $_shm_load_start;
 
     try {
         // $_tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
@@ -72,7 +69,7 @@ function main(): int
             $_SERVER["REQUEST_URI"] ?? "No Request",
             [
                 "user" => $_COOKIE["shm_user"] ?? "No User",
-                "ip" => get_real_ip() ?? "No IP",
+                "ip" => Network::get_real_ip(),
                 "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
             ]
         );
@@ -127,16 +124,16 @@ function main(): int
         $exit_code = 1;
     } finally {
         $_tracer->end();
-        if (TRACE_FILE) {
+        if (!is_null(SysConfig::getTraceFile())) {
             if (
                 empty($_SERVER["REQUEST_URI"])
                 || (@$_GET["trace"] == "on")
                 || (
-                    (ftime() - $_shm_load_start) > TRACE_THRESHOLD
+                    (ftime() - $_shm_load_start) > SysConfig::getTraceThreshold()
                     && ($_SERVER["REQUEST_URI"] ?? "") != "/upload"
                 )
             ) {
-                $_tracer->flush(TRACE_FILE);
+                $_tracer->flush(SysConfig::getTraceFile());
             }
         }
     }
