@@ -784,20 +784,6 @@ function version_check(string $min_php): void
     }
 }
 
-function vendor_check(): void
-{
-    if (!file_exists("vendor/")) {
-        die_nicely(
-            "Shimmie is unable to find the composer <code>vendor</code> directory.",
-            "
-			<p>To finish installing, you need to run <code>composer install</code>
-			in the shimmie directory (<code>".getcwd()."</code>).</p>
-			<p>(If you don't have composer, <a href='https://getcomposer.org/'>get it here</a>)</p>
-		"
-        );
-    }
-}
-
 function sanitize_php(): void
 {
     # ini_set('zend.assertions', '1');  // generate assertions
