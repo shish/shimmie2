@@ -742,23 +742,6 @@ function isValidDate(string $date): bool
 ///////////////////////////////////////////////////////////////////////
 // Misc things
 
-/**
- * @param class-string $parent
- * @return class-string[]
- */
-function get_subclasses_of(string $parent): array
-{
-    $result = [];
-    foreach (get_declared_classes() as $class) {
-        $rclass = new \ReflectionClass($class);
-        // @phpstan-ignore-next-line
-        if (!$rclass->isAbstract() && is_subclass_of($class, $parent)) {
-            $result[] = $class;
-        }
-    }
-    return $result;
-}
-
 /*
  * A small number of PHP-sanity things (eg don't silently ignore errors) to
  * be included right at the very start of index.php and tests/bootstrap.php

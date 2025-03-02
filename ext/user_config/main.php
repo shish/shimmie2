@@ -73,9 +73,8 @@ class UserConfig extends Extension
 
         if ($event->page_matches("user_config", method: "GET", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $blocks = [];
-            foreach (get_subclasses_of(UserConfigGroup::class) as $class) {
-                $group = new $class();
-                assert(is_a($group, UserConfigGroup::class));
+            foreach (UserConfigGroup::get_subclasses() as $class) {
+                $group = $class->newInstance();
                 if (Extension::is_enabled($group::KEY)) {
                     $block = $this->theme->config_group_to_block($user->get_config(), $group);
                     if ($block) {

@@ -42,8 +42,8 @@ class UserClass
     public function permissions(): array
     {
         $perms = [];
-        foreach (get_subclasses_of(PermissionGroup::class) as $class) {
-            foreach ((new \ReflectionClass($class))->getConstants() as $k => $v) {
+        foreach (PermissionGroup::get_subclasses() as $class) {
+            foreach ($class->getConstants() as $k => $v) {
                 if ($this->can($v)) {
                     $perms[] = $v;
                 }
