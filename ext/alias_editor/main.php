@@ -100,7 +100,7 @@ class AliasEditor extends Extension
                 $tmp = $_FILES['alias_file']['tmp_name'];
                 $contents = \Safe\file_get_contents($tmp);
                 $this->add_alias_csv($contents);
-                log_info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
+                Log::info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("alias/list"));
             } else {
@@ -133,14 +133,14 @@ class AliasEditor extends Extension
             "INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)",
             ["oldtag" => $event->oldtag, "newtag" => $event->newtag]
         );
-        log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
+        Log::info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
     }
 
     public function onDeleteAlias(DeleteAliasEvent $event): void
     {
         global $database;
         $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $event->oldtag]);
-        log_info("alias_editor", "Deleted alias for {$event->oldtag}", "Deleted alias");
+        Log::info("alias_editor", "Deleted alias for {$event->oldtag}", "Deleted alias");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void

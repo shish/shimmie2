@@ -68,10 +68,10 @@ class CommonElementsTheme extends Themelet
         // TODO: Set up a function for fetching what kind of files are currently thumbnailable
         $mimeArr = array_flip([MimeType::MP3]); //List of thumbless filetypes
         if (!isset($mimeArr[$image->get_mime()])) {
-            $tsize = get_thumbnail_size($image->width, $image->height);
+            $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
         } else {
             //Use max thumbnail size if using thumbless filetype
-            $tsize = get_thumbnail_size($config->get_int(ThumbnailConfig::WIDTH), $config->get_int(ThumbnailConfig::WIDTH));
+            $tsize = ThumbnailUtil::get_thumbnail_size($config->get_int(ThumbnailConfig::WIDTH), $config->get_int(ThumbnailConfig::WIDTH));
         }
 
         $custom_classes = "";

@@ -279,7 +279,7 @@ class CommentListTheme extends Themelet
         global $config;
 
         $hash = CommentList::get_hash();
-        $h_captcha = $config->get_bool(CommentConfig::CAPTCHA) ? captcha_get_html() : "";
+        $h_captcha = $config->get_bool(CommentConfig::CAPTCHA) ? Captcha::get_html() : "";
 
         return DIV(
             ["class" => "comment comment_add"],

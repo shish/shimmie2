@@ -88,7 +88,7 @@ class RSSImages extends Extension
         $next_url = make_link("rss/images/$search".($page_number + 1));
         $next_link = "<atom:link rel=\"next\" href=\"$next_url\" />"; // no end...
 
-        $version = VERSION;
+        $version = SysConfig::getVersion();
         $xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
 <rss version=\"2.0\" xmlns:media=\"http://search.yahoo.com/mrss\" xmlns:atom=\"http://www.w3.org/2005/Atom\">
     <channel>

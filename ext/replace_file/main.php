@@ -34,7 +34,7 @@ class ReplaceFile extends Extension
                 $tmp_filename = shm_tempnam("transload");
                 $url = $event->req_POST("url");
                 assert(!empty($url));
-                fetch_url($url, $tmp_filename);
+                Network::fetch_url($url, $tmp_filename);
                 send_event(new ImageReplaceEvent($image, $tmp_filename));
             } elseif (count($_FILES) > 0) {
                 send_event(new ImageReplaceEvent($image, $_FILES["data"]['tmp_name']));
@@ -69,7 +69,7 @@ class ReplaceFile extends Extension
 
         $image->remove_image_only(); // Actually delete the old image file from disk
 
-        $target = warehouse_path(Image::IMAGE_DIR, $event->new_hash);
+        $target = Filesystem::warehouse_path(Image::IMAGE_DIR, $event->new_hash);
         try {
             \Safe\copy($event->tmp_filename, $target);
         } catch (\Exception $e) {
@@ -86,6 +86,6 @@ class ReplaceFile extends Extension
 
         send_event(new ThumbnailGenerationEvent($image));
 
-        log_info("image", "Replaced >>{$image->id} {$event->old_hash} with {$event->new_hash}");
+        Log::info("image", "Replaced >>{$image->id} {$event->old_hash} with {$event->new_hash}");
     }
 }

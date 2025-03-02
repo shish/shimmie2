@@ -57,9 +57,9 @@ class TagHistory extends Extension
 
         if (empty($old_tags)) {
             /* no old tags, so we are probably adding the image for the first time */
-            log_debug("tag_history", "adding new tag history: [$new_tags]");
+            Log::debug("tag_history", "adding new tag history: [$new_tags]");
         } else {
-            log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
+            Log::debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
         }
 
         $allowed = $config->get_int("history_limit", -1);
@@ -84,7 +84,7 @@ class TagHistory extends Extension
             "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-            ["image_id" => $event->image->id, "tags" => $new_tags, "user_id" => $user->id, "user_ip" => get_real_ip()]
+            ["image_id" => $event->image->id, "tags" => $new_tags, "user_id" => $user->id, "user_ip" => Network::get_real_ip()]
         );
         $entries++;
 
@@ -187,7 +187,7 @@ class TagHistory extends Extension
 
         $image = Image::by_id_ex($stored_image_id);
 
-        log_debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
+        Log::debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
         // all should be ok so we can revert by firing the SetUserTags event.
         send_event(new TagSetEvent($image, Tag::explode($stored_tags)));
 
@@ -217,7 +217,7 @@ class TagHistory extends Extension
         }
 
         if (isset($_POST['revert_date']) && !empty($_POST['revert_date'])) {
-            if (isValidDate($_POST['revert_date'])) {
+            if (is_valid_date($_POST['revert_date'])) {
                 $revert_date = addslashes($_POST['revert_date']); // addslashes is really unnecessary since we just checked if valid, but better safe.
             } else {
                 $this->theme->display_admin_block('Invalid Date');
@@ -324,11 +324,11 @@ class TagHistory extends Extension
         }
 
         if (count($select_code) == 0) {
-            log_error("tag_history", "Tried to mass revert without any conditions");
+            Log::error("tag_history", "Tried to mass revert without any conditions");
             return;
         }
 
-        log_info("tag_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." (".implode(" / ", $select_args).")");
+        Log::info("tag_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." (".implode(" / ", $select_args).")");
 
         // Get all the images that the given IP has changed tags on (within the timeframe) that were last edited by the given IP
         $result = $database->get_col('
@@ -372,13 +372,13 @@ class TagHistory extends Extension
                     continue;
                 }
 
-                log_debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
+                Log::debug("tag_history", 'Reverting tags of >>'.$stored_image_id.' to ['.$stored_tags.']');
                 // all should be ok so we can revert by firing the SetTags event.
                 send_event(new TagSetEvent($image, Tag::explode($stored_tags)));
                 $this->theme->add_status('Reverted Change', 'Reverted >>'.$image_id.' to Tag History #'.$stored_result_id.' ('.$row['tags'].')');
             }
         }
 
-        log_info("tag_history", 'Reverted '.count($result).' edits.');
+        Log::info("tag_history", 'Reverted '.count($result).' edits.');
     }
 }

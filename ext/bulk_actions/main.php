@@ -117,7 +117,7 @@ class BulkActions extends Extension
                 $action = $input->getArgument('action');
                 $query = $input->getArgument('query');
                 $items = $this->yield_search_results($query);
-                log_info("bulk_actions", "Performing $action on $query");
+                Log::info("bulk_actions", "Performing $action on $query");
                 send_event(new BulkActionEvent($action, $items, []));
                 return Command::SUCCESS;
             });

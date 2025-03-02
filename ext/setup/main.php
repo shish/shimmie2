@@ -134,7 +134,7 @@ class Setup extends Extension
                 is_array($value) => $config->set_array($key, $value),
             };
         }
-        log_warning("setup", "Configuration updated");
+        Log::warning("setup", "Configuration updated");
     }
 
     public function onCliGen(CliGenEvent $event): void

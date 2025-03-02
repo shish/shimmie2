@@ -26,7 +26,7 @@ class ImageViewCounter extends Extension
 				WHERE ipaddress=:ipaddress AND timestamp >:lasthour AND image_id =:image_id
 			",
             [
-                "ipaddress" => get_real_ip(),
+                "ipaddress" => Network::get_real_ip(),
                 "lasthour" => time() - $this->view_interval,
                 "image_id" => $imgid
             ]
@@ -47,7 +47,7 @@ class ImageViewCounter extends Extension
                 "image_id" => $imgid,
                 "user_id" => $user->id,
                 "timestamp" => time(),
-                "ipaddress" => get_real_ip(),
+                "ipaddress" => Network::get_real_ip(),
             ]
         );
     }

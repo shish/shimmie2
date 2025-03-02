@@ -78,7 +78,7 @@ class PostTitles extends Extension
     {
         global $database;
         $database->execute("UPDATE images SET title=:title WHERE id=:id", ['title' => $title, 'id' => $image_id]);
-        log_info("post_titles", "Title for >>{$image_id} set to: ".$title);
+        Log::info("post_titles", "Title for >>{$image_id} set to: ".$title);
     }
 
     public static function get_title(Image $image): string

@@ -60,9 +60,9 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
         $this->assertEquals(md5_file("tests/favicon.png"), $image->hash);
 
         // check that new files exist and old files don't
-        $this->assertFalse(file_exists(warehouse_path(Image::IMAGE_DIR, $old_hash)));
-        $this->assertFalse(file_exists(warehouse_path(Image::THUMBNAIL_DIR, $old_hash)));
-        $this->assertTrue(file_exists(warehouse_path(Image::IMAGE_DIR, $new_hash)));
-        $this->assertTrue(file_exists(warehouse_path(Image::THUMBNAIL_DIR, $new_hash)));
+        $this->assertFalse(file_exists(Filesystem::warehouse_path(Image::IMAGE_DIR, $old_hash)));
+        $this->assertFalse(file_exists(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $old_hash)));
+        $this->assertTrue(file_exists(Filesystem::warehouse_path(Image::IMAGE_DIR, $new_hash)));
+        $this->assertTrue(file_exists(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $new_hash)));
     }
 }

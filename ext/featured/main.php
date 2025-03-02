@@ -16,7 +16,7 @@ class Featured extends Extension
         if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: FeaturedPermission::EDIT_FEATURE)) {
             $id = $event->get_iarg('image_id');
             $config->set_int(FeaturedConfig::ID, $id);
-            log_info("featured", "Featured post set to >>$id", "Featured post set");
+            Log::info("featured", "Featured post set to >>$id", "Featured post set");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$id"));
         }

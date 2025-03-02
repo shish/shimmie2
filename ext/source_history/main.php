@@ -134,7 +134,7 @@ class SourceHistory extends Extension
         $stored_image_id = (int)$result['image_id'];
         $stored_source = $result['source'];
 
-        log_debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
+        Log::debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
 
         $image = Image::by_id($stored_image_id);
 
@@ -171,7 +171,7 @@ class SourceHistory extends Extension
         }
 
         if (isset($_POST['revert_date']) && !empty($_POST['revert_date'])) {
-            if (isValidDate($_POST['revert_date'])) {
+            if (is_valid_date($_POST['revert_date'])) {
                 $revert_date = addslashes($_POST['revert_date']); // addslashes is really unnecessary since we just checked if valid, but better safe.
             } else {
                 $this->theme->display_admin_block('Invalid Date');
@@ -262,11 +262,11 @@ class SourceHistory extends Extension
         }
 
         if (count($select_code) == 0) {
-            log_error("source_history", "Tried to mass revert without any conditions");
+            Log::error("source_history", "Tried to mass revert without any conditions");
             return;
         }
 
-        log_info("source_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." (".implode(" / ", $select_args).")");
+        Log::info("source_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." (".implode(" / ", $select_args).")");
 
         // Get all the images that the given IP has changed source on (within the timeframe) that were last editied by the given IP
         $result = $database->get_col('
@@ -305,7 +305,7 @@ class SourceHistory extends Extension
                 $stored_image_id = $result['image_id'];
                 $stored_source = $result['source'];
 
-                log_debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
+                Log::debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
 
                 $image = Image::by_id_ex($stored_image_id);
 
@@ -315,7 +315,7 @@ class SourceHistory extends Extension
             }
         }
 
-        log_info("source_history", 'Reverted '.count($result).' edits.');
+        Log::info("source_history", 'Reverted '.count($result).' edits.');
     }
 
     /**
@@ -334,9 +334,9 @@ class SourceHistory extends Extension
 
         if (empty($old_source)) {
             /* no old source, so we are probably adding the image for the first time */
-            log_debug("source_history", "adding new source history: [$new_source]");
+            Log::debug("source_history", "adding new source history: [$new_source]");
         } else {
-            log_debug("source_history", "adding source history: [$old_source] -> [$new_source]");
+            Log::debug("source_history", "adding source history: [$old_source] -> [$new_source]");
         }
 
         $allowed = $config->get_int("history_limit", -1);
@@ -361,7 +361,7 @@ class SourceHistory extends Extension
             "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (:image_id, :source, :user_id, :user_ip, now())",
-            ["image_id" => $image->id, "source" => $new_source, "user_id" => $user->id, "user_ip" => get_real_ip()]
+            ["image_id" => $image->id, "source" => $new_source, "user_id" => $user->id, "user_ip" => Network::get_real_ip()]
         );
         $entries++;
 

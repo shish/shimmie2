@@ -52,7 +52,7 @@ class Upgrade extends Extension
             if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
                 $tables = $database->get_col("SHOW TABLES");
                 foreach ($tables as $table) {
-                    log_info("upgrade", "converting $table to innodb");
+                    Log::info("upgrade", "converting $table to innodb");
                     $database->execute("ALTER TABLE $table ENGINE=INNODB");
                 }
             }
@@ -61,14 +61,14 @@ class Upgrade extends Extension
         }
 
         if ($this->get_version("db_version") < 10) {
-            log_info("upgrade", "Adding foreign keys to images");
+            Log::info("upgrade", "Adding foreign keys to images");
             $database->execute("ALTER TABLE images ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
 
             $this->set_version("db_version", 10);
         }
 
         if ($this->get_version("db_version") < 11) {
-            log_info("upgrade", "Converting user flags to classes");
+            Log::info("upgrade", "Converting user flags to classes");
             $database->execute("ALTER TABLE users ADD COLUMN class VARCHAR(32) NOT NULL default :user", ["user" => "user"]);
             $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name" => "anonymous", "id" => $config->get_int(UserAccountsConfig::ANON_ID)]);
             $database->execute("UPDATE users SET class = :name WHERE admin=:admin", ["name" => "admin", "admin" => 'Y']);
@@ -78,18 +78,18 @@ class Upgrade extends Extension
 
         if ($this->get_version("db_version") < 12) {
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
-                log_info("upgrade", "Changing ext column to VARCHAR");
+                Log::info("upgrade", "Changing ext column to VARCHAR");
                 $database->execute("ALTER TABLE images ALTER COLUMN ext SET DATA TYPE VARCHAR(4)");
             }
 
-            log_info("upgrade", "Lowering case of all exts");
+            Log::info("upgrade", "Lowering case of all exts");
             $database->execute("UPDATE images SET ext = LOWER(ext)");
 
             $this->set_version("db_version", 12);
         }
 
         if ($this->get_version("db_version") < 13) {
-            log_info("upgrade", "Changing password column to VARCHAR(250)");
+            Log::info("upgrade", "Changing password column to VARCHAR(250)");
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute("ALTER TABLE users ALTER COLUMN pass SET DATA TYPE VARCHAR(250)");
             } elseif ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
@@ -100,7 +100,7 @@ class Upgrade extends Extension
         }
 
         if ($this->get_version("db_version") < 14) {
-            log_info("upgrade", "Changing tag column to VARCHAR(255)");
+            Log::info("upgrade", "Changing tag column to VARCHAR(255)");
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute('ALTER TABLE tags ALTER COLUMN tag SET DATA TYPE VARCHAR(255)');
                 $database->execute('ALTER TABLE aliases ALTER COLUMN oldtag SET DATA TYPE VARCHAR(255)');
@@ -115,7 +115,7 @@ class Upgrade extends Extension
         }
 
         if ($this->get_version("db_version") < 15) {
-            log_info("upgrade", "Adding lower indexes for postgresql use");
+            Log::info("upgrade", "Adding lower indexes for postgresql use");
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute('CREATE INDEX tags_lower_tag_idx ON tags ((lower(tag)))');
                 $database->execute('CREATE INDEX users_lower_name_idx ON users ((lower(name)))');
@@ -125,10 +125,10 @@ class Upgrade extends Extension
         }
 
         if ($this->get_version("db_version") < 16) {
-            log_info("upgrade", "Adding tag_id, image_id index to image_tags");
+            Log::info("upgrade", "Adding tag_id, image_id index to image_tags");
             $database->execute('CREATE UNIQUE INDEX image_tags_tag_id_image_id_idx ON image_tags(tag_id,image_id) ');
 
-            log_info("upgrade", "Changing filename column to VARCHAR(255)");
+            Log::info("upgrade", "Changing filename column to VARCHAR(255)");
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute('ALTER TABLE images ALTER COLUMN filename SET DATA TYPE VARCHAR(255)');
                 // Postgresql creates a unique index for unique columns, not just a constraint,
@@ -144,13 +144,13 @@ class Upgrade extends Extension
         }
 
         if ($this->get_version("db_version") < 17) {
-            log_info("upgrade", "Adding media information columns to images table");
+            Log::info("upgrade", "Adding media information columns to images table");
             $database->execute("ALTER TABLE images ADD COLUMN lossless BOOLEAN NULL");
             $database->execute("ALTER TABLE images ADD COLUMN video BOOLEAN NULL");
             $database->execute("ALTER TABLE images ADD COLUMN audio BOOLEAN NULL");
             $database->execute("ALTER TABLE images ADD COLUMN length INTEGER NULL ");
 
-            log_info("upgrade", "Setting indexes for media columns");
+            Log::info("upgrade", "Setting indexes for media columns");
             switch ($database->get_driver_id()) {
                 case DatabaseDriverID::PGSQL:
                 case DatabaseDriverID::SQLITE:
@@ -167,7 +167,7 @@ class Upgrade extends Extension
 
             $database->set_timeout(null); // These updates can take a little bit
 
-            log_info("upgrade", "Setting index for ext column");
+            Log::info("upgrade", "Setting index for ext column");
             $database->execute('CREATE INDEX images_ext_idx ON images(ext)');
 
             $this->set_version("db_version", 17);
@@ -176,11 +176,11 @@ class Upgrade extends Extension
         // 18 was populating data using an out of date format
 
         if ($this->get_version("db_version") < 19) {
-            log_info("upgrade", "Adding MIME type column");
+            Log::info("upgrade", "Adding MIME type column");
 
             $database->execute("ALTER TABLE images ADD COLUMN mime varchar(512) NULL");
             // Column is primed in mime extension
-            log_info("upgrade", "Setting index for mime column");
+            Log::info("upgrade", "Setting index for mime column");
             $database->execute('CREATE INDEX images_mime_idx ON images(mime)');
 
             $this->set_version("db_version", 19);
@@ -194,7 +194,7 @@ class Upgrade extends Extension
         }
 
         if ($this->get_version("db_version") < 21) {
-            log_info("upgrade", "Setting predictable media values for known file types");
+            Log::info("upgrade", "Setting predictable media values for known file types");
             if ($database->is_transaction_open()) {
                 // Each of these commands could hit a lot of data, combining
                 // them into one big transaction would not be a good idea.

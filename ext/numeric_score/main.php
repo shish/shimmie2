@@ -255,7 +255,7 @@ class NumericScore extends Extension
     public function onNumericScoreSet(NumericScoreSetEvent $event): void
     {
         global $user;
-        log_debug("numeric_score", "Rated >>{$event->image_id} as {$event->score}", "Rated Post");
+        Log::debug("numeric_score", "Rated >>{$event->image_id} as {$event->score}", "Rated Post");
         $this->add_vote($event->image_id, $user->id, $event->score);
     }
 

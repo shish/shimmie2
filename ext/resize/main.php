@@ -64,7 +64,7 @@ class ResizeImage extends Extension
             $height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
             $isanigif = 0;
             if ($image_obj->get_mime() == MimeType::GIF) {
-                $image_filename = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
+                $image_filename = Filesystem::warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
                 $fh = \Safe\fopen($image_filename, 'rb');
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 while (!feof($fh) && $isanigif < 2) {
@@ -80,7 +80,7 @@ class ResizeImage extends Extension
                 $image_obj = Image::by_id_ex($image_obj->id); //Must be a better way to grab the new hash than setting this again..
                 send_event(new ThumbnailGenerationEvent($image_obj, true));
 
-                log_info("resize", ">>{$image_obj->id} has been resized to: ".$width."x".$height);
+                Log::info("resize", ">>{$image_obj->id} has been resized to: ".$width."x".$height);
                 //TODO: Notify user that image has been resized.
             }
         }
@@ -124,7 +124,7 @@ class ResizeImage extends Extension
                 $max_width = $event->image->width;
             }
 
-            [$new_width, $new_height] = get_scaled_by_aspect_ratio($event->image->width, $event->image->height, $max_width, $max_height);
+            [$new_width, $new_height] = ThumbnailUtil::get_scaled_by_aspect_ratio($event->image->width, $event->image->height, $max_width, $max_height);
 
             if ($new_width !== $event->image->width || $new_height !== $event->image->height) {
                 $tmp_filename = shm_tempnam('resize');
@@ -179,7 +179,7 @@ class ResizeImage extends Extension
         }
 
         $hash = $image_obj->hash;
-        $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
+        $image_filename  = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash);
 
         $info = \Safe\getimagesize($image_filename);
         assert(!is_null($info));
@@ -207,7 +207,7 @@ class ResizeImage extends Extension
 
         send_event(new ImageReplaceEvent($image_obj, $tmp_filename));
 
-        log_info("resize", "Resized >>{$image_obj->id} - New hash: {$image_obj->hash}");
+        Log::info("resize", "Resized >>{$image_obj->id} - New hash: {$image_obj->hash}");
     }
 
     /**

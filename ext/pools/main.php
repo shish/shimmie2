@@ -157,7 +157,7 @@ class Pools extends Extension
 					");
             $this->set_version("ext_pools_version", 4);
 
-            log_info("pools", "extension installed");
+            Log::info("pools", "extension installed");
         }
 
         if ($this->get_version("ext_pools_version") < 4) {
@@ -632,7 +632,7 @@ class Pools extends Extension
         );
 
         $poolID = $database->get_last_insert_id('pools_id_seq');
-        log_info("pools", "Pool {$poolID} created by {$user->name}");
+        Log::info("pools", "Pool {$poolID} created by {$user->name}");
 
         $event->new_id = $poolID;
     }
@@ -891,7 +891,7 @@ class Pools extends Extension
                 $this->update_count($poolID);
             } else {
                 // FIXME: should this throw an exception instead?
-                log_error("pools", "Invalid history action.");
+                Log::error("pools", "Invalid history action.");
                 continue; // go on to the next one.
             }
 

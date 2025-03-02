@@ -28,7 +28,7 @@ class SetupTheme extends Themelet
      */
     public function display_page(Page $page, array $config_blocks): void
     {
-        usort($config_blocks, "Shimmie2\blockcmp");
+        usort($config_blocks, Block::cmp(...));
 
         $blocks = DIV(["class" => "setupblocks"]);
         foreach ($config_blocks as $block) {

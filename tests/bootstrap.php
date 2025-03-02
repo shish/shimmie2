@@ -12,14 +12,13 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+$_shm_load_start = microtime(true);
+
 chdir(dirname(dirname(__FILE__)));
 require_once "vendor/autoload.php";
 require_once "tests/defines.php";
-require_once "core/sys_config.php";
-require_once "core/polyfills.php";
-require_once "core/util.php";
-require_once "core/tests/ShimmiePHPUnitTestCase.php";
 
+CliApp::$logLevel = LogLevel::CRITICAL->value;
 $_SERVER['SCRIPT_FILENAME'] = '/var/www/html/test/index.php';
 $_SERVER['DOCUMENT_ROOT'] = '/var/www/html';
 $_SERVER['QUERY_STRING'] = '/';
@@ -29,20 +28,20 @@ if (file_exists("data/test-trace.json")) {
 }
 
 sanitize_php();
-global $cache, $config, $database, $user, $page, $_tracer;
+global $cache, $config, $database, $user, $page, $_tracer, $_shm_event_bus;
 _set_up_shimmie_environment();
 $tracer_enabled = true;
 $_tracer = new \EventTracer();
 $_tracer->begin("bootstrap");
-_load_core_files();
-$cache = loadCache(CACHE_DSN);
-$database = new Database(getenv("TEST_DSN") ?: "sqlite::memory:");
-create_dirs();
-create_tables($database);
+_load_ext_files();
+$cache = load_cache(SysConfig::getCacheDsn());
+$database = new Database(SysConfig::getDatabaseDsn());
+Installer::create_dirs();
+Installer::create_tables($database);
 $config = new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults());
 _load_theme_files();
 $page = new Page();
-_load_event_listeners();
+$_shm_event_bus = new EventBus();
 $config->set_string("thumb_engine", "static");
 $config->set_bool("nice_urls", true);
 $config->set_bool("approve_images", false);

@@ -1,17 +1,18 @@
 parameters:
   level: 8
   paths:
+    - index.php
     - core
     - ext
     - tests
     - themes
-  dynamicConstantNames:
-    - DEBUG
-    - TRUSTED_PROXIES
-    - TIMEZONE
-    - BASE_HREF
-    - TRACE_FILE
-    - UNITTEST
+#  dynamicConstantNames:
+#    - DEBUG
+#    - TRUSTED_PROXIES
+#    - TIMEZONE
+#    - BASE_HREF
+#    - TRACE_FILE
+#    - UNITTEST
   ignoreErrors:
     -
       message: '#Function .* is unsafe to use.*$#'
@@ -19,6 +20,6 @@ includes:
   - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
 services:
   -
-    class: Shimmie2\Tests\GenericStringTypeNodeResolverExtension
+    class: Shimmie2\GenericStringTypeNodeResolverExtension
     tags:
       - phpstan.phpDoc.typeNodeResolverExtension

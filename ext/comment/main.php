@@ -212,7 +212,7 @@ class CommentList extends Extension
                 WHERE owner_ip=:ip
             ", ["ip" => $ip]);
             $num = count($comment_ids);
-            log_warning("comment", "Deleting $num comments from $ip");
+            Log::warning("comment", "Deleting $num comments from $ip");
             foreach ($comment_ids as $cid) {
                 send_event(new CommentDeletionEvent($cid));
             }
@@ -340,7 +340,7 @@ class CommentList extends Extension
 			DELETE FROM comments
 			WHERE id=:comment_id
 		", ["comment_id" => $event->comment_id]);
-        log_info("comment", "Deleting Comment #{$event->comment_id}");
+        Log::info("comment", "Deleting Comment #{$event->comment_id}");
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
@@ -459,7 +459,7 @@ class CommentList extends Extension
 			SELECT *
 			FROM comments
 			WHERE owner_ip = :remote_ip AND posted > now() - $window_sql
-		", ["remote_ip" => get_real_ip()]);
+		", ["remote_ip" => Network::get_real_ip()]);
 
         return (count($result) >= $max);
     }
@@ -473,7 +473,7 @@ class CommentList extends Extension
      */
     public static function get_hash(): string
     {
-        return md5(get_real_ip() . date("%Y%m%d"));
+        return md5(Network::get_real_ip() . date("%Y%m%d"));
     }
 
     private function is_spam_akismet(string $text): bool
@@ -532,13 +532,13 @@ class CommentList extends Extension
         $database->execute(
             "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
                 "VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
-            ["image_id" => $image_id, "user_id" => $user->id, "remote_addr" => get_real_ip(), "comment" => $comment]
+            ["image_id" => $image_id, "user_id" => $user->id, "remote_addr" => Network::get_real_ip(), "comment" => $comment]
         );
         $cid = $database->get_last_insert_id('comments_id_seq');
         $snippet = substr($comment, 0, 100);
         $snippet = str_replace("\n", " ", $snippet);
         $snippet = str_replace("\r", " ", $snippet);
-        log_info("comment", "Comment #$cid added to >>$image_id: $snippet");
+        Log::info("comment", "Comment #$cid added to >>$image_id: $snippet");
     }
 
     private function comment_checks(int $image_id, User $user, string $comment): void
@@ -575,7 +575,7 @@ class CommentList extends Extension
         }
 
         // rate-limited external service checks last
-        elseif ($config->get_bool(CommentConfig::CAPTCHA) && !captcha_check()) {
+        elseif ($config->get_bool(CommentConfig::CAPTCHA) && !Captcha::check()) {
             throw new CommentPostingException("Error in captcha");
         } elseif ($user->is_anonymous() && $this->is_spam_akismet($comment)) {
             throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");

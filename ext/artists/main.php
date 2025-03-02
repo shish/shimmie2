@@ -643,7 +643,7 @@ class Artists extends Extension
         //// WE CHECK IF THE ARTIST ALREADY EXISTS ON DATABASE; IF NOT WE CREATE
         if (!$this->artist_exists($name)) {
             $artistID = $this->save_new_artist($name, $notes);
-            log_info("artists", "Artist {$artistID} created by {$user->name}");
+            Log::info("artists", "Artist {$artistID} created by {$user->name}");
         } else {
             $artistID = $this->get_artist_id($name);
         }

@@ -68,17 +68,6 @@ class ET extends Extension
             }
         }
 
-        $ver = VERSION;
-        if (defined("BUILD_TIME")) {
-            $ver .= "-" . substr(str_replace("-", "", constant("BUILD_TIME")), 0, 8);
-        }
-        if (defined("BUILD_HASH")) {
-            $ver .= "-" . substr(constant("BUILD_HASH"), 0, 7);
-        }
-        if (file_exists(".git")) {
-            $ver .= "+";
-        }
-
         $disk_total = \Safe\disk_total_space("./");
         $disk_free = \Safe\disk_free_space("./");
         $info = [
@@ -88,7 +77,7 @@ class ET extends Extension
                 'url'   => make_http(make_link("")),
             ],
             "versions" => [
-                'shimmie' => $ver,
+                'shimmie' => SysConfig::getVersion(),
                 'schema'  => $config->get_int("db_version"),
                 'php'     => phpversion(),
                 'db'      => $database->get_driver_id()->value . " " . $database->get_version(),

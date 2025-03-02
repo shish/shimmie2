@@ -23,7 +23,7 @@ class ArchiveFileHandler extends DataHandlerExtension
             exec($cmd);
             if (file_exists($tmpdir)) {
                 try {
-                    $results = add_dir($tmpdir, Tag::explode($event->metadata['tags']));
+                    $results = send_event(new DirectoryUploadEvent($tmpdir, Tag::explode($event->metadata['tags'])))->results;
                     foreach ($results as $r) {
                         if (is_a($r, UploadError::class)) {
                             $page->flash($r->name." failed: ".$r->error);
@@ -33,7 +33,7 @@ class ArchiveFileHandler extends DataHandlerExtension
                         }
                     }
                 } finally {
-                    deltree($tmpdir);
+                    Filesystem::deltree($tmpdir);
                 }
             }
         }

@@ -28,10 +28,10 @@ class CBZFileHandler extends DataHandlerExtension
     protected function create_thumb(Image $image): bool
     {
         $cover = $this->get_representative_image($image->get_image_filename());
-        create_scaled_image(
+        ThumbnailUtil::create_scaled_image(
             $cover,
             $image->get_thumb_filename(),
-            get_thumbnail_max_size_scaled(),
+            ThumbnailUtil::get_thumbnail_max_size_scaled(),
             MimeType::get_for_file($cover),
             null
         );

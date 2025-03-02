@@ -321,7 +321,7 @@ class OuroborosAPI extends Extension
             $meta['file'] = shm_tempnam('transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
             $meta['filename'] = basename($post->file_url);
             try {
-                fetch_url($post->file_url, $meta['file']);
+                Network::fetch_url($post->file_url, $meta['file']);
             } catch (FetchException $e) {
                 $this->sendResponse(500, "Transloading failed: $e");
                 return;
@@ -582,12 +582,12 @@ class OuroborosAPI extends Extension
                 $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0));
             }
             send_event(new UserLoginEvent($user));
-        } elseif (isset($_COOKIE[COOKIE_PREFIX . '_' . 'session']) &&
-            isset($_COOKIE[COOKIE_PREFIX . '_' . 'user'])
+        } elseif (isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session']) &&
+            isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'])
         ) {
             //Auth by session data from cookies
-            $session = $_COOKIE[COOKIE_PREFIX . '_' . 'session'];
-            $user = $_COOKIE[COOKIE_PREFIX . '_' . 'user'];
+            $session = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session'];
+            $user = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'];
             $duser = User::by_session($user, $session);
             if (!is_null($duser)) {
                 $user = $duser;
