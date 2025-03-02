@@ -23,7 +23,7 @@ class XMLSitemap extends Extension
         if ($event->page_matches("sitemap.xml")) {
             global $config, $page;
 
-            $cache_path = data_path("cache/sitemap.xml");
+            $cache_path = Filesystem::data_path("cache/sitemap.xml");
 
             if ($this->new_sitemap_needed($cache_path)) {
                 $xml = $this->handle_full_sitemap();

@@ -57,7 +57,7 @@ class AdminPage extends Extension
             $action = $event->get_arg('action');
             $aae = new AdminActionEvent($action, $event->POST);
 
-            log_info("admin", "Util: $action");
+            Log::info("admin", "Util: $action");
             shm_set_timeout(null);
             $database->set_timeout(null);
             send_event($aae);

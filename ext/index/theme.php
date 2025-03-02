@@ -39,7 +39,7 @@ and of course start organising your images :-)
 <p>This message will go away once your first image is uploaded~
 </div>
 ";
-        $page->set_title("Welcome to Shimmie ".VERSION);
+        $page->set_title("Welcome to Shimmie ".SysConfig::getVersion(false));
         $page->set_heading("Welcome to Shimmie");
         $page->add_block(new Block("Nothing here yet!", rawHTML($text), "main", 0));
     }

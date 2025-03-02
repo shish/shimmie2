@@ -26,7 +26,7 @@ class Blotter extends Extension
                 "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
                 ["text" => "Installed the blotter extension!", "important" => true]
             );
-            log_info("blotter", "Installed tables for blotter extension.");
+            Log::info("blotter", "Installed tables for blotter extension.");
             $this->set_version(BlotterConfig::VERSION, 2);
         }
         if ($this->get_version(BlotterConfig::VERSION) < 2) {
@@ -69,14 +69,14 @@ class Blotter extends Extension
                 "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
                 ["text" => $entry_text, "important" => $important]
             );
-            log_info("blotter", "Added Message: $entry_text");
+            Log::info("blotter", "Added Message: $entry_text");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blotter/editor"));
         }
         if ($event->page_matches("blotter/remove", method: "POST", permission: BlotterPermission::ADMIN)) {
             $id = int_escape($event->req_POST('id'));
             $database->execute("DELETE FROM blotter WHERE id=:id", ["id" => $id]);
-            log_info("blotter", "Removed Entry #$id");
+            Log::info("blotter", "Removed Entry #$id");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blotter/editor"));
         }

@@ -123,7 +123,7 @@ class S3 extends Extension
         if ($event->page_matches("s3/sync/{image_id}", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $id = $event->get_iarg('image_id');
             $this->sync_post(Image::by_id_ex($id));
-            log_info("s3", "Manual resync for >>$id", "File re-sync'ed");
+            Log::info("s3", "Manual resync for >>$id", "File re-sync'ed");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$id"));
         }

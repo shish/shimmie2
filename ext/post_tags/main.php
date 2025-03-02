@@ -268,12 +268,12 @@ class PostTags extends Extension
         $search_set = Tag::explode(strtolower($search), false);
         $replace_set = Tag::explode(strtolower($replace), false);
 
-        log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
+        Log::info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
         if (count($search_set) == 1 && count($replace_set) == 1) {
             $images = Search::find_images(limit: 10, tags: $replace_set);
             if (count($images) == 0) {
-                log_info("tag_edit", "No images found with target tag, doing in-place rename");
+                Log::info("tag_edit", "No images found with target tag, doing in-place rename");
                 $database->execute(
                     "DELETE FROM tags WHERE tag=:replace",
                     ["replace" => $replace_set[0]]

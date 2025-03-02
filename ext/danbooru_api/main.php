@@ -228,7 +228,7 @@ class DanbooruApi extends Extension
             }
             $taglist = $img->get_tag_list();
             $owner = $img->get_owner();
-            $previewsize = get_thumbnail_size($img->width, $img->height);
+            $previewsize = ThumbnailUtil::get_thumbnail_size($img->width, $img->height);
             $xml->appendChild(TAG([
                 "id" => $img->id,
                 "md5" => $img->hash,
@@ -315,7 +315,7 @@ class DanbooruApi extends Extension
             $source = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
             $file = shm_tempnam("transload");
             try {
-                fetch_url($source, $file);
+                Network::fetch_url($source, $file);
             } catch (FetchException $e) {
                 $page->set_code(409);
                 $page->add_http_header("X-Danbooru-Errors: $e");
@@ -352,8 +352,8 @@ class DanbooruApi extends Extension
             return;
         }
 
-        //log_debug("danbooru_api","========== NEW($filename) =========");
-        //log_debug("danbooru_api", "upload($filename): fileinfo(".var_export($fileinfo,TRUE)."), metadata(".var_export($metadata,TRUE).")...");
+        //Log::debug("danbooru_api","========== NEW($filename) =========");
+        //Log::debug("danbooru_api", "upload($filename): fileinfo(".var_export($fileinfo,TRUE)."), metadata(".var_export($metadata,TRUE).")...");
 
         try {
             $newimg = $database->with_savepoint(function () use ($file, $filename, $posttags, $source) {
@@ -363,7 +363,7 @@ class DanbooruApi extends Extension
                     'source' => $source,
                 ]));
 
-                //log_debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
+                //Log::debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
                 // If it went ok, grab the id for the newly uploaded image and pass it in the header
                 return $dae->images[0];
             });

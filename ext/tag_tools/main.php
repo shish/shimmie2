@@ -25,12 +25,12 @@ class TagTools extends Extension
                     "UPDATE tags SET tag=:tag1 WHERE LOWER(tag) = LOWER(:tag2)",
                     ["tag1" => $event->params['tag'], "tag2" => $event->params['tag']]
                 );
-                log_info("admin", "Fixed the case of {$event->params['tag']}", "Fixed case");
+                Log::info("admin", "Fixed the case of {$event->params['tag']}", "Fixed case");
                 $event->redirect = true;
                 break;
             case "lowercase_all_tags":
                 $database->execute("UPDATE tags SET tag=lower(tag)");
-                log_warning("admin", "Set all tags to lowercase", "Set all tags to lowercase");
+                Log::warning("admin", "Set all tags to lowercase", "Set all tags to lowercase");
                 $event->redirect = true;
                 break;
             case "recount_tag_use":
@@ -42,7 +42,7 @@ class TagTools extends Extension
                     )
                 ");
                 $database->execute("DELETE FROM tags WHERE count=0");
-                log_warning("admin", "Re-counted tags", "Re-counted tags");
+                Log::warning("admin", "Re-counted tags", "Re-counted tags");
                 $event->redirect = true;
                 break;
         }

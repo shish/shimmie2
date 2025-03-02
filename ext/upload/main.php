@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\emptyHTML;
-use function MicroHTML\I;
-
 /**
  * Occurs when some data is being uploaded.
  */
@@ -49,12 +46,28 @@ class DataUploadEvent extends Event
         $this->tmpname = $tmpname;
         $this->hash = \Safe\md5_file($tmpname);
         $this->size = \Safe\filesize($tmpname);
-        $mime = $mime ?? MimeType::get_for_file($tmpname, get_file_ext($this->filename));
+        $mime = $mime ?? MimeType::get_for_file($tmpname, pathinfo($this->filename)['extension'] ?? null);
         if (empty($mime)) {
             throw new UploadException("Could not determine mime type");
         }
 
         $this->mime = strtolower($mime);
+    }
+}
+
+class DirectoryUploadEvent extends Event
+{
+    /** @var UploadResult[] */
+    public array $results = [];
+
+    /**
+     * @param string[] $extra_tags
+     */
+    public function __construct(
+        public string $base,
+        public array $extra_tags = [],
+    ) {
+        parent::__construct();
     }
 }
 
@@ -156,6 +169,37 @@ class Upload extends Extension
             $limit = to_shorthand_int($config->get_int(UploadConfig::SIZE));
             throw new UploadException("File too large ($size > $limit)");
         }
+    }
+
+    public function onDirectoryUpload(DirectoryUploadEvent $event): void
+    {
+        global $database;
+        $results = [];
+
+        foreach (Filesystem::list_files($event->base) as $full_path) {
+            $short_path = str_replace($event->base, "", $full_path);
+            $filename = basename($full_path);
+
+            $tags = array_merge(Filesystem::path_to_tags($short_path), $event->extra_tags);
+            try {
+                $more_results = $database->with_savepoint(function () use ($full_path, $filename, $tags) {
+                    $dae = send_event(new DataUploadEvent($full_path, basename($full_path), 0, [
+                        'filename' => pathinfo($filename, PATHINFO_BASENAME),
+                        'tags' => Tag::implode($tags),
+                    ]));
+                    $results = [];
+                    foreach ($dae->images as $image) {
+                        $results[] = new UploadSuccess($filename, $image->id);
+                    }
+                    return $results;
+                });
+                $results = array_merge($results, $more_results);
+            } catch (UploadException $ex) {
+                $results[] = new UploadError($filename, $ex->getMessage());
+            }
+        }
+
+        $event->results = array_merge($event->results, $results);
     }
 
     public function onPageRequest(PageRequestEvent $event): void
@@ -296,13 +340,13 @@ class Upload extends Extension
         try {
             // Fetch file
             try {
-                $headers = fetch_url($url, $tmp_filename);
+                $headers = Network::fetch_url($url, $tmp_filename);
             } catch (FetchException $e) {
                 throw new UploadException("Error reading from $url: $e");
             }
 
             // Parse metadata
-            $s_filename = find_header($headers, 'Content-Disposition');
+            $s_filename = Network::find_header($headers, 'Content-Disposition');
             $h_filename = ($s_filename ? \Safe\preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
             $filename = $h_filename ?: basename($url);
 

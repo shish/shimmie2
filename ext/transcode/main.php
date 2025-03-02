@@ -156,7 +156,7 @@ class TranscodeImage extends Extension
                     $new_image = $this->transcode_image($event->tmpname, $event->mime, $target_mime);
                     $event->set_tmpname($new_image, $target_mime);
                 } catch (\Exception $e) {
-                    log_error("transcode", "Error while performing upload transcode: ".$e->getMessage());
+                    Log::error("transcode", "Error while performing upload transcode: ".$e->getMessage());
                     // We don't want to interfere with the upload process,
                     // so if something goes wrong the untranscoded image jsut continues
                 }
@@ -247,7 +247,7 @@ class TranscodeImage extends Extension
                             $total++;
                             $size_difference += ($before_size - $image->filesize);
                         } catch (\Exception $e) {
-                            log_error("transcode", "Error while bulk transcode on item {$image->id} to $mime: ".$e->getMessage());
+                            Log::error("transcode", "Error while bulk transcode on item {$image->id} to $mime: ".$e->getMessage());
                         }
                     }
                     if ($size_difference > 0) {
@@ -292,7 +292,7 @@ class TranscodeImage extends Extension
 
     private function transcode_and_replace_image(Image $image, string $target_mime): void
     {
-        $original_file = warehouse_path(Image::IMAGE_DIR, $image->hash);
+        $original_file = Filesystem::warehouse_path(Image::IMAGE_DIR, $image->hash);
         $tmp_filename = $this->transcode_image($original_file, $image->get_mime(), $target_mime);
         send_event(new ImageReplaceEvent($image, $tmp_filename));
     }
@@ -417,7 +417,7 @@ class TranscodeImage extends Extension
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
 
-        log_debug('transcode', "Transcoding with command `$cmd`, returns $ret");
+        Log::debug('transcode', "Transcoding with command `$cmd`, returns $ret");
 
         if ($ret !== 0) {
             throw new ImageTranscodeException("Transcoding failed with command ".$cmd.", returning ".implode("\r\n", $output));

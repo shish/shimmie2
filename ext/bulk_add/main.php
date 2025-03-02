@@ -66,7 +66,7 @@ class BulkAdd extends Extension
     public function onBulkAdd(BulkAddEvent $event): void
     {
         if (is_dir($event->dir) && is_readable($event->dir)) {
-            $event->results = add_dir($event->dir);
+            $event->results = send_event(new DirectoryUploadEvent($event->dir))->results;
         } else {
             $event->results = [new UploadError($event->dir, "is not a readable directory")];
         }

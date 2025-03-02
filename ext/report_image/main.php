@@ -76,7 +76,7 @@ class ReportImage extends Extension
     public function onAddReportedImage(AddReportedImageEvent $event): void
     {
         global $cache, $database;
-        log_info("report_image", "Adding report of >>{$event->report->image_id} with reason '{$event->report->reason}'");
+        Log::info("report_image", "Adding report of >>{$event->report->image_id} with reason '{$event->report->reason}'");
         $database->execute(
             "INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (:image_id, :reporter_id, :reason)",

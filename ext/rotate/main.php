@@ -67,7 +67,7 @@ class RotateImage extends Extension
         $image_obj = Image::by_id_ex($image_id);
         $hash = $image_obj->hash;
 
-        $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
+        $image_filename  = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash);
         if (file_exists($image_filename) === false) {
             throw new ImageRotateException("$image_filename does not exist.");
         }
@@ -138,13 +138,13 @@ class RotateImage extends Extension
 
         $new_hash = \Safe\md5_file($tmp_filename);
         /* Move the new image into the main storage location */
-        $target = warehouse_path(Image::IMAGE_DIR, $new_hash);
+        $target = Filesystem::warehouse_path(Image::IMAGE_DIR, $new_hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageRotateException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }
 
         send_event(new ImageReplaceEvent($image_obj, $tmp_filename));
 
-        log_info("rotate", "Rotated >>{$image_id} - New hash: {$new_hash}");
+        Log::info("rotate", "Rotated >>{$image_id} - New hash: {$new_hash}");
     }
 }

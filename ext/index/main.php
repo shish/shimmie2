@@ -40,7 +40,7 @@ class Index extends Extension
 
             if (
                 $speed_hax
-                && is_bot()
+                && Network::is_bot()
                 && (
                     $count_search_terms > 1
                     || ($count_search_terms == 1 && $search_terms[0][0] == "-")

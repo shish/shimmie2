@@ -319,7 +319,7 @@ class UserPage extends Extension
 
         $event->add_part("Joined: $h_join_date", 10);
         if ($user->name == $duser->name) {
-            $event->add_part("Current IP: " . get_real_ip(), 80);
+            $event->add_part("Current IP: " . Network::get_real_ip(), 80);
         }
         $event->add_part("Class: $h_class", 90);
 
@@ -456,7 +456,7 @@ class UserPage extends Extension
         } catch (UserNotFound $ex) {
             // user not found is good
         }
-        if (!captcha_check()) {
+        if (!Captcha::check()) {
             throw new UserCreationException("Error in captcha");
         }
         if ($event->password != $event->password2) {
@@ -483,7 +483,7 @@ class UserPage extends Extension
         );
         $new_user = User::by_name($event->username);
         $new_user->set_password($event->password);
-        log_info("user", "Created User @{$event->username}");
+        Log::info("user", "Created User @{$event->username}");
 
         if ($event->login) {
             send_event(new UserLoginEvent($new_user));
@@ -571,7 +571,7 @@ class UserPage extends Extension
             # make cookies all-or-nothing
             $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         }
-        log_info("user", "Logged out");
+        Log::info("user", "Logged out");
         $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link());
     }
@@ -675,10 +675,10 @@ class UserPage extends Extension
         $page->add_block(Block::nav());
 
         $duser = User::by_id($uid);
-        log_warning("user", "Deleting user #{$uid} (@{$duser->name})");
+        Log::warning("user", "Deleting user #{$uid} (@{$duser->name})");
 
         if ($with_images) {
-            log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s uploads");
+            Log::warning("user", "Deleting user #{$uid} (@{$duser->name})'s uploads");
             $image_ids = $database->get_col("SELECT id FROM images WHERE owner_id = :owner_id", ["owner_id" => $uid]);
             foreach ($image_ids as $image_id) {
                 $image = Image::by_id((int) $image_id);
@@ -694,7 +694,7 @@ class UserPage extends Extension
         }
 
         if ($with_comments) {
-            log_warning("user", "Deleting user #{$uid} (@{$duser->name})'s comments");
+            Log::warning("user", "Deleting user #{$uid} (@{$duser->name})'s comments");
             $database->execute("DELETE FROM comments WHERE owner_id = :owner_id", ["owner_id" => $uid]);
         } else {
             $database->execute(

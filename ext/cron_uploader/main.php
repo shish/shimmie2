@@ -43,11 +43,11 @@ class CronUploader extends Extension
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $failed_dir = $this->get_failed_dir();
-        $results = get_dir_contents($failed_dir);
+        $results = Filesystem::get_dir_contents($failed_dir);
 
         $failed_dirs = [];
         foreach ($results as $result) {
-            $path = join_path($failed_dir, $result);
+            $path = Filesystem::join_path($failed_dir, $result);
             if (is_dir($path)) {
                 $failed_dirs[] = $result;
             }
@@ -107,7 +107,7 @@ class CronUploader extends Extension
             throw new InvalidInput("folder empty");
         }
         $queue_dir = $this->get_queue_dir();
-        $stage_dir = join_path($this->get_failed_dir(), $folder);
+        $stage_dir = Filesystem::join_path($this->get_failed_dir(), $folder);
 
         if (!is_dir($stage_dir)) {
             throw new InvalidInput("Could not find $stage_dir");
@@ -115,10 +115,10 @@ class CronUploader extends Extension
 
         $this->prep_root_dir();
 
-        $results = get_files_recursively($stage_dir);
+        $results = Filesystem::get_files_recursively($stage_dir);
 
         if (count($results) == 0) {
-            if (remove_empty_dirs($stage_dir) === false) {
+            if (Filesystem::remove_empty_dirs($stage_dir) === false) {
                 $page->flash("Nothing to stage from $folder, cannot remove folder");
             } else {
                 $page->flash("Nothing to stage from $folder, removing folder");
@@ -126,7 +126,7 @@ class CronUploader extends Extension
             return;
         }
         foreach ($results as $result) {
-            $new_path = join_path($queue_dir, substr($result, strlen($stage_dir)));
+            $new_path = Filesystem::join_path($queue_dir, substr($result, strlen($stage_dir)));
 
             if (file_exists($new_path)) {
                 $page->flash("File already exists in queue folder: " .$result);
@@ -136,7 +136,7 @@ class CronUploader extends Extension
 
         $success = true;
         foreach ($results as $result) {
-            $new_path = join_path($queue_dir, substr($result, strlen($stage_dir)));
+            $new_path = Filesystem::join_path($queue_dir, substr($result, strlen($stage_dir)));
 
             $dir = dirname($new_path);
             if (!is_dir($dir)) {
@@ -151,7 +151,7 @@ class CronUploader extends Extension
 
         if ($success === true) {
             $page->flash("Re-staged $folder to queue");
-            if (remove_empty_dirs($stage_dir) === false) {
+            if (Filesystem::remove_empty_dirs($stage_dir) === false) {
                 $page->flash("Could not remove $folder");
             }
         }
@@ -160,8 +160,8 @@ class CronUploader extends Extension
     private function clear_folder(string $folder): void
     {
         global $page, $user;
-        $path = join_path($this->get_user_dir(), $folder);
-        deltree($path);
+        $path = Filesystem::join_path($this->get_user_dir(), $folder);
+        Filesystem::deltree($path);
         $page->flash("Cleared $path");
     }
 
@@ -190,9 +190,9 @@ class CronUploader extends Extension
         $uploaded_dir = $this->get_uploaded_dir();
         $failed_dir = $this->get_failed_dir();
 
-        $queue_dirinfo = scan_dir($queue_dir);
-        $uploaded_dirinfo = scan_dir($uploaded_dir);
-        $failed_dirinfo = scan_dir($failed_dir);
+        $queue_dirinfo = Filesystem::scan_dir($queue_dir);
+        $uploaded_dirinfo = Filesystem::scan_dir($uploaded_dir);
+        $failed_dirinfo = Filesystem::scan_dir($failed_dir);
 
 
         $running = false;
@@ -231,23 +231,23 @@ class CronUploader extends Extension
         global $user;
         return $user->get_config()->get_string(
             CronUploaderUserConfig::DIR,
-            data_path(join_path("cron_uploader", $user->name))
+            Filesystem::data_path(Filesystem::join_path("cron_uploader", $user->name))
         );
     }
 
     public function get_queue_dir(): string
     {
-        return join_path($this->get_user_dir(), self::QUEUE_DIR);
+        return Filesystem::join_path($this->get_user_dir(), self::QUEUE_DIR);
     }
 
     public function get_uploaded_dir(): string
     {
-        return join_path($this->get_user_dir(), self::UPLOADED_DIR);
+        return Filesystem::join_path($this->get_user_dir(), self::UPLOADED_DIR);
     }
 
     public function get_failed_dir(): string
     {
-        return join_path($this->get_user_dir(), self::FAILED_DIR);
+        return Filesystem::join_path($this->get_user_dir(), self::FAILED_DIR);
     }
 
     private function prep_root_dir(): string
@@ -268,7 +268,7 @@ class CronUploader extends Extension
 
     private function get_lock_file(): string
     {
-        return join_path($this->get_user_dir(), ".lock");
+        return Filesystem::join_path($this->get_user_dir(), ".lock");
     }
 
     /**
@@ -292,7 +292,7 @@ class CronUploader extends Extension
             throw new UserError("User not present. Please specify the api_key for the user to run cron upload as.");
         }
 
-        log_info(self::NAME, "Logged in as user {$user->name}");
+        Log::info(self::NAME, "Logged in as user {$user->name}");
 
         if (!$user->can(CronUploaderPermission::CRON_RUN)) {
             throw new PermissionDenied("User does not have permission to run cron upload");
@@ -324,11 +324,11 @@ class CronUploader extends Extension
                     break;
                 } else {
                     $remaining = $max_time - $execution_time;
-                    log_debug(self::NAME, "Max run time remaining: $remaining");
+                    Log::debug(self::NAME, "Max run time remaining: $remaining");
                 }
                 try {
                     $result = $database->with_savepoint(function () use ($img, $output_subdir) {
-                        log_info(self::NAME, "Adding file: {$img[0]} - tags: {$img[2]}");
+                        Log::info(self::NAME, "Adding file: {$img[0]} - tags: {$img[2]}");
                         $result = $this->add_image($img[0], $img[1], $img[2]);
                         $this->move_uploaded($img[0], $img[1], $output_subdir, false);
                         return $result;
@@ -340,8 +340,8 @@ class CronUploader extends Extension
                     }
                 } catch (\Exception $e) {
                     $failed++;
-                    log_error(self::NAME, "(" . gettype($e) . ") " . $e->getMessage());
-                    log_error(self::NAME, $e->getTraceAsString());
+                    Log::error(self::NAME, "(" . gettype($e) . ") " . $e->getMessage());
+                    Log::error(self::NAME, $e->getTraceAsString());
                     if ($user->get_config()->get_bool(CronUploaderUserConfig::STOP_ON_ERROR)) {
                         break;
                     } else {
@@ -352,13 +352,13 @@ class CronUploader extends Extension
 
             // Throw exception if there's nothing in the queue
             if ($merged + $failed + $added === 0) {
-                log_warning(self::NAME, "Your queue is empty so nothing could be uploaded.");
+                Log::warning(self::NAME, "Your queue is empty so nothing could be uploaded.");
                 return false;
             }
 
-            log_info(self::NAME, "Items added: $added");
-            log_info(self::NAME, "Items merged: $merged");
-            log_info(self::NAME, "Items failed: $failed");
+            Log::info(self::NAME, "Items added: $added");
+            Log::info(self::NAME, "Items merged: $merged");
+            Log::info(self::NAME, "Items failed: $failed");
 
 
             return true;
@@ -388,10 +388,10 @@ class CronUploader extends Extension
         // Determine which dir to move to
         if ($corrupt) {
             // Move to corrupt dir
-            $newDir = join_path($this->get_failed_dir(), $output_subdir, $relativeDir);
+            $newDir = Filesystem::join_path($this->get_failed_dir(), $output_subdir, $relativeDir);
             $info = "ERROR: Post was not uploaded. ";
         } else {
-            $newDir = join_path($this->get_uploaded_dir(), $output_subdir, $relativeDir);
+            $newDir = Filesystem::join_path($this->get_uploaded_dir(), $output_subdir, $relativeDir);
             $info = "Post successfully uploaded. ";
         }
 
@@ -399,11 +399,11 @@ class CronUploader extends Extension
             mkdir($newDir, 0775, true);
         }
 
-        $newFile = join_path($newDir, $filename);
+        $newFile = Filesystem::join_path($newDir, $filename);
         // move file to correct dir
         rename($path, $newFile);
 
-        log_info(self::NAME, $info . "Post \"$filename\" moved from queue to \"$newDir\".");
+        Log::info(self::NAME, $info . "Post \"$filename\" moved from queue to \"$newDir\".");
     }
 
     /**
@@ -425,7 +425,7 @@ class CronUploader extends Extension
         } else {
             $infomsg = "Post uploaded. ID: {$event->images[0]->id} - Filename: {$filename}";
         }
-        log_info(self::NAME, $infomsg);
+        Log::info(self::NAME, $infomsg);
 
         return $event;
     }
@@ -453,7 +453,7 @@ class CronUploader extends Extension
         $base = $this->get_queue_dir();
 
         if (!is_dir($base)) {
-            log_warning(self::NAME, "Post Queue Directory could not be found at \"$base\".");
+            Log::warning(self::NAME, "Post Queue Directory could not be found at \"$base\".");
             return;
         }
 
@@ -461,7 +461,7 @@ class CronUploader extends Extension
         foreach (new \RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath) && !$this->is_skippable_file($fullpath)) {
                 $relativePath = substr($fullpath, strlen($base));
-                $tags = path_to_tags($relativePath);
+                $tags = Filesystem::path_to_tags($relativePath);
 
                 yield [
                     0 => $fullpath,
@@ -474,6 +474,6 @@ class CronUploader extends Extension
 
     private function get_log_file(): string
     {
-        return join_path($this->get_user_dir(), "uploads.log");
+        return Filesystem::join_path($this->get_user_dir(), "uploads.log");
     }
 }
