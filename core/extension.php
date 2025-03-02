@@ -184,9 +184,6 @@ abstract class ExtensionInfo
         return $this->support_info;
     }
 
-    /** @var array<string, ExtensionInfo> */
-    private static array $all_info_by_key = [];
-
     protected function __construct()
     {
         assert(!empty($this::KEY), "KEY field is required");
@@ -203,7 +200,7 @@ abstract class ExtensionInfo
      */
     public static function get_all(): array
     {
-        return array_values(self::$all_info_by_key);
+        return array_values(self::get_all_infos());
     }
 
     /**
@@ -211,7 +208,7 @@ abstract class ExtensionInfo
      */
     public static function get_all_keys(): array
     {
-        return array_keys(self::$all_info_by_key);
+        return array_keys(self::get_all_infos());
     }
 
     /**
@@ -222,7 +219,7 @@ abstract class ExtensionInfo
         return array_map(
             fn ($info) => $info::KEY,
             array_filter(
-                array_values(self::$all_info_by_key),
+                array_values(self::get_all_infos()),
                 fn ($info) => $info->core
             )
         );
@@ -230,24 +227,28 @@ abstract class ExtensionInfo
 
     public static function get_by_key(string $key): ExtensionInfo
     {
-        if (array_key_exists($key, self::$all_info_by_key)) {
-            return self::$all_info_by_key[$key];
-        } else {
+        $info = self::get_all_infos()[$key] ?? null;
+        if (is_null($info)) {
             throw new \InvalidArgumentException("No ExtensionInfo with key '$key'");
         }
+        return $info;
     }
 
-    public static function load_all_extension_info(): void
+    /**
+     * @return array<string, ExtensionInfo>
+     */
+    private static function get_all_infos(): array
     {
-        foreach (get_subclasses_of(ExtensionInfo::class) as $class) {
-            $extension_info = new $class();
-            assert(is_a($extension_info, ExtensionInfo::class));
-            if (array_key_exists($extension_info::KEY, self::$all_info_by_key)) {
-                throw new ServerError("Extension Info $class with key " . $extension_info::KEY . " has already been loaded");
+        static $infos = null;
+        if (is_null($infos)) {
+            $infos = [];
+            foreach (get_subclasses_of(ExtensionInfo::class) as $class) {
+                $extension_info = new $class();
+                assert(is_a($extension_info, ExtensionInfo::class));
+                $infos[$extension_info::KEY] = $extension_info;
             }
-
-            self::$all_info_by_key[$extension_info::KEY] = $extension_info;
         }
+        return $infos;
     }
 }
 
