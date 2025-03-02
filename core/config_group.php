@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class BaseConfigGroup
+require_once "core/extension.php";
+
+abstract class BaseConfigGroup extends Enablable
 {
-    public const KEY = "";
     public ?string $title = null;
     public ?int $position = null;
 
@@ -65,16 +66,10 @@ abstract class BaseConfigGroup
     public static function _get_all_defaults(): array
     {
         $defaults = [];
-        $base = get_called_class();
-        foreach (get_subclasses_of($base) as $class) {
-            $refl_group = new \ReflectionClass($class);
-            $group = $refl_group->newInstance();
-            assert(is_a($group, $base));
-            if (!Extension::is_enabled($group::KEY)) {
-                continue;
-            }
-            foreach ($refl_group->getConstants() as $const => $value) {
-                $refl_const = $refl_group->getReflectionConstant($const);
+        foreach (self::get_subclasses() as $class) {
+            $group = $class->newInstance();
+            foreach ($class->getConstants() as $const => $value) {
+                $refl_const = $class->getReflectionConstant($const);
                 if (!$refl_const) {
                     continue;
                 }

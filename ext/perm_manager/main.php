@@ -14,8 +14,8 @@ class PermManager extends Extension
     {
         $_all_false = [];
         $_all_true = [];
-        foreach (get_subclasses_of(PermissionGroup::class) as $class) {
-            foreach ((new \ReflectionClass($class))->getConstants() as $k => $v) {
+        foreach (PermissionGroup::get_subclasses(all: true) as $class) {
+            foreach ($class->getConstants() as $k => $v) {
                 assert(is_string($v));
                 $_all_false[$v] = false;
                 $_all_true[$v] = true;
@@ -86,15 +86,13 @@ class PermManager extends Extension
 
         if ($event->page_matches("perm_manager", method: "GET")) {
             $permissions = [];
-            foreach (get_subclasses_of(PermissionGroup::class) as $class) {
-                $refl_group = new \ReflectionClass($class);
-                $group = $refl_group->newInstance();
-                assert(is_a($group, PermissionGroup::class));
+            foreach (PermissionGroup::get_subclasses() as $class) {
+                $group = $class->newInstance();
                 if (!Extension::is_enabled($group::KEY)) {
                     continue;
                 }
-                foreach ($refl_group->getConstants() as $const => $key) {
-                    $refl_const = $refl_group->getReflectionConstant($const);
+                foreach ($class->getConstants() as $const => $key) {
+                    $refl_const = $class->getReflectionConstant($const);
                     if (!$refl_const) {
                         continue;
                     }
