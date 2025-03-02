@@ -11,6 +11,7 @@ use MicroHTML\HTMLElement;
  */
 class UserBlockBuildingEvent extends PartListBuildingEvent
 {
+    /** @param url-string $link */
     public function add_link(string|HTMLElement $name, string $link, int $position = 50): void
     {
         $this->add_part(["name" => $name, "link" => $link], $position);

@@ -689,6 +689,7 @@ class PageNavBuildingEvent extends Event
     /** @var NavLink[] */
     public array $links = [];
 
+    /** @param url-string $link */
     public function add_nav_link(string $name, string $link, string $desc, ?bool $active = null, int $order = 50): void
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
@@ -708,6 +709,7 @@ class PageSubNavBuildingEvent extends Event
         $this->parent = $parent;
     }
 
+    /** @param url-string $link */
     public function add_nav_link(string $name, string $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50): void
     {
         $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
@@ -717,11 +719,13 @@ class PageSubNavBuildingEvent extends Event
 class NavLink
 {
     public string $name;
+    /** @var url-string $link */
     public string $link;
     public string|HTMLElement $description;
     public int $order;
     public bool $active = false;
 
+    /** @param url-string $link */
     public function __construct(string $name, string $link, string|HTMLElement $description, ?bool $active = null, int $order = 50)
     {
         global $config;

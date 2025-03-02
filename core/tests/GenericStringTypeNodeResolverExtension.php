@@ -1,0 +1,55 @@
+<?php
+
+//namespace PHPStan\PhpDoc;
+
+namespace Shimmie2\Tests;
+
+use PHPStan\Analyser\NameScope;
+use PHPStan\PhpDoc\TypeNodeResolver;
+use PHPStan\PhpDoc\TypeNodeResolverAwareExtension;
+use PHPStan\PhpDoc\TypeNodeResolverExtension;
+use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\TypeNode;
+use PHPStan\Type\Type;
+
+//use PHPStan\Type\TypeCombinator;
+
+class GenericStringTypeNodeResolverExtension implements TypeNodeResolverExtension //, TypeNodeResolverAwareExtension
+{
+    /*
+    // @ phpstan-ignore-next-line
+    private TypeNodeResolver $typeNodeResolver;
+
+    public function setTypeNodeResolver(TypeNodeResolver $typeNodeResolver): void
+    {
+        $this->typeNodeResolver = $typeNodeResolver;
+    }
+*/
+    public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
+    {
+        if ($typeNode instanceof IdentifierTypeNode) {
+            return match ($typeNode->name) {
+                'url-string' => new MatchyStringType(
+                    'url-string',
+                    fn ($v) => preg_match('#^(http://|https://|/)#', $v) === 1
+                ),
+                'page-string' => new MatchyStringType(
+                    'page-string',
+                    fn ($v) => (preg_match('/^(|[a-z\$][a-zA-Z0-9\/_:\$\.]*)$/', $v) === 1 && !str_contains($v, '://'))
+                ),
+                // 'page-string' => new PageStringType(),
+                'fragment-string' => new MatchyStringType(
+                    'fragment-string',
+                    fn ($v) => preg_match('/^[a-z\-]+$/', $v) === 1
+                ),
+                'query-string' => new MatchyStringType(
+                    'query-string',
+                    fn ($v) => preg_match('/^[^ ]+$/', $v) === 1
+                ),
+                default => null,
+            };
+        }
+        return null;
+    }
+}

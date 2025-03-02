@@ -9,6 +9,7 @@ namespace Shimmie2;
  * with all the appropriate escaping
  *
  * @param string[] $terms
+ * @return url-string
  */
 function search_link(array $terms = [], int $page = 1): string
 {
@@ -26,6 +27,11 @@ function search_link(array $terms = [], int $page = 1): string
  *
  * eg make_link("foo/bar") becomes either "/v2/foo/bar" (niceurls) or
  * "/v2/index.php?q=foo/bar" (uglyurls)
+ *
+ * @param page-string $page
+ * @param query-string $query
+ * @param fragment-string $fragment
+ * @return url-string
  */
 function make_link(?string $page = null, ?string $query = null, ?string $fragment = null): string
 {
@@ -77,6 +83,9 @@ function make_link(?string $page = null, ?string $query = null, ?string $fragmen
  *   /img, however the URL in REQUEST_URI is /index.php, not /img/index.php
  *
  * This function should always return strings with no leading slashes
+ *
+ * @param ?url-string $uri
+ * @return page-string
  */
 function _get_query(?string $uri = null): string
 {
@@ -161,6 +170,7 @@ function get_base_href(?array $server_settings = null): string
  * The opposite of the standard library's parse_url
  *
  * @param array<string, string|int> $parsed_url
+ * @return url-string
  */
 function unparse_url(array $parsed_url): string
 {
@@ -181,6 +191,7 @@ function unparse_url(array $parsed_url): string
  * Take the current URL and modify some parameters
  *
  * @param array<string, mixed> $changes
+ * @return url-string
  */
 function modify_current_url(array $changes): string
 {
@@ -190,7 +201,9 @@ function modify_current_url(array $changes): string
 /**
  * Take a URL and modify some parameters
  *
+ * @param url-string $url
  * @param array<string, mixed> $changes
+ * @return url-string
  */
 function modify_url(string $url, array $changes): string
 {
@@ -214,6 +227,9 @@ function modify_url(string $url, array $changes): string
 
 /**
  * Turn a relative link into an absolute one, including hostname
+ *
+ * @param string $link
+ * @return url-string
  */
 function make_http(string $link): string
 {
@@ -236,19 +252,21 @@ function make_http(string $link): string
  * If HTTP_REFERER is set, and not blacklisted, then return it
  * Else return a default $dest
  *
- * @param string[]|null $blacklist
+ * @param url-string $dest
+ * @param string[] $blacklist
+ * @return url-string
  */
-function referer_or(string $dest, ?array $blacklist = null): string
+function referer_or(string $dest, array $blacklist = []): string
 {
-    if (empty($_SERVER['HTTP_REFERER'])) {
+    /** @var ?url-string $referer */
+    $referer = $_SERVER['HTTP_REFERER'] ?? null;
+    if (is_null($referer)) {
         return $dest;
     }
-    if ($blacklist) {
-        foreach ($blacklist as $b) {
-            if (str_contains($_SERVER['HTTP_REFERER'], $b)) {
-                return $dest;
-            }
+    foreach ($blacklist as $b) {
+        if (str_contains($referer, $b)) {
+            return $dest;
         }
     }
-    return $_SERVER['HTTP_REFERER'];
+    return $referer;
 }
