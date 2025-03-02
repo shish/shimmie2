@@ -47,9 +47,8 @@ function _calc_event_listeners(): array
 {
     $event_listeners = [];
 
-    foreach (get_subclasses_of(Extension::class) as $class) {
-        /** @var Extension $extension */
-        $extension = new $class();
+    foreach (Extension::get_subclasses() as $class) {
+        $extension = $class->newInstance();
 
         // skip extensions which don't support our current database
         if (!$extension->info->is_supported()) {

@@ -37,7 +37,6 @@ $_tracer->begin("bootstrap");
 _load_core_files();
 $cache = loadCache(CACHE_DSN);
 $database = new Database(getenv("TEST_DSN") ?: "sqlite::memory:");
-_load_extension_files();
 create_dirs();
 create_tables($database);
 $config = new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults());

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class PermissionGroup
+require_once "core/extension.php";
+
+abstract class PermissionGroup extends Enablable
 {
-    public const KEY = "";
     public ?string $title = null;
     public ?int $position = null;
 }

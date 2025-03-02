@@ -41,9 +41,6 @@ _load_core_files();
 // Depends on core files
 $cache = loadCache(CACHE_DSN);
 $database = new Database(DATABASE_DSN);
-// extensions depend on database (`determine_enabled_extensions()`
-// will check that the extension is compatible with the database)
-_load_extension_files();
 // $config depends on extensions (to load config.php files and
 // calculate defaults) and $cache (to cache config values)
 $config = new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults());
