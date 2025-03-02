@@ -17,7 +17,7 @@ class BulkAddCSVTheme extends Themelet
     public function display_upload_results(Page $page): void
     {
         $page->set_title("Adding posts from csv");
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         foreach ($this->messages as $block) {
             $page->add_block($block);
         }

@@ -148,7 +148,7 @@ class ExtManagerTheme extends Themelet
 
         $page->set_title("Documentation for {$info->name}");
         $page->set_heading($info->name);
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block(null, $html));
     }
 }

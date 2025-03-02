@@ -27,7 +27,7 @@ class SourceHistoryTheme extends Themelet
 
         $page->set_title('Post '.$image_id.' Source History');
         $page->set_heading('Source History: '.$image_id);
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block("Source History", rawHTML($history_html), "main", 10));
     }
 
