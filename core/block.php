@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, DIV, H3, SECTION, rawHTML};
+use function MicroHTML\{A};
 
 /**
  * Class Block
@@ -62,21 +62,9 @@ class Block
         $str_id = \Safe\preg_replace('/[^\w-]/', '', str_replace(' ', '_', $id));
         $this->id = $str_id;
     }
-}
 
-
-/**
- * Class NavBlock
- *
- * A generic navigation block with a link to the main page.
- *
- * Used because "new NavBlock()" is easier than "new Block('Navigation', ..."
- *
- */
-class NavBlock extends Block
-{
-    public function __construct()
+    public static function nav(): self
     {
-        parent::__construct("Navigation", A(["href" => make_link()], "Index"), "left", 0);
+        return new self("Navigation", A(["href" => make_link()], "Index"), "left", 0);
     }
 }

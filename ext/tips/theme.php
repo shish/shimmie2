@@ -48,7 +48,7 @@ class TipsTheme extends Themelet
 ";
 
         $page->set_title("Tips List");
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block("Add Tip", rawHTML($html), "main", 10));
     }
 

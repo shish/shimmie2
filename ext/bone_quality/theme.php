@@ -40,7 +40,7 @@ class BoneQualityTheme extends Themelet
         );
 
         $page->set_title("review your fate");
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block($heading, $html, "main", 20));
     }
 

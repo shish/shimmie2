@@ -20,7 +20,7 @@ class ImageViewCounterTheme extends Themelet
         }
 
         $page->set_title($config->get_string(SetupConfig::TITLE));
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block(null, rawHTML($pop_images), "main", 30));
     }
 

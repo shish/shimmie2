@@ -19,7 +19,7 @@ class ETTheme extends Themelet
         global $page;
 
         $page->set_title("System Info");
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block("Site Information", $this->build_data_form($yaml)));
         $page->add_block(new Block("System Information", TEXTAREA(
             ["name" => 'data', "style" => "width: 100%; height: 20em;"],

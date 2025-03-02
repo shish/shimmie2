@@ -15,7 +15,7 @@ class RegenThumbTheme extends Themelet
     {
         $page->set_title("Thumbnail Regenerated");
         $page->add_html_header(META(['http-equiv' => 'cache-control', 'content' => 'no-cache']));
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block("Thumbnail", $this->build_thumb($image)));
     }
 

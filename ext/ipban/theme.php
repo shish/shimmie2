@@ -21,7 +21,7 @@ class IPBanTheme extends Themelet
 			$paginator
 		";
         $page->set_title("IP Bans");
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block(null, rawHTML($html)));
     }
 }

@@ -28,7 +28,7 @@ class TagHistoryTheme extends Themelet
 
         $page->set_title('Post '.$image_id.' Tag History');
         $page->set_heading('Tag History: '.$image_id);
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
         $page->add_block(new Block("Tag History", rawHTML($history_html), "main", 10));
     }
 
