@@ -215,7 +215,7 @@ class UserPage extends Extension
                 array_splice($t->columns, 2, 0, [$col]);
             }
             $page->set_title("Users");
-            $page->add_block(new NavBlock());
+            $page->add_block(Block::nav());
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
         if ($event->page_matches("user_admin/logout", method: "GET")) {
@@ -672,7 +672,7 @@ class UserPage extends Extension
         global $user, $config, $database;
 
         $page->set_title("Error");
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
 
         $duser = User::by_id($uid);
         log_warning("user", "Deleting user #{$uid} (@{$duser->name})");

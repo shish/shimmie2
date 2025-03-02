@@ -34,6 +34,6 @@ class HelpPagesTheme extends Themelet
         global $page;
 
         $page->set_title("Help - $title");
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
     }
 }

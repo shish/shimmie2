@@ -20,7 +20,7 @@ class BlotterTheme extends Themelet
         $html = $this->get_html_for_blotter_editor($entries);
         $page->set_title("Blotter Editor");
         $page->add_block(new Block("Welcome to the Blotter Editor!", rawHTML($html), "main", 10));
-        $page->add_block(new NavBlock());
+        $page->add_block(Block::nav());
     }
 
     /**
