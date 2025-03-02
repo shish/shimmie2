@@ -289,6 +289,7 @@ class DatabaseConfig extends Config
             $args["sub_value"] = $this->sub_value;
         }
 
+        // @phpstan-ignore-next-line
         foreach ($this->database->get_all($query, $args) as $row) {
             // versions prior to 2.12 would store null
             // instead of deleting the row
@@ -315,11 +316,13 @@ class DatabaseConfig extends Config
             $params[] = ":sub_value";
         }
 
+        // @phpstan-ignore-next-line
         $this->database->execute($query, $args);
 
         if (isset($this->values[$name])) {
             $args["value"] = $this->values[$name];
             $this->database->execute(
+                // @phpstan-ignore-next-line
                 "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
                 $args
             );

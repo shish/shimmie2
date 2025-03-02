@@ -127,6 +127,7 @@ class DanbooruPage extends Page
         );
     }
 
+    /** @param url-string $link */
     private function navlinks(string $link, HTMLElement|string $desc, bool $active): HTMLElement
     {
         return A([
