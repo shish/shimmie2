@@ -104,9 +104,8 @@ class Setup extends Extension
 
         if ($event->page_matches("setup", method: "GET", permission: SetupPermission::CHANGE_SETTING)) {
             $blocks = [];
-            foreach (get_subclasses_of(ConfigGroup::class) as $class) {
-                $group = new $class();
-                assert(is_a($group, ConfigGroup::class));
+            foreach (ConfigGroup::get_subclasses() as $class) {
+                $group = $class->newInstance();
                 if (Extension::is_enabled($group::KEY)) {
                     $block = $this->theme->config_group_to_block($config, $group);
                     if ($block) {

@@ -6,6 +6,78 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+require_once "core/exceptions.php";
+
+abstract class Enablable
+{
+    public const KEY = "";
+
+    /** @var string[]|null */
+    private static ?array $enabled_extensions = null;
+
+    /**
+     * @return \ReflectionClass<static>[]
+     */
+    public static function get_subclasses(bool $all = false): array
+    {
+        $result = [];
+        foreach (get_declared_classes() as $class) {
+            if (is_subclass_of($class, get_called_class())) {
+                $rclass = new \ReflectionClass($class);
+                if (!$rclass->isAbstract()) {
+                    if ($all || self::is_enabled($class::KEY)) {
+                        $result[] = $rclass;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+    /**
+     * @return string[]
+     */
+    public static function get_enabled_extensions(): array
+    {
+        if (is_null(self::$enabled_extensions)) {
+            self::$enabled_extensions = [];
+            $extras = defined("EXTRA_EXTS") ? explode(",", EXTRA_EXTS) : [];
+
+            foreach (array_merge(
+                ExtensionInfo::get_core_extensions(),
+                $extras
+            ) as $key) {
+                try {
+                    $ext = ExtensionInfo::get_by_key($key);
+                } catch (\InvalidArgumentException $e) {
+                    continue;
+                }
+                if (!$ext->is_supported()) {
+                    continue;
+                }
+                // FIXME: error if one of our dependencies isn't supported
+                self::$enabled_extensions[] = $ext::KEY;
+                if (!empty($ext->dependencies)) {
+                    foreach ($ext->dependencies as $dep) {
+                        self::$enabled_extensions[] = $dep;
+                    }
+                }
+            }
+        }
+
+        return self::$enabled_extensions;
+    }
+
+    public static function is_enabled(?string $key = null): bool
+    {
+        return in_array($key ?? static::KEY, self::get_enabled_extensions());
+    }
+
+    public static function get_enabled_extensions_as_string(): string
+    {
+        return implode(",", self::get_enabled_extensions());
+    }
+}
+
 /**
  * An Extension is a class that can be loaded by the system to add new
  * functionality. It can hook into events, and provide new features.
@@ -19,14 +91,10 @@ use MicroHTML\HTMLElement;
  * Then re-implemented by Shish after he broke the forum and couldn't
  * find the thread where the original was posted >_<
  */
-abstract class Extension
+abstract class Extension extends Enablable
 {
-    public const KEY = "";
     protected Themelet $theme;
     public ExtensionInfo $info;
-
-    /** @var string[] */
-    private static array $enabled_extensions = [];
 
     public function __construct(?string $class = null)
     {
@@ -42,50 +110,6 @@ abstract class Extension
     public function get_priority(): int
     {
         return 50;
-    }
-
-    public static function determine_enabled_extensions(): void
-    {
-        self::$enabled_extensions = [];
-        $extras = defined("EXTRA_EXTS") ? explode(",", EXTRA_EXTS) : [];
-
-        foreach (array_merge(
-            ExtensionInfo::get_core_extensions(),
-            $extras
-        ) as $key) {
-            try {
-                $ext = ExtensionInfo::get_by_key($key);
-            } catch (\InvalidArgumentException $e) {
-                continue;
-            }
-            if (!$ext->is_supported()) {
-                continue;
-            }
-            // FIXME: error if one of our dependencies isn't supported
-            self::$enabled_extensions[] = $ext::KEY;
-            if (!empty($ext->dependencies)) {
-                foreach ($ext->dependencies as $dep) {
-                    self::$enabled_extensions[] = $dep;
-                }
-            }
-        }
-    }
-
-    public static function is_enabled(string $key): bool
-    {
-        return in_array($key, self::$enabled_extensions);
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function get_enabled_extensions(): array
-    {
-        return self::$enabled_extensions;
-    }
-    public static function get_enabled_extensions_as_string(): string
-    {
-        return implode(",", self::$enabled_extensions);
     }
 
     protected function get_version(string $name): int
@@ -125,10 +149,8 @@ enum ExtensionCategory: string
     case METADATA = "Metadata";
 }
 
-abstract class ExtensionInfo
+abstract class ExtensionInfo extends Enablable
 {
-    public const KEY = "";
-
     // Every credit you get costs us RAM. It stops now.
     public const SHISH_NAME = "Shish";
     public const SHISH_EMAIL = "webmaster@shishnet.org";
@@ -161,6 +183,12 @@ abstract class ExtensionInfo
     public array $db_support = [];
     private ?string $support_info = null;
 
+    public function __construct()
+    {
+        assert(!empty($this::KEY), "KEY field is required");
+        assert(!empty($this->name), "name field is required for extension " . $this::KEY);
+    }
+
     public function is_supported(): bool
     {
         return empty($this->get_support_info());
@@ -182,17 +210,6 @@ abstract class ExtensionInfo
             }
         }
         return $this->support_info;
-    }
-
-    protected function __construct()
-    {
-        assert(!empty($this::KEY), "KEY field is required");
-        assert(!empty($this->name), "name field is required for extension " . $this::KEY);
-    }
-
-    public function is_enabled(): bool
-    {
-        return Extension::is_enabled($this::KEY);
     }
 
     /**
@@ -242,9 +259,8 @@ abstract class ExtensionInfo
         static $infos = null;
         if (is_null($infos)) {
             $infos = [];
-            foreach (get_subclasses_of(ExtensionInfo::class) as $class) {
-                $extension_info = new $class();
-                assert(is_a($extension_info, ExtensionInfo::class));
+            foreach (ExtensionInfo::get_subclasses(all: true) as $class) {
+                $extension_info = $class->newInstance();
                 $infos[$extension_info::KEY] = $extension_info;
             }
         }
@@ -432,9 +448,8 @@ abstract class DataHandlerExtension extends Extension
     public static function get_all_supported_mimes(): array
     {
         $arr = [];
-        foreach (get_subclasses_of(DataHandlerExtension::class) as $handler) {
-            $handler = (new $handler());
-            assert(is_a($handler, DataHandlerExtension::class));
+        foreach (DataHandlerExtension::get_subclasses() as $class) {
+            $handler = $class->newInstance();
             $arr = array_merge($arr, $handler->SUPPORTED_MIME);
         }
 

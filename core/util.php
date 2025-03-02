@@ -639,21 +639,16 @@ function _load_core_files(): void
         zglob("ext/*/info.php"),
         zglob("ext/*/config.php"),
         zglob("ext/*/permissions.php"),
+        zglob("ext/*/theme.php"),
+        zglob("ext/*/main.php"),
     ));
-}
-
-function _load_extension_files(): void
-{
-    Extension::determine_enabled_extensions();
-    require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php"));
 }
 
 function _load_theme_files(): void
 {
     $theme = get_theme();
     require_once('themes/'.$theme.'/page.class.php');
-    require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/theme.php"));
-    require_all(zglob('themes/'.$theme.'/{'.Extension::get_enabled_extensions_as_string().'}.theme.php'));
+    require_all(zglob('themes/'.$theme.'/*.theme.php'));
 }
 
 function _set_up_shimmie_environment(): void
