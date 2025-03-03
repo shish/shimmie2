@@ -78,7 +78,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
       - name: Set up database
-        run: ./tests/setup-db.sh "${{ matrix.database }}"
+        run: ./.github/setup-db.sh "${{ matrix.database }}"
       - name: Install PHP dependencies
         run: composer install --no-progress
       - name: Install old version
@@ -128,7 +128,7 @@ jobs:
           extensions: mbstring
           ini-file: development
       - name: Set up database
-        run: ./tests/setup-db.sh "${{ matrix.database }}"
+        run: ./.github/setup-db.sh "${{ matrix.database }}"
       - name: Check versions
         run: php -v && composer -V
       - name: Validate composer.json and composer.lock
