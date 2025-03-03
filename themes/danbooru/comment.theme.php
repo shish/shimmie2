@@ -55,7 +55,7 @@ class DanbooruCommentListTheme extends CommentListTheme
             }
             $p = autodate($image->posted);
 
-            $r = Extension::is_enabled(RatingsInfo::KEY) ? "<b>Rating</b> ".Ratings::rating_to_human($image['rating']) : "";
+            $r = RatingsInfo::is_enabled() ? "<b>Rating</b> ".Ratings::rating_to_human($image['rating']) : "";
             $comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
 
             $comment_count = count($comments);

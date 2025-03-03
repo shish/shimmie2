@@ -6,17 +6,15 @@ namespace Shimmie2;
 
 class DatabaseException extends SCoreException
 {
-    public string $query;
-    /** @var array<string, mixed> */
-    public array $args;
-
     /**
      * @param array<string, mixed> $args
      */
-    public function __construct(string $msg, string $query, array $args)
-    {
+    public function __construct(
+        public string $msg,
+        public string $query,
+        public array $args
+    ) {
         parent::__construct($msg);
-        $this->error = $msg;
         $this->query = $query;
         $this->args = $args;
     }

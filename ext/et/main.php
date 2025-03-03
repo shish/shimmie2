@@ -60,11 +60,15 @@ class ET extends Extension
     {
         global $config, $database;
 
-        $core_exts = ExtensionInfo::get_core_extensions();
+        $core_exts = [];
         $extra_exts = [];
-        foreach (ExtensionInfo::get_all() as $info) {
-            if ($info->is_enabled() && !in_array($info::KEY, $core_exts)) {
-                $extra_exts[] = $info::KEY;
+        foreach (ExtensionInfo::get_all() as $key => $info) {
+            if ($info->is_enabled()) {
+                if ($info->core) {
+                    $core_exts[] = $info::KEY;
+                } else {
+                    $extra_exts[] = $info::KEY;
+                }
             }
         }
 

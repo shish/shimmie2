@@ -28,12 +28,16 @@ class Image implements \ArrayAccess
     private bool $in_db = false;
 
     public int $id;
+    /** @var 0|positive-int */
     #[Field]
     public int $height = 0;
+    /** @var 0|positive-int */
     #[Field]
     public int $width = 0;
+    /** @var hash-string */
     #[Field]
     public string $hash;
+    /** @var positive-int */
     #[Field]
     public int $filesize;
     #[Field]
@@ -42,12 +46,13 @@ class Image implements \ArrayAccess
     private string $ext;
     private string $mime;
 
-    /** @var ?string[] */
+    /** @var list<tag-string>|null */
     public ?array $tag_array;
     public int $owner_id;
     public string $owner_ip;
     #[Field]
     public string $posted;
+    /** @var non-empty-string|null */
     #[Field]
     public ?string $source = null;
     #[Field]
@@ -180,6 +185,9 @@ class Image implements \ArrayAccess
         throw new PostNotFound("Image $post_id not found");
     }
 
+    /**
+     * @param hash-string $hash
+     */
     public static function by_hash(string $hash): ?Image
     {
         global $database;
@@ -188,6 +196,9 @@ class Image implements \ArrayAccess
         return ($row ? new Image($row) : null);
     }
 
+    /**
+     * @param numeric-string|hash-string $id
+     */
     public static function by_id_or_hash(string $id): ?Image
     {
         return (is_numberish($id) && strlen($id) != 32) ? Image::by_id((int)$id) : Image::by_hash($id);
@@ -260,8 +271,7 @@ class Image implements \ArrayAccess
     #[Field(name: "owner")]
     public function get_owner(): User
     {
-        $user = User::by_id($this->owner_id);
-        return $user;
+        return User::by_id($this->owner_id);
     }
 
     /**
@@ -338,13 +348,14 @@ class Image implements \ArrayAccess
     /**
      * Get this image's tags as an array.
      *
-     * @return array<string>
+     * @return list<tag-string>
      */
     #[Field(name: "tags", type: "[string!]!")]
     public function get_tag_array(): array
     {
         global $database;
         if (!isset($this->tag_array)) {
+            /** @var list<tag-string> */
             $tarr = $database->get_col("
                 SELECT tag
                 FROM image_tags
@@ -355,7 +366,6 @@ class Image implements \ArrayAccess
             sort($tarr);
             $this->tag_array = $tarr;
         }
-        assert(is_array($this->tag_array));
         return $this->tag_array;
     }
 
@@ -369,6 +379,7 @@ class Image implements \ArrayAccess
 
     /**
      * Get the URL for the full size image
+     * @return url-string
      */
     #[Field(name: "image_link")]
     public function get_image_link(): string
@@ -387,6 +398,7 @@ class Image implements \ArrayAccess
 
     /**
      * Get the URL for the thumbnail
+     * @return url-string
      */
     #[Field(name: "thumb_link")]
     public function get_thumb_link(): string
@@ -399,6 +411,7 @@ class Image implements \ArrayAccess
 
     /**
      * Check configured template for a link, then try nice URL, then plain URL
+     * @return url-string
      */
     private function get_link(string $template, string $nice, string $plain): string
     {
@@ -496,6 +509,7 @@ class Image implements \ArrayAccess
 
     /**
      * Get the image's source URL
+     * @return non-empty-string|null
      */
     public function get_source(): ?string
     {
@@ -563,7 +577,7 @@ class Image implements \ArrayAccess
     /**
      * Set the tags for this image.
      *
-     * @param string[] $unfiltered_tags
+     * @param tag-string[] $unfiltered_tags
      */
     public function set_tags(array $unfiltered_tags): void
     {

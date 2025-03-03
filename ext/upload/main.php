@@ -152,7 +152,7 @@ class Upload extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "upload") {
-            if (Extension::is_enabled(WikiInfo::KEY)) {
+            if (WikiInfo::is_enabled()) {
                 $event->add_nav_link("upload_guidelines", make_link('wiki/upload_guidelines'), "Guidelines");
             }
         }
