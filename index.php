@@ -32,7 +32,9 @@ if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN"))
 * Load files                                                                *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// @phpstan-ignore-next-line
 @include_once "data/config/shimmie.conf.php";
+// @phpstan-ignore-next-line
 @include_once "data/config/extensions.conf.php";
 
 global $cache, $config, $database, $user, $page, $_tracer;
