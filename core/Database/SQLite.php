@@ -15,12 +15,9 @@ class SQLite extends DBEngine
         ini_set('sqlite.assoc_case', '0');
         $db->exec("PRAGMA foreign_keys = ON;");
         $db->sqliteCreateFunction('now', fn (): string => date("Y-m-d H:i:s"), 0);
-        $db->sqliteCreateFunction('floor', fn (float|int $a): float => floor($a), 1);
-        $db->sqliteCreateFunction('log', fn (float $a, float $b): float => log($b, $a), 2);
         $db->sqliteCreateFunction('md5', fn (string $a): string => md5($a), 1);
-        $db->sqliteCreateFunction('lower', fn (string $a): string => strtolower($a), 1);
+        $db->sqliteCreateFunction('lower', fn (string $a): string => mb_strtolower($a), 1);
         $db->sqliteCreateFunction('rand', fn (): int => rand(), 0);
-        $db->sqliteCreateFunction('ln', fn (float $n): float => log($n), 1);
     }
 
     public function scoreql_to_sql(string $data): string

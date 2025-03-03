@@ -39,4 +39,17 @@ class SQLTest extends ShimmiePHPUnitTestCase
         $this->assertEqualsWithDelta(2.3, $database->get_one("SELECT ln(10)"), 0.01);
         $this->assertEqualsWithDelta(3.0, $database->get_one("SELECT log(2, 8)"), 0.01);
     }
+
+    public function test_cyrillic_php_lowercase(): void
+    {
+        // confirm that strtolower does not work with Cyrillic, but mb_strtolower does
+        $this->assertNotEquals("советских", strtolower("Советских"), "strtolower");
+        $this->assertEquals("советских", mb_strtolower("Советских"), "mb_strtolower");
+    }
+
+    public function test_cyrillic_database_lowercase(): void
+    {
+        global $database;
+        $this->assertEquals("советских", $database->get_one("SELECT LOWER('Советских')"), "LOWER");
+    }
 }
