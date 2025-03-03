@@ -39,7 +39,7 @@ class EventBus
         $ver = \Safe\preg_replace("/[^a-zA-Z0-9\.]/", "_", SysConfig::getVersion());
         $key = md5(Extension::get_enabled_extensions_as_string());
 
-        $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_EVENT_LISTENERS));
+        $speed_hax = (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::CACHE_EVENT_LISTENERS));
         $cache_path = Filesystem::data_path("cache/event_listeners/el.$ver.$key.php");
         if ($speed_hax && file_exists($cache_path)) {
             $this->event_listeners = require_once($cache_path);
@@ -72,7 +72,7 @@ class EventBus
             $extension = $class->newInstance();
 
             // skip extensions which don't support our current database
-            if (!ExtensionInfo::get_by_key($extension::KEY)->is_supported()) {
+            if (!ExtensionInfo::get_all()[$extension::KEY]->is_supported()) {
                 continue;
             }
 

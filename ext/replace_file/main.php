@@ -79,7 +79,11 @@ class ReplaceFile extends Extension
 
         // update metadata and save metadata to DB
         $event->image->hash = $event->new_hash;
-        $event->image->filesize = \Safe\filesize($target);
+        $filesize = \Safe\filesize($target);
+        if ($filesize == 0) {
+            throw new ImageReplaceException("Replacement file size is zero");
+        }
+        $event->image->filesize = $filesize;
         $event->image->set_mime(MimeType::get_for_file($target));
         send_event(new MediaCheckPropertiesEvent($image));
         $image->save_to_db();

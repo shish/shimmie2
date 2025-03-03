@@ -6,44 +6,6 @@ namespace Shimmie2;
 
 use FFSPHP\PDO;
 
-// shimmie functions for export to sqlite
-function _unix_timestamp(string $date): int
-{
-    return \Safe\strtotime($date);
-}
-function _now(): string
-{
-    return date("Y-m-d H:i:s");
-}
-function _floor(float|int $a): float
-{
-    return floor($a);
-}
-function _log(float $a, ?float $b = null): float
-{
-    if (is_null($b)) {
-        return log($a);
-    } else {
-        return log($b, $a);
-    }
-}
-function _md5(string $a): string
-{
-    return md5($a);
-}
-function _lower(string $a): string
-{
-    return strtolower($a);
-}
-function _rand(): int
-{
-    return rand();
-}
-function _ln(float $n): float
-{
-    return log($n);
-}
-
 class SQLite extends DBEngine
 {
     public DatabaseDriverID $id = DatabaseDriverID::SQLITE;
@@ -52,14 +14,13 @@ class SQLite extends DBEngine
     {
         ini_set('sqlite.assoc_case', '0');
         $db->exec("PRAGMA foreign_keys = ON;");
-        $db->sqliteCreateFunction('UNIX_TIMESTAMP', 'Shimmie2\_unix_timestamp', 1);
-        $db->sqliteCreateFunction('now', 'Shimmie2\_now', 0);
-        $db->sqliteCreateFunction('floor', 'Shimmie2\_floor', 1);
-        $db->sqliteCreateFunction('log', 'Shimmie2\_log');
-        $db->sqliteCreateFunction('md5', 'Shimmie2\_md5', 1);
-        $db->sqliteCreateFunction('lower', 'Shimmie2\_lower', 1);
-        $db->sqliteCreateFunction('rand', 'Shimmie2\_rand', 0);
-        $db->sqliteCreateFunction('ln', 'Shimmie2\_ln', 1);
+        $db->sqliteCreateFunction('now', fn (): string => date("Y-m-d H:i:s"), 0);
+        $db->sqliteCreateFunction('floor', fn (float|int $a): float => floor($a), 1);
+        $db->sqliteCreateFunction('log', fn (float $a, ?float $b = null): float => $b === null ? log($a) : log($b, $a));
+        $db->sqliteCreateFunction('md5', fn (string $a): string => md5($a), 1);
+        $db->sqliteCreateFunction('lower', fn (string $a): string => strtolower($a), 1);
+        $db->sqliteCreateFunction('rand', fn (): int => rand(), 0);
+        $db->sqliteCreateFunction('ln', fn (float $n): float => log($n), 1);
     }
 
     public function scoreql_to_sql(string $data): string

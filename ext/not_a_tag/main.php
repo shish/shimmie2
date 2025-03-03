@@ -86,8 +86,8 @@ class NotATag extends Extension
     }
 
     /**
-     * @param string[] $tags
-     * @return string[]
+     * @param list<tag-string> $tags
+     * @return list<tag-string>
      */
     private function strip(array $tags): array
     {

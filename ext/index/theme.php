@@ -116,7 +116,7 @@ and of course start organising your images :-)
     {
         global $config;
 
-        if (Extension::is_enabled(WikiInfo::KEY) && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
+        if (WikiInfo::is_enabled() && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) == 1) {
                 $st = Tag::implode($this->search_terms);
 
@@ -127,7 +127,7 @@ and of course start organising your images :-)
                     $short_wiki_description = format_text(explode("\n", $wikiPage->body, 2)[0]);
                 }
                 $wikiLink = make_link("wiki/$st");
-                if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
+                if (TagCategoriesInfo::is_enabled()) {
                     $st = TagCategories::getTagHtml(html_escape($st));
                 }
                 $short_wiki_description = '<h2>'.$st.'&nbsp;<a href="'.$wikiLink.'"><sup>ⓘ</sup></a></h2>'.$short_wiki_description;

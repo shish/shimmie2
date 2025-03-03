@@ -224,7 +224,7 @@ class CommentList extends Extension
         if ($event->page_matches("comment/list", paged: true)) {
             $threads_per_page = 10;
 
-            $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::RECENT_COMMENTS));
+            $speed_hax = (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::RECENT_COMMENTS));
             $where = $speed_hax ? "WHERE posted > now() - interval '24 hours'" : "";
 
             $total_pages = cache_get_or_set("comment_pages", fn () => (int)ceil($database->get_one("
@@ -245,19 +245,19 @@ class CommentList extends Extension
                 LIMIT :limit OFFSET :offset
             ", ["limit" => $threads_per_page, "offset" => $start]);
 
-            $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_class_privs($user) : [];
+            $user_ratings = RatingsInfo::is_enabled() ? Ratings::get_user_class_privs($user) : [];
 
             $images = [];
             while ($row = $result->fetch()) {
                 $image = Image::by_id((int)$row["image_id"]);
                 if (
-                    Extension::is_enabled(RatingsInfo::KEY) && !is_null($image) &&
+                    RatingsInfo::is_enabled() && !is_null($image) &&
                     !in_array($image['rating'], $user_ratings)
                 ) {
                     $image = null; // this is "clever", I may live to regret it
                 }
                 if (
-                    Extension::is_enabled(ApprovalInfo::KEY) && !is_null($image) &&
+                    ApprovalInfo::is_enabled() && !is_null($image) &&
                     $image['approved'] !== true
                 ) {
                     $image = null;
