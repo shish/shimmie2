@@ -55,7 +55,7 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
             $html .= "<br>Source: <a href='$h_source'>link</a>";
         }
 
-        if (Extension::is_enabled(RatingsInfo::KEY)) {
+        if (RatingsInfo::is_enabled()) {
             $rating = $image['rating'];
             if ($rating === null) {
                 $rating = "?";

@@ -22,15 +22,15 @@ class TagSetException extends UserError
 class TagSetEvent extends Event
 {
     public Image $image;
-    /** @var string[] */
+    /** @var list<tag-string> */
     public array $old_tags;
-    /** @var string[] */
+    /** @var list<tag-string> */
     public array $new_tags;
-    /** @var string[] */
+    /** @var list<tag-string> */
     public array $metatags;
 
     /**
-     * @param string[] $tags
+     * @param tag-string[] $tags
      */
     public function __construct(Image $image, array $tags)
     {
@@ -71,7 +71,7 @@ class TagTermCheckEvent extends Event
     public function __construct(string $term)
     {
         parent::__construct();
-        $this->term  = $term;
+        $this->term = $term;
     }
 
     /**
@@ -304,7 +304,7 @@ class PostTags extends Extension
             }
 
             foreach ($images as $image) {
-                $before = array_map('strtolower', $image->get_tag_array());
+                $before = array_filter(array_map(strtolower(...), $image->get_tag_array()), fn ($tag) => !empty($tag));
                 $after = array_merge(array_diff($before, $search_set), $replace_set);
                 send_event(new TagSetEvent($image, $after));
                 $last_id = $image->id;

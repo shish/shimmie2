@@ -122,7 +122,7 @@ class TagList extends Extension
 			ORDER BY tags.count DESC
 		", ["image_id" => $image->id]);
         if (count($tags) > 0) {
-            if (Extension::is_enabled(TagCategoriesInfo::KEY) and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
+            if (TagCategoriesInfo::is_enabled() and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                 $this->theme->display_split_related_block($page, $tags);
             } else {
                 $this->theme->display_related_block($page, $tags, "Tags");

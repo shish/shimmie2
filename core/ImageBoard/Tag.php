@@ -60,7 +60,7 @@ class Tag
     /**
      * Turn a human-supplied string into a valid tag array.
      *
-     * @return list<string>
+     * @return list<tag-string>
      */
     public static function explode(string $tags, bool $tagme = true): array
     {
@@ -69,19 +69,19 @@ class Tag
         $tags = explode(' ', trim($tags));
 
         /* sanitise by removing invisible / dodgy characters */
-        $tag_array = self::sanitize_array($tags);
+        $tags_to_process = self::sanitize_array($tags);
 
         /* if user supplied a blank string, add "tagme" */
-        if (count($tag_array) === 0 && $tagme) {
-            $tag_array = ["tagme"];
+        if (count($tags_to_process) === 0 && $tagme) {
+            $tags_to_process = ["tagme"];
         }
 
         /* resolve aliases */
-        $new = [];
+        $processed_tags = [];
         $i = 0;
-        $tag_count = count($tag_array);
+        $tag_count = count($tags_to_process);
         while ($i < $tag_count) {
-            $tag = $tag_array[$i];
+            $tag = $tags_to_process[$i];
             $negative = '';
             if (!empty($tag) && ($tag[0] == '-')) {
                 $negative = '-';
@@ -104,11 +104,11 @@ class Tag
             }
 
             foreach ($aliases as $alias) {
-                if (!in_array($alias, $new)) {
+                if (!in_array($alias, $processed_tags)) {
                     if ($tag == $alias) {
-                        $new[] = $negative.$alias;
-                    } elseif (!in_array($alias, $tag_array)) {
-                        $tag_array[] = $negative.$alias;
+                        $processed_tags[] = $negative.$alias;
+                    } elseif (!in_array($alias, $tags_to_process)) {
+                        $tags_to_process[] = $negative.$alias;
                         $tag_count++;
                     }
                 }
@@ -117,12 +117,12 @@ class Tag
         }
 
         /* remove any duplicate tags */
-        $tag_array = array_iunique($new);
+        $processed_tags = array_iunique($processed_tags);
+        sort($processed_tags);
+        $processed_tags = array_filter($processed_tags, fn ($t) => !empty($t));
+        $processed_tags = array_values($processed_tags);
 
-        /* tidy up */
-        sort($tag_array);
-
-        return $tag_array;
+        return $processed_tags;
     }
 
     public static function sanitize(string $tag): string
@@ -178,7 +178,7 @@ class Tag
 
     /**
      * @param string[] $tags
-     * @return string[]
+     * @return list<tag-string>
      */
     public static function sanitize_array(array $tags): array
     {

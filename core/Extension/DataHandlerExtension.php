@@ -58,7 +58,11 @@ abstract class DataHandlerExtension extends Extension
             assert(is_readable($filename));
             $image = new Image();
             $image->tmp_file = $filename;
-            $image->filesize = \Safe\filesize($filename);
+            $filesize = \Safe\filesize($filename);
+            if ($filesize == 0) {
+                throw new UploadException("File size is zero");
+            }
+            $image->filesize = $filesize;
             $image->hash = \Safe\md5_file($filename);
             // DB limits to 255 char filenames
             $image->filename = substr($event->filename, -250);
@@ -144,7 +148,7 @@ abstract class DataHandlerExtension extends Extension
         }
 
         // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class
-        if (Extension::is_enabled(TranscodeImageInfo::KEY)) {
+        if (TranscodeImageInfo::is_enabled()) {
             $arr = array_merge($arr, TranscodeImage::get_enabled_mimes());
         }
 

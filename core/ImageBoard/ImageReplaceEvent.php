@@ -9,7 +9,9 @@ namespace Shimmie2;
  */
 class ImageReplaceEvent extends Event
 {
+    /** @var non-empty-string */
     public string $old_hash;
+    /** @var non-empty-string */
     public string $new_hash;
 
     /**

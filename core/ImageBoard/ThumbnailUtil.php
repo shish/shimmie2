@@ -11,10 +11,10 @@ class ThumbnailUtil
      * into the configured thumbnail square, with ratio intact.
      * Optionally uses the High-DPI scaling setting to adjust the final resolution.
      *
-     * @param int $orig_width
-     * @param int $orig_height
+     * @param 0|positive-int $orig_width
+     * @param 0|positive-int $orig_height
      * @param bool $use_dpi_scaling Enables the High-DPI scaling.
-     * @return array{0: int, 1: int}
+     * @return array{0: positive-int, 1: positive-int}
      */
     public static function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_scaling = false): array
     {
@@ -53,32 +53,41 @@ class ThumbnailUtil
             $max_height = $config->get_int(ThumbnailConfig::HEIGHT);
         }
 
-        $output = self::get_scaled_by_aspect_ratio($orig_width, $orig_height, $max_width, $max_height);
+        list($width, $height, $scale) = self::get_scaled_by_aspect_ratio($orig_width, $orig_height, $max_width, $max_height);
 
-        if ($output[2] > 1 && $config->get_bool(ThumbnailConfig::UPSCALE)) {
+        if ($scale > 1 && $config->get_bool(ThumbnailConfig::UPSCALE)) {
             return [(int)$orig_width, (int)$orig_height];
         } else {
-            return $output;
+            return [$width, $height];
         }
     }
 
     /**
-     * @return array{0: int, 1: int, 2: float}
+     * @param positive-int $original_width
+     * @param positive-int $original_height
+     * @param positive-int $max_width
+     * @param positive-int $max_height
+     * @return array{0: positive-int, 1: positive-int, 2: float}
      */
     public static function get_scaled_by_aspect_ratio(int $original_width, int $original_height, int $max_width, int $max_height): array
     {
         $xscale = ($max_width / $original_width);
         $yscale = ($max_height / $original_height);
+        $scale = ($yscale < $xscale) ? $yscale : $xscale;
+        assert($scale > 0);
 
-        $scale = ($yscale < $xscale) ? $yscale : $xscale ;
+        $new_width = (int)($original_width * $scale);
+        $new_height = (int)($original_height * $scale);
+        assert($new_width > 0);
+        assert($new_height > 0);
 
-        return [(int)($original_width * $scale), (int)($original_height * $scale), $scale];
+        return [$new_width, $new_height, $scale];
     }
 
     /**
      * Fetches the thumbnails height and width settings and applies the High-DPI scaling setting before returning the dimensions.
      *
-     * @return array{0: int, 1: int}
+     * @return array{0: positive-int, 1: positive-int}
      */
     public static function get_thumbnail_max_size_scaled(): array
     {
@@ -87,6 +96,8 @@ class ThumbnailUtil
         $scaling = $config->get_int(ThumbnailConfig::SCALING);
         $max_width  = $config->get_int(ThumbnailConfig::WIDTH) * ($scaling / 100);
         $max_height = $config->get_int(ThumbnailConfig::HEIGHT) * ($scaling / 100);
+        assert($max_width > 0);
+        assert($max_height > 0);
         return [$max_width, $max_height];
     }
 
@@ -104,7 +115,7 @@ class ThumbnailUtil
     }
 
     /**
-     * @param array{0: int, 1: int} $tsize
+     * @param array{0: positive-int, 1: positive-int} $tsize
      */
     public static function create_scaled_image(
         string $inname,

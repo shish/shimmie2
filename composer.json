@@ -110,6 +110,7 @@
         "format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
         "analyse-ci": "phpstan analyse --memory-limit 1G --error-format=github",
         "analyse": "phpstan analyse --memory-limit 1G --error-format=raw | sed 's/:/ /g; s/ /:/'",
+        "test-cover": "XDEBUG_MODE=coverage phpunit --coverage-html=./data/coverage",
         "test": "phpunit",
         "docker-run": "./.docker/run.php"
     }

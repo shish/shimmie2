@@ -96,8 +96,10 @@ class SVGFileHandler extends DataHandlerExtension
 class MiniSVGParser
 {
     public bool $valid = false;
-    public int $width = 0;
-    public int $height = 0;
+    /** @var positive-int */
+    public int $width;
+    /** @var positive-int */
+    public int $height;
     private int $xml_depth = 0;
 
     public function __construct(string $file)
@@ -114,8 +116,12 @@ class MiniSVGParser
     public function startElement(mixed $parser, string $name, array $attrs): void
     {
         if ($name == "SVG" && $this->xml_depth == 0) {
-            $this->width = int_escape($attrs["WIDTH"]);
-            $this->height = int_escape($attrs["HEIGHT"]);
+            $w = int_escape($attrs["WIDTH"]);
+            $h = int_escape($attrs["HEIGHT"]);
+            assert($w > 0);
+            assert($h > 0);
+            $this->width = $w;
+            $this->height = $h;
         }
         $this->xml_depth++;
     }
