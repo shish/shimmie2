@@ -16,9 +16,16 @@ $_shm_load_start = microtime(true);
 
 chdir(dirname(dirname(__FILE__)));
 require_once "vendor/autoload.php";
-require_once "tests/defines.php";
+
+define("DATABASE_DSN", getenv("TEST_DSN") ?: "sqlite::memory:");
+define("UNITTEST", true);
+define("EXTRA_EXTS", array_map(fn ($x) => str_replace("ext/", "", $x), \Safe\glob('ext/*')));
+define("VERSION", 'unit-tests');
+define("TIMEZONE", 'UTC');
+define("SECRET", "asdfghjkl");
 
 CliApp::$logLevel = LogLevel::CRITICAL->value;
+
 $_SERVER['SCRIPT_FILENAME'] = '/var/www/html/test/index.php';
 $_SERVER['DOCUMENT_ROOT'] = '/var/www/html';
 $_SERVER['QUERY_STRING'] = '/';

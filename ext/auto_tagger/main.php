@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use MicroCRUD\ActionColumn;
-use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
 class AutoTaggerTable extends Table
@@ -258,8 +257,8 @@ class AutoTagger extends Extension
     }
 
     /**
-     * @param string[] $tags_mixed
-     * @return string[]
+     * @param list<tag-string> $tags_mixed
+     * @return list<tag-string>
      */
     private function apply_auto_tags(array $tags_mixed): array
     {
@@ -274,10 +273,10 @@ class AutoTagger extends Extension
                 );
 
                 if (!empty($additional_tags)) {
-                    $additional_tags = explode(" ", $additional_tags);
+                    $additional_tags = Tag::explode($additional_tags);
                     $new_tags = array_merge(
                         $new_tags,
-                        array_udiff($additional_tags, $tags_mixed, 'strcasecmp')
+                        array_udiff($additional_tags, $tags_mixed, strcasecmp(...))
                     );
                 }
             }
@@ -287,16 +286,12 @@ class AutoTagger extends Extension
             $tags_mixed = array_merge($tags_mixed, $new_tags);
         }
 
-        return array_intersect_key(
+        return array_values(array_intersect_key(
             $tags_mixed,
-            array_unique(array_map('strtolower', $tags_mixed))
-        );
+            array_unique(array_map(strtolower(...), $tags_mixed))
+        ));
     }
 
-    /**
-     * Get the priority for this extension.
-     *
-     */
     public function get_priority(): int
     {
         return 30;

@@ -75,7 +75,7 @@ class UserConfig extends Extension
             $blocks = [];
             foreach (UserConfigGroup::get_subclasses() as $class) {
                 $group = $class->newInstance();
-                if (Extension::is_enabled($group::KEY)) {
+                if ($group::is_enabled()) {
                     $block = $this->theme->config_group_to_block($user->get_config(), $group);
                     if ($block) {
                         $blocks[] = $block;

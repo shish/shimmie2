@@ -186,6 +186,7 @@ class DanbooruApi extends Extension
         if (isset($GET['md5'])) {
             $md5list = explode(",", $GET['md5']);
             foreach ($md5list as $md5) {
+                assert($md5 !== '');
                 $results[] = Image::by_hash($md5);
             }
             $count = count($results);

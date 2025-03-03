@@ -610,8 +610,8 @@ class Media extends Extension
      *
      * @param string $image_filename The source file to be resized.
      * @param array{0:int,1:int,2:int} $info The output of getimagesize() for the source file.
-     * @param int $new_width
-     * @param int $new_height
+     * @param positive-int $new_width
+     * @param positive-int $new_height
      * @param string $output_filename
      * @param ?string $output_mime If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
      * @param int $output_quality Defaults to 80.
@@ -630,6 +630,7 @@ class Media extends Extension
     ): void {
         $width = $info[0];
         $height = $info[1];
+        assert($width > 0 && $height > 0);
 
         if ($output_mime === null) {
             /* If not specified, output to the same format as the original image */
@@ -674,7 +675,6 @@ class Media extends Extension
             throw new MediaException("Could not load image: " . $image_filename);
         }
 
-        assert($new_width > 0 && $new_height > 0);
         $image_resized = imagecreatetruecolor($new_width, $new_height);
         if ($image_resized === false) {
             throw new MediaException("Could not create output image with dimensions $new_width x $new_height ");
@@ -807,7 +807,7 @@ class Media extends Extension
      * Determines the dimensions of a video file using ffmpeg.
      *
      * @param string $filename
-     * @return array{0: int, 1: int}
+     * @return array{0: positive-int, 1: positive-int}
      */
     public static function video_size(string $filename): array
     {
@@ -827,10 +827,13 @@ class Media extends Extension
         // error_log("Getting size with `$cmd`");
 
         if (\Safe\preg_match("/Video: .* ([0-9]{1,4})x([0-9]{1,4})/", $output, $regs)) {
+            $x = (int)$regs[1];
+            $y = (int)$regs[2];
+            assert($x > 0 && $y > 0);
             if (\Safe\preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
-                $size = [(int)$regs[2], (int)$regs[1]];
+                $size = [$y, $x];
             } else {
-                $size = [(int)$regs[1], (int)$regs[2]];
+                $size = [$x, $y];
             }
         } else {
             $size = [1, 1];
