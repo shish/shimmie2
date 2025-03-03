@@ -63,6 +63,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Set up database
+        run: ./.github/setup-db.sh "${{ matrix.database }}"
       - name: Travel to past
         # is there a way to programatically get "the most recent
         # tagged minor version of the previous major version"?
@@ -77,8 +79,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-      - name: Set up database
-        run: ./tests/setup-db.sh "${{ matrix.database }}"
       - name: Install PHP dependencies
         run: composer install --no-progress
       - name: Install old version
@@ -128,7 +128,7 @@ jobs:
           extensions: mbstring
           ini-file: development
       - name: Set up database
-        run: ./tests/setup-db.sh "${{ matrix.database }}"
+        run: ./.github/setup-db.sh "${{ matrix.database }}"
       - name: Check versions
         run: php -v && composer -V
       - name: Validate composer.json and composer.lock
