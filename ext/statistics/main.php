@@ -26,7 +26,7 @@ class Statistics extends Extension
                 $limit = 100;
             }
 
-            if (Extension::is_enabled(TagHistoryInfo::KEY)) {
+            if (TagHistoryInfo::is_enabled()) {
                 $tallies = $this->get_tag_stats($this->unlisted);
                 arsort($tallies[0], SORT_NUMERIC);
                 $stats = [];
@@ -50,7 +50,7 @@ class Statistics extends Extension
             arsort($upload_tally, SORT_NUMERIC);
             $upload_table = $this->theme->build_table($upload_tally, "Uploaders", "Top $limit uploaders", $limit);
 
-            if (Extension::is_enabled(CommentListInfo::KEY)) {
+            if (CommentListInfo::is_enabled()) {
                 $comment_tally = [];
                 foreach ($this->get_comment_stats($unlisted) as $name) {
                     array_key_exists($name, $comment_tally) ? $comment_tally[$name] += 1 : $comment_tally[$name] = 1;
@@ -62,7 +62,7 @@ class Statistics extends Extension
                 $comment_table = null;
             }
 
-            if (Extension::is_enabled(FavoritesInfo::KEY)) {
+            if (FavoritesInfo::is_enabled()) {
                 $favorite_tally = [];
                 foreach ($this->get_favorite_stats($unlisted) as $name) {
                     array_key_exists($name, $favorite_tally) ? $favorite_tally[$name] += 1 : $favorite_tally[$name] = 1;

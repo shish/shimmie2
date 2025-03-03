@@ -53,7 +53,7 @@ class AutoComplete extends Extension
         $search = str_replace('%', '\%', $search);
         $SQLarr = [
             "search" => "$search%",
-            "cat_search" => Extension::is_enabled(TagCategoriesInfo::KEY) ? "%:$search%" : "",
+            "cat_search" => TagCategoriesInfo::is_enabled() ? "%:$search%" : "",
         ];
         if ($limit !== 0) {
             $limitSQL = "LIMIT :limit";

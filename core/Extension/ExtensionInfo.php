@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
 abstract class ExtensionInfo extends Enablable
 {
     // Every credit you get costs us RAM. It stops now.
@@ -38,7 +36,6 @@ abstract class ExtensionInfo extends Enablable
 
     /** @var DatabaseDriverID[] which DBs this ext supports (blank for 'all') */
     public array $db_support = [];
-    private ?string $support_info = null;
 
     public function __construct()
     {
@@ -53,65 +50,24 @@ abstract class ExtensionInfo extends Enablable
 
     public function get_support_info(): string
     {
-        if ($this->support_info === null) {
-            global $database;
-            $this->support_info  = "";
-            if (!empty($this->db_support) && !in_array($database->get_driver_id(), $this->db_support)) {
-                $this->support_info .= "Database not supported. ";
-            }
-            if (!empty($this->conflicts)) {
-                $intersects = array_intersect($this->conflicts, Extension::get_enabled_extensions());
-                if (!empty($intersects)) {
-                    $this->support_info .= "Conflicts with other extension(s): " . join(", ", $intersects);
-                }
+        global $database;
+        $support_info  = "";
+        if (!empty($this->db_support) && !in_array($database->get_driver_id(), $this->db_support)) {
+            $support_info .= "Database not supported. ";
+        }
+        if (!empty($this->conflicts)) {
+            $intersects = array_intersect($this->conflicts, Extension::get_enabled_extensions());
+            if (!empty($intersects)) {
+                $support_info .= "Conflicts with other extension(s): " . join(", ", $intersects);
             }
         }
-        return $this->support_info;
-    }
-
-    /**
-     * @return ExtensionInfo[]
-     */
-    public static function get_all(): array
-    {
-        return array_values(self::get_all_infos());
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function get_all_keys(): array
-    {
-        return array_keys(self::get_all_infos());
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function get_core_extensions(): array
-    {
-        return array_map(
-            fn ($info) => $info::KEY,
-            array_filter(
-                array_values(self::get_all_infos()),
-                fn ($info) => $info->core
-            )
-        );
-    }
-
-    public static function get_by_key(string $key): ExtensionInfo
-    {
-        $info = self::get_all_infos()[$key] ?? null;
-        if (is_null($info)) {
-            throw new \InvalidArgumentException("No ExtensionInfo with key '$key'");
-        }
-        return $info;
+        return $support_info;
     }
 
     /**
      * @return array<string, ExtensionInfo>
      */
-    private static function get_all_infos(): array
+    public static function get_all(): array
     {
         static $infos = null;
         if (is_null($infos)) {

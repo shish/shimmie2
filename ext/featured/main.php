@@ -53,7 +53,7 @@ class Featured extends Extension
                 600
             );
             if (!is_null($image)) {
-                if (Extension::is_enabled(RatingsInfo::KEY)) {
+                if (RatingsInfo::is_enabled()) {
                     if (!in_array($image['rating'], Ratings::get_user_class_privs($user))) {
                         return;
                     }

@@ -88,7 +88,7 @@ class PermManager extends Extension
             $permissions = [];
             foreach (PermissionGroup::get_subclasses() as $class) {
                 $group = $class->newInstance();
-                if (!Extension::is_enabled($group::KEY)) {
+                if (!$group::is_enabled()) {
                     continue;
                 }
                 foreach ($class->getConstants() as $const => $key) {

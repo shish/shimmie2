@@ -10,19 +10,11 @@ abstract class DBEngine
 {
     public DatabaseDriverID $id;
 
-    public function init(PDO $db): void
-    {
-    }
+    abstract public function init(PDO $db): void;
 
-    public function scoreql_to_sql(string $data): string
-    {
-        return $data;
-    }
+    abstract public function scoreql_to_sql(string $data): string;
 
-    public function create_table_sql(string $name, string $data): string
-    {
-        return 'CREATE TABLE '.$name.' ('.$data.')';
-    }
+    abstract public function create_table_sql(string $name, string $data): string;
 
     abstract public function set_timeout(PDO $db, ?int $time): void;
 
