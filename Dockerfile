@@ -56,7 +56,7 @@ ENV XDEBUG_MODE=coverage
 FROM dev-tools AS build
 COPY composer.json composer.lock /app/
 WORKDIR /app
-RUN composer install --no-dev --no-progress
+RUN composer install --no-dev --no-progress --optimize-autoloader
 COPY . /app/
 
 # Devcontainer target
