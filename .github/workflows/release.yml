@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         run: |
-          composer install --no-dev --no-progress
+          composer install --no-dev --no-progress --optimize-autoloader
           cd ..
           tar cvzf shimmie2-${{ steps.get_version.outputs.VERSION }}.tgz shimmie2
           zip -r shimmie2-${{ steps.get_version.outputs.VERSION }}.zip shimmie2
