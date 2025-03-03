@@ -69,9 +69,27 @@ class SysConfig
         return defined("TIMEZONE") ? constant("TIMEZONE") : null;
     }
 
-    public static function getExtraExtensions(): string
+    /**
+     * @return array<string>
+     */
+    public static function getExtraExtensions(): array
     {
-        return defined("EXTRA_EXTS") ? constant("EXTRA_EXTS") : "";
+        // Up to 2.11 uses a comma-separated string,
+        // but since 2.12 it's an array
+        if (defined("EXTRA_EXTS")) {
+            $v = constant("EXTRA_EXTS");
+            if (is_array($v)) {
+                return $v;
+            }
+            if (is_string($v)) {
+                if ($v === "") {
+                    return [];
+                } else {
+                    return explode(",", $v);
+                }
+            }
+        }
+        return [];
     }
 
     public static function getBaseHref(): ?string

@@ -13,9 +13,14 @@ parameters:
 #    - BASE_HREF
 #    - TRACE_FILE
 #    - UNITTEST
+  typeAliases:
+    tag-string: non-empty-string
+    hash-string: non-empty-string&internal-hash-string
   ignoreErrors:
     -
       message: '#Function .* is unsafe to use.*$#'
+    -
+      message: '#Path in include_once\(\) "data/.*" is not a file or it does not exist.#'
 includes:
   - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
 services:

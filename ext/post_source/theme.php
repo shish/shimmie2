@@ -32,7 +32,7 @@ class PostSourceTheme extends Themelet
                 $this->format_source($image->get_source())
             ),
             $user->can(PostSourcePermission::EDIT_IMAGE_SOURCE) ? INPUT(["type" => "text", "name" => "source", "value" => $image->get_source()]) : null,
-            link: Extension::is_enabled(SourceHistoryInfo::KEY) ? make_link("source_history/{$image->id}") : null,
+            link: SourceHistoryInfo::is_enabled() ? make_link("source_history/{$image->id}") : null,
         );
     }
 
