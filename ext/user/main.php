@@ -330,11 +330,11 @@ class UserPage extends Extension
             $event->add_part((string)$av, 0);
         } elseif ($duser->id == $user->id) {
             $part = "";
-            if (Extension::is_enabled(AvatarPostInfo::KEY)) {
+            if (AvatarPostInfo::is_enabled()) {
                 $part .= "No avatar?<br>You can set any post as avatar by clicking \"Set Image As Avatar\" in the Post Controls on any post." .
                 "<br>Or by setting it manually in your <a href='".make_link("user_config")."'>user config</a>";
             }
-            if (Extension::is_enabled(AvatarGravatarInfo::KEY)) {
+            if (AvatarGravatarInfo::is_enabled()) {
                 if (empty($part)) {
                     $part .= "<br>No avatar? This gallery uses ";
                 } else {
@@ -566,7 +566,7 @@ class UserPage extends Extension
     {
         global $page, $config;
         $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
-        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::PURGE_COOKIE)) {
+        if (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
             $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
@@ -653,7 +653,7 @@ class UserPage extends Extension
      */
     private function count_log_ips(User $duser): array
     {
-        if (!Extension::is_enabled(LogDatabaseInfo::KEY)) {
+        if (!LogDatabaseInfo::is_enabled()) {
             return [];
         }
         global $database;

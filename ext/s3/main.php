@@ -196,7 +196,7 @@ class S3 extends Extension
 
     // underlying s3 interaction functions
     /**
-     * @param string[]|null $new_tags
+     * @param list<tag-string>|null $new_tags
      */
     private function sync_post(Image $image, ?array $new_tags = null, bool $overwrite = true): bool
     {

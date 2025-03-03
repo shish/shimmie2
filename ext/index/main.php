@@ -35,7 +35,7 @@ class Index extends Extension
             $page_number = $event->get_iarg('page_num', 1);
             $page_size = $config->get_int(IndexConfig::IMAGES);
 
-            $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::FAST_PAGE_LIMIT));
+            $speed_hax = (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::FAST_PAGE_LIMIT));
             $fast_page_limit = 500;
 
             if (
@@ -63,7 +63,7 @@ class Index extends Extension
             }
 
             $images = null;
-            if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::CACHE_FIRST_FEW)) {
+            if (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::CACHE_FIRST_FEW)) {
                 if ($count_search_terms === 0 && ($page_number < 10)) {
                     // extra caching for the first few post/list pages
                     $images = cache_get_or_set(

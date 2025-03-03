@@ -56,7 +56,7 @@ class BulkActionsTheme extends Themelet
 
     public function render_ban_reason_input(): string
     {
-        if (Extension::is_enabled(ImageBanInfo::KEY)) {
+        if (ImageBanInfo::is_enabled()) {
             return "<input type='text' name='bulk_ban_reason' placeholder='Ban reason (leave blank to not ban)' />";
         } else {
             return "";
