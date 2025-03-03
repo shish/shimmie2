@@ -63,7 +63,7 @@ class TagListTheme extends Themelet
             usort($tag_infos, fn ($a, $b) => strcasecmp($a['tag'], $b['tag']));
         }
 
-        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
+        if (TagCategoriesInfo::is_enabled()) {
             $tag_category_dict = TagCategories::getKeyedDict();
         } else {
             $tag_category_dict = [];
@@ -168,7 +168,7 @@ class TagListTheme extends Themelet
         $tag = $row['tag'];
         $count = $row['count'];
 
-        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
+        if (TagCategoriesInfo::is_enabled()) {
             $tag_category_dict = TagCategories::getKeyedDict();
             $tag_category = TagCategories::get_tag_category($tag);
             $tag_body = TagCategories::get_tag_body($tag);

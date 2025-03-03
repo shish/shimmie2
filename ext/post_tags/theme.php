@@ -44,7 +44,7 @@ class PostTagsTheme extends Themelet
                 "id" => "tag_editor",
                 "spellcheck" => "off",
             ], $image->get_tag_list()) : null,
-            link: Extension::is_enabled(TagHistoryInfo::KEY) ?
+            link: TagHistoryInfo::is_enabled() ?
                 make_link("tag_history/{$image->id}") :
                 null,
         );

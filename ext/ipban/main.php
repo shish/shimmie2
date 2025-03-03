@@ -285,7 +285,13 @@ class IPBan extends Extension
         if ($this->get_version("ext_ipban_version") == 3) {
             $database->execute("ALTER TABLE bans CHANGE end old_end DATE NOT NULL");
             $database->execute("ALTER TABLE bans ADD COLUMN end INTEGER");
-            $database->execute("UPDATE bans SET end = UNIX_TIMESTAMP(old_end)");
+            if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
+                $database->execute("UPDATE bans SET end = UNIX_TIMESTAMP(old_end)");
+            } elseif ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+                $database->execute("UPDATE bans SET end = EXTRACT(EPOCH FROM old_end)");
+            } elseif ($database->get_driver_id() == DatabaseDriverID::SQLITE) {
+                $database->execute("UPDATE bans SET end = unixepoch(old_end)");
+            }
             $database->execute("ALTER TABLE bans DROP COLUMN old_end");
             $database->execute("CREATE INDEX bans__end ON bans(end)");
             $this->set_version("ext_ipban_version", 4);

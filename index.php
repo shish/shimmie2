@@ -32,9 +32,7 @@ if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN"))
 * Load files                                                                *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// @phpstan-ignore-next-line
 @include_once "data/config/shimmie.conf.php";
-// @phpstan-ignore-next-line
 @include_once "data/config/extensions.conf.php";
 
 global $cache, $config, $database, $user, $page, $_tracer;
@@ -76,7 +74,7 @@ function main(): int
             ]
         );
 
-        if (!(Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::NO_AUTO_DB_UPGRADE))) {
+        if (!(SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::NO_AUTO_DB_UPGRADE))) {
             send_event(new DatabaseUpgradeEvent());
         }
         send_event(new InitExtEvent());

@@ -100,7 +100,7 @@ class WikiTheme extends Themelet
         if (!is_null($tag)) {
             $text = $config->get_string(WikiConfig::TAG_PAGE_TEMPLATE);
 
-            if (Extension::is_enabled(AliasEditorInfo::KEY)) {
+            if (AliasEditorInfo::is_enabled()) {
                 $aliases = $database->get_col("
                     SELECT oldtag
                     FROM aliases
@@ -115,7 +115,7 @@ class WikiTheme extends Themelet
                 }
             }
 
-            if (Extension::is_enabled(AutoTaggerInfo::KEY)) {
+            if (AutoTaggerInfo::is_enabled()) {
                 $auto_tags = $database->get_one("
                     SELECT additional_tags
                     FROM auto_tag

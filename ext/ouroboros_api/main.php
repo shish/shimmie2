@@ -73,13 +73,13 @@ class _SafeOuroborosImage
         $this->id = intval($img->id);
         $this->parent_id = null;
 
-        if (Extension::is_enabled(RatingsInfo::KEY) !== false) {
+        if (RatingsInfo::is_enabled() !== false) {
             // 'u' is not a "valid" rating
             if ($img['rating'] == 's' || $img['rating'] == 'q' || $img['rating'] == 'e') {
                 $this->rating = $img['rating'];
             }
         }
-        if (Extension::is_enabled(NumericScoreInfo::KEY) !== false) {
+        if (NumericScoreInfo::is_enabled() !== false) {
             $this->score = $img['numeric_score'];
         }
 
@@ -312,7 +312,7 @@ class OuroborosAPI extends Extension
         $meta = [];
         $meta['tags'] = $post->tags;
         $meta['source'] = $post->source ?? '';
-        if (Extension::is_enabled(RatingsInfo::KEY) !== false) {
+        if (RatingsInfo::is_enabled() !== false) {
             $meta['rating'] = $post->rating;
         }
         // Check where we should try for the file

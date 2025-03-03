@@ -20,4 +20,23 @@ class SQLTest extends ShimmiePHPUnitTestCase
             $database->get_one("SELECT 'foo' || 'bar'")
         );
     }
+
+    public function testNow(): void
+    {
+        global $database;
+        $this->assertMatchesRegularExpression(
+            '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d+)?(\+\d+)?$/',
+            $database->get_one("SELECT now()")
+        );
+    }
+
+    public function testLog(): void
+    {
+        global $database;
+        $this->assertEqualsWithDelta(1.0, $database->get_one("SELECT log(10, 10)"), 0.01);
+        // Some DBs default to log(10, n) and some to log(E, n), so we can't use this'
+        // $this->assertEqualsWithDelta(2.3, $database->get_one("SELECT log(10)"), 0.01);
+        $this->assertEqualsWithDelta(2.3, $database->get_one("SELECT ln(10)"), 0.01);
+        $this->assertEqualsWithDelta(3.0, $database->get_one("SELECT log(2, 8)"), 0.01);
+    }
 }

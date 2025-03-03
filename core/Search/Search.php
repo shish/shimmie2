@@ -34,7 +34,7 @@ class Search
             $limit = 1;
         }
 
-        if (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_int(SpeedHaxConfig::BIG_SEARCH) > 0) {
+        if (SpeedHaxInfo::is_enabled() && $config->get_int(SpeedHaxConfig::BIG_SEARCH) > 0) {
             $anon_limit = $config->get_int(SpeedHaxConfig::BIG_SEARCH);
             $counted_tags = $tags;
             // exclude tags which start with "id>", "id<", or "order:id_"
@@ -133,7 +133,7 @@ class Search
 
         // speed_hax ignores the fact that extensions can add img_conditions
         // even when there are no tags being searched for
-        $speed_hax = (Extension::is_enabled(SpeedHaxInfo::KEY) && $config->get_bool(SpeedHaxConfig::LIMIT_COMPLEX));
+        $speed_hax = (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::LIMIT_COMPLEX));
         if ($speed_hax && $tag_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();

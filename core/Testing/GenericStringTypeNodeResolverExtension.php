@@ -45,6 +45,10 @@ class GenericStringTypeNodeResolverExtension implements TypeNodeResolverExtensio
                     'query-string',
                     fn ($v) => preg_match('/^[^ ]+$/', $v) === 1
                 ),
+                'internal-hash-string' => new MatchyStringType(
+                    'hash-string',
+                    fn ($v) => preg_match('#^[0-9a-fA-F]{32}$#', $v) === 1
+                ),
                 default => null,
             };
         }
