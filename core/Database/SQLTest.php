@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use PHPUnit\Framework\Attributes\Depends;
+
 /**
  * Because various SQL engines have wildly different support for
  * various SQL features, and sometimes they are silently incompatible,
@@ -38,5 +40,28 @@ class SQLTest extends ShimmiePHPUnitTestCase
         // $this->assertEqualsWithDelta(2.3, $database->get_one("SELECT log(10)"), 0.01);
         $this->assertEqualsWithDelta(2.3, $database->get_one("SELECT ln(10)"), 0.01);
         $this->assertEqualsWithDelta(3.0, $database->get_one("SELECT log(2, 8)"), 0.01);
+    }
+
+    /**
+     * confirm that strtolower does not work with Cyrillic, but mb_strtolower
+     * does - if this test fails, then the database test below makes no sense
+     */
+    public function test_cyrillic_php_lowercase(): void
+    {
+        $this->assertNotEquals("советских", strtolower("Советских"), "strtolower");
+        $this->assertEquals("советских", mb_strtolower("Советских"), "mb_strtolower");
+    }
+
+    /**
+     * LOWER is UTF-8 aware in MySQL and PostgreSQL, but is ASCII-only in
+     * SQLite... buuuuut SQLite does allow us to define our own functions,
+     * and we can override the LOWER function with a call to mb_strtolower.
+     * This test ensures that we now get consistent results across all DBs.
+     */
+    #[Depends("test_cyrillic_php_lowercase")]
+    public function test_cyrillic_database_lowercase(): void
+    {
+        global $database;
+        $this->assertEquals("советских", $database->get_one("SELECT LOWER('Советских')"), "LOWER");
     }
 }

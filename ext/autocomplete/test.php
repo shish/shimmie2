@@ -53,9 +53,6 @@ class AutoCompleteTest extends ShimmiePHPUnitTestCase
     public function testCyrillic(): void
     {
         global $database;
-        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
-            $this->markTestSkipped("SQLite only partially supports Cyrillic");
-        }
 
         $this->log_in_as_user();
 
