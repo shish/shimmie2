@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TR, TH, TD, emptyHTML, DIV, INPUT, rawHTML};
+use function MicroHTML\{INPUT, rawHTML};
 
 class RelationshipsTheme extends Themelet
 {

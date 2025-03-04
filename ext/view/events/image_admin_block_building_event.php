@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{FORM,INPUT};
+use function MicroHTML\{INPUT};
 
 /**
  * @extends PartListBuildingEvent<HTMLElement>

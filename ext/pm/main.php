@@ -6,7 +6,6 @@ namespace Shimmie2;
 
 use GQLA\Type;
 use GQLA\Field;
-use GQLA\Query;
 use GQLA\Mutation;
 
 use function MicroHTML\{emptyHTML, SPAN};

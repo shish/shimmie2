@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\{INPUT,rawHTML};
+use function MicroHTML\{rawHTML};
 
 class FavoritesTheme extends Themelet
 {

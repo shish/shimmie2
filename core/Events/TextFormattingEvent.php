@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
 /**
  * A signal that some text needs formatting, the event carries
  * both the text and the result
