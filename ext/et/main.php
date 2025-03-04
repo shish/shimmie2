@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\{InputInterface,InputArgument};
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ET extends Extension
@@ -115,9 +115,12 @@ class ET extends Extension
 
         if (file_exists(".git")) {
             try {
-                $commitHash = trim(\Safe\exec('git log --pretty="%h" -n1 HEAD'));
-                $commitBranch = trim(\Safe\exec('git rev-parse --abbrev-ref HEAD'));
-                $commitOrigin = trim(\Safe\exec('git config --get remote.origin.url'));
+                $commitHash = trim(\Safe\exec('git log --pretty="%h" -n1 HEAD', result_code: $r1));
+                $commitBranch = trim(\Safe\exec('git rev-parse --abbrev-ref HEAD', result_code: $r2));
+                $commitOrigin = trim(\Safe\exec('git config --get remote.origin.url', result_code: $r3));
+                if ($r1 !== 0 || $r2 !== 0 || $r3 !== 0) {
+                    throw new \Exception("Failed to get git data");
+                }
                 $commitOrigin = \Safe\preg_replace("#//.*@#", "//xxx@", $commitOrigin);
                 $info['versions']['shimmie'] .= $commitHash;
                 $info['versions']['origin'] = "$commitOrigin ($commitBranch)";
