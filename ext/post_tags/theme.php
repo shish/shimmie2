@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{joinHTML, A, TEXTAREA, TR, TH, TD, INPUT, rawHTML};
+use function MicroHTML\{joinHTML, TEXTAREA, TR, TH, TD, INPUT, rawHTML};
 
 class PostTagsTheme extends Themelet
 {

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{BODY, DIV, LI, A, IMG, rawHTML, emptyHTML, UL, ARTICLE, FOOTER, EM, HEADER, H1, NAV};
+use function MicroHTML\{BODY, DIV, LI, A, IMG, emptyHTML, UL, ARTICLE, FOOTER, HEADER, H1, NAV};
 
 /**
  * Name: Danbooru 2 Theme

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
 require_once "mime_map.php";
 require_once "file_extension.php";
 require_once "mime_type.php";
