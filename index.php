@@ -108,7 +108,7 @@ function main(): int
             fastcgi_finish_request();
         }
         $exit_code = 0;
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         if ($database->is_transaction_open()) {
             $database->rollback();
         }
