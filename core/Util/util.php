@@ -329,7 +329,7 @@ function _fatal_error(\Throwable $e): void
             $t = $f['type'] ?? '';
             $i = $f['file'] ?? 'unknown file';
             $l = $f['line'] ?? -1;
-            $a = implode(", ", array_map("Shimmie2\stringer", $f['args'] ?? []));
+            $a = implode(", ", array_map(stringer(...), $f['args'] ?? []));
             print("$n: {$i}({$l}): {$c}{$t}{$f['function']}({$a})\n");
         }
 

@@ -336,7 +336,7 @@ class Pools extends Extension
             $pool = $this->get_single_pool($pool_id);
             $this->assert_permission($user, $pool);
 
-            $image_ids = array_map('intval', $event->req_POST_array('check'));
+            $image_ids = array_map(intval(...), $event->req_POST_array('check'));
             send_event(new PoolAddPostsEvent($pool_id, $image_ids));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
@@ -664,7 +664,7 @@ class Pools extends Extension
     {
         global $database;
         $col = $database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", ["iid" => $imageID]);
-        $col = array_map('intval', $col);
+        $col = array_map(intval(...), $col);
         return $col;
     }
 

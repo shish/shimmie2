@@ -546,7 +546,7 @@ function stringer(mixed $s): string
 {
     if (is_array($s)) {
         if (isset($s[0])) {
-            return "[" . implode(", ", array_map("Shimmie2\stringer", $s)) . "]";
+            return "[" . implode(", ", array_map(stringer(...), $s)) . "]";
         } else {
             $pairs = [];
             foreach ($s as $k => $v) {
