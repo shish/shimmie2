@@ -150,8 +150,8 @@ class Tag
             return false;
         }
 
-        $tags1 = array_map("strtolower", $tags1);
-        $tags2 = array_map("strtolower", $tags2);
+        $tags1 = array_map(strtolower(...), $tags1);
+        $tags2 = array_map(strtolower(...), $tags2);
         sort($tags1);
         sort($tags2);
 
@@ -165,8 +165,8 @@ class Tag
      */
     public static function get_diff_tags(array $source, array $remove): array
     {
-        $before = array_map('strtolower', $source);
-        $remove = array_map('strtolower', $remove);
+        $before = array_map(strtolower(...), $source);
+        $remove = array_map(strtolower(...), $remove);
         $after = [];
         foreach ($before as $tag) {
             if (!in_array($tag, $remove)) {
