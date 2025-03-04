@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use PHPUnit\Framework\Attributes\Depends;
-
 class TagCategoriesTest extends ShimmiePHPUnitTestCase
 {
     public function testParsing(): void

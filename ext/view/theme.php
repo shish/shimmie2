@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, rawHTML, DIV, BR, META, LINK};
+use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, rawHTML, DIV, META, LINK};
 
 class ViewPostTheme extends Themelet
 {

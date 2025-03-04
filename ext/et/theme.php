@@ -6,7 +6,6 @@ namespace Shimmie2;
 
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
-use function MicroHTML\P;
 use function MicroHTML\TEXTAREA;
 
 class ETTheme extends Themelet

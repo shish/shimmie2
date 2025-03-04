@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TR, TH, TD, emptyHTML, rawHTML, joinHTML, DIV, INPUT, A, TEXTAREA};
+use function MicroHTML\{TR, TH, TD, rawHTML, DIV, INPUT, A};
 
 class PostSourceTheme extends Themelet
 {

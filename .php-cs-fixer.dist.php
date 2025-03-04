@@ -13,6 +13,7 @@ return $_phpcs_config
     '@PSR12' => true,
     //'strict_param' => true,
     'array_syntax' => ['syntax' => 'short'],
+    'no_unused_imports' => true,
   ])
   ->setFinder($_phpcs_finder)
   ->setCacheFile("data/php-cs-fixer.cache")

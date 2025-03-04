@@ -8,8 +8,6 @@ use GQLA\Type;
 use GQLA\Field;
 use GQLA\Mutation;
 
-use function MicroHTML\rawHTML;
-
 #[Type(name: "NumericScoreVote")]
 class NumericScoreVote
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{emptyHTML, TITLE, META, rawHTML};
+use function MicroHTML\{rawHTML};
 
 class TermsTheme extends Themelet
 {

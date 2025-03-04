@@ -7,7 +7,6 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\A;
-use function MicroHTML\B;
 use function MicroHTML\BR;
 use function MicroHTML\DIV;
 use function MicroHTML\SPAN;

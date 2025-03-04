@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Constraint\IsEqual;
 
 class SearchParametersTest extends ShimmiePHPUnitTestCase
