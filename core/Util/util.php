@@ -311,7 +311,7 @@ function _set_up_shimmie_environment(): void
 /**
  * Used to display fatal errors to the web user.
  */
-function _fatal_error(\Exception $e): void
+function _fatal_error(\Throwable $e): void
 {
     $version = SysConfig::getVersion();
     $message = $e->getMessage();
