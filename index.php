@@ -74,7 +74,7 @@ function main(): int
             ]
         );
 
-        if (!(SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::NO_AUTO_DB_UPGRADE))) {
+        if (!$config->get_bool(SetupConfig::NO_AUTO_DB_UPGRADE)) {
             send_event(new DatabaseUpgradeEvent());
         }
         send_event(new InitExtEvent());

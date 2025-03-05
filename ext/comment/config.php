@@ -37,4 +37,13 @@ class CommentConfig extends ConfigGroup
 
     #[ConfigMeta("Show repeat anons publicly", ConfigType::BOOL)]
     public const SHOW_REPEAT_ANONS = "comment_samefags_public";
+
+    #[ConfigMeta(
+        "List only recent comments",
+        ConfigType::BOOL,
+        default: false,
+        advanced: true,
+        help: "Only comments from the past 24 hours show up in <code>/comment/list</code>",
+    )]
+    public const RECENT_COMMENTS = "speed_hax_recent_comments";
 }

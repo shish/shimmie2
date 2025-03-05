@@ -43,7 +43,7 @@ class PermManager extends Extension
         // and do basic edits (tags, source, title) on other
         // people's content
         new UserClass("user", "base", [
-            SpeedHaxPermission::BIG_SEARCH => true,
+            IndexPermission::BIG_SEARCH => true,
             ImagePermission::CREATE_IMAGE => true,
             CommentPermission::CREATE_COMMENT => true,
             PostTagsPermission::EDIT_IMAGE_TAG => true,

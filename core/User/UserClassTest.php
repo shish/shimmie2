@@ -10,11 +10,11 @@ class UserClassTest extends ShimmiePHPUnitTestCase
     {
         $cls = new UserClass("user2", "user", [
             CommentPermission::CREATE_COMMENT => true,
-            SpeedHaxPermission::BIG_SEARCH => false,
+            IndexPermission::BIG_SEARCH => false,
         ]);
         $this->assertEquals("user2", $cls->name);
         $this->assertTrue($cls->can(CommentPermission::CREATE_COMMENT));
-        $this->assertFalse($cls->can(SpeedHaxPermission::BIG_SEARCH));
+        $this->assertFalse($cls->can(IndexPermission::BIG_SEARCH));
     }
 
     public function test_not_found(): void

@@ -39,7 +39,7 @@ class EventBus
         $ver = \Safe\preg_replace("/[^a-zA-Z0-9\.]/", "_", SysConfig::getVersion());
         $key = md5(Extension::get_enabled_extensions_as_string());
 
-        $speed_hax = (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::CACHE_EVENT_LISTENERS));
+        $speed_hax = ($config->get_bool(SetupConfig::CACHE_EVENT_LISTENERS));
         $cache_path = Filesystem::data_path("cache/event_listeners/el.$ver.$key.php");
         if ($speed_hax && file_exists($cache_path)) {
             $this->event_listeners = require_once($cache_path);

@@ -34,13 +34,13 @@ class Search
             $limit = 1;
         }
 
-        if (SpeedHaxInfo::is_enabled() && $config->get_int(SpeedHaxConfig::BIG_SEARCH) > 0) {
-            $anon_limit = $config->get_int(SpeedHaxConfig::BIG_SEARCH);
+        if ($config->get_int(IndexConfig::BIG_SEARCH) > 0) {
+            $anon_limit = $config->get_int(IndexConfig::BIG_SEARCH);
             $counted_tags = $tags;
             // exclude tags which start with "id>", "id<", or "order:id_"
             // because those are added internally for post/next and post/prev
             $counted_tags = array_filter($counted_tags, fn ($tag) => !\Safe\preg_match("/^id[><]|^order:id_/", $tag));
-            if (!$user->can(SpeedHaxPermission::BIG_SEARCH) and count($counted_tags) > $anon_limit) {
+            if (!$user->can(IndexPermission::BIG_SEARCH) and count($counted_tags) > $anon_limit) {
                 throw new PermissionDenied("Anonymous users may only search for up to $anon_limit tags at a time");
             }
         }
@@ -133,11 +133,11 @@ class Search
 
         // speed_hax ignores the fact that extensions can add img_conditions
         // even when there are no tags being searched for
-        $speed_hax = (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::LIMIT_COMPLEX));
-        if ($speed_hax && $tag_count === 0) {
+        $limit_complex = ($config->get_bool(IndexConfig::LIMIT_COMPLEX));
+        if ($limit_complex && $tag_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();
-        } elseif ($speed_hax && $tag_count === 1 && !\Safe\preg_match("/[:=><\*\?]/", $tags[0])) {
+        } elseif ($limit_complex && $tag_count === 1 && !\Safe\preg_match("/[:=><\*\?]/", $tags[0])) {
             if (!str_starts_with($tags[0], "-")) {
                 // one positive tag - we can look that up directly
                 $total = self::count_tag($tags[0]);
@@ -154,7 +154,7 @@ class Search
                 $params = SearchParameters::from_terms($tags);
                 $querylet = self::build_search_querylet($params, count: true);
                 $total = (int)$database->get_one($querylet->sql, $querylet->variables);
-                if ($speed_hax && $total > 5000) {
+                if ($limit_complex && $total > 5000) {
                     // when we have a ton of images, the count
                     // won't change dramatically very often
                     $cache->set($cache_key, $total, 3600);
