@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71b02e3cff8c42acbb5ebfb3af06b702",
+    "content-hash": "553b7c5cbe7d4c6f819ea4acad3b4c13",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -517,16 +517,16 @@
         },
         {
             "name": "shish/eventtracer-php",
-            "version": "v2.1.1",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/eventtracer-php.git",
-                "reference": "b65488e09a014d64c4df46fb852adf9be8e597bb"
+                "reference": "967cd5be21d8c01cd712fcaf0dfd241edd8ed149"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/b65488e09a014d64c4df46fb852adf9be8e597bb",
-                "reference": "b65488e09a014d64c4df46fb852adf9be8e597bb",
+                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/967cd5be21d8c01cd712fcaf0dfd241edd8ed149",
+                "reference": "967cd5be21d8c01cd712fcaf0dfd241edd8ed149",
                 "shasum": ""
             },
             "require": {
@@ -535,7 +535,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.64",
-                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan": "^2.0",
                 "phpunit/phpunit": "^11.0"
             },
             "type": "library",
@@ -560,9 +560,9 @@
             "homepage": "https://github.com/shish/eventtracer-php",
             "support": {
                 "issues": "https://github.com/shish/eventtracer-php/issues",
-                "source": "https://github.com/shish/eventtracer-php/tree/v2.1.1"
+                "source": "https://github.com/shish/eventtracer-php/tree/v2.2.0"
             },
-            "time": "2024-08-31T21:49:49+00:00"
+            "time": "2025-03-05T14:58:19+00:00"
         },
         {
             "name": "shish/ffsphp",
