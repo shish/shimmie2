@@ -38,8 +38,8 @@ if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN"))
 global $cache, $config, $database, $user, $page, $_tracer;
 _set_up_shimmie_environment();
 $_tracer = new \EventTracer();
-$_tracer->complete($_shm_load_start * 1000000, (ftime() - $_shm_load_start) * 1000000, "Autoload");
-$_tracer->begin("Bootstrap");
+// Override TS to show that bootstrapping started in the past
+$_tracer->begin("Bootstrap", raw: ["ts" => $_shm_load_start * 1e6]);
 _load_ext_files();
 // Depends on core files
 $cache = load_cache(SysConfig::getCacheDsn());
