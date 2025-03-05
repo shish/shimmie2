@@ -3,7 +3,7 @@
 	"description": "A tag-based image gallery",
 	"type"    : "project",
 	"license" : "GPL-2.0-or-later",
-	"minimum-stability" : "dev",
+	"minimum-stability" : "stable",
 
 	"config": {
 		"platform": {
