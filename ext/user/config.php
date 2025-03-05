@@ -40,4 +40,7 @@ class UserAccountsConfig extends ConfigGroup
 
     #[ConfigMeta("Session hash mask", ConfigType::STRING, default: "255.255.0.0", advanced: true)]
     public const SESSION_HASH_MASK = "session_hash_mask";
+
+    #[ConfigMeta("Purge cookie on logout", ConfigType::BOOL, default: false, advanced: true)]
+    public const PURGE_COOKIE = "speed_hax_purge_cookie";
 }

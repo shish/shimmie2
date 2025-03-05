@@ -31,6 +31,18 @@ class SetupConfig extends ConfigGroup
     #[ConfigMeta("Nice URLs", ConfigType::BOOL, default: false, help: "Javascript inactive, can't test Nice URLs!")]
     public const NICE_URLS = "nice_urls";
 
+    #[ConfigMeta(
+        "Don't auto-upgrade database",
+        ConfigType::BOOL,
+        default: false,
+        advanced: true,
+        help: "Database schema upgrades are no longer automatic; you'll need to run <code>php index.php db-upgrade</code> from the CLI each time you update the code."
+    )]
+    public const NO_AUTO_DB_UPGRADE = "speed_hax_no_auto_db_upgrade";
+
+    #[ConfigMeta("Cache event listeners", ConfigType::BOOL, default: false, advanced: true)]
+    public const CACHE_EVENT_LISTENERS = "speed_hax_cache_listeners";
+
     /**
      * @return array<string, string>
      */
