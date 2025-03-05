@@ -19,7 +19,9 @@ $_shm_event_listeners = [];
 
 function _load_event_listeners(): void
 {
-    global $_shm_event_listeners;
+    global $_shm_event_listeners, $_tracer;
+
+    $_tracer->begin("Load Event Listeners");
 
     $ver = preg_replace("/[^a-zA-Z0-9\.]/", "_", VERSION);
     $key = md5(Extension::get_enabled_extensions_as_string());
@@ -34,6 +36,8 @@ function _load_event_listeners(): void
             _dump_event_listeners($_shm_event_listeners, $cache_path);
         }
     }
+
+    $_tracer->end();
 }
 
 function _clear_cached_event_listeners(): void
