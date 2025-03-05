@@ -42,7 +42,7 @@ class RSSImages extends Extension
             $search_terms = Tag::explode($event->get_arg('search', ""));
             $page_number = $event->get_iarg('page_num', 1);
             $page_size = $config->get_int(IndexConfig::IMAGES);
-            if (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::RSS_LIMIT) && $page_number > 9) {
+            if ($config->get_bool(RSSImagesConfig::RSS_LIMIT) && $page_number > 9) {
                 return;
             }
             $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);

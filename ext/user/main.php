@@ -566,7 +566,7 @@ class UserPage extends Extension
     {
         global $page, $config;
         $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
-        if (SpeedHaxInfo::is_enabled() && $config->get_bool(SpeedHaxConfig::PURGE_COOKIE)) {
+        if ($config->get_bool(UserAccountsConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
             $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");

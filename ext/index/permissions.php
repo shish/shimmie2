@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SpeedHaxPermission extends PermissionGroup
+class IndexPermission extends PermissionGroup
 {
-    public const KEY = "speed_hax";
+    public const KEY = "index";
 
     #[PermissionMeta("Big search", help: "search for more than 3 tags at once")]
     public const BIG_SEARCH = "big_search";
