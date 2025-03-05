@@ -8,28 +8,27 @@ namespace Shimmie2;
 * Make sure that shimmie is correctly installed                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-require_once "core/sanitize_php.php";
-require_once "core/polyfills.php";
-
+$_shm_load_start = microtime(true);
 if (!file_exists("vendor/")) {
-    $cwd = getcwd();
-    die_nicely(
-        "Shimmie is unable to find the composer <code>vendor</code> directory.",
+    die(
         "
+			<p>Shimmie is unable to find the composer <code>vendor</code> directory.</p>
 			<p>To finish installing, you need to run <code>composer install</code>
-			in the shimmie directory (<code>$cwd</code>).</p>
+			in the shimmie directory (<code>" . getcwd() . "</code>).</p>
 			<p>(If you don't have composer, <a href='https://getcomposer.org/'>get it here</a>)</p>
 		"
     );
 }
+require_once "vendor/autoload.php";
+
+require_once "core/sanitize_php.php";
+require_once "core/polyfills.php";
 
 if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN")) {
     require_once "core/install.php";
     install();
     exit;
 }
-
-require_once "vendor/autoload.php";
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -45,6 +44,7 @@ require_once "core/microhtml.php";
 global $cache, $config, $database, $user, $page, $_tracer;
 _set_up_shimmie_environment();
 $_tracer = new \EventTracer();
+$_tracer->complete($_shm_load_start * 1000000, (ftime() - $_shm_load_start) * 1000000, "Autoload");
 $_tracer->begin("Bootstrap");
 _load_core_files();
 $cache = loadCache(CACHE_DSN);

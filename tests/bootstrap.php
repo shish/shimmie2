@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+$_shm_load_start = microtime(true);
+
 chdir(dirname(dirname(__FILE__)));
 require_once "core/sanitize_php.php";
 require_once "vendor/autoload.php";

@@ -551,8 +551,6 @@ function ftime(): float
 * Debugging functions                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-$_shm_load_start = ftime();
-
 /**
  * Collects some debug information (execution time, memory usage, queries, etc)
  * and formats it to stick in the footer of the page.
@@ -616,27 +614,36 @@ function require_all(array $files): void
 
 function _load_core_files(): void
 {
+    global $_tracer;
+    $_tracer->begin("Load Core Files");
     require_all(array_merge(
         zglob("core/*.php"),
         zglob("core/imageboard/*.php"),
         zglob("ext/*/info.php")
     ));
+    $_tracer->end();
 }
 
 function _load_extension_files(): void
 {
+    global $_tracer;
+    $_tracer->begin("Load Ext Files");
     ExtensionInfo::load_all_extension_info();
     Extension::determine_enabled_extensions();
     require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php"));
+    $_tracer->end();
 }
 
 function _load_theme_files(): void
 {
+    global $_tracer;
+    $_tracer->begin("Load Theme Files");
     $theme = get_theme();
     require_once('themes/'.$theme.'/page.class.php');
     require_once('themes/'.$theme.'/themelet.class.php');
     require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/theme.php"));
     require_all(zglob('themes/'.$theme.'/{'.Extension::get_enabled_extensions_as_string().'}.theme.php'));
+    $_tracer->end();
 }
 
 function _set_up_shimmie_environment(): void
