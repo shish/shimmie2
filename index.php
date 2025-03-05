@@ -22,7 +22,7 @@ require_once "vendor/autoload.php";
 sanitize_php();
 version_check("8.2");
 
-if (!file_exists("data/config/shimmie.conf.php") && !getenv("SHM_DATABASE_DSN")) {
+if (!file_exists("data/config/shimmie.conf.php")) {
     Installer::install();
     exit;
 }
