@@ -265,10 +265,10 @@ abstract class BaseConfig implements Config
     public function get_array(string $name, ?array $default = null): ?array
     {
         $val = $this->get($name);
-        if(is_null($val)) {
+        if (is_null($val)) {
             return $default;
         }
-        if(empty($val)) {
+        if (empty($val)) {
             return [];
         }
         return explode(",", $val);

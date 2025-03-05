@@ -15,7 +15,7 @@ class BanWordsInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "For stopping spam and other comment abuse";
     public ?string $documentation =
-"Allows an administrator to ban certain words
+        "Allows an administrator to ban certain words
 from comments. This can be a very simple but effective way
 of stopping spam; just add \"viagra\", \"porn\", etc to the
 banned words list.

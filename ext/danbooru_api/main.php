@@ -139,8 +139,7 @@ class DanbooruApi extends Extension
             $tags = Tag::explode($GET['tags']);
             assert(!is_null($start) && !is_null($tags));
         }
-        */
-        else {
+        */ else {
             $start = isset($GET['after_id']) ? int_escape($GET['offset']) : 0;
             $sqlresult = $database->get_all(
                 "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= :id ORDER BY id DESC",
@@ -319,7 +318,7 @@ class DanbooruApi extends Extension
             assert($file !== false);
             try {
                 fetch_url($source, $file);
-            } catch(FetchException $e) {
+            } catch (FetchException $e) {
                 $page->set_code(409);
                 $page->add_http_header("X-Danbooru-Errors: $e");
                 return;

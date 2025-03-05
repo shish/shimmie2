@@ -7,7 +7,6 @@ namespace Shimmie2;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
-
 use GraphQL\GraphQL as GQL;
 use GraphQL\Server\StandardServer;
 use GraphQL\Error\DebugFlag;
@@ -174,7 +173,7 @@ class GraphQL extends Extension
             }
             try {
                 $results[] = ["image_ids" => self::handle_upload($n, $metadata)];
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $results[] = ["error" => $e->getMessage()];
             }
         }
@@ -192,7 +191,7 @@ class GraphQL extends Extension
             throw new UploadException("URLs not handled yet");
         } else {
             $ec = $_FILES["data$n"]["error"];
-            switch($ec) {
+            switch ($ec) {
                 case UPLOAD_ERR_OK:
                     $tmpname = $_FILES["data$n"]["tmp_name"];
                     $filename = $_FILES["data$n"]["name"];

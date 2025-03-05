@@ -68,7 +68,7 @@ class Database
 
     private function get_db(): PDO
     {
-        if(is_null($this->db)) {
+        if (is_null($this->db)) {
             $this->db = new PDO($this->dsn);
             $this->connect_engine();
             $this->get_engine()->init($this->db);

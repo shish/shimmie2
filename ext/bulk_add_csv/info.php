@@ -15,7 +15,7 @@ class BulkAddCSVInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Bulk add server-side posts with metadata from CSV file";
     public ?string $documentation =
-"Adds posts from a CSV with the five following values:
+        "Adds posts from a CSV with the five following values:
 <pre>\"/path/to/image.jpg\",\"spaced tags\",\"source\",\"rating s/q/e\",\"/path/thumbnail.jpg\"</pre>
 
 <b>e.g.</b>

@@ -146,7 +146,7 @@ class Search
     public static function get_images(array $ids): array
     {
         $visible_images = [];
-        foreach(Search::find_images(tags: ["id=" . implode(",", $ids)]) as $image) {
+        foreach (Search::find_images(tags: ["id=" . implode(",", $ids)]) as $image) {
             $visible_images[$image->id] = $image;
         }
         $visible_ids = array_keys($visible_images);
@@ -451,7 +451,7 @@ class Search
             $query->append(new Querylet($img_sql, $img_vars));
         }
 
-        if(!is_null($order)) {
+        if (!is_null($order)) {
             $query->append(new Querylet(" ORDER BY ".$order));
         }
 

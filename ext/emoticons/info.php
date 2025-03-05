@@ -16,7 +16,7 @@ class EmoticonsInfo extends ExtensionInfo
     public array $dependencies = [EmoticonListInfo::KEY];
     public string $description = "Lets users use graphical smilies";
     public ?string $documentation =
-"This extension will turn colon-something-colon into a link
+        "This extension will turn colon-something-colon into a link
 to an image with that something as the name, eg :smile:
 becomes a link to smile.gif
 <p>Images are stored in /ext/emoticons/default/, and you can

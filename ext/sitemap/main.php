@@ -62,7 +62,7 @@ class XMLSitemap extends Extension
         }
 
         /* --- Add latest images to sitemap with higher priority --- */
-        foreach(Search::find_images(limit: 50) as $image) {
+        foreach (Search::find_images(limit: 50) as $image) {
             $urls[] = new XMLSitemapURL(
                 "post/view/$image->id",
                 "weekly",
@@ -82,7 +82,7 @@ class XMLSitemap extends Extension
         }
 
         /* --- Add all other images to sitemap with lower priority --- */
-        foreach(Search::find_images(offset: 51, limit: 10000) as $image) {
+        foreach (Search::find_images(offset: 51, limit: 10000) as $image) {
             $urls[] = new XMLSitemapURL(
                 "post/view/$image->id",
                 "monthly",
@@ -102,7 +102,7 @@ class XMLSitemap extends Extension
     {
         $xml = "<" . "?xml version=\"1.0\" encoding=\"utf-8\"?" . ">\n" .
         "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
-        foreach($urls as $url) {
+        foreach ($urls as $url) {
             $link = make_http(make_link($url->url));
             $xml .= "
     <url>

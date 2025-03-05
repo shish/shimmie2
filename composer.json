@@ -82,7 +82,7 @@
 		    "@stan",
 		    "@test"
 		],
-		"format": "php-cs-fixer fix",
+		"format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
 		"stan": "phpstan analyse --memory-limit 1G -c tests/phpstan.neon",
 		"test": "phpunit --config tests/phpunit.xml"
 	  }

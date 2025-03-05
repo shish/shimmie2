@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
+if (class_exists("\\PHPUnit\\Framework\\TestCase")) {
     abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         protected static string $anon_name = "anonymous";
@@ -261,7 +261,7 @@ if(class_exists("\\PHPUnit\\Framework\\TestCase")) {
                 "filename" => $filename,
                 "tags" => $tags,
             ]));
-            if(count($dae->images) == 0) {
+            if (count($dae->images) == 0) {
                 throw new \Exception("Upload failed :(");
             }
             return $dae->images[0]->id;

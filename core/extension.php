@@ -340,7 +340,7 @@ abstract class DataHandlerExtension extends Extension
                     // Right now tags are the only thing that get merged, so
                     // we can just send a TagSetEvent - in the future we might
                     // want a dedicated MergeEvent?
-                    if(!empty($event->metadata['tags'])) {
+                    if (!empty($event->metadata['tags'])) {
                         $tags = Tag::explode($existing->get_tag_list() . " " . $event->metadata['tags']);
                         send_event(new TagSetEvent($existing, $tags));
                     }

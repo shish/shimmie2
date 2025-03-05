@@ -16,7 +16,7 @@ class BBCodeInfo extends ExtensionInfo
     public bool $core = true;
     public string $description = "Turns BBCode into HTML";
     public ?string $documentation =
-"  Basic formatting tags:
+        "  Basic formatting tags:
    <ul>
      <li>[b]<b>bold</b>[/b]
      <li>[i]<i>italic</i>[/i]

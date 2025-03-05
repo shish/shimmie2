@@ -101,7 +101,7 @@ class BasePage
     public function set_filename(string $filename, string $disposition = "attachment"): void
     {
         $max_len = 250;
-        if(strlen($filename) > $max_len) {
+        if (strlen($filename) > $max_len) {
             // remove extension, truncate filename, apply extension
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
             $filename = substr($filename, 0, $max_len - strlen($ext) - 1) . '.' . $ext;
@@ -417,7 +417,7 @@ class BasePage
         $css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
         if (!file_exists($css_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
-            foreach($css_files as $css) {
+            foreach ($css_files as $css) {
                 $mcss->addSource($css);
             }
             $mcss->save($css_cache_file);
@@ -440,7 +440,7 @@ class BasePage
         $js_cache_file = data_path("cache/initscript/{$theme_name}.{$js_latest}.{$js_md5}.js");
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
-            foreach($js_files as $js) {
+            foreach ($js_files as $js) {
                 $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);
@@ -468,7 +468,7 @@ class BasePage
         $js_cache_file = data_path("cache/script/{$theme_name}.{$js_latest}.{$js_md5}.js");
         if (!file_exists($js_cache_file)) {
             $mcss = new \MicroBundler\MicroBundler();
-            foreach($js_files as $js) {
+            foreach ($js_files as $js) {
                 $mcss->addSource($js);
             }
             $mcss->save($js_cache_file);

@@ -163,14 +163,14 @@ function SHM_POST_INFO(
     HTMLElement|string|null $edit = null,
     string|null $link = null,
 ): HTMLElement {
-    if(!is_null($view) && !is_null($edit)) {
+    if (!is_null($view) && !is_null($edit)) {
         $show = emptyHTML(
             SPAN(["class" => "view"], $view),
             SPAN(["class" => "edit"], $edit),
         );
-    } elseif(!is_null($edit)) {
+    } elseif (!is_null($edit)) {
         $show = $edit;
-    } elseif(!is_null($view)) {
+    } elseif (!is_null($view)) {
         $show = $view;
     } else {
         $show = "???";

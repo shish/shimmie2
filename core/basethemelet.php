@@ -79,7 +79,7 @@ class BaseThemelet
             "data-mime" => $image->get_mime(),
             "data-post-id" => $id,
         ];
-        if(Extension::is_enabled(RatingsInfo::KEY)) {
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
             $attrs["data-rating"] = $image['rating'];
         }
 
