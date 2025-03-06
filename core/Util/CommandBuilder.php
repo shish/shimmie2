@@ -13,7 +13,7 @@ class CommandBuilder
     /** @var string[] */
     private array $args = [];
     /** @var string[] */
-    public array $output;
+    public array $output = [];
 
     public function __construct(string $executable)
     {
