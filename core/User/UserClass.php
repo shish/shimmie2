@@ -13,26 +13,21 @@ class UserClass
     /** @var array<string, UserClass> */
     public static array $known_classes = [];
 
-    #[Field]
-    public string $name;
-    public ?UserClass $parent = null;
-
-    /** @var array<string, bool> */
-    private array $abilities = [];
-
     /**
      * @param array<string, bool> $abilities
      */
-    public function __construct(string $name, ?string $parent = null, array $abilities = [])
-    {
-        $this->name = $name;
-        $this->abilities = $abilities;
-
-        if (!is_null($parent)) {
-            $this->parent = static::$known_classes[$parent];
-        }
-
+    public function __construct(
+        #[Field]
+        public string $name,
+        private ?string $parent_name = null,
+        private array $abilities = []
+    ) {
         static::$known_classes[$name] = $this;
+    }
+
+    public function get_parent(): ?UserClass
+    {
+        return static::$known_classes[$this->parent_name] ?? null;
     }
 
     // #[Field(type: "[Permission!]!")]
@@ -59,8 +54,8 @@ class UserClass
     {
         if (array_key_exists($ability, $this->abilities)) {
             return $this->abilities[$ability];
-        } elseif (!is_null($this->parent)) {
-            return $this->parent->can($ability);
+        } elseif (!is_null($this->get_parent())) {
+            return $this->get_parent()->can($ability);
         } else {
             $min_dist = 9999;
             $min_ability = null;
