@@ -210,6 +210,23 @@ class Upgrade extends Extension
             $this->set_version("db_version", 21);
             $database->begin_transaction();
         }
+
+        if ($this->get_version("db_version") < 22) {
+            $database->execute(
+                "ALTER TABLE users ADD COLUMN hellbanned BOOLEAN NOT NULL DEFAULT :f",
+                ["f" => false]
+            );
+            $database->execute(
+                "UPDATE users SET hellbanned = :t WHERE class = :hellbanned",
+                ["t" => true, "hellbanned" => "hellbanned"]
+            );
+            $database->execute(
+                "UPDATE users SET class = :user WHERE class = :hellbanned",
+                ["user" => "user", "hellbanned" => "hellbanned"]
+            );
+
+            $this->set_version("db_version", 22);
+        }
     }
 
     public function get_priority(): int
