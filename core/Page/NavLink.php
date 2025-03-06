@@ -26,7 +26,7 @@ class NavLink
         $this->order = $order;
         if ($active == null) {
             $query = _get_query();
-            $link = trim($link," \n\r\t\v\x00/\\");
+            $link = trim($link, " \n\r\t\v\x00/\\");
             if ($query === "") {
                 // This indicates the front page, so we check what's set as the front page
                 $front_page = trim($config->get_string(SetupConfig::FRONT_PAGE), "/");
