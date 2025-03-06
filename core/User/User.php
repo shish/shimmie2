@@ -57,7 +57,8 @@ class User
         if (array_key_exists($row["class"], UserClass::$known_classes)) {
             $this->class = UserClass::$known_classes[$row["class"]];
         } else {
-            throw new ServerError("User '{$this->name}' has invalid class '{$row["class"]}'");
+            Log::error("core-user", "User '{$this->name}' has invalid class '{$row["class"]}' - treating as anonymous");
+            $this->class = UserClass::$known_classes["anonymous"];
         }
     }
 

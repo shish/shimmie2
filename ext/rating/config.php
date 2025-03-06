@@ -25,7 +25,7 @@ class RatingsConfig extends ConfigGroup
         }
 
         foreach (array_keys(UserClass::$known_classes) as $userclass) {
-            if ($userclass == "base" || $userclass == "hellbanned") {
+            if ($userclass == "base") {
                 continue;
             }
             $key = "ext_rating_{$userclass}_privs";
