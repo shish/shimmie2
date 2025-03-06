@@ -392,56 +392,47 @@ class Page
         ]));
     }
 
+    /**
+     * @param string[] $files
+     */
+    private function get_cache_file(string $type, string $ext, string $theme_name, int $timestamp, array $files): string
+    {
+        foreach ($files as $file) {
+            $timestamp = max($timestamp, filemtime($file));
+        }
+        $md5 = md5(serialize($files));
+        $cache_file = Filesystem::data_path("cache/{$type}/{$theme_name}.{$timestamp}.{$md5}.{$ext}");
+        if (!file_exists($cache_file)) {
+            $mcss = new \MicroBundler\MicroBundler();
+            foreach ($files as $file) {
+                $mcss->addSource($file);
+            }
+            $mcss->save($cache_file);
+        }
+        return $cache_file;
+    }
+
     private function get_css_cache_file(string $theme_name, int $config_latest): string
     {
-        $css_latest = $config_latest;
-        $css_files = array_merge(
+        $files = array_merge(
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.css"),
             Filesystem::zglob("themes/$theme_name/{" . implode(",", $this->get_theme_stylesheets()) . "}")
         );
-        foreach ($css_files as $css) {
-            $css_latest = max($css_latest, filemtime($css));
-        }
-        $css_md5 = md5(serialize($css_files));
-        $css_cache_file = Filesystem::data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
-        if (!file_exists($css_cache_file)) {
-            $mcss = new \MicroBundler\MicroBundler();
-            foreach ($css_files as $css) {
-                $mcss->addSource($css);
-            }
-            $mcss->save($css_cache_file);
-        }
-
-        return $css_cache_file;
+        return self::get_cache_file('style', 'css', $theme_name, $config_latest, $files);
     }
 
     private function get_initjs_cache_file(string $theme_name, int $config_latest): string
     {
-        $js_latest = $config_latest;
-        $js_files = array_merge(
+        $files = array_merge(
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/init.js"),
             Filesystem::zglob("themes/$theme_name/init.js")
         );
-        foreach ($js_files as $js) {
-            $js_latest = max($js_latest, filemtime($js));
-        }
-        $js_md5 = md5(serialize($js_files));
-        $js_cache_file = Filesystem::data_path("cache/initscript/{$theme_name}.{$js_latest}.{$js_md5}.js");
-        if (!file_exists($js_cache_file)) {
-            $mcss = new \MicroBundler\MicroBundler();
-            foreach ($js_files as $js) {
-                $mcss->addSource($js);
-            }
-            $mcss->save($js_cache_file);
-        }
-
-        return $js_cache_file;
+        return self::get_cache_file('initscript', 'js', $theme_name, $config_latest, $files);
     }
 
     private function get_js_cache_file(string $theme_name, int $config_latest): string
     {
-        $js_latest = $config_latest;
-        $js_files = array_merge(
+        $files = array_merge(
             [
                 "vendor/bower-asset/jquery/dist/jquery.min.js",
                 "vendor/bower-asset/jquery-timeago/jquery.timeago.js",
@@ -450,20 +441,7 @@ class Page
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/script.js"),
             Filesystem::zglob("themes/$theme_name/{" . implode(",", $this->get_theme_scripts()) . "}")
         );
-        foreach ($js_files as $js) {
-            $js_latest = max($js_latest, filemtime($js));
-        }
-        $js_md5 = md5(serialize($js_files));
-        $js_cache_file = Filesystem::data_path("cache/script/{$theme_name}.{$js_latest}.{$js_md5}.js");
-        if (!file_exists($js_cache_file)) {
-            $mcss = new \MicroBundler\MicroBundler();
-            foreach ($js_files as $js) {
-                $mcss->addSource($js);
-            }
-            $mcss->save($js_cache_file);
-        }
-
-        return $js_cache_file;
+        return self::get_cache_file('script', 'js', $theme_name, $config_latest, $files);
     }
 
     /**
