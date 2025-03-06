@@ -311,8 +311,8 @@ class UserPage extends Extension
         $duser = $event->display_user;
         $h_join_date = autodate($duser->join_date);
         $class = $duser->class;
-        if ($duser->can(UserAccountsPermission::HELLBANNED) && $class->parent) {
-            $h_class = $class->parent->name;
+        if ($duser->can(UserAccountsPermission::HELLBANNED) && $class->get_parent()) {
+            $h_class = $class->get_parent()->name;
         } else {
             $h_class = $class->name;
         }

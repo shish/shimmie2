@@ -24,8 +24,8 @@ class PermManagerTheme extends Themelet
         $row->appendChild(TH("Permission"));
         foreach ($classes as $class) {
             $n = $class->name;
-            if ($class->parent) {
-                $n .= " ({$class->parent->name})";
+            if ($class->get_parent()) {
+                $n .= " ({$class->get_parent()->name})";
             }
             $row->appendChild(TH($n));
         }
