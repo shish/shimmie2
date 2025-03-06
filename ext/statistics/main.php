@@ -10,7 +10,7 @@ class Statistics extends Extension
     /** @var StatisticsTheme */
     protected Themelet $theme;
     /** @var String[] */
-    private array $unlisted = ['anonymous', 'ghost', 'hellbanned'];
+    private array $unlisted = ['anonymous', 'ghost'];
 
     public function onPageRequest(PageRequestEvent $event): void
     {

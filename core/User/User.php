@@ -53,12 +53,7 @@ class User
         $this->email = $row['email'];
         $this->join_date = $row['joindate'];
         $this->passhash = $row['pass'];
-
-        if (array_key_exists($row["class"], UserClass::$known_classes)) {
-            $this->class = UserClass::$known_classes[$row["class"]];
-        } else {
-            throw new ServerError("User '{$this->name}' has invalid class '{$row["class"]}'");
-        }
+        $this->class = UserClass::get_class($row['class']);
     }
 
     public function get_config(): Config

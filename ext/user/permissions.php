@@ -19,8 +19,6 @@ class UserAccountsPermission extends PermissionGroup
     /** modify own user-level settings */
     public const CHANGE_USER_SETTING = "change_user_setting";
     public const CHANGE_OTHER_USER_SETTING = "change_other_user_setting";
-    public const HELLBANNED = "hellbanned";
-    public const VIEW_HELLBANNED = "view_hellbanned";
     /** only admins can modify protected users (stops a moderator from changing an admin's password) */
     public const PROTECTED = "protected";
 }
