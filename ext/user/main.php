@@ -17,7 +17,7 @@ use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
 
-use function MicroHTML\{A, STYLE, emptyHTML};
+use function MicroHTML\{A, emptyHTML};
 
 class UserNameColumn extends TextColumn
 {
@@ -144,12 +144,6 @@ class UserPage extends Extension
         global $config, $database, $page, $user;
 
         $this->show_user_info();
-
-        if ($user->can(UserAccountsPermission::VIEW_HELLBANNED)) {
-            $page->add_html_header(STYLE("DIV.hb, TR.hb TD {border: 1px solid red !important;}"));
-        } elseif (!$user->can(UserAccountsPermission::HELLBANNED)) {
-            $page->add_html_header(STYLE(".hb {display: none !important;}"));
-        }
 
         if ($event->page_matches("user_admin/login", method: "GET")) {
             $this->theme->display_login_page($page);
@@ -311,11 +305,7 @@ class UserPage extends Extension
         $duser = $event->display_user;
         $h_join_date = autodate($duser->join_date);
         $class = $duser->class;
-        if ($duser->can(UserAccountsPermission::HELLBANNED) && $class->get_parent()) {
-            $h_class = $class->get_parent()->name;
-        } else {
-            $h_class = $class->name;
-        }
+        $h_class = $class->name;
 
         $event->add_part("Joined: $h_join_date", 10);
         if ($user->name == $duser->name) {

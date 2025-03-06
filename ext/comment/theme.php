@@ -227,10 +227,9 @@ class CommentListTheme extends Themelet
         }
 
         $tfe = send_event(new TextFormattingEvent($comment->comment));
-        $hb = ($comment->owner_class == "hellbanned" ? "hb" : "");
         if ($trim) {
             $html = DIV(
-                ["class" => "comment $hb"],
+                ["class" => "comment"],
                 $userlink,
                 ": ",
                 truncate($tfe->stripped, 50),
@@ -240,7 +239,7 @@ class CommentListTheme extends Themelet
             /** @var BuildAvatarEvent $bae */
             $bae = send_event(new BuildAvatarEvent($comment->get_owner()));
             $html = DIV(
-                ["class" => "comment $hb", "id" => "c{$comment->comment_id}"],
+                ["class" => "comment", "id" => "c{$comment->comment_id}"],
                 DIV(
                     ["class" => "info"],
                     emptyHTML(

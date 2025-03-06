@@ -22,7 +22,17 @@ class UserClass
         private ?string $parent_name = null,
         private array $abilities = []
     ) {
-        static::$known_classes[$name] = $this;
+        self::$known_classes[$name] = $this;
+    }
+
+    public static function get_class(string $name): UserClass
+    {
+        if (array_key_exists($name, self::$known_classes)) {
+            return self::$known_classes[$name];
+        } else {
+            Log::error("core-user", "User class '{$name}' does not exist - treating as anonymous");
+            return self::$known_classes["anonymous"];
+        }
     }
 
     public function get_parent(): ?UserClass

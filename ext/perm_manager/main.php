@@ -21,9 +21,6 @@ class PermManager extends Extension
                 $_all_true[$v] = true;
             }
         }
-        // hellbanned is a snowflake, it isn't really a "permission" so much as
-        // "a special behaviour which applies to one particular user class"
-        $_all_true[UserAccountsPermission::HELLBANNED] = false;
         new UserClass("base", null, $_all_false);
         new UserClass("admin", null, $_all_true);
 
@@ -67,13 +64,6 @@ class PermManager extends Extension
             NotesPermission::REQUEST => true,
             PoolsPermission::CREATE => true,
             PoolsPermission::UPDATE => true,
-        ]);
-
-        // Hellbanning is a special case where a user can do all
-        // of the normal user actions, but their posts are hidden
-        // from everyone else
-        new UserClass("hellbanned", "user", [
-            UserAccountsPermission::HELLBANNED => true,
         ]);
 
         @include_once "data/config/user-classes.conf.php";
