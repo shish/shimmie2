@@ -48,8 +48,8 @@ abstract class Enablable
                 SysConfig::getExtraExtensions()
             );
             foreach ($keys as $key) {
-                $ext = ExtensionInfo::get_all()[$key];
-                if (!$ext->is_supported()) {
+                $ext = ExtensionInfo::get_all()[$key] ?? null;
+                if (!$ext?->is_supported()) {
                     continue;
                 }
                 // FIXME: error if one of our dependencies isn't supported
