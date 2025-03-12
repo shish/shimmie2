@@ -95,7 +95,7 @@ class Approval extends Extension
         global $user;
         if ($event->parent == "posts") {
             if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
-                $event->add_nav_link("posts_unapproved", search_link(['approved:no']), "Pending Approval", null, 60);
+                $event->add_nav_link("posts_unapproved", search_link(['approved:no']), "Pending Approval", order: 60);
             }
         }
     }

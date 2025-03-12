@@ -343,9 +343,9 @@ class UserPage extends Extension
     {
         global $user;
         if ($user->is_anonymous()) {
-            $event->add_nav_link("user", make_link('user_admin/login'), "Account", null, 10);
+            $event->add_nav_link("user", make_link('user_admin/login'), "Account", order: 10);
         } else {
-            $event->add_nav_link("user", make_link('user'), "Account", null, 10);
+            $event->add_nav_link("user", make_link('user'), "Account", order: 10);
         }
     }
 
@@ -392,7 +392,7 @@ class UserPage extends Extension
         }
 
         if ($event->parent === "user" && !$user->is_anonymous()) {
-            $event->add_nav_link("logout", make_link('user_admin/logout'), "Log Out", false, 90);
+            $event->add_nav_link("logout", make_link('user_admin/logout'), "Log Out", order: 90);
         }
     }
 
