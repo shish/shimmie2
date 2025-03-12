@@ -8,22 +8,20 @@ use MicroHTML\HTMLElement;
 
 class NavLink
 {
-    public string $name;
-    /** @var url-string $link */
-    public string $link;
-    public string|HTMLElement $description;
-    public int $order;
     public bool $active = false;
 
-    /** @param url-string $link */
-    public function __construct(string $name, string $link, string|HTMLElement $description, ?bool $active = null, int $order = 50)
-    {
+    /**
+     * @param url-string $link
+     */
+    public function __construct(
+        public string $name,
+        public string $link,
+        public string|HTMLElement $description,
+        ?bool $active = null,
+        public int $order = 50
+    ) {
         global $config;
 
-        $this->name = $name;
-        $this->link = $link;
-        $this->description = $description;
-        $this->order = $order;
         if ($active == null) {
             $query = _get_query();
             $link = trim($link, " \n\r\t\v\x00/\\");

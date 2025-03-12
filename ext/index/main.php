@@ -101,7 +101,7 @@ class Index extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link("posts", make_link('post/list'), "Posts", NavLink::is_active(["post","view"]), 20);
+        $event->add_nav_link("posts", make_link('post/list'), "Posts", NavLink::is_active(["post","view"]), order: 20);
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
