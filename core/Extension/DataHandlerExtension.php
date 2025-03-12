@@ -24,7 +24,7 @@ namespace Shimmie2;
 abstract class DataHandlerExtension extends Extension
 {
     /** @var string[] */
-    protected array $SUPPORTED_MIME = [];
+    protected const SUPPORTED_MIME = [];
 
     public function onDataUpload(DataUploadEvent $event): void
     {
@@ -133,7 +133,7 @@ abstract class DataHandlerExtension extends Extension
 
     protected function supported_mime(string $mime): bool
     {
-        return MimeType::matches_array($mime, $this->SUPPORTED_MIME);
+        return MimeType::matches_array($mime, $this::SUPPORTED_MIME);
     }
 
     /**
@@ -144,7 +144,7 @@ abstract class DataHandlerExtension extends Extension
         $arr = [];
         foreach (DataHandlerExtension::get_subclasses() as $class) {
             $handler = $class->newInstance();
-            $arr = array_merge($arr, $handler->SUPPORTED_MIME);
+            $arr = array_merge($arr, $handler::SUPPORTED_MIME);
         }
 
         // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class

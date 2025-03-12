@@ -7,7 +7,7 @@ namespace Shimmie2;
 class ArchiveFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_archive";
-    protected array $SUPPORTED_MIME = [MimeType::ZIP];
+    public const SUPPORTED_MIME = [MimeType::ZIP];
 
     public function onDataUpload(DataUploadEvent $event): void
     {
