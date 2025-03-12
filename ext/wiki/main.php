@@ -202,8 +202,8 @@ class Wiki extends Extension
             }
         } elseif ($event->page_matches("wiki/{title}")) {
             $title = $event->get_arg('title');
-            if ($title === "all") {
-                $this->theme->display_all_page($page, $this->get_page("wiki:sidebar"));
+            if ($title === "wiki:list") {
+                $this->theme->display_list_page($page, $this->get_page("wiki:sidebar"));
             } else {
                 $revision = int_escape($event->get_GET('revision') ?? "-1");
                 $content = $this->get_page($title, $revision);
@@ -225,6 +225,7 @@ class Wiki extends Extension
         if ($event->parent == "wiki") {
             $event->add_nav_link("wiki_rules", make_link('wiki/rules'), "Rules");
             $event->add_nav_link("wiki_help", make_link('ext_doc/wiki'), "Help");
+            $event->add_nav_link("wiki_list", make_link('wiki/wiki:list'), "Page list");
         }
     }
 
