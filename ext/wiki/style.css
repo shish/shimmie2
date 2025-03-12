@@ -4,3 +4,12 @@
 .wiki-footer {
 	text-align: center;
 }
+.wiki-all-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 1em;
+}
+.wiki-all-grid A {
+	font-size: 1.5em;
+	background-color: #8881;;
+}

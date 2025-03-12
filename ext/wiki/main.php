@@ -202,9 +202,13 @@ class Wiki extends Extension
             }
         } elseif ($event->page_matches("wiki/{title}")) {
             $title = $event->get_arg('title');
-            $revision = int_escape($event->get_GET('revision') ?? "-1");
-            $content = $this->get_page($title, $revision);
-            $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
+            if ($title === "all") {
+                $this->theme->display_all_page($page, $this->get_page("wiki:sidebar"));
+            } else {
+                $revision = int_escape($event->get_GET('revision') ?? "-1");
+                $content = $this->get_page($title, $revision);
+                $this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
+            }
         } elseif ($event->page_matches("wiki")) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("wiki/Index"));
