@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function MicroHTML\INPUT;
 
-require_once "S3.php";
+require_once __DIR__ . "/S3.php";
 
 class S3 extends Extension
 {
@@ -98,11 +98,7 @@ class S3 extends Extension
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $query = Tag::explode($input->getArgument('query'));
                 foreach (Search::find_images_iterable(tags: $query) as $image) {
-                    if ($this->sync_post($image)) {
-                        print("{$image->id}: {$image->hash}\n");
-                    } else {
-                        print("{$image->id}: {$image->hash} (skipped)\n");
-                    }
+                    print("{$image->id}: {$image->hash}\n");
                 }
                 return Command::SUCCESS;
             });
@@ -160,13 +156,13 @@ class S3 extends Extension
     }
 
     // utils
-    private function get_client(): ?\S3Client\S3
+    private function get_client(): \S3Client\S3
     {
         global $config;
         $access_key_id = $config->get_string(S3Config::ACCESS_KEY_ID);
         $access_key_secret = $config->get_string(S3Config::ACCESS_KEY_SECRET);
         if (is_null($access_key_id) || is_null($access_key_secret)) {
-            return null;
+            throw new ServerError("S3 credentials not set");
         }
         $endpoint = $config->get_string(S3Config::ENDPOINT);
 
@@ -198,21 +194,12 @@ class S3 extends Extension
     /**
      * @param list<tag-string>|null $new_tags
      */
-    private function sync_post(Image $image, ?array $new_tags = null, bool $overwrite = true): bool
+    private function sync_post(Image $image, ?array $new_tags = null): void
     {
         global $config;
-
-        $client = $this->get_client();
-        if (is_null($client)) {
-            return false;
+        if (defined("UNITTEST")) {
+            return;
         }
-        $image_bucket = $config->get_string(S3Config::IMAGE_BUCKET);
-
-        $key = $this->hash_to_path($image->hash);
-        if (!$overwrite && $client->getObjectInfo($image_bucket, $key)->code !== 200) {
-            return false;
-        }
-
         if ($this->is_busy()) {
             $this->enqueue($image->hash, "S");
         } else {
@@ -224,9 +211,10 @@ class S3 extends Extension
                 $friendly = $image->parse_link_template('$id - $tags.$ext');
                 $image->tag_array = $_orig_tags;
             }
+            $client = $this->get_client();
             $client->putObject(
-                $image_bucket,
-                $key,
+                $config->get_string(S3Config::IMAGE_BUCKET),
+                $this->hash_to_path($image->hash),
                 \Safe\file_get_contents($image->get_image_filename()),
                 [
                     'ACL' => 'public-read',
@@ -236,19 +224,18 @@ class S3 extends Extension
             );
             $this->dequeue($image->hash);
         }
-        return true;
     }
 
     private function remove_file(string $hash): void
     {
         global $config;
-        $client = $this->get_client();
-        if (is_null($client)) {
+        if (defined("UNITTEST")) {
             return;
         }
         if ($this->is_busy()) {
             $this->enqueue($hash, "D");
         } else {
+            $client = $this->get_client();
             $client->deleteObject(
                 $config->get_string(S3Config::IMAGE_BUCKET),
                 $this->hash_to_path($hash),
