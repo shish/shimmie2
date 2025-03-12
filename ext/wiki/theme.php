@@ -42,7 +42,7 @@ class WikiTheme extends Themelet
         $page->add_block(new Block($wiki_page->title, $this->create_display_html($wiki_page)));
     }
 
-    public function display_all_page(Page $page, ?WikiPage $nav_page = null): void
+    public function display_list_page(Page $page, ?WikiPage $nav_page = null): void
     {
         global $database;
         if (is_null($nav_page)) {
@@ -59,6 +59,7 @@ class WikiTheme extends Themelet
         foreach ($titles as $title) {
             $html->appendChild(A(["href" => make_link("wiki/$title")], $title));
         }
+        $page->set_title("Wiki page list");
         $page->add_block(new Block("Wiki Index", rawHTML($body_html), "left", 20));
         $page->add_block(new Block("All Wiki Pages", $html));
     }
