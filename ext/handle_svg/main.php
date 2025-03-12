@@ -9,7 +9,7 @@ use enshrined\svgSanitize\Sanitizer;
 class SVGFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_svg";
-    protected array $SUPPORTED_MIME = [MimeType::SVG];
+    public const SUPPORTED_MIME = [MimeType::SVG];
 
     /** @var SVGFileHandlerTheme */
     protected Themelet $theme;

@@ -7,7 +7,7 @@ namespace Shimmie2;
 class IcoFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_ico";
-    protected array $SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
+    public const SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {

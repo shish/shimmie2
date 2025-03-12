@@ -7,7 +7,7 @@ namespace Shimmie2;
 class CBZFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_cbz";
-    protected array $SUPPORTED_MIME = [MimeType::COMIC_ZIP];
+    public const SUPPORTED_MIME = [MimeType::COMIC_ZIP];
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
