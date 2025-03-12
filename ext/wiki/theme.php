@@ -42,6 +42,27 @@ class WikiTheme extends Themelet
         $page->add_block(new Block($wiki_page->title, $this->create_display_html($wiki_page)));
     }
 
+    public function display_all_page(Page $page, ?WikiPage $nav_page = null): void
+    {
+        global $database;
+        if (is_null($nav_page)) {
+            $nav_page = new WikiPage();
+            $nav_page->body = "";
+        }
+
+        $body_html = format_text($nav_page->body);
+
+        $query = "SELECT DISTINCT title FROM wiki_pages
+                ORDER BY title ASC";
+        $titles = $database->get_col($query);
+        $html = DIV(["class" => "wiki-all-grid"]);
+        foreach ($titles as $title) {
+            $html->appendChild(A(["href" => make_link("wiki/$title")], $title));
+        }
+        $page->add_block(new Block("Wiki Index", rawHTML($body_html), "left", 20));
+        $page->add_block(new Block("All Wiki Pages", $html));
+    }
+
     /**
      * @param array<array{revision: string, date: string}> $history
      */
