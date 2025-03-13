@@ -44,7 +44,7 @@ class AvatarPostTheme extends Themelet
             ),
             // simulate user config page
             SHM_SIMPLE_FORM(
-                "save_avatar",
+                make_link("save_avatar"),
                 INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_ID, "value" => $image->id]),
                 INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_ID, "value" => "int"]),
                 INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_SCALE, "id" => "avatar-post-scale", "value" => 100]),

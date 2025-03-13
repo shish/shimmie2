@@ -39,7 +39,7 @@ class ForumTheme extends Themelet
         $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
-            "forum/create",
+            make_link("forum/create"),
             TABLE(
                 ["style" => "width: 500px;"],
                 TR(
@@ -85,7 +85,7 @@ class ForumTheme extends Themelet
         $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
-            "forum/answer",
+            make_link("forum/answer"),
             INPUT(["type" => "hidden", "name" => "threadID", "value" => $threadID]),
             TABLE(
                 ["style" => "width: 500px;"],

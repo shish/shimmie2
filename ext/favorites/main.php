@@ -125,8 +125,7 @@ class Favorites extends Extension
     {
         global $user;
 
-        $username = url_escape($user->name);
-        $event->add_link("My Favorites", search_link(["favorited_by=$username"]), 20);
+        $event->add_link("My Favorites", search_link(["favorited_by={$user->name}"]), 20);
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event): void

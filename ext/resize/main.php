@@ -39,7 +39,7 @@ class ResizeImage extends Extension
             $default_height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT, $event->image->height);
 
             $event->add_part(SHM_SIMPLE_FORM(
-                "resize/{$event->image->id}",
+                make_link("resize/{$event->image->id}"),
                 rawHTML("
                     <input id='original_width'  name='original_width'  type='hidden' value='{$event->image->width}'>
                     <input id='original_height' name='original_height' type='hidden' value='{$event->image->height}'>

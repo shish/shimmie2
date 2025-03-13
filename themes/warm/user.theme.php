@@ -9,7 +9,7 @@ use function MicroHTML\rawHTML;
 class WarmUserPageTheme extends UserPageTheme
 {
     /**
-     * @param array<array{link: string, name: string}> $parts
+     * @param array<array{link: Url, name: string}> $parts
      */
     public function display_user_block(Page $page, User $user, array $parts): void
     {

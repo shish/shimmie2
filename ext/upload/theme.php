@@ -55,7 +55,7 @@ class UploadTheme extends Themelet
             $common_fields->appendChild($part);
         }
 
-        $form = SHM_FORM("upload", multipart: true, form_id: "file_upload");
+        $form = SHM_FORM(make_link("upload"), multipart: true, form_id: "file_upload");
         $form->appendChild(
             TABLE(
                 ["id" => "large_upload_form", "class" => "form"],
@@ -159,8 +159,8 @@ class UploadTheme extends Themelet
     {
         global $config;
         $limits = get_upload_limits();
-        $link = make_http(make_link("upload"));
-        $main_page = make_http(make_link());
+        $link = make_link("upload")->asAbsolute();
+        $main_page = make_link()->asAbsolute();
         $title = $config->get_string(SetupConfig::TITLE);
         $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
@@ -202,7 +202,7 @@ class UploadTheme extends Themelet
             var supext=&quot;'.$supported_ext.'&quot;;
             var maxsize=&quot;'.$max_kb.'&quot;;
             var CA=0;
-            void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(get_base_href())."/ext/upload/bookmarklet.js".'&quot;)
+            void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.Url::base()->asAbsolute()."/ext/upload/bookmarklet.js".'&quot;)
         ';
         $html2 = P(
             A(["href" => $js], $title),
@@ -260,7 +260,7 @@ class UploadTheme extends Themelet
         $max_total_kb = to_shorthand_int($max_total_size);
 
         // <input type='hidden' name='max_file_size' value='$max_size' />
-        $form = SHM_FORM("upload", multipart: true);
+        $form = SHM_FORM(make_link("upload"), multipart: true);
         $form->appendChild(
             emptyHTML(
                 INPUT(["id" => "data[]", "name" => "data[]", "size" => "16", "type" => "file", "accept" => $accept, "multiple" => true]),

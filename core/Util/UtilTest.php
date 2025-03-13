@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Depends;
 
 class UtilTest extends TestCase
 {
@@ -69,5 +70,136 @@ class UtilTest extends TestCase
             "Anonymous",
             _get_user()->name
         );
+    }
+
+    /**
+     * An integration test for
+     * - search_link()
+     *   - make_link_str()
+     * - _get_query()
+     * - get_search_terms()
+     */
+    #[Depends("test_search_link")]
+    public function test_get_search_terms_from_search_link(): void
+    {
+        /**
+         * @param array<string> $vars
+         * @return array<string>
+         */
+        $gst = function (array $terms): array {
+            $pre = new PageRequestEvent("GET", _get_query((string)search_link($terms)), [], []);
+            $pre->page_matches("post/list/{search}/{page}");
+            return Tag::explode($pre->get_arg('search'));
+        };
+
+        global $config;
+        foreach ([true, false] as $nice_urls) {
+            $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
+
+            $this->assertEquals(
+                ["bar", "foo"],
+                $gst(["foo", "bar"])
+            );
+            $this->assertEquals(
+                ["AC/DC"],
+                $gst(["AC/DC"])
+            );
+            $this->assertEquals(
+                ["cat*", "rating=?"],
+                $gst(["rating=?", "cat*"]),
+            );
+        }
+    }
+
+    public function test_search_link(): void
+    {
+        global $config;
+        foreach ([true, false] as $nice_urls) {
+            $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
+
+            $this->assertEquals(
+                $nice_urls ? "/test/post/list/bar%20foo/1" : "/test/index.php?q=post/list/bar%20foo/1",
+                search_link(["foo", "bar"])
+            );
+            $this->assertEquals(
+                $nice_urls ? "/test/post/list/AC%2FDC/1" : "/test/index.php?q=post/list/AC%2FDC/1",
+                search_link(["AC/DC"])
+            );
+            $this->assertEquals(
+                $nice_urls ? "/test/post/list/cat%2A%20rating%3D%3F/1" : "/test/index.php?q=post/list/cat%2A%20rating%3D%3F/1",
+                search_link(["rating=?", "cat*"])
+            );
+        }
+    }
+
+    public function test_get_query(): void
+    {
+        // just validating an assumption that this test relies upon
+        $this->assertEquals(Url::base(), "/test");
+
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/test/tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
+        );
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/test/index.php?q=tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
+        );
+
+        // even when we are /test/... publicly, and generating /test/... URLs,
+        // we should still be able to handle URLs at the root because that's
+        // what apache sends us when it is reverse-proxying a subdirectory
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
+        );
+        $this->assertEquals(
+            "tasty/cake",
+            _get_query("/index.php?q=tasty/cake"),
+            'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
+        );
+
+        $this->assertEquals(
+            "tasty/cake%20pie",
+            _get_query("/test/index.php?q=tasty/cake%20pie"),
+            'URL encoded paths should be left alone'
+        );
+        $this->assertEquals(
+            "tasty/cake%20pie",
+            _get_query("/test/tasty/cake%20pie"),
+            'URL encoded queries should be left alone'
+        );
+
+        $this->assertEquals(
+            "",
+            _get_query("/test/"),
+            'If just viewing install directory, should return /'
+        );
+        $this->assertEquals(
+            "",
+            _get_query("/test/index.php"),
+            'If just viewing index.php, should return /'
+        );
+
+        $this->assertEquals(
+            "post/list/tasty%2Fcake/1",
+            _get_query("/test/post/list/tasty%2Fcake/1"),
+            'URL encoded niceurls should be left alone, even encoded slashes'
+        );
+        $this->assertEquals(
+            "post/list/tasty%2Fcake/1",
+            _get_query("/test/index.php?q=post/list/tasty%2Fcake/1"),
+            'URL encoded uglyurls should be left alone, even encoded slashes'
+        );
+    }
+
+    public function tearDown(): void
+    {
+        global $config;
+        $config->set_bool(SetupConfig::NICE_URLS, true);
+        parent::tearDown();
     }
 }

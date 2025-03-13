@@ -35,7 +35,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
     }
 
     /**
-     * @param array<int, array{name: string, link: string}> $parts
+     * @param array<int, array{name: string, link: Url}> $parts
      */
     public function display_user_links(Page $page, User $user, array $parts): void
     {
@@ -47,7 +47,7 @@ class Danbooru2UserPageTheme extends UserPageTheme
     }
 
     /**
-     * @param array<array{link: string, name: string}> $parts
+     * @param array<array{link: Url, name: string}> $parts
      */
     public function display_user_block(Page $page, User $user, array $parts): void
     {

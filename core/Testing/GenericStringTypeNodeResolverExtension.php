@@ -40,10 +40,6 @@ class GenericStringTypeNodeResolverExtension implements TypeNodeResolverExtensio
                     'fragment-string',
                     fn ($v) => preg_match('/^[a-z\-]+$/', $v) === 1
                 ),
-                'query-string' => new MatchyStringType(
-                    'query-string',
-                    fn ($v) => preg_match('/^[^ ]+$/', $v) === 1
-                ),
                 'internal-hash-string' => new MatchyStringType(
                     'hash-string',
                     fn ($v) => preg_match('#^[0-9a-fA-F]{32}$#', $v) === 1

@@ -30,7 +30,7 @@ class RotateImage extends Extension
                 && MimeType::matches_array($event->image->get_mime(), self::SUPPORTED_MIME)) {
             /* Add a link to rotate the image */
             $event->add_part(SHM_SIMPLE_FORM(
-                'rotate/'.$event->image->id,
+                make_link('rotate/'.$event->image->id),
                 INPUT(["type" => 'number', "name" => 'rotate_deg', "id" => "rotate_deg", "placeholder" => "Rotation degrees"]),
                 INPUT(["type" => 'submit', "value" => 'Rotate', "id" => "rotatebutton"]),
             ));

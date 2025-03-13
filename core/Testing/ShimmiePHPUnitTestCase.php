@@ -74,7 +74,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     /**
      * @param array<string, mixed> $args
-     * @return array<string, string|mixed[]>
+     * @return query-array
      */
     private static function check_args(array $args): array
     {
@@ -92,8 +92,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array<string, mixed> $get_args
-     * @param array<string, mixed> $post_args
+     * @param query-array $get_args
+     * @param query-array $post_args
      * @param array<string, string> $cookies
      */
     protected static function request(
@@ -112,7 +112,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             throw new \RuntimeException("Query string included in page name");
         }
         $_SERVER['REQUEST_METHOD'] = $method;
-        $_SERVER['REQUEST_URI'] = make_link($page_name, http_build_query($get_args));
+        $_SERVER['REQUEST_URI'] = (string)make_link($page_name, $get_args);
         $_GET = $get_args;
         $_POST = $post_args;
         $_COOKIE = $cookies;

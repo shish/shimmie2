@@ -17,12 +17,11 @@ class BrowserSearch extends Extension
         // Add in header code to let the browser know that the search plugin exists
         // We need to build the data for the header
         $search_title = $config->get_string(SetupConfig::TITLE);
-        $search_file_url = make_link('browser_search.xml');
         $page->add_html_header(LINK([
             'rel' => 'search',
             'type' => 'application/opensearchdescription+xml',
             'title' => $search_title,
-            'href' => $search_file_url
+            'href' => make_link('browser_search.xml')
         ]));
 
         // The search.xml file that is generated on the fly

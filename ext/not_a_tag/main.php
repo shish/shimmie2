@@ -137,7 +137,7 @@ class NotATag extends Extension
                 ["tag" => $input['c_tag'], "redirect" => $input['c_redirect']]
             );
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link()));
+            $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("untag/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $input = validate_input(["d_tag" => "string"]);
@@ -147,7 +147,7 @@ class NotATag extends Extension
             );
             $page->flash("Post ban removed");
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link()));
+            $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("untag/list")) {
             $t = new NotATagTable($database->raw_db());

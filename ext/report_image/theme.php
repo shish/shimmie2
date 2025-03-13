@@ -99,7 +99,7 @@ class ReportImageTheme extends Themelet
     {
         global $page;
         $html = (string)SHM_SIMPLE_FORM(
-            "image_report/remove_reports_by",
+            make_link("image_report/remove_reports_by"),
             INPUT(["type" => 'hidden', "name" => 'user_id', "value" => $duser->id]),
             SHM_SUBMIT('Delete all reports by this user')
         );
