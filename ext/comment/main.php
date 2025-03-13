@@ -176,7 +176,7 @@ class CommentList extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link("comment", make_link('comment/list'), "Comments");
+        $event->add_nav_link(make_link('comment/list'), "Comments", category: "comment");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void

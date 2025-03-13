@@ -23,6 +23,6 @@ class System extends Extension
     }
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link("system", make_link('system'), "System");
+        $event->add_nav_link(make_link('system'), "System", category: "system");
     }
 }

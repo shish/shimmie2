@@ -78,7 +78,7 @@ class Forum extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link("forum", make_link('forum/index'), "Forum");
+        $event->add_nav_link(make_link('forum/index'), "Forum", category: "forum");
     }
 
     public function onPageRequest(PageRequestEvent $event): void
