@@ -36,7 +36,7 @@ class S3 extends Extension
         global $database, $page;
         $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
         $html = SHM_SIMPLE_FORM(
-            "admin/s3_process",
+            make_link("admin/s3_process"),
             INPUT(["type" => 'number', "name" => 'count', 'value' => '10']),
             SHM_SUBMIT("Sync N/$count posts"),
         );

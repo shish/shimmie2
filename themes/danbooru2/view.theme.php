@@ -51,7 +51,7 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
 
 
         if (!is_null($image->source)) {
-            $h_source = html_escape(make_http($image->source));
+            $h_source = html_escape($image->source);
             $html .= "<br>Source: <a href='$h_source'>link</a>";
         }
 
@@ -74,7 +74,7 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
 			<form action='".search_link()."' method='GET'>
 				<input name='search' type='text' class='autocomplete_tags' style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
-				<input type='hidden' name='q' value='".search_page()."'>
+				<input type='hidden' name='q' value='post/list'>
 			</form>
 		";
 

@@ -38,7 +38,7 @@ class TagToolsTheme extends Themelet
         $page->add_block(new Block("Misc Admin Tools", rawHTML($html)));
 
         $html = (string)SHM_SIMPLE_FORM(
-            "admin/set_tag_case",
+            make_link("admin/set_tag_case"),
             INPUT(["type" => 'text', "name" => 'tag', "placeholder" => 'Enter tag with correct case', "autocomplete" => 'off']),
             SHM_SUBMIT('Set Tag Case'),
         );

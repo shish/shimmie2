@@ -15,7 +15,7 @@ class Holiday extends Extension
         if (date('d/m') == '01/04' && $config->get_bool(HolidayConfig::APRIL_FOOLS)) {
             $page->add_html_header(LINK([
                 'rel' => 'stylesheet',
-                'href' => get_base_href() . '/ext/holiday/stylesheets/aprilfools.css',
+                'href' => Url::base() . '/ext/holiday/stylesheets/aprilfools.css',
                 'type' => 'text/css'
             ]));
         }

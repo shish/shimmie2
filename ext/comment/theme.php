@@ -283,7 +283,7 @@ class CommentListTheme extends Themelet
         return DIV(
             ["class" => "comment comment_add"],
             SHM_SIMPLE_FORM(
-                "comment/add",
+                make_link("comment/add"),
                 INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
                 INPUT(["type" => "hidden", "name" => "hash", "value" => $hash]),
                 TEXTAREA(["id" => "comment_on_$image_id", "name" => "comment", "rows" => 5, "cols" => 50]),

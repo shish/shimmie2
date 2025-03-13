@@ -14,7 +14,7 @@ class EmoticonListTheme extends Themelet
     public function display_emotes(array $list): void
     {
         global $page;
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $body = "<table><tr>";
         $n = 1;
         foreach ($list as $item) {

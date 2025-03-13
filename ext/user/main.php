@@ -546,7 +546,7 @@ class UserPage extends Extension
         $page->set_mode(PageMode::REDIRECT);
 
         if ($config->get_string(UserAccountsConfig::LOGIN_REDIRECT, "previous") === "previous") {
-            $page->set_redirect(referer_or(make_link(), ["user/"]));
+            $page->set_redirect(Url::referer_or(ignore: ["user/"]));
         } else {
             $page->set_redirect(make_link("user"));
         }

@@ -25,7 +25,7 @@ class ApprovalTheme extends Themelet
         global $page;
 
         $form = SHM_SIMPLE_FORM(
-            "admin/approval",
+            make_link("admin/approval"),
             BUTTON(["name" => 'approval_action', "value" => 'approve_all'], "Approve All Posts"),
             " ",
             BUTTON(["name" => 'approval_action', "value" => 'disapprove_all'], "Disapprove All Posts"),

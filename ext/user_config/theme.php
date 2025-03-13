@@ -56,7 +56,7 @@ class UserConfigTheme extends Themelet
         }
 
         $table = SHM_SIMPLE_FORM(
-            "user_config/save",
+            make_link("user_config/save"),
             INPUT(['type' => 'hidden', 'name' => 'id', 'value' => $user->id]),
             $blocks,
             INPUT(['class' => 'setupsubmit', 'type' => 'submit', 'value' => 'Save Settings'])

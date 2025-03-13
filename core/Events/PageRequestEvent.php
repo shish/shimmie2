@@ -15,9 +15,9 @@ class PageRequestEvent extends Event
 {
     private string $method;
     public string $path;
-    /** @var array<string, string|string[]> */
+    /** @var query-array */
     public array $GET;
-    /** @var array<string, string|string[]> */
+    /** @var query-array */
     public array $POST;
 
     /**
