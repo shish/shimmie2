@@ -28,7 +28,7 @@ class Home extends Extension
     {
         // returns just the contents of the body
         global $config;
-        $base_href = get_base_href();
+        $base_href = Url::base();
         $sitename = $config->get_string(SetupConfig::TITLE);
         $contact_link = contact_link();
         if (is_null($contact_link)) {

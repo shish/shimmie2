@@ -48,7 +48,7 @@ class RatingsTheme extends Themelet
             TR(TD(["colspan" => "2"], SHM_SUBMIT("Update")))
         );
 
-        $page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM("admin/update_ratings", $table)));
+        $page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM(make_link("admin/update_ratings"), $table)));
     }
 
     /**

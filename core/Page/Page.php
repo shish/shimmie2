@@ -89,9 +89,9 @@ class Page
      * Set the URL to redirect to (remember to use make_link() if linking
      * to a page in the same site).
      */
-    public function set_redirect(string $redirect): void
+    public function set_redirect(Url $redirect): void
     {
-        $this->redirect = $redirect;
+        $this->redirect = (string)$redirect;
     }
 
     // ==============================================
@@ -327,7 +327,7 @@ class Page
                 break;
             case PageMode::REDIRECT:
                 if ($this->flash) {
-                    $this->redirect = modify_url($this->redirect, ["flash" => implode("\n", $this->flash)]);
+                    $this->redirect = (string)Url::parse($this->redirect)->withModifiedQuery(["flash" => implode("\n", $this->flash)]);
                 }
                 header('Location: ' . $this->redirect);
                 print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
@@ -351,7 +351,7 @@ class Page
     {
         global $config;
 
-        $data_href = get_base_href();
+        $data_href = (string)Url::base();
         $theme_name = $config->get_string(SetupConfig::THEME, 'default');
 
         # static handler will map these to themes/foo/static/bar.ico or ext/static_files/static/bar.ico
@@ -557,8 +557,8 @@ class Page
         return [
             "class" => "layout-{$this->layout}",
             "data-userclass" => $user->class->name,
-            "data-base-href" => get_base_href(),
-            "data-base-link" => make_link(""),
+            "data-base-href" => (string)Url::base(),
+            "data-base-link" => (string)make_link(""),
         ];
     }
 

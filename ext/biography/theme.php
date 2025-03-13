@@ -19,7 +19,7 @@ class BiographyTheme extends Themelet
     public function display_composer(Page $page, User $duser, string $bio): void
     {
         $html = SHM_SIMPLE_FORM(
-            "user/{$duser->name}/biography",
+            make_link("user/{$duser->name}/biography"),
             TABLE(
                 ["class" => "form", "style" => "width: 100%"],
                 TR(TD(TEXTAREA(["rows" => "6", "name" => "biography"], $bio))),

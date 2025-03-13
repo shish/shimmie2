@@ -53,7 +53,7 @@ class DanbooruIndexTheme extends IndexTheme
         return rawHTML("
 			<p><form action='".search_link()."' method='GET'>
 				<input name='search' type='text' value='$h_search_string' class='autocomplete_tags' placeholder='Search' />
-				<input type='hidden' name='q' value='".search_page()."'>
+				<input type='hidden' name='q' value='post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 		");

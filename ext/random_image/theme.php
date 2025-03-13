@@ -17,14 +17,14 @@ class RandomImageTheme extends Themelet
         $page->add_block(new Block("Random Post", $this->build_random_html($image), "left", 8));
     }
 
-    public function build_random_html(Image $image, ?string $query = null): HTMLElement
+    public function build_random_html(Image $image): HTMLElement
     {
         $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
 
         return DIV(
             ["style" => "text-align: center;"],
             A(
-                ["href" => make_link("post/view/{$image->id}", $query)],
+                ["href" => make_link("post/view/{$image->id}")],
                 IMG([
                     "id" => "thumb_rand_{$image->id}",
                     "title" => $image->get_tooltip(),

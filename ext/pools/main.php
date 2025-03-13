@@ -201,7 +201,7 @@ class Pools extends Extension
         ) { //index
             if ($event->get_GET('search')) {
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link('pool/list') . '/' . url_escape($event->get_GET('search')) . '/' . strval($event->page_num));
+                $page->set_redirect(make_link('pool/list/'. url_escape($event->get_GET('search')) . "/{$event->page_num}"));
                 return;
             }
             $search = $event->get_arg('search', "");
@@ -435,7 +435,7 @@ class Pools extends Extension
             }
             if (count($pools) > 0) {
                 $html = SHM_SIMPLE_FORM(
-                    "pool/add_post",
+                    make_link("pool/add_post"),
                     SHM_SELECT("pool_id", $pools),
                     INPUT(["type" => "hidden", "name" => "image_id", "value" => $event->image->id]),
                     SHM_SUBMIT("Add Post to Pool")

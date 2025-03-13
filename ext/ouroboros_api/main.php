@@ -63,7 +63,7 @@ class _SafeOuroborosImage
         $this->width = intval($img->width);
         $this->file_ext = $img->get_ext();
         $this->file_size = intval($img->filesize);
-        $this->file_url = make_http($img->get_image_link());
+        $this->file_url = (string)$img->get_image_link()->asAbsolute();
         $this->md5 = $img->hash;
 
         // meta
@@ -93,12 +93,12 @@ class _SafeOuroborosImage
         // thumb
         $this->preview_height = $config->get_int(ThumbnailConfig::HEIGHT);
         $this->preview_width = $config->get_int(ThumbnailConfig::WIDTH);
-        $this->preview_url = make_http($img->get_thumb_link());
+        $this->preview_url = (string)$img->get_thumb_link()->asAbsolute();
 
         // sample (use the full image here)
         $this->sample_height = intval($img->height);
         $this->sample_width = intval($img->width);
-        $this->sample_url = make_http($img->get_image_link());
+        $this->sample_url = (string)$img->get_image_link()->asAbsolute();
     }
 }
 
@@ -362,7 +362,7 @@ class OuroborosAPI extends Extension
                 $dae = send_event(new DataUploadEvent($meta['file'], basename($meta['file']), 0, $meta));
                 return $dae->images[0];
             });
-            $this->sendResponse(200, make_link('post/view/' . $image->id), true);
+            $this->sendResponse(200, (string)make_link('post/view/' . $image->id), true);
         } catch (UploadException $e) {
             // Cleanup in case shit hit the fan
             $this->sendResponse(500, $e->getMessage());

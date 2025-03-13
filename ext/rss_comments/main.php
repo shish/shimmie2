@@ -19,7 +19,7 @@ class RSSComments extends Extension
             'rel' => 'alternate',
             'type' => 'application/rss+xml',
             'title' => "$title - Comments",
-            'href' => make_link("rss/comments")
+            'href' => (string)make_link("rss/comments")
         ]));
     }
 
@@ -46,7 +46,7 @@ class RSSComments extends Extension
             foreach ($comments as $comment) {
                 $image_id = $comment['image_id'];
                 $comment_id = $comment['comment_id'];
-                $link = make_http(make_link("post/view/$image_id"));
+                $link = make_link("post/view/$image_id")->asAbsolute();
                 $owner = html_escape($comment['user_name']);
                 $posted = date(DATE_RSS, \Safe\strtotime($comment['posted']));
                 $comment = html_escape($comment['comment']);
@@ -64,7 +64,7 @@ class RSSComments extends Extension
             }
 
             $title = $config->get_string(SetupConfig::TITLE);
-            $base_href = make_http(get_base_href());
+            $base_href = Url::base()->asAbsolute();
             $version = SysConfig::getVersion();
             $xml = <<<EOD
 <?xml version="1.0" encoding="utf-8" ?>

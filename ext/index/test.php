@@ -129,6 +129,6 @@ class IndexTest extends ShimmiePHPUnitTestCase
         // but those ones shouldn't count towards the limit
         $page = $this->get_page("post/next/$image_id_2", ["search" => "asdf"]);
         $this->assertEquals(PageMode::REDIRECT, $page->mode);
-        $this->assertEquals($page->redirect, make_link("post/view/$image_id_1?#search=asdf"));
+        $this->assertEquals($page->redirect, make_link("post/view/$image_id_1#search=asdf"));
     }
 }

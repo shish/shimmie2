@@ -27,9 +27,9 @@ class LinkImage extends Extension
         $text_link = trim($text_link) == "" ? null : $text_link; // null blank setting so the url gets filled in on the text links.
 
         return [
-            'thumb_src' => make_http($image->get_thumb_link()),
-            'image_src' => make_http($image->get_image_link()),
-            'post_link' => make_http(make_link("post/view/{$image->id}")),
+            'thumb_src' => (string)$image->get_thumb_link()->asAbsolute(),
+            'image_src' => (string)$image->get_image_link()->asAbsolute(),
+            'post_link' => (string)make_link("post/view/{$image->id}")->asAbsolute(),
             'text_link' => $text_link
         ];
     }

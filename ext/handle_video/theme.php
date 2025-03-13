@@ -32,7 +32,7 @@ class VideoFileHandlerTheme extends Themelet
                     'class' => 'shm-main-image',
                     'id' => 'main_image',
                     'alt' => 'main image',
-                    'poster' => make_http($image->get_thumb_link()),
+                    'poster' => $image->get_thumb_link()->asAbsolute(),
                     'autoplay' => $config->get_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY),
                     'loop' => $config->get_bool(VideoFileHandlerConfig::PLAYBACK_LOOP),
                     'muted' => $config->get_bool(VideoFileHandlerConfig::PLAYBACK_MUTE),

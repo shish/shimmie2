@@ -474,7 +474,7 @@ function is_valid_date(string $date): bool
 
 function die_nicely(string $title, string $body, int $code = 0): void
 {
-    $data_href = get_base_href();
+    $data_href = Url::base();
     print("<!DOCTYPE html>
 <html lang='en'>
 	<head>

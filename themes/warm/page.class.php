@@ -15,7 +15,7 @@ class WarmPage extends Page
         global $config;
 
         $site_name = $config->get_string(SetupConfig::TITLE);
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
 
         $left_block_html = [];

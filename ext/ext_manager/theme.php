@@ -30,7 +30,7 @@ class ExtManagerTheme extends Themelet
         $tbody = TBODY();
 
         $form = SHM_SIMPLE_FORM(
-            "ext_manager/set",
+            make_link("ext_manager/set"),
             TABLE(
                 ["id" => 'extensions', "class" => 'zebra form'],
                 $tbody,
@@ -80,7 +80,7 @@ class ExtManagerTheme extends Themelet
                     // TODO: A proper "docs" symbol would be preferred here.
                     $extension->documentation ?
                         A(
-                            ["href" => make_link("ext_doc/" . url_escape($extension::KEY))],
+                            ["href" => make_link("ext_doc/" . $extension::KEY)],
                             IMG(["src" => 'ext/ext_manager/baseline_open_in_new_black_18dp.png'])
                         ) :
                         null

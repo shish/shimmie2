@@ -11,7 +11,7 @@ class CBZFileHandlerTheme extends Themelet
     public function display_image(Image $image): void
     {
         global $page;
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $ilink = $image->get_image_link();
         $html = "
             <div id='comicMain'>

@@ -347,8 +347,7 @@ class DanbooruApi extends Extension
         if (!is_null($existing)) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: duplicate");
-            $existinglink = make_link("post/view/" . $existing->id);
-            $existinglink = make_http($existinglink);
+            $existinglink = make_link("post/view/" . $existing->id)->asAbsolute();
             $page->add_http_header("X-Danbooru-Location: $existinglink");
             return;
         }
@@ -369,8 +368,7 @@ class DanbooruApi extends Extension
                 return $dae->images[0];
             });
 
-            $newid = make_link("post/view/" . $newimg->id);
-            $newid = make_http($newid);
+            $newid = make_link("post/view/" . $newimg->id)->asAbsolute();
 
             // Did we POST or GET this call?
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {

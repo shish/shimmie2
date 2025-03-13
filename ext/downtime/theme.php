@@ -28,7 +28,7 @@ class DowntimeTheme extends Themelet
     {
         global $config, $user, $page;
         $theme_name = $config->get_string(SetupConfig::THEME);
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $login_link = make_link("user_admin/login");
         $form = make_form($login_link);
 

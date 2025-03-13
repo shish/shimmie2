@@ -26,7 +26,7 @@ class BlocksTheme extends Themelet
         $html = TABLE(["class" => "form", "style" => "width: 100%;"]);
         foreach ($blocks as $block) {
             $html->appendChild(SHM_SIMPLE_FORM(
-                "blocks/update",
+                make_link("blocks/update"),
                 TR(
                     INPUT(["type" => "hidden", "name" => "id", "value" => $block['id']]),
                     TH("Title"),
@@ -53,7 +53,7 @@ class BlocksTheme extends Themelet
         }
 
         $html->appendChild(SHM_SIMPLE_FORM(
-            "blocks/add",
+            make_link("blocks/add"),
             TR(
                 TH("Title"),
                 TD(INPUT(["type" => "text", "name" => "title", "value" => ""])),
