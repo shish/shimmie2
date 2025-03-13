@@ -143,6 +143,90 @@ class PM
     }
 }
 
+#[Type(name: "PMThread")]
+class PMThread
+{
+    public function __construct(
+        #[Field]
+        public User $user,
+        #[Field]
+        public bool $is_read,
+        #[Field]
+        public string $last_update,
+        #[Field(type: "[PrivateMessage!]!")]
+        public array $messages,
+    ) {
+    }
+
+    #[Field(extends: "User")]
+    public static function thread(User $duser, string $other): PMThread
+    {
+        global $database, $user;
+
+        $ouser = User::by_name($other);
+
+        if (!$user->can(Permissions::READ_PM)) {
+            return null;
+        }
+        if (($duser->id != $user->id) && !$user->can(Permissions::VIEW_OTHER_PMS)) {
+            return null;
+        }
+
+        $rows = $database->get_all(
+            "SELECT *
+            FROM private_message
+            WHERE (to_id = :me AND from_id = :them) OR (to_id = :them AND from_id = :me)
+            ORDER BY sent_date ASC",
+            ["me" => $duser->id, "them" => $ouser->id]
+        );
+        $messages = [];
+        $is_read = true;
+        $last_update = "";
+        foreach ($rows as $row) {
+            $pm = PM::from_row($row);
+            $messages[] = $pm;
+            if($pm->to_id == $duser->id && !$pm->is_read) {
+                $is_read = false;
+            }
+            $last_update = $pm->sent_date;
+        }
+        return new PMThread($ouser, $is_read, $last_update, $messages);
+    }
+
+    #[Field(extends: "User", type: "[PMThread!]!")]
+    public static function threads(User $duser): array
+    {
+        global $database, $user;
+
+        if (!$user->can(Permissions::READ_PM)) {
+            return null;
+        }
+        if (($duser->id != $user->id) && !$user->can(Permissions::VIEW_OTHER_PMS)) {
+            return null;
+        }
+
+        $rows = $database->get_all(
+            "SELECT *
+            FROM private_message
+            WHERE (to_id = :me) OR (from_id = :me)
+            ORDER BY sent_date ASC",
+            ["me" => $duser->id]
+        );
+        $others = [];
+        foreach ($rows as $row) {
+            $others[] = ($row["to_id"] == $duser->id) ? $row["from_id"] : $row["to_id"];
+        }
+        $others = \array_unique($others);
+
+        $threads = [];
+        foreach ($others as $other) {
+            $ouser = User::by_id($other);
+            $threads[] = PMThread::thread($duser, $ouser->name);
+        }
+        return $threads;
+    }
+}
+
 class PrivMsg extends Extension
 {
     public const KEY = "pm";
