@@ -25,6 +25,6 @@ class PageSubNavBuildingEvent extends Event
      */
     public function add_nav_link(string $link, string|HTMLElement $desc, array $matches = [], int $order = 50): void
     {
-        $this->links[]  = new NavLink(null, $link, $desc, $matches, $order);
+        $this->links[]  = new NavLink($link, $desc, $matches, null, $order);
     }
 }
