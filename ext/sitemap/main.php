@@ -7,7 +7,7 @@ namespace Shimmie2;
 class XMLSitemapURL
 {
     public function __construct(
-        public string $url,
+        public Url $url,
         public string $changefreq,
         public string $priority,
         public string $date
@@ -46,7 +46,7 @@ class XMLSitemap extends Extension
 
         // add index
         $urls[] = new XMLSitemapURL(
-            $config->get_string(SetupConfig::FRONT_PAGE),
+            make_link($config->get_string(SetupConfig::FRONT_PAGE)),
             "weekly",
             "1",
             date("Y-m-d")
@@ -55,7 +55,7 @@ class XMLSitemap extends Extension
         /* --- Add 20 most used tags --- */
         foreach ($database->get_col("SELECT tag FROM tags ORDER BY count DESC LIMIT 20") as $tag) {
             $urls[] = new XMLSitemapURL(
-                search_page([$tag]),
+                search_link([$tag]),
                 "weekly",
                 "0.9",
                 date("Y-m-d")
@@ -65,7 +65,7 @@ class XMLSitemap extends Extension
         /* --- Add latest images to sitemap with higher priority --- */
         foreach (Search::find_images(limit: 50) as $image) {
             $urls[] = new XMLSitemapURL(
-                "post/view/$image->id",
+                make_link("post/view/$image->id"),
                 "weekly",
                 "0.8",
                 date("Y-m-d", \Safe\strtotime($image->posted))
@@ -75,7 +75,7 @@ class XMLSitemap extends Extension
         /* --- Add other tags --- */
         foreach ($database->get_col("SELECT tag FROM tags ORDER BY count DESC LIMIT 10000 OFFSET 21") as $tag) {
             $urls[] = new XMLSitemapURL(
-                search_page([$tag]),
+                search_link([$tag]),
                 "weekly",
                 "0.7",
                 date("Y-m-d")
@@ -85,7 +85,7 @@ class XMLSitemap extends Extension
         /* --- Add all other images to sitemap with lower priority --- */
         foreach (Search::find_images(offset: 51, limit: 10000) as $image) {
             $urls[] = new XMLSitemapURL(
-                "post/view/$image->id",
+                make_link("post/view/$image->id"),
                 "monthly",
                 "0.6",
                 date("Y-m-d", \Safe\strtotime($image->posted))
@@ -104,7 +104,7 @@ class XMLSitemap extends Extension
         $xml = "<" . "?xml version=\"1.0\" encoding=\"utf-8\"?" . ">\n" .
         "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
         foreach ($urls as $url) {
-            $link = make_http(make_link($url->url));
+            $link = (string)$url->url->asAbsolute();
             $xml .= "
     <url>
         <loc>$link</loc>

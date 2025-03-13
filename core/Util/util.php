@@ -409,9 +409,7 @@ function _get_user(): User
 function show_ip(string $ip, string $ban_reason): string
 {
     global $user;
-    $u_reason = url_escape($ban_reason);
-    $u_end = url_escape("+1 week");
-    $ban = $user->can(IPBanPermission::BAN_IP) ? ", <a href='".make_link("ip_ban/list", "c_ip=$ip&c_reason=$u_reason&c_expires=$u_end", "create")."'>Ban</a>" : "";
+    $ban = $user->can(IPBanPermission::BAN_IP) ? ", <a href='".make_link("ip_ban/list", ["c_ip" => $ip, "c_reason" => $ban_reason, "c_expires" => "+1 week"], "create")."'>Ban</a>" : "";
     $ip = $user->can(IPBanPermission::VIEW_IP) ? $ip.$ban : "";
     return $ip;
 }
@@ -419,7 +417,7 @@ function show_ip(string $ip, string $ban_reason): string
 /**
  * Make a form tag with relevant auth token and stuff
  */
-function make_form(string $target, bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): string
+function make_form(Url $target, bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): string
 {
     global $user;
     $at = $user->get_auth_token();
@@ -467,4 +465,107 @@ function shm_tempnam(string $prefix = ""): string
     }
     $temp = \Safe\realpath("data/temp");
     return \Safe\tempnam($temp, $prefix);
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* URL Shortcuts                                                             *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/**
+ * Build a link to a search page for given terms,
+ * with all the appropriate escaping
+ *
+ * @param string[] $terms
+ */
+function search_link(array $terms = [], int $page = 1): Url
+{
+    if ($terms) {
+        $q = url_escape(Tag::implode($terms));
+        return make_link("post/list/$q/$page");
+    } else {
+        return make_link("post/list/$page");
+    }
+}
+
+/**
+ * @param page-string $page
+ * @param query-array $query
+ * @param fragment-string $fragment
+ */
+function make_link(?string $page = null, ?array $query = null, ?string $fragment = null): Url
+{
+    return new Url(page: $page ?? "", query: $query, fragment: $fragment);
+}
+
+/**
+ * Figure out the current page from a link that make_link() generated
+ *
+ * SHIT: notes for the future, because the web stack is a pile of hacks
+ *
+ * - According to some specs, "/" is for URL dividers with heiracial
+ *   significance and %2F is for slashes that are just slashes. This
+ *   is what shimmie currently does - eg if you search for "AC/DC",
+ *   the shimmie URL will be /post/list/AC%2FDC/1
+ * - According to some other specs "/" and "%2F" are identical...
+ * - PHP's $_GET[] automatically urldecodes the inputs so we can't
+ *   tell the difference between q=foo/bar and q=foo%2Fbar
+ * - REQUEST_URI contains the exact URI that was given to us, so we
+ *   can parse it for ourselves
+ * - <input type='hidden' name='q' value='post/list'> generates
+ *   q=post%2Flist
+ * - When apache is reverse-proxying https://external.com/img/index.php
+ *   to http://internal:8000/index.php, Url::base() should return
+ *   /img, however the URL in REQUEST_URI is /index.php, not /img/index.php
+ *
+ * This function should always return strings with no leading slashes
+ *
+ * @param ?url-string $uri
+ * @return page-string
+ */
+function _get_query(?string $uri = null): string
+{
+    $parsed_url = parse_url($uri ?? $_SERVER['REQUEST_URI'] ?? "");
+
+    // if we're looking at http://site.com/.../index.php,
+    // then get the query from the "q" parameter
+    if (str_ends_with($parsed_url["path"] ?? "", "/index.php")) {
+        // default to looking at the root
+        $q = "";
+        // We can't just do `$q = $_GET["q"] ?? "";`, we need to manually
+        // parse the query string because PHP's $_GET does an extra round
+        // of URL decoding, which we don't want
+        foreach (explode('&', $parsed_url['query'] ?? "") as $z) {
+            $qps = explode('=', $z, 2);
+            if (count($qps) == 2 && $qps[0] == "q") {
+                $q = $qps[1];
+            }
+        }
+        // if we have no slashes, but do have an encoded
+        // slash, then we _probably_ encoded too much
+        if (!str_contains($q, "/") && str_contains($q, "%2F")) {
+            $q = rawurldecode($q);
+        }
+    }
+
+    // if we're looking at http://site.com/$INSTALL_DIR/$PAGE,
+    // then get the query from the path
+    else {
+        $base = (string)Url::base();
+        $q = $parsed_url["path"] ?? "";
+
+        // sometimes our public URL is /img/foo/bar but after
+        // reverse-proxying shimmie only sees /foo/bar, so only
+        // strip off the /img if it's actually there
+        if (str_starts_with($q, $base)) {
+            $q = substr($q, strlen($base));
+        }
+
+        // whether we are /img/foo/bar or /foo/bar, we still
+        // want to remove the leading slash
+        $q = ltrim($q, "/");
+    }
+
+    assert(!str_starts_with($q, "/"));
+    return $q;
 }

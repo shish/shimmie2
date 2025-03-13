@@ -36,7 +36,7 @@ class SetupTheme extends Themelet
         }
 
         $table = SHM_SIMPLE_FORM(
-            "setup/save",
+            make_link("setup/save"),
             $blocks,
             INPUT(['class' => 'setupsubmit', 'type' => 'submit', 'value' => 'Save Settings'])
         );
@@ -46,7 +46,7 @@ class SetupTheme extends Themelet
             BR(),
             @$_GET["advanced"] == "on" ?
                 A(["href" => make_link("setup")], "Simple") :
-                A(["href" => make_link("setup", "advanced=on")], "Advanced")
+                A(["href" => make_link("setup", ["advanced" => "on"])], "Advanced")
         );
 
         $page->set_title("Shimmie Setup");

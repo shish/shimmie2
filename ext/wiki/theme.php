@@ -73,7 +73,7 @@ class WikiTheme extends Themelet
         $html = "<table class='zebra'>";
         foreach ($history as $row) {
             $rev = $row['revision'];
-            $html .= "<tr><td><a href='".make_link("wiki/$title", "revision=$rev")."'>{$rev}</a></td><td>{$row['date']}</td></tr>";
+            $html .= "<tr><td><a href='".make_link("wiki/$title", ["revision" => $rev])."'>{$rev}</a></td><td>{$row['date']}</td></tr>";
         }
         $html .= "</table>";
         $page->set_title($title);
@@ -102,7 +102,7 @@ class WikiTheme extends Themelet
 
         $u_title = url_escape($page->title);
         return SHM_SIMPLE_FORM(
-            "wiki/$u_title/save",
+            make_link("wiki/$u_title/save"),
             INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision + 1]),
             TEXTAREA(["name" => "body", "style" => "width: 100%", "rows" => 20], $page->body),
             $lock,
@@ -169,7 +169,7 @@ class WikiTheme extends Themelet
         $edit = TR();
         if (Wiki::can_edit($user, $page)) {
             $edit->appendChild(TD(SHM_SIMPLE_FORM(
-                "wiki/$u_title/edit",
+                make_link("wiki/$u_title/edit"),
                 INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
                 INPUT(["type" => "submit", "value" => "Edit"])
             )));
@@ -177,13 +177,13 @@ class WikiTheme extends Themelet
         if ($user->can(WikiPermission::ADMIN)) {
             $edit->appendChild(
                 TD(SHM_SIMPLE_FORM(
-                    "wiki/$u_title/delete_revision",
+                    make_link("wiki/$u_title/delete_revision"),
                     INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
                     SHM_SUBMIT("Delete")
                 ))
             );
             $edit->appendChild(TD(SHM_SIMPLE_FORM(
-                "wiki/$u_title/delete_all",
+                make_link("wiki/$u_title/delete_all"),
                 SHM_SUBMIT("Delete All")
             )));
         }

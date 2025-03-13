@@ -66,17 +66,18 @@ class NumericScoreTheme extends Themelet
     /**
      * @param Image[] $images
      */
-    public function view_popular(array $images, string $totaldate, string $current, string $name, string $fmt): void
-    {
+    public function view_popular(
+        array $images,
+        string $current,
+        Url $b_dte,
+        Url $f_dte,
+    ): void {
         global $page, $config;
 
         $pop_images = "";
         foreach ($images as $image) {
             $pop_images .= $this->build_thumb($image)."\n";
         }
-
-        $b_dte = make_link("popular_by_$name", date($fmt, \Safe\strtotime("-1 $name", \Safe\strtotime($totaldate))));
-        $f_dte = make_link("popular_by_$name", date($fmt, \Safe\strtotime("+1 $name", \Safe\strtotime($totaldate))));
 
         $html = "\n".
             "<h3 style='text-align: center;'>\n".

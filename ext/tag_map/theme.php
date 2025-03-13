@@ -131,7 +131,7 @@ class TagMapTheme extends Themelet
                 A(["href" => make_link("tags/alphabetic")], "Alphabetic"),
                 A(["href" => make_link("tags/popularity")], "Popularity"),
                 rawHTML("&nbsp;"),
-                A(["href" => modify_current_url(["mincount" => 1])], "Show All"),
+                A(["href" => Url::current()->withModifiedQuery(["mincount" => "1"])], "Show All"),
             ]
         ), "left", 0));
     }
@@ -150,7 +150,7 @@ class TagMapTheme extends Themelet
 
         $html = SPAN(["class" => "atoz"]);
         foreach ($tag_data as $a) {
-            $html->appendChild(A(["href" => modify_current_url(["starts_with" => $a])], "$a "));
+            $html->appendChild(A(["href" => Url::current()->withModifiedQuery(["starts_with" => $a])], "$a "));
         }
         return emptyHTML($html, P(), HR());
     }

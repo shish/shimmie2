@@ -16,7 +16,7 @@ class Statistics extends Extension
     {
         global $config, $page;
         if ($event->page_matches("stats") || $event->page_matches("stats/100")) {
-            $base_href = get_base_href();
+            $base_href = Url::base();
             $sitename = $config->get_string(SetupConfig::TITLE);
             $theme_name = $config->get_string(SetupConfig::THEME);
             $unlisted = "'".implode("','", $this->unlisted)."'";

@@ -42,7 +42,7 @@ class PageTest extends ShimmiePHPUnitTestCase
     {
         $page = new Page();
         $page->set_mode(PageMode::REDIRECT);
-        $page->set_redirect("/new/page");
+        $page->set_redirect(Url::parse("/new/page"));
         ob_start();
         $page->display();
         $this->assertGreaterThan(0, ob_get_length());

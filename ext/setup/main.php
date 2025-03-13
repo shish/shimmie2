@@ -118,7 +118,7 @@ class Setup extends Extension
             send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link("setup")));
+            $page->set_redirect(Url::referer_or(make_link("setup")));
         }
     }
 

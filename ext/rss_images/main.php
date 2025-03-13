@@ -15,12 +15,12 @@ class RSSImages extends Extension
         $title = $config->get_string(SetupConfig::TITLE);
 
         if (count($event->search_terms) > 0) {
-            $search = url_escape(Tag::implode($event->search_terms));
+            $search = Tag::implode($event->search_terms);
             $page->add_html_header(LINK([
                 'rel' => 'alternate',
                 'type' => 'application/rss+xml',
                 'title' => "$title - Posts with tags: $search",
-                'href' => make_link("rss/images/$search/1")
+                'href' => make_link("rss/images/" . url_escape($search) . "/1")
             ]));
         } else {
             $page->add_html_header(LINK([
@@ -73,7 +73,7 @@ class RSSImages extends Extension
         }
 
         $title = $config->get_string(SetupConfig::TITLE);
-        $base_href = make_http(get_base_href());
+        $base_href = Url::base()->asAbsolute();
         $search = "";
         if (count($search_terms) > 0) {
             $search = url_escape(Tag::implode($search_terms)) . "/";
@@ -114,7 +114,7 @@ class RSSImages extends Extension
             return $cached;
         }
 
-        $link = make_http(make_link("post/view/{$image->id}"));
+        $link = make_link("post/view/{$image->id}")->asAbsolute();
         $tags = html_escape($image->get_tag_list());
         $thumb_url = $image->get_thumb_link();
         $image_url = $image->get_image_link();

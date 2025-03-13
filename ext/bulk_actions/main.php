@@ -186,7 +186,7 @@ class BulkActions extends Extension
 
             if ($bae->redirect) {
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(referer_or(make_link()));
+                $page->set_redirect(Url::referer_or());
             }
         }
     }

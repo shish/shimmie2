@@ -118,7 +118,10 @@ class CommonElementsTheme extends Themelet
         );
     }
 
-    public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false): void
+    /**
+     * @param ?query-array $query
+     */
+    public function display_paginator(Page $page, string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
         if ($total_pages == 0) {
             $total_pages = 1;
@@ -137,12 +140,18 @@ class CommonElementsTheme extends Themelet
         $page->add_html_header(LINK(['rel' => 'last', 'href' => make_link($base.'/'.$total_pages, $query)]));
     }
 
-    private function gen_page_link(string $base_url, ?string $query, int $page, string $name): HTMLElement
+    /**
+     * @param ?query-array $query
+     */
+    private function gen_page_link(string $base_url, ?array $query, int $page, string $name): HTMLElement
     {
         return A(["href" => make_link($base_url.'/'.$page, $query)], $name);
     }
 
-    private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): HTMLElement
+    /**
+     * @param ?query-array $query
+     */
+    private function gen_page_link_block(string $base_url, ?array $query, int $page, int $current_page, string $name): HTMLElement
     {
         $paginator = $this->gen_page_link($base_url, $query, $page, $name);
         if ($page == $current_page) {
@@ -151,7 +160,10 @@ class CommonElementsTheme extends Themelet
         return $paginator;
     }
 
-    private function build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query, bool $show_random): HTMLElement
+    /**
+     * @param ?query-array $query
+     */
+    private function build_paginator(int $current_page, int $total_pages, string $base_url, ?array $query, bool $show_random): HTMLElement
     {
         $next = $current_page + 1;
         $prev = $current_page - 1;

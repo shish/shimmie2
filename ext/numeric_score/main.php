@@ -216,9 +216,12 @@ class NumericScore extends Extension
                     $sql .= " AND EXTRACT(MONTH FROM posted) = :month AND EXTRACT(DAY FROM posted) = :day";
                 }
                 $args = array_merge($args, ["month" => $month, "day" => $day]);
+
                 $current = date("F jS, Y", \Safe\strtotime($totaldate));
-                $name = "day";
-                $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m\\&\\d\\a\\y\\=d";
+                $before = \Safe\strtotime("-1 day", \Safe\strtotime($totaldate));
+                $after = \Safe\strtotime("+1 day", \Safe\strtotime($totaldate));
+                $b_dte = make_link("popular_by_day", ["year" => date("Y", $before), "month" => date("m", $before), "day" => date("d", $before)]);
+                $f_dte = make_link("popular_by_day", ["year" => date("Y", $after), "month" => date("m", $after), "day" => date("d", $after)]);
             } elseif ($event->page_matches("popular_by_month")) {
                 if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
                     $sql .=	" AND strftime('%m', posted) = cast(:month as text)";
@@ -230,13 +233,18 @@ class NumericScore extends Extension
                 // See Example #3 on https://www.php.net/manual/en/datetime.modify.php
                 // To get around this, set the day to 1 when doing month work.
                 $totaldate = $year."/".$month."/01";
+
                 $current = date("F Y", \Safe\strtotime($totaldate));
-                $name = "month";
-                $fmt = "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m";
+                $before = \Safe\strtotime("-1 month", \Safe\strtotime($totaldate));
+                $after = \Safe\strtotime("+1 month", \Safe\strtotime($totaldate));
+                $b_dte = make_link("popular_by_month", ["year" => date("Y", $before), "month" => date("m", $before)]);
+                $f_dte = make_link("popular_by_month", ["year" => date("Y", $after), "month" => date("m", $after)]);
             } elseif ($event->page_matches("popular_by_year")) {
                 $current = "$year";
-                $name = "year";
-                $fmt = "\\y\\e\\a\\r\=Y";
+                $before = \Safe\strtotime("-1 year", \Safe\strtotime($totaldate));
+                $after = \Safe\strtotime("+1 year", \Safe\strtotime($totaldate));
+                $b_dte = make_link("popular_by_year", ["year" => date("Y", $before)]);
+                $f_dte = make_link("popular_by_year", ["year" => date("Y", $after)]);
             } else {
                 // this should never happen due to the fact that the page event is already matched against earlier.
                 throw new \UnexpectedValueException("Error: Invalid page event.");
@@ -246,7 +254,7 @@ class NumericScore extends Extension
             //filter images by score != 0 + date > limit to max images on one page > order from highest to lowest score
             $ids = $database->get_col($sql, $args);
             $images = Search::get_images($ids);
-            $this->theme->view_popular($images, $totaldate, $current, $name, $fmt);
+            $this->theme->view_popular($images, $current, $b_dte, $f_dte);
         }
     }
 

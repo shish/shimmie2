@@ -110,7 +110,7 @@ class Tips extends Extension
 
     private function manageTips(): void
     {
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $url = $data_href."/ext/tips/images/";
 
         $dirPath = \Safe\dir('./ext/tips/images');
@@ -141,7 +141,7 @@ class Tips extends Extension
     {
         global $database;
 
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $url = $data_href."/ext/tips/images/";
 
         $tip = $database->get_row("
@@ -161,7 +161,7 @@ class Tips extends Extension
     {
         global $database;
 
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $url = $data_href."/ext/tips/images/";
 
         $tips = $database->get_all("SELECT * FROM tips ORDER BY id ASC");

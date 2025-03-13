@@ -105,7 +105,7 @@ class Installer
         $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
         $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
 
-        $data_href = get_base_href();
+        $data_href = Url::base();
 
         die_nicely(
             "Install Options",
@@ -118,8 +118,8 @@ class Installer
             <tr>
                 <th>Type:</th>
                 <td><select name="database_type" id="database_type" onchange="update_qs();">
-                        $db_s
-                        $db_m
+                    $db_s
+                    $db_m
                     $db_p
                 </select></td>
             </tr>

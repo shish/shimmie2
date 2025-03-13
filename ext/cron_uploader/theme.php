@@ -135,7 +135,7 @@ class CronUploaderTheme extends Themelet
     public function get_user_options(): HTMLElement
     {
         $form = SHM_SIMPLE_FORM(
-            "user_admin/cron_uploader",
+            make_link("user_admin/cron_uploader"),
             TABLE(
                 ["class" => "form"],
                 TBODY(
@@ -173,7 +173,7 @@ class CronUploaderTheme extends Themelet
     {
         global $page;
 
-        $link = make_http(make_link("cron_upload"));
+        $link = make_link("cron_upload");
         $html = "<a href='$link'>Cron uploader documentation</a>";
 
         $html .= make_form(make_link("admin/cron_uploader_restage"));

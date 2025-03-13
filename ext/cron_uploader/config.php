@@ -24,7 +24,7 @@ class CronUploaderUserConfig extends UserConfigGroup
     {
         return \MicroHTML\emptyHTML(
             $html,
-            \MicroHTML\A(["href" => make_http(make_link("cron_upload"))], "Read the documentation"),
+            \MicroHTML\A(["href" => make_link("cron_upload")], "Read the documentation"),
             " for cron setup instructions.",
         );
     }
