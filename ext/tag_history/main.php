@@ -111,7 +111,7 @@ class TagHistory extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-                $event->add_nav_link(make_link('tag_history/all/1'), "Tag Changes", NavLink::is_active(["tag_history"]));
+                $event->add_nav_link(make_link('tag_history/all/1'), "Tag Changes", ["tag_history"]);
             }
         }
     }

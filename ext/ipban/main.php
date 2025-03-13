@@ -200,7 +200,7 @@ class IPBan extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(IPBanPermission::BAN_IP)) {
-                $event->add_nav_link(make_link('ip_ban/list'), "IP Bans", NavLink::is_active(["ip_ban"]));
+                $event->add_nav_link(make_link('ip_ban/list'), "IP Bans", ["ip_ban"]);
             }
         }
     }

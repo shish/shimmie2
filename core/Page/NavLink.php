@@ -12,60 +12,28 @@ class NavLink
 
     /**
      * @param url-string $link
+     * @param page-string[] $matches
      */
     public function __construct(
         public ?string $name,
         public string $link,
         public string|HTMLElement $description,
-        ?bool $active = null,
-        public int $order = 50
+        array $matches = [],
+        public int $order = 50,
+        ?string $_query = null,
     ) {
         global $config;
-
-        if ($active == null) {
-            $query = _get_query();
-            $link = trim($link, " \n\r\t\v\x00/\\");
-            if ($query === "") {
-                // This indicates the front page, so we check what's set as the front page
-                $front_page = trim($config->get_string(SetupConfig::FRONT_PAGE), "/");
-
-                if ($front_page === $link) {
-                    $this->active = true;
-                } else {
-                    $this->active = self::is_active([$link], $front_page);
-                }
-            } elseif ($query === $link) {
-                $this->active = true;
-            } else {
-                $this->active = self::is_active([$link]);
-            }
+        $query = make_link($_query ?: _get_query() ?: $config->get_string(SetupConfig::FRONT_PAGE));
+        if ($query === $link) {
+            $this->active = true;
         } else {
-            $this->active = $active;
-        }
-    }
-
-    /**
-     * @param string[] $pages_matched
-     */
-    public static function is_active(array $pages_matched, ?string $url = null): bool
-    {
-        /**
-         * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
-         */
-        $url = $url ?? _get_query();
-
-        if (\Safe\preg_match_all("/.*?((?:[a-z][a-z_]+))/is", $url, $matches) > 0) {
-            $url = $matches[1][0];
-        }
-
-        $count_pages_matched = count($pages_matched);
-
-        for ($i = 0; $i < $count_pages_matched; $i++) {
-            if ($url == $pages_matched[$i]) {
-                return true;
+            $matches = array_map(fn ($match) => make_link($match), $matches);
+            foreach ($matches as $match) {
+                if (str_starts_with($query, $match)) {
+                    $this->active = true;
+                    break;
+                }
             }
         }
-
-        return false;
     }
 }
