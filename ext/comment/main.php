@@ -201,7 +201,7 @@ class CommentList extends Extension
             send_event(new CommentDeletionEvent($event->get_iarg('comment_id')));
             $page->flash("Deleted comment");
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link("post/view/" . $event->get_iarg('image_id'))));
+            $page->set_redirect(Url::referer_or(make_link("post/view/" . $event->get_iarg('image_id'))));
         }
         if ($event->page_matches("comment/bulk_delete", method: "POST", permission: CommentPermission::DELETE_COMMENT)) {
             $ip = $event->req_POST('ip');

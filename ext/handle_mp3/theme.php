@@ -11,7 +11,7 @@ class MP3FileHandlerTheme extends Themelet
     public function display_image(Image $image): void
     {
         global $page;
-        $data_href = get_base_href();
+        $data_href = Url::base();
         $ilink = $image->get_image_link();
         $html = "
 			<audio controls class='shm-main-image audio_image' id='main_image' alt='main image'>

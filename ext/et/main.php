@@ -78,7 +78,7 @@ class ET extends Extension
             "about" => [
                 'title' => $config->get_string(SetupConfig::TITLE),
                 'theme' => $config->get_string(SetupConfig::THEME),
-                'url'   => make_http(make_link("")),
+                'url'   => (string)(make_link("")->asAbsolute()),
             ],
             "versions" => [
                 'shimmie' => SysConfig::getVersion(),

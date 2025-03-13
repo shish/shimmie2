@@ -379,10 +379,9 @@ class Image implements \ArrayAccess
 
     /**
      * Get the URL for the full size image
-     * @return url-string
      */
     #[Field(name: "image_link")]
-    public function get_image_link(): string
+    public function get_image_link(): Url
     {
         return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id/$id%20-%20$tags.$ext');
     }
@@ -398,10 +397,9 @@ class Image implements \ArrayAccess
 
     /**
      * Get the URL for the thumbnail
-     * @return url-string
      */
     #[Field(name: "thumb_link")]
-    public function get_thumb_link(): string
+    public function get_thumb_link(): Url
     {
         global $config;
         $mime = $config->get_string(ThumbnailConfig::MIME);
@@ -411,9 +409,8 @@ class Image implements \ArrayAccess
 
     /**
      * Check configured template for a link, then try nice URL, then plain URL
-     * @return url-string
      */
-    private function get_link(string $template, string $nice, string $plain): string
+    private function get_link(string $template, string $nice, string $plain): Url
     {
         global $config;
 
@@ -429,7 +426,8 @@ class Image implements \ArrayAccess
         } else {
             $chosen = make_link($plain);
         }
-        return $this->parse_link_template($chosen);
+        $link_string = $this->parse_link_template((string)$chosen);
+        return Url::parse($link_string);
     }
 
     /**

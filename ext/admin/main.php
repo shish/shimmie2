@@ -81,7 +81,7 @@ class AdminPage extends Extension
                 $query = ltrim($query, '/');
                 $args = $input->getArgument('args');
                 $_SERVER['REQUEST_METHOD'] = 'GET';
-                $_SERVER['REQUEST_URI'] = make_link($query);
+                $_SERVER['REQUEST_URI'] = (string)make_link($query);
                 if (!is_null($args)) {
                     parse_str($args, $_GET);
                     $_SERVER['REQUEST_URI'] .= "?" . $args;
@@ -103,7 +103,7 @@ class AdminPage extends Extension
                     parse_str($args, $_POST);
                 }
                 $_SERVER['REQUEST_METHOD'] = 'GET';
-                $_SERVER['REQUEST_URI'] = make_link($query);
+                $_SERVER['REQUEST_URI'] = (string)make_link($query);
                 send_event(new PageRequestEvent("POST", $query, [], $_POST));
                 $page->display();
                 return Command::SUCCESS;

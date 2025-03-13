@@ -36,7 +36,7 @@ class UserPageTheme extends Themelet
     }
 
     /**
-     * @param array<int, array{name: string|HTMLElement, link: string}> $parts
+     * @param array<int, array{name: string|HTMLElement, link: Url}> $parts
      */
     public function display_user_links(Page $page, User $user, array $parts): void
     {
@@ -44,14 +44,14 @@ class UserPageTheme extends Themelet
     }
 
     /**
-     * @param array<array{link: string, name: string|HTMLElement}> $parts
+     * @param array<array{link: Url, name: string|HTMLElement}> $parts
      */
     public function display_user_block(Page $page, User $user, array $parts): void
     {
         $html = emptyHTML('Logged in as ', $user->name);
         foreach ($parts as $part) {
             $html->appendChild(BR());
-            $html->appendChild(A(["href" => $part["link"]], $part["name"]));
+            $html->appendChild(A(["href" => (string)$part["link"]], $part["name"]));
         }
         $b = new Block("User Links", $html, "left", 90);
         $b->is_content = false;
@@ -73,7 +73,7 @@ class UserPageTheme extends Themelet
         );
 
         $form = SHM_SIMPLE_FORM(
-            "user_admin/create",
+            make_link("user_admin/create"),
             TABLE(
                 ["class" => "form"],
                 TBODY(
@@ -118,7 +118,7 @@ class UserPageTheme extends Themelet
         global $page;
 
         $form = SHM_SIMPLE_FORM(
-            "user_admin/create_other",
+            make_link("user_admin/create_other"),
             TABLE(
                 ["class" => "form"],
                 TBODY(
@@ -170,7 +170,7 @@ class UserPageTheme extends Themelet
     {
         global $config, $user;
         $form = SHM_SIMPLE_FORM(
-            "user_admin/login",
+            make_link("user_admin/login"),
             TABLE(
                 ["style" => "width: 100%", "class" => "form"],
                 TBODY(
@@ -263,7 +263,7 @@ class UserPageTheme extends Themelet
             if ($user->can(UserAccountsPermission::EDIT_USER_NAME)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,
-                    "user_admin/change_name",
+                    make_link("user_admin/change_name"),
                     "Change Name",
                     TBODY(TR(
                         TH("New name"),
@@ -275,7 +275,7 @@ class UserPageTheme extends Themelet
 
             $html->appendChild(SHM_USER_FORM(
                 $duser,
-                "user_admin/change_pass",
+                make_link("user_admin/change_pass"),
                 "Change Password",
                 TBODY(
                     TR(
@@ -292,7 +292,7 @@ class UserPageTheme extends Themelet
 
             $html->appendChild(SHM_USER_FORM(
                 $duser,
-                "user_admin/change_email",
+                make_link("user_admin/change_email"),
                 "Change Email",
                 TBODY(TR(
                     TH("Address"),
@@ -310,7 +310,7 @@ class UserPageTheme extends Themelet
                 }
                 $html->appendChild(SHM_USER_FORM(
                     $duser,
-                    "user_admin/change_class",
+                    make_link("user_admin/change_class"),
                     "Change Class",
                     TBODY(TR(TD($select))),
                     "Set"
@@ -320,7 +320,7 @@ class UserPageTheme extends Themelet
             if ($user->can(UserAccountsPermission::DELETE_USER)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,
-                    "user_admin/delete_user",
+                    make_link("user_admin/delete_user"),
                     "Delete User",
                     TBODY(
                         TR(TD(LABEL(INPUT(["type" => 'checkbox', "name" => 'with_images']), "Delete images"))),

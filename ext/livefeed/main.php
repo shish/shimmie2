@@ -17,7 +17,7 @@ class LiveFeed extends Extension
     {
         global $user;
         $this->msg(
-            make_http(make_link("post/view/".$event->image->id))." - ".
+            make_link("post/view/".$event->image->id)->asAbsolute(). " - ".
             "new post by ".$user->name
         );
     }
@@ -25,7 +25,7 @@ class LiveFeed extends Extension
     public function onTagSet(TagSetEvent $event): void
     {
         $this->msg(
-            make_http(make_link("post/view/".$event->image->id))." - ".
+            make_link("post/view/".$event->image->id)->asAbsolute(). " - ".
             "tags set to: ".Tag::implode($event->new_tags)
         );
     }
@@ -34,7 +34,7 @@ class LiveFeed extends Extension
     {
         global $user;
         $this->msg(
-            make_http(make_link("post/view/".$event->image_id))." - ".
+            make_link("post/view/".$event->image_id)->asAbsolute(). " - ".
             $user->name . ": " . str_replace("\n", " ", $event->comment)
         );
     }

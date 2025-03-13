@@ -15,14 +15,14 @@ class FeaturedTheme extends Themelet
         $page->add_block(new Block("Featured Post", $this->build_featured_html($image), "left", 3));
     }
 
-    public function build_featured_html(Image $image, ?string $query = null): \MicroHTML\HTMLElement
+    public function build_featured_html(Image $image): \MicroHTML\HTMLElement
     {
         $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
 
         return DIV(
             ["style" => "text-align: center;"],
             A(
-                ["href" => make_link("post/view/{$image->id}", $query)],
+                ["href" => make_link("post/view/{$image->id}")],
                 IMG([
                     "id" => "thumb_rand_{$image->id}",
                     "title" => $image->get_tooltip(),

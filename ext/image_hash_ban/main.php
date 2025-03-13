@@ -106,7 +106,7 @@ class ImageBan extends Extension
                 }
 
                 $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(referer_or(make_link()));
+                $page->set_redirect(Url::referer_or());
             }
         }
         if ($event->page_matches("image_hash_ban/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
@@ -114,7 +114,7 @@ class ImageBan extends Extension
             send_event(new RemoveImageHashBanEvent($input['d_hash']));
             $page->flash("Post ban removed");
             $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(referer_or(make_link()));
+            $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("image_hash_ban/list", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $t = new HashBanTable($database->raw_db());
@@ -165,7 +165,7 @@ class ImageBan extends Extension
         global $user;
         if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->add_part(SHM_SIMPLE_FORM(
-                "image_hash_ban/add",
+                make_link("image_hash_ban/add"),
                 INPUT(["type" => 'hidden', "name" => 'c_hash', "value" => $event->image->hash]),
                 INPUT(["type" => 'hidden', "name" => 'c_image_id', "value" => $event->image->id]),
                 INPUT(["type" => 'text', "name" => 'c_reason']),

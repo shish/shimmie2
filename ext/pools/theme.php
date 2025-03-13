@@ -28,14 +28,14 @@ class PoolsTheme extends Themelet
         //TODO: Use a 3 column table?
         $linksPools = emptyHTML();
         foreach ($navIDs as $poolID => $poolInfo) {
-            $div = DIV(SHM_A("pool/view/" . $poolID, $poolInfo["info"]->title));
+            $div = DIV(A(["href" => "pool/view/" . $poolID], $poolInfo["info"]->title));
 
             if (!empty($poolInfo["nav"])) {
                 if (!empty($poolInfo["nav"]["prev"])) {
-                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["prev"], "Prev", class: "pools_prev_img"));
+                    $div->appendChild(A(["href" => make_link("post/view/" . $poolInfo["nav"]["prev"]), "class" => "pools_prev_img"], "Prev"));
                 }
                 if (!empty($poolInfo["nav"]["next"])) {
-                    $div->appendChild(SHM_A("post/view/" . $poolInfo["nav"]["next"], "Next", class: "pools_next_img"));
+                    $div->appendChild(A(["href" => make_link("post/view/" . $poolInfo["nav"]["next"]), "class" => "pools_next_img"], "Next"));
                 }
             }
 
@@ -57,8 +57,8 @@ class PoolsTheme extends Themelet
         // Build up the list of pools.
         $pool_rows = [];
         foreach ($pools as $pool) {
-            $pool_link = SHM_A("pool/view/" . $pool->id, $pool->title);
-            $user_link = SHM_A("user/" . url_escape($pool->user_name), $pool->user_name ?? "No Name");
+            $pool_link = A(["href" => make_link("pool/view/" . $pool->id)], $pool->title);
+            $user_link = A(["href" => make_link("user/" . url_escape($pool->user_name))], $pool->user_name ?? "No Name");
 
             $pool_rows[] = TR(
                 TD(["class" => "left"], $pool_link),
@@ -94,7 +94,7 @@ class PoolsTheme extends Themelet
      */
     public function new_pool_composer(Page $page): void
     {
-        $form = SHM_SIMPLE_FORM("pool/create", TABLE(
+        $form = SHM_SIMPLE_FORM(make_link("pool/create"), TABLE(
             TR(TD("Title:"), TD(INPUT(["type" => "text", "name" => "title"]))),
             TR(TD("Public?:"), TD("Yes", INPUT(["type" => "radio", "name" => "public", "value" => "Y", "checked" => "checked"]), "No", INPUT(["type" => "radio", "name" => "public", "value" => "N"]))),
             TR(TD("Description:"), TD(TEXTAREA(["name" => "description"]))),
@@ -112,11 +112,11 @@ class PoolsTheme extends Themelet
         $page->set_title($heading);
 
         $poolnav = emptyHTML(
-            SHM_A("pool/list", "Pool Index"),
+            A(["href" => make_link("pool/list")], "Pool Index"),
             BR(),
-            SHM_A("pool/new", "Create Pool"),
+            A(["href" => make_link("pool/new")], "Create Pool"),
             BR(),
-            SHM_A("pool/updated", "Pool Changes")
+            A(["href" => make_link("pool/updated")], "Pool Changes")
         );
 
         $search = "<form action='".make_link('pool/list')."' method='POST'>
@@ -168,24 +168,24 @@ class PoolsTheme extends Themelet
 
         $editor = emptyHTML(
             SHM_SIMPLE_FORM(
-                "pool/import/{$pool->id}",
+                make_link("pool/import/{$pool->id}"),
                 INPUT(["type" => "text", "name" => "pool_tag", "id" => "edit_pool_tag", "placeholder" => "Please enter a tag", "class" => "autocomplete_tags"]),
                 SHM_SUBMIT("Import", ["name" => "edit", "id" => "edit_pool_import_btn"])
             ),
             SHM_SIMPLE_FORM(
-                "pool/edit/{$pool->id}",
+                make_link("pool/edit/{$pool->id}"),
                 SHM_SUBMIT("Edit Pool", ["name" => "edit", "id" => "edit_pool_btn"]),
             ),
             SHM_SIMPLE_FORM(
-                "pool/order/{$pool->id}",
+                make_link("pool/order/{$pool->id}"),
                 SHM_SUBMIT("Order Pool", ["name" => "edit", "id" => "edit_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
-                "pool/reverse/{$pool->id}",
+                make_link("pool/reverse/{$pool->id}"),
                 SHM_SUBMIT("Reverse Order", ["name" => "edit", "id" => "reverse_pool_order_btn"])
             ),
             SHM_SIMPLE_FORM(
-                search_page(["pool_id=" . $pool->id]),
+                search_link(["pool_id=" . $pool->id]),
                 SHM_SUBMIT("Post/List View", ["name" => "edit", "id" => $pool->id])
             )
         );
@@ -201,7 +201,7 @@ class PoolsTheme extends Themelet
                     //-->")
                 ),
                 SHM_SIMPLE_FORM(
-                    "pool/nuke/{$pool->id}",
+                    make_link("pool/nuke/{$pool->id}"),
                     SHM_SUBMIT("Delete Pool", ["name" => "delete", "id" => "delete_pool_btn", "onclick" => "return confirm_action()"])
                 )
             );
@@ -244,7 +244,7 @@ class PoolsTheme extends Themelet
             )
         );
 
-        $form = SHM_FORM("pool/add_posts/{$pool->id}", name: "checks");
+        $form = SHM_FORM(make_link("pool/add_posts/{$pool->id}"), name: "checks");
         $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
             $image_list->appendChild(
@@ -274,7 +274,7 @@ class PoolsTheme extends Themelet
     {
         $this->display_top($pool, "Sorting Pool");
 
-        $form = SHM_FORM("pool/save_order/{$pool->id}", name: "checks");
+        $form = SHM_FORM(make_link("pool/save_order/{$pool->id}"), name: "checks");
         $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $i => $image) {
             $image_list->appendChild(SPAN(
@@ -303,13 +303,13 @@ class PoolsTheme extends Themelet
     public function edit_pool(Page $page, Pool $pool, array $images): void
     {
         $desc_form = SHM_SIMPLE_FORM(
-            "pool/edit_description/{$pool->id}",
+            make_link("pool/edit_description/{$pool->id}"),
             TEXTAREA(["name" => "description"], $pool->description),
             BR(),
             SHM_SUBMIT("Change Description")
         );
 
-        $images_form = SHM_FORM("pool/remove_posts/{$pool->id}", name: "checks");
+        $images_form = SHM_FORM(make_link("pool/remove_posts/{$pool->id}"), name: "checks");
         $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
             $image_list->appendChild(SPAN(
@@ -347,9 +347,9 @@ class PoolsTheme extends Themelet
 
         $body = [];
         foreach ($histories as $history) {
-            $pool_link = SHM_A("pool/view/" . $history["pool_id"], $history["title"]);
-            $user_link = SHM_A("user/" . url_escape($history["user_name"]), $history["user_name"]);
-            $revert_link = SHM_A(("pool/revert/" . $history["id"]), "Revert");
+            $pool_link = A(["href" => make_link("pool/view/" . $history["pool_id"])], $history["title"]);
+            $user_link = A(["href" => make_link("user/" . url_escape($history["user_name"]))], $history["user_name"]);
+            $revert_link = A(["href" => make_link("pool/revert/" . $history["id"])], "Revert");
 
             if ($history['action'] == 1) {
                 $prefix = "+";
@@ -364,7 +364,7 @@ class PoolsTheme extends Themelet
 
             $image_links = emptyHTML();
             foreach ($images as $image) {
-                $image_links->appendChild(" ", SHM_A("post/view/" . $image, $prefix . $image));
+                $image_links->appendChild(" ", A(["href" => make_link("post/view/" . $image)], $prefix . $image));
             }
 
             $body[] = TR(

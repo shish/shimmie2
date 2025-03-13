@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b2ba223b8ffa17b5abd2c7c0eebf63a",
+    "content-hash": "462c895845117dc8133e82a3e8081704",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -776,16 +776,16 @@
         },
         {
             "name": "shish/microhtml",
-            "version": "v2.4.0",
+            "version": "v2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "e4b8c06aba3d481be955a13189279b17c4e647d1"
+                "reference": "22aa9dd9843c2a91424da3def6bfa4b2ca6b717a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/e4b8c06aba3d481be955a13189279b17c4e647d1",
-                "reference": "e4b8c06aba3d481be955a13189279b17c4e647d1",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/22aa9dd9843c2a91424da3def6bfa4b2ca6b717a",
+                "reference": "22aa9dd9843c2a91424da3def6bfa4b2ca6b717a",
                 "shasum": ""
             },
             "require": {
@@ -822,9 +822,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microhtml/issues",
-                "source": "https://github.com/shish/microhtml/tree/v2.4.0"
+                "source": "https://github.com/shish/microhtml/tree/v2.4.1"
             },
-            "time": "2025-03-13T13:58:47+00:00"
+            "time": "2025-03-13T14:29:00+00:00"
         },
         {
             "name": "symfony/console",
