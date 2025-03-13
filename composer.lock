@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "553b7c5cbe7d4c6f819ea4acad3b4c13",
+    "content-hash": "5b2ba223b8ffa17b5abd2c7c0eebf63a",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -517,16 +517,16 @@
         },
         {
             "name": "shish/eventtracer-php",
-            "version": "v2.2.0",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/eventtracer-php.git",
-                "reference": "967cd5be21d8c01cd712fcaf0dfd241edd8ed149"
+                "reference": "d2d1982d74a49eac3c1be843c6e2bf46d3bb3c6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/967cd5be21d8c01cd712fcaf0dfd241edd8ed149",
-                "reference": "967cd5be21d8c01cd712fcaf0dfd241edd8ed149",
+                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/d2d1982d74a49eac3c1be843c6e2bf46d3bb3c6f",
+                "reference": "d2d1982d74a49eac3c1be843c6e2bf46d3bb3c6f",
                 "shasum": ""
             },
             "require": {
@@ -560,9 +560,9 @@
             "homepage": "https://github.com/shish/eventtracer-php",
             "support": {
                 "issues": "https://github.com/shish/eventtracer-php/issues",
-                "source": "https://github.com/shish/eventtracer-php/tree/v2.2.0"
+                "source": "https://github.com/shish/eventtracer-php/tree/v2.2.1"
             },
-            "time": "2025-03-05T14:58:19+00:00"
+            "time": "2025-03-05T16:47:58+00:00"
         },
         {
             "name": "shish/ffsphp",
@@ -721,28 +721,28 @@
         },
         {
             "name": "shish/microcrud",
-            "version": "v2.2.2",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "e696f35b494b78bf1bfcddd47b4d542e98a468cb"
+                "reference": "cda3e9fca2c5606f45ce459b6dd47163ba83bc58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/e696f35b494b78bf1bfcddd47b4d542e98a468cb",
-                "reference": "e696f35b494b78bf1bfcddd47b4d542e98a468cb",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/cda3e9fca2c5606f45ce459b6dd47163ba83bc58",
+                "reference": "cda3e9fca2c5606f45ce459b6dd47163ba83bc58",
                 "shasum": ""
             },
             "require": {
                 "ext-pdo": "*",
-                "php": "^8.1",
+                "php": "^8.2",
                 "shish/ffsphp": "^1.0",
-                "shish/microhtml": "^2.0.2"
+                "shish/microhtml": "^2.4.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.12",
-                "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^9.0"
+                "friendsofphp/php-cs-fixer": "^3.64",
+                "phpstan/phpstan": "^2.0",
+                "phpunit/phpunit": "^11.0"
             },
             "type": "library",
             "autoload": {
@@ -770,22 +770,22 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microcrud/issues",
-                "source": "https://github.com/shish/microcrud/tree/v2.2.2"
+                "source": "https://github.com/shish/microcrud/tree/v2.3.0"
             },
-            "time": "2024-01-19T17:35:05+00:00"
+            "time": "2025-03-13T14:04:30+00:00"
         },
         {
             "name": "shish/microhtml",
-            "version": "v2.3.0",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "67c97a523507ad5c680e3dce3338b0c1faeef4d0"
+                "reference": "e4b8c06aba3d481be955a13189279b17c4e647d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/67c97a523507ad5c680e3dce3338b0c1faeef4d0",
-                "reference": "67c97a523507ad5c680e3dce3338b0c1faeef4d0",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/e4b8c06aba3d481be955a13189279b17c4e647d1",
+                "reference": "e4b8c06aba3d481be955a13189279b17c4e647d1",
                 "shasum": ""
             },
             "require": {
@@ -822,9 +822,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microhtml/issues",
-                "source": "https://github.com/shish/microhtml/tree/v2.3.0"
+                "source": "https://github.com/shish/microhtml/tree/v2.4.0"
             },
-            "time": "2025-02-19T17:54:29+00:00"
+            "time": "2025-03-13T13:58:47+00:00"
         },
         {
             "name": "symfony/console",
@@ -2089,16 +2089,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.70.0",
+            "version": "v3.72.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "2ecd5aae0edc937f0d5aa4a22d1d705c6b2e084e"
+                "reference": "900389362c43d116fee1ffc51f7878145fa61b57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/2ecd5aae0edc937f0d5aa4a22d1d705c6b2e084e",
-                "reference": "2ecd5aae0edc937f0d5aa4a22d1d705c6b2e084e",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/900389362c43d116fee1ffc51f7878145fa61b57",
+                "reference": "900389362c43d116fee1ffc51f7878145fa61b57",
                 "shasum": ""
             },
             "require": {
@@ -2128,18 +2128,18 @@
                 "symfony/stopwatch": "^5.4 || ^6.4 || ^7.0"
             },
             "require-dev": {
-                "facile-it/paraunit": "^1.3.1 || ^2.5",
-                "infection/infection": "^0.29.10",
-                "justinrainbow/json-schema": "^5.3 || ^6.0",
+                "facile-it/paraunit": "^1.3.1 || ^2.6",
+                "infection/infection": "^0.29.14",
+                "justinrainbow/json-schema": "^5.3 || ^6.2",
                 "keradus/cli-executor": "^2.1",
                 "mikey179/vfsstream": "^1.6.12",
                 "php-coveralls/php-coveralls": "^2.7",
                 "php-cs-fixer/accessible-object": "^1.1",
                 "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.6",
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.6",
-                "phpunit/phpunit": "^9.6.22 || ^10.5.45 || ^11.5.7",
-                "symfony/var-dumper": "^5.4.48 || ^6.4.18 || ^7.2.0",
-                "symfony/yaml": "^5.4.45 || ^6.4.18 || ^7.2.0"
+                "phpunit/phpunit": "^9.6.22 || ^10.5.45 || ^11.5.12",
+                "symfony/var-dumper": "^5.4.48 || ^6.4.18 || ^7.2.3",
+                "symfony/yaml": "^5.4.45 || ^6.4.18 || ^7.2.3"
             },
             "suggest": {
                 "ext-dom": "For handling output formats in XML",
@@ -2180,7 +2180,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.70.0"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.72.0"
             },
             "funding": [
                 {
@@ -2188,7 +2188,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-22T23:30:51+00:00"
+            "time": "2025-03-13T11:25:37+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2428,16 +2428,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.6",
+            "version": "2.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "6eaec7c6c9e90dcfe46ad1e1ffa5171e2dab641c"
+                "reference": "f9adff3b87c03b12cc7e46a30a524648e497758f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/6eaec7c6c9e90dcfe46ad1e1ffa5171e2dab641c",
-                "reference": "6eaec7c6c9e90dcfe46ad1e1ffa5171e2dab641c",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f9adff3b87c03b12cc7e46a30a524648e497758f",
+                "reference": "f9adff3b87c03b12cc7e46a30a524648e497758f",
                 "shasum": ""
             },
             "require": {
@@ -2482,7 +2482,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-19T15:46:42+00:00"
+            "time": "2025-03-09T09:30:48+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2809,16 +2809,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.10",
+            "version": "11.5.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d5df2b32d729562ff8db634678d71085ee579006"
+                "reference": "d42785840519401ed2113292263795eb4c0f95da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d5df2b32d729562ff8db634678d71085ee579006",
-                "reference": "d5df2b32d729562ff8db634678d71085ee579006",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d42785840519401ed2113292263795eb4c0f95da",
+                "reference": "d42785840519401ed2113292263795eb4c0f95da",
                 "shasum": ""
             },
             "require": {
@@ -2832,14 +2832,14 @@
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.2",
-                "phpunit/php-code-coverage": "^11.0.8",
+                "phpunit/php-code-coverage": "^11.0.9",
                 "phpunit/php-file-iterator": "^5.1.0",
                 "phpunit/php-invoker": "^5.0.1",
                 "phpunit/php-text-template": "^4.0.1",
                 "phpunit/php-timer": "^7.0.1",
                 "sebastian/cli-parser": "^3.0.2",
                 "sebastian/code-unit": "^3.0.2",
-                "sebastian/comparator": "^6.3.0",
+                "sebastian/comparator": "^6.3.1",
                 "sebastian/diff": "^6.0.2",
                 "sebastian/environment": "^7.2.0",
                 "sebastian/exporter": "^6.3.0",
@@ -2890,7 +2890,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.10"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.12"
             },
             "funding": [
                 {
@@ -2906,7 +2906,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-02-25T06:11:48+00:00"
+            "time": "2025-03-07T07:31:03+00:00"
         },
         {
             "name": "psr/event-dispatcher",
@@ -3706,16 +3706,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "6.3.0",
+            "version": "6.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "d4e47a769525c4dd38cea90e5dcd435ddbbc7115"
+                "reference": "24b8fbc2c8e201bb1308e7b05148d6ab393b6959"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/d4e47a769525c4dd38cea90e5dcd435ddbbc7115",
-                "reference": "d4e47a769525c4dd38cea90e5dcd435ddbbc7115",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/24b8fbc2c8e201bb1308e7b05148d6ab393b6959",
+                "reference": "24b8fbc2c8e201bb1308e7b05148d6ab393b6959",
                 "shasum": ""
             },
             "require": {
@@ -3734,7 +3734,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "6.2-dev"
+                    "dev-main": "6.3-dev"
                 }
             },
             "autoload": {
@@ -3774,7 +3774,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
                 "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/6.3.0"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/6.3.1"
             },
             "funding": [
                 {
@@ -3782,7 +3782,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-06T10:28:19+00:00"
+            "time": "2025-03-07T06:57:01+00:00"
         },
         {
             "name": "sebastian/complexity",
