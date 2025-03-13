@@ -13,8 +13,8 @@ class PageNavBuildingEvent extends Event
      * @param url-string $link
      * @param string[] $matches
      */
-    public function add_nav_link(string $name, string $link, string $desc, array $matches = [], int $order = 50): void
+    public function add_nav_link(string $link, string $desc, array $matches = [], ?string $category = null, int $order = 50): void
     {
-        $this->links[]  = new NavLink($name, $link, $desc, $matches, $order);
+        $this->links[]  = new NavLink($category, $link, $desc, $matches, $order);
     }
 }
