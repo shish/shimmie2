@@ -216,7 +216,7 @@ class PostTags extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "tags") {
-            $event->add_nav_link("tags_help", make_link('ext_doc/post_tags'), "Help");
+            $event->add_nav_link(make_link('ext_doc/post_tags'), "Help");
         }
     }
 

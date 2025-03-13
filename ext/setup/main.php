@@ -172,7 +172,7 @@ class Setup extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(SetupPermission::CHANGE_SETTING)) {
-                $event->add_nav_link("setup", make_link('setup'), "Board Config", order: 0);
+                $event->add_nav_link(make_link('setup'), "Board Config", order: 0);
             }
         }
     }

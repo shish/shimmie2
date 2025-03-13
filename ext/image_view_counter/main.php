@@ -107,7 +107,7 @@ class ImageViewCounter extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
-            $event->add_nav_link("sort_by_visits", make_link('popular_images'), "Popular Posts");
+            $event->add_nav_link(make_link('popular_images'), "Popular Posts");
         }
     }
 }

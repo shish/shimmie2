@@ -223,9 +223,9 @@ class Wiki extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "wiki") {
-            $event->add_nav_link("wiki_rules", make_link('wiki/rules'), "Rules");
-            $event->add_nav_link("wiki_help", make_link('ext_doc/wiki'), "Help");
-            $event->add_nav_link("wiki_list", make_link('wiki/wiki:list'), "Page list");
+            $event->add_nav_link(make_link('wiki/rules'), "Rules");
+            $event->add_nav_link(make_link('ext_doc/wiki'), "Help");
+            $event->add_nav_link(make_link('wiki/wiki:list'), "Page list");
         }
     }
 

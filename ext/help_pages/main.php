@@ -96,7 +96,7 @@ class HelpPages extends Extension
         if ($event->parent == "help") {
             $pages = send_event(new HelpPageListBuildingEvent())->pages;
             foreach ($pages as $key => $value) {
-                $event->add_nav_link("help_".$key, make_link('help/'.$key), $value);
+                $event->add_nav_link(make_link('help/'.$key), $value);
             }
         }
     }
