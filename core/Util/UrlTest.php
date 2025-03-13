@@ -84,7 +84,7 @@ class UrlTest extends TestCase
 
         $this->assertEquals(
             ["api_key" => "Something // not-friendly"],
-            Url::parse("/test/foo?api_key=Something+%2F%2F+not-friendly")->query
+            Url::parse("/test/foo?api_key=Something+%2F%2F+not-friendly")->getQueryArray()
         );
         /*
         $this->assertEquals(
@@ -98,7 +98,7 @@ class UrlTest extends TestCase
     {
         $this->assertEquals(
             "/post/list/AC%2FDC/1",
-            Url::parse("/post/list/AC%2FDC/1")->path
+            Url::parse("/post/list/AC%2FDC/1")->getPath()
         );
     }
 

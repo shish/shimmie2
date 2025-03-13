@@ -18,6 +18,10 @@ use GQLA\Field;
 #[Type(name: "Url")]
 class Url
 {
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+    * Various constructors                                                  *
+    \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     /**
      * @param ?url-string $path
      * @param ?page-string $page
@@ -25,17 +29,21 @@ class Url
      * @param ?fragment-string $fragment
      */
     public function __construct(
-        public ?string $scheme = null,
-        public ?string $user = null,
-        public ?string $pass = null,
-        public ?string $host = null,
-        public ?int $port = null,
-        public ?string $page = null,
-        public ?string $path = null,
-        public ?array $query = null,
-        public ?string $fragment = null
+        private ?string $scheme = null,
+        private ?string $user = null,
+        private ?string $pass = null,
+        private ?string $host = null,
+        private ?int $port = null,
+        private ?string $page = null,
+        private ?string $path = null,
+        private ?array $query = null,
+        private ?string $fragment = null
     ) {
         assert($page === null || $path === null);
+        if ($page !== null && str_starts_with($page, "/")) {
+            throw new \InvalidArgumentException("Url(page: $page): page cannot start with a slash");
+        }
+
     }
 
     public static function parse(string $url): Url
@@ -125,6 +133,51 @@ class Url
         return Url::parse($referer);
     }
 
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+    * Attribute getters                                                     *
+    \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    public function getPage(): ?string
+    {
+        return $this->page;
+    }
+
+    public function getPath(): string
+    {
+        global $config;
+        assert(is_null($this->path) || is_null($this->page));
+        if ($this->path !== null) {
+            assert(str_starts_with($this->path, "/"));
+            $path = $this->path;
+        } elseif ($this->page !== null) {
+            /**
+             * Figure out the correct way to link to a page, taking into account
+             * things like the nice URLs setting.
+             *
+             * eg make_link("foo/bar") becomes either "/v2/foo/bar" (niceurls) or
+             * "/v2/index.php?q=foo/bar" (uglyurls)
+             */
+            $install_dir = (string)Url::base();
+            if ($config->get_bool(SetupConfig::NICE_URLS, false)) {
+                $path = "$install_dir/{$this->page}";
+            } else {
+                $path = "$install_dir/index.php?q={$this->page}";
+            }
+        } else {
+            $path = '';
+        }
+        return $path;
+    }
+
+    /**
+     * Get the query parameters as an array.
+     *
+     * @return query-array The query parameters.
+     */
+    public function getQueryArray(): array
+    {
+        return $this->query ?? [];
+    }
 
     #[Field(name: "url")]
     public function __toString(): string
@@ -137,16 +190,7 @@ class Url
         $user     = $this->user ?? '';
         $pass     = !is_null($this->pass) ? ':' . $this->pass : '';
         $pass     = ($user || $pass) ? "$pass@" : '';
-
-        assert(is_null($this->path) || is_null($this->page));
-        if ($this->path !== null) {
-            assert(str_starts_with($this->path, "/"));
-            $path = $this->path;
-        } elseif ($this->page !== null) {
-            $path = self::make_link_str($this->page);
-        } else {
-            $path = '';
-        }
+        $path     = $this->getPath();
 
         if (!empty($this->query)) {
             $query_joiner = $config->get_bool(SetupConfig::NICE_URLS) ? '?' : '&';
@@ -159,34 +203,9 @@ class Url
         return "$scheme$user$pass$host$port$path$query$fragment";
     }
 
-    /**
-     * Figure out the correct way to link to a page, taking into account
-     * things like the nice URLs setting.
-     *
-     * eg make_link("foo/bar") becomes either "/v2/foo/bar" (niceurls) or
-     * "/v2/index.php?q=foo/bar" (uglyurls)
-     *
-     * @param page-string $page
-     * @return url-string
-     */
-    private static function make_link_str(?string $page = null): string
-    {
-        global $config;
-
-        if (is_null($page)) {
-            $page = trim($config->get_string(SetupConfig::MAIN_PAGE), "/");
-        }
-        if (str_starts_with($page, "/")) {
-            throw new \InvalidArgumentException("make_link($page): page cannot start with a slash");
-        }
-
-        $install_dir = (string)Url::base();
-        if ($config->get_bool(SetupConfig::NICE_URLS, false)) {
-            return "$install_dir/$page";
-        } else {
-            return "$install_dir/index.php?q=$page";
-        }
-    }
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+    * Return a modified version of this URL                                 *
+    \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     public function asAbsolute(): Url
     {
@@ -232,6 +251,10 @@ class Url
             fragment: $this->fragment
         );
     }
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+    * Misc URL utilities                                                    *
+    \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     /**
      * Check if HTTPS is enabled for the server.

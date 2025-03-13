@@ -23,7 +23,7 @@ class NavLink
     ) {
         global $config;
         $query = $_query ?: _get_query() ?: $config->get_string(SetupConfig::FRONT_PAGE);
-        if ($query === $link->page) {
+        if ($query === $link->getPage()) {
             $this->active = true;
         } else {
             foreach ($matches as $match) {
