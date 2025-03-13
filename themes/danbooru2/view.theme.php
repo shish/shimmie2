@@ -74,7 +74,7 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
 			<form action='".search_link()."' method='GET'>
 				<input name='search' type='text' class='autocomplete_tags' style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
-				<input type='hidden' name='q' value='post/list'>
+				<input type='hidden' name='q' value='".search_page()."'>
 			</form>
 		";
 

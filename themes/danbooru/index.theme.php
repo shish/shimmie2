@@ -49,12 +49,11 @@ class DanbooruIndexTheme extends IndexTheme
      */
     protected function build_navigation(int $page_number, int $total_pages, array $search_terms): HTMLElement
     {
-        $h_search_string = count($search_terms) == 0 ? "" : html_escape(implode(" ", $search_terms));
-        $h_search_link = search_link();
+        $h_search_string = html_escape(Tag::implode($search_terms));
         return rawHTML("
-			<p><form action='$h_search_link' method='GET'>
+			<p><form action='".search_link()."' method='GET'>
 				<input name='search' type='text' value='$h_search_string' class='autocomplete_tags' placeholder='Search' />
-				<input type='hidden' name='q' value='post/list'>
+				<input type='hidden' name='q' value='".search_page()."'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 		");

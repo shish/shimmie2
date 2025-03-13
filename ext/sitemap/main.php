@@ -55,7 +55,7 @@ class XMLSitemap extends Extension
         /* --- Add 20 most used tags --- */
         foreach ($database->get_col("SELECT tag FROM tags ORDER BY count DESC LIMIT 20") as $tag) {
             $urls[] = new XMLSitemapURL(
-                "post/list/$tag/1",
+                search_page([$tag]),
                 "weekly",
                 "0.9",
                 date("Y-m-d")
@@ -75,7 +75,7 @@ class XMLSitemap extends Extension
         /* --- Add other tags --- */
         foreach ($database->get_col("SELECT tag FROM tags ORDER BY count DESC LIMIT 10000 OFFSET 21") as $tag) {
             $urls[] = new XMLSitemapURL(
-                "post/list/$tag/1",
+                search_page([$tag]),
                 "weekly",
                 "0.7",
                 date("Y-m-d")
