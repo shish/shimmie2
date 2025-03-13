@@ -387,12 +387,12 @@ class UserPage extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
-                $event->add_nav_link("user_admin", make_link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
+                $event->add_nav_link(make_link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
             }
         }
 
         if ($event->parent === "user" && !$user->is_anonymous()) {
-            $event->add_nav_link("logout", make_link('user_admin/logout'), "Log Out", order: 90);
+            $event->add_nav_link(make_link('user_admin/logout'), "Log Out", order: 90);
         }
     }
 

@@ -14,7 +14,7 @@ class NavLink
      * @param url-string $link
      */
     public function __construct(
-        public string $name,
+        public ?string $name,
         public string $link,
         public string|HTMLElement $description,
         ?bool $active = null,

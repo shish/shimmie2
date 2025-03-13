@@ -20,8 +20,8 @@ class PageSubNavBuildingEvent extends Event
     }
 
     /** @param url-string $link */
-    public function add_nav_link(string $name, string $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50): void
+    public function add_nav_link(string $link, string|HTMLElement $desc, ?bool $active = null, int $order = 50): void
     {
-        $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
+        $this->links[]  = new NavLink(null, $link, $desc, $active, $order);
     }
 }

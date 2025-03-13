@@ -45,7 +45,7 @@ class BoneQuality extends Extension
         if ($event->parent == "stats") {
             global $config;
             $failure_string = $config->get_string(BoneQualityConfig::FAILURE_STRING);
-            $event->add_nav_link("bone_quality", make_link('bone_quality'), "how $failure_string are we?");
+            $event->add_nav_link(make_link('bone_quality'), "how $failure_string are we?");
         }
     }
 }

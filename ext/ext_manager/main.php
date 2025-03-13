@@ -67,9 +67,9 @@ class ExtManager extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
-                $event->add_nav_link("ext_manager", make_link('ext_manager'), "Extension Manager");
+                $event->add_nav_link(make_link('ext_manager'), "Extension Manager");
             } else {
-                $event->add_nav_link("ext_doc", make_link('ext_doc'), "Board Help");
+                $event->add_nav_link(make_link('ext_doc'), "Board Help");
             }
         }
     }

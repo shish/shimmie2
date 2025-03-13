@@ -165,7 +165,7 @@ class AdminPage extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(AdminPermission::MANAGE_ADMINTOOLS)) {
-                $event->add_nav_link("admin", make_link('admin'), "Board Admin");
+                $event->add_nav_link(make_link('admin'), "Board Admin");
             }
         }
     }

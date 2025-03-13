@@ -51,7 +51,7 @@ class RandomImage extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
-            $event->add_nav_link("posts_random", make_link('random_image/view'), "Random Post");
+            $event->add_nav_link(make_link('random_image/view'), "Random Post");
         }
     }
 }

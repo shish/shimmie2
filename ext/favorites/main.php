@@ -159,7 +159,7 @@ class Favorites extends Extension
     {
         global $user;
         if ($event->parent == "posts") {
-            $event->add_nav_link("posts_favorites", search_link(["favorited_by={$user->name}"]), "My Favorites");
+            $event->add_nav_link(search_link(["favorited_by={$user->name}"]), "My Favorites");
         }
     }
 

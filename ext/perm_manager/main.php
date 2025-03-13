@@ -106,7 +106,7 @@ class PermManager extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
-                $event->add_nav_link("perm_manager", make_link('perm_manager'), "Permission Manager");
+                $event->add_nav_link(make_link('perm_manager'), "Permission Manager");
             }
         }
     }

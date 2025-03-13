@@ -76,7 +76,7 @@ class Trash extends Extension
         global $user;
         if ($event->parent == "posts") {
             if ($user->can(TrashPermission::VIEW_TRASH)) {
-                $event->add_nav_link("posts_trash", search_link(['in:trash']), "Trash", order: 60);
+                $event->add_nav_link(search_link(['in:trash']), "Trash", order: 60);
             }
         }
     }

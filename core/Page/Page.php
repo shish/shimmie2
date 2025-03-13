@@ -480,12 +480,15 @@ class Page
         }
         $sub_links = null;
         // If one is, we just query for sub-menu options under that one tab
-        if ($active_link !== null) {
+        if ($active_link !== null && $active_link->name !== null) {
             $psnbe = send_event(new PageSubNavBuildingEvent($active_link->name));
             $sub_links = $psnbe->links;
         } else {
             // Otherwise we query for the sub-items under each of the tabs
             foreach ($nav_links as $link) {
+                if ($link->name === null) {
+                    continue;
+                }
                 $psnbe = send_event(new PageSubNavBuildingEvent($link->name));
 
                 // Now we check for a current link so we can identify the sub-links to show

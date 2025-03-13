@@ -241,7 +241,7 @@ class LogDatabase extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
-                $event->add_nav_link("event_log", make_link('log/view'), "Event Log");
+                $event->add_nav_link(make_link('log/view'), "Event Log");
             }
         }
     }

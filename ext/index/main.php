@@ -107,7 +107,7 @@ class Index extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
-            $event->add_nav_link("posts_all", search_link(), "All");
+            $event->add_nav_link(search_link(), "All");
         }
     }
 

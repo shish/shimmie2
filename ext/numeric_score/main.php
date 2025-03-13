@@ -372,9 +372,9 @@ class NumericScore extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
-            $event->add_nav_link("numeric_score_day", make_link('popular_by_day'), "Popular by Day");
-            $event->add_nav_link("numeric_score_month", make_link('popular_by_month'), "Popular by Month");
-            $event->add_nav_link("numeric_score_year", make_link('popular_by_year'), "Popular by Year");
+            $event->add_nav_link(make_link('popular_by_day'), "Popular by Day");
+            $event->add_nav_link(make_link('popular_by_month'), "Popular by Month");
+            $event->add_nav_link(make_link('popular_by_year'), "Popular by Year");
         }
     }
 
