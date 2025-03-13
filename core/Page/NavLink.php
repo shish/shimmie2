@@ -15,10 +15,10 @@ class NavLink
      * @param page-string[] $matches
      */
     public function __construct(
-        public ?string $name,
         public string $link,
         public string|HTMLElement $description,
         array $matches = [],
+        public ?string $category = null,
         public int $order = 50,
         ?string $_query = null,
     ) {
