@@ -60,7 +60,7 @@ class SourceHistory extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-                $event->add_nav_link(make_link('source_history/all/1'), "Source Changes", NavLink::is_active(["source_history"]));
+                $event->add_nav_link(make_link('source_history/all/1'), "Source Changes", ["source_history"]);
             }
         }
     }

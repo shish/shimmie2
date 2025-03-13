@@ -115,7 +115,7 @@ class AutoTagger extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "tags") {
-            $event->add_nav_link(make_link('auto_tag/list'), "Auto-Tag", NavLink::is_active(["auto_tag"]));
+            $event->add_nav_link(make_link('auto_tag/list'), "Auto-Tag", ["auto_tag"]);
         }
     }
 

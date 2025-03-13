@@ -131,7 +131,7 @@ class ImageBan extends Extension
         global $user;
         if ($event->parent === "system") {
             if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
-                $event->add_nav_link(make_link('image_hash_ban/list'), "Post Bans", NavLink::is_active(["image_hash_ban"]));
+                $event->add_nav_link(make_link('image_hash_ban/list'), "Post Bans", ["image_hash_ban"]);
             }
         }
     }

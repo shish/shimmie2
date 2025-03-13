@@ -145,7 +145,7 @@ class AliasEditor extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "tags") {
-            $event->add_nav_link(make_link('alias/list'), "Aliases", NavLink::is_active(["alias"]));
+            $event->add_nav_link(make_link('alias/list'), "Aliases", ["alias"]);
         }
     }
 
