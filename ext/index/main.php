@@ -101,13 +101,13 @@ class Index extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link("posts", make_link('post/list'), "Posts", NavLink::is_active(["post","view"]), order: 20);
+        $event->add_nav_link("posts", search_link(), "Posts", NavLink::is_active(["post","view"]), order: 20);
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent == "posts") {
-            $event->add_nav_link("posts_all", make_link('post/list'), "All");
+            $event->add_nav_link("posts_all", search_link(), "All");
         }
     }
 

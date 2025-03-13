@@ -86,11 +86,10 @@ and of course start organising your images :-)
         $h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.search_link($search_terms, $next).'">Next</a>';
 
         $h_search_string = html_escape(Tag::implode($search_terms));
-        $h_search_link = search_link();
         $h_search = "
-			<p><form action='$h_search_link' method='GET'>
+			<p><form action='".search_link()."' method='GET'>
 				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' />
-				<input type='hidden' name='q' value='post/list'>
+				<input type='hidden' name='q' value='".search_page()."'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 		";

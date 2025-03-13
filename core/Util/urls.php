@@ -21,16 +21,28 @@ function is_https_enabled(): bool
  * with all the appropriate escaping
  *
  * @param string[] $terms
+ * @return page-string
+ */
+function search_page(array $terms = [], int $page = 1): string
+{
+    if ($terms) {
+        $q = url_escape(Tag::implode($terms));
+        return "post/list/$q/$page";
+    } else {
+        return "post/list/$page";
+    }
+}
+
+/**
+ * Build a link to a search page for given terms,
+ * with all the appropriate escaping
+ *
+ * @param string[] $terms
  * @return url-string
  */
 function search_link(array $terms = [], int $page = 1): string
 {
-    if ($terms) {
-        $q = url_escape(Tag::implode($terms));
-        return make_link("post/list/$q/$page");
-    } else {
-        return make_link("post/list/$page");
-    }
+    return make_link(search_page($terms, $page));
 }
 
 /**

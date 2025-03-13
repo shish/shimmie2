@@ -43,7 +43,7 @@ class RelationshipsTheme extends Themelet
         if ($image['has_children']) {
             $visible_children = Relationships::get_children($image->id);
             if (!empty($visible_children)) {
-                $child_summary_html = "<span>This post has <a href='".make_link('post/list/parent='.$image->id.'/1')."'>".(count($visible_children) > 1 ? "child posts" : "a child post")."</a>";
+                $child_summary_html = "<span>This post has <a href='".search_link(['parent='.$image->id])."'>".(count($visible_children) > 1 ? "child posts" : "a child post")."</a>";
                 $child_summary_html .= " (post ";
                 $child_thumb_html = "<div class='shm-relationships-child-thumbs'><div class='shm-child-thumbs'>";
                 foreach ($visible_children as $child) {
