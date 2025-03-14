@@ -11,7 +11,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
 {
     public function testWeirdTags(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
 
@@ -25,7 +25,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
 
     public function testOrder(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $i1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
         $i2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
         $i3 = $this->post_image("tests/favicon.png", "another");
@@ -51,10 +51,10 @@ class SearchTest extends ShimmiePHPUnitTestCase
      */
     public function testUpload(): array
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "thing computer screenshot pbx phone");
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "thing computer computing bedroom workshop");
-        $this->log_out();
+        self::log_out();
 
         # make sure both uploads were ok
         self::assertTrue($image_id_1 > 0);

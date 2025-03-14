@@ -63,7 +63,7 @@ class ET extends Extension
         $core_exts = [];
         $extra_exts = [];
         foreach (ExtensionInfo::get_all() as $key => $info) {
-            if ($info->is_enabled()) {
+            if ($info::is_enabled()) {
                 if ($info->core) {
                     $core_exts[] = $info::KEY;
                 } else {

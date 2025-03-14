@@ -17,7 +17,7 @@ class BulkAddTest extends ShimmiePHPUnitTestCase
     {
         send_event(new UserLoginEvent(User::by_name(self::ADMIN_NAME)));
         send_event(new BulkAddEvent('tests'));
-        $page = $this->get_page("post/list/hash=17fc89f372ed3636e28bd25cc7f3bac1/1");
+        $page = self::get_page("post/list/hash=17fc89f372ed3636e28bd25cc7f3bac1/1");
         self::assertEquals(302, $page->code);
     }
 }

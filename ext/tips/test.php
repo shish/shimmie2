@@ -17,54 +17,54 @@ class TipsTest extends ShimmiePHPUnitTestCase
     public function testImageless(): void
     {
         global $database;
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
 
-        $this->get_page("tips/list");
+        self::get_page("tips/list");
         self::assert_title("Tips List");
 
         send_event(new CreateTipEvent(true, "", "a postless tip"));
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_text("a postless tip");
 
         $tip_id = (int)$database->get_one("SELECT id FROM tips");
         send_event(new DeleteTipEvent($tip_id));
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("a postless tip");
     }
 
     public function testImaged(): void
     {
         global $database;
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
 
-        $this->get_page("tips/list");
+        self::get_page("tips/list");
         self::assert_title("Tips List");
 
         send_event(new CreateTipEvent(true, "coins.png", "a postless tip"));
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_text("a postless tip");
 
         $tip_id = (int)$database->get_one("SELECT id FROM tips");
         send_event(new DeleteTipEvent($tip_id));
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("a postless tip");
     }
 
     public function testDisabled(): void
     {
         global $database;
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
 
-        $this->get_page("tips/list");
+        self::get_page("tips/list");
         self::assert_title("Tips List");
 
         send_event(new CreateTipEvent(false, "", "a postless tip"));
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("a postless tip");
 
         $tip_id = (int)$database->get_one("SELECT id FROM tips");
         send_event(new DeleteTipEvent($tip_id));
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("a postless tip");
     }
 }

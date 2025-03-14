@@ -10,13 +10,13 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
     public function testRatingBlurDefault(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image_s = Image::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
 
         // the safe image should not insert a blur class
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("blur");
 
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
@@ -24,7 +24,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image_e, "e"));
 
         // the explicit image should insert a blur class
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_text("blur");
     }
 
@@ -42,7 +42,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image_e, "e"));
 
         // the explicit image should not insert a blur class
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("blur");
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -50,7 +50,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image_s, "s"));
 
         // the safe image should insert a blur class
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_text("blur");
 
         // change global setting: don't blur any
@@ -59,7 +59,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->delete_test_user($this->username);
         $this->create_test_user($this->username);
 
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("blur");
 
         $this->delete_test_user($this->username);
@@ -71,7 +71,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         // set global default to blur all, so we can test it is overriden
         $config->set_array(RatingsBlurConfig::GLOBAL_DEFAULTS, array_keys(ImageRating::$known_ratings));
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
 
         // don't blur explict, blur safe
         $user->get_config()->set_array(RatingsBlurUserConfig::USER_DEFAULTS, ["s"]);
@@ -81,7 +81,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image_e, "e"));
 
         // the explicit image should not insert a blur class
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("blur");
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -89,13 +89,13 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image_s, "s"));
 
         // the safe image should insert a blur class
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_text("blur");
 
         // don't blur any
         $user->get_config()->set_array(RatingsBlurUserConfig::USER_DEFAULTS, [RatingsBlur::NULL_OPTION]);
 
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assert_no_text("blur");
     }
 
@@ -107,15 +107,15 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
     private function delete_test_user(string $username): void
     {
-        $this->log_out();
-        $this->log_in_as_admin();
+        self::log_out();
+        self::log_in_as_admin();
         send_event(new PageRequestEvent(
             "POST",
             "user_admin/delete_user",
             [],
             ['id' => (string)User::by_name($username)->id, 'with_images' => '', 'with_comments' => '']
         ));
-        $this->log_out();
+        self::log_out();
     }
 
     // reset the user config to defaults at the end of every test so
@@ -124,7 +124,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
     {
         global $user;
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $user->get_config()->set_array(RatingsBlurUserConfig::USER_DEFAULTS, ['e']);
 
         parent::tearDown();

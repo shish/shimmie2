@@ -91,7 +91,7 @@ class TranscodeImage extends Extension
             }
 
             foreach ($old_extensions as $old_extension) {
-                $oldValue = $this->get_mapping($old_extension);
+                $oldValue = self::get_mapping($old_extension);
                 if (!empty($oldValue)) {
                     $from_mime = MimeType::get_for_extension($old_extension);
                     if (empty($from_mime)) {
@@ -103,8 +103,8 @@ class TranscodeImage extends Extension
                         continue;
                     }
 
-                    $this->set_mapping($from_mime, $to_mime);
-                    $this->set_mapping($old_extension, null);
+                    self::set_mapping($from_mime, $to_mime);
+                    self::set_mapping($old_extension, null);
                 }
             }
 
@@ -120,7 +120,7 @@ class TranscodeImage extends Extension
         if ($user->can(ImagePermission::EDIT_FILES) && $event->context !== "report") {
             $engine = $config->get_string(TranscodeImageConfig::ENGINE);
             if ($this->can_convert_mime($engine, $event->image->get_mime())) {
-                $options = $this->get_supported_output_mimes($engine, $event->image->get_mime());
+                $options = self::get_supported_output_mimes($engine, $event->image->get_mime());
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
             }
         }
@@ -218,7 +218,7 @@ class TranscodeImage extends Extension
 
         if ($user->can(ImagePermission::EDIT_FILES)) {
             $engine = $config->get_string(TranscodeImageConfig::ENGINE);
-            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode Image", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_mimes($engine)));
+            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode Image", null, "", $this->theme->get_transcode_picker_html(self::get_supported_output_mimes($engine)));
         }
     }
 

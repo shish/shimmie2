@@ -8,30 +8,30 @@ class RSSImagesTest extends ShimmiePHPUnitTestCase
 {
     public function testImageFeed(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        $this->log_out();
+        self::log_out();
 
-        $this->get_page('rss/images');
+        self::get_page('rss/images');
         //self::assert_mime(MimeType::RSS);
         self::assert_no_content("Exception");
 
-        $this->get_page('rss/images/1');
+        self::get_page('rss/images/1');
         //self::assert_mime(MimeType::RSS);
         self::assert_no_content("Exception");
 
         # FIXME: test that the image is actually found
-        $this->get_page('rss/images/computer/1');
+        self::get_page('rss/images/computer/1');
         //self::assert_mime(MimeType::RSS);
         self::assert_no_content("Exception");
 
         # valid tag, invalid page
-        $this->get_page('rss/images/computer/2');
+        self::get_page('rss/images/computer/2');
         //self::assert_mime(MimeType::RSS);
         self::assert_no_content("Exception");
 
         # not found
-        $this->get_page('rss/images/waffle/2');
+        self::get_page('rss/images/waffle/2');
         //self::assert_mime(MimeType::RSS);
         self::assert_no_content("Exception");
     }

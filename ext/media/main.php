@@ -324,7 +324,7 @@ class Media extends Extension
 
             exec($cmd, $output, $ret);
 
-            if ((int)$ret === (int)0) {
+            if ($ret === 0) {
                 Log::debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
                 ThumbnailUtil::create_scaled_image($tmpname, $outname, $scaled_size, MimeType::PNG);
                 $ok = true;
@@ -362,7 +362,7 @@ class Media extends Extension
 
         exec($cmd, $output, $ret);
 
-        if ((int)$ret === (int)0) {
+        if ($ret === 0) {
             Log::debug('media', "Getting media data `$cmd`, returns $ret");
             $output = implode($output);
             return json_decode($output, true);

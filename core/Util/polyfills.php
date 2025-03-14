@@ -319,7 +319,7 @@ function clamp(int $val, ?int $min = null, ?int $max = null): int
  */
 function parse_shorthand_int(string $limit): ?int
 {
-    if (\Safe\preg_match('/^(-?[\d\.]+)([tgmk])?b?$/i', (string)$limit, $m)) {
+    if (\Safe\preg_match('/^(-?[\d\.]+)([tgmk])?b?$/i', $limit, $m)) {
         $value = (float)$m[1];
         if (isset($m[2])) {
             switch (strtolower($m[2])) {

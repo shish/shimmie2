@@ -17,7 +17,7 @@ class ReverseSearchLinksTheme extends Themelet
             'SauceNAO' => Url::parse('https://saucenao.com/search.php')->withModifiedQuery(["url" => $url]),
             'TinEye' => Url::parse('https://www.tineye.com/search/')->withModifiedQuery(["url" => $url]),
             'trace.moe' => Url::parse('https://trace.moe/')->withModifiedQuery(["auto" => "", "url" => $url]),
-            'ascii2d' => Url::parse('https://ascii2d.net/search/url/' . url_escape((string)$url)),
+            'ascii2d' => Url::parse('https://ascii2d.net/search/url/' . url_escape($url)),
             'Yandex' => Url::parse('https://yandex.com/images/search')->withModifiedQuery(["rpt" => "imageview", "url" => $url]),
         ];
 
