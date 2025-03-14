@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 use GQLA\Type;
 use GQLA\Field;
+use Psr\Http\Message\UriInterface;
 
 /**
  * A fairly standard URL class with a couple of Shimmie-specific helpers:
@@ -16,7 +17,7 @@ use GQLA\Field;
  * - forming a URL with a page _and_ a path at the same time is invalid
  */
 #[Type(name: "Url")]
-class Url
+final readonly class Url implements UriInterface
 {
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
     * Various constructors                                                  *
@@ -39,11 +40,12 @@ class Url
         private ?array $query = null,
         private ?string $fragment = null
     ) {
-        assert($page === null || $path === null);
+        if ($page !== null && $path !== null) {
+            throw new \InvalidArgumentException("Url(page: $page, path: $path): cannot have both a page and a path");
+        }
         if ($page !== null && str_starts_with($page, "/")) {
             throw new \InvalidArgumentException("Url(page: $page): page cannot start with a slash");
         }
-
     }
 
     public static function parse(string $url): Url
@@ -137,6 +139,50 @@ class Url
     * Attribute getters                                                     *
     \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+    public function getScheme(): string
+    {
+        return $this->scheme ?? '';
+    }
+
+    public function getAuthority(): string
+    {
+        $host = $this->getHost();
+        if (empty($host)) {
+            return '';
+        }
+        $authority = $this->getUserInfo();
+        if (!empty($authority)) {
+            $authority .= '@';
+        }
+        $authority .= $this->getHost();
+        if ($this->getPort() !== null) {
+            $authority .= ':' . $this->getPort();
+        }
+        return $authority;
+    }
+
+    public function getUserInfo(): string
+    {
+        $info = '';
+        if ($this->user) {
+            $info .= $this->user;
+            if ($this->pass) {
+                $info .= ':' . $this->pass;
+            }
+        }
+        return $info;
+    }
+
+    public function getHost(): string
+    {
+        return $this->host ?? '';
+    }
+
+    public function getPort(): ?int
+    {
+        return $this->port;
+    }
+
     public function getPage(): ?string
     {
         return $this->page;
@@ -167,6 +213,16 @@ class Url
             $path = '';
         }
         return $path;
+    }
+
+    public function getQuery(): string
+    {
+        return http_build_query($this->query ?? []);
+    }
+
+    public function getFragment(): string
+    {
+        return $this->fragment ?? '';
     }
 
     /**
@@ -222,6 +278,99 @@ class Url
         );
     }
 
+    public function withScheme(string $scheme): Url
+    {
+        return new Url(
+            scheme: $scheme,
+            user: $this->user,
+            pass: $this->pass,
+            host: $this->host,
+            port: $this->port,
+            page: $this->page,
+            path: $this->path,
+            query: $this->query,
+            fragment: $this->fragment
+        );
+    }
+
+    public function withUserInfo(string $user, ?string $password = null): Url
+    {
+        return new Url(
+            scheme: $this->scheme,
+            user: $user,
+            pass: $password,
+            host: $this->host,
+            port: $this->port,
+            page: $this->page,
+            path: $this->path,
+            query: $this->query,
+            fragment: $this->fragment
+        );
+    }
+
+    public function withHost(string $host): Url
+    {
+        return new Url(
+            scheme: $this->scheme,
+            user: $this->user,
+            pass: $this->pass,
+            host: $host,
+            port: $this->port,
+            page: $this->page,
+            path: $this->path,
+            query: $this->query,
+            fragment: $this->fragment
+        );
+    }
+
+    public function withPort(?int $port): Url
+    {
+        return new Url(
+            scheme: $this->scheme,
+            user: $this->user,
+            pass: $this->pass,
+            host: $this->host,
+            port: $port,
+            page: $this->page,
+            path: $this->path,
+            query: $this->query,
+            fragment: $this->fragment
+        );
+    }
+
+    public function withPath(string $path): Url
+    {
+        return new Url(
+            scheme: $this->scheme,
+            user: $this->user,
+            pass: $this->pass,
+            host: $this->host,
+            port: $this->port,
+            page: $this->page,
+            path: $path,
+            query: $this->query,
+            fragment: $this->fragment
+        );
+    }
+
+    public function withQuery(string $query): Url
+    {
+        $query_array = [];
+        parse_str($query, $query_array);
+        /** @var query-array $query_array */
+        return new Url(
+            scheme: $this->scheme,
+            user: $this->user,
+            pass: $this->pass,
+            host: $this->host,
+            port: $this->port,
+            page: $this->page,
+            path: $this->path,
+            query: $query_array,
+            fragment: $this->fragment
+        );
+    }
+
     /**
      * @param array<string, string|null> $changes
      */
@@ -249,6 +398,21 @@ class Url
             path: $this->path,
             query: $query,
             fragment: $this->fragment
+        );
+    }
+
+    public function withFragment(string $fragment): Url
+    {
+        return new Url(
+            scheme: $this->scheme,
+            user: $this->user,
+            pass: $this->pass,
+            host: $this->host,
+            port: $this->port,
+            page: $this->page,
+            path: $this->path,
+            query: $this->query,
+            fragment: $fragment
         );
     }
 
