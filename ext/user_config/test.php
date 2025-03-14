@@ -11,12 +11,12 @@ class UserConfigTest extends ShimmiePHPUnitTestCase
     public function testUserConfigPage(): void
     {
         self::assertException(PermissionDenied::class, function () {
-            $this->get_page('user_config');
+            self::get_page('user_config');
         });
 
-        $this->log_in_as_user();
-        $this->get_page('user_config');
+        self::log_in_as_user();
+        self::get_page('user_config');
         self::assert_title(self::OPTIONS_BLOCK_TITLE);
-        $this->log_out();
+        self::log_out();
     }
 }

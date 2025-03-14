@@ -8,7 +8,7 @@ class ArchiveFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testArchiveHander(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         system("zip -q tests/test.zip tests/pbx_screenshot.jpg tests/favicon.png");
         $this->post_image("tests/test.zip", "a z");
 

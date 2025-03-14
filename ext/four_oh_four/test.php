@@ -9,7 +9,7 @@ class FourOhFourTest extends ShimmiePHPUnitTestCase
     public function test404Handler(): void
     {
         self::assertException(ObjectNotFound::class, function () {
-            $this->get_page('not/a/page');
+            self::get_page('not/a/page');
         });
     }
 }

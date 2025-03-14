@@ -8,7 +8,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
 {
     public function testRatingSafe(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "s"));
@@ -29,13 +29,13 @@ class RatingsTest extends ShimmiePHPUnitTestCase
     {
         global $config;
         $config->set_array("ext_rating_anonymous_privs", ["s", "q"]);
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "e"));
 
         # the explicit image shouldn't show up in anon's searches
-        $this->log_out();
+        self::log_out();
         self::assert_search_results(["pbx"], []);
     }
 
@@ -44,7 +44,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         global $config, $user;
 
         // post a safe image and an explicit image
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
         $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
@@ -83,7 +83,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
     {
         global $config, $user;
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image_s = Image::by_id_ex($image_id_s);
@@ -109,7 +109,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
     {
         global $user;
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["?", "s", "q", "e"]);
 
         parent::tearDown();

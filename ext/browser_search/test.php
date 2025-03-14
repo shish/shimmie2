@@ -8,10 +8,10 @@ class BrowserSearchTest extends ShimmiePHPUnitTestCase
 {
     public function testBasic(): void
     {
-        $page = $this->get_page("browser_search.xml");
+        $page = self::get_page("browser_search.xml");
         self::assertEquals(200, $page->code);
 
-        $page = $this->get_page("browser_search/test");
+        $page = self::get_page("browser_search/test");
         self::assertEquals(200, $page->code);
     }
 }

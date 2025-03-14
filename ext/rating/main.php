@@ -193,7 +193,7 @@ class Ratings extends Extension
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         if (!is_null($event->image['rating'])) {
-            $event->replace('$rating', $this->rating_to_human($event->image['rating']));
+            $event->replace('$rating', self::rating_to_human($event->image['rating']));
         }
     }
 
@@ -532,7 +532,7 @@ class Ratings extends Extension
         global $database;
         if ($old_rating !== $rating) {
             $database->execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating' => $rating, 'id' => $image_id]);
-            Log::info("rating", "Rating for >>{$image_id} set to: ".$this->rating_to_human($rating));
+            Log::info("rating", "Rating for >>{$image_id} set to: ".self::rating_to_human($rating));
         }
     }
 }

@@ -115,7 +115,7 @@ class GraphQL extends Extension
             $this->cors();
             $t1 = ftime();
             $server = new StandardServer([
-                'schema' => $this->get_schema(),
+                'schema' => self::get_schema(),
                 'fieldResolver' => "\Shimmie2\shmFieldResolver",
             ]);
             $t2 = ftime();
@@ -213,7 +213,7 @@ class GraphQL extends Extension
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $query = $input->getArgument('query');
                 $t1 = ftime();
-                $schema = $this->get_schema();
+                $schema = self::get_schema();
                 $t2 = ftime();
                 $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
                 $body = GQL::executeQuery($schema, $query, fieldResolver: "\Shimmie2\shmFieldResolver")->toArray($debug);
@@ -227,7 +227,7 @@ class GraphQL extends Extension
         $event->app->register('graphql:schema')
             ->setDescription('Print out the GraphQL schema')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $schema = $this->get_schema();
+                $schema = self::get_schema();
                 echo(SchemaPrinter::doPrint($schema));
                 return Command::SUCCESS;
             });

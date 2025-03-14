@@ -346,6 +346,7 @@ class SourceHistory extends Extension
 
         // if the image has no history, make one with the old source
         $entries = $database->get_one("SELECT COUNT(*) FROM source_histories WHERE image_id = :image_id", ['image_id' => $image->id]);
+        assert(is_int($entries));
         if ($entries == 0 && !empty($old_source)) {
             $database->execute(
                 "

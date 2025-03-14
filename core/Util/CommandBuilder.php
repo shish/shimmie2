@@ -63,7 +63,7 @@ class CommandBuilder
 
         Log::debug('command_builder', "Command `$cmd` returned $ret and outputted $output");
 
-        if ($fail_on_non_zero_return && (int)$ret !== (int)0) {
+        if ($fail_on_non_zero_return && $ret !== 0) {
             throw new ServerError("Command `$cmd` failed, returning $ret and outputting $output");
         }
         return $ret;

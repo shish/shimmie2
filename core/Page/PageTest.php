@@ -54,7 +54,7 @@ class PageTest extends ShimmiePHPUnitTestCase
         // the default theme doesn't send this, so let's have
         // a random test manually
 
-        $this->log_in_as_admin(); // show the most links
+        self::log_in_as_admin(); // show the most links
 
         $e = send_event(new PageSubNavBuildingEvent("system"));
         self::assertGreaterThan(0, count($e->links));

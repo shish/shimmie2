@@ -10,16 +10,16 @@ class EmoticonsTest extends ShimmiePHPUnitTestCase
     {
         global $user;
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         send_event(new CommentPostingEvent($image_id, $user, ":cool: :beans:"));
 
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_no_text(":cool:"); # FIXME: test for working image link
         //self::assert_text(":beans:"); # FIXME: this should be left as-is
 
-        $this->get_page("emote/list");
+        self::get_page("emote/list");
         //self::assert_text(":arrow:");
     }
 }

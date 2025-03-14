@@ -8,26 +8,26 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth(): void
     {
-        $this->log_out();
+        self::log_out();
         self::assertException(PermissionDenied::class, function () {
-            $this->get_page('admin');
+            self::get_page('admin');
         });
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
         self::assertException(PermissionDenied::class, function () {
-            $this->get_page('admin');
+            self::get_page('admin');
         });
 
-        $this->log_in_as_admin();
-        $page = $this->get_page('admin');
+        self::log_in_as_admin();
+        $page = self::get_page('admin');
         self::assertEquals(200, $page->code);
         self::assertEquals("Admin Tools", $page->title);
     }
 
     public function testAct(): void
     {
-        $this->log_in_as_admin();
-        $page = $this->post_page('admin/test');
+        self::log_in_as_admin();
+        $page = self::post_page('admin/test');
         self::assertEquals("test", $page->data);
     }
 
