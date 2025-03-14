@@ -254,88 +254,99 @@ class Page
      */
     public function display(): void
     {
-        if ($this->mode !== PageMode::MANUAL) {
-            $this->send_headers();
+        global $_tracer;
+        $_tracer->begin("Display ({$this->mode->value})");
+        match($this->mode) {
+            PageMode::MANUAL => null,
+            PageMode::PAGE => $this->display_page(),
+            PageMode::DATA => $this->display_data(),
+            PageMode::FILE => $this->display_file(),
+            PageMode::REDIRECT => $this->display_redirect(),
+        };
+        $_tracer->end();
+    }
+
+    private function display_page(): void
+    {
+        $this->send_headers();
+        usort($this->blocks, Block::cmp(...));
+        $this->add_auto_html_headers();
+        $this->render();
+    }
+
+    private function display_data(): void
+    {
+        $this->send_headers();
+        header("Content-Length: " . strlen($this->data));
+        if (!is_null($this->filename)) {
+            header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
         }
+        print $this->data;
+    }
 
-        switch ($this->mode) {
-            case PageMode::MANUAL:
-                break;
-            case PageMode::PAGE:
-                usort($this->blocks, Block::cmp(...));
-                $this->add_auto_html_headers();
-                $this->render();
-                break;
-            case PageMode::DATA:
-                header("Content-Length: " . strlen($this->data));
-                if (!is_null($this->filename)) {
-                    header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
-                }
-                print $this->data;
-                break;
-            case PageMode::FILE:
-                if (!is_null($this->filename)) {
-                    header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
-                }
-                assert(!is_null($this->file), "file should not be null with PageMode::FILE");
+    private function display_file(): void
+    {
+        $this->send_headers();
+        if (!is_null($this->filename)) {
+            header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
+        }
+        assert(!is_null($this->file), "file should not be null with PageMode::FILE");
 
-                // https://gist.github.com/codler/3906826
-                $size = $this->file->filesize(); // File size
-                $length = $size;           // Content length
-                $start = 0;               // Start byte
-                $end = $size - 1;       // End byte
+        // https://gist.github.com/codler/3906826
+        $size = $this->file->filesize(); // File size
+        $length = $size;           // Content length
+        $start = 0;               // Start byte
+        $end = $size - 1;       // End byte
 
-                header("Content-Length: " . $size);
-                header('Accept-Ranges: bytes');
+        header("Content-Length: " . $size);
+        header('Accept-Ranges: bytes');
 
-                if (isset($_SERVER['HTTP_RANGE'])) {
-                    list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-                    if (str_contains($range, ',')) {
-                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes $start-$end/$size");
-                        break;
-                    }
-                    if ($range === '-') {
-                        $c_start = $size - (int)substr($range, 1);
-                        $c_end = $end;
-                    } else {
-                        $range = explode('-', $range);
-                        $c_start = (int)$range[0];
-                        $c_end = (isset($range[1]) && is_numeric($range[1])) ? (int)$range[1] : $size;
-                    }
-                    $c_end = ($c_end > $end) ? $end : $c_end;
-                    if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
-                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes $start-$end/$size");
-                        break;
-                    }
-                    $start = $c_start;
-                    $end = $c_end;
-                    $length = $end - $start + 1;
-                    header('HTTP/1.1 206 Partial Content');
-                }
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+            if (str_contains($range, ',')) {
+                header('HTTP/1.1 416 Requested Range Not Satisfiable');
                 header("Content-Range: bytes $start-$end/$size");
-                header("Content-Length: " . $length);
-
-                try {
-                    Filesystem::stream_file($this->file, $start, $end);
-                } finally {
-                    if ($this->file_delete === true) {
-                        $this->file->unlink();
-                    }
-                }
-                break;
-            case PageMode::REDIRECT:
-                if ($this->flash) {
-                    $this->redirect = (string)Url::parse($this->redirect)->withModifiedQuery(["flash" => implode("\n", $this->flash)]);
-                }
-                header('Location: ' . $this->redirect);
-                print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
-                break;
-            default:
-                print "Invalid page mode";
-                break;
+                return;
+            }
+            if ($range === '-') {
+                $c_start = $size - (int)substr($range, 1);
+                $c_end = $end;
+            } else {
+                $range = explode('-', $range);
+                $c_start = (int)$range[0];
+                $c_end = (isset($range[1]) && is_numeric($range[1])) ? (int)$range[1] : $size;
+            }
+            $c_end = ($c_end > $end) ? $end : $c_end;
+            if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
+                header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                header("Content-Range: bytes $start-$end/$size");
+                return;
+            }
+            $start = $c_start;
+            $end = $c_end;
+            $length = $end - $start + 1;
+            header('HTTP/1.1 206 Partial Content');
         }
+        header("Content-Range: bytes $start-$end/$size");
+        header("Content-Length: " . $length);
+
+        try {
+            Filesystem::stream_file($this->file, $start, $end);
+        } finally {
+            if ($this->file_delete === true) {
+                $this->file->unlink();
+            }
+        }
+    }
+
+    private function display_redirect(): void
+    {
+        $this->send_headers();
+        if ($this->flash) {
+            $this->redirect = (string)Url::parse($this->redirect)->withModifiedQuery(["flash" => implode("\n", $this->flash)]);
+        }
+        header('Location: ' . $this->redirect);
+        print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
     }
 
     /**
