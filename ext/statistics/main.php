@@ -125,7 +125,7 @@ class Statistics extends Extension
         // Count changes made in each tag history and tally tags for users
         $tag_tally = [];
         $change_tally = [];
-        foreach ($tag_histories as $i => $image) {
+        foreach (array_values($tag_histories) as $image) {
             $prev = [];
             foreach ($image as $change) {
                 $curr = explode(' ', $change['tags']);

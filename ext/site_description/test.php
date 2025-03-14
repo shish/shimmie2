@@ -10,7 +10,7 @@ class SiteDescriptionTest extends ShimmiePHPUnitTestCase
     {
         global $config, $page;
         $config->set_string("site_description", "A Shimmie testbed");
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assertStringContainsString(
             "<meta name='description' content='A Shimmie testbed' />",
             (string)$page->get_all_html_headers()
@@ -21,7 +21,7 @@ class SiteDescriptionTest extends ShimmiePHPUnitTestCase
     {
         global $config, $page;
         $config->set_string("site_keywords", "foo,bar,baz");
-        $this->get_page("post/list");
+        self::get_page("post/list");
         self::assertStringContainsString(
             "<meta name='keywords' content='foo,bar,baz' />",
             (string)$page->get_all_html_headers()

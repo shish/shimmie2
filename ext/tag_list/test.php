@@ -8,9 +8,9 @@ class TagListTest extends ShimmiePHPUnitTestCase
 {
     public function testIndex(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $page = $this->get_page("post/view/$image_id");
+        $page = self::get_page("post/view/$image_id");
         self::assert_title("Post $image_id: pbx");
         self::assert_text("pbx");
     }

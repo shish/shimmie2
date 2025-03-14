@@ -10,18 +10,18 @@ class ImageBanTest extends ShimmiePHPUnitTestCase
 
     public function testPages(): void
     {
-        $this->log_in_as_admin();
-        $page = $this->get_page("image_hash_ban/list");
+        self::log_in_as_admin();
+        $page = self::get_page("image_hash_ban/list");
         self::assertEquals(200, $page->code);
     }
 
     public function testBan(): void
     {
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
 
         // Post image
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $page = $this->get_page("post/view/$image_id");
+        $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
 
         // Ban & delete
@@ -30,7 +30,7 @@ class ImageBanTest extends ShimmiePHPUnitTestCase
 
         // Check deleted
         self::assertException(PostNotFound::class, function () use ($image_id) {
-            $this->get_page("post/view/$image_id");
+            self::get_page("post/view/$image_id");
         });
 
         // Can't repost
@@ -43,7 +43,7 @@ class ImageBanTest extends ShimmiePHPUnitTestCase
 
         // Can repost
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $page = $this->get_page("post/view/$image_id");
+        $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
     }
 

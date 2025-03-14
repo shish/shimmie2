@@ -8,16 +8,16 @@ class BiographyTest extends ShimmiePHPUnitTestCase
 {
     public function testBio(): void
     {
-        $this->log_in_as_user();
-        $this->post_page("user/" . self::USER_NAME . "/biography", ["biography" => "My bio goes here"]);
-        $this->get_page("user/" . self::USER_NAME);
+        self::log_in_as_user();
+        self::post_page("user/" . self::USER_NAME . "/biography", ["biography" => "My bio goes here"]);
+        self::get_page("user/" . self::USER_NAME);
         self::assert_text("My bio goes here");
 
-        $this->log_in_as_admin();
-        $this->get_page("user/" . self::USER_NAME);
+        self::log_in_as_admin();
+        self::get_page("user/" . self::USER_NAME);
         self::assert_text("My bio goes here");
 
-        $this->get_page("user/" . self::ADMIN_NAME);
+        self::get_page("user/" . self::ADMIN_NAME);
         self::assert_no_text("My bio goes here");
     }
 }

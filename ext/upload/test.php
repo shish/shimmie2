@@ -8,9 +8,9 @@ class UploadTest extends ShimmiePHPUnitTestCase
 {
     public function testUploadPage(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
 
-        $this->get_page("upload");
+        self::get_page("upload");
         self::assert_title("Upload");
     }
 
@@ -19,7 +19,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
     {
         global $database;
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $_FILES = [
             'data0' => [
                 'name' => ['puppy-hugs.jpg'],
@@ -43,7 +43,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
                 'size' => [0],
             ]
         ];
-        $page = $this->post_page("upload", ["tags0" => "foo bar"]);
+        $page = self::post_page("upload", ["tags0" => "foo bar"]);
         self::assert_response(302);
         self::assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
         // FIXME: image IDs get allocated even when transactions are rolled back,
@@ -53,11 +53,11 @@ class UploadTest extends ShimmiePHPUnitTestCase
 
     public function testUpload(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::assertGreaterThan(0, $image_id);
 
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_title("Post $image_id: computer pbx screenshot");
     }
 

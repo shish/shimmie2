@@ -10,9 +10,9 @@ class PixelFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testPixelHander(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        $page = $this->get_page("post/view/$image_id");
+        $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
         //self::assert_response(302);
 
@@ -45,7 +45,7 @@ class PixelFileHandlerTest extends ShimmiePHPUnitTestCase
         $encodefunc($img, "{$tmp->str()}.$format");
 
         $image_id = $this->post_image("{$tmp->str()}.$format", "pbx computer screenshot $format");
-        $page = $this->get_page("post/view/$image_id");
+        $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
     }
 

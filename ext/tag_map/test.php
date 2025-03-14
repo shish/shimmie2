@@ -11,13 +11,13 @@ class TagMapTest extends ShimmiePHPUnitTestCase
 
     public function testTagList(): void
     {
-        $this->get_page('tags/map');
+        self::get_page('tags/map');
         self::assert_title('Tag List');
 
-        $this->get_page('tags/alphabetic');
+        self::get_page('tags/alphabetic');
         self::assert_title('Tag List');
 
-        $this->get_page('tags/popularity');
+        self::get_page('tags/popularity');
         self::assert_title('Tag List');
 
         # FIXME: test that these show the right stuff
@@ -26,16 +26,16 @@ class TagMapTest extends ShimmiePHPUnitTestCase
     public function testMinCount(): void
     {
         foreach ($this->pages as $page) {
-            $this->get_page("tags/$page", ["mincount" => 999999]);
+            self::get_page("tags/$page", ["mincount" => 999999]);
             self::assert_title("Tag List");
 
-            $this->get_page("tags/$page", ["mincount" => 1]);
+            self::get_page("tags/$page", ["mincount" => 1]);
             self::assert_title("Tag List");
 
-            $this->get_page("tags/$page", ["mincount" => 0]);
+            self::get_page("tags/$page", ["mincount" => 0]);
             self::assert_title("Tag List");
 
-            $this->get_page("tags/$page", ["mincount" => -1]);
+            self::get_page("tags/$page", ["mincount" => -1]);
             self::assert_title("Tag List");
         }
     }

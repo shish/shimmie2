@@ -66,7 +66,7 @@ class ExtManagerTheme extends Themelet
                     "type" => 'checkbox',
                     "name" => "ext_" . $extension::KEY,
                     "id" => "ext_" . $extension::KEY,
-                    "checked" => ($extension->is_enabled() === true),
+                    "checked" => ($extension::is_enabled() === true),
                     "disabled" => ($extension->is_supported() === false || $extension->core === true)
                 ])) : null,
                 TD(LABEL(
@@ -100,7 +100,7 @@ class ExtManagerTheme extends Themelet
                     $form->appendChild(INPUT([
                         "type" => 'hidden',
                         "name" => "ext_" . $extension::KEY,
-                        "value" => ($extension->is_enabled() === true) ? "on" : "off"
+                        "value" => ($extension::is_enabled() === true) ? "on" : "off"
                     ]));
                 }
             }

@@ -325,7 +325,7 @@ class Filesystem
         try {
             fseek($fp, $start);
             $buffer = 1024 * 1024;
-            while (!feof($fp) && ($p = ftell($fp)) <= $end) {
+            while (!feof($fp) && ($p = \Safe\ftell($fp)) <= $end) {
                 if ($p + $buffer > $end) {
                     $buffer = $end - $p + 1;
                     assert($buffer >= 1);

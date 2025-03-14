@@ -264,7 +264,7 @@ class CommentList extends Extension
                     $image = null;
                 }
                 if (!is_null($image)) {
-                    $comments = $this->get_comments($image->id);
+                    $comments = self::get_comments($image->id);
                     $images[] = [$image, $comments];
                 }
             }
@@ -278,7 +278,7 @@ class CommentList extends Extension
             $i_comment_count = Comment::count_comments_by_user($duser);
             $com_per_page = 50;
             $total_pages = (int)ceil($i_comment_count / $com_per_page);
-            $comments = $this->get_user_comments($duser->id, $com_per_page, $page_num * $com_per_page);
+            $comments = self::get_user_comments($duser->id, $com_per_page, $page_num * $com_per_page);
             $this->theme->display_all_user_comments($comments, $page_num + 1, $total_pages, $duser);
         }
     }
@@ -300,7 +300,7 @@ class CommentList extends Extension
         global $cache, $config;
         $cc = $config->get_int(CommentConfig::COUNT);
         if ($cc > 0) {
-            $recent = cache_get_or_set("recent_comments", fn () => $this->get_recent_comments($cc), 60);
+            $recent = cache_get_or_set("recent_comments", fn () => self::get_recent_comments($cc), 60);
             if (count($recent) > 0) {
                 $this->theme->display_recent_comments($recent);
             }
@@ -314,7 +314,7 @@ class CommentList extends Extension
         $h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
         $event->add_part("Comments made: $i_comment_count, $h_comment_rate per day");
 
-        $recent = $this->get_user_comments($event->display_user->id, 10);
+        $recent = self::get_user_comments($event->display_user->id, 10);
         $this->theme->display_recent_user_comments($recent, $event->display_user);
     }
 
@@ -323,7 +323,7 @@ class CommentList extends Extension
         global $user;
         $this->theme->display_image_comments(
             $event->image,
-            $this->get_comments($event->image->id),
+            self::get_comments($event->image->id),
             $user->can(CommentPermission::CREATE_COMMENT)
         );
     }
@@ -560,7 +560,7 @@ class CommentList extends Extension
         // advanced sanity checks
         elseif (strlen($comment) / strlen(\Safe\gzcompress($comment)) > 10) {
             throw new CommentPostingException("Comment too repetitive~");
-        } elseif ($user->is_anonymous() && ($_POST['hash'] !== $this->get_hash())) {
+        } elseif ($user->is_anonymous() && ($_POST['hash'] !== self::get_hash())) {
             $page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");
             throw new CommentPostingException(
                 "Comment submission form is out of date; refresh the ".
