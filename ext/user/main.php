@@ -345,7 +345,7 @@ class UserPage extends Extension
         if ($user->is_anonymous()) {
             $event->add_nav_link(make_link('user_admin/login'), "Account", category: "user", order: 10);
         } else {
-            $event->add_nav_link(make_link('user'), "Account", category: "user", order: 10);
+            $event->add_nav_link(make_link('user'), "Account", ["user"], "user", 10);
         }
     }
 

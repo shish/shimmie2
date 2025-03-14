@@ -12,6 +12,8 @@ class PermManager extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
+        global $database;
+
         $_all_false = [];
         $_all_true = [];
         foreach (PermissionGroup::get_subclasses(all: true) as $class) {
@@ -67,6 +69,42 @@ class PermManager extends Extension
         ]);
 
         @include_once "data/config/user-classes.conf.php";
+
+        if ($this->get_version() >= 1) {
+            foreach ($database->get_all("SELECT * FROM user_classes") as $class_row) {
+                $name = $class_row['name'];
+                $base = $class_row['base'];
+                $permissions = $database->get_pairs(
+                    "SELECT permission, value FROM user_class_permissions WHERE class_id = :id",
+                    [":id" => $class_row['id']]
+                );
+                new UserClass($name, $base, $permissions);
+            }
+        }
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
+    {
+        global $database;
+
+        if ($this->get_version() < 1) {
+            $database->create_table("user_classes", "
+                id SCORE_AIPK,
+                name VARCHAR(32) NOT NULL UNIQUE,
+                base VARCHAR(32) NOT NULL,
+                description TEXT NOT NULL
+            ");
+            $database->create_table("user_class_permissions", "
+                id SCORE_AIPK,
+                user_class_id INTEGER NOT NULL,
+                permission TEXT NOT NULL,
+                value BOOLEAN NOT NULL,
+                INDEX(user_class_id),
+                UNIQUE(user_class_id, permission),
+                FOREIGN KEY (user_class_id) REFERENCES user_classes(id)
+            ");
+            $this->set_version(1);
+        }
     }
 
     public function onPageRequest(PageRequestEvent $event): void
