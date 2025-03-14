@@ -34,7 +34,7 @@ class AutoTaggerTheme extends Themelet
 		";
 
         $page->set_title("Auto-Tag List");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Auto-Tag", rawHTML($html)));
         if ($can_manage) {
             $page->add_block(new Block("Bulk Upload", rawHTML($bulk_html), "main", 51));

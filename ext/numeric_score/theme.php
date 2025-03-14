@@ -85,11 +85,8 @@ class NumericScoreTheme extends Themelet
             "</h3>\n".
             "<br/>\n".$pop_images;
 
-
-        $nav_html = "<a href=".make_link().">Index</a>";
-
         $page->set_title($config->get_string(SetupConfig::TITLE));
-        $page->add_block(new Block("Navigation", rawHTML($nav_html), "left", 10));
+        $this->display_navigation();
         $page->add_block(new Block(null, rawHTML($html), "main", 30));
     }
 

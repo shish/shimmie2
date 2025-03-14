@@ -37,7 +37,7 @@ class WikiTheme extends Themelet
         }
 
         $page->set_title($wiki_page->title);
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Wiki Index", rawHTML($body_html), "left", 20));
         $page->add_block(new Block($wiki_page->title, $this->create_display_html($wiki_page)));
     }
@@ -77,14 +77,14 @@ class WikiTheme extends Themelet
         }
         $html .= "</table>";
         $page->set_title($title);
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block($title, rawHTML($html)));
     }
 
     public function display_page_editor(Page $page, WikiPage $wiki_page): void
     {
         $page->set_title($wiki_page->title);
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
     }
 

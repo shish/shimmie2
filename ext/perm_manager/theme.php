@@ -52,7 +52,7 @@ class PermManagerTheme extends Themelet
         }
 
         $page->set_title("User Classes");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Classes", $table, "main", 10));
     }
 }

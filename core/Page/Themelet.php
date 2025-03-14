@@ -28,6 +28,16 @@ class Themelet
         return self::$common;
     }
 
+    /**
+     * @param array<Url|null> $links
+     */
+    public function display_navigation(array $links = [], ?HTMLElement $extra = null): void
+    {
+        $c = self::get_common();
+        assert(is_a($c, CommonElementsTheme::class));
+        $c->display_navigation($links, $extra);
+    }
+
     public function build_tag(
         string $tag,
         bool $show_underscores = true,

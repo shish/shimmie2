@@ -27,7 +27,7 @@ class SourceHistoryTheme extends Themelet
 
         $page->set_title('Post '.$image_id.' Source History');
         $page->set_heading('Source History: '.$image_id);
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Source History", rawHTML($history_html), "main", 10));
     }
 
@@ -39,15 +39,12 @@ class SourceHistoryTheme extends Themelet
         $history_html = $this->history_list($history, false);
 
         $page->set_title("Global Source History");
+        $this->display_navigation([
+            ($page_number <= 1) ? null : make_link('source_history/all/'.($page_number - 1)),
+            make_link(),
+            make_link('source_history/all/'.($page_number + 1))
+        ]);
         $page->add_block(new Block("Source History", rawHTML($history_html), "main", 10));
-
-        $h_prev = ($page_number <= 1) ? "Prev" :
-            '<a href="'.make_link('source_history/all/'.($page_number - 1)).'">Prev</a>';
-        $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_next = '<a href="'.make_link('source_history/all/'.($page_number + 1)).'">Next</a>';
-
-        $nav = $h_prev.' | '.$h_index.' | '.$h_next;
-        $page->add_block(new Block("Navigation", rawHTML($nav), "left"));
     }
 
     /**
