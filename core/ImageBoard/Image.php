@@ -63,7 +63,7 @@ class Image implements \ArrayAccess
     public ?bool $image = null;
     public ?bool $audio = null;
     public ?int $length = null;
-    public ?string $tmp_file = null;
+    public ?Path $tmp_file = null;
 
     /** @var array<string, ImagePropType> */
     public static array $prop_types = [];
@@ -456,7 +456,7 @@ class Image implements \ArrayAccess
     /**
      * Figure out where the full size image is on disk.
      */
-    public function get_image_filename(): string
+    public function get_image_filename(): Path
     {
         if (!is_null($this->tmp_file)) {
             return $this->tmp_file;
@@ -467,7 +467,7 @@ class Image implements \ArrayAccess
     /**
      * Figure out where the thumbnail is on disk.
      */
-    public function get_thumb_filename(): string
+    public function get_thumb_filename(): Path
     {
         return Filesystem::warehouse_path(self::THUMBNAIL_DIR, $this->hash);
     }
@@ -639,16 +639,25 @@ class Image implements \ArrayAccess
      */
     public function remove_image_only(bool $quiet = false): void
     {
-        $img_del = @unlink($this->get_image_filename());
-        $thumb_del = @unlink($this->get_thumb_filename());
-        if ($img_del && $thumb_del) {
-            if (!$quiet) {
-                Log::info("core_image", "Deleted files for Post #{$this->id} ({$this->hash})");
-            }
-        } else {
-            $img = $img_del ? '' : ' image';
-            $thumb = $thumb_del ? '' : ' thumbnail';
-            Log::error('core_image', "Failed to delete files for Post #{$this->id}{$img}{$thumb}");
+        $img_del = false;
+        $thumb_del = false;
+
+        try {
+            $this->get_image_filename()->unlink();
+            $img_del = true;
+        } catch (\Exception $e) {
+            Log::error('core_image', "Failed to delete image file for Post #{$this->id}: {$e->getMessage()}");
+        }
+
+        try {
+            $this->get_thumb_filename()->unlink();
+            $thumb_del = true;
+        } catch (\Exception $e) {
+            Log::error('core_image', "Failed to delete thumbnail file for Post #{$this->id}: {$e->getMessage()}");
+        }
+
+        if ($img_del && $thumb_del && !$quiet) {
+            Log::info("core_image", "Deleted files for Post #{$this->id} ({$this->hash})");
         }
     }
 

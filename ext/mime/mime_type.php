@@ -132,13 +132,13 @@ class MimeType
     /**
      * Determines if a file is an animated gif.
      *
-     * @param string $image_filename The path of the file to check.
+     * @param Path $image_filename The path of the file to check.
      * @return bool true if the file is an animated gif, false if it is not.
      */
-    public static function is_animated_gif(string $image_filename): bool
+    public static function is_animated_gif(Path $image_filename): bool
     {
         $is_anim_gif = 0;
-        if (($fh = @fopen($image_filename, 'rb'))) {
+        if (($fh = @fopen($image_filename->str(), 'rb'))) {
             try {
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 $chunk = false;
@@ -158,16 +158,16 @@ class MimeType
     /**
      * @param non-empty-array<int|null> $comparison
      */
-    private static function compare_file_bytes(string $file_name, array $comparison): bool
+    private static function compare_file_bytes(Path $file_name, array $comparison): bool
     {
-        $size = \Safe\filesize($file_name);
+        $size = $file_name->filesize();
         $cc = count($comparison);
         if ($size < $cc) {
             // Can't match because it's too small
             return false;
         }
 
-        if (($fh = @fopen($file_name, 'rb'))) {
+        if (($fh = @fopen($file_name->str(), 'rb'))) {
             try {
                 $chunk = \Safe\unpack("C*", \Safe\fread($fh, $cc));
 
@@ -187,16 +187,16 @@ class MimeType
                 @fclose($fh);
             }
         } else {
-            throw new MediaException("Unable to open file for byte check: $file_name");
+            throw new MediaException("Unable to open file for byte check: {$file_name->str()}");
         }
     }
 
-    public static function is_animated_webp(string $image_filename): bool
+    public static function is_animated_webp(Path $image_filename): bool
     {
         return self::compare_file_bytes($image_filename, self::WEBP_ANIMATION_HEADER);
     }
 
-    public static function is_lossless_webp(string $image_filename): bool
+    public static function is_lossless_webp(Path $image_filename): bool
     {
         return self::compare_file_bytes($image_filename, self::WEBP_LOSSLESS_HEADER);
     }

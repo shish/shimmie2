@@ -20,7 +20,7 @@ class PageTest extends ShimmiePHPUnitTestCase
     {
         $page = new Page();
         $page->set_mode(PageMode::FILE);
-        $page->set_file("tests/pbx_screenshot.jpg");
+        $page->set_file(new Path("tests/pbx_screenshot.jpg"));
         ob_start();
         $page->display();
         self::assertGreaterThan(0, ob_get_length());

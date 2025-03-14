@@ -189,8 +189,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         return match($page->mode) {
             PageMode::PAGE => $page->title . "\n" . $this->blocks_to_text($page->blocks, $section),
             PageMode::DATA => $page->data,
-            PageMode::REDIRECT => self::fail("Page mode is REDIRECT ($page->redirect) (only PAGE and DATA are supported)"),
-            PageMode::FILE => self::fail("Page mode is FILE ($page->file) (only PAGE and DATA are supported)"),
+            PageMode::REDIRECT => self::fail("Page mode is REDIRECT ({$page->redirect}) (only PAGE and DATA are supported)"),
+            PageMode::FILE => self::fail("Page mode is FILE (only PAGE and DATA are supported)"),
             PageMode::MANUAL => self::fail("Page mode is MANUAL (only PAGE and DATA are supported)"),
             default => self::fail("Unknown page mode {$page->mode->name}"),  // just for phpstan
         };
@@ -273,8 +273,9 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     // post things
     protected function post_image(string $filename, string $tags): int
     {
-        $dae = send_event(new DataUploadEvent($filename, basename($filename), 0, [
-            "filename" => $filename,
+        $file = new Path($filename);
+        $dae = send_event(new DataUploadEvent($file, $file->basename()->str(), 0, [
+            "filename" => $file->basename()->str(),
             "tags" => $tags,
         ]));
         if (count($dae->images) === 0) {

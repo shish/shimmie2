@@ -38,13 +38,13 @@ class PixelFileHandlerTest extends ShimmiePHPUnitTestCase
     public function testFormats(string $format): void
     {
         $tmp = shm_tempnam("test-format");
-        unlink($tmp);
+        $tmp->unlink();
         $img = \Safe\imagecreatefromstring(\Safe\file_get_contents("tests/pbx_screenshot.jpg"));
         $encodefunc = "image$format";
         self::assertTrue(is_callable($encodefunc));
-        $encodefunc($img, "$tmp.$format");
+        $encodefunc($img, "{$tmp->str()}.$format");
 
-        $image_id = $this->post_image("$tmp.$format", "pbx computer screenshot $format");
+        $image_id = $this->post_image("{$tmp->str()}.$format", "pbx computer screenshot $format");
         $page = $this->get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
     }

@@ -65,7 +65,7 @@ class ResizeImage extends Extension
             $isanigif = 0;
             if ($image_obj->get_mime() == MimeType::GIF) {
                 $image_filename = Filesystem::warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
-                $fh = \Safe\fopen($image_filename, 'rb');
+                $fh = \Safe\fopen($image_filename->str(), 'rb');
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 while (!feof($fh) && $isanigif < 2) {
                     $chunk = \Safe\fread($fh, 1024 * 100);
@@ -135,9 +135,6 @@ class ResizeImage extends Extension
 
             if ($new_width !== $image_width || $new_height !== $image_height) {
                 $tmp_filename = shm_tempnam('resize');
-                if (empty($tmp_filename)) {
-                    throw new ImageResizeException("Unable to save temporary image file.");
-                }
 
                 send_event(new MediaResizeEvent(
                     $config->get_string(ResizeConfig::ENGINE),
@@ -150,7 +147,7 @@ class ResizeImage extends Extension
 
                 if ($event->file_modified === true && $event->path !== $event->image->get_image_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up
-                    unlink($event->path);
+                    $event->path->unlink();
                 }
 
                 $event->path = $tmp_filename;
@@ -188,7 +185,7 @@ class ResizeImage extends Extension
         $hash = $image_obj->hash;
         $image_filename  = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash);
 
-        $info = \Safe\getimagesize($image_filename);
+        $info = \Safe\getimagesize($image_filename->str());
         assert(!is_null($info));
         if (($image_obj->width !== $info[0]) || ($image_obj->height !== $info[1])) {
             throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
@@ -198,9 +195,6 @@ class ResizeImage extends Extension
 
         /* Temp storage while we resize */
         $tmp_filename = shm_tempnam('resize');
-        if (empty($tmp_filename)) {
-            throw new ImageResizeException("Unable to save temporary image file.");
-        }
 
         send_event(new MediaResizeEvent(
             $engine,

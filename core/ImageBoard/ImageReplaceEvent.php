@@ -23,11 +23,10 @@ class ImageReplaceEvent extends Event
      */
     public function __construct(
         public Image $image,
-        public string $tmp_filename,
+        public Path $tmp_filename,
     ) {
         parent::__construct();
         $this->old_hash = $image->hash;
-        $hash = \Safe\md5_file($tmp_filename);
-        $this->new_hash = $hash;
+        $this->new_hash = $tmp_filename->md5();
     }
 }

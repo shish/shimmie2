@@ -10,7 +10,7 @@ class FilesystemTest extends TestCase
 {
     public function test_warehouse_path(): void
     {
-        $hash = "7ac19c10d6859415";
+        $hash = "7ac19c10d6859415a9bf32f335f564ad";
 
         self::assertEquals(
             Filesystem::join_path(DATA_DIR, "base", $hash),
@@ -28,28 +28,8 @@ class FilesystemTest extends TestCase
         );
 
         self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", $hash),
-            Filesystem::warehouse_path("base", $hash, false, 3)
-        );
-
-        self::assertEquals(
             Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", $hash),
             Filesystem::warehouse_path("base", $hash, false, 4)
-        );
-
-        self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", "d6", $hash),
-            Filesystem::warehouse_path("base", $hash, false, 5)
-        );
-
-        self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", "d6", "85", $hash),
-            Filesystem::warehouse_path("base", $hash, false, 6)
-        );
-
-        self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", "d6", "85", "94", $hash),
-            Filesystem::warehouse_path("base", $hash, false, 7)
         );
 
         self::assertEquals(
@@ -58,13 +38,8 @@ class FilesystemTest extends TestCase
         );
 
         self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", "d6", "85", "94", "15", $hash),
-            Filesystem::warehouse_path("base", $hash, false, 9)
-        );
-
-        self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", "d6", "85", "94", "15", $hash),
-            Filesystem::warehouse_path("base", $hash, false, 10)
+            new Path("data/base/7a/c1/9c/10/d6/85/94/15/a9/bf/32/f3/35/f5/64/ad/7ac19c10d6859415a9bf32f335f564ad"),
+            Filesystem::warehouse_path("base", $hash, false, 50)
         );
     }
 
@@ -72,39 +47,39 @@ class FilesystemTest extends TestCase
     {
         self::assertEquals(
             [],
-            Filesystem::path_to_tags("nope.jpg")
+            Filesystem::path_to_tags(new Path("nope.jpg"))
         );
         self::assertEquals(
             [],
-            Filesystem::path_to_tags("\\")
+            Filesystem::path_to_tags(new Path("\\"))
         );
         self::assertEquals(
             [],
-            Filesystem::path_to_tags("/")
+            Filesystem::path_to_tags(new Path("/"))
         );
         self::assertEquals(
             [],
-            Filesystem::path_to_tags("C:\\")
+            Filesystem::path_to_tags(new Path("C:\\"))
         );
         self::assertEquals(
-            ["test", "tag"],
-            Filesystem::path_to_tags("123 - test tag.jpg")
+            ["tag", "test"],
+            Filesystem::path_to_tags(new Path("123 - test tag.jpg"))
         );
         self::assertEquals(
             ["foo", "bar"],
-            Filesystem::path_to_tags("/foo/bar/baz.jpg")
+            Filesystem::path_to_tags(new Path("/foo/bar/baz.jpg"))
         );
         self::assertEquals(
             ["cake", "pie", "foo", "bar"],
-            Filesystem::path_to_tags("/foo/bar/123 - cake pie.jpg")
+            Filesystem::path_to_tags(new Path("/foo/bar/123 - cake pie.jpg"))
         );
         self::assertEquals(
             ["bacon", "lemon"],
-            Filesystem::path_to_tags("\\bacon\\lemon\\baz.jpg")
+            Filesystem::path_to_tags(new Path("\\bacon\\lemon\\baz.jpg"))
         );
         self::assertEquals(
             ["category:tag"],
-            Filesystem::path_to_tags("/category:/tag/baz.jpg")
+            Filesystem::path_to_tags(new Path("/category:/tag/baz.jpg"))
         );
     }
 
@@ -120,77 +95,34 @@ class FilesystemTest extends TestCase
         self::assertTrue(file_exists("$dir/foo"));
         self::assertTrue(file_exists("$dir/baz"));
         self::assertTrue(file_exists("$dir/baz/.qux"));
-        Filesystem::deltree($dir);
+        Filesystem::deltree(new Path($dir));
         self::assertFalse(file_exists($dir));
-    }
-
-    public function test_sanitize_path(): void
-    {
-        self::assertEquals(
-            "one",
-            Filesystem::sanitize_path("one")
-        );
-
-        self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two",
-            Filesystem::sanitize_path("one\\two")
-        );
-
-        self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two",
-            Filesystem::sanitize_path("one/two")
-        );
-
-        self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two",
-            Filesystem::sanitize_path("one\\\\two")
-        );
-
-        self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two",
-            Filesystem::sanitize_path("one//two")
-        );
-
-        self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two",
-            Filesystem::sanitize_path("one\\\\\\two")
-        );
-
-        self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two",
-            Filesystem::sanitize_path("one///two")
-        );
-
-        self::assertEquals(
-            DIRECTORY_SEPARATOR."one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR,
-            Filesystem::sanitize_path("\\/one/\\/\\/two\\/")
-        );
     }
 
     public function test_join_path(): void
     {
         self::assertEquals(
-            "one",
+            new Path("one"),
             Filesystem::join_path("one")
         );
 
         self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two",
+            new Path("one/two"),
             Filesystem::join_path("one", "two")
         );
 
         self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three",
+            new Path("one/two/three"),
             Filesystem::join_path("one", "two", "three")
         );
 
         self::assertEquals(
-            "one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three",
+            new Path("one/two/three"),
             Filesystem::join_path("one/two", "three")
         );
 
         self::assertEquals(
-            DIRECTORY_SEPARATOR."one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three".DIRECTORY_SEPARATOR,
+            new Path("/one/two/three/"),
             Filesystem::join_path("\\/////\\\\one/\///"."\\//two\/\\//\\//", "//\/\\\/three/\\/\/")
         );
     }

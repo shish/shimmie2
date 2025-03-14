@@ -37,7 +37,7 @@ class ReplaceFile extends Extension
                 Network::fetch_url($url, $tmp_filename);
                 send_event(new ImageReplaceEvent($image, $tmp_filename));
             } elseif (count($_FILES) > 0) {
-                send_event(new ImageReplaceEvent($image, $_FILES["data"]['tmp_name']));
+                send_event(new ImageReplaceEvent($image, new Path($_FILES["data"]['tmp_name'])));
             }
             if ($event->get_POST("source")) {
                 send_event(new SourceSetEvent($image, $event->req_POST("source")));
@@ -71,20 +71,20 @@ class ReplaceFile extends Extension
 
         $target = Filesystem::warehouse_path(Image::IMAGE_DIR, $event->new_hash);
         try {
-            \Safe\copy($event->tmp_filename, $target);
+            $event->tmp_filename->copy($target);
         } catch (\Exception $e) {
-            throw new ImageReplaceException("Failed to copy file from uploads ({$event->tmp_filename}) to archive ($target): {$e->getMessage()}");
+            throw new ImageReplaceException("Failed to copy file from uploads ({$event->tmp_filename->str()}) to archive ({$target->str()}): {$e->getMessage()}");
         }
-        unlink($event->tmp_filename);
+        $event->tmp_filename->unlink();
 
         // update metadata and save metadata to DB
         $event->image->hash = $event->new_hash;
-        $filesize = \Safe\filesize($target);
+        $filesize = $target->filesize();
         if ($filesize == 0) {
             throw new ImageReplaceException("Replacement file size is zero");
         }
         $event->image->filesize = $filesize;
-        $event->image->set_mime(MimeType::get_for_file($target));
+        $event->image->set_mime(MimeType::get_for_file($target->str()));
         send_event(new MediaCheckPropertiesEvent($image));
         $image->save_to_db();
 

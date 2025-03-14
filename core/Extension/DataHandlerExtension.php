@@ -36,7 +36,7 @@ abstract class DataHandlerExtension extends Extension
                 throw new UploadException("Invalid or corrupted file");
             }
 
-            $existing = Image::by_hash(\Safe\md5_file($event->tmpname));
+            $existing = Image::by_hash($event->tmpname->md5());
             if (!is_null($existing)) {
                 if ($config->get_string(UploadConfig::COLLISION_HANDLER) === 'merge') {
                     // Right now tags are the only thing that get merged, so
@@ -55,22 +55,22 @@ abstract class DataHandlerExtension extends Extension
 
             // Create a new Image object
             $filename = $event->tmpname;
-            assert(is_readable($filename));
+            assert($filename->is_readable());
             $image = new Image();
             $image->tmp_file = $filename;
-            $filesize = \Safe\filesize($filename);
+            $filesize = $filename->filesize();
             if ($filesize === 0) {
                 throw new UploadException("File size is zero");
             }
             $image->filesize = $filesize;
-            $image->hash = \Safe\md5_file($filename);
+            $image->hash = $filename->md5();
             // DB limits to 255 char filenames
             $image->filename = substr($event->filename, -250);
             $image->set_mime($event->mime);
             try {
                 send_event(new MediaCheckPropertiesEvent($image));
             } catch (MediaException $e) {
-                throw new UploadException("Unable to scan media properties $filename / $image->filename / $image->hash: ".$e->getMessage());
+                throw new UploadException("Unable to scan media properties {$filename->str()} / {$image->filename} / $image->hash: ".$e->getMessage());
             }
             $image->save_to_db(); // Ensure the image has a DB-assigned ID
 
@@ -80,9 +80,9 @@ abstract class DataHandlerExtension extends Extension
             // If everything is OK, then move the file to the archive
             $filename = Filesystem::warehouse_path(Image::IMAGE_DIR, $event->hash);
             try {
-                \Safe\copy($event->tmpname, $filename);
+                $event->tmpname->copy($filename);
             } catch (\Exception $e) {
-                throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($filename): ".$e->getMessage());
+                throw new UploadException("Failed to copy file from uploads ({$event->tmpname->str()}) to archive ({$filename->str()}): ".$e->getMessage());
             }
 
             $event->images[] = $iae->image;
@@ -97,7 +97,7 @@ abstract class DataHandlerExtension extends Extension
                 $result = $this->create_thumb($event->image);
             } else {
                 $outname = $event->image->get_thumb_filename();
-                if (file_exists($outname)) {
+                if ($outname->exists()) {
                     return;
                 }
                 $result = $this->create_thumb($event->image);
@@ -128,7 +128,7 @@ abstract class DataHandlerExtension extends Extension
     }
 
     abstract protected function media_check_properties(MediaCheckPropertiesEvent $event): void;
-    abstract protected function check_contents(string $tmpname): bool;
+    abstract protected function check_contents(Path $tmpname): bool;
     abstract protected function create_thumb(Image $image): bool;
 
     protected function supported_mime(string $mime): bool

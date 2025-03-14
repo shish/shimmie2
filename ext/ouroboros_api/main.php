@@ -318,10 +318,10 @@ class OuroborosAPI extends Extension
         // Check where we should try for the file
         if (empty($post->file) && !empty($post->file_url)) {
             // Transload from source
-            $meta['file'] = shm_tempnam('transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE));
+            $meta['file'] = shm_tempnam('transload_' . $config->get_string(UploadConfig::TRANSLOAD_ENGINE))->str();
             $meta['filename'] = basename($post->file_url);
             try {
-                Network::fetch_url($post->file_url, $meta['file']);
+                Network::fetch_url($post->file_url, new Path($meta['file']));
             } catch (FetchException $e) {
                 $this->sendResponse(500, "Transloading failed: $e");
                 return;
@@ -359,7 +359,7 @@ class OuroborosAPI extends Extension
         }
         try {
             $image = $database->with_savepoint(function () use ($meta) {
-                $dae = send_event(new DataUploadEvent($meta['file'], basename($meta['file']), 0, $meta));
+                $dae = send_event(new DataUploadEvent(new Path($meta['file']), basename($meta['file']), 0, $meta));
                 return $dae->images[0];
             });
             $this->sendResponse(200, (string)make_link('post/view/' . $image->id), true);
