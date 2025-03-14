@@ -11,12 +11,11 @@ class Filesystem
      * This process creates subfolders based on octet pairs from the file's hash.
      * The calculated folder follows this pattern data/$base/octet_pairs/$hash
      * @param string $base
-     * @param string $hash
+     * @param hash-string $hash
      * @param bool $create
      * @param int $splits The number of octet pairs to split the hash into. Caps out at strlen($hash)/2.
-     * @return string
      */
-    public static function warehouse_path(string $base, string $hash, bool $create = true, ?int $splits = null): string
+    public static function warehouse_path(string $base, string $hash, bool $create = true, ?int $splits = null): Path
     {
         if (is_null($splits)) {
             $splits = SysConfig::getWarehouseSplits();
@@ -30,8 +29,8 @@ class Filesystem
 
         $pa = Filesystem::join_path(...$dirs);
 
-        if ($create && !file_exists(dirname($pa))) {
-            mkdir(dirname($pa), 0755, true);
+        if ($create && !$pa->dirname()->exists()) {
+            $pa->dirname()->mkdir(0755, true);
         }
         return $pa;
     }
@@ -39,26 +38,27 @@ class Filesystem
     /**
      * Determines the path to the specified file in the data folder.
      */
-    public static function data_path(string $filename, bool $create = true): string
+    public static function data_path(string|Path $filename, bool $create = true): Path
     {
         $filename = Filesystem::join_path("data", $filename);
-        if ($create && !file_exists(dirname($filename))) {
-            mkdir(dirname($filename), 0755, true);
+        if ($create && !$filename->dirname()->exists()) {
+            $filename->dirname()->mkdir(0755, true);
         }
         return $filename;
     }
 
     /**
-     * @return string[]
+     * @return tag-string[]
      */
-    public static function path_to_tags(string $path): array
+    public static function path_to_tags(Path $path): array
     {
         $matches = [];
         $tags = [];
-        if (\Safe\preg_match("/\d+ - (.+)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
-            $tags = explode(" ", $matches[1]);
+        if (\Safe\preg_match("/\d+ - (.+)\.([a-zA-Z0-9]+)/", $path->basename()->str(), $matches)) {
+            $tags = Tag::explode($matches[1]);
         }
 
+        $path = $path->str();
         $path = str_replace("\\", "/", $path);
         $path = str_replace(";", ":", $path);
         $path = str_replace("__", " ", $path);
@@ -99,45 +99,50 @@ class Filesystem
     }
 
     /**
-     * @return string[]
+     * @return Path[]
      */
-    public static function get_dir_contents(string $dir): array
+    public static function get_dir_contents(Path $path): array
     {
-        assert(!empty($dir));
-
-        if (!is_dir($dir)) {
+        if (!$path->is_dir()) {
             return [];
         }
-        return array_diff(
-            \Safe\scandir($dir),
-            ['..', '.']
+        return array_map(
+            fn ($p) => new Path($p),
+            array_diff(
+                \Safe\scandir($path->str()),
+                ['..', '.']
+            )
         );
     }
 
-    public static function remove_empty_dirs(string $dir): bool
+    public static function remove_empty_dirs(Path $dir): bool
     {
-        $result = true;
+        $children_deleted = true;
 
         $items = Filesystem::get_dir_contents($dir);
-        ;
+
         foreach ($items as $item) {
             $path = Filesystem::join_path($dir, $item);
-            if (is_dir($path)) {
-                $result = $result && Filesystem::remove_empty_dirs($path);
+            if ($path->is_dir()) {
+                $children_deleted = $children_deleted && Filesystem::remove_empty_dirs($path);
             } else {
-                $result = false;
+                $children_deleted = false;
             }
         }
-        if ($result === true) {
-            $result = rmdir($dir);
+        if ($children_deleted === true) {
+            try {
+                $dir->rmdir();
+            } catch (\Exception $e) {
+                $children_deleted = false;
+            }
         }
-        return $result;
+        return $children_deleted;
     }
 
     /**
-     * @return string[]
+     * @return Path[]
      */
-    public static function get_files_recursively(string $dir): array
+    public static function get_files_recursively(Path $dir): array
     {
         $things = Filesystem::get_dir_contents($dir);
 
@@ -145,7 +150,7 @@ class Filesystem
 
         foreach ($things as $thing) {
             $path = Filesystem::join_path($dir, $thing);
-            if (is_file($path)) {
+            if ($path->is_file()) {
                 $output[] = $path;
             } else {
                 $output = array_merge($output, Filesystem::get_files_recursively($path));
@@ -158,15 +163,15 @@ class Filesystem
     /**
      * Returns amount of files & total size of dir.
      *
-     * @return array{"path": string, "total_files": int, "total_mb": string}
+     * @return array{"path": Path, "total_files": int, "total_mb": string}
      */
-    public static function scan_dir(string $path): array
+    public static function scan_dir(Path $path): array
     {
         $bytestotal = 0;
         $nbfiles = 0;
 
         $ite = new \RecursiveDirectoryIterator(
-            $path,
+            $path->str(),
             \FilesystemIterator::KEY_AS_PATHNAME |
             \FilesystemIterator::CURRENT_AS_FILEINFO |
             \FilesystemIterator::SKIP_DOTS
@@ -190,15 +195,15 @@ class Filesystem
     /**
      * Delete an entire file heirachy
      */
-    public static function deltree(string $dir): void
+    public static function deltree(Path $dir): void
     {
-        $di = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::KEY_AS_PATHNAME);
+        $di = new \RecursiveDirectoryIterator($dir->str(), \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::KEY_AS_PATHNAME);
         $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
         /** @var \SplFileInfo $file */
         foreach ($ri as $filename => $file) {
             $file->isDir() ? rmdir($filename) : unlink($filename);
         }
-        rmdir($dir);
+        $dir->rmdir();
     }
 
     /**
@@ -206,12 +211,12 @@ class Filesystem
      *
      * from a comment on https://uk.php.net/copy
      */
-    public static function full_copy(string $source, string $target): void
+    public static function full_copy(Path $source, Path $target): void
     {
-        if (is_dir($source)) {
-            @mkdir($target);
+        if ($source->is_dir()) {
+            @$target->mkdir();
 
-            $d = \Safe\dir($source);
+            $d = \Safe\dir($source->str());
 
             while (true) {
                 $entry = $d->read();
@@ -222,34 +227,37 @@ class Filesystem
                     continue;
                 }
 
-                $Entry = $source . '/' . $entry;
-                if (is_dir($Entry)) {
-                    Filesystem::full_copy($Entry, $target . '/' . $entry);
+                $entry = $source->str() . '/' . $entry;
+                if (is_dir($entry)) {
+                    Filesystem::full_copy(
+                        new Path($entry),
+                        new Path($target->str() . '/' . $entry)
+                    );
                     continue;
                 }
-                copy($Entry, $target . '/' . $entry);
+                copy($entry, $target->str() . '/' . $entry);
             }
             $d->close();
         } else {
-            copy($source, $target);
+            $source->copy($target);
         }
     }
 
     /**
      * Return a list of all the regular files in a directory and subdirectories
      *
-     * @return string[]
+     * @return Path[]
      */
-    public static function list_files(string $base, string $_sub_dir = ""): array
+    public static function list_files(Path $base, string $_sub_dir = ""): array
     {
-        assert(is_dir($base));
+        assert($base->is_dir());
 
         $file_list = [];
 
         $files = [];
-        $dir = opendir("$base/$_sub_dir");
+        $dir = opendir("{$base->str()}/$_sub_dir");
         if ($dir === false) {
-            throw new UserError("Unable to open directory $base/$_sub_dir");
+            throw new UserError("Unable to open directory {$base->str()}/$_sub_dir");
         }
         try {
             while ($f = readdir($dir)) {
@@ -261,7 +269,7 @@ class Filesystem
         sort($files);
 
         foreach ($files as $filename) {
-            $full_path = "$base/$_sub_dir/$filename";
+            $full_path = "{$base->str()}/$_sub_dir/$filename";
 
             if (!is_link($full_path) && is_dir($full_path)) {
                 if (!($filename === "." || $filename === "..")) {
@@ -273,7 +281,7 @@ class Filesystem
                 }
             } else {
                 $full_path = str_replace("//", "/", $full_path);
-                $file_list[] = $full_path;
+                $file_list[] = new Path($full_path);
             }
         }
 
@@ -283,7 +291,7 @@ class Filesystem
     /**
      * Like glob, with support for matching very long patterns with braces.
      *
-     * @return string[]
+     * @return Path[]
      */
     public static function zglob(string $pattern): array
     {
@@ -298,18 +306,21 @@ class Filesystem
         } else {
             $r = glob($pattern);
             if ($r) {
-                return $r;
+                return array_map(fn ($p) => new Path($p), $r);
             } else {
                 return [];
             }
         }
     }
 
-    public static function stream_file(string $file, int $start, int $end): void
+    /**
+     * Stream a file to the client
+     */
+    public static function stream_file(Path $file, int $start, int $end): void
     {
-        $fp = fopen($file, 'r');
+        $fp = fopen($file->str(), 'r');
         if (!$fp) {
-            throw new \Exception("Failed to open $file");
+            throw new \Exception("Failed to open {$file->str()}");
         }
         try {
             fseek($fp, $start);
@@ -335,27 +346,20 @@ class Filesystem
     }
 
     /**
-     * Translates all possible directory separators to the appropriate one for the current system,
-     * and removes any duplicate separators.
-     */
-    public static function sanitize_path(string $path): string
-    {
-        $r = \Safe\preg_replace('|[\\\\/]+|S', DIRECTORY_SEPARATOR, $path);
-        return $r;
-    }
-
-    /**
      * Combines all path segments specified, ensuring no duplicate separators occur,
      * as well as converting all possible separators to the one appropriate for the current system.
      */
-    public static function join_path(string ...$paths): string
+    public static function join_path(string|Path ...$paths): Path
     {
         $output = "";
         foreach ($paths as $path) {
+            if ($path instanceof Path) {
+                $path = $path->str();
+            }
             if (empty($path)) {
                 continue;
             }
-            $path = Filesystem::sanitize_path($path);
+            $path = \Safe\preg_replace('|[\\\\/]+|S', DIRECTORY_SEPARATOR, $path);
             if (empty($output)) {
                 $output = $path;
             } else {
@@ -364,6 +368,7 @@ class Filesystem
                 $output .= DIRECTORY_SEPARATOR . $path;
             }
         }
-        return $output;
+        assert(!empty($output));
+        return new Path($output);
     }
 }

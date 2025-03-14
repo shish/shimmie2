@@ -25,12 +25,12 @@ class MP3FileHandler extends DataHandlerExtension
 
     protected function create_thumb(Image $image): bool
     {
-        copy("ext/handle_mp3/thumb.jpg", $image->get_thumb_filename());
+        (new Path("ext/handle_mp3/thumb.jpg"))->copy($image->get_thumb_filename());
         return true;
     }
 
-    protected function check_contents(string $tmpname): bool
+    protected function check_contents(Path $tmpname): bool
     {
-        return MimeType::get_for_file($tmpname) === MimeType::MP3;
+        return MimeType::get_for_file($tmpname->str()) === MimeType::MP3;
     }
 }

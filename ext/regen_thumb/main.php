@@ -126,7 +126,7 @@ class RegenThumb extends Extension
                 foreach ($images as $image) {
                     if (!$force) {
                         $path = Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $image->hash, false);
-                        if (file_exists($path)) {
+                        if ($path->exists()) {
                             continue;
                         }
                     }
@@ -149,15 +149,14 @@ class RegenThumb extends Extension
                     $i = 0;
                     foreach ($images as $image) {
                         $outname = $image->get_thumb_filename();
-                        if (file_exists($outname)) {
-                            unlink($outname);
+                        if ($outname->exists()) {
+                            filename: $outname->unlink();
                             $i++;
                         }
                     }
                     $page->flash("Deleted $i thumbnails for ".$event->params["delete_thumb_mime"]." images");
                 } else {
-                    $dir = "data/thumbs/";
-                    Filesystem::deltree($dir);
+                    Filesystem::deltree(new Path("data/thumbs/"));
                     $page->flash("Deleted all thumbnails");
                 }
 

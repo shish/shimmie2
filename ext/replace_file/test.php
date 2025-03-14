@@ -33,13 +33,13 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
         // replace it
         // create a copy because the file is deleted after upload
         $tmpfile = shm_tempnam("test");
-        copy("tests/favicon.png", $tmpfile);
-        $new_hash = \Safe\md5_file($tmpfile);
+        (new Path("tests/favicon.png"))->copy($tmpfile);
+        $new_hash = $tmpfile->md5();
         $_FILES = [
             'data' => [
                 'name' => 'favicon.png',
                 'type' => 'image/png',
-                'tmp_name' => $tmpfile,
+                'tmp_name' => $tmpfile->str(),
                 'error' => 0,
                 'size' => 246,
             ]
@@ -60,9 +60,9 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
         self::assertEquals(md5_file("tests/favicon.png"), $image->hash);
 
         // check that new files exist and old files don't
-        self::assertFalse(file_exists(Filesystem::warehouse_path(Image::IMAGE_DIR, $old_hash)));
-        self::assertFalse(file_exists(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $old_hash)));
-        self::assertTrue(file_exists(Filesystem::warehouse_path(Image::IMAGE_DIR, $new_hash)));
-        self::assertTrue(file_exists(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $new_hash)));
+        self::assertFalse(Filesystem::warehouse_path(Image::IMAGE_DIR, $old_hash)->exists());
+        self::assertFalse(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $old_hash)->exists());
+        self::assertTrue(Filesystem::warehouse_path(Image::IMAGE_DIR, $new_hash)->exists());
+        self::assertTrue(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $new_hash)->exists());
     }
 }

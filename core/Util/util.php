@@ -253,12 +253,12 @@ function get_debug_info_arr(): array
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
- * @param string[] $files
+ * @param Path[] $files
  */
 function require_all(array $files): void
 {
     foreach ($files as $filename) {
-        require_once $filename;
+        require_once $filename->str();
     }
 }
 
@@ -458,13 +458,21 @@ function generate_key(int $length = 20): string
     return $randomString;
 }
 
-function shm_tempnam(string $prefix = ""): string
+function shm_tempnam(string $prefix = ""): Path
 {
     if (!is_dir("data/temp")) {
         mkdir("data/temp");
     }
     $temp = \Safe\realpath("data/temp");
-    return \Safe\tempnam($temp, $prefix);
+    return new Path(\Safe\tempnam($temp, $prefix));
+}
+
+function shm_tempdir(string $prefix = ""): Path
+{
+    $temp = shm_tempnam($prefix);
+    $temp->unlink();
+    $temp->mkdir(0700, true);
+    return new Path($temp->str() . "/");
 }
 
 

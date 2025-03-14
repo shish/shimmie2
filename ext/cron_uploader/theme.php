@@ -20,9 +20,9 @@ use function MicroHTML\emptyHTML;
 class CronUploaderTheme extends Themelet
 {
     /**
-     * @param array{path:string,total_files:int,total_mb:string} $queue_dirinfo
-     * @param array{path:string,total_files:int,total_mb:string} $uploaded_dirinfo
-     * @param array{path:string,total_files:int,total_mb:string} $failed_dirinfo
+     * @param array{path:Path,total_files:int,total_mb:string} $queue_dirinfo
+     * @param array{path:Path,total_files:int,total_mb:string} $uploaded_dirinfo
+     * @param array{path:Path,total_files:int,total_mb:string} $failed_dirinfo
      * @param array<array{date_sent:string,message:string}>|null $log_entries
      */
     public function display_documentation(
@@ -57,17 +57,17 @@ class CronUploaderTheme extends Themelet
 			<td>Queue</td>
 			<td>{$queue_dirinfo['total_files']}</td>
 			<td>{$queue_dirinfo['total_mb']}</td>
-			<td>{$queue_dirinfo['path']}</td>
+			<td>{$queue_dirinfo['path']->str()}</td>
 			</tr><tr>
 			<td>Uploaded</td>
 			<td>{$uploaded_dirinfo['total_files']}</td>
 			<td>{$uploaded_dirinfo['total_mb']}</td>
-			<td>{$uploaded_dirinfo['path']}</td>
+			<td>{$uploaded_dirinfo['path']->str()}</td>
 			</tr><tr>
 			<td>Failed</td>
 			<td>{$failed_dirinfo['total_files']}</td>
 			<td>{$failed_dirinfo['total_mb']}</td>
-			<td>{$failed_dirinfo['path']}</td>
+			<td>{$failed_dirinfo['path']->str()}</td>
 			</tr></table>
 
 			<div>Cron Command: <input type='text' size='60' value='$cron_cmd' id='cron_command'>
@@ -94,7 +94,7 @@ class CronUploaderTheme extends Themelet
         $max_time = intval(ini_get('max_execution_time')) * .8;
 
         $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means.
-<br />(<b>{$queue_dirinfo['path']}</b>)
+<br />(<b>{$queue_dirinfo['path']->str()}</b>)
                     <ol>
                         <li style='text-align: left;'>Any sub-folders will be turned into tags.</li>
                         <li style='text-align: left;'>If the file name matches \"## - tag1 tag2.png\" the tags will be used.</li>
@@ -167,7 +167,7 @@ class CronUploaderTheme extends Themelet
     }
 
     /**
-     * @param string[] $failed_dirs
+     * @param Path[] $failed_dirs
      */
     public function display_form(array $failed_dirs): void
     {
@@ -181,7 +181,7 @@ class CronUploaderTheme extends Themelet
         $html .= "<tr><th>Failed dir</th><td><select name='failed_dir' required='required'>";
 
         foreach ($failed_dirs as $dir) {
-            $html .= "<option value='$dir'>$dir</option>";
+            $html .= "<option value='{$dir->str()}'>{$dir->str()}</option>";
         }
 
         $html .= "</select></td></tr>";

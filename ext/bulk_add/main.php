@@ -10,11 +10,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BulkAddEvent extends Event
 {
-    public string $dir;
+    public Path $dir;
     /** @var UploadResult[] */
     public array $results;
 
-    public function __construct(string $dir)
+    public function __construct(Path $dir)
     {
         parent::__construct();
         $this->dir = $dir;
@@ -33,8 +33,9 @@ class BulkAdd extends Extension
         global $page, $user;
         if ($event->page_matches("bulk_add", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
             $dir = $event->req_POST('dir');
+            assert(!empty($dir), "Directory cannot be empty");
             shm_set_timeout(null);
-            $bae = send_event(new BulkAddEvent($dir));
+            $bae = send_event(new BulkAddEvent(new Path($dir)));
             $this->theme->display_upload_results($page, $bae->results);
         }
     }
@@ -65,10 +66,10 @@ class BulkAdd extends Extension
 
     public function onBulkAdd(BulkAddEvent $event): void
     {
-        if (is_dir($event->dir) && is_readable($event->dir)) {
+        if ($event->dir->is_dir() && $event->dir->is_readable()) {
             $event->results = send_event(new DirectoryUploadEvent($event->dir))->results;
         } else {
-            $event->results = [new UploadError($event->dir, "is not a readable directory")];
+            $event->results = [new UploadError($event->dir->str(), "is not a readable directory")];
         }
     }
 }

@@ -215,7 +215,7 @@ class S3 extends Extension
             $client->putObject(
                 $config->get_string(S3Config::IMAGE_BUCKET),
                 $this->hash_to_path($image->hash),
-                \Safe\file_get_contents($image->get_image_filename()),
+                $image->get_image_filename()->get_contents(),
                 [
                     'ACL' => 'public-read',
                     'ContentType' => $image->get_mime(),

@@ -47,7 +47,7 @@ class Page
     // ==============================================
 
     public string $data = "";  // public only for unit test
-    private ?string $file = null;
+    private ?Path $file = null;
     private bool $file_delete = false;
     private ?string $filename = null;
     private ?string $disposition = null;
@@ -60,7 +60,7 @@ class Page
         $this->data = $data;
     }
 
-    public function set_file(string $file, bool $delete = false): void
+    public function set_file(Path $file, bool $delete = false): void
     {
         $this->file = $file;
         $this->file_delete = $delete;
@@ -280,7 +280,7 @@ class Page
                 assert(!is_null($this->file), "file should not be null with PageMode::FILE");
 
                 // https://gist.github.com/codler/3906826
-                $size = \Safe\filesize($this->file); // File size
+                $size = $this->file->filesize(); // File size
                 $length = $size;           // Content length
                 $start = 0;               // Start byte
                 $end = $size - 1;       // End byte
@@ -321,7 +321,7 @@ class Page
                     Filesystem::stream_file($this->file, $start, $end);
                 } finally {
                     if ($this->file_delete === true) {
-                        unlink($this->file);
+                        $this->file->unlink();
                     }
                 }
                 break;
@@ -368,51 +368,51 @@ class Page
         //We use $config_latest to make sure cache is reset if config is ever updated.
         $config_latest = 0;
         foreach (Filesystem::zglob("data/config/*") as $conf) {
-            $config_latest = max($config_latest, filemtime($conf));
+            $config_latest = max($config_latest, $conf->filemtime());
         }
 
         $css_cache_file = $this->get_css_cache_file($theme_name, $config_latest);
         $this->add_html_header(LINK([
             'rel' => 'stylesheet',
-            'href' => "$data_href/$css_cache_file",
+            'href' => "$data_href/{$css_cache_file->str()}",
             'type' => 'text/css'
         ]), 43);
 
         $initjs_cache_file = $this->get_initjs_cache_file($theme_name, $config_latest);
         $this->add_html_header(SCRIPT([
-            'src' => "$data_href/$initjs_cache_file",
+            'src' => "$data_href/{$initjs_cache_file->str()}",
             'type' => 'text/javascript'
         ]));
 
         $js_cache_file = $this->get_js_cache_file($theme_name, $config_latest);
         $this->add_html_header(SCRIPT([
             'defer' => true,
-            'src' => "$data_href/$js_cache_file",
+            'src' => "$data_href/{$js_cache_file->str()}",
             'type' => 'text/javascript'
         ]));
     }
 
     /**
-     * @param string[] $files
+     * @param Path[] $files
      */
-    private function get_cache_file(string $type, string $ext, string $theme_name, int $timestamp, array $files): string
+    private function get_cache_file(string $type, string $ext, string $theme_name, int $timestamp, array $files): Path
     {
         foreach ($files as $file) {
-            $timestamp = max($timestamp, filemtime($file));
+            $timestamp = max($timestamp, $file->filemtime());
         }
         $md5 = md5(serialize($files));
         $cache_file = Filesystem::data_path("cache/{$type}/{$theme_name}.{$timestamp}.{$md5}.{$ext}");
-        if (!file_exists($cache_file)) {
+        if (!$cache_file->exists()) {
             $mcss = new \MicroBundler\MicroBundler();
             foreach ($files as $file) {
-                $mcss->addSource($file);
+                $mcss->addSource($file->str());
             }
-            $mcss->save($cache_file);
+            $mcss->save($cache_file->str());
         }
         return $cache_file;
     }
 
-    private function get_css_cache_file(string $theme_name, int $config_latest): string
+    private function get_css_cache_file(string $theme_name, int $config_latest): Path
     {
         $files = array_merge(
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.css"),
@@ -421,7 +421,7 @@ class Page
         return self::get_cache_file('style', 'css', $theme_name, $config_latest, $files);
     }
 
-    private function get_initjs_cache_file(string $theme_name, int $config_latest): string
+    private function get_initjs_cache_file(string $theme_name, int $config_latest): Path
     {
         $files = array_merge(
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/init.js"),
@@ -430,13 +430,13 @@ class Page
         return self::get_cache_file('initscript', 'js', $theme_name, $config_latest, $files);
     }
 
-    private function get_js_cache_file(string $theme_name, int $config_latest): string
+    private function get_js_cache_file(string $theme_name, int $config_latest): Path
     {
         $files = array_merge(
             [
-                "vendor/bower-asset/jquery/dist/jquery.min.js",
-                "vendor/bower-asset/jquery-timeago/jquery.timeago.js",
-                "vendor/bower-asset/js-cookie/src/js.cookie.js",
+                new Path("vendor/bower-asset/jquery/dist/jquery.min.js"),
+                new Path("vendor/bower-asset/jquery-timeago/jquery.timeago.js"),
+                new Path("vendor/bower-asset/js-cookie/src/js.cookie.js"),
             ],
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/script.js"),
             Filesystem::zglob("themes/$theme_name/{" . implode(",", $this->get_theme_scripts()) . "}")
