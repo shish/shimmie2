@@ -1,0 +1,11 @@
+#permission_table .allowed {
+    color: #0F0;
+}
+
+#permission_table .denied {
+    color: #F00;
+}
+
+#permission_table .inherited {
+    opacity: 0.2;
+}
