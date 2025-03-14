@@ -53,8 +53,20 @@ and of course start organising your images :-)
 
         $this->display_page_header($page, $images);
 
-        $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
-        $page->add_block(new Block("Navigation", $nav, "left", 0));
+        $h_search_string = html_escape(Tag::implode($this->search_terms));
+        $extra = rawHTML("
+			<p><form action='".search_link()."' method='GET'>
+				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' />
+				<input type='hidden' name='q' value='post/list'>
+				<input type='submit' value='Find' style='display: none;' />
+			</form>
+		");
+
+        $this->display_navigation([
+            ($this->page_number <= 1) ? null : search_link($this->search_terms, $this->page_number - 1),
+            make_link(),
+            ($this->page_number >= $this->total_pages) ? null : search_link($this->search_terms, $this->page_number + 1),
+        ], $extra);
 
         if (count($images) > 0) {
             $this->display_page_images($page, $images);
@@ -70,31 +82,6 @@ and of course start organising your images :-)
     {
         global $page;
         $page->add_block(new Block("List Controls", rawHTML(join("<br>", $parts)), "left", 50));
-    }
-
-
-    /**
-     * @param string[] $search_terms
-     */
-    protected function build_navigation(int $page_number, int $total_pages, array $search_terms): HTMLElement
-    {
-        $prev = $page_number - 1;
-        $next = $page_number + 1;
-
-        $h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.search_link($search_terms, $prev).'">Prev</a>';
-        $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.search_link($search_terms, $next).'">Next</a>';
-
-        $h_search_string = html_escape(Tag::implode($search_terms));
-        $h_search = "
-			<p><form action='".search_link()."' method='GET'>
-				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' />
-				<input type='hidden' name='q' value='post/list'>
-				<input type='submit' value='Find' style='display: none;' />
-			</form>
-		";
-
-        return rawHTML($h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search);
     }
 
     /**

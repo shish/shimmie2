@@ -209,7 +209,7 @@ class UserPage extends Extension
                 array_splice($t->columns, 2, 0, [$col]);
             }
             $page->set_title("Users");
-            $page->add_block(Block::nav());
+            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
         if ($event->page_matches("user_admin/logout", method: "GET")) {
@@ -657,9 +657,6 @@ class UserPage extends Extension
     private function delete_user(Page $page, int $uid, bool $with_images = false, bool $with_comments = false): void
     {
         global $user, $config, $database;
-
-        $page->set_title("Error");
-        $page->add_block(Block::nav());
 
         $duser = User::by_id($uid);
         Log::warning("user", "Deleting user #{$uid} (@{$duser->name})");

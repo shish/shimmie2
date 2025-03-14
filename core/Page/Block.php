@@ -63,11 +63,6 @@ class Block
         $this->id = $str_id;
     }
 
-    public static function nav(): self
-    {
-        return new self("Navigation", A(["href" => make_link()], "Index"), "left", 0);
-    }
-
     /**
      * Compare two Block objects, used to sort them before being displayed
      */

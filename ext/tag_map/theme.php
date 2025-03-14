@@ -122,10 +122,9 @@ class TagMapTheme extends Themelet
     protected function display_nav(): void
     {
         global $page;
-        $page->add_block(new Block("Navigation", joinHTML(
+        $this->display_navigation(extra: joinHTML(
             BR(),
             [
-                A(["href" => make_link()], "Index"),
                 rawHTML("&nbsp;"),
                 A(["href" => make_link("tags/map")], "Map"),
                 A(["href" => make_link("tags/alphabetic")], "Alphabetic"),
@@ -133,7 +132,7 @@ class TagMapTheme extends Themelet
                 rawHTML("&nbsp;"),
                 A(["href" => Url::current()->withModifiedQuery(["mincount" => "1"])], "Show All"),
             ]
-        ), "left", 0));
+        ));
     }
 
     protected function build_az(int $tags_min): HTMLElement

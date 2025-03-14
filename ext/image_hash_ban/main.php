@@ -122,7 +122,7 @@ class ImageBan extends Extension
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
             $page->set_title("Post Bans");
-            $page->add_block(Block::nav());
+            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }

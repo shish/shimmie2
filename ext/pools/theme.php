@@ -124,7 +124,7 @@ class PoolsTheme extends Themelet
 				<input type='submit' value='Go' style='width:20%'>
 			</form>";
 
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
         $page->add_block(new Block("Search", rawHTML($search), "left", 10));
 
