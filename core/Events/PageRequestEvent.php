@@ -46,7 +46,7 @@ class PageRequestEvent extends Event
 
         // if we're looking at the root of the install,
         // use the default front page
-        if ($path == "") {
+        if ($path === "") {
             $path = $config->get_string(SetupConfig::FRONT_PAGE);
         }
         $this->path = $path;
@@ -155,7 +155,7 @@ class PageRequestEvent extends Event
         }
 
         assert($method === null || in_array($method, ["GET", "POST", "OPTIONS"]));
-        $authed = $authed ?? $method == "POST";
+        $authed = $authed ?? $method === "POST";
 
         // method check is fast so do that first
         if ($method !== null && $this->method !== $method) {
@@ -165,14 +165,14 @@ class PageRequestEvent extends Event
         // check if the path matches
         $parts = explode("/", $name);
         $part_count = count($parts);
-        if ($part_count != count($this->args)) {
+        if ($part_count !== count($this->args)) {
             return false;
         }
         $this->named_args = [];
         for ($i = 0; $i < $part_count; $i++) {
             if (str_starts_with($parts[$i], "{")) {
                 $this->named_args[substr($parts[$i], 1, -1)] = $this->args[$i];
-            } elseif ($parts[$i] != $this->args[$i]) {
+            } elseif ($parts[$i] !== $this->args[$i]) {
                 return false;
             }
         }
@@ -183,7 +183,7 @@ class PageRequestEvent extends Event
             if (!isset($this->POST["auth_token"])) {
                 throw new PermissionDenied("Permission Denied: Missing CSRF Token");
             }
-            if ($this->POST["auth_token"] != $user->get_auth_token()) {
+            if ($this->POST["auth_token"] !== $user->get_auth_token()) {
                 throw new PermissionDenied("Permission Denied: Invalid CSRF Token (Go back, refresh the page, and try again?)");
             }
         }

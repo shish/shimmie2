@@ -116,12 +116,12 @@ and of course start organising your images :-)
         global $config;
 
         if (WikiInfo::is_enabled() && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
-            if (count($this->search_terms) == 1) {
+            if (count($this->search_terms) === 1) {
                 $st = Tag::implode($this->search_terms);
 
                 $wikiPage = Wiki::get_page($st);
                 $short_wiki_description = '';
-                if ($wikiPage->id != -1) {
+                if ($wikiPage->id !== -1) {
                     // only show first line of wiki
                     $short_wiki_description = format_text(explode("\n", $wikiPage->body, 2)[0]);
                 }
@@ -142,7 +142,7 @@ and of course start organising your images :-)
     {
         global $config;
 
-        if (count($this->search_terms) == 0) {
+        if (count($this->search_terms) === 0) {
             $page_title = $config->get_string(SetupConfig::TITLE);
         } else {
             $search_string = implode(' ', $this->search_terms);

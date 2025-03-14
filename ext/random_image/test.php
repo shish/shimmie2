@@ -13,13 +13,13 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         $this->log_out();
 
         $page = $this->get_page("random_image/view");
-        $this->assertEquals("Post $image_id: test", $page->title);
+        self::assertEquals("Post $image_id: test", $page->title);
 
         $page = $this->get_page("random_image/view/test");
-        $this->assertEquals("Post $image_id: test", $page->title);
+        self::assertEquals("Post $image_id: test", $page->title);
 
         $page = $this->get_page("random_image/download");
-        $this->assertEquals($page->mode, PageMode::FILE);
+        self::assertEquals($page->mode, PageMode::FILE);
         # FIXME: assert($raw == file(blah.jpg))
     }
 
@@ -32,7 +32,7 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         # enabled, no image = no text
         $config->set_bool("show_random_block", true);
         $page = $this->get_page("post/list");
-        $this->assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
+        self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
 
         # enabled, image = text
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
@@ -42,11 +42,11 @@ class RandomImageTest extends ShimmiePHPUnitTestCase
         # disabled, image = no text
         $config->set_bool("show_random_block", false);
         $page = $this->get_page("post/list");
-        $this->assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
+        self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
 
         # disabled, no image = no image
         $this->delete_image($image_id);
         $page = $this->get_page("post/list");
-        $this->assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
+        self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
     }
 }

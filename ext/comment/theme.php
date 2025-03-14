@@ -204,7 +204,7 @@ class CommentListTheme extends Themelet
     {
         global $config, $user;
 
-        if ($comment->owner_id == $config->get_int(UserAccountsConfig::ANON_ID)) {
+        if ($comment->owner_id === $config->get_int(UserAccountsConfig::ANON_ID)) {
             $anoncode = "";
             $anoncode2 = "";
             if ($this->show_anon_id) {
@@ -215,7 +215,7 @@ class CommentListTheme extends Themelet
                 #if($user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
                 if ($user->can(IPBanPermission::VIEW_IP) || $config->get_bool(CommentConfig::SHOW_REPEAT_ANONS, false)) {
-                    if ($this->anon_map[$comment->poster_ip] != $this->anon_id) {
+                    if ($this->anon_map[$comment->poster_ip] !== $this->anon_id) {
                         $anoncode2 = SUP("(" . $this->anon_map[$comment->poster_ip] . ")");
                     }
                 }

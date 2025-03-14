@@ -42,7 +42,7 @@ class UploadTheme extends Themelet
 
         $limits = get_upload_limits();
 
-        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
+        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") !== "none");
         $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
         $max_total_size = $limits['shm_post'];
@@ -96,7 +96,7 @@ class UploadTheme extends Themelet
         global $config;
         $upload_list = emptyHTML();
         $upload_count = $config->get_int(UploadConfig::COUNT);
-        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") != "none");
+        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") !== "none");
         $accept = $this->get_accept();
 
         $headers = emptyHTML();

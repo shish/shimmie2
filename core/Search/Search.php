@@ -212,7 +212,7 @@ class Search
             // We can only do this if we're sorting by ID, because
             // we're going to be using the image_tags table, which
             // only has image_id and tag_id, not any other columns
-            && ($params->order == "id DESC" || $params->order == "images.id DESC")
+            && ($params->order === "id DESC" || $params->order === "images.id DESC")
             // This is only an optimisation if we are applying limit
             // and offset
             && !is_null($limit)
@@ -223,7 +223,7 @@ class Search
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
             $tag_array = self::tag_or_wildcard_to_ids($tc->tag);
-            if (count($tag_array) == 0) {
+            if (count($tag_array) === 0) {
                 // if wildcard expanded to nothing, take a shortcut
                 static::$_search_path[] = "invalid_tag";
                 $query = new Querylet("SELECT $columns FROM images WHERE 1=0");
@@ -261,12 +261,12 @@ class Search
 
                 if ($tq->positive) {
                     $all_nonexistent_negatives = false;
-                    if ($tag_count == 0) {
+                    if ($tag_count === 0) {
                         # one of the positive tags had zero results, therefor there
                         # can be no results; "where 1=0" should shortcut things
                         static::$_search_path[] = "invalid_tag";
                         return new Querylet("SELECT $columns FROM images WHERE 1=0");
-                    } elseif ($tag_count == 1) {
+                    } elseif ($tag_count === 1) {
                         // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
                         $positive_tag_id_array[] = $tag_ids[0];
                     } else {
@@ -366,7 +366,7 @@ class Search
             $query->append(new Querylet(" ORDER BY ".$params->order));
         }
 
-        if (!is_null($limit) && $count == false) {
+        if (!is_null($limit) && $count === false) {
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
             $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
         }

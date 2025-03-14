@@ -16,7 +16,7 @@ class PostSourceTest extends ShimmiePHPUnitTestCase
         send_event(new ImageInfoSetEvent($image, 0, ["source" => "http://example.com"]));
 
         $this->get_page("post/view/$image_id");
-        $this->assert_text("example.com");
+        self::assert_text("example.com");
     }
 
     public function testSourceSearch(): void
@@ -27,14 +27,14 @@ class PostSourceTest extends ShimmiePHPUnitTestCase
 
         send_event(new ImageInfoSetEvent($image, 0, ["source" => "http://example.com"]));
 
-        $this->assert_search_results(["source:http://example.com"], [$image_id], "exact match");
-        $this->assert_search_results(["source:example.com"], [$image_id], "match without protocol");
-        $this->assert_search_results(["source:https://example.com"], [$image_id], "match with wrong protocol");
+        self::assert_search_results(["source:http://example.com"], [$image_id], "exact match");
+        self::assert_search_results(["source:example.com"], [$image_id], "match without protocol");
+        self::assert_search_results(["source:https://example.com"], [$image_id], "match with wrong protocol");
 
         send_event(new ImageInfoSetEvent($image, 0, ["source" => "http://example.com/THING"]));
 
-        $this->assert_search_results(["source:http://example.com"], [$image_id], "prefix match");
-        $this->assert_search_results(["source:http://example.com/THING"], [$image_id], "case match");
-        $this->assert_search_results(["source:http://example.com/thing"], [$image_id], "case mismatch");
+        self::assert_search_results(["source:http://example.com"], [$image_id], "prefix match");
+        self::assert_search_results(["source:http://example.com/THING"], [$image_id], "case match");
+        self::assert_search_results(["source:http://example.com/thing"], [$image_id], "case mismatch");
     }
 }

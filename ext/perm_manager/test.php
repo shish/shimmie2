@@ -10,6 +10,6 @@ class PermManagerTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_admin();
         $this->get_page('perm_manager');
-        $this->assert_title("User Classes");
+        self::assert_title("User Classes");
     }
 }

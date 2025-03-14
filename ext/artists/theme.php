@@ -31,13 +31,13 @@ class ArtistsTheme extends Themelet
 
         $html = "";
 
-        if ($mode == "neutral") {
+        if ($mode === "neutral") {
             $html = make_form(make_link("artist/new_artist"))."
 						<input type='submit' name='edit' id='edit' value='New Artist'/>
 					</form>";
         }
 
-        if ($mode == "editor") {
+        if ($mode === "editor") {
             $html = make_form(make_link("artist/new_artist"))."
 						<input type='submit' name='edit' value='New Artist'/>
 					</form>
@@ -197,7 +197,7 @@ class ArtistsTheme extends Themelet
         ];
 
         foreach ($artists as $artist) {
-            if ($artist['type'] != 'artist') {
+            if ($artist['type'] !== 'artist') {
                 $artist['name'] = str_replace("_", " ", $artist['name']);
             }
 
@@ -210,10 +210,10 @@ class ArtistsTheme extends Themelet
             $html .= "<tr>".
                 "<td class='left'>".$elementLink;
 
-            //if ($artist['type'] == 'member')
+            //if ($artist['type'] === 'member')
             //	$html .= " (member of ".$artist_link.")";
 
-            //if ($artist['type'] == 'alias')
+            //if ($artist['type'] === 'alias')
             //	$html .= " (alias for ".$artist_link.")";
 
             $html .= "</td>".

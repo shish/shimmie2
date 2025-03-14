@@ -10,6 +10,6 @@ class SystemTest extends ShimmiePHPUnitTestCase
     {
         global $page;
         $this->get_page("system");
-        $this->assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertEquals(PageMode::REDIRECT, $page->mode);
     }
 }

@@ -20,16 +20,16 @@ class TipsTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_admin();
 
         $this->get_page("tips/list");
-        $this->assert_title("Tips List");
+        self::assert_title("Tips List");
 
         send_event(new CreateTipEvent(true, "", "a postless tip"));
         $this->get_page("post/list");
-        $this->assert_text("a postless tip");
+        self::assert_text("a postless tip");
 
         $tip_id = (int)$database->get_one("SELECT id FROM tips");
         send_event(new DeleteTipEvent($tip_id));
         $this->get_page("post/list");
-        $this->assert_no_text("a postless tip");
+        self::assert_no_text("a postless tip");
     }
 
     public function testImaged(): void
@@ -38,16 +38,16 @@ class TipsTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_admin();
 
         $this->get_page("tips/list");
-        $this->assert_title("Tips List");
+        self::assert_title("Tips List");
 
         send_event(new CreateTipEvent(true, "coins.png", "a postless tip"));
         $this->get_page("post/list");
-        $this->assert_text("a postless tip");
+        self::assert_text("a postless tip");
 
         $tip_id = (int)$database->get_one("SELECT id FROM tips");
         send_event(new DeleteTipEvent($tip_id));
         $this->get_page("post/list");
-        $this->assert_no_text("a postless tip");
+        self::assert_no_text("a postless tip");
     }
 
     public function testDisabled(): void
@@ -56,15 +56,15 @@ class TipsTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_admin();
 
         $this->get_page("tips/list");
-        $this->assert_title("Tips List");
+        self::assert_title("Tips List");
 
         send_event(new CreateTipEvent(false, "", "a postless tip"));
         $this->get_page("post/list");
-        $this->assert_no_text("a postless tip");
+        self::assert_no_text("a postless tip");
 
         $tip_id = (int)$database->get_one("SELECT id FROM tips");
         send_event(new DeleteTipEvent($tip_id));
         $this->get_page("post/list");
-        $this->assert_no_text("a postless tip");
+        self::assert_no_text("a postless tip");
     }
 }

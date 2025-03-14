@@ -90,7 +90,7 @@ class UserConfig extends Extension
             ]);
             $duser = User::by_id($input['id']);
 
-            if ($user->id != $duser->id && !$user->can(UserAccountsPermission::CHANGE_OTHER_USER_SETTING)) {
+            if ($user->id !== $duser->id && !$user->can(UserAccountsPermission::CHANGE_OTHER_USER_SETTING)) {
                 throw new PermissionDenied("You do not have permission to change other user's settings");
             }
 

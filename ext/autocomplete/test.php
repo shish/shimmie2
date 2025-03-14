@@ -14,19 +14,19 @@ class AutoCompleteTest extends ShimmiePHPUnitTestCase
 
         $this->log_out();
         $page = $this->get_page('api/internal/autocomplete', ["s" => "not-a-tag"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEquals("[]", $page->data);
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEquals("[]", $page->data);
 
         $page = $this->get_page('api/internal/autocomplete', ["s" => "li"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEquals('{"link":{"newtag":null,"count":1}}', $page->data);
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEquals('{"link":{"newtag":null,"count":1}}', $page->data);
 
         $page = $this->get_page('api/internal/autocomplete', ["s" => "pr"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEquals('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEquals('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
     }
 
     public function testCategories(): void
@@ -35,19 +35,19 @@ class AutoCompleteTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "artist:bob");
 
         $page = $this->get_page('api/internal/autocomplete', ["s" => "bob"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
 
         $page = $this->get_page('api/internal/autocomplete', ["s" => "art"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
 
         $page = $this->get_page('api/internal/autocomplete', ["s" => "artist:"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
     }
 
     public function testCyrillic(): void
@@ -61,14 +61,14 @@ class AutoCompleteTest extends ShimmiePHPUnitTestCase
 
         // check that lowercase search returns all three cases of matching words
         $page = $this->get_page('api/internal/autocomplete', ["s" => "со"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
 
         // check that uppercase search returns all three cases of matching words
         $page = $this->get_page('api/internal/autocomplete', ["s" => "СО"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(PageMode::DATA, $page->mode);
-        $this->assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
     }
 }

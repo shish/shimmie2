@@ -35,7 +35,7 @@ class BulkImportExport extends DataHandlerExtension
                     $item = array_pop($json_data);
                     try {
                         $image = Image::by_hash($item->hash);
-                        if ($image != null) {
+                        if ($image !== null) {
                             $skipped++;
                             Log::info(BulkImportExportInfo::KEY, "Post $item->hash already present, skipping");
                             continue;
@@ -54,12 +54,12 @@ class BulkImportExport extends DataHandlerExtension
                                 'tags' => $item->new_tags,
                             ]))->images;
 
-                            if (count($images) == 0) {
+                            if (count($images) === 0) {
                                 throw new UserError("Unable to import file $item->hash");
                             }
                             foreach ($images as $image) {
                                 $event->images[] = $image;
-                                if ($item->source != null) {
+                                if ($item->source !== null) {
                                     $image->set_source($item->source);
                                 }
                                 send_event(new BulkImportEvent($image, $item));
@@ -102,7 +102,7 @@ class BulkImportExport extends DataHandlerExtension
         global $user, $page;
 
         if ($user->can(BulkImportExportPermission::BULK_EXPORT) &&
-            ($event->action == self::EXPORT_ACTION_NAME)) {
+            ($event->action === self::EXPORT_ACTION_NAME)) {
             $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = shm_tempnam("bulk_export");
             $zip = new \ZipArchive();

@@ -8,7 +8,7 @@ class SetupTest extends ShimmiePHPUnitTestCase
 {
     public function testParseSettings(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             [
                 "mynull" => null,
                 "mystring" => "hello world!",
@@ -51,7 +51,7 @@ class SetupTest extends ShimmiePHPUnitTestCase
             ])
         );
 
-        $this->assertException(InvalidInput::class, function () {
+        self::assertException(InvalidInput::class, function () {
             ConfigSaveEvent::postToSettings([
                 "_type_myint" => "cake",
                 "_config_myint" => "tasty",
@@ -64,20 +64,20 @@ class SetupTest extends ShimmiePHPUnitTestCase
         # for a bug where it was coming out as "\nok"; it doesn't
         # check that niceurls actually work
         $this->get_page('nicetest');
-        $this->assert_content("ok");
-        $this->assert_no_content("\n");
+        self::assert_content("ok");
+        self::assert_no_content("\n");
     }
 
     public function testNiceDebug(): void
     {
         // the automatic testing for shimmie2-examples depends on this
         $page = $this->get_page('nicedebug/foo%2Fbar/1');
-        $this->assertEquals('{"args":["nicedebug","foo%2Fbar","1"]}', $page->data);
+        self::assertEquals('{"args":["nicedebug","foo%2Fbar","1"]}', $page->data);
     }
 
     public function testAuthAnon(): void
     {
-        $this->assertException(PermissionDenied::class, function () {
+        self::assertException(PermissionDenied::class, function () {
             $this->get_page('setup');
         });
     }
@@ -85,7 +85,7 @@ class SetupTest extends ShimmiePHPUnitTestCase
     public function testAuthUser(): void
     {
         $this->log_in_as_user();
-        $this->assertException(PermissionDenied::class, function () {
+        self::assertException(PermissionDenied::class, function () {
             $this->get_page('setup');
         });
     }
@@ -94,15 +94,15 @@ class SetupTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_admin();
         $this->get_page('setup');
-        $this->assert_title("Shimmie Setup");
-        $this->assert_text("General");
+        self::assert_title("Shimmie Setup");
+        self::assert_text("General");
     }
 
     public function testAdvanced(): void
     {
         $this->log_in_as_admin();
         $this->get_page('setup', ['advanced' => 'on']);
-        $this->assert_title("Shimmie Setup");
-        $this->assert_text("Minimum free space");
+        self::assert_title("Shimmie Setup");
+        self::assert_text("Minimum free space");
     }
 }
