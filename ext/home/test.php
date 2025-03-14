@@ -9,6 +9,6 @@ class HomeTest extends ShimmiePHPUnitTestCase
     public function testHomePage(): void
     {
         $page = $this->get_page('home');
-        $this->assertStringContainsString("Posts", $page->data);
+        self::assertStringContainsString("Posts", $page->data);
     }
 }

@@ -31,7 +31,7 @@ class EventTracingCache implements CacheInterface
         $sentinel = "__etc_sentinel";
         $this->tracer->begin("Cache Get", ["key" => $key]);
         $val = $this->engine->get($key, $sentinel);
-        if ($val != $sentinel) {
+        if ($val !== $sentinel) {
             $res = "hit";
             $this->hits++;
         } else {

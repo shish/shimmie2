@@ -83,7 +83,7 @@ class PoolsTheme extends Themelet
 
         $page->add_block(new Block("Pools", $table, position: 10));
 
-        if ($search != "" and !str_starts_with($search, '/')) {
+        if ($search !== "" and !str_starts_with($search, '/')) {
             $search = '/'.$search;
         }
         $this->display_paginator($page, "pool/list".$search, null, $pageNumber, $totalPages);
@@ -190,7 +190,7 @@ class PoolsTheme extends Themelet
             )
         );
 
-        if ($user->id == $pool->user_id || $user->can(PoolsPermission::ADMIN)) {
+        if ($user->id === $pool->user_id || $user->can(PoolsPermission::ADMIN)) {
             $editor->appendChild(
                 SCRIPT(
                     ["type" => "text/javascript"],
@@ -351,9 +351,9 @@ class PoolsTheme extends Themelet
             $user_link = A(["href" => make_link("user/" . url_escape($history["user_name"]))], $history["user_name"]);
             $revert_link = A(["href" => make_link("pool/revert/" . $history["id"])], "Revert");
 
-            if ($history['action'] == 1) {
+            if ($history['action'] === 1) {
                 $prefix = "+";
-            } elseif ($history['action'] == 0) {
+            } elseif ($history['action'] === 0) {
                 $prefix = "-";
             } else {
                 throw new \RuntimeException("history['action'] not in {0, 1}");

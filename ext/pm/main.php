@@ -98,7 +98,7 @@ class PM
         if (!$user->can(PrivMsgPermission::READ_PM)) {
             return null;
         }
-        if (($duser->id != $user->id) && !$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
+        if (($duser->id !== $user->id) && !$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
             return null;
         }
 
@@ -121,7 +121,7 @@ class PM
         if (!$user->can(PrivMsgPermission::READ_PM)) {
             return null;
         }
-        if (($duser->id != $user->id) && !$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
+        if (($duser->id !== $user->id) && !$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
             return null;
         }
 
@@ -218,7 +218,7 @@ class PrivMsg extends Extension
             if (!is_null($pms)) {
                 $this->theme->display_pms($page, $pms);
             }
-            if ($user->can(PrivMsgPermission::SEND_PM) && $user->id != $duser->id) {
+            if ($user->can(PrivMsgPermission::SEND_PM) && $user->id !== $duser->id) {
                 $this->theme->display_composer($page, $user, $duser);
             }
         }
@@ -232,9 +232,9 @@ class PrivMsg extends Extension
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
                 throw new ObjectNotFound("No such PM");
-            } elseif (($pm["to_id"] == $user->id) || $user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
+            } elseif (($pm["to_id"] === $user->id) || $user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
                 $from_user = User::by_id((int)$pm["from_id"]);
-                if ($pm["to_id"] == $user->id) {
+                if ($pm["to_id"] === $user->id) {
                     $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
                     $cache->delete("pm-count-{$user->id}");
                 }
@@ -252,7 +252,7 @@ class PrivMsg extends Extension
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
                 throw new ObjectNotFound("No such PM");
-            } elseif (($pm["to_id"] == $user->id) || $user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
+            } elseif (($pm["to_id"] === $user->id) || $user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
                 $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
                 $cache->delete("pm-count-{$user->id}");
                 Log::info("pm", "Deleted PM #$pm_id", "PM deleted");

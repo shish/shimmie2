@@ -18,24 +18,24 @@ class NotATagTest extends ShimmiePHPUnitTestCase
 
         // Original
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: pbx");
+        self::assert_title("Post $image_id: pbx");
 
         // Modified OK
         send_event(new TagSetEvent($image, ["two"]));
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: two");
+        self::assert_title("Post $image_id: two");
 
         // Modified Bad as user - redirect
-        $this->assertException(TagSetException::class, function () use ($image) {
+        self::assertException(TagSetException::class, function () use ($image) {
             send_event(new TagSetEvent($image, ["three", "face"]));
         });
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: two");
+        self::assert_title("Post $image_id: two");
 
         // Modified Bad as admin - ignore (should warn?)
         $this->log_in_as_admin();
         send_event(new TagSetEvent($image, ["four", "face"]));
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: four");
+        self::assert_title("Post $image_id: four");
     }
 }

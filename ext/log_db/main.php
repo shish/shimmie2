@@ -79,7 +79,7 @@ class ActorColumn extends Column
     public function display(array $row): HTMLElement
     {
         $ret = emptyHTML();
-        if ($row['username'] != "Anonymous") {
+        if ($row['username'] !== "Anonymous") {
             $ret->appendChild(A(["href" => make_link("user/{$row['username']}"), "title" => $row['address']], $row['username']));
             $ret->appendChild(BR());
         }
@@ -122,7 +122,7 @@ class MessageColumn extends Column
         $s->appendChild(OPTION(["value" => ""], '-'));
         foreach (LogLevel::names_to_levels() as $k => $v) {
             $attrs = ["value" => $v];
-            if ($v == @$inputs["r_{$this->name}"][1]) {
+            if ($v === @$inputs["r_{$this->name}"][1]) {
                 $attrs["selected"] = true;
             }
             $s->appendChild(OPTION($attrs, $k));

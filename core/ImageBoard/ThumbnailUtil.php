@@ -56,7 +56,7 @@ class ThumbnailUtil
         list($width, $height, $scale) = self::get_scaled_by_aspect_ratio($orig_width, $orig_height, $max_width, $max_height);
 
         if ($scale > 1 && $config->get_bool(ThumbnailConfig::UPSCALE)) {
-            return [(int)$orig_width, (int)$orig_height];
+            return [$orig_width, $orig_height];
         } else {
             return [$width, $height];
         }

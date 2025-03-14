@@ -25,7 +25,7 @@ class Installer
         if ($dsn) {
             self::do_install($dsn);
         } else {
-            if (PHP_SAPI == 'cli') {
+            if (PHP_SAPI === 'cli') {
                 print("INSTALL_DSN needs to be set for CLI installation\n");
                 exit(1);
             } else {
@@ -38,7 +38,7 @@ class Installer
     {
         if (getenv("INSTALL_DSN")) {
             $dsn = getenv("INSTALL_DSN");
-        } elseif (@$_POST["database_type"] == DatabaseDriverID::SQLITE->value) {
+        } elseif (@$_POST["database_type"] === DatabaseDriverID::SQLITE->value) {
             /** @noinspection PhpUnhandledExceptionInspection */
             $id = bin2hex(random_bytes(8));
             $dsn = "sqlite:data/shimmie.{$id}.sqlite";
@@ -66,12 +66,12 @@ class Installer
         $warnings = [];
         $errors = [];
 
-        if (check_gd_version() == 0 && check_im_version() == 0) {
+        if (check_gd_version() === 0 && check_im_version() === 0) {
             $errors[] = "
             No thumbnailers could be found - install the imagemagick
             tools (or the PHP-GD library, if imagemagick is unavailable).
         ";
-        } elseif (check_im_version() == 0) {
+        } elseif (check_im_version() === 0) {
             $warnings[] = "
             The 'convert' command (from the imagemagick package)
             could not be found - PHP-GD can be used instead, but
@@ -300,7 +300,7 @@ class Installer
         }
 
         if (file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
-            if (PHP_SAPI == 'cli') {
+            if (PHP_SAPI === 'cli') {
                 print("Installation Successful\n");
                 exit(0);
             } else {

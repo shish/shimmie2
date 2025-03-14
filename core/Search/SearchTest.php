@@ -15,12 +15,12 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
         $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
 
-        $this->assert_search_results(["question?"], [$image_id_1]);
-        $this->assert_search_results(["question."], [$image_id_2]);
-        $this->assert_search_results(["colon:thing"], [$image_id_1]);
-        $this->assert_search_results(["colon_thing"], [$image_id_2]);
-        $this->assert_search_results(["exclamation!"], [$image_id_1]);
-        $this->assert_search_results(["exclamation%"], [$image_id_2]);
+        self::assert_search_results(["question?"], [$image_id_1]);
+        self::assert_search_results(["question."], [$image_id_2]);
+        self::assert_search_results(["colon:thing"], [$image_id_1]);
+        self::assert_search_results(["colon_thing"], [$image_id_2]);
+        self::assert_search_results(["exclamation!"], [$image_id_1]);
+        self::assert_search_results(["exclamation%"], [$image_id_2]);
     }
 
     public function testOrder(): void
@@ -32,18 +32,18 @@ class SearchTest extends ShimmiePHPUnitTestCase
 
         $is1 = Search::find_images(0, null, ["order=random_4123"]);
         $ids1 = array_map(fn ($image) => $image->id, $is1);
-        $this->assertEquals(3, count($ids1));
+        self::assertEquals(3, count($ids1));
 
         $is2 = Search::find_images(0, null, ["order=random_4123"]);
         $ids2 = array_map(fn ($image) => $image->id, $is2);
-        $this->assertEquals(3, count($ids1));
+        self::assertEquals(3, count($ids1));
 
         $is3 = Search::find_images(0, null, ["order=random_6543"]);
         $ids3 = array_map(fn ($image) => $image->id, $is3);
-        $this->assertEquals(3, count($ids3));
+        self::assertEquals(3, count($ids3));
 
-        $this->assertEquals($ids1, $ids2);
-        $this->assertNotEquals($ids1, $ids3);
+        self::assertEquals($ids1, $ids2);
+        self::assertNotEquals($ids1, $ids3);
     }
 
     /**
@@ -57,8 +57,8 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $this->log_out();
 
         # make sure both uploads were ok
-        $this->assertTrue($image_id_1 > 0);
-        $this->assertTrue($image_id_2 > 0);
+        self::assertTrue($image_id_1 > 0);
+        self::assertTrue($image_id_2 > 0);
 
         return [$image_id_1, $image_id_2];
     }
@@ -87,7 +87,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         global $database;
 
         $tcs = array_map(
-            fn ($tag) => ($tag[0] == "-") ?
+            fn ($tag) => ($tag[0] === "-") ?
                 new TagCondition(substr($tag, 1), false) :
                 new TagCondition($tag),
             $tcs
@@ -133,7 +133,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_NoTags(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: [],
             res: [$image_ids[1], $image_ids[0]],
             path: ["no_tags"],
@@ -147,7 +147,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_FastPath_NoResults(): void
     {
         $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["maumaumau"],
             res: [],
             path: ["fast", "invalid_tag"],
@@ -158,7 +158,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_FastPath_OneResult(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["pbx"],
             res: [$image_ids[0]],
             path: ["fast"],
@@ -169,7 +169,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_FastPath_ManyResults(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["computer"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["fast"],
@@ -180,7 +180,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_FastPath_WildNoResults(): void
     {
         $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["asdfasdf*"],
             res: [],
             path: ["fast", "invalid_tag"],
@@ -199,7 +199,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_FastPath_WildOneResult(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["screen*"],
             res: [$image_ids[0]],
             path: ["fast"],
@@ -215,7 +215,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->testUpload();
         // two images match comp* - one matches it once, one matches it twice
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["comp*"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["fast"],
@@ -231,7 +231,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $this->testUpload();
         # multiple tags, one of which doesn't exist
         # (test the "one tag doesn't exist = no hits" path)
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["computer", "not_a_tag"],
             res: [],
             path: ["general", "invalid_tag"],
@@ -242,7 +242,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_GeneralPath_OneResult(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["computer", "screenshot"],
             res: [$image_ids[0]],
             path: ["general", "some_positives"],
@@ -261,7 +261,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_GeneralPath_WildOneResult(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["comp*", "screenshot"],
             res: [$image_ids[0]],
             path: ["general", "some_positives"],
@@ -272,7 +272,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_GeneralPath_ManyResults(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["computer", "thing"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["general", "some_positives"],
@@ -283,7 +283,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_GeneralPath_WildManyResults(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["comp*", "-asdf"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["general", "some_positives"],
@@ -294,7 +294,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_GeneralPath_SubtractValidFromResults(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["computer", "-pbx"],
             res: [$image_ids[1]],
             path: ["general", "some_positives"],
@@ -305,7 +305,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_GeneralPath_SubtractNotValidFromResults(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["computer", "-not_a_tag"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["general", "some_positives"],
@@ -317,7 +317,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->testUpload();
         // negative tag alone, should remove the image with that tag
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["-pbx"],
             res: [$image_ids[1]],
             path: ["general", "only_negative_tags"],
@@ -329,7 +329,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->testUpload();
         // negative that doesn't exist, should return all results
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["-not_a_tag"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["general", "all_nonexistent_negatives"],
@@ -341,7 +341,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->testUpload();
         // multiple negative tags that don't exist, should return all results
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["-not_a_tag", "-also_not_a_tag"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["general", "all_nonexistent_negatives"],
@@ -355,12 +355,12 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_ImgCond_NoResults(): void
     {
         $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["hash=1234567890"],
             res: [],
             path: ["no_tags"],
         );
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["ratio=42:12345"],
             res: [],
             path: ["no_tags"],
@@ -371,17 +371,17 @@ class SearchTest extends ShimmiePHPUnitTestCase
     public function testBSQ_ImgCond_OneResult(): void
     {
         $image_ids = $this->testUpload();
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["hash=feb01bab5698a11dd87416724c7a89e3"],
             res: [$image_ids[0]],
             path: ["no_tags"],
         );
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["id={$image_ids[1]}"],
             res: [$image_ids[1]],
             path: ["no_tags"],
         );
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["filename=screenshot"],
             res: [$image_ids[0]],
             path: ["no_tags"],
@@ -393,17 +393,17 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->testUpload();
 
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["size=640x480"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["no_tags"],
         );
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["tags=5"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["no_tags"],
         );
-        $this->assert_BSQ(
+        self::assert_BSQ(
             ics: ["ext=jpg"],
             res: [$image_ids[1], $image_ids[0]],
             path: ["no_tags"],
@@ -418,7 +418,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->testUpload();
         // multiple tags, many results
-        $this->assert_BSQ(
+        self::assert_BSQ(
             tcs: ["computer"],
             ics: ["size=640x480"],
             res: [$image_ids[1], $image_ids[0]],
@@ -435,9 +435,9 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $image_ids = $this->testUpload();
 
         $res = Search::get_images($image_ids);
-        $this->assertGreaterThan($res[0]->id, $res[1]->id);
+        self::assertGreaterThan($res[0]->id, $res[1]->id);
 
         $res = Search::get_images(array_reverse($image_ids));
-        $this->assertLessThan($res[0]->id, $res[1]->id);
+        self::assertLessThan($res[0]->id, $res[1]->id);
     }
 }

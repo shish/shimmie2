@@ -259,7 +259,7 @@ class UserPageTheme extends Themelet
         $html = emptyHTML();
 
         // just a fool-admin protection so they dont mess around with anon users.
-        if ($duser->id != $config->get_int(UserAccountsConfig::ANON_ID)) {
+        if ($duser->id !== $config->get_int(UserAccountsConfig::ANON_ID)) {
             if ($user->can(UserAccountsPermission::EDIT_USER_NAME)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,

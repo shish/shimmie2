@@ -19,22 +19,22 @@ class FeaturedTest extends ShimmiePHPUnitTestCase
         // Admin can feature things
         $this->log_in_as_admin();
         $page = $this->post_page("featured_image/set/$image_id");
-        $this->assertEquals(302, $page->code);
+        self::assertEquals(302, $page->code);
 
         $this->get_page("post/list");
-        $this->assert_text("Featured Post");
+        self::assert_text("Featured Post");
 
         # FIXME: test changing from one feature to another
 
         $page = $this->get_page("featured_image/download");
-        $this->assertEquals(200, $page->code);
+        self::assertEquals(200, $page->code);
 
         $page = $this->get_page("featured_image/view");
-        $this->assertEquals(200, $page->code);
+        self::assertEquals(200, $page->code);
 
         // after deletion, there should be no feature
         $this->delete_image($image_id);
         $this->get_page("post/list");
-        $this->assert_no_text("Featured Post");
+        self::assert_no_text("Featured Post");
     }
 }

@@ -12,7 +12,7 @@ class PageTest extends ShimmiePHPUnitTestCase
         $page->set_mode(PageMode::PAGE);
         ob_start();
         $page->display();
-        $this->assertGreaterThan(0, ob_get_length());
+        self::assertGreaterThan(0, ob_get_length());
         ob_end_clean();
     }
 
@@ -23,7 +23,7 @@ class PageTest extends ShimmiePHPUnitTestCase
         $page->set_file("tests/pbx_screenshot.jpg");
         ob_start();
         $page->display();
-        $this->assertGreaterThan(0, ob_get_length());
+        self::assertGreaterThan(0, ob_get_length());
         ob_end_clean();
     }
 
@@ -34,7 +34,7 @@ class PageTest extends ShimmiePHPUnitTestCase
         $page->set_data("hello world");
         ob_start();
         $page->display();
-        $this->assertGreaterThan(0, ob_get_length());
+        self::assertGreaterThan(0, ob_get_length());
         ob_end_clean();
     }
 
@@ -45,7 +45,7 @@ class PageTest extends ShimmiePHPUnitTestCase
         $page->set_redirect(Url::parse("/new/page"));
         ob_start();
         $page->display();
-        $this->assertGreaterThan(0, ob_get_length());
+        self::assertGreaterThan(0, ob_get_length());
         ob_end_clean();
     }
 
@@ -57,9 +57,9 @@ class PageTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_admin(); // show the most links
 
         $e = send_event(new PageSubNavBuildingEvent("system"));
-        $this->assertGreaterThan(0, count($e->links));
+        self::assertGreaterThan(0, count($e->links));
 
         $e = send_event(new PageSubNavBuildingEvent("posts"));
-        $this->assertGreaterThan(0, count($e->links));
+        self::assertGreaterThan(0, count($e->links));
     }
 }

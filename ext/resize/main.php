@@ -148,7 +148,7 @@ class ResizeImage extends Extension
                     $new_height
                 ));
 
-                if ($event->file_modified === true && $event->path != $event->image->get_image_filename()) {
+                if ($event->file_modified === true && $event->path !== $event->image->get_image_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up
                     unlink($event->path);
                 }
@@ -190,7 +190,7 @@ class ResizeImage extends Extension
 
         $info = \Safe\getimagesize($image_filename);
         assert(!is_null($info));
-        if (($image_obj->width != $info[0]) || ($image_obj->height != $info[1])) {
+        if (($image_obj->width !== $info[0]) || ($image_obj->height !== $info[1])) {
             throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
         }
 

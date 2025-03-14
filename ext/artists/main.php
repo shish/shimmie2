@@ -351,21 +351,21 @@ class Artists extends Extension
     {
         global $database;
         $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = :url", ['url' => $url]);
-        return ($result != 0);
+        return ($result !== 0);
     }
 
     private function member_exists_by_name(string $member): bool
     {
         global $database;
         $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = :name", ['name' => $member]);
-        return ($result != 0);
+        return ($result !== 0);
     }
 
     private function alias_exists_by_name(string $alias): bool
     {
         global $database;
         $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = :alias", ['alias' => $alias]);
-        return ($result != 0);
+        return ($result !== 0);
     }
 
     private function alias_exists(int $artistID, string $alias): bool
@@ -375,7 +375,7 @@ class Artists extends Extension
             "SELECT COUNT(1) FROM artist_alias WHERE artist_id = :artist_id AND alias = :alias",
             ['artist_id' => $artistID, 'alias' => $alias]
         );
-        return ($result != 0);
+        return ($result !== 0);
     }
 
     private function get_artistID_by_url(string $url): int
@@ -699,7 +699,7 @@ class Artists extends Extension
             "SELECT COUNT(1) FROM artists WHERE name = :name",
             ['name' => $name]
         );
-        return ($result != 0);
+        return ($result !== 0);
     }
 
     /**
@@ -962,7 +962,7 @@ class Artists extends Extension
             "SELECT COUNT(1) FROM artist_members WHERE artist_id = :artist_id AND name = :name",
             ['artist_id' => $artistID, 'name' => $member]
         );
-        return ($result != 0);
+        return ($result !== 0);
     }
 
     private function url_exists(int $artistID, string $url): bool
@@ -973,7 +973,7 @@ class Artists extends Extension
             "SELECT COUNT(1) FROM artist_urls WHERE artist_id = :artist_id AND url = :url",
             ['artist_id' => $artistID, 'url' => $url]
         );
-        return ($result != 0);
+        return ($result !== 0);
     }
 
     /**

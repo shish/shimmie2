@@ -17,17 +17,17 @@ class TagHistoryTest extends ShimmiePHPUnitTestCase
 
         // Check post
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: old_tag");
+        self::assert_title("Post $image_id: old_tag");
 
         // Check image history
         $this->get_page("tag_history/$image_id");
-        $this->assert_title("Post $image_id Tag History");
-        $this->assert_text("old_tag");
+        self::assert_title("Post $image_id Tag History");
+        self::assert_text("old_tag");
 
         // Check global history
         $this->get_page("tag_history/all/1");
-        $this->assert_title("Global Tag History");
-        $this->assert_text("old_tag");
+        self::assert_title("Global Tag History");
+        self::assert_text("old_tag");
     }
 
     #[Depends("testHistoryWhenAdding")]
@@ -43,17 +43,17 @@ class TagHistoryTest extends ShimmiePHPUnitTestCase
 
         // Check post
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: new_tag");
+        self::assert_title("Post $image_id: new_tag");
 
         // Check image history
         $this->get_page("tag_history/$image_id");
-        $this->assert_title("Post $image_id Tag History");
-        $this->assert_text("new_tag");
+        self::assert_title("Post $image_id Tag History");
+        self::assert_text("new_tag");
 
         // Check global history
         $this->get_page("tag_history/all/1");
-        $this->assert_title("Global Tag History");
-        $this->assert_text("new_tag");
+        self::assert_title("Global Tag History");
+        self::assert_text("new_tag");
     }
 
     #[Depends("testHistoryWhenModifying")]
@@ -78,16 +78,16 @@ class TagHistoryTest extends ShimmiePHPUnitTestCase
 
         // Check post
         $this->get_page("post/view/$image_id");
-        $this->assert_title("Post $image_id: old_tag");
+        self::assert_title("Post $image_id: old_tag");
 
         // Check image history
         $this->get_page("tag_history/$image_id");
-        $this->assert_title("Post $image_id Tag History");
-        $this->assert_text("old_tag");
+        self::assert_title("Post $image_id Tag History");
+        self::assert_text("old_tag");
 
         // Check global history
         $this->get_page("tag_history/all/1");
-        $this->assert_title("Global Tag History");
-        $this->assert_text("old_tag");
+        self::assert_title("Global Tag History");
+        self::assert_text("old_tag");
     }
 }

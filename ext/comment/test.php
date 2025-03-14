@@ -24,63 +24,63 @@ class CommentListTest extends ShimmiePHPUnitTestCase
         # a good comment
         send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
         $this->get_page("post/view/$image_id");
-        $this->assert_text("ASDFASDF");
+        self::assert_text("ASDFASDF");
 
         # dupe
         try {
             send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
         } catch (CommentPostingException $e) {
-            $this->assertStringContainsString("try and be more original", $e->getMessage());
+            self::assertStringContainsString("try and be more original", $e->getMessage());
         }
 
         # empty comment
         try {
             send_event(new CommentPostingEvent($image_id, $user, ""));
         } catch (CommentPostingException $e) {
-            $this->assertStringContainsString("Comments need text", $e->getMessage());
+            self::assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # whitespace is still empty...
         try {
             send_event(new CommentPostingEvent($image_id, $user, " \t\r\n"));
         } catch (CommentPostingException $e) {
-            $this->assertStringContainsString("Comments need text", $e->getMessage());
+            self::assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # repetitive (aka. gzip gives >= 10x improvement)
         try {
             send_event(new CommentPostingEvent($image_id, $user, str_repeat("U", 5000)));
         } catch (CommentPostingException $e) {
-            $this->assertStringContainsString("Comment too repetitive", $e->getMessage());
+            self::assertStringContainsString("Comment too repetitive", $e->getMessage());
         }
 
         # test UTF8
         send_event(new CommentPostingEvent($image_id, $user, "Test Comment むちむち"));
         $this->get_page("post/view/$image_id");
-        $this->assert_text("むちむち");
+        self::assert_text("むちむち");
 
         # test that search by comment metadata works
         //		$this->get_page("post/list/commented_by=test/1");
-        //		$this->assert_title("Image $image_id: pbx");
+        //		self::assert_title("Image $image_id: pbx");
         //		$this->get_page("post/list/comments=2/1");
-        //		$this->assert_title("Image $image_id: pbx");
+        //		self::assert_title("Image $image_id: pbx");
 
         $this->log_out();
 
         $this->get_page('comment/list');
-        $this->assert_title('Comments');
-        $this->assert_text('ASDFASDF');
+        self::assert_title('Comments');
+        self::assert_text('ASDFASDF');
 
         $this->get_page('comment/list/2');
-        $this->assert_title('Comments');
+        self::assert_title('Comments');
 
         $this->log_in_as_admin();
         $this->delete_image($image_id);
         $this->log_out();
 
         $this->get_page('comment/list');
-        $this->assert_title('Comments');
-        $this->assert_no_text('ASDFASDF');
+        self::assert_title('Comments');
+        self::assert_no_text('ASDFASDF');
     }
 
     public function testSingleDel(): void
@@ -93,12 +93,12 @@ class CommentListTest extends ShimmiePHPUnitTestCase
         # make a comment
         send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
         $this->get_page("post/view/$image_id");
-        $this->assert_text("ASDFASDF");
+        self::assert_text("ASDFASDF");
 
         # delete a comment
         $comment_id = (int)$database->get_one("SELECT id FROM comments");
         send_event(new CommentDeletionEvent($comment_id));
         $this->get_page("post/view/$image_id");
-        $this->assert_no_text("ASDFASDF");
+        self::assert_no_text("ASDFASDF");
     }
 }

@@ -12,7 +12,7 @@ class IcoFileHandlerTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("ext/static_files/static/favicon.ico", "shimmie favicon");
 
         $page = $this->get_page("post/view/$image_id");
-        $this->assertEquals(200, $page->code);
+        self::assertEquals(200, $page->code);
 
         # FIXME: test that the thumb works
         # FIXME: test that it gets displayed properly

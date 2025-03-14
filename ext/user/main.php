@@ -238,7 +238,7 @@ class UserPage extends Extension
             ]);
             $duser = User::by_id($input['id']);
             if ($this->user_can_edit_user($user, $duser)) {
-                if ($input['pass1'] != $input['pass2']) {
+                if ($input['pass1'] !== $input['pass2']) {
                     throw new InvalidInput("Passwords don't match");
                 } else {
                     // FIXME: send_event()
@@ -362,16 +362,16 @@ class UserPage extends Extension
             }
         }
 
-        if ($user->id == $event->display_user->id) {
+        if ($user->id === $event->display_user->id) {
             $ubbe = send_event(new UserBlockBuildingEvent());
             $this->theme->display_user_links($page, $user, $ubbe->get_parts());
         }
         if (
             (
                 $user->can(IPBanPermission::VIEW_IP) ||  # user can view all IPS
-                ($user->id == $event->display_user->id)  # or user is viewing themselves
+                ($user->id === $event->display_user->id)  # or user is viewing themselves
             ) &&
-            ($event->display_user->id != $config->get_int(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
+            ($event->display_user->id !== $config->get_int(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
         ) {
             $this->theme->display_ip_list(
                 $page,
@@ -449,7 +449,7 @@ class UserPage extends Extension
         if (!Captcha::check()) {
             throw new UserCreationException("Error in captcha");
         }
-        if ($event->password != $event->password2) {
+        if ($event->password !== $event->password2) {
             throw new UserCreationException("Passwords don't match");
         }
         if (
@@ -583,8 +583,8 @@ class UserPage extends Extension
         }
 
         if (
-            ($a->name == $b->name) ||
-            ($b->can(UserAccountsPermission::PROTECTED) && $a->class->name == "admin") ||
+            ($a->name === $b->name) ||
+            ($b->can(UserAccountsPermission::PROTECTED) && $a->class->name === "admin") ||
             (!$b->can(UserAccountsPermission::PROTECTED) && $a->can(UserAccountsPermission::EDIT_USER_INFO))
         ) {
             return true;
@@ -597,7 +597,7 @@ class UserPage extends Extension
     {
         global $page, $user;
 
-        if ($user->id == $duser->id) {
+        if ($user->id === $duser->id) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user"));
         } else {

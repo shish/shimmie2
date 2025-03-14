@@ -77,7 +77,7 @@ class EventBus
             }
 
             foreach (get_class_methods($extension) as $method) {
-                if (substr($method, 0, 2) == "on") {
+                if (substr($method, 0, 2) === "on") {
                     $event = substr($method, 2) . "Event";
                     $pos = $extension->get_priority() * 100;
                     while (isset($event_listeners_with_ids[$event][$pos])) {

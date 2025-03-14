@@ -39,8 +39,8 @@ class Home extends Extension
         $total = Search::count_images();
         $num_comma = number_format($total);
         $counter_text = "";
-        if ($counter_dir != 'none') {
-            if ($counter_dir != 'text-only') {
+        if ($counter_dir !== 'none') {
+            if ($counter_dir !== 'text-only') {
                 $strtotal = "$total";
                 $length = strlen($strtotal);
                 for ($n = 0; $n < $length; $n++) {

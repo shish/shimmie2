@@ -11,6 +11,6 @@ class EventBusTest extends TestCase
     public function testInit(): void
     {
         $b = new EventBus();
-        $this->assertEquals(0, $b->event_count);
+        self::assertEquals(0, $b->event_count);
     }
 }

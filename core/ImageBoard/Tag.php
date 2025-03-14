@@ -79,7 +79,7 @@ class Tag
         while ($i < $tag_count) {
             $tag = $tags_to_process[$i];
             $negative = '';
-            if (!empty($tag) && ($tag[0] == '-')) {
+            if (!empty($tag) && ($tag[0] === '-')) {
                 $negative = '-';
                 $tag = substr($tag, 1);
             }
@@ -101,7 +101,7 @@ class Tag
 
             foreach ($aliases as $alias) {
                 if (!in_array($alias, $processed_tags)) {
-                    if ($tag == $alias) {
+                    if ($tag === $alias) {
                         $processed_tags[] = $negative.$alias;
                     } elseif (!in_array($alias, $tags_to_process)) {
                         $tags_to_process[] = $negative.$alias;
@@ -129,7 +129,7 @@ class Tag
         $tag = \Safe\preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
         $tag = trim($tag, ", \t\n\r\0\x0B");
 
-        if ($tag == ".") {
+        if ($tag === ".") {
             $tag = "";
         }  // hard-code one bad case...
 
@@ -151,7 +151,7 @@ class Tag
         sort($tags1);
         sort($tags2);
 
-        return $tags1 == $tags2;
+        return $tags1 === $tags2;
     }
 
     /**

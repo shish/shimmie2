@@ -9,12 +9,12 @@ class StatisticsTest extends ShimmiePHPUnitTestCase
     public function testStatisticsPage(): void
     {
         $page = $this->get_page('stats');
-        $this->assert_title("Stats");
+        self::assert_title("Stats");
     }
 
     public function testTop100StatisticsPage(): void
     {
         $page = $this->get_page('stats/100');
-        $this->assert_title("Stats");
+        self::assert_title("Stats");
     }
 }

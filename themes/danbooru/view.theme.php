@@ -44,7 +44,7 @@ class DanbooruViewPostTheme extends ViewPostTheme
 		<br>Filesize: $h_filesize
 		<br>Type: $h_type";
 
-        if ($image->length != null) {
+        if ($image->length !== null) {
             $h_length = format_milliseconds($image->length);
             $html .= "<br/>Length: $h_length";
         }
