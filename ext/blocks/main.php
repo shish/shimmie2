@@ -15,7 +15,7 @@ class Blocks extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
-        if ($this->get_version("ext_blocks_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("blocks", "
 				id SCORE_AIPK,
 				pages VARCHAR(128) NOT NULL,
@@ -26,11 +26,11 @@ class Blocks extends Extension
                 userclass TEXT
 			");
             $database->execute("CREATE INDEX blocks_pages_idx ON blocks(pages)", []);
-            $this->set_version("ext_blocks_version", 2);
+            $this->set_version(2);
         }
-        if ($this->get_version("ext_blocks_version") < 2) {
+        if ($this->get_version() < 2) {
             $database->execute("ALTER TABLE blocks ADD COLUMN userclass TEXT");
-            $this->set_version("ext_blocks_version", 2);
+            $this->set_version(2);
         }
     }
 

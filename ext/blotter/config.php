@@ -8,9 +8,6 @@ class BlotterConfig extends ConfigGroup
 {
     public const KEY = "blotter";
 
-    #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
-    public const VERSION = "blotter_version";
-
     #[ConfigMeta("Recent updates", ConfigType::INT, default: 5)]
     public const RECENT = "blotter_recent";
 

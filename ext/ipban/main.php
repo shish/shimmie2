@@ -240,7 +240,7 @@ class IPBan extends Extension
         global $database;
 
         // shortcut to latest
-        if ($this->get_version("ext_ipban_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("bans", "
 				id SCORE_AIPK,
 				banner_id INTEGER NOT NULL,
@@ -252,12 +252,12 @@ class IPBan extends Extension
 				FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE,
 			");
             $database->execute("CREATE INDEX bans__expires ON bans(expires)");
-            $this->set_version("ext_ipban_version", 10);
+            $this->set_version(10);
         }
 
         // ===
 
-        if ($this->get_version("ext_ipban_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->execute("CREATE TABLE bans (
 				id int(11) NOT NULL auto_increment,
 				ip char(15) default NULL,
@@ -266,23 +266,23 @@ class IPBan extends Extension
 				reason varchar(255) default NULL,
 				PRIMARY KEY (id)
 			)");
-            $this->set_version("ext_ipban_version", 1);
+            $this->set_version(1);
         }
 
-        if ($this->get_version("ext_ipban_version") == 1) {
+        if ($this->get_version() == 1) {
             $database->execute("ALTER TABLE bans ADD COLUMN banner_id INTEGER NOT NULL AFTER id");
-            $this->set_version("ext_ipban_version", 2);
+            $this->set_version(2);
         }
 
-        if ($this->get_version("ext_ipban_version") == 2) {
+        if ($this->get_version() == 2) {
             $database->execute("ALTER TABLE bans DROP COLUMN date");
             $database->execute("ALTER TABLE bans CHANGE ip ip CHAR(20) NOT NULL");
             $database->execute("ALTER TABLE bans CHANGE reason reason TEXT NOT NULL");
             $database->execute("CREATE INDEX bans__end ON bans(end)");
-            $this->set_version("ext_ipban_version", 3);
+            $this->set_version(3);
         }
 
-        if ($this->get_version("ext_ipban_version") == 3) {
+        if ($this->get_version() == 3) {
             $database->execute("ALTER TABLE bans CHANGE end old_end DATE NOT NULL");
             $database->execute("ALTER TABLE bans ADD COLUMN end INTEGER");
             if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
@@ -294,41 +294,41 @@ class IPBan extends Extension
             }
             $database->execute("ALTER TABLE bans DROP COLUMN old_end");
             $database->execute("CREATE INDEX bans__end ON bans(end)");
-            $this->set_version("ext_ipban_version", 4);
+            $this->set_version(4);
         }
 
-        if ($this->get_version("ext_ipban_version") == 4) {
+        if ($this->get_version() == 4) {
             $database->execute("ALTER TABLE bans CHANGE end end_timestamp INTEGER");
-            $this->set_version("ext_ipban_version", 5);
+            $this->set_version(5);
         }
 
-        if ($this->get_version("ext_ipban_version") == 5) {
+        if ($this->get_version() == 5) {
             $database->execute("ALTER TABLE bans CHANGE ip ip VARCHAR(15)");
-            $this->set_version("ext_ipban_version", 6);
+            $this->set_version(6);
         }
 
-        if ($this->get_version("ext_ipban_version") == 6) {
+        if ($this->get_version() == 6) {
             $database->execute("ALTER TABLE bans ADD FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
-            $this->set_version("ext_ipban_version", 7);
+            $this->set_version(7);
         }
 
-        if ($this->get_version("ext_ipban_version") == 7) {
+        if ($this->get_version() == 7) {
             $database->execute($database->scoreql_to_sql("ALTER TABLE bans CHANGE ip ip SCORE_INET"));
             $database->execute("ALTER TABLE bans ADD COLUMN added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
-            $this->set_version("ext_ipban_version", 8);
+            $this->set_version(8);
         }
 
-        if ($this->get_version("ext_ipban_version") == 8) {
+        if ($this->get_version() == 8) {
             $database->execute("ALTER TABLE bans ADD COLUMN mode VARCHAR(16) NOT NULL DEFAULT 'block'");
-            $this->set_version("ext_ipban_version", 9);
+            $this->set_version(9);
         }
 
-        if ($this->get_version("ext_ipban_version") == 9) {
+        if ($this->get_version() == 9) {
             $database->execute("ALTER TABLE bans ADD COLUMN expires TIMESTAMP DEFAULT NULL");
             $database->execute("UPDATE bans SET expires = to_date('1970/01/01', 'YYYY/MM/DD') + (end_timestamp * interval '1 seconds')");
             $database->execute("ALTER TABLE bans DROP COLUMN end_timestamp");
             $database->execute("CREATE INDEX bans__expires ON bans(expires)");
-            $this->set_version("ext_ipban_version", 10);
+            $this->set_version(10);
         }
     }
 

@@ -84,7 +84,7 @@ class TranscodeImage extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        if ($this->get_version(TranscodeImageConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             $old_extensions = [];
             foreach (array_values(self::INPUT_MIMES) as $mime) {
                 $old_extensions = array_merge($old_extensions, FileExtension::get_all_for_mime($mime));
@@ -108,7 +108,7 @@ class TranscodeImage extends Extension
                 }
             }
 
-            $this->set_version(TranscodeImageConfig::VERSION, 1);
+            $this->set_version(1);
         }
     }
 

@@ -21,7 +21,7 @@ class Notes extends Extension
         global $config, $database;
 
         // shortcut to latest
-        if ($this->get_version("ext_notes_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN notes INTEGER NOT NULL DEFAULT 0");
             $database->create_table("notes", "
 					id SCORE_AIPK,
@@ -69,7 +69,7 @@ class Notes extends Extension
 					");
             $database->execute("CREATE INDEX note_histories_image_id_idx ON note_histories(image_id)", []);
 
-            $this->set_version("ext_notes_version", 1);
+            $this->set_version(1);
         }
     }
 

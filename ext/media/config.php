@@ -8,9 +8,6 @@ class MediaConfig extends ConfigGroup
 {
     public const KEY = "media";
 
-    #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
-    public const VERSION = "ext_media_version";
-
     #[ConfigMeta("FFmpeg path", ConfigType::STRING, default: "ffmpeg")]
     public const FFMPEG_PATH = "media_ffmpeg_path";
 

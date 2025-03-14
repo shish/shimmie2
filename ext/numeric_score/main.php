@@ -390,7 +390,7 @@ class NumericScore extends Extension
     {
         global $database;
 
-        if ($this->get_version("ext_numeric_score_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN numeric_score INTEGER NOT NULL DEFAULT 0");
             $database->execute("CREATE INDEX images__numeric_score ON images(numeric_score)");
             $database->create_table("numeric_score_votes", "
@@ -402,11 +402,11 @@ class NumericScore extends Extension
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
             $database->execute("CREATE INDEX numeric_score_votes_image_id_idx ON numeric_score_votes(image_id)", []);
-            $this->set_version("ext_numeric_score_version", 1);
+            $this->set_version(1);
         }
-        if ($this->get_version("ext_numeric_score_version") < 2) {
+        if ($this->get_version() < 2) {
             $database->execute("CREATE INDEX numeric_score_votes__user_votes ON numeric_score_votes(user_id, score)");
-            $this->set_version("ext_numeric_score_version", 2);
+            $this->set_version(2);
         }
     }
 

@@ -7,6 +7,8 @@ namespace Shimmie2;
 class ImageViewCounter extends Extension
 {
     public const KEY = "image_view_counter";
+    public const VERSION_KEY = 'ext_image_view_counter';
+
     /** @var ImageViewCounterTheme */
     protected Themelet $theme;
     private int $view_interval = 3600; # allows views to be added each hour
@@ -71,17 +73,17 @@ class ImageViewCounter extends Extension
         global $database, $config;
 
         if ($config->get_bool("image_viewcounter_installed")) {
-            $this->set_version(ImageViewCounterConfig::VERSION, 1);
+            $this->set_version(1);
             $config->delete("image_viewcounter_installed");
         }
-        if ($this->get_version(ImageViewCounterConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("image_views", "
                 id SCORE_AIPK,
                 image_id INTEGER NOT NULL,
                 user_id INTEGER NOT NULL,
                 timestamp INTEGER NOT NULL,
                 ipaddress SCORE_INET NOT NULL");
-            $this->set_version(ImageViewCounterConfig::VERSION, 1);
+            $this->set_version(1);
         }
     }
 

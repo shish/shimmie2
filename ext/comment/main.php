@@ -119,15 +119,17 @@ class Comment
 class CommentList extends Extension
 {
     public const KEY = "comment";
+    public const VERSION_KEY = "ext_comments_version";
+
     /** @var CommentListTheme $theme */
     public Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
-        if ($this->get_version(CommentConfig::VERSION) < 3) {
+        if ($this->get_version() < 3) {
             // shortcut to latest
-            if ($this->get_version(CommentConfig::VERSION) < 1) {
+            if ($this->get_version() < 1) {
                 $database->create_table("comments", "
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
@@ -141,11 +143,11 @@ class CommentList extends Extension
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);
                 $database->execute("CREATE INDEX comments_owner_id_idx ON comments(owner_id)", []);
                 $database->execute("CREATE INDEX comments_posted_idx ON comments(posted)", []);
-                $this->set_version(CommentConfig::VERSION, 3);
+                $this->set_version(3);
             }
 
             // the whole history
-            if ($this->get_version(CommentConfig::VERSION) < 1) {
+            if ($this->get_version() < 1) {
                 $database->create_table("comments", "
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
@@ -155,22 +157,20 @@ class CommentList extends Extension
 					comment TEXT NOT NULL
 				");
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);
-                $this->set_version(CommentConfig::VERSION, 1);
+                $this->set_version(1);
             }
 
-            if ($this->get_version(CommentConfig::VERSION) === 1) {
+            if ($this->get_version() === 1) {
                 $database->execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
                 $database->execute("CREATE INDEX comments_posted ON comments(posted)");
-                $this->set_version(CommentConfig::VERSION, 2);
+                $this->set_version(2);
             }
 
-            if ($this->get_version(CommentConfig::VERSION) === 2) {
-                $this->set_version(CommentConfig::VERSION, 3);
+            if ($this->get_version() === 2) {
                 $database->execute("ALTER TABLE comments ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
                 $database->execute("ALTER TABLE comments ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
+                $this->set_version(3);
             }
-
-            // FIXME: add foreign keys, bump to v3
         }
     }
 

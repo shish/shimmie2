@@ -21,13 +21,13 @@ class S3 extends Extension
     {
         global $database;
 
-        if ($this->get_version("ext_s3_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("s3_sync_queue", "
                 hash CHAR(32) NOT NULL PRIMARY KEY,
                 time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 action CHAR(1) NOT NULL DEFAULT 'S'
             ");
-            $this->set_version("ext_s3_version", 1);
+            $this->set_version(1);
         }
     }
 

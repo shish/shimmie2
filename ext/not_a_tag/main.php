@@ -35,6 +35,7 @@ class NotATagTable extends Table
 class NotATag extends Extension
 {
     public const KEY = "not_a_tag";
+    public const VERSION_KEY = "ext_notatag_version";
 
     public function get_priority(): int
     {
@@ -44,12 +45,12 @@ class NotATag extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
-        if ($this->get_version("ext_notatag_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("untags", "
 				tag VARCHAR(128) NOT NULL PRIMARY KEY,
 				redirect VARCHAR(255) NOT NULL
 			");
-            $this->set_version("ext_notatag_version", 1);
+            $this->set_version(1);
         }
     }
 

@@ -26,9 +26,9 @@ class PostTitles extends Extension
     {
         global $database;
 
-        if ($this->get_version(PostTitlesConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN title varchar(255) NULL");
-            $this->set_version(PostTitlesConfig::VERSION, 1);
+            $this->set_version(1);
         }
     }
 

@@ -9,6 +9,7 @@ use function MicroHTML\{CODE,rawHTML};
 class ETServer extends Extension
 {
     public const KEY = "et_server";
+    public const VERSION_KEY = "et_server_version";
 
     public function onPageRequest(PageRequestEvent $event): void
     {
@@ -42,13 +43,13 @@ class ETServer extends Extension
         global $database;
 
         // shortcut to latest
-        if ($this->get_version("et_server_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("registration", "
 				id SCORE_AIPK,
 				responded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				data TEXT NOT NULL,
 			");
-            $this->set_version("et_server_version", 1);
+            $this->set_version(1);
         }
     }
 }

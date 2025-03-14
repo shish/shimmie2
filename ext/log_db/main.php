@@ -204,12 +204,13 @@ class LogTable extends Table
 class LogDatabase extends Extension
 {
     public const KEY = "log_db";
+    public const VERSION_KEY = "ext_log_database_version";
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
-        if ($this->get_version("ext_log_database_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("score_log", "
 				id SCORE_AIPK,
 				date_sent TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -220,7 +221,7 @@ class LogDatabase extends Extension
 				message TEXT NOT NULL
 			");
             //INDEX(section)
-            $this->set_version("ext_log_database_version", 1);
+            $this->set_version(1);
         }
     }
 
@@ -261,7 +262,7 @@ class LogDatabase extends Extension
         $username = ($user && $user->name) ? $user->name : "null";
 
         // not installed yet...
-        if ($this->get_version("ext_log_database_version") < 1) {
+        if ($this->get_version() < 1) {
             return;
         }
 

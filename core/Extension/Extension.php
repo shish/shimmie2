@@ -20,6 +20,7 @@ namespace Shimmie2;
 abstract class Extension extends Enablable
 {
     protected Themelet $theme;
+    public const VERSION_KEY = null;
 
     public function __construct()
     {
@@ -35,15 +36,17 @@ abstract class Extension extends Enablable
         return 50;
     }
 
-    protected function get_version(string $name): int
+    protected function get_version(): int
     {
         global $config;
+        $name = static::VERSION_KEY ?? "ext_" . static::KEY . "_version";
         return $config->get_int($name, 0);
     }
 
-    protected function set_version(string $name, int $ver): void
+    protected function set_version(int $ver): void
     {
         global $config;
+        $name = static::VERSION_KEY ?? "ext_" . static::KEY . "_version";
         $config->set_int($name, $ver);
         Log::info("upgrade", "Set version for $name to $ver");
     }
