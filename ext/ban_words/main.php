@@ -33,7 +33,7 @@ class BanWords extends Extension
     {
         $comment = mb_strtolower($comment);
 
-        foreach ($this->get_words() as $word) {
+        foreach (self::get_words() as $word) {
             if ($word[0] == '/') {
                 // lines that start with slash are regex
                 if (\Safe\preg_match($word, $comment)) {

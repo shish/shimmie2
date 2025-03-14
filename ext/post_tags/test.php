@@ -8,23 +8,23 @@ class PostTagsTest extends ShimmiePHPUnitTestCase
 {
     public function testValidChange(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id_ex($image_id);
 
         // Original
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_title("Post $image_id: pbx");
 
         // Modified
         send_event(new TagSetEvent($image, ["new"]));
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_title("Post $image_id: new");
     }
 
     public function testInvalidChange(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id_ex($image_id);
 
@@ -41,7 +41,7 @@ class PostTagsTest extends ShimmiePHPUnitTestCase
 
     public function testTagEdit_tooLong(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         self::assertException(TagSetException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", str_repeat("a", 500));
         });

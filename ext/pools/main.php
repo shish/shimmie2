@@ -491,7 +491,7 @@ class Pools extends Extension
         global $user;
 
         if ($matches = $event->matches("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i")) {
-            $poolTag = (string) str_replace("_", " ", $matches[1]);
+            $poolTag = str_replace("_", " ", $matches[1]);
 
             $pool = null;
             if ($poolTag === 'lastcreated') {

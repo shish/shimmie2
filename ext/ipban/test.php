@@ -11,7 +11,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
     public function testAccess(): void
     {
         self::assertException(PermissionDenied::class, function () {
-            $this->get_page('ip_ban/list');
+            self::get_page('ip_ban/list');
         });
     }
 
@@ -19,10 +19,10 @@ class IPBanTest extends ShimmiePHPUnitTestCase
     {
         global $database;
 
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
 
         // Check initial state
-        $this->get_page('ip_ban/list');
+        self::get_page('ip_ban/list');
         self::assert_no_text("42.42.42.42");
 
         // Add ban
@@ -34,7 +34,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
         ));
 
         // Check added
-        $page = $this->get_page('ip_ban/list');
+        $page = self::get_page('ip_ban/list');
         self::assertStringContainsString(
             "42.42.42.42",
             (string)$page->find_block(null)->body
@@ -45,7 +45,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
         send_event(new RemoveIPBanEvent($ban_id));
 
         // Check delete
-        $page = $this->get_page('ip_ban/list');
+        $page = self::get_page('ip_ban/list');
         self::assertStringNotContainsString(
             "42.42.42.42",
             (string)$page->find_block(null)->body
@@ -55,8 +55,8 @@ class IPBanTest extends ShimmiePHPUnitTestCase
     public function test_all(): void
     {
         // just test it doesn't crash for now
-        $this->log_in_as_admin();
-        $page = $this->get_page('ip_ban/list', ['r_all' => 'on']);
+        self::log_in_as_admin();
+        $page = self::get_page('ip_ban/list', ['r_all' => 'on']);
         self::assertEquals(200, $page->code);
     }
 }

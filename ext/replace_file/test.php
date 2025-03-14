@@ -8,15 +8,15 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
 {
     public function testReplacePage(): void
     {
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        $this->get_page("replace/$image_id");
+        self::get_page("replace/$image_id");
         self::assert_title("Replace File");
     }
     public function testReplace(): void
     {
         global $database;
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
 
         // upload an image
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
@@ -44,7 +44,7 @@ class ReplaceFileTest extends ShimmiePHPUnitTestCase
                 'size' => 246,
             ]
         ];
-        $page = $this->post_page("replace/$image_id");
+        $page = self::post_page("replace/$image_id");
         self::assert_response(302);
         self::assertEquals("/test/post/view/$image_id", $page->redirect);
 

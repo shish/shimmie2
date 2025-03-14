@@ -69,6 +69,7 @@ class TagHistory extends Extension
 
         // if the image has no history, make one with the old tags
         $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = :id", ["id" => $event->image->id]);
+        assert(is_int($entries));
         if ($entries == 0 && !empty($old_tags)) {
             $database->execute(
                 "

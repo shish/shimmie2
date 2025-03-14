@@ -116,6 +116,7 @@ class OuroborosPost extends _SafeOuroborosImage
      *
      * @param array<string,mixed> $post
      */
+    // @phpstan-ignore-next-line
     public function __construct(array $post)
     {
         if (array_key_exists('tags', $post)) {

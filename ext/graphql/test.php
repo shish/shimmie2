@@ -28,7 +28,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
 
     public function testQuery(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
         $image = Image::by_id_ex($image_id);
 
@@ -67,7 +67,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
 
     public function testMutation(): void
     {
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 
         $result = $this->graphql("mutation {
@@ -101,7 +101,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
     {
         global $database;
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $_FILES = [
             'data0' => [
                 'name' => 'puppy-hugs.jpg',
@@ -111,7 +111,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
                 'size' => 271386,
             ],
         ];
-        $page = $this->post_page("graphql_upload", ["tags" => "foo", "tags0" => "bar"]);
+        $page = self::post_page("graphql_upload", ["tags" => "foo", "tags0" => "bar"]);
         self::assertEquals(200, $page->code);
         self::assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
         $id = $database->get_one("SELECT id FROM images");

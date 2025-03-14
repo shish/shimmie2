@@ -11,19 +11,19 @@ class CommentListTest extends ShimmiePHPUnitTestCase
         global $config;
         parent::setUp();
         $config->set_int(CommentConfig::LIMIT, 100);
-        $this->log_out();
+        self::log_out();
     }
 
     public function testCommentsPage(): void
     {
         global $user;
 
-        $this->log_in_as_user();
+        self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
         # a good comment
         send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_text("ASDFASDF");
 
         # dupe
@@ -56,29 +56,29 @@ class CommentListTest extends ShimmiePHPUnitTestCase
 
         # test UTF8
         send_event(new CommentPostingEvent($image_id, $user, "Test Comment むちむち"));
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_text("むちむち");
 
         # test that search by comment metadata works
-        //		$this->get_page("post/list/commented_by=test/1");
+        //		self::get_page("post/list/commented_by=test/1");
         //		self::assert_title("Image $image_id: pbx");
-        //		$this->get_page("post/list/comments=2/1");
+        //		self::get_page("post/list/comments=2/1");
         //		self::assert_title("Image $image_id: pbx");
 
-        $this->log_out();
+        self::log_out();
 
-        $this->get_page('comment/list');
+        self::get_page('comment/list');
         self::assert_title('Comments');
         self::assert_text('ASDFASDF');
 
-        $this->get_page('comment/list/2');
+        self::get_page('comment/list/2');
         self::assert_title('Comments');
 
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
         $this->delete_image($image_id);
-        $this->log_out();
+        self::log_out();
 
-        $this->get_page('comment/list');
+        self::get_page('comment/list');
         self::assert_title('Comments');
         self::assert_no_text('ASDFASDF');
     }
@@ -87,18 +87,18 @@ class CommentListTest extends ShimmiePHPUnitTestCase
     {
         global $database, $user;
 
-        $this->log_in_as_admin();
+        self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
         # make a comment
         send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_text("ASDFASDF");
 
         # delete a comment
         $comment_id = (int)$database->get_one("SELECT id FROM comments");
         send_event(new CommentDeletionEvent($comment_id));
-        $this->get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_no_text("ASDFASDF");
     }
 }

@@ -30,10 +30,10 @@ class BulkDownload extends Extension
             $size_total = 0;
             $max_size = $config->get_int(BulkDownloadConfig::SIZE_LIMIT);
 
-            if ($zip->open($zip_filename, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) === true) {
+            if ($zip->open($zip_filename, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
                 foreach ($event->items as $image) {
                     $img_loc = Filesystem::warehouse_path(Image::IMAGE_DIR, $image->hash, false);
-                    $size_total += filesize($img_loc);
+                    $size_total += \Safe\filesize($img_loc);
                     if ($size_total > $max_size) {
                         throw new UserError("Bulk download limited to ".human_filesize($max_size));
                     }

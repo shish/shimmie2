@@ -8,7 +8,7 @@ class RobotsTxtTest extends ShimmiePHPUnitTestCase
 {
     public function testRobots(): void
     {
-        $page = $this->get_page("robots.txt");
+        $page = self::get_page("robots.txt");
         self::assertStringContainsString("User-agent: *", $page->data);
     }
 }

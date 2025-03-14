@@ -109,7 +109,7 @@ class BulkImportExport extends DataHandlerExtension
 
             $json_data = [];
 
-            if ($zip->open($zip_filename, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) === true) {
+            if ($zip->open($zip_filename, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
                 foreach ($event->items as $image) {
                     $img_loc = Filesystem::warehouse_path(Image::IMAGE_DIR, $image->hash, false);
 
