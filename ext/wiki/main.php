@@ -143,10 +143,10 @@ class Wiki extends Extension
             $title = $event->get_arg('title');
             $action = $event->get_arg('action');
 
-            if ($action == "history") {
+            if ($action === "history") {
                 $history = $this->get_history($title);
                 $this->theme->display_page_history($page, $title, $history);
-            } elseif ($action == "edit") {
+            } elseif ($action === "edit") {
                 $content = $this->get_page($title);
                 if ($this->can_edit($user, $content)) {
                     $this->theme->display_page_editor($page, $content);
@@ -159,12 +159,12 @@ class Wiki extends Extension
             $title = $event->get_arg('title');
             $action = $event->get_arg('action');
 
-            if ($action == "edit") {
+            if ($action === "edit") {
                 // we're only here because making a form do a GET request is a
                 // pain, so we accept the POST and do a GET redirect
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$title/edit"));
-            } elseif ($action == "save") {
+            } elseif ($action === "save") {
                 $rev = int_escape($event->req_POST('revision'));
                 $body = $event->req_POST('body');
                 $lock = $user->can(WikiPermission::ADMIN) && ($event->get_POST('lock') == "on");
@@ -181,7 +181,7 @@ class Wiki extends Extension
                 } else {
                     throw new PermissionDenied("You are not allowed to edit this page");
                 }
-            } elseif ($action == "delete_revision") {
+            } elseif ($action === "delete_revision") {
                 $content = $this->get_page($title);
                 if ($user->can(WikiPermission::ADMIN)) {
                     $revision = int_escape($event->req_POST('revision'));
@@ -192,7 +192,7 @@ class Wiki extends Extension
                 } else {
                     throw new PermissionDenied("You are not allowed to edit this page");
                 }
-            } elseif ($action == "delete_all") {
+            } elseif ($action === "delete_all") {
                 if ($user->can(WikiPermission::ADMIN)) {
                     send_event(new WikiDeletePageEvent($title));
                     $u_title = url_escape($title);

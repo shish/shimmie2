@@ -116,7 +116,7 @@ class Tips extends Extension
         $dirPath = \Safe\dir('./ext/tips/images');
         $images = [];
         while (($file = $dirPath->read()) !== false) {
-            if ($file[0] != ".") {
+            if ($file[0] !== ".") {
                 $images[] = trim($file);
             }
         }

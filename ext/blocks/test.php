@@ -10,7 +10,7 @@ class BlocksTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_admin();
         $this->get_page("blocks/list");
-        $this->assert_response(200);
-        $this->assert_title("Blocks");
+        self::assert_response(200);
+        self::assert_title("Blocks");
     }
 }

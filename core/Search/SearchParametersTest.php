@@ -38,7 +38,7 @@ class SearchParametersTest extends ShimmiePHPUnitTestCase
 
     public function testTTC_Empty(): void
     {
-        $this->assert_TTC(
+        self::assert_TTC(
             "",
             [
             ],
@@ -55,7 +55,7 @@ class SearchParametersTest extends ShimmiePHPUnitTestCase
 
     public function testTTC_Hash(): void
     {
-        $this->assert_TTC(
+        self::assert_TTC(
             "hash=1234567890",
             [
             ],
@@ -73,7 +73,7 @@ class SearchParametersTest extends ShimmiePHPUnitTestCase
 
     public function testTTC_Ratio(): void
     {
-        $this->assert_TTC(
+        self::assert_TTC(
             "ratio=42:12345",
             [
             ],
@@ -92,7 +92,7 @@ class SearchParametersTest extends ShimmiePHPUnitTestCase
 
     public function testTTC_Order(): void
     {
-        $this->assert_TTC(
+        self::assert_TTC(
             "order=score",
             [
             ],

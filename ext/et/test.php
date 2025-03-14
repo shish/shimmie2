@@ -10,6 +10,6 @@ class ETTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_admin();
         $this->get_page("system_info");
-        $this->assert_title("System Info");
+        self::assert_title("System Info");
     }
 }

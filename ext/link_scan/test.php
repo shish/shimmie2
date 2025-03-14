@@ -21,8 +21,8 @@ class LinkScanTest extends ShimmiePHPUnitTestCase
         ";
         $page = $this->get_page("post/list", ["search" => $text]);
 
-        $this->assertEquals(PageMode::REDIRECT, $page->mode);
-        $this->assertEquals("/test/post/list/id%3D{$image_id_1}%2C{$image_id_2}/1", $page->redirect);
+        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertEquals("/test/post/list/id%3D{$image_id_1}%2C{$image_id_2}/1", $page->redirect);
     }
 
     public function testScanPostHash(): void
@@ -37,8 +37,8 @@ class LinkScanTest extends ShimmiePHPUnitTestCase
         doesn't exist is e106ea2983e1b77f11e00c0c54e50000 o.o";
         $page = $this->get_page("post/list", ["search" => $text]);
 
-        $this->assertEquals(PageMode::REDIRECT, $page->mode);
-        $this->assertEquals("/test/post/list/id%3D{$image_id_1}%2C{$image_id_2}/1", $page->redirect);
+        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertEquals("/test/post/list/id%3D{$image_id_1}%2C{$image_id_2}/1", $page->redirect);
     }
 
     public function testNotTriggered(): void
@@ -50,7 +50,7 @@ class LinkScanTest extends ShimmiePHPUnitTestCase
         $text = "Look at feb01bab5698a11dd87416724c7a89e3/foobar.jpg";
         $page = $this->get_page("post/list", ["search" => $text]);
 
-        $this->assertEquals(PageMode::REDIRECT, $page->mode);
-        $this->assertEquals("/test/post/list/at%20feb01bab5698a11dd87416724c7a89e3%2Ffoobar.jpg%20Look/1", $page->redirect);
+        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertEquals("/test/post/list/at%20feb01bab5698a11dd87416724c7a89e3%2Ffoobar.jpg%20Look/1", $page->redirect);
     }
 }

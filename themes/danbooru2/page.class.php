@@ -76,7 +76,7 @@ class Danbooru2Page extends Page
                     $sub_block_html[] = $block->body;
                     break;
                 case "main":
-                    if ($block->header == "Posts") {
+                    if ($block->header === "Posts") {
                         $block->header = "&nbsp;";
                     }
                     $main_block_html[] = $this->block_html($block, false);

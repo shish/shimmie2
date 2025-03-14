@@ -13,7 +13,7 @@ class RegenThumbTest extends ShimmiePHPUnitTestCase
         $this->get_page("post/view/$image_id");
 
         $this->post_page("regen_thumb/one/$image_id");
-        $this->assert_title("Thumbnail Regenerated");
+        self::assert_title("Thumbnail Regenerated");
 
         # FIXME: test that the thumb's modified time has been updated
     }

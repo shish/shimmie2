@@ -57,7 +57,7 @@ function contact_link(?string $contact = null): ?string
         return "mailto:$text";
     }
 
-    if (str_contains($text, "/") && mb_substr($text, 0, 1) != "/") {
+    if (str_contains($text, "/") && !str_starts_with($text, "/")) {
         return "https://$text";
     }
 
@@ -199,7 +199,7 @@ function only_strings(array $map): array
  */
 function ftime(): float
 {
-    return (float)microtime(true);
+    return microtime(true);
 }
 
 
@@ -321,7 +321,7 @@ function _fatal_error(\Throwable $e): void
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
     //'.$h_hash.'
 
-    if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
+    if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
         print("Trace: ");
         $t = array_reverse($e->getTrace());
         foreach ($t as $n => $f) {
@@ -378,9 +378,9 @@ function _get_user(): User
     $my_user = null;
     if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $parts = explode(" ", $_SERVER['HTTP_AUTHORIZATION'], 2);
-        if (count($parts) == 2 && $parts[0] == "Bearer") {
+        if (count($parts) === 2 && $parts[0] === "Bearer") {
             $parts = explode(":", $parts[1], 2);
-            if (count($parts) == 2) {
+            if (count($parts) === 2) {
                 $my_user = User::by_session($parts[0], $parts[1]);
             }
         }
@@ -537,7 +537,7 @@ function _get_query(?string $uri = null): string
         // of URL decoding, which we don't want
         foreach (explode('&', $parsed_url['query'] ?? "") as $z) {
             $qps = explode('=', $z, 2);
-            if (count($qps) == 2 && $qps[0] == "q") {
+            if (count($qps) === 2 && $qps[0] === "q") {
                 $q = $qps[1];
             }
         }

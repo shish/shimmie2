@@ -13,7 +13,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
     {
         $schema = GraphQL::get_schema();
         $schema->assertValid();
-        $this->assertNotEmpty($schema->getTypeMap());
+        self::assertNotEmpty($schema->getTypeMap());
     }
 
     /**
@@ -45,7 +45,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
             }
         }');
 
-        $this->assertEquals([
+        self::assertEquals([
             'data' => [
                 'posts' => [
                     [
@@ -84,7 +84,7 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
             }
         }");
 
-        $this->assertEquals([
+        self::assertEquals([
             'data' => [
                 'update_post_metadata' => [
                     'id' => "post:$image_id",
@@ -112,9 +112,9 @@ class GraphQLTest extends ShimmiePHPUnitTestCase
             ],
         ];
         $page = $this->post_page("graphql_upload", ["tags" => "foo", "tags0" => "bar"]);
-        $this->assertEquals(200, $page->code);
-        $this->assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
+        self::assertEquals(200, $page->code);
+        self::assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
         $id = $database->get_one("SELECT id FROM images");
-        $this->assertEquals("{\"results\":[{\"image_ids\":[$id]}]}", $page->data);
+        self::assertEquals("{\"results\":[{\"image_ids\":[$id]}]}", $page->data);
     }
 }

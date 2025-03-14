@@ -13,9 +13,9 @@ class ArchiveFileHandlerTest extends ShimmiePHPUnitTestCase
         $this->post_image("tests/test.zip", "a z");
 
         $images = Search::find_images();
-        $this->assertEquals(2, count($images));
-        $this->assertEquals("a tests z", $images[0]->get_tag_list());
-        $this->assertEquals("a tests z", $images[1]->get_tag_list());
+        self::assertEquals(2, count($images));
+        self::assertEquals("a tests z", $images[0]->get_tag_list());
+        self::assertEquals("a tests z", $images[1]->get_tag_list());
     }
 
     public function tearDown(): void

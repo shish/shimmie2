@@ -426,7 +426,7 @@ final readonly class Url implements UriInterface
     public static function is_https_enabled(): bool
     {
         // check forwarded protocol
-        if (Network::is_trusted_proxy() && !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        if (Network::is_trusted_proxy() && !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
             $_SERVER['HTTPS'] = 'on';
         }
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');

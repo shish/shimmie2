@@ -143,7 +143,7 @@ class RegenThumb extends Extension
             case "delete_thumbs":
                 $event->redirect = true;
 
-                if (isset($event->params["delete_thumb_mime"]) && $event->params["delete_thumb_mime"] != "") {
+                if (isset($event->params["delete_thumb_mime"]) && $event->params["delete_thumb_mime"] !== "") {
                     $images = Search::find_images(tags: ["mime=" . $event->params["delete_thumb_mime"]]);
 
                     $i = 0;

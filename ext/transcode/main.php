@@ -117,7 +117,7 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        if ($user->can(ImagePermission::EDIT_FILES) && $event->context != "report") {
+        if ($user->can(ImagePermission::EDIT_FILES) && $event->context !== "report") {
             $engine = $config->get_string(TranscodeImageConfig::ENGINE);
             if ($this->can_convert_mime($engine, $event->image->get_mime())) {
                 $options = $this->get_supported_output_mimes($engine, $event->image->get_mime());
@@ -197,10 +197,10 @@ class TranscodeImage extends Extension
 
             $source_mime = $event->image->get_mime();
 
-            if ($source_mime != $target_mime) {
+            if ($source_mime !== $target_mime) {
                 $tmp_filename = $this->transcode_image($event->path, $source_mime, $target_mime);
 
-                if ($event->file_modified === true && $event->path != $event->image->get_image_filename()) {
+                if ($event->file_modified === true && $event->path !== $event->image->get_image_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up
                     unlink($event->path);
                 }
@@ -281,7 +281,7 @@ class TranscodeImage extends Extension
                 continue;
             }
             if (MediaEngine::is_output_supported($engine, $value)
-                && (empty($omit_mime) || $omit_mime != $value)) {
+                && (empty($omit_mime) || $omit_mime !== $value)) {
                 $output[$key] = $value;
             }
         }

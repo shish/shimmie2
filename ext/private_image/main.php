@@ -22,7 +22,7 @@ class PrivateImage extends Extension
         if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
-            if ($image->owner_id != $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+            if ($image->owner_id !== $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to private.");
             }
 
@@ -34,7 +34,7 @@ class PrivateImage extends Extension
         if ($event->page_matches("publicize_image/{image_id}", method: "POST")) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
-            if ($image->owner_id != $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+            if ($image->owner_id !== $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to public.");
             }
 
@@ -45,7 +45,7 @@ class PrivateImage extends Extension
 
         if ($event->page_matches("user_admin/private_image", method: "POST")) {
             $id = int_escape($event->req_POST('id'));
-            if ($id != $user->id) {
+            if ($id !== $user->id) {
                 throw new PermissionDenied("Cannot change another user's settings");
             }
             $set_default = array_key_exists("set_default", $event->POST);
@@ -63,7 +63,7 @@ class PrivateImage extends Extension
     {
         global $user, $page;
 
-        if ($event->image['private'] === true && $event->image->owner_id != $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ($event->image['private'] === true && $event->image->owner_id !== $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }

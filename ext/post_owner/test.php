@@ -17,6 +17,6 @@ class PostOwnerTest extends ShimmiePHPUnitTestCase
 
         $this->log_in_as_user();
         $this->get_page("post/view/$image_id");
-        $this->assert_text(self::ADMIN_NAME);
+        self::assert_text(self::ADMIN_NAME);
     }
 }

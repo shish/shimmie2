@@ -13,10 +13,10 @@ class EnablableTest extends TestCase
         $class = new \ReflectionClass(Enablable::class);
         $prop = $class->getProperty("enabled_extensions");
         $prop->setValue(null, null);
-        $this->assertNull($prop->getValue());
+        self::assertNull($prop->getValue());
         Enablable::get_enabled_extensions();
         // phpstan doesn't know that we changed the value
         // @phpstan-ignore-next-line
-        $this->assertContains("admin", $prop->getValue());
+        self::assertContains("admin", $prop->getValue());
     }
 }

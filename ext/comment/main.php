@@ -158,13 +158,13 @@ class CommentList extends Extension
                 $this->set_version(CommentConfig::VERSION, 1);
             }
 
-            if ($this->get_version(CommentConfig::VERSION) == 1) {
+            if ($this->get_version(CommentConfig::VERSION) === 1) {
                 $database->execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
                 $database->execute("CREATE INDEX comments_posted ON comments(posted)");
                 $this->set_version(CommentConfig::VERSION, 2);
             }
 
-            if ($this->get_version(CommentConfig::VERSION) == 2) {
+            if ($this->get_version(CommentConfig::VERSION) === 2) {
                 $this->set_version(CommentConfig::VERSION, 3);
                 $database->execute("ALTER TABLE comments ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
                 $database->execute("ALTER TABLE comments ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
@@ -181,7 +181,7 @@ class CommentList extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "comment") {
+        if ($event->parent === "comment") {
             $event->add_nav_link(make_link('comment/list'), "All");
             $event->add_nav_link(make_link('ext_doc/comment'), "Help");
         }
@@ -449,7 +449,7 @@ class CommentList extends Extension
         $window = $config->get_int(CommentConfig::WINDOW);
         $max = $config->get_int(CommentConfig::LIMIT);
 
-        if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
+        if ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
             $window_sql = "interval $window minute";
         } else {
             $window_sql = "interval '$window minute'";
@@ -551,7 +551,7 @@ class CommentList extends Extension
             throw new CommentPostingException("You do not have permission to add comments");
         } elseif (is_null(Image::by_id($image_id))) {
             throw new CommentPostingException("The image does not exist");
-        } elseif (trim($comment) == "") {
+        } elseif (trim($comment) === "") {
             throw new CommentPostingException("Comments need text...");
         } elseif (strlen($comment) > 9000) {
             throw new CommentPostingException("Comment too long~");
@@ -560,7 +560,7 @@ class CommentList extends Extension
         // advanced sanity checks
         elseif (strlen($comment) / strlen(\Safe\gzcompress($comment)) > 10) {
             throw new CommentPostingException("Comment too repetitive~");
-        } elseif ($user->is_anonymous() && ($_POST['hash'] != $this->get_hash())) {
+        } elseif ($user->is_anonymous() && ($_POST['hash'] !== $this->get_hash())) {
             $page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");
             throw new CommentPostingException(
                 "Comment submission form is out of date; refresh the ".

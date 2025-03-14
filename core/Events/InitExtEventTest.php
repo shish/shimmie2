@@ -11,6 +11,6 @@ class InitExtEventTest extends TestCase
     public function testInitExt(): void
     {
         $e = send_event(new InitExtEvent());
-        $this->assertFalse($e->stop_processing);
+        self::assertFalse($e->stop_processing);
     }
 }

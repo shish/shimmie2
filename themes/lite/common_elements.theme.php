@@ -15,7 +15,7 @@ class LiteCommonElementsTheme extends CommonElementsTheme
      */
     public function display_paginator(Page $page, string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
-        if ($total_pages == 0) {
+        if ($total_pages === 0) {
             $total_pages = 1;
         }
         $body = $this->litetheme_build_paginator($page_number, $total_pages, $base, $query, $show_random);
@@ -35,7 +35,7 @@ class LiteCommonElementsTheme extends CommonElementsTheme
      */
     public function litetheme_gen_page_link_block(string $base_url, ?array $query, int $page, int $current_page, string $name): HTMLElement
     {
-        if ($page == $current_page) {
+        if ($page === $current_page) {
             $link_class = "tab-selected";
         } else {
             $link_class = "";

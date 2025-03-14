@@ -27,7 +27,7 @@ abstract class BaseConfigGroup extends Enablable
                 continue;
             }
             $attributes = $refl_const->getAttributes(ConfigMeta::class);
-            if (count($attributes) == 0) {
+            if (count($attributes) === 0) {
                 continue;
             }
             $meta = $attributes[0]->newInstance();
@@ -72,7 +72,7 @@ abstract class BaseConfigGroup extends Enablable
                     continue;
                 }
                 $attributes = $refl_const->getAttributes(ConfigMeta::class);
-                if (count($attributes) == 0) {
+                if (count($attributes) === 0) {
                     continue;
                 }
                 $meta = $attributes[0]->newInstance();

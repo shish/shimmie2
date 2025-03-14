@@ -63,7 +63,7 @@ class BulkAddCSV extends Extension
                 'rating' => $rating,
             ]));
 
-            if (count($event->images) == 0) {
+            if (count($event->images) === 0) {
                 throw new UploadException("File type not recognised");
             } else {
                 if (file_exists($thumbfile)) {
@@ -79,7 +79,7 @@ class BulkAddCSV extends Extension
             $this->theme->add_status("Error", "$csvfile not found");
             return;
         }
-        if (!is_file($csvfile) || strtolower(substr($csvfile, -4)) != ".csv") {
+        if (!is_file($csvfile) || !str_ends_with(strtolower($csvfile), ".csv")) {
             $this->theme->add_status("Error", "$csvfile doesn't appear to be a csv file");
             return;
         }
@@ -89,7 +89,7 @@ class BulkAddCSV extends Extension
         $csvhandle = \Safe\fopen($csvfile, "r");
 
         while (($csvdata = \Safe\fgetcsv($csvhandle, 0, ",")) !== false) {
-            if (count($csvdata) != 5) {
+            if (count($csvdata) !== 5) {
                 if (strlen($list) > 0) {
                     $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum $csvfile</b><br>".$list);
                 } else {

@@ -160,17 +160,17 @@ class TagEditCloud extends Extension
             $last_cat = $current_cat;
         }
 
-        if ($precloud != '') {
+        if ($precloud !== '') {
             $html .= "<div id='tagcloud_set'><span class='tag-category'>{$precloud}</span></div>";
         }
 
-        if ($postcloud != '') {
+        if ($postcloud !== '') {
             $postcloud = "<div id='tagcloud_extra' style='display: none;'><span class='tag-category'>{$postcloud}</span></div>";
         }
 
         $html .= "<div id='tagcloud_unset'><span class='tag-category'>{$cloud}</span>{$postcloud}</div>";
 
-        if ($sort_method != 'a' && $counter > $def_count) {
+        if ($sort_method !== 'a' && $counter > $def_count) {
             $rem = $counter - $def_count;
             $html .= "</div><br>[<span onclick='tageditcloud_toggle_extra(this);' style='color: #0000EF; font-weight:bold;'>show {$rem} more tags</span>]";
         }

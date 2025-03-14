@@ -15,10 +15,10 @@ class EventTracingCacheTest extends TestCase
         $c = new EventTracingCache($b, $t);
 
         $c->set('key', 'value');
-        $this->assertEquals('value', $c->get('key'));
-        $this->assertTrue($c->has('key'));
+        self::assertEquals('value', $c->get('key'));
+        self::assertTrue($c->has('key'));
         $c->clear();
-        $this->assertFalse($c->has('key'));
+        self::assertFalse($c->has('key'));
     }
 
     public function testMultipleBits(): void
@@ -29,10 +29,10 @@ class EventTracingCacheTest extends TestCase
 
         $c->setMultiple(['key1' => 'value1', 'key2' => 'value2']);
         foreach ($c->getMultiple(['key1', 'key2']) as $key => $value) {
-            $this->assertEquals($value, $c->get($key));
+            self::assertEquals($value, $c->get($key));
         }
         $c->deleteMultiple(['key1', 'key2']);
-        $this->assertFalse($c->has('key1'));
-        $this->assertFalse($c->has('key2'));
+        self::assertFalse($c->has('key1'));
+        self::assertFalse($c->has('key2'));
     }
 }

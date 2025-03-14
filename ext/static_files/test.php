@@ -9,6 +9,6 @@ class StaticFilesTest extends ShimmiePHPUnitTestCase
     public function testStaticHandler(): void
     {
         $this->get_page('favicon.ico');
-        $this->assert_response(200);
+        self::assert_response(200);
     }
 }

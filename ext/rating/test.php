@@ -14,15 +14,15 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image, "s"));
 
         # search for it in various ways
-        $this->assert_search_results(["rating=Safe"], [$image_id]);
-        $this->assert_search_results(["rating=s"], [$image_id]);
-        $this->assert_search_results(["rating=sqe"], [$image_id]);
+        self::assert_search_results(["rating=Safe"], [$image_id]);
+        self::assert_search_results(["rating=s"], [$image_id]);
+        self::assert_search_results(["rating=sqe"], [$image_id]);
 
         # test that search by tag still works
-        $this->assert_search_results(["pbx"], [$image_id]);
+        self::assert_search_results(["pbx"], [$image_id]);
 
         # searching for a different rating should return nothing
-        $this->assert_search_results(["rating=q"], []);
+        self::assert_search_results(["rating=q"], []);
     }
 
     public function testRatingExplicit(): void
@@ -36,7 +36,7 @@ class RatingsTest extends ShimmiePHPUnitTestCase
 
         # the explicit image shouldn't show up in anon's searches
         $this->log_out();
-        $this->assert_search_results(["pbx"], []);
+        self::assert_search_results(["pbx"], []);
     }
 
     public function testUserConfig(): void
@@ -59,24 +59,24 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
 
         // search with no tags should return only safe image
-        $this->assert_search_results([], [$image_id_s]);
+        self::assert_search_results([], [$image_id_s]);
 
         // specifying a rating should return only that rating
-        $this->assert_search_results(["rating=e"], [$image_id_e]);
-        $this->assert_search_results(["rating=s"], [$image_id_s]);
+        self::assert_search_results(["rating=e"], [$image_id_e]);
+        self::assert_search_results(["rating=s"], [$image_id_s]);
 
         // If user prefers to see all images, going to the safe image
         // and clicking next should show the explicit image
         $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s", "q", "e"]);
         $next = $image_s->get_next();
-        $this->assertNotNull($next);
-        $this->assertEquals($next->id, $image_id_e);
+        self::assertNotNull($next);
+        self::assertEquals($next->id, $image_id_e);
 
         // If the user prefers to see only safe images by default, then
         // going to the safe image and clicking next should not show
         // the explicit image (See bug #984)
         $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
-        $this->assertEquals($image_s->get_next(), null);
+        self::assertEquals($image_s->get_next(), null);
     }
 
     public function testCountImages(): void
@@ -98,9 +98,9 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         $config->set_array("ext_rating_user_privs", ["s", "q"]);
         $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
 
-        $this->assertEquals(1, Search::count_images(["rating=s"]), "UserClass has access to safe, show safe");
-        $this->assertEquals(2, Search::count_images(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
-        $this->assertEquals(1, Search::count_images(), "If search doesn't specify anything, check the user defaults");
+        self::assertEquals(1, Search::count_images(["rating=s"]), "UserClass has access to safe, show safe");
+        self::assertEquals(2, Search::count_images(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
+        self::assertEquals(1, Search::count_images(), "If search doesn't specify anything, check the user defaults");
     }
 
     // reset the user config to defaults at the end of every test so

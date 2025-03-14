@@ -20,7 +20,7 @@ class WordFilterTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         send_event(new CommentPostingEvent($image_id, $user, $in));
         $this->get_page("post/view/$image_id");
-        $this->assert_text($out);
+        self::assert_text($out);
     }
 
     public function testRegular(): void
