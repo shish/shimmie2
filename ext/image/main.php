@@ -158,7 +158,7 @@ class ImageIO extends Extension
 
     private function can_user_delete_image(User $user, Image $image): bool
     {
-        if ($user->can(ImagePermission::DELETE_OWN_IMAGE) && $image->owner_id == $user->id) {
+        if ($user->can(ImagePermission::DELETE_OWN_IMAGE) && $image->owner_id === $user->id) {
             return true;
         }
         return $user->can(ImagePermission::DELETE_IMAGE);
@@ -173,7 +173,7 @@ class ImageIO extends Extension
 
         $image = Image::by_id_ex($image_id);
 
-        if ($type == "thumb") {
+        if ($type === "thumb") {
             $mime = $config->get_string(ThumbnailConfig::MIME);
             $file = $image->get_thumb_filename();
         } else {
@@ -195,14 +195,14 @@ class ImageIO extends Extension
         }
         $gmdate_mod = gmdate('D, d M Y H:i:s', \Safe\filemtime($file)) . ' GMT';
 
-        if ($if_modified_since == $gmdate_mod) {
+        if ($if_modified_since === $gmdate_mod) {
             $page->set_mode(PageMode::DATA);
             $page->set_code(304);
             $page->set_data("");
         } else {
             $page->set_mode(PageMode::FILE);
             $page->add_http_header("Last-Modified: $gmdate_mod");
-            if ($type != "thumb") {
+            if ($type !== "thumb") {
                 $page->set_filename($image->get_nice_image_name(), 'inline');
             }
 

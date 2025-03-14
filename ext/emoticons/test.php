@@ -16,10 +16,10 @@ class EmoticonsTest extends ShimmiePHPUnitTestCase
         send_event(new CommentPostingEvent($image_id, $user, ":cool: :beans:"));
 
         $this->get_page("post/view/$image_id");
-        $this->assert_no_text(":cool:"); # FIXME: test for working image link
-        //$this->assert_text(":beans:"); # FIXME: this should be left as-is
+        self::assert_no_text(":cool:"); # FIXME: test for working image link
+        //self::assert_text(":beans:"); # FIXME: this should be left as-is
 
         $this->get_page("emote/list");
-        //$this->assert_text(":arrow:");
+        //self::assert_text(":arrow:");
     }
 }

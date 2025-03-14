@@ -155,7 +155,7 @@ class Relationships extends Extension
         $database->execute("UPDATE images SET parent_id = :pid WHERE id = :cid", ["pid" => $event->parent_id, "cid" => $event->child_id]);
         $database->execute("UPDATE images SET has_children = :true WHERE id = :pid", ["pid" => $event->parent_id, "true" => true]);
 
-        if ($old_parent != null) {
+        if ($old_parent !== null) {
             $this->set_has_children($old_parent);
         }
     }

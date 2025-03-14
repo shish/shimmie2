@@ -38,7 +38,7 @@ abstract class DataHandlerExtension extends Extension
 
             $existing = Image::by_hash(\Safe\md5_file($event->tmpname));
             if (!is_null($existing)) {
-                if ($config->get_string(UploadConfig::COLLISION_HANDLER) == 'merge') {
+                if ($config->get_string(UploadConfig::COLLISION_HANDLER) === 'merge') {
                     // Right now tags are the only thing that get merged, so
                     // we can just send a TagSetEvent - in the future we might
                     // want a dedicated MergeEvent?
@@ -59,7 +59,7 @@ abstract class DataHandlerExtension extends Extension
             $image = new Image();
             $image->tmp_file = $filename;
             $filesize = \Safe\filesize($filename);
-            if ($filesize == 0) {
+            if ($filesize === 0) {
                 throw new UploadException("File size is zero");
             }
             $image->filesize = $filesize;

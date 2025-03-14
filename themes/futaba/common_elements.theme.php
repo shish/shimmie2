@@ -13,7 +13,7 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
      */
     public function display_paginator(Page $page, string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
-        if ($total_pages == 0) {
+        if ($total_pages === 0) {
             $total_pages = 1;
         }
         $body = $this->futaba_build_paginator($page_number, $total_pages, $base, $query);
@@ -35,11 +35,11 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
     public function futaba_gen_page_link_block(string $base_url, ?array $query, int $page, int $current_page, string $name): string
     {
         $paginator = "";
-        if ($page == $current_page) {
+        if ($page === $current_page) {
             $paginator .= "<b>";
         }
         $paginator .= $this->futaba_gen_page_link($base_url, $query, $page, $name);
-        if ($page == $current_page) {
+        if ($page === $current_page) {
             $paginator .= "</b>";
         }
         return $paginator;

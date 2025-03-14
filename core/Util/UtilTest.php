@@ -11,51 +11,51 @@ class UtilTest extends TestCase
 {
     public function test_get_theme(): void
     {
-        $this->assertEquals("default", get_theme());
+        self::assertEquals("default", get_theme());
     }
 
     public function test_get_memory_limit(): void
     {
-        $this->assertGreaterThan(0, get_memory_limit());
+        self::assertGreaterThan(0, get_memory_limit());
     }
 
     public function test_check_gd_version(): void
     {
-        $this->assertGreaterThanOrEqual(0, check_gd_version());
+        self::assertGreaterThanOrEqual(0, check_gd_version());
     }
 
     public function test_check_im_version(): void
     {
-        $this->assertGreaterThanOrEqual(0, check_im_version());
+        self::assertGreaterThanOrEqual(0, check_im_version());
     }
 
     public function test_human_filesize(): void
     {
-        $this->assertEquals("123.00B", human_filesize(123));
-        $this->assertEquals("123B", human_filesize(123, 0));
-        $this->assertEquals("120.56KB", human_filesize(123456));
+        self::assertEquals("123.00B", human_filesize(123));
+        self::assertEquals("123B", human_filesize(123, 0));
+        self::assertEquals("120.56KB", human_filesize(123456));
     }
 
     public function test_generate_key(): void
     {
-        $this->assertEquals(20, strlen(generate_key()));
+        self::assertEquals(20, strlen(generate_key()));
     }
 
     public function test_contact_link(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             "mailto:asdf@example.com",
             contact_link("asdf@example.com")
         );
-        $this->assertEquals(
+        self::assertEquals(
             "http://example.com",
             contact_link("http://example.com")
         );
-        $this->assertEquals(
+        self::assertEquals(
             "https://foo.com/bar",
             contact_link("foo.com/bar")
         );
-        $this->assertEquals(
+        self::assertEquals(
             "john",
             contact_link("john")
         );
@@ -66,7 +66,7 @@ class UtilTest extends TestCase
         // TODO: HTTP_AUTHORIZATION
         // TODO: cookie user + session
         // fallback to anonymous
-        $this->assertEquals(
+        self::assertEquals(
             "Anonymous",
             _get_user()->name
         );
@@ -96,15 +96,15 @@ class UtilTest extends TestCase
         foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
-            $this->assertEquals(
+            self::assertEquals(
                 ["bar", "foo"],
                 $gst(["foo", "bar"])
             );
-            $this->assertEquals(
+            self::assertEquals(
                 ["AC/DC"],
                 $gst(["AC/DC"])
             );
-            $this->assertEquals(
+            self::assertEquals(
                 ["cat*", "rating=?"],
                 $gst(["rating=?", "cat*"]),
             );
@@ -117,15 +117,15 @@ class UtilTest extends TestCase
         foreach ([true, false] as $nice_urls) {
             $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
-            $this->assertEquals(
+            self::assertEquals(
                 $nice_urls ? "/test/post/list/bar%20foo/1" : "/test/index.php?q=post/list/bar%20foo/1",
                 search_link(["foo", "bar"])
             );
-            $this->assertEquals(
+            self::assertEquals(
                 $nice_urls ? "/test/post/list/AC%2FDC/1" : "/test/index.php?q=post/list/AC%2FDC/1",
                 search_link(["AC/DC"])
             );
-            $this->assertEquals(
+            self::assertEquals(
                 $nice_urls ? "/test/post/list/cat%2A%20rating%3D%3F/1" : "/test/index.php?q=post/list/cat%2A%20rating%3D%3F/1",
                 search_link(["rating=?", "cat*"])
             );
@@ -135,14 +135,14 @@ class UtilTest extends TestCase
     public function test_get_query(): void
     {
         // just validating an assumption that this test relies upon
-        $this->assertEquals(Url::base(), "/test");
+        self::assertEquals(Url::base(), "/test");
 
-        $this->assertEquals(
+        self::assertEquals(
             "tasty/cake",
             _get_query("/test/tasty/cake"),
             'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
         );
-        $this->assertEquals(
+        self::assertEquals(
             "tasty/cake",
             _get_query("/test/index.php?q=tasty/cake"),
             'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
@@ -151,45 +151,45 @@ class UtilTest extends TestCase
         // even when we are /test/... publicly, and generating /test/... URLs,
         // we should still be able to handle URLs at the root because that's
         // what apache sends us when it is reverse-proxying a subdirectory
-        $this->assertEquals(
+        self::assertEquals(
             "tasty/cake",
             _get_query("/tasty/cake"),
             'http://$SERVER/$INSTALL_DIR/$PATH should return $PATH'
         );
-        $this->assertEquals(
+        self::assertEquals(
             "tasty/cake",
             _get_query("/index.php?q=tasty/cake"),
             'http://$SERVER/$INSTALL_DIR/index.php?q=$PATH should return $PATH'
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             "tasty/cake%20pie",
             _get_query("/test/index.php?q=tasty/cake%20pie"),
             'URL encoded paths should be left alone'
         );
-        $this->assertEquals(
+        self::assertEquals(
             "tasty/cake%20pie",
             _get_query("/test/tasty/cake%20pie"),
             'URL encoded queries should be left alone'
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             "",
             _get_query("/test/"),
             'If just viewing install directory, should return /'
         );
-        $this->assertEquals(
+        self::assertEquals(
             "",
             _get_query("/test/index.php"),
             'If just viewing index.php, should return /'
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             "post/list/tasty%2Fcake/1",
             _get_query("/test/post/list/tasty%2Fcake/1"),
             'URL encoded niceurls should be left alone, even encoded slashes'
         );
-        $this->assertEquals(
+        self::assertEquals(
             "post/list/tasty%2Fcake/1",
             _get_query("/test/index.php?q=post/list/tasty%2Fcake/1"),
             'URL encoded uglyurls should be left alone, even encoded slashes'

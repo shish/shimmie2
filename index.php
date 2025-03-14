@@ -82,7 +82,7 @@ function main(): int
         // start the page generation waterfall
         $user = _get_user();
         send_event(new UserLoginEvent($user));
-        if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
+        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
             ob_end_flush();
             ob_implicit_flush(true);
             $app = new CliApp();
@@ -127,10 +127,10 @@ function main(): int
         if (!is_null(SysConfig::getTraceFile())) {
             if (
                 empty($_SERVER["REQUEST_URI"])
-                || (@$_GET["trace"] == "on")
+                || (@$_GET["trace"] === "on")
                 || (
                     (ftime() - $_shm_load_start) > SysConfig::getTraceThreshold()
-                    && ($_SERVER["REQUEST_URI"] ?? "") != "/upload"
+                    && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
                 )
             ) {
                 $_tracer->flush(SysConfig::getTraceFile());
@@ -140,7 +140,7 @@ function main(): int
     return $exit_code;
 }
 
-if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
+if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
     exit(main());
 } else {
     main();

@@ -178,7 +178,7 @@ class User
             }
         }
 
-        if ($my_user->passhash == md5(strtolower($name) . $pass)) {
+        if ($my_user->passhash === md5(strtolower($name) . $pass)) {
             Log::info("core-user", "Migrating from md5 to bcrypt for $name");
             $my_user->set_password($pass);
         }

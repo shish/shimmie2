@@ -18,7 +18,7 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
 
         $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Post $image_id_1: test");
+        self::assert_title("Post $image_id_1: test");
     }
 
     public function testViewInfo(): void
@@ -30,7 +30,7 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
 
         $config->set_string(ImageConfig::INFO, '$size // $filesize // $ext');
         $this->get_page("post/view/$image_id_1");
-        $this->assert_text("640x480 // 19KB // jpg");
+        self::assert_text("640x480 // 19KB // jpg");
     }
 
     public function testPrevNext(): void
@@ -41,29 +41,29 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $image_id_3 = $this->post_image("tests/favicon.png", "test");
 
         // Front image: no next, has prev
-        $this->assertException(PostNotFound::class, function () use ($image_id_1) {
+        self::assertException(PostNotFound::class, function () use ($image_id_1) {
             $this->get_page("post/next/$image_id_1");
         });
         $page = $this->get_page("post/prev/$image_id_1");
-        $this->assertEquals("/test/post/view/$image_id_2", $page->redirect);
+        self::assertEquals("/test/post/view/$image_id_2", $page->redirect);
 
         // When searching, we skip the middle
         $page = $this->get_page("post/prev/$image_id_1", ["search" => "test"]);
-        $this->assertEquals("/test/post/view/$image_id_3#search=test", $page->redirect);
+        self::assertEquals("/test/post/view/$image_id_3#search=test", $page->redirect);
 
         $page = $this->get_page("post/next/$image_id_3", ["search" => "test"]);
-        $this->assertEquals("/test/post/view/$image_id_1#search=test", $page->redirect);
+        self::assertEquals("/test/post/view/$image_id_1#search=test", $page->redirect);
 
         // Middle image: has next and prev
         $page = $this->get_page("post/next/$image_id_2");
-        $this->assertEquals("/test/post/view/$image_id_1", $page->redirect);
+        self::assertEquals("/test/post/view/$image_id_1", $page->redirect);
         $page = $this->get_page("post/prev/$image_id_2");
-        $this->assertEquals("/test/post/view/$image_id_3", $page->redirect);
+        self::assertEquals("/test/post/view/$image_id_3", $page->redirect);
 
         // Last image has next, no prev
         $page = $this->get_page("post/next/$image_id_3");
-        $this->assertEquals("/test/post/view/$image_id_2", $page->redirect);
-        $this->assertException(PostNotFound::class, function () use ($image_id_3) {
+        self::assertEquals("/test/post/view/$image_id_2", $page->redirect);
+        self::assertException(PostNotFound::class, function () use ($image_id_3) {
             $this->get_page("post/prev/$image_id_3");
         });
     }
@@ -74,16 +74,16 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 
         $this->get_page("post/view/$image_id");
-        $this->assert_text("Prev");
+        self::assert_text("Prev");
 
         $this->get_page("post/view/$image_id", ["search" => "test"]);
-        $this->assert_text("Prev");
+        self::assert_text("Prev");
 
         $this->get_page("post/view/$image_id", ["search" => "cake_order:_the_cakening"]);
-        $this->assert_text("Prev");
+        self::assert_text("Prev");
 
         $this->get_page("post/view/$image_id", ["search" => "order:score"]);
-        $this->assert_no_text("Prev");
+        self::assert_no_text("Prev");
     }
 
     public function testView404(): void
@@ -92,10 +92,10 @@ class ViewPostTest extends ShimmiePHPUnitTestCase
         $image_id_1 = $this->post_image("tests/favicon.png", "test");
         $idp1 = $image_id_1 + 1;
 
-        $this->assertException(PostNotFound::class, function () use ($idp1) {
+        self::assertException(PostNotFound::class, function () use ($idp1) {
             $this->get_page("post/view/$idp1");
         });
-        $this->assertException(PostNotFound::class, function () {
+        self::assertException(PostNotFound::class, function () {
             $this->get_page('post/view/-1');
         });
     }

@@ -15,7 +15,7 @@ class CustomHtmlHeaders extends Extension
         global $config, $page;
 
         $header = $config->get_string(CustomHtmlHeadersConfig::CUSTOM_HTML_HEADERS, '');
-        if ($header != '') {
+        if ($header !== '') {
             $page->add_html_header(rawHTML($header));
         }
 
@@ -23,9 +23,9 @@ class CustomHtmlHeaders extends Extension
         $site_title = $config->get_string(SetupConfig::TITLE);
         $sitename_in_title = $config->get_string(CustomHtmlHeadersConfig::SITENAME_IN_TITLE);
         if (!str_contains($page->title, $site_title)) {
-            if ($sitename_in_title == "prefix") {
+            if ($sitename_in_title === "prefix") {
                 $page->title = "$site_title - $page->title";
-            } elseif ($sitename_in_title == "suffix") {
+            } elseif ($sitename_in_title === "suffix") {
                 $page->title = "$page->title - $site_title";
             }
         }

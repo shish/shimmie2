@@ -41,7 +41,7 @@ class RobotsTxt extends Extension
     {
         global $config;
         $domain = $config->get_string(RobotsTxtConfig::CANONICAL_DOMAIN);
-        if (!empty($domain) && $_SERVER['HTTP_HOST'] != $domain) {
+        if (!empty($domain) && $_SERVER['HTTP_HOST'] !== $domain) {
             $event->add_disallow("");
         }
     }

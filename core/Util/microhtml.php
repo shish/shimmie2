@@ -127,7 +127,7 @@ function SHM_SELECT(string $name, array $options, array $selected_options = [], 
     }
 
     foreach ($options as $value => $text) {
-        $_options[] = SHM_OPTION((string)$value, (string)$text, in_array($value, $selected_options));
+        $_options[] = SHM_OPTION((string)$value, $text, in_array($value, $selected_options));
     }
 
     return SELECT($attrs, ...$_options);

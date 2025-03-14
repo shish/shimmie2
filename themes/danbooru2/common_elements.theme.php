@@ -15,7 +15,7 @@ class Danbooru2CommonElementsTheme extends CommonElementsTheme
      */
     public function display_paginator(Page $page, string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
-        if ($total_pages == 0) {
+        if ($total_pages === 0) {
             $total_pages = 1;
         }
         $body = $this->build_paginator($page_number, $total_pages, $base, $query);
@@ -35,7 +35,7 @@ class Danbooru2CommonElementsTheme extends CommonElementsTheme
      */
     private function gen_page_link_block(string $base_url, ?array $query, int $page, int $current_page, string $name): HTMLElement
     {
-        if ($page == $current_page) {
+        if ($page === $current_page) {
             $paginator = B($page);
         } else {
             $paginator = $this->gen_page_link($base_url, $query, $page, $name);

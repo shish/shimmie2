@@ -362,7 +362,7 @@ class Media extends Extension
 
         exec($cmd, $output, $ret);
 
-        if ((int)$ret == (int)0) {
+        if ((int)$ret === (int)0) {
             Log::debug('media', "Getting media data `$cmd`, returns $ret");
             $output = implode($output);
             return json_decode($output, true);
@@ -525,7 +525,7 @@ class Media extends Extension
             $output_mime = $input_mime;
         }
 
-        if ($output_mime == MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
+        if ($output_mime === MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
             $output_mime = MimeType::WEBP_LOSSLESS;
         }
 
@@ -538,7 +538,7 @@ class Media extends Extension
         if (!$allow_upscale) {
             $resize_suffix .= "\>";
         }
-        if ($resize_type == Media::RESIZE_TYPE_STRETCH) {
+        if ($resize_type === Media::RESIZE_TYPE_STRETCH) {
             $resize_suffix .= "\!";
         }
 
@@ -598,7 +598,7 @@ class Media extends Extension
         $cmd = sprintf($format, $convert, $args, $output_ext, $output_filename);
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
-        if ($ret != 0) {
+        if ($ret !== 0) {
             throw new MediaException("Resizing image with command `$cmd`, returns $ret, outputting " . implode("\r\n", $output));
         } else {
             Log::debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
@@ -661,7 +661,7 @@ class Media extends Extension
             throw new InsufficientMemoryException("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
         }
 
-        if ($resize_type == Media::RESIZE_TYPE_FIT) {
+        if ($resize_type === Media::RESIZE_TYPE_FIT) {
             list($new_width, $new_height) = ThumbnailUtil::get_scaled_by_aspect_ratio($width, $height, $new_width, $new_height);
         }
         if (!$allow_upscale &&

@@ -78,12 +78,12 @@ class FileExtension
             return null;
         }
 
-        if ($mime == MimeType::OCTET_STREAM) {
+        if ($mime === MimeType::OCTET_STREAM) {
             return null;
         }
 
         $data = MimeMap::get_for_mime($mime);
-        if ($data != null) {
+        if ($data !== null) {
             return $data[MimeMap::MAP_EXT][0];
         }
         return null;
@@ -100,12 +100,12 @@ class FileExtension
             return [];
         }
 
-        if ($mime == MimeType::OCTET_STREAM) {
+        if ($mime === MimeType::OCTET_STREAM) {
             return [];
         }
 
         $data = MimeMap::get_for_mime($mime);
-        if ($data != null) {
+        if ($data !== null) {
             return $data[MimeMap::MAP_EXT];
         }
 

@@ -177,7 +177,7 @@ class MimeType
                         continue;
                     } else {
                         $fileByte = $chunk[$i + 1];
-                        if ($fileByte != $byte) {
+                        if ($fileByte !== $byte) {
                             return false;
                         }
                     }
@@ -209,7 +209,7 @@ class MimeType
     public static function get_for_extension(string $ext): ?string
     {
         $data = MimeMap::get_for_extension($ext);
-        if ($data != null) {
+        if ($data !== null) {
             return $data[MimeMap::MAP_MIME][0];
         }
         // This was an old solution for differentiating lossless webps

@@ -8,7 +8,7 @@ class FourOhFourTest extends ShimmiePHPUnitTestCase
 {
     public function test404Handler(): void
     {
-        $this->assertException(ObjectNotFound::class, function () {
+        self::assertException(ObjectNotFound::class, function () {
             $this->get_page('not/a/page');
         });
     }

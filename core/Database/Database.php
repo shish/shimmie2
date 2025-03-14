@@ -345,7 +345,7 @@ class Database
         $_start = ftime();
         $row = $this->_execute($query, $args)->fetch();
         $this->count_time("exists", $_start, $query, $args);
-        if ($row == null) {
+        if ($row === null) {
             return false;
         }
         return true;
@@ -356,7 +356,7 @@ class Database
      */
     public function get_last_insert_id(string $seq): int
     {
-        if ($this->get_engine()->id == DatabaseDriverID::PGSQL) {
+        if ($this->get_engine()->id === DatabaseDriverID::PGSQL) {
             $id = $this->get_db()->lastInsertId($seq);
         } else {
             $id = $this->get_db()->lastInsertId();
@@ -399,7 +399,7 @@ class Database
     public function standardise_boolean(string $table, string $column, bool $include_postgres = false): void
     {
         $d = $this->get_driver_id();
-        if ($d == DatabaseDriverID::MYSQL) {
+        if ($d === DatabaseDriverID::MYSQL) {
             # In mysql, ENUM('Y', 'N') is secretly INTEGER where Y=1 and N=2.
             # BOOLEAN is secretly TINYINT where true=1 and false=0.
             # So we can cast directly from ENUM to BOOLEAN which gives us a
@@ -408,12 +408,12 @@ class Database
             $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");  // @phpstan-ignore-line
             $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");  // @phpstan-ignore-line
         }
-        if ($d == DatabaseDriverID::SQLITE) {
+        if ($d === DatabaseDriverID::SQLITE) {
             # SQLite doesn't care about column types at all, everything is
             # text, so we can in-place replace a char with a bool
             $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");  // @phpstan-ignore-line
         }
-        if ($d == DatabaseDriverID::PGSQL && $include_postgres) {
+        if ($d === DatabaseDriverID::PGSQL && $include_postgres) {
             $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");  // @phpstan-ignore-line
             $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");  // @phpstan-ignore-line
             $this->execute("ALTER TABLE $table DROP COLUMN $column");  // @phpstan-ignore-line
@@ -427,7 +427,7 @@ class Database
     public function seeded_random(int $seed, string $id_column): string
     {
         $d = $this->get_driver_id();
-        if ($d == DatabaseDriverID::MYSQL) {
+        if ($d === DatabaseDriverID::MYSQL) {
             // MySQL supports RAND(n), where n is a random seed. Use that.
             return "RAND($seed)";
         }

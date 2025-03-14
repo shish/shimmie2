@@ -113,7 +113,7 @@ class FutabaCommentListTheme extends CommentListTheme
             $h_reply = "[<a href='".make_link("post/view/$i_image_id")."'>Reply</a>]";
         }
 
-        if ($inner_id == 0) {
+        if ($inner_id === 0) {
             return rawHTML("<div class='comment' style='margin-top: 8px;'>$h_userlink$h_del $h_date No.$i_comment_id $h_reply<p>$h_comment</p></div>");
         } else {
             return rawHTML("<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td>".

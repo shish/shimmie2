@@ -15,6 +15,6 @@ class LogDatabaseTest extends ShimmiePHPUnitTestCase
         $this->get_page("log/view", ["r_user" => "demo"]);
 
         $page = $this->get_page("log/view", ["r_priority" => "10"]);
-        $this->assertEquals(200, $page->code);
+        self::assertEquals(200, $page->code);
     }
 }

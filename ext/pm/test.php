@@ -21,20 +21,20 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase
         // Check that user can see own messages
         $this->log_in_as_user();
         $this->get_page("user/" . self::USER_NAME);
-        $this->assert_text("message demo to test");
+        self::assert_text("message demo to test");
 
         // FIXME: read PM
         // $this->get_page("pm/read/0");
-        // $this->assert_text("No such PM");
+        // self::assert_text("No such PM");
 
         // FIXME: delete PM
         // send_event();
         // $this->get_page("user");
-        // $this->assert_no_text("message demo to test");
+        // self::assert_no_text("message demo to test");
 
         // FIXME: verify deleted
         // $this->get_page("pm/read/0");
-        // $this->assert_text("No such PM");
+        // self::assert_text("No such PM");
     }
 
     public function testAdminReadOtherMessage(): void
@@ -51,6 +51,6 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase
 
         // Check that admin can see user's messages
         $this->get_page("user/" . self::USER_NAME);
-        $this->assert_text("message demo to test");
+        self::assert_text("message demo to test");
     }
 }

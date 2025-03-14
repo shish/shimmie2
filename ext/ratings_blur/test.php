@@ -17,7 +17,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
         // the safe image should not insert a blur class
         $this->get_page("post/list");
-        $this->assert_no_text("blur");
+        self::assert_no_text("blur");
 
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
         $image_e = Image::by_id_ex($image_id_e);
@@ -25,7 +25,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
         // the explicit image should insert a blur class
         $this->get_page("post/list");
-        $this->assert_text("blur");
+        self::assert_text("blur");
     }
 
     public function testRatingBlurGlobalConfig(): void
@@ -43,7 +43,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
         // the explicit image should not insert a blur class
         $this->get_page("post/list");
-        $this->assert_no_text("blur");
+        self::assert_no_text("blur");
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image_s = Image::by_id_ex($image_id_s);
@@ -51,7 +51,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
         // the safe image should insert a blur class
         $this->get_page("post/list");
-        $this->assert_text("blur");
+        self::assert_text("blur");
 
         // change global setting: don't blur any
         $config->set_array(RatingsBlurConfig::GLOBAL_DEFAULTS, [RatingsBlur::NULL_OPTION]);
@@ -60,7 +60,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->create_test_user($this->username);
 
         $this->get_page("post/list");
-        $this->assert_no_text("blur");
+        self::assert_no_text("blur");
 
         $this->delete_test_user($this->username);
     }
@@ -82,7 +82,7 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
         // the explicit image should not insert a blur class
         $this->get_page("post/list");
-        $this->assert_no_text("blur");
+        self::assert_no_text("blur");
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image_s = Image::by_id_ex($image_id_s);
@@ -90,13 +90,13 @@ class RatingsBlurTest extends ShimmiePHPUnitTestCase
 
         // the safe image should insert a blur class
         $this->get_page("post/list");
-        $this->assert_text("blur");
+        self::assert_text("blur");
 
         // don't blur any
         $user->get_config()->set_array(RatingsBlurUserConfig::USER_DEFAULTS, [RatingsBlur::NULL_OPTION]);
 
         $this->get_page("post/list");
-        $this->assert_no_text("blur");
+        self::assert_no_text("blur");
     }
 
     private function create_test_user(string $username): void
