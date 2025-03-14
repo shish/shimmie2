@@ -43,8 +43,7 @@ class RandomList extends Extension
                 $random_images[] = $random_image;
             }
 
-            $this->theme->set_page($search_terms);
-            $this->theme->display_page($page, $random_images);
+            $this->theme->display_page($page, $search_terms, $random_images);
         }
     }
 

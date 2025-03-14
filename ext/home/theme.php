@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{BODY, emptyHTML, TITLE, META, rawHTML};
+use function MicroHTML\{BODY, emptyHTML, TITLE, META, rawHTML, DIV, INPUT};
 
 class HomeTheme extends Themelet
 {
@@ -35,15 +35,18 @@ class HomeTheme extends Themelet
         $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";
         $counter_html = empty($counter_text) ? "" : "<div class='space' id='counter'>$counter_text</div>";
         $contact_link = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a> &ndash;";
-        $search_html = "
-			<div class='space' id='search'>
-				<form action='".search_link()."' method='GET'>
-				<input name='search' size='30' type='search' value='' class='autocomplete_tags' autofocus='autofocus' />
-				<input type='hidden' name='q' value='post/list'>
-				<input type='submit' value='Search'/>
-				</form>
-			</div>
-		";
+        $search_html = DIV(
+            ["class" => "space", "id" => "search"],
+            SHM_FORM(
+                action: search_link(),
+                method: "GET",
+                children: [
+                    INPUT(["name" => "search", "size" => "30", "type" => "search", "class" => "autocomplete_tags", "autofocus" => true]),
+                    " ",
+                    SHM_SUBMIT("Search")
+                ]
+            )
+        );
         return BODY(
             $page->body_attrs(),
             rawHTML("

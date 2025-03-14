@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{BR,H3,HR,P,META,rawHTML,emptyHTML};
+use function MicroHTML\{BR,H3,HR,P,META,rawHTML,emptyHTML,INPUT};
 
 class IndexTheme extends Themelet
 {
@@ -53,14 +53,25 @@ and of course start organising your images :-)
 
         $this->display_page_header($page, $images);
 
-        $h_search_string = html_escape(Tag::implode($this->search_terms));
-        $extra = rawHTML("
-			<p><form action='".search_link()."' method='GET'>
-				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' />
-				<input type='hidden' name='q' value='post/list'>
-				<input type='submit' value='Find' style='display: none;' />
-			</form>
-		");
+        $extra = SHM_FORM(
+            action: search_link(),
+            method: "GET",
+            children: [
+                P(),
+                INPUT([
+                    "type" => "search",
+                    "name" => "search",
+                    "value" => Tag::implode($this->search_terms),
+                    "placeholder" => "Search",
+                    "class" => "autocomplete_tags"
+                ]),
+                INPUT([
+                    "type" => "submit",
+                    "value" => "Find",
+                    "style" => "display: none;"
+                ])
+            ],
+        );
 
         $this->display_navigation([
             ($this->page_number <= 1) ? null : search_link($this->search_terms, $this->page_number - 1),

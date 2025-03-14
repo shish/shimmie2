@@ -18,17 +18,20 @@ use function MicroHTML\SELECT;
 use function MicroHTML\SPAN;
 use function MicroHTML\{TABLE,THEAD,TFOOT,TR,TH,TD};
 
-function SHM_FORM(Url $target, bool $multipart = false, string $form_id = "", string $onsubmit = "", string $name = ""): HTMLElement
+/**
+ * @param array<string|HTMLElement|null> $children
+ */
+function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string $onsubmit = "", string $name = "", string $method = "POST", array $children = []): HTMLElement
 {
     global $user;
 
     $attrs = [
-        "action" => $target,
-        "method" => 'POST'
+        "action" => $action,
+        "method" => $method,
     ];
 
-    if ($form_id) {
-        $attrs["id"] = $form_id;
+    if ($id) {
+        $attrs["id"] = $id;
     }
     if ($multipart) {
         $attrs["enctype"] = 'multipart/form-data';
@@ -42,7 +45,9 @@ function SHM_FORM(Url $target, bool $multipart = false, string $form_id = "", st
 
     return FORM(
         $attrs,
-        INPUT(["type" => "hidden", "name" => "auth_token", "value" => $user->get_auth_token()])
+        $method === "GET" ? INPUT(["type" => "hidden", "name" => "q", "value" => $action->getPath()]) : null,
+        INPUT(["type" => "hidden", "name" => "auth_token", "value" => $user->get_auth_token()]),
+        ...$children,
     );
 }
 
@@ -51,9 +56,9 @@ function SHM_FORM(Url $target, bool $multipart = false, string $form_id = "", st
  *
  * @param array<string|HTMLElement|null> $children
  */
-function SHM_SIMPLE_FORM(Url $target, ...$children): HTMLElement
+function SHM_SIMPLE_FORM(Url $action, ...$children): HTMLElement
 {
-    $form = SHM_FORM($target);
+    $form = SHM_FORM($action);
     $form->appendChild(emptyHTML(...$children));
     return $form;
 }

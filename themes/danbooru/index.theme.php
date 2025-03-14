@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\{rawHTML, INPUT, P};
 
 class DanbooruIndexTheme extends IndexTheme
 {
@@ -49,14 +49,25 @@ class DanbooruIndexTheme extends IndexTheme
      */
     protected function build_navigation(int $page_number, int $total_pages, array $search_terms): HTMLElement
     {
-        $h_search_string = html_escape(Tag::implode($search_terms));
-        return rawHTML("
-			<p><form action='".search_link()."' method='GET'>
-				<input name='search' type='text' value='$h_search_string' class='autocomplete_tags' placeholder='Search' />
-				<input type='hidden' name='q' value='post/list'>
-				<input type='submit' value='Find' style='display: none;' />
-			</form>
-		");
+        return SHM_FORM(
+            action: search_link(),
+            method: 'GET',
+            children: [
+                P(),
+                INPUT([
+                    "name" => 'search',
+                    "type" => 'text',
+                    "value" => Tag::implode($search_terms),
+                    "class" => 'autocomplete_tags',
+                    "style" => 'width:75%'
+                ]),
+                INPUT([
+                    "type" => 'submit',
+                    "value" => 'Go',
+                    "style" => 'width:20%'
+                ]),
+            ]
+        );
     }
 
     protected function build_table(array $images, ?string $query): HTMLElement

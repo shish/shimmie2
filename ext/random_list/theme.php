@@ -4,27 +4,15 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\rawHTML;
+use function MicroHTML\{rawHTML, INPUT};
 
 class RandomListTheme extends Themelet
 {
-    /** @var string[] */
-    protected array $search_terms;
-
     /**
      * @param string[] $search_terms
-     */
-    public function set_page(array $search_terms): void
-    {
-        $this->search_terms = $search_terms;
-    }
-
-    /**
      * @param Image[] $images
      */
-    public function display_page(Page $page, array $images): void
+    public function display_page(Page $page, array $search_terms, array $images): void
     {
         $page->title = "Random Posts";
 
@@ -43,25 +31,23 @@ class RandomListTheme extends Themelet
 
         $page->add_block(new Block("Random Posts", rawHTML($html)));
 
-        $nav = $this->build_navigation($this->search_terms);
-        $page->add_block(new Block("Navigation", $nav, "left", 0));
-    }
-
-    /**
-     * @param string[] $search_terms
-     */
-    protected function build_navigation(array $search_terms): HTMLElement
-    {
-        $h_search_string = html_escape(Tag::implode($search_terms));
-        $h_search_link = make_link("random");
-        $h_search = "
-			<p><form action='$h_search_link' method='GET'>
-				<input type='search' name='search' value='$h_search_string' placeholder='Search random list' class='autocomplete_tags' />
-				<input type='hidden' name='q' value='random'>
-				<input type='submit' value='Find' style='display: none;' />
-			</form>
-		";
-
-        return rawHTML($h_search);
+        $this->display_navigation(extra: SHM_FORM(
+            action: make_link("random"),
+            method: "GET",
+            children: [
+                INPUT([
+                    "type" => "search",
+                    "name" => "search",
+                    "value" => Tag::implode($search_terms),
+                    "placeholder" => "Search random list",
+                    "class" => "autocomplete_tags"
+                ]),
+                INPUT([
+                    "type" => "submit",
+                    "value" => "Find",
+                    "style" => "display: none;"
+                ])
+            ]
+        ));
     }
 }

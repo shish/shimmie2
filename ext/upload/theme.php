@@ -55,7 +55,7 @@ class UploadTheme extends Themelet
             $common_fields->appendChild($part);
         }
 
-        $form = SHM_FORM(make_link("upload"), multipart: true, form_id: "file_upload");
+        $form = SHM_FORM(make_link("upload"), multipart: true, id: "file_upload");
         $form->appendChild(
             TABLE(
                 ["id" => "large_upload_form", "class" => "form"],

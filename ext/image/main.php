@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function MicroHTML\{INPUT, emptyHTML, STYLE};
+use function MicroHTML\{INPUT, STYLE};
 
 /**
  * A class to handle adding / getting / removing image files from the disk.
@@ -71,12 +71,14 @@ class ImageIO extends Extension
         global $user;
 
         if ($user->can(ImagePermission::DELETE_IMAGE)) {
-            $form = SHM_FORM(make_link("image/delete"), form_id: "image_delete_form");
-            $form->appendChild(emptyHTML(
-                INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),
-                INPUT(["type" => 'submit', "value" => 'Delete', "onclick" => 'return confirm("Delete the image?");', "id" => "image_delete_button"]),
+            $event->add_part(SHM_FORM(
+                action: make_link("image/delete"),
+                id: "image_delete_form",
+                children: [
+                    INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),
+                    INPUT(["type" => 'submit', "value" => 'Delete', "onclick" => 'return confirm("Delete the image?");', "id" => "image_delete_button"]),
+                ]
             ));
-            $event->add_part($form);
         }
     }
 
