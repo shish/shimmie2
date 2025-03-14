@@ -155,7 +155,7 @@ class NotATag extends Extension
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
             $page->set_title("UnTags");
-            $page->add_block(Block::nav());
+            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }

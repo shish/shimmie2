@@ -107,7 +107,6 @@ class ExtManagerTheme extends Themelet
         }
 
         $cat_html = [
-            A(["href" => make_link()], "Index"),
             " ",
         ];
         foreach ($categories as $cat) {
@@ -115,7 +114,7 @@ class ExtManagerTheme extends Themelet
         }
 
         $page->set_title("Extensions");
-        $page->add_block(new Block("Navigation", \MicroHTML\joinHTML(BR(), $cat_html), "left", 0));
+        $this->display_navigation(extra: \MicroHTML\joinHTML(BR(), $cat_html));
         $page->add_block(new Block(null, $form));
     }
 
@@ -146,7 +145,7 @@ class ExtManagerTheme extends Themelet
 
         $page->set_title("Documentation for {$info->name}");
         $page->set_heading($info->name);
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block(null, $html));
     }
 }

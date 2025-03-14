@@ -73,7 +73,7 @@ class BlocksTheme extends Themelet
         ));
 
         $page->set_title("Blocks");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block(null, $html));
     }
 }

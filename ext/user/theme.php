@@ -28,7 +28,7 @@ class UserPageTheme extends Themelet
     public function display_login_page(Page $page): void
     {
         $page->set_title("Login");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block(
             "Login There",
             rawHTML("There should be a login box to the left")
@@ -109,7 +109,7 @@ class UserPageTheme extends Themelet
         );
 
         $page->set_title("Create Account");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Signup", $html));
     }
 
@@ -154,7 +154,7 @@ class UserPageTheme extends Themelet
     {
         global $config;
         $page->set_title("Signups Disabled");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block(
             "Signups Disabled",
             rawHTML(format_text($config->get_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE))),
@@ -248,7 +248,7 @@ class UserPageTheme extends Themelet
         $stats[] = 'User ID: '.$duser->id;
 
         $page->set_title("{$duser->name}'s Page");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Stats", rawHTML(join("<br>", $stats)), "main", 10));
     }
 

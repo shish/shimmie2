@@ -19,20 +19,12 @@ class Danbooru2CommentListTheme extends CommentListTheme
 
         $page->set_layout("no-left");
 
-        // parts for the whole page
-        $prev = $page_number - 1;
-        $next = $page_number + 1;
-
-        $h_prev = ($page_number <= 1) ? "Prev" :
-            "<a href='".make_link("comment/list/$prev")."'>Prev</a>";
-        $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_next = ($page_number >= $total_pages) ? "Next" :
-            "<a href='".make_link("comment/list/$next")."'>Next</a>";
-
-        $nav = "$h_prev | $h_index | $h_next";
-
         $page->set_title("Comments");
-        $page->add_block(new Block("Navigation", rawHTML($nav), "left"));
+        $this->display_navigation([
+            ($page_number <= 1) ? null : make_link('comment/list/'.($page_number - 1)),
+            make_link(),
+            ($page_number >= $total_pages) ? null : make_link('comment/list/'.($page_number + 1))
+        ]);
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 
         // parts for each image

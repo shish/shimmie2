@@ -232,7 +232,7 @@ class LogDatabase extends Extension
             $t = new LogTable($database->raw_db());
             $t->inputs = $event->GET;
             $page->set_title("Event Log");
-            $page->add_block(Block::nav());
+            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }

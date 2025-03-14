@@ -28,7 +28,7 @@ class TagHistoryTheme extends Themelet
 
         $page->set_title('Post '.$image_id.' Tag History');
         $page->set_heading('Tag History: '.$image_id);
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Tag History", rawHTML($history_html), "main", 10));
     }
 
@@ -40,15 +40,12 @@ class TagHistoryTheme extends Themelet
         $history_html = $this->history_list($history, false);
 
         $page->set_title("Global Tag History");
+        $this->display_navigation([
+            ($page_number <= 1) ? null : make_link('tag_history/all/'.($page_number - 1)),
+            make_link(),
+            make_link('tag_history/all/'.($page_number + 1))
+        ]);
         $page->add_block(new Block("Tag History", rawHTML($history_html), "main", 10));
-
-        $h_prev = ($page_number <= 1) ? "Prev" :
-            '<a href="'.make_link('tag_history/all/'.($page_number - 1)).'">Prev</a>';
-        $h_index = "<a href='".make_link()."'>Index</a>";
-        $h_next = '<a href="'.make_link('tag_history/all/'.($page_number + 1)).'">Next</a>';
-
-        $nav = $h_prev.' | '.$h_index.' | '.$h_next;
-        $page->add_block(new Block("Navigation", rawHTML($nav), "left", 0));
     }
 
     /**

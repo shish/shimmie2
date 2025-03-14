@@ -24,7 +24,7 @@ class StatisticsTheme extends Themelet
         );
 
         $page->set_title("Stats - Top $limit");
-        $page->add_block(Block::nav());
+        $this->display_navigation();
         $page->add_block(new Block("Stats", $html, "main", 20));
     }
 
