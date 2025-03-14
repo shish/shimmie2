@@ -403,9 +403,6 @@ class UserPage extends Extension
         if ($user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
             $event->add_link("User List", make_link("user_admin/list"), 87);
         }
-        if ($user->can(UserAccountsPermission::EDIT_USER_CLASS)) {
-            $event->add_link("User Classes", make_link("user_admin/classes"), 88);
-        }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
     }
 
