@@ -125,7 +125,7 @@ class Pools extends Extension
         global $database;
 
         // Create the database tables
-        if ($this->get_version("ext_pools_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("pools", "
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
@@ -155,17 +155,17 @@ class Pools extends Extension
 					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
-            $this->set_version("ext_pools_version", 4);
+            $this->set_version(4);
 
             Log::info("pools", "extension installed");
         }
 
-        if ($this->get_version("ext_pools_version") < 4) {
+        if ($this->get_version() < 4) {
             $database->standardise_boolean("pools", "public");
-            $this->set_version("ext_pools_version", 4);
+            $this->set_version(4);
         }
 
-        if ($this->get_version("ext_pools_version") < 5) {
+        if ($this->get_version() < 5) {
             // earlier versions of the table-creation code added the lastupdated
             // column non-deterministically, so let's check if it is there and
             // add it if needed.
@@ -173,7 +173,7 @@ class Pools extends Extension
             if (!array_key_exists("lastupdated", $cols)) {
                 $database->execute("ALTER TABLE pools ADD COLUMN lastupdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
             }
-            $this->set_version("ext_pools_version", 5);
+            $this->set_version(5);
         }
     }
 

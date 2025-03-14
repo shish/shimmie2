@@ -176,14 +176,14 @@ class Trash extends Extension
     {
         global $database;
 
-        if ($this->get_version(TrashConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN trash BOOLEAN NOT NULL DEFAULT FALSE");
             $database->execute("CREATE INDEX images_trash_idx ON images(trash)");
-            $this->set_version(TrashConfig::VERSION, 2);
+            $this->set_version(2);
         }
-        if ($this->get_version(TrashConfig::VERSION) < 2) {
+        if ($this->get_version() < 2) {
             $database->standardise_boolean("images", "trash");
-            $this->set_version(TrashConfig::VERSION, 2);
+            $this->set_version(2);
         }
     }
 }

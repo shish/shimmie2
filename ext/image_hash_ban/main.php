@@ -61,18 +61,19 @@ class AddImageHashBanEvent extends Event
 class ImageBan extends Extension
 {
     public const KEY = "image_hash_ban";
+    public const VERSION_KEY = "ext_imageban_version";
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
-        if ($this->get_version("ext_imageban_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("image_bans", "
 				id SCORE_AIPK,
 				hash CHAR(32) NOT NULL,
 				date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				reason TEXT NOT NULL
 			");
-            $this->set_version("ext_imageban_version", 1);
+            $this->set_version(1);
         }
     }
 

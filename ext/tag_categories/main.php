@@ -14,7 +14,7 @@ class TagCategories extends Extension
     {
         global $database;
 
-        if ($this->get_version(TagCategoriesConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             // primary extension database, holds all our stuff!
             $database->create_table(
                 'image_tag_categories',
@@ -24,13 +24,13 @@ class TagCategories extends Extension
 				color VARCHAR(7)'
             );
 
-            $this->set_version(TagCategoriesConfig::VERSION, 1);
+            $this->set_version(1);
 
             Log::info("tag_categories", "extension installed");
         }
 
         // if empty, add our default values
-        $number_of_db_rows = $database->execute('SELECT COUNT(*) FROM image_tag_categories;')->fetchColumn();
+        $number_of_db_rows = $database->get_one('SELECT COUNT(*) FROM image_tag_categories');
 
         if ($number_of_db_rows == 0) {
             $database->execute(

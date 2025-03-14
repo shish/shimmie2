@@ -224,14 +224,14 @@ class PrivateImage extends Extension
     {
         global $database;
 
-        if ($this->get_version(PrivateImageConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN private BOOLEAN NOT NULL DEFAULT FALSE");
             $database->execute("CREATE INDEX images_private_idx ON images(private)");
-            $this->set_version(PrivateImageConfig::VERSION, 2);
+            $this->set_version(2);
         }
-        if ($this->get_version(PrivateImageConfig::VERSION) < 2) {
+        if ($this->get_version() < 2) {
             $database->standardise_boolean("images", "private");
-            $this->set_version(PrivateImageConfig::VERSION, 2);
+            $this->set_version(2);
         }
     }
 }

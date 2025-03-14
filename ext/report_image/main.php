@@ -156,7 +156,7 @@ class ReportImage extends Extension
     {
         global $database;
 
-        if ($this->get_version("ext_report_image_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("image_reports", "
 				id SCORE_AIPK,
 				image_id INTEGER NOT NULL,
@@ -165,7 +165,7 @@ class ReportImage extends Extension
 				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 				FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
 			");
-            $this->set_version("ext_report_image_version", 1);
+            $this->set_version(1);
         }
     }
 
