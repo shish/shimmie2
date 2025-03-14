@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, rawHTML, DIV, META, LINK};
+use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, BR, DIV, META, LINK};
 
 class ViewPostTheme extends Themelet
 {
@@ -104,16 +104,26 @@ class ViewPostTheme extends Themelet
 
     protected function build_navigation(Image $image): HTMLElement
     {
-        $h_pin = $this->build_pin($image);
-        $h_search = "
-			<p><form action='".search_link()."' method='GET'>
-				<input type='hidden' name='q' value='post/list'>
-				<input type='search' name='search' placeholder='Search' class='autocomplete_tags'>
-				<input type='submit' value='Find' style='display: none;'>
-			</form>
-		";
+        $pin = $this->build_pin($image);
 
-        return rawHTML("$h_pin<br>$h_search");
+        $search = SHM_FORM(
+            action: search_link(),
+            method: 'GET',
+            children: [
+                INPUT([
+                    "name" => 'search',
+                    "type" => 'text',
+                    "class" => 'autocomplete_tags',
+                ]),
+                INPUT([
+                    "type" => 'submit',
+                    "value" => 'Find',
+                    "style" => 'display: none;'
+                ]),
+            ]
+        );
+
+        return emptyHTML($pin, BR(), $search);
     }
 
     /**

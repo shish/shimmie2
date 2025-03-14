@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\{rawHTML, INPUT};
 
 class Danbooru2ViewPostTheme extends ViewPostTheme
 {
@@ -69,15 +69,22 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
 
     protected function build_navigation(Image $image): HTMLElement
     {
-        //$h_pin = $this->build_pin($image);
-        $h_search = "
-			<form action='".search_link()."' method='GET'>
-				<input name='search' type='text' class='autocomplete_tags' style='width:75%'>
-				<input type='submit' value='Go' style='width:20%'>
-				<input type='hidden' name='q' value='post/list'>
-			</form>
-		";
-
-        return rawHTML($h_search);
+        return SHM_FORM(
+            action: search_link(),
+            method: 'GET',
+            children: [
+                INPUT([
+                    "name" => 'search',
+                    "type" => 'text',
+                    "class" => 'autocomplete_tags',
+                    "style" => 'width:75%'
+                ]),
+                INPUT([
+                    "type" => 'submit',
+                    "value" => 'Go',
+                    "style" => 'width:20%'
+                ]),
+            ]
+        );
     }
 }

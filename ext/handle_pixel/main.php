@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{FORM, SELECT, OPTION};
+
 class PixelFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_pixel";
@@ -62,16 +64,15 @@ class PixelFileHandler extends DataHandlerExtension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if ($event->context == "view") {
-            $event->add_part(\MicroHTML\rawHTML("
-                <form>
-                    <select class='shm-zoomer'>
-                        <option value='full'>Full Size</option>
-                        <option value='width'>Fit Width</option>
-                        <option value='height'>Fit Height</option>
-                        <option value='both'>Fit Both</option>
-                    </select>
-                </form>
-            "), 20);
+            $event->add_part(FORM(
+                SELECT(
+                    ["class" => "shm-zoomer"],
+                    OPTION(["value" => "full"], "Full Size"),
+                    OPTION(["value" => "width"], "Fit Width"),
+                    OPTION(["value" => "height"], "Fit Height"),
+                    OPTION(["value" => "both"], "Fit Both")
+                )
+            ), 20);
         }
     }
 }
