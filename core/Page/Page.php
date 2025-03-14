@@ -222,7 +222,7 @@ class Page
     public function find_block(?string $text): Block
     {
         foreach ($this->blocks as $block) {
-            if ($block->header == $text) {
+            if ($block->header === $text) {
                 return $block;
             }
         }
@@ -254,7 +254,7 @@ class Page
      */
     public function display(): void
     {
-        if ($this->mode != PageMode::MANUAL) {
+        if ($this->mode !== PageMode::MANUAL) {
             $this->send_headers();
         }
 
@@ -295,7 +295,7 @@ class Page
                         header("Content-Range: bytes $start-$end/$size");
                         break;
                     }
-                    if ($range == '-') {
+                    if ($range === '-') {
                         $c_start = $size - (int)substr($range, 1);
                         $c_end = $end;
                     } else {

@@ -201,7 +201,7 @@ class Image implements \ArrayAccess
      */
     public static function by_id_or_hash(string $id): ?Image
     {
-        return (is_numberish($id) && strlen($id) != 32) ? Image::by_id((int)$id) : Image::by_hash($id);
+        return (is_numberish($id) && strlen($id) !== 32) ? Image::by_id((int)$id) : Image::by_hash($id);
     }
 
     /**
@@ -280,7 +280,7 @@ class Image implements \ArrayAccess
     public function set_owner(User $owner): void
     {
         global $database;
-        if ($owner->id != $this->owner_id) {
+        if ($owner->id !== $this->owner_id) {
             $database->execute("
                 UPDATE images
                 SET owner_id=:owner_id
@@ -524,7 +524,7 @@ class Image implements \ArrayAccess
         if (empty($new_source)) {
             $new_source = null;
         }
-        if ($new_source != $old_source) {
+        if ($new_source !== $old_source) {
             $database->execute("UPDATE images SET source=:source WHERE id=:id", ["source" => $new_source, "id" => $this->id]);
             Log::info("core_image", "Source for Post #{$this->id} set to: $new_source (was $old_source)");
         }
@@ -598,7 +598,7 @@ class Image implements \ArrayAccess
             throw new TagSetException('Tried to set zero tags');
         }
 
-        if (strtolower(Tag::implode($tags)) != strtolower($this->get_tag_list())) {
+        if (strtolower(Tag::implode($tags)) !== strtolower($this->get_tag_list())) {
             // delete old
             $this->delete_tags_from_image();
 

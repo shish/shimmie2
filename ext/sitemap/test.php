@@ -11,7 +11,7 @@ class XMLSitemapTest extends ShimmiePHPUnitTestCase
         // check empty DB
         @unlink(Filesystem::data_path("cache/sitemap.xml"));
         $page = $this->get_page('sitemap.xml');
-        $this->assertEquals(200, $page->code);
+        self::assertEquals(200, $page->code);
 
         $this->log_in_as_user();
         $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
@@ -19,10 +19,10 @@ class XMLSitemapTest extends ShimmiePHPUnitTestCase
         // check DB with one image
         @unlink(Filesystem::data_path("cache/sitemap.xml"));
         $page = $this->get_page('sitemap.xml');
-        $this->assertEquals(200, $page->code);
+        self::assertEquals(200, $page->code);
 
         // check caching
         $page = $this->get_page('sitemap.xml');
-        $this->assertEquals(200, $page->code);
+        self::assertEquals(200, $page->code);
     }
 }

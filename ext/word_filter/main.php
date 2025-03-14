@@ -26,7 +26,7 @@ class WordFilter extends Extension
         foreach ($map as $search => $replace) {
             $search = trim($search);
             $replace = trim($replace);
-            if ($search[0] == '/') {
+            if ($search[0] === '/') {
                 $text = \Safe\preg_replace($search, $replace, $text);
             } else {
                 $search = "/\\b" . str_replace("/", "\\/", $search) . "\\b/i";
@@ -47,7 +47,7 @@ class WordFilter extends Extension
         $map = [];
         foreach ($lines as $line) {
             $parts = explode(",", $line);
-            if (count($parts) == 2) {
+            if (count($parts) === 2) {
                 $map[$parts[0]] = $parts[1];
             }
         }

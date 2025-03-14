@@ -11,6 +11,6 @@ class DownloadTest extends ShimmiePHPUnitTestCase
         global $page;
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         $this->get_page("image/$image_id/moo.jpg");
-        $this->assertEquals(PageMode::FILE, $page->mode);
+        self::assertEquals(PageMode::FILE, $page->mode);
     }
 }

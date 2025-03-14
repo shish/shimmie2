@@ -93,7 +93,7 @@ class Approval extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         global $user;
-        if ($event->parent == "posts") {
+        if ($event->parent === "posts") {
             if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
                 $event->add_nav_link(search_link(['approved:no']), "Pending Approval", order: 60);
             }
@@ -118,7 +118,7 @@ class Approval extends Extension
         }
 
         if ($matches = $event->matches(self::SEARCH_REGEXP)) {
-            if ($user->can(ApprovalPermission::APPROVE_IMAGE) && strtolower($matches[1]) == "no") {
+            if ($user->can(ApprovalPermission::APPROVE_IMAGE) && strtolower($matches[1]) === "no") {
                 $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
             } else {
                 $event->add_querylet(new Querylet("approved = :true", ["true" => true]));

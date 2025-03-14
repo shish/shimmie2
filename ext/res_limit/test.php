@@ -17,8 +17,8 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        //$this->assert_response(302);
-        $this->assertNotNull(Image::by_id($image_id));
+        //self::assert_response(302);
+        self::assertNotNull(Image::by_id($image_id));
     }
 
     public function testResLimitSmall(): void
@@ -31,10 +31,10 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $config->set_string("upload_ratios", "4:3 16:9");
 
         $this->log_in_as_user();
-        $e = $this->assertException(UploadException::class, function () {
+        $e = self::assertException(UploadException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         });
-        $this->assertEquals("Post too small", $e->getMessage());
+        self::assertEquals("Post too small", $e->getMessage());
     }
 
     public function testResLimitLarge(): void
@@ -46,10 +46,10 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $config->set_int("upload_max_width", 100);
         $config->set_string("upload_ratios", "4:3 16:9");
 
-        $e = $this->assertException(UploadException::class, function () {
+        $e = self::assertException(UploadException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         });
-        $this->assertEquals("Post too large", $e->getMessage());
+        self::assertEquals("Post too large", $e->getMessage());
     }
 
     public function testResLimitRatio(): void
@@ -61,9 +61,9 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $config->delete("upload_max_width");
         $config->set_string("upload_ratios", "16:9");
 
-        $e = $this->assertException(UploadException::class, function () {
+        $e = self::assertException(UploadException::class, function () {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         });
-        $this->assertEquals("Post needs to be in one of these ratios: 16:9", $e->getMessage());
+        self::assertEquals("Post needs to be in one of these ratios: 16:9", $e->getMessage());
     }
 }

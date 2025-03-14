@@ -10,10 +10,10 @@ class TagTest extends TestCase
 {
     public function test_compare(): void
     {
-        $this->assertFalse(Tag::compare(["foo"], ["bar"]));
-        $this->assertFalse(Tag::compare(["foo"], ["foo", "bar"]));
-        $this->assertTrue(Tag::compare([], []));
-        $this->assertTrue(Tag::compare(["foo"], ["FoO"]));
-        $this->assertTrue(Tag::compare(["foo", "bar"], ["bar", "FoO"]));
+        self::assertFalse(Tag::compare(["foo"], ["bar"]));
+        self::assertFalse(Tag::compare(["foo"], ["foo", "bar"]));
+        self::assertTrue(Tag::compare([], []));
+        self::assertTrue(Tag::compare(["foo"], ["FoO"]));
+        self::assertTrue(Tag::compare(["foo", "bar"], ["bar", "FoO"]));
     }
 }

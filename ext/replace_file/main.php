@@ -63,7 +63,7 @@ class ReplaceFile extends Extension
         $image = $event->image;
 
         $duplicate = Image::by_hash($event->new_hash);
-        if (!is_null($duplicate) && $duplicate->id != $image->id) {
+        if (!is_null($duplicate) && $duplicate->id !== $image->id) {
             throw new ImageReplaceException("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
         }
 

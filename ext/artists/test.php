@@ -15,6 +15,6 @@ class ArtistsTest extends ShimmiePHPUnitTestCase
 
         send_event(new AuthorSetEvent($image, $user, "bob"));
 
-        $this->assert_search_results(["author=bob"], [$image_id]);
+        self::assert_search_results(["author=bob"], [$image_id]);
     }
 }

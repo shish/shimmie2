@@ -25,7 +25,7 @@ function array_iunique(array $array): array
     foreach ($array as $element) {
         $found = false;
         foreach ($ok as $existing) {
-            if (strtolower($element) == strtolower($existing)) {
+            if (strtolower($element) === strtolower($existing)) {
                 $found = true;
                 break;
             }
@@ -43,10 +43,10 @@ function array_iunique(array $array): array
  * @template T
  * @template U
  * @param callable(U):T $callback
- * @param \iterator<U> $iter
+ * @param \Iterator<U> $iter
  * @return \Generator<T>
  */
-function iterator_map(callable $callback, \iterator $iter): \Generator
+function iterator_map(callable $callback, \Iterator $iter): \Generator
 {
     foreach ($iter as $i) {
         yield call_user_func($callback, $i);
@@ -59,10 +59,10 @@ function iterator_map(callable $callback, \iterator $iter): \Generator
  * @template T
  * @template U
  * @param callable(U):T $callback
- * @param \iterator<U> $iter
+ * @param \Iterator<U> $iter
  * @return array<T>
  */
-function iterator_map_to_array(callable $callback, \iterator $iter): array
+function iterator_map_to_array(callable $callback, \Iterator $iter): array
 {
     return iterator_to_array(iterator_map($callback, $iter));
 }
@@ -154,12 +154,12 @@ function validate_input(array $inputs): array
         }
 
         if (in_array('optional', $flags)) {
-            if (!isset($_POST[$key]) || trim($_POST[$key]) == "") {
+            if (!isset($_POST[$key]) || trim($_POST[$key]) === "") {
                 $outputs[$key] = null;
                 continue;
             }
         }
-        if (!isset($_POST[$key]) || trim($_POST[$key]) == "") {
+        if (!isset($_POST[$key]) || trim($_POST[$key]) === "") {
             throw new InvalidInput("Input '$key' not set");
         }
 
@@ -245,7 +245,7 @@ function truncate(string $string, int $limit, string $break = " ", string $pad =
      * strlen has O(1) cost so it's the fastest way to check if anything happened.
      */
     $truncated = mb_substr($string, 0, $limit, $e);
-    if (strlen($truncated) == strlen($string)) {
+    if (strlen($truncated) === strlen($string)) {
         return $string;
     }
 
@@ -400,13 +400,13 @@ function format_milliseconds(int $input, string $min_unit = TIME_UNITS::SECONDS)
         $count = $remainder % $conversion;
         $remainder = floor($remainder / $conversion);
 
-        if ($found || $unit == $min_unit) {
+        if ($found || $unit === $min_unit) {
             $found = true;
         } else {
             continue;
         }
 
-        if ($count == 0 && $remainder < 1) {
+        if ($count === 0 && $remainder < 1) {
             break;
         }
         $output = "$count".$unit." ".$output;
@@ -493,7 +493,7 @@ function die_nicely(string $title, string $body, int $code = 0): void
 		</div>
     </body>
 </html>");
-    if ($code != 0) {
+    if ($code !== 0) {
         http_response_code(500);
     }
     exit($code);
@@ -525,7 +525,7 @@ function sanitize_php(): void
 
     ob_start();
 
-    if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
+    if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
         if (isset($_SERVER['REMOTE_ADDR'])) {
             die("CLI with remote addr? Confused, not taking the risk.");
         }
@@ -605,13 +605,13 @@ function load_cache(?string $dsn): CacheInterface
     if ($dsn && !isset($_GET['DISABLE_CACHE'])) {
         $url = parse_url($dsn);
         if ($url) {
-            if ($url['scheme'] == "memcached" || $url['scheme'] == "memcache") {
+            if ($url['scheme'] === "memcached" || $url['scheme'] === "memcache") {
                 $memcache = new \Memcached();
                 $memcache->addServer($url['host'], $url['port']);
                 $c = new \Sabre\Cache\Memcached($memcache);
-            } elseif ($url['scheme'] == "apc") {
+            } elseif ($url['scheme'] === "apc") {
                 $c = new \Sabre\Cache\Apcu();
-            } elseif ($url['scheme'] == "redis") {
+            } elseif ($url['scheme'] === "redis") {
                 $redis = new \Predis\Client([
                     'scheme' => 'tcp',
                     'host' => $url['host'] ?? "127.0.0.1",

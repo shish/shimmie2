@@ -11,6 +11,6 @@ class InstallerExceptionTest extends TestCase
     public function testInstallerExceptionCanBeCreated(): void
     {
         $exception = new InstallerException('Test title', 'Test body', 1);
-        $this->assertInstanceOf(InstallerException::class, $exception);
+        self::assertInstanceOf(InstallerException::class, $exception);
     }
 }

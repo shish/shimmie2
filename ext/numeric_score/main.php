@@ -79,7 +79,7 @@ class NumericScoreVote
     {
         global $user;
         if ($user->can(NumericScorePermission::CREATE_VOTE)) {
-            assert($score == 0 || $score == -1 || $score == 1);
+            assert($score === 0 || $score === -1 || $score === 1);
             send_event(new NumericScoreSetEvent($post_id, $user, $score));
             return true;
         }
@@ -160,7 +160,7 @@ class NumericScore extends Extension
         } elseif ($event->page_matches("numeric_score_vote", method: "POST", permission: NumericScorePermission::CREATE_VOTE)) {
             $image_id = int_escape($event->req_POST("image_id"));
             $score = int_escape($event->req_POST("vote"));
-            if (($score == -1 || $score == 0 || $score == 1) && $image_id > 0) {
+            if (($score === -1 || $score === 0 || $score === 1) && $image_id > 0) {
                 send_event(new NumericScoreSetEvent($image_id, $user, $score));
             }
             $page->set_mode(PageMode::REDIRECT);
@@ -282,7 +282,7 @@ class NumericScore extends Extension
 
         $image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=:user_id", ['user_id' => $user_id]);
 
-        if (count($image_ids) == 0) {
+        if (count($image_ids) === 0) {
             return;
         }
 
@@ -370,7 +370,7 @@ class NumericScore extends Extension
         global $user;
 
         if ($matches = $event->matches("/^vote[=|:](up|down|remove)$/")) {
-            $score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
+            $score = ($matches[1] === "up" ? 1 : ($matches[1] === "down" ? -1 : 0));
             if ($user->can(NumericScorePermission::CREATE_VOTE)) {
                 send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
             }
@@ -379,7 +379,7 @@ class NumericScore extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "posts") {
+        if ($event->parent === "posts") {
             $event->add_nav_link(make_link('popular_by_day'), "Popular by Day");
             $event->add_nav_link(make_link('popular_by_month'), "Popular by Month");
             $event->add_nav_link(make_link('popular_by_year'), "Popular by Year");
@@ -417,7 +417,7 @@ class NumericScore extends Extension
             "DELETE FROM numeric_score_votes WHERE image_id=:imageid AND user_id=:userid",
             ["imageid" => $image_id, "userid" => $user_id]
         );
-        if ($score != 0) {
+        if ($score !== 0) {
             $database->execute(
                 "INSERT INTO numeric_score_votes(image_id, user_id, score) VALUES(:imageid, :userid, :score)",
                 ["imageid" => $image_id, "userid" => $user_id, "score" => $score]

@@ -27,12 +27,12 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_id_2);
         $image_3 = Image::by_id_ex($image_id_3);
 
-        $this->assertNull($image_1['parent_id']);
-        $this->assertNull($image_2['parent_id']);
-        $this->assertNull($image_3['parent_id']);
-        $this->assertFalse($image_1['has_children']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertFalse($image_3['has_children']);
+        self::assertNull($image_1['parent_id']);
+        self::assertNull($image_2['parent_id']);
+        self::assertNull($image_3['parent_id']);
+        self::assertFalse($image_1['has_children']);
+        self::assertFalse($image_2['has_children']);
+        self::assertFalse($image_3['has_children']);
 
         return [$image_1, $image_2, $image_3];
     }
@@ -52,12 +52,12 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_2->id);
         $image_3 = Image::by_id_ex($image_3->id);
 
-        $this->assertNull($image_1['parent_id']);
-        $this->assertEquals($image_1->id, $image_2['parent_id']);
-        $this->assertNull($image_3['parent_id']);
-        $this->assertTrue($image_1['has_children']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertFalse($image_3['has_children']);
+        self::assertNull($image_1['parent_id']);
+        self::assertEquals($image_1->id, $image_2['parent_id']);
+        self::assertNull($image_3['parent_id']);
+        self::assertTrue($image_1['has_children']);
+        self::assertFalse($image_2['has_children']);
+        self::assertFalse($image_3['has_children']);
 
         return [$image_1, $image_2, $image_3];
     }
@@ -76,12 +76,12 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_2->id);
         $image_3 = Image::by_id_ex($image_3->id);
 
-        $this->assertNull($image_1['parent_id']);
-        $this->assertEquals($image_3->id, $image_2['parent_id']);
-        $this->assertNull($image_3['parent_id']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertTrue($image_3['has_children']);
+        self::assertNull($image_1['parent_id']);
+        self::assertEquals($image_3->id, $image_2['parent_id']);
+        self::assertNull($image_3['parent_id']);
+        self::assertFalse($image_2['has_children']);
+        self::assertFalse($image_2['has_children']);
+        self::assertTrue($image_3['has_children']);
 
         return [$image_1, $image_2, $image_3];
     }
@@ -91,12 +91,12 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
     {
         [$image_1, $image_2, $image_3] = $this->testSetParent();
 
-        $this->assert_search_results(["parent:any"], [$image_2->id]);
-        $this->assert_search_results(["parent:none"], [$image_3->id, $image_1->id]);
-        $this->assert_search_results(["parent:{$image_1->id}"], [$image_2->id]);
+        self::assert_search_results(["parent:any"], [$image_2->id]);
+        self::assert_search_results(["parent:none"], [$image_3->id, $image_1->id]);
+        self::assert_search_results(["parent:{$image_1->id}"], [$image_2->id]);
 
-        $this->assert_search_results(["child:any"], [$image_1->id]);
-        $this->assert_search_results(["child:none"], [$image_3->id, $image_2->id]);
+        self::assert_search_results(["child:any"], [$image_1->id]);
+        self::assert_search_results(["child:none"], [$image_3->id, $image_2->id]);
     }
 
     #[Depends('testChangeParent')]
@@ -116,12 +116,12 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_2->id);
         $image_3 = Image::by_id_ex($image_3->id);
 
-        $this->assertNull($image_1['parent_id']);
-        $this->assertNull($image_2['parent_id']);
-        $this->assertNull($image_3['parent_id']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertFalse($image_3['has_children']);
+        self::assertNull($image_1['parent_id']);
+        self::assertNull($image_2['parent_id']);
+        self::assertNull($image_3['parent_id']);
+        self::assertFalse($image_2['has_children']);
+        self::assertFalse($image_2['has_children']);
+        self::assertFalse($image_3['has_children']);
     }
 
     //=================================================================
@@ -142,12 +142,12 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_id_2);
         $image_3 = Image::by_id_ex($image_id_3);
 
-        $this->assertNull($image_1['parent_id']);
-        $this->assertNull($image_2['parent_id']);
-        $this->assertNull($image_3['parent_id']);
-        $this->assertFalse($image_1['has_children']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertFalse($image_3['has_children']);
+        self::assertNull($image_1['parent_id']);
+        self::assertNull($image_2['parent_id']);
+        self::assertNull($image_3['parent_id']);
+        self::assertFalse($image_1['has_children']);
+        self::assertFalse($image_2['has_children']);
+        self::assertFalse($image_3['has_children']);
 
         return [$image_1, $image_2, $image_3];
     }
@@ -167,13 +167,13 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_2->id);
         $image_3 = Image::by_id_ex($image_3->id);
 
-        $this->assertEquals(["pbx"], $image_2->get_tag_array());
-        $this->assertNull($image_1['parent_id']);
-        $this->assertEquals($image_1->id, $image_2['parent_id']);
-        $this->assertNull($image_3['parent_id']);
-        $this->assertTrue($image_1['has_children']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertFalse($image_3['has_children']);
+        self::assertEquals(["pbx"], $image_2->get_tag_array());
+        self::assertNull($image_1['parent_id']);
+        self::assertEquals($image_1->id, $image_2['parent_id']);
+        self::assertNull($image_3['parent_id']);
+        self::assertTrue($image_1['has_children']);
+        self::assertFalse($image_2['has_children']);
+        self::assertFalse($image_3['has_children']);
 
         return [$image_1, $image_2, $image_3];
     }
@@ -193,13 +193,13 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_2->id);
         $image_3 = Image::by_id_ex($image_3->id);
 
-        $this->assertEquals(["pbx"], $image_3->get_tag_array());
-        $this->assertEquals($image_3->id, $image_1['parent_id']);
-        $this->assertEquals($image_1->id, $image_2['parent_id']);
-        $this->assertNull($image_3['parent_id']);
-        $this->assertTrue($image_1['has_children']);
-        $this->assertFalse($image_2['has_children']);
-        $this->assertTrue($image_3['has_children']);
+        self::assertEquals(["pbx"], $image_3->get_tag_array());
+        self::assertEquals($image_3->id, $image_1['parent_id']);
+        self::assertEquals($image_1->id, $image_2['parent_id']);
+        self::assertNull($image_3['parent_id']);
+        self::assertTrue($image_1['has_children']);
+        self::assertFalse($image_2['has_children']);
+        self::assertTrue($image_3['has_children']);
 
         return [$image_1, $image_2, $image_3];
     }
@@ -210,7 +210,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         [$image_1, $image_2, $image_3] = $this->testSetChildByTag();
 
         // check parent is set
-        $this->assertEquals($image_2['parent_id'], $image_1->id);
+        self::assertEquals($image_2['parent_id'], $image_1->id);
 
         // un-set it
         send_event(new TagSetEvent($image_2, ["pbx", "parent:none"]));
@@ -219,7 +219,7 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id_ex($image_2->id);
 
         // check it was unset
-        $this->assertEquals(["pbx"], $image_2->get_tag_array());
-        $this->assertNull($image_2['parent_id']);
+        self::assertEquals(["pbx"], $image_2->get_tag_array());
+        self::assertNull($image_2['parent_id']);
     }
 }

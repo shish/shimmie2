@@ -18,7 +18,7 @@ class PostLockTest extends ShimmiePHPUnitTestCase
 
         // user can't edit locked post
         $this->log_in_as_user();
-        $this->assertException(PermissionDenied::class, function () use ($image_id) {
+        self::assertException(PermissionDenied::class, function () use ($image_id) {
             send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, ["source" => "http://example.com"]));
         });
 

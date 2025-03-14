@@ -13,7 +13,7 @@ class BanWordsTest extends ShimmiePHPUnitTestCase
             send_event(new CommentPostingEvent($image_id, $user, $words));
             $this->fail("Exception not thrown");
         } catch (CommentPostingException $e) {
-            $this->assertEquals("Comment contains banned terms", $e->getMessage());
+            self::assertEquals("Comment contains banned terms", $e->getMessage());
         }
     }
 
@@ -31,10 +31,10 @@ class BanWordsTest extends ShimmiePHPUnitTestCase
         $this->check_blocked($image_id, "some link to http://something.cn/");
 
         $this->get_page('comment/list');
-        $this->assert_title('Comments');
-        $this->assert_no_text('viagra');
-        $this->assert_no_text('ViagrA');
-        $this->assert_no_text('http://something.cn/');
+        self::assert_title('Comments');
+        self::assert_no_text('viagra');
+        self::assert_no_text('ViagrA');
+        self::assert_no_text('http://something.cn/');
     }
 
     public function testCyrillicBan(): void
@@ -51,9 +51,9 @@ class BanWordsTest extends ShimmiePHPUnitTestCase
         $this->check_blocked($image_id, "республик");
 
         $this->get_page('comment/list');
-        $this->assert_title('Comments');
-        $this->assert_no_text('СОВЕТСКИХ');
-        $this->assert_no_text('республик');
+        self::assert_title('Comments');
+        self::assert_no_text('СОВЕТСКИХ');
+        self::assert_no_text('республик');
     }
 
 }

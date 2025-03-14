@@ -14,7 +14,7 @@ class IcoFileHandler extends DataHandlerExtension
         $event->image->lossless = true;
         $event->image->video = false;
         $event->image->audio = false;
-        $event->image->image = ($event->image->get_mime() != MimeType::ANI);
+        $event->image->image = ($event->image->get_mime() !== MimeType::ANI);
 
         $fp = \Safe\fopen($event->image->get_image_filename(), "r");
         try {
@@ -22,8 +22,8 @@ class IcoFileHandler extends DataHandlerExtension
             $subheader = \Safe\unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", \Safe\fread($fp, 16));
             $width = $subheader['width'];
             $height = $subheader['height'];
-            $event->image->width = $width == 0 ? 256 : $width;
-            $event->image->height = $height == 0 ? 256 : $height;
+            $event->image->width = $width === 0 ? 256 : $width;
+            $event->image->height = $height === 0 ? 256 : $height;
         } finally {
             fclose($fp);
         }
@@ -45,6 +45,6 @@ class IcoFileHandler extends DataHandlerExtension
         $fp = \Safe\fopen($tmpname, "r");
         $header = \Safe\unpack("Snull/Stype/Scount", \Safe\fread($fp, 6));
         fclose($fp);
-        return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
+        return ($header['null'] === 0 && ($header['type'] === 0 || $header['type'] === 1));
     }
 }

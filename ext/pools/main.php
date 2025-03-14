@@ -96,7 +96,7 @@ class Pool
     {
         global $database;
         $row = $database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
-        if ($row != null) {
+        if ($row !== null) {
             return $row['id'];
         } else {
             return null;
@@ -184,7 +184,7 @@ class Pools extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "pool") {
+        if ($event->parent === "pool") {
             $event->add_nav_link(make_link('pool/list'), "List");
             $event->add_nav_link(make_link('pool/new'), "Create");
             $event->add_nav_link(make_link('pool/updated'), "Changes");
@@ -239,7 +239,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/edit/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             $result = $database->execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $pool_id]);
             $images = [];
@@ -251,7 +251,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/order/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             $result = $database->execute(
                 "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC",
@@ -277,7 +277,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/save_order/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             foreach ($event->POST as $key => $value) {
                 if (str_starts_with($key, "order_")) {
@@ -297,7 +297,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/reverse/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             $database->with_savepoint(function () use ($pool_id) {
                 global $database;
@@ -323,7 +323,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/import/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             $images = Search::find_images(
                 limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
@@ -334,7 +334,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/add_posts/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             $image_ids = array_map(intval(...), $event->req_POST_array('check'));
             send_event(new PoolAddPostsEvent($pool_id, $image_ids));
@@ -344,7 +344,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/remove_posts/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             $images = "";
             foreach ($event->req_POST_array('check') as $imageID) {
@@ -365,7 +365,7 @@ class Pools extends Extension
         if ($event->page_matches("pool/edit_description/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
-            $this->assert_permission($user, $pool);
+            self::assert_permission($user, $pool);
 
             $database->execute(
                 "UPDATE pools SET description=:dsc,lastupdated=CURRENT_TIMESTAMP WHERE id=:pid",
@@ -380,7 +380,7 @@ class Pools extends Extension
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
 
-            if ($user->can(PoolsPermission::ADMIN) || $user->id == $pool->user_id) {
+            if ($user->can(PoolsPermission::ADMIN) || $user->id === $pool->user_id) {
                 send_event(new PoolDeletionEvent($pool_id));
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("pool/list"));
@@ -458,7 +458,7 @@ class Pools extends Extension
             $poolID = $matches[1];
 
             if (\Safe\preg_match("/^(any|none)$/", $poolID)) {
-                $not = ($poolID == "none" ? "NOT" : "");
+                $not = ($poolID === "none" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.id $not IN (SELECT DISTINCT image_id FROM pool_images)"));
             } else {
                 $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
@@ -494,7 +494,7 @@ class Pools extends Extension
             $poolTag = (string) str_replace("_", " ", $matches[1]);
 
             $pool = null;
-            if ($poolTag == 'lastcreated') {
+            if ($poolTag === 'lastcreated') {
                 $pool = $this->get_last_userpool($user->id);
             } elseif (is_numeric($poolTag)) { //If only digits, assume PoolID
                 $pool = $this->get_single_pool((int) $poolTag);
@@ -533,14 +533,14 @@ class Pools extends Extension
 
                 if ($this->have_permission($user, $pool)) {
                     send_event(
-                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items))
+                        new PoolAddPostsEvent($pool_id, iterator_map_to_array(_image_to_id(...), $event->items))
                     );
                 }
                 break;
             case "bulk_pool_add_new":
                 $new_pool_title = $event->params['bulk_pool_new'];
                 $pce = send_event(new PoolCreationEvent($new_pool_title));
-                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array("Shimmie2\_image_to_id", $event->items)));
+                send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array(_image_to_id(...), $event->items)));
                 break;
         }
     }
@@ -562,7 +562,7 @@ class Pools extends Extension
         return (
             ($pool->public && $user->can(PoolsPermission::UPDATE)) ||
             $user->can(PoolsPermission::ADMIN) ||
-            $user->id == $pool->user_id
+            $user->id === $pool->user_id
         );
     }
 
@@ -581,20 +581,17 @@ class Pools extends Extension
 
         $order_by = "";
         $order = $page->get_cookie("ui-order-pool");
-        if ($order == "created" || is_null($order)) {
+        if ($order === "created" || is_null($order)) {
             $order_by = "ORDER BY p.date DESC";
-        } elseif ($order == "updated") {
+        } elseif ($order === "updated") {
             $order_by = "ORDER BY p.lastupdated DESC";
-        } elseif ($order == "name") {
+        } elseif ($order === "name") {
             $order_by = "ORDER BY p.title ASC";
-        } elseif ($order == "count") {
+        } elseif ($order === "count") {
             $order_by = "ORDER BY p.posts DESC";
         }
 
-        $where_clause = "WHERE LOWER(title) like '%%'";
-        if ($search != null) {
-            $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
-        }
+        $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
 
         $pools = array_map([Pool::class, "makePool"], $database->get_all("
 			SELECT p.*, u.name as user_name
@@ -685,7 +682,7 @@ class Pools extends Extension
         global $database, $user;
 
         $pool = $this->get_single_pool($event->pool_id);
-        $this->assert_permission($user, $pool);
+        self::assert_permission($user, $pool);
 
         $images = [];
         foreach ($event->posts as $post_id) {
@@ -808,7 +805,7 @@ class Pools extends Extension
         $poolID = $event->pool_id;
 
         $owner_id = (int) $database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
-        if ($owner_id == $user->id || $user->can(PoolsPermission::ADMIN)) {
+        if ($owner_id === $user->id || $user->can(PoolsPermission::ADMIN)) {
             $database->execute("DELETE FROM pool_history WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pool_images WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pools WHERE id = :pid", ["pid" => $poolID]);
@@ -870,7 +867,7 @@ class Pools extends Extension
             $imageArray = "";
             $newAction = -1;
 
-            if ($entry['action'] == 0) {
+            if ($entry['action'] === 0) {
                 // READ ENTRIES
                 foreach ($images as $imageID) {
                     $this->add_post($poolID, int_escape($imageID));
@@ -878,7 +875,7 @@ class Pools extends Extension
                     $imageArray .= " " . $imageID;
                     $newAction = 1;
                 }
-            } elseif ($entry['action'] == 1) {
+            } elseif ($entry['action'] === 1) {
                 // DELETE ENTRIES
                 foreach ($images as $imageID) {
                     $database->execute(
@@ -913,7 +910,7 @@ class Pools extends Extension
             ["pid" => $poolID, "iid" => $imageID]
         );
 
-        if ($result == 0) {
+        if ($result === 0) {
             if ($config->get_bool(PoolsConfig::AUTO_INCREMENT_ORDER) && $imageOrder === 0) {
                 $imageOrder = (int) $database->get_one(
                     "

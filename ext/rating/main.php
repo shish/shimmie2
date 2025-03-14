@@ -29,7 +29,7 @@ function add_rating(ImageRating $rating): void
     if ($rating->code == "?" && array_key_exists("?", ImageRating::$known_ratings)) {
         throw new \RuntimeException("? is a reserved rating code that cannot be overridden");
     }
-    if ($rating->code != "?" && in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
+    if ($rating->code !== "?" && in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
         throw new \RuntimeException("$rating->search_term is a reserved search term");
     }
     ImageRating::$known_ratings[$rating->code] = $rating;
@@ -530,7 +530,7 @@ class Ratings extends Extension
     private function set_rating(int $image_id, string $rating, string $old_rating): void
     {
         global $database;
-        if ($old_rating != $rating) {
+        if ($old_rating !== $rating) {
             $database->execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating' => $rating, 'id' => $image_id]);
             Log::info("rating", "Rating for >>{$image_id} set to: ".$this->rating_to_human($rating));
         }

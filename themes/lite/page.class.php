@@ -105,7 +105,7 @@ class LitePage extends Page
     {
         $h = $block->header;
         $i = $block->id;
-        if ($h == "Paginator") {
+        if ($h === "Paginator") {
             return $block->body;
         }
         $html = SECTION(["id" => $i]);

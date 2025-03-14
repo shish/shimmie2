@@ -63,7 +63,7 @@ class Filesystem
         $path = str_replace(";", ":", $path);
         $path = str_replace("__", " ", $path);
         $path = dirname($path);
-        if ($path == "\\" || $path == "/" || $path == ".") {
+        if ($path === "\\" || $path === "/" || $path === ".") {
             $path = "";
         }
 
@@ -72,7 +72,7 @@ class Filesystem
             $category_to_inherit = "";
             foreach (explode(" ", $dir) as $tag) {
                 $tag = trim($tag);
-                if ($tag == "") {
+                if ($tag === "") {
                     continue;
                 }
                 if (substr_compare($tag, ":", -1) === 0) {
@@ -80,7 +80,7 @@ class Filesystem
                     // which is for inheriting to tags on the subfolder
                     $category_to_inherit = $tag;
                 } else {
-                    if ($category != "" && !str_contains($tag, ":")) {
+                    if ($category !== "" && !str_contains($tag, ":")) {
                         // This indicates that category inheritance is active,
                         // and we've encountered a tag that does not specify a category.
                         // So we attach the inherited category to the tag.
@@ -218,7 +218,7 @@ class Filesystem
                 if ($entry === false) {
                     break;
                 }
-                if ($entry == '.' || $entry == '..') {
+                if ($entry === '.' || $entry === '..') {
                     continue;
                 }
 
@@ -264,7 +264,7 @@ class Filesystem
             $full_path = "$base/$_sub_dir/$filename";
 
             if (!is_link($full_path) && is_dir($full_path)) {
-                if (!($filename == "." || $filename == "..")) {
+                if (!($filename === "." || $filename === "..")) {
                     //subdirectory found
                     $file_list = array_merge(
                         $file_list,
@@ -325,7 +325,7 @@ class Filesystem
                 // After flush, we can tell if the client browser has disconnected.
                 // This means we can start sending a large file, and if we detect they disappeared
                 // then we can just stop and not waste any more resources or bandwidth.
-                if (connection_status() != 0) {
+                if (connection_status() !== CONNECTION_NORMAL) {
                     break;
                 }
             }

@@ -27,7 +27,7 @@ class VarnishPurger extends Extension
         \Safe\curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         $result = \Safe\curl_exec($ch);
         $httpCode = \Safe\curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($httpCode != 200) {
+        if ($httpCode !== 200) {
             throw new ServerError('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
         }
         curl_close($ch);

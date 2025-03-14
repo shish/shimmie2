@@ -334,7 +334,7 @@ class DanbooruApi extends Extension
 
         // Was an md5 supplied? Does it match the file hash?
         $hash = \Safe\md5_file($file);
-        if (isset($_REQUEST['md5']) && strtolower($_REQUEST['md5']) != $hash) {
+        if (isset($_REQUEST['md5']) && strtolower($_REQUEST['md5']) !== $hash) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: md5 mismatch");
             return;
@@ -371,7 +371,7 @@ class DanbooruApi extends Extension
             $newid = make_link("post/view/" . $newimg->id)->asAbsolute();
 
             // Did we POST or GET this call?
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $page->add_http_header("X-Danbooru-Location: $newid");
             } else {
                 $page->add_http_header("Location: $newid");

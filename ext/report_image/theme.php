@@ -69,7 +69,7 @@ class ReportImageTheme extends Themelet
         $i_image = $image->id;
         $html = "";
         $public = $config->get_string(ReportImageConfig::SHOW_INFO);
-        if ($public != "none" && count($reports) > 0) {
+        if ($public !== "none" && count($reports) > 0) {
             $html .= "<b>Current reports:</b>";
             foreach ($reports as $report) {
                 $html .= "<br>";

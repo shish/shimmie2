@@ -11,7 +11,7 @@ class BlockTest extends ShimmiePHPUnitTestCase
     public function test_blockcmp(): void
     {
         // Equal position and heading
-        $this->assertEquals(
+        self::assertEquals(
             0,
             Block::cmp(
                 new Block("Alice", emptyHTML(), "main", 10),
@@ -20,14 +20,14 @@ class BlockTest extends ShimmiePHPUnitTestCase
         );
 
         // Different positions
-        $this->assertEquals(
+        self::assertEquals(
             -1,
             Block::cmp(
                 new Block("Alice", emptyHTML(), "main", 10),
                 new Block("Alice", emptyHTML(), "main", 20),
             )
         );
-        $this->assertEquals(
+        self::assertEquals(
             1,
             Block::cmp(
                 new Block("Alice", emptyHTML(), "main", 20),
@@ -36,14 +36,14 @@ class BlockTest extends ShimmiePHPUnitTestCase
         );
 
         // Different headings
-        $this->assertEquals(
+        self::assertEquals(
             -1,
             Block::cmp(
                 new Block("Alice", emptyHTML(), "main", 10),
                 new Block("Bob", emptyHTML(), "main", 10),
             )
         );
-        $this->assertEquals(
+        self::assertEquals(
             1,
             Block::cmp(
                 new Block("Bob", emptyHTML(), "main", 10),
@@ -52,7 +52,7 @@ class BlockTest extends ShimmiePHPUnitTestCase
         );
 
         // Heading sort is case insensitive
-        $this->assertEquals(
+        self::assertEquals(
             0,
             Block::cmp(
                 new Block("Alice", emptyHTML(), "main", 10),

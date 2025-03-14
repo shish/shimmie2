@@ -71,7 +71,7 @@ class TagMapTheme extends Themelet
         foreach ($tag_data as $tag => $count) {
             // In PHP, $array["10"] sets the array key as int(10), not string("10")...
             $tag = (string)$tag;
-            if ($lastLetter != mb_strtolower(substr($tag, 0, strlen($starts_with) + 1))) {
+            if ($lastLetter !== mb_strtolower(substr($tag, 0, strlen($starts_with) + 1))) {
                 $lastLetter = mb_strtolower(substr($tag, 0, strlen($starts_with) + 1));
                 if ($n++ > 0) {
                     $html->appendChild(BR());
@@ -102,7 +102,7 @@ class TagMapTheme extends Themelet
             $tag = $row['tag'];
             $count = $row['count'];
             $scaled = $row['scaled'];
-            if ($lastLog != $scaled) {
+            if ($lastLog !== $scaled) {
                 $lastLog = $scaled;
                 $html->appendChild(BR());
                 $html->appendChild(BR());

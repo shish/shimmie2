@@ -12,15 +12,15 @@ class UserClassTest extends ShimmiePHPUnitTestCase
             CommentPermission::CREATE_COMMENT => true,
             IndexPermission::BIG_SEARCH => false,
         ]);
-        $this->assertEquals("user2", $cls->name);
-        $this->assertTrue($cls->can(CommentPermission::CREATE_COMMENT));
-        $this->assertFalse($cls->can(IndexPermission::BIG_SEARCH));
+        self::assertEquals("user2", $cls->name);
+        self::assertTrue($cls->can(CommentPermission::CREATE_COMMENT));
+        self::assertFalse($cls->can(IndexPermission::BIG_SEARCH));
     }
 
     public function test_not_found(): void
     {
         $cls = UserClass::$known_classes['user'];
-        $this->assertException(ServerError::class, function () use ($cls) {
+        self::assertException(ServerError::class, function () use ($cls) {
             $cls->can("not_found");
         });
     }
@@ -29,6 +29,6 @@ class UserClassTest extends ShimmiePHPUnitTestCase
     {
         $cls = UserClass::$known_classes['user'];
         $ps = $cls->permissions();
-        $this->assertContains(CommentPermission::CREATE_COMMENT, $ps);
+        self::assertContains(CommentPermission::CREATE_COMMENT, $ps);
     }
 }

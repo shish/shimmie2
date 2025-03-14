@@ -73,7 +73,7 @@ class Block
      */
     public static function cmp(Block $a, Block $b): int
     {
-        if ($a->position == $b->position) {
+        if ($a->position === $b->position) {
             if ($a->header && $b->header) {
                 return strcasecmp($a->header, $b->header);
             }
