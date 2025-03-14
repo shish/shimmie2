@@ -27,7 +27,7 @@ class SVGFileHandler extends DataHandlerExtension
 
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = \Safe\file_get_contents(Filesystem::warehouse_path(Image::IMAGE_DIR, $hash));
+            $dirtySVG = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash)->get_contents();
             $cleanSVG = $sanitizer->sanitize($dirtySVG);
             $page->set_data($cleanSVG);
         }
@@ -42,14 +42,14 @@ class SVGFileHandler extends DataHandlerExtension
             // then sanitise it before touching it
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = \Safe\file_get_contents($event->tmpname);
+            $dirtySVG = $event->tmpname->get_contents();
             $cleanSVG = false_throws($sanitizer->sanitize($dirtySVG));
             $event->hash = md5($cleanSVG);
             $new_tmpname = shm_tempnam("svg");
-            file_put_contents($new_tmpname, $cleanSVG);
+            $new_tmpname->put_contents($cleanSVG);
             $event->set_tmpname($new_tmpname);
             parent::onDataUpload($event);
-            unlink($new_tmpname);
+            $new_tmpname->unlink();
         }
     }
 
@@ -60,7 +60,7 @@ class SVGFileHandler extends DataHandlerExtension
         $event->image->audio = false;
         $event->image->image = true;
 
-        $msp = new MiniSVGParser($event->image->get_image_filename());
+        $msp = new MiniSVGParser($event->image->get_image_filename()->str());
         $event->image->width = $msp->width;
         $event->image->height = $msp->height;
     }
@@ -77,18 +77,18 @@ class SVGFileHandler extends DataHandlerExtension
             return true;
         } catch (MediaException $e) {
             Log::warning("handle_svg", "Could not generate thumbnail. " . $e->getMessage());
-            copy("ext/handle_svg/thumb.jpg", $image->get_thumb_filename());
+            (new Path("ext/handle_svg/thumb.jpg"))->copy($image->get_thumb_filename());
             return false;
         }
     }
 
-    protected function check_contents(string $tmpname): bool
+    protected function check_contents(Path $tmpname): bool
     {
-        if (MimeType::get_for_file($tmpname) !== MimeType::SVG) {
+        if (MimeType::get_for_file($tmpname->str()) !== MimeType::SVG) {
             return false;
         }
 
-        $msp = new MiniSVGParser($tmpname);
+        $msp = new MiniSVGParser($tmpname->str());
         return $msp->valid;
     }
 }

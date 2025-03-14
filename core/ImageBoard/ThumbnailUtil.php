@@ -118,8 +118,8 @@ class ThumbnailUtil
      * @param array{0: positive-int, 1: positive-int} $tsize
      */
     public static function create_scaled_image(
-        string $inname,
-        string $outname,
+        Path $inname,
+        Path $outname,
         array $tsize,
         string $mime,
         ?string $engine = null,

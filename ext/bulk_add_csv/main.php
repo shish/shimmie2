@@ -20,7 +20,7 @@ class BulkAddCSV extends Extension
         if ($event->page_matches("bulk_add_csv", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
             $csv = $event->req_POST('csv');
             shm_set_timeout(null);
-            $this->add_csv($csv);
+            $this->add_csv(new Path($csv));
             $this->theme->display_upload_results($page);
         }
     }
@@ -53,7 +53,7 @@ class BulkAddCSV extends Extension
      *
      * @param string[] $tags
      */
-    private function add_image(string $tmpname, string $filename, array $tags, string $source, string $rating, string $thumbfile): void
+    private function add_image(Path $tmpname, string $filename, array $tags, string $source, string $rating, Path $thumbfile): void
     {
         global $database;
         $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
@@ -66,34 +66,34 @@ class BulkAddCSV extends Extension
             if (count($event->images) === 0) {
                 throw new UploadException("File type not recognised");
             } else {
-                if (file_exists($thumbfile)) {
-                    copy($thumbfile, Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $event->hash));
+                if ($thumbfile->exists()) {
+                    $thumbfile->copy(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $event->hash));
                 }
             }
         });
     }
 
-    private function add_csv(string $csvfile): void
+    private function add_csv(Path $csvfile): void
     {
-        if (!file_exists($csvfile)) {
-            $this->theme->add_status("Error", "$csvfile not found");
+        if (!$csvfile->exists()) {
+            $this->theme->add_status("Error", "{$csvfile->str()} not found");
             return;
         }
-        if (!is_file($csvfile) || !str_ends_with(strtolower($csvfile), ".csv")) {
-            $this->theme->add_status("Error", "$csvfile doesn't appear to be a csv file");
+        if (!$csvfile->is_file() || !str_ends_with(strtolower($csvfile->str()), ".csv")) {
+            $this->theme->add_status("Error", "{$csvfile->str()} doesn't appear to be a csv file");
             return;
         }
 
         $linenum = 1;
         $list = "";
-        $csvhandle = \Safe\fopen($csvfile, "r");
+        $csvhandle = \Safe\fopen($csvfile->str(), "r");
 
         while (($csvdata = \Safe\fgetcsv($csvhandle, 0, ",")) !== false) {
             if (count($csvdata) !== 5) {
                 if (strlen($list) > 0) {
-                    $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum $csvfile</b><br>".$list);
+                    $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum {$csvfile->str()}</b><br>".$list);
                 } else {
-                    $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum $csvfile</b><br>Check <a href=\"" . make_link("ext_doc/bulk_add_csv") . "\">here</a> for the expected format");
+                    $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum {$csvfile->str()}</b><br>Check <a href=\"" . make_link("ext_doc/bulk_add_csv") . "\">here</a> for the expected format");
                 }
                 fclose($csvhandle);
                 return;
@@ -116,7 +116,7 @@ class BulkAddCSV extends Extension
         }
 
         if (strlen($list) > 0) {
-            $this->theme->add_status("Adding $csvfile", $list);
+            $this->theme->add_status("Adding {$csvfile->str()}", $list);
         }
         fclose($csvhandle);
     }

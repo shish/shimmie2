@@ -188,7 +188,7 @@ class GraphQL extends Extension
             $ec = $_FILES["data$n"]["error"];
             switch ($ec) {
                 case UPLOAD_ERR_OK:
-                    $tmpname = $_FILES["data$n"]["tmp_name"];
+                    $tmpname = new Path($_FILES["data$n"]["tmp_name"]);
                     $filename = $_FILES["data$n"]["name"];
                     break;
                 case UPLOAD_ERR_INI_SIZE:

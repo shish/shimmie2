@@ -35,17 +35,17 @@ class PixelFileHandler extends DataHandlerExtension
         }
         $event->image->image = !$event->image->video;
 
-        $info = getimagesize($event->image->get_image_filename());
+        $info = getimagesize($event->image->get_image_filename()->str());
         if ($info) {
             $event->image->width = $info[0];
             $event->image->height = $info[1];
         }
     }
 
-    protected function check_contents(string $tmpname): bool
+    protected function check_contents(Path $tmpname): bool
     {
         $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_WEBP, IMAGETYPE_AVIF];
-        $info = getimagesize($tmpname);
+        $info = getimagesize($tmpname->str());
         return $info && in_array($info[2], $valid);
     }
 

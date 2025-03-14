@@ -68,11 +68,11 @@ class RotateImage extends Extension
         $hash = $image_obj->hash;
 
         $image_filename  = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash);
-        if (file_exists($image_filename) === false) {
-            throw new ImageRotateException("$image_filename does not exist.");
+        if (!$image_filename->exists()) {
+            throw new ImageRotateException("{$image_filename->str()} does not exist.");
         }
 
-        $info = \Safe\getimagesize($image_filename);
+        $info = \Safe\getimagesize($image_filename->str());
         assert(!is_null($info));
 
         $memory_use = Media::calc_memory_use($info);
@@ -84,9 +84,9 @@ class RotateImage extends Extension
 
 
         /* Attempt to load the image */
-        $image = imagecreatefromstring(\Safe\file_get_contents($image_filename));
+        $image = imagecreatefromstring(data: $image_filename->get_contents());
         if ($image == false) {
-            throw new ImageRotateException("Could not load image: ".$image_filename);
+            throw new ImageRotateException("Could not load image: ".$image_filename->str());
         }
 
         $background_color = 0;
@@ -107,42 +107,36 @@ class RotateImage extends Extension
 
         /* Temp storage while we rotate */
         $tmp_filename = shm_tempnam('rotate');
-        if (empty($tmp_filename)) {
-            throw new ImageRotateException("Unable to save temporary image file.");
-        }
 
         /* Output to the same format as the original image */
         switch ($info[2]) {
             case IMAGETYPE_GIF:
-                $result = imagegif($image_rotated, $tmp_filename);
+                $result = imagegif($image_rotated, $tmp_filename->str());
                 break;
             case IMAGETYPE_JPEG:
-                $result = imagejpeg($image_rotated, $tmp_filename);
+                $result = imagejpeg($image_rotated, $tmp_filename->str());
                 break;
             case IMAGETYPE_PNG:
-                $result = imagepng($image_rotated, $tmp_filename, 9);
+                $result = imagepng($image_rotated, $tmp_filename->str(), 9);
                 break;
             case IMAGETYPE_WEBP:
-                $result = imagewebp($image_rotated, $tmp_filename);
+                $result = imagewebp($image_rotated, $tmp_filename->str());
                 break;
             case IMAGETYPE_BMP:
-                $result = imagebmp($image_rotated, $tmp_filename, true);
+                $result = imagebmp($image_rotated, $tmp_filename->str(), true);
                 break;
             default:
                 throw new ImageRotateException("Unsupported image type.");
         }
 
         if ($result === false) {
-            throw new ImageRotateException("Could not save image: ".$tmp_filename);
+            throw new ImageRotateException("Could not save image: ".$tmp_filename->str());
         }
 
-        $new_hash = \Safe\md5_file($tmp_filename);
+        $new_hash = $tmp_filename->md5();
         /* Move the new image into the main storage location */
         $target = Filesystem::warehouse_path(Image::IMAGE_DIR, $new_hash);
-        if (!@copy($tmp_filename, $target)) {
-            throw new ImageRotateException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
-        }
-
+        $tmp_filename->copy($target);
         send_event(new ImageReplaceEvent($image_obj, $tmp_filename));
 
         Log::info("rotate", "Rotated >>{$image_id} - New hash: {$new_hash}");

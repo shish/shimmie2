@@ -151,8 +151,7 @@ class TranscodeVideo extends Extension
         return true;
     }
 
-
-    private function transcode_video(string $source_file, string $source_video_codec, string $target_mime, string $target_file): string
+    private function transcode_video(Path $source_file, string $source_video_codec, string $target_mime, Path $target_file): Path
     {
         global $config;
 
@@ -169,7 +168,7 @@ class TranscodeVideo extends Extension
         $command = new CommandBuilder($ffmpeg);
         $command->add_flag("-y"); // Bypass y/n prompts
         $command->add_flag("-i");
-        $command->add_escaped_arg($source_file);
+        $command->add_escaped_arg($source_file->str());
 
         if (!VideoContainers::is_video_codec_supported($target_mime, $source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec $source_video_codec");
@@ -185,7 +184,7 @@ class TranscodeVideo extends Extension
         $command->add_flag("-f");
         $format = self::FORMAT_NAMES[$target_mime];
         $command->add_flag($format);
-        $command->add_escaped_arg($target_file);
+        $command->add_escaped_arg($target_file->str());
 
         $command->execute(true);
 

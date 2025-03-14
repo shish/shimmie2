@@ -12,9 +12,9 @@ class MediaResizeEvent extends Event
      */
     public function __construct(
         public string $engine,
-        public string $input_path,
+        public Path $input_path,
         public string $input_mime,
-        public string $output_path,
+        public Path $output_path,
         public int $target_width,
         public int $target_height,
         public string $resize_type = Media::RESIZE_TYPE_FIT,

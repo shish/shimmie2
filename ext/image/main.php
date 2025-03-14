@@ -180,7 +180,7 @@ class ImageIO extends Extension
             $mime = $image->get_mime();
             $file = $image->get_image_filename();
         }
-        if (!file_exists($file)) {
+        if (!$file->exists()) {
             http_response_code(404);
             die();
         }
@@ -193,7 +193,7 @@ class ImageIO extends Extension
         } else {
             $if_modified_since = "";
         }
-        $gmdate_mod = gmdate('D, d M Y H:i:s', \Safe\filemtime($file)) . ' GMT';
+        $gmdate_mod = gmdate('D, d M Y H:i:s', $file->filemtime()) . ' GMT';
 
         if ($if_modified_since === $gmdate_mod) {
             $page->set_mode(PageMode::DATA);

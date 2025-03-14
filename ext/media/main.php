@@ -153,9 +153,9 @@ class Media extends Extension
 
         switch ($event->engine) {
             case MediaEngine::GD:
-                $info = getimagesize($event->input_path);
-                if ($info === false) {
-                    throw new MediaException("getimagesize failed for " . $event->input_path);
+                $info = \Safe\getimagesize($event->input_path->str());
+                if ($info === null) {
+                    throw new MediaException("Couldn't get dimensions of {$event->input_path->str()}");
                 }
 
                 self::image_resize_gd(
@@ -191,7 +191,7 @@ class Media extends Extension
                 //}
                 break;
             case MediaEngine::STATIC:
-                copy($event->input_path, $event->output_path);
+                $event->input_path->copy($event->output_path);
                 break;
             default:
                 throw new MediaException("Engine not supported for resize: " . $event->engine);
@@ -310,12 +310,12 @@ class Media extends Extension
 
             $args = [
                 escapeshellarg($ffmpeg),
-                "-y", "-i", escapeshellarg($inname),
+                "-y", "-i", escapeshellarg($inname->str()),
                 "-vf", "scale=$scaled_size[0]:$scaled_size[1],thumbnail",
                 "-f", "image2",
                 "-vframes", "1",
                 "-c:v", "png",
-                escapeshellarg($tmpname),
+                escapeshellarg($tmpname->str()),
             ];
 
             $cmd = escapeshellcmd(implode(" ", $args));
@@ -332,7 +332,7 @@ class Media extends Extension
                 Log::error('media', "Generating thumbnail with command `$cmd`, returns $ret");
             }
         } finally {
-            @unlink($tmpname);
+            @$tmpname->unlink();
         }
         return $ok;
     }
@@ -488,7 +488,7 @@ class Media extends Extension
     //        }
     //    }
 
-    public static function is_lossless(string $filename, string $mime): bool
+    public static function is_lossless(Path $filename, string $mime): bool
     {
         if (in_array($mime, self::LOSSLESS_FORMATS)) {
             return true;
@@ -501,11 +501,11 @@ class Media extends Extension
     }
 
     public static function image_resize_convert(
-        string $input_path,
+        Path $input_path,
         string $input_mime,
         int $new_width,
         int $new_height,
-        string $output_filename,
+        Path $output_filename,
         ?string $output_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         string $resize_type = self::RESIZE_TYPE_FIT,
@@ -551,8 +551,6 @@ class Media extends Extension
 
         $input_ext = self::determine_ext($input_mime);
 
-        $file_arg = "{$input_ext}:\"{$input_path}[0]\"";
-
         if ($resize_type === Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
             if ($new_height > $new_width) {
                 $resize_type = Media::RESIZE_TYPE_FIT_BLUR;
@@ -564,20 +562,19 @@ class Media extends Extension
         switch ($resize_type) {
             case Media::RESIZE_TYPE_FIT:
             case Media::RESIZE_TYPE_STRETCH:
-                $args .= "{$file_arg} {$resize_arg} {$new_width}x{$new_height}{$resize_suffix} -background {$bg} -flatten ";
+                $args .= "{$resize_arg} {$new_width}x{$new_height}{$resize_suffix} -background {$bg} -flatten ";
                 break;
             case Media::RESIZE_TYPE_FILL:
-                $args .= "{$file_arg} {$resize_arg} {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -extent {$new_width}x{$new_height} ";
+                $args .= "{$resize_arg} {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -extent {$new_width}x{$new_height} ";
                 break;
             case Media::RESIZE_TYPE_FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
-                $args .= "{$file_arg} ".
+                $args .= " ".
                     "\( -clone 0 -auto-orient -resize {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -fill black -colorize 50% -extent {$new_width}x{$new_height} -blur 0x{$blur_size} \) ".
                     "\( -clone 0 -auto-orient -resize {$new_width}x{$new_height} \) ".
                     "-delete 0 -gravity center -compose over -composite";
                 break;
         }
-
 
         switch ($output_mime) {
             case MimeType::WEBP_LOSSLESS:
@@ -588,40 +585,33 @@ class Media extends Extension
                 break;
         }
 
-
         $args .= " -quality {$output_quality} ";
-
-
         $output_ext = self::determine_ext($output_mime);
 
-        $format = '"%s"  %s   %s:"%s" 2>&1';
-        $cmd = sprintf($format, $convert, $args, $output_ext, $output_filename);
-        $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
-        exec($cmd, $output, $ret);
-        if ($ret !== 0) {
-            throw new MediaException("Resizing image with command `$cmd`, returns $ret, outputting " . implode("\r\n", $output));
-        } else {
-            Log::debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
-        }
+        $command = new CommandBuilder(executable: $convert);
+        $command->add_escaped_arg("{$input_ext}:\"{$input_path->str()}[0]\"");
+        $command->add_flag($args);
+        $command->add_escaped_arg("$output_ext:{$output_filename->str()}");
+        $command->execute();
     }
 
     /**
      * Performs a resize operation on an image file using GD.
      *
-     * @param string $image_filename The source file to be resized.
+     * @param Path $image_filename The source file to be resized.
      * @param array{0:int,1:int,2:int} $info The output of getimagesize() for the source file.
      * @param positive-int $new_width
      * @param positive-int $new_height
-     * @param string $output_filename
+     * @param Path $output_filename
      * @param ?string $output_mime If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
      * @param int $output_quality Defaults to 80.
      */
     public static function image_resize_gd(
-        string $image_filename,
+        Path $image_filename,
         array $info,
         int $new_width,
         int $new_height,
-        string $output_filename,
+        Path $output_filename,
         ?string $output_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
         string $resize_type = self::RESIZE_TYPE_FIT,
@@ -670,9 +660,9 @@ class Media extends Extension
             $new_width = $width;
         }
 
-        $image = imagecreatefromstring(\Safe\file_get_contents($image_filename));
+        $image = imagecreatefromstring($image_filename->get_contents());
         if ($image === false) {
-            throw new MediaException("Could not load image: " . $image_filename);
+            throw new MediaException("Could not load image: " . $image_filename->str());
         }
 
         $image_resized = imagecreatetruecolor($new_width, $new_height);
@@ -770,19 +760,19 @@ class Media extends Extension
 
             switch ($output_mime) {
                 case MimeType::BMP:
-                    $result = imagebmp($image_resized, $output_filename, true);
+                    $result = imagebmp($image_resized, $output_filename->str(), true);
                     break;
                 case MimeType::WEBP:
-                    $result = imagewebp($image_resized, $output_filename, $output_quality);
+                    $result = imagewebp($image_resized, $output_filename->str(), $output_quality);
                     break;
                 case MimeType::JPEG:
-                    $result = imagejpeg($image_resized, $output_filename, $output_quality);
+                    $result = imagejpeg($image_resized, $output_filename->str(), $output_quality);
                     break;
                 case MimeType::PNG:
-                    $result = imagepng($image_resized, $output_filename, 9);
+                    $result = imagepng($image_resized, $output_filename->str(), 9);
                     break;
                 case MimeType::GIF:
-                    $result = imagegif($image_resized, $output_filename);
+                    $result = imagegif($image_resized, $output_filename->str());
                     break;
                 default:
                     throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime");
@@ -806,16 +796,15 @@ class Media extends Extension
     /**
      * Determines the dimensions of a video file using ffmpeg.
      *
-     * @param string $filename
      * @return array{0: positive-int, 1: positive-int}
      */
-    public static function video_size(string $filename): array
+    public static function video_size(Path $filename): array
     {
         global $config;
         $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
         $cmd = escapeshellcmd(implode(" ", [
             escapeshellarg($ffmpeg),
-            "-y", "-i", escapeshellarg($filename),
+            "-y", "-i", escapeshellarg($filename->str()),
             "-vstats"
         ]));
         // \Safe\shell_exec is a little broken

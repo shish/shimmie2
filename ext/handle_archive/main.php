@@ -13,15 +13,15 @@ class ArchiveFileHandler extends DataHandlerExtension
     {
         if ($this->supported_mime($event->mime)) {
             global $config, $page;
-            $tmpdir = shm_tempnam("archive");
-            unlink($tmpdir);
-            mkdir($tmpdir, 0755, true);
+            $tmpdir = shm_tempdir("archive");
             $cmd = $config->get_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND);
-            $cmd = str_replace('%f', $event->tmpname, $cmd);
-            $cmd = str_replace('%d', $tmpdir, $cmd);
+            $cmd = str_replace('"%f"', "%f", $cmd);
+            $cmd = str_replace('"%d"', "%d", $cmd);
+            $cmd = str_replace('%f', escapeshellarg($event->tmpname->str()), $cmd);
+            $cmd = str_replace('%d', escapeshellarg($tmpdir->str()), $cmd);
             assert(is_string($cmd));
             exec($cmd);
-            if (file_exists($tmpdir)) {
+            if ($tmpdir->exists()) {
                 try {
                     $results = send_event(new DirectoryUploadEvent($tmpdir, Tag::explode($event->metadata['tags'])))->results;
                     foreach ($results as $r) {
@@ -48,7 +48,7 @@ class ArchiveFileHandler extends DataHandlerExtension
     {
     }
 
-    protected function check_contents(string $tmpname): bool
+    protected function check_contents(Path $tmpname): bool
     {
         return false;
     }

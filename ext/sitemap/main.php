@@ -27,10 +27,10 @@ class XMLSitemap extends Extension
 
             if ($this->new_sitemap_needed($cache_path)) {
                 $xml = $this->handle_full_sitemap();
-                file_put_contents($cache_path, $xml);
+                $cache_path->put_contents($xml);
             }
 
-            $xml = \Safe\file_get_contents($cache_path);
+            $xml = $cache_path->get_contents();
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::XML_APPLICATION);
             $page->set_data($xml);
@@ -122,14 +122,14 @@ class XMLSitemap extends Extension
     /**
      * Returns true if a new sitemap is needed.
      */
-    private function new_sitemap_needed(string $cache_path): bool
+    private function new_sitemap_needed(Path $cache_path): bool
     {
-        if (!file_exists($cache_path)) {
+        if (!$cache_path->exists()) {
             return true;
         }
 
         $sitemap_generation_interval = 86400; // allow new site map every day
-        $last_generated_time = filemtime($cache_path);
+        $last_generated_time = $cache_path->filemtime();
 
         // if file doesn't exist, return true
         if ($last_generated_time == false) {

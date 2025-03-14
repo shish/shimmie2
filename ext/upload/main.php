@@ -9,6 +9,7 @@ namespace Shimmie2;
  */
 class DataUploadEvent extends Event
 {
+    /** @var hash-string */
     public string $hash;
     public string $mime;
     public int $size;
@@ -22,7 +23,7 @@ class DataUploadEvent extends Event
      * Some data is being uploaded.
      * This should be caught by a file handler.
      *
-     * @param string $tmpname The name of a physical file on the local hard drive.
+     * @param Path $tmpname The name of a physical file on the local hard drive.
      * @param string $filename The name of the file as it was uploaded.
      * @param int $slot The slot number of the upload.
      * @param array<string, string> $metadata Key-value pairs of metadata, the
@@ -31,7 +32,7 @@ class DataUploadEvent extends Event
      *    override the common one.
      */
     public function __construct(
-        public string $tmpname,
+        public Path $tmpname,
         public string $filename,
         public int $slot,
         public array $metadata,
@@ -40,13 +41,13 @@ class DataUploadEvent extends Event
         $this->set_tmpname($tmpname);
     }
 
-    public function set_tmpname(string $tmpname, ?string $mime = null): void
+    public function set_tmpname(Path $tmpname, ?string $mime = null): void
     {
-        assert(is_readable($tmpname));
+        assert($tmpname->is_readable());
         $this->tmpname = $tmpname;
-        $this->hash = \Safe\md5_file($tmpname);
-        $this->size = \Safe\filesize($tmpname);
-        $mime = $mime ?? MimeType::get_for_file($tmpname, pathinfo($this->filename)['extension'] ?? null);
+        $this->hash = $tmpname->md5();
+        $this->size = $tmpname->filesize();
+        $mime = $mime ?? MimeType::get_for_file($tmpname->str(), pathinfo($this->filename)['extension'] ?? null);
         if (empty($mime)) {
             throw new UploadException("Could not determine mime type");
         }
@@ -64,7 +65,7 @@ class DirectoryUploadEvent extends Event
      * @param string[] $extra_tags
      */
     public function __construct(
-        public string $base,
+        public Path $base,
         public array $extra_tags = [],
     ) {
         parent::__construct();
@@ -177,13 +178,13 @@ class Upload extends Extension
         $results = [];
 
         foreach (Filesystem::list_files($event->base) as $full_path) {
-            $short_path = str_replace($event->base, "", $full_path);
-            $filename = basename($full_path);
+            $short_path = $full_path->relative_to($event->base);
+            $filename = $full_path->basename()->str();
 
             $tags = array_merge(Filesystem::path_to_tags($short_path), $event->extra_tags);
             try {
                 $more_results = $database->with_savepoint(function () use ($full_path, $filename, $tags) {
-                    $dae = send_event(new DataUploadEvent($full_path, basename($full_path), 0, [
+                    $dae = send_event(new DataUploadEvent($full_path, $filename, 0, [
                         'filename' => pathinfo($filename, PATHINFO_BASENAME),
                         'tags' => Tag::implode($tags),
                     ]));
@@ -296,7 +297,7 @@ class Upload extends Extension
         for ($i = 0; $i < count($file['name']); $i++) {
             $name = $file['name'][$i];
             $error = $file['error'][$i];
-            $tmp_name = $file['tmp_name'][$i];
+            $tmp_name = new Path($file['tmp_name'][$i]);
 
             if (empty($name)) {
                 continue;
@@ -363,8 +364,8 @@ class Upload extends Extension
         } catch (UploadException $ex) {
             $results[] = new UploadError($url, $ex->getMessage());
         } finally {
-            if (file_exists($tmp_filename)) {
-                unlink($tmp_filename);
+            if ($tmp_filename->exists()) {
+                $tmp_filename->unlink();
             }
         }
 

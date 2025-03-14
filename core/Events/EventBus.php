@@ -41,13 +41,13 @@ class EventBus
 
         $speed_hax = ($config->get_bool(SetupConfig::CACHE_EVENT_LISTENERS));
         $cache_path = Filesystem::data_path("cache/event_listeners/el.$ver.$key.php");
-        if ($speed_hax && file_exists($cache_path)) {
+        if ($speed_hax && $cache_path->exists()) {
             $this->event_listeners = require_once($cache_path);
         } else {
             $this->event_listeners = $this->calc_event_listeners();
 
             if ($speed_hax) {
-                file_put_contents($cache_path, $this->dump_event_listeners());
+                $cache_path->put_contents($this->dump_event_listeners());
             }
         }
 
