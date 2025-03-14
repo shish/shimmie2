@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Upgrade extends Extension
 {
     public const KEY = "upgrade";
+    public const VERSION_KEY = "db_version";
 
     public function onCliGen(CliGenEvent $event): void
     {
@@ -33,22 +34,22 @@ class Upgrade extends Extension
             file_put_contents("data/index.php", "<?php\n// Silence is golden...\n");
         }
 
-        if ($this->get_version("db_version") < 1) {
-            $this->set_version("db_version", 2);
+        if ($this->get_version() < 1) {
+            $this->set_version(2);
         }
 
         // v7 is convert to innodb with adodb
         // now done again as v9 with PDO
 
-        if ($this->get_version("db_version") < 8) {
+        if ($this->get_version() < 8) {
             $database->execute(
                 "ALTER TABLE images ADD COLUMN locked BOOLEAN NOT NULL DEFAULT FALSE"
             );
 
-            $this->set_version("db_version", 8);
+            $this->set_version(8);
         }
 
-        if ($this->get_version("db_version") < 9) {
+        if ($this->get_version() < 9) {
             if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
                 $tables = $database->get_col("SHOW TABLES");
                 foreach ($tables as $table) {
@@ -57,26 +58,26 @@ class Upgrade extends Extension
                 }
             }
 
-            $this->set_version("db_version", 9);
+            $this->set_version(9);
         }
 
-        if ($this->get_version("db_version") < 10) {
+        if ($this->get_version() < 10) {
             Log::info("upgrade", "Adding foreign keys to images");
             $database->execute("ALTER TABLE images ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
 
-            $this->set_version("db_version", 10);
+            $this->set_version(10);
         }
 
-        if ($this->get_version("db_version") < 11) {
+        if ($this->get_version() < 11) {
             Log::info("upgrade", "Converting user flags to classes");
             $database->execute("ALTER TABLE users ADD COLUMN class VARCHAR(32) NOT NULL default :user", ["user" => "user"]);
             $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name" => "anonymous", "id" => $config->get_int(UserAccountsConfig::ANON_ID)]);
             $database->execute("UPDATE users SET class = :name WHERE admin=:admin", ["name" => "admin", "admin" => 'Y']);
 
-            $this->set_version("db_version", 11);
+            $this->set_version(11);
         }
 
-        if ($this->get_version("db_version") < 12) {
+        if ($this->get_version() < 12) {
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 Log::info("upgrade", "Changing ext column to VARCHAR");
                 $database->execute("ALTER TABLE images ALTER COLUMN ext SET DATA TYPE VARCHAR(4)");
@@ -85,10 +86,10 @@ class Upgrade extends Extension
             Log::info("upgrade", "Lowering case of all exts");
             $database->execute("UPDATE images SET ext = LOWER(ext)");
 
-            $this->set_version("db_version", 12);
+            $this->set_version(12);
         }
 
-        if ($this->get_version("db_version") < 13) {
+        if ($this->get_version() < 13) {
             Log::info("upgrade", "Changing password column to VARCHAR(250)");
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute("ALTER TABLE users ALTER COLUMN pass SET DATA TYPE VARCHAR(250)");
@@ -96,10 +97,10 @@ class Upgrade extends Extension
                 $database->execute("ALTER TABLE users CHANGE pass pass VARCHAR(250)");
             }
 
-            $this->set_version("db_version", 13);
+            $this->set_version(13);
         }
 
-        if ($this->get_version("db_version") < 14) {
+        if ($this->get_version() < 14) {
             Log::info("upgrade", "Changing tag column to VARCHAR(255)");
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute('ALTER TABLE tags ALTER COLUMN tag SET DATA TYPE VARCHAR(255)');
@@ -111,20 +112,20 @@ class Upgrade extends Extension
                 $database->execute('ALTER TABLE aliases MODIFY COLUMN newtag VARCHAR(255) NOT NULL');
             }
 
-            $this->set_version("db_version", 14);
+            $this->set_version(14);
         }
 
-        if ($this->get_version("db_version") < 15) {
+        if ($this->get_version() < 15) {
             Log::info("upgrade", "Adding lower indexes for postgresql use");
             if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
                 $database->execute('CREATE INDEX tags_lower_tag_idx ON tags ((lower(tag)))');
                 $database->execute('CREATE INDEX users_lower_name_idx ON users ((lower(name)))');
             }
 
-            $this->set_version("db_version", 15);
+            $this->set_version(15);
         }
 
-        if ($this->get_version("db_version") < 16) {
+        if ($this->get_version() < 16) {
             Log::info("upgrade", "Adding tag_id, image_id index to image_tags");
             $database->execute('CREATE UNIQUE INDEX image_tags_tag_id_image_id_idx ON image_tags(tag_id,image_id) ');
 
@@ -140,10 +141,10 @@ class Upgrade extends Extension
             }
             // SQLite doesn't support altering existing columns? This seems like a problem?
 
-            $this->set_version("db_version", 16);
+            $this->set_version(16);
         }
 
-        if ($this->get_version("db_version") < 17) {
+        if ($this->get_version() < 17) {
             Log::info("upgrade", "Adding media information columns to images table");
             $database->execute("ALTER TABLE images ADD COLUMN lossless BOOLEAN NULL");
             $database->execute("ALTER TABLE images ADD COLUMN video BOOLEAN NULL");
@@ -170,12 +171,12 @@ class Upgrade extends Extension
             Log::info("upgrade", "Setting index for ext column");
             $database->execute('CREATE INDEX images_ext_idx ON images(ext)');
 
-            $this->set_version("db_version", 17);
+            $this->set_version(17);
         }
 
         // 18 was populating data using an out of date format
 
-        if ($this->get_version("db_version") < 19) {
+        if ($this->get_version() < 19) {
             Log::info("upgrade", "Adding MIME type column");
 
             $database->execute("ALTER TABLE images ADD COLUMN mime varchar(512) NULL");
@@ -183,17 +184,17 @@ class Upgrade extends Extension
             Log::info("upgrade", "Setting index for mime column");
             $database->execute('CREATE INDEX images_mime_idx ON images(mime)');
 
-            $this->set_version("db_version", 19);
+            $this->set_version(19);
         }
 
-        if ($this->get_version("db_version") < 20) {
+        if ($this->get_version() < 20) {
             $database->standardise_boolean("images", "lossless");
             $database->standardise_boolean("images", "video");
             $database->standardise_boolean("images", "audio");
-            $this->set_version("db_version", 20);
+            $this->set_version(20);
         }
 
-        if ($this->get_version("db_version") < 21) {
+        if ($this->get_version() < 21) {
             Log::info("upgrade", "Setting predictable media values for known file types");
             if ($database->is_transaction_open()) {
                 // Each of these commands could hit a lot of data, combining
@@ -207,7 +208,7 @@ class Upgrade extends Extension
             $database->execute("UPDATE images SET lossless = :t, audio = :f WHERE ext IN ('gif')", ["t" => true, "f" => false]);
             $database->execute("UPDATE images SET audio = :f WHERE ext IN ('webp')", ["f" => false]);
             $database->execute("UPDATE images SET lossless = :f, video = :t WHERE ext IN ('flv','mp4','m4v','ogv','webm')", ["t" => true, "f" => false]);
-            $this->set_version("db_version", 21);
+            $this->set_version(21);
             $database->begin_transaction();
         }
     }

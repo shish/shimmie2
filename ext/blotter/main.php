@@ -7,6 +7,8 @@ namespace Shimmie2;
 class Blotter extends Extension
 {
     public const KEY = "blotter";
+    public const VERSION_KEY = "blotter_version";
+
     /** @var BlotterTheme */
     protected Themelet $theme;
 
@@ -14,7 +16,7 @@ class Blotter extends Extension
     {
         global $database;
 
-        if ($this->get_version(BlotterConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("blotter", "
                 id SCORE_AIPK,
                 entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -27,11 +29,11 @@ class Blotter extends Extension
                 ["text" => "Installed the blotter extension!", "important" => true]
             );
             Log::info("blotter", "Installed tables for blotter extension.");
-            $this->set_version(BlotterConfig::VERSION, 2);
+            $this->set_version(2);
         }
-        if ($this->get_version(BlotterConfig::VERSION) < 2) {
+        if ($this->get_version() < 2) {
             $database->standardise_boolean("blotter", "important");
-            $this->set_version(BlotterConfig::VERSION, 2);
+            $this->set_version(2);
         }
     }
 

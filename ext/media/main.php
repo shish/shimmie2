@@ -834,12 +834,12 @@ class Media extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
-        if ($this->get_version(MediaConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             // The stuff that was here got refactored out of existence
-            $this->set_version(MediaConfig::VERSION, 1);
+            $this->set_version(1);
         }
 
-        if ($this->get_version(MediaConfig::VERSION) < 2) {
+        if ($this->get_version() < 2) {
             $database->execute("ALTER TABLE images ADD COLUMN image BOOLEAN NULL");
 
             switch ($database->get_driver_id()) {
@@ -852,23 +852,23 @@ class Media extends Extension
                     break;
             }
 
-            $this->set_version(MediaConfig::VERSION, 2);
+            $this->set_version(2);
         }
 
-        if ($this->get_version(MediaConfig::VERSION) < 3) {
+        if ($this->get_version() < 3) {
             $database->execute("ALTER TABLE images ADD COLUMN video_codec varchar(512) NULL");
-            $this->set_version(MediaConfig::VERSION, 3);
+            $this->set_version(3);
         }
 
-        if ($this->get_version(MediaConfig::VERSION) < 4) {
+        if ($this->get_version() < 4) {
             $database->standardise_boolean("images", "image");
-            $this->set_version(MediaConfig::VERSION, 4);
+            $this->set_version(4);
         }
 
-        if ($this->get_version(MediaConfig::VERSION) < 5) {
+        if ($this->get_version() < 5) {
             $database->execute("UPDATE images SET image = :f WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')", ["f" => false]);
             $database->execute("UPDATE images SET image = :t WHERE ext IN ('jpg','jpeg','ico','cur','png')", ["t" => true]);
-            $this->set_version(MediaConfig::VERSION, 5);
+            $this->set_version(5);
         }
     }
 

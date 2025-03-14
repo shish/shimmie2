@@ -14,8 +14,6 @@ class MimeSystem extends Extension
     /** @var MimeSystemTheme */
     protected Themelet $theme;
 
-    public const VERSION = "ext_mime_version";
-
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $event->replace('$ext', $event->image->get_ext());
@@ -30,7 +28,7 @@ class MimeSystem extends Extension
         // These upgrades are primarily for initializing mime types on upgrade, and for adjusting mime types whenever an
         // adjustment needs to be made to the mime types.
 
-        if ($this->get_version(self::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             if ($database->is_transaction_open()) {
                 // Each of these commands could hit a lot of data, combining
                 // them into one big transaction would not be a good idea.
@@ -55,7 +53,7 @@ class MimeSystem extends Extension
                 );
             }
 
-            $this->set_version(self::VERSION, 1);
+            $this->set_version(1);
             $database->begin_transaction();
         }
     }

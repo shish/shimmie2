@@ -9,9 +9,6 @@ class ImageConfig extends ConfigGroup
     public const KEY = "image";
     public ?string $title = "Post Manager";
 
-    #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
-    public const VERSION = 'ext_image_version';
-
     #[ConfigMeta("Image URL format", ConfigType::STRING, advanced: true)]
     public const ILINK = 'image_ilink';
 

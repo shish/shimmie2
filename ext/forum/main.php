@@ -15,6 +15,7 @@ Todo:
 class Forum extends Extension
 {
     public const KEY = "forum";
+    public const VERSION_KEY = "forum_version";
     /** @var ForumTheme */
     protected Themelet $theme;
 
@@ -24,7 +25,7 @@ class Forum extends Extension
 
         // shortcut to latest
 
-        if ($this->get_version("forum_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("forum_threads", "
 					id SCORE_AIPK,
 					sticky BOOLEAN NOT NULL DEFAULT FALSE,
@@ -47,16 +48,16 @@ class Forum extends Extension
 					");
             $database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", []);
 
-            $this->set_version("forum_version", 3);
+            $this->set_version(3);
         }
-        if ($this->get_version("forum_version") < 2) {
+        if ($this->get_version() < 2) {
             $database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
             $database->execute("ALTER TABLE forum_posts ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
-            $this->set_version("forum_version", 2);
+            $this->set_version(2);
         }
-        if ($this->get_version("forum_version") < 3) {
+        if ($this->get_version() < 3) {
             $database->standardise_boolean("forum_threads", "sticky");
-            $this->set_version("forum_version", 3);
+            $this->set_version(3);
         }
     }
 

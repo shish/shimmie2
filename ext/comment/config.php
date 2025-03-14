@@ -8,9 +8,6 @@ class CommentConfig extends ConfigGroup
 {
     public const KEY = "comment";
 
-    #[ConfigMeta("Version", ConfigType::INT, advanced: true)]
-    public const VERSION = "ext_comments_version";
-
     #[ConfigMeta("Limit to N comments per (window) minutes", ConfigType::INT, default: 10)]
     public const LIMIT = "comment_limit";
 

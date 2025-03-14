@@ -21,7 +21,7 @@ class ImageIO extends Extension
     {
         global $config;
 
-        if ($this->get_version(ImageConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             switch ($config->get_string("thumb_type")) {
                 case FileExtension::WEBP:
                     $config->set_string(ThumbnailConfig::MIME, MimeType::WEBP);
@@ -31,8 +31,7 @@ class ImageIO extends Extension
                     break;
             }
             $config->delete("thumb_type");
-
-            $this->set_version(ImageConfig::VERSION, 1);
+            $this->set_version(1);
         }
     }
 

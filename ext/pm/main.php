@@ -146,6 +146,8 @@ class PM
 class PrivMsg extends Extension
 {
     public const KEY = "pm";
+    public const VERSION_KEY = "pm_version";
+
     /** @var PrivMsgTheme */
     protected Themelet $theme;
 
@@ -154,7 +156,7 @@ class PrivMsg extends Extension
         global $database;
 
         // shortcut to latest
-        if ($this->get_version("pm_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("private_message", "
 				id SCORE_AIPK,
 				from_id INTEGER NOT NULL,
@@ -168,22 +170,22 @@ class PrivMsg extends Extension
 				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
             $database->execute("CREATE INDEX private_message__to_id ON private_message(to_id)");
-            $this->set_version("pm_version", 3);
+            $this->set_version(3);
         }
 
-        if ($this->get_version("pm_version") < 2) {
+        if ($this->get_version() < 2) {
             Log::info("pm", "Adding foreign keys to private messages");
             $database->execute("delete from private_message where to_id not in (select id from users);");
             $database->execute("delete from private_message where from_id not in (select id from users);");
             $database->execute("ALTER TABLE private_message
 			ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 			ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
-            $this->set_version("pm_version", 2);
+            $this->set_version(2);
         }
 
-        if ($this->get_version("pm_version") < 3) {
+        if ($this->get_version() < 3) {
             $database->standardise_boolean("private_message", "is_read", true);
-            $this->set_version("pm_version", 3);
+            $this->set_version(3);
         }
     }
 

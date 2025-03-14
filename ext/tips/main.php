@@ -39,7 +39,7 @@ class Tips extends Extension
     {
         global $database;
 
-        if ($this->get_version("ext_tips_version") < 1) {
+        if ($this->get_version() < 1) {
             $database->create_table("tips", "
                 id SCORE_AIPK,
                 enable BOOLEAN NOT NULL DEFAULT FALSE,
@@ -47,11 +47,11 @@ class Tips extends Extension
                 text TEXT NOT NULL,
             ");
 
-            $this->set_version("ext_tips_version", 2);
+            $this->set_version(2);
         }
-        if ($this->get_version("ext_tips_version") < 2) {
+        if ($this->get_version() < 2) {
             $database->standardise_boolean("tips", "enable");
-            $this->set_version("ext_tips_version", 2);
+            $this->set_version(2);
         }
     }
 

@@ -247,16 +247,16 @@ class Approval extends Extension
     {
         global $database;
 
-        if ($this->get_version(ApprovalConfig::VERSION) < 1) {
+        if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN approved BOOLEAN NOT NULL DEFAULT FALSE");
             $database->execute("ALTER TABLE images ADD COLUMN approved_by_id INTEGER NULL");
             $database->execute("CREATE INDEX images_approved_idx ON images(approved)");
-            $this->set_version(ApprovalConfig::VERSION, 2);
+            $this->set_version(2);
         }
 
-        if ($this->get_version(ApprovalConfig::VERSION) < 2) {
+        if ($this->get_version() < 2) {
             $database->standardise_boolean("images", "approved");
-            $this->set_version(ApprovalConfig::VERSION, 2);
+            $this->set_version(2);
         }
     }
 }
