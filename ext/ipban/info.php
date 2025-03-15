@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IPBanInfo extends ExtensionInfo
+final class IPBanInfo extends ExtensionInfo
 {
     public const KEY = "ipban";
 

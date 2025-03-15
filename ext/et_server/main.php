@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\{emptyHTML, PRE};
 
-class ETServer extends Extension
+final class ETServer extends Extension
 {
     public const KEY = "et_server";
     public const VERSION_KEY = "et_server_version";

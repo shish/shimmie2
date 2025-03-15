@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageBanInfo extends ExtensionInfo
+final class ImageBanInfo extends ExtensionInfo
 {
     public const KEY = "image_hash_ban";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class WordFilter extends Extension
+final class WordFilter extends Extension
 {
     public const KEY = "word_filter";
 

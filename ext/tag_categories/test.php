@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagCategoriesTest extends ShimmiePHPUnitTestCase
+final class TagCategoriesTest extends ShimmiePHPUnitTestCase
 {
     public function testParsing(): void
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ThumbnailUtil
+final class ThumbnailUtil
 {
     /**
      * Given a full size pair of dimensions, return a pair scaled down to fit

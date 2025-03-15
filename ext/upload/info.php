@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UploadInfo extends ExtensionInfo
+final class UploadInfo extends ExtensionInfo
 {
     public const KEY = "upload";
 

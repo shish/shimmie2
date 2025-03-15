@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class PathTest extends TestCase
+final class PathTest extends TestCase
 {
     public function testAbsolute(): void
     {

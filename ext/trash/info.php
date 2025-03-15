@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TrashInfo extends ExtensionInfo
+final class TrashInfo extends ExtensionInfo
 {
     public const KEY = "trash";
 

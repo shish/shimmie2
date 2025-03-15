@@ -6,14 +6,14 @@ namespace Shimmie2;
 
 use function MicroHTML\{rawHTML};
 
-class ImageResizeException extends ServerError
+final class ImageResizeException extends ServerError
 {
 }
 
 /**
  *	This class handles image resize requests.
  */
-class ResizeImage extends Extension
+final class ResizeImage extends Extension
 {
     public const KEY = "resize";
     /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TestConfig extends Config
+final class TestConfig extends Config
 {
     /**
      * @param array<string, string> $values

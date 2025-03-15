@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IndexInfo extends ExtensionInfo
+final class IndexInfo extends ExtensionInfo
 {
     public const KEY = "index";
 

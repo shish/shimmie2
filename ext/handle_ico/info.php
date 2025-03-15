@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IcoFileHandlerInfo extends ExtensionInfo
+final class IcoFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_ico";
 

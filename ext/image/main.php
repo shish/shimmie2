@@ -13,7 +13,7 @@ use function MicroHTML\{INPUT, STYLE};
 /**
  * A class to handle adding / getting / removing image files from the disk.
  */
-class ImageIO extends Extension
+final class ImageIO extends Extension
 {
     public const KEY = "image";
 

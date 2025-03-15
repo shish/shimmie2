@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RegenThumb extends Extension
+final class RegenThumb extends Extension
 {
     public const KEY = "regen_thumb";
     /** @var RegenThumbTheme */

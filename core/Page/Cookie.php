@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Cookie
+final readonly class Cookie
 {
     public function __construct(
         public string $name,

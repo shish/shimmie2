@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class NotATagTest extends ShimmiePHPUnitTestCase
+final class NotATagTest extends ShimmiePHPUnitTestCase
 {
     public function testUntags(): void
     {

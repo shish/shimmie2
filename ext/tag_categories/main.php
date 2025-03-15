@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagCategories extends Extension
+final class TagCategories extends Extension
 {
     public const KEY = "tag_categories";
     /** @var TagCategoriesTheme */

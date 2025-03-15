@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class DowntimeInfo extends ExtensionInfo
+final class DowntimeInfo extends ExtensionInfo
 {
     public const KEY = "downtime";
 

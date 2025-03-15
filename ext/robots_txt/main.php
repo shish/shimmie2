@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RobotsBuildingEvent extends Event
+final class RobotsBuildingEvent extends Event
 {
     /** @var string[] */
     public array $parts = [
@@ -20,7 +20,7 @@ class RobotsBuildingEvent extends Event
     }
 }
 
-class RobotsTxt extends Extension
+final class RobotsTxt extends Extension
 {
     public const KEY = "robots_txt";
 

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\LINK;
 
-class RSSComments extends Extension
+final class RSSComments extends Extension
 {
     public const KEY = "rss_comments";
 

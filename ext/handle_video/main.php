@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class VideoFileHandler extends DataHandlerExtension
+final class VideoFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_video";
     public const SUPPORTED_MIME = [

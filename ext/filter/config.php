@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FilterConfig extends ConfigGroup
+final class FilterConfig extends ConfigGroup
 {
     public const KEY = "filter";
 
@@ -18,7 +18,7 @@ class FilterConfig extends ConfigGroup
     public const TAGS = "filter_tags";
 }
 
-class FilterUserConfig extends UserConfigGroup
+final class FilterUserConfig extends UserConfigGroup
 {
     public const KEY = "filter";
 

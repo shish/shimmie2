@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class HelpPagesInfo extends ExtensionInfo
+final class HelpPagesInfo extends ExtensionInfo
 {
     public const KEY = "help_pages";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LinkScanTest extends ShimmiePHPUnitTestCase
+final class LinkScanTest extends ShimmiePHPUnitTestCase
 {
     public function testScanPostView(): void
     {

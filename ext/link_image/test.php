@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LinkImageTest extends ShimmiePHPUnitTestCase
+final class LinkImageTest extends ShimmiePHPUnitTestCase
 {
     public function testLinkImage(): void
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RelationshipsPermission extends PermissionGroup
+final class RelationshipsPermission extends PermissionGroup
 {
     public const KEY = "relationships";
 

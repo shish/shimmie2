@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\{rawHTML};
 
-class Blocks extends Extension
+final class Blocks extends Extension
 {
     public const KEY = "blocks";
     /** @var BlocksTheme */

@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Depends;
  * here's a test suite to ensure that certain features give predictable
  * results on all engines and thus can be considered safe to use.
  */
-class SQLTest extends ShimmiePHPUnitTestCase
+final class SQLTest extends ShimmiePHPUnitTestCase
 {
     public function testConcatPipes(): void
     {

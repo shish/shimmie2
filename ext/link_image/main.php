@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LinkImage extends Extension
+final class LinkImage extends Extension
 {
     public const KEY = "link_image";
     /** @var LinkImageTheme */

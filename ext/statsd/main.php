@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class StatsDInterface extends Extension
+final class StatsDInterface extends Extension
 {
     public const KEY = "statsd";
     /** @var array<string, string> */

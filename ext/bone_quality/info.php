@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BoneQualityInfo extends ExtensionInfo
+final class BoneQualityInfo extends ExtensionInfo
 {
     public const KEY = "bone_quality";
 

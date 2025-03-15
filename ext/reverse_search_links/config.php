@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReverseSearchLinksConfig extends ConfigGroup
+final class ReverseSearchLinksConfig extends ConfigGroup
 {
     public const KEY = "reverse_search_links";
 

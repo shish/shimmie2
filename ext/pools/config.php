@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PoolsConfig extends ConfigGroup
+final class PoolsConfig extends ConfigGroup
 {
     public const KEY = "pools";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ApprovalTest extends ShimmiePHPUnitTestCase
+final class ApprovalTest extends ShimmiePHPUnitTestCase
 {
     public function testNoApprovalNeeded(): void
     {

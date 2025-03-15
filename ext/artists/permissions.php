@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ArtistsPermission extends PermissionGroup
+final class ArtistsPermission extends PermissionGroup
 {
     public const KEY = "artists";
 

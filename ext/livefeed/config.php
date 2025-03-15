@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LiveFeedConfig extends ConfigGroup
+final class LiveFeedConfig extends ConfigGroup
 {
     public const KEY = "livefeed";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class EokmConfig extends ConfigGroup
+final class EokmConfig extends ConfigGroup
 {
     public const KEY = "eokm";
     public ?string $title = "EOKM Filter";

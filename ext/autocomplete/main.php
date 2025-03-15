@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AutoComplete extends Extension
+final class AutoComplete extends Extension
 {
     public const KEY = "autocomplete";
 

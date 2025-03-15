@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BulkActionBlockBuildingEvent extends Event
+final class BulkActionBlockBuildingEvent extends Event
 {
     /**
      * @var array<array{block:string,access_key:?string,confirmation_message:string,action:string,button_text:string,position:int}>
@@ -39,7 +39,7 @@ class BulkActionBlockBuildingEvent extends Event
     }
 }
 
-class BulkActionEvent extends Event
+final class BulkActionEvent extends Event
 {
     public string $action;
     public \Generator $items;
@@ -59,7 +59,7 @@ class BulkActionEvent extends Event
     }
 }
 
-class BulkActions extends Extension
+final class BulkActions extends Extension
 {
     public const KEY = "bulk_actions";
     /** @var BulkActionsTheme */

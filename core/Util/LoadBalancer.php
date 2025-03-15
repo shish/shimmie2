@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LoadBalancer
+final class LoadBalancer
 {
     public static function load_balance_url(string $tmpl, string $hash, int $n = 0): string
     {

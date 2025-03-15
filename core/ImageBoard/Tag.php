@@ -11,7 +11,7 @@ namespace Shimmie2;
  *
  * All the methods are static, one should never actually use a tag object.
  */
-class Tag
+final class Tag
 {
     /** @var array<string, int> */
     private static array $tag_id_cache = [];

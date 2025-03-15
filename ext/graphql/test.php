@@ -7,7 +7,7 @@ namespace Shimmie2;
 use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL as GQL;
 
-class GraphQLTest extends ShimmiePHPUnitTestCase
+final class GraphQLTest extends ShimmiePHPUnitTestCase
 {
     public function testSchema(): void
     {

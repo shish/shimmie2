@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\LINK;
 
-class Holiday extends Extension
+final class Holiday extends Extension
 {
     public const KEY = "holiday";
     public function onPageRequest(PageRequestEvent $event): void

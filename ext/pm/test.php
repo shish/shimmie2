@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PrivMsgTest extends ShimmiePHPUnitTestCase
+final class PrivMsgTest extends ShimmiePHPUnitTestCase
 {
     public function testUserReadOwnMessage(): void
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ExtManagerPermission extends PermissionGroup
+final class ExtManagerPermission extends PermissionGroup
 {
     public const KEY = "ext_manager";
 

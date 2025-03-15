@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FourOhFour extends Extension
+final class FourOhFour extends Extension
 {
     public const KEY = "four_oh_four";
 

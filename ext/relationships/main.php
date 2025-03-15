@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageRelationshipSetEvent extends Event
+final class ImageRelationshipSetEvent extends Event
 {
     public int $child_id;
     public int $parent_id;
@@ -18,7 +18,7 @@ class ImageRelationshipSetEvent extends Event
 }
 
 
-class Relationships extends Extension
+final class Relationships extends Extension
 {
     public const KEY = "relationships";
     /** @var RelationshipsTheme */

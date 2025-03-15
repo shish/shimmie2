@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 // Tagger AJAX back-end
-class TaggerXML extends Extension
+final class TaggerXML extends Extension
 {
     public const KEY = "tagger_xml";
 

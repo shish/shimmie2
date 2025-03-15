@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SourceSetEvent extends Event
+final class SourceSetEvent extends Event
 {
     public Image $image;
     public string $source;
@@ -17,7 +17,7 @@ class SourceSetEvent extends Event
     }
 }
 
-class PostSource extends Extension
+final class PostSource extends Extension
 {
     public const KEY = "post_source";
     /** @var PostSourceTheme */

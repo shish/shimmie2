@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class HelpPagesTest extends ShimmiePHPUnitTestCase
+final class HelpPagesTest extends ShimmiePHPUnitTestCase
 {
     public function test_list(): void
     {

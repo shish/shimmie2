@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-class Home extends Extension
+final class Home extends Extension
 {
     public const KEY = "home";
     /** @var HomeTheme */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LogNetConfig extends ConfigGroup
+final class LogNetConfig extends ConfigGroup
 {
     public const KEY = "log_net";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ETServerPermission extends PermissionGroup
+final class ETServerPermission extends PermissionGroup
 {
     public const KEY = "et_server";
 

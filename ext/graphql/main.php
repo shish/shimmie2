@@ -14,7 +14,7 @@ use GraphQL\Type\Schema;
 use GraphQL\Utils\SchemaPrinter;
 
 #[\GQLA\InputObjectType]
-class MetadataInput
+final class MetadataInput
 {
     public function __construct(
         #[\GQLA\Field]
@@ -71,7 +71,7 @@ function shmFieldResolver(
         : $property;
 }
 
-class GraphQL extends Extension
+final class GraphQL extends Extension
 {
     public const KEY = "graphql";
 

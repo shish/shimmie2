@@ -23,7 +23,7 @@ function shm_set_timeout(?int $timeout): void
     $_shm_event_bus->set_timeout($timeout);
 }
 
-class EventBus
+final class EventBus
 {
     /** @var array<string, list<Extension>> $event_listeners */
     private array $event_listeners = [];

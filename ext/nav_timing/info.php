@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class NavTimingInfo extends ExtensionInfo
+final class NavTimingInfo extends ExtensionInfo
 {
     public const KEY = "nav_timing";
 

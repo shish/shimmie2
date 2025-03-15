@@ -7,7 +7,7 @@ namespace Shimmie2;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Depends;
 
-class UrlTest extends TestCase
+final class UrlTest extends TestCase
 {
     public function test_query_joiner(): void
     {

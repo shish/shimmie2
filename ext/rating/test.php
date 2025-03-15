@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RatingsTest extends ShimmiePHPUnitTestCase
+final class RatingsTest extends ShimmiePHPUnitTestCase
 {
     public function testRatingSafe(): void
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class XMLSitemapTest extends ShimmiePHPUnitTestCase
+final class XMLSitemapTest extends ShimmiePHPUnitTestCase
 {
     public function testBasic(): void
     {

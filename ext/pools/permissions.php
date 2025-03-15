@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PoolsPermission extends PermissionGroup
+final class PoolsPermission extends PermissionGroup
 {
     public const KEY = "pools";
 

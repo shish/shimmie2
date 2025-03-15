@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostTitlesConfig extends ConfigGroup
+final class PostTitlesConfig extends ConfigGroup
 {
     public const KEY = "post_titles";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostTitlesPermission extends PermissionGroup
+final class PostTitlesPermission extends PermissionGroup
 {
     public const KEY = "post_titles";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ArchiveFileHandlerInfo extends ExtensionInfo
+final class ArchiveFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_archive";
 

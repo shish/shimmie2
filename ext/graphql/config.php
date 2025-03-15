@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class GraphQLConfig extends ConfigGroup
+final class GraphQLConfig extends ConfigGroup
 {
     public const KEY = "graphql";
     public ?string $title = "GraphQL";

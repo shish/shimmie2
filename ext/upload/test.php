@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UploadTest extends ShimmiePHPUnitTestCase
+final class UploadTest extends ShimmiePHPUnitTestCase
 {
     public function testUploadPage(): void
     {

@@ -13,7 +13,7 @@ namespace Shimmie2;
  * Documentation: Installation guide: activate this extension and navigate to www.yoursite.com/cron_upload
  */
 
-class CronUploaderInfo extends ExtensionInfo
+final class CronUploaderInfo extends ExtensionInfo
 {
     public const KEY = "cron_uploader";
 

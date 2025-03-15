@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class HomeConfig extends ConfigGroup
+final class HomeConfig extends ConfigGroup
 {
     public const KEY = "home";
     public ?string $title = "Home Page";

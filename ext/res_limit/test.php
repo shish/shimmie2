@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ResolutionLimitTest extends ShimmiePHPUnitTestCase
+final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 {
     public function testResLimitOK(): void
     {

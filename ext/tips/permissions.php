@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TipsPermission extends PermissionGroup
+final class TipsPermission extends PermissionGroup
 {
     public const KEY = "tips";
 

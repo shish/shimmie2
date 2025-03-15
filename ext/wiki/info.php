@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class WikiInfo extends ExtensionInfo
+final class WikiInfo extends ExtensionInfo
 {
     public const KEY = "wiki";
 

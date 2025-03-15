@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageRating
+final class ImageRating
 {
     /** @var array<string, ImageRating> */
     public static array $known_ratings = [];
@@ -42,7 +42,7 @@ add_rating(new ImageRating("e", "Explicit", "explicit", 1000));
 // @phpstan-ignore-next-line
 @include_once "data/config/ratings.conf.php";
 
-class RatingSetException extends UserError
+final class RatingSetException extends UserError
 {
     public ?string $redirect;
 
@@ -53,7 +53,7 @@ class RatingSetException extends UserError
     }
 }
 
-class RatingSetEvent extends Event
+final class RatingSetEvent extends Event
 {
     public Image $image;
     public string $rating;
@@ -69,7 +69,7 @@ class RatingSetEvent extends Event
     }
 }
 
-class Ratings extends Extension
+final class Ratings extends Extension
 {
     public const KEY = "rating";
     public const VERSION_KEY = "ext_ratings2_version";

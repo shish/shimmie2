@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 require_once "events/post_title_set_event.php";
 
-class PostTitles extends Extension
+final class PostTitles extends Extension
 {
     public const KEY = "post_titles";
     /** @var PostTitlesTheme */

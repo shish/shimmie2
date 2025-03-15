@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagMapTest extends ShimmiePHPUnitTestCase
+final class TagMapTest extends ShimmiePHPUnitTestCase
 {
     /** @var string[] */
     private array $pages = ["map", "alphabetic", "popularity"];

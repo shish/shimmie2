@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagEditCloudInfo extends ExtensionInfo
+final class TagEditCloudInfo extends ExtensionInfo
 {
     public const KEY = "tag_editcloud";
 

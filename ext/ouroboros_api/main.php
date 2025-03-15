@@ -102,7 +102,7 @@ class _SafeOuroborosImage
     }
 }
 
-class OuroborosPost extends _SafeOuroborosImage
+final class OuroborosPost extends _SafeOuroborosImage
 {
     /** @var array{tmp_name:string,name:string} */
     public ?array $file = null;
@@ -166,7 +166,7 @@ class OuroborosPost extends _SafeOuroborosImage
     }
 }
 
-class _SafeOuroborosTag
+final class _SafeOuroborosTag
 {
     public bool $ambiguous = false;
     public int $count = 0;
@@ -185,7 +185,7 @@ class _SafeOuroborosTag
     }
 }
 
-class OuroborosAPI extends Extension
+final class OuroborosAPI extends Extension
 {
     public const KEY = "ouroboros_api";
     private string $type;

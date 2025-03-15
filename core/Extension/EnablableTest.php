@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class EnablableTest extends TestCase
+final class EnablableTest extends TestCase
 {
     public function testGetEnabled(): void
     {

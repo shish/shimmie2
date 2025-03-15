@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AuthorSetEvent extends Event
+final class AuthorSetEvent extends Event
 {
     public Image $image;
     public User $user;
@@ -25,7 +25,7 @@ class AuthorSetEvent extends Event
  * @phpstan-type ArtistMember array{id:int,name:string}
  * @phpstan-type ArtistUrl array{id:int,url:string}
  */
-class Artists extends Extension
+final class Artists extends Extension
 {
     public const KEY = "artists";
     /** @var ArtistsTheme */

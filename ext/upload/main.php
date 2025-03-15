@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * Occurs when some data is being uploaded.
  */
-class DataUploadEvent extends Event
+final class DataUploadEvent extends Event
 {
     /** @var hash-string */
     public string $hash;
@@ -56,7 +56,7 @@ class DataUploadEvent extends Event
     }
 }
 
-class DirectoryUploadEvent extends Event
+final class DirectoryUploadEvent extends Event
 {
     /** @var UploadResult[] */
     public array $results = [];
@@ -72,7 +72,7 @@ class DirectoryUploadEvent extends Event
     }
 }
 
-class UploadException extends SCoreException
+final class UploadException extends SCoreException
 {
 }
 
@@ -84,7 +84,7 @@ abstract class UploadResult
     }
 }
 
-class UploadError extends UploadResult
+final class UploadError extends UploadResult
 {
     public function __construct(
         string $name,
@@ -94,7 +94,7 @@ class UploadError extends UploadResult
     }
 }
 
-class UploadSuccess extends UploadResult
+final class UploadSuccess extends UploadResult
 {
     public function __construct(
         string $name,
@@ -109,7 +109,7 @@ class UploadSuccess extends UploadResult
  * All files that are uploaded to the site are handled through this class.
  * This also includes transloaded files as well.
  */
-class Upload extends Extension
+final class Upload extends Extension
 {
     public const KEY = "upload";
     /** @var UploadTheme */

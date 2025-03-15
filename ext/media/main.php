@@ -15,15 +15,15 @@ require_once "video_codecs.php";
 /*
 * This is used by the media code when there is an error
 */
-class MediaException extends SCoreException
+final class MediaException extends SCoreException
 {
 }
 
-class InsufficientMemoryException extends ServerError
+final class InsufficientMemoryException extends ServerError
 {
 }
 
-class Media extends Extension
+final class Media extends Extension
 {
     public const KEY = "media";
     /** @var MediaTheme */

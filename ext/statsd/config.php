@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class StatsDInterfaceConfig extends ConfigGroup
+final class StatsDInterfaceConfig extends ConfigGroup
 {
     public const KEY = "statsd";
     public ?string $title = "StatsD";

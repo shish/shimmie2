@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AliasEditorPermission extends PermissionGroup
+final class AliasEditorPermission extends PermissionGroup
 {
     public const KEY = "alias_editor";
 
