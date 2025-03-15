@@ -72,7 +72,16 @@ class SetupTest extends ShimmiePHPUnitTestCase
     {
         // the automatic testing for shimmie2-examples depends on this
         $page = self::get_page('nicedebug/foo%2Fbar/1');
-        self::assertEquals('{"args":["nicedebug","foo%2Fbar","1"]}', $page->data);
+        self::assertEquals(
+            [
+                "args" => ["nicedebug","foo%2Fbar","1"],
+                "theme" => "default",
+                "nice_urls" => true,
+                "base_href" => "/test",
+                "base_link" => "/test/"
+            ],
+            \Safe\json_decode($page->data, true)
+        );
     }
 
     public function testAuthAnon(): void
