@@ -92,8 +92,15 @@ final class Setup extends Extension
 
         if ($event->page_starts_with("nicedebug")) {
             $page->set_mode(PageMode::DATA);
+            $page->set_mime(MimeType::JSON);
             $page->set_data(\Safe\json_encode([
                 "args" => $event->args,
+                "theme" => get_theme(),
+                "nice_urls" => $config->get_bool(SetupConfig::NICE_URLS, false),
+                "base" => (string)Url::base(),
+                "absolute_base" => (string)Url::base()->asAbsolute(),
+                "base_link" => (string)make_link(""),
+                "search_example" => (string)search_link(["AC/DC"]),
             ]));
         }
 
