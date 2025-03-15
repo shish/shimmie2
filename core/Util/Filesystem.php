@@ -20,7 +20,7 @@ class Filesystem
         if (is_null($splits)) {
             $splits = SysConfig::getWarehouseSplits();
         }
-        $dirs = [DATA_DIR, $base];
+        $dirs = ["data", $base];
         $splits = min($splits, strlen($hash) / 2);
         for ($i = 0; $i < $splits; $i++) {
             $dirs[] = substr($hash, $i * 2, 2);
