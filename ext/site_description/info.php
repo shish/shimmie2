@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SiteDescriptionInfo extends ExtensionInfo
+final class SiteDescriptionInfo extends ExtensionInfo
 {
     public const KEY = "site_description";
 

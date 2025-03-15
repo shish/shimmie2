@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RobotsTxtInfo extends ExtensionInfo
+final class RobotsTxtInfo extends ExtensionInfo
 {
     public const KEY = "robots_txt";
 

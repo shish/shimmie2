@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class StatsDInterfaceInfo extends ExtensionInfo
+final class StatsDInterfaceInfo extends ExtensionInfo
 {
     public const KEY = "statsd";
 

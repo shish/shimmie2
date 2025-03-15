@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostOwnerInfo extends ExtensionInfo
+final class PostOwnerInfo extends ExtensionInfo
 {
     public const KEY = "post_owner";
 

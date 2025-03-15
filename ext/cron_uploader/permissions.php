@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CronUploaderPermission extends PermissionGroup
+final class CronUploaderPermission extends PermissionGroup
 {
     public const KEY = "cron_uploader";
 

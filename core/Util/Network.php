@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Network
+final class Network
 {
     public static function is_trusted_proxy(): bool
     {

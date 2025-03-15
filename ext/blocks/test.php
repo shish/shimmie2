@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BlocksTest extends ShimmiePHPUnitTestCase
+final class BlocksTest extends ShimmiePHPUnitTestCase
 {
     public function testBlocks(): void
     {

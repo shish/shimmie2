@@ -16,7 +16,7 @@ use GQLA\Field;
  * - forming a URL with a page _and_ a path at the same time is invalid
  */
 #[Type(name: "Url")]
-class Url
+final class Url
 {
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
     * Various constructors                                                  *

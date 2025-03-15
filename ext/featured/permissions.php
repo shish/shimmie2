@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FeaturedPermission extends PermissionGroup
+final class FeaturedPermission extends PermissionGroup
 {
     public const KEY = "featured";
 

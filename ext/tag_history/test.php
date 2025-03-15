@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\Attributes\Depends;
 
-class TagHistoryTest extends ShimmiePHPUnitTestCase
+final class TagHistoryTest extends ShimmiePHPUnitTestCase
 {
     public function testHistoryWhenAdding(): void
     {

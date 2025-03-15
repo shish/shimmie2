@@ -7,7 +7,7 @@ namespace Shimmie2;
 use Symfony\Component\Console\Input\{ArgvInput,InputOption,InputDefinition,InputInterface};
 use Symfony\Component\Console\Output\{OutputInterface,ConsoleOutput};
 
-class CliApp extends \Symfony\Component\Console\Application
+final class CliApp extends \Symfony\Component\Console\Application
 {
     public ?string $traceFile = null;
     public static int $logLevel = 0;

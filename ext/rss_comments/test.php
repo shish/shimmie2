@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RSSCommentsTest extends ShimmiePHPUnitTestCase
+final class RSSCommentsTest extends ShimmiePHPUnitTestCase
 {
     public function testImageFeed(): void
     {

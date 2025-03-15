@@ -10,7 +10,7 @@ use GQLA\Mutation;
 
 use function MicroHTML\{emptyHTML, SPAN};
 
-class SendPMEvent extends Event
+final class SendPMEvent extends Event
 {
     public PM $pm;
 
@@ -22,7 +22,7 @@ class SendPMEvent extends Event
 }
 
 #[Type(name: "PrivateMessage")]
-class PM
+final class PM
 {
     public int $id = -1;
     public int $from_id;
@@ -143,7 +143,7 @@ class PM
     }
 }
 
-class PrivMsg extends Extension
+final class PrivMsg extends Extension
 {
     public const KEY = "pm";
     public const VERSION_KEY = "pm_version";

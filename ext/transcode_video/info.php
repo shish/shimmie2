@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TranscodeVideoInfo extends ExtensionInfo
+final class TranscodeVideoInfo extends ExtensionInfo
 {
     public const KEY = "transcode_video";
 

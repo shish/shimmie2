@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostTagsInfo extends ExtensionInfo
+final class PostTagsInfo extends ExtensionInfo
 {
     public const KEY = "post_tags";
 

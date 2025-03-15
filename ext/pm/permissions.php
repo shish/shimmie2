@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PrivMsgPermission extends PermissionGroup
+final class PrivMsgPermission extends PermissionGroup
 {
     public const KEY = "pm";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TermsConfig extends ConfigGroup
+final class TermsConfig extends ConfigGroup
 {
     public const KEY = "terms";
     public ?string $title = "Terms & Conditions Wall";

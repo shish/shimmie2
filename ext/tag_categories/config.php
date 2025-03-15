@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagCategoriesConfig extends ConfigGroup
+final class TagCategoriesConfig extends ConfigGroup
 {
     public const KEY = "tag_categories";
 

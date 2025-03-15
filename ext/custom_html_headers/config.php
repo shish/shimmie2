@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CustomHtmlHeadersConfig extends ConfigGroup
+final class CustomHtmlHeadersConfig extends ConfigGroup
 {
     public const KEY = "custom_html_headers";
     public ?string $title = "Custom HTML Headers";

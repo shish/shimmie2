@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BrowserSearchInfo extends ExtensionInfo
+final class BrowserSearchInfo extends ExtensionInfo
 {
     public const KEY = "browser_search";
 

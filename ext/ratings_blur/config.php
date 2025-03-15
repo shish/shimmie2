@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RatingsBlurConfig extends ConfigGroup
+final class RatingsBlurConfig extends ConfigGroup
 {
     public const KEY = "ratings_blur";
 
@@ -35,7 +35,7 @@ class RatingsBlurConfig extends ConfigGroup
     }
 }
 
-class RatingsBlurUserConfig extends UserConfigGroup
+final class RatingsBlurUserConfig extends UserConfigGroup
 {
     public const KEY = "ratings_blur";
 

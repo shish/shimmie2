@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Terms extends Extension
+final class Terms extends Extension
 {
     public const KEY = "terms";
     /** @var TermsTheme */

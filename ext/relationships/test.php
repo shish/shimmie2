@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\Attributes\Depends;
 
-class RelationshipsTest extends ShimmiePHPUnitTestCase
+final class RelationshipsTest extends ShimmiePHPUnitTestCase
 {
     //=================================================================
     // Set by box

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class FilesystemTest extends TestCase
+final class FilesystemTest extends TestCase
 {
     public function test_warehouse_path(): void
     {

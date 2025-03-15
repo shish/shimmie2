@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class InitExtEventTest extends TestCase
+final class InitExtEventTest extends TestCase
 {
     public function testInitExt(): void
     {

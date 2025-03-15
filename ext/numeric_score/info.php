@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class NumericScoreInfo extends ExtensionInfo
+final class NumericScoreInfo extends ExtensionInfo
 {
     public const KEY = "numeric_score";
 

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\Constraint\IsEqual;
 
-class SearchParametersTest extends ShimmiePHPUnitTestCase
+final class SearchParametersTest extends ShimmiePHPUnitTestCase
 {
     /**
      * @param string $tags

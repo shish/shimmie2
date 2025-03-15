@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SetupTest extends ShimmiePHPUnitTestCase
+final class SetupTest extends ShimmiePHPUnitTestCase
 {
     public function testParseSettings(): void
     {

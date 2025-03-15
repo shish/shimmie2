@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReverseSearchLinksInfo extends ExtensionInfo
+final class ReverseSearchLinksInfo extends ExtensionInfo
 {
     public const KEY = "reverse_search_links";
 

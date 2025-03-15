@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class XMLSitemapURL
+final class XMLSitemapURL
 {
     public function __construct(
         public Url $url,
@@ -15,7 +15,7 @@ class XMLSitemapURL
     }
 }
 
-class XMLSitemap extends Extension
+final class XMLSitemap extends Extension
 {
     public const KEY = "sitemap";
     public function onPageRequest(PageRequestEvent $event): void

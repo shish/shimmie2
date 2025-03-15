@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ForumConfig extends ConfigGroup
+final class ForumConfig extends ConfigGroup
 {
     public const KEY = "forum";
 

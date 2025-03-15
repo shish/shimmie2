@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class GraphQLInfo extends ExtensionInfo
+final class GraphQLInfo extends ExtensionInfo
 {
     public const KEY = "graphql";
 

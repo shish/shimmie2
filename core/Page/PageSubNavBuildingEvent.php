@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-class PageSubNavBuildingEvent extends Event
+final class PageSubNavBuildingEvent extends Event
 {
     public string $parent;
 

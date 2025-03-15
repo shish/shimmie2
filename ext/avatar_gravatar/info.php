@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AvatarGravatarInfo extends ExtensionInfo
+final class AvatarGravatarInfo extends ExtensionInfo
 {
     public const KEY = "avatar_gravatar";
 

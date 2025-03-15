@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Filter extends Extension
+final class Filter extends Extension
 {
     public const KEY = "filter";
     /** @var FilterTheme */

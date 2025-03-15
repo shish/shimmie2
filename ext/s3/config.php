@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class S3Config extends ConfigGroup
+final class S3Config extends ConfigGroup
 {
     public const KEY = "s3";
     public ?string $title = "S3 CDN";

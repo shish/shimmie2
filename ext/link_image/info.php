@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LinkImageInfo extends ExtensionInfo
+final class LinkImageInfo extends ExtensionInfo
 {
     public const KEY = "link_image";
 

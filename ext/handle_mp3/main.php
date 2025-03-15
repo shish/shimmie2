@@ -7,7 +7,7 @@ namespace Shimmie2;
 // TODO: Add support for generating an icon from embedded cover art
 // TODO: MORE AUDIO FORMATS
 
-class MP3FileHandler extends DataHandlerExtension
+final class MP3FileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_mp3";
     public const SUPPORTED_MIME = [MimeType::MP3];

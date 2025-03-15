@@ -7,12 +7,12 @@ namespace Shimmie2;
 /*
 * This is used by the image transcoding code when there is an error while transcoding
 */
-class ImageTranscodeException extends SCoreException
+final class ImageTranscodeException extends SCoreException
 {
 }
 
 
-class TranscodeImage extends Extension
+final class TranscodeImage extends Extension
 {
     public const KEY = "transcode";
     /** @var TranscodeImageTheme */

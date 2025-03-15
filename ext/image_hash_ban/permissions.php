@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageHashBanPermission extends PermissionGroup
+final class ImageHashBanPermission extends PermissionGroup
 {
     public const KEY = "image_hash_ban";
 

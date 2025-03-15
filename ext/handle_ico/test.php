@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IcoFileHandlerTest extends ShimmiePHPUnitTestCase
+final class IcoFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testIcoHander(): void
     {

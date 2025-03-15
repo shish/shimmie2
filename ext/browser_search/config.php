@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BrowserSearchConfig extends ConfigGroup
+final class BrowserSearchConfig extends ConfigGroup
 {
     public const KEY = "browser_search";
 

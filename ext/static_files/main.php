@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class StaticFiles extends Extension
+final class StaticFiles extends Extension
 {
     public const KEY = "static_files";
 

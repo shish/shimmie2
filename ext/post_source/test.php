@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostSourceTest extends ShimmiePHPUnitTestCase
+final class PostSourceTest extends ShimmiePHPUnitTestCase
 {
     public function testSourceEdit(): void
     {

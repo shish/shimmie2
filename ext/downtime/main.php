@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Downtime extends Extension
+final class Downtime extends Extension
 {
     public const KEY = "downtime";
     /** @var DowntimeTheme */

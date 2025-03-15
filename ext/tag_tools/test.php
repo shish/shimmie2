@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagToolsTest extends ShimmiePHPUnitTestCase
+final class TagToolsTest extends ShimmiePHPUnitTestCase
 {
     public function testLowercaseAndSetCase(): void
     {

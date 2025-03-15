@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagMap extends Extension
+final class TagMap extends Extension
 {
     public const KEY = "tag_map";
     /** @var TagMapTheme */

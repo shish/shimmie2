@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PrivateImageUserConfig extends UserConfigGroup
+final class PrivateImageUserConfig extends UserConfigGroup
 {
     public const KEY = "private_image";
     public ?string $title = "Private Posts";

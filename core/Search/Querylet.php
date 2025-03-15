@@ -19,7 +19,7 @@ namespace Shimmie2;
  * SELECT * FROM images WHERE id = :id AND rating = :rating ORDER BY id DESC
  * ["id" => 123, "rating" => "safe"]
  */
-class Querylet
+final class Querylet
 {
     /**
      * @param string $sql

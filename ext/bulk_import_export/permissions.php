@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BulkImportExportPermission extends PermissionGroup
+final class BulkImportExportPermission extends PermissionGroup
 {
     public const KEY = "bulk_import_export";
 

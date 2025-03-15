@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SiteDescriptionConfig extends ConfigGroup
+final class SiteDescriptionConfig extends ConfigGroup
 {
     public const KEY = "site_description";
 

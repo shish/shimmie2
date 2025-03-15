@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PermManagerTest extends ShimmiePHPUnitTestCase
+final class PermManagerTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth(): void
     {

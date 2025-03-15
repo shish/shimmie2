@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ArchiveFileHandlerConfig extends ConfigGroup
+final class ArchiveFileHandlerConfig extends ConfigGroup
 {
     public const KEY = "handle_archive";
 

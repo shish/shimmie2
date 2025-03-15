@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class GoogleAnalyticsConfig extends ConfigGroup
+final class GoogleAnalyticsConfig extends ConfigGroup
 {
     public const KEY = "google_analytics";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostLockInfo extends ExtensionInfo
+final class PostLockInfo extends ExtensionInfo
 {
     public const KEY = "post_lock";
 

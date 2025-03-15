@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagHistory extends Extension
+final class TagHistory extends Extension
 {
     public const KEY = "tag_history";
     /** @var TagHistoryTheme */

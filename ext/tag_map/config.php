@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagMapConfig extends ConfigGroup
+final class TagMapConfig extends ConfigGroup
 {
     public const KEY = "tag_map";
 

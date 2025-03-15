@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use enshrined\svgSanitize\Sanitizer;
 
-class SVGFileHandler extends DataHandlerExtension
+final class SVGFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_svg";
     public const SUPPORTED_MIME = [MimeType::SVG];
@@ -93,7 +93,7 @@ class SVGFileHandler extends DataHandlerExtension
     }
 }
 
-class MiniSVGParser
+final class MiniSVGParser
 {
     public bool $valid = false;
     /** @var positive-int */

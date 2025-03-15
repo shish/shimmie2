@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UploadConfig extends ConfigGroup
+final class UploadConfig extends ConfigGroup
 {
     public const KEY = "upload";
 

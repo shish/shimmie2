@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CommentConfig extends ConfigGroup
+final class CommentConfig extends ConfigGroup
 {
     public const KEY = "comment";
 

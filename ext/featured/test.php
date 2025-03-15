@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FeaturedTest extends ShimmiePHPUnitTestCase
+final class FeaturedTest extends ShimmiePHPUnitTestCase
 {
     public function testFeatured(): void
     {

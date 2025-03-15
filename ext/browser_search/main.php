@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\LINK;
 
-class BrowserSearch extends Extension
+final class BrowserSearch extends Extension
 {
     public const KEY = "browser_search";
 

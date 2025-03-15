@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReplaceFilePermission extends PermissionGroup
+final class ReplaceFilePermission extends PermissionGroup
 {
     public const KEY = "replace_file";
 

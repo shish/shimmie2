@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class DowntimePermission extends PermissionGroup
+final class DowntimePermission extends PermissionGroup
 {
     public const KEY = "downtime";
 

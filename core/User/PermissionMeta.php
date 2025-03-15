@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 #[\Attribute(\Attribute::TARGET_CLASS_CONSTANT)]
-readonly class PermissionMeta
+final readonly class PermissionMeta
 {
     public function __construct(
         public string $label,

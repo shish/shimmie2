@@ -11,7 +11,7 @@ namespace Shimmie2;
  * "42"); when an event handler asks $event->page_matches("view/{id}"), it returns
  * true and sets $event->get_arg('id') = "42"
  */
-class PageRequestEvent extends Event
+final class PageRequestEvent extends Event
 {
     private string $method;
     public string $path;

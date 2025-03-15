@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class EventTracingCacheTest extends TestCase
+final class EventTracingCacheTest extends TestCase
 {
     public function testBits(): void
     {

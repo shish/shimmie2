@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BulkParentChildInfo extends ExtensionInfo
+final class BulkParentChildInfo extends ExtensionInfo
 {
     public const KEY = "bulk_parent_child";
 

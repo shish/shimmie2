@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LogDatabaseTest extends ShimmiePHPUnitTestCase
+final class LogDatabaseTest extends ShimmiePHPUnitTestCase
 {
     public function testLog(): void
     {

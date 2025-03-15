@@ -12,7 +12,7 @@ use function MicroHTML\INPUT;
 
 require_once __DIR__ . "/S3.php";
 
-class S3 extends Extension
+final class S3 extends Extension
 {
     public const KEY = "s3";
     public int $synced = 0;

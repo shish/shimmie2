@@ -7,7 +7,7 @@ namespace Shimmie2;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\Table;
 
-class AliasTable extends Table
+final class AliasTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
@@ -27,7 +27,7 @@ class AliasTable extends Table
     }
 }
 
-class AddAliasEvent extends Event
+final class AddAliasEvent extends Event
 {
     public string $oldtag;
     public string $newtag;
@@ -40,7 +40,7 @@ class AddAliasEvent extends Event
     }
 }
 
-class DeleteAliasEvent extends Event
+final class DeleteAliasEvent extends Event
 {
     public string $oldtag;
 
@@ -51,11 +51,11 @@ class DeleteAliasEvent extends Event
     }
 }
 
-class AddAliasException extends UserError
+final class AddAliasException extends UserError
 {
 }
 
-class AliasEditor extends Extension
+final class AliasEditor extends Extension
 {
     public const KEY = "alias_editor";
     /** @var AliasEditorTheme */

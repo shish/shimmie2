@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BulkAddEvent extends Event
+final class BulkAddEvent extends Event
 {
     public Path $dir;
     /** @var UploadResult[] */
@@ -22,7 +22,7 @@ class BulkAddEvent extends Event
     }
 }
 
-class BulkAdd extends Extension
+final class BulkAdd extends Extension
 {
     public const KEY = "bulk_add";
     /** @var BulkAddTheme */

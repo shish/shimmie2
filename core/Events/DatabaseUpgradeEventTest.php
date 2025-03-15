@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class DatabaseUpgradeEventTest extends TestCase
+final class DatabaseUpgradeEventTest extends TestCase
 {
     public function testDatabaseUpgrade(): void
     {

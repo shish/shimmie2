@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BulkDownloadConfig extends ConfigGroup
+final class BulkDownloadConfig extends ConfigGroup
 {
     public const KEY = "bulk_download";
 

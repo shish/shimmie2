@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BulkParentChildConfig
+final class BulkParentChildConfig
 {
 }
 
-class BulkParentChild extends Extension
+final class BulkParentChild extends Extension
 {
     public const KEY = "bulk_parent_child";
     private const PARENT_CHILD_ACTION_NAME = "bulk_parent_child";

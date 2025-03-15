@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BoneQualityTest extends ShimmiePHPUnitTestCase
+final class BoneQualityTest extends ShimmiePHPUnitTestCase
 {
     public function testBoneQualityPage(): void
     {

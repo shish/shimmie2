@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UserConfig extends Extension
+final class UserConfig extends Extension
 {
     public const KEY = "user_config";
     /** @var UserConfigTheme */

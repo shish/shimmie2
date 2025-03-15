@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BanWordsInfo extends ExtensionInfo
+final class BanWordsInfo extends ExtensionInfo
 {
     public const KEY = "ban_words";
 

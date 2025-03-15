@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReportImagePermission extends PermissionGroup
+final class ReportImagePermission extends PermissionGroup
 {
     public const KEY = "report_image";
 
