@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Log
+final class Log
 {
     /**
     * A shorthand way to send a LogEvent

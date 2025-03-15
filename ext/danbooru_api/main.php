@@ -36,7 +36,7 @@ function POST(...$args): HTMLElement
 }
 
 
-class DanbooruApi extends Extension
+final class DanbooruApi extends Extension
 {
     public const KEY = "danbooru_api";
 

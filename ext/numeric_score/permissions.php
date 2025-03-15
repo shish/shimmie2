@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class NumericScorePermission extends PermissionGroup
+final class NumericScorePermission extends PermissionGroup
 {
     public const KEY = "numeric_score";
 

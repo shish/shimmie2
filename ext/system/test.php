@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SystemTest extends ShimmiePHPUnitTestCase
+final class SystemTest extends ShimmiePHPUnitTestCase
 {
     public function testView(): void
     {

@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{DIV,IMG};
 
-class AvatarPost extends AvatarExtension
+final class AvatarPost extends AvatarExtension
 {
     public const KEY = "avatar_post";
     /** @var AvatarPostTheme */

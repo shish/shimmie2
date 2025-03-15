@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TrashPermission extends PermissionGroup
+final class TrashPermission extends PermissionGroup
 {
     public const KEY = "trash";
 

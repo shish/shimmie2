@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReplaceFile extends Extension
+final class ReplaceFile extends Extension
 {
     public const KEY = "replace_file";
     /** @var ReplaceFileTheme */

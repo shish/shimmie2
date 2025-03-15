@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RSSImagesConfig extends ConfigGroup
+final class RSSImagesConfig extends ConfigGroup
 {
     public const KEY = "rss_images";
 

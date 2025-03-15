@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AdminPageTest extends ShimmiePHPUnitTestCase
+final class AdminPageTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth(): void
     {

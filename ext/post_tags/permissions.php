@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostTagsPermission extends PermissionGroup
+final class PostTagsPermission extends PermissionGroup
 {
     public const KEY = "post_tags";
 

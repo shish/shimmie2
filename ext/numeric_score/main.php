@@ -9,7 +9,7 @@ use GQLA\Field;
 use GQLA\Mutation;
 
 #[Type(name: "NumericScoreVote")]
-class NumericScoreVote
+final class NumericScoreVote
 {
     public int $image_id;
     public int $user_id;
@@ -87,7 +87,7 @@ class NumericScoreVote
     }
 }
 
-class NumericScoreSetEvent extends Event
+final class NumericScoreSetEvent extends Event
 {
     public int $image_id;
     public User $user;
@@ -102,7 +102,7 @@ class NumericScoreSetEvent extends Event
     }
 }
 
-class NumericScore extends Extension
+final class NumericScore extends Extension
 {
     public const KEY = "numeric_score";
     /** @var NumericScoreTheme */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RatingsBlur extends Extension
+final class RatingsBlur extends Extension
 {
     public const KEY = "ratings_blur";
     public const NULL_OPTION = "[none]";

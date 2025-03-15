@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Blotter extends Extension
+final class Blotter extends Extension
 {
     public const KEY = "blotter";
     public const VERSION_KEY = "blotter_version";

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReportImageTest extends ShimmiePHPUnitTestCase
+final class ReportImageTest extends ShimmiePHPUnitTestCase
 {
     public function testReportImage(): void
     {

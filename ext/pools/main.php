@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\{INPUT};
 
-class PoolAddPostsEvent extends Event
+final class PoolAddPostsEvent extends Event
 {
     public int $pool_id;
     /** @var int[] */
@@ -23,7 +23,7 @@ class PoolAddPostsEvent extends Event
     }
 }
 
-class PoolCreationEvent extends Event
+final class PoolCreationEvent extends Event
 {
     public string $title;
     public User $user;
@@ -47,7 +47,7 @@ class PoolCreationEvent extends Event
     }
 }
 
-class PoolDeletionEvent extends Event
+final class PoolDeletionEvent extends Event
 {
     public int $pool_id;
 
@@ -58,7 +58,7 @@ class PoolDeletionEvent extends Event
     }
 }
 
-class Pool
+final class Pool
 {
     public int $id;
     public int $user_id;
@@ -109,7 +109,7 @@ function _image_to_id(Image $image): int
     return $image->id;
 }
 
-class Pools extends Extension
+final class Pools extends Extension
 {
     public const KEY = "pools";
     /** @var PoolsTheme */

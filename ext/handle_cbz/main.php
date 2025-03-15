@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CBZFileHandler extends DataHandlerExtension
+final class CBZFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_cbz";
     public const SUPPORTED_MIME = [MimeType::COMIC_ZIP];

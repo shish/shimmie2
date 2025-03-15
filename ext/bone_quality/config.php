@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BoneQualityConfig extends ConfigGroup
+final class BoneQualityConfig extends ConfigGroup
 {
     public const KEY = "bone_quality";
 

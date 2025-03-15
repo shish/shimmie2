@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LogDatabasePermission extends PermissionGroup
+final class LogDatabasePermission extends PermissionGroup
 {
     public const KEY = "log_db";
 

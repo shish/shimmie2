@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AutoTaggerPermission extends PermissionGroup
+final class AutoTaggerPermission extends PermissionGroup
 {
     public const KEY = "auto_tagger";
 

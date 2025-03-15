@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class MediaConfig extends ConfigGroup
+final class MediaConfig extends ConfigGroup
 {
     public const KEY = "media";
 

@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\rawHTML;
 
-class HelpPageListBuildingEvent extends Event
+final class HelpPageListBuildingEvent extends Event
 {
     /** @var array<string,string> */
     public array $pages = [];
@@ -22,7 +22,7 @@ class HelpPageListBuildingEvent extends Event
 /**
  * @extends PartListBuildingEvent<Block>
  */
-class HelpPageBuildingEvent extends PartListBuildingEvent
+final class HelpPageBuildingEvent extends PartListBuildingEvent
 {
     public string $key;
 
@@ -46,7 +46,7 @@ class HelpPageBuildingEvent extends PartListBuildingEvent
     }
 }
 
-class HelpPages extends Extension
+final class HelpPages extends Extension
 {
     public const KEY = "help_pages";
     /** @var HelpPagesTheme */

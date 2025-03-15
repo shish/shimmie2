@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Featured extends Extension
+final class Featured extends Extension
 {
     public const KEY = "featured";
     /** @var FeaturedTheme */

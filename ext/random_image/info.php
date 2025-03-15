@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RandomImageInfo extends ExtensionInfo
+final class RandomImageInfo extends ExtensionInfo
 {
     public const KEY = "random_image";
 

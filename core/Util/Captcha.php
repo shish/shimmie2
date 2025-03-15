@@ -10,7 +10,7 @@ namespace Shimmie2;
 
 use ReCaptcha\ReCaptcha;
 
-class Captcha
+final readonly class Captcha
 {
     public static function get_html(): string
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class HolidayConfig extends ConfigGroup
+final class HolidayConfig extends ConfigGroup
 {
     public const KEY = "holiday";
     public ?string $title = "Holiday Themes";

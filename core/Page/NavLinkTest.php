@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class NavLinkTest extends ShimmiePHPUnitTestCase
+final class NavLinkTest extends ShimmiePHPUnitTestCase
 {
     public function test_nav_link(): void
     {

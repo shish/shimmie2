@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ResolutionLimitConfig extends ConfigGroup
+final class ResolutionLimitConfig extends ConfigGroup
 {
     public const KEY = "res_limit";
 

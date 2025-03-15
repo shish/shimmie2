@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ExtManagerTest extends ShimmiePHPUnitTestCase
+final class ExtManagerTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth(): void
     {

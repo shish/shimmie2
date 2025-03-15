@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BulkImportExport extends DataHandlerExtension
+final class BulkImportExport extends DataHandlerExtension
 {
     public const KEY = "bulk_import_export";
     public const SUPPORTED_MIME = [MimeType::ZIP];

@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-class BuildAvatarEvent extends Event
+final class BuildAvatarEvent extends Event
 {
     public User $user;
     public HTMLElement|null $html;

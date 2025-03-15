@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RatingsBlurInfo extends ExtensionInfo
+final class RatingsBlurInfo extends ExtensionInfo
 {
     public const KEY = "ratings_blur";
 

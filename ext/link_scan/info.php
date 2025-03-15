@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LinkScanInfo extends ExtensionInfo
+final class LinkScanInfo extends ExtensionInfo
 {
     public const KEY = "link_scan";
 

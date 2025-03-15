@@ -11,7 +11,7 @@ namespace Shimmie2;
  *   $original -- the formatting string, for reference
  *   $image    -- the image who's link is being parsed
  */
-class ParseLinkTemplateEvent extends Event
+final class ParseLinkTemplateEvent extends Event
 {
     public string $link;
     public string $text;

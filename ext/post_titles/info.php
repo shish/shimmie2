@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostTitlesInfo extends ExtensionInfo
+final class PostTitlesInfo extends ExtensionInfo
 {
     public const KEY = "post_titles";
 

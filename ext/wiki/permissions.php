@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class WikiPermission extends PermissionGroup
+final class WikiPermission extends PermissionGroup
 {
     public const KEY = "wiki";
 

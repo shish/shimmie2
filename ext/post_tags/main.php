@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TagSetException extends UserError
+final class TagSetException extends UserError
 {
     public ?string $redirect;
 
@@ -19,7 +19,7 @@ class TagSetException extends UserError
     }
 }
 
-class TagSetEvent extends Event
+final class TagSetEvent extends Event
 {
     public Image $image;
     /** @var list<tag-string> */
@@ -63,7 +63,7 @@ class TagSetEvent extends Event
 /**
  * Check whether or not a tag is a meta-tag
  */
-class TagTermCheckEvent extends Event
+final class TagTermCheckEvent extends Event
 {
     public string $term;
     public bool $metatag = false;
@@ -90,7 +90,7 @@ class TagTermCheckEvent extends Event
 /**
  * If a tag is a meta-tag, parse it
  */
-class TagTermParseEvent extends Event
+final class TagTermParseEvent extends Event
 {
     public string $term;
     public int $image_id;
@@ -117,7 +117,7 @@ class TagTermParseEvent extends Event
     }
 }
 
-class PostTags extends Extension
+final class PostTags extends Extension
 {
     public const KEY = "post_tags";
     /** @var PostTagsTheme */

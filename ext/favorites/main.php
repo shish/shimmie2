@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FavoriteSetEvent extends Event
+final class FavoriteSetEvent extends Event
 {
     public int $image_id;
     public User $user;
@@ -20,7 +20,7 @@ class FavoriteSetEvent extends Event
     }
 }
 
-class Favorites extends Extension
+final class Favorites extends Extension
 {
     public const KEY = "favorites";
     /** @var FavoritesTheme */

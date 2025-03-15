@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IndexPermission extends PermissionGroup
+final class IndexPermission extends PermissionGroup
 {
     public const KEY = "index";
 

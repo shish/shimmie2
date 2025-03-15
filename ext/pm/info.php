@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PrivMsgInfo extends ExtensionInfo
+final class PrivMsgInfo extends ExtensionInfo
 {
     public const KEY = "pm";
 

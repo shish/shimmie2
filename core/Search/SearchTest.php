@@ -7,7 +7,7 @@ namespace Shimmie2;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Constraint\IsEqual;
 
-class SearchTest extends ShimmiePHPUnitTestCase
+final class SearchTest extends ShimmiePHPUnitTestCase
 {
     public function testWeirdTags(): void
     {
@@ -106,10 +106,7 @@ class SearchTest extends ShimmiePHPUnitTestCase
         $build_search_querylet->setAccessible(true); // Use this if you are running PHP older than 8.1.0
 
         $obj = new Search();
-        $params = new SearchParameters();
-        $params->tag_conditions = $tcs;
-        $params->img_conditions = $ics;
-        $params->order = $order;
+        $params = new SearchParameters($tcs, $ics, $order);
         $querylet = $build_search_querylet->invokeArgs($obj, [$params, $limit, $start]);
 
         $results = $database->get_all($querylet->sql, $querylet->variables);

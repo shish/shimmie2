@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use GQLA\Query;
 
-class Search
+final class Search
 {
     /**
      * The search code is dark and full of horrors, and it's not always clear

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IcoFileHandler extends DataHandlerExtension
+final class IcoFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_ico";
     public const SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];

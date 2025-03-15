@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ViewPostInfo extends ExtensionInfo
+final class ViewPostInfo extends ExtensionInfo
 {
     public const KEY = "view";
 

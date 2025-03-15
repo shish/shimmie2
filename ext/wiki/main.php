@@ -8,7 +8,7 @@ use GQLA\Type;
 use GQLA\Field;
 use GQLA\Query;
 
-class WikiUpdateEvent extends Event
+final class WikiUpdateEvent extends Event
 {
     public User $user;
     public WikiPage $wikipage;
@@ -21,7 +21,7 @@ class WikiUpdateEvent extends Event
     }
 }
 
-class WikiDeleteRevisionEvent extends Event
+final class WikiDeleteRevisionEvent extends Event
 {
     public string $title;
     public int $revision;
@@ -34,7 +34,7 @@ class WikiDeleteRevisionEvent extends Event
     }
 }
 
-class WikiDeletePageEvent extends Event
+final class WikiDeletePageEvent extends Event
 {
     public string $title;
 
@@ -46,7 +46,7 @@ class WikiDeletePageEvent extends Event
 }
 
 #[Type(name: "WikiPage")]
-class WikiPage
+final class WikiPage
 {
     public int $id;
     public int $owner_id;
@@ -100,7 +100,7 @@ class WikiPage
     }
 }
 
-class Wiki extends Extension
+final class Wiki extends Extension
 {
     public const KEY = "wiki";
     /** @var WikiTheme */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class WordFilterConfig extends ConfigGroup
+final class WordFilterConfig extends ConfigGroup
 {
     public const KEY = "word_filter";
 

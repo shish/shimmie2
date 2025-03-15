@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class VarnishPurger extends Extension
+final class VarnishPurger extends Extension
 {
     public const KEY = "varnish";
 

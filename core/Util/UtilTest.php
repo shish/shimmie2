@@ -7,7 +7,7 @@ namespace Shimmie2;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Depends;
 
-class UtilTest extends TestCase
+final class UtilTest extends TestCase
 {
     public function test_get_theme(): void
     {

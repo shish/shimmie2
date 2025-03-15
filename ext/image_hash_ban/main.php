@@ -11,7 +11,7 @@ use MicroCRUD\Table;
 
 use function MicroHTML\{INPUT,emptyHTML};
 
-class HashBanTable extends Table
+final class HashBanTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
@@ -34,7 +34,7 @@ class HashBanTable extends Table
     }
 }
 
-class RemoveImageHashBanEvent extends Event
+final class RemoveImageHashBanEvent extends Event
 {
     public string $hash;
 
@@ -45,7 +45,7 @@ class RemoveImageHashBanEvent extends Event
     }
 }
 
-class AddImageHashBanEvent extends Event
+final class AddImageHashBanEvent extends Event
 {
     public string $hash;
     public string $reason;
@@ -58,7 +58,7 @@ class AddImageHashBanEvent extends Event
     }
 }
 
-class ImageBan extends Extension
+final class ImageBan extends Extension
 {
     public const KEY = "image_hash_ban";
     public const VERSION_KEY = "ext_imageban_version";

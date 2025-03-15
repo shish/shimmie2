@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AutoTaggerConfig extends ConfigGroup
+final class AutoTaggerConfig extends ConfigGroup
 {
     public const KEY = "auto_tagger";
 

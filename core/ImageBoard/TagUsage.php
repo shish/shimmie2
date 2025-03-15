@@ -9,7 +9,7 @@ use GQLA\Field;
 use GQLA\Query;
 
 #[Type(name: "TagUsage")]
-class TagUsage
+final class TagUsage
 {
     #[Field]
     public string $tag;

@@ -10,7 +10,7 @@ namespace Shimmie2;
  *  function copyright 2008 Maxim Chernyak, released under a MIT-style license.
  */
 
-class ResizeImageInfo extends ExtensionInfo
+final class ResizeImageInfo extends ExtensionInfo
 {
     public const KEY = "resize";
 

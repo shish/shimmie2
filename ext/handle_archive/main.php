@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ArchiveFileHandler extends DataHandlerExtension
+final class ArchiveFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_archive";
     public const SUPPORTED_MIME = [MimeType::ZIP];

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BlotterConfig extends ConfigGroup
+final class BlotterConfig extends ConfigGroup
 {
     public const KEY = "blotter";
 

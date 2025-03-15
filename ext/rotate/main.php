@@ -11,14 +11,14 @@ use function MicroHTML\{INPUT};
 /**
  * This class is just a wrapper around SCoreException.
  */
-class ImageRotateException extends SCoreException
+final class ImageRotateException extends SCoreException
 {
 }
 
 /**
  *	This class handles image rotate requests.
  */
-class RotateImage extends Extension
+final class RotateImage extends Extension
 {
     public const KEY = "rotate";
     public const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];

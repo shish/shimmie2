@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\IMG;
 
-class AvatarGravatar extends AvatarExtension
+final class AvatarGravatar extends AvatarExtension
 {
     public const KEY = "avatar_gravatar";
 

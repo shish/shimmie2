@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /*
  * Sent when the setup screen's 'Save Settings' button has been activated
  */
-class ConfigSaveEvent extends Event
+final class ConfigSaveEvent extends Event
 {
     public Config $config;
     /** @var array<string, null|string|int|boolean|array<string>> $values */
@@ -80,7 +80,7 @@ class ConfigSaveEvent extends Event
     }
 }
 
-class Setup extends Extension
+final class Setup extends Extension
 {
     public const KEY = "setup";
     /** @var SetupTheme */

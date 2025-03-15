@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReportImageConfig extends ConfigGroup
+final class ReportImageConfig extends ConfigGroup
 {
     public const KEY = "report_image";
     public ?string $title = "Post Reports";

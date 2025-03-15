@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\rawHTML;
 
-class TagEditCloud extends Extension
+final class TagEditCloud extends Extension
 {
     public const KEY = "tag_editcloud";
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void

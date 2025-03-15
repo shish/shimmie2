@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LinkImageConfig extends ConfigGroup
+final class LinkImageConfig extends ConfigGroup
 {
     public const KEY = "link_image";
 

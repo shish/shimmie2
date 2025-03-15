@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AutoTaggerTest extends ShimmiePHPUnitTestCase
+final class AutoTaggerTest extends ShimmiePHPUnitTestCase
 {
     public function testAutoTaggerList(): void
     {

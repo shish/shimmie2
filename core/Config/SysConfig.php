@@ -16,7 +16,7 @@ namespace Shimmie2;
 * Example:
 *  define("DEBUG", true);
 */
-class SysConfig
+final class SysConfig
 {
     public static function getDatabaseDsn(): string
     {

@@ -20,7 +20,7 @@ use GQLA\Query;
  * @implements \ArrayAccess<string, mixed>
  */
 #[Type(name: "Post")]
-class Image implements \ArrayAccess
+final class Image implements \ArrayAccess
 {
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";

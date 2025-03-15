@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\emptyHTML;
 
-class BoneQuality extends Extension
+final class BoneQuality extends Extension
 {
     public const KEY = "bone_quality";
     /** @var BoneQualityTheme */

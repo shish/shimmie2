@@ -19,7 +19,7 @@ use MicroCRUD\Table;
 
 use function MicroHTML\{A, emptyHTML};
 
-class UserNameColumn extends TextColumn
+final class UserNameColumn extends TextColumn
 {
     public function display(array $row): HTMLElement
     {
@@ -27,7 +27,7 @@ class UserNameColumn extends TextColumn
     }
 }
 
-class UserActionColumn extends ActionColumn
+final class UserActionColumn extends ActionColumn
 {
     public function __construct()
     {
@@ -41,7 +41,7 @@ class UserActionColumn extends ActionColumn
     }
 }
 
-class UserTable extends Table
+final class UserTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
@@ -69,12 +69,12 @@ class UserTable extends Table
     }
 }
 
-class UserCreationException extends SCoreException
+final class UserCreationException extends SCoreException
 {
 }
 
 #[Type]
-class LoginResult
+final class LoginResult
 {
     public function __construct(
         #[Field]
@@ -127,7 +127,7 @@ class LoginResult
     }
 }
 
-class UserPage extends Extension
+final class UserPage extends Extension
 {
     public const KEY = "user";
     /** @var UserPageTheme $theme */

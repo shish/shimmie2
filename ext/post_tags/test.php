@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostTagsTest extends ShimmiePHPUnitTestCase
+final class PostTagsTest extends ShimmiePHPUnitTestCase
 {
     public function testValidChange(): void
     {

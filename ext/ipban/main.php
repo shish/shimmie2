@@ -13,7 +13,7 @@ use MicroCRUD\Table;
 
 use function MicroHTML\rawHTML;
 
-class IPBanTable extends Table
+final class IPBanTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
@@ -51,7 +51,7 @@ class IPBanTable extends Table
     }
 }
 
-class RemoveIPBanEvent extends Event
+final class RemoveIPBanEvent extends Event
 {
     public int $id;
 
@@ -62,7 +62,7 @@ class RemoveIPBanEvent extends Event
     }
 }
 
-class AddIPBanEvent extends Event
+final class AddIPBanEvent extends Event
 {
     public string $ip;
     public string $mode;
@@ -79,7 +79,7 @@ class AddIPBanEvent extends Event
     }
 }
 
-class IPBan extends Extension
+final class IPBan extends Extension
 {
     public const KEY = "ipban";
     /** @var IPBanTheme */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LogLogstash extends Extension
+final class LogLogstash extends Extension
 {
     public const KEY = "log_logstash";
 

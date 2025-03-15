@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IPBanPermission extends PermissionGroup
+final class IPBanPermission extends PermissionGroup
 {
     public const KEY = "ipban";
 

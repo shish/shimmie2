@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Approval extends Extension
+final class Approval extends Extension
 {
     public const KEY = "approval";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagEditCloudConfig extends ConfigGroup
+final class TagEditCloudConfig extends ConfigGroup
 {
     public const KEY = "tag_editcloud";
 

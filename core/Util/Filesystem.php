@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Filesystem
+final class Filesystem
 {
     /**
      * Generates the path to a file under the data folder based on the file's hash.

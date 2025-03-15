@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BBCodeTest extends ShimmiePHPUnitTestCase
+final class BBCodeTest extends ShimmiePHPUnitTestCase
 {
     public function testBasics(): void
     {

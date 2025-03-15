@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class DatabaseExceptionTest extends TestCase
+final class DatabaseExceptionTest extends TestCase
 {
     public function testCreate(): void
     {

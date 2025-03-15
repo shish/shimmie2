@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class PageRequestEventTest extends TestCase
+final class PageRequestEventTest extends TestCase
 {
     // Event::__toString() is only for debugging and nothing else tests it
     public function testToString(): void

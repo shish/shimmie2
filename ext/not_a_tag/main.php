@@ -10,7 +10,7 @@ use MicroCRUD\Table;
 
 use function MicroHTML\{emptyHTML};
 
-class NotATagTable extends Table
+final class NotATagTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
@@ -32,7 +32,7 @@ class NotATagTable extends Table
     }
 }
 
-class NotATag extends Extension
+final class NotATag extends Extension
 {
     public const KEY = "not_a_tag";
     public const VERSION_KEY = "ext_notatag_version";

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ResolutionLimit extends Extension
+final class ResolutionLimit extends Extension
 {
     public const KEY = "res_limit";
 

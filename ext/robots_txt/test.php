@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RobotsTxtTest extends ShimmiePHPUnitTestCase
+final class RobotsTxtTest extends ShimmiePHPUnitTestCase
 {
     public function testRobots(): void
     {

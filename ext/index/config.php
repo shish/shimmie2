@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IndexConfig extends ConfigGroup
+final class IndexConfig extends ConfigGroup
 {
     public const KEY = "index";
     public ?string $title = "Post List";

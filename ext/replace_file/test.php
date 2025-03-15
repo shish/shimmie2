@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ReplaceFileTest extends ShimmiePHPUnitTestCase
+final class ReplaceFileTest extends ShimmiePHPUnitTestCase
 {
     public function testReplacePage(): void
     {

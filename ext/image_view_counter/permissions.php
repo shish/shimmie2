@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageViewCounterPermission extends PermissionGroup
+final class ImageViewCounterPermission extends PermissionGroup
 {
     public const KEY = "image_view_counter";
 

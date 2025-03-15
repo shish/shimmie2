@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class PolyfillsTest extends TestCase
+final class PolyfillsTest extends TestCase
 {
     public function test_html_escape(): void
     {

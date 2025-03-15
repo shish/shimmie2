@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * A signal that something needs logging
  */
-class LogEvent extends Event
+final class LogEvent extends Event
 {
     /**
      * a category, normally the extension name

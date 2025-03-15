@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UserConfigUserConfig extends UserConfigGroup
+final class UserConfigUserConfig extends UserConfigGroup
 {
     public const KEY = "user_config";
 

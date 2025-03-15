@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class WikiConfig extends ConfigGroup
+final class WikiConfig extends ConfigGroup
 {
     public const KEY = "wiki";
 

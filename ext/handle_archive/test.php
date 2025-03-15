@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ArchiveFileHandlerTest extends ShimmiePHPUnitTestCase
+final class ArchiveFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testArchiveHander(): void
     {

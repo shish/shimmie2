@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BBCode extends FormatterExtension
+final class BBCode extends FormatterExtension
 {
     public const KEY = "bbcode";
 

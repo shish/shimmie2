@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PrivateImage extends Extension
+final class PrivateImage extends Extension
 {
     public const KEY = "private_image";
     /** @var PrivateImageTheme */

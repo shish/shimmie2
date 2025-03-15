@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\rawHTML;
 
-class CustomHtmlHeaders extends Extension
+final class CustomHtmlHeaders extends Extension
 {
     public const KEY = "custom_html_headers";
 

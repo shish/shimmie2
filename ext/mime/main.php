@@ -8,7 +8,7 @@ require_once "mime_map.php";
 require_once "file_extension.php";
 require_once "mime_type.php";
 
-class MimeSystem extends Extension
+final class MimeSystem extends Extension
 {
     public const KEY = "mime";
     /** @var MimeSystemTheme */

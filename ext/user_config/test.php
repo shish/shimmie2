@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class UserConfigTest extends ShimmiePHPUnitTestCase
+final class UserConfigTest extends ShimmiePHPUnitTestCase
 {
     private const OPTIONS_BLOCK_TITLE = "User Options";
 
