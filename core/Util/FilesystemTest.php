@@ -13,27 +13,27 @@ class FilesystemTest extends TestCase
         $hash = "7ac19c10d6859415a9bf32f335f564ad";
 
         self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", $hash),
+            Filesystem::join_path("data/base", $hash),
             Filesystem::warehouse_path("base", $hash, false, 0)
         );
 
         self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", $hash),
+            Filesystem::join_path("data/base", "7a", $hash),
             Filesystem::warehouse_path("base", $hash, false, 1)
         );
 
         self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", $hash),
+            Filesystem::join_path("data/base", "7a", "c1", $hash),
             Filesystem::warehouse_path("base", $hash, false, 2)
         );
 
         self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", $hash),
+            Filesystem::join_path("data/base", "7a", "c1", "9c", "10", $hash),
             Filesystem::warehouse_path("base", $hash, false, 4)
         );
 
         self::assertEquals(
-            Filesystem::join_path(DATA_DIR, "base", "7a", "c1", "9c", "10", "d6", "85", "94", "15", $hash),
+            Filesystem::join_path("data/base", "7a", "c1", "9c", "10", "d6", "85", "94", "15", $hash),
             Filesystem::warehouse_path("base", $hash, false, 8)
         );
 
