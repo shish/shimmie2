@@ -193,7 +193,7 @@ final class Url
         $path     = $this->getPath();
 
         if (!empty($this->query)) {
-            $query_joiner = $config->get_bool(SetupConfig::NICE_URLS) ? '?' : '&';
+            $query_joiner = str_contains($path, '?') ? '&' : '?';
             $query        = $query_joiner . http_build_query($this->query);
         } else {
             $query = '';
