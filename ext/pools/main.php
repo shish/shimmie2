@@ -331,6 +331,17 @@ final class Pools extends Extension
             );
             $this->theme->pool_result($page, $images, $pool);
         }
+        if ($event->page_matches("pool/add_post", method: "POST")) {
+            $pool_id = int_escape($event->req_POST("pool_id"));
+            $image_id = int_escape($event->req_POST("image_id"));
+            $pool = $this->get_single_pool($pool_id);
+            self::assert_permission($user, $pool);
+
+            send_event(new PoolAddPostsEvent($pool_id, [$image_id]));
+            $page->flash("Post added to {$pool->title}");
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$image_id"));
+        }
         if ($event->page_matches("pool/add_posts/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
