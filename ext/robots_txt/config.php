@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RobotsTxtConfig extends ConfigGroup
+final class RobotsTxtConfig extends ConfigGroup
 {
     public const KEY = "robots_txt";
 

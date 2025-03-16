@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class MediaPermission extends PermissionGroup
+final class MediaPermission extends PermissionGroup
 {
     public const KEY = "media";
 

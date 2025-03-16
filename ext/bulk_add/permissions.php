@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BulkAddPermission extends PermissionGroup
+final class BulkAddPermission extends PermissionGroup
 {
     public const KEY = "bulk_add";
 

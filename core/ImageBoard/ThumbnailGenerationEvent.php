@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * Request a thumbnail be made for an image object.
  */
-class ThumbnailGenerationEvent extends Event
+final class ThumbnailGenerationEvent extends Event
 {
     public bool $generated;
 

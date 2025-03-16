@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TranscodeImageConfig extends ConfigGroup
+final class TranscodeImageConfig extends ConfigGroup
 {
     public const KEY = "transcode";
     public ?string $title = "Transcode Images";

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class NumericScoreTest extends ShimmiePHPUnitTestCase
+final class NumericScoreTest extends ShimmiePHPUnitTestCase
 {
     public function testNumericScore(): void
     {

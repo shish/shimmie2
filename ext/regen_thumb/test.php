@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RegenThumbTest extends ShimmiePHPUnitTestCase
+final class RegenThumbTest extends ShimmiePHPUnitTestCase
 {
     public function testRegenThumb(): void
     {

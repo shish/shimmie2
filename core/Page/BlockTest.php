@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\emptyHTML;
 
-class BlockTest extends ShimmiePHPUnitTestCase
+final class BlockTest extends ShimmiePHPUnitTestCase
 {
     public function test_blockcmp(): void
     {

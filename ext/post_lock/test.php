@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostLockTest extends ShimmiePHPUnitTestCase
+final class PostLockTest extends ShimmiePHPUnitTestCase
 {
     public function testLockEdit(): void
     {

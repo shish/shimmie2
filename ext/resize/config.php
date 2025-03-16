@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ResizeConfig extends ConfigGroup
+final class ResizeConfig extends ConfigGroup
 {
     public const KEY = "resize";
     public ?string $title = "Image Resize";

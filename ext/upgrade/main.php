@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Upgrade extends Extension
+final class Upgrade extends Extension
 {
     public const KEY = "upgrade";
     public const VERSION_KEY = "db_version";

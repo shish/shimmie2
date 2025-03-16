@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CronUploaderUserConfig extends UserConfigGroup
+final class CronUploaderUserConfig extends UserConfigGroup
 {
     public const KEY = "cron_uploader";
 

@@ -12,7 +12,7 @@ Todo:
 *Smiley filter, word filter, etc should work with our extension
 
 */
-class Forum extends Extension
+final class Forum extends Extension
 {
     public const KEY = "forum";
     public const VERSION_KEY = "forum_version";

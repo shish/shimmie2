@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LiveFeed extends Extension
+final class LiveFeed extends Extension
 {
     public const KEY = "livefeed";
 

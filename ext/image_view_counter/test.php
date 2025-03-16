@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageViewCounterTest extends ShimmiePHPUnitTestCase
+final class ImageViewCounterTest extends ShimmiePHPUnitTestCase
 {
     public function testPostView(): void
     {

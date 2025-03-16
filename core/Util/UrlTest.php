@@ -7,8 +7,32 @@ namespace Shimmie2;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Depends;
 
-class UrlTest extends TestCase
+final class UrlTest extends TestCase
 {
+    public function test_parse(): void
+    {
+        self::assertEquals(
+            new Url(path: "/index.php", query: ["q" => "thumb/2/thumb.jpg"]),
+            Url::parse("/index.php?q=thumb/2/thumb.jpg")
+        );
+    }
+
+    public function test_toString(): void
+    {
+        global $config;
+        $config->set_bool(SetupConfig::NICE_URLS, true);
+        self::assertEquals(
+            "/index.php?q=thumb%2F2%2Fthumb.jpg",
+            new Url(path: "/index.php", query: ["q" => "thumb/2/thumb.jpg"]),
+        );
+
+        $config->set_bool(SetupConfig::NICE_URLS, false);
+        self::assertEquals(
+            "/index.php?q=thumb%2F2%2Fthumb.jpg",
+            new Url(path: "/index.php", query: ["q" => "thumb/2/thumb.jpg"]),
+        );
+    }
+
     public function test_query_joiner(): void
     {
         global $config;

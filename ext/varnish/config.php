@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class VarnishPurgerConfig extends ConfigGroup
+final class VarnishPurgerConfig extends ConfigGroup
 {
     public const KEY = "varnish";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LogNet extends Extension
+final class LogNet extends Extension
 {
     public const KEY = "log_net";
     private int $count = 0;

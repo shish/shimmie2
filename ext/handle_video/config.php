@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class VideoFileHandlerConfig extends ConfigGroup
+final class VideoFileHandlerConfig extends ConfigGroup
 {
     public const KEY = "handle_video";
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AutoCompleteTest extends ShimmiePHPUnitTestCase
+final class AutoCompleteTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth(): void
     {

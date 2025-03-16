@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CreateTipEvent extends Event
+final class CreateTipEvent extends Event
 {
     public bool $enable;
     public string $image;
@@ -19,7 +19,7 @@ class CreateTipEvent extends Event
     }
 }
 
-class DeleteTipEvent extends Event
+final class DeleteTipEvent extends Event
 {
     public int $tip_id;
     public function __construct(int $tip_id)
@@ -29,7 +29,7 @@ class DeleteTipEvent extends Event
     }
 }
 
-class Tips extends Extension
+final class Tips extends Extension
 {
     public const KEY = "tips";
     /** @var TipsTheme */

@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BulkAddCSV extends Extension
+final class BulkAddCSV extends Extension
 {
     public const KEY = "bulk_add_csv";
     /** @var BulkAddCSVTheme */

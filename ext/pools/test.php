@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\Attributes\Depends;
 
-class PoolsTest extends ShimmiePHPUnitTestCase
+final class PoolsTest extends ShimmiePHPUnitTestCase
 {
     public function setUp(): void
     {

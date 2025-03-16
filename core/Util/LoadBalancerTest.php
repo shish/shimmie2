@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class LoadBalancerTest extends TestCase
+final class LoadBalancerTest extends TestCase
 {
     public function test_load_balancing_parse(): void
     {

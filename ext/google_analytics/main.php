@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\SCRIPT;
 
-class GoogleAnalytics extends Extension
+final class GoogleAnalytics extends Extension
 {
     public const KEY = "google_analytics";
 

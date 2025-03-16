@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ArtistsTest extends ShimmiePHPUnitTestCase
+final class ArtistsTest extends ShimmiePHPUnitTestCase
 {
     public function testSearch(): void
     {

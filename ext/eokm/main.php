@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Eokm extends Extension
+final class Eokm extends Extension
 {
     public const KEY = "eokm";
 

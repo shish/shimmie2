@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ConfigTest extends ShimmiePHPUnitTestCase
+final class ConfigTest extends ShimmiePHPUnitTestCase
 {
     public function testGetInt(): void
     {

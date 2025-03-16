@@ -15,7 +15,7 @@ namespace Shimmie2;
  *  );
  * \endcode
  */
-class DatabaseConfig extends Config
+final class DatabaseConfig extends Config
 {
     private string $cache_name;
 

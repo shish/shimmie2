@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class DowntimeTest extends ShimmiePHPUnitTestCase
+final class DowntimeTest extends ShimmiePHPUnitTestCase
 {
     public function testDowntime(): void
     {

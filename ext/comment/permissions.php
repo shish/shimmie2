@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CommentPermission extends PermissionGroup
+final class CommentPermission extends PermissionGroup
 {
     public const KEY = "comment";
 

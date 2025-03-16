@@ -8,7 +8,7 @@ use GQLA\Type;
 use GQLA\Field;
 
 #[Type(name: "UserClass")]
-class UserClass
+final class UserClass
 {
     /** @var array<string, UserClass> */
     public static array $known_classes = [];

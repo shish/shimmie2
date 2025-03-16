@@ -16,7 +16,7 @@ use GQLA\Query;
  * The currently logged in user will always be accessible via the global variable $user.
  */
 #[Type(name: "User")]
-class User
+final class User
 {
     public int $id;
     #[Field]

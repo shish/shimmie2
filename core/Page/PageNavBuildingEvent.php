@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PageNavBuildingEvent extends Event
+final class PageNavBuildingEvent extends Event
 {
     /** @var NavLink[] */
     public array $links = [];

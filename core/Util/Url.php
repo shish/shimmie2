@@ -16,7 +16,7 @@ use GQLA\Field;
  * - forming a URL with a page _and_ a path at the same time is invalid
  */
 #[Type(name: "Url")]
-class Url
+final class Url
 {
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
     * Various constructors                                                  *
@@ -193,7 +193,7 @@ class Url
         $path     = $this->getPath();
 
         if (!empty($this->query)) {
-            $query_joiner = $config->get_bool(SetupConfig::NICE_URLS) ? '?' : '&';
+            $query_joiner = str_contains($path, '?') ? '&' : '?';
             $query        = $query_joiner . http_build_query($this->query);
         } else {
             $query = '';

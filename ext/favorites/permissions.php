@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FavouritesPermission extends PermissionGroup
+final class FavouritesPermission extends PermissionGroup
 {
     public const KEY = "favorites";
 

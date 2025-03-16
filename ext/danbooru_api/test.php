@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class DanbooruApiTest extends ShimmiePHPUnitTestCase
+final class DanbooruApiTest extends ShimmiePHPUnitTestCase
 {
     public function testSearch(): void
     {

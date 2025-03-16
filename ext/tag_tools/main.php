@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagTools extends Extension
+final class TagTools extends Extension
 {
     public const KEY = "tag_tools";
     /** @var TagToolsTheme */

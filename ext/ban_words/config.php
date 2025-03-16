@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BanWordsConfig extends ConfigGroup
+final class BanWordsConfig extends ConfigGroup
 {
     public const KEY = "ban_words";
 

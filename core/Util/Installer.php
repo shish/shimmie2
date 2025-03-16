@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Installer
+final class Installer
 {
     public static function install(): void
     {

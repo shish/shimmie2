@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 #[\Attribute(\Attribute::TARGET_CLASS_CONSTANT)]
-readonly class ConfigMeta
+final readonly class ConfigMeta
 {
     /** @var "bool"|"int"|"shorthand_int"|"text"|"longtext"|"multichoice"|"color" */
     public string $input;

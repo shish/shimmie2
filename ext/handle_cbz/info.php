@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CBZFileHandlerInfo extends ExtensionInfo
+final class CBZFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_cbz";
 

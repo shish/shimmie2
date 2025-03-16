@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Statistics extends Extension
+final class Statistics extends Extension
 {
     public const KEY = "statistics";
     /** @var StatisticsTheme */

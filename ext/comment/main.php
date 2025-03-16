@@ -10,7 +10,7 @@ use GQLA\Mutation;
 
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
-class CommentPostingEvent extends Event
+final class CommentPostingEvent extends Event
 {
     public int $image_id;
     public User $user;
@@ -30,7 +30,7 @@ class CommentPostingEvent extends Event
  * detectors to get a feel for what should be deleted
  * and what should be kept?
  */
-class CommentDeletionEvent extends Event
+final class CommentDeletionEvent extends Event
 {
     public int $comment_id;
 
@@ -41,12 +41,12 @@ class CommentDeletionEvent extends Event
     }
 }
 
-class CommentPostingException extends InvalidInput
+final class CommentPostingException extends InvalidInput
 {
 }
 
 #[Type(name: "Comment")]
-class Comment
+final class Comment
 {
     public ?User $owner;
     public int $owner_id;
@@ -116,7 +116,7 @@ class Comment
     }
 }
 
-class CommentList extends Extension
+final class CommentList extends Extension
 {
     public const KEY = "comment";
     public const VERSION_KEY = "ext_comments_version";

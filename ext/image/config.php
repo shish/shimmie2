@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageConfig extends ConfigGroup
+final class ImageConfig extends ConfigGroup
 {
     public const KEY = "image";
     public ?string $title = "Post Manager";
@@ -31,7 +31,7 @@ class ImageConfig extends ConfigGroup
     public const EXPIRES = 'image_expires';
 }
 
-class ThumbnailConfig extends ConfigGroup
+final class ThumbnailConfig extends ConfigGroup
 {
     public const KEY = "image";
     public ?string $title = "Thumbnailing";

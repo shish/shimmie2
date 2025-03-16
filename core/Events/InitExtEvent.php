@@ -9,6 +9,6 @@ namespace Shimmie2;
  *
  * This event is sent before $user is set to anything
  */
-class InitExtEvent extends Event
+final class InitExtEvent extends Event
 {
 }

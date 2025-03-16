@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostLockPermission extends PermissionGroup
+final class PostLockPermission extends PermissionGroup
 {
     public const KEY = "post_lock";
 

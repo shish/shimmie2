@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RSSCommentsInfo extends ExtensionInfo
+final class RSSCommentsInfo extends ExtensionInfo
 {
     public const KEY = "rss_comments";
 

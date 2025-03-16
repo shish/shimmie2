@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * An image is being replaced.
  */
-class ImageReplaceEvent extends Event
+final class ImageReplaceEvent extends Event
 {
     /** @var non-empty-string */
     public string $old_hash;

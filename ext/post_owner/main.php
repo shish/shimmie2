@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class OwnerSetEvent extends Event
+final class OwnerSetEvent extends Event
 {
     public Image $image;
     public User $owner;
@@ -17,7 +17,7 @@ class OwnerSetEvent extends Event
     }
 }
 
-class PostOwner extends Extension
+final class PostOwner extends Extension
 {
     public const KEY = "post_owner";
     /** @var PostOwnerTheme */

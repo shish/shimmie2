@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class NetworkTest extends TestCase
+final class NetworkTest extends TestCase
 {
     public function test_get_session_ipv4(): void
     {

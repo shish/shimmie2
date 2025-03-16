@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
+final class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testSVGHander(): void
     {

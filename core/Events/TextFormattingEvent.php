@@ -8,7 +8,7 @@ namespace Shimmie2;
  * A signal that some text needs formatting, the event carries
  * both the text and the result
  */
-class TextFormattingEvent extends Event
+final class TextFormattingEvent extends Event
 {
     /**
      * For reference

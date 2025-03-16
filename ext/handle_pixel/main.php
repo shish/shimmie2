@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\{FORM, SELECT, OPTION};
 
-class PixelFileHandler extends DataHandlerExtension
+final class PixelFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_pixel";
     public const SUPPORTED_MIME = [

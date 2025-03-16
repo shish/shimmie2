@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ExtensionAuthor
+final class ExtensionAuthor
 {
     public string $name;
     public ?string $email;
@@ -20,7 +20,7 @@ class ExtensionAuthor
     }
 }
 
-class ExtManager extends Extension
+final class ExtManager extends Extension
 {
     public const KEY = "ext_manager";
     /** @var ExtManagerTheme */

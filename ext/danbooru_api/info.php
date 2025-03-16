@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class DanbooruApiInfo extends ExtensionInfo
+final class DanbooruApiInfo extends ExtensionInfo
 {
     public const KEY = "danbooru_api";
 

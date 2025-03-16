@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class S3Info extends ExtensionInfo
+final class S3Info extends ExtensionInfo
 {
     public const KEY = "s3";
 

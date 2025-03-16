@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LogLogstashConfig extends ConfigGroup
+final class LogLogstashConfig extends ConfigGroup
 {
     public const KEY = "log_logstash";
 

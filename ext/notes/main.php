@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Notes extends Extension
+final class Notes extends Extension
 {
     public const KEY = "notes";
     /** @var NotesTheme */

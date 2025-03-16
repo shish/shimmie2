@@ -7,7 +7,7 @@ namespace Shimmie2;
 use MicroCRUD\ActionColumn;
 use MicroCRUD\Table;
 
-class AutoTaggerTable extends Table
+final class AutoTaggerTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
@@ -27,7 +27,7 @@ class AutoTaggerTable extends Table
     }
 }
 
-class AddAutoTagEvent extends Event
+final class AddAutoTagEvent extends Event
 {
     public string $tag;
     public string $additional_tags;
@@ -40,7 +40,7 @@ class AddAutoTagEvent extends Event
     }
 }
 
-class DeleteAutoTagEvent extends Event
+final class DeleteAutoTagEvent extends Event
 {
     public string $tag;
 
@@ -51,15 +51,15 @@ class DeleteAutoTagEvent extends Event
     }
 }
 
-class AutoTaggerException extends SCoreException
+final class AutoTaggerException extends SCoreException
 {
 }
 
-class AddAutoTagException extends SCoreException
+final class AddAutoTagException extends SCoreException
 {
 }
 
-class AutoTagger extends Extension
+final class AutoTagger extends Extension
 {
     public const KEY = "auto_tagger";
     public const VERSION_KEY = "ext_auto_tagger_ver";

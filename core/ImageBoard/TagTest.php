@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class TagTest extends TestCase
+final class TagTest extends TestCase
 {
     public function test_compare(): void
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FeaturedConfig extends ConfigGroup
+final class FeaturedConfig extends ConfigGroup
 {
     public const KEY = "featured";
 

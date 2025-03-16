@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * An image is being added to the database.
  */
-class ImageAdditionEvent extends Event
+final class ImageAdditionEvent extends Event
 {
     /**
      * A new image is being added to the database - just the image,

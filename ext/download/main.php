@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 require_once "events.php";
 
-class Download extends Extension
+final class Download extends Extension
 {
     public const KEY = "download";
 

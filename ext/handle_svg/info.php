@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SVGFileHandlerInfo extends ExtensionInfo
+final class SVGFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_svg";
 

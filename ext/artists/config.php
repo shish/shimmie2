@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ArtistsConfig extends ConfigGroup
+final class ArtistsConfig extends ConfigGroup
 {
     public const KEY = "artists";
 

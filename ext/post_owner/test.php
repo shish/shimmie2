@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostOwnerTest extends ShimmiePHPUnitTestCase
+final class PostOwnerTest extends ShimmiePHPUnitTestCase
 {
     public function testOwnerEdit(): void
     {

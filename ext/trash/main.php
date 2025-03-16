@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class Trash extends Extension
+final class Trash extends Extension
 {
     public const KEY = "trash";
     /** @var TrashTheme */

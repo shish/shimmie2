@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class CommonElementsInfo extends ExtensionInfo
+final class CommonElementsInfo extends ExtensionInfo
 {
     public const KEY = "common_elements";
 

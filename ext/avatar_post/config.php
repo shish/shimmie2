@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AvatarPostUserConfig extends UserConfigGroup
+final class AvatarPostUserConfig extends UserConfigGroup
 {
     public const KEY = "avatar_post";
 

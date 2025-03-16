@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ExtManagerInfo extends ExtensionInfo
+final class ExtManagerInfo extends ExtensionInfo
 {
     public const KEY = "ext_manager";
 

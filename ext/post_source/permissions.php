@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class PostSourcePermission extends PermissionGroup
+final class PostSourcePermission extends PermissionGroup
 {
     public const KEY = "post_source";
 

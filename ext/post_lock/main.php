@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LockSetEvent extends Event
+final class LockSetEvent extends Event
 {
     public Image $image;
     public bool $locked;
@@ -17,7 +17,7 @@ class LockSetEvent extends Event
     }
 }
 
-class PostLock extends Extension
+final class PostLock extends Extension
 {
     public const KEY = "post_lock";
     /** @var PostLockTheme */

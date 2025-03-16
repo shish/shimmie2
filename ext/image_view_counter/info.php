@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageViewCounterInfo extends ExtensionInfo
+final class ImageViewCounterInfo extends ExtensionInfo
 {
     public const KEY = "image_view_counter";
 

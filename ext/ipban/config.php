@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class IPBanConfig extends ConfigGroup
+final class IPBanConfig extends ConfigGroup
 {
     public const KEY = "ipban";
     public ?string $title = "IP Ban";

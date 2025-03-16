@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\{META};
 
-class SiteDescription extends Extension
+final class SiteDescription extends Extension
 {
     public const KEY = "site_description";
 

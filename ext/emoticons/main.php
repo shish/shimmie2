@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * Class Emoticons
  */
-class Emoticons extends FormatterExtension
+final class Emoticons extends FormatterExtension
 {
     public const KEY = "emoticons";
 

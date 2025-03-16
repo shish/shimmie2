@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class LogConsoleConfig extends ConfigGroup
+final class LogConsoleConfig extends ConfigGroup
 {
     public const KEY = "log_console";
 

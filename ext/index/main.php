@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 require_once "events.php";
 
-class Index extends Extension
+final class Index extends Extension
 {
     public const KEY = "index";
     /** @var IndexTheme */

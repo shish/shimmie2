@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RandomList extends Extension
+final class RandomList extends Extension
 {
     public const KEY = "random_list";
     /** @var RandomListTheme */

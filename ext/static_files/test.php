@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class StaticFilesTest extends ShimmiePHPUnitTestCase
+final class StaticFilesTest extends ShimmiePHPUnitTestCase
 {
     public function testStaticHandler(): void
     {

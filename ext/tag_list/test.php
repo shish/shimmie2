@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class TagListTest extends ShimmiePHPUnitTestCase
+final class TagListTest extends ShimmiePHPUnitTestCase
 {
     public function testIndex(): void
     {

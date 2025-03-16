@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * An image is being deleted.
  */
-class ImageDeletionEvent extends Event
+final class ImageDeletionEvent extends Event
 {
     /**
      * Deletes an image.

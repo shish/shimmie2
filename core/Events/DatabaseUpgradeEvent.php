@@ -11,6 +11,6 @@ namespace Shimmie2;
  * the admin manually trigger the upgrade via CLI after each software
  * update)
  */
-class DatabaseUpgradeEvent extends Event
+final class DatabaseUpgradeEvent extends Event
 {
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RandomImageConfig extends ConfigGroup
+final class RandomImageConfig extends ConfigGroup
 {
     public const KEY = "random_image";
 

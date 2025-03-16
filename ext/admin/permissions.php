@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class AdminPermission extends PermissionGroup
+final class AdminPermission extends PermissionGroup
 {
     public const KEY = "admin";
 

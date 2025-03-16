@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class BulkAddTest extends ShimmiePHPUnitTestCase
+final class BulkAddTest extends ShimmiePHPUnitTestCase
 {
     public function testInvalidDir(): void
     {

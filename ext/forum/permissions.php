@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ForumPermission extends PermissionGroup
+final class ForumPermission extends PermissionGroup
 {
     public const KEY = "forum";
 

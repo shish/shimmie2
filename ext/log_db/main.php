@@ -19,7 +19,7 @@ use function MicroHTML\SELECT;
 use function MicroHTML\OPTION;
 use function MicroHTML\rawHTML;
 
-class ActorColumn extends Column
+final class ActorColumn extends Column
 {
     public function __construct(string $name, string $title)
     {
@@ -88,7 +88,7 @@ class ActorColumn extends Column
     }
 }
 
-class MessageColumn extends Column
+final class MessageColumn extends Column
 {
     public function __construct(string $name, string $title)
     {
@@ -180,7 +180,7 @@ class MessageColumn extends Column
     }
 }
 
-class LogTable extends Table
+final class LogTable extends Table
 {
     public function __construct(\FFSPHP\PDO $db)
     {
@@ -201,7 +201,7 @@ class LogTable extends Table
     }
 }
 
-class LogDatabase extends Extension
+final class LogDatabase extends Extension
 {
     public const KEY = "log_db";
     public const VERSION_KEY = "ext_log_database_version";

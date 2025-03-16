@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class SourceHistoryInfo extends ExtensionInfo
+final class SourceHistoryInfo extends ExtensionInfo
 {
     public const KEY = "source_history";
 

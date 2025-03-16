@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class RatingsBlurTest extends ShimmiePHPUnitTestCase
+final class RatingsBlurTest extends ShimmiePHPUnitTestCase
 {
     private string $username = "test_ratings";
 
