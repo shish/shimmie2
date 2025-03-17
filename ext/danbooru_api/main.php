@@ -358,7 +358,7 @@ final class DanbooruApi extends Extension
         try {
             $newimg = $database->with_savepoint(function () use ($file, $filename, $posttags, $source) {
                 // Fire off an event which should process the new file and add it to the db
-                $dae = send_event(new DataUploadEvent($file, basename($filename), 0, [
+                $dae = send_event(new DataUploadEvent(new Path($file), basename($filename), 0, [
                     'tags' => $posttags,
                     'source' => $source,
                 ]));
