@@ -467,7 +467,9 @@ final class Notes extends Extension
             ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
+        $count = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]);
+        if($count === 0) throw new HistoryNotFound("No note history for Note #$noteID was found.");
+        $totalPages = (int) ceil($count / $historiesPerPage);
 
         $this->theme->display_history($histories, $pageNumber + 1, $totalPages);
     }
@@ -488,7 +490,9 @@ final class Notes extends Extension
             ['image_id' => $imageID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id", ['image_id' => $imageID]) / $historiesPerPage);
+        $count = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id", ['image_id' => $imageID]);
+        if($count === 0) throw new HistoryNotFound("No note history for Post #$imageID was found.");
+        $totalPages = (int) ceil($count / $historiesPerPage);
 
         $this->theme->display_image_history($histories, $imageID, $pageNumber + 1, $totalPages);
     }
