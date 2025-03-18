@@ -125,8 +125,7 @@ final class SourceHistory extends Extension
             // there is no history entry with that id so either the image was deleted
             // while the user was viewing the history, someone is playing with form
             // variables or we have messed up in code somewhere.
-            /* calling die() is probably not a good idea, we should throw an Exception */
-            die("Error: No source history with specified id was found.");
+            throw new HistoryNotFound("No source history with specified id was found.");
         }
 
         // lets get the values out of the result
@@ -204,12 +203,12 @@ final class SourceHistory extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return non-empty-array<string, mixed>
      */
     private function get_source_history_from_id(int $image_id): array
     {
         global $database;
-        return $database->get_all(
+        $entries = $database->get_all(
             "
 				SELECT source_histories.*, users.name
 				FROM source_histories
@@ -218,6 +217,10 @@ final class SourceHistory extends Extension
 				ORDER BY source_histories.id DESC",
             ["image_id" => $image_id]
         );
+        if (empty($entries)) {
+            throw new HistoryNotFound("No source history for Image #$image_id was found.");
+        }
+        return $entries;
     }
 
     /**
