@@ -296,8 +296,8 @@ final class DanbooruApi extends Extension
         }
 
         if (isset($_FILES['file'])) {    // A file was POST'd in
-            $file = $_FILES['file']['tmp_name'];
-            $filename = $_FILES['file']['name'];
+            $file = new Path($_FILES['file']['tmp_name']);
+            $filename = $file->basename()->str();
             // If both a file is posted and a source provided, I'm assuming source is the source of the file
             if (isset($_REQUEST['source']) && !empty($_REQUEST['source'])) {
                 $source = $_REQUEST['source'];
@@ -305,8 +305,8 @@ final class DanbooruApi extends Extension
                 $source = null;
             }
         } elseif (isset($_FILES['post'])) {
-            $file = $_FILES['post']['tmp_name']['file'];
-            $filename = $_FILES['post']['name']['file'];
+            $file = new Path($_FILES['post']['tmp_name']['file']);
+            $filename = $file->basename()->str();
             if (isset($_REQUEST['post']['source']) && !empty($_REQUEST['post']['source'])) {
                 $source = $_REQUEST['post']['source'];
             } else {
@@ -333,7 +333,7 @@ final class DanbooruApi extends Extension
         $posttags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags'];
 
         // Was an md5 supplied? Does it match the file hash?
-        $hash = \Safe\md5_file($file);
+        $hash = $file->md5();
         if (isset($_REQUEST['md5']) && strtolower($_REQUEST['md5']) !== $hash) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: md5 mismatch");
@@ -358,7 +358,7 @@ final class DanbooruApi extends Extension
         try {
             $newimg = $database->with_savepoint(function () use ($file, $filename, $posttags, $source) {
                 // Fire off an event which should process the new file and add it to the db
-                $dae = send_event(new DataUploadEvent($file, basename($filename), 0, [
+                $dae = send_event(new DataUploadEvent($file, $filename, 0, [
                     'tags' => $posttags,
                     'source' => $source,
                 ]));
