@@ -501,7 +501,7 @@ function search_link(array $terms = [], int $page = 1): Url
  */
 function make_link(?string $page = null, ?array $query = null, ?string $fragment = null): Url
 {
-    return new Url(page: $page ?? "", query: $query, fragment: $fragment);
+    return new Url(page: $page ?? "", query: $query ?? [], fragment: $fragment);
 }
 
 /**

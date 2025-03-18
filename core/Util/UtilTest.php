@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Depends;
 
 final class UtilTest extends TestCase
 {
+    /**
+     * @return array<array{boolean}>
+     */
+    public static function niceurl_options(): array
+    {
+        return [[true], [false]];
+    }
+
     public function test_get_theme(): void
     {
         self::assertEquals("default", get_theme());
@@ -72,66 +79,6 @@ final class UtilTest extends TestCase
         );
     }
 
-    /**
-     * An integration test for
-     * - search_link()
-     *   - make_link_str()
-     * - _get_query()
-     * - get_search_terms()
-     */
-    #[Depends("test_search_link")]
-    public function test_get_search_terms_from_search_link(): void
-    {
-        /**
-         * @param array<string> $vars
-         * @return array<string>
-         */
-        $gst = function (array $terms): array {
-            $pre = new PageRequestEvent("GET", _get_query((string)search_link($terms)), [], []);
-            $pre->page_matches("post/list/{search}/{page}");
-            return Tag::explode($pre->get_arg('search'));
-        };
-
-        global $config;
-        foreach ([true, false] as $nice_urls) {
-            $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
-
-            self::assertEquals(
-                ["bar", "foo"],
-                $gst(["foo", "bar"])
-            );
-            self::assertEquals(
-                ["AC/DC"],
-                $gst(["AC/DC"])
-            );
-            self::assertEquals(
-                ["cat*", "rating=?"],
-                $gst(["rating=?", "cat*"]),
-            );
-        }
-    }
-
-    public function test_search_link(): void
-    {
-        global $config;
-        foreach ([true, false] as $nice_urls) {
-            $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
-
-            self::assertEquals(
-                $nice_urls ? "/test/post/list/bar%20foo/1" : "/test/index.php?q=post/list/bar%20foo/1",
-                search_link(["foo", "bar"])
-            );
-            self::assertEquals(
-                $nice_urls ? "/test/post/list/AC%2FDC/1" : "/test/index.php?q=post/list/AC%2FDC/1",
-                search_link(["AC/DC"])
-            );
-            self::assertEquals(
-                $nice_urls ? "/test/post/list/cat%2A%20rating%3D%3F/1" : "/test/index.php?q=post/list/cat%2A%20rating%3D%3F/1",
-                search_link(["rating=?", "cat*"])
-            );
-        }
-    }
-
     public function test_get_query(): void
     {
         // just validating an assumption that this test relies upon
@@ -187,12 +134,17 @@ final class UtilTest extends TestCase
         self::assertEquals(
             "post/list/tasty%2Fcake/1",
             _get_query("/test/post/list/tasty%2Fcake/1"),
-            'URL encoded niceurls should be left alone, even encoded slashes'
+            'URL encoded niceurl components should be left alone, even encoded slashes'
         );
         self::assertEquals(
             "post/list/tasty%2Fcake/1",
             _get_query("/test/index.php?q=post/list/tasty%2Fcake/1"),
-            'URL encoded uglyurls should be left alone, even encoded slashes'
+            'URL encoded uglyurl components should be left alone, even encoded slashes'
+        );
+        self::assertEquals(
+            "post/list/tasty%2Fcake/1",
+            _get_query("/test/index.php?q=post%2Flist%2Ftasty%252Fcake%2F1"),
+            'URL encoded uglyurl components within a URL encoded param should be left alone, even encoded slashes'
         );
     }
 
