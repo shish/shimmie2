@@ -16,7 +16,7 @@ use GQLA\Field;
  * - forming a URL with a page _and_ a path at the same time is invalid
  */
 #[Type(name: "Url")]
-final class Url
+final readonly class Url
 {
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
     * Various constructors                                                  *
@@ -25,7 +25,7 @@ final class Url
     /**
      * @param ?url-string $path
      * @param ?page-string $page
-     * @param ?query-array $query
+     * @param query-array $query
      * @param ?fragment-string $fragment
      */
     public function __construct(
@@ -36,7 +36,7 @@ final class Url
         private ?int $port = null,
         private ?string $page = null,
         private ?string $path = null,
-        private ?array $query = null,
+        private array $query = [],
         private ?string $fragment = null
     ) {
         assert($page === null || $path === null);
@@ -50,7 +50,7 @@ final class Url
     {
         $parsed = parse_url($url);
 
-        $query_array = null;
+        $query_array = [];
         if (isset($parsed['query'])) {
             parse_str($parsed['query'], $query_array);
         }
@@ -161,7 +161,7 @@ final class Url
             if ($config->get_bool(SetupConfig::NICE_URLS, false)) {
                 $path = "$install_dir/{$this->page}";
             } else {
-                $path = "$install_dir/index.php?q={$this->page}";
+                $path = "$install_dir/index.php";
             }
         } else {
             $path = '';
@@ -192,9 +192,13 @@ final class Url
         $pass     = ($user || $pass) ? "$pass@" : '';
         $path     = $this->getPath();
 
-        if (!empty($this->query)) {
-            $query_joiner = $config->get_bool(SetupConfig::NICE_URLS) ? '?' : '&';
-            $query        = $query_joiner . http_build_query($this->query);
+        $query = $this->query;
+        if (!$config->get_bool(SetupConfig::NICE_URLS) && $this->page !== null) {
+            //$query["q"] = $this->page;
+            $query = array_merge(["q" => $this->page], $query);
+        }
+        if (!empty($query)) {
+            $query = "?" . http_build_query($query);
         } else {
             $query = '';
         }
@@ -227,16 +231,13 @@ final class Url
      */
     public function withModifiedQuery(array $changes): Url
     {
-        $query = $this->query ?? [];
+        $query = $this->query;
         foreach ($changes as $k => $v) {
             if (is_null($v) and isset($query[$k])) {
                 unset($query[$k]);
             } elseif (!is_null($v)) {
                 $query[$k] = $v;
             }
-        }
-        if (empty($query)) {
-            $query = null;
         }
 
         return new Url(

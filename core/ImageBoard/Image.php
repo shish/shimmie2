@@ -426,7 +426,12 @@ final class Image implements \ArrayAccess
         } else {
             $chosen = make_link($plain);
         }
-        $link_string = $this->parse_link_template((string)$chosen);
+        // HACK
+        // $chosen = (string)make_link("foo/$var")
+        // results in
+        // $chosen = "/index.php?q=foo%2F%24var"
+        // so we manually replace the %24 to make substitution work
+        $link_string = $this->parse_link_template(str_replace("%24", "$", (string)$chosen));
         return Url::parse($link_string);
     }
 
