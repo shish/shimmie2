@@ -225,7 +225,7 @@ function get_debug_info(): string
 /**
  * Collects some debug information (execution time, memory usage, queries, etc)
  *
- * @return array<string, mixed>
+ * @return array{time:float,dbtime:float,mem_mb:float,files:int,query_count:int,event_count:int,cache_hits:int,cache_misses:int,version:string}
  */
 function get_debug_info_arr(): array
 {
@@ -374,8 +374,10 @@ function _get_user(): User
 {
     global $config, $page;
     $my_user = null;
-    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-        $parts = explode(" ", $_SERVER['HTTP_AUTHORIZATION'], 2);
+    /** @var ?string $auth */
+    $auth = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+    if (!is_null($auth)) {
+        $parts = explode(" ", $auth, 2);
         if (count($parts) === 2 && $parts[0] === "Bearer") {
             $parts = explode(":", $parts[1], 2);
             if (count($parts) === 2) {
@@ -531,7 +533,9 @@ function make_link(?string $page = null, ?array $query = null, ?string $fragment
  */
 function _get_query(?string $uri = null): string
 {
-    $parsed_url = parse_url($uri ?? $_SERVER['REQUEST_URI'] ?? "");
+    /** @var ?string $request_uri */
+    $request_uri = $_SERVER['REQUEST_URI'] ?? null;
+    $parsed_url = parse_url($uri ?? $request_uri ?? "");
 
     // if we're looking at http://site.com/.../index.php,
     // then get the query from the "q" parameter

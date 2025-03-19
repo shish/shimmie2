@@ -22,6 +22,7 @@ final class Network
 
     public static function is_bot(): bool
     {
+        /** @var string $ua */
         $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
         return (
             str_contains($ua, "Googlebot")
@@ -82,7 +83,7 @@ final class Network
 
     /**
      * @param non-empty-string $url
-     * @return array<string, string|string[]>
+     * @return header-array
      */
     public static function fetch_url(string $url, Path $mfile): array
     {
@@ -176,7 +177,7 @@ final class Network
     }
 
     /**
-     * @return array<string, string|string[]>
+     * @return header-array
      */
     public static function http_parse_headers(string $raw_headers): array
     {
@@ -204,9 +205,10 @@ final class Network
      * HTTP Headers can sometimes be lowercase which will cause issues.
      * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
      *
-     * @param array<string, mixed> $headers
+     * @param header-array $headers
+     * @return string|array<string>|null
      */
-    public static function find_header(array $headers, string $name): ?string
+    public static function find_header(array $headers, string $name): mixed
     {
         $header = null;
 
