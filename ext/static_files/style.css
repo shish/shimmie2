@@ -1,3 +1,15 @@
+:root {
+	--added-background: lightgreen;
+	--removed-background: lightcoral;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--added-background: green;
+		--removed-background: coral;
+	}
+}
+
 INPUT, TEXTAREA, SELECT, BUTTON {
 	box-sizing: border-box;
 	font-size: 1em;
