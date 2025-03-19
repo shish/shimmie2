@@ -79,8 +79,12 @@ abstract class BaseConfigGroup extends Enablable
                 if ($meta->default !== null) {
                     $defaults[$value] = match ($meta->type) {
                         ConfigType::BOOL => $meta->default ? "true" : "false",
+                        // phpstan doesn't know that if type=X then default=Y
+                        // @phpstan-ignore-next-line
                         ConfigType::INT => (string)($meta->default),
+                        // @phpstan-ignore-next-line
                         ConfigType::STRING => (string)($meta->default),
+                        // @phpstan-ignore-next-line
                         ConfigType::ARRAY => implode(",", $meta->default),
                     };
                 }

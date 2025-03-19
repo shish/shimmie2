@@ -17,7 +17,7 @@ final class CronUploaderUserConfig extends UserConfigGroup
     #[ConfigMeta("Include all logs", ConfigType::BOOL, default: false, permission: CronUploaderPermission::CRON_ADMIN)]
     public const INCLUDE_ALL_LOGS = "cron_uploader_include_all_logs";
 
-    #[ConfigMeta("Log level", ConfigType::STRING, default: LogLevel::INFO->value, options: "Shimmie2\LogLevel::names_to_levels", permission: CronUploaderPermission::CRON_ADMIN)]
+    #[ConfigMeta("Log level", ConfigType::INT, default: LogLevel::INFO->value, options: "Shimmie2\LogLevel::names_to_levels", permission: CronUploaderPermission::CRON_ADMIN)]
     public const LOG_LEVEL = "cron_uploader_log_level";
 
     public function tweak_html(\MicroHTML\HTMLElement $html): \MicroHTML\HTMLElement
