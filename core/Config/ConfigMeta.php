@@ -13,6 +13,12 @@ final readonly class ConfigMeta
     /**
      * @param "shorthand_int"|"longtext"|"color" $input Override the default UI renderer
      * @param array<string, string>|callable-string|null $options A list of key-value pairs, or the name of a function to call to generate pairs
+     * @param (
+     *     $type is ConfigType::BOOL ? bool|null :
+     *     $type is ConfigType::INT ? int|null :
+     *     $type is ConfigType::STRING ? string|null :
+     *     $type is ConfigType::ARRAY ? array<string>|null :
+     *     null) $default
      */
     public function __construct(
         public string $label,
