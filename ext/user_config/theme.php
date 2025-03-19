@@ -10,31 +10,29 @@ use function MicroHTML\DIV;
 use function MicroHTML\H3;
 use function MicroHTML\INPUT;
 use function MicroHTML\SECTION;
-use function MicroHTML\rawHTML;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TH;
+use function MicroHTML\TR;
 
 class UserConfigTheme extends Themelet
 {
     public function get_user_operations(string $key): HTMLElement
     {
-        $html = "
-                <p>".make_form(make_link("user_admin/reset_api_key"))."
-                    <table style='width: 300px;'>
-                        <tbody>
-                        <tr><th colspan='2'>API Key</th></tr>
-                        <tr>
-                            <td>
-                                $key
-                            </td>
-                        </tbody>
-                        <tfoot>
-                            <tr><td><input type='submit' value='Reset Key'></td></tr>
-                        </tfoot>
-                    </table>
-                </form>
-            ";
-        return rawHTML($html);
+        return SHM_SIMPLE_FORM(
+            make_link("user_admin/reset_api_key"),
+            TABLE(
+                ["class" => "form"],
+                TR(
+                    TH("API Key"),
+                    TD($key)
+                ),
+                TR(
+                    TD(["colspan" => 2], SHM_SUBMIT("Reset Key"))
+                )
+            ),
+        );
     }
-
 
     /**
      * Display a set of setup option blocks

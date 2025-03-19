@@ -6,7 +6,10 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\BR;
+use function MicroHTML\DIV;
+use function MicroHTML\SPAN;
+use function MicroHTML\emptyHTML;
 
 final class TagEditCloud extends Extension
 {
@@ -26,11 +29,6 @@ final class TagEditCloud extends Extension
     private function build_tag_map(Image $image): ?HTMLElement
     {
         global $database, $config;
-
-        $html = "";
-        $cloud = "";
-        $precloud = "";
-        $postcloud = "";
 
         $sort_method = $config->get_string(TagEditCloudConfig::SORT);
         $tags_min = $config->get_int(TagEditCloudConfig::MIN_USAGE);
@@ -105,6 +103,10 @@ final class TagEditCloud extends Extension
                 break;
         }
 
+        $cloud = emptyHTML();
+        $precloud = emptyHTML();
+        $postcloud = emptyHTML();
+
         $counter = 1;
         $last_cat = null;
         $last_used_cat = null;
@@ -116,71 +118,99 @@ final class TagEditCloud extends Extension
                 $tc = explode(':', $row['tag']);
                 if (isset($tc[1]) && isset($cat_color[$tc[0]])) {
                     $current_cat = $tc[0];
-                    $h_tag = html_escape($tc[1]);
+                    $h_tag = $tc[1];
                     $color = '; color:'.$cat_color[$tc[0]];
                 } else {
-                    $h_tag = html_escape($row['tag']);
+                    $h_tag = $row['tag'];
                     $color = '';
                 }
             } else {
-                $h_tag = html_escape($row['tag']);
+                $h_tag = $row['tag'];
                 $color = '';
             }
 
             $size = sprintf("%.2f", max($row['scaled'], 0.5));
-            $js = html_escape('tageditcloud_toggle_tag(this,'.\Safe\json_encode($full_tag).')'); //Ugly, but it works
+            $js = 'tageditcloud_toggle_tag(this,'.\Safe\json_encode($full_tag).')';
 
             if (in_array($row['tag'], $image->get_tag_array())) {
+                $entry = SPAN([
+                    'onclick' => $js,
+                    'class' => 'tag-selected',
+                    'style' => "font-size: {$size}em$color",
+                    'title' => $row['count'],
+                ], $h_tag);
                 if ($used_first) {
                     if ($last_used_cat !== $current_cat && $last_used_cat !== null) {
-                        $precloud .= "</span><span class='tag-category'>\n";
+                        //$precloud .= "</span><span class='tag-category'>\n";
                     }
                     $last_used_cat = $current_cat;
-                    $precloud .= "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: {$size}em$color' title='{$row['count']}'>{$h_tag}</span>&nbsp;\n";
+                    $precloud->appendChild($entry);
                     continue;
-                } else {
-                    $entry = "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: {$size}em$color' title='{$row['count']}'>{$h_tag}</span>&nbsp;\n";
                 }
             } else {
-                $entry = "&nbsp;<span onclick='{$js}' style='font-size: {$size}em$color' title='{$row['count']}'>{$h_tag}</span>&nbsp;\n";
+                $entry = SPAN([
+                    'onclick' => $js,
+                    'style' => "font-size: {$size}em$color",
+                    'title' => $row['count'],
+                ], $h_tag);
             }
 
             if ($counter++ <= $def_count) {
                 if ($last_cat !== $current_cat && $last_cat !== null) {
-                    $cloud .= "</span><span class='tag-category'>\n";
+                    //$cloud .= "</span><span class='tag-category'>\n";
                 } //TODO: Maybe add a title for the category after the span opens?
-                $cloud .= $entry;
+                $cloud->appendChild($entry);
             } else {
                 if ($last_cat !== $current_cat && $counter !== $def_count + 2) {
-                    $postcloud .= "</span><span class='tag-category'>\n";
+                    //$postcloud .= "</span><span class='tag-category'>\n";
                 }
-                $postcloud .= $entry;
+                $postcloud->appendChild($entry);
             }
 
             $last_cat = $current_cat;
         }
 
-        if ($precloud !== '') {
-            $html .= "<div id='tagcloud_set'><span class='tag-category'>{$precloud}</span></div>";
+        if (strlen((string)$postcloud) > 0) {
+            $postcloud = DIV(
+                ["id" => "tagcloud_extra", "style" => "display: none;"],
+                SPAN(["class" => "tag-category"], $postcloud)
+            );
         }
 
-        if ($postcloud !== '') {
-            $postcloud = "<div id='tagcloud_extra' style='display: none;'><span class='tag-category'>{$postcloud}</span></div>";
+        $html = emptyHTML();
+        if (strlen((string)$precloud) > 0) {
+            $html->appendChild(DIV(
+                ["id" => "tagcloud_set"],
+                SPAN(["class" => "tag-category"], $precloud)
+            ));
         }
-
-        $html .= "<div id='tagcloud_unset'><span class='tag-category'>{$cloud}</span>{$postcloud}</div>";
-
+        $html->appendChild(DIV(
+            ["id" => "tagcloud_unset"],
+            SPAN(["class" => "tag-category"], $cloud),
+            $postcloud
+        ));
         if ($sort_method !== 'a' && $counter > $def_count) {
             $rem = $counter - $def_count;
-            $html .= "</div><br>[<span onclick='tageditcloud_toggle_extra(this);' style='color: #0000EF; font-weight:bold;'>show {$rem} more tags</span>]";
+            $html->appendChild(emptyHTML(
+                BR(),
+                "[",
+                SPAN(["onclick" => "tageditcloud_toggle_extra(this);", "style" => "color: #0000EF; font-weight:bold;"], "show {$rem} more tags"),
+                "]"
+            ));
         }
 
-        return rawHTML("<div id='tageditcloud' class='tageditcloud'>{$html}</div>"); // FIXME: stupidasallhell
+        return DIV(["id" => "tageditcloud", "class" => "tageditcloud"], $html);
     }
 
     private function can_tag(Image $image): bool
     {
         global $user;
-        return ($user->can(PostTagsPermission::EDIT_IMAGE_TAG) && (!$image->is_locked() || $user->can(PostLockPermission::EDIT_IMAGE_LOCK)));
+        return (
+            $user->can(PostTagsPermission::EDIT_IMAGE_TAG)
+            && (
+                !$image->is_locked()
+                || $user->can(PostLockPermission::EDIT_IMAGE_LOCK)
+            )
+        );
     }
 }

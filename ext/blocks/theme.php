@@ -10,7 +10,6 @@ use function MicroHTML\TH;
 use function MicroHTML\TD;
 use function MicroHTML\INPUT;
 use function MicroHTML\TEXTAREA;
-use function MicroHTML\rawHTML;
 use function MicroHTML\SELECT;
 use function MicroHTML\OPTION;
 
@@ -47,7 +46,7 @@ class BlocksTheme extends Themelet
                     TD(["colspan" => "13"], TEXTAREA(["rows" => "5", "name" => "content"], $block['content']))
                 ),
                 TR(
-                    TD(["colspan" => "13"], rawHTML("&nbsp;"))
+                    TD(["colspan" => "13"], " ")
                 ),
             ));
         }

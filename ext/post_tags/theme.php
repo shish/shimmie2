@@ -6,23 +6,23 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{joinHTML, TEXTAREA, TR, TH, TD, INPUT, rawHTML};
+use function MicroHTML\{joinHTML, TEXTAREA, TABLE, TR, TH, TD, INPUT};
 
 class PostTagsTheme extends Themelet
 {
     public function display_mass_editor(): void
     {
         global $page;
-        $html = "
-		" . make_form(make_link("tag_edit/replace")) . "
-			<table class='form'>
-				<tr><th>Search</th><td><input type='text' name='search' class='autocomplete_tags'></tr>
-				<tr><th>Replace</th><td><input type='text' name='replace' class='autocomplete_tags'></td></tr>
-				<tr><td colspan='2'><input type='submit' value='Replace'></td></tr>
-			</table>
-		</form>
-		";
-        $page->add_block(new Block("Mass Tag Edit", rawHTML($html)));
+        $html = SHM_SIMPLE_FORM(
+            make_link("tag_edit/replace"),
+            TABLE(
+                ["class" => "form"],
+                TR(TH("Search"), TD(INPUT(["type" => "text", "name" => "search", "class" => "autocomplete_tags"]))),
+                TR(TH("Replace"), TD(INPUT(["type" => "text", "name" => "replace", "class" => "autocomplete_tags"]))),
+                TR(TD(["colspan" => "2"], SHM_SUBMIT("Replace")))
+            )
+        );
+        $page->add_block(new Block("Mass Tag Edit", $html));
     }
 
     public function get_tag_editor_html(Image $image): HTMLElement

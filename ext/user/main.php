@@ -17,7 +17,7 @@ use MicroCRUD\TextColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
 
-use function MicroHTML\{A, emptyHTML};
+use function MicroHTML\{A, emptyHTML, P};
 
 final class UserNameColumn extends TextColumn
 {
@@ -303,37 +303,36 @@ final class UserPage extends Extension
         global $user, $config;
 
         $duser = $event->display_user;
-        $h_join_date = autodate($duser->join_date);
         $class = $duser->class;
-        $h_class = $class->name;
 
-        $event->add_part("Joined: $h_join_date", 10);
+        $event->add_part(emptyHTML("Joined: ", SHM_DATE($duser->join_date)), 10);
         if ($user->name == $duser->name) {
-            $event->add_part("Current IP: " . Network::get_real_ip(), 80);
+            $event->add_part(emptyHTML("Current IP: " . Network::get_real_ip()), 80);
         }
-        $event->add_part("Class: $h_class", 90);
+        $event->add_part(emptyHTML("Class: {$class->name}"), 90);
 
         /** @var BuildAvatarEvent $avatar_e */
         $avatar_e = send_event(new BuildAvatarEvent($duser));
         $av = $avatar_e->html;
         if ($av) {
-            $event->add_part((string)$av, 0);
+            $event->add_part($av, 0);
         } elseif ($duser->id == $user->id) {
-            $part = "";
-            if (AvatarPostInfo::is_enabled()) {
-                $part .= "No avatar?<br>You can set any post as avatar by clicking \"Set Image As Avatar\" in the Post Controls on any post." .
-                "<br>Or by setting it manually in your <a href='".make_link("user_config")."'>user config</a>";
-            }
-            if (AvatarGravatarInfo::is_enabled()) {
-                if (empty($part)) {
-                    $part .= "<br>No avatar? This gallery uses ";
-                } else {
-                    $part .= "<br>This gallery also uses ";
+            if (AvatarPostInfo::is_enabled() || AvatarGravatarInfo::is_enabled()) {
+                $part = emptyHTML(P("No avatar?"));
+                if (AvatarPostInfo::is_enabled()) {
+                    $part->appendChild(P(
+                        "You can set any post as avatar by clicking \"Set Image As Avatar\" in ",
+                        "the Post Controls on any post, or by setting it manually in your ",
+                        A(["href" => make_link("user_config")], "user config")
+                    ));
                 }
-                $part .= "<a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the" .
-                "<br>same email address here and there to have your avatar synced<br>";
-            }
-            if (!empty($part)) {
+                if (AvatarGravatarInfo::is_enabled()) {
+                    $part->appendChild(P(
+                        "You can set a ",
+                        A(["href" => "https://gravatar.com"], "Gravatar"),
+                        " avatar by using the same email address here and there"
+                    ));
+                }
                 $event->add_part($part, 0);
             }
         }

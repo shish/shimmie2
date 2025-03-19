@@ -6,26 +6,21 @@ namespace Shimmie2;
 
 final class CreateTipEvent extends Event
 {
-    public bool $enable;
-    public string $image;
-    public string $text;
-
-    public function __construct(bool $enable, string $image, string $text)
-    {
+    public function __construct(
+        public bool $enable,
+        public string $image,
+        public string $text
+    ) {
         parent::__construct();
-        $this->enable = $enable;
-        $this->image = $image;
-        $this->text = $text;
     }
 }
 
 final class DeleteTipEvent extends Event
 {
-    public int $tip_id;
-    public function __construct(int $tip_id)
-    {
+    public function __construct(
+        public int $tip_id
+    ) {
         parent::__construct();
-        $this->tip_id = $tip_id;
     }
 }
 
@@ -110,20 +105,10 @@ final class Tips extends Extension
 
     private function manageTips(): void
     {
-        $data_href = Url::base();
-        $url = $data_href."/ext/tips/images/";
-
-        $dirPath = \Safe\dir('./ext/tips/images');
-        $images = [];
-        while (($file = $dirPath->read()) !== false) {
-            if ($file[0] !== ".") {
-                $images[] = trim($file);
-            }
-        }
-        $dirPath->close();
+        $images = Filesystem::get_dir_contents(new Path("ext/tips/images"));
+        $images = array_map(fn ($p) => $p->basename()->str(), $images);
         sort($images);
-
-        $this->theme->manageTips($url, $images);
+        $this->theme->manageTips($images);
     }
 
     public function onCreateTip(CreateTipEvent $event): void
@@ -141,9 +126,6 @@ final class Tips extends Extension
     {
         global $database;
 
-        $data_href = Url::base();
-        $url = $data_href."/ext/tips/images/";
-
         $tip = $database->get_row("
             SELECT *
             FROM tips
@@ -153,30 +135,22 @@ final class Tips extends Extension
         ", ["true" => true]);
 
         if ($tip) {
-            $this->theme->showTip($url, $tip);
+            $this->theme->showTip($tip);
         }
     }
 
     private function getAll(): void
     {
         global $database;
-
-        $data_href = Url::base();
-        $url = $data_href."/ext/tips/images/";
-
         $tips = $database->get_all("SELECT * FROM tips ORDER BY id ASC");
-
-        $this->theme->showAll($url, $tips);
+        $this->theme->showAll($tips);
     }
 
     private function setStatus(int $tipID): void
     {
         global $database;
-
         $tip = $database->get_row("SELECT * FROM tips WHERE id = :id ", ["id" => $tipID]);
-
-        $enable = bool_escape($tip['enable']);
-
+        $enable = !bool_escape($tip['enable']);
         $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable" => $enable, "id" => $tipID]);
     }
 

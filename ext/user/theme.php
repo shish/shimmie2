@@ -7,7 +7,7 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
+use function MicroHTML\joinHTML;
 use function MicroHTML\TABLE;
 use function MicroHTML\TBODY;
 use function MicroHTML\TFOOT;
@@ -31,7 +31,7 @@ class UserPageTheme extends Themelet
         $this->display_navigation();
         $page->add_block(new Block(
             "Login There",
-            rawHTML("There should be a login box to the left")
+            emptyHTML("There should be a login box to the left")
         ));
     }
 
@@ -86,15 +86,15 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
                     ),
                     TR(
-                        TH(rawHTML("Repeat&nbsp;Password")),
+                        TH(\MicroHTML\rawHTML("Repeat&nbsp;Password")),
                         TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
-                        TH($email_required ? "Email" : rawHTML("Email&nbsp;(Optional)")),
+                        TH($email_required ? "Email" : \MicroHTML\rawHTML("Email&nbsp;(Optional)")),
                         TD(INPUT(["type" => 'email', "name" => 'email', "required" => $email_required]))
                     ),
                     TR(
-                        TD(["colspan" => "2"], rawHTML(Captcha::get_html()))
+                        TD(["colspan" => "2"], Captcha::get_html())
                     ),
                 ),
                 TFOOT(
@@ -104,7 +104,7 @@ class UserPageTheme extends Themelet
         );
 
         $html = emptyHTML(
-            $tac ? P(rawHTML($tac)) : null,
+            $tac ? P($tac) : null,
             $form
         );
 
@@ -131,15 +131,15 @@ class UserPageTheme extends Themelet
                         TD(INPUT(["type" => 'password', "name" => 'pass1', "required" => true]))
                     ),
                     TR(
-                        TH(rawHTML("Repeat&nbsp;Password")),
+                        TH(\MicroHTML\rawHTML("Repeat&nbsp;Password")),
                         TD(INPUT(["type" => 'password', "name" => 'pass2', "required" => true]))
                     ),
                     TR(
-                        TH(rawHTML("Email")),
+                        TH("Email"),
                         TD(INPUT(["type" => 'email', "name" => 'email']))
                     ),
                     TR(
-                        TD(["colspan" => 2], rawHTML("(Email is optional for admin-created accounts)")),
+                        TD(["colspan" => 2], "(Email is optional for admin-created accounts)"),
                     ),
                 ),
                 TFOOT(
@@ -157,7 +157,7 @@ class UserPageTheme extends Themelet
         $this->display_navigation();
         $page->add_block(new Block(
             "Signups Disabled",
-            rawHTML(format_text($config->get_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE))),
+            format_text($config->get_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
         ));
     }
 
@@ -201,7 +201,7 @@ class UserPageTheme extends Themelet
     /**
      * @param array<string, int> $ips
      */
-    private function _ip_list(string $name, array $ips): HTMLElement
+    protected function _ip_list(string $name, array $ips): HTMLElement
     {
         $td = TD("$name: ");
         $n = 0;
@@ -240,16 +240,16 @@ class UserPageTheme extends Themelet
     }
 
     /**
-     * @param string[] $stats
+     * @param array<HTMLElement|string> $stats
      */
     public function display_user_page(User $duser, array $stats): void
     {
         global $page;
-        $stats[] = 'User ID: '.$duser->id;
+        $stats[] = emptyHTML('User ID: '.$duser->id);
 
         $page->set_title("{$duser->name}'s Page");
         $this->display_navigation();
-        $page->add_block(new Block("Stats", rawHTML(join("<br>", $stats)), "main", 10));
+        $page->add_block(new Block("Stats", joinHTML(BR(), $stats), "main", 10));
     }
 
 
@@ -343,22 +343,13 @@ class UserPageTheme extends Themelet
     public function get_help_html(): HTMLElement
     {
         global $user;
-        $output = emptyHTML(P("Search for posts posted by particular individuals."));
-        $output->appendChild(SHM_COMMAND_EXAMPLE(
-            "poster=username",
-            'Returns posts posted by "username".'
-        ));
-        $output->appendChild(SHM_COMMAND_EXAMPLE(
-            "poster_id=123",
-            'Returns posts posted by user 123.'
-        ));
-
-        if ($user->can(IPBanPermission::VIEW_IP)) {
-            $output->appendChild(SHM_COMMAND_EXAMPLE(
-                "poster_ip=127.0.0.1",
-                "Returns posts posted from IP 127.0.0.1."
-            ));
-        }
-        return $output;
+        return emptyHTML(
+            P("Search for posts posted by particular individuals."),
+            SHM_COMMAND_EXAMPLE("poster=username", 'Returns posts posted by "username"'),
+            // SHM_COMMAND_EXAMPLE("poster_id=123", 'Returns posts posted by user 123'),
+            $user->can(IPBanPermission::VIEW_IP)
+                ? SHM_COMMAND_EXAMPLE("poster_ip=127.0.0.1", "Returns posts posted from IP 127.0.0.1.")
+                : null
+        );
     }
 }

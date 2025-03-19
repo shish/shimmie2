@@ -307,7 +307,7 @@ final class Ratings extends Extension
         global $user;
 
         if ($user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
-            $event->add_action("bulk_rate", "Set (R)ating", "r", "", (string)$this->theme->get_selection_rater_html(selected_options: ["?"]));
+            $event->add_action("bulk_rate", "Set (R)ating", "r", "", $this->theme->get_selection_rater_html(selected_options: ["?"]));
         }
     }
 

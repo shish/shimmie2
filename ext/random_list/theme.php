@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{rawHTML, INPUT};
+use function MicroHTML\{INPUT};
+use function MicroHTML\B;
+use function MicroHTML\BR;
+use function MicroHTML\DIV;
+use function MicroHTML\P;
+use function MicroHTML\emptyHTML;
 
 class RandomListTheme extends Themelet
 {
@@ -14,23 +19,20 @@ class RandomListTheme extends Themelet
      */
     public function display_page(Page $page, array $search_terms, array $images): void
     {
-        $page->title = "Random Posts";
-
-        $html = "<b>Refresh the page to view more posts</b>";
+        $html = emptyHTML(B("Refresh the page to view more posts"));
         if (count($images)) {
-            $html .= "<div class='shm-image-list'>";
-
+            $list = DIV(["class" => "shm-image-list"]);
             foreach ($images as $image) {
-                $html .= $this->build_thumb($image);
+                $list->appendChild($this->build_thumb($image));
             }
-
-            $html .= "</div>";
+            $html->appendChild($list);
         } else {
-            $html .= "<br/><br/>No posts were found to match the search criteria";
+            $html->appendChild(BR());
+            $html->appendChild(P("No posts were found to match the search criteria"));
         }
 
-        $page->add_block(new Block("Random Posts", rawHTML($html)));
-
+        $page->add_block(new Block("Random Posts", $html));
+        $page->set_title("Random Posts");
         $this->display_navigation(extra: SHM_FORM(
             action: make_link("random"),
             method: "GET",

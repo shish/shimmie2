@@ -96,8 +96,6 @@ class PostListBuildingEvent extends Event
 {
     /** @var list<string> */
     public array $search_terms = [];
-    /** @var array<int,string> */
-    public array $parts = [];
 
     /**
      * @param list<string> $search
@@ -106,13 +104,5 @@ class PostListBuildingEvent extends Event
     {
         parent::__construct();
         $this->search_terms = $search;
-    }
-
-    public function add_control(string $html, int $position = 50): void
-    {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = $html;
     }
 }

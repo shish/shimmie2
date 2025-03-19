@@ -13,15 +13,15 @@ final class NumericScoreTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         self::get_page("post/view/$image_id");
-        self::assert_text("Current Score: 0");
+        self::assert_text("Post Score: 0");
 
         send_event(new NumericScoreSetEvent($image_id, $user, -1));
         self::get_page("post/view/$image_id");
-        self::assert_text("Current Score: -1");
+        self::assert_text("Post Score: -1");
 
         send_event(new NumericScoreSetEvent($image_id, $user, 1));
         self::get_page("post/view/$image_id");
-        self::assert_text("Current Score: 1");
+        self::assert_text("Post Score: 1");
 
         # FIXME: test that up and down are hidden if already voted up or down
 

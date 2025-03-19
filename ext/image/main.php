@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function MicroHTML\{INPUT, STYLE};
+use function MicroHTML\{INPUT, STYLE, A, emptyHTML};
 
 /**
  * A class to handle adding / getting / removing image files from the disk.
@@ -112,7 +112,10 @@ final class ImageIO extends Extension
         $i_days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
         $images_link = search_link(["user={$event->display_user->name}"]);
-        $event->add_part("<a href='$images_link'>Posts uploaded</a>: $i_image_count, $h_image_rate per day");
+        $event->add_part(emptyHTML(
+            A(["href" => $images_link], "Posts uploaded"),
+            ": $i_image_count, $h_image_rate per day"
+        ));
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
@@ -128,7 +131,7 @@ final class ImageIO extends Extension
         $event->replace('$filename', $base_fname);
         $event->replace('$ext', $event->image->get_ext());
         if (isset($event->image->posted)) {
-            $event->replace('$date', autodate($event->image->posted, false));
+            $event->replace('$date', date('c', \Safe\strtotime($event->image->posted)));
         }
         $event->replace("\\n", "\n");
     }

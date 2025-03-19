@@ -46,6 +46,6 @@ class VideoFileHandlerTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block("Video", $html, "main", 10));
+        $page->add_block(new Block(null, $html, "main", 10));
     }
 }

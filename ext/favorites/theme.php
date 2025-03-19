@@ -4,50 +4,40 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{rawHTML};
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\A;
+use function MicroHTML\BR;
+use function MicroHTML\P;
+use function MicroHTML\emptyHTML;
 
 class FavoritesTheme extends Themelet
 {
     /**
-     * @param string[] $username_array
+     * @param string[] $usernames
      */
-    public function display_people(array $username_array): void
+    public function display_people(array $usernames): void
     {
         global $page;
 
-        $i_favorites = count($username_array);
-        $html = "$i_favorites people:";
+        $i_favorites = count($usernames);
+        $html = emptyHTML("$i_favorites people:");
 
-        reset($username_array); // rewind to first element in array.
-
-        foreach ($username_array as $row) {
-            $username = html_escape($row);
-            $html .= "<br><a href='".make_link("user/$username")."'>$username</a>";
+        foreach ($usernames as $username) {
+            $html->appendChild(BR());
+            $html->appendChild(A(["href" => make_link("user/$username")], $username));
         }
 
-        $page->add_block(new Block("Favorited By", rawHTML($html), "left", 25));
+        $page->add_block(new Block("Favorited By", $html, "left", 25));
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts that have been favorited a certain number of times, or favorited by a particular individual.</p>
-        <div class="command_example">
-        <code>favorites=1</code>
-        <p>Returns posts that have been favorited once.</p>
-        </div>
-        <div class="command_example">
-        <code>favorites>0</code>
-        <p>Returns posts that have been favorited 1 or more times</p>
-        </div>
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
-        <div class="command_example">
-        <code>favorited_by:username</code>
-        <p>Returns posts that have been favorited by "username". </p>
-        </div>
-        <div class="command_example">
-        <code>favorited_by_userno:123</code>
-        <p>Returns posts that have been favorited by user 123. </p>
-        </div>
-        ';
+        return emptyHTML(
+            P('Search for posts that have been favorited a certain number of times, or favorited by a particular individual.'),
+            SHM_COMMAND_EXAMPLE('favorites=1', 'Returns posts that have been favorited once'),
+            SHM_COMMAND_EXAMPLE('favorites>0', 'Returns posts that have been favorited 1 or more times'),
+            SHM_COMMAND_EXAMPLE('favorited_by:username', 'Returns posts that have been favorited by a user'),
+        );
     }
 }

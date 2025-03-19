@@ -116,14 +116,6 @@ final class PolyfillsTest extends TestCase
         self::assertEquals(50000000000, parse_to_milliseconds("1y 213d 16h 53m 20s"));
     }
 
-    public function test_autodate(): void
-    {
-        self::assertEquals(
-            "<time datetime='2012-06-23T16:14:22+00:00'>June 23, 2012; 16:14</time>",
-            autodate("2012-06-23 16:14:22")
-        );
-    }
-
     public function test_validate_input(): void
     {
         $_POST = [

@@ -12,7 +12,6 @@ use function MicroHTML\DIV;
 use function MicroHTML\SPAN;
 use function MicroHTML\IMG;
 use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
 
 class BoneQualityTheme extends Themelet
 {
@@ -48,7 +47,7 @@ class BoneQualityTheme extends Themelet
         $search_boned_class = $search_boned ? $this->boned_class : [];
         return emptyHTML(
             A(["class" => "search", "href" => search_link(Tag::explode($search))], $search),
-            rawHTML(" remaining: "),
+            " remaining: ",
             SPAN($search_boned ? $search_boned_class : [], "$search_count"),
             BR()
         );

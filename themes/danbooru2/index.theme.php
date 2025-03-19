@@ -6,7 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{rawHTML,INPUT,P};
+use function MicroHTML\{INPUT,P};
+use function MicroHTML\DIV;
 
 class Danbooru2IndexTheme extends IndexTheme
 {
@@ -60,12 +61,10 @@ class Danbooru2IndexTheme extends IndexTheme
      */
     protected function build_table(array $images, ?string $query): HTMLElement
     {
-        $h_query = html_escape($query);
-        $table = "<div class='shm-image-list' data-query='$h_query'>";
+        $table = DIV(["class" => "shm-image-list", "data-query" => $query]);
         foreach ($images as $image) {
-            $table .= $this->build_thumb($image) . "\n";
+            $table->appendChild($this->build_thumb($image));
         }
-        $table .= "</div>";
-        return rawHTML($table);
+        return $table;
     }
 }

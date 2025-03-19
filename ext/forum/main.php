@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\emptyHTML;
+
 /*
 Todo:
 *Quote buttons on posts
@@ -73,8 +75,8 @@ final class Forum extends Extension
         $threads_rate = sprintf("%.1f", ($threads_count / $days_old));
         $posts_rate = sprintf("%.1f", ($posts_count / $days_old));
 
-        $event->add_part("Forum threads: $threads_count, $threads_rate per day");
-        $event->add_part("Forum posts: $posts_count, $posts_rate per day");
+        $event->add_part(emptyHTML("Forum threads: $threads_count, $threads_rate per day"));
+        $event->add_part(emptyHTML("Forum posts: $posts_count, $posts_rate per day"));
     }
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void

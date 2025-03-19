@@ -9,6 +9,7 @@ use MicroHTML\HTMLElement;
 use function MicroHTML\{emptyHTML};
 use function MicroHTML\A;
 use function MicroHTML\CODE;
+use function MicroHTML\TIME;
 use function MicroHTML\DIV;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
@@ -17,6 +18,35 @@ use function MicroHTML\P;
 use function MicroHTML\SELECT;
 use function MicroHTML\SPAN;
 use function MicroHTML\{TABLE,THEAD,TFOOT,TR,TH,TD};
+
+/**
+ * Turn a date into a time, a date, an "X minutes ago...", etc
+ */
+function SHM_DATE(string $date, bool $html = true): HTMLElement
+{
+    $cpu = date('c', \Safe\strtotime($date));
+    $hum = date('F j, Y; H:i', \Safe\strtotime($date));
+    return ($html ? TIME(["datetime" => $cpu], $hum) : emptyHTML($hum));
+}
+
+function SHM_IP(string $ip, string $ban_reason): ?HTMLElement
+{
+    global $user;
+    if (!$user->can(IPBanPermission::VIEW_IP)) {
+        return null;
+    }
+    $html = emptyHTML($ip);
+    if ($user->can(IPBanPermission::BAN_IP)) {
+        $html->appendChild(", ");
+        $html->appendChild(
+            A([
+                "href" => make_link("ip_ban/list", ["c_ip" => $ip, "c_reason" => $ban_reason, "c_expires" => "+1 week"], "create"),
+            ], "Ban")
+        );
+    }
+    return $html;
+}
+
 
 /**
  * @param array<string|HTMLElement|null> $children

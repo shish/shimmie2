@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{INPUT, TABLE, TR, TD, emptyHTML, rawHTML, BR, TEXTAREA, DIV, HR, P, A};
+use function MicroHTML\{INPUT, TABLE, TR, TD, emptyHTML, BR, TEXTAREA, DIV, HR, P, A};
 
 class WikiTheme extends Themelet
 {
@@ -29,7 +29,11 @@ class WikiTheme extends Themelet
 
         // only the admin can edit the sidebar
         if ($user->can(WikiPermission::ADMIN)) {
-            $body_html .= "<p>(<a href='".make_link("wiki/wiki:sidebar/edit")."'>Edit</a>)";
+            $link = A(["href" => make_link("wiki/wiki:sidebar/edit")], "Edit");
+            $body_html = emptyHTML(
+                $body_html,
+                P("(", $link, ")")
+            );
         }
 
         if (!$wiki_page->exists) {
@@ -38,7 +42,7 @@ class WikiTheme extends Themelet
 
         $page->set_title($wiki_page->title);
         $this->display_navigation();
-        $page->add_block(new Block("Wiki Index", rawHTML($body_html), "left", 20));
+        $page->add_block(new Block("Wiki Index", $body_html, "left", 20));
         $page->add_block(new Block($wiki_page->title, $this->create_display_html($wiki_page)));
     }
 
@@ -60,7 +64,7 @@ class WikiTheme extends Themelet
             $html->appendChild(A(["href" => make_link("wiki/$title")], $title));
         }
         $page->set_title("Wiki page list");
-        $page->add_block(new Block("Wiki Index", rawHTML($body_html), "left", 20));
+        $page->add_block(new Block("Wiki Index", $body_html, "left", 20));
         $page->add_block(new Block("All Wiki Pages", $html));
     }
 
@@ -70,15 +74,16 @@ class WikiTheme extends Themelet
 
     public function display_page_history(Page $page, string $title, array $history): void
     {
-        $html = "<table class='zebra'>";
+        $html = TABLE(["class" => "zebra"]);
         foreach ($history as $row) {
-            $rev = $row['revision'];
-            $html .= "<tr><td><a href='".make_link("wiki/$title", ["revision" => $rev])."'>{$rev}</a></td><td>{$row['date']}</td></tr>";
+            $html->appendChild(TR(
+                TD(A(["href" => make_link("wiki/$title", ["revision" => $row['revision']])], $row['revision'])),
+                TD($row['date'])
+            ));
         }
-        $html .= "</table>";
         $page->set_title($title);
         $this->display_navigation();
-        $page->add_block(new Block($title, rawHTML($html)));
+        $page->add_block(new Block($title, $html));
     }
 
     public function display_page_editor(Page $page, WikiPage $wiki_page): void
@@ -154,7 +159,7 @@ class WikiTheme extends Themelet
 
         $text = str_replace("{body}", $page->body, $text);
 
-        return rawHTML(format_text($text));
+        return format_text($text);
     }
 
     protected function create_display_html(WikiPage $page): HTMLElement

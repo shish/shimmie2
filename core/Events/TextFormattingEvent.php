@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 /**
  * A signal that some text needs formatting, the event carries
  * both the text and the result
@@ -35,5 +37,10 @@ final class TextFormattingEvent extends Event
         $this->original  = $h_text;
         $this->formatted = $h_text;
         $this->stripped  = $h_text;
+    }
+
+    public function getFormattedHTML(): HTMLElement
+    {
+        return \MicroHTML\rawHTML($this->formatted);
     }
 }

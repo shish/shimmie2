@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
-
 final class CustomHtmlHeaders extends Extension
 {
     public const KEY = "custom_html_headers";
@@ -16,7 +14,7 @@ final class CustomHtmlHeaders extends Extension
 
         $header = $config->get_string(CustomHtmlHeadersConfig::CUSTOM_HTML_HEADERS, '');
         if ($header !== '') {
-            $page->add_html_header(rawHTML($header));
+            $page->add_html_header(\MicroHTML\rawHTML($header));
         }
 
         // check sitename is not already in title (can occur on index & other pages)

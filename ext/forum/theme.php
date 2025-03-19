@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{INPUT, LABEL, SMALL, TEXTAREA, TR, TD, TABLE, TH, TBODY, THEAD, DIV, A, BR, emptyHTML, SUP, rawHTML};
+use function MicroHTML\{INPUT, LABEL, SMALL, TEXTAREA, TR, TD, TABLE, TH, TBODY, THEAD, DIV, A, BR, emptyHTML, SUP};
 
 /**
  * @phpstan-type Thread array{id:int,title:string,sticky:bool,user_name:string,uptodate:string,response_count:int}
@@ -20,18 +20,15 @@ class ForumTheme extends Themelet
     public function display_thread_list(Page $page, array $threads, bool $showAdminOptions, int $pageNumber, int $totalPages): void
     {
         if (count($threads) == 0) {
-            $html = rawHTML("There are no threads to show.");
+            $html = emptyHTML("There are no threads to show.");
         } else {
             $html = $this->make_thread_list($threads, $showAdminOptions);
         }
 
         $page->set_title("Forum");
         $page->add_block(new Block("Forum", $html, "main", 10));
-
         $this->display_paginator($page, "forum/index", null, $pageNumber, $totalPages);
     }
-
-
 
     public function display_new_thread_composer(Page $page, ?string $threadText = null, ?string $threadTitle = null): void
     {
@@ -157,10 +154,10 @@ class ForumTheme extends Themelet
                         ),
                         TD(
                             ["class" => "forumMessage"],
-                            DIV(["class" => "postDate"], SMALL(rawHTML(autodate($post['date'])))),
+                            DIV(["class" => "postDate"], SMALL(SHM_DATE($post['date']))),
                             DIV(["class" => "postNumber"], " #".$post_number),
                             BR(),
-                            DIV(["class" => "postMessage"], rawHTML(format_text($post["message"])))
+                            DIV(["class" => "postMessage"], format_text($post["message"]))
                         )
                     ),
                     TR(
@@ -239,7 +236,7 @@ class ForumTheme extends Themelet
                     TD(
                         A(["href" => make_link("user/".$thread["user_name"])], $thread["user_name"])
                     ),
-                    TD(rawHTML(autodate($thread["uptodate"]))),
+                    TD(SHM_DATE($thread["uptodate"])),
                     TD($thread["response_count"]),
                     $showAdminOptions ? TD(A(["href" => make_link("forum/nuke/".$thread["id"])], "Delete")) : null
                 )

@@ -18,7 +18,6 @@ use function MicroHTML\INPUT;
 use function MicroHTML\DIV;
 use function MicroHTML\P;
 use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
 
 class ExtManagerTheme extends Themelet
 {
@@ -138,7 +137,7 @@ class ExtManagerTheme extends Themelet
             ["style" => 'margin: auto; text-align: left; width: 512px;'],
             $author,
             ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href" => $info->link], "Link")) : null),
-            P(rawHTML($info->documentation ?? "(This extension has no documentation)")),
+            P(\MicroHTML\rawHTML($info->documentation ?? "(This extension has no documentation)")),
             // <hr>,
             P(A(["href" => make_link("ext_manager")], "Back to the list"))
         );

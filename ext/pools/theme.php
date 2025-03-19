@@ -7,8 +7,7 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
-use function MicroHTML\{A,BR,DIV,INPUT,P,SCRIPT,SPAN,TABLE,TBODY,TD,TEXTAREA,TH,THEAD,TR};
+use function MicroHTML\{A,BR,DIV,INPUT,P,SPAN,TABLE,TBODY,TD,TEXTAREA,TH,THEAD,TR};
 
 /**
  * @phpstan-type PoolHistory array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
@@ -119,14 +118,23 @@ class PoolsTheme extends Themelet
             A(["href" => make_link("pool/updated")], "Pool Changes")
         );
 
-        $search = "<form action='".make_link('pool/list')."' method='POST'>
-				<input name='search' type='text'  style='width:75%'>
-				<input type='submit' value='Go' style='width:20%'>
-			</form>";
+        $search = SHM_SIMPLE_FORM(
+            make_link('pool/list'),
+            INPUT([
+                "name" => "search",
+                "type" => "text",
+                "style" => "width:75%"
+            ]),
+            INPUT([
+                "type" => "submit",
+                "value" => "Go",
+                "style" => "width:20%"
+            ])
+        );
 
         $this->display_navigation();
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
-        $page->add_block(new Block("Search", rawHTML($search), "left", 10));
+        $page->add_block(new Block("Search", $search, "left", 10));
 
         if (!is_null($pool)) {
             if ($pool->public || $user->can(PoolsPermission::ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
@@ -134,13 +142,11 @@ class PoolsTheme extends Themelet
                     $this->sidebar_options($page, $pool, $check_all);
                 }
             }
-            $page->add_block(new Block($pool->title, rawHTML(format_text($pool->description)), "main", 10));
+            $page->add_block(new Block($pool->title, format_text($pool->description), "main", 10));
         }
     }
 
     /**
-     * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION.
-     *
      * @param Image[] $images
      */
     public function view_pool(Pool $pool, array $images, int $pageNumber, int $totalPages): void
@@ -158,10 +164,6 @@ class PoolsTheme extends Themelet
         $this->display_paginator($page, "pool/view/" . $pool->id, null, $pageNumber, $totalPages);
     }
 
-
-    /**
-     * HERE WE DISPLAY THE POOL OPTIONS ON SIDEBAR BUT WE HIDE REMOVE OPTION IF THE USER IS NOT THE OWNER OR ADMIN.
-     */
     public function sidebar_options(Page $page, Pool $pool, bool $check_all): void
     {
         global $user;
@@ -192,33 +194,17 @@ class PoolsTheme extends Themelet
 
         if ($user->id === $pool->user_id || $user->can(PoolsPermission::ADMIN)) {
             $editor->appendChild(
-                SCRIPT(
-                    ["type" => "text/javascript"],
-                    rawHTML("<!--
-                    function confirm_action() {
-                        return confirm('Are you sure that you want to delete this pool?');
-                    }
-                    //-->")
-                ),
                 SHM_SIMPLE_FORM(
                     make_link("pool/nuke/{$pool->id}"),
-                    SHM_SUBMIT("Delete Pool", ["name" => "delete", "id" => "delete_pool_btn", "onclick" => "return confirm_action()"])
+                    SHM_SUBMIT("Delete Pool", ["name" => "delete", "id" => "delete_pool_btn", "onclick" => "return confirm('Are you sure that you want to delete this pool?')"])
                 )
             );
         }
 
         if ($check_all) {
             $editor->appendChild(
-                SCRIPT(
-                    ["type" => "text/javascript"],
-                    rawHTML("<!--
-                    function setAll(value) {
-                        $('[name=\"check[]\"]').attr('checked', value);
-                    }
-                    //-->")
-                ),
-                INPUT(["type" => "button", "name" => "CheckAll", "value" => "Check All", "onclick" => "setAll(true)"]),
-                INPUT(["type" => "button", "name" => "UnCheckAll", "value" => "Uncheck All", "onclick" => "setAll(false)"])
+                INPUT(["type" => "button", "name" => "CheckAll", "value" => "Check All", "onclick" => "$('[name=\"check[]\"]').attr('checked', true)"]),
+                INPUT(["type" => "button", "name" => "UnCheckAll", "value" => "Uncheck All", "onclick" => "$('[name=\"check[]\"]').attr('checked', false)"])
             );
         }
 
@@ -226,23 +212,11 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT.
-     *
      * @param Image[] $images
      */
     public function pool_result(Page $page, array $images, Pool $pool): void
     {
         $this->display_top($pool, "Importing Posts", true);
-
-        $import = emptyHTML(
-            SCRIPT(
-                ["type" => "text/javascript"],
-                rawHTML("
-                function confirm_action() {
-                    return confirm('Are you sure you want to add selected posts to this pool?');
-                }")
-            )
-        );
 
         $form = SHM_FORM(make_link("pool/add_posts/{$pool->id}"), name: "checks");
         $image_list = DIV(["class" => "shm-image-list"]);
@@ -252,15 +226,12 @@ class PoolsTheme extends Themelet
             );
         }
         $form->appendChild($image_list);
-
         $form->appendChild(
             BR(),
-            SHM_SUBMIT("Add Selected", ["name" => "edit", "id" => "edit_pool_add_btn", "onclick" => "return confirm_action()"]),
+            SHM_SUBMIT("Add Selected", ["name" => "edit", "id" => "edit_pool_add_btn", "onclick" => "return confirm('Are you sure you want to add selected posts to this pool?')"]),
         );
 
-        $import->appendChild($form);
-
-        $page->add_block(new Block("Import", $import, "main", 30));
+        $page->add_block(new Block("Import", $form, "main", 30));
     }
 
 
@@ -332,8 +303,6 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * HERE WE DISPLAY THE HISTORY LIST.
-     *
      * @param PoolHistory[] $histories
      */
     public function show_history(array $histories, int $pageNumber, int $totalPages): void
@@ -413,26 +382,11 @@ class PoolsTheme extends Themelet
     {
         return emptyHTML(
             P("Search for posts that are in a pool."),
-            SHM_COMMAND_EXAMPLE(
-                "pool=1",
-                "Returns posts in pool #1."
-            ),
-            SHM_COMMAND_EXAMPLE(
-                "pool=any",
-                "Returns posts in any pool."
-            ),
-            SHM_COMMAND_EXAMPLE(
-                "pool=none",
-                "Returns posts not in any pool."
-            ),
-            SHM_COMMAND_EXAMPLE(
-                "pool_by_name=swimming",
-                "Returns posts in the \"swimming\" pool."
-            ),
-            SHM_COMMAND_EXAMPLE(
-                "pool_by_name=swimming_pool",
-                "Returns posts in the \"swimming pool\" pool. Note that the underscore becomes a space."
-            )
+            SHM_COMMAND_EXAMPLE("pool=1", "Returns posts in pool #1"),
+            SHM_COMMAND_EXAMPLE("pool=any", "Returns posts in any pool"),
+            SHM_COMMAND_EXAMPLE("pool=none", "Returns posts not in any pool"),
+            SHM_COMMAND_EXAMPLE("pool_by_name=swimming", "Returns posts in the \"swimming\" pool"),
+            SHM_COMMAND_EXAMPLE("pool_by_name=swimming_pool", "Returns posts in the \"swimming pool\" pool. Note that the underscore becomes a space")
         );
     }
 }

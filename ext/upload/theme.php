@@ -11,8 +11,8 @@ require_once "events/upload_header_building_event.php";
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\{TABLE,TR,TH,TD};
+use function MicroHTML\SCRIPT;
 use function MicroHTML\SMALL;
-use function MicroHTML\rawHTML;
 use function MicroHTML\INPUT;
 use function MicroHTML\emptyHTML;
 use function MicroHTML\NOSCRIPT;
@@ -33,7 +33,7 @@ class UploadTheme extends Themelet
 
     public function display_full(Page $page): void
     {
-        $page->add_block(new Block("Upload", rawHTML("Disk nearly full, uploads disabled"), "left", 20));
+        $page->add_block(new Block("Upload", emptyHTML("Disk nearly full, uploads disabled"), "left", 20));
     }
 
     public function display_page(Page $page): void
@@ -77,10 +77,10 @@ class UploadTheme extends Themelet
                 SPAN(["id" => "upload_size_tracker"], "0KB"),
                 ")"
             ),
-            rawHTML("<script>
+            SCRIPT("
             window.shm_max_size = $max_size;
             window.shm_max_total_size = $max_total_size;
-            </script>")
+            ")
         );
 
         $page->set_title("Upload");
@@ -188,7 +188,7 @@ class UploadTheme extends Themelet
         )();';
         $html1 = P(
             A(["href" => $js], "Upload to $title"),
-            rawHTML(' (Drag &amp; drop onto your bookmarks toolbar, then click when looking at a post)')
+            emptyHTML(' (Drag & drop onto your bookmarks toolbar, then click when looking at a post)')
         );
 
         // Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
@@ -206,7 +206,7 @@ class UploadTheme extends Themelet
         ';
         $html2 = P(
             A(["href" => $js], $title),
-            rawHTML(" (Click when looking at a post page. Works on sites running Shimmie / Danbooru / Gelbooru. (This also grabs the tags / rating / source!))"),
+            emptyHTML(" (Click when looking at a post page. Works on sites running Shimmie / Danbooru / Gelbooru. (This also grabs the tags / rating / source!))"),
         );
 
         return emptyHTML($html1, $html2);
@@ -229,12 +229,12 @@ class UploadTheme extends Themelet
             $page->set_title("Upload Status");
             $this->display_navigation();
             foreach ($errors as $error) {
-                $page->add_block(new Block($error->name, rawHTML(format_text($error->error))));
+                $page->add_block(new Block($error->name, format_text($error->error)));
             }
         } elseif (count($successes) == 0) {
             $page->set_title("No images uploaded");
             $this->display_navigation();
-            $page->add_block(new Block("No images uploaded", rawHTML("Upload attempted, but nothing succeeded and nothing failed?")));
+            $page->add_block(new Block("No images uploaded", emptyHTML("Upload attempted, but nothing succeeded and nothing failed?")));
         } elseif (count($successes) == 1) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/{$successes[0]->image_id}"));

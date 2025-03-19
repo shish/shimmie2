@@ -10,11 +10,15 @@ use function MicroHTML\A;
 use function MicroHTML\BR;
 use function MicroHTML\DIV;
 use function MicroHTML\INPUT;
+use function MicroHTML\P;
 use function MicroHTML\SPAN;
 use function MicroHTML\SUP;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
 use function MicroHTML\TEXTAREA;
+use function MicroHTML\TH;
+use function MicroHTML\TR;
 use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
 
 class CommentListTheme extends Themelet
 {
@@ -50,12 +54,11 @@ class CommentListTheme extends Themelet
             $image = $pair[0];
             $comments = $pair[1];
 
-            $thumb_html = $this->build_thumb($image);
-            $comment_html = "";
+            $comment_html = emptyHTML();
 
             $comment_count = count($comments);
             if ($comment_limit > 0 && $comment_count > $comment_limit) {
-                $comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
+                $comment_html->appendChild(P("showing $comment_limit of $comment_count comments"));
                 $comments = array_slice($comments, negative_int($comment_limit));
                 $this->show_anon_id = false;
             } else {
@@ -63,31 +66,30 @@ class CommentListTheme extends Themelet
             }
             $this->anon_id = 1;
             foreach ($comments as $comment) {
-                $comment_html .= $this->comment_to_html($comment);
+                $comment_html->appendChild($this->comment_to_html($comment));
             }
             if (!$user->is_anonymous()) {
                 if ($can_post) {
-                    $comment_html .= $this->build_postbox($image->id);
+                    $comment_html->appendChild($this->build_postbox($image->id));
                 }
             } else {
                 if ($can_post) {
                     if (!$comment_captcha) {
-                        $comment_html .= $this->build_postbox($image->id);
+                        $comment_html->appendChild($this->build_postbox($image->id));
                     } else {
                         $link = make_link("post/view/".$image->id);
-                        $comment_html .= "<a href='$link'>Add Comment</a>";
+                        $comment_html->appendChild(A(["href" => $link], "Add Comment"));
                     }
                 }
             }
 
-            $html  = '
-				<div class="comment_big_list">
-					'.$thumb_html.'
-					<div class="comment_list">'.$comment_html.'</div>
-				</div>
-			';
+            $html = DIV(
+                ["class" => "comment_big_list"],
+                $this->build_thumb($image),
+                DIV(["class" => "comment_list"], $comment_html)
+            );
 
-            $page->add_block(new Block($image->id.': '.$image->get_tag_list(), rawHTML($html), "main", $position++, "comment-list-list"));
+            $page->add_block(new Block($image->id.': '.$image->get_tag_list(), $html, "main", $position++, "comment-list-list"));
         }
     }
 
@@ -95,17 +97,25 @@ class CommentListTheme extends Themelet
     {
         global $page;
 
-        $html = '
-			Delete comments by IP.
-
-			<br><br>'.make_form(make_link("comment/bulk_delete"))."
-				<table class='form'>
-					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='ip' size='15'></td></tr>
-					<tr><td colspan='2'><input type='submit' value='Delete'></td></tr>
-				</table>
-			</form>
-		";
-        $page->add_block(new Block("Mass Comment Delete", rawHTML($html)));
+        $html = DIV(
+            "Delete comments by IP.",
+            BR(),
+            BR(),
+            SHM_SIMPLE_FORM(
+                make_link("comment/bulk_delete"),
+                TABLE(
+                    ["class" => "form"],
+                    TR(
+                        TH("IP Address"),
+                        TD(INPUT(["type" => "text", "name" => "ip", "size" => 15]))
+                    ),
+                    TR(
+                        TD(["colspan" => 2], INPUT(["type" => "submit", "value" => "Delete"]))
+                    )
+                )
+            )
+        );
+        $page->add_block(new Block("Mass Comment Delete", $html));
     }
 
     /**
@@ -117,12 +127,12 @@ class CommentListTheme extends Themelet
     {
         global $page;
         $this->show_anon_id = false;
-        $html = "";
+        $html = emptyHTML();
         foreach ($comments as $comment) {
-            $html .= $this->comment_to_html($comment, true);
+            $html->appendChild($this->comment_to_html($comment, true));
         }
-        $html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
-        $page->add_block(new Block("Comments", rawHTML($html), "left", 70, "comment-list-recent"));
+        $html->appendChild(A(["class" => "more", "href" => make_link("comment/list")], "Full List"));
+        $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-recent"));
     }
 
     /**
@@ -134,14 +144,14 @@ class CommentListTheme extends Themelet
     {
         global $page;
         $this->show_anon_id = true;
-        $html = "";
+        $html = emptyHTML();
         foreach ($comments as $comment) {
-            $html .= $this->comment_to_html($comment);
+            $html->appendChild($this->comment_to_html($comment));
         }
         if ($postbox) {
-            $html .= $this->build_postbox($image->id);
+            $html->appendChild($this->build_postbox($image->id));
         }
-        $page->add_block(new Block("Comments", rawHTML($html), "main", 30, "comment-list-image"));
+        $page->add_block(new Block("Comments", $html, "main", 30, "comment-list-image"));
     }
 
     /**
@@ -152,16 +162,16 @@ class CommentListTheme extends Themelet
     public function display_recent_user_comments(array $comments, User $user): void
     {
         global $page;
-        $html = "";
+        $html = emptyHTML();
         foreach ($comments as $comment) {
-            $html .= $this->comment_to_html($comment, true);
+            $html->appendChild($this->comment_to_html($comment, true));
         }
-        if (empty($html)) {
-            $html = '<p>No comments by this user.</p>';
+        if (count($comments) === 0) {
+            $html->appendChild(P("No comments by this user."));
         } else {
-            $html .= "<p><a href='".make_link("comment/beta-search/{$user->name}/1")."'>More</a></p>";
+            $html->appendChild(P(A(["href" => make_link("comment/beta-search/{$user->name}/1")], "More")));
         }
-        $page->add_block(new Block("Comments", rawHTML($html), "left", 70, "comment-list-user"));
+        $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
     }
 
     /**
@@ -171,14 +181,14 @@ class CommentListTheme extends Themelet
     {
         global $page;
 
-        $html = "";
+        $html = emptyHTML();
         foreach ($comments as $comment) {
-            $html .= $this->comment_to_html($comment, true);
+            $html->appendChild($this->comment_to_html($comment, true));
         }
-        if (empty($html)) {
-            $html = '<p>No comments by this user.</p>';
+        if (count($comments) === 0) {
+            $html->appendChild(P("No comments by this user."));
         }
-        $page->add_block(new Block("Comments", rawHTML($html), "main", 70, "comment-list-user"));
+        $page->add_block(new Block("Comments", $html, "main", 70, "comment-list-user"));
 
         $page->set_title("{$user->name}'s comments");
         $this->display_navigation([
@@ -235,18 +245,18 @@ class CommentListTheme extends Themelet
                         $bae->html ? emptyHTML($bae->html, BR()) : null
                     ),
                     emptyHTML(
-                        rawHTML(autodate($comment->posted)),
+                        SHM_DATE($comment->posted),
                         " - ",
                         A(["href" => "javascript:replyTo({$comment->image_id}, {$comment->comment_id}, '{$comment->owner_name}')"], "Reply"),
                     ),
                     emptyHTML(
-                        $user->can(IPBanPermission::VIEW_IP) ? rawHTML("<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
+                        $user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
                         $user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped)) : null,
                     ),
                 ),
                 $userlink,
                 ": ",
-                rawHTML($tfe->formatted)
+                $tfe->getFormattedHTML(),
             );
         }
         return $html;
@@ -266,43 +276,28 @@ class CommentListTheme extends Themelet
     {
         global $config;
 
-        $hash = CommentList::get_hash();
-        $h_captcha = $config->get_bool(CommentConfig::CAPTCHA) ? Captcha::get_html() : "";
-
         return DIV(
             ["class" => "comment comment_add"],
             SHM_SIMPLE_FORM(
                 make_link("comment/add"),
                 INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
-                INPUT(["type" => "hidden", "name" => "hash", "value" => $hash]),
+                INPUT(["type" => "hidden", "name" => "hash", "value" => CommentList::get_hash()]),
                 TEXTAREA(["id" => "comment_on_$image_id", "name" => "comment", "rows" => 5, "cols" => 50]),
-                rawHTML($h_captcha),
+                $config->get_bool(CommentConfig::CAPTCHA) ? Captcha::get_html() : null,
                 BR(),
                 INPUT(["type" => "submit", "value" => "Post Comment"])
             ),
         );
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts containing a certain number of comments, or comments by a particular individual.</p>
-        <div class="command_example">
-        <code>comments=1</code>
-        <p>Returns posts with exactly 1 comment.</p>
-        </div>
-        <div class="command_example">
-        <code>comments>0</code>
-        <p>Returns posts with 1 or more comments. </p>
-        </div>
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
-        <div class="command_example">
-        <code>commented_by:username</code>
-        <p>Returns posts that have been commented on by "username". </p>
-        </div>
-        <div class="command_example">
-        <code>commented_by_userno:123</code>
-        <p>Returns posts that have been commented on by user 123. </p>
-        </div>
-        ';
+        return emptyHTML(
+            P("Search for posts containing a certain number of comments, or comments by a particular individual."),
+            SHM_COMMAND_EXAMPLE("comments>0", "Returns posts with 1 or more comments"),
+            P("Can use <, <=, >, >=, or =."),
+            SHM_COMMAND_EXAMPLE("commented_by:username", "Returns posts that have been commented on by \"username\"."),
+            //SHM_COMMAND_EXAMPLE("commented_by_userno:123", "Returns posts that have been commented on by user 123."),
+        );
     }
 }

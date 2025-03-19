@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{P,joinHTML};
 
 class ImageViewCounterTheme extends Themelet
 {
@@ -14,18 +16,18 @@ class ImageViewCounterTheme extends Themelet
     public function view_popular(array $images): void
     {
         global $page, $config;
-        $pop_images = "";
+        $pop_images = [];
         foreach ($images as $image) {
-            $pop_images .= $this->build_thumb($image) . "\n";
+            $pop_images[] = $this->build_thumb($image);
         }
 
         $page->set_title($config->get_string(SetupConfig::TITLE));
         $this->display_navigation();
-        $page->add_block(new Block(null, rawHTML($pop_images), "main", 30));
+        $page->add_block(new Block(null, joinHTML(" ", $pop_images), "main", 30));
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts that have received views by users.</p>';
+        return P('Search for posts that have received views by users.');
     }
 }

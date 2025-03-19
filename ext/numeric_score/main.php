@@ -8,6 +8,9 @@ use GQLA\Type;
 use GQLA\Field;
 use GQLA\Mutation;
 
+use function MicroHTML\A;
+use function MicroHTML\emptyHTML;
+
 #[Type(name: "NumericScoreVote")]
 final class NumericScoreVote
 {
@@ -132,14 +135,18 @@ final class NumericScore extends Extension
         $link_up = search_link(["upvoted_by={$event->display_user->name}"]);
         $n_down = Search::count_images(["downvoted_by={$event->display_user->name}"]);
         $link_down = search_link(["downvoted_by={$event->display_user->name}"]);
-        $event->add_part("<a href='$link_up'>$n_up Upvotes</a> / <a href='$link_down'>$n_down Downvotes</a>");
+        $event->add_part(emptyHTML(
+            A(["href" => $link_up], "$n_up Upvotes"),
+            " / ",
+            A(["href" => $link_down], "$n_down Downvotes"),
+        ));
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $config, $database, $user, $page;
 
-        if ($event->page_matches("numeric_score_votes/{image_id}")) {
+        if ($event->page_matches("numeric_score/votes/{image_id}")) {
             $image_id = $event->get_iarg('image_id');
             $x = $database->get_all(
                 "SELECT users.name as username, user_id, score
@@ -157,7 +164,7 @@ final class NumericScore extends Extension
                 $html .= "</td></tr>";
             }
             die($html);
-        } elseif ($event->page_matches("numeric_score_vote", method: "POST", permission: NumericScorePermission::CREATE_VOTE)) {
+        } elseif ($event->page_matches("numeric_score/vote", method: "POST", permission: NumericScorePermission::CREATE_VOTE)) {
             $image_id = int_escape($event->req_POST("image_id"));
             $score = int_escape($event->req_POST("vote"));
             if (($score === -1 || $score === 0 || $score === 1) && $image_id > 0) {

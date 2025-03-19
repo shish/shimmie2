@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{INPUT,rawHTML};
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\{INPUT, emptyHTML};
 
 class TagToolsTheme extends Themelet
 {
-    protected function button(string $name, string $action, bool $protected = false): string
+    protected function button(string $name, string $action, bool $protected = false): HTMLElement
     {
-        $c_protected = $protected ? " protected" : "";
-        $html = make_form(make_link("admin/$action"), multipart: false, form_id: "admin$c_protected");
-        if ($protected) {
-            $html .= "<input type='submit' id='$action' value='$name' disabled='disabled'>";
-            $html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
-        } else {
-            $html .= "<input type='submit' id='$action' value='$name'>";
-        }
-        $html .= "</form>\n";
-        return $html;
+        return SHM_FORM(
+            action: make_link("admin/$action"),
+            children: $protected ? [
+                INPUT(["type" => 'submit', "id" => $action, "value" => $name, "disabled" => "disabled"]),
+                INPUT(["type" => 'checkbox', "onclick" => "jQuery('#$action').attr('disabled', !jQuery(this).is(':checked'))"])
+            ] : [
+                INPUT(["type" => 'submit', "id" => $action, "value" => $name])
+            ]
+        );
     }
 
     /*
@@ -32,16 +33,15 @@ class TagToolsTheme extends Themelet
     {
         global $page;
 
-        $html = "";
-        $html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
-        $html .= $this->button("Recount tag use", "recount_tag_use", false);
-        $page->add_block(new Block("Misc Admin Tools", rawHTML($html)));
+        $page->add_block(new Block("Misc Admin Tools", emptyHTML(
+            $this->button("All tags to lowercase", "lowercase_all_tags", true),
+            $this->button("Recount tag use", "recount_tag_use", false)
+        )));
 
-        $html = (string)SHM_SIMPLE_FORM(
+        $page->add_block(new Block("Set Tag Case", SHM_SIMPLE_FORM(
             make_link("admin/set_tag_case"),
             INPUT(["type" => 'text', "name" => 'tag', "placeholder" => 'Enter tag with correct case', "autocomplete" => 'off']),
             SHM_SUBMIT('Set Tag Case'),
-        );
-        $page->add_block(new Block("Set Tag Case", rawHTML($html)));
+        )));
     }
 }
