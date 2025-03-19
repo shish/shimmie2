@@ -92,6 +92,7 @@ final readonly class Url
         if (!is_null(SysConfig::getBaseHref())) {
             $dir = SysConfig::getBaseHref();
         } else {
+            /** @var array<string, string> $server_settings */
             $server_settings = $server_settings ?? $_SERVER;
             if (str_ends_with($server_settings['PHP_SELF'], 'index.php')) {
                 $self = $server_settings['PHP_SELF'];
