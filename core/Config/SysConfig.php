@@ -79,6 +79,7 @@ final class SysConfig
         if (defined("EXTRA_EXTS")) {
             $v = constant("EXTRA_EXTS");
             if (is_array($v)) {
+                /** @var array<string> $v */
                 return $v;
             }
             if (is_string($v)) {
