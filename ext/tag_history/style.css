@@ -1,2 +1,2 @@
-.added-tag{background:lightgreen;}
-.deleted-tag{background:pink;text-decoration:line-through;}
+.added-tag{background:var(--added-background);}
+.deleted-tag{background:var(--removed-background);text-decoration:line-through;}
