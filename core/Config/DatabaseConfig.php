@@ -38,10 +38,11 @@ final class DatabaseConfig extends Config
         );
     }
 
-    private function get_values(): mixed
+    /**
+     * @return array<string,string>
+     */
+    private function get_values(): array
     {
-        $values = [];
-
         $query = "SELECT name, value FROM {$this->table_name}";
         $args = [];
 
@@ -50,6 +51,7 @@ final class DatabaseConfig extends Config
             $args["sub_value"] = $this->sub_value;
         }
 
+        $values = [];
         // @phpstan-ignore-next-line
         foreach ($this->database->get_all($query, $args) as $row) {
             // versions prior to 2.12 would store null
@@ -59,6 +61,7 @@ final class DatabaseConfig extends Config
             }
         }
 
+        /** @var array<string,string> $values */
         return $values;
     }
 
