@@ -6,13 +6,6 @@ parameters:
     - ext
     - tests
     - themes
-#  dynamicConstantNames:
-#    - DEBUG
-#    - TRUSTED_PROXIES
-#    - TIMEZONE
-#    - BASE_HREF
-#    - TRACE_FILE
-#    - UNITTEST
   typeAliases:
     tag-string: non-empty-string
     hash-string: non-empty-string&internal-hash-string
