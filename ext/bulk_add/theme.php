@@ -4,7 +4,15 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{UL, LI, rawHTML};
+use function MicroHTML\{UL, LI};
+use function MicroHTML\BR;
+use function MicroHTML\INPUT;
+use function MicroHTML\P;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TH;
+use function MicroHTML\TR;
+use function MicroHTML\emptyHTML;
 
 class BulkAddTheme extends Themelet
 {
@@ -36,19 +44,22 @@ class BulkAddTheme extends Themelet
     public function display_admin_block(): void
     {
         global $page;
-        $html = "
-			Add a folder full of images; any subfolders will have their names
-			used as tags for the images within.
-			<br>Note: this is the folder as seen by the server -- you need to
-			upload via FTP or something first.
-
-			<p>".make_form(make_link("bulk_add"))."
-				<table class='form'>
-					<tr><th>Folder</th><td><input type='text' name='dir' size='40'></td></tr>
-					<tr><td colspan='2'><input type='submit' value='Add'></td></tr>
-				</table>
-			</form>
-		";
-        $page->add_block(new Block("Bulk Add", rawHTML($html)));
+        $html = emptyHTML(
+            "Add a folder full of images; any subfolders will have their names
+			used as tags for the images within.",
+            BR(),
+            "Note: this is the folder as seen by the server -- you need to
+			upload via FTP or something first.",
+            P(),
+            SHM_SIMPLE_FORM(
+                make_link("bulk_add"),
+                TABLE(
+                    ["class" => "form"],
+                    TR([TH("Folder"), TD(INPUT(["type" => "text", "name" => "dir", "size" => "40"]))]),
+                    TR([TD(["colspan" => 2], INPUT(["type" => "submit", "value" => "Add"]))])
+                )
+            )
+        );
+        $page->add_block(new Block("Bulk Add", $html));
     }
 }

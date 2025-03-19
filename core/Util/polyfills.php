@@ -440,16 +440,6 @@ function parse_to_milliseconds(string $input): int
 }
 
 /**
- * Turn a date into a time, a date, an "X minutes ago...", etc
- */
-function autodate(string $date, bool $html = true): string
-{
-    $cpu = date('c', \Safe\strtotime($date));
-    $hum = date('F j, Y; H:i', \Safe\strtotime($date));
-    return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
-}
-
-/**
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
  */
 function is_valid_date(string $date): bool

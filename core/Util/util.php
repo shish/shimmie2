@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -169,10 +171,10 @@ function check_im_version(): int
 /**
  * A shorthand way to send a TextFormattingEvent and get the results.
  */
-function format_text(string $string): string
+function format_text(string $string): HTMLElement
 {
     $event = send_event(new TextFormattingEvent($string));
-    return $event->formatted;
+    return $event->getFormattedHTML();
 }
 
 /**
@@ -397,20 +399,6 @@ function _get_user(): User
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/**
- * Give a HTML string which shows an IP (if the user is allowed to see IPs),
- * and a link to ban that IP (if the user is allowed to ban IPs)
- *
- * FIXME: also check that IP ban ext is installed
- */
-function show_ip(string $ip, string $ban_reason): string
-{
-    global $user;
-    $ban = $user->can(IPBanPermission::BAN_IP) ? ", <a href='".make_link("ip_ban/list", ["c_ip" => $ip, "c_reason" => $ban_reason, "c_expires" => "+1 week"], "create")."'>Ban</a>" : "";
-    $ip = $user->can(IPBanPermission::VIEW_IP) ? $ip.$ban : "";
-    return $ip;
-}
 
 /**
  * Make a form tag with relevant auth token and stuff

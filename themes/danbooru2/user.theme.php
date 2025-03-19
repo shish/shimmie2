@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\A;
+use function MicroHTML\INPUT;
+use function MicroHTML\LABEL;
+use function MicroHTML\SMALL;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TR;
+use function MicroHTML\joinHTML;
 
 class Danbooru2UserPageTheme extends UserPageTheme
 {
@@ -13,25 +20,27 @@ class Danbooru2UserPageTheme extends UserPageTheme
         global $config;
         $page->set_title("Login");
         $page->set_layout("no-left");
-        $html = "
-			<form action='".make_link("user_admin/login")."' method='POST'>
-				<table summary='Login Form'>
-					<tr>
-						<td width='70'><label for='user'>Name</label></td>
-						<td width='70'><input id='user' type='text' name='user'></td>
-					</tr>
-					<tr>
-						<td><label for='pass'>Password</label></td>
-						<td><input id='pass' type='password' name='pass'></td>
-					</tr>
-					<tr><td colspan='2'><input type='submit' value='Log In'></td></tr>
-				</table>
-			</form>
-		";
+        $html = SHM_SIMPLE_FORM(
+            make_link("user_admin/login"),
+            TABLE(
+                ["summary" => "Login Form"],
+                TR(
+                    TD(["width" => "70"], LABEL(["for" => "user"], "Name")),
+                    TD(["width" => "70"], INPUT(["type" => "text", "name" => "user", "id" => "user"]))
+                ),
+                TR(
+                    TD(LABEL(["for" => "pass"], "Password")),
+                    TD(INPUT(["type" => "password", "name" => "pass", "id" => "pass"]))
+                ),
+                TR(
+                    TD(["colspan" => "2"], SHM_SUBMIT("Log In"))
+                )
+            )
+        );
         if ($config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
-            $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
+            $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
-        $page->add_block(new Block("Login", rawHTML($html), "main", 90));
+        $page->add_block(new Block("Login", $html, "main", 90));
     }
 
     /**
@@ -51,80 +60,27 @@ class Danbooru2UserPageTheme extends UserPageTheme
      */
     public function display_user_block(Page $page, User $user, array $parts): void
     {
-        $html = "";
+        $html = [];
         $blocked = ["Pools", "Pool Changes", "Alias Editor", "My Profile"];
         foreach ($parts as $part) {
             if (in_array($part["name"], $blocked)) {
                 continue;
             }
-            $html .= "<li><a href='{$part["link"]}'>{$part["name"]}</a>";
+            $html[] = A(["href" => $part["link"], "class" => "tab"], $part["name"]);
         }
-        $b = new Block("User Links", rawHTML($html), "user", 90);
+        $b = new Block("User Links", joinHTML(" ", $html), "user", 90);
         $b->is_content = false;
         $page->add_block($b);
     }
 
     public function display_signup_page(Page $page): void
     {
-        global $config, $user;
-
-        $reca = "<tr><td colspan='2'>".Captcha::get_html()."</td></tr>";
-
-        $email_required = (
-            $config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
-            !$user->can(UserAccountsPermission::CREATE_OTHER_USER)
-        );
-        $email_text = $email_required ? "Email" : "Email (Optional)";
-
-        $tac = format_text($config->get_string(UserAccountsConfig::LOGIN_TAC, ""));
-        if (empty($tac)) {
-            $html = "";
-        } else {
-            $html = "<p>$tac</p>";
-        }
-
-        $html .= "
-		<form action='".make_link("user_admin/create")."' method='POST'>
-			<table style='width: 300px;'>
-				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td>$email_text</td><td><input type='text' name='email'></td></tr>
-				$reca
-				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
-			</table>
-		</form>
-		";
-
-        $page->set_title("Create Account");
         $page->set_layout("no-left");
-        $page->add_block(new Block("Signup", rawHTML($html)));
+        parent::display_signup_page($page);
     }
 
     /**
-     * @param array<string, int> $uploads
-     * @param array<string, int> $comments
-     * @param array<string, int> $events
-     */
-    public function display_ip_list(Page $page, array $uploads, array $comments, array $events): void
-    {
-        $html = "<table id='ip-history' style='width: 400px;'>";
-        $html .= "<tr><td>Uploaded from: ";
-        foreach ($uploads as $ip => $count) {
-            $html .= "<br>$ip ($count)";
-        }
-        $html .= "</td><td>Commented from:";
-        foreach ($comments as $ip => $count) {
-            $html .= "<br>$ip ($count)";
-        }
-        $html .= "</td></tr>";
-        $html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
-
-        $page->add_block(new Block("IPs", rawHTML($html)));
-    }
-
-    /**
-     * @param string[] $stats
+     * @param \MicroHTML\HTMLElement[] $stats
      */
     public function display_user_page(User $duser, array $stats): void
     {

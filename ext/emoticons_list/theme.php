@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{TITLE, rawHTML};
+use function MicroHTML\{TITLE};
+use function MicroHTML\IMG;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TR;
 
 class EmoticonListTheme extends Themelet
 {
@@ -15,21 +19,19 @@ class EmoticonListTheme extends Themelet
     {
         global $page;
         $data_href = Url::base();
-        $body = "<table><tr>";
-        $n = 1;
+
+        $table = TABLE();
         foreach ($list as $item) {
-            $name = pathinfo($item, PATHINFO_FILENAME);
-            $body .= "<td><img alt='$name' src='$data_href/$item'> :$name:</td>";
-            if ($n++ % 3 == 0) {
-                $body .= "</tr><tr>";
-            }
+            $table->appendChild(TR(
+                TD(IMG(['src' => "$data_href/$item", 'alt' => pathinfo($item, PATHINFO_FILENAME)])),
+                TD(":".pathinfo($item, PATHINFO_FILENAME).":")
+            ));
         }
-        $body .= "</tr></table>";
 
         $page->set_mode(PageMode::DATA);
         $page->set_data((string)$page->html_html(
             TITLE("Emoticon list"),
-            rawHTML($body)
+            $table
         ));
     }
 }

@@ -7,10 +7,10 @@ namespace Shimmie2;
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\{TABLE,THEAD,TBODY,TR,TH,TD};
+use function MicroHTML\A;
 use function MicroHTML\B;
 use function MicroHTML\DIV;
 use function MicroHTML\emptyHTML;
-use function MicroHTML\rawHTML;
 
 class StatisticsTheme extends Themelet
 {
@@ -39,8 +39,8 @@ class StatisticsTheme extends Themelet
             $rows->appendChild(
                 TR(
                     TD([], $n),
-                    TD([], rawHTML((string)$value)),
-                    TD([], rawHTML('<a class="username" href="'.make_link('user/'.$user).'">'.$user.'</a>'))
+                    TD([], $value),
+                    TD([], A(["class" => "username", "href" => make_link('user/'.$user)], $user)),
                 )
             );
             $n++;

@@ -6,7 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, BR, DIV, META, LINK};
+use function MicroHTML\{A, P, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, DIV, META, LINK};
+use function MicroHTML\BR;
 
 class ViewPostTheme extends Themelet
 {
@@ -123,7 +124,7 @@ class ViewPostTheme extends Themelet
             ]
         );
 
-        return emptyHTML($pin, BR(), $search);
+        return emptyHTML($pin, P(), $search);
     }
 
     /**
@@ -171,5 +172,37 @@ class ViewPostTheme extends Themelet
                 ...$editor_parts,
             ),
         );
+    }
+
+    protected function build_stats(Image $image): HTMLElement
+    {
+        global $user;
+
+        $owner = $image->get_owner()->name;
+        $ip = $user->can(IPBanPermission::VIEW_IP) ? " ({$image->owner_ip})" : "";
+
+        $parts = [
+            "ID: {$image->id}",
+            emptyHTML("Uploader: ", A(["href" => make_link("user/$owner")], $owner . $ip)),
+            emptyHTML("Date: ", SHM_DATE($image->posted)),
+            "Size: ".to_shorthand_int($image->filesize)." ({$image->width}x{$image->height})",
+            "Type: {$image->get_mime()}",
+        ];
+        if ($image->video_codec !== null) {
+            $parts[] = "Video Codec: $image->video_codec";
+        }
+        if ($image->length !== null) {
+            $parts[] = "Length: " . format_milliseconds($image->length);
+        }
+        if ($image->source !== null) {
+            $parts[] = emptyHTML("Source: ", A(["href" => $image->source], "link"));
+        }
+        if (RatingsInfo::is_enabled()) {
+            $rating = $image['rating'] ?? "?";
+            $h_rating = Ratings::rating_to_human($rating);
+            $parts[] = emptyHTML("Rating: ", A(["href" => search_link(["rating=$rating"])], $h_rating));
+        }
+
+        return joinHTML(BR(), $parts);
     }
 }

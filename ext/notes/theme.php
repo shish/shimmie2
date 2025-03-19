@@ -6,7 +6,17 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{INPUT,SCRIPT,FORM,rawHTML};
+use function MicroHTML\{INPUT,SCRIPT,FORM};
+use function MicroHTML\A;
+use function MicroHTML\P;
+use function MicroHTML\TABLE;
+use function MicroHTML\TBODY;
+use function MicroHTML\TD;
+use function MicroHTML\TH;
+use function MicroHTML\THEAD;
+use function MicroHTML\TR;
+use function MicroHTML\emptyHTML;
+use function MicroHTML\joinHTML;
 
 /**
  * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
@@ -63,7 +73,7 @@ class NotesTheme extends Themelet
         }
         $page->add_html_header(SCRIPT(
             ["type" => "text/javascript"],
-            rawHTML("
+            \MicroHTML\rawHTML("
             window.notes = ".\Safe\json_encode($to_json).";
             window.notes_image_id = $image_id;
             window.notes_admin = ".($adminOptions ? "true" : "false").";
@@ -78,18 +88,11 @@ class NotesTheme extends Themelet
     public function display_note_list(array $images, int $pageNumber, int $totalPages): void
     {
         global $page;
-        $pool_images = '';
-        foreach ($images as $image) {
-            $thumb_html = $this->build_thumb($image);
-
-            $pool_images .= '<span class="thumb">'.
-                            '    <a href="$image_link">'.$thumb_html.'</a>'.
-                            '</span>';
-        }
-        $this->display_paginator($page, "note/list", null, $pageNumber, $totalPages);
+        $thumbs = array_map(fn ($image) => $this->build_thumb($image), $images);
 
         $page->set_title("Notes");
-        $page->add_block(new Block("Notes", rawHTML($pool_images), "main", 20));
+        $page->add_block(new Block("Notes", joinHTML(" ", $thumbs), "main", 20));
+        $this->display_paginator($page, "note/list", null, $pageNumber, $totalPages);
     }
 
     /**
@@ -99,62 +102,46 @@ class NotesTheme extends Themelet
     {
         global $page;
 
-        $pool_images = '';
-        foreach ($images as $image) {
-            $thumb_html = $this->build_thumb($image);
-            $pool_images .= '<span class="thumb">'.
-                            '    <a href="$image_link">'.$thumb_html.'</a>'.
-                            '</span>';
-        }
-        $this->display_paginator($page, "requests/list", null, $pageNumber, $totalPages);
+        $thumbs = array_map(fn ($image) => $this->build_thumb($image), $images);
 
         $page->set_title("Note Requests");
-        $page->add_block(new Block("Note Requests", rawHTML($pool_images), "main", 20));
+        $page->add_block(new Block("Note Requests", joinHTML(" ", $thumbs), "main", 20));
+        $this->display_paginator($page, "requests/list", null, $pageNumber, $totalPages);
     }
 
     /**
      * @param NoteHistory[] $histories
      */
-    private function get_history(array $histories): string
+    private function get_history(array $histories): HTMLElement
     {
         global $user;
 
-        $html = "<table id='poolsList' class='zebra'>".
-                "<thead><tr>".
-                "<th>Post</th>".
-                "<th>Note</th>".
-                "<th>Body</th>".
-                "<th>Updater</th>".
-                "<th>Date</th>";
-
-        if (!$user->is_anonymous()) {
-            $html .= "<th>Action</th>";
-        }
-
-        $html .= "</tr></thead>".
-                 "<tbody>";
-
+        $tbody = TBODY();
         foreach ($histories as $history) {
-            $image_link = "<a href='".make_link("post/view/".$history['image_id'])."'>".$history['image_id']."</a>";
-            $history_link = "<a href='".make_link("note/history/".$history['note_id'])."'>".$history['note_id'].".".$history['review_id']."</a>";
-            $user_link = "<a href='".make_link("user/".$history['user_name'])."'>".$history['user_name']."</a>";
-            $revert_link = "<a href='".make_link("note/revert/".$history['note_id']."/".$history['review_id'])."'>Revert</a>";
-
-            $html .= "<tr>".
-                     "<td>".$image_link."</td>".
-                     "<td>".$history_link."</td>".
-                     "<td style='text-align:left;'>".$history['note']."</td>".
-                     "<td>".$user_link."</td>".
-                     "<td>".autodate($history['date'])."</td>";
-
-            if (!$user->is_anonymous()) {
-                $html .= "<td>".$revert_link."</td>";
-            }
+            $tbody->appendChild(TR(
+                TD(A(["href" => make_link("post/view/".$history['image_id'])], $history['image_id'])),
+                TD(A(["href" => make_link("note/view/".$history['note_id'])], $history['note_id'].".".$history['review_id'])),
+                TD(["style" => "text-align:left;"], $history['note']),
+                TD(A(["href" => make_link("user/".$history['user_name'])], $history['user_name'])),
+                TD(SHM_DATE($history['date'])),
+                TD($user->is_anonymous() ? null : TD(A(["href" => make_link("note/revert/".$history['note_id']."/".$history['review_id'])], "Revert"))),
+            ));
         }
 
-        $html .= "</tr></tbody></table>";
-
-        return $html;
+        return TABLE(
+            ["class" => "zebra"],
+            THEAD(
+                TR(
+                    TH("Post"),
+                    TH("Note"),
+                    TH("Body"),
+                    TH("Updater"),
+                    TH("Date"),
+                    $user->is_anonymous() ? null : TH("Action")
+                )
+            ),
+            $tbody
+        );
     }
 
     /**
@@ -164,11 +151,8 @@ class NotesTheme extends Themelet
     {
         global $page;
 
-        $html = $this->get_history($histories);
-
         $page->set_title("Note Updates");
-        $page->add_block(new Block("Note Updates", rawHTML($html), "main", 10));
-
+        $page->add_block(new Block("Note Updates", $this->get_history($histories), "main", 10));
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
 
@@ -179,11 +163,8 @@ class NotesTheme extends Themelet
     {
         global $page;
 
-        $html = $this->get_history($histories);
-
         $page->set_title("Note History");
-        $page->add_block(new Block("Note History", rawHTML($html), "main", 10));
-
+        $page->add_block(new Block("Note History", $this->get_history($histories), "main", 10));
         $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
     }
 
@@ -194,35 +175,21 @@ class NotesTheme extends Themelet
     {
         global $page;
 
-        $html = $this->get_history($histories);
-
         $page->set_title("Note History #$imageID");
         $page->set_heading("Note History #$imageID");
-        $page->add_block(new Block("Note History #$imageID", rawHTML($html), "main", 10));
+        $page->add_block(new Block("Note History #$imageID", $this->get_history($histories), "main", 10));
 
         $this->display_paginator($page, "note_history/$imageID", null, $pageNumber, $totalPages);
     }
 
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts with notes.</p>
-        <div class="command_example">
-        <code>note=noted</code>
-        <p>Returns posts with a note matching "noted".</p>
-        </div>
-        <div class="command_example">
-        <code>notes>0</code>
-        <p>Returns posts with 1 or more notes.</p>
-        </div>
-        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
-        <div class="command_example">
-        <code>notes_by=username</code>
-        <p>Returns posts with note(s) by "username".</p>
-        </div>
-        <div class="command_example">
-        <code>notes_by_user_id=123</code>
-        <p>Returns posts with note(s) by user 123.</p>
-        </div>
-        ';
+        return emptyHTML(
+            P("Search for posts with notes."),
+            SHM_COMMAND_EXAMPLE("note=noted", "Returns posts with a note matching 'noted'."),
+            SHM_COMMAND_EXAMPLE("notes>0", "Returns posts with 1 or more notes."),
+            P("Can use <, <=, >, >=, or =."),
+            SHM_COMMAND_EXAMPLE("notes_by=username", "Returns posts with note(s) by 'username'."),
+        );
     }
 }

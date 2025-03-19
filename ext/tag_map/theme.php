@@ -6,7 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, BR, emptyHTML, rawHTML, joinHTML, P, HR, SPAN};
+use function MicroHTML\{A, BR, emptyHTML, joinHTML, P, HR, SPAN};
+use function MicroHTML\SUB;
 
 class TagMapTheme extends Themelet
 {
@@ -25,9 +26,7 @@ class TagMapTheme extends Themelet
             $tag = $row['tag'];
             $scale = $row['scaled'];
             $size = sprintf("%.2f", $scale < 0.5 ? 0.5 : $scale);
-            $html->appendChild(rawHTML("&nbsp;"));
-            $html->appendChild($this->build_tag($tag, show_underscores: false, style: "font-size: {$size}em"));
-            $html->appendChild(rawHTML("&nbsp;"));
+            $html->appendChild($this->build_tag($tag, show_underscores: false, style: "margin: 0em 1em; font-size: {$size}em"));
         }
 
         $page->set_title("Tag List");
@@ -96,7 +95,7 @@ class TagMapTheme extends Themelet
     {
         global $page;
 
-        $html = emptyHTML(rawHTML("Results grouped by log<sub>10</sub>(n)"));
+        $html = emptyHTML("Results grouped by log", SUB("10"), "(n)");
         $lastLog = "";
         foreach ($tag_data as $row) {
             $tag = $row['tag'];
@@ -109,8 +108,8 @@ class TagMapTheme extends Themelet
                 $html->appendChild("$lastLog");
                 $html->appendChild(BR());
             }
-            $html->appendChild($this->build_tag($tag));
-            $html->appendChild(rawHTML("&nbsp;($count)&nbsp;&nbsp;"));
+            $html->appendChild(SPAN(["style" => "margin-right: 1em; white-space: nowrap;"], $this->build_tag($tag), " ($count)"));
+            $html->appendChild(" ");
         }
 
         $page->set_title("Tag List");
@@ -125,11 +124,11 @@ class TagMapTheme extends Themelet
         $this->display_navigation(extra: joinHTML(
             BR(),
             [
-                rawHTML("&nbsp;"),
+                " ",
                 A(["href" => make_link("tags/map")], "Map"),
                 A(["href" => make_link("tags/alphabetic")], "Alphabetic"),
                 A(["href" => make_link("tags/popularity")], "Popularity"),
-                rawHTML("&nbsp;"),
+                " ",
                 A(["href" => Url::current()->withModifiedQuery(["mincount" => "1"])], "Show All"),
             ]
         ));

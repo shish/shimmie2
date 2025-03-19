@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, BR, rawHTML, emptyHTML, TABLE, COLGROUP, COL, THEAD, TH, TR, TD, SPAN};
+use function MicroHTML\{A, BR, emptyHTML, TABLE, COLGROUP, COL, THEAD, TH, TR, TD, SPAN};
 use function MicroHTML\joinHTML;
 
 class TagListTheme extends Themelet
@@ -128,7 +128,7 @@ class TagListTheme extends Themelet
                 $tag_infos,
                 $config->get_string(TagListConfig::POPULAR_SORT)
             ),
-            rawHTML("&nbsp;"),
+            " ",
             BR(),
             A(["class" => "more", "href" => make_link("tags")], "Full List")
         );
@@ -149,7 +149,7 @@ class TagListTheme extends Themelet
                 $config->get_string(TagListConfig::POPULAR_SORT),
                 $search
             ),
-            rawHTML("&nbsp;"),
+            " ",
             BR(),
             A(["class" => "more", "href" => make_link("tags")], "Full List")
         );

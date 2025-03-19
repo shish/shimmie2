@@ -6,7 +6,10 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{BR,H3,HR,P,META,rawHTML,emptyHTML,INPUT};
+use function MicroHTML\{BR,H3,HR,P,META,DIV,emptyHTML,INPUT};
+use function MicroHTML\A;
+use function MicroHTML\H2;
+use function MicroHTML\SUP;
 
 class IndexTheme extends Themelet
 {
@@ -27,21 +30,18 @@ class IndexTheme extends Themelet
 
     public function display_intro(Page $page): void
     {
-        $text = "
-<div style='text-align: left;'>
-<p>The first thing you'll probably want to do is create a new account; note
-that the first account you create will by default be marked as the board's
-administrator, and any further accounts will be regular users.
-
-<p>Once logged in you can play with the settings, install extra features,
-and of course start organising your images :-)
-
-<p>This message will go away once your first image is uploaded~
-</div>
-";
+        $text = DIV(
+            ["style" => "text-align: left;"],
+            P("The first thing you'll probably want to do is create a new account; note
+         that the first account you create will by default be marked as the board's
+         administrator, and any further accounts will be regular users."),
+            P("Once logged in you can play with the settings, install extra features,
+         and of course start organising your images :-)"),
+            P("This message will go away once your first image is uploaded~"),
+        );
         $page->set_title("Welcome to Shimmie ".SysConfig::getVersion(false));
         $page->set_heading("Welcome to Shimmie");
-        $page->add_block(new Block("Nothing here yet!", rawHTML($text), "main", 0));
+        $page->add_block(new Block("Nothing here yet!", $text, "main", 0));
     }
 
     /**
@@ -87,26 +87,12 @@ and of course start organising your images :-)
     }
 
     /**
-     * @param string[] $parts
-     */
-    public function display_admin_block(array $parts): void
-    {
-        global $page;
-        $page->add_block(new Block("List Controls", rawHTML(join("<br>", $parts)), "left", 50));
-    }
-
-    /**
      * @param Image[] $images
      */
     protected function build_table(array $images, ?string $query): HTMLElement
     {
-        $h_query = html_escape($query);
-        $table = "<div class='shm-image-list' data-query='$h_query'>";
-        foreach ($images as $image) {
-            $table .= $this->build_thumb($image);
-        }
-        $table .= "</div>";
-        return rawHTML($table);
+        $thumbs = array_map(fn ($image) => $this->build_thumb($image), $images);
+        return DIV(["class" => "shm-image-list", "data-query", $query], ...$thumbs);
     }
 
     protected function display_shortwiki(Page $page): void
@@ -116,19 +102,17 @@ and of course start organising your images :-)
         if (WikiInfo::is_enabled() && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) === 1) {
                 $st = Tag::implode($this->search_terms);
-
                 $wikiPage = Wiki::get_page($st);
-                $short_wiki_description = '';
                 if ($wikiPage->id !== -1) {
-                    // only show first line of wiki
-                    $short_wiki_description = format_text(explode("\n", $wikiPage->body, 2)[0]);
+                    if (TagCategoriesInfo::is_enabled()) {
+                        $st = TagCategories::getTagHtml($st);
+                    }
+                    $short_wiki_description = emptyHTML(
+                        H2($st, " ", A(["href" => make_link("wiki/$st")], SUP("ⓘ"))),
+                        format_text(explode("\n", $wikiPage->body, 2)[0])
+                    );
+                    $page->add_block(new Block(null, $short_wiki_description, "main", 0, "short-wiki-description"));
                 }
-                $wikiLink = make_link("wiki/$st");
-                if (TagCategoriesInfo::is_enabled()) {
-                    $st = TagCategories::getTagHtml(html_escape($st));
-                }
-                $short_wiki_description = '<h2>'.$st.'&nbsp;<a href="'.$wikiLink.'"><sup>ⓘ</sup></a></h2>'.$short_wiki_description;
-                $page->add_block(new Block(null, rawHTML($short_wiki_description), "main", 0, "short-wiki-description"));
             }
         }
     }

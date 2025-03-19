@@ -1,4 +1,5 @@
 div#front-page h1 {font-size: 4rem; margin-top: 2em; margin-bottom: 0; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
+div#front-page h1 A {text-decoration: none;}
 div#front-page {text-align:center;}
 div#front-page .space {margin-bottom: 1em;}
 div#front-page div#links a {display: inline-block; margin: 0 0.5em;}

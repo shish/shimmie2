@@ -54,20 +54,12 @@ final class RegenThumb extends Extension
         }
     }
 
-    // public function onPostListBuilding(PostListBuildingEvent $event): void
-    // {
-    //     global $user;
-    //     if ($user->can(UserAbilities::DELETE_IMAGE) && !empty($event->search_terms)) {
-    //         $event->add_control($this->theme->mtr_html(Tag::implode($event->search_terms)));
-    //     }
-    // }
-
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $user;
 
         if ($user->can(ImagePermission::DELETE_IMAGE)) {
-            $event->add_action("bulk_regen", "Regen Thumbnails", "", "", $this->theme->bulk_html());
+            $event->add_action("bulk_regen", "Regen Thumbnails", block: $this->theme->bulk_html());
         }
     }
 
@@ -139,28 +131,6 @@ final class RegenThumb extends Extension
                     }
                 }
                 $page->flash("Re-generated $i thumbnails");
-                break;
-            case "delete_thumbs":
-                $event->redirect = true;
-
-                if (isset($event->params["delete_thumb_mime"]) && $event->params["delete_thumb_mime"] !== "") {
-                    $images = Search::find_images(tags: ["mime=" . $event->params["delete_thumb_mime"]]);
-
-                    $i = 0;
-                    foreach ($images as $image) {
-                        $outname = $image->get_thumb_filename();
-                        if ($outname->exists()) {
-                            filename: $outname->unlink();
-                            $i++;
-                        }
-                    }
-                    $page->flash("Deleted $i thumbnails for ".$event->params["delete_thumb_mime"]." images");
-                } else {
-                    Filesystem::deltree(new Path("data/thumbs/"));
-                    $page->flash("Deleted all thumbnails");
-                }
-
-
                 break;
         }
     }

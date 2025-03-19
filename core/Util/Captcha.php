@@ -8,29 +8,35 @@ namespace Shimmie2;
 * CAPTCHA abstraction                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+use MicroHTML\HTMLElement;
 use ReCaptcha\ReCaptcha;
+
+use function MicroHTML\DIV;
+use function MicroHTML\SCRIPT;
+use function MicroHTML\emptyHTML;
 
 final readonly class Captcha
 {
-    public static function get_html(): string
+    public static function get_html(): ?HTMLElement
     {
         global $config, $user;
 
         if (SysConfig::getDebug() && Network::ip_in_range(Network::get_real_ip(), "127.0.0.0/8")) {
-            return "";
+            return null;
         }
 
-        $captcha = "";
+        $captcha = null;
         if ($user->is_anonymous() && $config->get_bool(CommentConfig::CAPTCHA)) {
             $r_publickey = $config->get_string(CommentConfig::RECAPTCHA_PUBKEY);
             if (!empty($r_publickey)) {
-                $captcha = "
-				<div class=\"g-recaptcha\" data-sitekey=\"{$r_publickey}\"></div>
-				<script type=\"text/javascript\" src=\"https://www.google.com/recaptcha/api.js\"></script>";
-            } /*else {
-                session_start();
-                $captcha = \Securimage::getCaptchaHtml(['securimage_path' => './vendor/dapphp/securimage/']);
-            }*/
+                $captcha = emptyHTML(
+                    DIV(["class" => "g-recaptcha", "data-sitekey" => $r_publickey]),
+                    SCRIPT([
+                        "type" => "text/javascript",
+                        "src" => "https://www.google.com/recaptcha/api.js"
+                    ])
+                );
+            }
         }
         return $captcha;
     }

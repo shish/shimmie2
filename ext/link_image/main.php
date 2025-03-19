@@ -17,7 +17,7 @@ final class LinkImage extends Extension
     }
 
     /**
-     * @return array{thumb_src: string, image_src: string, post_link: string, text_link: string|null}
+     * @return array{thumb_src: Url, image_src: Url, post_link: Url, text_link: string|null}
      */
     private function data(Image $image): array
     {
@@ -27,9 +27,9 @@ final class LinkImage extends Extension
         $text_link = trim($text_link) == "" ? null : $text_link; // null blank setting so the url gets filled in on the text links.
 
         return [
-            'thumb_src' => (string)$image->get_thumb_link()->asAbsolute(),
-            'image_src' => (string)$image->get_image_link()->asAbsolute(),
-            'post_link' => (string)make_link("post/view/{$image->id}")->asAbsolute(),
+            'thumb_src' => $image->get_thumb_link()->asAbsolute(),
+            'image_src' => $image->get_image_link()->asAbsolute(),
+            'post_link' => make_link("post/view/{$image->id}")->asAbsolute(),
             'text_link' => $text_link
         ];
     }

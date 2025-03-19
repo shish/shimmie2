@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{IMG,rawHTML};
+use function MicroHTML\{IMG};
+use function MicroHTML\BR;
+use function MicroHTML\joinHTML;
 
 class PixelFileHandlerTheme extends Themelet
 {
@@ -24,7 +26,7 @@ class PixelFileHandlerTheme extends Themelet
             'data-mime' => $image->get_mime(),
             'onerror' => "shm_log('Error loading >>{$image->id}')",
         ]);
-        $page->add_block(new Block("Image", $html, "main", 10));
+        $page->add_block(new Block(null, $html, "main", 10));
     }
 
     public function display_metadata(Image $image): void
@@ -35,7 +37,7 @@ class PixelFileHandlerTheme extends Themelet
             # FIXME: only read from jpegs?
             $exif = @exif_read_data($image->get_image_filename()->str(), "IFD0", true);
             if ($exif) {
-                $head = "";
+                $info = [];
                 foreach ($exif as $key => $section) {
                     foreach ($section as $name => $val) {
                         if ($key == "IFD0") {
@@ -43,12 +45,12 @@ class PixelFileHandlerTheme extends Themelet
                             if (is_array($val)) {
                                 $val = implode(',', $val);
                             }
-                            $head .= html_escape("$name: $val")."<br>\n";
+                            $info[] = "$name: $val";
                         }
                     }
                 }
-                if ($head) {
-                    $page->add_block(new Block("EXIF Info", rawHTML($head), "left"));
+                if ($info) {
+                    $page->add_block(new Block("EXIF Info", joinHTML(BR(), $info), "left"));
                 }
             }
         }

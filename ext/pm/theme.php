@@ -4,7 +4,16 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\A;
+use function MicroHTML\B;
+use function MicroHTML\INPUT;
+use function MicroHTML\TABLE;
+use function MicroHTML\TBODY;
+use function MicroHTML\TD;
+use function MicroHTML\TEXTAREA;
+use function MicroHTML\TH;
+use function MicroHTML\THEAD;
+use function MicroHTML\TR;
 
 class PrivMsgTheme extends Themelet
 {
@@ -15,70 +24,51 @@ class PrivMsgTheme extends Themelet
     {
         global $user;
 
-        $user_cache = [];
-
-        $html = "
-			<table id='pms' class='zebra'>
-				<thead><tr><th>R?</th><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr></thead>
-				<tbody>";
+        $tbody = TBODY();
         foreach ($pms as $pm) {
-            $h_subject = html_escape($pm->subject);
-            if (strlen(trim($h_subject)) == 0) {
-                $h_subject = "(No subject)";
-            }
-            if (!array_key_exists($pm->from_id, $user_cache)) {
-                $from = User::by_id($pm->from_id);
-                $user_cache[$pm->from_id] = $from;
-            } else {
-                $from = $user_cache[$pm->from_id];
-            }
-            $from_name = $from->name;
-            $h_from = html_escape($from_name);
-            $from_url = make_link("user/".url_escape($from_name));
-            $pm_url = make_link("pm/read/".$pm->id);
-            $del_url = make_link("pm/delete");
-            $h_date = substr(html_escape($pm->sent_date), 0, 16);
-            $readYN = "Y";
+            $from = User::by_id_dangerously_cached($pm->from_id);
+
+            $subject = trim($pm->subject) ?: "(No subject)";
             if (!$pm->is_read) {
-                $h_subject = "<b>$h_subject</b>";
-                $readYN = "N";
+                $subject = B($subject);
             }
-            $html .= "<tr>
-			<td>$readYN</td>
-			<td><a href='$pm_url'>$h_subject</a></td>
-			<td><a href='$from_url'>$h_from</a></td>
-			<td>$h_date</td>
-			<td>".make_form($del_url)."
-                <input type='hidden' name='pm_id' value='{$pm->id}'>
-				<input type='submit' value='Delete'>
-			</form></td>
-			</tr>";
+            $tbody->appendChild(TR(
+                TD($pm->is_read ? "Y" : "N"),
+                TD(A(["href" => make_link("pm/read/".$pm->id)], $subject)),
+                TD(A(["href" => make_link("user/".url_escape($from->name))], $from->name)),
+                TD(substr($pm->sent_date, 0, 16)),
+                TD(SHM_SIMPLE_FORM(
+                    make_link("pm/delete"),
+                    INPUT(["type" => "hidden", "name" => "pm_id", "value" => $pm->id]),
+                    SHM_SUBMIT("Delete")
+                ))
+            ));
         }
-        $html .= "
-				</tbody>
-			</table>
-		";
-        $page->add_block(new Block("Private Messages", rawHTML($html), "main", 40, "private-messages"));
+        $html = TABLE(
+            ["id" => "pms", "class" => "zebra"],
+            THEAD(TR(TH("R?"), TH("Subject"), TH("From"), TH("Date"), TH("Action"))),
+            $tbody
+        );
+        $page->add_block(new Block("Private Messages", $html, "main", 40, "private-messages"));
     }
 
     public function display_composer(Page $page, User $from, User $to, string $subject = ""): void
     {
         global $user;
-        $post_url = make_link("pm/send");
-        $h_subject = html_escape($subject);
-        $to_id = $to->id;
-        $form = make_form($post_url);
-        $html = <<<EOD
-$form
-<input type="hidden" name="to_id" value="$to_id">
-<table style="width: 400px;" class="form">
-<tr><th>Subject:</th><td><input type="text" name="subject" value="$h_subject"></td></tr>
-<tr><td colspan="2"><textarea style="width: 100%" rows="6" name="message"></textarea></td></tr>
-<tr><td colspan="2"><input type="submit" value="Send"></td></tr>
-</table>
-</form>
-EOD;
-        $page->add_block(new Block("Write a PM", rawHTML($html), "main", 50));
+        $html = SHM_SIMPLE_FORM(
+            make_link("pm/send"),
+            INPUT(["type" => "hidden", "name" => "to_id", "value" => $to->id]),
+            TABLE(
+                ["class" => "form"],
+                TR(
+                    TH("Subject"),
+                    TD(INPUT(["type" => "text", "name" => "subject", "value" => $subject]))
+                ),
+                TR(TD(["colspan" => 2], TEXTAREA(["name" => "message", "rows" => 6]))),
+                TR(TD(["colspan" => 2], SHM_SUBMIT("Send")))
+            ),
+        );
+        $page->add_block(new Block("Write a PM", $html, "main", 50));
     }
 
     public function display_message(Page $page, User $from, User $to, PM $pm): void
@@ -86,6 +76,6 @@ EOD;
         $page->set_title("Private Message");
         $page->set_heading($pm->subject);
         $this->display_navigation();
-        $page->add_block(new Block("Message from {$from->name}", rawHTML(format_text($pm->message)), "main", 10));
+        $page->add_block(new Block("Message from {$from->name}", format_text($pm->message), "main", 10));
     }
 }

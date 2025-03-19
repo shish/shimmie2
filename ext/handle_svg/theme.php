@@ -4,25 +4,21 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\IMG;
 
 class SVGFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
         global $page;
-        $ilink = make_link("get_svg/{$image->id}/{$image->id}.svg");
-        //		$ilink = $image->get_image_link();
-        $html = "
-			<img
-			    alt='main image'
-			    src='$ilink'
-			    id='main_image'
-			    class='shm-main-image'
-			    data-width='{$image->width}'
-			    data-height='{$image->height}'
-			    />
-		";
-        $page->add_block(new Block("Image", rawHTML($html), "main", 10));
+        $html = IMG([
+            'alt' => 'main image',
+            'src' => make_link("get_svg/{$image->id}/{$image->id}.svg"),
+            'id' => 'main_image',
+            'class' => 'shm-main-image',
+            'data-width' => $image->width,
+            'data-height' => $image->height,
+        ]);
+        $page->add_block(new Block(null, $html, "main", 10));
     }
 }

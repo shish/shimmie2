@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{META,rawHTML};
+use function MicroHTML\{META};
+use function MicroHTML\A;
+use function MicroHTML\NOSCRIPT;
+use function MicroHTML\UL;
+use function MicroHTML\emptyHTML;
 
 class FilterTheme extends Themelet
 {
@@ -21,12 +25,13 @@ class FilterTheme extends Themelet
         } else {
             $tags = $config->get_string(FilterConfig::TAGS);
         }
-        $html = "<noscript>Post filtering requires JavaScript</noscript>
-        <ul id='filter-list' class='list-bulleted'></ul>
-        <a id='disable-all-filters' style='display: none;' href='#'>Disable all</a>
-        <a id='re-enable-all-filters' style='display: none;' href='#'>Re-enable all</a>
-        ";
+        $html = emptyHTML(
+            NOSCRIPT("Post filtering requires JavaScript"),
+            UL(["id" => "filter-list", "class" => "list-bulleted"]),
+            A(["id" => "disable-all-filters", "href" => "#", "style" => "display: none;"], "Disable all"),
+            A(["id" => "re-enable-all-filters", "href" => "#", "style" => "display: none;"], "Re-enable all")
+        );
         $page->add_html_header(META(['id' => 'filter-tags', 'tags' => $tags]));
-        $page->add_block(new Block("Filters", rawHTML($html), "left", 10));
+        $page->add_block(new Block("Filters", $html, "left", 10));
     }
 }
