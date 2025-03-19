@@ -6,20 +6,18 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TR, TH, TD, rawHTML, DIV, INPUT, A};
+use function MicroHTML\{TR, TH, TD, DIV, INPUT, A, emptyHTML};
 
 class PostSourceTheme extends Themelet
 {
-    public function mss_html(string $terms): string
+    public function mss_html(string $terms): HTMLElement
     {
-        $h_terms = html_escape($terms);
-        $html = make_form(make_link("tag_edit/mass_source_set")) . "
-				<input type='hidden' name='tags' value='$h_terms'>
-				<input type='text' name='source' value=''>
-				<input type='submit' value='Set Source For All' onclick='return confirm(\"This will mass-edit all sources on the page.\\nAre you sure you want to do this?\")'>
-			</form>
-		";
-        return $html;
+        return SHM_SIMPLE_FORM(
+            make_link("tag_edit/mass_source_set"),
+            INPUT(["type" => "hidden", "name" => "tags", "value" => $terms]),
+            INPUT(["type" => "text", "name" => "source", "value" => '']),
+            INPUT(["type" => "submit", "value" => "Set Source For All", "onclick" => "return confirm(\"This will mass-edit all sources on the page.\\nAre you sure you want to do this?\")"])
+        );
     }
 
     public function get_source_editor_html(Image $image): HTMLElement
@@ -49,7 +47,7 @@ class PostSourceTheme extends Themelet
             }
             return A(["href" => $source], $h_source);
         }
-        return rawHTML("Unknown");
+        return emptyHTML("Unknown");
     }
 
     public function get_upload_common_html(): HTMLElement

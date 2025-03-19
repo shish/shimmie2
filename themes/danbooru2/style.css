@@ -294,6 +294,13 @@ NAV h3 {
 	text-align: left;
 }
 
+SPAN.comment-info SPAN {
+    margin-right: 2em;
+}
+SPAN.comment-info SPAN B {
+    margin-right: 0.5em;
+}
+
 TABLE.tag_list {
 	width: auto;
 	border-collapse: collapse;

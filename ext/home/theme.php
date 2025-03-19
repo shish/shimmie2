@@ -6,7 +6,13 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{BODY, emptyHTML, TITLE, META, rawHTML, DIV, INPUT};
+use function MicroHTML\{BODY, emptyHTML, TITLE, META, DIV, INPUT};
+use function MicroHTML\A;
+use function MicroHTML\H1;
+use function MicroHTML\IMG;
+use function MicroHTML\SMALL;
+use function MicroHTML\SPAN;
+use function MicroHTML\joinHTML;
 
 class HomeTheme extends Themelet
 {
@@ -26,16 +32,46 @@ class HomeTheme extends Themelet
         ));
     }
 
-    public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, string $num_comma, string $counter_text): HTMLElement
-    {
+    public function build_body(
+        string $sitename,
+        HTMLElement $main_links,
+        ?string $main_text,
+        ?string $contact_link,
+        int $post_count,
+    ): HTMLElement {
         global $page;
         $page->set_layout("front-page");
 
-        $main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
-        $message_html = empty($main_text) ? "" : "<div class='space' id='message'>$main_text</div>";
-        $counter_html = empty($counter_text) ? "" : "<div class='space' id='counter'>$counter_text</div>";
-        $contact_link = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a> &ndash;";
-        $search_html = DIV(
+        return BODY(
+            $page->body_attrs(),
+            DIV(
+                ["id" => "front-page"],
+                $this->build_title($sitename),
+                $this->build_links($main_links),
+                $this->build_search(),
+                $this->build_message($main_text),
+                $this->build_counter($post_count),
+                $this->build_footer($contact_link, $post_count),
+            ),
+        );
+    }
+
+    protected function build_title(string $sitename): HTMLElement
+    {
+        return H1(A(["href" => make_link()], SPAN($sitename)));
+    }
+
+    protected function build_links(HTMLElement $links): ?HTMLElement
+    {
+        if (empty((string)$links)) {
+            return null;
+        }
+        return DIV(["class" => "space", "id" => "links"], $links);
+    }
+
+    protected function build_search(): HTMLElement
+    {
+        return DIV(
             ["class" => "space", "id" => "search"],
             SHM_FORM(
                 action: search_link(),
@@ -47,22 +83,50 @@ class HomeTheme extends Themelet
                 ]
             )
         );
-        return BODY(
-            $page->body_attrs(),
-            rawHTML("
-		<div id='front-page'>
-			<h1><a style='text-decoration: none;' href='".make_link()."'><span>$sitename</span></a></h1>
-			$main_links_html
-			$search_html
-			$message_html
-			$counter_html
-			<div class='space' id='foot'>
-				<small><small>
-				$contact_link" . (empty($num_comma) ? "" : " Serving $num_comma posts &ndash;") . "
-				Running <a href='https://code.shishnet.org/shimmie2/'>Shimmie2</a>
-				</small></small>
-			</div>
-		</div>")
+    }
+
+    protected function build_message(?string $main_text): ?HTMLElement
+    {
+        if (empty($main_text)) {
+            return null;
+        }
+        return DIV(["class" => "space", "id" => "message"], $main_text);
+    }
+
+    protected function build_counter(int $post_count): ?HTMLElement
+    {
+        global $config;
+
+        $counter_dir = $config->get_string(HomeConfig::COUNTER, 'default');
+        if ($counter_dir === 'none' || $counter_dir === 'text-only') {
+            return null;
+        }
+
+        $base_href = Url::base();
+        $counter_digits = [];
+        foreach (str_split((string)$post_count) as $cur) {
+            $counter_digits[] = IMG([
+                'class' => 'counter-img',
+                'alt' => $cur,
+                'src' => "$base_href/ext/home/counters/$counter_dir/$cur.gif"
+            ]);
+        }
+        return DIV(["class" => "space", "id" => "counter"], joinHTML('', $counter_digits));
+    }
+
+    protected function build_footer(?string $contact_link, int $post_count): HTMLElement
+    {
+        $num_comma = number_format($post_count);
+        return DIV(
+            ["class" => "space", "id" => "foot"],
+            SMALL(SMALL(
+                empty($contact_link)
+                    ? null
+                    : emptyHTML(A(["href" => $contact_link], "Contact"), " - "),
+                " Serving $num_comma posts - ",
+                " Running ",
+                A(["href" => "https://code.shishnet.org/shimmie2/"], "Shimmie2")
+            ))
         );
     }
 }

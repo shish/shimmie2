@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\A;
+use function MicroHTML\INPUT;
+use function MicroHTML\SMALL;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TR;
+use function MicroHTML\joinHTML;
 
 class WarmUserPageTheme extends UserPageTheme
 {
@@ -13,29 +19,36 @@ class WarmUserPageTheme extends UserPageTheme
      */
     public function display_user_block(Page $page, User $user, array $parts): void
     {
-        $h_name = html_escape($user->name);
-        $html = " | ";
+        $parts_html = [];
         foreach ($parts as $part) {
-            $html .= "<a href='{$part["link"]}'>{$part["name"]}</a> | ";
+            $parts_html[] = A(["href" => $part["link"]], $part["name"]);
         }
-        $page->add_block(new Block("Logged in as $h_name", rawHTML($html), "head", 90));
+        $page->add_block(new Block("Logged in as {$user->name}", joinHTML(" | ", $parts_html), "head", 90));
     }
 
     public function display_login_block(Page $page): void
     {
         global $config;
-        $html = "
-			<form action='".make_link("user_admin/login")."' method='POST'>
-			<table summary='Login Form' align='center'>
-			<tr><td width='70'>Name</td><td width='70'><input type='text' name='user'></td></tr>
-			<tr><td>Password</td><td><input type='password' name='pass'></td></tr>
-			<tr><td colspan='2'><input type='submit' name='gobu' value='Log In'></td></tr>
-			</table>
-			</form>
-		";
+        $html = SHM_SIMPLE_FORM(
+            make_link("user_admin/login"),
+            TABLE(
+                ["summary" => "Login Form", "align" => "center"],
+                TR(
+                    TD(["width" => "70"], "Name"),
+                    TD(["width" => "70"], INPUT(["type" => "text", "name" => "user"]))
+                ),
+                TR(
+                    TD("Password"),
+                    TD(INPUT(["type" => "password", "name" => "pass"]))
+                ),
+                TR(
+                    TD(["colspan" => "2"], SHM_SUBMIT("Log In"))
+                )
+            )
+        );
         if ($config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
-            $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
+            $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
-        $page->add_block(new Block("Login", rawHTML($html), "head", 90));
+        $page->add_block(new Block("Login", $html, "head", 90));
     }
 }

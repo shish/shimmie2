@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML, rawHTML, INPUT, A};
+use function MicroHTML\{emptyHTML, INPUT, A};
 
 class PostOwnerTheme extends Themelet
 {
@@ -14,8 +14,8 @@ class PostOwnerTheme extends Themelet
     {
         global $config, $user;
         $owner = $image->get_owner()->name;
-        $date = rawHTML(autodate($image->posted));
-        $ip = $user->can(IPBanPermission::VIEW_IP) ? rawHTML(" (" . show_ip($image->owner_ip, "Post posted {$image->posted}") . ")") : "";
+        $date = SHM_DATE($image->posted);
+        $ip = $user->can(IPBanPermission::VIEW_IP) ? emptyHTML(" (", SHM_IP($image->owner_ip, "Post posted {$image->posted}"), ")") : null;
         return SHM_POST_INFO(
             "Uploader",
             emptyHTML(A(["class" => "username", "href" => make_link("user/$owner")], $owner), $ip, ", ", $date),

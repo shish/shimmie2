@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, BR, emptyHTML, rawHTML};
+use function MicroHTML\{A, BR, emptyHTML};
 
 class HelpPagesTheme extends Themelet
 {
@@ -26,7 +26,7 @@ class HelpPagesTheme extends Themelet
         }
 
         $page->add_block(new Block("Help", $items, "left", 0));
-        $page->add_block(new Block("Help Pages", rawHTML("See list of pages to left")));
+        $page->add_block(new Block("Help Pages", emptyHTML("See list of pages to left")));
     }
 
     public function display_help_page(string $title): void

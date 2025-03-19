@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\A;
+use function MicroHTML\IMG;
+use function MicroHTML\joinHTML;
 
 class ReverseSearchLinksTheme extends Themelet
 {
@@ -24,14 +26,20 @@ class ReverseSearchLinksTheme extends Themelet
         // only generate links for enabled reverse search services
         $enabled_services = $config->get_array(ReverseSearchLinksConfig::ENABLED_SERVICES);
 
-        $html = "";
+        $parts = [];
         foreach ($links as $name => $link) {
             if (in_array($name, $enabled_services)) {
-                $icon_link = Url::base() . "/ext/reverse_search_links/icons/" . strtolower($name) . ".ico";
-                $html .= "<a href='$link' class='reverse_image_link' rel='nofollow'><img title='Search with $name' src='$icon_link' alt='$name icon'></a>";
+                $parts[] = A(
+                    ["href" => $link, "class" => "reverse_image_link", "rel" => "nofollow"],
+                    IMG([
+                        "title" => "Search with $name",
+                        "src" => Url::base() . "/ext/reverse_search_links/icons/" . strtolower($name) . ".ico",
+                        "alt" => "$name icon"
+                    ])
+                );
             }
         }
 
-        $page->add_block(new Block("Reverse Image Search", rawHTML($html), "main", 20));
+        $page->add_block(new Block("Reverse Image Search", joinHTML("", $parts), "main", 25));
     }
 }

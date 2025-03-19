@@ -92,9 +92,6 @@ final class Index extends Extension
 
                 $this->theme->set_page($page_number, $total_pages, $search_terms);
                 $this->theme->display_page($page, $images);
-                if (count($plbe->parts) > 0) {
-                    $this->theme->display_admin_block($plbe->parts);
-                }
             }
         }
     }

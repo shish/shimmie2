@@ -6,7 +6,14 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\A;
+use function MicroHTML\DIV;
+use function MicroHTML\HR;
+use function MicroHTML\P;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TR;
+use function MicroHTML\emptyHTML;
 
 class FutabaCommentListTheme extends CommentListTheme
 {
@@ -20,14 +27,11 @@ class FutabaCommentListTheme extends CommentListTheme
     {
         global $config, $page;
 
-        //$prev = $page_number - 1;
-        //$next = $page_number + 1;
-
         $page_title = $config->get_string(SetupConfig::TITLE);
         $page->set_title($page_title);
         $page->set_layout("no-left");
         $page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
-        $page->add_block(new Block(null, rawHTML("<hr>"), "main", 80));
+        $page->add_block(new Block(null, HR(), "main", 80));
         $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
         $this->post_page = false;
 
@@ -42,22 +46,28 @@ class FutabaCommentListTheme extends CommentListTheme
             $w = $image->width;
             $h = $image->height;
 
-            $comment_html = "";
+            $comment_html = [];
             $comment_id = 0;
             foreach ($comments as $comment) {
                 $this->inner_id = $comment_id++;
-                $comment_html .= $this->comment_to_html($comment, false);
+                $comment_html[] = $this->comment_to_html($comment, false);
             }
 
-            $html  = "<p style='clear:both'>&nbsp;</p><hr >";
-            $html .= "File: <a href=\"".make_link("post/view/{$image->id}")."\">$h_filename</a> - ($h_filesize, {$w}x{$h}) - ";
-            $html .= html_escape($image->get_tag_list());
-            $html .= "<div style='text-align: left'>";
-            $html .=   "<div style='float: left;'>" . $this->build_thumb($image) . "</div>";
-            $html .=   "<div class='commentset'>$comment_html</div>";
-            $html .= "</div>";
+            $html = emptyHTML(
+                P(["style" => "clear:both"], " "),
+                HR(),
+                "File: ",
+                A(["href" => make_link("post/view/{$image->id}")], $image->filename),
+                " - ($h_filesize, {$w}x{$h}) - ",
+                $image->get_tag_list(),
+                DIV(
+                    ["style" => "text-align: left"],
+                    DIV(["style" => "float: left;"], $this->build_thumb($image)),
+                    DIV(["class" => "commentset"], ...$comment_html)
+                )
+            );
 
-            $page->add_block(new Block(null, rawHTML($html), "main", $position++));
+            $page->add_block(new Block(null, $html, "main", $position++));
         }
     }
 
@@ -69,9 +79,8 @@ class FutabaCommentListTheme extends CommentListTheme
 
     public function build_upload_box(): HTMLElement
     {
-        return rawHTML("[[ insert upload-and-comment extension here ]]");
+        return emptyHTML("[[ insert upload-and-comment extension here ]]");
     }
-
 
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
@@ -114,11 +123,20 @@ class FutabaCommentListTheme extends CommentListTheme
         }
 
         if ($inner_id === 0) {
-            return rawHTML("<div class='comment' style='margin-top: 8px;'>$h_userlink$h_del $h_date No.$i_comment_id $h_reply<p>$h_comment</p></div>");
+            return DIV(
+                ["class" => "comment", "style" => "margin-top: 8px;"],
+                $h_userlink,
+                $h_del,
+                $h_date,
+                "No.$i_comment_id",
+                $h_reply,
+                P($h_comment)
+            );
         } else {
-            return rawHTML("<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td>".
-                "<div class='reply'>$h_userlink$h_del $h_date No.$i_comment_id<p>$h_comment</p></div>" .
-                "</td></tr></table>");
+            return TABLE(TR(
+                TD(["nowrap" => true, "class" => "doubledash"], ">>"),
+                TD(DIV(["class" => "reply"], $h_userlink, $h_del, $h_date, "No.$i_comment_id", P($h_comment)))
+            ));
         }
     }
 }

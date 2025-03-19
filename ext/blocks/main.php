@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{rawHTML};
-
 final class Blocks extends Extension
 {
     public const KEY = "blocks";
@@ -60,7 +58,7 @@ final class Blocks extends Extension
         foreach ($blocks as $block) {
             $path = implode("/", $event->args);
             if (strlen($path) < 4000 && fnmatch($block['pages'], $path)) {
-                $b = new Block($block['title'], rawHTML($block['content']), $block['area'], (int)$block['priority']);
+                $b = new Block($block['title'], \MicroHTML\rawHTML($block['content']), $block['area'], (int)$block['priority']);
                 $b->is_content = false;
 
                 # Split by comma, trimming whitespaces, and not allowing empty elements.

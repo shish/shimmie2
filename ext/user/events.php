@@ -31,7 +31,7 @@ class UserOperationsBuildingEvent extends PartListBuildingEvent
 }
 
 /**
- * @extends PartListBuildingEvent<string>
+ * @extends PartListBuildingEvent<HTMLElement>
  */
 class UserPageBuildingEvent extends PartListBuildingEvent
 {

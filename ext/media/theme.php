@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\P;
+use function MicroHTML\emptyHTML;
+
 class MediaTheme extends Themelet
 {
-    public function get_help_html(): string
+    public function get_help_html(): HTMLElement
     {
-        return '<p>Search for posts based on the type of media.</p>
-        <div class="command_example">
-        <code>content:audio</code>
-        <p>Returns posts that contain audio, including videos and audio files.</p>
-        </div>
-        <div class="command_example">
-        <code>content:video</code>
-        <p>Returns posts that contain video, including animated GIFs.</p>
-        </div>
-        <p>These search terms depend on the posts being scanned for media content. Automatic scanning was implemented in mid-2019, so posts uploaded before, or posts uploaded on a system without ffmpeg, will require additional scanning before this will work.</p>
-        ';
+        return emptyHTML(
+            P('Search for posts based on the type of media.'),
+            SHM_COMMAND_EXAMPLE('content:audio', 'Returns posts that contain audio, including videos and audio files.'),
+            SHM_COMMAND_EXAMPLE('content:video', 'Returns posts that contain video, including animated GIFs.'),
+        );
     }
 }

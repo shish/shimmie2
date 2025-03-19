@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{rawHTML};
+use function MicroHTML\BR;
+use function MicroHTML\INPUT;
+use function MicroHTML\LABEL;
+use function MicroHTML\emptyHTML;
 
 final class ImageResizeException extends ServerError
 {
@@ -40,14 +43,20 @@ final class ResizeImage extends Extension
 
             $event->add_part(SHM_SIMPLE_FORM(
                 make_link("resize/{$event->image->id}"),
-                rawHTML("
-                    <input id='original_width'  name='original_width'  type='hidden' value='{$event->image->width}'>
-                    <input id='original_height' name='original_height' type='hidden' value='{$event->image->height}'>
-                    <input id='resize_width'  style='width: 70px;' name='resize_width'  type='number' min='1' value='".$default_width."'> x
-                    <input id='resize_height' style='width: 70px;' name='resize_height' type='number' min='1' value='".$default_height."'>
-                    <br><label><input type='checkbox' id='resize_aspect' name='resize_aspect' style='max-width: 20px;' checked='checked'> Keep Aspect</label>
-                    <br><input id='resizebutton' type='submit' value='Resize'>
-                ")
+                emptyHTML(
+                    INPUT(["id" => "original_width", "name" => "original_width", "type" => "hidden", "value" => $event->image->width]),
+                    INPUT(["id" => "original_height", "name" => "original_height", "type" => "hidden", "value" => $event->image->height]),
+                    INPUT(["id" => "resize_width", "name" => "resize_width", "style" => "width: 70px;", "type" => "number", "min" => "1", "value" => $default_width]),
+                    " x ",
+                    INPUT(["id" => "resize_height", "name" => "resize_height", "style" => "width: 70px;", "type" => "number", "min" => "1", "value" => $default_height]),
+                    BR(),
+                    LABEL(
+                        INPUT(["type" => "checkbox", "id" => "resize_aspect", "name" => "resize_aspect", "style" => "max-width: 20px;", "checked" => true]),
+                        " Keep Aspect"
+                    ),
+                    BR(),
+                    INPUT(["id" => "resizebutton", "type" => "submit", "value" => "Resize"]),
+                )
             ));
         }
     }

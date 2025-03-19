@@ -4,38 +4,57 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
+final readonly class BulkAction
+{
+    public function __construct(
+        public string $action,
+        public string $button_text,
+        public ?string $access_key = null,
+        public string $confirmation_message = "",
+        public ?HTMLElement $block = null,
+        public int $position = 40
+    ) {
+    }
+}
 final class BulkActionBlockBuildingEvent extends Event
 {
     /**
-     * @var array<array{block:string,access_key:?string,confirmation_message:string,action:string,button_text:string,position:int}>
+     * @var array<BulkAction>
      */
     public array $actions = [];
     /** @var string[] */
     public array $search_terms = [];
 
-    public function add_action(string $action, string $button_text, ?string $access_key = null, string $confirmation_message = "", string $block = "", int $position = 40): void
-    {
+    public function add_action(
+        string $action,
+        string $button_text,
+        ?string $access_key = null,
+        string $confirmation_message = "",
+        ?HTMLElement $block = null,
+        int $position = 40
+    ): void {
         if (!empty($access_key)) {
             assert(strlen($access_key) === 1);
             foreach ($this->actions as $existing) {
-                if ($existing["access_key"] === $access_key) {
+                if ($existing->access_key === $access_key) {
                     throw new UserError("Access key $access_key is already in use");
                 }
             }
         }
 
-        $this->actions[] = [
-            "block" => $block,
-            "access_key" => $access_key,
-            "confirmation_message" => $confirmation_message,
-            "action" => $action,
-            "button_text" => $button_text,
-            "position" => $position
-        ];
+        $this->actions[] = new BulkAction(
+            $action,
+            $button_text,
+            $access_key,
+            $confirmation_message,
+            $block,
+            $position
+        );
     }
 }
 
@@ -74,12 +93,11 @@ final class BulkActions extends Extension
 
         send_event($babbe);
 
-        if (sizeof($babbe->actions) === 0) {
+        if (count($babbe->actions) === 0) {
             return;
         }
 
-        usort($babbe->actions, [$this, "sort_blocks"]);
-
+        usort($babbe->actions, $this->sort_blocks(...));
         $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
     }
 
@@ -215,12 +233,12 @@ final class BulkActions extends Extension
     }
 
     /**
-     * @param array{position: int} $a
-     * @param array{position: int} $b
+     * @param BulkAction $a
+     * @param BulkAction $b
      */
-    private function sort_blocks(array $a, array $b): int
+    private function sort_blocks(BulkAction $a, BulkAction $b): int
     {
-        return $a["position"] - $b["position"];
+        return $a->position - $b->position;
     }
 
     /**

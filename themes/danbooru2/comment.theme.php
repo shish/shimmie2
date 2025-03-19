@@ -6,7 +6,16 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\A;
+use function MicroHTML\B;
+use function MicroHTML\BR;
+use function MicroHTML\P;
+use function MicroHTML\SPAN;
+use function MicroHTML\TABLE;
+use function MicroHTML\TD;
+use function MicroHTML\TR;
+use function MicroHTML\emptyHTML;
+use function MicroHTML\joinHTML;
 
 class Danbooru2CommentListTheme extends CommentListTheme
 {
@@ -37,49 +46,60 @@ class Danbooru2CommentListTheme extends CommentListTheme
             $image = $pair[0];
             $comments = $pair[1];
 
-            $thumb_html = $this->build_thumb($image);
-
-            $s = "&nbsp;&nbsp;&nbsp;";
-            $un = $image->get_owner()->name;
-            $t = "";
+            $tags = [];
             foreach ($image->get_tag_array() as $tag) {
-                $t .= "<a href='".search_link([$tag])."'>".html_escape($tag)."</a> ";
+                $tags[] = A(["href" => search_link([$tag])], $tag);
             }
-            $p = autodate($image->posted);
 
-            $r = RatingsInfo::is_enabled() ? "<b>Rating</b> ".Ratings::rating_to_human($image['rating']) : "";
-            $comment_html =   "<b>Date</b> $p $s <b>Uploader</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
+            $comment_html = SPAN(
+                ["class" => "comment-info"],
+                SPAN(
+                    B("Date"),
+                    SHM_DATE($image->posted),
+                ),
+                SPAN(
+                    B("Uploader"),
+                    $image->get_owner()->name,
+                ),
+                RatingsInfo::is_enabled()
+                    ? SPAN(B("Rating"), Ratings::rating_to_human($image['rating']))
+                    : null,
+                BR(),
+                SPAN(
+                    B("Tags"),
+                    joinHTML(" ", $tags),
+                ),
+                P(),
+            );
 
             $comment_count = count($comments);
             if ($comment_limit > 0 && $comment_count > $comment_limit) {
-                //$hidden = $comment_count - $comment_limit;
-                $comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
+                $comment_html->appendChild(P("showing $comment_limit of $comment_count comments"));
                 $comments = array_slice($comments, negative_int($comment_limit));
             }
             foreach ($comments as $comment) {
-                $comment_html .= $this->comment_to_html($comment);
+                $comment_html->appendChild($this->comment_to_html($comment));
             }
             if ($can_post) {
                 if (!$user->is_anonymous()) {
-                    $comment_html .= $this->build_postbox($image->id);
+                    $comment_html->appendChild($this->build_postbox($image->id));
                 } else {
                     if (!$comment_captcha) {
-                        $comment_html .= $this->build_postbox($image->id);
+                        $comment_html->appendChild($this->build_postbox($image->id));
                     } else {
-                        $comment_html .= "<a href='".make_link("post/view/".$image->id)."'>Add Comment</a>";
+                        $comment_html->appendChild(A(["href" => make_link("post/view/".$image->id)], "Add Comment"));
                     }
                 }
             }
 
-            $html  = "
-				<table><tr>
-					<td style='width: 220px;'>$thumb_html</td>
-					<td style='text-align: left;'>$comment_html</td>
-				</tr></table>
-			";
+            $html = TABLE(
+                TR(
+                    TD(["style" => "width: 220px;"], $this->build_thumb($image)),
+                    TD(["style" => "text-align: left;"], $comment_html)
+                )
+            );
 
-
-            $page->add_block(new Block(null, rawHTML($html), "main", $position++));
+            $page->add_block(new Block(null, $html, "main", $position++));
         }
     }
 
@@ -88,40 +108,42 @@ class Danbooru2CommentListTheme extends CommentListTheme
         // no recent comments in this theme
     }
 
-
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
         global $user;
 
         $tfe = send_event(new TextFormattingEvent($comment->comment));
 
-        //$i_uid = $comment->owner_id;
-        $h_name = html_escape($comment->owner_name);
-        //$h_poster_ip = html_escape($comment->poster_ip);
         if ($trim) {
             $h_comment = truncate($tfe->stripped, 50);
         } else {
-            $h_comment = $tfe->formatted;
+            $h_comment = $tfe->getFormattedHTML();
         }
-        $i_comment_id = $comment->comment_id;
-        $i_image_id = $comment->image_id;
-        $h_posted = autodate($comment->posted);
+        $h_posted = SHM_DATE($comment->posted);
 
-        $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
-        $h_del = "";
+        $h_userlink = A(["class" => "username", "href" => make_link("user/{$comment->owner_name}")], $comment->owner_name);
+        $h_del = null;
         if ($user->can(CommentPermission::DELETE_COMMENT)) {
-            $h_del = " - " . $this->delete_link($i_comment_id, $i_image_id, $comment->owner_name, $tfe->stripped);
+            $h_del = emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped));
         }
-        //$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
         if ($trim) {
-            return rawHTML("<p class='comment'>$h_userlink $h_del<br/>$h_posted<br/>$h_comment</p>");
+            return P(
+                ["class" => "comment"],
+                $h_userlink,
+                $h_del,
+                BR(),
+                $h_posted,
+                BR(),
+                $h_comment
+            );
         } else {
-            return rawHTML("
-				<table class='comment'><tr>
-					<td class='meta'>$h_userlink<br/>$h_posted$h_del</td>
-					<td>$h_comment</td>
-				</tr></table>
-			");
+            return TABLE(
+                ["class" => "comment"],
+                TR(
+                    TD(["class" => "meta"], $h_userlink, BR(), $h_posted, $h_del),
+                    TD($h_comment)
+                )
+            );
         }
     }
 }

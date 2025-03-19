@@ -6,7 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\rawHTML;
+use function MicroHTML\PRE;
+use function MicroHTML\emptyHTML;
 
 final class HelpPageListBuildingEvent extends Event
 {
@@ -37,11 +38,8 @@ final class HelpPageBuildingEvent extends PartListBuildingEvent
         $this->add_part($block, $position);
     }
 
-    public function add_section(string $title, string|HTMLElement $html): void
+    public function add_section(string $title, HTMLElement $html): void
     {
-        if (is_string($html)) {
-            $html = rawHTML($html);
-        }
         $this->add_block(new Block($title, $html));
     }
 }
@@ -111,12 +109,12 @@ final class HelpPages extends Extension
         if ($event->key == "licenses") {
             $event->add_section(
                 "Software Licenses",
-                "The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license."
+                emptyHTML("The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license.")
             );
 
             $event->add_section(
                 ExtensionInfo::LICENSE_GPLV2,
-                "<pre>                    GNU GENERAL PUBLIC LICENSE
+                PRE("                    GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.,
@@ -454,12 +452,12 @@ This General Public License does not permit incorporating your program into
 proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
-Public License instead of this License.</pre>"
+Public License instead of this License.")
             );
 
             $event->add_section(
                 ExtensionInfo::LICENSE_MIT,
-                "<pre>Permission is hereby granted, free of charge, to any person obtaining a copy
+                PRE("Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the \"Software\"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -475,12 +473,12 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</pre>"
+SOFTWARE.")
             );
 
             $event->add_section(
                 ExtensionInfo::LICENSE_WTFPL,
-                "<pre>            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                PRE("            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                     Version 2, December 2004
 
  Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
@@ -494,7 +492,7 @@ SOFTWARE.</pre>"
 
   0. You just DO WHAT THE FUCK YOU WANT TO.
 
-</pre>"
+")
             );
         }
     }
