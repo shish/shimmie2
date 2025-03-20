@@ -263,7 +263,7 @@ final class PostTags extends Extension
 
     private function mass_tag_edit(string $search, string $replace, bool $commit): void
     {
-        global $database, $_tracer;
+        global $database;
 
         $search_set = Tag::explode(strtolower($search), false);
         $replace_set = Tag::explode(strtolower($replace), false);
@@ -288,7 +288,6 @@ final class PostTags extends Extension
 
         $last_id = -1;
         while (true) {
-            $_tracer->begin("Batch starting with $last_id");
             // make sure we don't look at the same images twice.
             // search returns high-ids first, so we want to look
             // at images with lower IDs than the previous.
@@ -316,7 +315,6 @@ final class PostTags extends Extension
                 $database->commit();
                 $database->begin_transaction();
             }
-            $_tracer->end();
         }
     }
 }

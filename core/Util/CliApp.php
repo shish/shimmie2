@@ -39,8 +39,6 @@ final class CliApp extends \Symfony\Component\Console\Application
 
     public function run(?InputInterface $input = null, ?OutputInterface $output = null): int
     {
-        global $tracer_enabled;
-
         $input ??= new ArgvInput();
         $output ??= new ConsoleOutput();
 
@@ -50,7 +48,7 @@ final class CliApp extends \Symfony\Component\Console\Application
             send_event(new UserLoginEvent(Ctx::$user));
         }
         $this->traceFile = $input->getParameterOption(['--trace', '-t'], null);
-        $tracer_enabled = !is_null($this->traceFile);
+        Ctx::$tracer_enabled = !is_null($this->traceFile);
 
         $log_level = LogLevel::WARNING->value;
         if (true === $input->hasParameterOption(['--quiet', '-q'], true)) {

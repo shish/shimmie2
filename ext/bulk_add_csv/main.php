@@ -19,7 +19,7 @@ final class BulkAddCSV extends Extension
         global $page, $user;
         if ($event->page_matches("bulk_add_csv", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
             $csv = $event->req_POST('csv');
-            shm_set_timeout(null);
+            Ctx::$event_bus->set_timeout(null);
             $this->add_csv(new Path($csv));
             $this->theme->display_upload_results($page);
         }
