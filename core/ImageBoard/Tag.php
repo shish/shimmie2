@@ -18,25 +18,23 @@ final class Tag
 
     public static function get_or_create_id(string $tag): int
     {
-        global $database;
-
         // don't cache in unit tests, because the test suite doesn't
         // reset static variables but it does reset the database
         if (!defined("UNITTEST") && array_key_exists($tag, self::$tag_id_cache)) {
             return self::$tag_id_cache[$tag];
         }
 
-        $id = $database->get_one(
+        $id = Ctx::$database->get_one(
             "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
             ["tag" => $tag]
         );
         if (empty($id)) {
             // a new tag
-            $database->execute(
+            Ctx::$database->execute(
                 "INSERT INTO tags(tag) VALUES (:tag)",
                 ["tag" => $tag]
             );
-            $id = $database->get_one(
+            $id = Ctx::$database->get_one(
                 "SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)",
                 ["tag" => $tag]
             );
@@ -60,8 +58,6 @@ final class Tag
      */
     public static function explode(string $tags, bool $tagme = true): array
     {
-        global $database;
-
         $tags = explode(' ', trim($tags));
 
         /* sanitise by removing invisible / dodgy characters */
@@ -84,7 +80,7 @@ final class Tag
                 $tag = substr($tag, 1);
             }
 
-            $newtags = $database->get_one(
+            $newtags = Ctx::$database->get_one(
                 "
 					SELECT newtag
 					FROM aliases
@@ -178,13 +174,12 @@ final class Tag
      */
     public static function sanitize_array(array $tags): array
     {
-        global $page;
         $tag_array = [];
         foreach ($tags as $tag) {
             try {
                 $tag = Tag::sanitize($tag);
             } catch (UserError $e) {
-                $page->flash($e->getMessage());
+                Ctx::$page->flash($e->getMessage());
                 continue;
             }
 
@@ -197,8 +192,7 @@ final class Tag
 
     public static function sqlify(string $term): string
     {
-        global $database;
-        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
+        if (Ctx::$database->get_driver_id() === DatabaseDriverID::SQLITE) {
             $term = str_replace('\\', '\\\\', $term);
         }
         $term = str_replace('_', '\_', $term);

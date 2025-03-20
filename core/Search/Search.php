@@ -25,8 +25,6 @@ final class Search
      */
     private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): \FFSPHP\PDOStatement
     {
-        global $config, $database, $user;
-
         if ($start < 0) {
             $start = 0;
         }
@@ -34,20 +32,21 @@ final class Search
             $limit = 1;
         }
 
-        if ($config->get_int(IndexConfig::BIG_SEARCH) > 0) {
-            $anon_limit = $config->get_int(IndexConfig::BIG_SEARCH);
+        if (Ctx::$config->get_int(IndexConfig::BIG_SEARCH) > 0) {
+            $anon_limit = Ctx::$config->get_int(IndexConfig::BIG_SEARCH);
             $counted_tags = $tags;
             // exclude tags which start with "id>", "id<", or "order:id_"
             // because those are added internally for post/next and post/prev
             $counted_tags = array_filter($counted_tags, fn ($tag) => !\Safe\preg_match("/^id[><]|^order:id_/", $tag));
-            if (!$user->can(IndexPermission::BIG_SEARCH) and count($counted_tags) > $anon_limit) {
+            if (!Ctx::$user->can(IndexPermission::BIG_SEARCH) and count($counted_tags) > $anon_limit) {
                 throw new PermissionDenied("Anonymous users may only search for up to $anon_limit tags at a time");
             }
         }
 
         $params = SearchParameters::from_terms($tags);
         $querylet = self::build_search_querylet($params, $limit, $start);
-        return $database->get_all_iterable($querylet->sql, $querylet->variables);
+        // @phpstan-ignore-next-line
+        return Ctx::$database->get_all_iterable($querylet->sql, $querylet->variables);
     }
 
     /**
@@ -108,8 +107,7 @@ final class Search
 
     public static function count_tag(string $tag): int
     {
-        global $database;
-        return (int)$database->get_one(
+        return (int)Ctx::$database->get_one(
             "SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
             ["tag" => $tag]
         );
@@ -117,8 +115,7 @@ final class Search
 
     private static function count_total_images(): int
     {
-        global $database;
-        return cache_get_or_set("image-count", fn () => (int)$database->get_one("SELECT COUNT(*) FROM images"), 600);
+        return cache_get_or_set("image-count", fn () => (int)Ctx::$database->get_one("SELECT COUNT(*) FROM images"), 600);
     }
 
     /**
@@ -128,12 +125,11 @@ final class Search
      */
     public static function count_images(array $tags = []): int
     {
-        global $cache, $config, $database;
         $tag_count = count($tags);
 
         // speed_hax ignores the fact that extensions can add img_conditions
         // even when there are no tags being searched for
-        $limit_complex = ($config->get_bool(IndexConfig::LIMIT_COMPLEX));
+        $limit_complex = (Ctx::$config->get_bool(IndexConfig::LIMIT_COMPLEX));
         if ($limit_complex && $tag_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();
@@ -149,15 +145,16 @@ final class Search
             // complex query
             // implode(tags) can be too long for memcache, so use the hash of tags as the key
             $cache_key = "image-count:" . md5(Tag::implode($tags));
-            $total = $cache->get($cache_key);
+            $total = Ctx::$cache->get($cache_key);
             if (is_null($total)) {
                 $params = SearchParameters::from_terms($tags);
                 $querylet = self::build_search_querylet($params, count: true);
-                $total = (int)$database->get_one($querylet->sql, $querylet->variables);
+                // @phpstan-ignore-next-line
+                $total = (int)Ctx::$database->get_one($querylet->sql, $querylet->variables);
                 if ($limit_complex && $total > 5000) {
                     // when we have a ton of images, the count
                     // won't change dramatically very often
-                    $cache->set($cache_key, $total, 3600);
+                    Ctx::$cache->set($cache_key, $total, 3600);
                 }
             }
         }
@@ -170,12 +167,11 @@ final class Search
      */
     private static function tag_or_wildcard_to_ids(string $tag): array
     {
-        global $database;
         $sq = "SELECT id FROM tags WHERE LOWER(tag) LIKE LOWER(:tag)";
-        if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
+        if (Ctx::$database->get_driver_id() === DatabaseDriverID::SQLITE) {
             $sq .= "ESCAPE '\\'";
         }
-        return $database->get_col($sq, ["tag" => Tag::sqlify($tag)]);
+        return Ctx::$database->get_col($sq, ["tag" => Tag::sqlify($tag)]);
     }
 
     /**

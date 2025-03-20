@@ -16,30 +16,27 @@ final class SQLTest extends ShimmiePHPUnitTestCase
 {
     public function testConcatPipes(): void
     {
-        global $database;
         self::assertEquals(
             "foobar",
-            $database->get_one("SELECT 'foo' || 'bar'")
+            Ctx::$database->get_one("SELECT 'foo' || 'bar'")
         );
     }
 
     public function testNow(): void
     {
-        global $database;
         self::assertMatchesRegularExpression(
             '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d+)?(\+\d+)?$/',
-            $database->get_one("SELECT now()")
+            Ctx::$database->get_one("SELECT now()")
         );
     }
 
     public function testLog(): void
     {
-        global $database;
-        self::assertEqualsWithDelta(1.0, $database->get_one("SELECT log(10, 10)"), 0.01);
+        self::assertEqualsWithDelta(1.0, Ctx::$database->get_one("SELECT log(10, 10)"), 0.01);
         // Some DBs default to log(10, n) and some to log(E, n), so we can't use this'
         // self::assertEqualsWithDelta(2.3, $database->get_one("SELECT log(10)"), 0.01);
-        self::assertEqualsWithDelta(2.3, $database->get_one("SELECT ln(10)"), 0.01);
-        self::assertEqualsWithDelta(3.0, $database->get_one("SELECT log(2, 8)"), 0.01);
+        self::assertEqualsWithDelta(2.3, Ctx::$database->get_one("SELECT ln(10)"), 0.01);
+        self::assertEqualsWithDelta(3.0, Ctx::$database->get_one("SELECT log(2, 8)"), 0.01);
     }
 
     /**
@@ -61,7 +58,6 @@ final class SQLTest extends ShimmiePHPUnitTestCase
     #[Depends("test_cyrillic_php_lowercase")]
     public function test_cyrillic_database_lowercase(): void
     {
-        global $database;
-        self::assertEquals("советских", $database->get_one("SELECT LOWER('Советских')"), "LOWER");
+        self::assertEquals("советских", Ctx::$database->get_one("SELECT LOWER('Советских')"), "LOWER");
     }
 }
