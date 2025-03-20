@@ -103,7 +103,8 @@ final class ViewPost extends Extension
         global $config;
         $image_info = $config->get_string(ImageConfig::INFO);
         if ($image_info) {
-            $event->add_part(SHM_POST_INFO("Info", $event->image->get_info()), 85);
+            $text = send_event(new ParseLinkTemplateEvent($image_info, $event->image))->text;
+            $event->add_part(SHM_POST_INFO("Info", $text), 85);
         }
     }
 }
