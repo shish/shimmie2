@@ -162,7 +162,7 @@ final class Notes extends Extension
 
         //display form on image event
         $notes = $this->get_notes($event->image->id);
-        $this->theme->display_note_system($page, $event->image->id, $notes, $user->can(NotesPermission::ADMIN), $user->can(NotesPermission::EDIT));
+        $this->theme->display_note_system($event->image->id, $notes, $user->can(NotesPermission::ADMIN), $user->can(NotesPermission::EDIT));
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void

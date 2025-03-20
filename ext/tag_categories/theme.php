@@ -22,8 +22,9 @@ class TagCategoriesTheme extends Themelet
     /**
      * @param array<array{category: string, display_singular: string, display_multiple: string, color: string}> $tc_dict
      */
-    public function show_tag_categories(Page $page, array $tc_dict): void
+    public function show_tag_categories(array $tc_dict): void
     {
+        global $page;
         $tc_block_index = 0;
         $html = [];
 

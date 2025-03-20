@@ -12,8 +12,9 @@ use function MicroHTML\IMG;
 
 class RandomImageTheme extends Themelet
 {
-    public function display_random(Page $page, Image $image): void
+    public function display_random(Image $image): void
     {
+        global $page;
         $page->add_block(new Block("Random Post", $this->build_random_html($image), "left", 8));
     }
 

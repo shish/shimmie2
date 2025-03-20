@@ -16,7 +16,7 @@ class ReplaceFileTheme extends Themelet
     /**
      * Only allows 1 file to be uploaded - for replacing another image file.
      */
-    public function display_replace_page(Page $page, int $image_id): void
+    public function display_replace_page(int $image_id): void
     {
         global $config, $page;
         $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE, "none") !== "none");

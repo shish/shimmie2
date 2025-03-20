@@ -25,9 +25,9 @@ class ReportImageTheme extends Themelet
     /**
      * @param array<Report> $reports
      */
-    public function display_reported_images(Page $page, array $reports): void
+    public function display_reported_images(array $reports): void
     {
-        global $config, $user;
+        global $config, $user, $page;
 
         $tbody = TBODY();
         foreach ($reports as $report) {

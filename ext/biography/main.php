@@ -12,14 +12,14 @@ final class Biography extends Extension
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $page, $user;
+        global $user;
         $duser = $event->display_user;
         $bio = $duser->get_config()->get_string("biography", "");
 
         if ($user->id == $duser->id || $user->can(UserAccountsPermission::EDIT_USER_INFO)) {
-            $this->theme->display_composer($page, $duser, $bio);
+            $this->theme->display_composer($duser, $bio);
         } else {
-            $this->theme->display_biography($page, $bio);
+            $this->theme->display_biography($bio);
         }
     }
 

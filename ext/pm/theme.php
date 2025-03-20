@@ -20,9 +20,9 @@ class PrivMsgTheme extends Themelet
     /**
      * @param PM[] $pms
      */
-    public function display_pms(Page $page, array $pms): void
+    public function display_pms(array $pms): void
     {
-        global $user;
+        global $user, $page;
 
         $tbody = TBODY();
         foreach ($pms as $pm) {
@@ -52,9 +52,9 @@ class PrivMsgTheme extends Themelet
         $page->add_block(new Block("Private Messages", $html, "main", 40, "private-messages"));
     }
 
-    public function display_composer(Page $page, User $from, User $to, string $subject = ""): void
+    public function display_composer(User $from, User $to, string $subject = ""): void
     {
-        global $user;
+        global $user, $page;
         $html = SHM_SIMPLE_FORM(
             make_link("pm/send"),
             INPUT(["type" => "hidden", "name" => "to_id", "value" => $to->id]),
@@ -71,8 +71,9 @@ class PrivMsgTheme extends Themelet
         $page->add_block(new Block("Write a PM", $html, "main", 50));
     }
 
-    public function display_message(Page $page, User $from, User $to, PM $pm): void
+    public function display_message(User $from, User $to, PM $pm): void
     {
+        global $page;
         $page->set_title("Private Message");
         $page->set_heading($pm->subject);
         $this->display_navigation();

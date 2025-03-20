@@ -14,8 +14,9 @@ use function MicroHTML\emptyHTML;
 
 class StatisticsTheme extends Themelet
 {
-    public function display_page(Page $page, int $limit, ?HTMLElement $tag_table, ?HTMLElement $upload_table, ?HTMLElement $comment_table, ?HTMLElement $favorite_table): void
+    public function display_page(int $limit, ?HTMLElement $tag_table, ?HTMLElement $upload_table, ?HTMLElement $comment_table, ?HTMLElement $favorite_table): void
     {
+        global $page;
         $html = emptyHTML(
             $tag_table,
             $upload_table,

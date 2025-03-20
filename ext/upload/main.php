@@ -209,9 +209,9 @@ final class Upload extends Extension
 
         if ($user->can(ImagePermission::CREATE_IMAGE)) {
             if ($this->is_full) {
-                $this->theme->display_full($page);
+                $this->theme->display_full();
             } else {
-                $this->theme->display_block($page);
+                $this->theme->display_block();
             }
         }
 
@@ -219,7 +219,7 @@ final class Upload extends Extension
             if ($this->is_full) {
                 throw new ServerError("Can't upload images: disk nearly full");
             }
-            $this->theme->display_page($page);
+            $this->theme->display_page();
         }
         if ($event->page_matches("upload", method: "POST", permission: ImagePermission::CREATE_IMAGE)) {
             if ($this->is_full) {
@@ -243,7 +243,7 @@ final class Upload extends Extension
                 $results = array_merge($results, $this->try_transload($value, $slot, only_strings($event->POST)));
             }
 
-            $this->theme->display_upload_status($page, $results);
+            $this->theme->display_upload_status($results);
         }
     }
 

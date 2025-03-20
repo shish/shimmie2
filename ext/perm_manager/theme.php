@@ -12,12 +12,12 @@ use function MicroHTML\TR;
 class PermManagerTheme extends Themelet
 {
     /**
-     * @param Page $page
      * @param UserClass[] $classes
      * @param array<string,PermissionMeta> $permissions
      */
-    public function display_user_classes(Page $page, array $classes, array $permissions): void
+    public function display_user_classes(array $classes, array $permissions): void
     {
+        global $page;
         $table = TABLE(["class" => "zebra"]);
 
         $row = TR();

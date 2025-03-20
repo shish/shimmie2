@@ -34,7 +34,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
             make_link(),
             ($page_number >= $total_pages) ? null : make_link('comment/list/'.($page_number + 1))
         ]);
-        $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
+        $this->display_paginator("comment/list", null, $page_number, $total_pages);
 
         // parts for each image
         $position = 10;

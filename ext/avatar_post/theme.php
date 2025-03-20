@@ -10,9 +10,9 @@ use function MicroHTML\{BR,DIV,IMG,LABEL,INPUT};
 
 class AvatarPostTheme extends Themelet
 {
-    public function display_avatar_edit_page(Page $page, int $image_id): void
+    public function display_avatar_edit_page(int $image_id): void
     {
-        global $user;
+        global $user, $page;
         /** @var BuildAvatarEvent $avatar_e */
         $avatar_e = send_event(new BuildAvatarEvent($user));
         $current = $avatar_e->html;

@@ -58,7 +58,7 @@ final class Featured extends Extension
                         return;
                     }
                 }
-                $this->theme->display_featured($page, $image);
+                $this->theme->display_featured($image);
             }
         }
     }

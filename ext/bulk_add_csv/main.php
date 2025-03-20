@@ -16,12 +16,12 @@ final class BulkAddCSV extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $user;
         if ($event->page_matches("bulk_add_csv", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
             $csv = $event->req_POST('csv');
             Ctx::$event_bus->set_timeout(null);
             $this->add_csv(new Path($csv));
-            $this->theme->display_upload_results($page);
+            $this->theme->display_upload_results();
         }
     }
 

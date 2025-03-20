@@ -94,7 +94,6 @@ final class PermManager extends Extension
                 }
             }
             $this->theme->display_user_classes(
-                $page,
                 UserClass::$known_classes,
                 $permissions
             );

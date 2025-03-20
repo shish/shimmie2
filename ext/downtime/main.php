@@ -29,7 +29,7 @@ final class Downtime extends Extension
                     exit;
                 }
             }
-            $this->theme->display_notification($page);
+            $this->theme->display_notification();
         }
     }
 

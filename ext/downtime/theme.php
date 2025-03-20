@@ -22,9 +22,9 @@ class DowntimeTheme extends Themelet
     /**
      * Show the admin that downtime mode is enabled
      */
-    public function display_notification(Page $page): void
+    public function display_notification(): void
     {
-        $page->add_block(new Block(
+        Ctx::$page->add_block(new Block(
             "Downtime",
             SPAN(["style" => "font-size: 1.5rem; text-align: center;"], B("DOWNTIME MODE IS ON!")),
             "left",

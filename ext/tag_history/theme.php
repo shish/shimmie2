@@ -33,8 +33,9 @@ class TagHistoryTheme extends Themelet
     /**
      * @param HistoryEntry[] $history
      */
-    public function display_history_page(Page $page, int $image_id, array $history): void
+    public function display_history_page(int $image_id, array $history): void
     {
+        global $page;
         $page->set_title('Post '.$image_id.' Tag History');
         $page->set_heading('Tag History: '.$image_id);
         $this->display_navigation();
@@ -44,8 +45,9 @@ class TagHistoryTheme extends Themelet
     /**
      * @param HistoryEntry[] $history
      */
-    public function display_global_page(Page $page, array $history, int $page_number): void
+    public function display_global_page(array $history, int $page_number): void
     {
+        global $page;
         $page->set_title("Global Tag History");
         $this->display_navigation([
             ($page_number <= 1) ? null : make_link('tag_history/all/'.($page_number - 1)),

@@ -40,15 +40,15 @@ final class ExtManager extends Extension
             }
         } elseif ($event->page_matches("ext_manager", method: "GET")) {
             $is_admin = $user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST);
-            $this->theme->display_table($page, $this->get_extensions($is_admin), $is_admin);
+            $this->theme->display_table($this->get_extensions($is_admin), $is_admin);
         }
 
         if ($event->page_matches("ext_doc/{ext}")) {
             $ext = $event->get_arg('ext');
             $info = ExtensionInfo::get_all()[$ext];
-            $this->theme->display_doc($page, $info);
+            $this->theme->display_doc($info);
         } elseif ($event->page_matches("ext_doc")) {
-            $this->theme->display_table($page, $this->get_extensions(false), false);
+            $this->theme->display_table($this->get_extensions(false), false);
         }
     }
 

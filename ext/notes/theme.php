@@ -57,8 +57,9 @@ class NotesTheme extends Themelet
     /**
      * @param Note[] $recovered_notes
      */
-    public function display_note_system(Page $page, int $image_id, array $recovered_notes, bool $adminOptions, bool $editOptions): void
+    public function display_note_system(int $image_id, array $recovered_notes, bool $adminOptions, bool $editOptions): void
     {
+        global $page;
         $to_json = [];
         foreach ($recovered_notes as $note) {
             $to_json[] = [
@@ -92,7 +93,7 @@ class NotesTheme extends Themelet
 
         $page->set_title("Notes");
         $page->add_block(new Block("Notes", joinHTML(" ", $thumbs), "main", 20));
-        $this->display_paginator($page, "note/list", null, $pageNumber, $totalPages);
+        $this->display_paginator("note/list", null, $pageNumber, $totalPages);
     }
 
     /**
@@ -106,7 +107,7 @@ class NotesTheme extends Themelet
 
         $page->set_title("Note Requests");
         $page->add_block(new Block("Note Requests", joinHTML(" ", $thumbs), "main", 20));
-        $this->display_paginator($page, "requests/list", null, $pageNumber, $totalPages);
+        $this->display_paginator("requests/list", null, $pageNumber, $totalPages);
     }
 
     /**
@@ -153,7 +154,7 @@ class NotesTheme extends Themelet
 
         $page->set_title("Note Updates");
         $page->add_block(new Block("Note Updates", $this->get_history($histories), "main", 10));
-        $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
+        $this->display_paginator("note/updated", null, $pageNumber, $totalPages);
     }
 
     /**
@@ -165,7 +166,7 @@ class NotesTheme extends Themelet
 
         $page->set_title("Note History");
         $page->add_block(new Block("Note History", $this->get_history($histories), "main", 10));
-        $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
+        $this->display_paginator("note/updated", null, $pageNumber, $totalPages);
     }
 
     /**
@@ -179,7 +180,7 @@ class NotesTheme extends Themelet
         $page->set_heading("Note History #$imageID");
         $page->add_block(new Block("Note History #$imageID", $this->get_history($histories), "main", 10));
 
-        $this->display_paginator($page, "note_history/$imageID", null, $pageNumber, $totalPages);
+        $this->display_paginator("note_history/$imageID", null, $pageNumber, $totalPages);
     }
 
     public function get_help_html(): HTMLElement

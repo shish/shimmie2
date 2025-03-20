@@ -74,7 +74,7 @@ final class Statistics extends Extension
                 $favorite_table = null;
             }
 
-            $this->theme->display_page($page, $limit, $tag_table, $upload_table, $comment_table, $favorite_table);
+            $this->theme->display_page($limit, $tag_table, $upload_table, $comment_table, $favorite_table);
         }
     }
 

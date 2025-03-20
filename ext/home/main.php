@@ -17,7 +17,6 @@ final class Home extends Extension
         global $config, $page;
         if ($event->page_matches("home")) {
             $this->theme->display_page(
-                $page,
                 $config->get_string(SetupConfig::TITLE),
                 $this->get_body()
             );
