@@ -35,10 +35,8 @@ final class UrlTest extends TestCase
     #[DataProvider("niceurl_options")]
     public function test_toString(bool $niceurls): void
     {
-        global $config;
-
         // since this uses path: rather than page:, niceurls should have no effect
-        $config->set_bool(SetupConfig::NICE_URLS, $niceurls);
+        Ctx::$config->set_bool(SetupConfig::NICE_URLS, $niceurls);
         self::assertUrlEquals(
             "/index.php?q=thumb%2F2%2Fthumb.jpg",
             new Url(path: "/index.php", query: ["q" => "thumb/2/thumb.jpg"]),
@@ -47,15 +45,13 @@ final class UrlTest extends TestCase
 
     public function test_query_joiner(): void
     {
-        global $config;
-
-        $config->set_bool(SetupConfig::NICE_URLS, true);
+        Ctx::$config->set_bool(SetupConfig::NICE_URLS, true);
         self::assertUrlEquals(
             "/test/foo?a=1&b=2",
             make_link("foo", ["a" => "1", "b" => "2"])
         );
 
-        $config->set_bool(SetupConfig::NICE_URLS, false);
+        Ctx::$config->set_bool(SetupConfig::NICE_URLS, false);
         self::assertUrlEquals(
             "/test/index.php?q=foo&a=1&b=2",
             make_link("foo", ["a" => "1", "b" => "2"])
@@ -116,8 +112,7 @@ final class UrlTest extends TestCase
             return Tag::explode($pre->get_arg('search'));
         };
 
-        global $config;
-        $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
+        Ctx::$config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
         self::assertEquals(
             ["bar", "foo"],
@@ -136,8 +131,7 @@ final class UrlTest extends TestCase
     #[DataProvider("niceurl_options")]
     public function test_search_link(bool $nice_urls): void
     {
-        global $config;
-        $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
+        Ctx::$config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
         self::assertUrlEquals(
             $nice_urls ? "/test/post/list/bar%20foo/1" : "/test/index.php?q=post%2Flist%2Fbar%2520foo%2F1",
@@ -164,8 +158,6 @@ final class UrlTest extends TestCase
 
     public function test_arg_encode(): void
     {
-        global $config;
-
         self::assertUrlEquals(
             "/test/foo?api_key=Something+%2F%2F+not-friendly",
             make_link("foo", ["api_key" => "Something // not-friendly"])
@@ -174,8 +166,6 @@ final class UrlTest extends TestCase
 
     public function test_arg_decode(): void
     {
-        global $config;
-
         self::assertEquals(
             ["api_key" => "Something // not-friendly"],
             Url::parse("/test/foo?api_key=Something+%2F%2F+not-friendly")->getQueryArray()
@@ -222,8 +212,6 @@ final class UrlTest extends TestCase
 
     public function test_withModifiedQuery(): void
     {
-        global $config;
-
         // add an arg
         self::assertUrlEquals(
             "/foo/bar?modified=true",
@@ -251,8 +239,7 @@ final class UrlTest extends TestCase
     #[DataProvider("niceurl_options")]
     public function test_make_link(bool $nice_urls): void
     {
-        global $config;
-        $config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
+        Ctx::$config->set_bool(SetupConfig::NICE_URLS, $nice_urls);
 
         // basic
         self::assertUrlEquals(
@@ -294,8 +281,7 @@ final class UrlTest extends TestCase
 
     public function tearDown(): void
     {
-        global $config;
-        $config->set_bool(SetupConfig::NICE_URLS, true);
+        Ctx::$config->set_bool(SetupConfig::NICE_URLS, true);
         parent::tearDown();
     }
 }

@@ -24,8 +24,6 @@ final class SearchParameters
      */
     public static function from_terms(array $terms): SearchParameters
     {
-        global $config;
-
         $tag_conditions = [];
         $img_conditions = [];
         $order = null;
@@ -38,7 +36,7 @@ final class SearchParameters
             $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
         }
 
-        $order ??= "images.".$config->get_string(IndexConfig::ORDER);
+        $order ??= "images.".Ctx::$config->get_string(IndexConfig::ORDER);
 
         return new SearchParameters($tag_conditions, $img_conditions, $order);
     }

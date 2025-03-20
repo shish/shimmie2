@@ -167,12 +167,11 @@ final class Image implements \ArrayAccess
     #[Query(name: "post")]
     public static function by_id(int $post_id): ?Image
     {
-        global $database;
         if ($post_id > 2 ** 32) {
             // for some reason bots query huge numbers and pollute the DB error logs...
             return null;
         }
-        $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id" => $post_id]);
+        $row = Ctx::$database->get_row("SELECT * FROM images WHERE images.id=:id", ["id" => $post_id]);
         return ($row ? new Image($row) : null);
     }
 
@@ -190,9 +189,8 @@ final class Image implements \ArrayAccess
      */
     public static function by_hash(string $hash): ?Image
     {
-        global $database;
         $hash = strtolower($hash);
-        $row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", ["hash" => $hash]);
+        $row = Ctx::$database->get_row("SELECT images.* FROM images WHERE hash=:hash", ["hash" => $hash]);
         return ($row ? new Image($row) : null);
     }
 
@@ -239,8 +237,6 @@ final class Image implements \ArrayAccess
      */
     public function get_next(array $tags = [], bool $next = true): ?Image
     {
-        global $database;
-
         if ($next) {
             $gtlt = "<";
             $dir = "DESC";
@@ -279,9 +275,8 @@ final class Image implements \ArrayAccess
      */
     public function set_owner(User $owner): void
     {
-        global $database;
         if ($owner->id !== $this->owner_id) {
-            $database->execute("
+            Ctx::$database->execute("
                 UPDATE images
                 SET owner_id=:owner_id
                 WHERE id=:id
@@ -292,8 +287,6 @@ final class Image implements \ArrayAccess
 
     public function save_to_db(): void
     {
-        global $database, $user;
-
         $props_to_save = [
             "filename" => substr($this->filename, 0, 255),
             "filesize" => $this->filesize,
@@ -311,22 +304,22 @@ final class Image implements \ArrayAccess
             "length" => $this->length
         ];
         if (!$this->in_db) {
-            $props_to_save["owner_id"] = $user->id;
+            $props_to_save["owner_id"] = Ctx::$user->id;
             $props_to_save["owner_ip"] = Network::get_real_ip();
             $props_to_save["posted"] = date('Y-m-d H:i:s', time());
 
             $props_sql = implode(", ", array_keys($props_to_save));
             $vals_sql = implode(", ", array_map(fn ($prop) => ":$prop", array_keys($props_to_save)));
 
-            $database->execute(
+            Ctx::$database->execute(
                 "INSERT INTO images($props_sql) VALUES ($vals_sql)",
                 $props_to_save,
             );
-            $this->id = $database->get_last_insert_id('images_id_seq');
+            $this->id = Ctx::$database->get_last_insert_id('images_id_seq');
             $this->in_db = true;
         } else {
             $props_sql = implode(", ", array_map(fn ($prop) => "$prop = :$prop", array_keys($props_to_save)));
-            $database->execute(
+            Ctx::$database->execute(
                 "UPDATE images SET $props_sql WHERE id = :id",
                 array_merge(
                     $props_to_save,
@@ -341,7 +334,7 @@ final class Image implements \ArrayAccess
         $props_sql = "UPDATE images SET ";
         $props_sql .= implode(", ", array_map(fn ($prop) => "$prop = :$prop", array_keys($this->dynamic_props)));
         $props_sql .= " WHERE id = :id";
-        $database->execute($props_sql, array_merge($this->dynamic_props, ["id" => $this->id]));
+        Ctx::$database->execute($props_sql, array_merge($this->dynamic_props, ["id" => $this->id]));
         */
     }
 
@@ -353,10 +346,9 @@ final class Image implements \ArrayAccess
     #[Field(name: "tags", type: "[string!]!")]
     public function get_tag_array(): array
     {
-        global $database;
         if (!isset($this->tag_array)) {
             /** @var list<tag-string> */
-            $tarr = $database->get_col("
+            $tarr = Ctx::$database->get_col("
                 SELECT tag
                 FROM image_tags
                 JOIN tags ON image_tags.tag_id = tags.id
@@ -401,8 +393,7 @@ final class Image implements \ArrayAccess
     #[Field(name: "thumb_link")]
     public function get_thumb_link(): Url
     {
-        global $config;
-        $mime = $config->get_string(ThumbnailConfig::MIME);
+        $mime = Ctx::$config->req_string(ThumbnailConfig::MIME);
         $ext = FileExtension::get_for_mime($mime);
         return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
     }
@@ -412,16 +403,14 @@ final class Image implements \ArrayAccess
      */
     private function get_link(string $template, string $nice, string $plain): Url
     {
-        global $config;
-
-        $image_link = $config->get_string($template);
+        $image_link = Ctx::$config->get_string($template);
 
         if (!empty($image_link)) {
             if (!str_contains($image_link, "://") && !str_starts_with($image_link, "/")) {
                 $image_link = make_link($image_link);
             }
             $chosen = $image_link;
-        } elseif ($config->get_bool(SetupConfig::NICE_URLS, false)) {
+        } elseif (Ctx::$config->get_bool(SetupConfig::NICE_URLS, false)) {
             $chosen = make_link($nice);
         } else {
             $chosen = make_link($plain);
@@ -442,8 +431,7 @@ final class Image implements \ArrayAccess
     #[Field(name: "tooltip")]
     public function get_tooltip(): string
     {
-        global $config;
-        return send_event(new ParseLinkTemplateEvent($config->get_string(ThumbnailConfig::TIP), $this))->text;
+        return send_event(new ParseLinkTemplateEvent(Ctx::$config->req_string(ThumbnailConfig::TIP), $this))->text;
     }
 
     /**
@@ -524,13 +512,12 @@ final class Image implements \ArrayAccess
      */
     public function set_source(string $new_source): void
     {
-        global $database;
         $old_source = $this->source;
         if (empty($new_source)) {
             $new_source = null;
         }
         if ($new_source !== $old_source) {
-            $database->execute("UPDATE images SET source=:source WHERE id=:id", ["source" => $new_source, "id" => $this->id]);
+            Ctx::$database->execute("UPDATE images SET source=:source WHERE id=:id", ["source" => $new_source, "id" => $this->id]);
             Log::info("core_image", "Source for Post #{$this->id} set to: $new_source (was $old_source)");
         }
     }
@@ -545,9 +532,8 @@ final class Image implements \ArrayAccess
 
     public function set_locked(bool $locked): void
     {
-        global $database;
         if ($locked !== $this->locked) {
-            $database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn" => $locked, "id" => $this->id]);
+            Ctx::$database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn" => $locked, "id" => $this->id]);
             $s = $locked ? "locked" : "unlocked";
             Log::info("core_image", "Setting Post #{$this->id} to $s");
         }
@@ -560,8 +546,7 @@ final class Image implements \ArrayAccess
      */
     public function delete_tags_from_image(): void
     {
-        global $database;
-        $database->execute("
+        Ctx::$database->execute("
             UPDATE tags
             SET count = count - 1
             WHERE id IN (
@@ -570,7 +555,7 @@ final class Image implements \ArrayAccess
                 WHERE image_id = :id
             )
         ", ["id" => $this->id]);
-        $database->execute("
+        Ctx::$database->execute("
             DELETE
             FROM image_tags
             WHERE image_id=:id
@@ -584,8 +569,6 @@ final class Image implements \ArrayAccess
      */
     public function set_tags(array $unfiltered_tags): void
     {
-        global $cache, $database, $page;
-
         $tags = array_unique($unfiltered_tags);
 
         foreach ($tags as $tag) {
@@ -610,8 +593,9 @@ final class Image implements \ArrayAccess
             // insert each new tags
             $ids = array_map(fn ($tag) => Tag::get_or_create_id($tag), $tags);
             $values = implode(", ", array_map(fn ($id) => "({$this->id}, $id)", $ids));
-            $database->execute("INSERT INTO image_tags(image_id, tag_id) VALUES $values");
-            $database->execute("
+            // @phpstan-ignore-next-line
+            Ctx::$database->execute("INSERT INTO image_tags(image_id, tag_id) VALUES $values");
+            Ctx::$database->execute("
                 UPDATE tags
                 SET count = count + 1
                 WHERE id IN (
@@ -622,7 +606,7 @@ final class Image implements \ArrayAccess
             ", ["id" => $this->id]);
 
             Log::info("core_image", "Tags for Post #{$this->id} set to: ".Tag::implode($tags));
-            $cache->delete("image-{$this->id}-tags");
+            Ctx::$cache->delete("image-{$this->id}-tags");
         }
     }
 
@@ -631,9 +615,8 @@ final class Image implements \ArrayAccess
      */
     public function delete(): void
     {
-        global $database;
         $this->delete_tags_from_image();
-        $database->execute("DELETE FROM images WHERE id=:id", ["id" => $this->id]);
+        Ctx::$database->execute("DELETE FROM images WHERE id=:id", ["id" => $this->id]);
         Log::info("core_image", 'Deleted Post #'.$this->id.' ('.$this->hash.')');
         $this->remove_image_only(quiet: true);
     }
