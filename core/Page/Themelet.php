@@ -11,24 +11,45 @@ use MicroHTML\HTMLElement;
  */
 class Themelet
 {
-    private static Themelet $common;
+    private static CommonElementsTheme $common;
 
     /**
-     * @param class-string $class
+     * @template T of Page|Themelet
+     * @param class-string<T> $class
+     * @return T|null
+     */
+    public static function get_theme_class(string $class): ?object
+    {
+        $class = str_replace("Shimmie2\\", "", $class);
+        $theme = ucfirst(get_theme());
+        $options = [
+            "\\Shimmie2\\$theme$class",
+            "\\Shimmie2\\Custom$class",
+            "\\Shimmie2\\$class",
+        ];
+        foreach ($options as $option) {
+            if (class_exists($option)) {
+                // @phpstan-ignore-next-line
+                return new $option();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param class-string<Extension> $class
      */
     public static function get_for_extension_class(string $class): Themelet
     {
-        /** @var class-string $theme_class */
-        $theme_class = str_replace("Shimmie2\\", "", $class) . "Theme";
-        $cls = get_theme_class($theme_class) ?? new Themelet();
-        assert(is_a($cls, Themelet::class));
-        return $cls;
+        /** @var class-string<Themelet> $theme_class */
+        $theme_class = $class . "Theme";
+        return static::get_theme_class($theme_class) ?? new Themelet();
     }
 
-    private function get_common(): Themelet
+    private function get_common(): CommonElementsTheme
     {
         if (!isset(self::$common)) {
-            self::$common = Themelet::get_for_extension_class(CommonElements::class);
+            self::$common = static::get_theme_class(CommonElementsTheme::class) ?? new CommonElementsTheme();
         }
         return self::$common;
     }
@@ -38,9 +59,7 @@ class Themelet
      */
     public function display_navigation(array $links = [], ?HTMLElement $extra = null): void
     {
-        $c = self::get_common();
-        assert(is_a($c, CommonElementsTheme::class));
-        $c->display_navigation($links, $extra);
+        self::get_common()->display_navigation($links, $extra);
     }
 
     public function build_tag(
@@ -49,16 +68,12 @@ class Themelet
         bool $show_category = true,
         ?string $style = null,
     ): HTMLElement {
-        $c = self::get_common();
-        assert(is_a($c, CommonElementsTheme::class));
-        return $c->build_tag($tag, $show_underscores, $show_category, $style);
+        return self::get_common()->build_tag($tag, $show_underscores, $show_category, $style);
     }
 
     public function build_thumb(Image $image): HTMLElement
     {
-        $c = self::get_common();
-        assert(is_a($c, CommonElementsTheme::class));
-        return $c->build_thumb($image);
+        return self::get_common()->build_thumb($image);
     }
 
     /**
@@ -66,15 +81,11 @@ class Themelet
      */
     public function display_paginator(string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
-        $c = self::get_common();
-        assert(is_a($c, CommonElementsTheme::class));
-        $c->display_paginator($base, $query, $page_number, $total_pages, $show_random);
+        self::get_common()->display_paginator($base, $query, $page_number, $total_pages, $show_random);
     }
 
     public function config_group_to_block(Config $config, BaseConfigGroup $group): ?Block
     {
-        $c = self::get_common();
-        assert(is_a($c, CommonElementsTheme::class));
-        return $c->config_group_to_block($config, $group);
+        return self::get_common()->config_group_to_block($config, $group);
     }
 }
