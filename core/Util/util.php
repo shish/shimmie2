@@ -19,30 +19,6 @@ function get_theme(): string
     return $theme;
 }
 
-/**
- * @template T of object
- * @param class-string<T> $class
- * @return T
- */
-function get_theme_class(string $class): ?object
-{
-    $class = str_replace("Shimmie2\\", "", $class);
-    $theme = ucfirst(get_theme());
-    $options = [
-        "\\Shimmie2\\$theme$class",
-        "\\Shimmie2\\Custom$class",
-        "\\Shimmie2\\$class",
-    ];
-    foreach ($options as $option) {
-        if (class_exists($option)) {
-            // @phpstan-ignore-next-line
-            return new $option();
-        }
-    }
-    return null;
-}
-
-
 function contact_link(?string $contact = null): ?string
 {
     $text = $contact ?? Ctx::$config->get_string(SetupConfig::CONTACT_LINK);

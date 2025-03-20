@@ -49,7 +49,7 @@ $config = Ctx::setConfig(new DatabaseConfig($database, defaults: ConfigGroup::ge
 // theme files depend on $config (theme name is a config value)
 _load_theme_files();
 // $page depends on theme files (to load theme-specific Page class)
-$page = Ctx::setPage(get_theme_class(Page::class) ?? new Page());
+$page = Ctx::setPage(Themelet::get_theme_class(Page::class) ?? new Page());
 // $event_bus depends on ext/*/main.php being loaded
 Ctx::setEventBus(new EventBus());
 Ctx::$tracer->end();
