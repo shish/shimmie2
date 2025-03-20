@@ -19,15 +19,13 @@ final readonly class Captcha
 {
     public static function get_html(): ?HTMLElement
     {
-        global $config, $user;
-
         if (SysConfig::getDebug() && Network::ip_in_range(Network::get_real_ip(), "127.0.0.0/8")) {
             return null;
         }
 
         $captcha = null;
-        if ($user->is_anonymous() && $config->get_bool(CommentConfig::CAPTCHA)) {
-            $r_publickey = $config->get_string(CommentConfig::RECAPTCHA_PUBKEY);
+        if (Ctx::$user->is_anonymous() && Ctx::$config->get_bool(CommentConfig::CAPTCHA)) {
+            $r_publickey = Ctx::$config->get_string(CommentConfig::RECAPTCHA_PUBKEY);
             if (!empty($r_publickey)) {
                 $captcha = emptyHTML(
                     DIV(["class" => "g-recaptcha", "data-sitekey" => $r_publickey]),
@@ -43,14 +41,12 @@ final readonly class Captcha
 
     public static function check(): bool
     {
-        global $config, $user;
-
         if (SysConfig::getDebug() && Network::ip_in_range(Network::get_real_ip(), "127.0.0.0/8")) {
             return true;
         }
 
-        if ($user->is_anonymous() && $config->get_bool(CommentConfig::CAPTCHA)) {
-            $r_privatekey = $config->get_string(CommentConfig::RECAPTCHA_PRIVKEY);
+        if (Ctx::$user->is_anonymous() && Ctx::$config->get_bool(CommentConfig::CAPTCHA)) {
+            $r_privatekey = Ctx::$config->get_string(CommentConfig::RECAPTCHA_PRIVKEY);
             if (!empty($r_privatekey)) {
                 $recaptcha = new ReCaptcha($r_privatekey);
                 $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", Network::get_real_ip());

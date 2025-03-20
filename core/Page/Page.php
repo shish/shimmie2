@@ -360,10 +360,8 @@ class Page
      */
     public function add_auto_html_headers(): void
     {
-        global $config;
-
         $data_href = (string)Url::base();
-        $theme_name = $config->get_string(SetupConfig::THEME, 'default');
+        $theme_name = get_theme();
 
         # static handler will map these to themes/foo/static/bar.ico or ext/static_files/static/bar.ico
         $this->add_html_header(LINK([
@@ -564,10 +562,9 @@ class Page
      */
     public function body_attrs(): array
     {
-        global $user;
         return [
             "class" => "layout-{$this->layout}",
-            "data-userclass" => $user->class->name,
+            "data-userclass" => Ctx::$user->class->name,
             "data-base-href" => (string)Url::base(),
             "data-base-link" => (string)make_link(""),
         ];

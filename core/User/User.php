@@ -13,7 +13,7 @@ use GQLA\Query;
  *
  * An object representing a row in the "users" table.
  *
- * The currently logged in user will always be accessible via the global variable $user.
+ * The currently logged in user will always be accessible via Ctx::$user.
  */
 #[Type(name: "User")]
 final class User
@@ -58,10 +58,9 @@ final class User
 
     public function get_config(): Config
     {
-        global $database;
         if (is_null($this->config)) {
             $this->config = new DatabaseConfig(
-                $database,
+                Ctx::$database,
                 "user_config",
                 "user_id",
                 "{$this->id}",
@@ -74,8 +73,7 @@ final class User
     #[Query]
     public static function me(): User
     {
-        global $user;
-        return $user;
+        return Ctx::$user;
     }
 
     #[Field(name: "user_id")]
@@ -92,8 +90,7 @@ final class User
 
     public static function by_session(string $name, string $session): ?User
     {
-        global $cache, $config, $database;
-        $user = $cache->get("user-session-obj:$name-$session");
+        $user = Ctx::$cache->get("user-session-obj:$name-$session");
         if (is_null($user)) {
             try {
                 $user_by_name = User::by_name($name);
@@ -104,27 +101,26 @@ final class User
                 $user = $user_by_name;
             }
             // For 2.12, check old session IDs and convert to new IDs
-            if (md5($user_by_name->passhash . Network::get_session_ip($config)) === $session) {
+            if (md5($user_by_name->passhash . Network::get_session_ip(Ctx::$config)) === $session) {
                 $user = $user_by_name;
                 $user->set_login_cookie();
             }
-            $cache->set("user-session-obj:$name-$session", $user, 600);
+            Ctx::$cache->set("user-session-obj:$name-$session", $user, 600);
         }
         return $user;
     }
 
     public static function by_id(int $id): User
     {
-        global $cache, $database;
         if ($id === 1) {
-            $cached = $cache->get('user-id:'.$id);
+            $cached = Ctx::$cache->get('user-id:'.$id);
             if (!is_null($cached)) {
                 return new User($cached);
             }
         }
-        $row = $database->get_row("SELECT * FROM users WHERE id = :id", ["id" => $id]);
+        $row = Ctx::$database->get_row("SELECT * FROM users WHERE id = :id", ["id" => $id]);
         if ($id === 1) {
-            $cache->set('user-id:'.$id, $row, 600);
+            Ctx::$cache->set('user-id:'.$id, $row, 600);
         }
         if (is_null($row)) {
             throw new UserNotFound("Can't find any user with ID $id");
@@ -150,8 +146,7 @@ final class User
     #[Query(name: "user")]
     public static function by_name(string $name): User
     {
-        global $database;
-        $row = $database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name" => $name]);
+        $row = Ctx::$database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name" => $name]);
         if (is_null($row)) {
             throw new UserNotFound("Can't find any user named $name");
         } else {
@@ -203,20 +198,17 @@ final class User
 
     public function is_anonymous(): bool
     {
-        global $config;
-        return ($this->id === $config->get_int(UserAccountsConfig::ANON_ID));
+        return ($this->id === Ctx::$config->get_int(UserAccountsConfig::ANON_ID));
     }
 
     public function set_class(string $class): void
     {
-        global $database;
-        $database->execute("UPDATE users SET class=:class WHERE id=:id", ["class" => $class, "id" => $this->id]);
+        Ctx::$database->execute("UPDATE users SET class=:class WHERE id=:id", ["class" => $class, "id" => $this->id]);
         Log::info("core-user", 'Set class for '.$this->name.' to '.$class);
     }
 
     public function set_name(string $name): void
     {
-        global $database;
         try {
             User::by_name($name);
             throw new InvalidInput("Desired username is already in use");
@@ -225,23 +217,21 @@ final class User
         }
         $old_name = $this->name;
         $this->name = $name;
-        $database->execute("UPDATE users SET name=:name WHERE id=:id", ["name" => $this->name, "id" => $this->id]);
+        Ctx::$database->execute("UPDATE users SET name=:name WHERE id=:id", ["name" => $this->name, "id" => $this->id]);
         Log::info("core-user", "Changed username for {$old_name} to {$this->name}");
     }
 
     public function set_password(string $password): void
     {
-        global $database;
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $this->passhash = $hash;
-        $database->execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash" => $this->passhash, "id" => $this->id]);
+        Ctx::$database->execute("UPDATE users SET pass=:hash WHERE id=:id", ["hash" => $this->passhash, "id" => $this->id]);
         Log::info("core-user", 'Set password for '.$this->name);
     }
 
     public function set_email(string $address): void
     {
-        global $database;
-        $database->execute("UPDATE users SET email=:email WHERE id=:id", ["email" => $address, "id" => $this->id]);
+        Ctx::$database->execute("UPDATE users SET email=:email WHERE id=:id", ["email" => $address, "id" => $this->id]);
         Log::info("core-user", 'Set email for '.$this->name);
     }
 
@@ -256,31 +246,27 @@ final class User
      */
     public function get_auth_token(): string
     {
-        global $config;
-        return hash("sha3-256", $this->passhash . Network::get_session_ip($config) . SysConfig::getSecret());
+        return hash("sha3-256", $this->passhash . Network::get_session_ip(Ctx::$config) . SysConfig::getSecret());
     }
 
 
     public function get_session_id(): string
     {
-        global $config;
-        return hash("sha3-256", $this->passhash . Network::get_session_ip($config) . SysConfig::getSecret());
+        return hash("sha3-256", $this->passhash . Network::get_session_ip(Ctx::$config) . SysConfig::getSecret());
     }
 
     public function set_login_cookie(): void
     {
-        global $config, $page;
-
-        $page->add_cookie(
+        Ctx::$page->add_cookie(
             "user",
             $this->name,
             time() + 60 * 60 * 24 * 365,
             '/'
         );
-        $page->add_cookie(
+        Ctx::$page->add_cookie(
             "session",
             $this->get_session_id(),
-            time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY),
+            time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY),
             '/'
         );
     }

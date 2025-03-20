@@ -50,9 +50,8 @@ abstract class ExtensionInfo extends Enablable
 
     public function get_support_info(): string
     {
-        global $database;
         $support_info  = "";
-        if (!empty($this->db_support) && !in_array($database->get_driver_id(), $this->db_support)) {
+        if (!empty($this->db_support) && !in_array(Ctx::$database->get_driver_id(), $this->db_support)) {
             $support_info .= "Database not supported. ";
         }
         if (!empty($this->conflicts)) {

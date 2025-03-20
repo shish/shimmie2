@@ -9,13 +9,18 @@ use MicroHTML\HTMLElement;
 /**
  * A collection of common functions for theme parts
  */
-class Themelet
+class Themelet extends Ctx
 {
     private static Themelet $common;
 
+    /**
+     * @param class-string $class
+     */
     public static function get_for_extension_class(string $class): Themelet
     {
-        $cls = get_theme_class(str_replace("Shimmie2\\", "", $class) . "Theme") ?? new Themelet();
+        /** @var class-string $theme_class */
+        $theme_class = str_replace("Shimmie2\\", "", $class) . "Theme";
+        $cls = get_theme_class($theme_class) ?? new Themelet();
         assert(is_a($cls, Themelet::class));
         return $cls;
     }
@@ -23,7 +28,7 @@ class Themelet
     private function get_common(): Themelet
     {
         if (!isset(self::$common)) {
-            self::$common = Themelet::get_for_extension_class("CommonElements");
+            self::$common = Themelet::get_for_extension_class(CommonElements::class);
         }
         return self::$common;
     }

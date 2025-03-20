@@ -28,8 +28,6 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDataUpload(DataUploadEvent $event): void
     {
-        global $config;
-
         if ($this->supported_mime($event->mime)) {
             if (!$this->check_contents($event->tmpname)) {
                 // We DO support this extension - but the file looks corrupt
@@ -38,7 +36,7 @@ abstract class DataHandlerExtension extends Extension
 
             $existing = Image::by_hash($event->tmpname->md5());
             if (!is_null($existing)) {
-                if ($config->get_string(UploadConfig::COLLISION_HANDLER) === 'merge') {
+                if (Ctx::$config->get_string(UploadConfig::COLLISION_HANDLER) === 'merge') {
                     // Right now tags are the only thing that get merged, so
                     // we can just send a TagSetEvent - in the future we might
                     // want a dedicated MergeEvent?
@@ -110,11 +108,10 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $config, $page;
         if ($this->supported_mime($event->image->get_mime())) {
             // @phpstan-ignore-next-line
             $this->theme->display_image($event->image);
-            if ($config->get_bool(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
+            if (Ctx::$config->get_bool(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
                 $this->theme->display_metadata($event->image);
             }
         }

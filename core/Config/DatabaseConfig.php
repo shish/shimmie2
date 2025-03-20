@@ -29,8 +29,6 @@ final class DatabaseConfig extends Config
         private ?string $sub_value = null,
         array $defaults = [],
     ) {
-        global $cache;
-
         $this->cache_name = empty($sub_value) ? "config" : "config_{$sub_column}_{$sub_value}";
         $this->values = array_merge(
             $defaults,
@@ -67,8 +65,6 @@ final class DatabaseConfig extends Config
 
     protected function save(string $name): void
     {
-        global $cache;
-
         $query = "DELETE FROM {$this->table_name} WHERE name = :name";
         $args = ["name" => $name];
         $cols = ["name","value"];
@@ -94,7 +90,7 @@ final class DatabaseConfig extends Config
 
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here
-        $cache->set($this->cache_name, $this->values);
+        Ctx::$cache->set($this->cache_name, $this->values);
         $this->database->notify($this->cache_name);
     }
 }
