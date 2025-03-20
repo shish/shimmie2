@@ -32,14 +32,14 @@ final class EventBus
 
     public function __construct()
     {
-        global $config, $_tracer;
+        global $_tracer;
 
         $_tracer->begin("Load Event Listeners");
 
         $ver = \Safe\preg_replace("/[^a-zA-Z0-9\.]/", "_", SysConfig::getVersion());
         $key = md5(Extension::get_enabled_extensions_as_string());
 
-        $speed_hax = ($config->get_bool(SetupConfig::CACHE_EVENT_LISTENERS));
+        $speed_hax = (Ctx::$config->get_bool(SetupConfig::CACHE_EVENT_LISTENERS));
         $cache_path = Filesystem::data_path("cache/event_listeners/el.$ver.$key.php");
         if ($speed_hax && $cache_path->exists()) {
             $this->event_listeners = require_once($cache_path);

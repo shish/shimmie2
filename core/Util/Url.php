@@ -145,7 +145,6 @@ final readonly class Url
 
     public function getPath(): string
     {
-        global $config;
         assert(is_null($this->path) || is_null($this->page));
         if ($this->path !== null) {
             assert(str_starts_with($this->path, "/"));
@@ -159,7 +158,7 @@ final readonly class Url
              * "/v2/index.php?q=foo/bar" (uglyurls)
              */
             $install_dir = (string)Url::base();
-            if ($config->get_bool(SetupConfig::NICE_URLS, false)) {
+            if (Ctx::$config->get_bool(SetupConfig::NICE_URLS, false)) {
                 $path = "$install_dir/{$this->page}";
             } else {
                 $path = "$install_dir/index.php";
@@ -183,8 +182,6 @@ final readonly class Url
     #[Field(name: "url")]
     public function __toString(): string
     {
-        global $config;
-
         $scheme   = !is_null($this->scheme) ? $this->scheme . '://' : '';
         $host     = $this->host ?? '';
         $port     = !is_null($this->port) ? ':' . $this->port : '';
@@ -194,7 +191,7 @@ final readonly class Url
         $path     = $this->getPath();
 
         $query = $this->query;
-        if (!$config->get_bool(SetupConfig::NICE_URLS) && $this->page !== null) {
+        if (!Ctx::$config->get_bool(SetupConfig::NICE_URLS) && $this->page !== null) {
             //$query["q"] = $this->page;
             $query = array_merge(["q" => $this->page], $query);
         }

@@ -135,8 +135,7 @@ final class UserPage extends Extension
 
     public function onUserLogin(UserLoginEvent $event): void
     {
-        global $user;
-        $user = $event->user;
+        Ctx::setUser($event->user);
     }
 
     public function onPageRequest(PageRequestEvent $event): void

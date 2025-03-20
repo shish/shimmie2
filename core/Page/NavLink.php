@@ -21,8 +21,7 @@ final class NavLink
         public readonly int $order = 50,
         ?string $_query = null,
     ) {
-        global $config;
-        $query = $_query ?: _get_query() ?: $config->get_string(SetupConfig::FRONT_PAGE);
+        $query = $_query ?: _get_query() ?: Ctx::$config->req_string(SetupConfig::FRONT_PAGE);
         $active = false;
         if ($query === $link->getPage()) {
             $active = true;

@@ -31,12 +31,11 @@ function SHM_DATE(string $date, bool $html = true): HTMLElement
 
 function SHM_IP(string $ip, string $ban_reason): ?HTMLElement
 {
-    global $user;
-    if (!$user->can(IPBanPermission::VIEW_IP)) {
+    if (!Ctx::$user->can(IPBanPermission::VIEW_IP)) {
         return null;
     }
     $html = emptyHTML($ip);
-    if ($user->can(IPBanPermission::BAN_IP)) {
+    if (Ctx::$user->can(IPBanPermission::BAN_IP)) {
         $html->appendChild(", ");
         $html->appendChild(
             A([
@@ -53,8 +52,6 @@ function SHM_IP(string $ip, string $ban_reason): ?HTMLElement
  */
 function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string $onsubmit = "", string $name = "", string $method = "POST", array $children = []): HTMLElement
 {
-    global $user;
-
     $attrs = [
         "action" => $action,
         "method" => $method,
@@ -76,7 +73,7 @@ function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string 
     return FORM(
         $attrs,
         $method === "GET" ? INPUT(["type" => "hidden", "name" => "q", "value" => $action->getPath()]) : null,
-        INPUT(["type" => "hidden", "name" => "auth_token", "value" => $user->get_auth_token()]),
+        INPUT(["type" => "hidden", "name" => "auth_token", "value" => Ctx::$user->get_auth_token()]),
         ...$children,
     );
 }

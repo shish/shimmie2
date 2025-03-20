@@ -28,8 +28,6 @@ final class TagUsage
     #[Query(name: "tags", type: '[TagUsage!]!')]
     public static function tags(string $search, int $limit = 10): array
     {
-        global $cache, $database;
-
         $search = strtolower($search);
         if (
             $search === '' ||
@@ -53,7 +51,7 @@ final class TagUsage
 
         $res = cache_get_or_set(
             $cache_key,
-            fn () => $database->get_pairs(
+            fn () => Ctx::$database->get_pairs(
                 "
                 SELECT tag, count
                 FROM tags

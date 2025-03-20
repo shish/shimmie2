@@ -15,7 +15,6 @@ final class Log
     */
     private static function msg(string $section, LogLevel $priority, string $message, ?string $flash = null): void
     {
-        global $page;
         send_event(new LogEvent($section, $priority->value, $message));
 
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
@@ -25,7 +24,7 @@ final class Log
             }
         }
         if (!is_null($flash)) {
-            $page->flash($flash);
+            Ctx::$page->flash($flash);
         }
     }
 

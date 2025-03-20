@@ -8,7 +8,6 @@ final class DatabaseTest extends ShimmiePHPUnitTestCase
 {
     public function testCountDatabase(): void
     {
-        global $database;
-        self::assertGreaterThan(0, $database->count_tables());
+        self::assertGreaterThan(0, Ctx::$database->count_tables());
     }
 }

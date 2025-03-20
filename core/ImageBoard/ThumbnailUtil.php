@@ -18,9 +18,10 @@ final class ThumbnailUtil
      */
     public static function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_scaling = false): array
     {
-        global $config;
-
-        $fit = $config->get_string(ThumbnailConfig::FIT);
+        $fit = Ctx::$config->get_string(ThumbnailConfig::FIT);
+        $conf_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
+        $conf_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
+        assert($conf_width > 0 && $conf_height > 0);
 
         if (in_array($fit, [
                 Media::RESIZE_TYPE_FILL,
@@ -28,7 +29,7 @@ final class ThumbnailUtil
                 Media::RESIZE_TYPE_FIT_BLUR,
                 Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT
             ])) {
-            return [$config->get_int(ThumbnailConfig::WIDTH), $config->get_int(ThumbnailConfig::HEIGHT)];
+            return [$conf_width, $conf_height];
         }
 
         if ($orig_width === 0) {
@@ -49,13 +50,13 @@ final class ThumbnailUtil
         if ($use_dpi_scaling) {
             list($max_width, $max_height) = self::get_thumbnail_max_size_scaled();
         } else {
-            $max_width = $config->get_int(ThumbnailConfig::WIDTH);
-            $max_height = $config->get_int(ThumbnailConfig::HEIGHT);
+            $max_width = $conf_width;
+            $max_height = $conf_height;
         }
 
         list($width, $height, $scale) = self::get_scaled_by_aspect_ratio($orig_width, $orig_height, $max_width, $max_height);
 
-        if ($scale > 1 && $config->get_bool(ThumbnailConfig::UPSCALE)) {
+        if ($scale > 1 && Ctx::$config->get_bool(ThumbnailConfig::UPSCALE)) {
             return [$orig_width, $orig_height];
         } else {
             return [$width, $height];
@@ -91,11 +92,9 @@ final class ThumbnailUtil
      */
     public static function get_thumbnail_max_size_scaled(): array
     {
-        global $config;
-
-        $scaling = $config->get_int(ThumbnailConfig::SCALING);
-        $max_width  = $config->get_int(ThumbnailConfig::WIDTH) * ($scaling / 100);
-        $max_height = $config->get_int(ThumbnailConfig::HEIGHT) * ($scaling / 100);
+        $scaling = Ctx::$config->req_int(ThumbnailConfig::SCALING);
+        $max_width  = Ctx::$config->req_int(ThumbnailConfig::WIDTH) * ($scaling / 100);
+        $max_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT) * ($scaling / 100);
         assert($max_width > 0);
         assert($max_height > 0);
         return [$max_width, $max_height];
@@ -103,14 +102,13 @@ final class ThumbnailUtil
 
     public static function create_image_thumb(Image $image, ?string $engine = null): void
     {
-        global $config;
         self::create_scaled_image(
             $image->get_image_filename(),
             $image->get_thumb_filename(),
             self::get_thumbnail_max_size_scaled(),
             $image->get_mime(),
             $engine,
-            $config->get_string(ThumbnailConfig::FIT)
+            Ctx::$config->get_string(ThumbnailConfig::FIT)
         );
     }
 
@@ -125,10 +123,9 @@ final class ThumbnailUtil
         ?string $engine = null,
         ?string $resize_type = null
     ): void {
-        global $config;
-        $engine ??= $config->get_string(ThumbnailConfig::ENGINE);
-        $resize_type ??= $config->get_string(ThumbnailConfig::FIT);
-        $output_mime = $config->get_string(ThumbnailConfig::MIME);
+        $engine ??= Ctx::$config->req_string(ThumbnailConfig::ENGINE);
+        $resize_type ??= Ctx::$config->req_string(ThumbnailConfig::FIT);
+        $output_mime = Ctx::$config->req_string(ThumbnailConfig::MIME);
 
         send_event(new MediaResizeEvent(
             $engine,
@@ -139,8 +136,8 @@ final class ThumbnailUtil
             $tsize[1],
             $resize_type,
             $output_mime,
-            $config->get_string(ThumbnailConfig::ALPHA_COLOR),
-            $config->get_int(ThumbnailConfig::QUALITY),
+            Ctx::$config->req_string(ThumbnailConfig::ALPHA_COLOR),
+            Ctx::$config->req_int(ThumbnailConfig::QUALITY),
             true,
             true
         ));

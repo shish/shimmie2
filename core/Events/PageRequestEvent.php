@@ -38,16 +38,14 @@ final class PageRequestEvent extends Event
      */
     public function __construct(string $method, string $path, array $get, array $post)
     {
-        global $user;
         parent::__construct();
-        global $config;
 
         $this->method = $method;
 
         // if we're looking at the root of the install,
         // use the default front page
         if ($path === "") {
-            $path = $config->get_string(SetupConfig::FRONT_PAGE);
+            $path = Ctx::$config->req_string(SetupConfig::FRONT_PAGE);
         }
         $this->path = $path;
         $this->GET = $get;
@@ -143,8 +141,6 @@ final class PageRequestEvent extends Event
         ?string $permission = null,
         bool $paged = false,
     ): bool {
-        global $user;
-
         if ($paged) {
             if ($this->page_matches("$name/{page_num}", $method, $authed, $permission, false)) {
                 $pn = $this->get_arg("page_num");
@@ -183,12 +179,12 @@ final class PageRequestEvent extends Event
             if (!isset($this->POST["auth_token"])) {
                 throw new PermissionDenied("Permission Denied: Missing CSRF Token");
             }
-            if ($this->POST["auth_token"] !== $user->get_auth_token()) {
+            if ($this->POST["auth_token"] !== Ctx::$user->get_auth_token()) {
                 throw new PermissionDenied("Permission Denied: Invalid CSRF Token (Go back, refresh the page, and try again?)");
             }
         }
-        if ($permission !== null && !$user->can($permission)) {
-            throw new PermissionDenied("Permission Denied: {$user->name} lacks permission {$permission}");
+        if ($permission !== null && !Ctx::$user->can($permission)) {
+            throw new PermissionDenied("Permission Denied: " . Ctx::$user->name . " lacks permission {$permission}");
         }
 
         return true;
