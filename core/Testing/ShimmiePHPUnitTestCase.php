@@ -238,16 +238,17 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         self::assertEquals($results, $ids, $message);
     }
 
-    protected function assertException(string $type, callable $function): \Exception
+    protected function assertException(string $type, callable $function, string $message = ''): \Exception
     {
+        $message = $message ? " ($message)" : '';
         try {
             call_user_func($function);
-            self::fail("Expected exception of type $type, but none was thrown");
+            self::fail("Expected exception of type $type, but none was thrown$message");
         } catch (\Exception $exception) {
             self::assertThat(
                 $exception,
                 new \PHPUnit\Framework\Constraint\Exception($type),
-                "Expected exception of type $type, but got " . get_class($exception)
+                "Expected exception of type $type, but got " . get_class($exception) . $message
             );
             return $exception;
         }

@@ -32,15 +32,6 @@ abstract class Config
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_float(string $name, float $value): void
-    {
-        $this->values[$name] = (string)$value;
-        $this->save($name);
-    }
-
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
     public function set_string(string $name, string $value): void
     {
         $this->values[$name] = $value;
@@ -90,22 +81,6 @@ abstract class Config
             return $default;
         }
         return (int)$val;
-    }
-
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     *
-     * @template T of float|null
-     * @param T $default
-     * @return T|float
-     */
-    public function get_float(string $name, ?float $default = null): ?float
-    {
-        $val = $this->get($name);
-        if (is_null($val) || !is_numeric($val)) {
-            return $default;
-        }
-        return (float)$val;
     }
 
     /**
@@ -162,5 +137,45 @@ abstract class Config
     private function get(string $name): ?string
     {
         return $this->values[$name] ?? null;
+    }
+
+    public function req_int(string $name, ?int $default = null): int
+    {
+        $val = $this->get_int($name);
+        if (is_null($val)) {
+            throw new ConfigException("Missing required integer value for '$name'");
+        }
+        return $val;
+    }
+
+    public function req_string(string $name, ?string $default = null): string
+    {
+        $val = $this->get_string($name);
+        if (is_null($val)) {
+            throw new ConfigException("Missing required string value for '$name'");
+        }
+        return $val;
+    }
+
+    public function req_bool(string $name, ?bool $default = null): bool
+    {
+        $val = $this->get_bool($name);
+        if (is_null($val)) {
+            throw new ConfigException("Missing required boolean value for '$name'");
+        }
+        return $val;
+    }
+
+    /**
+     * @param array<string>|null $default
+     * @return array<string>
+     */
+    public function req_array(string $name, ?array $default = null): array
+    {
+        $val = $this->get_array($name);
+        if (is_null($val)) {
+            throw new ConfigException("Missing required array value for '$name'");
+        }
+        return $val;
     }
 }
