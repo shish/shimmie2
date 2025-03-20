@@ -17,8 +17,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        global $_tracer;
-        $_tracer->begin(get_called_class());
+        Ctx::$tracer->begin(get_called_class());
         Ctx::$database->begin_transaction();
         parent::setUpBeforeClass();
     }
@@ -28,9 +27,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
      */
     public function setUp(): void
     {
-        global $_tracer;
-        $_tracer->begin($this->name());
-        $_tracer->begin("setUp");
+        Ctx::$tracer->begin($this->name());
+        Ctx::$tracer->begin("setUp");
         $class = str_replace("Test", "Info", get_class($this));
         try {
             if (defined("$class::KEY") && !ExtensionInfo::get_all()[$class::KEY]->is_supported()) {
@@ -49,27 +47,25 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         Ctx::setPage(new Page());
         $this->config_snapshot = Ctx::$config->values;
 
-        $_tracer->end();  # setUp
-        $_tracer->begin("test");
+        Ctx::$tracer->end();  # setUp
+        Ctx::$tracer->begin("test");
     }
 
     public function tearDown(): void
     {
-        global $_tracer;
         Ctx::$database->execute("ROLLBACK TO test_start");
         Ctx::$config->values = $this->config_snapshot;
-        $_tracer->end();  # test
-        $_tracer->end();  # $this->getName()
+        Ctx::$tracer->end();  # test
+        Ctx::$tracer->end();  # $this->getName()
     }
 
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
-        global $_tracer;
         Ctx::$database->rollback();
-        $_tracer->end();  # get_called_class()
-        $_tracer->clear();
-        $_tracer->flush("data/test-trace.json");
+        Ctx::$tracer->end();  # get_called_class()
+        Ctx::$tracer->clear();
+        Ctx::$tracer->flush("data/test-trace.json");
     }
 
     /**

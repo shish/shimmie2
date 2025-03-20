@@ -34,7 +34,7 @@ final class BulkAdd extends Extension
         if ($event->page_matches("bulk_add", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
             $dir = $event->req_POST('dir');
             assert(!empty($dir), "Directory cannot be empty");
-            shm_set_timeout(null);
+            Ctx::$event_bus->set_timeout(null);
             $bae = send_event(new BulkAddEvent(new Path($dir)));
             $this->theme->display_upload_results($page, $bae->results);
         }

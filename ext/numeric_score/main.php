@@ -295,7 +295,7 @@ final class NumericScore extends Extension
 
         // vote recounting is pretty heavy, and often hits statement timeouts
         // if you try to recount all the images in one go
-        shm_set_timeout(null);
+        Ctx::$event_bus->set_timeout(null);
         foreach (array_chunk($image_ids, 100) as $chunk) {
             $id_list = implode(",", $chunk);
             $database->execute(

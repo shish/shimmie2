@@ -254,8 +254,7 @@ class Page
      */
     public function display(): void
     {
-        global $_tracer;
-        $_tracer->begin("Display ({$this->mode->value})");
+        Ctx::$tracer->begin("Display ({$this->mode->value})");
         match($this->mode) {
             PageMode::MANUAL => null,
             PageMode::PAGE => $this->display_page(),
@@ -263,7 +262,7 @@ class Page
             PageMode::FILE => $this->display_file(),
             PageMode::REDIRECT => $this->display_redirect(),
         };
-        $_tracer->end();
+        Ctx::$tracer->end();
     }
 
     private function display_page(): void

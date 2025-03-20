@@ -18,8 +18,7 @@ final class Installer
         }
 
         // Pull in necessary files
-        global $_tracer;
-        $_tracer = new \EventTracer();
+        Ctx::setTracer(new \EventTracer());
 
         $dsn = self::get_dsn();
         if ($dsn) {

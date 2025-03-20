@@ -58,8 +58,8 @@ final class AdminPage extends Extension
             $aae = new AdminActionEvent($action, $event->POST);
 
             Log::info("admin", "Util: $action");
-            shm_set_timeout(null);
-            $database->set_timeout(null);
+            Ctx::$event_bus->set_timeout(null);
+            Ctx::$database->set_timeout(null);
             send_event($aae);
 
             if ($aae->redirect) {

@@ -13,14 +13,7 @@ namespace Shimmie2;
  */
 function send_event(Event $event): Event
 {
-    global $_shm_event_bus;
-    return $_shm_event_bus->send_event($event);
-}
-
-function shm_set_timeout(?int $timeout): void
-{
-    global $_shm_event_bus;
-    $_shm_event_bus->set_timeout($timeout);
+    return Ctx::$event_bus->send_event($event);
 }
 
 final class EventBus
@@ -32,9 +25,7 @@ final class EventBus
 
     public function __construct()
     {
-        global $_tracer;
-
-        $_tracer->begin("Load Event Listeners");
+        Ctx::$tracer->begin("Load Event Listeners");
 
         $ver = \Safe\preg_replace("/[^a-zA-Z0-9\.]/", "_", SysConfig::getVersion());
         $key = md5(Extension::get_enabled_extensions_as_string());
@@ -55,7 +46,7 @@ final class EventBus
             $this->set_timeout((int)ini_get('max_execution_time') - 3);
         }
 
-        $_tracer->end();
+        Ctx::$tracer->end();
     }
 
     /**
@@ -146,8 +137,6 @@ final class EventBus
      */
     public function send_event(Event $event): Event
     {
-        global $_tracer, $tracer_enabled;
-
         $event_name = $this->namespaced_class_name(get_class($event));
         if (!isset($this->event_listeners[$event_name])) {
             return $event;
@@ -155,30 +144,30 @@ final class EventBus
 
         // send_event() is performance sensitive, and with the number
         // of times tracer gets called the time starts to add up
-        if ($tracer_enabled) {
-            $_tracer->begin($event_name);
+        if (Ctx::$tracer_enabled) {
+            Ctx::$tracer->begin($event_name);
         }
         $method_name = "on".str_replace("Event", "", $event_name);
         foreach ($this->event_listeners[$event_name] as $listener) {
             if ($this->deadline && ftime() > $this->deadline) {
                 throw new TimeoutException("Timeout while sending $event_name");
             }
-            if ($tracer_enabled) {
-                $_tracer->begin($this->namespaced_class_name(get_class($listener)));
+            if (Ctx::$tracer_enabled) {
+                Ctx::$tracer->begin($this->namespaced_class_name(get_class($listener)));
             }
             if (method_exists($listener, $method_name)) {
                 $listener->$method_name($event);
             }
-            if ($tracer_enabled) {
-                $_tracer->end();
+            if (Ctx::$tracer_enabled) {
+                Ctx::$tracer->end();
             }
             if ($event->stop_processing === true) {
                 break;
             }
         }
         $this->event_count++;
-        if ($tracer_enabled) {
-            $_tracer->end();
+        if (Ctx::$tracer_enabled) {
+            Ctx::$tracer->end();
         }
 
         return $event;

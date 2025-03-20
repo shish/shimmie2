@@ -199,7 +199,7 @@ final class BulkActions extends Extension
                 throw new InvalidInput("No ids selected and no query present, cannot perform bulk operation on entire collection");
             }
 
-            shm_set_timeout(null);
+            Ctx::$event_bus->set_timeout(null);
             $bae = send_event(new BulkActionEvent($action, $items, $event->POST));
 
             if ($bae->redirect) {
