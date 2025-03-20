@@ -6,16 +6,12 @@ namespace Shimmie2;
 
 final class AuthorSetEvent extends Event
 {
-    public Image $image;
-    public User $user;
-    public string $author;
-
-    public function __construct(Image $image, User $user, string $author)
-    {
+    public function __construct(
+        public Image $image,
+        public User $user,
+        public string $author
+    ) {
         parent::__construct();
-        $this->image = $image;
-        $this->user = $user;
-        $this->author = $author;
     }
 }
 

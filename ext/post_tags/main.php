@@ -92,14 +92,11 @@ final class TagTermCheckEvent extends Event
  */
 final class TagTermParseEvent extends Event
 {
-    public string $term;
-    public int $image_id;
-
-    public function __construct(string $term, int $image_id)
-    {
+    public function __construct(
+        public string $term,
+        public int $image_id
+    ) {
         parent::__construct();
-        $this->term = $term;
-        $this->image_id = $image_id;
     }
 
     /**

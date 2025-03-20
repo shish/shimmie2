@@ -14,16 +14,12 @@ require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
 final class CommentPostingEvent extends Event
 {
-    public int $image_id;
-    public User $user;
-    public string $comment;
-
-    public function __construct(int $image_id, User $user, string $comment)
-    {
+    public function __construct(
+        public int $image_id,
+        public User $user,
+        public string $comment
+    ) {
         parent::__construct();
-        $this->image_id = $image_id;
-        $this->user = $user;
-        $this->comment = $comment;
     }
 }
 
@@ -34,12 +30,10 @@ final class CommentPostingEvent extends Event
  */
 final class CommentDeletionEvent extends Event
 {
-    public int $comment_id;
-
-    public function __construct(int $comment_id)
-    {
+    public function __construct(
+        public int $comment_id
+    ) {
         parent::__construct();
-        $this->comment_id = $comment_id;
     }
 }
 

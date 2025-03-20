@@ -51,29 +51,24 @@ final class IPBanTable extends Table
 
 final class RemoveIPBanEvent extends Event
 {
-    public int $id;
-
-    public function __construct(int $id)
-    {
+    public function __construct(
+        public int $id
+    ) {
         parent::__construct();
-        $this->id = $id;
     }
 }
 
 final class AddIPBanEvent extends Event
 {
-    public string $ip;
-    public string $mode;
-    public string $reason;
-    public ?string $expires;
-
-    public function __construct(string $ip, string $mode, string $reason, ?string $expires)
-    {
+    public function __construct(
+        public string $ip,
+        public string $mode,
+        public string $reason,
+        public ?string $expires
+    ) {
         parent::__construct();
         $this->ip = trim($ip);
-        $this->mode = $mode;
         $this->reason = trim($reason);
-        $this->expires = $expires;
     }
 }
 

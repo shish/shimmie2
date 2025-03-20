@@ -8,53 +8,40 @@ use function MicroHTML\{INPUT};
 
 final class PoolAddPostsEvent extends Event
 {
-    public int $pool_id;
-    /** @var int[] */
-    public array $posts = [];
-
     /**
      * @param int[] $posts
      */
-    public function __construct(int $pool_id, array $posts)
-    {
+    public function __construct(
+        public int $pool_id,
+        public array $posts
+    ) {
         parent::__construct();
-        $this->pool_id = $pool_id;
-        $this->posts = $posts;
     }
 }
 
 final class PoolCreationEvent extends Event
 {
-    public string $title;
     public User $user;
-    public bool $public;
-    public string $description;
     public int $new_id = -1;
 
     public function __construct(
-        string $title,
+        public string $title,
         ?User $pool_user = null,
-        bool $public = false,
-        string $description = ""
+        public bool $public = false,
+        public string $description = ""
     ) {
         parent::__construct();
         global $user;
-
-        $this->title = $title;
         $this->user = $pool_user ?? $user;
-        $this->public = $public;
-        $this->description = $description;
     }
 }
 
 final class PoolDeletionEvent extends Event
 {
-    public int $pool_id;
-
-    public function __construct(int $pool_id)
-    {
+    public function __construct(
+        public int $pool_id
+    ) {
         parent::__construct();
-        $this->pool_id = $pool_id;
     }
 }
 

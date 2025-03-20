@@ -14,8 +14,6 @@ use FFSPHP\PDOStatement;
  */
 class Database
 {
-    private string $dsn;
-
     /**
      * The PDO database connection object, for anyone who wants direct access.
      */
@@ -34,9 +32,9 @@ class Database
     /** @var string[] */
     public array $queries = [];
 
-    public function __construct(string $dsn)
-    {
-        $this->dsn = $dsn;
+    public function __construct(
+        private string $dsn
+    ) {
     }
 
     private function get_db(): PDO

@@ -6,14 +6,11 @@ namespace Shimmie2;
 
 final class LockSetEvent extends Event
 {
-    public Image $image;
-    public bool $locked;
-
-    public function __construct(Image $image, bool $locked)
-    {
+    public function __construct(
+        public Image $image,
+        public bool $locked
+    ) {
         parent::__construct();
-        $this->image = $image;
-        $this->locked = $locked;
     }
 }
 

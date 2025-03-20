@@ -11,15 +11,12 @@ use GQLA\Query;
 #[Type(name: "TagUsage")]
 final class TagUsage
 {
-    #[Field]
-    public string $tag;
-    #[Field]
-    public int $uses;
-
-    public function __construct(string $tag, int $uses)
-    {
-        $this->tag = $tag;
-        $this->uses = $uses;
+    public function __construct(
+        #[Field]
+        public string $tag,
+        #[Field]
+        public int $uses,
+    ) {
     }
 
     /**

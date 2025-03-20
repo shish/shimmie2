@@ -20,7 +20,7 @@ final class LogLogstash extends Extension
                     "username" => ($user && $user->name) ? $user->name : "Anonymous",
                     "section" => $event->section,
                     "priority" => $event->priority,
-                    "time" => $event->time,
+                    "time" => time(),
                 ],
                 #"@request" => $_SERVER,
                 "@request" => [

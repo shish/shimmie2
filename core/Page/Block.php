@@ -16,46 +16,24 @@ use function MicroHTML\{A};
 class Block
 {
     /**
-     * The block's title.
-     */
-    public ?string $header;
-
-    /**
-     * The content of the block.
-     */
-    public HTMLElement $body;
-
-    /**
-     * Where the block should be placed. The default theme supports
+     * @param ?string $header The block's title
+     * @param HTMLElement $body The content of the block
+     * @param string $section Where the block should be placed. The default theme supports
      * "main" and "left", other themes can add their own areas.
-     */
-    public string $section;
-
-    /**
-     * How far down the section the block should appear, higher
+     * @param int $position How far down the section the block should appear, higher
      * numbers appear lower. The scale is 0-100 by convention,
      * though any number will work.
+     * @param ?string $id A unique HTML ID for the block
+     * @param bool $is_content Whether this block should be considered "content" for the 404 handler
      */
-    public int $position;
-
-    /**
-     * A unique ID for the block.
-     */
-    public string $id;
-
-    /**
-     * Should this block count as content for the sake of
-     * the 404 handler
-     */
-    public bool $is_content = true;
-
-    public function __construct(?string $header, HTMLElement $body, string $section = "main", int $position = 50, ?string $id = null)
-    {
-        $this->header = $header;
-        $this->body = $body;
-        $this->section = $section;
-        $this->position = $position;
-
+    public function __construct(
+        public ?string $header,
+        public HTMLElement $body,
+        public string $section = "main",
+        public int $position = 50,
+        public ?string $id = null,
+        public bool $is_content = true,
+    ) {
         if (is_null($id)) {
             $id = (empty($header) ? 'unknown' : $header) . $section;
         }

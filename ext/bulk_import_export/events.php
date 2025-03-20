@@ -20,17 +20,13 @@ class BulkExportEvent extends Event
 
 class BulkImportEvent extends Event
 {
-    public Image $image;
-    /** @var array<string,mixed> */
-    public array $fields = [];
-
     /**
      * @param array<string,mixed> $fields
      */
-    public function __construct(Image $image, array $fields)
-    {
+    public function __construct(
+        public Image $image,
+        public array $fields
+    ) {
         parent::__construct();
-        $this->image = $image;
-        $this->fields = $fields;
     }
 }

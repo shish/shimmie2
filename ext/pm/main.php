@@ -12,12 +12,10 @@ use function MicroHTML\{emptyHTML, SPAN};
 
 final class SendPMEvent extends Event
 {
-    public PM $pm;
-
-    public function __construct(PM $pm)
-    {
+    public function __construct(
+        public PM $pm
+    ) {
         parent::__construct();
-        $this->pm = $pm;
     }
 }
 
@@ -25,16 +23,20 @@ final class SendPMEvent extends Event
 final class PM
 {
     public int $id = -1;
-    public int $from_id;
-    public string $from_ip;
-    public int $to_id;
     public mixed $sent_date;
-    #[Field]
-    public string $subject;
-    #[Field]
-    public string $message;
-    #[Field]
-    public bool $is_read;
+
+    public function __construct(
+        public int $from_id,
+        public string $from_ip,
+        public int $to_id,
+        #[Field]
+        public string $subject,
+        #[Field]
+        public string $message,
+        #[Field]
+        public bool $is_read = false
+    ) {
+    }
 
     #[Field]
     public function from(): User
@@ -51,22 +53,6 @@ final class PM
     public function graphql_guid(): string
     {
         return "pm:{$this->id}";
-    }
-
-    public function __construct(
-        int $from_id,
-        string $from_ip,
-        int $to_id,
-        string $subject,
-        string $message,
-        bool $is_read = false
-    ) {
-        $this->from_id = $from_id;
-        $this->from_ip = $from_ip;
-        $this->to_id   = $to_id;
-        $this->subject = $subject;
-        $this->message = $message;
-        $this->is_read = $is_read;
     }
 
     /**
