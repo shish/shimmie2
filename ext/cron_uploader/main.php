@@ -296,7 +296,7 @@ final class CronUploader extends Extension
 
         self::$IMPORT_RUNNING = true;
         try {
-            //shm_set_timeout(null);
+            //Ctx::$event_bus->set_timeout(null);
 
             $output_subdir = date('Ymd-His', time());
             $image_queue = $this->generate_image_queue();

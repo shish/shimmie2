@@ -11,8 +11,11 @@ abstract class Ctx
     public static CacheInterface $cache;
     public static Config $config;
     public static Database $database;
+    public static EventBus $event_bus;
     public static Page $page;
+    public static \EventTracer $tracer;
     public static User $user;
+    public static bool $tracer_enabled;
 
     public static function setCache(CacheInterface $_cache): CacheInterface
     {
@@ -46,11 +49,23 @@ abstract class Ctx
         return $_database;
     }
 
+    public static function setEventBus(EventBus $_event_bus): EventBus
+    {
+        self::$event_bus = $_event_bus;
+        return $_event_bus;
+    }
+
     public static function setPage(Page $_page): Page
     {
         global $page;
         $page = $_page;
         self::$page = $_page;
         return $_page;
+    }
+
+    public static function setTracer(\EventTracer $tracer): \EventTracer
+    {
+        self::$tracer = $tracer;
+        return $tracer;
     }
 }

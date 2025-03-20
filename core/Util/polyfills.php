@@ -575,12 +575,11 @@ function stringer(mixed $s): string
  */
 function cache_get_or_set(string $key, callable $callback, ?int $ttl = null): mixed
 {
-    global $_tracer;
     $value = Ctx::$cache->get($key);
     if ($value === null) {
-        $_tracer->begin("Cache Populate", ["key" => $key]);
+        Ctx::$tracer->begin("Cache Populate", ["key" => $key]);
         $value = $callback();
-        $_tracer->end();
+        Ctx::$tracer->end();
         Ctx::$cache->set($key, $value, $ttl);
     }
     return $value;
@@ -616,8 +615,7 @@ function load_cache(?string $dsn): CacheInterface
     if (is_null($c)) {
         $c = new \Sabre\Cache\Memory();
     }
-    global $_tracer;
-    return new EventTracingCache($c, $_tracer);
+    return new EventTracingCache($c, Ctx::$tracer);
 }
 
 /**

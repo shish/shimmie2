@@ -111,18 +111,17 @@ class Database
      */
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
     {
-        global $_tracer;
         try {
-            $_tracer->begin("Savepoint $name");
+            Ctx::$tracer->begin("Savepoint $name");
             // doing string interpolation because bound parameters don't work here
             $this->execute("SAVEPOINT $name");  // @phpstan-ignore-line
             $ret = $callback();
             $this->execute("RELEASE SAVEPOINT $name");  // @phpstan-ignore-line
-            $_tracer->end();
+            Ctx::$tracer->end();
             return $ret;
         } catch (\Exception $e) {
             $this->execute("ROLLBACK TO SAVEPOINT $name");  // @phpstan-ignore-line
-            $_tracer->end();
+            Ctx::$tracer->end();
             throw $e;
         }
     }
@@ -156,13 +155,12 @@ class Database
      */
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
-        global $_tracer, $tracer_enabled;
         $dur = ftime() - $start;
         // trim whitespace
         $query = \Safe\preg_replace('/[\n\t ]+/m', ' ', $query);
         $query = trim($query);
-        if ($tracer_enabled) {
-            $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query" => $query, "args" => $args, "method" => $method]);
+        if (Ctx::$tracer_enabled) {
+            Ctx::$tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query" => $query, "args" => $args, "method" => $method]);
         }
         $this->queries[] = $query;
         $this->query_count++;

@@ -12,7 +12,7 @@ final class StatsDInterface extends Extension
 
     private function _stats(string $type): void
     {
-        global $_shm_event_bus, $cache, $database, $_shm_load_start;
+        global $cache, $database, $_shm_load_start;
         $time = ftime() - $_shm_load_start;
         StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
         StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
@@ -20,7 +20,7 @@ final class StatsDInterface extends Extension
         StatsDInterface::$stats["shimmie.$type.memory"] = memory_get_peak_usage(true)."|c";
         StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
         StatsDInterface::$stats["shimmie.$type.queries"] = $database->query_count."|c";
-        StatsDInterface::$stats["shimmie.$type.events"] = $_shm_event_bus->event_count."|c";
+        StatsDInterface::$stats["shimmie.$type.events"] = Ctx::$event_bus->event_count."|c";
         StatsDInterface::$stats["shimmie.$type.cache-hits"] = $cache->get("__etc_cache_hits", -1)."|c";
         StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get("__etc_cache_misses", -1)."|c";
     }

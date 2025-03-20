@@ -35,11 +35,11 @@ if (file_exists("data/test-trace.json")) {
 }
 
 sanitize_php();
-global $cache, $config, $database, $user, $page, $_tracer, $_shm_event_bus;
+global $cache, $config, $database, $user, $page;
 _set_up_shimmie_environment();
 $tracer_enabled = true;
-$_tracer = new \EventTracer();
-$_tracer->begin("bootstrap");
+Ctx::setTracer(new \EventTracer());
+Ctx::$tracer->begin("bootstrap");
 _load_ext_files();
 $cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
 $database = Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
@@ -48,10 +48,9 @@ Installer::create_tables($database);
 $config = Ctx::setConfig(new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults()));
 _load_theme_files();
 $page = Ctx::setPage(new Page());
-$_shm_event_bus = new EventBus();
-$config->set_string("thumb_engine", "static");
-$config->set_bool("nice_urls", true);
-$config->set_bool("approve_images", false);
+Ctx::setEventBus(new EventBus());
+$config->set_string(ThumbnailConfig::ENGINE, "static");
+$config->set_bool(SetupConfig::NICE_URLS, true);
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 $user = Ctx::setUser(User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)));
@@ -64,4 +63,4 @@ $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@te
 if ($database->is_transaction_open()) {
     $database->commit();
 }
-$_tracer->end();
+Ctx::$tracer->end();

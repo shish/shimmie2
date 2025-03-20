@@ -180,7 +180,7 @@ final class SourceHistory extends Extension
             $revert_date = null;
         }
 
-        shm_set_timeout(null); // reverting changes can take a long time, disable php's timelimit if possible.
+        Ctx::$event_bus->set_timeout(null); // reverting changes can take a long time, disable php's timelimit if possible.
 
         // Call the revert function.
         $this->process_revert_all_changes($revert_name, $revert_ip, $revert_date);

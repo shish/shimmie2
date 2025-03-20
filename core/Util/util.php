@@ -232,7 +232,7 @@ function get_debug_info(): string
  */
 function get_debug_info_arr(): array
 {
-    global $_shm_event_bus, $_shm_load_start;
+    global $_shm_load_start;
 
     return [
         "time" => round(ftime() - $_shm_load_start, 2),
@@ -241,7 +241,7 @@ function get_debug_info_arr(): array
         "files" => count(get_included_files()),
         "query_count" => Ctx::$database->query_count,
         // "query_log" => Ctx::$database->queries,
-        "event_count" => $_shm_event_bus->event_count,
+        "event_count" => Ctx::$event_bus->event_count,
         "cache_hits" => Ctx::$cache->get("__etc_cache_hits"),
         "cache_misses" => Ctx::$cache->get("__etc_cache_misses"),
         "version" => SysConfig::getVersion(),
@@ -265,8 +265,7 @@ function require_all(array $files): void
 
 function _load_ext_files(): void
 {
-    global $_tracer;
-    $_tracer->begin("Load Ext Files");
+    Ctx::$tracer->begin("Load Ext Files");
     require_all(array_merge(
         Filesystem::zglob("ext/*/info.php"),
         Filesystem::zglob("ext/*/config.php"),
@@ -274,23 +273,20 @@ function _load_ext_files(): void
         Filesystem::zglob("ext/*/theme.php"),
         Filesystem::zglob("ext/*/main.php"),
     ));
-    $_tracer->end();
+    Ctx::$tracer->end();
 }
 
 function _load_theme_files(): void
 {
-    global $_tracer;
-    $_tracer->begin("Load Theme Files");
+    Ctx::$tracer->begin("Load Theme Files");
     $theme = get_theme();
     require_once('themes/'.$theme.'/page.class.php');
     require_all(Filesystem::zglob('themes/'.$theme.'/*.theme.php'));
-    $_tracer->end();
+    Ctx::$tracer->end();
 }
 
 function _set_up_shimmie_environment(): void
 {
-    global $tracer_enabled;
-
     if (file_exists("images") && !file_exists("data/images")) {
         die_nicely("Upgrade error", "As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
     }
@@ -306,7 +302,7 @@ function _set_up_shimmie_environment(): void
     // The trace system has a certain amount of memory consumption every time it is used,
     // so to prevent running out of memory during complex operations code that uses it should
     // check if tracer output is enabled before making use of it.
-    $tracer_enabled = !is_null(SysConfig::getTraceFile());
+    Ctx::$tracer_enabled = !is_null(SysConfig::getTraceFile());
 }
 
 /**
