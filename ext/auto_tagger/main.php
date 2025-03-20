@@ -42,12 +42,10 @@ final class AddAutoTagEvent extends Event
 
 final class DeleteAutoTagEvent extends Event
 {
-    public string $tag;
-
-    public function __construct(string $tag)
-    {
+    public function __construct(
+        public string $tag
+    ) {
         parent::__construct();
-        $this->tag = $tag;
     }
 }
 

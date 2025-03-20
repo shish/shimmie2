@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use Psr\SimpleCache\CacheInterface;
 
-abstract class Ctx
+final class Ctx
 {
     public static CacheInterface $cache;
     public static Config $config;

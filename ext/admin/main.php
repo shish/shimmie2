@@ -13,30 +13,20 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class AdminBuildingEvent extends Event
 {
-    public Page $page;
-
-    public function __construct(Page $page)
-    {
-        parent::__construct();
-        $this->page = $page;
-    }
 }
 
 final class AdminActionEvent extends Event
 {
-    public string $action;
     public bool $redirect = true;
-    /** @var array<string, mixed> */
-    public array $params;
 
     /**
      * @param array<string, mixed> $params
      */
-    public function __construct(string $action, array $params)
-    {
+    public function __construct(
+        public string $action,
+        public array $params
+    ) {
         parent::__construct();
-        $this->action = $action;
-        $this->params = $params;
     }
 }
 
@@ -51,7 +41,7 @@ final class AdminPage extends Extension
         global $database, $page, $user;
 
         if ($event->page_matches("admin", method: "GET", permission: AdminPermission::MANAGE_ADMINTOOLS)) {
-            send_event(new AdminBuildingEvent($page));
+            send_event(new AdminBuildingEvent());
         }
         if ($event->page_matches("admin/{action}", method: "POST", permission: AdminPermission::MANAGE_ADMINTOOLS)) {
             $action = $event->get_arg('action');

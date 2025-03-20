@@ -9,7 +9,7 @@ use MicroHTML\HTMLElement;
 /**
  * A collection of common functions for theme parts
  */
-class Themelet extends Ctx
+class Themelet
 {
     private static Themelet $common;
 

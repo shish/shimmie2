@@ -10,38 +10,30 @@ use GQLA\Query;
 
 final class WikiUpdateEvent extends Event
 {
-    public User $user;
-    public WikiPage $wikipage;
-
-    public function __construct(User $user, WikiPage $wikipage)
-    {
+    public function __construct(
+        public User $user,
+        public WikiPage $wikipage
+    ) {
         parent::__construct();
-        $this->user = $user;
-        $this->wikipage = $wikipage;
     }
 }
 
 final class WikiDeleteRevisionEvent extends Event
 {
-    public string $title;
-    public int $revision;
-
-    public function __construct(string $title, int $revision)
-    {
+    public function __construct(
+        public string $title,
+        public int $revision
+    ) {
         parent::__construct();
-        $this->title = $title;
-        $this->revision = $revision;
     }
 }
 
 final class WikiDeletePageEvent extends Event
 {
-    public string $title;
-
-    public function __construct(string $title)
-    {
+    public function __construct(
+        public string $title
+    ) {
         parent::__construct();
-        $this->title = $title;
     }
 }
 

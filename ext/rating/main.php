@@ -8,19 +8,14 @@ final class ImageRating
 {
     /** @var array<string, ImageRating> */
     public static array $known_ratings = [];
-    public string $name;
-    public string $code;
-    public string $search_term;
-    public int $order = 0;
 
-    public function __construct(string $code, string $name, string $search_term, int $order)
-    {
+    public function __construct(
+        public string $code,
+        public string $name,
+        public string $search_term,
+        public int $order
+    ) {
         assert(strlen($code) == 1, "Rating code must be exactly one character");
-
-        $this->name = $name;
-        $this->code = $code;
-        $this->search_term = $search_term;
-        $this->order = $order;
     }
 }
 
@@ -55,17 +50,12 @@ final class RatingSetException extends UserError
 
 final class RatingSetEvent extends Event
 {
-    public Image $image;
-    public string $rating;
-
-    public function __construct(Image $image, string $rating)
-    {
+    public function __construct(
+        public Image $image,
+        public string $rating
+    ) {
         parent::__construct();
-
         assert(in_array($rating, array_keys(ImageRating::$known_ratings)));
-
-        $this->image = $image;
-        $this->rating = $rating;
     }
 }
 

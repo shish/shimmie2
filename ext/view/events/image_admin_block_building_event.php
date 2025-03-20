@@ -13,16 +13,12 @@ use function MicroHTML\{INPUT};
  */
 class ImageAdminBlockBuildingEvent extends PartListBuildingEvent
 {
-    public Image $image;
-    public User $user;
-    public string $context;
-
-    public function __construct(Image $image, User $user, string $context)
-    {
+    public function __construct(
+        public Image $image,
+        public User $user,
+        public string $context
+    ) {
         parent::__construct();
-        $this->image = $image;
-        $this->user = $user;
-        $this->context = $context;
     }
 
     public function add_button(string $name, string $path, int $position = 50): void

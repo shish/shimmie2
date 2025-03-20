@@ -6,11 +6,6 @@ namespace Shimmie2;
 
 class ImageInfoSetEvent extends Event
 {
-    public Image $image;
-    public int $slot;
-    /** @var array<string, string> */
-    public array $params;
-
     /**
      * currently all post metadata is string => string - in the future
      * we might want to have a more complex type system, but for now
@@ -18,12 +13,12 @@ class ImageInfoSetEvent extends Event
      *
      * @param array<string, string> $params
      */
-    public function __construct(Image $image, int $slot, array $params)
-    {
+    public function __construct(
+        public Image $image,
+        public int $slot,
+        public array $params
+    ) {
         parent::__construct();
-        $this->image = $image;
-        $this->slot = $slot;
-        $this->params = $params;
     }
 
     /**

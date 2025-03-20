@@ -92,16 +92,12 @@ final class NumericScoreVote
 
 final class NumericScoreSetEvent extends Event
 {
-    public int $image_id;
-    public User $user;
-    public int $score;
-
-    public function __construct(int $image_id, User $user, int $score)
-    {
+    public function __construct(
+        public int $image_id,
+        public User $user,
+        public int $score
+    ) {
         parent::__construct();
-        $this->image_id = $image_id;
-        $this->user = $user;
-        $this->score = $score;
     }
 }
 

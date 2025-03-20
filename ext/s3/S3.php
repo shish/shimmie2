@@ -32,8 +32,6 @@ THE SOFTWARE.
 
 class S3
 {
-    public const DEFAULT_ENDPOINT = 's3.amazonaws.com';
-
     private string $access_key;
     private string $secret_key;
     private string $endpoint;
@@ -41,11 +39,11 @@ class S3
     /** @var array<int,mixed> */
     private array $curl_opts;
 
-    public function __construct(string $access_key, string $secret_key, ?string $endpoint = null)
+    public function __construct(string $access_key, string $secret_key, string $endpoint = 's3.amazonaws.com')
     {
         $this->access_key = $access_key;
         $this->secret_key = $secret_key;
-        $this->endpoint = $endpoint ?: self::DEFAULT_ENDPOINT;
+        $this->endpoint = $endpoint;
 
         $this->multi_curl = curl_multi_init();
 

@@ -36,25 +36,20 @@ final class HashBanTable extends Table
 
 final class RemoveImageHashBanEvent extends Event
 {
-    public string $hash;
-
-    public function __construct(string $hash)
-    {
+    public function __construct(
+        public string $hash
+    ) {
         parent::__construct();
-        $this->hash = $hash;
     }
 }
 
 final class AddImageHashBanEvent extends Event
 {
-    public string $hash;
-    public string $reason;
-
-    public function __construct(string $hash, string $reason)
-    {
+    public function __construct(
+        public string $hash,
+        public string $reason
+    ) {
         parent::__construct();
-        $this->hash = $hash;
-        $this->reason = $reason;
     }
 }
 

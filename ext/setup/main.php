@@ -13,18 +13,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class ConfigSaveEvent extends Event
 {
-    public Config $config;
-    /** @var array<string, null|string|int|boolean|array<string>> $values */
-    public array $values;
-
     /**
      * @param array<string, null|string|int|boolean|array<string>> $values
      */
-    public function __construct(Config $config, array $values)
-    {
+    public function __construct(
+        public Config $config,
+        public array $values
+    ) {
         parent::__construct();
-        $this->config = $config;
-        $this->values = $values;
     }
 
     /**

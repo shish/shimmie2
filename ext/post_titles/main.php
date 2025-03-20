@@ -37,7 +37,7 @@ final class PostTitles extends Extension
         global $config, $page;
 
         if ($config->get_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
-            $page->set_title(self::get_title($event->get_image()));
+            $page->set_title(self::get_title($event->image));
         }
     }
 

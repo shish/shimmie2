@@ -6,13 +6,11 @@ namespace Shimmie2;
 
 final class SourceSetEvent extends Event
 {
-    public Image $image;
-    public string $source;
-
-    public function __construct(Image $image, string $source)
-    {
+    public function __construct(
+        public Image $image,
+        public string $source
+    ) {
         parent::__construct();
-        $this->image = $image;
         $this->source = trim($source);
     }
 }

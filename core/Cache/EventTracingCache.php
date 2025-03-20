@@ -8,15 +8,13 @@ use Psr\SimpleCache\CacheInterface;
 
 class EventTracingCache implements CacheInterface
 {
-    private CacheInterface $engine;
-    private \EventTracer $tracer;
     private int $hits = 0;
     private int $misses = 0;
 
-    public function __construct(CacheInterface $engine, \EventTracer $tracer)
-    {
-        $this->engine = $engine;
-        $this->tracer = $tracer;
+    public function __construct(
+        private CacheInterface $engine,
+        private \EventTracer $tracer
+    ) {
     }
 
     public function get($key, $default = null)

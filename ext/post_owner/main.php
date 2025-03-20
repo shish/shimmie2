@@ -6,14 +6,11 @@ namespace Shimmie2;
 
 final class OwnerSetEvent extends Event
 {
-    public Image $image;
-    public User $owner;
-
-    public function __construct(Image $image, User $owner)
-    {
+    public function __construct(
+        public Image $image,
+        public User $owner
+    ) {
         parent::__construct();
-        $this->image = $image;
-        $this->owner = $owner;
     }
 }
 
