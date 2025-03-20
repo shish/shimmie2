@@ -14,17 +14,18 @@ class Danbooru2IndexTheme extends IndexTheme
     /**
      * @param Image[] $images
      */
-    public function display_page(Page $page, array $images): void
+    public function display_page(array $images): void
     {
-        $this->display_shortwiki($page);
+        global $page;
+        $this->display_shortwiki();
 
-        $this->display_page_header($page, $images);
+        $this->display_page_header($images);
 
         $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
         $page->add_block(new Block("Search", $nav, "left", 0));
 
         if (count($images) > 0) {
-            $this->display_page_images($page, $images);
+            $this->display_page_images($images);
         } else {
             throw new PostNotFound("No posts were found to match the search criteria");
         }

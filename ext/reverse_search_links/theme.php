@@ -10,9 +10,9 @@ use function MicroHTML\joinHTML;
 
 class ReverseSearchLinksTheme extends Themelet
 {
-    public function reverse_search_block(Page $page, Image $image): void
+    public function reverse_search_block(Image $image): void
     {
-        global $config;
+        global $config, $page;
 
         $url = (string)$image->get_thumb_link()->asAbsolute();
         $links = [

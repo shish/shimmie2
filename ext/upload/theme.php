@@ -24,19 +24,21 @@ use function MicroHTML\P;
 
 class UploadTheme extends Themelet
 {
-    public function display_block(Page $page): void
+    public function display_block(): void
     {
+        global $page;
         $b = new Block("Upload", $this->build_upload_block(), "left", 20);
         $b->is_content = false;
         $page->add_block($b);
     }
 
-    public function display_full(Page $page): void
+    public function display_full(): void
     {
+        global $page;
         $page->add_block(new Block("Upload", emptyHTML("Disk nearly full, uploads disabled"), "left", 20));
     }
 
-    public function display_page(Page $page): void
+    public function display_page(): void
     {
         global $config, $page;
 
@@ -215,9 +217,9 @@ class UploadTheme extends Themelet
     /**
      * @param UploadResult[] $results
      */
-    public function display_upload_status(Page $page, array $results): void
+    public function display_upload_status(array $results): void
     {
-        global $user;
+        global $user, $page;
 
         /** @var UploadSuccess[] */
         $successes = array_filter($results, fn ($r) => is_a($r, UploadSuccess::class));

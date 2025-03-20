@@ -14,8 +14,9 @@ use function MicroHTML\SPAN;
 
 class TermsTheme extends Themelet
 {
-    public function display_page(Page $page, string $sitename, string $path, HTMLElement $body): void
+    public function display_page(string $sitename, string $path, HTMLElement $body): void
     {
+        global $page;
         $html = DIV(
             ["id" => "terms-modal-bg"],
             DIALOG(

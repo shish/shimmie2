@@ -16,9 +16,9 @@ class WikiTheme extends Themelet
      * $wiki_page The wiki page, has ->title and ->body
      * $nav_page A wiki page object with navigation, has ->body
      */
-    public function display_page(Page $page, WikiPage $wiki_page, ?WikiPage $nav_page = null): void
+    public function display_page(WikiPage $wiki_page, ?WikiPage $nav_page = null): void
     {
-        global $user;
+        global $user, $page;
 
         if (is_null($nav_page)) {
             $nav_page = new WikiPage();
@@ -46,9 +46,9 @@ class WikiTheme extends Themelet
         $page->add_block(new Block($wiki_page->title, $this->create_display_html($wiki_page)));
     }
 
-    public function display_list_page(Page $page, ?WikiPage $nav_page = null): void
+    public function display_list_page(?WikiPage $nav_page = null): void
     {
-        global $database;
+        global $database, $page;
         if (is_null($nav_page)) {
             $nav_page = new WikiPage();
             $nav_page->body = "";
@@ -71,9 +71,9 @@ class WikiTheme extends Themelet
     /**
      * @param array<array{revision: string, date: string}> $history
      */
-
-    public function display_page_history(Page $page, string $title, array $history): void
+    public function display_page_history(string $title, array $history): void
     {
+        global $page;
         $html = TABLE(["class" => "zebra"]);
         foreach ($history as $row) {
             $html->appendChild(TR(
@@ -86,8 +86,9 @@ class WikiTheme extends Themelet
         $page->add_block(new Block($title, $html));
     }
 
-    public function display_page_editor(Page $page, WikiPage $wiki_page): void
+    public function display_page_editor(WikiPage $wiki_page): void
     {
+        global $page;
         $page->set_title($wiki_page->title);
         $this->display_navigation();
         $page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));

@@ -17,8 +17,9 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
     /**
      * @param ?query-array $query
      */
-    public function display_paginator(Page $page, string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
+    public function display_paginator(string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
+        global $page;
         if ($total_pages === 0) {
             $total_pages = 1;
         }

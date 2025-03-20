@@ -20,8 +20,9 @@ class BoneQualityTheme extends Themelet
      */
     private array $boned_class = ["class" => "boned_color"];
 
-    public function display_page(Page $page, string $failure_string, bool $boned, ?HTMLElement $results): void
+    public function display_page(string $failure_string, bool $boned, ?HTMLElement $results): void
     {
+        global $page;
         $bones = emptyHTML();
         $heading = "Congratulations. We appear to be un$failure_string, but remain ever vigilant.";
         if ($boned) {

@@ -44,7 +44,7 @@ class UserConfigTheme extends Themelet
      *
      * @param array<Block> $config_blocks
      */
-    public function display_user_config_page(Page $page, array $config_blocks, User $user): void
+    public function display_user_config_page(array $config_blocks, User $user): void
     {
         usort($config_blocks, Block::cmp(...));
 
@@ -60,10 +60,10 @@ class UserConfigTheme extends Themelet
             INPUT(['class' => 'setupsubmit', 'type' => 'submit', 'value' => 'Save Settings'])
         );
 
-        $page->set_mode(PageMode::PAGE);
-        $page->set_title("User Options");
+        Ctx::$page->set_mode(PageMode::PAGE);
+        Ctx::$page->set_title("User Options");
         $this->display_navigation();
-        $page->add_block(new Block(null, $table, id: "Setupmain"));
+        Ctx::$page->add_block(new Block(null, $table, id: "Setupmain"));
     }
 
     protected function sb_to_html(Block $block): HTMLElement

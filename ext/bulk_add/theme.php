@@ -21,8 +21,9 @@ class BulkAddTheme extends Themelet
      *
      * @param UploadResult[] $results
      */
-    public function display_upload_results(Page $page, array $results): void
+    public function display_upload_results(array $results): void
     {
+        global $page;
         $page->set_title("Adding folder");
         $this->display_navigation();
         $html = UL();

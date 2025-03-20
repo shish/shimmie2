@@ -16,8 +16,9 @@ class BulkActionsTheme extends Themelet
     /**
      * @param array<BulkAction> $actions
      */
-    public function display_selector(Page $page, array $actions, string $query): void
+    public function display_selector(array $actions, string $query): void
     {
+        global $page;
         $header = emptyHTML(
             INPUT(["type" => "hidden", "name" => "bulk_selected_ids", "id" => "bulk_selected_ids"]),
             INPUT(["type" => "button", "id" => "bulk_selector_activate", "onclick" => 'activate_bulk_selector();' , "value" => "Activate (M)anual Select", "accesskey" => "m"])

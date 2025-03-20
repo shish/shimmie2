@@ -17,8 +17,9 @@ class ForumTheme extends Themelet
     /**
      * @param Thread[] $threads
      */
-    public function display_thread_list(Page $page, array $threads, bool $showAdminOptions, int $pageNumber, int $totalPages): void
+    public function display_thread_list(array $threads, bool $showAdminOptions, int $pageNumber, int $totalPages): void
     {
+        global $page;
         if (count($threads) == 0) {
             $html = emptyHTML("There are no threads to show.");
         } else {
@@ -27,12 +28,12 @@ class ForumTheme extends Themelet
 
         $page->set_title("Forum");
         $page->add_block(new Block("Forum", $html, "main", 10));
-        $this->display_paginator($page, "forum/index", null, $pageNumber, $totalPages);
+        $this->display_paginator("forum/index", null, $pageNumber, $totalPages);
     }
 
-    public function display_new_thread_composer(Page $page, ?string $threadText = null, ?string $threadTitle = null): void
+    public function display_new_thread_composer(?string $threadText = null, ?string $threadTitle = null): void
     {
-        global $config, $user;
+        global $config, $user, $page;
         $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
@@ -75,9 +76,9 @@ class ForumTheme extends Themelet
         $page->add_block(new Block($blockTitle, $html, "main", 120));
     }
 
-    public function display_new_post_composer(Page $page, int $threadID): void
+    public function display_new_post_composer(int $threadID): void
     {
-        global $config;
+        global $config, $page;
 
         $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
@@ -113,7 +114,7 @@ class ForumTheme extends Themelet
      */
     public function display_thread(array $posts, bool $showAdminOptions, string $threadTitle, int $threadID, int $pageNumber, int $totalPages): void
     {
-        global $config, $page/*, $user*/;
+        global $config, $page;
 
         $posts_per_page = $config->get_int(ForumConfig::POSTS_PER_PAGE);
 
@@ -188,14 +189,15 @@ class ForumTheme extends Themelet
             )
         );
 
-        $this->display_paginator($page, "forum/view/".$threadID, null, $pageNumber, $totalPages);
+        $this->display_paginator("forum/view/".$threadID, null, $pageNumber, $totalPages);
 
         $page->set_title($threadTitle);
         $page->add_block(new Block($threadTitle, $html, "main", 20));
     }
 
-    public function add_actions_block(Page $page, int $threadID): void
+    public function add_actions_block(int $threadID): void
     {
+        global $page;
         $html = A(["href" => make_link("forum/nuke/".$threadID)], "Delete this thread and its posts.");
         $page->add_block(new Block("Admin Actions", $html, "main", 140));
     }

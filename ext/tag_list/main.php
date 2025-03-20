@@ -15,9 +15,9 @@ final class TagList extends Extension
         global $config, $page;
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
             if (!empty($event->search_terms)) {
-                $this->add_refine_block($page, $event->search_terms);
+                $this->add_refine_block($event->search_terms);
             } else {
-                $this->add_popular_block($page);
+                $this->add_popular_block();
             }
         }
     }
@@ -28,10 +28,10 @@ final class TagList extends Extension
         if ($config->get_int(TagListConfig::LENGTH) > 0) {
             $type = $config->get_string(TagListConfig::IMAGE_TYPE);
             if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
-                $this->add_tags_block($page, $event->image);
+                $this->add_tags_block($event->image);
             }
             if ($type == TagListConfig::TYPE_RELATED || $type == TagListConfig::TYPE_BOTH) {
-                $this->add_related_block($page, $event->image);
+                $this->add_related_block($event->image);
             }
         }
     }
@@ -75,7 +75,7 @@ final class TagList extends Extension
         return $results;
     }
 
-    private function add_related_block(Page $page, Image $image): void
+    private function add_related_block(Image $image): void
     {
         global $database, $config;
 
@@ -106,11 +106,11 @@ final class TagList extends Extension
 
         $tags = $database->get_all($query, $args);
         if (count($tags) > 0) {
-            $this->theme->display_related_block($page, $tags, "Related Tags");
+            $this->theme->display_related_block($tags, "Related Tags");
         }
     }
 
-    private function add_tags_block(Page $page, Image $image): void
+    private function add_tags_block(Image $image): void
     {
         global $config, $database;
 
@@ -123,14 +123,14 @@ final class TagList extends Extension
 		", ["image_id" => $image->id]);
         if (count($tags) > 0) {
             if (TagCategoriesInfo::is_enabled() and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
-                $this->theme->display_split_related_block($page, $tags);
+                $this->theme->display_split_related_block($tags);
             } else {
-                $this->theme->display_related_block($page, $tags, "Tags");
+                $this->theme->display_related_block($tags, "Tags");
             }
         }
     }
 
-    private function add_popular_block(Page $page): void
+    private function add_popular_block(): void
     {
         global $cache, $database, $config;
 
@@ -164,14 +164,14 @@ final class TagList extends Extension
             $cache->set("popular_tags", $tags, 600);
         }
         if (count($tags) > 0) {
-            $this->theme->display_popular_block($page, $tags);
+            $this->theme->display_popular_block($tags);
         }
     }
 
     /**
      * @param string[] $search
      */
-    private function add_refine_block(Page $page, array $search): void
+    private function add_refine_block(array $search): void
     {
         global $cache, $config, $database;
 
@@ -182,7 +182,7 @@ final class TagList extends Extension
         $related_tags = self::get_related_tags($search, $config->get_int(TagListConfig::LENGTH));
 
         if (!empty($related_tags)) {
-            $this->theme->display_refine_block($page, $related_tags, $search);
+            $this->theme->display_refine_block($related_tags, $search);
         }
     }
 

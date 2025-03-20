@@ -51,8 +51,9 @@ class PoolsTheme extends Themelet
      *
      * @param Pool[] $pools
      */
-    public function list_pools(Page $page, array $pools, string $search, int $pageNumber, int $totalPages): void
+    public function list_pools(array $pools, string $search, int $pageNumber, int $totalPages): void
     {
+        global $page;
         // Build up the list of pools.
         $pool_rows = [];
         foreach ($pools as $pool) {
@@ -85,14 +86,15 @@ class PoolsTheme extends Themelet
         if ($search !== "" and !str_starts_with($search, '/')) {
             $search = '/'.$search;
         }
-        $this->display_paginator($page, "pool/list".$search, null, $pageNumber, $totalPages);
+        $this->display_paginator("pool/list".$search, null, $pageNumber, $totalPages);
     }
 
     /*
      * HERE WE DISPLAY THE NEW POOL COMPOSER
      */
-    public function new_pool_composer(Page $page): void
+    public function new_pool_composer(): void
     {
+        global $page;
         $form = SHM_SIMPLE_FORM(make_link("pool/create"), TABLE(
             TR(TD("Title:"), TD(INPUT(["type" => "text", "name" => "title"]))),
             TR(TD("Public?:"), TD("Yes", INPUT(["type" => "radio", "name" => "public", "value" => "Y", "checked" => "checked"]), "No", INPUT(["type" => "radio", "name" => "public", "value" => "N"]))),
@@ -139,7 +141,7 @@ class PoolsTheme extends Themelet
         if (!is_null($pool)) {
             if ($pool->public || $user->can(PoolsPermission::ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
                 if (!$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
-                    $this->sidebar_options($page, $pool, $check_all);
+                    $this->sidebar_options($pool, $check_all);
                 }
             }
             $page->add_block(new Block($pool->title, format_text($pool->description), "main", 10));
@@ -161,12 +163,12 @@ class PoolsTheme extends Themelet
         }
 
         $page->add_block(new Block("Viewing Posts", $image_list, "main", 30));
-        $this->display_paginator($page, "pool/view/" . $pool->id, null, $pageNumber, $totalPages);
+        $this->display_paginator("pool/view/" . $pool->id, null, $pageNumber, $totalPages);
     }
 
-    public function sidebar_options(Page $page, Pool $pool, bool $check_all): void
+    public function sidebar_options(Pool $pool, bool $check_all): void
     {
-        global $user;
+        global $user, $page;
 
         $editor = emptyHTML(
             SHM_SIMPLE_FORM(
@@ -214,8 +216,9 @@ class PoolsTheme extends Themelet
     /**
      * @param Image[] $images
      */
-    public function pool_result(Page $page, array $images, Pool $pool): void
+    public function pool_result(array $images, Pool $pool): void
     {
+        global $page;
         $this->display_top($pool, "Importing Posts", true);
 
         $form = SHM_FORM(make_link("pool/add_posts/{$pool->id}"), name: "checks");
@@ -241,8 +244,9 @@ class PoolsTheme extends Themelet
      *
      * @param Image[] $images
      */
-    public function edit_order(Page $page, Pool $pool, array $images): void
+    public function edit_order(Pool $pool, array $images): void
     {
+        global $page;
         $this->display_top($pool, "Sorting Pool");
 
         $form = SHM_FORM(make_link("pool/save_order/{$pool->id}"), name: "checks");
@@ -271,8 +275,9 @@ class PoolsTheme extends Themelet
      *
      * @param Image[] $images
      */
-    public function edit_pool(Page $page, Pool $pool, array $images): void
+    public function edit_pool(Pool $pool, array $images): void
     {
+        global $page;
         $desc_form = SHM_SIMPLE_FORM(
             make_link("pool/edit_description/{$pool->id}"),
             TEXTAREA(["name" => "description"], $pool->description),
@@ -351,7 +356,7 @@ class PoolsTheme extends Themelet
         $this->display_top(null, "Recent Changes");
         $page->add_block(new Block("Recent Changes", $table, position: 10));
 
-        $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
+        $this->display_paginator("pool/updated", null, $pageNumber, $totalPages);
     }
 
     /**

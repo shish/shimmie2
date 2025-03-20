@@ -32,11 +32,11 @@ final class SourceHistory extends Extension
             $this->process_bulk_revert_request();
         } elseif ($event->page_matches("source_history/all/{page}")) {
             $page_id = $event->get_iarg('page');
-            $this->theme->display_global_page($page, $this->get_global_source_history($page_id), $page_id);
+            $this->theme->display_global_page($this->get_global_source_history($page_id), $page_id);
         } elseif ($event->page_matches("source_history/{image_id}")) {
             // must be an attempt to view a source history
             $image_id = $event->get_iarg('image_id');
-            $this->theme->display_history_page($page, $image_id, $this->get_source_history_from_id($image_id));
+            $this->theme->display_history_page($image_id, $this->get_source_history_from_id($image_id));
         }
     }
 

@@ -69,7 +69,7 @@ final class ReportImage extends Extension
             $page->set_redirect(make_link());
         }
         if ($event->page_matches("image_report/list", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {
-            $this->theme->display_reported_images($page, $this->get_reported_images());
+            $this->theme->display_reported_images($this->get_reported_images());
         }
     }
 

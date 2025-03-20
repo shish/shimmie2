@@ -95,7 +95,7 @@ final class ViewPost extends Extension
         $this->theme->display_page($image, $iibbe->get_parts());
 
         $iabbe = send_event(new ImageAdminBlockBuildingEvent($image, $user, "view"));
-        $this->theme->display_admin_block($page, $iabbe->get_parts());
+        $this->theme->display_admin_block($iabbe->get_parts());
     }
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void

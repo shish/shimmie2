@@ -20,7 +20,7 @@ class LinkImageTheme extends Themelet
     /**
      * @param array{thumb_src:Url,image_src:Url,post_link:Url,text_link:string|null} $data
      */
-    public function links_block(Page $page, array $data): void
+    public function links_block(array $data): void
     {
         $thumb_src = $data['thumb_src'];
         $image_src = $data['image_src'];
@@ -61,7 +61,7 @@ class LinkImageTheme extends Themelet
                 )
             )),
         ));
-        $page->add_block(new Block("Link to Post", $html, "main", 50));
+        Ctx::$page->add_block(new Block("Link to Post", $html, "main", 50));
     }
 
     protected function url(Url $url, ?string $content, string $type): string

@@ -32,7 +32,7 @@ class FutabaCommentListTheme extends CommentListTheme
         $page->set_layout("no-left");
         $page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
         $page->add_block(new Block(null, HR(), "main", 80));
-        $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
+        $this->display_paginator("comment/list", null, $page_number, $total_pages);
         $this->post_page = false;
 
         // parts for each image

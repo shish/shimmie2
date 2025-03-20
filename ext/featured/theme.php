@@ -10,8 +10,9 @@ use function MicroHTML\IMG;
 
 class FeaturedTheme extends Themelet
 {
-    public function display_featured(Page $page, Image $image): void
+    public function display_featured(Image $image): void
     {
+        global $page;
         $page->add_block(new Block("Featured Post", $this->build_featured_html($image), "left", 3));
     }
 

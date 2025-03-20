@@ -206,10 +206,10 @@ final class Pools extends Extension
             }
             $search = $event->get_arg('search', "");
             $page_num = $event->get_iarg('page_num', 1) - 1;
-            $this->list_pools($page, $page_num, $search);
+            $this->list_pools($page_num, $search);
         }
         if ($event->page_matches("pool/new", method: "GET", permission: PoolsPermission::CREATE)) {
-            $this->theme->new_pool_composer($page);
+            $this->theme->new_pool_composer();
         }
         if ($event->page_matches("pool/create", method: "POST", permission: PoolsPermission::CREATE)) {
             $pce = send_event(
@@ -246,7 +246,7 @@ final class Pools extends Extension
             while ($row = $result->fetch()) {
                 $images[] = Image::by_id_ex((int) $row["image_id"]);
             }
-            $this->theme->edit_pool($page, $pool, $images);
+            $this->theme->edit_pool($pool, $images);
         }
         if ($event->page_matches("pool/order/{pool_id}")) {
             $pool_id = $event->get_iarg('pool_id');
@@ -272,7 +272,7 @@ final class Pools extends Extension
                 }
             }
 
-            $this->theme->edit_order($page, $pool, $images);
+            $this->theme->edit_order($pool, $images);
         }
         if ($event->page_matches("pool/save_order/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
@@ -329,7 +329,7 @@ final class Pools extends Extension
                 limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
                 tags: Tag::explode($event->req_POST("pool_tag"))
             );
-            $this->theme->pool_result($page, $images, $pool);
+            $this->theme->pool_result($images, $pool);
         }
         if ($event->page_matches("pool/add_post", method: "POST")) {
             $pool_id = int_escape($event->req_POST("pool_id"));
@@ -584,9 +584,9 @@ final class Pools extends Extension
         }
     }
 
-    private function list_pools(Page $page, int $pageNumber, string $search): void
+    private function list_pools(int $pageNumber, string $search): void
     {
-        global $config, $database;
+        global $config, $database, $page;
 
         $poolsPerPage = $config->get_int(PoolsConfig::LISTS_PER_PAGE);
 
@@ -615,7 +615,7 @@ final class Pools extends Extension
 		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]));
         $totalPages = (int) ceil((int) $database->get_one("SELECT COUNT(*) FROM pools " . $where_clause) / $poolsPerPage);
 
-        $this->theme->list_pools($page, $pools, $search, $pageNumber + 1, $totalPages);
+        $this->theme->list_pools($pools, $search, $pageNumber + 1, $totalPages);
     }
 
     public function onPoolCreation(PoolCreationEvent $event): void

@@ -11,12 +11,12 @@ use function MicroHTML\TR;
 
 class BiographyTheme extends Themelet
 {
-    public function display_biography(Page $page, string $bio): void
+    public function display_biography(string $bio): void
     {
-        $page->add_block(new Block("About Me", format_text($bio), "main", 30, "about-me"));
+        Ctx::$page->add_block(new Block("About Me", format_text($bio), "main", 30, "about-me"));
     }
 
-    public function display_composer(Page $page, User $duser, string $bio): void
+    public function display_composer(User $duser, string $bio): void
     {
         $html = SHM_SIMPLE_FORM(
             make_link("user/{$duser->name}/biography"),
@@ -27,6 +27,6 @@ class BiographyTheme extends Themelet
             ),
         );
 
-        $page->add_block(new Block("About Me", $html, "main", 30));
+        Ctx::$page->add_block(new Block("About Me", $html, "main", 30));
     }
 }

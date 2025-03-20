@@ -31,7 +31,7 @@ final class RegenThumb extends Extension
 
             $this->regenerate_thumbnail($image);
 
-            $this->theme->display_results($page, $image);
+            $this->theme->display_results($image);
         }
         if ($event->page_matches("regen_thumb/mass", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $tags = Tag::explode(strtolower($event->req_POST('tags')), false);

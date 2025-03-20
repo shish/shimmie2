@@ -82,7 +82,7 @@ final class Index extends Extension
             $count_images = count($images);
 
             if ($count_search_terms === 0 && $count_images === 0 && $page_number === 1) {
-                $this->theme->display_intro($page);
+                $this->theme->display_intro();
                 send_event(new PostListBuildingEvent($search_terms));
             } elseif ($count_search_terms > 0 && $count_images === 1 && $page_number === 1) {
                 $page->set_mode(PageMode::REDIRECT);
@@ -91,7 +91,7 @@ final class Index extends Extension
                 $plbe = send_event(new PostListBuildingEvent($search_terms));
 
                 $this->theme->set_page($page_number, $total_pages, $search_terms);
-                $this->theme->display_page($page, $images);
+                $this->theme->display_page($images);
             }
         }
     }
