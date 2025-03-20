@@ -60,21 +60,17 @@ final class BulkActionBlockBuildingEvent extends Event
 
 final class BulkActionEvent extends Event
 {
-    public string $action;
-    public \Generator $items;
-    /** @var array<string, mixed> */
-    public array $params;
     public bool $redirect = true;
 
     /**
      * @param array<string, mixed> $params
      */
-    public function __construct(string $action, \Generator $items, array $params)
-    {
+    public function __construct(
+        public string $action,
+        public \Generator $items,
+        public array $params
+    ) {
         parent::__construct();
-        $this->action = $action;
-        $this->items = $items;
-        $this->params = $params;
     }
 }
 

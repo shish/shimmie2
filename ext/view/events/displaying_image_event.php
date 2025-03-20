@@ -15,16 +15,9 @@ namespace Shimmie2;
  */
 class DisplayingImageEvent extends Event
 {
-    public Image $image;
-
-    public function __construct(Image $image)
-    {
+    public function __construct(
+        public Image $image
+    ) {
         parent::__construct();
-        $this->image = $image;
-    }
-
-    public function get_image(): Image
-    {
-        return $this->image;
     }
 }

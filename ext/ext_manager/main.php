@@ -10,13 +10,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ExtensionAuthor
 {
-    public string $name;
-    public ?string $email;
-
-    public function __construct(string $name, ?string $email)
-    {
-        $this->name = $name;
-        $this->email = $email;
+    public function __construct(
+        public string $name,
+        public ?string $email
+    ) {
     }
 }
 

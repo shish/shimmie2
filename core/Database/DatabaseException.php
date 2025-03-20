@@ -15,7 +15,5 @@ class DatabaseException extends SCoreException
         public array $args
     ) {
         parent::__construct($msg);
-        $this->query = $query;
-        $this->args = $args;
     }
 }

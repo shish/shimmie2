@@ -6,14 +6,11 @@ namespace Shimmie2;
 
 final class ImageRelationshipSetEvent extends Event
 {
-    public int $child_id;
-    public int $parent_id;
-
-    public function __construct(int $child_id, int $parent_id)
-    {
+    public function __construct(
+        public int $child_id,
+        public int $parent_id
+    ) {
         parent::__construct();
-        $this->child_id = $child_id;
-        $this->parent_id = $parent_id;
     }
 }
 

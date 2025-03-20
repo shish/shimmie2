@@ -25,12 +25,10 @@ final class HelpPageListBuildingEvent extends Event
  */
 final class HelpPageBuildingEvent extends PartListBuildingEvent
 {
-    public string $key;
-
-    public function __construct(string $key)
-    {
+    public function __construct(
+        public string $key
+    ) {
         parent::__construct();
-        $this->key = $key;
     }
 
     public function add_block(Block $block, int $position = 50): void

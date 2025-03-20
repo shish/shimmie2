@@ -9,17 +9,12 @@ use function MicroHTML\emptyHTML;
 
 final class FavoriteSetEvent extends Event
 {
-    public int $image_id;
-    public User $user;
-    public bool $do_set;
-
-    public function __construct(int $image_id, User $user, bool $do_set)
-    {
+    public function __construct(
+        public int $image_id,
+        public User $user,
+        public bool $do_set
+    ) {
         parent::__construct();
-
-        $this->image_id = $image_id;
-        $this->user = $user;
-        $this->do_set = $do_set;
     }
 }
 

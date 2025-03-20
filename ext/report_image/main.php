@@ -6,37 +6,29 @@ namespace Shimmie2;
 
 final class RemoveReportedImageEvent extends Event
 {
-    public int $id;
-
-    public function __construct(int $id)
-    {
+    public function __construct(
+        public int $id
+    ) {
         parent::__construct();
-        $this->id = $id;
     }
 }
 
 final class AddReportedImageEvent extends Event
 {
-    public ImageReport $report;
-
-    public function __construct(ImageReport $report)
-    {
+    public function __construct(
+        public ImageReport $report
+    ) {
         parent::__construct();
-        $this->report = $report;
     }
 }
 
 final class ImageReport
 {
-    public int $user_id;
-    public int $image_id;
-    public string $reason;
-
-    public function __construct(int $image_id, int $user_id, string $reason)
-    {
-        $this->image_id = $image_id;
-        $this->user_id = $user_id;
-        $this->reason = $reason;
+    public function __construct(
+        public int $image_id,
+        public int $user_id,
+        public string $reason
+    ) {
     }
 }
 

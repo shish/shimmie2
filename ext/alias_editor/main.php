@@ -42,12 +42,10 @@ final class AddAliasEvent extends Event
 
 final class DeleteAliasEvent extends Event
 {
-    public string $oldtag;
-
-    public function __construct(string $oldtag)
-    {
+    public function __construct(
+        public string $oldtag
+    ) {
         parent::__construct();
-        $this->oldtag = $oldtag;
     }
 }
 
