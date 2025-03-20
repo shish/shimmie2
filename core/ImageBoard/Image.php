@@ -435,18 +435,6 @@ final class Image implements \ArrayAccess
     }
 
     /**
-     * Get the info for this image, formatted according to the
-     * configured template.
-     */
-    #[Field(name: "info")]
-    public function get_info(): string
-    {
-        global $config;
-        return send_event(new ParseLinkTemplateEvent($config->get_string(ImageConfig::INFO), $this))->text;
-    }
-
-
-    /**
      * Figure out where the full size image is on disk.
      */
     public function get_image_filename(): Path
