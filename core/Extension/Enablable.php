@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class Enablable
+trait Enablable
 {
-    public const KEY = "";
-
     /** @var string[]|null */
     private static ?array $enabled_extensions = null;
 
