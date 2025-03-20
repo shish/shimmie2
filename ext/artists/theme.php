@@ -275,7 +275,7 @@ class ArtistsTheme extends Themelet
 
         $page->set_title("Artists");
         $page->add_block(new Block("Artists", $html, "main", 10));
-        $this->display_paginator($page, "artist/list", null, $pageNumber, $totalPages);
+        $this->display_paginator("artist/list", null, $pageNumber, $totalPages);
     }
 
     public function show_new_alias_composer(int $artistID): void

@@ -29,7 +29,7 @@ final class Terms extends Extension
             ) {
                 $sitename = $config->get_string(SetupConfig::TITLE);
                 $body = format_text($config->get_string(TermsConfig::MESSAGE));
-                $this->theme->display_page($page, $sitename, $event->path, $body);
+                $this->theme->display_page($sitename, $event->path, $body);
             }
         }
     }

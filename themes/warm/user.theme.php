@@ -17,8 +17,9 @@ class WarmUserPageTheme extends UserPageTheme
     /**
      * @param array<array{link: Url, name: string}> $parts
      */
-    public function display_user_block(Page $page, User $user, array $parts): void
+    public function display_user_block(User $user, array $parts): void
     {
+        global $page;
         $parts_html = [];
         foreach ($parts as $part) {
             $parts_html[] = A(["href" => $part["link"]], $part["name"]);
@@ -26,9 +27,9 @@ class WarmUserPageTheme extends UserPageTheme
         $page->add_block(new Block("Logged in as {$user->name}", joinHTML(" | ", $parts_html), "head", 90));
     }
 
-    public function display_login_block(Page $page): void
+    public function display_login_block(): void
     {
-        global $config;
+        global $config, $page;
         $html = SHM_SIMPLE_FORM(
             make_link("user_admin/login"),
             TABLE(

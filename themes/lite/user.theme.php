@@ -15,9 +15,9 @@ use function MicroHTML\joinHTML;
 
 class LiteUserPageTheme extends UserPageTheme
 {
-    public function display_login_page(Page $page): void
+    public function display_login_page(): void
     {
-        global $config;
+        global $config, $page;
         $page->set_title("Login");
         $page->set_layout("no-left");
         $html = SHM_SIMPLE_FORM(
@@ -46,12 +46,12 @@ class LiteUserPageTheme extends UserPageTheme
     /**
      * @param array<int, array{name: string, link: Url}> $parts
      */
-    public function display_user_links(Page $page, User $user, array $parts): void
+    public function display_user_links(User $user, array $parts): void
     {
         // no block in this theme
     }
 
-    public function display_login_block(Page $page): void
+    public function display_login_block(): void
     {
         // no block in this theme
     }
@@ -59,8 +59,9 @@ class LiteUserPageTheme extends UserPageTheme
     /**
      * @param array<array{link: Url, name: string}> $parts
      */
-    public function display_user_block(Page $page, User $user, array $parts): void
+    public function display_user_block(User $user, array $parts): void
     {
+        global $page;
         $html = [];
         $blocked = ["Pools", "Pool Changes", "Alias Editor", "My Profile"];
         foreach ($parts as $part) {
@@ -74,10 +75,11 @@ class LiteUserPageTheme extends UserPageTheme
         $page->add_block($b);
     }
 
-    public function display_signup_page(Page $page): void
+    public function display_signup_page(): void
     {
+        global $page;
         $page->set_layout("no-left");
-        parent::display_signup_page($page);
+        parent::display_signup_page();
     }
 
     /**

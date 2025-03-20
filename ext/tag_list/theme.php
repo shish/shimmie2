@@ -55,9 +55,9 @@ class TagListTheme extends Themelet
     /**
      * @param array<array{tag: string, count: int}> $tag_infos
      */
-    public function display_split_related_block(Page $page, array $tag_infos): void
+    public function display_split_related_block(array $tag_infos): void
     {
-        global $config;
+        global $config, $page;
 
         if ($config->get_string(TagListConfig::RELATED_SORT) == TagListConfig::SORT_ALPHABETICAL) {
             usort($tag_infos, fn ($a, $b) => strcasecmp($a['tag'], $b['tag']));
@@ -104,9 +104,9 @@ class TagListTheme extends Themelet
     /**
      * @param array<array{tag: string, count: int}> $tag_infos
      */
-    public function display_related_block(Page $page, array $tag_infos, string $block_name): void
+    public function display_related_block(array $tag_infos, string $block_name): void
     {
-        global $config;
+        global $config, $page;
 
         $main_html = $this->get_tag_list_html(
             $tag_infos,
@@ -119,9 +119,9 @@ class TagListTheme extends Themelet
     /**
      * @param array<array{tag: string, count: int}> $tag_infos
      */
-    public function display_popular_block(Page $page, array $tag_infos): void
+    public function display_popular_block(array $tag_infos): void
     {
-        global $config;
+        global $config, $page;
 
         $main_html = emptyHTML(
             $this->get_tag_list_html(
@@ -139,9 +139,9 @@ class TagListTheme extends Themelet
      * @param array<array{tag: string, count: int}> $tag_infos
      * @param string[] $search
      */
-    public function display_refine_block(Page $page, array $tag_infos, array $search): void
+    public function display_refine_block(array $tag_infos, array $search): void
     {
-        global $config;
+        global $config, $page;
 
         $main_html = emptyHTML(
             $this->get_tag_list_html(

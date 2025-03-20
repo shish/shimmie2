@@ -24,8 +24,9 @@ class SetupTheme extends Themelet
      *
      * @param array<Block> $config_blocks
      */
-    public function display_page(Page $page, array $config_blocks): void
+    public function display_page(array $config_blocks): void
     {
+        global $page;
         usort($config_blocks, Block::cmp(...));
 
         $blocks = DIV(["class" => "setupblocks"]);

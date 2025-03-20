@@ -28,8 +28,9 @@ class IndexTheme extends Themelet
         $this->search_terms = $search_terms;
     }
 
-    public function display_intro(Page $page): void
+    public function display_intro(): void
     {
+        global $page;
         $text = DIV(
             ["style" => "text-align: left;"],
             P("The first thing you'll probably want to do is create a new account; note
@@ -47,11 +48,11 @@ class IndexTheme extends Themelet
     /**
      * @param Image[] $images
      */
-    public function display_page(Page $page, array $images): void
+    public function display_page(array $images): void
     {
-        $this->display_shortwiki($page);
+        $this->display_shortwiki();
 
-        $this->display_page_header($page, $images);
+        $this->display_page_header($images);
 
         $extra = SHM_FORM(
             action: search_link(),
@@ -80,7 +81,7 @@ class IndexTheme extends Themelet
         ], $extra);
 
         if (count($images) > 0) {
-            $this->display_page_images($page, $images);
+            $this->display_page_images($images);
         } else {
             throw new PostNotFound("No posts were found to match the search criteria");
         }
@@ -95,9 +96,9 @@ class IndexTheme extends Themelet
         return DIV(["class" => "shm-image-list", "data-query", $query], ...$thumbs);
     }
 
-    protected function display_shortwiki(Page $page): void
+    protected function display_shortwiki(): void
     {
-        global $config;
+        global $config, $page;
 
         if (WikiInfo::is_enabled() && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) === 1) {
@@ -120,9 +121,9 @@ class IndexTheme extends Themelet
     /**
      * @param Image[] $images
      */
-    protected function display_page_header(Page $page, array $images): void
+    protected function display_page_header(array $images): void
     {
-        global $config;
+        global $config, $page;
 
         if (count($this->search_terms) === 0) {
             $page_title = $config->get_string(SetupConfig::TITLE);
@@ -145,8 +146,9 @@ class IndexTheme extends Themelet
     /**
      * @param Image[] $images
      */
-    protected function display_page_images(Page $page, array $images): void
+    protected function display_page_images(array $images): void
     {
+        global $page;
         if (count($this->search_terms) > 0) {
             if ($this->page_number > 3) {
                 // only index the first pages of each term
@@ -154,10 +156,10 @@ class IndexTheme extends Themelet
             }
             $query = url_escape(Tag::implode($this->search_terms));
             $page->add_block(new Block(null, $this->build_table($images, "search=$query"), "main", 10, "image-list"));
-            $this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, true);
+            $this->display_paginator("post/list/$query", null, $this->page_number, $this->total_pages, true);
         } else {
             $page->add_block(new Block(null, $this->build_table($images, null), "main", 10, "image-list"));
-            $this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages, true);
+            $this->display_paginator("post/list", null, $this->page_number, $this->total_pages, true);
         }
     }
 

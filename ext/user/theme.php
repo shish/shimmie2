@@ -25,8 +25,9 @@ use function MicroHTML\OPTION;
 
 class UserPageTheme extends Themelet
 {
-    public function display_login_page(Page $page): void
+    public function display_login_page(): void
     {
+        global $page;
         $page->set_title("Login");
         $this->display_navigation();
         $page->add_block(new Block(
@@ -38,7 +39,7 @@ class UserPageTheme extends Themelet
     /**
      * @param array<int, array{name: string|HTMLElement, link: Url}> $parts
      */
-    public function display_user_links(Page $page, User $user, array $parts): void
+    public function display_user_links(User $user, array $parts): void
     {
         # $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
     }
@@ -46,8 +47,9 @@ class UserPageTheme extends Themelet
     /**
      * @param array<array{link: Url, name: string|HTMLElement}> $parts
      */
-    public function display_user_block(Page $page, User $user, array $parts): void
+    public function display_user_block(User $user, array $parts): void
     {
+        global $page;
         $html = emptyHTML('Logged in as ', $user->name);
         foreach ($parts as $part) {
             $html->appendChild(BR());
@@ -58,9 +60,9 @@ class UserPageTheme extends Themelet
         $page->add_block($b);
     }
 
-    public function display_signup_page(Page $page): void
+    public function display_signup_page(): void
     {
-        global $config, $user;
+        global $config, $user, $page;
         $tac = $config->get_string(UserAccountsConfig::LOGIN_TAC, "");
 
         if ($config->get_bool(UserAccountsConfig::LOGIN_TAC_BBCODE)) {
@@ -150,9 +152,9 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Create User", $form, "main", 75));
     }
 
-    public function display_signups_disabled(Page $page): void
+    public function display_signups_disabled(): void
     {
-        global $config;
+        global $config, $page;
         $page->set_title("Signups Disabled");
         $this->display_navigation();
         $page->add_block(new Block(
@@ -161,8 +163,9 @@ class UserPageTheme extends Themelet
         ));
     }
 
-    public function display_login_block(Page $page): void
+    public function display_login_block(): void
     {
+        global $page;
         $page->add_block(new Block("Login", $this->create_login_block(), "left", 90));
     }
 
@@ -222,8 +225,9 @@ class UserPageTheme extends Themelet
      * @param array<string, int> $comments
      * @param array<string, int> $events
      */
-    public function display_ip_list(Page $page, array $uploads, array $comments, array $events): void
+    public function display_ip_list(array $uploads, array $comments, array $events): void
     {
+        global $page;
         $html = TABLE(
             ["id" => "ip-history"],
             TR(

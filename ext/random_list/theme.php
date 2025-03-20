@@ -17,8 +17,9 @@ class RandomListTheme extends Themelet
      * @param string[] $search_terms
      * @param Image[] $images
      */
-    public function display_page(Page $page, array $search_terms, array $images): void
+    public function display_page(array $search_terms, array $images): void
     {
+        global $page;
         $html = emptyHTML(B("Refresh the page to view more posts"));
         if (count($images)) {
             $list = DIV(["class" => "shm-image-list"]);

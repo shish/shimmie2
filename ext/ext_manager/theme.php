@@ -24,7 +24,7 @@ class ExtManagerTheme extends Themelet
     /**
      * @param ExtensionInfo[] $extensions
      */
-    public function display_table(Page $page, array $extensions, bool $editable): void
+    public function display_table(array $extensions, bool $editable): void
     {
         $tbody = TBODY();
 
@@ -112,12 +112,12 @@ class ExtManagerTheme extends Themelet
             $cat_html[] = A(["href" => "#".$cat->value], $cat->value);
         }
 
-        $page->set_title("Extensions");
+        Ctx::$page->set_title("Extensions");
         $this->display_navigation(extra: \MicroHTML\joinHTML(BR(), $cat_html));
-        $page->add_block(new Block(null, $form));
+        Ctx::$page->add_block(new Block(null, $form));
     }
 
-    public function display_doc(Page $page, ExtensionInfo $info): void
+    public function display_doc(ExtensionInfo $info): void
     {
         $author = emptyHTML();
         if (count($info->authors) > 0) {
@@ -142,9 +142,9 @@ class ExtManagerTheme extends Themelet
             P(A(["href" => make_link("ext_manager")], "Back to the list"))
         );
 
-        $page->set_title("Documentation for {$info->name}");
-        $page->set_heading($info->name);
+        Ctx::$page->set_title("Documentation for {$info->name}");
+        Ctx::$page->set_heading($info->name);
         $this->display_navigation();
-        $page->add_block(new Block(null, $html));
+        Ctx::$page->add_block(new Block(null, $html));
     }
 }

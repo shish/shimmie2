@@ -98,7 +98,7 @@ final class BulkActions extends Extension
         }
 
         usort($babbe->actions, $this->sort_blocks(...));
-        $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
+        $this->theme->display_selector($babbe->actions, Tag::implode($event->search_terms));
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void

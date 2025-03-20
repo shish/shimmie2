@@ -189,7 +189,7 @@ final class IPBan extends Extension
             $t = new IPBanTable($database->raw_db());
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
-            $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
+            $this->theme->display_bans($t->table($t->query()), $t->paginator());
         }
     }
 

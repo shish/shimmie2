@@ -12,8 +12,7 @@ final class LinkImage extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $page;
-        $this->theme->links_block($page, $this->data($event->image));
+        $this->theme->links_block($this->data($event->image));
     }
 
     /**

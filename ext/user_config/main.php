@@ -81,7 +81,7 @@ final class UserConfig extends Extension
                     }
                 }
             }
-            $this->theme->display_user_config_page($page, $blocks, $user);
+            $this->theme->display_user_config_page($blocks, $user);
         }
         if ($event->page_matches("user_config/save", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $input = validate_input([

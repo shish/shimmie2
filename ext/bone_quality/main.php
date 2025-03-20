@@ -36,14 +36,14 @@ final class BoneQuality extends Extension
             }
 
             $failure_string = $config->get_string(BoneQualityConfig::FAILURE_STRING);
-            $this->theme->display_page($page, $failure_string, $boned, $results);
+            $this->theme->display_page($failure_string, $boned, $results);
         }
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
+        global $config;
         if ($event->parent == "stats") {
-            global $config;
             $failure_string = $config->get_string(BoneQualityConfig::FAILURE_STRING);
             $event->add_nav_link(make_link('bone_quality'), "how $failure_string are we?");
         }

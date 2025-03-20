@@ -16,8 +16,9 @@ use function MicroHTML\joinHTML;
 
 class HomeTheme extends Themelet
 {
-    public function display_page(Page $page, string $sitename, HTMLElement $body): void
+    public function display_page(string $sitename, HTMLElement $body): void
     {
+        global $page;
         $page->set_mode(PageMode::DATA);
         $page->add_auto_html_headers();
 

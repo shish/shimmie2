@@ -145,7 +145,7 @@ final class UserPage extends Extension
         $this->show_user_info();
 
         if ($event->page_matches("user_admin/login", method: "GET")) {
-            $this->theme->display_login_page($page);
+            $this->theme->display_login_page();
         }
         if ($event->page_matches("user_admin/login", method: "POST", authed: false)) {
             $this->page_login($event->req_POST('user'), $event->req_POST('pass'));
@@ -156,15 +156,15 @@ final class UserPage extends Extension
         if ($event->page_matches("user_admin/create", method: "GET", permission: UserAccountsPermission::CREATE_USER)) {
             global $config, $page, $user;
             if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
-                $this->theme->display_signups_disabled($page);
+                $this->theme->display_signups_disabled();
                 return;
             }
-            $this->theme->display_signup_page($page);
+            $this->theme->display_signup_page();
         }
         if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: UserAccountsPermission::CREATE_USER)) {
             global $config, $page, $user;
             if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
-                $this->theme->display_signups_disabled($page);
+                $this->theme->display_signups_disabled();
                 return;
             }
             try {
@@ -277,7 +277,6 @@ final class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/delete_user", method: "POST", permission: UserAccountsPermission::DELETE_USER)) {
             $this->delete_user(
-                $page,
                 int_escape($event->req_POST('id')),
                 $event->get_POST("with_images") == "on",
                 $event->get_POST("with_comments") == "on"
@@ -362,7 +361,7 @@ final class UserPage extends Extension
 
         if ($user->id === $event->display_user->id) {
             $ubbe = send_event(new UserBlockBuildingEvent());
-            $this->theme->display_user_links($page, $user, $ubbe->get_parts());
+            $this->theme->display_user_links($user, $ubbe->get_parts());
         }
         if (
             (
@@ -372,7 +371,6 @@ final class UserPage extends Extension
             ($event->display_user->id !== $config->get_int(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
         ) {
             $this->theme->display_ip_list(
-                $page,
                 $this->count_upload_ips($event->display_user),
                 $this->count_comment_ips($event->display_user),
                 $this->count_log_ips($event->display_user)
@@ -524,10 +522,10 @@ final class UserPage extends Extension
         global $user, $page;
         // user info is shown on all pages
         if ($user->is_anonymous()) {
-            $this->theme->display_login_block($page);
+            $this->theme->display_login_block();
         } else {
             $ubbe = send_event(new UserBlockBuildingEvent());
-            $this->theme->display_user_block($page, $user, $ubbe->get_parts());
+            $this->theme->display_user_block($user, $ubbe->get_parts());
         }
     }
 
@@ -652,9 +650,9 @@ final class UserPage extends Extension
 				ORDER BY MAX(date_sent) DESC", ["username" => $duser->name]);
     }
 
-    private function delete_user(Page $page, int $uid, bool $with_images = false, bool $with_comments = false): void
+    private function delete_user(int $uid, bool $with_images = false, bool $with_comments = false): void
     {
-        global $user, $config, $database;
+        global $user, $config, $database, $page;
 
         $duser = User::by_id($uid);
         Log::warning("user", "Deleting user #{$uid} (@{$duser->name})");

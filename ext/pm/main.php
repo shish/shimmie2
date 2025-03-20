@@ -218,10 +218,10 @@ final class PrivMsg extends Extension
         if (!$user->is_anonymous() && !$duser->is_anonymous()) {
             $pms = PM::get_pms($duser);
             if (!is_null($pms)) {
-                $this->theme->display_pms($page, $pms);
+                $this->theme->display_pms($pms);
             }
             if ($user->can(PrivMsgPermission::SEND_PM) && $user->id !== $duser->id) {
-                $this->theme->display_composer($page, $user, $duser);
+                $this->theme->display_composer($user, $duser);
             }
         }
     }
@@ -241,9 +241,9 @@ final class PrivMsg extends Extension
                     $cache->delete("pm-count-{$user->id}");
                 }
                 $pmo = PM::from_row($pm);
-                $this->theme->display_message($page, $from_user, $user, $pmo);
+                $this->theme->display_message($from_user, $user, $pmo);
                 if ($user->can(PrivMsgPermission::SEND_PM)) {
-                    $this->theme->display_composer($page, $user, $from_user, "Re: ".$pmo->subject);
+                    $this->theme->display_composer($user, $from_user, "Re: ".$pmo->subject);
                 }
             } else {
                 throw new PermissionDenied("You do not have permission to view this PM");

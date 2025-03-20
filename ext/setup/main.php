@@ -120,7 +120,7 @@ final class Setup extends Extension
                     }
                 }
             }
-            $this->theme->display_page($page, $blocks);
+            $this->theme->display_page($blocks);
         } elseif ($event->page_matches("setup/save", method: "POST", permission: SetupPermission::CHANGE_SETTING)) {
             send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");

@@ -42,7 +42,7 @@ class CommentListTheme extends Themelet
             make_link(),
             make_link('comment/list/'.($page_number + 1))
         ]);
-        $this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
+        $this->display_paginator("comment/list", null, $page_number, $total_pages);
 
         // parts for each image
         $position = 10;
@@ -196,7 +196,7 @@ class CommentListTheme extends Themelet
             make_link(),
             ($page_number >= $total_pages) ? null : make_link("comment/beta-search/{$user->name}/" . ($page_number + 1)),
         ]);
-        $this->display_paginator($page, "comment/beta-search/{$user->name}", null, $page_number, $total_pages);
+        $this->display_paginator("comment/beta-search/{$user->name}", null, $page_number, $total_pages);
     }
 
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement

@@ -64,11 +64,11 @@ class Themelet extends Ctx
     /**
      * @param ?query-array $query
      */
-    public function display_paginator(Page $page, string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
+    public function display_paginator(string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
         $c = self::get_common();
         assert(is_a($c, CommonElementsTheme::class));
-        $c->display_paginator($page, $base, $query, $page_number, $total_pages, $show_random);
+        $c->display_paginator($base, $query, $page_number, $total_pages, $show_random);
     }
 
     public function config_group_to_block(Config $config, BaseConfigGroup $group): ?Block
