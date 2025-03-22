@@ -160,13 +160,17 @@ final class MessageColumn extends Column
 
     protected function scan_entities(string $line): string
     {
-        $line = preg_replace_callback("/(Image #|Post #|>>)(\d+)/s", [$this, "link_image"], $line);
+        $line = preg_replace_callback(
+            "/(Image #|Post #|>>)(\d+)/s",
+            $this->link_image(...),
+            $line
+        );
         assert(is_string($line));
         return $line;
     }
 
     /**
-     * @param array{1: string, 2:string} $id
+     * @param array<string> $id
      */
     protected function link_image(array $id): string
     {
