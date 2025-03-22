@@ -166,11 +166,11 @@ final class MessageColumn extends Column
     }
 
     /**
-     * @param array{1: string} $id
+     * @param array{1: string, 2:string} $id
      */
     protected function link_image(array $id): string
     {
-        $iid = int_escape($id[1]);
+        $iid = int_escape($id[2]);
         return "<a href='".make_link("post/view/$iid")."'>&gt;&gt;$iid</a>";
     }
 }
