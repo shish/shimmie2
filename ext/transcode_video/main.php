@@ -186,7 +186,7 @@ final class TranscodeVideo extends Extension
         $command->add_flag($format);
         $command->add_escaped_arg($target_file->str());
 
-        $command->execute(true);
+        $command->execute();
 
         return $target_file;
     }
