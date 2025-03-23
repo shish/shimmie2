@@ -32,7 +32,8 @@ final class IcoFileHandler extends DataHandlerExtension
     protected function create_thumb(Image $image): bool
     {
         try {
-            ThumbnailUtil::create_image_thumb($image, MediaEngine::IMAGICK);
+            $engine = defined("UNITTEST") ? MediaEngine::STATIC : MediaEngine::IMAGICK;
+            ThumbnailUtil::create_image_thumb($image, $engine);
             return true;
         } catch (MediaException $e) {
             Log::warning("handle_ico", "Could not generate thumbnail. " . $e->getMessage());
