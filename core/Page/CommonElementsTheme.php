@@ -91,8 +91,7 @@ class CommonElementsTheme extends Themelet
         $tags = strtolower($image->get_tag_list());
 
         // TODO: Set up a function for fetching what kind of files are currently thumbnailable
-        $mimeArr = array_flip([MimeType::MP3]); //List of thumbless filetypes
-        if (!isset($mimeArr[$image->get_mime()])) {
+        if (!in_array($image->get_mime()->base, [MimeType::MP3])) {
             $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
         } else {
             //Use max thumbnail size if using thumbless filetype

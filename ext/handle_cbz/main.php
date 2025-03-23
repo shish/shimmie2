@@ -32,7 +32,7 @@ final class CBZFileHandler extends DataHandlerExtension
             $cover,
             $image->get_thumb_filename(),
             ThumbnailUtil::get_thumbnail_max_size_scaled(),
-            MimeType::get_for_file($cover->str()),
+            MimeType::get_for_file($cover),
             null
         );
         return true;

@@ -190,7 +190,7 @@ class ViewPostTheme extends Themelet
             "Type: {$image->get_mime()}",
         ];
         if ($image->video_codec !== null) {
-            $parts[] = "Video Codec: $image->video_codec";
+            $parts[] = "Video Codec: {$image->video_codec->name}";
         }
         if ($image->length !== null) {
             $parts[] = "Length: " . format_milliseconds($image->length);

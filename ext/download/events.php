@@ -14,7 +14,7 @@ class ImageDownloadingEvent extends Event
     public function __construct(
         public Image $image,
         public Path $path,
-        public string $mime,
+        public MimeType $mime,
         public array $params
     ) {
         parent::__construct();

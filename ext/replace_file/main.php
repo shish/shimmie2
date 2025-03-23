@@ -84,7 +84,7 @@ final class ReplaceFile extends Extension
             throw new ImageReplaceException("Replacement file size is zero");
         }
         $event->image->filesize = $filesize;
-        $event->image->set_mime(MimeType::get_for_file($target->str()));
+        $event->image->set_mime(MimeType::get_for_file($target));
         send_event(new MediaCheckPropertiesEvent($image));
         $image->save_to_db();
 

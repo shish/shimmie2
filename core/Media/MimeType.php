@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "file_extension.php";
-
-class MimeType
+final class MimeType
 {
     // Couldn't find a mimetype for ani, so made one up based on it being a riff container
     public const ANI = 'application/riff+ani';
@@ -68,6 +66,25 @@ class MimeType
 
     public const CHARSET_UTF8 = "charset=utf-8";
 
+    public string $base;
+    public string $parameters;
+
+    public function __construct(
+        string $input
+    ) {
+        if (\Safe\preg_match("/^([-\w.]+)\/([-\w.\+]+)(;.+)?$/", $input) !== 1) {
+            throw new \InvalidArgumentException("Invalid MIME type: $input");
+        }
+        $parts = explode('; ', $input);
+        $this->base = strtolower(array_shift($parts));
+        $this->parameters = implode('; ', $parts);
+    }
+
+    public function __toString(): string
+    {
+        return $this->base . ($this->parameters ? '; ' . $this->parameters : '');
+    }
+
     //RIFF####WEBPVP8?..............ANIM
     private const WEBP_ANIMATION_HEADER =
         [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, null,
@@ -77,55 +94,28 @@ class MimeType
     private const WEBP_LOSSLESS_HEADER =
         [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, 0x4C];
 
-    private const REGEX_MIME_TYPE = "/^([-\w.]+)\/([-\w.]+)(;.+)?$/";
-
-    public static function is_mime(string $value): bool
-    {
-        return \Safe\preg_match(self::REGEX_MIME_TYPE, $value) === 1;
-    }
-
-    public static function add_parameters(string $mime, string ...$parameters): string
-    {
-        if (empty($parameters)) {
-            return $mime;
-        }
-        return $mime."; ".join("; ", $parameters);
-    }
-
-    public static function remove_parameters(string $mime): string
-    {
-        $i = strpos($mime, ";");
-        if ($i !== false) {
-            return substr($mime, 0, $i);
-        }
-        return $mime;
-    }
-
     /**
      * @param array<string> $mime_array
      */
-    public static function matches_array(string $mime, array $mime_array, bool $exact = false): bool
+    public static function matches_array(MimeType $mime, array $mime_array, bool $exact = false): bool
     {
         // If there's an exact match, find it and that's it
-        if (in_array($mime, $mime_array)) {
+        if (in_array((string)$mime, $mime_array)) {
             return true;
         }
         if ($exact) {
             return false;
         }
-
-        $mime = self::remove_parameters($mime);
-
-        return in_array($mime, $mime_array);
+        return in_array($mime->base, $mime_array);
     }
 
-    public static function matches(string $mime1, string $mime2, bool $exact = false): bool
+    public static function matches(MimeType $mime1, MimeType $mime2, bool $exact = false): bool
     {
-        if (!$exact) {
-            $mime1 = self::remove_parameters($mime1);
-            $mime2 = self::remove_parameters($mime2);
+        if ($exact) {
+            return $mime1->base === $mime2->base && $mime1->parameters === $mime2->parameters;
+        } else {
+            return $mime1->base === $mime2->base;
         }
-        return strtolower($mime1) === strtolower($mime2);
     }
 
 
@@ -206,34 +196,33 @@ class MimeType
     /**
      * Returns the mimetype that matches the provided extension.
      */
-    public static function get_for_extension(string $ext): ?string
+    public static function get_for_extension(string $ext): ?MimeType
     {
         $data = MimeMap::get_for_extension($ext);
         if ($data !== null) {
-            return $data[MimeMap::MAP_MIME][0];
+            return new MimeType($data[MimeMap::MAP_MIME][0]);
         }
         // This was an old solution for differentiating lossless webps
         if ($ext === "webp-lossless") {
-            return MimeType::WEBP_LOSSLESS;
+            return new MimeType(MimeType::WEBP_LOSSLESS);
         }
         return null;
     }
 
     /**
      * Returns the mimetype for the specified file via file inspection
-     * @param string $file
-     * @return string The mimetype that was found. Returns generic octet binary mimetype if not found.
+     * @return MimeType The mimetype that was found. Returns generic octet binary mimetype if not found.
      */
-    public static function get_for_file(string $file, ?string $ext = null): string
+    public static function get_for_file(Path $file, ?string $ext = null): MimeType
     {
-        if (!file_exists($file)) {
-            throw new UserError("File not found: ".$file);
+        if (!$file->exists()) {
+            throw new UserError("File not found: ".$file->str());
         }
 
         $output = self::OCTET_STREAM;
 
         $finfo = \Safe\finfo_open(FILEINFO_MIME_TYPE);
-        $type = finfo_file($finfo, $file);
+        $type = finfo_file($finfo, $file->str());
         finfo_close($finfo);
 
         if ($type !== false && !empty($type)) {
@@ -266,6 +255,6 @@ class MimeType
 
         // TODO: Implement manual byte inspections for supported esoteric formats, like ANI
 
-        return $output;
+        return new MimeType($output);
     }
 }

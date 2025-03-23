@@ -14,7 +14,7 @@ final class IcoFileHandler extends DataHandlerExtension
         $event->image->lossless = true;
         $event->image->video = false;
         $event->image->audio = false;
-        $event->image->image = ($event->image->get_mime() !== MimeType::ANI);
+        $event->image->image = ($event->image->get_mime()->base !== MimeType::ANI);
 
         $fp = \Safe\fopen($event->image->get_image_filename()->str(), "r");
         try {

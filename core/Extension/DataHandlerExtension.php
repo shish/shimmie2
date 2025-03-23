@@ -128,20 +128,20 @@ abstract class DataHandlerExtension extends Extension
     abstract protected function check_contents(Path $tmpname): bool;
     abstract protected function create_thumb(Image $image): bool;
 
-    protected function supported_mime(string $mime): bool
+    protected function supported_mime(MimeType $mime): bool
     {
         return MimeType::matches_array($mime, $this::SUPPORTED_MIME);
     }
 
     /**
-     * @return string[]
+     * @return MimeType[]
      */
     public static function get_all_supported_mimes(): array
     {
         $arr = [];
         foreach (DataHandlerExtension::get_subclasses() as $class) {
             $handler = $class->newInstance();
-            $arr = array_merge($arr, $handler::SUPPORTED_MIME);
+            $arr = array_merge($arr, array_map(fn ($mime) => new MimeType($mime), $handler::SUPPORTED_MIME));
         }
 
         // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class

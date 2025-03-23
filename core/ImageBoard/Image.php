@@ -44,7 +44,7 @@ final class Image implements \ArrayAccess
     public string $filename;
     #[Field]
     private string $ext;
-    private string $mime;
+    private MimeType $mime;
 
     /** @var list<tag-string>|null */
     public ?array $tag_array;
@@ -59,7 +59,7 @@ final class Image implements \ArrayAccess
     public bool $locked = false;
     public ?bool $lossless = null;
     public ?bool $video = null;
-    public ?string $video_codec = null;
+    public ?VideoCodec $video_codec = null;
     public ?bool $image = null;
     public ?bool $audio = null;
     public ?int $length = null;
@@ -95,6 +95,8 @@ final class Image implements \ArrayAccess
                                 "int" => int_escape((string)$value),
                                 "bool" => bool_escape((string)$value),
                                 "string" => (string)$value,
+                                "Shimmie2\MimeType" => new MimeType($value),
+                                "Shimmie2\VideoCodec" => VideoCodec::from($value),
                                 default => $value,
                             };
                         }
@@ -203,7 +205,7 @@ final class Image implements \ArrayAccess
     }
 
     /**
-     * @param list<string> $tags
+     * @param list<tag-string> $tags
      */
     public static function by_random(array $tags = [], int $limit_range = 0): ?Image
     {
@@ -233,7 +235,7 @@ final class Image implements \ArrayAccess
      * Rather than simply $this_id + 1, one must take into account
      * deleted images and search queries
      *
-     * @param list<string> $tags
+     * @param list<tag-string> $tags
      */
     public function get_next(array $tags = [], bool $next = true): ?Image
     {
@@ -254,7 +256,7 @@ final class Image implements \ArrayAccess
     /**
      * The reverse of get_next
      *
-     * @param list<string> $tags
+     * @param list<tag-string> $tags
      */
     public function get_prev(array $tags = []): ?Image
     {
@@ -291,14 +293,14 @@ final class Image implements \ArrayAccess
             "filename" => substr($this->filename, 0, 255),
             "filesize" => $this->filesize,
             "hash" => $this->hash,
-            "mime" => strtolower($this->mime),
+            "mime" => (string)$this->mime,
             "ext" => strtolower($this->ext),
             "source" => $this->source,
             "width" => $this->width,
             "height" => $this->height,
             "lossless" => $this->lossless,
             "video" => $this->video,
-            "video_codec" => $this->video_codec,
+            "video_codec" => $this->video_codec?->value,
             "image" => $this->image,
             "audio" => $this->audio,
             "length" => $this->length
@@ -393,7 +395,7 @@ final class Image implements \ArrayAccess
     #[Field(name: "thumb_link")]
     public function get_thumb_link(): Url
     {
-        $mime = Ctx::$config->req_string(ThumbnailConfig::MIME);
+        $mime = new MimeType(Ctx::$config->req_string(ThumbnailConfig::MIME));
         $ext = FileExtension::get_for_mime($mime);
         return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
     }
@@ -465,20 +467,28 @@ final class Image implements \ArrayAccess
     /**
      * Get the image's mime type.
      */
-    #[Field(name: "mime")]
-    public function get_mime(): string
+    public function get_mime(): MimeType
     {
-        if ($this->mime === MimeType::WEBP && $this->lossless) {
-            return MimeType::WEBP_LOSSLESS;
+        if ($this->mime->base === MimeType::WEBP && $this->lossless) {
+            return new MimeType(MimeType::WEBP_LOSSLESS);
         }
-        return strtolower($this->mime);
+        return $this->mime;
+    }
+
+    #[Field(name: "mime")]
+    public function graphql_mime(): string
+    {
+        return (string)$this->mime;
     }
 
     /**
      * Set the image's mime type.
      */
-    public function set_mime(string $mime): void
+    public function set_mime(MimeType|string $mime): void
     {
+        if (is_string($mime)) {
+            $mime = new MimeType($mime);
+        }
         $this->mime = $mime;
         $ext = FileExtension::get_for_mime($this->get_mime());
         assert($ext !== null);

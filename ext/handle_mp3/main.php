@@ -31,6 +31,6 @@ final class MP3FileHandler extends DataHandlerExtension
 
     protected function check_contents(Path $tmpname): bool
     {
-        return MimeType::get_for_file($tmpname->str()) === MimeType::MP3;
+        return MimeType::get_for_file($tmpname)->base === MimeType::MP3;
     }
 }

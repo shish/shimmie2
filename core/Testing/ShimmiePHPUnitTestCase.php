@@ -215,7 +215,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param list<string> $tags
+     * @param list<tag-string> $tags
      * @param int[] $results
      */
     protected function assert_search_results(array $tags, array $results, string $message = ''): void
