@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class MimeMap
+final class MimeMap
 {
     public const MAP_NAME = 'name';
     public const MAP_EXT = 'ext';

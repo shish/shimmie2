@@ -50,7 +50,7 @@ final class TranscodeImageConfig extends ConfigGroup
         global $config;
         $fields = parent::get_config_fields();
 
-        $engine = $config->get_string(TranscodeImageConfig::ENGINE);
+        $engine = MediaEngine::from(Ctx::$config->req_string(TranscodeImageConfig::ENGINE));
         foreach (TranscodeImage::INPUT_MIMES as $display => $mime) {
             if (MediaEngine::is_input_supported($engine, $mime)) {
                 $outputs = TranscodeImage::get_supported_output_mimes($engine, $mime);

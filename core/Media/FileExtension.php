@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class FileExtension
+final class FileExtension
 {
     public const ANI = 'ani';
     public const ASC = 'asc';

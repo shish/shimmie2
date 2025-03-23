@@ -167,8 +167,7 @@ final class ResizeImage extends Extension
 
     private function can_resize_mime(string $mime): bool
     {
-        global $config;
-        $engine = $config->get_string(ResizeConfig::ENGINE);
+        $engine = MediaEngine::from(Ctx::$config->req_string(ResizeConfig::ENGINE));
         return MediaEngine::is_input_supported($engine, $mime)
                 && MediaEngine::is_output_supported($engine, $mime);
     }
@@ -178,17 +177,14 @@ final class ResizeImage extends Extension
     /* ----------------------------- */
     private function resize_image(Image $image_obj, int $width, int $height): void
     {
-        global $config;
-
         if (($height <= 0) && ($width <= 0)) {
             throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
         }
 
-        $engine = $config->get_string(ResizeConfig::ENGINE);
-
+        $engine = MediaEngine::from(Ctx::$config->req_string(ResizeConfig::ENGINE));
 
         if (!$this->can_resize_mime($image_obj->get_mime())) {
-            throw new ImageResizeException("Engine $engine cannot resize selected image");
+            throw new ImageResizeException("Engine {$engine->value} cannot resize selected image");
         }
 
         $hash = $image_obj->hash;

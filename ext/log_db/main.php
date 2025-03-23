@@ -30,7 +30,7 @@ final class ActorColumn extends Column
     {
         $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
         switch ($driver) {
-            case "pgsql":
+            case DatabaseDriverID::PGSQL:
                 return "((LOWER(username) = LOWER(:{$this->name}_0)) OR (address && cast(:{$this->name}_1 as inet)))";
             default:
                 return "((username = :{$this->name}_0) OR (address = :{$this->name}_1))";
@@ -99,7 +99,7 @@ final class MessageColumn extends Column
     {
         $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
         switch ($driver) {
-            case "pgsql":
+            case DatabaseDriverID::PGSQL:
                 return "(LOWER({$this->name}) LIKE LOWER(:{$this->name}_0) AND priority >= :{$this->name}_1)";
             default:
                 return "({$this->name} LIKE :{$this->name}_0 AND priority >= :{$this->name}_1)";

@@ -8,21 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface,InputArgument};
 use Symfony\Component\Console\Output\OutputInterface;
 
-require_once "events.php";
-require_once "media_engine.php";
-require_once "video_codecs.php";
-
-/*
-* This is used by the media code when there is an error
-*/
-final class MediaException extends SCoreException
-{
-}
-
-final class InsufficientMemoryException extends ServerError
-{
-}
-
 final class Media extends Extension
 {
     public const KEY = "media";
@@ -146,9 +131,9 @@ final class Media extends Extension
     {
         if (!in_array(
             $event->resize_type,
-            MediaEngine::RESIZE_TYPE_SUPPORT[$event->engine]
+            MediaEngine::RESIZE_TYPE_SUPPORT[$event->engine->value]
         )) {
-            throw new MediaException("Resize type $event->resize_type not supported by selected media engine $event->engine");
+            throw new MediaException("Resize type $event->resize_type not supported by selected media engine {$event->engine->value}");
         }
 
         switch ($event->engine) {
@@ -194,7 +179,7 @@ final class Media extends Extension
                 $event->input_path->copy($event->output_path);
                 break;
             default:
-                throw new MediaException("Engine not supported for resize: " . $event->engine);
+                throw new MediaException("Engine not supported for resize: " . $event->engine->value);
         }
 
         // TODO: Get output optimization tools working better
@@ -487,9 +472,8 @@ final class Media extends Extension
         if (in_array($mime, self::LOSSLESS_FORMATS)) {
             return true;
         }
-        switch ($mime) {
-            case MimeType::WEBP:
-                return MimeType::is_lossless_webp($filename);
+        if ($mime === MimeType::WEBP) {
+            return MimeType::is_lossless_webp($filename);
         }
         return false;
     }
@@ -752,25 +736,14 @@ final class Media extends Extension
                     break;
             }
 
-            switch ($output_mime) {
-                case MimeType::BMP:
-                    $result = imagebmp($image_resized, $output_filename->str(), true);
-                    break;
-                case MimeType::WEBP:
-                    $result = imagewebp($image_resized, $output_filename->str(), $output_quality);
-                    break;
-                case MimeType::JPEG:
-                    $result = imagejpeg($image_resized, $output_filename->str(), $output_quality);
-                    break;
-                case MimeType::PNG:
-                    $result = imagepng($image_resized, $output_filename->str(), 9);
-                    break;
-                case MimeType::GIF:
-                    $result = imagegif($image_resized, $output_filename->str());
-                    break;
-                default:
-                    throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime");
-            }
+            $result = match ($output_mime) {
+                MimeType::BMP => imagebmp($image_resized, $output_filename->str(), true),
+                MimeType::WEBP => imagewebp($image_resized, $output_filename->str(), $output_quality),
+                MimeType::JPEG => imagejpeg($image_resized, $output_filename->str(), $output_quality),
+                MimeType::PNG => imagepng($image_resized, $output_filename->str(), 9),
+                MimeType::GIF => imagegif($image_resized, $output_filename->str()),
+                default => throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime"),
+            };
             if ($result === false) {
                 throw new MediaException("Failed to save the new image, function returned false when saving type: $output_mime");
             }
