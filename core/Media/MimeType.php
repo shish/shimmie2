@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "file_extension.php";
-
-class MimeType
+final class MimeType
 {
     // Couldn't find a mimetype for ani, so made one up based on it being a riff container
     public const ANI = 'application/riff+ani';

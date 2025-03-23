@@ -54,7 +54,7 @@ final class VideoFileHandler extends DataHandlerExtension
                     $event->image->audio = $audio;
                     if ($event->image->get_mime() === MimeType::MKV &&
                         $event->image->video_codec !== null &&
-                        VideoContainers::is_video_codec_supported(VideoContainers::WEBM, $event->image->video_codec)) {
+                        VideoContainer::is_video_codec_supported(VideoContainer::WEBM, VideoCodec::from($event->image->video_codec))) {
                         // WEBMs are MKVs with the VP9 or VP8 codec
                         // For browser-friendliness, we'll just change the mime type
                         $event->image->set_mime(MimeType::WEBM);
