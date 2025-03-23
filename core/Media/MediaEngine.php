@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class MediaEngine
+enum MediaEngine: string
 {
-    public const GD = "gd";
-    public const IMAGICK = "convert";
-    public const FFMPEG = "ffmpeg";
-    public const STATIC = "static";
+    case GD = "gd";
+    case IMAGICK = "convert";
+    case FFMPEG = "ffmpeg";
+    case STATIC = "static";
 
     public const IMAGE_ENGINES = [
         "GD" => MediaEngine::GD,
@@ -23,14 +23,14 @@ abstract class MediaEngine
         MediaEngine::STATIC,
     ];
     private const OUTPUT_SUPPORT = [
-        MediaEngine::GD => [
+        MediaEngine::GD->value => [
             MimeType::GIF,
             MimeType::JPEG,
             MimeType::PNG,
             MimeType::WEBP,
             MimeType::AVIF,
         ],
-        MediaEngine::IMAGICK => [
+        MediaEngine::IMAGICK->value => [
             MimeType::GIF,
             MimeType::JPEG,
             MimeType::PNG,
@@ -38,17 +38,17 @@ abstract class MediaEngine
             MimeType::WEBP_LOSSLESS,
             MimeType::AVIF,
         ],
-        MediaEngine::FFMPEG => [
+        MediaEngine::FFMPEG->value => [
             MimeType::JPEG,
             MimeType::WEBP,
             MimeType::PNG,
         ],
-        MediaEngine::STATIC => [
+        MediaEngine::STATIC->value => [
             MimeType::JPEG,
         ],
     ];
     private const INPUT_SUPPORT = [
-        MediaEngine::GD => [
+        MediaEngine::GD->value => [
             MimeType::BMP,
             MimeType::GIF,
             MimeType::JPEG,
@@ -58,7 +58,7 @@ abstract class MediaEngine
             MimeType::WEBP_LOSSLESS,
             MimeType::AVIF,
         ],
-        MediaEngine::IMAGICK => [
+        MediaEngine::IMAGICK->value => [
             MimeType::BMP,
             MimeType::GIF,
             MimeType::JPEG,
@@ -72,7 +72,7 @@ abstract class MediaEngine
             MimeType::ICO,
             MimeType::AVIF,
         ],
-        MediaEngine::FFMPEG => [
+        MediaEngine::FFMPEG->value => [
             MimeType::AVI,
             MimeType::MKV,
             MimeType::WEBM,
@@ -80,7 +80,7 @@ abstract class MediaEngine
             MimeType::QUICKTIME,
             MimeType::FLASH_VIDEO,
         ],
-        MediaEngine::STATIC => [
+        MediaEngine::STATIC->value => [
             MimeType::JPEG,
             MimeType::GIF,
             MimeType::PNG,
@@ -88,39 +88,39 @@ abstract class MediaEngine
         ],
     ];
     public const RESIZE_TYPE_SUPPORT = [
-        MediaEngine::GD => [
+        MediaEngine::GD->value => [
             Media::RESIZE_TYPE_FIT,
             Media::RESIZE_TYPE_STRETCH
         ],
-        MediaEngine::IMAGICK => [
+        MediaEngine::IMAGICK->value => [
             Media::RESIZE_TYPE_FIT,
             Media::RESIZE_TYPE_FIT_BLUR,
             Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT,
             Media::RESIZE_TYPE_FILL,
             Media::RESIZE_TYPE_STRETCH,
         ],
-        MediaEngine::FFMPEG => [
+        MediaEngine::FFMPEG->value => [
             Media::RESIZE_TYPE_FIT
         ],
-        MediaEngine::STATIC => [
+        MediaEngine::STATIC->value => [
             Media::RESIZE_TYPE_FIT
         ]
     ];
 
-    public static function is_output_supported(string $engine, string $mime): bool
+    public static function is_output_supported(MediaEngine $engine, MimeType $mime): bool
     {
         return MimeType::matches_array(
             $mime,
-            MediaEngine::OUTPUT_SUPPORT[$engine],
+            MediaEngine::OUTPUT_SUPPORT[$engine->value],
             true
         );
     }
 
-    public static function is_input_supported(string $engine, string $mime): bool
+    public static function is_input_supported(MediaEngine $engine, MimeType $mime): bool
     {
         return MimeType::matches_array(
             $mime,
-            MediaEngine::INPUT_SUPPORT[$engine]
+            MediaEngine::INPUT_SUPPORT[$engine->value]
         );
     }
 }

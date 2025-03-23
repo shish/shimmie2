@@ -11,7 +11,7 @@ final class DataUploadEvent extends Event
 {
     /** @var hash-string */
     public string $hash;
-    public string $mime;
+    public MimeType $mime;
     public int $size;
 
     /** @var Image[] */
@@ -41,18 +41,14 @@ final class DataUploadEvent extends Event
         $this->set_tmpname($tmpname);
     }
 
-    public function set_tmpname(Path $tmpname, ?string $mime = null): void
+    public function set_tmpname(Path $tmpname, ?MimeType $mime = null): void
     {
         assert($tmpname->is_readable());
         $this->tmpname = $tmpname;
         $this->hash = $tmpname->md5();
         $this->size = $tmpname->filesize();
-        $mime = $mime ?? MimeType::get_for_file($tmpname->str(), pathinfo($this->filename)['extension'] ?? null);
-        if (empty($mime)) {
-            throw new UploadException("Could not determine mime type");
-        }
-
-        $this->mime = strtolower($mime);
+        $mime = $mime ?? MimeType::get_for_file($tmpname, pathinfo($this->filename)['extension'] ?? null);
+        $this->mime = $mime;
     }
 }
 
@@ -257,24 +253,16 @@ final class Upload extends Extension
      */
     private function upload_error_message(int $error_code): string
     {
-        switch ($error_code) {
-            case UPLOAD_ERR_INI_SIZE:
-                return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
-            case UPLOAD_ERR_FORM_SIZE:
-                return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
-            case UPLOAD_ERR_PARTIAL:
-                return 'The uploaded file was only partially uploaded';
-            case UPLOAD_ERR_NO_FILE:
-                return 'No file was uploaded';
-            case UPLOAD_ERR_NO_TMP_DIR:
-                return 'Missing a temporary folder';
-            case UPLOAD_ERR_CANT_WRITE:
-                return 'Failed to write file to disk';
-            case UPLOAD_ERR_EXTENSION:
-                return 'File upload stopped by extension';
-            default:
-                return 'Unknown upload error';
-        }
+        return match ($error_code) {
+            UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+            UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+            UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+            UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+            UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+            UPLOAD_ERR_EXTENSION => 'File upload stopped by extension',
+            default => 'Unknown upload error',
+        };
     }
 
     /**

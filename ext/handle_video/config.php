@@ -32,7 +32,7 @@ final class VideoFileHandlerConfig extends ConfigGroup
     {
         $output = [];
         foreach (VideoFileHandler::SUPPORTED_MIME as $mime) {
-            $output[MimeMap::get_name_for_mime($mime)] = $mime;
+            $output[MimeMap::get_name_for_mime(new MimeType($mime))] = $mime;
         }
         return $output;
     }

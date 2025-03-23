@@ -26,7 +26,7 @@ class MimeSystemTheme extends Themelet
             P("Search for posts by MIME type"),
             SHM_COMMAND_EXAMPLE("mime=image/jpeg", "Returns posts that have the MIME type 'image/jpeg'"),
             P("These MIME types are available in the system:"),
-            UL(joinHTML(", ", $mimes)),
+            UL(joinHTML(", ", array_map(fn ($mime) => (string)$mime, $mimes))),
         );
     }
 }

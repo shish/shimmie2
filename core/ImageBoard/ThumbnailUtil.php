@@ -100,7 +100,7 @@ final class ThumbnailUtil
         return [$max_width, $max_height];
     }
 
-    public static function create_image_thumb(Image $image, ?string $engine = null): void
+    public static function create_image_thumb(Image $image, ?MediaEngine $engine = null): void
     {
         self::create_scaled_image(
             $image->get_image_filename(),
@@ -119,13 +119,13 @@ final class ThumbnailUtil
         Path $inname,
         Path $outname,
         array $tsize,
-        string $mime,
-        ?string $engine = null,
+        MimeType $mime,
+        ?MediaEngine $engine = null,
         ?string $resize_type = null
     ): void {
-        $engine ??= Ctx::$config->req_string(ThumbnailConfig::ENGINE);
+        $engine ??= MediaEngine::from(Ctx::$config->req_string(ThumbnailConfig::ENGINE));
         $resize_type ??= Ctx::$config->req_string(ThumbnailConfig::FIT);
-        $output_mime = Ctx::$config->req_string(ThumbnailConfig::MIME);
+        $output_mime = new MimeType(Ctx::$config->req_string(ThumbnailConfig::MIME));
 
         send_event(new MediaResizeEvent(
             $engine,

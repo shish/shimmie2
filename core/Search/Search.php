@@ -21,7 +21,7 @@ final class Search
      * Build a search query for a given set of tags and return
      * the results as a PDOStatement (raw SQL rows)
      *
-     * @param array<string> $tags
+     * @param array<tag-string> $tags
      */
     private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): \FFSPHP\PDOStatement
     {
@@ -52,7 +52,7 @@ final class Search
     /**
      * Search for an array of images
      *
-     * @param array<string> $tags
+     * @param array<tag-string> $tags
      * @return Image[]
      */
     #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
@@ -70,7 +70,7 @@ final class Search
     /**
      * Search for an array of images, returning a iterable object of Image
      *
-     * @param array<string> $tags
+     * @param array<tag-string> $tags
      * @return \Generator<Image>
      */
     public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags = []): \Generator
@@ -121,7 +121,7 @@ final class Search
     /**
      * Count the number of image results for a given search
      *
-     * @param list<string> $tags
+     * @param list<tag-string> $tags
      */
     public static function count_images(array $tags = []): int
     {

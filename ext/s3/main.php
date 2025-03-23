@@ -218,7 +218,7 @@ final class S3 extends Extension
                 $image->get_image_filename()->get_contents(),
                 [
                     'ACL' => 'public-read',
-                    'ContentType' => $image->get_mime(),
+                    'ContentType' => (string)$image->get_mime(),
                     'ContentDisposition' => "inline; filename=\"$friendly\"",
                 ]
             );

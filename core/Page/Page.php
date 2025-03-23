@@ -17,7 +17,7 @@ use function MicroHTML\{emptyHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, 
 class Page
 {
     public PageMode $mode = PageMode::PAGE;
-    private string $mime;
+    private MimeType $mime;
 
     /**
      * Set what this page should do; "page", "data", or "redirect".
@@ -30,14 +30,17 @@ class Page
     /**
      * Set the page's MIME type.
      */
-    public function set_mime(string $mime): void
+    public function set_mime(MimeType|string $mime): void
     {
+        if (is_string($mime)) {
+            $mime = new MimeType($mime);
+        }
         $this->mime = $mime;
     }
 
     public function __construct()
     {
-        $this->mime = MimeType::add_parameters(MimeType::HTML, MimeType::CHARSET_UTF8);
+        $this->mime = new MimeType(MimeType::HTML . "; " . MimeType::CHARSET_UTF8);
         if (@$_GET["flash"]) {
             $this->flash[] = $_GET['flash'];
             unset($_GET["flash"]);

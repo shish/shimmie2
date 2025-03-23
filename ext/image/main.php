@@ -178,7 +178,7 @@ final class ImageIO extends Extension
         $image = Image::by_id_ex($image_id);
 
         if ($type === "thumb") {
-            $mime = $config->get_string(ThumbnailConfig::MIME);
+            $mime = new MimeType($config->get_string(ThumbnailConfig::MIME));
             $file = $image->get_thumb_filename();
         } else {
             $mime = $image->get_mime();

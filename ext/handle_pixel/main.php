@@ -24,7 +24,7 @@ final class PixelFileHandler extends DataHandlerExtension
 
         $event->image->lossless = Media::is_lossless($filename, $mime);
         $event->image->audio = false;
-        switch ($mime) {
+        switch ($mime->base) {
             case MimeType::GIF:
                 $event->image->video = MimeType::is_animated_gif($filename);
                 break;

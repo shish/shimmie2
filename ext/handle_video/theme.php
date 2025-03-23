@@ -41,7 +41,7 @@ class VideoFileHandlerTheme extends Themelet
                 ],
                 SOURCE([
                     'src' => $image->get_image_link(),
-                    'type' => strtolower($image->get_mime())
+                    'type' => $image->get_mime()
                 ])
             )
         );

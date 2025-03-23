@@ -8,7 +8,7 @@ final class MimeSystemTest extends ShimmiePHPUnitTestCase
 {
     public function testJPEG(): void
     {
-        $result = MimeType::get_for_file("tests/bedroom_workshop.jpg");
+        $result = MimeType::get_for_file(new Path("tests/bedroom_workshop.jpg"));
         self::assertEquals(MimeType::JPEG, $result);
     }
 }

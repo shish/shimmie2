@@ -385,7 +385,7 @@ final class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of posts
-     * @param string[] $tags
+     * @param list<tag-string> $tags
      */
     protected function postIndex(int $limit, int $page, array $tags): void
     {

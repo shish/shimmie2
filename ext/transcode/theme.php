@@ -13,7 +13,7 @@ class TranscodeImageTheme extends Themelet
     /**
      * Display a link to resize an image
      *
-     * @param array<string, string> $options
+     * @param array<string, ?MimeType> $options
      */
     public function get_transcode_html(Image $image, array $options): \MicroHTML\HTMLElement
     {
@@ -29,7 +29,7 @@ class TranscodeImageTheme extends Themelet
     }
 
     /**
-     * @param array<string, string> $options
+     * @param array<string, ?MimeType> $options
      */
     public function get_transcode_picker_html(array $options): \MicroHTML\HTMLElement
     {
@@ -39,7 +39,7 @@ class TranscodeImageTheme extends Themelet
             "required" => true,
         ]);
         foreach ($options as $display => $value) {
-            $select->appendChild(OPTION(["value" => $value], $display));
+            $select->appendChild(OPTION(["value" => $value ?? ""], $display));
         }
         return $select;
     }

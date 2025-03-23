@@ -271,8 +271,7 @@ final class Ratings extends Extension
     public function onAdminAction(AdminActionEvent $event): void
     {
         global $database, $user;
-        $action = $event->action;
-        switch ($action) {
+        switch ($event->action) {
             case "update_ratings":
                 $event->redirect = true;
                 if (!array_key_exists("rating_old", $event->params) || empty($event->params["rating_old"])) {

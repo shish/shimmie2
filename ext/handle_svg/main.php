@@ -84,7 +84,7 @@ final class SVGFileHandler extends DataHandlerExtension
 
     protected function check_contents(Path $tmpname): bool
     {
-        if (MimeType::get_for_file($tmpname->str()) !== MimeType::SVG) {
+        if (MimeType::get_for_file($tmpname)->base !== MimeType::SVG) {
             return false;
         }
 

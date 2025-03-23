@@ -30,7 +30,7 @@ final class RandomList extends Extension
 
             $search_terms = [];
             if ($event->page_matches("random/{search}")) {
-                $search_terms = explode(' ', $event->get_arg('search'));
+                $search_terms = Tag::explode($event->get_arg('search'));
             }
 
             $images_per_page = $config->get_int(RandomListConfig::LIST_COUNT, 12);

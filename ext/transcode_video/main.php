@@ -21,10 +21,10 @@ final class TranscodeVideo extends Extension
     public const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
 
     public const FORMAT_NAMES = [
-        VideoContainers::MKV => "matroska",
-        VideoContainers::WEBM => "webm",
-        VideoContainers::OGG => "ogg",
-        VideoContainers::MP4 => "mp4",
+        VideoContainer::MKV->value => "matroska",
+        VideoContainer::WEBM->value => "webm",
+        VideoContainer::OGG->value => "ogg",
+        VideoContainer::MP4->value => "mp4",
     ];
 
     /**
@@ -39,8 +39,8 @@ final class TranscodeVideo extends Extension
     {
         global $user;
 
-        if ($event->image->video === true && $user->can(ImagePermission::EDIT_FILES)) {
-            $options = self::get_output_options($event->image->get_mime(), $event->image->video_codec);
+        if ($event->image->video === true && $event->image->video_codec !== null && $user->can(ImagePermission::EDIT_FILES)) {
+            $options = self::get_output_options(VideoContainer::fromMimeType($event->image->get_mime()), $event->image->video_codec);
             if (!empty($options) && sizeof($options) > 1) {
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
             }
@@ -109,21 +109,23 @@ final class TranscodeVideo extends Extension
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, ?VideoContainer>
      */
-    private static function get_output_options(?string $starting_container = null, ?string $starting_codec = null): array
+    private static function get_output_options(?VideoContainer $starting_container = null, ?VideoCodec $starting_codec = null): array
     {
-        $output = ["" => ""];
+        $output = ["" => null];
 
-        foreach (VideoContainers::ALL as $container) {
+        foreach (VideoContainer::cases() as $container) {
             if ($starting_container == $container) {
                 continue;
             }
             if (!empty($starting_codec) &&
-                !VideoContainers::is_video_codec_supported($container, $starting_codec)) {
+                !VideoContainer::is_video_codec_supported($container, $starting_codec)) {
                 continue;
             }
-            $description = MimeMap::get_name_for_mime($container);
+            // FIXME: VideoContainer happens to be a mime type when in string form,
+            // but that's an implementation detail and might not be the case in the future.
+            $description = MimeMap::get_name_for_mime(new MimeType($container->value));
             $output[$description] = $container;
         }
         return $output;
@@ -151,11 +153,11 @@ final class TranscodeVideo extends Extension
         return true;
     }
 
-    private function transcode_video(Path $source_file, string $source_video_codec, string $target_mime, Path $target_file): Path
+    private function transcode_video(Path $source_file, ?VideoCodec $source_video_codec, string $target_mime, Path $target_file): Path
     {
         global $config;
 
-        if (empty($source_video_codec)) {
+        if (is_null($source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
         }
 
@@ -170,8 +172,8 @@ final class TranscodeVideo extends Extension
         $command->add_flag("-i");
         $command->add_escaped_arg($source_file->str());
 
-        if (!VideoContainers::is_video_codec_supported($target_mime, $source_video_codec)) {
-            throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec $source_video_codec");
+        if (!VideoContainer::is_video_codec_supported(VideoContainer::from($target_mime), $source_video_codec)) {
+            throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec {$source_video_codec->value}");
         }
 
         // TODO: Implement transcoding the codec as well. This will be much more advanced than just picking a container.

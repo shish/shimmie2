@@ -89,6 +89,7 @@
                 "core/Exceptions/",
                 "core/Extension/",
                 "core/ImageBoard/",
+                "core/Media/",
                 "core/Page/",
                 "core/Search/",
                 "core/Testing/",
