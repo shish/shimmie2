@@ -308,29 +308,23 @@ final class Media extends Extension
             $orig_size = self::video_size($inname);
             $scaled_size = ThumbnailUtil::get_thumbnail_size($orig_size[0], $orig_size[1], true);
 
-            $args = [
-                escapeshellarg($ffmpeg),
-                "-y", "-i", escapeshellarg($inname->str()),
-                "-vf", "scale=$scaled_size[0]:$scaled_size[1],thumbnail",
-                "-f", "image2",
-                "-vframes", "1",
-                "-c:v", "png",
-                escapeshellarg($tmpname->str()),
-            ];
+            $command = new CommandBuilder($ffmpeg);
+            $command->add_flag("-y");
+            $command->add_flag("-i");
+            $command->add_escaped_arg($inname->str());
+            $command->add_flag("-vf");
+            $command->add_escaped_arg("scale=$scaled_size[0]:$scaled_size[1],thumbnail");
+            $command->add_flag("-f");
+            $command->add_escaped_arg("image2");
+            $command->add_flag("-vframes");
+            $command->add_escaped_arg("1");
+            $command->add_flag("-c:v");
+            $command->add_escaped_arg("png");
+            $command->add_escaped_arg($tmpname->str());
+            $command->execute();
 
-            $cmd = escapeshellcmd(implode(" ", $args));
-
-            Log::debug('media', "Generating thumbnail with command `$cmd`...");
-
-            exec($cmd, $output, $ret);
-
-            if ($ret === 0) {
-                Log::debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
-                ThumbnailUtil::create_scaled_image($tmpname, $outname, $scaled_size, MimeType::PNG);
-                $ok = true;
-            } else {
-                Log::error('media', "Generating thumbnail with command `$cmd`, returns $ret");
-            }
+            ThumbnailUtil::create_scaled_image($tmpname, $outname, $scaled_size, MimeType::PNG);
+            $ok = true;
         } finally {
             @$tmpname->unlink();
         }
