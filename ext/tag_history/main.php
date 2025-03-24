@@ -62,7 +62,7 @@ final class TagHistory extends Extension
             Log::debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
         }
 
-        $allowed = $config->get_int("history_limit", -1);
+        $allowed = $config->get_int(TagHistoryConfig::MAX_HISTORY);
         if ($allowed == 0) {
             return;
         }

@@ -342,7 +342,7 @@ final class SourceHistory extends Extension
             Log::debug("source_history", "adding source history: [$old_source] -> [$new_source]");
         }
 
-        $allowed = $config->get_int("history_limit", -1);
+        $allowed = $config->get_int(SourceHistoryConfig::MAX_HISTORY);
         if ($allowed == 0) {
             return;
         }

@@ -19,7 +19,7 @@ final class LinkScan extends Extension
 
         $search = $event->get_GET('search') ?? $event->get_POST('search') ?? "";
         if ($event->page_matches("post/list") && !empty($search)) {
-            $trigger = $config->get_string("link_scan_trigger", "https?://");
+            $trigger = $config->get_string(LinkScanConfig::TRIGGER);
             if (\Safe\preg_match("#.*{$trigger}.*#", $search)) {
                 $ids = $this->scan($search);
                 $page->set_mode(PageMode::REDIRECT);

@@ -45,8 +45,8 @@ final class TaggerXML extends Extension
     {
         global $database, $config;
 
-        $max_rows = $config->get_int("ext_tagger_tag_max", 30);
-        $limit_rows = $config->get_int("ext_tagger_limit", 30);
+        $max_rows = $config->get_int(TaggerXMLConfig::TAG_MAX);
+        $limit_rows = $config->get_int(TaggerXMLConfig::LIMIT);
 
         $p = strlen($s) == 1 ? " " : "\_";
         $values = [
@@ -60,8 +60,9 @@ final class TaggerXML extends Extension
         //		$exclude = $event->get_arg('exclude')? "AND NOT IN ".$this->image_tags($event->get_arg('exclude')) : null;
 
         // Hidden Tags
-        $hidden = $config->get_string('ext-tagger_show-hidden', 'N') == 'N' ?
-            "AND substring(tag,1,1) != '.'" : null;
+        $hidden = $config->get_bool(TaggerXMLConfig::SHOW_HIDDEN)
+            ? null
+            : "AND substring(tag,1,1) != '.'";
 
         $q_where = "WHERE {$match} {$hidden} AND count > 0";
 
