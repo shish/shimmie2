@@ -60,7 +60,7 @@ final class TranscodeImage extends Extension
     private static function get_mapping(MimeType $mime): ?MimeType
     {
         $val = Ctx::$config->get_string(self::get_mapping_name($mime));
-        return $val === null ? null : new MimeType($val);
+        return ($val === null || $val === "") ? null : new MimeType($val);
     }
 
     /**
