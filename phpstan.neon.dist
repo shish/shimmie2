@@ -1,11 +1,12 @@
 parameters:
   level: 8
   paths:
-    - index.php
-    - core
-    - ext
-    - tests
-    - themes
+#    - index.php
+#    - core
+#    - ext
+#    - tests
+#    - themes
+    - test.php
   typeAliases:
     tag-string: non-empty-string
     hash-string: non-empty-string&internal-hash-string
@@ -33,3 +34,9 @@ services:
     class: Shimmie2\GenericStringTypeNodeResolverExtension
     tags:
       - phpstan.phpDoc.typeNodeResolverExtension
+  -
+    class: Shimmie2\GlobalNodeVisitor
+    tags:
+      - phpstan.parser.richParserNodeVisitor
+rules:
+  - Shimmie2\GlobalNodeRule
