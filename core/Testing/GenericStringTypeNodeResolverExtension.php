@@ -3,7 +3,6 @@
 namespace Shimmie2;
 
 use PHPStan\Analyser\NameScope;
-use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverAwareExtension;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
@@ -14,15 +13,6 @@ use PHPStan\Type\Type;
 
 class GenericStringTypeNodeResolverExtension implements TypeNodeResolverExtension //, TypeNodeResolverAwareExtension
 {
-    /*
-    // @ phpstan-ignore-next-line
-    private TypeNodeResolver $typeNodeResolver;
-
-    public function setTypeNodeResolver(TypeNodeResolver $typeNodeResolver): void
-    {
-        $this->typeNodeResolver = $typeNodeResolver;
-    }
-*/
     public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
     {
         if ($typeNode instanceof IdentifierTypeNode) {
