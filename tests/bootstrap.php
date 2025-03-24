@@ -37,7 +37,7 @@ if (file_exists("data/test-trace.json")) {
 sanitize_php();
 global $cache, $config, $database, $user, $page;
 _set_up_shimmie_environment();
-$tracer_enabled = true;
+Ctx::$tracer_enabled = true;
 Ctx::setTracer(new \EventTracer());
 Ctx::$tracer->begin("bootstrap");
 _load_ext_files();
