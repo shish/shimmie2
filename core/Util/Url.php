@@ -191,7 +191,7 @@ final readonly class Url
         $path     = $this->getPath();
 
         $query = $this->query;
-        if (!Ctx::$config->get_bool(SetupConfig::NICE_URLS) && $this->page !== null) {
+        if ($this->page !== null && !Ctx::$config->get_bool(SetupConfig::NICE_URLS)) {
             //$query["q"] = $this->page;
             $query = array_merge(["q" => $this->page], $query);
         }
