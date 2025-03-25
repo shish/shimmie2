@@ -21,17 +21,23 @@ final class Featured extends Extension
             $page->set_redirect(make_link("post/view/$id"));
         }
         if ($event->page_matches("featured_image/download")) {
-            $image = Image::by_id($config->get_int(FeaturedConfig::ID, 0));
-            if (!is_null($image)) {
-                $page->set_mode(PageMode::DATA);
-                $page->set_mime($image->get_mime());
-                $page->set_data($image->get_image_filename()->get_contents());
+            $fid = $config->get_int(FeaturedConfig::ID);
+            if (!is_null($fid)) {
+                $image = Image::by_id($fid);
+                if (!is_null($image)) {
+                    $page->set_mode(PageMode::DATA);
+                    $page->set_mime($image->get_mime());
+                    $page->set_data($image->get_image_filename()->get_contents());
+                }
             }
         }
         if ($event->page_matches("featured_image/view")) {
-            $image = Image::by_id($config->get_int(FeaturedConfig::ID, 0));
-            if (!is_null($image)) {
-                send_event(new DisplayingImageEvent($image));
+            $fid = $config->get_int(FeaturedConfig::ID);
+            if (!is_null($fid)) {
+                $image = Image::by_id($fid);
+                if (!is_null($image)) {
+                    send_event(new DisplayingImageEvent($image));
+                }
             }
         }
     }

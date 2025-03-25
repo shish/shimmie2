@@ -14,7 +14,7 @@ final class Biography extends Extension
     {
         global $user;
         $duser = $event->display_user;
-        $bio = $duser->get_config()->get_string("biography", "");
+        $bio = $duser->get_config()->get_string("biography") ?? "";
 
         if ($user->id == $duser->id || $user->can(UserAccountsPermission::EDIT_USER_INFO)) {
             $this->theme->display_composer($duser, $bio);

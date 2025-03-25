@@ -351,7 +351,7 @@ final class Wiki extends Extension
             // correct the default
             global $config;
             $row["title"] = $title;
-            $row["owner_id"] = $config->get_int(UserAccountsConfig::ANON_ID, 0);
+            $row["owner_id"] = $config->req_int(UserAccountsConfig::ANON_ID);
         }
 
         assert(!empty($row));
