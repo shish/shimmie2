@@ -67,7 +67,7 @@ final class AutoTagger extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $page, $user;
+        global $database, $page, $user;
 
         if ($event->page_matches("auto_tag/add", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
@@ -85,7 +85,7 @@ final class AutoTagger extends Extension
             $t = new AutoTaggerTable($database->raw_db());
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET;
-            $t->size = $config->req_int(AutoTaggerConfig::ITEMS_PER_PAGE);
+            $t->size = Ctx::$config->req_int(AutoTaggerConfig::ITEMS_PER_PAGE);
             if ($user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
                 $t->create_url = make_link("auto_tag/add");
                 $t->delete_url = make_link("auto_tag/remove");

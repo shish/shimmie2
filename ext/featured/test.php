@@ -8,8 +8,6 @@ final class FeaturedTest extends ShimmiePHPUnitTestCase
 {
     public function testFeatured(): void
     {
-        global $config;
-
         // Set up
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");

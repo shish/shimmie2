@@ -12,8 +12,7 @@ final class TagList extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        global $config, $page;
-        if ($config->get_int(TagListConfig::LENGTH) > 0) {
+        if (Ctx::$config->get_int(TagListConfig::LENGTH) > 0) {
             if (!empty($event->search_terms)) {
                 $this->add_refine_block($event->search_terms);
             } else {
@@ -24,9 +23,8 @@ final class TagList extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $config, $page;
-        if ($config->get_int(TagListConfig::LENGTH) > 0) {
-            $type = $config->get_string(TagListConfig::IMAGE_TYPE);
+        if (Ctx::$config->get_int(TagListConfig::LENGTH) > 0) {
+            $type = Ctx::$config->get_string(TagListConfig::IMAGE_TYPE);
             if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
                 $this->add_tags_block($event->image);
             }
@@ -41,10 +39,8 @@ final class TagList extends Extension
      */
     private static function get_omitted_tags(): array
     {
-        global $cache, $config, $database;
-        $tags_config =  $config->req_string(TagListConfig::OMIT_TAGS);
-
-        $results = $cache->get("tag_list_omitted_tags:".$tags_config);
+        $tags_config = Ctx::$config->req_string(TagListConfig::OMIT_TAGS);
+        $results = Ctx::$cache->get("tag_list_omitted_tags:".$tags_config);
 
         if (is_null($results)) {
             $tags = Tag::explode($tags_config, false);
@@ -71,17 +67,15 @@ final class TagList extends Extension
             // @phpstan-ignore-next-line
             $results = Ctx::$database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
 
-            $cache->set("tag_list_omitted_tags:" . $tags_config, $results, 600);
+            Ctx::$cache->set("tag_list_omitted_tags:" . $tags_config, $results, 600);
         }
         return $results;
     }
 
     private function add_related_block(Image $image): void
     {
-        global $database, $config;
-
         $omitted_tags = self::get_omitted_tags();
-        $starting_tags = $database->get_col("SELECT tag_id FROM image_tags WHERE image_id = :image_id", ["image_id" => $image->id]);
+        $starting_tags = Ctx::$database->get_col("SELECT tag_id FROM image_tags WHERE image_id = :image_id", ["image_id" => $image->id]);
 
         $starting_tags = array_diff($starting_tags, $omitted_tags);
 
@@ -103,7 +97,7 @@ final class TagList extends Extension
 			LIMIT :tag_list_length
 		";
 
-        $args = ["tag_list_length" => $config->get_int(TagListConfig::LENGTH)];
+        $args = ["tag_list_length" => Ctx::$config->get_int(TagListConfig::LENGTH)];
 
         // @phpstan-ignore-next-line
         $tags = Ctx::$database->get_all($query, $args);
@@ -134,9 +128,7 @@ final class TagList extends Extension
 
     private function add_popular_block(): void
     {
-        global $cache, $database, $config;
-
-        $tags = $cache->get("popular_tags");
+        $tags = Ctx::$cache->get("popular_tags");
         if (is_null($tags)) {
             $omitted_tags = self::get_omitted_tags();
 
@@ -159,12 +151,12 @@ final class TagList extends Extension
                     ";
             }
 
-            $args = ["popular_tag_list_length" => $config->get_int(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
+            $args = ["popular_tag_list_length" => Ctx::$config->req_int(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
 
             // @phpstan-ignore-next-line
             $tags = Ctx::$database->get_all($query, $args);
 
-            $cache->set("popular_tags", $tags, 600);
+            Ctx::$cache->set("popular_tags", $tags, 600);
         }
         if (count($tags) > 0) {
             $this->theme->display_popular_block($tags);
@@ -176,13 +168,11 @@ final class TagList extends Extension
      */
     private function add_refine_block(array $search): void
     {
-        global $cache, $config, $database;
-
         if (count($search) > 5) {
             return;
         }
 
-        $related_tags = self::get_related_tags($search, $config->req_int(TagListConfig::LENGTH));
+        $related_tags = self::get_related_tags($search, Ctx::$config->req_int(TagListConfig::LENGTH));
 
         if (!empty($related_tags)) {
             $this->theme->display_refine_block($related_tags, $search);
@@ -195,10 +185,8 @@ final class TagList extends Extension
      */
     public static function get_related_tags(array $search, int $limit): array
     {
-        global $cache, $database;
-
         $cache_key = "related_tags:" . md5(Tag::implode($search));
-        $related_tags = $cache->get($cache_key);
+        $related_tags = Ctx::$cache->get($cache_key);
 
         if (is_null($related_tags)) {
             // $search_tags = array();
@@ -210,7 +198,7 @@ final class TagList extends Extension
                     continue;
                 }
                 $tag = Tag::sqlify($tag);
-                $tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", ["tag" => $tag]);
+                $tag_ids = Ctx::$database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", ["tag" => $tag]);
                 // $search_tags = array_merge($search_tags,
                 //                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
                 $starting_tags = array_merge($starting_tags, $tag_ids);
@@ -253,7 +241,7 @@ final class TagList extends Extension
             } else {
                 $related_tags = [];
             }
-            $cache->set($cache_key, $related_tags, 60 * 60);
+            Ctx::$cache->set($cache_key, $related_tags, 60 * 60);
         }
         return $related_tags;
     }

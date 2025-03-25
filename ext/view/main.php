@@ -100,8 +100,7 @@ final class ViewPost extends Extension
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
-        global $config;
-        $image_info = $config->get_string(ImageConfig::INFO);
+        $image_info = Ctx::$config->get_string(ImageConfig::INFO);
         if ($image_info) {
             $text = send_event(new ParseLinkTemplateEvent($image_info, $event->image))->text;
             $event->add_part(SHM_POST_INFO("Info", $text), 85);

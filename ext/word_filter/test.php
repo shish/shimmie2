@@ -8,9 +8,8 @@ final class WordFilterTest extends ShimmiePHPUnitTestCase
 {
     public function setUp(): void
     {
-        global $config;
         parent::setUp();
-        $config->set_string("word_filter", "whore,nice lady\na duck,a kitten\n white ,\tspace\ninvalid");
+        Ctx::$config->set_string("word_filter", "whore,nice lady\na duck,a kitten\n white ,\tspace\ninvalid");
     }
 
     public function _doThings(string $in, string $out): void

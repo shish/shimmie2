@@ -35,8 +35,6 @@ final class SVGFileHandler extends DataHandlerExtension
 
     public function onDataUpload(DataUploadEvent $event): void
     {
-        global $config;
-
         if ($this->supported_mime($event->mime)) {
             // If the SVG handler intends to handle this file,
             // then sanitise it before touching it

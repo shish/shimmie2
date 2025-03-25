@@ -83,9 +83,9 @@ class BlotterTheme extends Themelet
      */
     public function display_blotter_page(array $entries): void
     {
-        global $config, $page;
+        global $page;
 
-        $i_color = $config->get_string(BlotterConfig::COLOR);
+        $i_color = Ctx::$config->get_string(BlotterConfig::COLOR);
 
         $html = P();
         foreach ($entries as $entry) {

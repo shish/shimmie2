@@ -12,7 +12,7 @@ final class ReplaceFile extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $cache, $page, $user;
+        global $page;
 
         if ($event->page_matches("replace/{image_id}", method: "GET", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
@@ -42,7 +42,7 @@ final class ReplaceFile extends Extension
             if ($event->get_POST("source")) {
                 send_event(new SourceSetEvent($image, $event->req_POST("source")));
             }
-            $cache->delete("thumb-block:{$image_id}");
+            Ctx::$cache->delete("thumb-block:{$image_id}");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
@@ -50,10 +50,8 @@ final class ReplaceFile extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-
         /* In the future, could perhaps allow users to replace images that they own as well... */
-        if ($user->can(ReplaceFilePermission::REPLACE_IMAGE)) {
+        if (Ctx::$user->can(ReplaceFilePermission::REPLACE_IMAGE)) {
             $event->add_button("Replace", "replace/{$event->image->id}");
         }
     }

@@ -15,10 +15,9 @@ final class VarnishPurger extends Extension
             return;
         }
 
-        global $config;
-        $host = $config->get_string(VarnishPurgerConfig::HOST);
-        $port = $config->get_int(VarnishPurgerConfig::PORT);
-        $protocol = $config->get_string(VarnishPurgerConfig::PROTOCOL);
+        $host = Ctx::$config->req_string(VarnishPurgerConfig::HOST);
+        $port = Ctx::$config->req_int(VarnishPurgerConfig::PORT);
+        $protocol = Ctx::$config->req_string(VarnishPurgerConfig::PROTOCOL);
         $url = $protocol . '://'. $host . '/' . $path;
         $ch = \Safe\curl_init();
         \Safe\curl_setopt($ch, CURLOPT_URL, $url);

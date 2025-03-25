@@ -73,8 +73,6 @@ final class Ratings extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        global $config;
-
         $codes = implode("", array_keys(ImageRating::$known_ratings));
         $search_terms = [];
         foreach (ImageRating::$known_ratings as $key => $rating) {
@@ -394,8 +392,7 @@ final class Ratings extends Extension
      */
     public static function get_user_class_privs(User $user): array
     {
-        global $config;
-        return $config->get_array("ext_rating_".$user->class->name."_privs") ?? array_keys(ImageRating::$known_ratings);
+        return Ctx::$config->get_array("ext_rating_".$user->class->name."_privs") ?? array_keys(ImageRating::$known_ratings);
     }
 
     /**
@@ -406,10 +403,8 @@ final class Ratings extends Extension
      */
     public static function get_user_default_ratings(): array
     {
-        global $user;
-
-        $available = self::get_user_class_privs($user);
-        $selected = $user->get_config()->get_array(RatingsUserConfig::DEFAULTS) ?? $available;
+        $available = self::get_user_class_privs(Ctx::$user);
+        $selected = Ctx::$user->get_config()->get_array(RatingsUserConfig::DEFAULTS) ?? $available;
 
         return array_intersect($available, $selected);
     }

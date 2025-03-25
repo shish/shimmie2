@@ -27,7 +27,7 @@ class ReportImageTheme extends Themelet
      */
     public function display_reported_images(array $reports): void
     {
-        global $config, $user, $page;
+        global $user, $page;
 
         $tbody = TBODY();
         foreach ($reports as $report) {
@@ -58,7 +58,7 @@ class ReportImageTheme extends Themelet
             ["id" => "reportedImage", "class" => "zebra"],
             THEAD(
                 TR(
-                    TD(["width" => $config->req_int(ThumbnailConfig::WIDTH)], "Post"),
+                    TD(["width" => Ctx::$config->req_int(ThumbnailConfig::WIDTH)], "Post"),
                     TD("Reason"),
                     TD(["width" => "128"], "Action")
                 )
@@ -76,10 +76,8 @@ class ReportImageTheme extends Themelet
      */
     public function display_image_banner(Image $image, array $reports): void
     {
-        global $config, $page;
-
         $html = emptyHTML();
-        $public = $config->get_string(ReportImageConfig::SHOW_INFO);
+        $public = Ctx::$config->get_string(ReportImageConfig::SHOW_INFO);
         if ($public !== "none" && count($reports) > 0) {
             $html->appendChild(P(B("Current reports:")));
             foreach ($reports as $report) {
@@ -101,7 +99,7 @@ class ReportImageTheme extends Themelet
             INPUT(["type" => 'text', "name" => 'reason', "placeholder" => 'Please enter a reason']),
             SHM_SUBMIT('Report')
         ));
-        $page->add_block(new Block("Report Post", $html, "left"));
+        Ctx::$page->add_block(new Block("Report Post", $html, "left"));
     }
 
     public function get_nuller(User $duser): void

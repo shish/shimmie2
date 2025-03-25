@@ -38,8 +38,6 @@ final class AdminPage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
-
         if ($event->page_matches("admin", method: "GET", permission: AdminPermission::MANAGE_ADMINTOOLS)) {
             send_event(new AdminBuildingEvent());
         }
@@ -53,6 +51,7 @@ final class AdminPage extends Extension
             send_event($aae);
 
             if ($aae->redirect) {
+                $page = Ctx::$page;
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("admin"));
             }
@@ -85,7 +84,6 @@ final class AdminPage extends Extension
             ->addArgument('args', InputArgument::OPTIONAL)
             ->setDescription('Post a page, eg ip_ban/delete id=1')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $page;
                 $query = $input->getArgument('query');
                 $query = ltrim($query, '/');
                 $args = $input->getArgument('args');
@@ -95,23 +93,21 @@ final class AdminPage extends Extension
                 $_SERVER['REQUEST_METHOD'] = 'GET';
                 $_SERVER['REQUEST_URI'] = (string)make_link($query);
                 send_event(new PageRequestEvent("POST", $query, [], $_POST));
-                $page->display();
+                Ctx::$page->display();
                 return Command::SUCCESS;
             });
         $event->app->register('get-token')
             ->setDescription('Get a CSRF token')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $user;
-                $output->writeln($user->get_auth_token());
+                $output->writeln(Ctx::$user->get_auth_token());
                 return Command::SUCCESS;
             });
         $event->app->register('cache:get')
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription("Get a cache value")
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $cache;
                 $key = $input->getArgument('key');
-                $output->writeln(var_export($cache->get($key), true));
+                $output->writeln(var_export(Ctx::$cache->get($key), true));
                 return Command::SUCCESS;
             });
         $event->app->register('cache:set')
@@ -119,27 +115,25 @@ final class AdminPage extends Extension
             ->addArgument('value', InputArgument::REQUIRED)
             ->setDescription("Set a cache value")
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $cache;
                 $key = $input->getArgument('key');
                 $value = $input->getArgument('value');
-                $cache->set($key, $value, 60);
+                Ctx::$cache->set($key, $value, 60);
                 return Command::SUCCESS;
             });
         $event->app->register('cache:del')
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription("Delete a cache value")
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $cache;
                 $key = $input->getArgument('key');
-                $cache->delete($key);
+                Ctx::$cache->delete($key);
                 return Command::SUCCESS;
             });
     }
 
     public function onAdminAction(AdminActionEvent $event): void
     {
-        global $page;
         if ($event->action === "test") {
+            $page = Ctx::$page;
             $page->set_mode(PageMode::DATA);
             $page->set_data("test");
         }
@@ -152,9 +146,8 @@ final class AdminPage extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(AdminPermission::MANAGE_ADMINTOOLS)) {
+            if (Ctx::$user->can(AdminPermission::MANAGE_ADMINTOOLS)) {
                 $event->add_nav_link(make_link('admin'), "Board Admin");
             }
         }
@@ -162,8 +155,7 @@ final class AdminPage extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(AdminPermission::MANAGE_ADMINTOOLS)) {
+        if (Ctx::$user->can(AdminPermission::MANAGE_ADMINTOOLS)) {
             $event->add_link("Board Admin", make_link("admin"));
         }
     }

@@ -140,7 +140,7 @@ final class NumericScore extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $user, $page;
+        global $database, $user, $page;
 
         if ($event->page_matches("numeric_score/votes/{image_id}")) {
             $image_id = $event->get_iarg('image_id');
@@ -210,7 +210,7 @@ final class NumericScore extends Extension
             } else {
                 $sql = "SELECT id FROM images WHERE EXTRACT(YEAR FROM posted) = :year";
             }
-            $args = ["limit" => $config->req_int(IndexConfig::IMAGES), "year" => $year];
+            $args = ["limit" => Ctx::$config->req_int(IndexConfig::IMAGES), "year" => $year];
 
             if ($event->page_matches("popular_by_day")) {
                 if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {

@@ -47,7 +47,6 @@ final class TranscodeImageConfig extends ConfigGroup
      */
     public function get_config_fields(): array
     {
-        global $config;
         $fields = parent::get_config_fields();
 
         $engine = MediaEngine::from(Ctx::$config->req_string(TranscodeImageConfig::ENGINE));

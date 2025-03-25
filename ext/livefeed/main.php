@@ -46,10 +46,7 @@ final class LiveFeed extends Extension
 
     private function msg(string $data): void
     {
-        global $config;
-
-        $host = $config->get_string(LiveFeedConfig::HOST);
-
+        $host = Ctx::$config->get_string(LiveFeedConfig::HOST);
         if (!$host) {
             return;
         }

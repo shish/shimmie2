@@ -55,7 +55,7 @@ final class Blocks extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $cache, $database, $page, $user;
+        global $database, $page, $user;
 
         $blocks = cache_get_or_set("blocks", fn () => $database->get_all("SELECT * FROM blocks"), 600);
         foreach ($blocks as $block) {
@@ -78,7 +78,7 @@ final class Blocks extends Extension
                     VALUES (:pages, :title, :area, :priority, :content, :userclass)
                 ", ['pages' => $event->req_POST('pages'), 'title' => $event->req_POST('title'), 'area' => $event->req_POST('area'), 'priority' => (int)$event->req_POST('priority'), 'content' => $event->req_POST('content'), 'userclass' => $event->req_POST('userclass')]);
             Log::info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$event->req_POST('title').")");
-            $cache->delete("blocks");
+            Ctx::$cache->delete("blocks");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blocks/list"));
         }
@@ -96,7 +96,7 @@ final class Blocks extends Extension
                     ", ['pages' => $event->req_POST('pages'), 'title' => $event->req_POST('title'), 'area' => $event->req_POST('area'), 'priority' => (int)$event->req_POST('priority'), 'content' => $event->req_POST('content'), 'userclass' => $event->req_POST('userclass'), 'id' => $event->req_POST('id')]);
                 Log::info("blocks", "Updated Block #".$event->req_POST('id')." (".$event->req_POST('title').")");
             }
-            $cache->delete("blocks");
+            Ctx::$cache->delete("blocks");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blocks/list"));
         }

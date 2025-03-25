@@ -10,8 +10,6 @@ class VideoFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
-        global $config, $page;
-
         $width = "auto";
         if ($image->width > 1) {
             $width = $image->width."px";
@@ -33,9 +31,9 @@ class VideoFileHandlerTheme extends Themelet
                     'id' => 'main_image',
                     'alt' => 'main image',
                     'poster' => $image->get_thumb_link()->asAbsolute(),
-                    'autoplay' => $config->get_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY),
-                    'loop' => $config->get_bool(VideoFileHandlerConfig::PLAYBACK_LOOP),
-                    'muted' => $config->get_bool(VideoFileHandlerConfig::PLAYBACK_MUTE),
+                    'autoplay' => Ctx::$config->req_bool(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY),
+                    'loop' => Ctx::$config->req_bool(VideoFileHandlerConfig::PLAYBACK_LOOP),
+                    'muted' => Ctx::$config->req_bool(VideoFileHandlerConfig::PLAYBACK_MUTE),
                     'style' => "height: $height; width: $width; max-width: 100%; object-fit: contain; background-color: black;",
                     'onloadstart' => 'this.volume = 0.25',
                 ],
@@ -46,6 +44,6 @@ class VideoFileHandlerTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block(null, $html, "main", 10));
+        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 }

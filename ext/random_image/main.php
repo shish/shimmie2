@@ -39,8 +39,8 @@ final class RandomImage extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        global $config, $page;
-        if ($config->get_bool(RandomImageConfig::SHOW_RANDOM_BLOCK)) {
+        global $page;
+        if (Ctx::$config->get_bool(RandomImageConfig::SHOW_RANDOM_BLOCK)) {
             $image = Image::by_random($event->search_terms);
             if (!is_null($image)) {
                 $this->theme->display_random($image);

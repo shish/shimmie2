@@ -84,7 +84,7 @@ final class Setup extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page, $user;
+        global $config, $page;
 
         if ($event->page_starts_with("nicedebug")) {
             $page->set_mode(PageMode::DATA);
@@ -154,8 +154,7 @@ final class Setup extends Extension
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription('Get a config value')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $config;
-                $output->writeln($config->req_string($input->getArgument('key')));
+                $output->writeln(Ctx::$config->req_string($input->getArgument('key')));
                 return Command::SUCCESS;
             });
         $event->app->register('config:set')
@@ -163,18 +162,16 @@ final class Setup extends Extension
             ->addArgument('value', InputArgument::REQUIRED)
             ->setDescription('Set a config value')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $cache, $config;
-                $config->set_string($input->getArgument('key'), $input->getArgument('value'));
-                $cache->delete("config");
+                Ctx::$config->set_string($input->getArgument('key'), $input->getArgument('value'));
+                Ctx::$cache->delete("config");
                 return Command::SUCCESS;
             });
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(SetupPermission::CHANGE_SETTING)) {
+            if (Ctx::$user->can(SetupPermission::CHANGE_SETTING)) {
                 $event->add_nav_link(make_link('setup'), "Board Config", order: 0);
             }
         }
@@ -182,16 +179,13 @@ final class Setup extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(SetupPermission::CHANGE_SETTING)) {
+        if (Ctx::$user->can(SetupPermission::CHANGE_SETTING)) {
             $event->add_link("Board Config", make_link("setup"));
         }
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        global $config;
-        $event->replace('$base', $config->get_string('base_href'));
-        $event->replace('$title', $config->req_string(SetupConfig::TITLE));
+        $event->replace('$title', Ctx::$config->req_string(SetupConfig::TITLE));
     }
 }

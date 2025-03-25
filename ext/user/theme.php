@@ -154,24 +154,22 @@ class UserPageTheme extends Themelet
 
     public function display_signups_disabled(): void
     {
-        global $config, $page;
+        global $page;
         $page->set_title("Signups Disabled");
         $this->display_navigation();
         $page->add_block(new Block(
             "Signups Disabled",
-            format_text($config->req_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
+            format_text(Ctx::$config->req_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
         ));
     }
 
     public function display_login_block(): void
     {
-        global $page;
-        $page->add_block(new Block("Login", $this->create_login_block(), "left", 90));
+        Ctx::$page->add_block(new Block("Login", $this->create_login_block(), "left", 90));
     }
 
     public function create_login_block(): HTMLElement
     {
-        global $config, $user;
         $form = SHM_SIMPLE_FORM(
             make_link("user_admin/login"),
             TABLE(
@@ -194,7 +192,7 @@ class UserPageTheme extends Themelet
 
         $html = emptyHTML();
         $html->appendChild($form);
-        if ($config->req_bool(UserAccountsConfig::SIGNUP_ENABLED) && $user->can(UserAccountsPermission::CREATE_USER)) {
+        if (Ctx::$config->req_bool(UserAccountsConfig::SIGNUP_ENABLED) && Ctx::$user->can(UserAccountsPermission::CREATE_USER)) {
             $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
 
@@ -227,7 +225,6 @@ class UserPageTheme extends Themelet
      */
     public function display_ip_list(array $uploads, array $comments, array $events): void
     {
-        global $page;
         $html = TABLE(
             ["id" => "ip-history"],
             TR(
@@ -240,7 +237,7 @@ class UserPageTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block("IPs", $html, "main", 70));
+        Ctx::$page->add_block(new Block("IPs", $html, "main", 70));
     }
 
     /**
@@ -259,11 +256,11 @@ class UserPageTheme extends Themelet
 
     public function build_operations(User $duser, UserOperationsBuildingEvent $event): HTMLElement
     {
-        global $config, $user;
+        global $user;
         $html = emptyHTML();
 
         // just a fool-admin protection so they dont mess around with anon users.
-        if ($duser->id !== $config->req_int(UserAccountsConfig::ANON_ID)) {
+        if ($duser->id !== Ctx::$config->req_int(UserAccountsConfig::ANON_ID)) {
             if ($user->can(UserAccountsPermission::EDIT_USER_NAME)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,

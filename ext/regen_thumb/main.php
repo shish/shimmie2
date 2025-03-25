@@ -16,15 +16,14 @@ final class RegenThumb extends Extension
 
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
-        global $cache;
         $event = send_event(new ThumbnailGenerationEvent($image, $force));
-        $cache->delete("thumb-block:{$image->id}");
+        Ctx::$cache->delete("thumb-block:{$image->id}");
         return $event->generated;
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
 
         if ($event->page_matches("regen_thumb/one/{image_id}", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $image = Image::by_id_ex($event->get_iarg('image_id'));
@@ -48,28 +47,23 @@ final class RegenThumb extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ImagePermission::DELETE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_button("Regenerate Thumbnail", "regen_thumb/one/{$event->image->id}");
         }
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(ImagePermission::DELETE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_action("bulk_regen", "Regen Thumbnails", block: $this->theme->bulk_html());
         }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page, $user;
-
         switch ($event->action) {
             case "bulk_regen":
-                if ($user->can(ImagePermission::DELETE_IMAGE)) {
+                if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $force = true;
                     if (isset($event->params["bulk_regen_thumb_missing_only"])
                         && $event->params["bulk_regen_thumb_missing_only"] == "true") {
@@ -82,7 +76,7 @@ final class RegenThumb extends Extension
                             $total++;
                         }
                     }
-                    $page->flash("Regenerated thumbnails for $total items");
+                    Ctx::$page->flash("Regenerated thumbnails for $total items");
                 }
                 break;
         }
@@ -95,7 +89,6 @@ final class RegenThumb extends Extension
 
     public function onAdminAction(AdminActionEvent $event): void
     {
-        global $page;
         switch ($event->action) {
             case "regen_thumbs":
                 $event->redirect = true;
@@ -130,7 +123,7 @@ final class RegenThumb extends Extension
                         break;
                     }
                 }
-                $page->flash("Re-generated $i thumbnails");
+                Ctx::$page->flash("Re-generated $i thumbnails");
                 break;
         }
     }

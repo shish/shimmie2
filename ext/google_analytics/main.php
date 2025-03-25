@@ -12,11 +12,9 @@ final class GoogleAnalytics extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page;
-
-        $google_analytics_id = $config->get_string(GoogleAnalyticsConfig::ANALYTICS_ID);
+        $google_analytics_id = Ctx::$config->get_string(GoogleAnalyticsConfig::ANALYTICS_ID);
         if ($google_analytics_id && stristr($google_analytics_id, "UA-")) {
-            $page->add_html_header(SCRIPT(["type" => 'text/javascript'], "
+            Ctx::$page->add_html_header(SCRIPT(["type" => 'text/javascript'], "
                 var _gaq = _gaq || [];
                 _gaq.push(['_setAccount', '$google_analytics_id']);
                 _gaq.push(['_trackPageview']);

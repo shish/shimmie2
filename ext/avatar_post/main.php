@@ -44,17 +44,16 @@ final class AvatarPost extends AvatarExtension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user, $config;
-        if ($user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
+        if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $event->add_button("Set Image As Avatar", "set_avatar/".$event->image->id);
         }
     }
 
     public function onConfigSave(ConfigSaveEvent $event): void
     {
-        global $cache, $user;
+        global $user;
         if (array_key_exists(AvatarPostUserConfig::AVATAR_ID, $event->values)) {
-            $cache->delete("Pavatar-{$user->id}");
+            Ctx::$cache->delete("Pavatar-{$user->id}");
         }
     }
 
@@ -65,7 +64,7 @@ final class AvatarPost extends AvatarExtension
 
     public function get_avatar_html(User $user): HTMLElement|null
     {
-        global $database, $config;
+        global $database;
 
         $user_config = $user->get_config();
         $id = $user_config->get_int(AvatarPostUserConfig::AVATAR_ID);
@@ -84,8 +83,8 @@ final class AvatarPost extends AvatarExtension
 
         $ar = $image->width / $image->height;
 
-        $thumb_height = $config->req_int(SetupConfig::AVATAR_SIZE);
-        $thumb_width = $config->req_int(SetupConfig::AVATAR_SIZE);
+        $thumb_height = Ctx::$config->req_int(SetupConfig::AVATAR_SIZE);
+        $thumb_width = Ctx::$config->req_int(SetupConfig::AVATAR_SIZE);
         $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
         $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
 

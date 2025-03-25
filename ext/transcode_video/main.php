@@ -155,13 +155,11 @@ final class TranscodeVideo extends Extension
 
     private function transcode_video(Path $source_file, ?VideoCodec $source_video_codec, string $target_mime, Path $target_file): Path
     {
-        global $config;
-
         if (is_null($source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
         }
 
-        $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
+        $ffmpeg = Ctx::$config->get_string(MediaConfig::FFMPEG_PATH);
 
         if (empty($ffmpeg)) {
             throw new VideoTranscodeException("ffmpeg path not configured");

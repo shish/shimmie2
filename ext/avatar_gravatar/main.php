@@ -19,13 +19,11 @@ final class AvatarGravatar extends AvatarExtension
 
     public function avatar_html(User $user): HTMLElement|null
     {
-        global $config;
-
         if (!empty($user->email)) {
             $hash = md5(strtolower($user->email));
-            $s = $config->req_int(SetupConfig::AVATAR_SIZE);
-            $d = urlencode($config->req_string(AvatarGravatarConfig::GRAVATAR_DEFAULT));
-            $r = $config->req_string(AvatarGravatarConfig::GRAVATAR_RATING);
+            $s = Ctx::$config->req_int(SetupConfig::AVATAR_SIZE);
+            $d = urlencode(Ctx::$config->req_string(AvatarGravatarConfig::GRAVATAR_DEFAULT));
+            $r = Ctx::$config->req_string(AvatarGravatarConfig::GRAVATAR_RATING);
             $cb = date("Y-m-d");
             $url = "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
             return IMG(["alt" => "avatar", "class" => "avatar gravatar", "src" => $url]);

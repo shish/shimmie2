@@ -31,8 +31,7 @@ final class PoolCreationEvent extends Event
         public string $description = ""
     ) {
         parent::__construct();
-        global $user;
-        $this->user = $pool_user ?? $user;
+        $this->user = $pool_user ?? Ctx::$user;
     }
 }
 
@@ -81,13 +80,10 @@ final class Pool
 
     public static function get_pool_id_by_title(string $poolTitle): ?int
     {
-        global $database;
-        $row = $database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
-        if ($row !== null) {
-            return $row['id'];
-        } else {
-            return null;
-        }
+        return Ctx::$database->get_one(
+            "SELECT id FROM pools WHERE title=:title",
+            ["title" => $poolTitle]
+        );
     }
 }
 
@@ -112,7 +108,7 @@ final class Pools extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Create the database tables
         if ($this->get_version() < 1) {
@@ -401,13 +397,11 @@ final class Pools extends Extension
      */
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $config;
-
-        if ($config->get_bool(PoolsConfig::INFO_ON_VIEW_IMAGE)) {
+        if (Ctx::$config->req_bool(PoolsConfig::INFO_ON_VIEW_IMAGE)) {
             $imageID = $event->image->id;
             $poolsIDs = $this->get_pool_ids($imageID);
 
-            $show_nav = $config->get_bool(PoolsConfig::SHOW_NAV_LINKS);
+            $show_nav = Ctx::$config->req_bool(PoolsConfig::SHOW_NAV_LINKS);
 
             $navInfo = [];
             foreach ($poolsIDs as $poolID) {
@@ -487,21 +481,19 @@ final class Pools extends Extension
 
     public function onTagTermParse(TagTermParseEvent $event): void
     {
-        global $user;
-
         if ($matches = $event->matches("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i")) {
             $poolTag = str_replace("_", " ", $matches[1]);
 
             $pool = null;
             if ($poolTag === 'lastcreated') {
-                $pool = $this->get_last_userpool($user->id);
+                $pool = $this->get_last_userpool(Ctx::$user->id);
             } elseif (is_numeric($poolTag)) { //If only digits, assume PoolID
                 $pool = $this->get_single_pool((int) $poolTag);
             } else { //assume PoolTitle
                 $pool = $this->get_single_pool_from_title($poolTag);
             }
 
-            if ($pool && $this->have_permission($user, $pool)) {
+            if ($pool && $this->have_permission(Ctx::$user, $pool)) {
                 $image_order = (int) ($matches[2] ?: 0);
                 $this->add_post($pool->id, $event->image_id, true, $image_order);
             }
@@ -523,14 +515,12 @@ final class Pools extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $user;
-
         switch ($event->action) {
             case "bulk_pool_add_existing":
                 $pool_id = intval($event->params['bulk_pool_select']);
                 $pool = $this->get_single_pool($pool_id);
 
-                if ($this->have_permission($user, $pool)) {
+                if ($this->have_permission(Ctx::$user, $pool)) {
                     send_event(
                         new PoolAddPostsEvent($pool_id, iterator_map_to_array(_image_to_id(...), $event->items))
                     );
