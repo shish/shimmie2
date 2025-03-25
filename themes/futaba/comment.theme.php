@@ -25,13 +25,10 @@ class FutabaCommentListTheme extends CommentListTheme
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
-        global $config, $page;
-
-        $page_title = $config->get_string(SetupConfig::TITLE);
-        $page->set_title($page_title);
-        $page->set_layout("no-left");
-        $page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
-        $page->add_block(new Block(null, HR(), "main", 80));
+        Ctx::$page->set_title(Ctx::$config->req_string(SetupConfig::TITLE));
+        Ctx::$page->set_layout("no-left");
+        Ctx::$page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
+        Ctx::$page->add_block(new Block(null, HR(), "main", 80));
         $this->display_paginator("comment/list", null, $page_number, $total_pages);
         $this->post_page = false;
 
@@ -67,7 +64,7 @@ class FutabaCommentListTheme extends CommentListTheme
                 )
             );
 
-            $page->add_block(new Block(null, $html, "main", $position++));
+            Ctx::$page->add_block(new Block(null, $html, "main", $position++));
         }
     }
 
@@ -87,7 +84,6 @@ class FutabaCommentListTheme extends CommentListTheme
         // because custom themes can't add params, because PHP
         $post_page = $this->post_page;
         $inner_id = $this->inner_id;
-        global $user;
 
         $tfe = send_event(new TextFormattingEvent($comment->comment));
 
@@ -109,7 +105,7 @@ class FutabaCommentListTheme extends CommentListTheme
         $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
         $h_date = $comment->posted;
         $h_del = "";
-        if ($user->can(CommentPermission::DELETE_COMMENT)) {
+        if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
             $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
             $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
             $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");

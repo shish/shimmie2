@@ -24,11 +24,8 @@ class Danbooru2CommentListTheme extends CommentListTheme
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
-        global $config, $page, $user;
-
-        $page->set_layout("no-left");
-
-        $page->set_title("Comments");
+        Ctx::$page->set_layout("no-left");
+        Ctx::$page->set_title("Comments");
         $this->display_navigation([
             ($page_number <= 1) ? null : make_link('comment/list/'.($page_number - 1)),
             make_link(),
@@ -39,8 +36,8 @@ class Danbooru2CommentListTheme extends CommentListTheme
         // parts for each image
         $position = 10;
 
-        $comment_captcha = $config->get_bool(CommentConfig::CAPTCHA);
-        $comment_limit = $config->get_int(CommentConfig::LIST_COUNT, 10);
+        $comment_captcha = Ctx::$config->get_bool(CommentConfig::CAPTCHA);
+        $comment_limit = Ctx::$config->get_int(CommentConfig::LIST_COUNT, 10);
 
         foreach ($images as $pair) {
             $image = $pair[0];
@@ -81,7 +78,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
                 $comment_html->appendChild($this->comment_to_html($comment));
             }
             if ($can_post) {
-                if (!$user->is_anonymous()) {
+                if (!Ctx::$user->is_anonymous()) {
                     $comment_html->appendChild($this->build_postbox($image->id));
                 } else {
                     if (!$comment_captcha) {
@@ -99,7 +96,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
                 )
             );
 
-            $page->add_block(new Block(null, $html, "main", $position++));
+            Ctx::$page->add_block(new Block(null, $html, "main", $position++));
         }
     }
 
@@ -110,8 +107,6 @@ class Danbooru2CommentListTheme extends CommentListTheme
 
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
-        global $user;
-
         $tfe = send_event(new TextFormattingEvent($comment->comment));
 
         if ($trim) {
@@ -123,7 +118,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
 
         $h_userlink = A(["class" => "username", "href" => make_link("user/{$comment->owner_name}")], $comment->owner_name);
         $h_del = null;
-        if ($user->can(CommentPermission::DELETE_COMMENT)) {
+        if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
             $h_del = emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped));
         }
         if ($trim) {

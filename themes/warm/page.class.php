@@ -12,11 +12,9 @@ class WarmPage extends Page
 {
     protected function body_html(): HTMLElement
     {
-        global $config;
-
-        $site_name = $config->get_string(SetupConfig::TITLE);
+        $site_name = Ctx::$config->get_string(SetupConfig::TITLE);
         $data_href = Url::base();
-        $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
+        $main_page = Ctx::$config->get_string(SetupConfig::MAIN_PAGE);
 
         $left_block_html = [];
         $main_block_html = [];

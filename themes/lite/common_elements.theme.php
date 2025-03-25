@@ -15,12 +15,11 @@ class LiteCommonElementsTheme extends CommonElementsTheme
      */
     public function display_paginator(string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
-        global $page;
         if ($total_pages === 0) {
             $total_pages = 1;
         }
         $body = $this->litetheme_build_paginator($page_number, $total_pages, $base, $query, $show_random);
-        $page->add_block(new Block("Paginator", $body, "main", 90));
+        Ctx::$page->add_block(new Block("Paginator", $body, "main", 90));
     }
 
     /**
