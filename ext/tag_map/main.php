@@ -12,15 +12,13 @@ final class TagMap extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page;
-
         if ($event->page_matches("tags/{sub}", method: "GET")) {
             $sub = $event->get_arg('sub');
 
             if ($event->get_GET('starts_with')) {
                 $starts_with = $event->get_GET('starts_with') . "%";
             } else {
-                if ($config->get_bool(TagMapConfig::PAGES)) {
+                if (Ctx::$config->get_bool(TagMapConfig::PAGES)) {
                     $starts_with = "a%";
                 } else {
                     $starts_with = "%";
@@ -40,6 +38,7 @@ final class TagMap extends Extension
                 default => null,
             };
         } elseif ($event->page_matches("tags")) {
+            $page = Ctx::$page;
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("tags/map"));
         }
@@ -82,7 +81,7 @@ final class TagMap extends Extension
      */
     private function get_alphabetic_data(string $starts_with, int $tags_min): array
     {
-        global $config, $database;
+        global $database;
 
         return $database->get_pairs("
             SELECT tag, count
@@ -98,7 +97,7 @@ final class TagMap extends Extension
      */
     private function get_popularity_data(int $tags_min): array
     {
-        global $config, $database;
+        global $database;
 
         // Make sure that the value of $tags_min is at least 1.
         // Otherwise the database will complain if you try to do: LOG(0)

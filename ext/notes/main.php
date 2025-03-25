@@ -21,7 +21,7 @@ final class Notes extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $config, $database;
+        $database = Ctx::$database;
 
         // shortcut to latest
         if ($this->get_version() < 1) {
@@ -93,7 +93,7 @@ final class Notes extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        $page = Ctx::$page;
         if ($event->page_matches("note/list", paged: true)) {
             $this->get_notes_list($event->get_iarg('page_num', 1) - 1); // This should show images like post/list but i don't know how do that.
         }
@@ -161,25 +161,25 @@ final class Notes extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $page, $user;
-
-        //display form on image event
-        $notes = $this->get_notes($event->image->id);
-        $this->theme->display_note_system($event->image->id, $notes, $user->can(NotesPermission::ADMIN), $user->can(NotesPermission::EDIT));
+        $this->theme->display_note_system(
+            $event->image->id,
+            $this->get_notes($event->image->id),
+            Ctx::$user->can(NotesPermission::ADMIN),
+            Ctx::$user->can(NotesPermission::EDIT)
+        );
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(NotesPermission::CREATE)) {
+        if (Ctx::$user->can(NotesPermission::CREATE)) {
             $event->add_part($this->theme->note_button($event->image->id));
 
-            if ($user->can(NotesPermission::ADMIN)) {
+            if (Ctx::$user->can(NotesPermission::ADMIN)) {
                 $event->add_part($this->theme->nuke_notes_button($event->image->id));
                 $event->add_part($this->theme->nuke_requests_button($event->image->id));
             }
         }
-        if ($user->can(NotesPermission::REQUEST)) {
+        if (Ctx::$user->can(NotesPermission::REQUEST)) {
             $event->add_part($this->theme->request_button($event->image->id));
         }
 
@@ -216,9 +216,7 @@ final class Notes extends Extension
      */
     private function get_notes(int $imageID): array
     {
-        global $database;
-
-        return $database->get_all("
+        return Ctx::$database->get_all("
             SELECT *
             FROM notes
             WHERE enable = :enable AND image_id = :image_id
@@ -289,8 +287,6 @@ final class Notes extends Extension
 
     private function update_note(): void
     {
-        global $database;
-
         $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
 
         // validate parameters
@@ -298,7 +294,7 @@ final class Notes extends Extension
             return;
         }
 
-        $database->execute("
+        Ctx::$database->execute("
 			UPDATE notes
 			SET x1 = :x1, y1 = :y1, height = :height, width = :width, note = :note
 			WHERE image_id = :image_id AND id = :note_id", $note);
@@ -308,10 +304,10 @@ final class Notes extends Extension
 
     private function delete_note(): void
     {
-        global $user, $database;
+        global $user;
 
         $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
-        $database->execute("
+        Ctx::$database->execute("
 			UPDATE notes SET enable = :enable
 			WHERE image_id = :image_id AND id = :id
 		", ['enable' => 0, 'image_id' => $note["image_id"], 'id' => $note["note_id"]]);
@@ -321,17 +317,15 @@ final class Notes extends Extension
 
     private function nuke_notes(int $image_id): void
     {
-        global $database, $user;
-        $database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id' => $image_id]);
+        global $user;
+        Ctx::$database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id' => $image_id]);
         Log::info("notes", "Notes deleted from {$image_id} by {$user->name}");
     }
 
     private function nuke_requests(int $image_id): void
     {
-        global $database, $user;
-
-        $database->execute("DELETE FROM note_request WHERE image_id = :image_id", ['image_id' => $image_id]);
-
+        global $user;
+        Ctx::$database->execute("DELETE FROM note_request WHERE image_id = :image_id", ['image_id' => $image_id]);
         Log::info("notes", "Requests deleted from {$image_id} by {$user->name}");
     }
 

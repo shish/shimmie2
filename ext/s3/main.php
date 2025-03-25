@@ -127,8 +127,7 @@ final class S3 extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ImagePermission::DELETE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_button("CDN Re-Sync", "s3/sync/{$event->image->id}");
         }
     }
@@ -158,13 +157,12 @@ final class S3 extends Extension
     // utils
     private function get_client(): \S3Client\S3
     {
-        global $config;
-        $access_key_id = $config->get_string(S3Config::ACCESS_KEY_ID);
-        $access_key_secret = $config->get_string(S3Config::ACCESS_KEY_SECRET);
+        $access_key_id = Ctx::$config->get_string(S3Config::ACCESS_KEY_ID);
+        $access_key_secret = Ctx::$config->get_string(S3Config::ACCESS_KEY_SECRET);
         if (is_null($access_key_id) || is_null($access_key_secret)) {
             throw new ServerError("S3 credentials not set");
         }
-        $endpoint = $config->get_string(S3Config::ENDPOINT);
+        $endpoint = Ctx::$config->req_string(S3Config::ENDPOINT);
 
         return new \S3Client\S3(
             $access_key_id,
@@ -182,12 +180,11 @@ final class S3 extends Extension
 
     private function is_busy(): bool
     {
-        global $config;
         $this->synced++;
         if (PHP_SAPI == "cli") {
             return false; // CLI can go on for as long as it wants
         }
-        return $this->synced > $config->req_int(UploadConfig::COUNT);
+        return $this->synced > Ctx::$config->req_int(UploadConfig::COUNT);
     }
 
     // underlying s3 interaction functions
@@ -196,7 +193,6 @@ final class S3 extends Extension
      */
     private function sync_post(Image $image, ?array $new_tags = null): void
     {
-        global $config;
         if (defined("UNITTEST")) {
             return;
         }
@@ -213,7 +209,7 @@ final class S3 extends Extension
             }
             $client = $this->get_client();
             $client->putObject(
-                $config->get_string(S3Config::IMAGE_BUCKET),
+                Ctx::$config->get_string(S3Config::IMAGE_BUCKET),
                 $this->hash_to_path($image->hash),
                 $image->get_image_filename()->get_contents(),
                 [

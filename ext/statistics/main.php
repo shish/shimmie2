@@ -14,11 +14,10 @@ final class Statistics extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page;
         if ($event->page_matches("stats") || $event->page_matches("stats/100")) {
             $base_href = Url::base();
-            $sitename = $config->req_string(SetupConfig::TITLE);
-            $theme_name = $config->req_string(SetupConfig::THEME);
+            $sitename = Ctx::$config->req_string(SetupConfig::TITLE);
+            $theme_name = Ctx::$config->req_string(SetupConfig::THEME);
             $unlisted = "'".implode("','", $this->unlisted)."'";
 
             $limit = 10;
@@ -96,9 +95,15 @@ final class Statistics extends Extension
      */
     private function get_tag_stats(array $unlisted): array
     {
-        global $database;
         // Returns the username and tags from each tag history entry. This includes Anonymous tag histories to prevent their tagging being ignored and credited to the next user to edit.
-        $tag_stats = $database->get_all("SELECT users.class,users.name,tag_histories.tags,tag_histories.image_id FROM tag_histories INNER JOIN users ON users.id = tag_histories.user_id WHERE 1=1 ORDER BY tag_histories.id;");
+        $tag_stats = Ctx::$database->get_all("
+            SELECT users.class,users.name,tag_histories.tags,tag_histories.image_id
+            FROM tag_histories
+            INNER JOIN users
+                ON users.id = tag_histories.user_id
+            WHERE 1=1
+            ORDER BY tag_histories.id
+        ");
 
         // Group tag history entries by image id
         $tag_histories = [];
@@ -110,13 +115,7 @@ final class Statistics extends Extension
 
         // Grab alias list so we can ignore those changes
         // While this strategy may discount some change made before those aliases were implemented, it is preferable over crediting the changes made by an alias to whoever edits the tags next.
-        $alias_db = $database->get_all(
-            "
-					SELECT *
-					FROM aliases
-					WHERE 1=1
-				"
-        );
+        $alias_db = Ctx::$database->get_all("SELECT * FROM aliases WHERE 1=1");
         $aliases = [];
         foreach ($alias_db as $alias) {
             $aliases[$alias['oldtag']] = $alias['newtag'];

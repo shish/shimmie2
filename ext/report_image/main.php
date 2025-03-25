@@ -43,10 +43,10 @@ final class ReportImage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        $page = Ctx::$page;
         if ($event->page_matches("image_report/add")) {
             $image_id = int_escape($event->req_POST('image_id'));
-            send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $event->req_POST('reason'))));
+            send_event(new AddReportedImageEvent(new ImageReport($image_id, Ctx::$user->id, $event->req_POST('reason'))));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
@@ -67,35 +67,31 @@ final class ReportImage extends Extension
 
     public function onAddReportedImage(AddReportedImageEvent $event): void
     {
-        global $cache, $database;
         Log::info("report_image", "Adding report of >>{$event->report->image_id} with reason '{$event->report->reason}'");
-        $database->execute(
+        Ctx::$database->execute(
             "INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (:image_id, :reporter_id, :reason)",
             ['image_id' => $event->report->image_id, 'reporter_id' => $event->report->user_id, 'reason' => $event->report->reason]
         );
-        $cache->delete("image-report-count");
+        Ctx::$cache->delete("image-report-count");
     }
 
     public function onRemoveReportedImage(RemoveReportedImageEvent $event): void
     {
-        global $cache, $database;
-        $database->execute("DELETE FROM image_reports WHERE id = :id", ["id" => $event->id]);
-        $cache->delete("image-report-count");
+        Ctx::$database->execute("DELETE FROM image_reports WHERE id = :id", ["id" => $event->id]);
+        Ctx::$cache->delete("image-report-count");
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
+        if (Ctx::$user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
             $this->theme->get_nuller($event->display_user);
         }
     }
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $user;
-        if ($user->can(ReportImagePermission::CREATE_IMAGE_REPORT)) {
+        if (Ctx::$user->can(ReportImagePermission::CREATE_IMAGE_REPORT)) {
             $reps = $this->get_reports($event->image);
             $this->theme->display_image_banner($event->image, $reps);
         }
@@ -104,9 +100,8 @@ final class ReportImage extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
+            if (Ctx::$user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
                 $count = $this->count_reported_images();
                 $h_count = $count > 0 ? " ($count)" : "";
 
@@ -117,8 +112,7 @@ final class ReportImage extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
+        if (Ctx::$user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
             $count = $this->count_reported_images();
             $h_count = $count > 0 ? " ($count)" : "";
             $event->add_link("Reported Posts$h_count", make_link("image_report/list"));
@@ -127,9 +121,8 @@ final class ReportImage extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
-        global $cache, $database;
-        $database->execute("DELETE FROM image_reports WHERE image_id = :image_id", ["image_id" => $event->image->id]);
-        $cache->delete("image-report-count");
+        Ctx::$database->execute("DELETE FROM image_reports WHERE image_id = :image_id", ["image_id" => $event->image->id]);
+        Ctx::$cache->delete("image-report-count");
     }
 
     public function onUserDeletion(UserDeletionEvent $event): void
@@ -139,14 +132,13 @@ final class ReportImage extends Extension
 
     public function delete_reports_by(int $user_id): void
     {
-        global $cache, $database;
-        $database->execute("DELETE FROM image_reports WHERE reporter_id=:reporter_id", ['reporter_id' => $user_id]);
-        $cache->delete("image-report-count");
+        Ctx::$database->execute("DELETE FROM image_reports WHERE reporter_id=:reporter_id", ['reporter_id' => $user_id]);
+        Ctx::$cache->delete("image-report-count");
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("image_reports", "
@@ -166,9 +158,7 @@ final class ReportImage extends Extension
      */
     public function get_reports(Image $image): array
     {
-        global $database;
-
-        $rows = $database->get_all("
+        $rows = Ctx::$database->get_all("
 			SELECT *
 			FROM image_reports
 			WHERE image_reports.image_id = :image_id
@@ -209,11 +199,9 @@ final class ReportImage extends Extension
 
     public function count_reported_images(): int
     {
-        global $database;
-
         return (int)cache_get_or_set(
             "image-report-count",
-            fn () => $database->get_one("SELECT count(*) FROM image_reports"),
+            fn () => Ctx::$database->get_one("SELECT count(*) FROM image_reports"),
             600
         );
     }
