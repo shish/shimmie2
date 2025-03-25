@@ -16,13 +16,12 @@ class Danbooru2IndexTheme extends IndexTheme
      */
     public function display_page(array $images): void
     {
-        global $page;
         $this->display_shortwiki();
 
         $this->display_page_header($images);
 
         $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
-        $page->add_block(new Block("Search", $nav, "left", 0));
+        Ctx::$page->add_block(new Block("Search", $nav, "left", 0));
 
         if (count($images) > 0) {
             $this->display_page_images($images);

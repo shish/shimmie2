@@ -21,11 +21,9 @@ class LitePage extends Page
 {
     protected function body_html(): HTMLElement
     {
-        global $config;
-
         list($nav_links, $sub_links) = $this->get_nav_links();
-        $theme_name = $config->get_string(SetupConfig::THEME, 'lite');
-        $site_name = $config->get_string(SetupConfig::TITLE);
+        $theme_name = Ctx::$config->get_string(SetupConfig::THEME, 'lite');
+        $site_name = Ctx::$config->get_string(SetupConfig::TITLE);
         $data_href = Url::base();
 
         $menu = DIV(

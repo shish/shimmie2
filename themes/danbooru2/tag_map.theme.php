@@ -8,8 +8,7 @@ class Danbooru2TagMapTheme extends TagMapTheme
 {
     protected function display_nav(): void
     {
-        global $page;
-        $page->set_layout("no-left");
+        Ctx::$page->set_layout("no-left");
         parent::display_nav();
     }
 }

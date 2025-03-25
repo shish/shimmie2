@@ -17,9 +17,8 @@ class LiteUserPageTheme extends UserPageTheme
 {
     public function display_login_page(): void
     {
-        global $config, $page;
-        $page->set_title("Login");
-        $page->set_layout("no-left");
+        Ctx::$page->set_title("Login");
+        Ctx::$page->set_layout("no-left");
         $html = SHM_SIMPLE_FORM(
             make_link("user_admin/login"),
             TABLE(
@@ -37,10 +36,10 @@ class LiteUserPageTheme extends UserPageTheme
                 )
             )
         );
-        if ($config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
+        if (Ctx::$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
             $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
-        $page->add_block(new Block("Login", $html, "main", 90));
+        Ctx::$page->add_block(new Block("Login", $html, "main", 90));
     }
 
     /**
@@ -61,7 +60,6 @@ class LiteUserPageTheme extends UserPageTheme
      */
     public function display_user_block(User $user, array $parts): void
     {
-        global $page;
         $html = [];
         $blocked = ["Pools", "Pool Changes", "Alias Editor", "My Profile"];
         foreach ($parts as $part) {
@@ -72,13 +70,12 @@ class LiteUserPageTheme extends UserPageTheme
         }
         $b = new Block("User Links", joinHTML(" ", $html), "user", 90);
         $b->is_content = false;
-        $page->add_block($b);
+        Ctx::$page->add_block($b);
     }
 
     public function display_signup_page(): void
     {
-        global $page;
-        $page->set_layout("no-left");
+        Ctx::$page->set_layout("no-left");
         parent::display_signup_page();
     }
 
@@ -87,8 +84,7 @@ class LiteUserPageTheme extends UserPageTheme
      */
     public function display_user_page(User $duser, array $stats): void
     {
-        global $page;
-        $page->set_layout("no-left");
+        Ctx::$page->set_layout("no-left");
         parent::display_user_page($duser, $stats);
     }
 }
