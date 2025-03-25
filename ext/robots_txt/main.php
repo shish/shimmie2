@@ -26,10 +26,9 @@ final class RobotsTxt extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page;
-
         if ($event->page_matches("robots.txt")) {
             $rbe = send_event(new RobotsBuildingEvent());
+            $page = Ctx::$page;
             $page->set_mode(PageMode::DATA);
             $page->set_mime("text/plain");
             $page->set_data(join("\n", $rbe->parts));
@@ -39,8 +38,7 @@ final class RobotsTxt extends Extension
 
     public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
-        global $config;
-        $domain = $config->get_string(RobotsTxtConfig::CANONICAL_DOMAIN);
+        $domain = Ctx::$config->get_string(RobotsTxtConfig::CANONICAL_DOMAIN);
         if (!empty($domain) && $_SERVER['HTTP_HOST'] !== $domain) {
             $event->add_disallow("");
         }

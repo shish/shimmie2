@@ -183,7 +183,7 @@ final class CommentList extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $cache, $config, $database, $user, $page;
+        global $database, $user, $page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $i_iid = int_escape($event->req_POST('image_id'));
             send_event(new CommentPostingEvent($i_iid, $user, $event->req_POST('comment')));
@@ -218,7 +218,7 @@ final class CommentList extends Extension
         if ($event->page_matches("comment/list", paged: true)) {
             $threads_per_page = 10;
 
-            $where = $config->get_bool(CommentConfig::RECENT_COMMENTS)
+            $where = Ctx::$config->req_bool(CommentConfig::RECENT_COMMENTS)
                 ? "WHERE posted > now() - interval '24 hours'"
                 : "";
 

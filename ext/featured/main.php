@@ -12,16 +12,16 @@ final class Featured extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page, $user;
+        global $page, $user;
         if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: FeaturedPermission::EDIT_FEATURE)) {
             $id = $event->get_iarg('image_id');
-            $config->set_int(FeaturedConfig::ID, $id);
+            Ctx::$config->set_int(FeaturedConfig::ID, $id);
             Log::info("featured", "Featured post set to >>$id", "Featured post set");
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$id"));
         }
         if ($event->page_matches("featured_image/download")) {
-            $fid = $config->get_int(FeaturedConfig::ID);
+            $fid = Ctx::$config->get_int(FeaturedConfig::ID);
             if (!is_null($fid)) {
                 $image = Image::by_id($fid);
                 if (!is_null($image)) {
@@ -32,7 +32,7 @@ final class Featured extends Extension
             }
         }
         if ($event->page_matches("featured_image/view")) {
-            $fid = $config->get_int(FeaturedConfig::ID);
+            $fid = Ctx::$config->get_int(FeaturedConfig::ID);
             if (!is_null($fid)) {
                 $image = Image::by_id($fid);
                 if (!is_null($image)) {
@@ -44,8 +44,7 @@ final class Featured extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        global $cache, $config, $page, $user;
-        $fid = $config->get_int(FeaturedConfig::ID);
+        $fid = Ctx::$config->get_int(FeaturedConfig::ID);
         if (!is_null($fid)) {
             $image = cache_get_or_set(
                 "featured_image_object:$fid",
@@ -60,7 +59,7 @@ final class Featured extends Extension
             );
             if (!is_null($image)) {
                 if (RatingsInfo::is_enabled()) {
-                    if (!in_array($image['rating'], Ratings::get_user_class_privs($user))) {
+                    if (!in_array($image['rating'], Ratings::get_user_class_privs(Ctx::$user))) {
                         return;
                     }
                 }
@@ -71,16 +70,14 @@ final class Featured extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
-        global $config;
-        if ($event->image->id === $config->get_int(FeaturedConfig::ID)) {
-            $config->delete(FeaturedConfig::ID);
+        if ($event->image->id === Ctx::$config->get_int(FeaturedConfig::ID)) {
+            Ctx::$config->delete(FeaturedConfig::ID);
         }
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(FeaturedPermission::EDIT_FEATURE) && $event->context == "view") {
+        if (Ctx::$user->can(FeaturedPermission::EDIT_FEATURE) && $event->context == "view") {
             $event->add_button("Feature This", "featured_image/set/{$event->image->id}");
         }
     }

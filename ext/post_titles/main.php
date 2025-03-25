@@ -34,25 +34,26 @@ final class PostTitles extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $config, $page;
-
-        if ($config->get_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
-            $page->set_title(self::get_title($event->image));
+        if (Ctx::$config->get_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
+            Ctx::$page->set_title(self::get_title($event->image));
         }
     }
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
-        global $user;
-
-        $event->add_part($this->theme->get_title_set_html(self::get_title($event->image), $user->can(PostTitlesPermission::EDIT_IMAGE_TITLE)), 10);
+        $event->add_part(
+            $this->theme->get_title_set_html(
+                self::get_title($event->image),
+                Ctx::$user->can(PostTitlesPermission::EDIT_IMAGE_TITLE)
+            ),
+            10
+        );
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $user;
         $title = $event->get_param('title');
-        if ($user->can(PostTitlesPermission::EDIT_IMAGE_TITLE) && !is_null($title)) {
+        if (Ctx::$user->can(PostTitlesPermission::EDIT_IMAGE_TITLE) && !is_null($title)) {
             send_event(new PostTitleSetEvent($event->image, $title));
         }
     }
@@ -76,17 +77,14 @@ final class PostTitles extends Extension
 
     private function set_title(int $image_id, string $title): void
     {
-        global $database;
-        $database->execute("UPDATE images SET title=:title WHERE id=:id", ['title' => $title, 'id' => $image_id]);
+        Ctx::$database->execute("UPDATE images SET title=:title WHERE id=:id", ['title' => $title, 'id' => $image_id]);
         Log::info("post_titles", "Title for >>{$image_id} set to: ".$title);
     }
 
     public static function get_title(Image $image): string
     {
-        global $config;
-
         $title = $image['title'] ?? "";
-        if (empty($title) && $config->get_bool(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
+        if (empty($title) && Ctx::$config->get_bool(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
             $info = pathinfo($image->filename);
             if (array_key_exists("extension", $info)) {
                 $title = basename($image->filename, '.' . $info['extension']);

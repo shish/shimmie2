@@ -14,10 +14,9 @@ use function MicroHTML\emptyHTML;
 final class TagEditCloud extends Extension
 {
     public const KEY = "tag_editcloud";
+
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
-        global $config;
-
         if ($this->can_tag($event->image)) {
             $html = $this->build_tag_map($event->image);
             if (!is_null($html)) {

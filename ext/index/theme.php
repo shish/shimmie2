@@ -98,9 +98,7 @@ class IndexTheme extends Themelet
 
     protected function display_shortwiki(): void
     {
-        global $config, $page;
-
-        if (WikiInfo::is_enabled() && $config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
+        if (WikiInfo::is_enabled() && Ctx::$config->get_bool(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) === 1) {
                 $st = Tag::implode($this->search_terms);
                 $wikiPage = Wiki::get_page($st);
@@ -112,7 +110,7 @@ class IndexTheme extends Themelet
                         H2($st, " ", A(["href" => make_link("wiki/$st")], SUP("ⓘ"))),
                         format_text(explode("\n", $wikiPage->body, 2)[0])
                     );
-                    $page->add_block(new Block(null, $short_wiki_description, "main", 0, "short-wiki-description"));
+                    Ctx::$page->add_block(new Block(null, $short_wiki_description, "main", 0, "short-wiki-description"));
                 }
             }
         }
@@ -123,10 +121,10 @@ class IndexTheme extends Themelet
      */
     protected function display_page_header(array $images): void
     {
-        global $config, $page;
+        global $page;
 
         if (count($this->search_terms) === 0) {
-            $page_title = $config->req_string(SetupConfig::TITLE);
+            $page_title = Ctx::$config->req_string(SetupConfig::TITLE);
         } else {
             $search_string = implode(' ', $this->search_terms);
             $page_title = html_escape($search_string);

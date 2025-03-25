@@ -89,7 +89,6 @@ final class LoginResult
     #[Mutation]
     public static function login(string $username, string $password): LoginResult
     {
-        global $config;
         try {
             $duser = User::by_name_and_pass($username, $password);
             return new LoginResult(
@@ -99,7 +98,7 @@ final class LoginResult
             );
         } catch (UserNotFound $ex) {
             return new LoginResult(
-                User::by_id($config->req_int(UserAccountsConfig::ANON_ID)),
+                User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID)),
                 null,
                 "No user found"
             );
@@ -109,7 +108,6 @@ final class LoginResult
     #[Mutation]
     public static function create_user(string $username, string $password1, string $password2, string $email): LoginResult
     {
-        global $config;
         try {
             $uce = send_event(new UserCreationEvent($username, $password1, $password2, $email, true));
             return new LoginResult(
@@ -119,7 +117,7 @@ final class LoginResult
             );
         } catch (UserCreationException $ex) {
             return new LoginResult(
-                User::by_id($config->req_int(UserAccountsConfig::ANON_ID)),
+                User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID)),
                 null,
                 $ex->getMessage()
             );
@@ -298,7 +296,7 @@ final class UserPage extends Extension
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $user, $config;
+        global $user;
 
         $duser = $event->display_user;
         $class = $duser->class;
@@ -531,14 +529,14 @@ final class UserPage extends Extension
 
     private function page_login(string $name, string $pass): void
     {
-        global $config, $page;
+        global $page;
 
         $duser = User::by_name_and_pass($name, $pass);
         send_event(new UserLoginEvent($duser));
         $duser->set_login_cookie();
         $page->set_mode(PageMode::REDIRECT);
 
-        if ($config->get_string(UserAccountsConfig::LOGIN_REDIRECT) === "previous") {
+        if (Ctx::$config->get_string(UserAccountsConfig::LOGIN_REDIRECT) === "previous") {
             $page->set_redirect(Url::referer_or(ignore: ["user/"]));
         } else {
             $page->set_redirect(make_link("user"));
@@ -547,12 +545,12 @@ final class UserPage extends Extension
 
     private function page_logout(): void
     {
-        global $page, $config;
-        $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
-        if ($config->get_bool(UserAccountsConfig::PURGE_COOKIE)) {
+        global $page;
+        $page->add_cookie("session", "", time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
+        if (Ctx::$config->req_bool(UserAccountsConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
-            $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
+            $page->add_cookie("user", "", time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         }
         Log::info("user", "Logged out");
         $page->set_mode(PageMode::REDIRECT);

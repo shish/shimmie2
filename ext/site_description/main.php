@@ -12,17 +12,16 @@ final class SiteDescription extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page;
-        if (!empty($config->get_string(SiteDescriptionConfig::DESCRIPTION))) {
-            $description = $config->get_string(SiteDescriptionConfig::DESCRIPTION);
-            $page->add_html_header(META([
+        $description = Ctx::$config->get_string(SiteDescriptionConfig::DESCRIPTION);
+        if (!empty($description)) {
+            Ctx::$page->add_html_header(META([
                 'name' => 'description',
                 'content' => $description
             ]));
         }
-        if (!empty($config->get_string(SiteDescriptionConfig::KEYWORDS))) {
-            $keywords = $config->get_string(SiteDescriptionConfig::KEYWORDS);
-            $page->add_html_header(META([
+        $keywords = Ctx::$config->get_string(SiteDescriptionConfig::KEYWORDS);
+        if (!empty($keywords)) {
+            Ctx::$page->add_html_header(META([
                 'name' => 'keywords',
                 'content' => $keywords
             ]));

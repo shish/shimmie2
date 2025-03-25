@@ -44,7 +44,7 @@ final class NotATag extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         if ($this->get_version() < 1) {
             $database->create_table("untags", "
 				tag VARCHAR(128) NOT NULL PRIMARY KEY,
@@ -56,8 +56,7 @@ final class NotATag extends Extension
 
     public function onTagSet(TagSetEvent $event): void
     {
-        global $user;
-        if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
+        if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->new_tags = $this->strip($event->new_tags);
         } else {
             $this->scan($event->new_tags);
@@ -91,8 +90,7 @@ final class NotATag extends Extension
      */
     private function strip(array $tags): array
     {
-        global $database;
-        $untags = $database->get_col("SELECT LOWER(tag) FROM untags");
+        $untags = Ctx::$database->get_col("SELECT LOWER(tag) FROM untags");
 
         $ok_tags = [];
         foreach ($tags as $tag) {
@@ -110,9 +108,8 @@ final class NotATag extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "tags") {
-            if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
+            if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
                 $event->add_nav_link(make_link('untag/list'), "UnTags");
             }
         }
@@ -120,15 +117,15 @@ final class NotATag extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
+        if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->add_link("UnTags", make_link("untag/list"));
         }
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        $page = Ctx::$page;
+        $database = Ctx::$database;
 
         if ($event->page_matches("untag/add", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $input = validate_input(["c_tag" => "string", "c_redirect" => "string"]);
@@ -151,7 +148,7 @@ final class NotATag extends Extension
         }
         if ($event->page_matches("untag/list")) {
             $t = new NotATagTable($database->raw_db());
-            $t->token = $user->get_auth_token();
+            $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET;
             $page->set_title("UnTags");
             $this->theme->display_navigation();

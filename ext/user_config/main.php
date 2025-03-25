@@ -29,16 +29,14 @@ final class UserConfig extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
-        if ($event->parent === "user" && !$user->is_anonymous()) {
+        if ($event->parent === "user" && !Ctx::$user->is_anonymous()) {
             $event->add_nav_link(make_link('user_config'), "User Options", order: 40);
         }
     }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if (!$user->is_anonymous()) {
+        if (!Ctx::$user->is_anonymous()) {
             $event->add_link("User Options", make_link("user_config"), 40);
         }
     }
@@ -102,9 +100,7 @@ final class UserConfig extends Extension
 
     public function onUserOperationsBuilding(UserOperationsBuildingEvent $event): void
     {
-        global $config;
-
-        if ($config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
+        if (Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             $key = $event->user_config->get_string(UserConfigUserConfig::API_KEY);
             if (empty($key)) {
                 $key = generate_key();

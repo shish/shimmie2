@@ -27,7 +27,7 @@ final class Forum extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $config, $database;
+        global $database;
 
         // shortcut to latest
 
@@ -259,8 +259,8 @@ final class Forum extends Extension
 
     private function show_posts(int $threadID, int $pageNumber, bool $showAdminOptions = false): void
     {
-        global $config, $database;
-        $postsPerPage = $config->req_int(ForumConfig::POSTS_PER_PAGE);
+        global $database;
+        $postsPerPage = Ctx::$config->req_int(ForumConfig::POSTS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id' => $threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
 
@@ -301,11 +301,10 @@ final class Forum extends Extension
 
     private function save_new_post(int $threadID, User $user): void
     {
-        global $config;
         $userID = $user->id;
         $message = $_POST["message"];
 
-        $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
+        $max_characters = Ctx::$config->get_int(ForumConfig::MAX_CHARS_PER_POST);
         $message = substr($message, 0, $max_characters);
 
         global $database;

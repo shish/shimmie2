@@ -85,11 +85,11 @@ final class IPBan extends Extension
 
     public function onUserLogin(UserLoginEvent $event): void
     {
-        global $cache, $config, $database, $page;
+        global $database, $page;
 
         // Get lists of banned IPs and banned networks
-        $ips = $cache->get("ip_bans");
-        $networks = $cache->get("network_bans");
+        $ips = Ctx::$cache->get("ip_bans");
+        $networks = Ctx::$cache->get("network_bans");
         if (is_null($ips) || is_null($networks)) {
             $rows = $database->get_pairs("
 				SELECT ip, id
@@ -107,8 +107,8 @@ final class IPBan extends Extension
                 }
             }
 
-            $cache->set("ip_bans", $ips, 60);
-            $cache->set("network_bans", $networks, 60);
+            Ctx::$cache->set("ip_bans", $ips, 60);
+            Ctx::$cache->set("network_bans", $networks, 60);
         }
 
         // Check if our current IP is in either of the ban lists
@@ -207,29 +207,30 @@ final class IPBan extends Extension
 
     public function onAddIPBan(AddIPBanEvent $event): void
     {
-        global $cache, $user, $database;
-        $sql = "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)";
-        $database->execute($sql, ["ip" => $event->ip, "mode" => $event->mode, "reason" => $event->reason, "expires" => $event->expires, "admin_id" => $user->id]);
-        $cache->delete("ip_bans");
-        $cache->delete("network_bans");
+        Ctx::$database->execute(
+            "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)",
+            ["ip" => $event->ip, "mode" => $event->mode, "reason" => $event->reason, "expires" => $event->expires, "admin_id" => Ctx::$user->id]
+        );
+        Ctx::$cache->delete("ip_bans");
+        Ctx::$cache->delete("network_bans");
         Log::info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
     public function onRemoveIPBan(RemoveIPBanEvent $event): void
     {
-        global $cache, $database;
+        global $database;
         $ban = $database->get_row("SELECT * FROM bans WHERE id = :id", ["id" => $event->id]);
         if ($ban) {
             $database->execute("DELETE FROM bans WHERE id = :id", ["id" => $event->id]);
-            $cache->delete("ip_bans");
-            $cache->delete("network_bans");
+            Ctx::$cache->delete("ip_bans");
+            Ctx::$cache->delete("network_bans");
             Log::info("ipban", "Removed {$ban['ip']}'s ban");
         }
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // shortcut to latest
         if ($this->get_version() < 1) {

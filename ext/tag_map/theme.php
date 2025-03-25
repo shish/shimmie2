@@ -16,10 +16,10 @@ class TagMapTheme extends Themelet
      */
     public function display_map(int $tags_min, array $tag_data): void
     {
-        global $config, $page;
+        global $page;
 
         $html = emptyHTML();
-        if ($config->get_bool(TagMapConfig::PAGES)) {
+        if (Ctx::$config->req_bool(TagMapConfig::PAGES)) {
             $html->appendChild($this->build_az($tags_min));
         }
         foreach ($tag_data as $row) {
@@ -40,10 +40,10 @@ class TagMapTheme extends Themelet
      */
     public function display_alphabetic(string $starts_with, int $tags_min, array $tag_data): void
     {
-        global $config, $page;
+        global $page;
 
         $html = emptyHTML();
-        if ($config->get_bool(TagMapConfig::PAGES)) {
+        if (Ctx::$config->req_bool(TagMapConfig::PAGES)) {
             $html->appendChild($this->build_az($tags_min));
         }
 

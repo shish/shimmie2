@@ -77,9 +77,8 @@ final class ThumbnailConfig extends ConfigGroup
      */
     public static function get_fit_options(): array
     {
-        global $config;
         $options = [];
-        foreach (MediaEngine::RESIZE_TYPE_SUPPORT[$config->req_string(ThumbnailConfig::ENGINE)] as $type) {
+        foreach (MediaEngine::RESIZE_TYPE_SUPPORT[Ctx::$config->req_string(ThumbnailConfig::ENGINE)] as $type) {
             $options[$type] = $type;
         }
         return $options;

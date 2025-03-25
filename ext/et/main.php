@@ -142,8 +142,6 @@ final class ET extends Extension
      */
     private function get_system_info(): array
     {
-        global $config, $database;
-
         $info = [
             "server" => $_SERVER,
             "env" => $_ENV,

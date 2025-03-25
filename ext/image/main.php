@@ -19,28 +19,26 @@ final class ImageIO extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $config;
-
         if ($this->get_version() < 1) {
-            switch ($config->get_string("thumb_type")) {
+            switch (Ctx::$config->get_string("thumb_type")) {
                 case FileExtension::WEBP:
-                    $config->set_string(ThumbnailConfig::MIME, MimeType::WEBP);
+                    Ctx::$config->set_string(ThumbnailConfig::MIME, MimeType::WEBP);
                     break;
                 case FileExtension::JPEG:
-                    $config->set_string(ThumbnailConfig::MIME, MimeType::JPEG);
+                    Ctx::$config->set_string(ThumbnailConfig::MIME, MimeType::JPEG);
                     break;
             }
-            $config->delete("thumb_type");
+            Ctx::$config->delete("thumb_type");
             $this->set_version(1);
         }
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page, $user;
+        global $page, $user;
 
-        $thumb_width = $config->req_int(ThumbnailConfig::WIDTH);
-        $thumb_height = $config->req_int(ThumbnailConfig::HEIGHT);
+        $thumb_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
+        $thumb_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST")) {
@@ -48,7 +46,7 @@ final class ImageIO extends Extension
             if ($this->can_user_delete_image($user, $image)) {
                 send_event(new ImageDeletionEvent($image));
 
-                if ($config->get_string(ImageConfig::ON_DELETE) === 'next') {
+                if (Ctx::$config->get_string(ImageConfig::ON_DELETE) === 'next') {
                     $this->redirect_to_next_image($image, $event->get_GET('search'));
                 } else {
                     $page->set_mode(PageMode::REDIRECT);

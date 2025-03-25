@@ -133,7 +133,7 @@ class ViewPostTheme extends Themelet
      */
     protected function build_info(Image $image, array $editor_parts): HTMLElement
     {
-        global $config, $user;
+        global $user;
 
         if (count($editor_parts) == 0) {
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
@@ -157,7 +157,7 @@ class ViewPostTheme extends Themelet
         if ($bae->html) {
             array_values($editor_parts)[0]->appendChild(
                 TD(
-                    ["class" => "image-info-avatar-box", "width" => $config->req_int(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => count($editor_parts) - 2],
+                    ["class" => "image-info-avatar-box", "width" => Ctx::$config->req_int(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => count($editor_parts) - 2],
                     $bae->html
                 )
             );

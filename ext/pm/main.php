@@ -214,7 +214,7 @@ final class PrivMsg extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $cache, $database, $page, $user;
+        global $database, $page, $user;
         if ($event->page_matches("pm/read/{pm_id}", permission: PrivMsgPermission::READ_PM)) {
             $pm_id = $event->get_iarg('pm_id');
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
@@ -224,7 +224,7 @@ final class PrivMsg extends Extension
                 $from_user = User::by_id((int)$pm["from_id"]);
                 if ($pm["to_id"] === $user->id) {
                     $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
-                    $cache->delete("pm-count-{$user->id}");
+                    Ctx::$cache->delete("pm-count-{$user->id}");
                 }
                 $pmo = PM::from_row($pm);
                 $this->theme->display_message($from_user, $user, $pmo);
@@ -242,7 +242,7 @@ final class PrivMsg extends Extension
                 throw new ObjectNotFound("No such PM");
             } elseif (($pm["to_id"] === $user->id) || $user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
                 $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
-                $cache->delete("pm-count-{$user->id}");
+                Ctx::$cache->delete("pm-count-{$user->id}");
                 Log::info("pm", "Deleted PM #$pm_id", "PM deleted");
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(Url::referer_or());
@@ -262,8 +262,7 @@ final class PrivMsg extends Extension
 
     public function onSendPM(SendPMEvent $event): void
     {
-        global $cache, $database;
-        $database->execute(
+        Ctx::$database->execute(
             "
 				INSERT INTO private_message(
 					from_id, from_ip, to_id,
@@ -272,17 +271,15 @@ final class PrivMsg extends Extension
             ["fromid" => $event->pm->from_id, "fromip" => $event->pm->from_ip,
             "toid" => $event->pm->to_id, "subject" => $event->pm->subject, "message" => $event->pm->message]
         );
-        $cache->delete("pm-count-{$event->pm->to_id}");
+        Ctx::$cache->delete("pm-count-{$event->pm->to_id}");
         Log::info("pm", "Sent PM to User #{$event->pm->to_id}");
     }
 
     private function count_pms(User $user): int
     {
-        global $database;
-
         return cache_get_or_set(
             "pm-count-{$user->id}",
-            fn () => $database->get_one("
+            fn () => (int)Ctx::$database->get_one("
                 SELECT count(*)
                 FROM private_message
                 WHERE to_id = :to_id

@@ -8,9 +8,8 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
 {
     public function setUp(): void
     {
-        global $config;
         parent::setUp();
-        $config->set_int(CommentConfig::LIMIT, 100);
+        Ctx::$config->set_int(CommentConfig::LIMIT, 100);
         self::log_out();
     }
 

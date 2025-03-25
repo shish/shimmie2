@@ -468,8 +468,7 @@ final class Artists extends Extension
             return;
         }
 
-        global $database;
-        $database->execute(
+        Ctx::$database->execute(
             "UPDATE artists SET name = :name, notes = :notes, updated = now(), user_id = :user_id WHERE id = :id",
             ['name' => $name, 'notes' => $notes, 'user_id' => $userID, 'id' => $artistID]
         );
@@ -591,7 +590,6 @@ final class Artists extends Extension
 
     private function add_artist(): int
     {
-        global $user;
         $inputs = validate_input([
             "name" => "string,lower",
             "notes" => "string,optional",
@@ -610,14 +608,15 @@ final class Artists extends Extension
         $aliases = $inputs["aliases"];
         $members = $inputs["members"];
         $urls = $inputs["urls"];
-        $userID = $user->id;
+        $username = Ctx::$user->name;
+        $userID = Ctx::$user->id;
 
         //$artistID = "";
 
         //// WE CHECK IF THE ARTIST ALREADY EXISTS ON DATABASE; IF NOT WE CREATE
         if (!$this->artist_exists($name)) {
             $artistID = $this->save_new_artist($name, $notes);
-            Log::info("artists", "Artist {$artistID} created by {$user->name}");
+            Log::info("artists", "Artist {$artistID} created by {$username}");
         } else {
             $artistID = $this->get_artist_id($name);
         }

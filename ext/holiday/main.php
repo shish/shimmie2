@@ -12,9 +12,8 @@ final class Holiday extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page;
-        if (date('m/d') == '04/01' && $config->get_bool(HolidayConfig::APRIL_FOOLS)) {
-            $page->add_html_header(LINK([
+        if (date('m/d') == '04/01' && Ctx::$config->get_bool(HolidayConfig::APRIL_FOOLS)) {
+            Ctx::$page->add_html_header(LINK([
                 'rel' => 'stylesheet',
                 'href' => Url::base() . '/ext/holiday/stylesheets/aprilfools.css',
                 'type' => 'text/css'

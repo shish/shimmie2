@@ -12,20 +12,17 @@ final class RSSComments extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        global $config, $page;
-        $title = $config->req_string(SetupConfig::TITLE);
-
-        $page->add_html_header(LINK([
+        Ctx::$page->add_html_header(LINK([
             'rel' => 'alternate',
             'type' => 'application/rss+xml',
-            'title' => "$title - Comments",
+            'title' => Ctx::$config->req_string(SetupConfig::TITLE) . " - Comments",
             'href' => (string)make_link("rss/comments")
         ]));
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $page;
+        global $database, $page;
         if ($event->page_matches("rss/comments")) {
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::RSS);
@@ -63,7 +60,7 @@ final class RSSComments extends Extension
 				";
             }
 
-            $title = $config->req_string(SetupConfig::TITLE);
+            $title = Ctx::$config->req_string(SetupConfig::TITLE);
             $base_href = Url::base()->asAbsolute();
             $version = SysConfig::getVersion();
             $xml = <<<EOD

@@ -34,8 +34,6 @@ final class AutoComplete extends Extension
      */
     private function complete(string $search, int $limit): array
     {
-        global $cache, $database;
-
         $search = mb_strtolower($search);
         if (
             $search == '' ||
@@ -60,8 +58,8 @@ final class AutoComplete extends Extension
             $SQLarr['limit'] = $limit;
         }
 
-        return cache_get_or_set($cache_key, function () use ($database, $limitSQL, $SQLarr) {
-            $rows = $database->get_all(
+        return cache_get_or_set($cache_key, function () use ($limitSQL, $SQLarr) {
+            $rows = Ctx::$database->get_all(
                 "
                     -- (
                         SELECT tag, NULL AS newtag, count

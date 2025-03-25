@@ -52,7 +52,6 @@ class _SafeOuroborosImage
 
     public function __construct(Image $img)
     {
-        global $config;
         // author
         $author = $img->get_owner();
         $this->author = $author->name;
@@ -91,8 +90,8 @@ class _SafeOuroborosImage
         $this->has_notes = false;
 
         // thumb
-        $this->preview_height = $config->req_int(ThumbnailConfig::HEIGHT);
-        $this->preview_width = $config->req_int(ThumbnailConfig::WIDTH);
+        $this->preview_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
+        $this->preview_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
         $this->preview_url = (string)$img->get_thumb_link()->asAbsolute();
 
         // sample (use the full image here)

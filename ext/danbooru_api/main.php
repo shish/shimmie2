@@ -77,7 +77,7 @@ final class DanbooruApi extends Extension
      */
     private function authenticate_user(PageRequestEvent $event): void
     {
-        global $config, $user;
+        global $user;
 
         if ($event->get_POST('login') && $event->get_POST('password')) {
             // Get this user from the db, if it fails the user becomes anonymous
@@ -87,7 +87,7 @@ final class DanbooruApi extends Extension
                 $pass = $event->req_POST('password');
                 $user = User::by_name_and_pass($name, $pass);
             } catch (UserNotFound $e) {
-                $user = User::by_id($config->req_int(UserAccountsConfig::ANON_ID));
+                $user = User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
             }
             send_event(new UserLoginEvent($user));
         }

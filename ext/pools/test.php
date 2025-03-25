@@ -61,10 +61,9 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
     {
         [$pool_id, $image_ids] = $this->testCreate();
 
-        global $config;
-        $config->set_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE, true);
-        $config->set_bool(PoolsConfig::INFO_ON_VIEW_IMAGE, true);
-        $config->set_bool(PoolsConfig::SHOW_NAV_LINKS, true);
+        Ctx::$config->set_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE, true);
+        Ctx::$config->set_bool(PoolsConfig::INFO_ON_VIEW_IMAGE, true);
+        Ctx::$config->set_bool(PoolsConfig::SHOW_NAV_LINKS, true);
 
         self::get_page("post/view/{$image_ids[0]}");
         self::assert_text("Pool");

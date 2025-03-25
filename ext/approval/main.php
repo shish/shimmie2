@@ -13,7 +13,6 @@ final class Approval extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        global $config;
         Image::$prop_types["approved"] = ImagePropType::BOOL;
         Image::$prop_types["approved_by_id"] = ImagePropType::INT;
     }

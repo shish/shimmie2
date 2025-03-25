@@ -33,8 +33,8 @@ class ForumTheme extends Themelet
 
     public function display_new_thread_composer(?string $threadText = null, ?string $threadTitle = null): void
     {
-        global $config, $user, $page;
-        $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
+        global $user, $page;
+        $max_characters = Ctx::$config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
             make_link("forum/create"),
@@ -78,9 +78,9 @@ class ForumTheme extends Themelet
 
     public function display_new_post_composer(int $threadID): void
     {
-        global $config, $page;
+        global $page;
 
-        $max_characters = $config->get_int(ForumConfig::MAX_CHARS_PER_POST);
+        $max_characters = Ctx::$config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
             make_link("forum/answer"),
@@ -104,8 +104,7 @@ class ForumTheme extends Themelet
             )
         );
 
-        $blockTitle = "Answer to this thread";
-        $page->add_block(new Block($blockTitle, $html, "main", 130));
+        $page->add_block(new Block("Answer to this thread", $html, "main", 130));
     }
 
 
@@ -114,9 +113,9 @@ class ForumTheme extends Themelet
      */
     public function display_thread(array $posts, bool $showAdminOptions, string $threadTitle, int $threadID, int $pageNumber, int $totalPages): void
     {
-        global $config, $page;
+        global $page;
 
-        $posts_per_page = $config->req_int(ForumConfig::POSTS_PER_PAGE);
+        $posts_per_page = Ctx::$config->req_int(ForumConfig::POSTS_PER_PAGE);
 
         $current_post = 0;
 
@@ -207,8 +206,6 @@ class ForumTheme extends Themelet
      */
     private function make_thread_list(array $threads, bool $showAdminOptions): HTMLElement
     {
-        global $config;
-
         $tbody = TBODY();
         $html = TABLE(
             ["id" => "threadList", "class" => "zebra"],
@@ -225,7 +222,7 @@ class ForumTheme extends Themelet
         );
 
         foreach ($threads as $thread) {
-            $titleSubString = $config->req_int(ForumConfig::TITLE_SUBSTRING);
+            $titleSubString = Ctx::$config->req_int(ForumConfig::TITLE_SUBSTRING);
             $title = truncate($thread["title"], $titleSubString);
 
             $tbody->appendChild(

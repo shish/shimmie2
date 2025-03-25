@@ -8,12 +8,10 @@ final class DowntimeTest extends ShimmiePHPUnitTestCase
 {
     public function testDowntime(): void
     {
-        global $config;
-
-        $config->set_string("downtime_message", "brb, unit testing");
+        Ctx::$config->set_string(DowntimeConfig::MESSAGE, "brb, unit testing");
 
         // downtime on
-        $config->set_bool("downtime", true);
+        Ctx::$config->set_bool(DowntimeConfig::DOWNTIME, true);
 
         self::log_in_as_admin();
         self::get_page("post/list");
@@ -26,7 +24,7 @@ final class DowntimeTest extends ShimmiePHPUnitTestCase
         self::assert_response(503);
 
         // downtime off
-        $config->set_bool("downtime", false);
+        Ctx::$config->set_bool(DowntimeConfig::DOWNTIME, false);
 
         self::log_in_as_admin();
         self::get_page("post/list");

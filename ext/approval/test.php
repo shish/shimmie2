@@ -18,8 +18,6 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
     // so we can't test this
     public function testApprovalNeeded(): void
     {
-        global $config;
-
         // use can post but not see what they posted
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "some_tag");

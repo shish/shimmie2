@@ -130,7 +130,9 @@ final class Wiki extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        $page = Ctx::$page;
+        $user = Ctx::$user;
+
         if ($event->page_matches("wiki/{title}/{action}", method: "GET")) {
             $title = $event->get_arg('title');
             $action = $event->get_arg('action');
@@ -223,14 +225,13 @@ final class Wiki extends Extension
 
     public function onWikiUpdate(WikiUpdateEvent $event): void
     {
-        global $database, $config;
         $wpage = $event->wikipage;
 
-        $exists = $database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title" => $wpage->title]);
+        $exists = Ctx::$database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title" => $wpage->title]);
 
         try {
-            if ($config->get_bool(WikiConfig::ENABLE_REVISIONS) || !$exists) {
-                $database->execute(
+            if (Ctx::$config->get_bool(WikiConfig::ENABLE_REVISIONS) || !$exists) {
+                Ctx::$database->execute(
                     "
                         INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
                         VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
@@ -238,7 +239,7 @@ final class Wiki extends Extension
                     "title" => $wpage->title, "revision" => $wpage->revision, "locked" => $wpage->locked, "body" => $wpage->body]
                 );
             } else {
-                $database->execute(
+                Ctx::$database->execute(
                     "
                         UPDATE wiki_pages SET owner_id=:owner_id, owner_ip=:owner_ip, date=now(), locked=:locked, body=:body
                         WHERE title = :title ORDER BY revision DESC LIMIT 1",
@@ -253,8 +254,7 @@ final class Wiki extends Extension
 
     public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event): void
     {
-        global $database;
-        $database->execute(
+        Ctx::$database->execute(
             "DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
             ["title" => $event->title, "rev" => $event->revision]
         );
@@ -262,8 +262,7 @@ final class Wiki extends Extension
 
     public function onWikiDeletePage(WikiDeletePageEvent $event): void
     {
-        global $database;
-        $database->execute(
+        Ctx::$database->execute(
             "DELETE FROM wiki_pages WHERE title=:title",
             ["title" => $event->title]
         );

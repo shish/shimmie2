@@ -8,7 +8,7 @@ final class DowntimeConfig extends ConfigGroup
 {
     public const KEY = "downtime";
 
-    #[ConfigMeta("Disable non-admin access", ConfigType::BOOL)]
+    #[ConfigMeta("Disable non-admin access", ConfigType::BOOL, default: false)]
     public const DOWNTIME = "downtime";
 
     #[ConfigMeta("Message for users", ConfigType::STRING, input: "longtext", default: "The site is currently down for maintenance.")]

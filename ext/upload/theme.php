@@ -40,11 +40,11 @@ class UploadTheme extends Themelet
 
     public function display_page(): void
     {
-        global $config, $page;
+        global $page;
 
         $limits = get_upload_limits();
 
-        $tl_enabled = ($config->req_string(UploadConfig::TRANSLOAD_ENGINE) !== "none");
+        $tl_enabled = (Ctx::$config->req_string(UploadConfig::TRANSLOAD_ENGINE) !== "none");
         $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
         $max_total_size = $limits['shm_post'];
@@ -95,10 +95,9 @@ class UploadTheme extends Themelet
 
     protected function build_upload_list(): HTMLElement
     {
-        global $config;
         $upload_list = emptyHTML();
-        $upload_count = $config->req_int(UploadConfig::COUNT);
-        $tl_enabled = ($config->req_string(UploadConfig::TRANSLOAD_ENGINE) !== "none");
+        $upload_count = Ctx::$config->req_int(UploadConfig::COUNT);
+        $tl_enabled = (Ctx::$config->req_string(UploadConfig::TRANSLOAD_ENGINE) !== "none");
         $accept = $this->get_accept();
 
         $headers = emptyHTML();
@@ -250,8 +249,6 @@ class UploadTheme extends Themelet
 
     protected function build_upload_block(): HTMLElement
     {
-        global $config;
-
         $limits = get_upload_limits();
 
         $accept = $this->get_accept();

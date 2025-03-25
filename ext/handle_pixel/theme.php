@@ -12,8 +12,6 @@ class PixelFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
-        global $config, $page;
-
         $html = IMG([
             'alt' => 'main image',
             'class' => 'shm-main-image shm-click-to-scale',
@@ -26,13 +24,11 @@ class PixelFileHandlerTheme extends Themelet
             'data-mime' => $image->get_mime(),
             'onerror' => "shm_log('Error loading >>{$image->id}')",
         ]);
-        $page->add_block(new Block(null, $html, "main", 10));
+        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 
     public function display_metadata(Image $image): void
     {
-        global $page;
-
         if (function_exists("exif_read_data")) {
             # FIXME: only read from jpegs?
             $exif = @exif_read_data($image->get_image_filename()->str(), "IFD0", true);
@@ -50,7 +46,7 @@ class PixelFileHandlerTheme extends Themelet
                     }
                 }
                 if ($info) {
-                    $page->add_block(new Block("EXIF Info", joinHTML(BR(), $info), "left"));
+                    Ctx::$page->add_block(new Block("EXIF Info", joinHTML(BR(), $info), "left"));
                 }
             }
         }

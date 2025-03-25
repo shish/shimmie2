@@ -14,15 +14,15 @@ class FilterTheme extends Themelet
 {
     public function addFilterBox(): void
     {
-        global $config, $page, $user;
+        global $page, $user;
 
         // If user is not able to set their own filters, use the default filters.
         if ($user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $tags = $user->get_config()->get_string(
                 FilterUserConfig::TAGS
-            ) ?? $config->get_string(FilterConfig::TAGS);
+            ) ?? Ctx::$config->get_string(FilterConfig::TAGS);
         } else {
-            $tags = $config->get_string(FilterConfig::TAGS);
+            $tags = Ctx::$config->get_string(FilterConfig::TAGS);
         }
         $html = emptyHTML(
             NOSCRIPT("Post filtering requires JavaScript"),

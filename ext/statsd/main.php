@@ -12,7 +12,7 @@ final class StatsDInterface extends Extension
 
     private function _stats(string $type): void
     {
-        global $cache, $database, $_shm_load_start;
+        global $database, $_shm_load_start;
         $time = ftime() - $_shm_load_start;
         StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
         StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
@@ -21,14 +21,12 @@ final class StatsDInterface extends Extension
         StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
         StatsDInterface::$stats["shimmie.$type.queries"] = $database->query_count."|c";
         StatsDInterface::$stats["shimmie.$type.events"] = Ctx::$event_bus->event_count."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-hits"] = $cache->get("__etc_cache_hits", -1)."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get("__etc_cache_misses", -1)."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-hits"] = Ctx::$cache->get("__etc_cache_hits", -1)."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-misses"] = Ctx::$cache->get("__etc_cache_misses", -1)."|c";
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config;
-
         $this->_stats("overall");
 
         if ($event->page_starts_with("post/view")) {  # 40%
@@ -47,7 +45,7 @@ final class StatsDInterface extends Extension
             $this->_stats("other");
         }
 
-        $host = $config->get_string(StatsDInterfaceConfig::HOST);
+        $host = Ctx::$config->get_string(StatsDInterfaceConfig::HOST);
         if (!is_null($host)) {
             $this->send($host, StatsDInterface::$stats, 1.0);
         }
