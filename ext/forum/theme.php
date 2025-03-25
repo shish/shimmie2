@@ -116,7 +116,7 @@ class ForumTheme extends Themelet
     {
         global $config, $page;
 
-        $posts_per_page = $config->get_int(ForumConfig::POSTS_PER_PAGE);
+        $posts_per_page = $config->req_int(ForumConfig::POSTS_PER_PAGE);
 
         $current_post = 0;
 
@@ -225,7 +225,7 @@ class ForumTheme extends Themelet
         );
 
         foreach ($threads as $thread) {
-            $titleSubString = $config->get_int(ForumConfig::TITLE_SUBSTRING);
+            $titleSubString = $config->req_int(ForumConfig::TITLE_SUBSTRING);
             $title = truncate($thread["title"], $titleSubString);
 
             $tbody->appendChild(

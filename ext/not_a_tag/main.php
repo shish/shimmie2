@@ -69,17 +69,16 @@ final class NotATag extends Extension
      */
     private function scan(array $tags_mixed): void
     {
-        global $database;
-
         $tags = [];
         foreach ($tags_mixed as $tag) {
             $tags[] = strtolower($tag);
         }
 
-        $pairs = $database->get_pairs("SELECT LOWER(tag), redirect FROM untags");
+        $pairs = Ctx::$database->get_pairs("SELECT LOWER(tag), redirect FROM untags");
         foreach ($pairs as $tag => $url) {
             // cast to string because PHP automatically turns ["69" => "No sex"]
             // into [69 => "No sex"]
+            // @phpstan-ignore-next-line
             if (in_array(strtolower((string)$tag), $tags)) {
                 throw new TagSetException("Invalid tag used: $tag", $url);
             }

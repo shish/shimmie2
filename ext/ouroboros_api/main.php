@@ -504,6 +504,8 @@ final class OuroborosAPI extends Extension
             $xml->endDocument();
             $response = $xml->outputMemory(true);
             unset($xml);
+        } else {
+            throw new \Exception("Unsupported response type: {$this->type}");
         }
         $page->set_data($response);
         $page->set_mode(PageMode::DATA);

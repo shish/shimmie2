@@ -74,10 +74,7 @@ final class VideoFileHandler extends DataHandlerExtension
 
     protected function supported_mime(MimeType $mime): bool
     {
-        global $config;
-
-        $enabled_formats = $config->get_array(VideoFileHandlerConfig::ENABLED_FORMATS);
-
+        $enabled_formats = Ctx::$config->req_array(VideoFileHandlerConfig::ENABLED_FORMATS);
         return MimeType::matches_array($mime, $enabled_formats, true);
     }
 
