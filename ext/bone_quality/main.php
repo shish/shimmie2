@@ -20,9 +20,9 @@ final class BoneQuality extends Extension
             $results = emptyHTML();
 
             // count how many of each chore searches is above the chore search threshold
-            $chore_threshold = $config->get_int(BoneQualityConfig::CHORE_THRESHOLD);
+            $chore_threshold = $config->req_int(BoneQualityConfig::CHORE_THRESHOLD);
             // split on any line break (\n, \r, \r\n) because browsers can theoretically send any of them
-            $chore_searches = preg_split("/\R/", $config->get_string(BoneQualityConfig::CHORE_SEARCHES));
+            $chore_searches = preg_split("/\R/", $config->req_string(BoneQualityConfig::CHORE_SEARCHES));
             if ($chore_searches) {
                 foreach ($chore_searches as $search) {
                     $search_boned = false;
@@ -35,7 +35,7 @@ final class BoneQuality extends Extension
                 }
             }
 
-            $failure_string = $config->get_string(BoneQualityConfig::FAILURE_STRING);
+            $failure_string = $config->req_string(BoneQualityConfig::FAILURE_STRING);
             $this->theme->display_page($failure_string, $boned, $results);
         }
     }

@@ -56,7 +56,7 @@ final class BanWords extends Extension
         global $config;
         $words = [];
 
-        $banned = $config->get_string(BanWordsConfig::BANNED_WORDS);
+        $banned = $config->req_string(BanWordsConfig::BANNED_WORDS);
         foreach (explode("\n", $banned) as $word) {
             $word = trim(mb_strtolower($word));
             if (strlen($word) == 0) {

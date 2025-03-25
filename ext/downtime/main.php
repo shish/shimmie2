@@ -21,7 +21,7 @@ final class Downtime extends Extension
 
         if ($config->get_bool(DowntimeConfig::DOWNTIME)) {
             if (!$user->can(DowntimePermission::IGNORE_DOWNTIME) && !$this->is_safe_page($event)) {
-                $msg = $config->get_string(DowntimeConfig::MESSAGE);
+                $msg = $config->req_string(DowntimeConfig::MESSAGE);
                 $this->theme->display_message($msg);
                 if (!defined("UNITTEST")) {  // hax D:
                     header("HTTP/1.1 {$page->code} Downtime");

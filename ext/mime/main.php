@@ -32,7 +32,8 @@ final class MimeSystem extends Extension
             }
             $database->set_timeout(null); // These updates can take a little bit
 
-            $extensions = $database->get_col_iterable("SELECT DISTINCT ext FROM images");
+            /** @var string[] $extensions */
+            $extensions = $database->get_col("SELECT DISTINCT ext FROM images");
 
             foreach ($extensions as $ext) {
                 $mime = MimeType::get_for_extension($ext);
@@ -45,7 +46,7 @@ final class MimeSystem extends Extension
 
                 $database->execute(
                     "UPDATE images SET mime = :mime, ext = :new_ext WHERE ext = :ext AND (mime IS NULL OR mime != :mime OR ext != :new_ext)",
-                    ["mime" => $mime, "new_ext" => $normalized_extension, "ext" => $ext]
+                    ["mime" => (string)$mime, "new_ext" => $normalized_extension, "ext" => $ext]
                 );
             }
 

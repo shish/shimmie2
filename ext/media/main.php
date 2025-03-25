@@ -647,8 +647,7 @@ final class Media extends Extension
      */
     public static function video_size(Path $filename): array
     {
-        global $config;
-        $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
+        $ffmpeg = Ctx::$config->req_string(MediaConfig::FFMPEG_PATH);
         $cmd = escapeshellcmd(implode(" ", [
             escapeshellarg($ffmpeg),
             "-y", "-i", escapeshellarg($filename->str()),
