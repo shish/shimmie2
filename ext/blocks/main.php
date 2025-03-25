@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/**
+ * @phpstan-type BlockArray array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}
+ */
 final class Blocks extends Extension
 {
     public const KEY = "blocks";
@@ -98,7 +101,9 @@ final class Blocks extends Extension
             $page->set_redirect(make_link("blocks/list"));
         }
         if ($event->page_matches("blocks/list", permission: BlocksPermission::MANAGE_BLOCKS)) {
-            $this->theme->display_blocks($database->get_all("SELECT * FROM blocks ORDER BY area, priority"));
+            /** @var array<BlockArray> $bs */
+            $bs = $database->get_all("SELECT * FROM blocks ORDER BY area, priority");
+            $this->theme->display_blocks($bs);
         }
     }
 }

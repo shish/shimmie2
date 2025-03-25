@@ -115,9 +115,8 @@ final class TagList extends Extension
 
     private function add_tags_block(Image $image): void
     {
-        global $config, $database;
-
-        $tags = $database->get_all("
+        /** @var array<array{tag: string, count: int}> $tags */
+        $tags = Ctx::$database->get_all("
 			SELECT tags.tag, tags.count
 			FROM tags, image_tags
 			WHERE tags.id = image_tags.tag_id
@@ -125,7 +124,7 @@ final class TagList extends Extension
 			ORDER BY tags.count DESC
 		", ["image_id" => $image->id]);
         if (count($tags) > 0) {
-            if (TagCategoriesInfo::is_enabled() and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
+            if (TagCategoriesInfo::is_enabled() and Ctx::$config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                 $this->theme->display_split_related_block($tags);
             } else {
                 $this->theme->display_related_block($tags, "Tags");

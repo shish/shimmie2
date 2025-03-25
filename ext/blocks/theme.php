@@ -13,10 +13,13 @@ use function MicroHTML\TEXTAREA;
 use function MicroHTML\SELECT;
 use function MicroHTML\OPTION;
 
+/**
+ * @phpstan-type BlockArray array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}
+ */
 class BlocksTheme extends Themelet
 {
     /**
-     * @param array<array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}> $blocks
+     * @param array<BlockArray> $blocks
      */
     public function display_blocks(array $blocks): void
     {
