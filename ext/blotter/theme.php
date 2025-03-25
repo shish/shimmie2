@@ -154,7 +154,7 @@ class BlotterTheme extends Themelet
             DIV(["id" => "blotter2", "class" => "shm-blotter2"], $in_text)
         );
 
-        $position = $config->get_string(BlotterConfig::POSITION);
+        $position = $config->req_string(BlotterConfig::POSITION);
         $page->add_block(new Block(null, $html, $position, 20));
     }
 }

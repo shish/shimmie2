@@ -323,21 +323,18 @@ final class Forum extends Extension
 
     private function delete_thread(int $threadID): void
     {
-        global $database;
-        $database->execute("DELETE FROM forum_threads WHERE id = :id", ['id' => $threadID]);
-        $database->execute("DELETE FROM forum_posts WHERE thread_id = :thread_id", ['thread_id' => $threadID]);
+        Ctx::$database->execute("DELETE FROM forum_threads WHERE id = :id", ['id' => $threadID]);
+        Ctx::$database->execute("DELETE FROM forum_posts WHERE thread_id = :thread_id", ['thread_id' => $threadID]);
     }
 
     private function delete_post(int $postID): void
     {
-        global $database;
-        $database->execute("DELETE FROM forum_posts WHERE id = :id", ['id' => $postID]);
+        Ctx::$database->execute("DELETE FROM forum_posts WHERE id = :id", ['id' => $postID]);
     }
 
     private function threadExists(int $threadID): bool
     {
-        global $database;
-        $result = $database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id' => $threadID]);
+        $result = Ctx::$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id' => $threadID]);
         return $result == 1;
     }
 }

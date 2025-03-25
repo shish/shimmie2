@@ -281,9 +281,7 @@ final class NumericScore extends Extension
 
     public function delete_votes_by(int $user_id): void
     {
-        global $database;
-
-        $image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=:user_id", ['user_id' => $user_id]);
+        $image_ids = Ctx::$database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=:user_id", ['user_id' => $user_id]);
 
         if (count($image_ids) === 0) {
             return;
@@ -294,11 +292,13 @@ final class NumericScore extends Extension
         Ctx::$event_bus->set_timeout(null);
         foreach (array_chunk($image_ids, 100) as $chunk) {
             $id_list = implode(",", $chunk);
-            $database->execute(
+            Ctx::$database->execute(
+                // @phpstan-ignore-next-line
                 "DELETE FROM numeric_score_votes WHERE user_id=:user_id AND image_id IN (".$id_list.")",
                 ['user_id' => $user_id]
             );
-            $database->execute("
+            // @phpstan-ignore-next-line
+            Ctx::$database->execute("
 				UPDATE images
 				SET numeric_score=COALESCE(
 					(
