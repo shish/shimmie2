@@ -22,7 +22,7 @@ class LitePage extends Page
     protected function body_html(): HTMLElement
     {
         list($nav_links, $sub_links) = $this->get_nav_links();
-        $theme_name = Ctx::$config->get_string(SetupConfig::THEME, 'lite');
+        $theme_name = Ctx::$config->get_string(SetupConfig::THEME);
         $site_name = Ctx::$config->get_string(SetupConfig::TITLE);
         $data_href = Url::base();
 

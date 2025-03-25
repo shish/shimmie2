@@ -183,7 +183,7 @@ final class Media extends Extension
         }
 
         // TODO: Get output optimization tools working better
-        //        if ($config->get_bool("thumb_optim", false)) {
+        //        if ($config->get_bool("thumb_optim")) {
         //            exec("jpegoptim $outname", $output, $ret);
         //        }
     }

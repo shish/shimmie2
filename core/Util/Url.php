@@ -158,7 +158,7 @@ final readonly class Url
              * "/v2/index.php?q=foo/bar" (uglyurls)
              */
             $install_dir = (string)Url::base();
-            if (Ctx::$config->get_bool(SetupConfig::NICE_URLS, false)) {
+            if (Ctx::$config->req_bool(SetupConfig::NICE_URLS)) {
                 $path = "$install_dir/{$this->page}";
             } else {
                 $path = "$install_dir/index.php";

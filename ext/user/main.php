@@ -99,7 +99,7 @@ final class LoginResult
             );
         } catch (UserNotFound $ex) {
             return new LoginResult(
-                User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)),
+                User::by_id($config->req_int(UserAccountsConfig::ANON_ID)),
                 null,
                 "No user found"
             );
@@ -119,7 +119,7 @@ final class LoginResult
             );
         } catch (UserCreationException $ex) {
             return new LoginResult(
-                User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)),
+                User::by_id($config->req_int(UserAccountsConfig::ANON_ID)),
                 null,
                 $ex->getMessage()
             );
