@@ -126,7 +126,7 @@ class IndexTheme extends Themelet
         global $config, $page;
 
         if (count($this->search_terms) === 0) {
-            $page_title = $config->get_string(SetupConfig::TITLE);
+            $page_title = $config->req_string(SetupConfig::TITLE);
         } else {
             $search_string = implode(' ', $this->search_terms);
             $page_title = html_escape($search_string);

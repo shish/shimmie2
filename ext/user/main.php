@@ -155,7 +155,7 @@ final class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/create", method: "GET", permission: UserAccountsPermission::CREATE_USER)) {
             global $config, $page, $user;
-            if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
+            if (!$config->req_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled();
                 return;
             }
@@ -163,7 +163,7 @@ final class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: UserAccountsPermission::CREATE_USER)) {
             global $config, $page, $user;
-            if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
+            if (!$config->req_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled();
                 return;
             }
@@ -285,7 +285,7 @@ final class UserPage extends Extension
 
         if ($event->page_matches("user/{name}")) {
             $display_user = User::by_name($event->get_arg('name'));
-            if ($display_user->id == $config->get_int(UserAccountsConfig::ANON_ID)) {
+            if ($display_user->id == $config->req_int(UserAccountsConfig::ANON_ID)) {
                 throw new UserNotFound("No such user");
             }
             $e = send_event(new UserPageBuildingEvent($display_user));
@@ -368,7 +368,7 @@ final class UserPage extends Extension
                 $user->can(IPBanPermission::VIEW_IP) ||  # user can view all IPS
                 ($user->id === $event->display_user->id)  # or user is viewing themselves
             ) &&
-            ($event->display_user->id !== $config->get_int(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
+            ($event->display_user->id !== $config->req_int(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
         ) {
             $this->theme->display_ip_list(
                 $this->count_upload_ips($event->display_user),
@@ -421,7 +421,7 @@ final class UserPage extends Extension
         if (!$user->can(UserAccountsPermission::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (!$config->get_bool(UserAccountsConfig::SIGNUP_ENABLED) && !$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
+        if (!$config->req_bool(UserAccountsConfig::SIGNUP_ENABLED) && !$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
         if (strlen($name) < 1) {
@@ -548,11 +548,11 @@ final class UserPage extends Extension
     private function page_logout(): void
     {
         global $page, $config;
-        $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
+        $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         if ($config->get_bool(UserAccountsConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
-            $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int(UserAccountsConfig::LOGIN_MEMORY), "/");
+            $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         }
         Log::info("user", "Logged out");
         $page->set_mode(PageMode::REDIRECT);
@@ -669,7 +669,7 @@ final class UserPage extends Extension
         } else {
             $database->execute(
                 "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                ["new_owner_id" => $config->get_int(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
+                ["new_owner_id" => $config->req_int(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
             );
         }
 
@@ -679,7 +679,7 @@ final class UserPage extends Extension
         } else {
             $database->execute(
                 "UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                ["new_owner_id" => $config->get_int(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
+                ["new_owner_id" => $config->req_int(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
             );
         }
 

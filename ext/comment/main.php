@@ -571,7 +571,7 @@ final class CommentList extends Extension
         }
 
         // rate-limited external service checks last
-        elseif ($config->get_bool(CommentConfig::CAPTCHA) && !Captcha::check()) {
+        elseif ($config->req_bool(CommentConfig::CAPTCHA) && !Captcha::check()) {
             throw new CommentPostingException("Error in captcha");
         } elseif ($user->is_anonymous() && $this->is_spam_akismet($comment)) {
             throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");

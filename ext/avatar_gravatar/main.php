@@ -23,7 +23,7 @@ final class AvatarGravatar extends AvatarExtension
 
         if (!empty($user->email)) {
             $hash = md5(strtolower($user->email));
-            $s = $config->get_int(SetupConfig::AVATAR_SIZE);
+            $s = $config->req_int(SetupConfig::AVATAR_SIZE);
             $d = urlencode($config->get_string(AvatarGravatarConfig::GRAVATAR_DEFAULT));
             $r = $config->get_string(AvatarGravatarConfig::GRAVATAR_RATING);
             $cb = date("Y-m-d");

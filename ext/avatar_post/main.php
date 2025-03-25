@@ -84,8 +84,8 @@ final class AvatarPost extends AvatarExtension
 
         $ar = $image->width / $image->height;
 
-        $thumb_height = $config->get_int(SetupConfig::AVATAR_SIZE);
-        $thumb_width = $config->get_int(SetupConfig::AVATAR_SIZE);
+        $thumb_height = $config->req_int(SetupConfig::AVATAR_SIZE);
+        $thumb_width = $config->req_int(SetupConfig::AVATAR_SIZE);
         $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
         $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
 

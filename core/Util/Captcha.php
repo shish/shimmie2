@@ -24,7 +24,7 @@ final readonly class Captcha
         }
 
         $captcha = null;
-        if (Ctx::$user->is_anonymous() && Ctx::$config->get_bool(CommentConfig::CAPTCHA)) {
+        if (Ctx::$user->is_anonymous() && Ctx::$config->req_bool(CommentConfig::CAPTCHA)) {
             $r_publickey = Ctx::$config->get_string(CommentConfig::RECAPTCHA_PUBKEY);
             if (!empty($r_publickey)) {
                 $captcha = emptyHTML(
@@ -45,7 +45,7 @@ final readonly class Captcha
             return true;
         }
 
-        if (Ctx::$user->is_anonymous() && Ctx::$config->get_bool(CommentConfig::CAPTCHA)) {
+        if (Ctx::$user->is_anonymous() && Ctx::$config->req_bool(CommentConfig::CAPTCHA)) {
             $r_privatekey = Ctx::$config->get_string(CommentConfig::RECAPTCHA_PRIVKEY);
             if (!empty($r_privatekey)) {
                 $recaptcha = new ReCaptcha($r_privatekey);

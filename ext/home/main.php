@@ -17,7 +17,7 @@ final class Home extends Extension
         global $config, $page;
         if ($event->page_matches("home")) {
             $this->theme->display_page(
-                $config->get_string(SetupConfig::TITLE),
+                $config->req_string(SetupConfig::TITLE),
                 $this->get_body()
             );
         }
@@ -43,7 +43,7 @@ final class Home extends Extension
         }
 
         return $this->theme->build_body(
-            $config->get_string(SetupConfig::TITLE),
+            $config->req_string(SetupConfig::TITLE),
             format_text($main_links),
             $config->get_string(HomeConfig::TEXT),
             contact_link(),
