@@ -78,9 +78,9 @@ final class AvatarPost extends AvatarExtension
             return null;
         }
 
-        $scale = $user_config->get_int(AvatarPostUserConfig::AVATAR_SCALE, 100) / 100;
-        $x = $user_config->get_int(AvatarPostUserConfig::AVATAR_X, 0);
-        $y = $user_config->get_int(AvatarPostUserConfig::AVATAR_Y, 0);
+        $scale = $user_config->req_int(AvatarPostUserConfig::AVATAR_SCALE) / 100;
+        $x = $user_config->req_int(AvatarPostUserConfig::AVATAR_X);
+        $y = $user_config->req_int(AvatarPostUserConfig::AVATAR_Y);
 
         $ar = $image->width / $image->height;
 

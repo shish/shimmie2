@@ -85,7 +85,7 @@ class BlotterTheme extends Themelet
     {
         global $config, $page;
 
-        $i_color = $config->get_string(BlotterConfig::COLOR, "#FF0000");
+        $i_color = $config->get_string(BlotterConfig::COLOR);
 
         $html = P();
         foreach ($entries as $entry) {
@@ -154,7 +154,7 @@ class BlotterTheme extends Themelet
             DIV(["id" => "blotter2", "class" => "shm-blotter2"], $in_text)
         );
 
-        $position = $config->get_string(BlotterConfig::POSITION, "subheading");
+        $position = $config->get_string(BlotterConfig::POSITION);
         $page->add_block(new Block(null, $html, $position, 20));
     }
 }

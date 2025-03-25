@@ -47,7 +47,7 @@ final class StatsDInterface extends Extension
             $this->_stats("other");
         }
 
-        $host = $config->get_string(StatsDInterfaceConfig::HOST, null);
+        $host = $config->get_string(StatsDInterfaceConfig::HOST);
         if (!is_null($host)) {
             $this->send($host, StatsDInterface::$stats, 1.0);
         }

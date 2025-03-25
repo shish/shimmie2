@@ -99,7 +99,7 @@ final class LoginResult
             );
         } catch (UserNotFound $ex) {
             return new LoginResult(
-                User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)),
+                User::by_id($config->req_int(UserAccountsConfig::ANON_ID)),
                 null,
                 "No user found"
             );
@@ -119,7 +119,7 @@ final class LoginResult
             );
         } catch (UserCreationException $ex) {
             return new LoginResult(
-                User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)),
+                User::by_id($config->req_int(UserAccountsConfig::ANON_ID)),
                 null,
                 $ex->getMessage()
             );
@@ -538,7 +538,7 @@ final class UserPage extends Extension
         $duser->set_login_cookie();
         $page->set_mode(PageMode::REDIRECT);
 
-        if ($config->get_string(UserAccountsConfig::LOGIN_REDIRECT, "previous") === "previous") {
+        if ($config->get_string(UserAccountsConfig::LOGIN_REDIRECT) === "previous") {
             $page->set_redirect(Url::referer_or(ignore: ["user/"]));
         } else {
             $page->set_redirect(make_link("user"));

@@ -39,8 +39,8 @@ final class ImageIO extends Extension
     {
         global $config, $page, $user;
 
-        $thumb_width = $config->get_int(ThumbnailConfig::WIDTH, 192);
-        $thumb_height = $config->get_int(ThumbnailConfig::HEIGHT, 192);
+        $thumb_width = $config->get_int(ThumbnailConfig::WIDTH);
+        $thumb_height = $config->get_int(ThumbnailConfig::HEIGHT);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST")) {

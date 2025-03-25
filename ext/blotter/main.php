@@ -97,7 +97,7 @@ final class Blotter extends Extension
         global $database, $config;
         $entries = $database->get_all(
             'SELECT * FROM blotter ORDER BY id DESC LIMIT :limit',
-            ["limit" => $config->get_int(BlotterConfig::RECENT, 5)]
+            ["limit" => $config->get_int(BlotterConfig::RECENT)]
         );
         $this->theme->display_blotter($entries);
     }

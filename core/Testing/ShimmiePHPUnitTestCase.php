@@ -257,7 +257,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     protected static function log_out(): void
     {
-        send_event(new UserLoginEvent(User::by_id(Ctx::$config->get_int(UserAccountsConfig::ANON_ID, 0))));
+        send_event(new UserLoginEvent(User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID))));
     }
 
     // post things

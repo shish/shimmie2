@@ -98,7 +98,7 @@ class HomeTheme extends Themelet
     {
         global $config;
 
-        $counter_dir = $config->get_string(HomeConfig::COUNTER, 'default');
+        $counter_dir = $config->get_string(HomeConfig::COUNTER);
         if ($counter_dir === 'none' || $counter_dir === 'text-only') {
             return null;
         }

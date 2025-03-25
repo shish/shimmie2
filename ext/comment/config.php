@@ -32,7 +32,7 @@ final class CommentConfig extends ConfigGroup
     #[ConfigMeta("ReCAPTCHA site key", ConfigType::STRING)]
     public const RECAPTCHA_PUBKEY = "api_recaptcha_pubkey";
 
-    #[ConfigMeta("Show repeat anons publicly", ConfigType::BOOL)]
+    #[ConfigMeta("Show repeat anons publicly", ConfigType::BOOL, default: false)]
     public const SHOW_REPEAT_ANONS = "comment_samefags_public";
 
     #[ConfigMeta(
