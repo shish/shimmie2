@@ -76,8 +76,8 @@ final class ET extends Extension
         $disk_free = \Safe\disk_free_space("./");
         $info = [
             "about" => [
-                'title' => $config->get_string(SetupConfig::TITLE),
-                'theme' => $config->get_string(SetupConfig::THEME),
+                'title' => $config->req_string(SetupConfig::TITLE),
+                'theme' => $config->req_string(SetupConfig::THEME),
                 'url'   => (string)(make_link("")->asAbsolute()),
             ],
             "versions" => [
@@ -104,12 +104,12 @@ final class ET extends Extension
                 "disk_total" => to_shorthand_int($disk_total),
             ],
             "thumbnails" => [
-                "engine" => $config->get_string(ThumbnailConfig::ENGINE),
-                "quality" => $config->get_int(ThumbnailConfig::QUALITY),
-                "width" => $config->get_int(ThumbnailConfig::WIDTH),
-                "height" => $config->get_int(ThumbnailConfig::HEIGHT),
-                "scaling" => $config->get_int(ThumbnailConfig::SCALING),
-                "mime" => $config->get_string(ThumbnailConfig::MIME),
+                "engine" => $config->req_string(ThumbnailConfig::ENGINE),
+                "quality" => $config->req_int(ThumbnailConfig::QUALITY),
+                "width" => $config->req_int(ThumbnailConfig::WIDTH),
+                "height" => $config->req_int(ThumbnailConfig::HEIGHT),
+                "scaling" => $config->req_int(ThumbnailConfig::SCALING),
+                "mime" => $config->req_string(ThumbnailConfig::MIME),
             ],
         ];
 

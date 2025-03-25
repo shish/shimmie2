@@ -87,7 +87,7 @@ final class DanbooruApi extends Extension
                 $pass = $event->req_POST('password');
                 $user = User::by_name_and_pass($name, $pass);
             } catch (UserNotFound $e) {
-                $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID));
+                $user = User::by_id($config->req_int(UserAccountsConfig::ANON_ID));
             }
             send_event(new UserLoginEvent($user));
         }

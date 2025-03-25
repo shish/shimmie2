@@ -36,7 +36,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
         // parts for each image
         $position = 10;
 
-        $comment_captcha = Ctx::$config->get_bool(CommentConfig::CAPTCHA);
+        $comment_captcha = Ctx::$config->req_bool(CommentConfig::CAPTCHA);
         $comment_limit = Ctx::$config->get_int(CommentConfig::LIST_COUNT);
 
         foreach ($images as $pair) {
