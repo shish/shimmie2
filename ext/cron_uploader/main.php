@@ -200,6 +200,7 @@ final class CronUploader extends Extension
 
         $logs = [];
         if (LogDatabaseInfo::is_enabled()) {
+            /** @var array<array{date_sent: string, message: string}> $logs */
             $logs = $database->get_all(
                 "SELECT * FROM score_log WHERE section = :section ORDER BY date_sent DESC LIMIT 100",
                 ["section" => self::NAME]
