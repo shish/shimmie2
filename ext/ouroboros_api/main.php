@@ -580,7 +580,7 @@ final class OuroborosAPI extends Extension
             if (!is_null($duser)) {
                 $user = $duser;
             } else {
-                $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0));
+                $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID));
             }
             send_event(new UserLoginEvent($user));
         } elseif (isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session']) &&
@@ -593,7 +593,7 @@ final class OuroborosAPI extends Extension
             if (!is_null($duser)) {
                 $user = $duser;
             } else {
-                $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0));
+                $user = User::by_id($config->get_int(UserAccountsConfig::ANON_ID));
             }
             send_event(new UserLoginEvent($user));
         }

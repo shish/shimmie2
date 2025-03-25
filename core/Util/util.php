@@ -12,7 +12,7 @@ use MicroHTML\HTMLElement;
 
 function get_theme(): string
 {
-    $theme = Ctx::$config->get_string(SetupConfig::THEME, "default");
+    $theme = Ctx::$config->req_string(SetupConfig::THEME);
     if (!file_exists("themes/$theme")) {
         $theme = "default";
     }
@@ -363,7 +363,7 @@ function _get_user(): User
         $my_user = User::by_session(Ctx::$page->get_cookie("user"), Ctx::$page->get_cookie("session"));
     }
     if (is_null($my_user)) {
-        $my_user = User::by_id(Ctx::$config->get_int(UserAccountsConfig::ANON_ID, 0));
+        $my_user = User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
     }
 
     return $my_user;

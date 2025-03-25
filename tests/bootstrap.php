@@ -53,7 +53,7 @@ $config->set_string(ThumbnailConfig::ENGINE, "static");
 $config->set_bool(SetupConfig::NICE_URLS, true);
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
-$user = Ctx::setUser(User::by_id($config->get_int(UserAccountsConfig::ANON_ID, 0)));
+$user = Ctx::setUser(User::by_id($config->req_int(UserAccountsConfig::ANON_ID)));
 $userPage = new UserPage();
 $userPage->onUserCreation(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
 $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@test.com", false));

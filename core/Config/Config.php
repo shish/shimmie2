@@ -20,27 +20,18 @@ abstract class Config
      */
     abstract protected function save(string $name): void;
 
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
     public function set_int(string $name, int $value): void
     {
         $this->values[$name] = (string)$value;
         $this->save($name);
     }
 
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
     public function set_string(string $name, string $value): void
     {
         $this->values[$name] = $value;
         $this->save($name);
     }
 
-    /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     */
     public function set_bool(string $name, bool $value): void
     {
         $this->values[$name] = $value ? 'Y' : 'N';
@@ -48,9 +39,7 @@ abstract class Config
     }
 
     /**
-     * Set a configuration option to a new value, regardless of what the value is at the moment.
-     *
-     * @param mixed[] $value
+     * @param string[] $value
      */
     public function set_array(string $name, array $value): void
     {
@@ -67,66 +56,32 @@ abstract class Config
         $this->save($name);
     }
 
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     *
-     * @template T of int|null
-     * @param T $default
-     * @return T|int
-     */
-    public function get_int(string $name, ?int $default = null): ?int
+    public function get_int(string $name): ?int
     {
         $val = $this->get($name);
-        if (is_null($val) || !is_numeric($val)) {
-            return $default;
-        }
-        return (int)$val;
+        return (is_null($val) || !is_numeric($val)) ? null : (int)$val;
+    }
+
+    public function get_string(string $name): ?string
+    {
+        $val = $this->get($name);
+        return is_null($val) ? null : $val;
+    }
+
+    public function get_bool(string $name): ?bool
+    {
+        $val = $this->get($name);
+        return (is_null($val)) ? null : bool_escape($val);
     }
 
     /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     *
-     * @template T of string|null
-     * @param T $default
-     * @return T|string
+     * @return string[]
      */
-    public function get_string(string $name, ?string $default = null): ?string
+    public function get_array(string $name): ?array
     {
         $val = $this->get($name);
         if (is_null($val)) {
-            return $default;
-        }
-        return $val;
-    }
-
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     *
-     * @template T of bool|null
-     * @param T $default
-     * @return T|bool
-     */
-    public function get_bool(string $name, ?bool $default = null): ?bool
-    {
-        $val = $this->get($name);
-        if (is_null($val)) {
-            return $default;
-        }
-        return bool_escape($val);
-    }
-
-    /**
-     * Pick a value out of the table by name, cast to the appropriate data type.
-     *
-     * @template T of array<string>|null
-     * @param T $default
-     * @return T|array<string>
-     */
-    public function get_array(string $name, ?array $default = null): ?array
-    {
-        $val = $this->get($name);
-        if (is_null($val)) {
-            return $default;
+            return null;
         }
         if (empty($val)) {
             return [];
@@ -139,7 +94,7 @@ abstract class Config
         return $this->values[$name] ?? null;
     }
 
-    public function req_int(string $name, ?int $default = null): int
+    public function req_int(string $name): int
     {
         $val = $this->get_int($name);
         if (is_null($val)) {
@@ -148,7 +103,7 @@ abstract class Config
         return $val;
     }
 
-    public function req_string(string $name, ?string $default = null): string
+    public function req_string(string $name): string
     {
         $val = $this->get_string($name);
         if (is_null($val)) {
@@ -157,7 +112,7 @@ abstract class Config
         return $val;
     }
 
-    public function req_bool(string $name, ?bool $default = null): bool
+    public function req_bool(string $name): bool
     {
         $val = $this->get_bool($name);
         if (is_null($val)) {
@@ -167,10 +122,9 @@ abstract class Config
     }
 
     /**
-     * @param array<string>|null $default
      * @return array<string>
      */
-    public function req_array(string $name, ?array $default = null): array
+    public function req_array(string $name): array
     {
         $val = $this->get_array($name);
         if (is_null($val)) {

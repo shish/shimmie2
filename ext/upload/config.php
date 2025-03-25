@@ -24,7 +24,7 @@ final class UploadConfig extends ConfigGroup
     ], advanced: true)]
     public const COLLISION_HANDLER = 'upload_collision_handler';
 
-    #[ConfigMeta("Transload", ConfigType::STRING, options: "Shimmie2\UploadConfig::get_transload_options")]
+    #[ConfigMeta("Transload", ConfigType::STRING, default: "none", options: "Shimmie2\UploadConfig::get_transload_options")]
     public const TRANSLOAD_ENGINE = "transload_engine";
 
     #[ConfigMeta("Use transload URL as source", ConfigType::BOOL, default: true, advanced: true)]

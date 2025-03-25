@@ -105,7 +105,7 @@ final class UserConfig extends Extension
         global $config;
 
         if ($config->get_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
-            $key = $event->user_config->get_string(UserConfigUserConfig::API_KEY, "");
+            $key = $event->user_config->get_string(UserConfigUserConfig::API_KEY);
             if (empty($key)) {
                 $key = generate_key();
                 $event->user_config->set_string(UserConfigUserConfig::API_KEY, $key);

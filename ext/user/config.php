@@ -23,7 +23,7 @@ final class UserAccountsConfig extends ConfigGroup
     #[ConfigMeta("Terms & Conditions", ConfigType::STRING, input: "longtext")]
     public const LOGIN_TAC = "login_tac";
 
-    #[ConfigMeta("On log in", ConfigType::STRING, options: [
+    #[ConfigMeta("On log in", ConfigType::STRING, default: "previous", options: [
         "Send to user profile" => "profile",
         "Return to previous page" => "previous",
     ])]

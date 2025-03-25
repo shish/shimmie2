@@ -221,9 +221,8 @@ final class CronUploader extends Extension
     {
         global $user;
         return new Path($user->get_config()->get_string(
-            CronUploaderUserConfig::DIR,
-            Filesystem::data_path(Filesystem::join_path("cron_uploader", $user->name))->str()
-        ));
+            CronUploaderUserConfig::DIR
+        ) ?? Filesystem::data_path(Filesystem::join_path("cron_uploader", $user->name))->str());
     }
 
     public function get_queue_dir(): Path
