@@ -161,7 +161,7 @@ final class CronUploader extends Extension
     {
         global $user;
 
-        $user_api_key = $user->get_config()->get_string(UserConfigUserConfig::API_KEY, "API_KEY");
+        $user_api_key = $user->get_config()->get_string(UserConfigUserConfig::API_KEY) ?? "API_KEY";
 
         return (string)make_link("cron_upload/run", ["api_key" => $user_api_key])->asAbsolute();
     }
