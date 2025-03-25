@@ -53,7 +53,8 @@ final class TagEditCloud extends Extension
                 }
                 $relevant_tag_ids = implode(',', array_map(fn ($t) => Tag::get_or_create_id($t), $relevant_tags));
 
-                $tag_data = $database->get_all(
+                $tag_data = Ctx::$database->get_all(
+                    // @phpstan-ignore-next-line
                     "
 					SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
 					FROM image_tags it1

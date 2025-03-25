@@ -283,7 +283,8 @@ final class SourceHistory extends Extension
 
         foreach ($result as $image_id) {
             // Get the first source history that was done before the given IP edit
-            $row = $database->get_row('
+            // @phpstan-ignore-next-line
+            $row = Ctx::$database->get_row('
 				SELECT id, source
 				FROM source_histories
 				WHERE image_id='.$image_id.'
