@@ -134,8 +134,6 @@ final class AutoTagger extends Extension
                 $database->execute('CREATE INDEX auto_tag_lower_tag_idx ON auto_tag ((lower(tag)))');
             }
             $this->set_version(1);
-
-            Log::info(AutoTaggerInfo::KEY, "extension installed");
         }
     }
 

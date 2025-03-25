@@ -25,8 +25,6 @@ final class TagCategories extends Extension
             );
 
             $this->set_version(1);
-
-            Log::info("tag_categories", "extension installed");
         }
 
         // if empty, add our default values
