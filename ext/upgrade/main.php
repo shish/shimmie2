@@ -54,7 +54,8 @@ final class Upgrade extends Extension
                 $tables = $database->get_col("SHOW TABLES");
                 foreach ($tables as $table) {
                     Log::info("upgrade", "converting $table to innodb");
-                    $database->execute("ALTER TABLE $table ENGINE=INNODB");
+                    // @phpstan-ignore-next-line
+                    Ctx::$database->execute("ALTER TABLE $table ENGINE=INNODB");
                 }
             }
 

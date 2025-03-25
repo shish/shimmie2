@@ -591,7 +591,8 @@ final class Pools extends Extension
 
         $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
 
-        $pools = array_map([Pool::class, "makePool"], $database->get_all("
+        // @phpstan-ignore-next-line
+        $pools = array_map([Pool::class, "makePool"], Ctx::$database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
 			INNER JOIN users AS u
@@ -600,7 +601,8 @@ final class Pools extends Extension
 			$order_by
 			LIMIT :l OFFSET :o
 		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]));
-        $totalPages = (int) ceil((int) $database->get_one("SELECT COUNT(*) FROM pools " . $where_clause) / $poolsPerPage);
+        // @phpstan-ignore-next-line
+        $totalPages = (int) ceil((int) Ctx::$database->get_one("SELECT COUNT(*) FROM pools " . $where_clause) / $poolsPerPage);
 
         $this->theme->list_pools($pools, $search, $pageNumber + 1, $totalPages);
     }
@@ -768,7 +770,8 @@ final class Pools extends Extension
             $params["true"] = true;
         }
 
-        $result = $database->get_all(
+        $result = Ctx::$database->get_all(
+            // @phpstan-ignore-next-line
             "
 					SELECT p.image_id FROM pool_images p
 					$query
@@ -781,7 +784,8 @@ final class Pools extends Extension
             ] + $params
         );
 
-        $totalPages = (int) ceil((int) $database->get_one(
+        $totalPages = (int) ceil((int) Ctx::$database->get_one(
+            // @phpstan-ignore-next-line
             "SELECT COUNT(*) FROM pool_images p $query",
             ["pid" => $poolID] + $params
         ) / $imagesPerPage);

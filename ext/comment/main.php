@@ -77,8 +77,7 @@ final class Comment
 
     public static function count_comments_by_user(User $user): int
     {
-        global $database;
-        return (int)$database->get_one("
+        return (int)Ctx::$database->get_one("
 			SELECT COUNT(*) AS count
 			FROM comments
 			WHERE owner_id=:owner_id
