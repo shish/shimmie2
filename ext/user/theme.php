@@ -159,7 +159,7 @@ class UserPageTheme extends Themelet
         $this->display_navigation();
         $page->add_block(new Block(
             "Signups Disabled",
-            format_text($config->get_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
+            format_text($config->req_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
         ));
     }
 

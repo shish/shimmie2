@@ -110,7 +110,7 @@ class TagListTheme extends Themelet
 
         $main_html = $this->get_tag_list_html(
             $tag_infos,
-            $config->get_string(TagListConfig::RELATED_SORT)
+            $config->req_string(TagListConfig::RELATED_SORT)
         );
 
         $page->add_block(new Block($block_name, $main_html, "left", 10));
@@ -126,7 +126,7 @@ class TagListTheme extends Themelet
         $main_html = emptyHTML(
             $this->get_tag_list_html(
                 $tag_infos,
-                $config->get_string(TagListConfig::POPULAR_SORT)
+                $config->req_string(TagListConfig::POPULAR_SORT)
             ),
             " ",
             BR(),
@@ -146,7 +146,7 @@ class TagListTheme extends Themelet
         $main_html = emptyHTML(
             $this->get_tag_list_html(
                 $tag_infos,
-                $config->get_string(TagListConfig::POPULAR_SORT),
+                $config->req_string(TagListConfig::POPULAR_SORT),
                 $search
             ),
             " ",

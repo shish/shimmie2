@@ -69,8 +69,8 @@ final class ResizeImage extends Extension
                 && $this->can_resize_mime($event->mime)) {
             $image_obj = $event->images[0];
 
-            $width = $config->get_int(ResizeConfig::DEFAULT_WIDTH);
-            $height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
+            $width = $config->req_int(ResizeConfig::DEFAULT_WIDTH);
+            $height = $config->req_int(ResizeConfig::DEFAULT_HEIGHT);
             $isanigif = 0;
             if ($image_obj->get_mime() == MimeType::GIF) {
                 $image_filename = Filesystem::warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
@@ -146,7 +146,7 @@ final class ResizeImage extends Extension
                 $tmp_filename = shm_tempnam('resize');
 
                 send_event(new MediaResizeEvent(
-                    $config->get_string(ResizeConfig::ENGINE),
+                    $config->req_string(ResizeConfig::ENGINE),
                     $event->path,
                     $event->mime,
                     $tmp_filename,

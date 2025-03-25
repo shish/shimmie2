@@ -57,9 +57,9 @@ class ReplaceFileTheme extends Themelet
             $max_size > 0 ? SMALL("(Max file size is $max_kb)") : null,
         );
 
-        $page->set_title("Replace File");
+        Ctx::$page->set_title("Replace File");
         $this->display_navigation();
-        $page->add_block(new Block("Upload Replacement File", $html, "main", 20));
+        Ctx::$page->add_block(new Block("Upload Replacement File", $html, "main", 20));
     }
 
     protected function get_accept(): string

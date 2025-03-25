@@ -228,7 +228,6 @@ final class S3 extends Extension
 
     private function remove_file(string $hash): void
     {
-        global $config;
         if (defined("UNITTEST")) {
             return;
         }
@@ -237,7 +236,7 @@ final class S3 extends Extension
         } else {
             $client = $this->get_client();
             $client->deleteObject(
-                $config->get_string(S3Config::IMAGE_BUCKET),
+                Ctx::$config->req_string(S3Config::IMAGE_BUCKET),
                 $this->hash_to_path($hash),
             );
             $this->dequeue($hash);

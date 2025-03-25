@@ -24,8 +24,8 @@ final class AvatarGravatar extends AvatarExtension
         if (!empty($user->email)) {
             $hash = md5(strtolower($user->email));
             $s = $config->req_int(SetupConfig::AVATAR_SIZE);
-            $d = urlencode($config->get_string(AvatarGravatarConfig::GRAVATAR_DEFAULT));
-            $r = $config->get_string(AvatarGravatarConfig::GRAVATAR_RATING);
+            $d = urlencode($config->req_string(AvatarGravatarConfig::GRAVATAR_DEFAULT));
+            $r = $config->req_string(AvatarGravatarConfig::GRAVATAR_RATING);
             $cb = date("Y-m-d");
             $url = "https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb";
             return IMG(["alt" => "avatar", "class" => "avatar gravatar", "src" => $url]);

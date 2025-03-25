@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/**
+ * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
+ * @phpstan-type Note array{id:int,x1:int,y1:int,height:int,width:int,note:string}
+ */
 final class Notes extends Extension
 {
     public const KEY = "notes";
@@ -12,7 +16,6 @@ final class Notes extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        global $config;
         Image::$prop_types["notes"] = ImagePropType::INT;
     }
 
@@ -336,7 +339,7 @@ final class Notes extends Extension
     {
         global $database, $config;
 
-        $notesPerPage = $config->get_int(NotesConfig::NOTES_PER_PAGE);
+        $notesPerPage = $config->req_int(NotesConfig::NOTES_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
@@ -361,7 +364,7 @@ final class Notes extends Extension
     {
         global $config, $database;
 
-        $requestsPerPage = $config->get_int(NotesConfig::REQUESTS_PER_PAGE);
+        $requestsPerPage = $config->req_int(NotesConfig::REQUESTS_PER_PAGE);
 
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
 
@@ -436,7 +439,7 @@ final class Notes extends Extension
     {
         global $config, $database;
 
-        $historiesPerPage = $config->get_int(NotesConfig::HISTORIES_PER_PAGE);
+        $historiesPerPage = $config->req_int(NotesConfig::HISTORIES_PER_PAGE);
 
         $histories = $database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
@@ -459,11 +462,10 @@ final class Notes extends Extension
 
     private function get_image_history(int $imageID, int $pageNumber): void
     {
-        global $config, $database;
+        $historiesPerPage = Ctx::$config->req_int(NotesConfig::HISTORIES_PER_PAGE);
 
-        $historiesPerPage = $config->get_int(NotesConfig::HISTORIES_PER_PAGE);
-
-        $histories = $database->get_all(
+        /** @var array<NoteHistory> $histories */
+        $histories = Ctx::$database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
             "FROM note_histories AS h " .
             "INNER JOIN users AS u " .
@@ -473,7 +475,7 @@ final class Notes extends Extension
             ['image_id' => $imageID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $count = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id", ['image_id' => $imageID]);
+        $count = Ctx::$database->get_one("SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id", ['image_id' => $imageID]);
         if ($count === 0) {
             throw new HistoryNotFound("No note history for Post #$imageID was found.");
         }

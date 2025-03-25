@@ -154,9 +154,9 @@ final class Statistics extends Extension
      */
     private function get_upload_stats(string $unlisted): array
     {
-        global $database;
         // Returns the username of each post, as an array.
-        return $database->get_col("SELECT users.name FROM images INNER JOIN users ON users.id = images.owner_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
+        // @phpstan-ignore-next-line
+        return Ctx::$database->get_col("SELECT users.name FROM images INNER JOIN users ON users.id = images.owner_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
     }
 
     /**
@@ -164,9 +164,9 @@ final class Statistics extends Extension
      */
     private function get_comment_stats(string $unlisted): array
     {
-        global $database;
         // Returns the username of each comment, as an array.
-        return $database->get_col("SELECT users.name FROM comments INNER JOIN users ON users.id = comments.owner_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
+        // @phpstan-ignore-next-line
+        return Ctx::$database->get_col("SELECT users.name FROM comments INNER JOIN users ON users.id = comments.owner_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
     }
 
     /**
@@ -174,8 +174,8 @@ final class Statistics extends Extension
      */
     private function get_favorite_stats(string $unlisted): array
     {
-        global $database;
         // Returns the username of each favorite, as an array.
-        return $database->get_col("SELECT users.name FROM user_favorites INNER JOIN users ON users.id = user_favorites.user_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
+        // @phpstan-ignore-next-line
+        return Ctx::$database->get_col("SELECT users.name FROM user_favorites INNER JOIN users ON users.id = user_favorites.user_id WHERE users.class NOT IN ($unlisted) ORDER BY users.id;");
     }
 }

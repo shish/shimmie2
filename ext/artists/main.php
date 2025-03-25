@@ -788,7 +788,7 @@ final class Artists extends Extension
     {
         global $config, $database;
 
-        $artistsPerPage = $config->get_int(ArtistsConfig::ARTISTS_PER_PAGE);
+        $artistsPerPage = $config->req_int(ArtistsConfig::ARTISTS_PER_PAGE);
 
         $listing = $database->get_all(
             "

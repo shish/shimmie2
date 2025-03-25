@@ -752,7 +752,7 @@ final class Pools extends Extension
         global $config, $user, $database;
 
         $pool = $this->get_single_pool($poolID);
-        $imagesPerPage = $config->get_int(PoolsConfig::IMAGES_PER_PAGE);
+        $imagesPerPage = $config->req_int(PoolsConfig::IMAGES_PER_PAGE);
 
         $query = "
             INNER JOIN images AS i ON i.id = p.image_id

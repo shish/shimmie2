@@ -92,8 +92,7 @@ final class TaggerXML extends Extension
 
     private function image_tag_list(int $image_id): string
     {
-        global $database;
-        $tags = $database->execute("
+        $tags = Ctx::$database->execute("
 			SELECT tags.*
 			FROM image_tags JOIN tags ON image_tags.tag_id = tags.id
 			WHERE image_id=:image_id ORDER BY tag", ['image_id' => $image_id]);
@@ -130,7 +129,7 @@ final class TaggerXML extends Extension
      */
     private function count(string $query, array $values): int
     {
-        global $database;
-        return $database->get_one("SELECT COUNT(*) FROM `tags` $query", $values);
+        // @phpstan-ignore-next-line
+        return Ctx::$database->get_one("SELECT COUNT(*) FROM `tags` $query", $values);
     }
 }

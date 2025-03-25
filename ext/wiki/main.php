@@ -313,9 +313,8 @@ final class Wiki extends Extension
     #[Query(name: "wiki")]
     public static function get_page(string $title, ?int $revision = null): WikiPage
     {
-        global $database;
         // first try and get the actual page
-        $row = $database->get_row(
+        $row = Ctx::$database->get_row(
             "
 				SELECT *
 				FROM wiki_pages
@@ -328,7 +327,7 @@ final class Wiki extends Extension
 
         // fall back to wiki:default
         if (empty($row)) {
-            $row = $database->get_row("
+            $row = Ctx::$database->get_row("
                 SELECT *
                 FROM wiki_pages
                 WHERE title LIKE :title
@@ -349,12 +348,9 @@ final class Wiki extends Extension
             }
 
             // correct the default
-            global $config;
             $row["title"] = $title;
-            $row["owner_id"] = $config->req_int(UserAccountsConfig::ANON_ID);
+            $row["owner_id"] = Ctx::$config->req_int(UserAccountsConfig::ANON_ID);
         }
-
-        assert(!empty($row));
 
         return new WikiPage($row);
     }

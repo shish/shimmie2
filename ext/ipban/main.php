@@ -125,7 +125,7 @@ final class IPBan extends Extension
 
             $row_banner_id_int = intval($row['banner_id']);
 
-            $msg = $config->get_string("ipban_message_{$row['mode']}") ?? $config->get_string("ipban_message") ?? "(no message)";
+            $msg = Ctx::$config->get_string("ipban_message_{$row['mode']}") ?? Ctx::$config->get_string("ipban_message") ?? "(no message)";
             $msg = str_replace('$IP', $row["ip"], $msg);
             $msg = str_replace('$DATE', $row['expires'] ?? 'the end of time', $msg);
             $msg = str_replace('$ADMIN', User::by_id($row_banner_id_int)->name, $msg);
@@ -136,7 +136,6 @@ final class IPBan extends Extension
             } else {
                 $msg = str_replace('$CONTACT', "", $msg);
             }
-            assert(is_string($msg));
             $msg .= "<!-- $active_ban_id / {$row["mode"]} -->";
 
             if ($row["mode"] == "ghost") {
