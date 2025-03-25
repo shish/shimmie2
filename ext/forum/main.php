@@ -14,6 +14,10 @@ Todo:
 *Smiley filter, word filter, etc should work with our extension
 
 */
+/**
+ * @phpstan-type Thread array{id:int,title:string,sticky:bool,user_name:string,uptodate:string,response_count:int}
+ * @phpstan-type Post array{id:int,user_name:string,user_class:string,date:string,message:string}
+ */
 final class Forum extends Extension
 {
     public const KEY = "forum";
@@ -228,16 +232,16 @@ final class Forum extends Extension
 
     private function get_thread_title(int $threadID): string
     {
-        global $database;
-        return $database->get_one("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id' => $threadID]);
+        return Ctx::$database->get_one("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id' => $threadID]);
     }
 
     private function show_last_threads(int $pageNumber, bool $showAdminOptions = false): void
     {
-        global $config, $database;
-        $threadsPerPage = $config->get_int(ForumConfig::THREADS_PER_PAGE);
+        $database = Ctx::$database;
+        $threadsPerPage = Ctx::$config->req_int(ForumConfig::THREADS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
 
+        /** @var Thread[] $threads */
         $threads = $database->get_all(
             "SELECT f.id, f.sticky, f.title, f.date, f.uptodate, u.name AS user_name, u.email AS user_email, u.class AS user_class, sum(1) - 1 AS response_count " .
             "FROM forum_threads AS f " .

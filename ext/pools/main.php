@@ -96,6 +96,9 @@ function _image_to_id(Image $image): int
     return $image->id;
 }
 
+/**
+ * @phpstan-type PoolHistory array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
+ */
 final class Pools extends Extension
 {
     public const KEY = "pools";
@@ -575,7 +578,7 @@ final class Pools extends Extension
     {
         global $config, $database, $page;
 
-        $poolsPerPage = $config->get_int(PoolsConfig::LISTS_PER_PAGE);
+        $poolsPerPage = $config->req_int(PoolsConfig::LISTS_PER_PAGE);
 
         $order_by = "";
         $order = $page->get_cookie("ui-order-pool");
@@ -639,8 +642,9 @@ final class Pools extends Extension
      */
     private function get_single_pool(int $poolID): Pool
     {
-        global $database;
-        return new Pool($database->get_row("SELECT * FROM pools WHERE id=:id", ["id" => $poolID]));
+        /** @var array<string, mixed> $pool_row */
+        $pool_row = Ctx::$database->get_row("SELECT * FROM pools WHERE id=:id", ["id" => $poolID]);
+        return new Pool($pool_row);
     }
 
     /**
@@ -707,9 +711,8 @@ final class Pools extends Extension
      */
     private function get_nav_posts(Pool $pool, int $imageID): array
     {
-        global $database;
-
-        return $database->get_row(
+        /** @var array{prev:?int,next:?int} $nav */
+        $nav = Ctx::$database->get_row(
             "
                 SELECT (
                     SELECT image_id
@@ -742,6 +745,7 @@ final class Pools extends Extension
             ",
             ["pid" => $pool->id, "iid" => $imageID]
         );
+        return $nav;
     }
 
     /**
@@ -821,23 +825,20 @@ final class Pools extends Extension
      */
     private function add_history(int $poolID, int $action, string $images, int $count): void
     {
-        global $user, $database;
-
-        $database->execute(
+        Ctx::$database->execute(
             "
 				INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
 				VALUES (:pid, :uid, :act, :img, :count, now())",
-            ["pid" => $poolID, "uid" => $user->id, "act" => $action, "img" => $images, "count" => $count]
+            ["pid" => $poolID, "uid" => Ctx::$user->id, "act" => $action, "img" => $images, "count" => $count]
         );
     }
 
     private function get_history(int $pageNumber): void
     {
-        global $config, $database;
+        $historiesPerPage = Ctx::$config->req_int(PoolsConfig::UPDATED_PER_PAGE);
 
-        $historiesPerPage = $config->get_int(PoolsConfig::UPDATED_PER_PAGE);
-
-        $history = $database->get_all("
+        /** @var PoolHistory[] $history */
+        $history = Ctx::$database->get_all("
 				SELECT h.id, h.pool_id, h.user_id, h.action, h.images,
 				       h.count, h.date, u.name as user_name, p.title as title
 				FROM pool_history AS h
@@ -849,7 +850,7 @@ final class Pools extends Extension
 				LIMIT :l OFFSET :o
 				", ["l" => $historiesPerPage, "o" => $pageNumber * $historiesPerPage]);
 
-        $totalPages = (int) ceil((int) $database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
+        $totalPages = (int) ceil((int) Ctx::$database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
 
         $this->theme->show_history($history, $pageNumber + 1, $totalPages);
     }

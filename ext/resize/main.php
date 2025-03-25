@@ -118,7 +118,7 @@ final class ResizeImage extends Extension
     {
         global $config, $user;
 
-        if ($config->get_bool(ResizeConfig::GET_ENABLED) &&
+        if (Ctx::$config->get_bool(ResizeConfig::GET_ENABLED) &&
             $user->can(ImagePermission::EDIT_FILES) &&
             $this->can_resize_mime($event->image->get_mime())
         ) {
@@ -146,7 +146,7 @@ final class ResizeImage extends Extension
                 $tmp_filename = shm_tempnam('resize');
 
                 send_event(new MediaResizeEvent(
-                    $config->req_string(ResizeConfig::ENGINE),
+                    MediaEngine::from(Ctx::$config->req_string(ResizeConfig::ENGINE)),
                     $event->path,
                     $event->mime,
                     $tmp_filename,

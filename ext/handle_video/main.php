@@ -88,12 +88,10 @@ final class VideoFileHandler extends DataHandlerExtension
 
     protected function check_contents(Path $tmpname): bool
     {
-        global $config;
-
         if ($tmpname->exists()) {
             $mime = MimeType::get_for_file($tmpname);
 
-            $enabled_formats = $config->get_array(VideoFileHandlerConfig::ENABLED_FORMATS);
+            $enabled_formats = Ctx::$config->req_array(VideoFileHandlerConfig::ENABLED_FORMATS);
             if (MimeType::matches_array($mime, $enabled_formats)) {
                 return true;
             }
