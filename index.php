@@ -60,7 +60,7 @@ Ctx::$tracer->end();
 
 function main(): int
 {
-    global $cache, $config, $database, $user, $page, $_shm_load_start;
+    global $_shm_load_start;
 
     try {
         // Ctx::$tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
@@ -73,14 +73,14 @@ function main(): int
             ]
         );
 
-        if (!$config->get_bool(SetupConfig::NO_AUTO_DB_UPGRADE)) {
+        if (!Ctx::$config->get_bool(SetupConfig::NO_AUTO_DB_UPGRADE)) {
             send_event(new DatabaseUpgradeEvent());
         }
         send_event(new InitExtEvent());
 
         // start the page generation waterfall
-        $user = Ctx::setUser(_get_user());
-        send_event(new UserLoginEvent($user));
+        Ctx::setUser(_get_user());
+        send_event(new UserLoginEvent(Ctx::$user));
         if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
             ob_end_flush();
             ob_implicit_flush(true);
@@ -95,11 +95,11 @@ function main(): int
             }
         } else {
             send_event(new PageRequestEvent($_SERVER['REQUEST_METHOD'], _get_query(), $_GET, $_POST));
-            $page->display();
+            Ctx::$page->display();
         }
 
-        if ($database->is_transaction_open()) {
-            $database->commit();
+        if (Ctx::$database->is_transaction_open()) {
+            Ctx::$database->commit();
         }
 
         // saving cache data and profiling data to disk can happen later
@@ -108,15 +108,15 @@ function main(): int
         }
         $exit_code = 0;
     } catch (\Throwable $e) {
-        if ($database->is_transaction_open()) {
-            $database->rollback();
+        if (Ctx::$database->is_transaction_open()) {
+            Ctx::$database->rollback();
         }
         if (is_a($e, \Shimmie2\UserError::class)) {
-            $page->set_mode(PageMode::PAGE);
-            $page->set_code($e->http_code);
-            $page->set_title("Error");
-            $page->add_block(new Block(null, \MicroHTML\SPAN($e->getMessage())));
-            $page->display();
+            Ctx::$page->set_mode(PageMode::PAGE);
+            Ctx::$page->set_code($e->http_code);
+            Ctx::$page->set_title("Error");
+            Ctx::$page->add_block(new Block(null, \MicroHTML\SPAN($e->getMessage())));
+            Ctx::$page->display();
         } else {
             _fatal_error($e);
         }

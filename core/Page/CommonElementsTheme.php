@@ -24,7 +24,6 @@ class CommonElementsTheme extends Themelet
      */
     public function display_navigation(array $links = [], ?HTMLElement $extra = null): void
     {
-        global $page;
         if (count($links) == 0) {
             $content = A(["href" => make_link()], "Index");
         } elseif (count($links) == 1) {
@@ -41,7 +40,7 @@ class CommonElementsTheme extends Themelet
         if ($extra !== null) {
             $content = emptyHTML($content, BR(), $extra);
         }
-        $page->add_block(new Block("Navigation", $content, "left", 0));
+        Ctx::$page->add_block(new Block("Navigation", $content, "left", 0));
     }
 
     public function build_tag(
@@ -82,8 +81,6 @@ class CommonElementsTheme extends Themelet
      */
     public function build_thumb(Image $image): HTMLElement
     {
-        global $config;
-
         $id = $image->id;
         $view_link = make_link('post/view/'.$id);
         $thumb_link = $image->get_thumb_link();
@@ -95,7 +92,10 @@ class CommonElementsTheme extends Themelet
             $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
         } else {
             //Use max thumbnail size if using thumbless filetype
-            $tsize = ThumbnailUtil::get_thumbnail_size($config->get_int(ThumbnailConfig::WIDTH), $config->get_int(ThumbnailConfig::WIDTH));
+            $config_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
+            $config_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
+            assert($config_width >= 0 && $config_height >= 0);
+            $tsize = ThumbnailUtil::get_thumbnail_size($config_width, $config_height);
         }
 
         $custom_classes = "";
@@ -147,22 +147,21 @@ class CommonElementsTheme extends Themelet
      */
     public function display_paginator(string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
-        global $page;
         if ($total_pages == 0) {
             $total_pages = 1;
         }
         $body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
-        $page->add_block(new Block(null, $body, "main", 90, "paginator"));
+        Ctx::$page->add_block(new Block(null, $body, "main", 90, "paginator"));
 
-        $page->add_html_header(LINK(['rel' => 'first', 'href' => make_link($base.'/1', $query)]));
+        Ctx::$page->add_html_header(LINK(['rel' => 'first', 'href' => make_link($base.'/1', $query)]));
         if ($page_number < $total_pages) {
-            $page->add_html_header(LINK(['rel' => 'prefetch', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
-            $page->add_html_header(LINK(['rel' => 'next', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
+            Ctx::$page->add_html_header(LINK(['rel' => 'prefetch', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
+            Ctx::$page->add_html_header(LINK(['rel' => 'next', 'href' => make_link($base.'/'.($page_number + 1), $query)]));
         }
         if ($page_number > 1) {
-            $page->add_html_header(LINK(['rel' => 'previous', 'href' => make_link($base.'/'.($page_number - 1), $query)]));
+            Ctx::$page->add_html_header(LINK(['rel' => 'previous', 'href' => make_link($base.'/'.($page_number - 1), $query)]));
         }
-        $page->add_html_header(LINK(['rel' => 'last', 'href' => make_link($base.'/'.$total_pages, $query)]));
+        Ctx::$page->add_html_header(LINK(['rel' => 'last', 'href' => make_link($base.'/'.$total_pages, $query)]));
     }
 
     /**
@@ -234,8 +233,6 @@ class CommonElementsTheme extends Themelet
 
     public function config_group_to_block(Config $config, BaseConfigGroup $group): ?Block
     {
-        global $user;
-
         $title = trim($group->title ?? implode(" ", \Safe\preg_split('/(?=[A-Z])/', \Safe\preg_replace("/^Shimmie2.(.*?)(User)?Config$/", "\$1", get_class($group)))));
         $fields = $group->get_config_fields();
         $fields = array_filter($fields, fn ($field) => !$field->advanced || @$_GET["advanced"] == "on");
@@ -245,7 +242,7 @@ class CommonElementsTheme extends Themelet
 
         $table = TABLE(["class" => "form"]);
         foreach ($fields as $key => $meta) {
-            if ($meta->permission && !$user->can($meta->permission)) {
+            if ($meta->permission && !Ctx::$user->can($meta->permission)) {
                 continue;
             }
 
