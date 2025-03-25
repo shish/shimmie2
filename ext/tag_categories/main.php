@@ -60,7 +60,9 @@ final class TagCategories extends Extension
         global $database, $page, $user;
 
         if ($event->page_matches("tags/categories", method: "GET")) {
-            $this->theme->show_tag_categories($database->get_all('SELECT * FROM image_tag_categories'));
+            /** @var array<array{category: string, display_singular: string, display_multiple: string, color: string}> $tcs */
+            $tcs = $database->get_all('SELECT * FROM image_tag_categories');
+            $this->theme->show_tag_categories($tcs);
         }
         if ($event->page_matches("tags/categories", method: "POST", permission: TagCategoriesPermission::EDIT_TAG_CATEGORIES)) {
             $this->page_update();
