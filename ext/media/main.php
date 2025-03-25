@@ -52,42 +52,36 @@ final class Media extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
-
         if ($event->page_matches("media_rescan/{image_id}", method: "POST", permission: MediaPermission::RESCAN_MEDIA)) {
             $image = Image::by_id_ex($event->get_iarg('image_id'));
 
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();
 
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/$image->id"));
+            Ctx::$page->set_mode(PageMode::REDIRECT);
+            Ctx::$page->set_redirect(make_link("post/view/$image->id"));
         }
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ImagePermission::DELETE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_button("Scan Media Properties", "media_rescan/{$event->image->id}");
         }
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(MediaPermission::RESCAN_MEDIA)) {
+        if (Ctx::$user->can(MediaPermission::RESCAN_MEDIA)) {
             $event->add_action("bulk_media_rescan", "Scan Media Properties");
         }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page, $user;
-
         switch ($event->action) {
             case "bulk_media_rescan":
-                if ($user->can(MediaPermission::RESCAN_MEDIA)) {
+                if (Ctx::$user->can(MediaPermission::RESCAN_MEDIA)) {
                     $total = 0;
                     $failed = 0;
                     foreach ($event->items as $image) {
@@ -100,7 +94,7 @@ final class Media extends Extension
                             $failed++;
                         }
                     }
-                    $page->flash("Scanned media properties for $total items, failed for $failed");
+                    Ctx::$page->flash("Scanned media properties for $total items, failed for $failed");
                 }
                 break;
         }
@@ -277,9 +271,7 @@ final class Media extends Extension
      */
     public static function create_thumbnail_ffmpeg(Image $image): bool
     {
-        global $config;
-
-        $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
+        $ffmpeg = Ctx::$config->get_string(MediaConfig::FFMPEG_PATH);
         if (empty($ffmpeg)) {
             throw new MediaException("ffmpeg command not configured");
         }
@@ -321,9 +313,7 @@ final class Media extends Extension
      */
     public static function get_ffprobe_data(string $filename): array
     {
-        global $config;
-
-        $ffprobe = $config->get_string(MediaConfig::FFPROBE_PATH);
+        $ffprobe = Ctx::$config->get_string(MediaConfig::FFPROBE_PATH);
         if (empty($ffprobe)) {
             throw new MediaException("ffprobe command not configured");
         }
@@ -384,14 +374,6 @@ final class Media extends Extension
         bool $minimize = false,
         bool $allow_upscale = true
     ): void {
-        global $config;
-
-        $convert = $config->get_string(MediaConfig::CONVERT_PATH);
-
-        if (empty($convert)) {
-            throw new MediaException("convert command not configured");
-        }
-
         if (empty($output_mime)) {
             $output_mime = $input_mime;
         }
@@ -457,7 +439,7 @@ final class Media extends Extension
 
         $output_ext = self::determine_ext($output_mime);
 
-        $command = new CommandBuilder(executable: $convert);
+        $command = new CommandBuilder(Ctx::$config->req_string(MediaConfig::CONVERT_PATH));
         $command->add_escaped_arg("{$input_ext}:\"{$input_path->str()}[0]\"");
         $command->add_flag($args);
         $command->add_escaped_arg("$output_ext:{$output_filename->str()}");
@@ -679,7 +661,7 @@ final class Media extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $config, $database;
+        $database = Ctx::$database;
         if ($this->get_version() < 1) {
             // The stuff that was here got refactored out of existence
             $this->set_version(1);

@@ -34,8 +34,7 @@ final class LogConsole extends Extension
 
     public function onLog(LogEvent $event): void
     {
-        global $config;
-        if ($event->priority >= $config->get_int(LogConsoleConfig::LEVEL)) {
+        if ($event->priority >= Ctx::$config->get_int(LogConsoleConfig::LEVEL)) {
             $this->log($event);
         }
     }
@@ -46,8 +45,7 @@ final class LogConsole extends Extension
             return;
         }
 
-        global $config, $user;
-        $username = ($user && $user->name) ? $user->name : "Anonymous";
+        $username = isset(Ctx::$user) ? Ctx::$user->name : "Anonymous";
 
         $levelName = "[unknown]";
         $color = "\033[0;35m"; # purple for unknown levels
@@ -76,7 +74,7 @@ final class LogConsole extends Extension
             $event->message
         ]);
 
-        if (strlen($color) > 0 && $config->get_bool(LogConsoleConfig::COLOUR)) {
+        if (strlen($color) > 0 && Ctx::$config->get_bool(LogConsoleConfig::COLOUR)) {
             $str = "$color$str\033[0m\n";
         } else {
             $str = "$str\n";
