@@ -26,8 +26,8 @@ final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         global $config;
         $config->set_int("upload_min_height", 900);
         $config->set_int("upload_min_width", 900);
-        $config->delete("upload_max_height");
-        $config->delete("upload_max_width");
+        $config->set_int("upload_max_height", -1);
+        $config->set_int("upload_max_width", -1);
         $config->set_string("upload_ratios", "4:3 16:9");
 
         self::log_in_as_user();
@@ -55,10 +55,10 @@ final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
     public function testResLimitRatio(): void
     {
         global $config;
-        $config->delete("upload_min_height");
-        $config->delete("upload_min_width");
-        $config->delete("upload_max_height");
-        $config->delete("upload_max_width");
+        $config->set_int("upload_min_height", -1);
+        $config->set_int("upload_min_width", -1);
+        $config->set_int("upload_max_height", -1);
+        $config->set_int("upload_max_width", -1);
         $config->set_string("upload_ratios", "16:9");
 
         $e = self::assertException(UploadException::class, function () {

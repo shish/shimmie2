@@ -28,7 +28,7 @@ final class Terms extends Extension
                 && !$event->page_starts_with("wiki")
             ) {
                 $sitename = $config->req_string(SetupConfig::TITLE);
-                $body = format_text($config->get_string(TermsConfig::MESSAGE));
+                $body = format_text($config->req_string(TermsConfig::MESSAGE));
                 $this->theme->display_page($sitename, $event->path, $body);
             }
         }

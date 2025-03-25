@@ -113,7 +113,7 @@ final class TranscodeImage extends Extension
         // was before potential transcoding (the original) at the time of upload, and that it failed if not allowed.
         // does it break bulk image importing? ZIP? SVG? there are a few flows that are untested!
         if ($config->get_bool(TranscodeImageConfig::MIME_CHECK_ENABLED) == true) {
-            $allowed_mimes = $config->get_array(TranscodeImageConfig::ALLOWED_MIME_STRINGS);
+            $allowed_mimes = $config->req_array(TranscodeImageConfig::ALLOWED_MIME_STRINGS);
             if (!MimeType::matches_array($event->mime, $allowed_mimes)) {
                 throw new UploadException("MIME type not supported: " . $event->mime);
             }
@@ -161,7 +161,7 @@ final class TranscodeImage extends Extension
         if ($config->get_bool(TranscodeImageConfig::GET_ENABLED) &&
             isset($event->params['transcode']) &&
             $user->can(ImagePermission::EDIT_FILES) &&
-            $this->can_convert_mime($config->get_string(TranscodeImageConfig::ENGINE), $event->image->get_mime())) {
+            $this->can_convert_mime(MediaEngine::from($config->req_string(TranscodeImageConfig::ENGINE)), $event->image->get_mime())) {
 
             try {
                 $target_mime = new MimeType($event->params['transcode']);
@@ -173,7 +173,7 @@ final class TranscodeImage extends Extension
                 throw new ImageTranscodeException("Unable to determine output MIME for ".$event->params['transcode']);
             }
 
-            MediaEngine::is_output_supported($config->get_string(TranscodeImageConfig::ENGINE), $target_mime);
+            MediaEngine::is_output_supported(MediaEngine::from($config->req_string(TranscodeImageConfig::ENGINE)), $target_mime);
 
             $source_mime = $event->image->get_mime();
 
@@ -307,7 +307,7 @@ final class TranscodeImage extends Extension
     {
         global $config;
 
-        $q = $config->get_int(TranscodeImageConfig::QUALITY);
+        $q = $config->req_int(TranscodeImageConfig::QUALITY);
 
         $tmp_name = shm_tempnam("transcode");
 
@@ -330,7 +330,7 @@ final class TranscodeImage extends Extension
                         throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
                     }
                     try {
-                        $background_color = Media::hex_color_allocate($new_image, $config->get_string(TranscodeImageConfig::ALPHA_COLOR));
+                        $background_color = Media::hex_color_allocate($new_image, $config->req_string(TranscodeImageConfig::ALPHA_COLOR));
                         if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
                             throw new ImageTranscodeException("Could not fill background color");
                         }

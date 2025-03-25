@@ -16,7 +16,7 @@ final class RatingsBlur extends Extension
 
         $blur_ratings = $user->get_config()->get_array(
             RatingsBlurUserConfig::USER_DEFAULTS
-        ) ?? $config->get_array(RatingsBlurConfig::GLOBAL_DEFAULTS);
+        ) ?? $config->req_array(RatingsBlurConfig::GLOBAL_DEFAULTS);
         if (in_array(RatingsBlur::NULL_OPTION, $blur_ratings)) {
             return false;
         }

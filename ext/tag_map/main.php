@@ -30,8 +30,7 @@ final class TagMap extends Extension
             if ($event->get_GET('mincount')) {
                 $tags_min = int_escape($event->get_GET('mincount'));
             } else {
-                global $config;
-                $tags_min = $config->get_int(TagMapConfig::TAGS_MIN);	// get the default.
+                $tags_min = Ctx::$config->req_int(TagMapConfig::TAGS_MIN);
             }
 
             match ($sub) {

@@ -42,7 +42,7 @@ final class TagList extends Extension
     private static function get_omitted_tags(): array
     {
         global $cache, $config, $database;
-        $tags_config =  $config->get_string(TagListConfig::OMIT_TAGS);
+        $tags_config =  $config->req_string(TagListConfig::OMIT_TAGS);
 
         $results = $cache->get("tag_list_omitted_tags:".$tags_config);
 
@@ -68,7 +68,8 @@ final class TagList extends Extension
                 }
             }
 
-            $results = $database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
+            // @phpstan-ignore-next-line
+            $results = Ctx::$database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
 
             $cache->set("tag_list_omitted_tags:" . $tags_config, $results, 600);
         }
@@ -104,7 +105,9 @@ final class TagList extends Extension
 
         $args = ["tag_list_length" => $config->get_int(TagListConfig::LENGTH)];
 
-        $tags = $database->get_all($query, $args);
+        // @phpstan-ignore-next-line
+        $tags = Ctx::$database->get_all($query, $args);
+        /** @var array<array{tag: string, count: int}> $tags */
         if (count($tags) > 0) {
             $this->theme->display_related_block($tags, "Related Tags");
         }
@@ -159,7 +162,8 @@ final class TagList extends Extension
 
             $args = ["popular_tag_list_length" => $config->get_int(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
 
-            $tags = $database->get_all($query, $args);
+            // @phpstan-ignore-next-line
+            $tags = Ctx::$database->get_all($query, $args);
 
             $cache->set("popular_tags", $tags, 600);
         }
@@ -179,7 +183,7 @@ final class TagList extends Extension
             return;
         }
 
-        $related_tags = self::get_related_tags($search, $config->get_int(TagListConfig::LENGTH));
+        $related_tags = self::get_related_tags($search, $config->req_int(TagListConfig::LENGTH));
 
         if (!empty($related_tags)) {
             $this->theme->display_refine_block($related_tags, $search);
@@ -245,7 +249,8 @@ final class TagList extends Extension
 				";
                 $args = ["limit" => $limit];
 
-                $related_tags = $database->get_all($query, $args);
+                // @phpstan-ignore-next-line
+                $related_tags = Ctx::$database->get_all($query, $args);
             } else {
                 $related_tags = [];
             }

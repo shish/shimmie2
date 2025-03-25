@@ -24,7 +24,7 @@ class ReverseSearchLinksTheme extends Themelet
         ];
 
         // only generate links for enabled reverse search services
-        $enabled_services = $config->get_array(ReverseSearchLinksConfig::ENABLED_SERVICES);
+        $enabled_services = $config->req_array(ReverseSearchLinksConfig::ENABLED_SERVICES);
 
         $parts = [];
         foreach ($links as $name => $link) {

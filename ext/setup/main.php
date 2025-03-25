@@ -155,7 +155,7 @@ final class Setup extends Extension
             ->setDescription('Get a config value')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 global $config;
-                $output->writeln($config->get_string($input->getArgument('key')));
+                $output->writeln($config->req_string($input->getArgument('key')));
                 return Command::SUCCESS;
             });
         $event->app->register('config:set')

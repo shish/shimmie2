@@ -17,11 +17,11 @@ final class ResolutionLimit extends Extension
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         global $config;
-        $min_w = $config->get_int(ResolutionLimitConfig::MIN_WIDTH);
-        $min_h = $config->get_int(ResolutionLimitConfig::MIN_HEIGHT);
-        $max_w = $config->get_int(ResolutionLimitConfig::MAX_WIDTH);
-        $max_h = $config->get_int(ResolutionLimitConfig::MAX_HEIGHT);
-        $rs = $config->get_string(ResolutionLimitConfig::RATIOS);
+        $min_w = $config->req_int(ResolutionLimitConfig::MIN_WIDTH);
+        $min_h = $config->req_int(ResolutionLimitConfig::MIN_HEIGHT);
+        $max_w = $config->req_int(ResolutionLimitConfig::MAX_WIDTH);
+        $max_h = $config->req_int(ResolutionLimitConfig::MAX_HEIGHT);
+        $rs = $config->req_string(ResolutionLimitConfig::RATIOS);
         $ratios = trim($rs) ? explode(" ", $rs) : [];
 
         $image = $event->image;

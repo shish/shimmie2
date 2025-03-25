@@ -99,7 +99,7 @@ final class ET extends Extension
                 'users'    => (int)$database->get_one("SELECT COUNT(*) FROM users"),
             ],
             "media" => [
-                "memory_limit" => to_shorthand_int($config->get_int(MediaConfig::MEM_LIMIT)),
+                "memory_limit" => to_shorthand_int($config->req_int(MediaConfig::MEM_LIMIT)),
                 "disk_use" => to_shorthand_int($disk_total - $disk_free),
                 "disk_total" => to_shorthand_int($disk_total),
             ],

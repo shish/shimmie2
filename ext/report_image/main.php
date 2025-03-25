@@ -185,16 +185,11 @@ final class ReportImage extends Extension
      */
     public function get_reported_images(): array
     {
-        global $database;
-
-        $all_reports = $database->get_all("
+        $all_reports = Ctx::$database->get_all("
 			SELECT image_reports.*, users.name AS reporter_name
 			FROM image_reports
 			JOIN users ON reporter_id = users.id
 			ORDER BY image_reports.id DESC");
-        if (is_null($all_reports)) {
-            $all_reports = [];
-        }
 
         $reports = [];
         foreach ($all_reports as $report) {
@@ -208,6 +203,7 @@ final class ReportImage extends Extension
             $reports[] = $report;
         }
 
+        /** @var array<Report> $reports */
         return $reports;
     }
 
