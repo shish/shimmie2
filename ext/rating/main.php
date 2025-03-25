@@ -395,10 +395,7 @@ final class Ratings extends Extension
     public static function get_user_class_privs(User $user): array
     {
         global $config;
-        return $config->get_array(
-            "ext_rating_".$user->class->name."_privs",
-            array_keys(ImageRating::$known_ratings)
-        );
+        return $config->get_array("ext_rating_".$user->class->name."_privs") ?? array_keys(ImageRating::$known_ratings);
     }
 
     /**
@@ -412,7 +409,7 @@ final class Ratings extends Extension
         global $user;
 
         $available = self::get_user_class_privs($user);
-        $selected = $user->get_config()->get_array(RatingsUserConfig::DEFAULTS, $available);
+        $selected = $user->get_config()->get_array(RatingsUserConfig::DEFAULTS) ?? $available;
 
         return array_intersect($available, $selected);
     }

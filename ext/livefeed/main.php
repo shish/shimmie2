@@ -48,7 +48,7 @@ final class LiveFeed extends Extension
     {
         global $config;
 
-        $host = $config->get_string(LiveFeedConfig::HOST, "127.0.0.1:25252");
+        $host = $config->get_string(LiveFeedConfig::HOST);
 
         if (!$host) {
             return;
