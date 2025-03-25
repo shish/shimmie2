@@ -21,7 +21,7 @@ final class Featured extends Extension
             $page->set_redirect(make_link("post/view/$id"));
         }
         if ($event->page_matches("featured_image/download")) {
-            $image = Image::by_id($config->get_int(FeaturedConfig::ID, 0));
+            $image = Image::by_id($config->get_int(FeaturedConfig::ID) ?? 0);
             if (!is_null($image)) {
                 $page->set_mode(PageMode::DATA);
                 $page->set_mime($image->get_mime());
@@ -29,7 +29,7 @@ final class Featured extends Extension
             }
         }
         if ($event->page_matches("featured_image/view")) {
-            $image = Image::by_id($config->get_int(FeaturedConfig::ID, 0));
+            $image = Image::by_id($config->get_int(FeaturedConfig::ID) ?? 0);
             if (!is_null($image)) {
                 send_event(new DisplayingImageEvent($image));
             }

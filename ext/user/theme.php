@@ -63,7 +63,7 @@ class UserPageTheme extends Themelet
     public function display_signup_page(): void
     {
         global $config, $user, $page;
-        $tac = $config->get_string(UserAccountsConfig::LOGIN_TAC, "");
+        $tac = $config->get_string(UserAccountsConfig::LOGIN_TAC) ?? "";
 
         if ($config->get_bool(UserAccountsConfig::LOGIN_TAC_BBCODE)) {
             $tac = format_text($tac);

@@ -24,7 +24,7 @@ class LitePage extends Page
         global $config;
 
         list($nav_links, $sub_links) = $this->get_nav_links();
-        $theme_name = $config->get_string(SetupConfig::THEME, 'lite');
+        $theme_name = $config->get_string(SetupConfig::THEME);
         $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = Url::base();
 

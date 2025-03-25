@@ -235,7 +235,7 @@ final class Forum extends Extension
     private function show_last_threads(int $pageNumber, bool $showAdminOptions = false): void
     {
         global $config, $database;
-        $threadsPerPage = $config->get_int(ForumConfig::THREADS_PER_PAGE, 15);
+        $threadsPerPage = $config->get_int(ForumConfig::THREADS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
 
         $threads = $database->get_all(
@@ -256,7 +256,7 @@ final class Forum extends Extension
     private function show_posts(int $threadID, int $pageNumber, bool $showAdminOptions = false): void
     {
         global $config, $database;
-        $postsPerPage = $config->get_int(ForumConfig::POSTS_PER_PAGE, 15);
+        $postsPerPage = $config->get_int(ForumConfig::POSTS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id' => $threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
 

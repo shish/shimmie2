@@ -14,8 +14,8 @@ final class GoogleAnalytics extends Extension
     {
         global $config, $page;
 
-        $google_analytics_id = $config->get_string(GoogleAnalyticsConfig::ANALYTICS_ID, '');
-        if (stristr($google_analytics_id, "UA-")) {
+        $google_analytics_id = $config->get_string(GoogleAnalyticsConfig::ANALYTICS_ID);
+        if ($google_analytics_id && stristr($google_analytics_id, "UA-")) {
             $page->add_html_header(SCRIPT(["type" => 'text/javascript'], "
                 var _gaq = _gaq || [];
                 _gaq.push(['_setAccount', '$google_analytics_id']);

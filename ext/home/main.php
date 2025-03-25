@@ -29,7 +29,7 @@ final class Home extends Extension
         global $config;
 
         // get the homelinks and process them
-        if (strlen($config->get_string(HomeConfig::LINKS, '')) > 0) {
+        if (strlen($config->get_string(HomeConfig::LINKS) ?? "") > 0) {
             $main_links = $config->get_string(HomeConfig::LINKS);
         } else {
             $main_links = '[url=site://post/list]Posts[/url][url=site://comment/list]Comments[/url][url=site://tags]Tags[/url]';
@@ -45,7 +45,7 @@ final class Home extends Extension
         return $this->theme->build_body(
             $config->get_string(SetupConfig::TITLE),
             format_text($main_links),
-            $config->get_string(HomeConfig::TEXT, null),
+            $config->get_string(HomeConfig::TEXT),
             contact_link(),
             Search::count_images(),
         );

@@ -15,7 +15,7 @@ final class HomeConfig extends ConfigGroup
     #[ConfigMeta("Page text", ConfigType::STRING, input: "longtext")]
     public const TEXT = 'home_text';
 
-    #[ConfigMeta("Counter", ConfigType::STRING, options: "Shimmie2\HomeConfig::get_counter_options")]
+    #[ConfigMeta("Counter", ConfigType::STRING, default: "default", options: "Shimmie2\HomeConfig::get_counter_options")]
     public const COUNTER = 'home_counter';
 
     /**

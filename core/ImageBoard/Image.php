@@ -412,7 +412,7 @@ final class Image implements \ArrayAccess
                 $image_link = make_link($image_link);
             }
             $chosen = $image_link;
-        } elseif (Ctx::$config->get_bool(SetupConfig::NICE_URLS, false)) {
+        } elseif (Ctx::$config->get_bool(SetupConfig::NICE_URLS)) {
             $chosen = make_link($nice);
         } else {
             $chosen = make_link($plain);

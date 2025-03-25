@@ -261,7 +261,7 @@ class CommonElementsTheme extends Themelet
                     $input = INPUT(["type" => "number", "id" => $key, "name" => "_config_$key", "value" => $val, "size" => 4, "step" => 1]);
                     break;
                 case "shorthand_int":
-                    $val = to_shorthand_int($config->get_int($key, 0));
+                    $val = to_shorthand_int($config->get_int($key) ?? 0);
                     $input = INPUT(["type" => "text", "id" => $key, "name" => "_config_$key", "value" => $val, "size" => 6]);
                     break;
                 case "text":
@@ -280,7 +280,7 @@ class CommonElementsTheme extends Themelet
                     }
                     break;
                 case "longtext":
-                    $val = $config->get_string($key, "");
+                    $val = $config->get_string($key) ?? "";
                     $rows = max(3, min(10, count(explode("\n", $val))));
                     $input = TEXTAREA(["rows" => $rows, "id" => $key, "name" => "_config_$key"], $val);
                     break;
@@ -289,7 +289,7 @@ class CommonElementsTheme extends Themelet
                     $input = INPUT(["type" => "color", "id" => $key, "name" => "_config_$key", "value" => $val]);
                     break;
                 case "multichoice":
-                    $val = $config->get_array($key, []);
+                    $val = $config->get_array($key) ?? [];
                     $input = SELECT(["id" => $key, "name" => "_config_{$key}[]", "multiple" => true, "size" => 5]);
                     $options = $meta->options;
                     if (is_callable($options)) {
