@@ -187,7 +187,7 @@ final class S3 extends Extension
         if (PHP_SAPI == "cli") {
             return false; // CLI can go on for as long as it wants
         }
-        return $this->synced > $config->get_int(UploadConfig::COUNT);
+        return $this->synced > $config->req_int(UploadConfig::COUNT);
     }
 
     // underlying s3 interaction functions

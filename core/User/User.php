@@ -198,7 +198,7 @@ final class User
 
     public function is_anonymous(): bool
     {
-        return ($this->id === Ctx::$config->get_int(UserAccountsConfig::ANON_ID));
+        return ($this->id === Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
     }
 
     public function set_class(string $class): void

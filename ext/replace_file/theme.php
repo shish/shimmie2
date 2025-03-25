@@ -19,10 +19,10 @@ class ReplaceFileTheme extends Themelet
     public function display_replace_page(int $image_id): void
     {
         global $config, $page;
-        $tl_enabled = ($config->get_string(UploadConfig::TRANSLOAD_ENGINE) !== "none");
+        $tl_enabled = ($config->req_string(UploadConfig::TRANSLOAD_ENGINE) !== "none");
         $accept = $this->get_accept();
 
-        $max_size = $config->get_int(UploadConfig::SIZE);
+        $max_size = $config->req_int(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
 
         $image = Image::by_id_ex($image_id);

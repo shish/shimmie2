@@ -13,7 +13,7 @@ final class RSSComments extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;
-        $title = $config->get_string(SetupConfig::TITLE);
+        $title = $config->req_string(SetupConfig::TITLE);
 
         $page->add_html_header(LINK([
             'rel' => 'alternate',
@@ -63,7 +63,7 @@ final class RSSComments extends Extension
 				";
             }
 
-            $title = $config->get_string(SetupConfig::TITLE);
+            $title = $config->req_string(SetupConfig::TITLE);
             $base_href = Url::base()->asAbsolute();
             $version = SysConfig::getVersion();
             $xml = <<<EOD

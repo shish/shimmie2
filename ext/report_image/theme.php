@@ -58,7 +58,7 @@ class ReportImageTheme extends Themelet
             ["id" => "reportedImage", "class" => "zebra"],
             THEAD(
                 TR(
-                    TD(["width" => $config->get_int(ThumbnailConfig::WIDTH)], "Post"),
+                    TD(["width" => $config->req_int(ThumbnailConfig::WIDTH)], "Post"),
                     TD("Reason"),
                     TD(["width" => "128"], "Action")
                 )

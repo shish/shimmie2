@@ -17,8 +17,8 @@ final class Statistics extends Extension
         global $config, $page;
         if ($event->page_matches("stats") || $event->page_matches("stats/100")) {
             $base_href = Url::base();
-            $sitename = $config->get_string(SetupConfig::TITLE);
-            $theme_name = $config->get_string(SetupConfig::THEME);
+            $sitename = $config->req_string(SetupConfig::TITLE);
+            $theme_name = $config->req_string(SetupConfig::THEME);
             $unlisted = "'".implode("','", $this->unlisted)."'";
 
             $limit = 10;

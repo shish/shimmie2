@@ -46,7 +46,7 @@ class CronUploaderTheme extends Themelet
         $page->set_title("Cron Uploader");
 
         $info_html = emptyHTML();
-        if (!$config->get_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
+        if (!$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             $info_html->appendChild(B(["style" => "color:red"], "THIS EXTENSION REQUIRES USER API KEYS TO BE ENABLED IN BOARD ADMIN"));
         }
 

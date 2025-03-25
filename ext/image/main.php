@@ -39,8 +39,8 @@ final class ImageIO extends Extension
     {
         global $config, $page, $user;
 
-        $thumb_width = $config->get_int(ThumbnailConfig::WIDTH);
-        $thumb_height = $config->get_int(ThumbnailConfig::HEIGHT);
+        $thumb_width = $config->req_int(ThumbnailConfig::WIDTH);
+        $thumb_height = $config->req_int(ThumbnailConfig::HEIGHT);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST")) {
@@ -178,7 +178,7 @@ final class ImageIO extends Extension
         $image = Image::by_id_ex($image_id);
 
         if ($type === "thumb") {
-            $mime = new MimeType($config->get_string(ThumbnailConfig::MIME));
+            $mime = new MimeType($config->req_string(ThumbnailConfig::MIME));
             $file = $image->get_thumb_filename();
         } else {
             $mime = $image->get_mime();

@@ -12,7 +12,7 @@ final class RSSImages extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $config, $page;
-        $title = $config->get_string(SetupConfig::TITLE);
+        $title = $config->req_string(SetupConfig::TITLE);
 
         if (count($event->search_terms) > 0) {
             $search = Tag::implode($event->search_terms);
@@ -41,7 +41,7 @@ final class RSSImages extends Extension
         ) {
             $search_terms = Tag::explode($event->get_arg('search', ""));
             $page_number = $event->get_iarg('page_num', 1);
-            $page_size = $config->get_int(IndexConfig::IMAGES);
+            $page_size = $config->req_int(IndexConfig::IMAGES);
             if ($config->get_bool(RSSImagesConfig::RSS_LIMIT) && $page_number > 9) {
                 return;
             }
@@ -72,7 +72,7 @@ final class RSSImages extends Extension
             $data .= $this->thumb($image);
         }
 
-        $title = $config->get_string(SetupConfig::TITLE);
+        $title = $config->req_string(SetupConfig::TITLE);
         $base_href = Url::base()->asAbsolute();
         $search = "";
         if (count($search_terms) > 0) {
