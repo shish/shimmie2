@@ -207,7 +207,7 @@ final class LogDatabase extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("score_log", "
@@ -226,7 +226,9 @@ final class LogDatabase extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        $database = Ctx::$database;
+        $page = Ctx::$page;
+        $user = Ctx::$user;
         if ($event->page_matches("log/view", permission: LogDatabasePermission::VIEW_EVENTLOG)) {
             $t = new LogTable($database->raw_db());
             $t->inputs = $event->GET;
@@ -238,9 +240,8 @@ final class LogDatabase extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
+            if (Ctx::$user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
                 $event->add_nav_link(make_link('log/view'), "Event Log");
             }
         }
@@ -248,25 +249,22 @@ final class LogDatabase extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
+        if (Ctx::$user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
             $event->add_link("Event Log", make_link("log/view"));
         }
     }
 
     public function onLog(LogEvent $event): void
     {
-        global $config, $database, $user;
-
-        $username = ($user && $user->name) ? $user->name : "null";
+        $username = isset(Ctx::$user) ? Ctx::$user->name : "Anonymous";
 
         // not installed yet...
         if ($this->get_version() < 1) {
             return;
         }
 
-        if ($event->priority >= $config->get_int(LogDatabaseConfig::LEVEL)) {
-            $database->execute("
+        if ($event->priority >= Ctx::$config->get_int(LogDatabaseConfig::LEVEL)) {
+            Ctx::$database->execute("
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
 				VALUES(now(), :section, :priority, :username, :address, :message)
 			", [

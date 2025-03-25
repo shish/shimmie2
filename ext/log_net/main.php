@@ -11,12 +11,10 @@ final class LogNet extends Extension
 
     public function onLog(LogEvent $event): void
     {
-        global $user;
-
         if ($event->priority > 10) {
             $this->count++;
             if ($this->count < 10) {
-                $username = ($user && $user->name) ? $user->name : "Anonymous";
+                $username = isset(Ctx::$user) ? Ctx::$user->name : "Anonymous";
                 $str = sprintf("%-15s %-10s: %s", Network::get_real_ip(), $username, $event->message);
                 $this->msg($str);
             } elseif ($this->count == 10) {
@@ -27,8 +25,7 @@ final class LogNet extends Extension
 
     private function msg(string $data): void
     {
-        global $config;
-        $host = $config->get_string(LogNetConfig::HOST);
+        $host = Ctx::$config->get_string(LogNetConfig::HOST);
 
         if (!$host) {
             return;
