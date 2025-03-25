@@ -16,6 +16,6 @@ final class ResolutionLimitConfig extends ConfigGroup
     public const MAX_WIDTH = "upload_max_width";
     #[ConfigMeta("Max height", ConfigType::INT, default: -1, help: "-1 for no limit")]
     public const MAX_HEIGHT = "upload_max_height";
-    #[ConfigMeta("Ratios", ConfigType::STRING, help: "eg. '4:3 16:9', blank for no limit")]
+    #[ConfigMeta("Ratios", ConfigType::STRING, default: "", help: "eg. '4:3 16:9', blank for no limit")]
     public const RATIOS = "upload_ratios";
 }

@@ -12,8 +12,8 @@ final class CustomHtmlHeaders extends Extension
     {
         global $config, $page;
 
-        $header = $config->get_string(CustomHtmlHeadersConfig::CUSTOM_HTML_HEADERS, '');
-        if ($header !== '') {
+        $header = $config->get_string(CustomHtmlHeadersConfig::CUSTOM_HTML_HEADERS);
+        if (!empty($header)) {
             $page->add_html_header(\MicroHTML\rawHTML($header));
         }
 

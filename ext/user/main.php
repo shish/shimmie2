@@ -538,7 +538,7 @@ final class UserPage extends Extension
         $duser->set_login_cookie();
         $page->set_mode(PageMode::REDIRECT);
 
-        if ($config->get_string(UserAccountsConfig::LOGIN_REDIRECT, "previous") === "previous") {
+        if ($config->get_string(UserAccountsConfig::LOGIN_REDIRECT) === "previous") {
             $page->set_redirect(Url::referer_or(ignore: ["user/"]));
         } else {
             $page->set_redirect(make_link("user"));

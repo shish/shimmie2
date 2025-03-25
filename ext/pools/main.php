@@ -313,7 +313,7 @@ final class Pools extends Extension
             self::assert_permission($user, $pool);
 
             $images = Search::find_images(
-                limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000),
+                limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS),
                 tags: Tag::explode($event->req_POST("pool_tag"))
             );
             $this->theme->pool_result($images, $pool);
@@ -406,7 +406,7 @@ final class Pools extends Extension
             $imageID = $event->image->id;
             $poolsIDs = $this->get_pool_ids($imageID);
 
-            $show_nav = $config->get_bool(PoolsConfig::SHOW_NAV_LINKS, false);
+            $show_nav = $config->get_bool(PoolsConfig::SHOW_NAV_LINKS);
 
             $navInfo = [];
             foreach ($poolsIDs as $poolID) {

@@ -38,8 +38,8 @@ final class ResizeImage extends Extension
             /* Add a link to resize the image */
             global $config;
 
-            $default_width = $config->get_int(ResizeConfig::DEFAULT_WIDTH, $event->image->width);
-            $default_height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT, $event->image->height);
+            $default_width = $config->get_int(ResizeConfig::DEFAULT_WIDTH) ?? $event->image->width;
+            $default_height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT) ?? $event->image->height;
 
             $event->add_part(SHM_SIMPLE_FORM(
                 make_link("resize/{$event->image->id}"),
