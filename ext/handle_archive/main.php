@@ -12,21 +12,19 @@ final class ArchiveFileHandler extends DataHandlerExtension
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {
-            global $config, $page;
             $tmpdir = shm_tempdir("archive");
-            $cmd = $config->get_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND);
+            $cmd = Ctx::$config->req_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND);
             $cmd = str_replace('"%f"', "%f", $cmd);
             $cmd = str_replace('"%d"', "%d", $cmd);
             $cmd = str_replace('%f', escapeshellarg($event->tmpname->str()), $cmd);
             $cmd = str_replace('%d', escapeshellarg($tmpdir->str()), $cmd);
-            assert(is_string($cmd));
             exec($cmd);
             if ($tmpdir->exists()) {
                 try {
                     $results = send_event(new DirectoryUploadEvent($tmpdir, Tag::explode($event->metadata['tags'])))->results;
                     foreach ($results as $r) {
                         if (is_a($r, UploadError::class)) {
-                            $page->flash($r->name." failed: ".$r->error);
+                            Ctx::$page->flash($r->name." failed: ".$r->error);
                         }
                         if (is_a($r, UploadSuccess::class)) {
                             $event->images[] = Image::by_id_ex($r->image_id);

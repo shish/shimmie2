@@ -28,7 +28,7 @@ final class SVGFileHandler extends DataHandlerExtension
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
             $dirtySVG = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash)->get_contents();
-            $cleanSVG = $sanitizer->sanitize($dirtySVG);
+            $cleanSVG = false_throws($sanitizer->sanitize($dirtySVG));
             $page->set_data($cleanSVG);
         }
     }
