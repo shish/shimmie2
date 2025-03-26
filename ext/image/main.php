@@ -178,9 +178,6 @@ final class ImageIO extends Extension
             die();
         }
 
-        $page->set_mime($mime);
-
-
         if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
             $if_modified_since = \Safe\preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
         } else {
@@ -197,7 +194,7 @@ final class ImageIO extends Extension
                 $page->set_filename($image->get_nice_image_name(), 'inline');
             }
 
-            $page->set_file($file);
+            $page->set_file($mime, $file);
 
             if (Ctx::$config->get_int(ImageConfig::EXPIRES)) {
                 $expires = date(DATE_RFC1123, time() + Ctx::$config->get_int(ImageConfig::EXPIRES));

@@ -30,7 +30,7 @@ class Page
     /**
      * Set the page's MIME type.
      */
-    public function set_mime(MimeType|string $mime): void
+    protected function set_mime(MimeType|string $mime): void
     {
         if (is_string($mime)) {
             $mime = new MimeType($mime);
@@ -65,9 +65,10 @@ class Page
         $this->data = $data;
     }
 
-    public function set_file(Path $file, bool $delete = false): void
+    public function set_file(MimeType|string $mime, Path $file, bool $delete = false): void
     {
         $this->mode = PageMode::FILE;
+        $this->set_mime($mime);
         $this->file = $file;
         $this->file_delete = $delete;
     }
