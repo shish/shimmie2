@@ -226,9 +226,6 @@ final class OuroborosAPI extends Extension
     public const ERROR_POST_CREATE_DUPE = 'Duplicate';
     public const OK_POST_CREATE_UPDATE = 'Updated';
 
-    public const MIME_JSON = 'application/json; charset=utf-8';
-    public const MIME_XML = 'text/xml; charset=utf-8';
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (\Safe\preg_match("%(.*)\.(xml|json)$%", implode('/', $event->args), $matches)) {
@@ -474,14 +471,12 @@ final class OuroborosAPI extends Extension
         }
         $response = ['success' => $success, 'reason' => $reason];
         if ($this->type === 'json') {
-            $page->set_mime(self::MIME_JSON);
             if ($location !== false) {
                 $response['location'] = $response['reason'];
                 unset($response['reason']);
             }
-            $response = \Safe\json_encode($response);
+            $page->set_data(MimeType::JSON, \Safe\json_encode($response));
         } elseif ($this->type === 'xml') {
-            $page->set_mime(self::MIME_XML);
             // Seriously, XML sucks...
             $xml = new \XMLWriter();
             $xml->openMemory();
@@ -495,12 +490,11 @@ final class OuroborosAPI extends Extension
             }
             $xml->endElement();
             $xml->endDocument();
-            $response = $xml->outputMemory(true);
+            $page->set_data(MimeType::XML, $xml->outputMemory(true));
             unset($xml);
         } else {
             throw new \Exception("Unsupported response type: {$this->type}");
         }
-        $page->set_data($response);
     }
 
     /**
@@ -511,10 +505,8 @@ final class OuroborosAPI extends Extension
         global $page;
         $response = '';
         if ($this->type === 'json') {
-            $page->set_mime(self::MIME_JSON);
-            $response = \Safe\json_encode($data);
+            $page->set_data(MimeType::JSON, \Safe\json_encode($data));
         } elseif ($this->type === 'xml') {
-            $page->set_mime(self::MIME_XML);
             $xml = new \XMLWriter();
             $xml->openMemory();
             $xml->startDocument('1.0', 'utf-8');
@@ -533,10 +525,9 @@ final class OuroborosAPI extends Extension
             $xml->endElement();
 
             $xml->endDocument();
-            $response = $xml->outputMemory(true);
+            $page->set_data(MimeType::XML, $xml->outputMemory(true));
             unset($xml);
         }
-        $page->set_data($response);
     }
 
     private function createItemXML(\XMLWriter $xml, string $type, _SafeOuroborosTag|_SafeOuroborosImage $item): void

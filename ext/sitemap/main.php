@@ -29,8 +29,7 @@ final class XMLSitemap extends Extension
             }
 
             $xml = $cache_path->get_contents();
-            Ctx::$page->set_mime(MimeType::XML_APPLICATION);
-            Ctx::$page->set_data($xml);
+            Ctx::$page->set_data(MimeType::XML_APPLICATION, $xml);
         }
     }
 

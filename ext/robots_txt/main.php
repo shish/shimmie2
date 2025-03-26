@@ -28,8 +28,7 @@ final class RobotsTxt extends Extension
     {
         if ($event->page_matches("robots.txt")) {
             $rbe = send_event(new RobotsBuildingEvent());
-            Ctx::$page->set_mime("text/plain");
-            Ctx::$page->set_data(join("\n", $rbe->parts));
+            Ctx::$page->set_data(MimeType::TEXT, join("\n", $rbe->parts));
         }
     }
 

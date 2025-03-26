@@ -58,9 +58,10 @@ class Page
     /**
      * Set the raw data to be sent.
      */
-    public function set_data(string $data): void
+    public function set_data(MimeType|string $mime, string $data): void
     {
         $this->mode = PageMode::DATA;
+        $this->set_mime($mime);
         $this->data = $data;
     }
 

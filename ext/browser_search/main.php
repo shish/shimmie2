@@ -12,12 +12,12 @@ final class BrowserSearch extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
+        global $database;
 
         // Add in header code to let the browser know that the search plugin exists
         // We need to build the data for the header
         $search_title = Ctx::$config->req_string(SetupConfig::TITLE);
-        $page->add_html_header(LINK([
+        Ctx::$page->add_html_header(LINK([
             'rel' => 'search',
             'type' => 'application/opensearchdescription+xml',
             'title' => $search_title,
@@ -47,8 +47,7 @@ final class BrowserSearch extends Extension
 			";
 
             // And now to send it to the browser
-            $page->set_mime(MimeType::XML);
-            $page->set_data($xml);
+            Ctx::$page->set_data(MimeType::XML, $xml);
         } elseif ($event->page_matches("browser_search/{tag_search}")) {
             $suggestions = Ctx::$config->get_string(BrowserSearchConfig::RESULTS_ORDER);
             if ($suggestions == "n") {
@@ -71,7 +70,7 @@ final class BrowserSearch extends Extension
 
             // And to do stuff with it. We want our output to look like:
             // ["shimmie",["shimmies","shimmy","shimmie","21 shimmies","hip shimmies","skea shimmies"],[],[]]
-            $page->set_data(\Safe\json_encode([$tag_search, $tags, [], []]));
+            Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode([$tag_search, $tags, [], []]));
         }
     }
 }

@@ -29,8 +29,7 @@ final class RandomImage extends Extension
                 send_event(new DisplayingImageEvent($image));
             } elseif ($action === "widget") {
                 $page = Ctx::$page;
-                $page->set_mime(MimeType::HTML);
-                $page->set_data((string)$this->theme->build_thumb($image));
+                $page->set_data(MimeType::HTML, (string)$this->theme->build_thumb($image));
             }
         }
     }

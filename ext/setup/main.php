@@ -88,8 +88,7 @@ final class Setup extends Extension
         $page = Ctx::$page;
 
         if ($event->page_starts_with("nicedebug")) {
-            $page->set_mime(MimeType::JSON);
-            $page->set_data(\Safe\json_encode([
+            $page->set_data(MimeType::JSON, \Safe\json_encode([
                 "args" => $event->args,
                 "theme" => get_theme(),
                 "nice_urls" => $config->req_bool(SetupConfig::NICE_URLS),
@@ -101,7 +100,7 @@ final class Setup extends Extension
         }
 
         if ($event->page_matches("nicetest")) {
-            $page->set_data("ok");
+            $page->set_data(MimeType::TEXT, "ok");
         }
 
         if ($event->page_matches("setup", method: "GET", permission: SetupPermission::CHANGE_SETTING)) {

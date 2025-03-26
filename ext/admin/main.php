@@ -131,7 +131,7 @@ final class AdminPage extends Extension
     public function onAdminAction(AdminActionEvent $event): void
     {
         if ($event->action === "test") {
-            Ctx::$page->set_data("test");
+            Ctx::$page->set_data(MimeType::TEXT, "test");
         }
     }
 

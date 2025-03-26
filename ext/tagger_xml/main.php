@@ -32,8 +32,7 @@ final class TaggerXML extends Extension
             "</tags>";
 
             $page = Ctx::$page;
-            $page->set_mime(MimeType::XML);
-            $page->set_data($xml);
+            $page->set_data(MimeType::XML, $xml);
         }
     }
 
