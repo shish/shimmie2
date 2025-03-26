@@ -96,7 +96,7 @@ final class TranscodeVideo extends Extension
                             Log::error("transcode_video", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
                         }
                     }
-                    Ctx::$page->flash("Transcoded $total items");
+                    $event->log_action("Transcoded $total items");
                 }
                 break;
         }

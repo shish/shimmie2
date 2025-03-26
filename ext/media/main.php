@@ -94,7 +94,7 @@ final class Media extends Extension
                             $failed++;
                         }
                     }
-                    Ctx::$page->flash("Scanned media properties for $total items, failed for $failed");
+                    $event->log_action("Scanned media properties for $total items, failed for $failed");
                 }
                 break;
         }
