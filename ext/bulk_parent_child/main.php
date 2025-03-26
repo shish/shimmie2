@@ -22,8 +22,10 @@ final class BulkParentChild extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        if (Ctx::$user->can(BulkParentChildPermission::BULK_PARENT_CHILD) &&
-            ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)) {
+        if (
+            Ctx::$user->can(BulkParentChildPermission::BULK_PARENT_CHILD)
+            && ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)
+        ) {
             $prev_id = null;
             foreach ($event->items as $image) {
                 if ($prev_id !== null) {

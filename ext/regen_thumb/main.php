@@ -76,7 +76,7 @@ final class RegenThumb extends Extension
                             $total++;
                         }
                     }
-                    Ctx::$page->flash("Regenerated thumbnails for $total items");
+                    $event->log_action("Regenerated thumbnails for $total items");
                 }
                 break;
         }

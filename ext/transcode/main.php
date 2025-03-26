@@ -198,8 +198,6 @@ final class TranscodeImage extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page;
-
         switch ($event->action) {
             case self::ACTION_BULK_TRANSCODE:
                 if (!isset($event->params['transcode_mime'])) {
@@ -225,11 +223,11 @@ final class TranscodeImage extends Extension
                         }
                     }
                     if ($size_difference > 0) {
-                        $page->flash("Transcoded $total items, reduced size by ".human_filesize($size_difference));
+                        $event->log_action("Transcoded $total items, reduced size by ".human_filesize($size_difference));
                     } elseif ($size_difference < 0) {
-                        $page->flash("Transcoded $total items, increased size by ".human_filesize(negative_int($size_difference)));
+                        $event->log_action("Transcoded $total items, increased size by ".human_filesize(negative_int($size_difference)));
                     } else {
-                        $page->flash("Transcoded $total items, no size difference");
+                        $event->log_action("Transcoded $total items, no size difference");
                     }
                 }
                 break;

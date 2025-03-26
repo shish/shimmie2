@@ -99,8 +99,6 @@ final class BulkImportExport extends DataHandlerExtension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page;
-
         if (Ctx::$user->can(BulkImportExportPermission::BULK_EXPORT) &&
             ($event->action === self::EXPORT_ACTION_NAME)) {
             $download_filename = Ctx::$user->name . '-' . date('YmdHis') . '.zip';
@@ -130,6 +128,7 @@ final class BulkImportExport extends DataHandlerExtension
 
                 $zip->close();
 
+                $page = Ctx::$page;
                 $page->set_mode(PageMode::FILE);
                 $page->set_file($zip_filename, true);
                 $page->set_filename($download_filename);

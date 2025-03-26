@@ -72,6 +72,12 @@ final class BulkActionEvent extends Event
     ) {
         parent::__construct();
     }
+
+    public function log_action(string $message): void
+    {
+        Log::debug($message);
+        Ctx::$page->flash($message);
+    }
 }
 
 final class BulkActions extends Extension
@@ -128,13 +134,11 @@ final class BulkActions extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page;
-
         switch ($event->action) {
             case "bulk_delete":
                 if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $i = $this->delete_posts($event->items);
-                    $page->flash("Deleted $i[0] items, totaling ".human_filesize($i[1]));
+                    $event->log_action("Deleted $i[0] items, totaling ".human_filesize($i[1]));
                 }
                 break;
             case "bulk_tag":
@@ -149,7 +153,7 @@ final class BulkActions extends Extension
                     }
 
                     $i = $this->tag_items($event->items, $tags, $replace);
-                    $page->flash("Tagged $i items");
+                    $event->log_action("Tagged $i items");
                 }
                 break;
             case "bulk_source":
@@ -159,7 +163,7 @@ final class BulkActions extends Extension
                 if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
                     $source = $event->params['bulk_source'];
                     $i = $this->set_source($event->items, $source);
-                    $page->flash("Set source for $i items");
+                    $event->log_action("Set source for $i items");
                 }
                 break;
         }

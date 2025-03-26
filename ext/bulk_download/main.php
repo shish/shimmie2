@@ -18,10 +18,10 @@ final class BulkDownload extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page;
-
-        if (Ctx::$user->can(BulkDownloadPermission::BULK_DOWNLOAD) &&
-            ($event->action == BulkDownload::DOWNLOAD_ACTION_NAME)) {
+        if (
+            Ctx::$user->can(BulkDownloadPermission::BULK_DOWNLOAD)
+            && ($event->action == BulkDownload::DOWNLOAD_ACTION_NAME)
+        ) {
             $download_filename = Ctx::$user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = shm_tempnam("bulk_download");
             $zip = new \ZipArchive();
@@ -43,6 +43,7 @@ final class BulkDownload extends Extension
 
                 $zip->close();
 
+                $page = Ctx::$page;
                 $page->set_mode(PageMode::FILE);
                 $page->set_file($zip_filename, true);
                 $page->set_filename($download_filename);

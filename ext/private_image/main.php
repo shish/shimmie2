@@ -203,7 +203,7 @@ final class PrivateImage extends Extension
                             $total++;
                         }
                     }
-                    Ctx::$page->flash("Made $total items private");
+                    $event->log_action("Made $total items private");
                 }
                 break;
             case "bulk_publicize_image":
@@ -217,7 +217,7 @@ final class PrivateImage extends Extension
                         $total++;
                     }
                 }
-                Ctx::$page->flash("Made $total items public");
+                $event->log_action("Made $total items public");
                 break;
         }
     }

@@ -154,7 +154,7 @@ final class Trash extends Extension
                         self::set_trash($image->id, false);
                         $total++;
                     }
-                    Ctx::$page->flash("Restored $total items from trash");
+                    $event->log_action("Restored $total items from trash");
                 }
                 break;
         }
