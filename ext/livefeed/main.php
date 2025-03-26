@@ -15,10 +15,9 @@ final class LiveFeed extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        global $user;
         $this->msg(
             make_link("post/view/".$event->image->id)->asAbsolute(). " - ".
-            "new post by ".$user->name
+            "new post by ".Ctx::$user->name
         );
     }
 
@@ -32,10 +31,9 @@ final class LiveFeed extends Extension
 
     public function onCommentPosting(CommentPostingEvent $event): void
     {
-        global $user;
         $this->msg(
             make_link("post/view/".$event->image_id)->asAbsolute(). " - ".
-            $user->name . ": " . str_replace("\n", " ", $event->comment)
+            Ctx::$user->name . ": " . str_replace("\n", " ", $event->comment)
         );
     }
 

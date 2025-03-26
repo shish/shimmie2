@@ -178,7 +178,9 @@ final class Pools extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $database;
+        $user = Ctx::$user;
+        $page = Ctx::$page;
         if (
             $event->page_matches("pool/list", paged: true)
             || $event->page_matches("pool/list/{search}", paged: true)
@@ -225,11 +227,8 @@ final class Pools extends Extension
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
 
-            $result = $database->execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $pool_id]);
-            $images = [];
-            while ($row = $result->fetch()) {
-                $images[] = Image::by_id_ex((int) $row["image_id"]);
-            }
+            $image_ids = $database->get_col("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $pool_id]);
+            $images = array_filter(array_map(Image::by_id(...), $image_ids));
             $this->theme->edit_pool($pool, $images);
         }
         if ($event->page_matches("pool/order/{pool_id}")) {
@@ -237,25 +236,11 @@ final class Pools extends Extension
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
 
-            $result = $database->execute(
+            $image_ids = $database->get_col(
                 "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC",
                 ["pid" => $pool_id]
             );
-            $images = [];
-
-            while ($row = $result->fetch()) {
-                $image = $database->get_row(
-                    "
-                            SELECT * FROM images AS i
-                            INNER JOIN pool_images AS p ON i.id = p.image_id
-                            WHERE pool_id=:pid AND i.id=:iid",
-                    ["pid" => $pool_id, "iid" => (int) $row['image_id']]
-                );
-                if ($image) {
-                    $images[] = new Image($image);
-                }
-            }
-
+            $images = array_filter(array_map(Image::by_id(...), $image_ids));
             $this->theme->edit_order($pool, $images);
         }
         if ($event->page_matches("pool/save_order/{pool_id}", method: "POST")) {
@@ -669,10 +654,10 @@ final class Pools extends Extension
      */
     public function onPoolAddPosts(PoolAddPostsEvent $event): void
     {
-        global $database, $user;
+        global $database;
 
         $pool = $this->get_single_pool($event->pool_id);
-        self::assert_permission($user, $pool);
+        self::assert_permission(Ctx::$user, $pool);
 
         $images = [];
         foreach ($event->posts as $post_id) {
@@ -791,11 +776,11 @@ final class Pools extends Extension
      */
     public function onPoolDeletion(PoolDeletionEvent $event): void
     {
-        global $user, $database;
+        global $database;
         $poolID = $event->pool_id;
 
         $owner_id = (int) $database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
-        if ($owner_id === $user->id || $user->can(PoolsPermission::ADMIN)) {
+        if ($owner_id === Ctx::$user->id || Ctx::$user->can(PoolsPermission::ADMIN)) {
             $database->execute("DELETE FROM pool_history WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pool_images WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pools WHERE id = :pid", ["pid" => $poolID]);

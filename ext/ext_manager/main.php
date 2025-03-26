@@ -25,7 +25,7 @@ final class ExtManager extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
         if ($event->page_matches("ext_manager/set", method: "POST", permission: ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
             if (is_writable("data/config")) {
                 $this->set_things($event->POST);
@@ -36,7 +36,7 @@ final class ExtManager extends Extension
                 throw new ServerError("The config file (data/config/extensions.conf.php) isn't writable by the web server :(");
             }
         } elseif ($event->page_matches("ext_manager", method: "GET")) {
-            $is_admin = $user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST);
+            $is_admin = Ctx::$user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST);
             $this->theme->display_table($this->get_extensions($is_admin), $is_admin);
         }
 

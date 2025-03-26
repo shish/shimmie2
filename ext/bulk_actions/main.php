@@ -128,11 +128,11 @@ final class BulkActions extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page, $user;
+        global $page;
 
         switch ($event->action) {
             case "bulk_delete":
-                if ($user->can(ImagePermission::DELETE_IMAGE)) {
+                if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $i = $this->delete_posts($event->items);
                     $page->flash("Deleted $i[0] items, totaling ".human_filesize($i[1]));
                 }
@@ -141,7 +141,7 @@ final class BulkActions extends Extension
                 if (!isset($event->params['bulk_tags'])) {
                     return;
                 }
-                if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
+                if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
                     $tags = $event->params['bulk_tags'];
                     $replace = false;
                     if (isset($event->params['bulk_tags_replace']) &&  $event->params['bulk_tags_replace'] === "true") {
@@ -156,7 +156,7 @@ final class BulkActions extends Extension
                 if (!isset($event->params['bulk_source'])) {
                     return;
                 }
-                if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
+                if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
                     $source = $event->params['bulk_source'];
                     $i = $this->set_source($event->items, $source);
                     $page->flash("Set source for $i items");

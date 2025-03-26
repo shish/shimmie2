@@ -88,14 +88,12 @@ final class Trash extends Extension
     public const SEARCH_REGEXP = "/^in:(trash)$/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $user;
-
         if (is_null($event->term) && $this->no_trash_query($event->context)) {
             $event->add_querylet(new Querylet("trash != :true", ["true" => true]));
         }
 
         if ($event->matches(self::SEARCH_REGEXP)) {
-            if ($user->can(TrashPermission::VIEW_TRASH)) {
+            if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
                 $event->add_querylet(new Querylet("trash = :true", ["true" => true]));
             }
         }
@@ -148,17 +146,15 @@ final class Trash extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page, $user;
-
         switch ($event->action) {
             case "bulk_trash_restore":
-                if ($user->can(TrashPermission::VIEW_TRASH)) {
+                if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         self::set_trash($image->id, false);
                         $total++;
                     }
-                    $page->flash("Restored $total items from trash");
+                    Ctx::$page->flash("Restored $total items from trash");
                 }
                 break;
         }

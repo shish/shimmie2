@@ -148,9 +148,7 @@ final class GraphQL extends Extension
      */
     private static function handle_uploads(): array
     {
-        global $user;
-
-        if (!$user->can(ImagePermission::CREATE_IMAGE)) {
+        if (!Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
             return ["error" => "User cannot create posts"];
         }
 

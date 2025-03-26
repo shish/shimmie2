@@ -162,7 +162,7 @@ final class IPBan extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $page;
         if ($event->page_matches("ip_ban/create", method: "POST", permission: IPBanPermission::BAN_IP)) {
             $input = validate_input(["c_ip" => "string", "c_mode" => "string", "c_reason" => "string", "c_expires" => "optional,date"]);
             send_event(new AddIPBanEvent($input['c_ip'], $input['c_mode'], $input['c_reason'], $input['c_expires']));
@@ -178,10 +178,10 @@ final class IPBan extends Extension
             $page->set_redirect(make_link("ip_ban/list"));
         }
         if ($event->page_matches("ip_ban/list", method: "GET", permission: IPBanPermission::BAN_IP)) {
-            $event->GET['c_banner'] = $user->name;
+            $event->GET['c_banner'] = Ctx::$user->name;
             $event->GET['c_added'] = date('Y-m-d');
-            $t = new IPBanTable($database->raw_db());
-            $t->token = $user->get_auth_token();
+            $t = new IPBanTable(Ctx::$database->raw_db());
+            $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET;
             $this->theme->display_bans($t->table($t->query()), $t->paginator());
         }

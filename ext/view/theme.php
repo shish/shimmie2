@@ -133,15 +133,13 @@ class ViewPostTheme extends Themelet
      */
     protected function build_info(Image $image, array $editor_parts): HTMLElement
     {
-        global $user;
-
         if (count($editor_parts) == 0) {
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
         }
 
         if (
-            (!$image->is_locked() || $user->can(PostLockPermission::EDIT_IMAGE_LOCK)) &&
-            $user->can(PostTagsPermission::EDIT_IMAGE_TAG)
+            (!$image->is_locked() || Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) &&
+            Ctx::$user->can(PostTagsPermission::EDIT_IMAGE_TAG)
         ) {
             $editor_parts[] = TR(TD(
                 ["colspan" => 4],
@@ -177,10 +175,8 @@ class ViewPostTheme extends Themelet
 
     protected function build_stats(Image $image): HTMLElement
     {
-        global $user;
-
         $owner = $image->get_owner()->name;
-        $ip = $user->can(IPBanPermission::VIEW_IP) ? " ({$image->owner_ip})" : "";
+        $ip = Ctx::$user->can(IPBanPermission::VIEW_IP) ? " ({$image->owner_ip})" : "";
 
         $parts = [
             "ID: {$image->id}",

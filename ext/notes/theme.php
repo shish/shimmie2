@@ -115,8 +115,6 @@ class NotesTheme extends Themelet
      */
     private function get_history(array $histories): HTMLElement
     {
-        global $user;
-
         $tbody = TBODY();
         foreach ($histories as $history) {
             $tbody->appendChild(TR(
@@ -125,7 +123,7 @@ class NotesTheme extends Themelet
                 TD(["style" => "text-align:left;"], $history['note']),
                 TD(A(["href" => make_link("user/".$history['user_name'])], $history['user_name'])),
                 TD(SHM_DATE($history['date'])),
-                TD($user->is_anonymous() ? null : TD(A(["href" => make_link("note/revert/".$history['note_id']."/".$history['review_id'])], "Revert"))),
+                TD(Ctx::$user->is_anonymous() ? null : TD(A(["href" => make_link("note/revert/".$history['note_id']."/".$history['review_id'])], "Revert"))),
             ));
         }
 
@@ -138,7 +136,7 @@ class NotesTheme extends Themelet
                     TH("Body"),
                     TH("Updater"),
                     TH("Date"),
-                    $user->is_anonymous() ? null : TH("Action")
+                    Ctx::$user->is_anonymous() ? null : TH("Action")
                 )
             ),
             $tbody

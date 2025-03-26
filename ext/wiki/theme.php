@@ -18,7 +18,7 @@ class WikiTheme extends Themelet
      */
     public function display_page(WikiPage $wiki_page, ?WikiPage $nav_page = null): void
     {
-        global $user, $page;
+        global $page;
 
         if (is_null($nav_page)) {
             $nav_page = new WikiPage();
@@ -28,7 +28,7 @@ class WikiTheme extends Themelet
         $body_html = format_text($nav_page->body);
 
         // only the admin can edit the sidebar
-        if ($user->can(WikiPermission::ADMIN)) {
+        if (Ctx::$user->can(WikiPermission::ADMIN)) {
             $link = A(["href" => make_link("wiki/wiki:sidebar/edit")], "Edit");
             $body_html = emptyHTML(
                 $body_html,
@@ -96,9 +96,7 @@ class WikiTheme extends Themelet
 
     protected function create_edit_html(WikiPage $page): HTMLElement
     {
-        global $user;
-
-        $lock = $user->can(WikiPermission::ADMIN) ?
+        $lock = Ctx::$user->can(WikiPermission::ADMIN) ?
             emptyHTML(
                 BR(),
                 "Lock page: ",
@@ -165,22 +163,20 @@ class WikiTheme extends Themelet
 
     protected function create_display_html(WikiPage $page): HTMLElement
     {
-        global $user;
-
         $u_title = url_escape($page->title);
         $owner = $page->get_owner();
 
         $formatted_body = self::format_wiki_page($page);
 
         $edit = TR();
-        if (Wiki::can_edit($user, $page)) {
+        if (Wiki::can_edit(Ctx::$user, $page)) {
             $edit->appendChild(TD(SHM_SIMPLE_FORM(
                 make_link("wiki/$u_title/edit"),
                 INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
                 INPUT(["type" => "submit", "value" => "Edit"])
             )));
         }
-        if ($user->can(WikiPermission::ADMIN)) {
+        if (Ctx::$user->can(WikiPermission::ADMIN)) {
             $edit->appendChild(
                 TD(SHM_SIMPLE_FORM(
                     make_link("wiki/$u_title/delete_revision"),

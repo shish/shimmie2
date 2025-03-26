@@ -52,8 +52,7 @@ final class RatingsBlurUserConfig extends UserConfigGroup
      */
     public static function get_user_options(): array
     {
-        global $user;
-        $levels = Ratings::get_user_class_privs($user);
+        $levels = Ratings::get_user_class_privs(Ctx::$user);
         $options = [];
         foreach ($levels as $level) {
             $options[ImageRating::$known_ratings[$level]->name] = $level;

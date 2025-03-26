@@ -108,10 +108,6 @@ class PoolsTheme extends Themelet
 
     private function display_top(?Pool $pool, string $heading, bool $check_all = false): void
     {
-        global $page, $user;
-
-        $page->set_title($heading);
-
         $poolnav = emptyHTML(
             A(["href" => make_link("pool/list")], "Pool Index"),
             BR(),
@@ -134,13 +130,15 @@ class PoolsTheme extends Themelet
             ])
         );
 
+        $page = Ctx::$page;
+        $page->set_title($heading);
         $this->display_navigation();
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
         $page->add_block(new Block("Search", $search, "left", 10));
 
         if (!is_null($pool)) {
-            if ($pool->public || $user->can(PoolsPermission::ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
-                if (!$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
+            if ($pool->public || Ctx::$user->can(PoolsPermission::ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
+                if (!Ctx::$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
                     $this->sidebar_options($pool, $check_all);
                 }
             }
@@ -168,7 +166,7 @@ class PoolsTheme extends Themelet
 
     public function sidebar_options(Pool $pool, bool $check_all): void
     {
-        global $user, $page;
+        global $page;
 
         $editor = emptyHTML(
             SHM_SIMPLE_FORM(
@@ -194,7 +192,7 @@ class PoolsTheme extends Themelet
             )
         );
 
-        if ($user->id === $pool->user_id || $user->can(PoolsPermission::ADMIN)) {
+        if (Ctx::$user->id === $pool->user_id || Ctx::$user->can(PoolsPermission::ADMIN)) {
             $editor->appendChild(
                 SHM_SIMPLE_FORM(
                     make_link("pool/nuke/{$pool->id}"),

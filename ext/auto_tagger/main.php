@@ -67,7 +67,7 @@ final class AutoTagger extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $page;
 
         if ($event->page_matches("auto_tag/add", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
@@ -82,11 +82,11 @@ final class AutoTagger extends Extension
             $page->set_redirect(make_link("auto_tag/list"));
         }
         if ($event->page_matches("auto_tag/list")) {
-            $t = new AutoTaggerTable($database->raw_db());
-            $t->token = $user->get_auth_token();
+            $t = new AutoTaggerTable(Ctx::$database->raw_db());
+            $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET;
             $t->size = Ctx::$config->req_int(AutoTaggerConfig::ITEMS_PER_PAGE);
-            if ($user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
+            if (Ctx::$user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
                 $t->create_url = make_link("auto_tag/add");
                 $t->delete_url = make_link("auto_tag/remove");
             }
@@ -96,7 +96,7 @@ final class AutoTagger extends Extension
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::CSV);
             $page->set_filename("auto_tag.csv");
-            $page->set_data($this->get_auto_tag_csv($database));
+            $page->set_data($this->get_auto_tag_csv(Ctx::$database));
         }
         if ($event->page_matches("auto_tag/import", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             if (count($_FILES) > 0) {

@@ -16,7 +16,7 @@ final class ImageViewCounter extends Extension
     # Adds view to database if needed
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $database, $user;
+        global $database;
 
         $imgid = $event->image->id;
 
@@ -47,7 +47,7 @@ final class ImageViewCounter extends Extension
 			",
             [
                 "image_id" => $imgid,
-                "user_id" => $user->id,
+                "user_id" => Ctx::$user->id,
                 "timestamp" => time(),
                 "ipaddress" => Network::get_real_ip(),
             ]

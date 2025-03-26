@@ -84,7 +84,7 @@ final class ImageBan extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $page;
 
         if ($event->page_matches("image_hash_ban/add", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $input = validate_input(["c_hash" => "optional,string", "c_reason" => "string", "c_image_id" => "optional,int"]);
@@ -113,8 +113,8 @@ final class ImageBan extends Extension
             $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("image_hash_ban/list", permission: ImageHashBanPermission::BAN_IMAGE)) {
-            $t = new HashBanTable($database->raw_db());
-            $t->token = $user->get_auth_token();
+            $t = new HashBanTable(Ctx::$database->raw_db());
+            $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET;
             $page->set_title("Post Bans");
             $this->theme->display_navigation();

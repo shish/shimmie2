@@ -255,12 +255,11 @@ class UserPageTheme extends Themelet
 
     public function build_operations(User $duser, UserOperationsBuildingEvent $event): HTMLElement
     {
-        global $user;
         $html = emptyHTML();
 
         // just a fool-admin protection so they dont mess around with anon users.
         if ($duser->id !== Ctx::$config->req_int(UserAccountsConfig::ANON_ID)) {
-            if ($user->can(UserAccountsPermission::EDIT_USER_NAME)) {
+            if (Ctx::$user->can(UserAccountsPermission::EDIT_USER_NAME)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,
                     make_link("user_admin/change_name"),
@@ -301,7 +300,7 @@ class UserPageTheme extends Themelet
                 "Set"
             ));
 
-            if ($user->can(UserAccountsPermission::EDIT_USER_CLASS)) {
+            if (Ctx::$user->can(UserAccountsPermission::EDIT_USER_CLASS)) {
                 $select = SELECT(["name" => "class"]);
                 foreach (UserClass::$known_classes as $name => $values) {
                     $select->appendChild(
@@ -317,7 +316,7 @@ class UserPageTheme extends Themelet
                 ));
             }
 
-            if ($user->can(UserAccountsPermission::DELETE_USER)) {
+            if (Ctx::$user->can(UserAccountsPermission::DELETE_USER)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,
                     make_link("user_admin/delete_user"),

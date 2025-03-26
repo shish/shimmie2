@@ -13,7 +13,7 @@ final class ETServer extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $database, $page;
         if ($event->page_matches("register.php")) {
             $data = $event->get_POST("data");
             if ($data) {
@@ -23,7 +23,7 @@ final class ETServer extends Extension
                 );
                 $page->set_title("Thanks!");
                 $page->add_block(new Block("Thanks!", emptyHTML("Your data has been recorded~")));
-            } elseif ($user->can(ETServerPermission::VIEW_REGISTRATIONS)) {
+            } elseif (Ctx::$user->can(ETServerPermission::VIEW_REGISTRATIONS)) {
                 $page->set_title("Registrations");
                 $n = 0;
                 foreach ($database->get_all("SELECT responded, data FROM registration ORDER BY responded DESC") as $row) {

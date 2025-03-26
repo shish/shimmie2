@@ -198,21 +198,21 @@ final class TranscodeImage extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $user, $database, $page;
+        global $page;
 
         switch ($event->action) {
             case self::ACTION_BULK_TRANSCODE:
                 if (!isset($event->params['transcode_mime'])) {
                     return;
                 }
-                if ($user->can(ImagePermission::EDIT_FILES)) {
+                if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
                     $mime = $event->params['transcode_mime'];
                     $total = 0;
                     $size_difference = 0;
                     foreach ($event->items as $image) {
                         try {
                             $before_size = $image->filesize;
-                            $database->with_savepoint(function () use ($image, $mime) {
+                            Ctx::$database->with_savepoint(function () use ($image, $mime) {
                                 $this->transcode_and_replace_image($image, $mime);
                             });
                             // If a subsequent transcode fails, the database needs to have everything about the previous

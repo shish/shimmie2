@@ -41,7 +41,6 @@ final class WikiTest extends ShimmiePHPUnitTestCase
 
     public function testDefault(): void
     {
-        global $user;
         self::log_in_as_admin();
 
         // Check default page is default
@@ -53,7 +52,7 @@ final class WikiTest extends ShimmiePHPUnitTestCase
         $wikipage = Wiki::get_page("wiki:default");
         $wikipage->revision = 1;
         $wikipage->body = "New Default Template";
-        send_event(new WikiUpdateEvent($user, $wikipage));
+        send_event(new WikiUpdateEvent(Ctx::$user, $wikipage));
 
         // Check that some random page is using the new default
         self::get_page("wiki/something");
@@ -70,7 +69,6 @@ final class WikiTest extends ShimmiePHPUnitTestCase
 
     public function testRevisions(): void
     {
-        global $user;
         self::log_in_as_admin();
 
         self::get_page("wiki/test");
@@ -80,7 +78,7 @@ final class WikiTest extends ShimmiePHPUnitTestCase
         $wikipage = Wiki::get_page("test");
         $wikipage->revision = $wikipage->revision + 1;
         $wikipage->body = "Mooooo 1";
-        send_event(new WikiUpdateEvent($user, $wikipage));
+        send_event(new WikiUpdateEvent(Ctx::$user, $wikipage));
         self::get_page("wiki/test");
         self::assert_text("Mooooo 1");
         self::assert_text("Revision 1");
@@ -88,7 +86,7 @@ final class WikiTest extends ShimmiePHPUnitTestCase
         $wikipage = Wiki::get_page("test");
         $wikipage->revision = $wikipage->revision + 1;
         $wikipage->body = "Mooooo 2";
-        send_event(new WikiUpdateEvent($user, $wikipage));
+        send_event(new WikiUpdateEvent(Ctx::$user, $wikipage));
         self::get_page("wiki/test");
         self::assert_text("Mooooo 2");
         self::assert_text("Revision 2");

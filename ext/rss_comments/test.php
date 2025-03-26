@@ -8,10 +8,9 @@ final class RSSCommentsTest extends ShimmiePHPUnitTestCase
 {
     public function testImageFeed(): void
     {
-        global $user;
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        send_event(new CommentPostingEvent($image_id, $user, "ASDFASDF"));
+        send_event(new CommentPostingEvent($image_id, Ctx::$user, "ASDFASDF"));
 
         self::get_page('rss/comments');
         //self::assert_mime(MimeType::RSS);

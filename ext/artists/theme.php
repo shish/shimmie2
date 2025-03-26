@@ -218,7 +218,7 @@ class ArtistsTheme extends Themelet
     */
     public function list_artists(array $artists, int $pageNumber, int $totalPages): void
     {
-        global $user, $page;
+        global $page;
 
         $deletionLinkActionArray = [
             'artist' => 'artist/nuke/',
@@ -254,8 +254,8 @@ class ArtistsTheme extends Themelet
                 TD($typeTextArray[$artist['type']]),
                 TD($user_link),
                 TD($artist['posts']),
-                $user->is_anonymous() ? null : TD($edit_link),
-                $user->can(ArtistsPermission::ADMIN) ? TD($del_link) : null,
+                Ctx::$user->is_anonymous() ? null : TD($edit_link),
+                Ctx::$user->can(ArtistsPermission::ADMIN) ? TD($del_link) : null,
             ]));
         }
 
@@ -267,7 +267,7 @@ class ArtistsTheme extends Themelet
                     TH("Type"),
                     TH("Last updater"),
                     TH("Posts"),
-                    $user->is_anonymous() ? null : TH(["colspan" => "2"], "Action")
+                    Ctx::$user->is_anonymous() ? null : TH(["colspan" => "2"], "Action")
                 )
             ),
             $tbody

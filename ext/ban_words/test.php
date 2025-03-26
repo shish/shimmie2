@@ -8,9 +8,8 @@ final class BanWordsTest extends ShimmiePHPUnitTestCase
 {
     public function check_blocked(int $image_id, string $words): void
     {
-        global $user;
         try {
-            send_event(new CommentPostingEvent($image_id, $user, $words));
+            send_event(new CommentPostingEvent($image_id, Ctx::$user, $words));
             self::fail("Exception not thrown");
         } catch (CommentPostingException $e) {
             self::assertEquals("Comment contains banned terms", $e->getMessage());

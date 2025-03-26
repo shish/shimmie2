@@ -53,7 +53,7 @@ final class Blocks extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $database, $page;
 
         $blocks = cache_get_or_set("blocks", fn () => $database->get_all("SELECT * FROM blocks"), 600);
         foreach ($blocks as $block) {
@@ -64,7 +64,7 @@ final class Blocks extends Extension
 
                 # Split by comma, trimming whitespaces, and not allowing empty elements.
                 $userclasses = preg_split('/\s*,+\s*/', strtolower($block['userclass'] ?? ""), 0, PREG_SPLIT_NO_EMPTY);
-                if (empty($userclasses) || in_array(strtolower($user->class->name), $userclasses)) {
+                if (empty($userclasses) || in_array(strtolower(Ctx::$user->class->name), $userclasses)) {
                     $page->add_block($b);
                 }
             }

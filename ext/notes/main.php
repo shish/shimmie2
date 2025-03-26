@@ -226,7 +226,7 @@ final class Notes extends Extension
 
     private function add_new_note(): int
     {
-        global $database, $user;
+        global $database;
 
         $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
 
@@ -237,7 +237,7 @@ final class Notes extends Extension
             [
                 'enable' => 1,
                 'image_id' => $note['image_id'],
-                'user_id' => $user->id,
+                'user_id' => Ctx::$user->id,
                 'user_ip' => Network::get_real_ip(),
                 'x1' => $note['x1'],
                 'y1' => $note['y1'],
@@ -249,7 +249,7 @@ final class Notes extends Extension
 
         $noteID = $database->get_last_insert_id('notes_id_seq');
 
-        Log::info("notes", "Note added {$noteID} by {$user->name}");
+        Log::info("notes", "Note added {$noteID} by " . Ctx::$user->name);
 
         $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id) WHERE id=:id", ['id' => $note['image_id']]);
 
@@ -269,20 +269,16 @@ final class Notes extends Extension
 
     private function add_note_request(int $image_id): void
     {
-        global $database, $user;
-
-        $user_id = $user->id;
-
-        $database->execute(
+        Ctx::$database->execute(
             "
 				INSERT INTO note_request (image_id, user_id, date)
 				VALUES (:image_id, :user_id, now())",
-            ['image_id' => $image_id, 'user_id' => $user_id]
+            ['image_id' => $image_id, 'user_id' => Ctx::$user->id]
         );
 
-        $resultID = $database->get_last_insert_id('note_request_id_seq');
+        $resultID = Ctx::$database->get_last_insert_id('note_request_id_seq');
 
-        Log::info("notes", "Note requested {$resultID} by {$user->name}");
+        Log::info("notes", "Note requested {$resultID} by " . Ctx::$user->name);
     }
 
     private function update_note(): void
@@ -304,29 +300,25 @@ final class Notes extends Extension
 
     private function delete_note(): void
     {
-        global $user;
-
         $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
         Ctx::$database->execute("
 			UPDATE notes SET enable = :enable
 			WHERE image_id = :image_id AND id = :id
 		", ['enable' => 0, 'image_id' => $note["image_id"], 'id' => $note["note_id"]]);
 
-        Log::info("notes", "Note deleted {$note["note_id"]} by {$user->name}");
+        Log::info("notes", "Note deleted {$note["note_id"]} by " . Ctx::$user->name);
     }
 
     private function nuke_notes(int $image_id): void
     {
-        global $user;
         Ctx::$database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id' => $image_id]);
-        Log::info("notes", "Notes deleted from {$image_id} by {$user->name}");
+        Log::info("notes", "Notes deleted from {$image_id} by " . Ctx::$user->name);
     }
 
     private function nuke_requests(int $image_id): void
     {
-        global $user;
         Ctx::$database->execute("DELETE FROM note_request WHERE image_id = :image_id", ['image_id' => $image_id]);
-        Log::info("notes", "Requests deleted from {$image_id} by {$user->name}");
+        Log::info("notes", "Requests deleted from {$image_id} by " . Ctx::$user->name);
     }
 
     private function get_notes_list(int $pageNumber): void
@@ -382,7 +374,7 @@ final class Notes extends Extension
 
     private function add_history(int $noteEnable, int $noteID, int $imageID, int $noteX1, int $noteY1, int $noteHeight, int $noteWidth, string $noteText): void
     {
-        global $user, $database;
+        global $database;
 
         $reviewID = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]);
         $reviewID = $reviewID + 1;
@@ -397,7 +389,7 @@ final class Notes extends Extension
                 'note_id' => $noteID,
                 'review_id' => $reviewID,
                 'image_id' => $imageID,
-                'user_id' => $user->id,
+                'user_id' => Ctx::$user->id,
                 'user_ip' => Network::get_real_ip(),
                 'x1' => $noteX1,
                 'y1' => $noteY1,

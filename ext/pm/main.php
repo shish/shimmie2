@@ -79,12 +79,12 @@ final class PM
     #[Field(extends: "User", name: "private_messages", type: "[PrivateMessage!]")]
     public static function get_pms(User $duser): ?array
     {
-        global $database, $user;
+        global $database;
 
-        if (!$user->can(PrivMsgPermission::READ_PM)) {
+        if (!Ctx::$user->can(PrivMsgPermission::READ_PM)) {
             return null;
         }
-        if (($duser->id !== $user->id) && !$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
+        if (($duser->id !== Ctx::$user->id) && !Ctx::$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
             return null;
         }
 
@@ -102,12 +102,12 @@ final class PM
     #[Field(extends: "User", name: "private_message_unread_count")]
     public static function count_unread_pms(User $duser): ?int
     {
-        global $database, $user;
+        global $database;
 
-        if (!$user->can(PrivMsgPermission::READ_PM)) {
+        if (!Ctx::$user->can(PrivMsgPermission::READ_PM)) {
             return null;
         }
-        if (($duser->id !== $user->id) && !$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
+        if (($duser->id !== Ctx::$user->id) && !Ctx::$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
             return null;
         }
 
@@ -120,11 +120,10 @@ final class PM
     #[Mutation(name: "create_private_message")]
     public static function send_pm(int $to_user_id, string $subject, string $message): bool
     {
-        global $user;
-        if (!$user->can(PrivMsgPermission::SEND_PM)) {
+        if (!Ctx::$user->can(PrivMsgPermission::SEND_PM)) {
             return false;
         }
-        send_event(new SendPMEvent(new PM($user->id, Network::get_real_ip(), $to_user_id, $subject, $message)));
+        send_event(new SendPMEvent(new PM(Ctx::$user->id, Network::get_real_ip(), $to_user_id, $subject, $message)));
         return true;
     }
 }
@@ -197,37 +196,38 @@ final class PrivMsg extends Extension
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $user;
         $duser = $event->display_user;
-        if (!$user->is_anonymous() && !$duser->is_anonymous()) {
+        if (!Ctx::$user->is_anonymous() && !$duser->is_anonymous()) {
             $pms = PM::get_pms($duser);
             if (!is_null($pms)) {
                 $this->theme->display_pms($pms);
             }
-            if ($user->can(PrivMsgPermission::SEND_PM) && $user->id !== $duser->id) {
-                $this->theme->display_composer($user, $duser);
+            if (Ctx::$user->can(PrivMsgPermission::SEND_PM) && Ctx::$user->id !== $duser->id) {
+                $this->theme->display_composer(Ctx::$user, $duser);
             }
         }
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $database, $page;
+        $user = Ctx::$user;
+        $page = Ctx::$page;
         if ($event->page_matches("pm/read/{pm_id}", permission: PrivMsgPermission::READ_PM)) {
             $pm_id = $event->get_iarg('pm_id');
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
                 throw new ObjectNotFound("No such PM");
-            } elseif (($pm["to_id"] === $user->id) || $user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
+            } elseif (($pm["to_id"] === Ctx::$user->id) || Ctx::$user->can(PrivMsgPermission::VIEW_OTHER_PMS)) {
                 $from_user = User::by_id((int)$pm["from_id"]);
-                if ($pm["to_id"] === $user->id) {
+                if ($pm["to_id"] === Ctx::$user->id) {
                     $database->execute("UPDATE private_message SET is_read=true WHERE id = :id", ["id" => $pm_id]);
-                    Ctx::$cache->delete("pm-count-{$user->id}");
+                    Ctx::$cache->delete("pm-count-".Ctx::$user->id);
                 }
                 $pmo = PM::from_row($pm);
-                $this->theme->display_message($from_user, $user, $pmo);
+                $this->theme->display_message($from_user, Ctx::$user, $pmo);
                 if ($user->can(PrivMsgPermission::SEND_PM)) {
-                    $this->theme->display_composer($user, $from_user, "Re: ".$pmo->subject);
+                    $this->theme->display_composer(Ctx::$user, $from_user, "Re: ".$pmo->subject);
                 }
             } else {
                 throw new PermissionDenied("You do not have permission to view this PM");
@@ -261,11 +261,8 @@ final class PrivMsg extends Extension
     public function onSendPM(SendPMEvent $event): void
     {
         Ctx::$database->execute(
-            "
-				INSERT INTO private_message(
-					from_id, from_ip, to_id,
-					sent_date, subject, message)
-				VALUES(:fromid, :fromip, :toid, now(), :subject, :message)",
+            "INSERT INTO private_message(from_id, from_ip, to_id, sent_date, subject, message)
+			VALUES(:fromid, :fromip, :toid, now(), :subject, :message)",
             ["fromid" => $event->pm->from_id, "fromip" => $event->pm->from_ip,
             "toid" => $event->pm->to_id, "subject" => $event->pm->subject, "message" => $event->pm->message]
         );

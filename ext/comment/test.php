@@ -15,46 +15,44 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
 
     public function testCommentsPage(): void
     {
-        global $user;
-
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
         # a good comment
-        send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
+        send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
         self::get_page("post/view/$image_id");
         self::assert_text("ASDFASDF");
 
         # dupe
         try {
-            send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
+            send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
         } catch (CommentPostingException $e) {
             self::assertStringContainsString("try and be more original", $e->getMessage());
         }
 
         # empty comment
         try {
-            send_event(new CommentPostingEvent($image_id, $user, ""));
+            send_event(new CommentPostingEvent($image_id, Ctx::$user, ""));
         } catch (CommentPostingException $e) {
             self::assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # whitespace is still empty...
         try {
-            send_event(new CommentPostingEvent($image_id, $user, " \t\r\n"));
+            send_event(new CommentPostingEvent($image_id, Ctx::$user, " \t\r\n"));
         } catch (CommentPostingException $e) {
             self::assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # repetitive (aka. gzip gives >= 10x improvement)
         try {
-            send_event(new CommentPostingEvent($image_id, $user, str_repeat("U", 5000)));
+            send_event(new CommentPostingEvent($image_id, Ctx::$user, str_repeat("U", 5000)));
         } catch (CommentPostingException $e) {
             self::assertStringContainsString("Comment too repetitive", $e->getMessage());
         }
 
         # test UTF8
-        send_event(new CommentPostingEvent($image_id, $user, "Test Comment むちむち"));
+        send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment むちむち"));
         self::get_page("post/view/$image_id");
         self::assert_text("むちむち");
 
@@ -84,18 +82,16 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
 
     public function testSingleDel(): void
     {
-        global $database, $user;
-
         self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
         # make a comment
-        send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
+        send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
         self::get_page("post/view/$image_id");
         self::assert_text("ASDFASDF");
 
         # delete a comment
-        $comment_id = (int)$database->get_one("SELECT id FROM comments");
+        $comment_id = (int)Ctx::$database->get_one("SELECT id FROM comments");
         send_event(new CommentDeletionEvent($comment_id));
         self::get_page("post/view/$image_id");
         self::assert_no_text("ASDFASDF");

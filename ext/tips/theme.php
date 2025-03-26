@@ -88,8 +88,6 @@ class TipsTheme extends Themelet
      */
     public function showAll(array $tips): void
     {
-        global $user, $page;
-
         $url = Url::base()."/ext/tips/images/";
         $tbody = TBODY();
         foreach ($tips as $tip) {
@@ -101,7 +99,7 @@ class TipsTheme extends Themelet
                         IMG(["src" => $url.$tip['image']])
                 ),
                 TD($tip['text']),
-                $user->can(TipsPermission::ADMIN) ? TD(A(["href" => make_link("tips/delete/".$tip['id'])], "Delete")) : null
+                Ctx::$user->can(TipsPermission::ADMIN) ? TD(A(["href" => make_link("tips/delete/".$tip['id'])], "Delete")) : null
             ));
         }
 
@@ -112,12 +110,12 @@ class TipsTheme extends Themelet
                     TH("Enabled"),
                     TH("Image"),
                     TH("Message"),
-                    $user->can(TipsPermission::ADMIN) ? TH("Action") : null
+                    Ctx::$user->can(TipsPermission::ADMIN) ? TH("Action") : null
                 )
             ),
             $tbody
         );
 
-        $page->add_block(new Block("All Tips", $html, "main", 20));
+        Ctx::$page->add_block(new Block("All Tips", $html, "main", 20));
     }
 }

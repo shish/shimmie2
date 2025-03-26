@@ -90,12 +90,13 @@ final class Forum extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        $user = Ctx::$user;
+        $page = Ctx::$page;
         if ($event->page_matches("forum/index", paged: true)) {
             $pageNumber = $event->get_iarg('page_num', 1) - 1;
             $this->show_last_threads($pageNumber, $user->can(ForumPermission::FORUM_ADMIN));
             if ($user->can(ForumPermission::FORUM_CREATE)) {
-                $this->theme->display_new_thread_composer($page);
+                $this->theme->display_new_thread_composer();
             }
         }
         if ($event->page_matches("forum/view/{threadID}", paged: true)) {

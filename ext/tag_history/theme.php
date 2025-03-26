@@ -138,13 +138,12 @@ class TagHistoryTheme extends Themelet
      */
     protected function history_entry(array $fields, bool $selected): HTMLElement
     {
-        global $user;
         $image_id = $fields['image_id'];
         $current_id = $fields['id'];
         $current_tags = $fields['tags'];
         $name = $fields['name'];
         $date_set = SHM_DATE($fields['date_set']);
-        $ip = $user->can(IPBanPermission::VIEW_IP) ?
+        $ip = Ctx::$user->can(IPBanPermission::VIEW_IP) ?
             emptyHTML(" ", SHM_IP($fields['user_ip'], "Tagging >>$image_id as '$current_tags'"))
             : null;
         $setter = A(["href" => make_link("user/" . url_escape($name))], $name);

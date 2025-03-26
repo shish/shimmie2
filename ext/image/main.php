@@ -35,7 +35,7 @@ final class ImageIO extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
 
         $thumb_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
         $thumb_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
@@ -43,7 +43,7 @@ final class ImageIO extends Extension
 
         if ($event->page_matches("image/delete", method: "POST")) {
             $image = Image::by_id_ex(int_escape($event->req_POST('image_id')));
-            if ($this->can_user_delete_image($user, $image)) {
+            if ($this->can_user_delete_image(Ctx::$user, $image)) {
                 send_event(new ImageDeletionEvent($image));
 
                 if (Ctx::$config->get_string(ImageConfig::ON_DELETE) === 'next') {
