@@ -22,8 +22,6 @@ class ApprovalTheme extends Themelet
 
     public function display_admin_form(): void
     {
-        global $page;
-
         $form = SHM_SIMPLE_FORM(
             make_link("admin/approval"),
             BUTTON(["name" => 'approval_action', "value" => 'approve_all'], "Approve All Posts"),
@@ -31,6 +29,6 @@ class ApprovalTheme extends Themelet
             BUTTON(["name" => 'approval_action', "value" => 'disapprove_all'], "Disapprove All Posts"),
         );
 
-        $page->add_block(new Block("Approval", $form));
+        Ctx::$page->add_block(new Block("Approval", $form));
     }
 }

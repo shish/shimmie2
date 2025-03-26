@@ -13,10 +13,6 @@ class HelpPagesTheme extends Themelet
      */
     public function display_list_page(array $pages): void
     {
-        global $page;
-
-        $page->set_title("Help Pages");
-
         $items = emptyHTML();
         foreach ($pages as $link => $desc) {
             $items->appendChild(
@@ -25,15 +21,15 @@ class HelpPagesTheme extends Themelet
             );
         }
 
+        $page = Ctx::$page;
+        $page->set_title("Help Pages");
         $page->add_block(new Block("Help", $items, "left", 0));
         $page->add_block(new Block("Help Pages", emptyHTML("See list of pages to left")));
     }
 
     public function display_help_page(string $title): void
     {
-        global $page;
-
-        $page->set_title("Help - $title");
+        Ctx::$page->set_title("Help - $title");
         $this->display_navigation();
     }
 }

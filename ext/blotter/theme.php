@@ -32,8 +32,6 @@ class BlotterTheme extends Themelet
      */
     public function display_editor(array $entries): void
     {
-        global $page;
-
         $tbody = TBODY();
         foreach ($entries as $entry) {
             $tbody->appendChild(
@@ -73,6 +71,8 @@ class BlotterTheme extends Themelet
                 )
             ),
         );
+
+        $page = Ctx::$page;
         $page->set_title("Blotter Editor");
         $page->add_block(new Block("Blotter Editor", $html, "main", 10));
         $this->display_navigation();
@@ -83,8 +83,6 @@ class BlotterTheme extends Themelet
      */
     public function display_blotter_page(array $entries): void
     {
-        global $page;
-
         $i_color = Ctx::$config->get_string(BlotterConfig::COLOR);
 
         $html = P();
@@ -98,8 +96,8 @@ class BlotterTheme extends Themelet
             $html->appendChild(emptyHTML($msg, BR(), BR()));
         }
 
-        $page->set_title("Blotter");
-        $page->add_block(new Block("Blotter Entries", $html, "main", 10));
+        Ctx::$page->set_title("Blotter");
+        Ctx::$page->add_block(new Block("Blotter Entries", $html, "main", 10));
     }
 
     /**
@@ -107,8 +105,6 @@ class BlotterTheme extends Themelet
      */
     public function display_blotter(array $entries): void
     {
-        global $page;
-
         $i_color = Ctx::$config->get_string(BlotterConfig::COLOR);
         $position = Ctx::$config->get_string(BlotterConfig::POSITION);
 
@@ -155,6 +151,6 @@ class BlotterTheme extends Themelet
         );
 
         $position = Ctx::$config->req_string(BlotterConfig::POSITION);
-        $page->add_block(new Block(null, $html, $position, 20));
+        Ctx::$page->add_block(new Block(null, $html, $position, 20));
     }
 }

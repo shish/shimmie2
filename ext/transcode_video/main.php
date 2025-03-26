@@ -47,14 +47,12 @@ final class TranscodeVideo extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if ($event->page_matches("transcode_video/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
             $image_obj = Image::by_id_ex($image_id);
             $this->transcode_and_replace_video($image_obj, $event->req_POST('transcode_format'));
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/".$image_id));
+            Ctx::$page->set_mode(PageMode::REDIRECT);
+            Ctx::$page->set_redirect(make_link("post/view/".$image_id));
         }
     }
 

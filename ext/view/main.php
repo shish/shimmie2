@@ -17,8 +17,7 @@ final class ViewPost extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         if ($event->page_matches("post/prev/{image_id}") || $event->page_matches("post/next/{image_id}")) {
             $image_id = $event->get_iarg('image_id');
 

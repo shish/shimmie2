@@ -13,8 +13,7 @@ class ViewPostTheme extends Themelet
 {
     public function display_meta_headers(Image $image): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $h_metatags = str_replace(" ", ", ", $image->get_tag_list());
         $page->add_html_header(META(["name" => "keywords", "content" => $h_metatags]));
         $page->add_html_header(META(["property" => "og:title", "content" => $h_metatags]));

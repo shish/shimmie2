@@ -59,7 +59,6 @@ class NotesTheme extends Themelet
      */
     public function display_note_system(int $image_id, array $recovered_notes, bool $adminOptions, bool $editOptions): void
     {
-        global $page;
         $to_json = [];
         foreach ($recovered_notes as $note) {
             $to_json[] = [
@@ -72,7 +71,7 @@ class NotesTheme extends Themelet
                 'note_id' => $note["id"],
             ];
         }
-        $page->add_html_header(SCRIPT(
+        Ctx::$page->add_html_header(SCRIPT(
             ["type" => "text/javascript"],
             \MicroHTML\rawHTML("
             window.notes = ".\Safe\json_encode($to_json).";
@@ -88,9 +87,9 @@ class NotesTheme extends Themelet
      */
     public function display_note_list(array $images, int $pageNumber, int $totalPages): void
     {
-        global $page;
         $thumbs = array_map(fn ($image) => $this->build_thumb($image), $images);
 
+        $page = Ctx::$page;
         $page->set_title("Notes");
         $page->add_block(new Block("Notes", joinHTML(" ", $thumbs), "main", 20));
         $this->display_paginator("note/list", null, $pageNumber, $totalPages);
@@ -101,10 +100,9 @@ class NotesTheme extends Themelet
      */
     public function display_note_requests(array $images, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
         $thumbs = array_map(fn ($image) => $this->build_thumb($image), $images);
 
+        $page = Ctx::$page;
         $page->set_title("Note Requests");
         $page->add_block(new Block("Note Requests", joinHTML(" ", $thumbs), "main", 20));
         $this->display_paginator("requests/list", null, $pageNumber, $totalPages);
@@ -148,8 +146,7 @@ class NotesTheme extends Themelet
      */
     public function display_histories(array $histories, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $page->set_title("Note Updates");
         $page->add_block(new Block("Note Updates", $this->get_history($histories), "main", 10));
         $this->display_paginator("note/updated", null, $pageNumber, $totalPages);
@@ -160,8 +157,7 @@ class NotesTheme extends Themelet
      */
     public function display_history(array $histories, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $page->set_title("Note History");
         $page->add_block(new Block("Note History", $this->get_history($histories), "main", 10));
         $this->display_paginator("note/updated", null, $pageNumber, $totalPages);
@@ -172,8 +168,7 @@ class NotesTheme extends Themelet
      */
     public function display_image_history(array $histories, int $imageID, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $page->set_title("Note History #$imageID");
         $page->set_heading("Note History #$imageID");
         $page->add_block(new Block("Note History #$imageID", $this->get_history($histories), "main", 10));

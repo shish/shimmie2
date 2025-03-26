@@ -12,8 +12,6 @@ final class RandomImage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if (
             $event->page_matches("random_image/{action}")
             || $event->page_matches("random_image/{action}/{search}")
@@ -30,6 +28,7 @@ final class RandomImage extends Extension
             } elseif ($action === "view") {
                 send_event(new DisplayingImageEvent($image));
             } elseif ($action === "widget") {
+                $page = Ctx::$page;
                 $page->set_mode(PageMode::DATA);
                 $page->set_mime(MimeType::HTML);
                 $page->set_data((string)$this->theme->build_thumb($image));

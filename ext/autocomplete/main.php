@@ -15,14 +15,13 @@ final class AutoComplete extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if ($event->page_matches("api/internal/autocomplete")) {
             $limit = (int)($event->get_GET("limit") ?? 1000);
             $s = $event->get_GET("s") ?? "";
 
             $res = $this->complete($s, $limit);
 
+            $page = Ctx::$page;
             $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::JSON);
             $page->set_data(\Safe\json_encode($res));

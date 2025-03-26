@@ -18,8 +18,6 @@ class WikiTheme extends Themelet
      */
     public function display_page(WikiPage $wiki_page, ?WikiPage $nav_page = null): void
     {
-        global $page;
-
         if (is_null($nav_page)) {
             $nav_page = new WikiPage();
             $nav_page->body = "";
@@ -36,10 +34,10 @@ class WikiTheme extends Themelet
             );
         }
 
+        $page = Ctx::$page;
         if (!$wiki_page->exists) {
             $page->set_code(404);
         }
-
         $page->set_title($wiki_page->title);
         $this->display_navigation();
         $page->add_block(new Block("Wiki Index", $body_html, "left", 20));

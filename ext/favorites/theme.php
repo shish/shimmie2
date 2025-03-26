@@ -18,8 +18,6 @@ class FavoritesTheme extends Themelet
      */
     public function display_people(array $usernames): void
     {
-        global $page;
-
         $i_favorites = count($usernames);
         $html = emptyHTML("$i_favorites people:");
 
@@ -28,7 +26,7 @@ class FavoritesTheme extends Themelet
             $html->appendChild(A(["href" => make_link("user/$username")], $username));
         }
 
-        $page->add_block(new Block("Favorited By", $html, "left", 25));
+        Ctx::$page->add_block(new Block("Favorited By", $html, "left", 25));
     }
 
     public function get_help_html(): HTMLElement

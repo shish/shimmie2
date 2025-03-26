@@ -15,8 +15,7 @@ class ETTheme extends Themelet
      */
     public function display_info_page(string $yaml, string $extra): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $page->set_title("System Info");
         $this->display_navigation();
         $page->add_block(new Block("Site Information", $this->build_data_form($yaml)));

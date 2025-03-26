@@ -10,8 +10,7 @@ final class StaticFiles extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         // hax.
         if ($page->mode == PageMode::PAGE && $this->count_main($page->blocks) == 0) {
             $h_pagename = html_escape(implode('/', $event->args));

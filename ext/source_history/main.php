@@ -105,12 +105,10 @@ final class SourceHistory extends Extension
      */
     private function process_revert_request(int $revert_id): void
     {
-        global $page;
-
         // check for the nothing case
         if ($revert_id < 1) {
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            Ctx::$page->set_mode(PageMode::REDIRECT);
+            Ctx::$page->set_redirect(make_link());
             return;
         }
 
@@ -141,8 +139,8 @@ final class SourceHistory extends Extension
         send_event(new SourceSetEvent($image, $stored_source));
 
         // all should be done now so redirect the user back to the image
-        $page->set_mode(PageMode::REDIRECT);
-        $page->set_redirect(make_link('post/view/'.$stored_image_id));
+        Ctx::$page->set_mode(PageMode::REDIRECT);
+        Ctx::$page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 
     private function process_bulk_revert_request(): void

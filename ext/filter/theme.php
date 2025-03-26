@@ -14,8 +14,6 @@ class FilterTheme extends Themelet
 {
     public function addFilterBox(): void
     {
-        global $page;
-
         // If user is not able to set their own filters, use the default filters.
         if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $tags = Ctx::$user->get_config()->get_string(FilterUserConfig::TAGS)
@@ -29,7 +27,7 @@ class FilterTheme extends Themelet
             A(["id" => "disable-all-filters", "href" => "#", "style" => "display: none;"], "Disable all"),
             A(["id" => "re-enable-all-filters", "href" => "#", "style" => "display: none;"], "Re-enable all")
         );
-        $page->add_html_header(META(['id' => 'filter-tags', 'tags' => $tags]));
-        $page->add_block(new Block("Filters", $html, "left", 10));
+        Ctx::$page->add_html_header(META(['id' => 'filter-tags', 'tags' => $tags]));
+        Ctx::$page->add_block(new Block("Filters", $html, "left", 10));
     }
 }

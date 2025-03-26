@@ -121,15 +121,13 @@ class IndexTheme extends Themelet
      */
     protected function display_page_header(array $images): void
     {
-        global $page;
-
         if (count($this->search_terms) === 0) {
             $page_title = Ctx::$config->req_string(SetupConfig::TITLE);
         } else {
             $search_string = implode(' ', $this->search_terms);
             $page_title = html_escape($search_string);
             if (count($images) > 0) {
-                $page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
+                Ctx::$page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
             }
         }
         /*
@@ -138,7 +136,7 @@ class IndexTheme extends Themelet
         }
         */
 
-        $page->set_title($page_title);
+        Ctx::$page->set_title($page_title);
     }
 
     /**

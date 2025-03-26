@@ -28,8 +28,6 @@ class TipsTheme extends Themelet
      */
     public function manageTips(array $images): void
     {
-        global $page;
-
         $select = SELECT(
             ["name" => "image"],
             OPTION(["value" => ""], "- Select Image -")
@@ -61,9 +59,9 @@ class TipsTheme extends Themelet
                 )
             )
         );
-        $page->set_title("Tips List");
+        Ctx::$page->set_title("Tips List");
         $this->display_navigation();
-        $page->add_block(new Block("Add Tip", $html, "main", 10));
+        Ctx::$page->add_block(new Block("Add Tip", $html, "main", 10));
     }
 
     /**
@@ -71,8 +69,6 @@ class TipsTheme extends Themelet
      */
     public function showTip(array $tip): void
     {
-        global $page;
-
         $url = Url::base()."/ext/tips/images/";
         $html = DIV(
             ["id" => "tips"],
@@ -80,7 +76,7 @@ class TipsTheme extends Themelet
             " ",
             $tip["text"]
         );
-        $page->add_block(new Block(null, $html, "subheading", 10));
+        Ctx::$page->add_block(new Block(null, $html, "subheading", 10));
     }
 
     /**

@@ -12,8 +12,7 @@ final class ReplaceFile extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         if ($event->page_matches("replace/{image_id}", method: "GET", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);

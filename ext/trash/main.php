@@ -23,13 +23,11 @@ final class Trash extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if ($event->page_matches("trash_restore/{image_id}", method: "POST", permission: TrashPermission::VIEW_TRASH)) {
             $image_id = $event->get_iarg('image_id');
             self::set_trash($image_id, false);
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/".$image_id));
+            Ctx::$page->set_mode(PageMode::REDIRECT);
+            Ctx::$page->set_redirect(make_link("post/view/".$image_id));
         }
     }
 
@@ -53,11 +51,9 @@ final class Trash extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $page;
-
         if (!$this->check_permissions(($event->image))) {
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            Ctx::$page->set_mode(PageMode::REDIRECT);
+            Ctx::$page->set_redirect(make_link());
         }
     }
 
