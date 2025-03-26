@@ -564,12 +564,10 @@ final class Pools extends Extension
 
     private function list_pools(int $pageNumber, string $search): void
     {
-        global $database, $page;
-
         $poolsPerPage = Ctx::$config->req_int(PoolsConfig::LISTS_PER_PAGE);
 
         $order_by = "";
-        $order = $page->get_cookie("ui-order-pool");
+        $order = Ctx::$page->get_cookie("ui-order-pool");
         if ($order === "created" || is_null($order)) {
             $order_by = "ORDER BY p.date DESC";
         } elseif ($order === "updated") {
@@ -741,8 +739,6 @@ final class Pools extends Extension
      */
     private function get_posts(int $pageNumber, int $poolID): void
     {
-        global $database;
-
         $pool = $this->get_single_pool($poolID);
         $imagesPerPage = Ctx::$config->req_int(PoolsConfig::IMAGES_PER_PAGE);
 

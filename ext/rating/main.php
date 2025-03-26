@@ -318,8 +318,6 @@ final class Ratings extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $user, $page;
-
         if ($event->page_matches("admin/bulk_rate", method: "POST", permission: RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
             $n = 0;
             while (true) {
@@ -335,6 +333,8 @@ final class Ratings extends Extension
                 }
                 $n += 100;
             }
+
+            $page = Ctx::$page;
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }

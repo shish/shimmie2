@@ -13,7 +13,7 @@ final class TagHistoryTest extends ShimmiePHPUnitTestCase
         // Set original
         self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "old_tag");
-        $image = Image::by_id_ex($image_id);
+        Image::by_id_ex($image_id);
 
         // Check post
         self::get_page("post/view/$image_id");

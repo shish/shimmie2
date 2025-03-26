@@ -82,8 +82,6 @@ final class BulkActions extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        global $page, $user;
-
         $babbe = new BulkActionBlockBuildingEvent();
         $babbe->search_terms = $event->search_terms;
 
@@ -169,7 +167,6 @@ final class BulkActions extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
         if ($event->page_matches("bulk_action", method: "POST", permission: BulkActionsPermission::PERFORM_BULK_ACTIONS)) {
             $action = $event->req_POST('bulk_action');
             $items = null;
@@ -190,6 +187,7 @@ final class BulkActions extends Extension
             $bae = send_event(new BulkActionEvent($action, $items, $event->POST));
 
             if ($bae->redirect) {
+                $page = Ctx::$page;
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(Url::referer_or());
             }

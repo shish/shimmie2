@@ -64,8 +64,6 @@ final class AvatarPost extends AvatarExtension
 
     public function get_avatar_html(User $user): HTMLElement|null
     {
-        global $database;
-
         $user_config = $user->get_config();
         $id = $user_config->get_int(AvatarPostUserConfig::AVATAR_ID);
         if ($id === null) {

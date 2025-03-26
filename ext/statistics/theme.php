@@ -52,17 +52,8 @@ class StatisticsTheme extends Themelet
         $table = TABLE(
             ["class" => "zebra stats-table"],
             THEAD(
-                TR(
-                    TH(
-                        ["colspan" => 3],
-                        B($title)
-                    )
-                ),
-                TR(
-                    TH([], "Place"),
-                    TH([], "Amount"),
-                    TH([], "User")
-                )
+                TR(TH(["colspan" => 3], B($title))),
+                TR(TH([], "Place"), TH([], "Amount"), TH([], "User"))
             ),
             TBODY($rows)
         );

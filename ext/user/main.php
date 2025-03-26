@@ -406,7 +406,7 @@ final class UserPage extends Extension
 
     public function onUserCreation(UserCreationEvent $event): void
     {
-        global $database, $page, $user;
+        global $user;
 
         $name = $event->username;
         //$pass = $event->password;
@@ -451,10 +451,10 @@ final class UserPage extends Extension
         $email = (!empty($event->email)) ? $event->email : null;
 
         // if there are currently no admins, the new user should be one
-        $need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
+        $need_admin = (Ctx::$database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
         $class = $need_admin ? 'admin' : 'user';
 
-        $database->execute(
+        Ctx::$database->execute(
             "INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
             ["username" => $event->username, "hash" => '', "email" => $email, "class" => $class]
         );
@@ -513,7 +513,7 @@ final class UserPage extends Extension
 
     private function show_user_info(): void
     {
-        global $user, $page;
+        global $user;
         // user info is shown on all pages
         if ($user->is_anonymous()) {
             $this->theme->display_login_block();
@@ -646,7 +646,7 @@ final class UserPage extends Extension
 
     private function delete_user(int $uid, bool $with_images = false, bool $with_comments = false): void
     {
-        global $user, $database, $page;
+        global $database, $page;
 
         $duser = User::by_id($uid);
         Log::warning("user", "Deleting user #{$uid} (@{$duser->name})");

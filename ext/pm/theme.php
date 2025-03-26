@@ -22,7 +22,7 @@ class PrivMsgTheme extends Themelet
      */
     public function display_pms(array $pms): void
     {
-        global $user, $page;
+        global $page;
 
         $tbody = TBODY();
         foreach ($pms as $pm) {
@@ -54,7 +54,7 @@ class PrivMsgTheme extends Themelet
 
     public function display_composer(User $from, User $to, string $subject = ""): void
     {
-        global $user, $page;
+        global $page;
         $html = SHM_SIMPLE_FORM(
             make_link("pm/send"),
             INPUT(["type" => "hidden", "name" => "to_id", "value" => $to->id]),

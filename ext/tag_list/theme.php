@@ -162,17 +162,6 @@ class TagListTheme extends Themelet
     protected function build_tag_row(array $row, array $search = []): HTMLElement
     {
         $tag = $row['tag'];
-        $count = $row['count'];
-
-        if (TagCategoriesInfo::is_enabled()) {
-            $tag_category_dict = TagCategories::getKeyedDict();
-            $tag_category = TagCategories::get_tag_category($tag);
-            $tag_body = TagCategories::get_tag_body($tag);
-        } else {
-            $tag_category_dict = [];
-            $tag_category = null;
-            $tag_body = $tag;
-        }
 
         $tr = TR();
 
@@ -202,7 +191,7 @@ class TagListTheme extends Themelet
         if (Ctx::$config->get_bool(TagListConfig::SHOW_NUMBERS)) {
             $tr->appendChild(TD(
                 ["class" => "tag_count_cell"],
-                SPAN(["class" => "tag_count"], $count)
+                SPAN(["class" => "tag_count"], $row['count'])
             ));
         }
 

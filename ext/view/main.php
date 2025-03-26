@@ -86,7 +86,7 @@ final class ViewPost extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $page, $user;
+        global $user;
         $image = $event->image;
 
         $this->theme->display_meta_headers($image);

@@ -9,7 +9,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
     public function testUserStats(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $this->post_image("tests/pbx_screenshot.jpg", "test");
 
         // broken with sqlite?
         self::get_page("user/test");

@@ -48,7 +48,7 @@ final class UserClass
     {
         $perms = [];
         foreach (PermissionGroup::get_subclasses() as $class) {
-            foreach ($class->getConstants() as $k => $v) {
+            foreach ($class->getConstants() as $_k => $v) {
                 if ($this->can($v)) {
                     $perms[] = $v;
                 }
@@ -69,7 +69,7 @@ final class UserClass
         } else {
             $min_dist = 9999;
             $min_ability = null;
-            foreach (UserClass::$known_classes['base']->abilities as $a => $cando) {
+            foreach (UserClass::$known_classes['base']->abilities as $_a => $cando) {
                 $v = levenshtein($ability, $a);
                 if ($v < $min_dist) {
                     $min_dist = $v;
