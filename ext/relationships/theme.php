@@ -18,8 +18,6 @@ class RelationshipsTheme extends Themelet
 {
     public function relationship_info(Image $image): void
     {
-        global $page;
-
         $parent = Search::get_images([$image['parent_id']]);
         if (!empty($parent)) {
             $visible_siblings = Relationships::has_siblings($image->id)
@@ -37,7 +35,7 @@ class RelationshipsTheme extends Themelet
                     DIV(["class" => "shm-sibling-thumbs"], joinHTML("", array_map(fn ($s) => $this->build_thumb($s), $visible_siblings))),
                 )
             );
-            $page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsParent"));
+            Ctx::$page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsParent"));
         }
 
         if ($image['has_children']) {
@@ -55,7 +53,7 @@ class RelationshipsTheme extends Themelet
                         DIV(["class" => "shm-child-thumbs"], ...array_map(fn ($child) => $this->build_thumb($child), $visible_children)),
                     )
                 );
-                $page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsChildren"));
+                Ctx::$page->add_block(new Block(null, $html, "main", 5, "PostRelationshipsChildren"));
             }
         }
     }

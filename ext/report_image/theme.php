@@ -27,8 +27,6 @@ class ReportImageTheme extends Themelet
      */
     public function display_reported_images(array $reports): void
     {
-        global $page;
-
         $tbody = TBODY();
         foreach ($reports as $report) {
             $iabbe = send_event(new ImageAdminBlockBuildingEvent($report['image'], Ctx::$user, "report"));
@@ -66,9 +64,9 @@ class ReportImageTheme extends Themelet
             $tbody,
         );
 
-        $page->set_title("Reported Posts");
+        Ctx::$page->set_title("Reported Posts");
         $this->display_navigation();
-        $page->add_block(new Block("Reported Posts", $html));
+        Ctx::$page->add_block(new Block("Reported Posts", $html));
     }
 
     /**

@@ -23,8 +23,6 @@ final class RegenThumb extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if ($event->page_matches("regen_thumb/one/{image_id}", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
             $image = Image::by_id_ex($event->get_iarg('image_id'));
 
@@ -40,8 +38,8 @@ final class RegenThumb extends Extension
                 $this->regenerate_thumbnail($image);
             }
 
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            Ctx::$page->set_mode(PageMode::REDIRECT);
+            Ctx::$page->set_redirect(make_link());
         }
     }
 

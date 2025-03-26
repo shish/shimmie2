@@ -35,8 +35,7 @@ final class ImageIO extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $thumb_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
         $thumb_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
         $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
@@ -134,8 +133,6 @@ final class ImageIO extends Extension
 
     private function redirect_to_next_image(Image $image, ?string $search = null): void
     {
-        global $page;
-
         if (!is_null($search)) {
             $search_terms = Tag::explode($search);
             $fragment = "search=" . url_escape($search);
@@ -152,8 +149,8 @@ final class ImageIO extends Extension
             $redirect_target = make_link("post/view/{$target_image->id}", fragment: $fragment);
         }
 
-        $page->set_mode(PageMode::REDIRECT);
-        $page->set_redirect($redirect_target);
+        Ctx::$page->set_mode(PageMode::REDIRECT);
+        Ctx::$page->set_redirect($redirect_target);
     }
 
     private function can_user_delete_image(User $user, Image $image): bool
@@ -169,8 +166,7 @@ final class ImageIO extends Extension
      */
     private function send_file(int $image_id, string $type, array $params): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $image = Image::by_id_ex($image_id);
 
         if ($type === "thumb") {

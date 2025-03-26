@@ -42,8 +42,7 @@ final class DanbooruApi extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         if ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
             // No XML data is returned from this function
             $page->set_mode(PageMode::DATA);

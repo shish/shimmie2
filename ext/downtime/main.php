@@ -17,13 +17,12 @@ final class Downtime extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if (Ctx::$config->req_bool(DowntimeConfig::DOWNTIME)) {
             if (!Ctx::$user->can(DowntimePermission::IGNORE_DOWNTIME) && !$this->is_safe_page($event)) {
                 $msg = Ctx::$config->req_string(DowntimeConfig::MESSAGE);
                 $this->theme->display_message($msg);
                 if (!defined("UNITTEST")) {  // hax D:
+                    $page = Ctx::$page;
                     header("HTTP/1.1 {$page->code} Downtime");
                     print($page->data);
                     exit;

@@ -158,8 +158,7 @@ final class TagHistory extends Extension
      */
     private function process_revert_request(int $revert_id): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         // check for the nothing case
         if ($revert_id < 1) {
             $page->set_mode(PageMode::REDIRECT);

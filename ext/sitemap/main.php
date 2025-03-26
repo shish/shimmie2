@@ -21,8 +21,6 @@ final class XMLSitemap extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("sitemap.xml")) {
-            global $page;
-
             $cache_path = Filesystem::data_path("cache/sitemap.xml");
 
             if ($this->new_sitemap_needed($cache_path)) {
@@ -31,9 +29,9 @@ final class XMLSitemap extends Extension
             }
 
             $xml = $cache_path->get_contents();
-            $page->set_mode(PageMode::DATA);
-            $page->set_mime(MimeType::XML_APPLICATION);
-            $page->set_data($xml);
+            Ctx::$page->set_mode(PageMode::DATA);
+            Ctx::$page->set_mime(MimeType::XML_APPLICATION);
+            Ctx::$page->set_data($xml);
         }
     }
 

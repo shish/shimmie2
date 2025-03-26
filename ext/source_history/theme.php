@@ -61,8 +61,6 @@ class SourceHistoryTheme extends Themelet
      */
     public function display_admin_block(string $validation_msg = ''): void
     {
-        global $page;
-
         $html = emptyHTML(
             "Revert source changes by a specific IP address or username, optionally limited to recent changes.",
             empty($validation_msg) ? null : emptyHTML(BR(), B($validation_msg)),
@@ -90,7 +88,7 @@ class SourceHistoryTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Mass Source Revert", $html));
+        Ctx::$page->add_block(new Block("Mass Source Revert", $html));
     }
 
     /*

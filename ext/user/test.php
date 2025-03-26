@@ -50,8 +50,6 @@ final class UserPageTest extends ShimmiePHPUnitTestCase
 
     public function testCreateOther(): void
     {
-        global $page;
-
         self::assertException(PermissionDenied::class, function () {
             self::log_out();
             self::post_page('user_admin/create_other', [
@@ -64,7 +62,7 @@ final class UserPageTest extends ShimmiePHPUnitTestCase
         self::assertException(UserNotFound::class, function () {User::by_name('testnew');});
 
         self::log_in_as_admin();
-        self::post_page('user_admin/create_other', [
+        $page = self::post_page('user_admin/create_other', [
             'name' => 'testnew',
             'pass1' => 'testnew',
             'pass2' => 'testnew',

@@ -22,8 +22,6 @@ class PrivMsgTheme extends Themelet
      */
     public function display_pms(array $pms): void
     {
-        global $page;
-
         $tbody = TBODY();
         foreach ($pms as $pm) {
             $from = User::by_id_dangerously_cached($pm->from_id);
@@ -49,12 +47,11 @@ class PrivMsgTheme extends Themelet
             THEAD(TR(TH("R?"), TH("Subject"), TH("From"), TH("Date"), TH("Action"))),
             $tbody
         );
-        $page->add_block(new Block("Private Messages", $html, "main", 40, "private-messages"));
+        Ctx::$page->add_block(new Block("Private Messages", $html, "main", 40, "private-messages"));
     }
 
     public function display_composer(User $from, User $to, string $subject = ""): void
     {
-        global $page;
         $html = SHM_SIMPLE_FORM(
             make_link("pm/send"),
             INPUT(["type" => "hidden", "name" => "to_id", "value" => $to->id]),
@@ -68,12 +65,12 @@ class PrivMsgTheme extends Themelet
                 TR(TD(["colspan" => 2], SHM_SUBMIT("Send")))
             ),
         );
-        $page->add_block(new Block("Write a PM", $html, "main", 50));
+        Ctx::$page->add_block(new Block("Write a PM", $html, "main", 50));
     }
 
     public function display_message(User $from, User $to, PM $pm): void
     {
-        global $page;
+        $page = Ctx::$page;
         $page->set_title("Private Message");
         $page->set_heading($pm->subject);
         $this->display_navigation();

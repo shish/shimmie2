@@ -37,14 +37,12 @@ class ArtistsTheme extends Themelet
 
     public function sidebar_options(string $mode, ?int $artistID = null, bool $is_admin = false): void
     {
-        global $page;
-
         if ($mode === "neutral") {
             $html = SHM_SIMPLE_FORM(
                 make_link("artist/new_artist"),
                 SHM_SUBMIT("New Artist")
             );
-            $page->add_block(new Block("Manage Artists", $html, "left", 10));
+            Ctx::$page->add_block(new Block("Manage Artists", $html, "left", 10));
         }
 
         if ($mode === "editor") {
@@ -82,7 +80,7 @@ class ArtistsTheme extends Themelet
                 INPUT(["type" => "hidden", "name" => "artist_id", "value" => $artistID]),
                 SHM_SUBMIT("Add URL")
             );
-            $page->add_block(new Block("Manage Artists", joinHTML("", $html), "left", 10));
+            Ctx::$page->add_block(new Block("Manage Artists", joinHTML("", $html), "left", 10));
         }
     }
 
@@ -94,8 +92,6 @@ class ArtistsTheme extends Themelet
      */
     public function show_artist_editor(array $artist, array $aliases, array $members, array $urls): void
     {
-        global $page;
-
         $artistName = $artist['name'];
         $artistNotes = $artist['notes'];
         $artistID = $artist['id'];
@@ -172,13 +168,11 @@ class ArtistsTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block("Edit artist", $html, "main", 10));
+        Ctx::$page->add_block(new Block("Edit artist", $html, "main", 10));
     }
 
     public function new_artist_composer(): void
     {
-        global $page;
-
         $html = SHM_SIMPLE_FORM(
             make_link("artist/create"),
             TABLE(
@@ -209,8 +203,8 @@ class ArtistsTheme extends Themelet
             )
         );
 
-        $page->set_title("Artists");
-        $page->add_block(new Block("Artists", $html, "main", 10));
+        Ctx::$page->set_title("Artists");
+        Ctx::$page->add_block(new Block("Artists", $html, "main", 10));
     }
 
     /**
@@ -218,8 +212,6 @@ class ArtistsTheme extends Themelet
     */
     public function list_artists(array $artists, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
         $deletionLinkActionArray = [
             'artist' => 'artist/nuke/',
             'alias' => 'artist/alias/delete/',
@@ -273,6 +265,7 @@ class ArtistsTheme extends Themelet
             $tbody
         );
 
+        $page = Ctx::$page;
         $page->set_title("Artists");
         $page->add_block(new Block("Artists", $html, "main", 10));
         $this->display_paginator("artist/list", null, $pageNumber, $totalPages);
@@ -280,8 +273,6 @@ class ArtistsTheme extends Themelet
 
     public function show_new_alias_composer(int $artistID): void
     {
-        global $page;
-
         $html = SHM_SIMPLE_FORM(
             make_link("artist/alias/add"),
             TABLE(
@@ -297,13 +288,11 @@ class ArtistsTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Artist Aliases", $html, "main", 20));
+        Ctx::$page->add_block(new Block("Artist Aliases", $html, "main", 20));
     }
 
     public function show_new_member_composer(int $artistID): void
     {
-        global $page;
-
         $html = SHM_SIMPLE_FORM(
             make_link("artist/member/add"),
             TABLE(
@@ -319,13 +308,11 @@ class ArtistsTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Artist members", $html, "main", 30));
+        Ctx::$page->add_block(new Block("Artist members", $html, "main", 30));
     }
 
     public function show_new_url_composer(int $artistID): void
     {
-        global $page;
-
         $html = SHM_SIMPLE_FORM(
             make_link("artist/url/add"),
             TABLE(
@@ -341,7 +328,7 @@ class ArtistsTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Artist URLs", $html, "main", 40));
+        Ctx::$page->add_block(new Block("Artist URLs", $html, "main", 40));
     }
 
     /**
@@ -349,8 +336,6 @@ class ArtistsTheme extends Themelet
      */
     public function show_alias_editor(array $alias): void
     {
-        global $page;
-
         $html = SHM_SIMPLE_FORM(
             make_link("artist/alias/edited/".$alias['id']),
             LABEL(["for" => "alias"], "Alias:"),
@@ -358,7 +343,7 @@ class ArtistsTheme extends Themelet
             INPUT(["type" => "hidden", "name" => "aliasID", "value" => $alias['id']]),
             SHM_SUBMIT("Submit")
         );
-        $page->add_block(new Block("Edit Alias", $html, "main", 10));
+        Ctx::$page->add_block(new Block("Edit Alias", $html, "main", 10));
     }
 
     /**
@@ -366,8 +351,6 @@ class ArtistsTheme extends Themelet
      */
     public function show_url_editor(array $url): void
     {
-        global $page;
-
         $html = SHM_SIMPLE_FORM(
             make_link("artist/url/edited/".$url['id']),
             LABEL(["for" => "url"], "URL:"),
@@ -375,7 +358,7 @@ class ArtistsTheme extends Themelet
             INPUT(["type" => "hidden", "name" => "urlID", "value" => $url['id']]),
             SHM_SUBMIT("Submit")
         );
-        $page->add_block(new Block("Edit URL", $html, "main", 10));
+        Ctx::$page->add_block(new Block("Edit URL", $html, "main", 10));
     }
 
     /**
@@ -383,8 +366,6 @@ class ArtistsTheme extends Themelet
      */
     public function show_member_editor(array $member): void
     {
-        global $page;
-
         $html = SHM_SIMPLE_FORM(
             make_link("artist/member/edited/".$member['id']),
             LABEL(["for" => "name"], "Member name:"),
@@ -392,7 +373,7 @@ class ArtistsTheme extends Themelet
             INPUT(["type" => "hidden", "name" => "memberID", "value" => $member['id']]),
             SHM_SUBMIT("Submit")
         );
-        $page->add_block(new Block("Edit Member", $html, "main", 10));
+        Ctx::$page->add_block(new Block("Edit Member", $html, "main", 10));
     }
 
     /**
@@ -404,8 +385,6 @@ class ArtistsTheme extends Themelet
      */
     public function show_artist(array $artist, array $aliases, array $members, array $urls, array $images, bool $userIsLogged, bool $userIsAdmin): void
     {
-        global $page;
-
         $html = TABLE(
             ["id" => "poolsList", "class" => "zebra"],
             TR(TH("Name"), TD(A(["href" => search_link([$artist['name']])], str_replace("_", " ", $artist['name'])))),
@@ -414,6 +393,8 @@ class ArtistsTheme extends Themelet
             $this->render_urls($urls, $userIsLogged, $userIsAdmin),
             TR(TH("Notes"), TD($artist["notes"])),
         );
+
+        $page = Ctx::$page;
         $page->set_title("Artist");
         $page->add_block(new Block("Artist", $html, "main", 10));
 

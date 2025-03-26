@@ -10,8 +10,7 @@ final class CustomHtmlHeaders extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $header = Ctx::$config->get_string(CustomHtmlHeadersConfig::CUSTOM_HTML_HEADERS);
         if (!empty($header)) {
             $page->add_html_header(\MicroHTML\rawHTML($header));

@@ -10,15 +10,13 @@ final class System extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if ($event->page_matches("system")) {
             $e = send_event(new PageSubNavBuildingEvent("system"));
             usort($e->links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
             $link = $e->links[0]->link;
 
-            $page->set_redirect($link);
-            $page->set_mode(PageMode::REDIRECT);
+            Ctx::$page->set_redirect($link);
+            Ctx::$page->set_mode(PageMode::REDIRECT);
         }
     }
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
