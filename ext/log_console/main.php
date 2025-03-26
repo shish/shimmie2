@@ -26,7 +26,6 @@ final class LogConsole extends Extension
             Log::debug("log_console", "Hello debug!");
             Log::info("log_console", "Hello info!");
             Log::warning("log_console", "Hello warning!");
-            $page->set_mode(PageMode::DATA);
             $page->set_data("You should see something in the log\n");
         }
         */

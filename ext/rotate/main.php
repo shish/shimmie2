@@ -47,7 +47,6 @@ final class RotateImage extends Extension
 
             /* Attempt to rotate the image */
             $this->rotate_image($image_id, $deg);
-            Ctx::$page->set_mode(PageMode::REDIRECT);
             Ctx::$page->set_redirect(make_link("post/view/".$image_id));
         }
     }

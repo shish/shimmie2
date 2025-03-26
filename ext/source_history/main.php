@@ -107,7 +107,6 @@ final class SourceHistory extends Extension
     {
         // check for the nothing case
         if ($revert_id < 1) {
-            Ctx::$page->set_mode(PageMode::REDIRECT);
             Ctx::$page->set_redirect(make_link());
             return;
         }
@@ -139,7 +138,6 @@ final class SourceHistory extends Extension
         send_event(new SourceSetEvent($image, $stored_source));
 
         // all should be done now so redirect the user back to the image
-        Ctx::$page->set_mode(PageMode::REDIRECT);
         Ctx::$page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 

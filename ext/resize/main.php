@@ -101,9 +101,7 @@ final class ResizeImage extends Extension
             $height = int_escape($event->get_POST('resize_height'));
             if ($width || $height) {
                 $this->resize_image($image, $width, $height);
-                $page = Ctx::$page;
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("post/view/".$image_id));
+                Ctx::$page->set_redirect(make_link("post/view/".$image_id));
             }
         }
     }

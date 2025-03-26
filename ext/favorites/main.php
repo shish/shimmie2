@@ -58,7 +58,6 @@ final class Favorites extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         if (Ctx::$user->is_anonymous()) {
             return;
         } // FIXME: proper permissions
@@ -66,14 +65,12 @@ final class Favorites extends Extension
         if ($event->page_matches("favourite/add/{image_id}", method: "POST")) {
             $image_id = $event->get_iarg('image_id');
             send_event(new FavoriteSetEvent($image_id, Ctx::$user, true));
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/$image_id"));
+            Ctx::$page->set_redirect(make_link("post/view/$image_id"));
         }
         if ($event->page_matches("favourite/remove/{image_id}", method: "POST")) {
             $image_id = $event->get_iarg('image_id');
             send_event(new FavoriteSetEvent($image_id, Ctx::$user, false));
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/$image_id"));
+            Ctx::$page->set_redirect(make_link("post/view/$image_id"));
         }
     }
 

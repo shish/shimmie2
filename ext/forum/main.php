@@ -121,43 +121,33 @@ final class Forum extends Extension
         }
         if ($event->page_matches("forum/create", permission: ForumPermission::FORUM_CREATE)) {
             $errors = $this->sanity_check_new_thread();
-
             if (count($errors) > 0) {
                 throw new InvalidInput(implode("<br>", $errors));
             }
-
             $newThreadID = $this->save_new_thread($user);
             $this->save_new_post($newThreadID, $user);
             $redirectTo = "forum/view/" . $newThreadID . "/1";
-
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link($redirectTo));
         }
         if ($event->page_matches("forum/delete/{threadID}/{postID}", permission: ForumPermission::FORUM_ADMIN)) {
             $threadID = $event->get_iarg('threadID');
             $postID = $event->get_iarg('postID');
             $this->delete_post($postID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("forum/view/" . $threadID));
         }
         if ($event->page_matches("forum/nuke/{threadID}", permission: ForumPermission::FORUM_ADMIN)) {
             $threadID = $event->get_iarg('threadID');
             $this->delete_thread($threadID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("forum/index"));
         }
         if ($event->page_matches("forum/answer", permission: ForumPermission::FORUM_CREATE)) {
             $threadID = int_escape($event->req_POST("threadID"));
             $total_pages = $this->get_total_pages_for_thread($threadID);
-
             $errors = $this->sanity_check_new_post();
-
             if (count($errors) > 0) {
                 throw new InvalidInput(implode("<br>", $errors));
             }
             $this->save_new_post($threadID, $user);
-
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("forum/view/" . $threadID . "/" . $total_pages));
         }
 

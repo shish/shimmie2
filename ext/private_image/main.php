@@ -18,7 +18,6 @@ final class PrivateImage extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         $user = Ctx::$user;
-        $page = Ctx::$page;
 
         if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
@@ -28,8 +27,7 @@ final class PrivateImage extends Extension
             }
 
             self::privatize_image($image_id);
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/" . $image_id));
+            Ctx::$page->set_redirect(make_link("post/view/" . $image_id));
         }
 
         if ($event->page_matches("publicize_image/{image_id}", method: "POST")) {
@@ -40,8 +38,7 @@ final class PrivateImage extends Extension
             }
 
             self::publicize_image($image_id);
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/".$image_id));
+            Ctx::$page->set_redirect(make_link("post/view/".$image_id));
         }
 
         if ($event->page_matches("user_admin/private_image", method: "POST")) {
@@ -55,8 +52,7 @@ final class PrivateImage extends Extension
             $user->get_config()->set_bool(PrivateImageUserConfig::SET_DEFAULT, $set_default);
             $user->get_config()->set_bool(PrivateImageUserConfig::VIEW_DEFAULT, $view_default);
 
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("user"));
+            Ctx::$page->set_redirect(make_link("user"));
         }
     }
 
@@ -67,9 +63,7 @@ final class PrivateImage extends Extension
             && $event->image->owner_id !== Ctx::$user->id
             && !Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)
         ) {
-            $page = Ctx::$page;
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            Ctx::$page->set_redirect(make_link());
         }
     }
 

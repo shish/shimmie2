@@ -187,14 +187,12 @@ final class CommentList extends Extension
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $i_iid = int_escape($event->req_POST('image_id'));
             send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->req_POST('comment')));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
         }
         if ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: CommentPermission::DELETE_COMMENT)) {
             // FIXME: post, not args
             send_event(new CommentDeletionEvent($event->get_iarg('comment_id')));
             $page->flash("Deleted comment");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(Url::referer_or(make_link("post/view/" . $event->get_iarg('image_id'))));
         }
         if ($event->page_matches("comment/bulk_delete", method: "POST", permission: CommentPermission::DELETE_COMMENT)) {
@@ -211,8 +209,6 @@ final class CommentList extends Extension
                 send_event(new CommentDeletionEvent($cid));
             }
             $page->flash("Deleted $num comments");
-
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("admin"));
         }
         if ($event->page_matches("comment/list", paged: true)) {

@@ -71,13 +71,11 @@ final class AutoTagger extends Extension
         if ($event->page_matches("auto_tag/add", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
             send_event(new AddAutoTagEvent($input['c_tag'], $input['c_additional_tags']));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("auto_tag/list"));
         }
         if ($event->page_matches("auto_tag/remove", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["d_tag" => "string"]);
             send_event(new DeleteAutoTagEvent($input['d_tag']));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("auto_tag/list"));
         }
         if ($event->page_matches("auto_tag/list")) {
@@ -92,7 +90,6 @@ final class AutoTagger extends Extension
             $this->theme->display_auto_tagtable($t->table($t->query()), $t->paginator());
         }
         if ($event->page_matches("auto_tag/export/auto_tag.csv")) {
-            $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::CSV);
             $page->set_filename("auto_tag.csv");
             $page->set_data($this->get_auto_tag_csv(Ctx::$database));
@@ -103,7 +100,6 @@ final class AutoTagger extends Extension
                 $contents = \Safe\file_get_contents($tmp);
                 $count = $this->add_auto_tag_csv($contents);
                 Log::info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("auto_tag/list"));
             } else {
                 throw new InvalidInput("No File Specified");

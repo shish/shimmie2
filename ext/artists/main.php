@@ -169,13 +169,11 @@ final class Artists extends Extension
             }
         }
         if ($event->page_matches("artist/new_artist")) {
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/new"));
         }
         if ($event->page_matches("artist/create")) {
             if (!$user->is_anonymous()) {
                 $newArtistID = $this->add_artist();
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("artist/view/" . $newArtistID));
             } else {
                 throw new PermissionDenied("You must be registered and logged in to create a new artist.");
@@ -222,24 +220,20 @@ final class Artists extends Extension
         }
         if ($event->page_matches("artist/edit_artist")) {
             $artistID = int_escape($event->req_POST('artist_id'));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/edit/" . $artistID));
         }
         if ($event->page_matches("artist/edited")) {
             $artistID = int_escape($event->get_POST('id'));
             $this->update_artist();
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/nuke_artist")) {
             $artistID = int_escape($event->req_POST('artist_id'));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/nuke/" . $artistID));
         }
         if ($event->page_matches("artist/nuke/{artistID}")) {
             $artistID = $event->get_iarg('artistID');
             $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/list"));
         }
         if ($event->page_matches("artist/add_alias")) {
@@ -257,14 +251,12 @@ final class Artists extends Extension
         if ($event->page_matches("artist/alias/add")) {
             $artistID = int_escape($event->req_POST('artist_id'));
             $this->add_alias();
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/alias/delete/{aliasID}")) {
             $aliasID = $event->get_iarg('aliasID');
             $artistID = $this->get_artistID_by_aliasID($aliasID);
             $this->delete_alias($aliasID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/alias/edit/{aliasID}")) {
@@ -276,20 +268,17 @@ final class Artists extends Extension
             $this->update_alias();
             $aliasID = int_escape($event->req_POST('aliasID'));
             $artistID = $this->get_artistID_by_aliasID($aliasID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/url/add")) {
             $artistID = int_escape($event->req_POST('artist_id'));
             $this->add_urls();
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/url/delete/{urlID}")) {
             $urlID = $event->get_iarg('urlID');
             $artistID = $this->get_artistID_by_urlID($urlID);
             $this->delete_url($urlID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/url/edit/{urlID}")) {
@@ -301,20 +290,17 @@ final class Artists extends Extension
             $this->update_url();
             $urlID = int_escape($event->req_POST('urlID'));
             $artistID = $this->get_artistID_by_urlID($urlID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/member/add")) {
             $artistID = int_escape($event->req_POST('artist_id'));
             $this->add_members();
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/member/delete/{memberID}")) {
             $memberID = $event->get_iarg('memberID');
             $artistID = $this->get_artistID_by_memberID($memberID);
             $this->delete_member($memberID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/member/edit/{memberID}")) {
@@ -326,7 +312,6 @@ final class Artists extends Extension
             $this->update_member();
             $memberID = int_escape($event->req_POST('memberID'));
             $artistID = $this->get_artistID_by_memberID($memberID);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
     }

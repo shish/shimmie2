@@ -55,8 +55,6 @@ final class Tips extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $page = Ctx::$page;
-
         $this->getTip();
 
         if ($event->page_matches("tips/list", permission: TipsPermission::ADMIN)) {
@@ -69,22 +67,19 @@ final class Tips extends Extension
                 $event->req_POST("image"),
                 $event->req_POST("text")
             ));
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("tips/list"));
+            Ctx::$page->set_redirect(make_link("tips/list"));
         }
         if ($event->page_matches("tips/status/{tipID}", permission: TipsPermission::ADMIN)) {
             // FIXME: HTTP GET CSRF
             $tipID = $event->get_iarg('tipID');
             $this->setStatus($tipID);
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("tips/list"));
+            Ctx::$page->set_redirect(make_link("tips/list"));
         }
         if ($event->page_matches("tips/delete/{tipID}", permission: TipsPermission::ADMIN)) {
             // FIXME: HTTP GET CSRF
             $tipID = $event->get_iarg('tipID');
             send_event(new DeleteTipEvent($tipID));
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("tips/list"));
+            Ctx::$page->set_redirect(make_link("tips/list"));
         }
     }
 

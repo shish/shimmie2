@@ -17,7 +17,6 @@ final class ViewPost extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $page = Ctx::$page;
         if ($event->page_matches("post/prev/{image_id}") || $event->page_matches("post/next/{image_id}")) {
             $image_id = $event->get_iarg('image_id');
 
@@ -42,8 +41,7 @@ final class ViewPost extends Extension
                 throw new PostNotFound("No more posts");
             }
 
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/{$image->id}", fragment: $fragment));
+            Ctx::$page->set_redirect(make_link("post/view/{$image->id}", fragment: $fragment));
         } elseif ($event->page_matches("post/view/{image_id}")) {
             if (!is_numeric($event->get_arg('image_id'))) {
                 // For some reason there exists some very broken mobile client
@@ -61,14 +59,13 @@ final class ViewPost extends Extension
             $image = Image::by_id_ex($image_id);
             if (!$image->is_locked() || Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
                 send_event(new ImageInfoSetEvent($image, 0, only_strings($event->POST)));
-                $page->set_mode(PageMode::REDIRECT);
 
                 if ($event->get_GET('search')) {
                     $fragment = "search=" . url_escape($event->get_GET('search'));
                 } else {
                     $fragment = null;
                 }
-                $page->set_redirect(make_link("post/view/$image_id", fragment: $fragment));
+                Ctx::$page->set_redirect(make_link("post/view/$image_id", fragment: $fragment));
             } else {
                 throw new PermissionDenied("An admin has locked this post");
             }

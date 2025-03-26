@@ -25,7 +25,6 @@ final class StaticFiles extends Extension
 
                 $page->add_http_header("Cache-control: public, max-age=600");
                 $page->add_http_header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
-                $page->set_mode(PageMode::DATA);
                 $page->set_mime(MimeType::get_for_file($file));
                 $page->set_data($file->get_contents());
             }

@@ -16,7 +16,6 @@ final class System extends Extension
             $link = $e->links[0]->link;
 
             Ctx::$page->set_redirect($link);
-            Ctx::$page->set_mode(PageMode::REDIRECT);
         }
     }
     public function onPageNavBuilding(PageNavBuildingEvent $event): void

@@ -186,7 +186,6 @@ final class Pools extends Extension
             || $event->page_matches("pool/list/{search}", paged: true)
         ) { //index
             if ($event->get_GET('search')) {
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link('pool/list/'. url_escape($event->get_GET('search')) . "/{$event->page_num}"));
                 return;
             }
@@ -206,7 +205,6 @@ final class Pools extends Extension
                     $event->req_POST("description")
                 )
             );
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pce->new_id));
         }
         if ($event->page_matches("pool/view/{pool_id}", method: "GET", paged: true)) {
@@ -219,7 +217,6 @@ final class Pools extends Extension
         if ($event->page_matches("pool/revert/{history_id}", method: "POST", permission: PoolsPermission::UPDATE)) {
             $history_id = $event->get_iarg('history_id');
             $this->revert_history($history_id);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/updated"));
         }
         if ($event->page_matches("pool/edit/{pool_id}")) {
@@ -260,7 +257,6 @@ final class Pools extends Extension
                     );
                 }
             }
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
         if ($event->page_matches("pool/reverse/{pool_id}", method: "POST")) {
@@ -286,7 +282,6 @@ final class Pools extends Extension
                     $image_order = $image_order + 1;
                 }
             });
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
         if ($event->page_matches("pool/import/{pool_id}")) {
@@ -308,7 +303,6 @@ final class Pools extends Extension
 
             send_event(new PoolAddPostsEvent($pool_id, [$image_id]));
             $page->flash("Post added to {$pool->title}");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
         if ($event->page_matches("pool/add_posts/{pool_id}")) {
@@ -318,7 +312,6 @@ final class Pools extends Extension
 
             $image_ids = array_map(intval(...), $event->req_POST_array('check'));
             send_event(new PoolAddPostsEvent($pool_id, $image_ids));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
         if ($event->page_matches("pool/remove_posts/{pool_id}")) {
@@ -339,7 +332,6 @@ final class Pools extends Extension
                 ["pid" => $pool_id]
             );
             $this->add_history($pool_id, 0, $images, $count);
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
         if ($event->page_matches("pool/edit_description/{pool_id}")) {
@@ -351,7 +343,6 @@ final class Pools extends Extension
                 "UPDATE pools SET description=:dsc,lastupdated=CURRENT_TIMESTAMP WHERE id=:pid",
                 ["dsc" => $event->req_POST('description'), "pid" => $pool_id]
             );
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
         if ($event->page_matches("pool/nuke/{pool_id}")) {
@@ -362,7 +353,6 @@ final class Pools extends Extension
 
             if ($user->can(PoolsPermission::ADMIN) || $user->id === $pool->user_id) {
                 send_event(new PoolDeletionEvent($pool_id));
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("pool/list"));
             } else {
                 throw new PermissionDenied("You do not have permission to access this page");

@@ -20,7 +20,6 @@ final class Download extends Extension
     {
         $page = Ctx::$page;
         $page->set_mime($event->mime);
-        $page->set_mode(PageMode::FILE);
         $page->set_file($event->path, $event->file_modified);
         $event->stop_processing = true;
     }

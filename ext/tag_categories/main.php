@@ -55,17 +55,14 @@ final class TagCategories extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
-
         if ($event->page_matches("tags/categories", method: "GET")) {
             /** @var array<array{category: string, display_singular: string, display_multiple: string, color: string}> $tcs */
-            $tcs = $database->get_all('SELECT * FROM image_tag_categories');
+            $tcs = Ctx::$database->get_all('SELECT * FROM image_tag_categories');
             $this->theme->show_tag_categories($tcs);
         }
         if ($event->page_matches("tags/categories", method: "POST", permission: TagCategoriesPermission::EDIT_TAG_CATEGORIES)) {
             $this->page_update();
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("tags/categories"));
+            Ctx::$page->set_redirect(make_link("tags/categories"));
         }
     }
 

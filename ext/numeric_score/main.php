@@ -164,7 +164,6 @@ final class NumericScore extends Extension
             if (($score === -1 || $score === 0 || $score === 1) && $image_id > 0) {
                 send_event(new NumericScoreSetEvent($image_id, $user, $score));
             }
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         } elseif ($event->page_matches("numeric_score/remove_votes_on", method: "POST", permission: NumericScorePermission::EDIT_OTHER_VOTE)) {
             $image_id = int_escape($event->req_POST("image_id"));
@@ -176,11 +175,9 @@ final class NumericScore extends Extension
                 "UPDATE images SET numeric_score=0 WHERE id=:id",
                 ['id' => $image_id]
             );
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         } elseif ($event->page_matches("numeric_score/remove_votes_by", method: "POST", permission: NumericScorePermission::EDIT_OTHER_VOTE)) {
             $this->delete_votes_by(int_escape($event->req_POST('user_id')));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         } elseif ($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
             //FIXME: popular_by isn't linked from anywhere

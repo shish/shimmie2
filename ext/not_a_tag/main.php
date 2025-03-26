@@ -133,7 +133,6 @@ final class NotATag extends Extension
                 "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
                 ["tag" => $input['c_tag'], "redirect" => $input['c_redirect']]
             );
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("untag/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
@@ -143,7 +142,6 @@ final class NotATag extends Extension
                 ["tag" => $input['d_tag']]
             );
             $page->flash("Post ban removed");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("untag/list")) {

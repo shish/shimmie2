@@ -282,7 +282,6 @@ final class OuroborosAPI extends Extension
             }
         } elseif ($event->page_matches('post/show')) {
             $page = Ctx::$page;
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link(str_replace('post/show', 'post/view', implode('/', $event->args))));
             $page->display();
             die();
@@ -502,7 +501,6 @@ final class OuroborosAPI extends Extension
             throw new \Exception("Unsupported response type: {$this->type}");
         }
         $page->set_data($response);
-        $page->set_mode(PageMode::DATA);
     }
 
     /**
@@ -539,7 +537,6 @@ final class OuroborosAPI extends Extension
             unset($xml);
         }
         $page->set_data($response);
-        $page->set_mode(PageMode::DATA);
     }
 
     private function createItemXML(\XMLWriter $xml, string $type, _SafeOuroborosTag|_SafeOuroborosImage $item): void

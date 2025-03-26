@@ -19,9 +19,7 @@ class HomeTheme extends Themelet
     public function display_page(string $sitename, HTMLElement $body): void
     {
         global $page;
-        $page->set_mode(PageMode::DATA);
         $page->add_auto_html_headers();
-
         $page->set_data((string)$page->html_html(
             emptyHTML(
                 TITLE($sitename),

@@ -61,7 +61,6 @@ final class RSSImages extends Extension
     private function do_rss(array $images, array $search_terms, int $page_number): void
     {
         global $page;
-        $page->set_mode(PageMode::DATA);
         $page->set_mime(MimeType::RSS);
 
         $data = "";

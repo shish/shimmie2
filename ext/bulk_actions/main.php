@@ -191,9 +191,7 @@ final class BulkActions extends Extension
             $bae = send_event(new BulkActionEvent($action, $items, $event->POST));
 
             if ($bae->redirect) {
-                $page = Ctx::$page;
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(Url::referer_or());
+                Ctx::$page->set_redirect(Url::referer_or());
             }
         }
     }
