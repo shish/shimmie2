@@ -77,6 +77,6 @@ class DowntimeTheme extends Themelet
         );
 
         $page->set_code(503);
-        $page->set_data((string)$page->html_html($head, $body));
+        $page->set_data(MimeType::HTML, (string)$page->html_html($head, $body));
     }
 }

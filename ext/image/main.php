@@ -190,7 +190,7 @@ final class ImageIO extends Extension
 
         if ($if_modified_since === $gmdate_mod) {
             $page->set_code(304);
-            $page->set_data("");
+            $page->set_data(MimeType::TEXT, "");
         } else {
             $page->add_http_header("Last-Modified: $gmdate_mod");
             if ($type !== "thumb") {

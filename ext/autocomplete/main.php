@@ -21,8 +21,7 @@ final class AutoComplete extends Extension
 
             $res = $this->complete($s, $limit);
 
-            Ctx::$page->set_mime(MimeType::JSON);
-            Ctx::$page->set_data(\Safe\json_encode($res));
+            Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode($res));
         }
     }
 

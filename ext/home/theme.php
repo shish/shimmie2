@@ -20,7 +20,7 @@ class HomeTheme extends Themelet
     {
         global $page;
         $page->add_auto_html_headers();
-        $page->set_data((string)$page->html_html(
+        $page->set_data(MimeType::HTML, (string)$page->html_html(
             emptyHTML(
                 TITLE($sitename),
                 META(["http-equiv" => "Content-Type", "content" => "text/html;charset=utf-8"]),

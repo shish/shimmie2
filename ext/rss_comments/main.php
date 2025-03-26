@@ -22,10 +22,8 @@ final class RSSComments extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
+        global $database;
         if ($event->page_matches("rss/comments")) {
-            $page->set_mime(MimeType::RSS);
-
             $comments = $database->get_all("
 				SELECT
 					users.id as user_id, users.name as user_name,
@@ -75,7 +73,7 @@ final class RSSComments extends Extension
 	</channel>
 </rss>
 EOD;
-            $page->set_data($xml);
+            Ctx::$page->set_data(MimeType::RSS, $xml);
         }
     }
 

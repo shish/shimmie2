@@ -60,9 +60,6 @@ final class RSSImages extends Extension
      */
     private function do_rss(array $images, array $search_terms, int $page_number): void
     {
-        global $page;
-        $page->set_mime(MimeType::RSS);
-
         $data = "";
         foreach ($images as $image) {
             $data .= $this->thumb($image);
@@ -98,7 +95,7 @@ final class RSSImages extends Extension
 		$data
 	</channel>
 </rss>";
-        $page->set_data($xml);
+        Ctx::$page->set_data(MimeType::RSS, $xml);
     }
 
     private function thumb(Image $image): string

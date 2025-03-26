@@ -131,13 +131,11 @@ final class GraphQL extends Extension
             $body['stats']['graphql_schema_time'] = round($t2 - $t1, 2);
             $body['stats']['graphql_execute_time'] = round($t3 - $t2, 2);
             // sleep(1);
-            $page->set_mime("application/json");
-            $page->set_data(\Safe\json_encode($body, JSON_UNESCAPED_UNICODE));
+            $page->set_data(MimeType::JSON, \Safe\json_encode($body, JSON_UNESCAPED_UNICODE));
         }
         if ($event->page_matches("graphql_upload")) {
             $this->cors();
-            $page->set_mime("application/json");
-            $page->set_data(\Safe\json_encode(self::handle_uploads()));
+            $page->set_data(MimeType::JSON, \Safe\json_encode(self::handle_uploads()));
         }
     }
 

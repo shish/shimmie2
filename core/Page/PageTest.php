@@ -28,7 +28,7 @@ final class PageTest extends ShimmiePHPUnitTestCase
     public function test_data(): void
     {
         $page = new Page();
-        $page->set_data("hello world");
+        $page->set_data(MimeType::TEXT, "hello world");
         ob_start();
         $page->display();
         self::assertGreaterThan(0, ob_get_length());

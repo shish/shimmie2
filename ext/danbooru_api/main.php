@@ -45,15 +45,12 @@ final class DanbooruApi extends Extension
         $page = Ctx::$page;
         if ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
             // No XML data is returned from this function
-            $page->set_mime(MimeType::TEXT);
-            $page->set_data("");
+            $page->set_data(MimeType::TEXT, "");
             $this->api_add_post($event);
         } elseif ($event->page_matches("api/danbooru/find_posts") || $event->page_matches("api/danbooru/post/index.xml")) {
-            $page->set_mime(MimeType::XML_APPLICATION);
-            $page->set_data((string)$this->api_find_posts($event));
+            $page->set_data(MimeType::XML_APPLICATION, (string)$this->api_find_posts($event));
         } elseif ($event->page_matches("api/danbooru/find_tags")) {
-            $page->set_mime(MimeType::XML_APPLICATION);
-            $page->set_data((string)$this->api_find_tags($event));
+            $page->set_data(MimeType::XML_APPLICATION, (string)$this->api_find_tags($event));
         }
 
         // Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper

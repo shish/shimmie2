@@ -127,18 +127,18 @@ final class Notes extends Extension
         }
         if ($event->page_matches("note/create_note", permission: NotesPermission::CREATE)) {
             $note_id = $this->add_new_note();
-            $page->set_data(\Safe\json_encode([
+            $page->set_data(MimeType::JSON, \Safe\json_encode([
                 'status' => 'success',
                 'note_id' => $note_id,
             ]));
         }
         if ($event->page_matches("note/update_note", permission: NotesPermission::EDIT)) {
             $this->update_note();
-            $page->set_data(\Safe\json_encode(['status' => 'success']));
+            $page->set_data(MimeType::JSON, \Safe\json_encode(['status' => 'success']));
         }
         if ($event->page_matches("note/delete_note", permission: NotesPermission::ADMIN)) {
             $this->delete_note();
-            $page->set_data(\Safe\json_encode(['status' => 'success']));
+            $page->set_data(MimeType::JSON, \Safe\json_encode(['status' => 'success']));
         }
         if ($event->page_matches("note/nuke_notes", permission: NotesPermission::ADMIN)) {
             $image_id = int_escape($event->req_POST("image_id"));
