@@ -153,8 +153,6 @@ class CronUploaderTheme extends Themelet
      */
     public function display_form(array $failed_dirs): void
     {
-        global $page;
-
         $failed_dir_select = SELECT(["name" => "failed_dir", "required" => true]);
         foreach ($failed_dirs as $dir) {
             $failed_dir_select->appendChild(OPTION(["value" => $dir->str()], $dir->str()));
@@ -204,6 +202,6 @@ class CronUploaderTheme extends Themelet
             ),
         );
 
-        $page->add_block(new Block("Cron Upload", $html));
+        Ctx::$page->add_block(new Block("Cron Upload", $html));
     }
 }

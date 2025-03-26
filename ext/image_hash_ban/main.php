@@ -84,8 +84,7 @@ final class ImageBan extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         if ($event->page_matches("image_hash_ban/add", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $input = validate_input(["c_hash" => "optional,string", "c_reason" => "string", "c_image_id" => "optional,int"]);
             $image = isset($input['c_image_id']) ? Image::by_id_ex($input['c_image_id']) : null;

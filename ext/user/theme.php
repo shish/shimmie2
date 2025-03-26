@@ -116,8 +116,6 @@ class UserPageTheme extends Themelet
 
     public function display_user_creator(): void
     {
-        global $page;
-
         $form = SHM_SIMPLE_FORM(
             make_link("user_admin/create_other"),
             TABLE(
@@ -148,15 +146,14 @@ class UserPageTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Create User", $form, "main", 75));
+        Ctx::$page->add_block(new Block("Create User", $form, "main", 75));
     }
 
     public function display_signups_disabled(): void
     {
-        global $page;
-        $page->set_title("Signups Disabled");
+        Ctx::$page->set_title("Signups Disabled");
         $this->display_navigation();
-        $page->add_block(new Block(
+        Ctx::$page->add_block(new Block(
             "Signups Disabled",
             format_text(Ctx::$config->req_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
         ));

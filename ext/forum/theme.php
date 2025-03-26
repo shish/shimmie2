@@ -78,8 +78,6 @@ class ForumTheme extends Themelet
 
     public function display_new_post_composer(int $threadID): void
     {
-        global $page;
-
         $max_characters = Ctx::$config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
@@ -104,7 +102,7 @@ class ForumTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block("Answer to this thread", $html, "main", 130));
+        Ctx::$page->add_block(new Block("Answer to this thread", $html, "main", 130));
     }
 
 
@@ -113,8 +111,6 @@ class ForumTheme extends Themelet
      */
     public function display_thread(array $posts, bool $showAdminOptions, string $threadTitle, int $threadID, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
         $posts_per_page = Ctx::$config->req_int(ForumConfig::POSTS_PER_PAGE);
 
         $current_post = 0;
@@ -189,16 +185,14 @@ class ForumTheme extends Themelet
         );
 
         $this->display_paginator("forum/view/".$threadID, null, $pageNumber, $totalPages);
-
-        $page->set_title($threadTitle);
-        $page->add_block(new Block($threadTitle, $html, "main", 20));
+        Ctx::$page->set_title($threadTitle);
+        Ctx::$page->add_block(new Block($threadTitle, $html, "main", 20));
     }
 
     public function add_actions_block(int $threadID): void
     {
-        global $page;
         $html = A(["href" => make_link("forum/nuke/".$threadID)], "Delete this thread and its posts.");
-        $page->add_block(new Block("Admin Actions", $html, "main", 140));
+        Ctx::$page->add_block(new Block("Admin Actions", $html, "main", 140));
     }
 
     /**

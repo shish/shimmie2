@@ -522,17 +522,15 @@ final class UserPage extends Extension
 
     private function page_login(string $name, string $pass): void
     {
-        global $page;
-
         $duser = User::by_name_and_pass($name, $pass);
         send_event(new UserLoginEvent($duser));
         $duser->set_login_cookie();
-        $page->set_mode(PageMode::REDIRECT);
 
+        Ctx::$page->set_mode(PageMode::REDIRECT);
         if (Ctx::$config->get_string(UserAccountsConfig::LOGIN_REDIRECT) === "previous") {
-            $page->set_redirect(Url::referer_or(ignore: ["user/"]));
+            Ctx::$page->set_redirect(Url::referer_or(ignore: ["user/"]));
         } else {
-            $page->set_redirect(make_link("user"));
+            Ctx::$page->set_redirect(make_link("user"));
         }
     }
 
@@ -579,8 +577,7 @@ final class UserPage extends Extension
 
     private function redirect_to_user(User $duser): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         if (Ctx::$user->id === $duser->id) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user"));

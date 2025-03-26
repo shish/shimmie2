@@ -20,8 +20,7 @@ class AutoTaggerTheme extends Themelet
      */
     public function display_auto_tagtable(HTMLElement $table, HTMLElement $paginator): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $page->set_title("Auto-Tag List");
         $this->display_navigation();
 

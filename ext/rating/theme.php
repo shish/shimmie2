@@ -39,8 +39,6 @@ class RatingsTheme extends Themelet
      */
     public function display_form(array $current_ratings): void
     {
-        global $page;
-
         $table = TABLE(
             ["class" => "form"],
             TR(TH("Change"), TD($this->get_selection_rater_html("rating_old", $current_ratings))),
@@ -48,7 +46,7 @@ class RatingsTheme extends Themelet
             TR(TD(["colspan" => "2"], SHM_SUBMIT("Update")))
         );
 
-        $page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM(make_link("admin/update_ratings"), $table)));
+        Ctx::$page->add_block(new Block("Update Ratings", SHM_SIMPLE_FORM(make_link("admin/update_ratings"), $table)));
     }
 
     /**

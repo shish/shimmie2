@@ -12,8 +12,7 @@ final class RandomList extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         if ($event->page_matches("random")) {
             if ($event->get_GET('search')) {
                 // implode(explode()) to resolve aliases and sanitise

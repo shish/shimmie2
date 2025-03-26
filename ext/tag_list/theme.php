@@ -55,8 +55,6 @@ class TagListTheme extends Themelet
      */
     public function display_split_related_block(array $tag_infos): void
     {
-        global $page;
-
         if (Ctx::$config->get_string(TagListConfig::RELATED_SORT) == TagListConfig::SORT_ALPHABETICAL) {
             usort($tag_infos, fn ($a, $b) => strcasecmp($a['tag'], $b['tag']));
         }
@@ -95,7 +93,7 @@ class TagListTheme extends Themelet
                 $category_display_name = $tag_category_dict[$category]['display_multiple'];
                 $prio = 9;
             }
-            $page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", $prio));
+            Ctx::$page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", $prio));
         }
     }
 
@@ -104,14 +102,12 @@ class TagListTheme extends Themelet
      */
     public function display_related_block(array $tag_infos, string $block_name): void
     {
-        global $page;
-
         $main_html = $this->get_tag_list_html(
             $tag_infos,
             Ctx::$config->req_string(TagListConfig::RELATED_SORT)
         );
 
-        $page->add_block(new Block($block_name, $main_html, "left", 10));
+        Ctx::$page->add_block(new Block($block_name, $main_html, "left", 10));
     }
 
     /**
@@ -119,8 +115,6 @@ class TagListTheme extends Themelet
      */
     public function display_popular_block(array $tag_infos): void
     {
-        global $page;
-
         $main_html = emptyHTML(
             $this->get_tag_list_html(
                 $tag_infos,
@@ -130,7 +124,7 @@ class TagListTheme extends Themelet
             BR(),
             A(["class" => "more", "href" => make_link("tags")], "Full List")
         );
-        $page->add_block(new Block("Popular Tags", $main_html, "left", 60));
+        Ctx::$page->add_block(new Block("Popular Tags", $main_html, "left", 60));
     }
 
     /**
@@ -139,8 +133,6 @@ class TagListTheme extends Themelet
      */
     public function display_refine_block(array $tag_infos, array $search): void
     {
-        global $page;
-
         $main_html = emptyHTML(
             $this->get_tag_list_html(
                 $tag_infos,
@@ -152,7 +144,7 @@ class TagListTheme extends Themelet
             A(["class" => "more", "href" => make_link("tags")], "Full List")
         );
 
-        $page->add_block(new Block("Refine Search", $main_html, "left", 60));
+        Ctx::$page->add_block(new Block("Refine Search", $main_html, "left", 60));
     }
 
     /**

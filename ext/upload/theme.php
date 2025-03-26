@@ -40,8 +40,6 @@ class UploadTheme extends Themelet
 
     public function display_page(): void
     {
-        global $page;
-
         $limits = get_upload_limits();
 
         $tl_enabled = (Ctx::$config->req_string(UploadConfig::TRANSLOAD_ENGINE) !== "none");
@@ -85,6 +83,7 @@ class UploadTheme extends Themelet
             ")
         );
 
+        $page = Ctx::$page;
         $page->set_title("Upload");
         $this->display_navigation();
         $page->add_block(new Block("Upload", $html, "main", 20));
@@ -217,7 +216,7 @@ class UploadTheme extends Themelet
      */
     public function display_upload_status(array $results): void
     {
-        global $page;
+        $page = Ctx::$page;
 
         /** @var UploadSuccess[] */
         $successes = array_filter($results, fn ($r) => is_a($r, UploadSuccess::class));

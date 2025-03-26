@@ -31,14 +31,12 @@ class TagToolsTheme extends Themelet
      */
     public function display_form(): void
     {
-        global $page;
-
-        $page->add_block(new Block("Misc Admin Tools", emptyHTML(
+        Ctx::$page->add_block(new Block("Misc Admin Tools", emptyHTML(
             $this->button("All tags to lowercase", "lowercase_all_tags", true),
             $this->button("Recount tag use", "recount_tag_use", false)
         )));
 
-        $page->add_block(new Block("Set Tag Case", SHM_SIMPLE_FORM(
+        Ctx::$page->add_block(new Block("Set Tag Case", SHM_SIMPLE_FORM(
             make_link("admin/set_tag_case"),
             INPUT(["type" => 'text', "name" => 'tag', "placeholder" => 'Enter tag with correct case', "autocomplete" => 'off']),
             SHM_SUBMIT('Set Tag Case'),

@@ -22,8 +22,6 @@ class PoolsTheme extends Themelet
      */
     public function pool_info(array $navIDs): void
     {
-        global $page;
-
         //TODO: Use a 3 column table?
         $linksPools = emptyHTML();
         foreach ($navIDs as $poolID => $poolInfo) {
@@ -42,7 +40,7 @@ class PoolsTheme extends Themelet
         }
 
         if (!empty($navIDs)) {
-            $page->add_block(new Block("Pools", $linksPools, "left"));
+            Ctx::$page->add_block(new Block("Pools", $linksPools, "left"));
         }
     }
 
@@ -151,8 +149,6 @@ class PoolsTheme extends Themelet
      */
     public function view_pool(Pool $pool, array $images, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
         $this->display_top($pool, "Pool: " . html_escape($pool->title));
 
         $image_list = DIV(["class" => "shm-image-list"]);
@@ -160,14 +156,12 @@ class PoolsTheme extends Themelet
             $image_list->appendChild($this->build_thumb($image));
         }
 
-        $page->add_block(new Block("Viewing Posts", $image_list, "main", 30));
+        Ctx::$page->add_block(new Block("Viewing Posts", $image_list, "main", 30));
         $this->display_paginator("pool/view/" . $pool->id, null, $pageNumber, $totalPages);
     }
 
     public function sidebar_options(Pool $pool, bool $check_all): void
     {
-        global $page;
-
         $editor = emptyHTML(
             SHM_SIMPLE_FORM(
                 make_link("pool/import/{$pool->id}"),
@@ -208,7 +202,7 @@ class PoolsTheme extends Themelet
             );
         }
 
-        $page->add_block(new Block("Manage Pool", $editor, "left", 15));
+        Ctx::$page->add_block(new Block("Manage Pool", $editor, "left", 15));
     }
 
     /**
@@ -310,8 +304,6 @@ class PoolsTheme extends Themelet
      */
     public function show_history(array $histories, int $pageNumber, int $totalPages): void
     {
-        global $page;
-
         $table = TABLE(
             ["id" => "poolsList", "class" => "zebra"],
             THEAD(TR(TH("Pool"), TH("Post Count"), TH("Changes"), TH("Updater"), TH("Date"), TH("Action")))
@@ -352,8 +344,7 @@ class PoolsTheme extends Themelet
         $table->appendChild(TBODY(...$body));
 
         $this->display_top(null, "Recent Changes");
-        $page->add_block(new Block("Recent Changes", $table, position: 10));
-
+        Ctx::$page->add_block(new Block("Recent Changes", $table, position: 10));
         $this->display_paginator("pool/updated", null, $pageNumber, $totalPages);
     }
 

@@ -34,8 +34,7 @@ class CommentListTheme extends Themelet
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
-        global $page;
-
+        $page = Ctx::$page;
         $page->set_title("Comments");
         $this->display_navigation([
             make_link('comment/list/'.($page_number - 1)),
@@ -95,8 +94,6 @@ class CommentListTheme extends Themelet
 
     public function display_admin_block(): void
     {
-        global $page;
-
         $html = DIV(
             "Delete comments by IP.",
             BR(),
@@ -115,7 +112,7 @@ class CommentListTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Mass Comment Delete", $html));
+        Ctx::$page->add_block(new Block("Mass Comment Delete", $html));
     }
 
     /**
@@ -179,8 +176,6 @@ class CommentListTheme extends Themelet
      */
     public function display_all_user_comments(array $comments, int $page_number, int $total_pages, User $user): void
     {
-        global $page;
-
         $html = emptyHTML();
         foreach ($comments as $comment) {
             $html->appendChild($this->comment_to_html($comment, true));
@@ -188,9 +183,8 @@ class CommentListTheme extends Themelet
         if (count($comments) === 0) {
             $html->appendChild(P("No comments by this user."));
         }
-        $page->add_block(new Block("Comments", $html, "main", 70, "comment-list-user"));
-
-        $page->set_title("{$user->name}'s comments");
+        Ctx::$page->add_block(new Block("Comments", $html, "main", 70, "comment-list-user"));
+        Ctx::$page->set_title("{$user->name}'s comments");
         $this->display_navigation([
             ($page_number <= 1) ? null : make_link("comment/beta-search/{$user->name}/" . ($page_number - 1)),
             make_link(),

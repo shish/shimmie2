@@ -16,8 +16,6 @@ class TagMapTheme extends Themelet
      */
     public function display_map(int $tags_min, array $tag_data): void
     {
-        global $page;
-
         $html = emptyHTML();
         if (Ctx::$config->req_bool(TagMapConfig::PAGES)) {
             $html->appendChild($this->build_az($tags_min));
@@ -29,6 +27,7 @@ class TagMapTheme extends Themelet
             $html->appendChild($this->build_tag($tag, show_underscores: false, style: "margin: 0em 1em; font-size: {$size}em"));
         }
 
+        $page = Ctx::$page;
         $page->set_title("Tag List");
         $page->set_heading("Tag Map");
         $this->display_nav();
@@ -40,8 +39,6 @@ class TagMapTheme extends Themelet
      */
     public function display_alphabetic(string $starts_with, int $tags_min, array $tag_data): void
     {
-        global $page;
-
         $html = emptyHTML();
         if (Ctx::$config->req_bool(TagMapConfig::PAGES)) {
             $html->appendChild($this->build_az($tags_min));
@@ -82,6 +79,7 @@ class TagMapTheme extends Themelet
             $html->appendChild($this->build_tag($tag));
         }
 
+        $page = Ctx::$page;
         $page->set_title("Tag List");
         $page->set_heading("Alphabetic Tag List");
         $this->display_nav();
@@ -93,8 +91,6 @@ class TagMapTheme extends Themelet
      */
     public function display_popularity(array $tag_data): void
     {
-        global $page;
-
         $html = emptyHTML("Results grouped by log", SUB("10"), "(n)");
         $lastLog = "";
         foreach ($tag_data as $row) {
@@ -112,6 +108,7 @@ class TagMapTheme extends Themelet
             $html->appendChild(" ");
         }
 
+        $page = Ctx::$page;
         $page->set_title("Tag List");
         $page->set_heading("Tag List by Popularity");
         $this->display_nav();
