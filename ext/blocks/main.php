@@ -37,9 +37,8 @@ final class Blocks extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(BlocksPermission::MANAGE_BLOCKS)) {
+            if (Ctx::$user->can(BlocksPermission::MANAGE_BLOCKS)) {
                 $event->add_nav_link(make_link('blocks/list'), "Blocks Editor");
             }
         }
@@ -47,8 +46,7 @@ final class Blocks extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(BlocksPermission::MANAGE_BLOCKS)) {
+        if (Ctx::$user->can(BlocksPermission::MANAGE_BLOCKS)) {
             $event->add_link("Blocks Editor", make_link("blocks/list"));
         }
     }

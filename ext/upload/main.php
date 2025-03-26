@@ -138,8 +138,7 @@ final class Upload extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ImagePermission::CREATE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
             $event->add_nav_link(make_link('upload'), "Upload", category: "upload");
         }
     }
@@ -198,9 +197,9 @@ final class Upload extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
 
-        if ($user->can(ImagePermission::CREATE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
             if ($this->is_full) {
                 $this->theme->display_full();
             } else {
