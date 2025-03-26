@@ -86,9 +86,7 @@ final class Ratings extends Extension
 
     private function check_permissions(Image $image): bool
     {
-        global $user;
-
-        $user_view_level = Ratings::get_user_class_privs($user);
+        $user_view_level = Ratings::get_user_class_privs(Ctx::$user);
         if (!in_array($image['rating'], $user_view_level)) {
             return false;
         }
@@ -155,9 +153,9 @@ final class Ratings extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $page, $user;
+        global $page;
         if (
-            $user->can(RatingsPermission::EDIT_IMAGE_RATING) && (
+            Ctx::$user->can(RatingsPermission::EDIT_IMAGE_RATING) && (
                 isset($event->params['rating'])
                 || isset($event->params["rating{$event->slot}"])
             )
@@ -291,9 +289,7 @@ final class Ratings extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
+        if (Ctx::$user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
             $event->add_action("bulk_rate", "Set (R)ating", "r", "", $this->theme->get_selection_rater_html(selected_options: ["?"]));
         }
     }

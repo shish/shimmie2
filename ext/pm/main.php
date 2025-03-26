@@ -177,10 +177,9 @@ final class PrivMsg extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "user") {
-            if ($user->can(PrivMsgPermission::READ_PM)) {
-                $count = $this->count_pms($user);
+            if (Ctx::$user->can(PrivMsgPermission::READ_PM)) {
+                $count = $this->count_pms(Ctx::$user);
                 $h_count = $count > 0 ? SPAN(["class" => 'unread'], "($count)") : "";
                 $event->add_nav_link(make_link('user', fragment: 'private-messages'), emptyHTML("Private Messages", $h_count));
             }
@@ -189,9 +188,8 @@ final class PrivMsg extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(PrivMsgPermission::READ_PM)) {
-            $count = $this->count_pms($user);
+        if (Ctx::$user->can(PrivMsgPermission::READ_PM)) {
+            $count = $this->count_pms(Ctx::$user);
             $h_count = $count > 0 ? SPAN(["class" => 'unread'], "($count)") : "";
             $event->add_link(emptyHTML("Private Messages", $h_count), make_link("user", fragment: "private-messages"), 10);
         }

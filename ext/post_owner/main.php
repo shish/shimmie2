@@ -22,9 +22,9 @@ final class PostOwner extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $page, $user;
+        global $page;
         $owner = $event->get_param('owner');
-        if ($user->can(PostOwnerPermission::EDIT_IMAGE_OWNER) && !is_null($owner)) {
+        if (Ctx::$user->can(PostOwnerPermission::EDIT_IMAGE_OWNER) && !is_null($owner)) {
             $owner_ob = User::by_name($owner);
             send_event(new OwnerSetEvent($event->image, $owner_ob));
         }
@@ -32,8 +32,7 @@ final class PostOwner extends Extension
 
     public function onOwnerSet(OwnerSetEvent $event): void
     {
-        global $user;
-        if ($user->can(PostOwnerPermission::EDIT_IMAGE_OWNER)) {
+        if (Ctx::$user->can(PostOwnerPermission::EDIT_IMAGE_OWNER)) {
             $event->image->set_owner($event->owner);
         }
     }

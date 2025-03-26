@@ -61,9 +61,8 @@ final class ExtManager extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
+            if (Ctx::$user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
                 $event->add_nav_link(make_link('ext_manager'), "Extension Manager");
             } else {
                 $event->add_nav_link(make_link('ext_doc'), "Board Help");
@@ -73,8 +72,7 @@ final class ExtManager extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
+        if (Ctx::$user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
             $event->add_link("Extension Manager", make_link("ext_manager"));
         }
     }

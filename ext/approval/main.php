@@ -19,9 +19,7 @@ final class Approval extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        global $user;
-
-        if (defined("UNITTEST") || $user->can(ApprovalPermission::BYPASS_IMAGE_APPROVAL)) {
+        if (defined("UNITTEST") || Ctx::$user->can(ApprovalPermission::BYPASS_IMAGE_APPROVAL)) {
             self::approve_image($event->image->id);
         }
     }
@@ -91,9 +89,8 @@ final class Approval extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "posts") {
-            if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
+            if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
                 $event->add_nav_link(search_link(['approved:no']), "Pending Approval", order: 60);
             }
         }
@@ -101,8 +98,7 @@ final class Approval extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
+        if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
             $event->add_link("Pending Approval", search_link(["approved:no"]), 60);
         }
     }
@@ -127,9 +123,8 @@ final class Approval extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
-        global $user;
         if ($event->key === HelpPages::SEARCH) {
-            if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
+            if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
                 $event->add_section("Approval", $this->theme->get_help_html());
             }
         }
@@ -190,8 +185,7 @@ final class Approval extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
+        if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
             if ($event->image['approved'] === true) {
                 $event->add_button("Disapprove", "disapprove_image/".$event->image->id);
             } else {
@@ -203,9 +197,7 @@ final class Approval extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
+        if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
             if (in_array("approved:no", $event->search_terms)) {
                 $event->add_action("bulk_approve_image", "Approve", "a");
             } else {

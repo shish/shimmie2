@@ -62,9 +62,7 @@ final class TranscodeVideo extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(ImagePermission::EDIT_FILES)) {
+        if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
             $event->add_action(
                 self::ACTION_BULK_TRANSCODE,
                 "Transcode Video",

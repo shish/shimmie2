@@ -99,24 +99,15 @@ final class BulkActions extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(ImagePermission::DELETE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_action("bulk_delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10);
         }
 
-        if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-            $event->add_action(
-                "bulk_tag",
-                "Tag",
-                "t",
-                "",
-                $this->theme->render_tag_input(),
-                10
-            );
+        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
+            $event->add_action("bulk_tag", "Tag", "t", "", $this->theme->render_tag_input(), 10);
         }
 
-        if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
+        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
             $event->add_action("bulk_source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10);
         }
     }

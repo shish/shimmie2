@@ -204,12 +204,11 @@ final class TagEditCloud extends Extension
 
     private function can_tag(Image $image): bool
     {
-        global $user;
         return (
-            $user->can(PostTagsPermission::EDIT_IMAGE_TAG)
+            Ctx::$user->can(PostTagsPermission::EDIT_IMAGE_TAG)
             && (
                 !$image->is_locked()
-                || $user->can(PostLockPermission::EDIT_IMAGE_LOCK)
+                || Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)
             )
         );
     }

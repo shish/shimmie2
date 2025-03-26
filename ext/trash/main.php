@@ -35,9 +35,7 @@ final class Trash extends Extension
 
     private function check_permissions(Image $image): bool
     {
-        global $user;
-
-        if ($image['trash'] === true && !$user->can(TrashPermission::VIEW_TRASH)) {
+        if ($image['trash'] === true && !Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
             return false;
         }
         return true;
@@ -73,9 +71,8 @@ final class Trash extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent == "posts") {
-            if ($user->can(TrashPermission::VIEW_TRASH)) {
+            if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
                 $event->add_nav_link(search_link(['in:trash']), "Trash", order: 60);
             }
         }
@@ -83,8 +80,7 @@ final class Trash extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(TrashPermission::VIEW_TRASH)) {
+        if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
             $event->add_link("Trash", search_link(["in:trash"]), 60);
         }
     }
@@ -107,9 +103,8 @@ final class Trash extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
-        global $user;
         if ($event->key === HelpPages::SEARCH) {
-            if ($user->can(TrashPermission::VIEW_TRASH)) {
+            if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
                 $event->add_section("Trash", $this->theme->get_help_html());
             }
         }
@@ -139,17 +134,14 @@ final class Trash extends Extension
     }
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($event->image['trash'] === true && $user->can(TrashPermission::VIEW_TRASH)) {
+        if ($event->image['trash'] === true && Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
             $event->add_button("Restore From Trash", "trash_restore/".$event->image->id);
         }
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(TrashPermission::VIEW_TRASH) && in_array("in:trash", $event->search_terms)) {
+        if (Ctx::$user->can(TrashPermission::VIEW_TRASH) && in_array("in:trash", $event->search_terms)) {
             $event->add_action("bulk_trash_restore", "(U)ndelete", "u");
         }
     }

@@ -56,9 +56,9 @@ final class ImageViewCounter extends Extension
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
-        global $user, $database;
+        global $database;
 
-        if ($user->can(ImageViewCounterPermission::SEE_IMAGE_VIEW_COUNTS)) {
+        if (Ctx::$user->can(ImageViewCounterPermission::SEE_IMAGE_VIEW_COUNTS)) {
             $view_count = (string)$database->get_one(
                 "SELECT COUNT(*) FROM image_views WHERE image_id =:image_id",
                 ["image_id" => $event->image->id]
