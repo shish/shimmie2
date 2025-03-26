@@ -90,9 +90,7 @@ final class BulkImportExport extends DataHandlerExtension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(BulkImportExportPermission::BULK_EXPORT)) {
+        if (Ctx::$user->can(BulkImportExportPermission::BULK_EXPORT)) {
             $event->add_action(self::EXPORT_ACTION_NAME, "Export");
         }
     }

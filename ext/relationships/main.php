@@ -52,8 +52,7 @@ final class Relationships extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $user;
-        if ($user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)) {
+        if (Ctx::$user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)) {
             if (isset($event->params['tags']) ? !\Safe\preg_match('/parent[=|:]/', $event->params["tags"]) : true) { //Ignore parent if tags contain parent metatag
                 if (isset($event->params["parent"]) ? int_escape($event->params["parent"]) : false) {
                     send_event(new ImageRelationshipSetEvent($event->image->id, (int) $event->params["parent"]));

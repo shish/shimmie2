@@ -66,9 +66,7 @@ final class ImageIO extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(ImagePermission::DELETE_IMAGE)) {
+        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_part(SHM_FORM(
                 action: make_link("image/delete"),
                 id: "image_delete_form",

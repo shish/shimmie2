@@ -159,8 +159,7 @@ final class AutoTagger extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
+        if (Ctx::$user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $event->add_link("Auto-Tag Editor", make_link("auto_tag/list"));
         }
     }

@@ -124,9 +124,8 @@ final class ImageBan extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
+            if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
                 $event->add_nav_link(make_link('image_hash_ban/list'), "Post Bans", ["image_hash_ban"]);
             }
         }
@@ -134,8 +133,7 @@ final class ImageBan extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
+        if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->add_link("Post Bans", make_link("image_hash_ban/list"));
         }
     }
@@ -158,8 +156,7 @@ final class ImageBan extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ImageHashBanPermission::BAN_IMAGE)) {
+        if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->add_part(SHM_SIMPLE_FORM(
                 make_link("image_hash_ban/add"),
                 INPUT(["type" => 'hidden', "name" => 'c_hash', "value" => $event->image->hash]),

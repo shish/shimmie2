@@ -37,8 +37,7 @@ final class ET extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(ETPermission::VIEW_SYSINFO)) {
+        if (Ctx::$user->can(ETPermission::VIEW_SYSINFO)) {
             $event->add_link("System Info", make_link("system_info"), 99);
         }
     }

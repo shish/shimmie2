@@ -189,9 +189,8 @@ final class IPBan extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(IPBanPermission::BAN_IP)) {
+            if (Ctx::$user->can(IPBanPermission::BAN_IP)) {
                 $event->add_nav_link(make_link('ip_ban/list'), "IP Bans", ["ip_ban"]);
             }
         }
@@ -199,8 +198,7 @@ final class IPBan extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(IPBanPermission::BAN_IP)) {
+        if (Ctx::$user->can(IPBanPermission::BAN_IP)) {
             $event->add_link("IP Bans", make_link("ip_ban/list"));
         }
     }
