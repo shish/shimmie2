@@ -205,14 +205,13 @@ class Page
     }
 
     /**
-     * Get all the HTML headers that are currently set and return as a string.
+     * Get all the HTML headers that are currently set.
+     * @return HTMLElement[]
      */
-    public function get_all_html_headers(): HTMLElement
+    public function get_all_html_headers(): array
     {
         ksort($this->html_headers);
-        return emptyHTML(
-            ...$this->html_headers
-        );
+        return $this->html_headers;
     }
 
     /**
@@ -535,10 +534,11 @@ class Page
      */
     public function render(): void
     {
-        print (string)$this->html_html(
+        $struct = $this->html_html(
             $this->head_html(),
             $this->body_html()
         );
+        print (string)$struct;
     }
 
     public function html_html(HTMLElement $head, HTMLElement $body): HTMLElement
@@ -547,11 +547,8 @@ class Page
             \MicroHTML\rawHTML("<!doctype html>"),
             HTML(
                 ["lang" => "en"],
-                "\n",
                 $head,
-                "\n",
                 $body,
-                "\n",
             )
         );
     }
@@ -560,7 +557,7 @@ class Page
     {
         return HEAD(
             TITLE($this->title),
-            $this->get_all_html_headers(),
+            ...$this->get_all_html_headers(),
         );
     }
 
@@ -630,7 +627,7 @@ class Page
         if (!empty($block->body)) {
             $html->appendChild(DIV(['class' => "blockbody"], $block->body));
         }
-        return emptyHTML("\n", $html);
+        return $html;
     }
 
     protected function flash_html(): HTMLElement
