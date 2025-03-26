@@ -150,19 +150,14 @@ final class CronUploader extends Extension
 
     private function clear_folder(string $folder): void
     {
-        global $page, $user;
         $path = Filesystem::join_path($this->get_user_dir(), $folder);
         Filesystem::deltree($path);
-        $page->flash("Cleared {$path->str()}");
+        Ctx::$page->flash("Cleared {$path->str()}");
     }
-
 
     private function get_cron_url(): string
     {
-        global $user;
-
-        $user_api_key = $user->get_config()->get_string(UserConfigUserConfig::API_KEY) ?? "API_KEY";
-
+        $user_api_key = Ctx::$user->get_config()->get_string(UserConfigUserConfig::API_KEY) ?? "API_KEY";
         return (string)make_link("cron_upload/run", ["api_key" => $user_api_key])->asAbsolute();
     }
 
@@ -362,8 +357,6 @@ final class CronUploader extends Extension
 
     private function move_uploaded(Path $path, string $filename, string $output_subdir, bool $corrupt = false): void
     {
-        global $user;
-
         $relativeDir = $path->relative_to($this->get_user_dir())->dirname();
 
         // Determine which dir to move to

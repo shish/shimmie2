@@ -73,7 +73,7 @@ final class ResizeImage extends Extension
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 while (!feof($fh) && $isanigif < 2) {
                     $chunk = \Safe\fread($fh, 1024 * 100);
-                    $isanigif += \Safe\preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
+                    $isanigif += \Safe\preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk);
                 }
             }
             if ($isanigif == 0) {
@@ -92,8 +92,6 @@ final class ResizeImage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
-
         if ($event->page_matches("resize/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = $event->get_iarg('image_id');
@@ -103,6 +101,7 @@ final class ResizeImage extends Extension
             $height = int_escape($event->get_POST('resize_height'));
             if ($width || $height) {
                 $this->resize_image($image, $width, $height);
+                $page = Ctx::$page;
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/".$image_id));
             }

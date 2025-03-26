@@ -176,7 +176,7 @@ final class Filesystem
             \FilesystemIterator::CURRENT_AS_FILEINFO |
             \FilesystemIterator::SKIP_DOTS
         );
-        foreach (new \RecursiveIteratorIterator($ite) as $filename => $cur) {
+        foreach (new \RecursiveIteratorIterator($ite) as $_filename => $cur) {
             try {
                 $filesize = $cur->getSize();
                 $bytestotal += $filesize;

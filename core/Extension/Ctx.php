@@ -19,7 +19,6 @@ final class Ctx
 
     public static function setCache(CacheInterface $_cache): CacheInterface
     {
-        $cache = $_cache;
         self::$cache = $_cache;
         return $_cache;
     }

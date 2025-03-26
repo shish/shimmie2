@@ -197,8 +197,6 @@ final class Upload extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
             if ($this->is_full) {
                 $this->theme->display_full();
@@ -269,7 +267,7 @@ final class Upload extends Extension
      */
     private function try_upload(array $file, int $slot, array $metadata): array
     {
-        global $page, $database;
+        global $database;
 
         // blank file boxes cause empty uploads, no need for error message
         if (empty($file['name'])) {
@@ -317,8 +315,6 @@ final class Upload extends Extension
      */
     private function try_transload(string $url, int $slot, array $metadata): array
     {
-        global $page, $user, $database;
-
         $results = [];
         $tmp_filename = shm_tempnam("transload");
 
@@ -336,7 +332,7 @@ final class Upload extends Extension
             $h_filename = ($s_filename ? \Safe\preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
             $filename = $h_filename ?: basename($url);
 
-            $new_images = $database->with_savepoint(function () use ($tmp_filename, $filename, $slot, $metadata) {
+            $new_images = Ctx::$database->with_savepoint(function () use ($tmp_filename, $filename, $slot, $metadata) {
                 $event = send_event(new DataUploadEvent($tmp_filename, $filename, $slot, $metadata));
                 if (count($event->images) == 0) {
                     throw new UploadException("File type not supported: " . $event->mime);

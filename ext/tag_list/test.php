@@ -10,7 +10,7 @@ final class TagListTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $page = self::get_page("post/view/$image_id");
+        self::get_page("post/view/$image_id");
         self::assert_title("Post $image_id: pbx");
         self::assert_text("pbx");
     }

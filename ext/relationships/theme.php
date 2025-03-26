@@ -18,7 +18,7 @@ class RelationshipsTheme extends Themelet
 {
     public function relationship_info(Image $image): void
     {
-        global $page, $database;
+        global $page;
 
         $parent = Search::get_images([$image['parent_id']]);
         if (!empty($parent)) {

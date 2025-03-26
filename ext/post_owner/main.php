@@ -22,7 +22,6 @@ final class PostOwner extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $page;
         $owner = $event->get_param('owner');
         if (Ctx::$user->can(PostOwnerPermission::EDIT_IMAGE_OWNER) && !is_null($owner)) {
             $owner_ob = User::by_name($owner);

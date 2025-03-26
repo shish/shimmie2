@@ -15,9 +15,6 @@ final class Statistics extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("stats") || $event->page_matches("stats/100")) {
-            $base_href = Url::base();
-            $sitename = Ctx::$config->req_string(SetupConfig::TITLE);
-            $theme_name = Ctx::$config->req_string(SetupConfig::THEME);
             $unlisted = "'".implode("','", $this->unlisted)."'";
 
             $limit = 10;

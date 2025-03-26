@@ -16,7 +16,6 @@ final class ET extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $user;
         if ($event->page_matches("system_info", permission: ETPermission::VIEW_SYSINFO)) {
             $this->theme->display_info_page(
                 $this->to_yaml($this->get_site_info()),
@@ -27,9 +26,8 @@ final class ET extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(ETPermission::VIEW_SYSINFO)) {
+            if (Ctx::$user->can(ETPermission::VIEW_SYSINFO)) {
                 $event->add_nav_link(make_link('system_info'), "System Info", order: 10);
             }
         }

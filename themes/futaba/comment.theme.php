@@ -38,7 +38,6 @@ class FutabaCommentListTheme extends CommentListTheme
             $image = $pair[0];
             $comments = $pair[1];
 
-            $h_filename = html_escape($image->filename);
             $h_filesize = to_shorthand_int($image->filesize);
             $w = $image->width;
             $h = $image->height;
@@ -82,7 +81,6 @@ class FutabaCommentListTheme extends CommentListTheme
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
         // because custom themes can't add params, because PHP
-        $post_page = $this->post_page;
         $inner_id = $this->inner_id;
 
         $tfe = send_event(new TextFormattingEvent($comment->comment));

@@ -71,8 +71,6 @@ final class PermManager extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
-
         if ($event->page_matches("perm_manager", method: "GET")) {
             $permissions = [];
             foreach (PermissionGroup::get_subclasses() as $class) {

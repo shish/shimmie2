@@ -17,8 +17,6 @@ final class TagHistory extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
-
         if ($event->page_matches("tag_history/revert", method: "POST", permission: PostTagsPermission::EDIT_IMAGE_TAG)) {
             // this is a request to revert to a previous version of the tags
             $this->process_revert_request((int)$event->req_POST('revert'));

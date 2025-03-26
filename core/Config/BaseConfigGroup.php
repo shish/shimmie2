@@ -65,7 +65,6 @@ abstract class BaseConfigGroup extends Enablable
     {
         $defaults = [];
         foreach (self::get_subclasses() as $class) {
-            $group = $class->newInstance();
             foreach ($class->getConstants() as $const => $value) {
                 $refl_const = $class->getReflectionConstant($const);
                 if (!$refl_const) {

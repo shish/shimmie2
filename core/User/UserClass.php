@@ -48,7 +48,7 @@ final class UserClass
     {
         $perms = [];
         foreach (PermissionGroup::get_subclasses() as $class) {
-            foreach ($class->getConstants() as $k => $v) {
+            foreach ($class->getConstants() as $_k => $v) {
                 if ($this->can($v)) {
                     $perms[] = $v;
                 }
