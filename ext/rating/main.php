@@ -302,7 +302,7 @@ final class Ratings extends Extension
                         send_event(new RatingSetEvent($image, $rating));
                         $total++;
                     }
-                    Ctx::$page->flash("Rating set for $total items");
+                    $event->log_action("Rating set for $total items");
                 }
                 break;
         }

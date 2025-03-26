@@ -213,7 +213,7 @@ final class Approval extends Extension
                         self::approve_image($image->id);
                         $total++;
                     }
-                    Ctx::$page->flash("Approved $total items");
+                    $event->log_action("Approved $total items");
                 }
                 break;
             case "bulk_disapprove_image":
@@ -223,7 +223,7 @@ final class Approval extends Extension
                         self::disapprove_image($image->id);
                         $total++;
                     }
-                    Ctx::$page->flash("Disapproved $total items");
+                    $event->log_action("Disapproved $total items");
                 }
                 break;
         }

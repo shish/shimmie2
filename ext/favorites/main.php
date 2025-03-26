@@ -166,8 +166,6 @@ final class Favorites extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page;
-
         switch ($event->action) {
             case "bulk_favorite":
                 if (!Ctx::$user->is_anonymous()) {
@@ -176,7 +174,7 @@ final class Favorites extends Extension
                         send_event(new FavoriteSetEvent($image->id, Ctx::$user, true));
                         $total++;
                     }
-                    $page->flash("Added $total items to favorites");
+                    $event->log_action("Added $total items to favorites");
                 }
                 break;
             case "bulk_unfavorite":
@@ -186,7 +184,7 @@ final class Favorites extends Extension
                         send_event(new FavoriteSetEvent($image->id, Ctx::$user, false));
                         $total++;
                     }
-                    $page->flash("Removed $total items from favorites");
+                    $event->log_action("Removed $total items from favorites");
                 }
                 break;
         }
