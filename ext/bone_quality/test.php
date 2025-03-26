@@ -8,7 +8,7 @@ final class BoneQualityTest extends ShimmiePHPUnitTestCase
 {
     public function testBoneQualityPage(): void
     {
-        $page = self::get_page('bone_quality');
+        self::get_page('bone_quality');
         self::assert_title("review your fate");
         self::assert_text("Congratulations");
         self::assert_text("tagme</a> remaining: <span>0");
@@ -37,7 +37,7 @@ final class BoneQualityTest extends ShimmiePHPUnitTestCase
 
         self::log_in_as_user();
 
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "tagme");
+        $this->post_image("tests/pbx_screenshot.jpg", "tagme");
         self::get_page("bone_quality");
         self::assert_no_text("Congratulations");
     }

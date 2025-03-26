@@ -197,7 +197,7 @@ final class PrivMsg extends Extension
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $page, $user;
+        global $user;
         $duser = $event->display_user;
         if (!$user->is_anonymous() && !$duser->is_anonymous()) {
             $pms = PM::get_pms($duser);

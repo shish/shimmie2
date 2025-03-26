@@ -37,7 +37,7 @@ class ArtistsTheme extends Themelet
 
     public function sidebar_options(string $mode, ?int $artistID = null, bool $is_admin = false): void
     {
-        global $page, $user;
+        global $page;
 
         if ($mode === "neutral") {
             $html = SHM_SIMPLE_FORM(
@@ -94,7 +94,7 @@ class ArtistsTheme extends Themelet
      */
     public function show_artist_editor(array $artist, array $aliases, array $members, array $urls): void
     {
-        global $user, $page;
+        global $page;
 
         $artistName = $artist['name'];
         $artistNotes = $artist['notes'];
@@ -177,7 +177,7 @@ class ArtistsTheme extends Themelet
 
     public function new_artist_composer(): void
     {
-        global $page, $user;
+        global $page;
 
         $html = SHM_SIMPLE_FORM(
             make_link("artist/create"),

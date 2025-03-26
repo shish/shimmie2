@@ -38,12 +38,12 @@ final class RotateImage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
 
         if ($event->page_matches("rotate/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id_ex($image_id);
+            Image::by_id_ex($image_id);
             /* Check if options were given to rotate an image. */
             $deg = int_escape($event->req_POST('rotate_deg'));
 

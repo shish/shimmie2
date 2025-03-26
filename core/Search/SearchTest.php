@@ -26,9 +26,9 @@ final class SearchTest extends ShimmiePHPUnitTestCase
     public function testOrder(): void
     {
         self::log_in_as_user();
-        $i1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
-        $i2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
-        $i3 = $this->post_image("tests/favicon.png", "another");
+        $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
+        $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
+        $this->post_image("tests/favicon.png", "another");
 
         $is1 = Search::find_images(0, null, ["order=random_4123"]);
         $ids1 = array_map(fn ($image) => $image->id, $is1);

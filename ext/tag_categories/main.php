@@ -55,7 +55,7 @@ final class TagCategories extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page, $user;
+        global $database, $page;
 
         if ($event->page_matches("tags/categories", method: "GET")) {
             /** @var array<array{category: string, display_singular: string, display_multiple: string, color: string}> $tcs */
@@ -166,7 +166,7 @@ final class TagCategories extends Extension
 
     public function page_update(): void
     {
-        global $user, $database;
+        global $database;
 
         if (!isset($_POST['tc_status']) and
            !isset($_POST['tc_category']) and

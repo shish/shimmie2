@@ -100,7 +100,7 @@ final class EventBus
         $listeners_str = "return [\n";
         foreach ($this->event_listeners as $event => $listeners) {
             $t = [];
-            foreach ($listeners as $id => $listener) {
+            foreach ($listeners as $_id => $listener) {
                 $class_name = $this->namespaced_class_name(get_class($listener));
                 $classes[] = $class_name;
                 $t[] = "\$".$class_name;

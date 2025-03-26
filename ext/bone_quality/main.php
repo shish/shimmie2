@@ -14,7 +14,6 @@ final class BoneQuality extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         if ($event->page_matches("bone_quality")) {
             $boned = false;
             $results = emptyHTML();

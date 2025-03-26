@@ -228,7 +228,6 @@ final class LogDatabase extends Extension
     {
         $database = Ctx::$database;
         $page = Ctx::$page;
-        $user = Ctx::$user;
         if ($event->page_matches("log/view", permission: LogDatabasePermission::VIEW_EVENTLOG)) {
             $t = new LogTable($database->raw_db());
             $t->inputs = $event->GET;

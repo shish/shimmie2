@@ -139,7 +139,7 @@ final class TranscodeImage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
 
         if ($event->page_matches("transcode/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
@@ -152,12 +152,10 @@ final class TranscodeImage extends Extension
 
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
-        global $user;
-
         if (
             Ctx::$config->get_bool(TranscodeImageConfig::GET_ENABLED) &&
             isset($event->params['transcode']) &&
-            $user->can(ImagePermission::EDIT_FILES) &&
+            Ctx::$user->can(ImagePermission::EDIT_FILES) &&
             $this->can_convert_mime(MediaEngine::from(Ctx::$config->req_string(TranscodeImageConfig::ENGINE)), $event->image->get_mime())
         ) {
 

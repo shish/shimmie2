@@ -43,7 +43,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
                 'size' => [0],
             ]
         ];
-        $page = self::post_page("upload", ["tags0" => "foo bar"]);
+        self::post_page("upload", ["tags0" => "foo bar"]);
         self::assert_response(302);
         self::assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
         // FIXME: image IDs get allocated even when transactions are rolled back,

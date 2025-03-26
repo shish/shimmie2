@@ -217,7 +217,7 @@ class UploadTheme extends Themelet
      */
     public function display_upload_status(array $results): void
     {
-        global $user, $page;
+        global $page;
 
         /** @var UploadSuccess[] */
         $successes = array_filter($results, fn ($r) => is_a($r, UploadSuccess::class));

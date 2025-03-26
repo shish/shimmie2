@@ -247,7 +247,7 @@ final class MimeMap
     {
         $ext = strtolower($ext);
 
-        foreach (self::MAP as $key => $value) {
+        foreach (self::MAP as $_key => $value) {
             if (in_array($ext, $value[self::MAP_EXT])) {
                 return $value;
             }
@@ -260,7 +260,7 @@ final class MimeMap
      */
     public static function get_for_mime(MimeType $mime): ?array
     {
-        foreach (self::MAP as $key => $value) {
+        foreach (self::MAP as $_key => $value) {
             if (in_array($mime->base, $value[self::MAP_MIME])) {
                 return $value;
             }

@@ -120,7 +120,6 @@ class TagMapTheme extends Themelet
 
     protected function display_nav(): void
     {
-        global $page;
         $this->display_navigation(extra: joinHTML(
             BR(),
             [

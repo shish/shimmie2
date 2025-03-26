@@ -12,8 +12,6 @@ final class ReverseSearchLinks extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $page;
-
         // only support image types
         $supported_types = [MimeType::JPEG, MimeType::GIF, MimeType::PNG, MimeType::WEBP];
         if (in_array($event->image->get_mime(), $supported_types)) {

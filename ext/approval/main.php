@@ -26,7 +26,7 @@ final class Approval extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
 
         if ($event->page_matches("approve_image/{image_id}", method: "POST", permission: ApprovalPermission::APPROVE_IMAGE)) {
             $image_id = int_escape($event->get_arg('image_id'));

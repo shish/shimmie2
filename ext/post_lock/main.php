@@ -22,7 +22,6 @@ final class PostLock extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $page;
         if ($event->image->is_locked() && !Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
             throw new PermissionDenied("Error: This image is locked and cannot be edited.");
         }
