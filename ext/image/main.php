@@ -171,12 +171,12 @@ final class ImageIO extends Extension
      */
     private function send_file(int $image_id, string $type, array $params): void
     {
-        global $config, $page;
+        global $page;
 
         $image = Image::by_id_ex($image_id);
 
         if ($type === "thumb") {
-            $mime = new MimeType($config->req_string(ThumbnailConfig::MIME));
+            $mime = new MimeType(Ctx::$config->req_string(ThumbnailConfig::MIME));
             $file = $image->get_thumb_filename();
         } else {
             $mime = $image->get_mime();
@@ -210,8 +210,8 @@ final class ImageIO extends Extension
 
             $page->set_file($file);
 
-            if ($config->get_int(ImageConfig::EXPIRES)) {
-                $expires = date(DATE_RFC1123, time() + $config->get_int(ImageConfig::EXPIRES));
+            if (Ctx::$config->get_int(ImageConfig::EXPIRES)) {
+                $expires = date(DATE_RFC1123, time() + Ctx::$config->get_int(ImageConfig::EXPIRES));
             } else {
                 $expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
             }

@@ -29,10 +29,9 @@ final class ResizeImage extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user, $config;
         if (
-            $user->can(ImagePermission::EDIT_FILES) &&
-            $config->get_bool(ResizeConfig::ENABLED) &&
+            Ctx::$user->can(ImagePermission::EDIT_FILES) &&
+            Ctx::$config->get_bool(ResizeConfig::ENABLED) &&
             $this->can_resize_mime($event->image->get_mime())
         ) {
             /* Add a link to resize the image */

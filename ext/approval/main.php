@@ -19,7 +19,7 @@ final class Approval extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        global $user, $config;
+        global $user;
 
         if (defined("UNITTEST") || $user->can(ApprovalPermission::BYPASS_IMAGE_APPROVAL)) {
             self::approve_image($event->image->id);
@@ -110,7 +110,7 @@ final class Approval extends Extension
     public const SEARCH_REGEXP = "/^approved:(yes|no)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $user, $config;
+        global $user;
 
         if (is_null($event->term) && $this->no_approval_query($event->context) && !defined("UNITTEST")) {
             $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
@@ -127,7 +127,7 @@ final class Approval extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
-        global $user, $config;
+        global $user;
         if ($event->key === HelpPages::SEARCH) {
             if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
                 $event->add_section("Approval", $this->theme->get_help_html());
@@ -170,7 +170,7 @@ final class Approval extends Extension
 
     private function check_permissions(Image $image): bool
     {
-        global $user, $config;
+        global $user;
 
         if ($image['approved'] === false && !$user->can(ApprovalPermission::APPROVE_IMAGE) && $user->id !== $image->owner_id) {
             return false;
@@ -190,7 +190,7 @@ final class Approval extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user, $config;
+        global $user;
         if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
             if ($event->image['approved'] === true) {
                 $event->add_button("Disapprove", "disapprove_image/".$event->image->id);
@@ -203,7 +203,7 @@ final class Approval extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user, $config;
+        global $user;
 
         if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
             if (in_array("approved:no", $event->search_terms)) {

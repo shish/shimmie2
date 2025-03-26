@@ -81,7 +81,7 @@ class NumericScoreTheme extends Themelet
         Url $b_dte,
         Url $f_dte,
     ): void {
-        global $page, $config;
+        global $page;
 
         $pop_images = [];
         foreach ($images as $image) {

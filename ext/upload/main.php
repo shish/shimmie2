@@ -270,7 +270,7 @@ final class Upload extends Extension
      */
     private function try_upload(array $file, int $slot, array $metadata): array
     {
-        global $page, $config, $database;
+        global $page, $database;
 
         // blank file boxes cause empty uploads, no need for error message
         if (empty($file['name'])) {
@@ -318,7 +318,7 @@ final class Upload extends Extension
      */
     private function try_transload(string $url, int $slot, array $metadata): array
     {
-        global $page, $config, $user, $database;
+        global $page, $user, $database;
 
         $results = [];
         $tmp_filename = shm_tempnam("transload");

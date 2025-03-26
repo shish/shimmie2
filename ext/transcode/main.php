@@ -92,7 +92,7 @@ final class TranscodeImage extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user, $config;
+        global $user;
 
         if ($user->can(ImagePermission::EDIT_FILES) && $event->context !== "report") {
             $engine = MediaEngine::from(Ctx::$config->req_string(TranscodeImageConfig::ENGINE));

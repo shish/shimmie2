@@ -15,13 +15,13 @@ class ImageViewCounterTheme extends Themelet
      */
     public function view_popular(array $images): void
     {
-        global $page, $config;
+        global $page;
         $pop_images = [];
         foreach ($images as $image) {
             $pop_images[] = $this->build_thumb($image);
         }
 
-        $page->set_title($config->req_string(SetupConfig::TITLE));
+        $page->set_title(Ctx::$config->req_string(SetupConfig::TITLE));
         $this->display_navigation();
         $page->add_block(new Block(null, joinHTML(" ", $pop_images), "main", 30));
     }

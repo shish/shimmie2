@@ -42,11 +42,11 @@ class CronUploaderTheme extends Themelet
         string $cron_url,
         ?array $log_entries
     ): void {
-        global $page, $config, $user;
+        global $page, $user;
         $page->set_title("Cron Uploader");
 
         $info_html = emptyHTML();
-        if (!$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
+        if (!Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             $info_html->appendChild(B(["style" => "color:red"], "THIS EXTENSION REQUIRES USER API KEYS TO BE ENABLED IN BOARD ADMIN"));
         }
 

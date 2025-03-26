@@ -84,7 +84,8 @@ final class Setup extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $page;
+        $config = Ctx::$config;
+        $page = Ctx::$page;
 
         if ($event->page_starts_with("nicedebug")) {
             $page->set_mode(PageMode::DATA);

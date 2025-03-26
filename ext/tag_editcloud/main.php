@@ -27,14 +27,14 @@ final class TagEditCloud extends Extension
 
     private function build_tag_map(Image $image): ?HTMLElement
     {
-        global $database, $config;
+        global $database;
 
-        $sort_method = $config->req_string(TagEditCloudConfig::SORT);
-        $tags_min = $config->req_int(TagEditCloudConfig::MIN_USAGE);
-        $used_first = $config->req_bool(TagEditCloudConfig::USED_FIRST);
-        $max_count = $config->req_int(TagEditCloudConfig::MAX_COUNT);
-        $def_count = $config->req_int(TagEditCloudConfig::DEF_COUNT);
-        $ignore_tags = Tag::explode($config->req_string(TagEditCloudConfig::IGNORE_TAGS));
+        $sort_method = Ctx::$config->req_string(TagEditCloudConfig::SORT);
+        $tags_min = Ctx::$config->req_int(TagEditCloudConfig::MIN_USAGE);
+        $used_first = Ctx::$config->req_bool(TagEditCloudConfig::USED_FIRST);
+        $max_count = Ctx::$config->req_int(TagEditCloudConfig::MAX_COUNT);
+        $def_count = Ctx::$config->req_int(TagEditCloudConfig::DEF_COUNT);
+        $ignore_tags = Tag::explode(Ctx::$config->req_string(TagEditCloudConfig::IGNORE_TAGS));
 
         $cat_color = [];
         if (TagCategoriesInfo::is_enabled()) {

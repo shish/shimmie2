@@ -27,8 +27,7 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
 
     public function testRatingExplicit(): void
     {
-        global $config;
-        $config->set_array("ext_rating_anonymous_privs", ["s", "q"]);
+        Ctx::$config->set_array("ext_rating_anonymous_privs", ["s", "q"]);
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id_ex($image_id);
@@ -41,7 +40,7 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
 
     public function testUserConfig(): void
     {
-        global $config, $user;
+        global $user;
 
         // post a safe image and an explicit image
         self::log_in_as_user();
@@ -53,7 +52,7 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image_s, "s"));
 
         // user is allowed to see all
-        $config->set_array("ext_rating_user_privs", ["s", "q", "e"]);
+        Ctx::$config->set_array("ext_rating_user_privs", ["s", "q", "e"]);
 
         // user prefers safe-only by default
         $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
@@ -81,8 +80,6 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
 
     public function testCountImages(): void
     {
-        global $config, $user;
-
         self::log_in_as_user();
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -95,8 +92,8 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         $image_e = Image::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
-        $config->set_array("ext_rating_user_privs", ["s", "q"]);
-        $user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
+        Ctx::$config->set_array("ext_rating_user_privs", ["s", "q"]);
+        Ctx::$user->get_config()->set_array(RatingsUserConfig::DEFAULTS, ["s"]);
 
         self::assertEquals(1, Search::count_images(["rating=s"]), "UserClass has access to safe, show safe");
         self::assertEquals(2, Search::count_images(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
