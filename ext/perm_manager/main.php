@@ -102,9 +102,8 @@ final class PermManager extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+            if (Ctx::$user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
                 $event->add_nav_link(make_link('perm_manager'), "Permission Manager");
             }
         }
@@ -112,8 +111,7 @@ final class PermManager extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+        if (Ctx::$user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
             $event->add_link("Permission Manager", make_link("perm_manager"), 88);
         }
     }

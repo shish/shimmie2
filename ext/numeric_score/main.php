@@ -114,16 +114,14 @@ final class NumericScore extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $user;
-        if ($user->can(NumericScorePermission::CREATE_VOTE)) {
+        if (Ctx::$user->can(NumericScorePermission::CREATE_VOTE)) {
             $this->theme->get_voter($event->image);
         }
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(NumericScorePermission::EDIT_OTHER_VOTE)) {
+        if (Ctx::$user->can(NumericScorePermission::EDIT_OTHER_VOTE)) {
             $this->theme->get_nuller($event->display_user);
         }
 

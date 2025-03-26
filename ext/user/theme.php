@@ -342,12 +342,11 @@ class UserPageTheme extends Themelet
 
     public function get_help_html(): HTMLElement
     {
-        global $user;
         return emptyHTML(
             P("Search for posts posted by particular individuals."),
             SHM_COMMAND_EXAMPLE("poster=username", 'Returns posts posted by "username"'),
             // SHM_COMMAND_EXAMPLE("poster_id=123", 'Returns posts posted by user 123'),
-            $user->can(IPBanPermission::VIEW_IP)
+            Ctx::$user->can(IPBanPermission::VIEW_IP)
                 ? SHM_COMMAND_EXAMPLE("poster_ip=127.0.0.1", "Returns posts posted from IP 127.0.0.1.")
                 : null
         );

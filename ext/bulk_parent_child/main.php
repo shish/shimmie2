@@ -15,17 +15,15 @@ final class BulkParentChild extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(BulkParentChildPermission::BULK_PARENT_CHILD)) {
+        if (Ctx::$user->can(BulkParentChildPermission::BULK_PARENT_CHILD)) {
             $event->add_action(BulkParentChild::PARENT_CHILD_ACTION_NAME, "Set Parent Child");
         }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $user, $page;
-        if ($user->can(BulkParentChildPermission::BULK_PARENT_CHILD) &&
+        global $page;
+        if (Ctx::$user->can(BulkParentChildPermission::BULK_PARENT_CHILD) &&
             ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)) {
             $prev_id = null;
             foreach ($event->items as $image) {

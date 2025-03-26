@@ -57,9 +57,8 @@ final class SourceHistory extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        global $user;
         if ($event->parent === "system") {
-            if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
+            if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
                 $event->add_nav_link(make_link('source_history/all/1'), "Source Changes", ["source_history"]);
             }
         }
@@ -67,8 +66,7 @@ final class SourceHistory extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        global $user;
-        if ($user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
+        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
             $event->add_link("Source Changes", make_link("source_history/all/1"));
         }
     }

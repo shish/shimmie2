@@ -502,9 +502,9 @@ final class Pools extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $database, $user;
+        global $database;
 
-        if (!$user->can(PoolsPermission::UPDATE)) {
+        if (!Ctx::$user->can(PoolsPermission::UPDATE)) {
             $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
             // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.
@@ -600,9 +600,9 @@ final class Pools extends Extension
 
     public function onPoolCreation(PoolCreationEvent $event): void
     {
-        global $user, $database;
+        global $database;
 
-        if (!$user->can(PoolsPermission::UPDATE)) {
+        if (!Ctx::$user->can(PoolsPermission::UPDATE)) {
             throw new PermissionDenied("You must be registered and logged in to add a image.");
         }
         if (empty($event->title)) {
@@ -620,7 +620,7 @@ final class Pools extends Extension
         );
 
         $poolID = $database->get_last_insert_id('pools_id_seq');
-        Log::info("pools", "Pool {$poolID} created by {$user->name}");
+        Log::info("pools", "Pool {$poolID} created by " . Ctx::$user->name);
 
         $event->new_id = $poolID;
     }

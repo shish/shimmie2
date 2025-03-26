@@ -161,8 +161,7 @@ final class PrivateImage extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-        if (($user->can(PrivateImagePermission::SET_PRIVATE_IMAGE) && $user->id == $event->image->owner_id) || $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ((Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE) && Ctx::$user->id == $event->image->owner_id) || Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
             if ($event->image['private'] === false) {
                 $event->add_button("Make Private", "privatize_image/".$event->image->id);
             } else {
@@ -173,17 +172,14 @@ final class PrivateImage extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        global $user;
-        if ($user->get_config()->get_bool(PrivateImageUserConfig::SET_DEFAULT) && $user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
+        if (Ctx::$user->get_config()->get_bool(PrivateImageUserConfig::SET_DEFAULT) && Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             self::privatize_image($event->image->id);
         }
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
+        if (Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             $event->add_action("bulk_privatize_image", "Make Private");
             $event->add_action("bulk_publicize_image", "Make Public");
         }

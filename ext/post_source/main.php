@@ -47,8 +47,7 @@ final class PostSource extends Extension
 
     public function onSourceSet(SourceSetEvent $event): void
     {
-        global $user;
-        if ($user->can(PostSourcePermission::EDIT_IMAGE_SOURCE)) {
+        if (Ctx::$user->can(PostSourcePermission::EDIT_IMAGE_SOURCE)) {
             $event->image->set_source($event->source);
         }
     }
