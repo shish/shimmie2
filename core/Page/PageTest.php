@@ -18,7 +18,7 @@ final class PageTest extends ShimmiePHPUnitTestCase
     public function test_file(): void
     {
         $page = new Page();
-        $page->set_file(new Path("tests/pbx_screenshot.jpg"));
+        $page->set_file(MimeType::JPEG, new Path("tests/pbx_screenshot.jpg"));
         ob_start();
         $page->display();
         self::assertGreaterThan(0, ob_get_length());
