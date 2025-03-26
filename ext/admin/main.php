@@ -51,9 +51,7 @@ final class AdminPage extends Extension
             send_event($aae);
 
             if ($aae->redirect) {
-                $page = Ctx::$page;
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("admin"));
+                Ctx::$page->set_redirect(make_link("admin"));
             }
         }
     }
@@ -133,9 +131,7 @@ final class AdminPage extends Extension
     public function onAdminAction(AdminActionEvent $event): void
     {
         if ($event->action === "test") {
-            $page = Ctx::$page;
-            $page->set_mode(PageMode::DATA);
-            $page->set_data("test");
+            Ctx::$page->set_data("test");
         }
     }
 

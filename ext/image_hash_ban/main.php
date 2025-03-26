@@ -100,7 +100,6 @@ final class ImageBan extends Extension
                     $page->flash("Post deleted");
                 }
 
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(Url::referer_or());
             }
         }
@@ -108,7 +107,6 @@ final class ImageBan extends Extension
             $input = validate_input(["d_hash" => "string"]);
             send_event(new RemoveImageHashBanEvent($input['d_hash']));
             $page->flash("Post ban removed");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("image_hash_ban/list", permission: ImageHashBanPermission::BAN_IMAGE)) {

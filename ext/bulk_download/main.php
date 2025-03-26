@@ -43,10 +43,8 @@ final class BulkDownload extends Extension
 
                 $zip->close();
 
-                $page = Ctx::$page;
-                $page->set_mode(PageMode::FILE);
-                $page->set_file($zip_filename, true);
-                $page->set_filename($download_filename);
+                Ctx::$page->set_file($zip_filename, true);
+                Ctx::$page->set_filename($download_filename);
 
                 $event->redirect = false;
             }

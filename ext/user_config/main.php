@@ -43,7 +43,7 @@ final class UserConfig extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
+        global $database;
 
         // if API keys are enabled, then _any_ anonymous page request can
         // be an authed page request if the api_key is set
@@ -61,9 +61,7 @@ final class UserConfig extends Extension
 
             if ($event->page_matches("user_admin/reset_api_key", method: "POST")) {
                 Ctx::$user->get_config()->set_string(UserConfigUserConfig::API_KEY, "");
-
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("user"));
+                Ctx::$page->set_redirect(make_link("user"));
             }
         }
 
@@ -91,9 +89,8 @@ final class UserConfig extends Extension
             }
 
             send_event(new ConfigSaveEvent($duser->get_config(), ConfigSaveEvent::postToSettings($event->POST)));
-            $page->flash("Config saved");
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("user_config"));
+            Ctx::$page->flash("Config saved");
+            Ctx::$page->set_redirect(make_link("user_config"));
         }
     }
 

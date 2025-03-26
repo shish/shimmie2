@@ -242,7 +242,6 @@ final class PrivMsg extends Extension
                 $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
                 Ctx::$cache->delete("pm-count-{$user->id}");
                 Log::info("pm", "Deleted PM #$pm_id", "PM deleted");
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(Url::referer_or());
             }
         }
@@ -253,7 +252,6 @@ final class PrivMsg extends Extension
             $message = $event->req_POST("message");
             send_event(new SendPMEvent(new PM($from_id, Network::get_real_ip(), $to_id, $subject, $message)));
             $page->flash("PM sent");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(Url::referer_or());
         }
     }

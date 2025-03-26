@@ -66,13 +66,11 @@ final class AliasEditor extends Extension
         if ($event->page_matches("alias/add", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $input = validate_input(["c_oldtag" => "string", "c_newtag" => "string"]);
             send_event(new AddAliasEvent($input['c_oldtag'], $input['c_newtag']));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("alias/list"));
         }
         if ($event->page_matches("alias/remove", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $input = validate_input(["d_oldtag" => "string"]);
             send_event(new DeleteAliasEvent($input['d_oldtag']));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("alias/list"));
         }
         if ($event->page_matches("alias/list")) {
@@ -87,7 +85,6 @@ final class AliasEditor extends Extension
             $this->theme->display_aliases($t->table($t->query()), $t->paginator());
         }
         if ($event->page_matches("alias/export/aliases.csv")) {
-            $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::CSV);
             $page->set_filename("aliases.csv");
             $page->set_data($this->get_alias_csv($database));
@@ -98,7 +95,6 @@ final class AliasEditor extends Extension
                 $contents = \Safe\file_get_contents($tmp);
                 $this->add_alias_csv($contents);
                 Log::info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("alias/list"));
             } else {
                 throw new InvalidInput("No File Specified");

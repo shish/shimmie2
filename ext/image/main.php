@@ -35,10 +35,9 @@ final class ImageIO extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $page = Ctx::$page;
         $thumb_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
         $thumb_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
-        $page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
+        Ctx::$page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST")) {
             $image = Image::by_id_ex(int_escape($event->req_POST('image_id')));
@@ -48,8 +47,7 @@ final class ImageIO extends Extension
                 if (Ctx::$config->get_string(ImageConfig::ON_DELETE) === 'next') {
                     $this->redirect_to_next_image($image, $event->get_GET('search'));
                 } else {
-                    $page->set_mode(PageMode::REDIRECT);
-                    $page->set_redirect(Url::referer_or(ignore: ['post/view']));
+                    Ctx::$page->set_redirect(Url::referer_or(ignore: ['post/view']));
                 }
             } else {
                 throw new PermissionDenied("You do not have permission to delete this image.");
@@ -149,7 +147,6 @@ final class ImageIO extends Extension
             $redirect_target = make_link("post/view/{$target_image->id}", fragment: $fragment);
         }
 
-        Ctx::$page->set_mode(PageMode::REDIRECT);
         Ctx::$page->set_redirect($redirect_target);
     }
 
@@ -192,11 +189,9 @@ final class ImageIO extends Extension
         $gmdate_mod = gmdate('D, d M Y H:i:s', $file->filemtime()) . ' GMT';
 
         if ($if_modified_since === $gmdate_mod) {
-            $page->set_mode(PageMode::DATA);
             $page->set_code(304);
             $page->set_data("");
         } else {
-            $page->set_mode(PageMode::FILE);
             $page->add_http_header("Last-Modified: $gmdate_mod");
             if ($type !== "thumb") {
                 $page->set_filename($image->get_nice_image_name(), 'inline');

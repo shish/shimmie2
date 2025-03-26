@@ -58,7 +58,6 @@ final class Media extends Extension
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();
 
-            Ctx::$page->set_mode(PageMode::REDIRECT);
             Ctx::$page->set_redirect(make_link("post/view/$image->id"));
         }
     }

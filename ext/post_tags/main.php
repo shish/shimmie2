@@ -122,11 +122,9 @@ final class PostTags extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         if ($event->page_matches("tag_edit/replace", method: "POST", permission: PostTagsPermission::MASS_TAG_EDIT)) {
             $this->mass_tag_edit($event->req_POST('search'), $event->req_POST('replace'), true);
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("admin"));
+            Ctx::$page->set_redirect(make_link("admin"));
         }
     }
 

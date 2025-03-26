@@ -60,11 +60,13 @@ class Page
      */
     public function set_data(string $data): void
     {
+        $this->mode = PageMode::DATA;
         $this->data = $data;
     }
 
     public function set_file(Path $file, bool $delete = false): void
     {
+        $this->mode = PageMode::FILE;
         $this->file = $file;
         $this->file_delete = $delete;
     }
@@ -94,6 +96,7 @@ class Page
      */
     public function set_redirect(Url $redirect): void
     {
+        $this->mode = PageMode::REDIRECT;
         $this->redirect = (string)$redirect;
     }
 

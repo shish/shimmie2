@@ -105,13 +105,11 @@ final class Ratings extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $page;
         /**
          * Deny images upon insufficient permissions.
          **/
         if (!$this->check_permissions($event->image)) {
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            Ctx::$page->set_redirect(make_link());
         }
     }
 
@@ -326,9 +324,7 @@ final class Ratings extends Extension
                 $n += 100;
             }
 
-            $page = Ctx::$page;
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link());
+            Ctx::$page->set_redirect(make_link());
         }
     }
 

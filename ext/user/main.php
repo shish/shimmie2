@@ -162,7 +162,6 @@ final class UserPage extends Extension
             $this->theme->display_signup_page();
         }
         if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: UserAccountsPermission::CREATE_USER)) {
-            global $page;
             if (!Ctx::$config->req_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled();
                 return;
@@ -178,8 +177,7 @@ final class UserPage extends Extension
                     )
                 );
                 $uce->get_user()->set_login_cookie();
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("user"));
+                Ctx::$page->set_redirect(make_link("user"));
             } catch (UserCreationException $ex) {
                 throw new InvalidInput($ex->getMessage());
             }
@@ -194,7 +192,6 @@ final class UserPage extends Extension
                     false
                 )
             );
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("admin"));
             $page->flash("Created new user");
         }
@@ -291,7 +288,6 @@ final class UserPage extends Extension
             $e = send_event(new UserPageBuildingEvent($display_user));
             $this->display_stats($e);
         } elseif ($event->page_matches("user")) {
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user/" . $user->name));
         }
     }
@@ -526,7 +522,6 @@ final class UserPage extends Extension
         send_event(new UserLoginEvent($duser));
         $duser->set_login_cookie();
 
-        Ctx::$page->set_mode(PageMode::REDIRECT);
         if (Ctx::$config->get_string(UserAccountsConfig::LOGIN_REDIRECT) === "previous") {
             Ctx::$page->set_redirect(Url::referer_or(ignore: ["user/"]));
         } else {
@@ -536,16 +531,14 @@ final class UserPage extends Extension
 
     private function page_logout(): void
     {
-        global $page;
-        $page->add_cookie("session", "", time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
+        Ctx::$page->add_cookie("session", "", time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         if (Ctx::$config->req_bool(UserAccountsConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
-            $page->add_cookie("user", "", time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
+            Ctx::$page->add_cookie("user", "", time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY), "/");
         }
         Log::info("user", "Logged out");
-        $page->set_mode(PageMode::REDIRECT);
-        $page->set_redirect(make_link());
+        Ctx::$page->set_redirect(make_link());
     }
 
     private function page_recover(string $username): void
@@ -577,13 +570,10 @@ final class UserPage extends Extension
 
     private function redirect_to_user(User $duser): void
     {
-        $page = Ctx::$page;
         if (Ctx::$user->id === $duser->id) {
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("user"));
+            Ctx::$page->set_redirect(make_link("user"));
         } else {
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("user/{$duser->name}"));
+            Ctx::$page->set_redirect(make_link("user/{$duser->name}"));
         }
     }
 
@@ -640,7 +630,7 @@ final class UserPage extends Extension
 
     private function delete_user(int $uid, bool $with_images = false, bool $with_comments = false): void
     {
-        global $database, $page;
+        global $database;
 
         $duser = User::by_id($uid);
         Log::warning("user", "Deleting user #{$uid} (@{$duser->name})");
@@ -678,7 +668,6 @@ final class UserPage extends Extension
             ["id" => $uid]
         );
 
-        $page->set_mode(PageMode::REDIRECT);
-        $page->set_redirect(make_link());
+        Ctx::$page->set_redirect(make_link());
     }
 }

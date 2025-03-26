@@ -12,7 +12,6 @@ final class ReplaceFile extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $page = Ctx::$page;
         if ($event->page_matches("replace/{image_id}", method: "GET", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
@@ -24,8 +23,7 @@ final class ReplaceFile extends Extension
             $image = Image::by_id_ex($image_id);
 
             if (empty($event->get_POST("url")) && count($_FILES) == 0) {
-                $page->set_mode(PageMode::REDIRECT);
-                $page->set_redirect(make_link("replace/$image_id"));
+                Ctx::$page->set_redirect(make_link("replace/$image_id"));
                 return;
             }
 
@@ -42,8 +40,7 @@ final class ReplaceFile extends Extension
                 send_event(new SourceSetEvent($image, $event->req_POST("source")));
             }
             Ctx::$cache->delete("thumb-block:{$image_id}");
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/$image_id"));
+            Ctx::$page->set_redirect(make_link("post/view/$image_id"));
         }
     }
 

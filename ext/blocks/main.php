@@ -77,7 +77,6 @@ final class Blocks extends Extension
                 ", ['pages' => $event->req_POST('pages'), 'title' => $event->req_POST('title'), 'area' => $event->req_POST('area'), 'priority' => (int)$event->req_POST('priority'), 'content' => $event->req_POST('content'), 'userclass' => $event->req_POST('userclass')]);
             Log::info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$event->req_POST('title').")");
             Ctx::$cache->delete("blocks");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blocks/list"));
         }
         if ($event->page_matches("blocks/update", method: "POST", permission: BlocksPermission::MANAGE_BLOCKS)) {
@@ -95,7 +94,6 @@ final class Blocks extends Extension
                 Log::info("blocks", "Updated Block #".$event->req_POST('id')." (".$event->req_POST('title').")");
             }
             Ctx::$cache->delete("blocks");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("blocks/list"));
         }
         if ($event->page_matches("blocks/list", permission: BlocksPermission::MANAGE_BLOCKS)) {

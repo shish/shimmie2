@@ -38,7 +38,6 @@ final class RegenThumb extends Extension
                 $this->regenerate_thumbnail($image);
             }
 
-            Ctx::$page->set_mode(PageMode::REDIRECT);
             Ctx::$page->set_redirect(make_link());
         }
     }

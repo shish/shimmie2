@@ -88,7 +88,6 @@ final class Setup extends Extension
         $page = Ctx::$page;
 
         if ($event->page_starts_with("nicedebug")) {
-            $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::JSON);
             $page->set_data(\Safe\json_encode([
                 "args" => $event->args,
@@ -102,7 +101,6 @@ final class Setup extends Extension
         }
 
         if ($event->page_matches("nicetest")) {
-            $page->set_mode(PageMode::DATA);
             $page->set_data("ok");
         }
 
@@ -121,7 +119,6 @@ final class Setup extends Extension
         } elseif ($event->page_matches("setup/save", method: "POST", permission: SetupPermission::CHANGE_SETTING)) {
             send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Config saved");
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(Url::referer_or(make_link("setup")));
         }
     }

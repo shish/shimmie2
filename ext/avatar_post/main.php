@@ -24,7 +24,6 @@ final class AvatarPost extends AvatarExtension
         global $page;
         if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("set_avatar/$image_id"));
         } elseif ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
@@ -33,7 +32,6 @@ final class AvatarPost extends AvatarExtension
             $settings = ConfigSaveEvent::postToSettings($event->POST);
             send_event(new ConfigSaveEvent(Ctx::$user->get_config(), $settings));
             $page->flash("Image set as avatar");
-            $page->set_mode(PageMode::REDIRECT);
             if (key_exists(AvatarPostUserConfig::AVATAR_ID, $settings) && is_int($settings[AvatarPostUserConfig::AVATAR_ID])) {
                 $page->set_redirect(make_link("post/view/".$settings[AvatarPostUserConfig::AVATAR_ID]));
             } else {

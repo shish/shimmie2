@@ -60,7 +60,6 @@ class UserConfigTheme extends Themelet
             INPUT(['class' => 'setupsubmit', 'type' => 'submit', 'value' => 'Save Settings'])
         );
 
-        Ctx::$page->set_mode(PageMode::PAGE);
         Ctx::$page->set_title("User Options");
         $this->display_navigation();
         Ctx::$page->add_block(new Block(null, $table, id: "Setupmain"));

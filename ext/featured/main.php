@@ -12,22 +12,19 @@ final class Featured extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: FeaturedPermission::EDIT_FEATURE)) {
             $id = $event->get_iarg('image_id');
             Ctx::$config->set_int(FeaturedConfig::ID, $id);
             Log::info("featured", "Featured post set to >>$id", "Featured post set");
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/$id"));
+            Ctx::$page->set_redirect(make_link("post/view/$id"));
         }
         if ($event->page_matches("featured_image/download")) {
             $fid = Ctx::$config->get_int(FeaturedConfig::ID);
             if (!is_null($fid)) {
                 $image = Image::by_id($fid);
                 if (!is_null($image)) {
-                    $page->set_mode(PageMode::DATA);
-                    $page->set_mime($image->get_mime());
-                    $page->set_data($image->get_image_filename()->get_contents());
+                    Ctx::$page->set_mime($image->get_mime());
+                    Ctx::$page->set_data($image->get_image_filename()->get_contents());
                 }
             }
         }

@@ -156,7 +156,6 @@ final class Wiki extends Extension
             if ($action === "edit") {
                 // we're only here because making a form do a GET request is a
                 // pain, so we accept the POST and do a GET redirect
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$title/edit"));
             } elseif ($action === "save") {
                 $rev = int_escape($event->req_POST('revision'));
@@ -170,7 +169,6 @@ final class Wiki extends Extension
                     $wikipage->locked = $lock;
                     send_event(new WikiUpdateEvent($user, $wikipage));
                     $u_title = url_escape($title);
-                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } else {
                     throw new PermissionDenied("You are not allowed to edit this page");
@@ -181,7 +179,6 @@ final class Wiki extends Extension
                     $revision = int_escape($event->req_POST('revision'));
                     send_event(new WikiDeleteRevisionEvent($title, $revision));
                     $u_title = url_escape($title);
-                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } else {
                     throw new PermissionDenied("You are not allowed to edit this page");
@@ -190,7 +187,6 @@ final class Wiki extends Extension
                 if ($user->can(WikiPermission::ADMIN)) {
                     send_event(new WikiDeletePageEvent($title));
                     $u_title = url_escape($title);
-                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 }
             }
@@ -204,7 +200,6 @@ final class Wiki extends Extension
                 $this->theme->display_page($content, self::get_page("wiki:sidebar"));
             }
         } elseif ($event->page_matches("wiki")) {
-            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("wiki/Index"));
         }
     }

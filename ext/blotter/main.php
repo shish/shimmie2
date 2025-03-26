@@ -59,7 +59,6 @@ final class Blotter extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $page = Ctx::$page;
         $database = Ctx::$database;
         if ($event->page_matches("blotter/editor", method: "GET", permission: BlotterPermission::ADMIN)) {
             /** @var BlotterEntry[] $entries */
@@ -75,15 +74,13 @@ final class Blotter extends Extension
                 ["text" => $entry_text, "important" => $important]
             );
             Log::info("blotter", "Added Message: $entry_text");
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("blotter/editor"));
+            Ctx::$page->set_redirect(make_link("blotter/editor"));
         }
         if ($event->page_matches("blotter/remove", method: "POST", permission: BlotterPermission::ADMIN)) {
             $id = int_escape($event->req_POST('id'));
             $database->execute("DELETE FROM blotter WHERE id=:id", ["id" => $id]);
             Log::info("blotter", "Removed Entry #$id");
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("blotter/editor"));
+            Ctx::$page->set_redirect(make_link("blotter/editor"));
         }
         if ($event->page_matches("blotter/list", method: "GET")) {
             /** @var BlotterEntry[] $entries */

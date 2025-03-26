@@ -25,9 +25,7 @@ final class PostSource extends Extension
     {
         if ($event->page_matches("tag_edit/mass_source_set", method: "POST", permission: PostTagsPermission::MASS_TAG_EDIT)) {
             $this->mass_source_edit($event->req_POST('tags'), $event->req_POST('source'));
-            $page = Ctx::$page;
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(search_link());
+            Ctx::$page->set_redirect(search_link());
         }
     }
 

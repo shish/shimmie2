@@ -38,9 +38,7 @@ final class TagMap extends Extension
                 default => null,
             };
         } elseif ($event->page_matches("tags")) {
-            $page = Ctx::$page;
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("tags/map"));
+            Ctx::$page->set_redirect(make_link("tags/map"));
         }
     }
 

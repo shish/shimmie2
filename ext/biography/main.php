@@ -32,7 +32,6 @@ final class Biography extends Extension
                 Log::info("biography", "Set biography to $bio");
                 $duser->get_config()->set_string("biography", $bio);
                 $page->flash("Bio Updated");
-                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(Url::referer_or());
             } else {
                 throw new PermissionDenied("You do not have permission to edit this user's biography");

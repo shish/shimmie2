@@ -47,7 +47,6 @@ final class BrowserSearch extends Extension
 			";
 
             // And now to send it to the browser
-            $page->set_mode(PageMode::DATA);
             $page->set_mime(MimeType::XML);
             $page->set_data($xml);
         } elseif ($event->page_matches("browser_search/{tag_search}")) {
@@ -72,7 +71,6 @@ final class BrowserSearch extends Extension
 
             // And to do stuff with it. We want our output to look like:
             // ["shimmie",["shimmies","shimmy","shimmie","21 shimmies","hip shimmies","skea shimmies"],[],[]]
-            $page->set_mode(PageMode::DATA);
             $page->set_data(\Safe\json_encode([$tag_search, $tags, [], []]));
         }
     }

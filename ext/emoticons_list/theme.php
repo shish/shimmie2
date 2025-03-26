@@ -28,7 +28,6 @@ class EmoticonListTheme extends Themelet
             ));
         }
 
-        $page->set_mode(PageMode::DATA);
         $page->set_data((string)$page->html_html(
             TITLE("Emoticon list"),
             $table

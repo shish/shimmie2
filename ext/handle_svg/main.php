@@ -22,13 +22,12 @@ final class SVGFileHandler extends DataHandlerExtension
             $image = Image::by_id_ex($id);
             $hash = $image->hash;
 
-            $page->set_mime(MimeType::SVG);
-            $page->set_mode(PageMode::DATA);
-
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
             $dirtySVG = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash)->get_contents();
             $cleanSVG = false_throws($sanitizer->sanitize($dirtySVG));
+
+            $page->set_mime(MimeType::SVG);
             $page->set_data($cleanSVG);
         }
     }
