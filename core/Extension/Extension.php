@@ -17,8 +17,11 @@ namespace Shimmie2;
  * Then re-implemented by Shish after he broke the forum and couldn't
  * find the thread where the original was posted >_<
  */
-abstract class Extension extends Enablable
+abstract class Extension
 {
+    use Enablable;
+    public const KEY = null;
+
     protected Themelet $theme;
     public const VERSION_KEY = null;
 

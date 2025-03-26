@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-abstract class ExtensionInfo extends Enablable
+abstract class ExtensionInfo
 {
+    use Enablable;
+    public const KEY = null;
+
     // Every credit you get costs us RAM. It stops now.
     public const SHISH_NAME = "Shish";
     public const SHISH_EMAIL = "webmaster@shishnet.org";
