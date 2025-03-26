@@ -331,9 +331,9 @@ final class Notes extends Extension
 
     private function get_notes_list(int $pageNumber): void
     {
-        global $database, $config;
+        global $database;
 
-        $notesPerPage = $config->req_int(NotesConfig::NOTES_PER_PAGE);
+        $notesPerPage = Ctx::$config->req_int(NotesConfig::NOTES_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);

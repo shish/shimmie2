@@ -70,11 +70,11 @@ final class ImageViewCounter extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database, $config;
+        global $database;
 
-        if ($config->get_bool("image_viewcounter_installed")) {
+        if (Ctx::$config->get_bool("image_viewcounter_installed")) {
             $this->set_version(1);
-            $config->delete("image_viewcounter_installed");
+            Ctx::$config->delete("image_viewcounter_installed");
         }
         if ($this->get_version() < 1) {
             $database->create_table("image_views", "

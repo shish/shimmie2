@@ -267,7 +267,7 @@ final class CronUploader extends Extension
      */
     public function process_upload(): bool
     {
-        global $database, $user, $config, $page, $_shm_load_start;
+        global $database, $user, $page, $_shm_load_start;
 
         $max_time = intval(ini_get('max_execution_time')) * .8;
 
@@ -275,7 +275,7 @@ final class CronUploader extends Extension
         $page->set_mime(MimeType::TEXT);
         $page->send_headers();
 
-        if (!$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
+        if (!Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
             throw new ServerError("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 

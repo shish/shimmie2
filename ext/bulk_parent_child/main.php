@@ -24,7 +24,7 @@ final class BulkParentChild extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $user, $page, $config;
+        global $user, $page;
         if ($user->can(BulkParentChildPermission::BULK_PARENT_CHILD) &&
             ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)) {
             $prev_id = null;

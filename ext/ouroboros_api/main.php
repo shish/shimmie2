@@ -299,8 +299,7 @@ final class OuroborosAPI extends Extension
      */
     protected function postCreate(OuroborosPost $post, ?string $md5 = ''): void
     {
-        global $config, $database;
-        $handler = $config->get_string(UploadConfig::COLLISION_HANDLER);
+        $handler = Ctx::$config->get_string(UploadConfig::COLLISION_HANDLER);
         if (!empty($md5) && !($handler === 'merge')) {
             $img = Image::by_hash($md5);
             if (!is_null($img)) {
@@ -318,7 +317,7 @@ final class OuroborosAPI extends Extension
         // Check where we should try for the file
         if (empty($post->file) && !empty($post->file_url)) {
             // Transload from source
-            $meta['file'] = shm_tempnam('transload_' . $config->req_string(UploadConfig::TRANSLOAD_ENGINE))->str();
+            $meta['file'] = shm_tempnam('transload_' . Ctx::$config->req_string(UploadConfig::TRANSLOAD_ENGINE))->str();
             $meta['filename'] = basename($post->file_url);
             try {
                 Network::fetch_url($post->file_url, new Path($meta['file']));
@@ -340,7 +339,7 @@ final class OuroborosAPI extends Extension
         }
         $img = Image::by_hash($meta['hash']);
         if (!is_null($img)) {
-            $handler = $config->get_string(UploadConfig::COLLISION_HANDLER);
+            $handler = Ctx::$config->get_string(UploadConfig::COLLISION_HANDLER);
             if ($handler === 'merge') {
                 $postTags = Tag::explode($post->tags);
                 $merged = array_merge($postTags, $img->get_tag_array());
@@ -358,7 +357,7 @@ final class OuroborosAPI extends Extension
             }
         }
         try {
-            $image = $database->with_savepoint(function () use ($meta) {
+            $image = Ctx::$database->with_savepoint(function () use ($meta) {
                 $dae = send_event(new DataUploadEvent(new Path($meta['file']), basename($meta['file']), 0, $meta));
                 return $dae->images[0];
             });
@@ -403,13 +402,10 @@ final class OuroborosAPI extends Extension
 
     protected function tagIndex(int $limit, int $page, string $order, string $name, string $name_pattern): void
     {
-        global $database, $config;
+        global $database;
 
         // This class will only exist if the tag map plugin is enabled
-        $tags_min = 0;
-        if (class_exists('\Shimmie2\TagMapConfig')) {
-            $tags_min = $config->get_int(TagMapConfig::TAGS_MIN);
-        }
+        $tags_min = Ctx::$config->get_int(TagMapConfig::TAGS_MIN);
 
         $start = ($page - 1) * $limit;
         switch ($order) {
@@ -571,18 +567,13 @@ final class OuroborosAPI extends Extension
      */
     private function tryAuth(): void
     {
-        global $config, $user;
+        global $user;
 
         if (isset($_REQUEST['user']) && isset($_REQUEST['session'])) {
             //Auth by session data from query
             $name = $_REQUEST['user'];
             $session = $_REQUEST['session'];
-            $duser = User::by_session($name, $session);
-            if (!is_null($duser)) {
-                $user = $duser;
-            } else {
-                $user = User::by_id($config->req_int(UserAccountsConfig::ANON_ID));
-            }
+            $user = User::by_session($name, $session) ?? User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
             send_event(new UserLoginEvent($user));
         } elseif (isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session']) &&
             isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'])
@@ -590,12 +581,7 @@ final class OuroborosAPI extends Extension
             //Auth by session data from cookies
             $session = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session'];
             $user = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'];
-            $duser = User::by_session($user, $session);
-            if (!is_null($duser)) {
-                $user = $duser;
-            } else {
-                $user = User::by_id($config->req_int(UserAccountsConfig::ANON_ID));
-            }
+            $user = User::by_session($user, $session) ?? User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
             send_event(new UserLoginEvent($user));
         }
     }

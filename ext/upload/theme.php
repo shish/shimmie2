@@ -158,14 +158,13 @@ class UploadTheme extends Themelet
 
     protected function build_bookmarklets(): HTMLElement
     {
-        global $config;
         $limits = get_upload_limits();
         $link = make_link("upload")->asAbsolute();
         $main_page = make_link()->asAbsolute();
-        $title = $config->req_string(SetupConfig::TITLE);
+        $title = Ctx::$config->req_string(SetupConfig::TITLE);
         $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
-        $delimiter = $config->req_bool(SetupConfig::NICE_URLS) ? '?' : '&amp;';
+        $delimiter = Ctx::$config->req_bool(SetupConfig::NICE_URLS) ? '?' : '&amp;';
 
         $js = 'javascript:(
             function() {
@@ -195,7 +194,7 @@ class UploadTheme extends Themelet
         // Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
         $supported_ext = join(" ", DataHandlerExtension::get_all_supported_exts());
 
-        $title = "Booru to " . $config->req_string(SetupConfig::TITLE);
+        $title = "Booru to " . Ctx::$config->req_string(SetupConfig::TITLE);
         // CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
         $js = '
             javascript:

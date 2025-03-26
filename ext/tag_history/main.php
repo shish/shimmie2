@@ -46,7 +46,7 @@ final class TagHistory extends Extension
 
     public function onTagSet(TagSetEvent $event): void
     {
-        global $database, $config, $user;
+        global $database, $user;
 
         $new_tags = Tag::implode($event->new_tags);
         $old_tags = Tag::implode($event->old_tags);
@@ -62,7 +62,7 @@ final class TagHistory extends Extension
             Log::debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
         }
 
-        $allowed = $config->get_int(TagHistoryConfig::MAX_HISTORY);
+        $allowed = Ctx::$config->get_int(TagHistoryConfig::MAX_HISTORY);
         if ($allowed == 0) {
             return;
         }
@@ -75,7 +75,7 @@ final class TagHistory extends Extension
                 "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-                ["image_id" => $event->image->id, "tags" => $old_tags, "user_id" => $config->req_int(UserAccountsConfig::ANON_ID), "user_ip" => '127.0.0.1']
+                ["image_id" => $event->image->id, "tags" => $old_tags, "user_id" => Ctx::$config->req_int(UserAccountsConfig::ANON_ID), "user_ip" => '127.0.0.1']
             );
             $entries++;
         }

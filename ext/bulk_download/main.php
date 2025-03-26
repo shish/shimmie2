@@ -20,7 +20,7 @@ final class BulkDownload extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $user, $page, $config;
+        global $user, $page;
 
         if ($user->can(BulkDownloadPermission::BULK_DOWNLOAD) &&
             ($event->action == BulkDownload::DOWNLOAD_ACTION_NAME)) {
@@ -28,7 +28,7 @@ final class BulkDownload extends Extension
             $zip_filename = shm_tempnam("bulk_download");
             $zip = new \ZipArchive();
             $size_total = 0;
-            $max_size = $config->req_int(BulkDownloadConfig::SIZE_LIMIT);
+            $max_size = Ctx::$config->req_int(BulkDownloadConfig::SIZE_LIMIT);
 
             if ($zip->open($zip_filename->str(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
                 foreach ($event->items as $image) {

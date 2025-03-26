@@ -8,7 +8,7 @@ final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 {
     public function testResLimitOK(): void
     {
-        global $config;
+        $config = Ctx::$config;
         $config->set_int("upload_min_height", 0);
         $config->set_int("upload_min_width", 0);
         $config->set_int("upload_max_height", 2000);
@@ -23,7 +23,7 @@ final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 
     public function testResLimitSmall(): void
     {
-        global $config;
+        $config = Ctx::$config;
         $config->set_int("upload_min_height", 900);
         $config->set_int("upload_min_width", 900);
         $config->set_int("upload_max_height", -1);
@@ -39,7 +39,7 @@ final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 
     public function testResLimitLarge(): void
     {
-        global $config;
+        $config = Ctx::$config;
         $config->set_int("upload_min_height", 0);
         $config->set_int("upload_min_width", 0);
         $config->set_int("upload_max_height", 100);
@@ -54,7 +54,7 @@ final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 
     public function testResLimitRatio(): void
     {
-        global $config;
+        $config = Ctx::$config;
         $config->set_int("upload_min_height", -1);
         $config->set_int("upload_min_width", -1);
         $config->set_int("upload_max_height", -1);

@@ -62,16 +62,15 @@ class UserPageTheme extends Themelet
 
     public function display_signup_page(): void
     {
-        global $config, $user, $page;
-        $tac = $config->get_string(UserAccountsConfig::LOGIN_TAC) ?? "";
+        $tac = Ctx::$config->get_string(UserAccountsConfig::LOGIN_TAC) ?? "";
 
-        if ($config->get_bool(UserAccountsConfig::LOGIN_TAC_BBCODE)) {
+        if (Ctx::$config->get_bool(UserAccountsConfig::LOGIN_TAC_BBCODE)) {
             $tac = format_text($tac);
         }
 
         $email_required = (
-            $config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
-            !$user->can(UserAccountsPermission::CREATE_OTHER_USER)
+            Ctx::$config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
+            !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)
         );
 
         $form = SHM_SIMPLE_FORM(
@@ -110,9 +109,9 @@ class UserPageTheme extends Themelet
             $form
         );
 
-        $page->set_title("Create Account");
+        Ctx::$page->set_title("Create Account");
         $this->display_navigation();
-        $page->add_block(new Block("Signup", $html));
+        Ctx::$page->add_block(new Block("Signup", $html));
     }
 
     public function display_user_creator(): void

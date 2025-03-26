@@ -164,14 +164,13 @@ final class Forum extends Extension
 
     private function get_total_pages_for_thread(int $threadID): int
     {
-        global $database, $config;
-        $result = $database->get_row("
+        $count = Ctx::$database->get_one("
             SELECT COUNT(1) AS count
             FROM forum_posts
             WHERE thread_id = :thread_id
         ", ['thread_id' => $threadID]);
 
-        return (int) ceil($result["count"] / $config->req_int(ForumConfig::POSTS_PER_PAGE));
+        return (int) ceil($count / Ctx::$config->req_int(ForumConfig::POSTS_PER_PAGE));
     }
 
     /**

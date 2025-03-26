@@ -58,7 +58,8 @@ final class ET extends Extension
      */
     private function get_site_info(): array
     {
-        global $config, $database;
+        $config = Ctx::$config;
+        $database = Ctx::$database;
 
         $core_exts = [];
         $extra_exts = [];

@@ -119,14 +119,14 @@ class WikiTheme extends Themelet
 
     protected function format_wiki_page(WikiPage $page): HTMLElement
     {
-        global $database, $config;
+        global $database;
 
         $text = "{body}";
 
         // if this is a tag page, add tag info
         $tag = $database->get_one("SELECT tag FROM tags WHERE tag = :tag", ["tag" => $page->title]);
         if (!is_null($tag)) {
-            $text = $config->req_string(WikiConfig::TAG_PAGE_TEMPLATE);
+            $text = Ctx::$config->req_string(WikiConfig::TAG_PAGE_TEMPLATE);
 
             if (AliasEditorInfo::is_enabled()) {
                 $aliases = $database->get_col("
@@ -139,7 +139,7 @@ class WikiTheme extends Themelet
                 if (!empty($aliases)) {
                     $text = str_replace("{aliases}", implode(", ", $aliases), $text);
                 } else {
-                    $text = str_replace("{aliases}", $config->req_string(WikiConfig::EMPTY_TAGINFO), $text);
+                    $text = str_replace("{aliases}", Ctx::$config->req_string(WikiConfig::EMPTY_TAGINFO), $text);
                 }
             }
 
@@ -153,7 +153,7 @@ class WikiTheme extends Themelet
                 if (!empty($auto_tags)) {
                     $text = str_replace("{autotags}", $auto_tags, $text);
                 } else {
-                    $text = str_replace("{autotags}", $config->req_string(WikiConfig::EMPTY_TAGINFO), $text);
+                    $text = str_replace("{autotags}", Ctx::$config->req_string(WikiConfig::EMPTY_TAGINFO), $text);
                 }
             }
         }

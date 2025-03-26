@@ -107,10 +107,10 @@ class BlotterTheme extends Themelet
      */
     public function display_blotter(array $entries): void
     {
-        global $page, $config;
+        global $page;
 
-        $i_color = $config->get_string(BlotterConfig::COLOR);
-        $position = $config->get_string(BlotterConfig::POSITION);
+        $i_color = Ctx::$config->get_string(BlotterConfig::COLOR);
+        $position = Ctx::$config->get_string(BlotterConfig::POSITION);
 
         $entries_list = UL();
         foreach ($entries as $entry) {
@@ -154,7 +154,7 @@ class BlotterTheme extends Themelet
             DIV(["id" => "blotter2", "class" => "shm-blotter2"], $in_text)
         );
 
-        $position = $config->req_string(BlotterConfig::POSITION);
+        $position = Ctx::$config->req_string(BlotterConfig::POSITION);
         $page->add_block(new Block(null, $html, $position, 20));
     }
 }

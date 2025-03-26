@@ -452,7 +452,7 @@ final class Ratings extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database, $config;
+        global $database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT '?'");
@@ -480,17 +480,17 @@ final class Ratings extends Extension
         }
 
         if ($this->get_version() < 4) {
-            $value = $config->get_string("ext_rating_anon_privs");
+            $value = Ctx::$config->get_string("ext_rating_anon_privs");
             if (!empty($value)) {
-                $config->set_array("ext_rating_anonymous_privs", str_split($value));
+                Ctx::$config->set_array("ext_rating_anonymous_privs", str_split($value));
             }
-            $value = $config->get_string("ext_rating_user_privs");
+            $value = Ctx::$config->get_string("ext_rating_user_privs");
             if (!empty($value)) {
-                $config->set_array("ext_rating_user_privs", str_split($value));
+                Ctx::$config->set_array("ext_rating_user_privs", str_split($value));
             }
-            $value = $config->get_string("ext_rating_admin_privs");
+            $value = Ctx::$config->get_string("ext_rating_admin_privs");
             if (!empty($value)) {
-                $config->set_array("ext_rating_admin_privs", str_split($value));
+                Ctx::$config->set_array("ext_rating_admin_privs", str_split($value));
             }
 
             switch ($database->get_driver_id()) {

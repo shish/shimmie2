@@ -178,7 +178,7 @@ final class Pools extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $config, $database, $page, $user;
+        global $database, $page, $user;
         if (
             $event->page_matches("pool/list", paged: true)
             || $event->page_matches("pool/list/{search}", paged: true)
@@ -310,7 +310,7 @@ final class Pools extends Extension
             self::assert_permission($user, $pool);
 
             $images = Search::find_images(
-                limit: $config->get_int(PoolsConfig::MAX_IMPORT_RESULTS),
+                limit: Ctx::$config->get_int(PoolsConfig::MAX_IMPORT_RESULTS),
                 tags: Tag::explode($event->req_POST("pool_tag"))
             );
             $this->theme->pool_result($images, $pool);
@@ -418,13 +418,13 @@ final class Pools extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $config, $database, $user;
-        if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && $user->can(PoolsPermission::UPDATE)) {
+        global $database;
+        if (Ctx::$config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && Ctx::$user->can(PoolsPermission::UPDATE)) {
             $pools = [];
-            if ($user->can(PoolsPermission::ADMIN)) {
+            if (Ctx::$user->can(PoolsPermission::ADMIN)) {
                 $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
             } else {
-                $pools = $database->get_pairs("SELECT id,title FROM pools WHERE user_id=:id ORDER BY title", ["id" => $user->id]);
+                $pools = $database->get_pairs("SELECT id,title FROM pools WHERE user_id=:id ORDER BY title", ["id" => Ctx::$user->id]);
             }
             if (count($pools) > 0) {
                 $html = SHM_SIMPLE_FORM(
@@ -564,9 +564,9 @@ final class Pools extends Extension
 
     private function list_pools(int $pageNumber, string $search): void
     {
-        global $config, $database, $page;
+        global $database, $page;
 
-        $poolsPerPage = $config->req_int(PoolsConfig::LISTS_PER_PAGE);
+        $poolsPerPage = Ctx::$config->req_int(PoolsConfig::LISTS_PER_PAGE);
 
         $order_by = "";
         $order = $page->get_cookie("ui-order-pool");
@@ -741,10 +741,10 @@ final class Pools extends Extension
      */
     private function get_posts(int $pageNumber, int $poolID): void
     {
-        global $config, $user, $database;
+        global $database;
 
         $pool = $this->get_single_pool($poolID);
-        $imagesPerPage = $config->req_int(PoolsConfig::IMAGES_PER_PAGE);
+        $imagesPerPage = Ctx::$config->req_int(PoolsConfig::IMAGES_PER_PAGE);
 
         $query = "
             INNER JOIN images AS i ON i.id = p.image_id
@@ -755,7 +755,7 @@ final class Pools extends Extension
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
         if (RatingsInfo::is_enabled()) {
-            $query .= "AND i.rating IN (" . Ratings::privs_to_sql(Ratings::get_user_class_privs($user)) . ")";
+            $query .= "AND i.rating IN (" . Ratings::privs_to_sql(Ratings::get_user_class_privs(Ctx::$user)) . ")";
         }
         if (TrashInfo::is_enabled()) {
             $query .= " AND trash != :true";
@@ -894,7 +894,7 @@ final class Pools extends Extension
      */
     private function add_post(int $poolID, int $imageID, bool $history = false, int $imageOrder = 0): bool
     {
-        global $database, $config;
+        global $database;
 
         $result = (int) $database->get_one(
             "SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid AND image_id=:iid",
@@ -902,7 +902,7 @@ final class Pools extends Extension
         );
 
         if ($result === 0) {
-            if ($config->get_bool(PoolsConfig::AUTO_INCREMENT_ORDER) && $imageOrder === 0) {
+            if (Ctx::$config->get_bool(PoolsConfig::AUTO_INCREMENT_ORDER) && $imageOrder === 0) {
                 $imageOrder = (int) $database->get_one(
                     "
 						SELECT COALESCE(MAX(image_order),0) + 1

@@ -25,7 +25,7 @@ final class RotateImage extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user, $config;
+        global $user;
         if ($user->can(ImagePermission::EDIT_FILES)
                 && MimeType::matches_array($event->image->get_mime(), self::SUPPORTED_MIME)) {
             /* Add a link to rotate the image */
