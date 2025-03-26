@@ -18,9 +18,7 @@ final class Download extends Extension
 
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
-        $page = Ctx::$page;
-        $page->set_mime($event->mime);
-        $page->set_file($event->path, $event->file_modified);
+        Ctx::$page->set_file($event->mime, $event->path, $event->file_modified);
         $event->stop_processing = true;
     }
 }

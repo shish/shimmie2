@@ -265,7 +265,7 @@ final class CronUploader extends Extension
         $max_time = intval(ini_get('max_execution_time')) * .8;
 
         Ctx::$page->set_mode(PageMode::MANUAL);
-        Ctx::$page->set_mime(MimeType::TEXT);
+        Ctx::$page->add_http_header("Content-Type: text/plain");
         Ctx::$page->send_headers();
 
         if (!Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
