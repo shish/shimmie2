@@ -19,7 +19,7 @@ final class Index extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
         if (
             $event->page_matches("post/list", paged: true)
             || $event->page_matches("post/list/{search}", paged: true)
@@ -52,7 +52,7 @@ final class Index extends Extension
                 }
             }
 
-            if ($search_results_limit && $page_number > $search_results_limit / $page_size && !$user->can(IndexPermission::BIG_SEARCH)) {
+            if ($search_results_limit && $page_number > $search_results_limit / $page_size && !Ctx::$user->can(IndexPermission::BIG_SEARCH)) {
                 throw new PermissionDenied(
                     "Only $search_results_limit search results can be shown at once - " .
                     "if you want to find older posts, use more specific search terms"
@@ -60,7 +60,7 @@ final class Index extends Extension
             }
 
             $total_pages = (int)ceil(Search::count_images($search_terms) / Ctx::$config->req_int(IndexConfig::IMAGES));
-            if ($search_results_limit && $total_pages > $search_results_limit / $page_size && !$user->can(IndexPermission::BIG_SEARCH)) {
+            if ($search_results_limit && $total_pages > $search_results_limit / $page_size && !Ctx::$user->can(IndexPermission::BIG_SEARCH)) {
                 $total_pages = (int)ceil($search_results_limit / $page_size);
             }
 

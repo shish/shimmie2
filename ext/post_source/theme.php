@@ -22,14 +22,13 @@ class PostSourceTheme extends Themelet
 
     public function get_source_editor_html(Image $image): HTMLElement
     {
-        global $user;
         return SHM_POST_INFO(
             "Source Link",
             DIV(
                 ["style" => "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;"],
                 $this->format_source($image->get_source())
             ),
-            $user->can(PostSourcePermission::EDIT_IMAGE_SOURCE) ? INPUT(["type" => "text", "name" => "source", "value" => $image->get_source()]) : null,
+            Ctx::$user->can(PostSourcePermission::EDIT_IMAGE_SOURCE) ? INPUT(["type" => "text", "name" => "source", "value" => $image->get_source()]) : null,
             link: SourceHistoryInfo::is_enabled() ? make_link("source_history/{$image->id}") : null,
         );
     }

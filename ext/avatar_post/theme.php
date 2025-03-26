@@ -12,9 +12,9 @@ class AvatarPostTheme extends Themelet
 {
     public function display_avatar_edit_page(int $image_id): void
     {
-        global $user, $page;
+        global $page;
         /** @var BuildAvatarEvent $avatar_e */
-        $avatar_e = send_event(new BuildAvatarEvent($user));
+        $avatar_e = send_event(new BuildAvatarEvent(Ctx::$user));
         $current = $avatar_e->html;
         $page->add_block(new Block("Current Avatar", DIV(["class" => "avatar-editor"], $current)));
 

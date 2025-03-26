@@ -50,7 +50,7 @@ final class Approval extends Extension
 
     public function onAdminAction(AdminActionEvent $event): void
     {
-        global $database, $user;
+        global $database;
 
         $action = $event->action;
         $event->redirect = true;
@@ -61,7 +61,7 @@ final class Approval extends Extension
                     $database->set_timeout(null); // These updates can take a little bit
                     $database->execute(
                         "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE approved = :false",
-                        ["approved_by_id" => $user->id, "true" => true, "false" => false]
+                        ["approved_by_id" => Ctx::$user->id, "true" => true, "false" => false]
                     );
                     break;
                 case "disapprove_all":
@@ -106,14 +106,12 @@ final class Approval extends Extension
     public const SEARCH_REGEXP = "/^approved:(yes|no)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $user;
-
         if (is_null($event->term) && $this->no_approval_query($event->context) && !defined("UNITTEST")) {
             $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
         }
 
         if ($matches = $event->matches(self::SEARCH_REGEXP)) {
-            if ($user->can(ApprovalPermission::APPROVE_IMAGE) && strtolower($matches[1]) === "no") {
+            if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE) && strtolower($matches[1]) === "no") {
                 $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
             } else {
                 $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
@@ -145,11 +143,11 @@ final class Approval extends Extension
 
     public static function approve_image(int $image_id): void
     {
-        global $database, $user;
+        global $database;
 
         $database->execute(
             "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE id = :id AND approved = :false",
-            ["approved_by_id" => $user->id, "id" => $image_id, "true" => true, "false" => false]
+            ["approved_by_id" => Ctx::$user->id, "id" => $image_id, "true" => true, "false" => false]
         );
     }
 
@@ -165,12 +163,11 @@ final class Approval extends Extension
 
     private function check_permissions(Image $image): bool
     {
-        global $user;
-
-        if ($image['approved'] === false && !$user->can(ApprovalPermission::APPROVE_IMAGE) && $user->id !== $image->owner_id) {
-            return false;
-        }
-        return true;
+        return (
+            $image['approved']
+            || Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)
+            || Ctx::$user->id === $image->owner_id
+        );
     }
 
     public function onImageDownloading(ImageDownloadingEvent $event): void
@@ -208,27 +205,25 @@ final class Approval extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page, $user;
-
         switch ($event->action) {
             case "bulk_approve_image":
-                if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
+                if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         self::approve_image($image->id);
                         $total++;
                     }
-                    $page->flash("Approved $total items");
+                    Ctx::$page->flash("Approved $total items");
                 }
                 break;
             case "bulk_disapprove_image":
-                if ($user->can(ApprovalPermission::APPROVE_IMAGE)) {
+                if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         self::disapprove_image($image->id);
                         $total++;
                     }
-                    $page->flash("Disapproved $total items");
+                    Ctx::$page->flash("Disapproved $total items");
                 }
                 break;
         }

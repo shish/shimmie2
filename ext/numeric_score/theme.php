@@ -19,8 +19,6 @@ class NumericScoreTheme extends Themelet
 {
     public function get_voter(Image $image): void
     {
-        global $user, $page;
-
         $vote_form = function (int $image_id, int $vote, string $text): HTMLElement {
             return SHM_SIMPLE_FORM(
                 make_link("numeric_score/vote"),
@@ -31,7 +29,7 @@ class NumericScoreTheme extends Themelet
         };
         $remove_votes = null;
         $voters = null;
-        if ($user->can(NumericScorePermission::EDIT_OTHER_VOTE)) {
+        if (Ctx::$user->can(NumericScorePermission::EDIT_OTHER_VOTE)) {
             $remove_votes = SHM_SIMPLE_FORM(
                 make_link("numeric_score/remove_votes_on"),
                 INPUT(['type' => 'hidden', 'name' => 'image_id', 'value' => $image->id]),
@@ -58,7 +56,7 @@ class NumericScoreTheme extends Themelet
             $remove_votes,
             $voters
         );
-        $page->add_block(new Block("Post Score: " . $image['numeric_score'], $html, "left", 20, id: "Post_Scoreleft"));
+        Ctx::$page->add_block(new Block("Post Score: " . $image['numeric_score'], $html, "left", 20, id: "Post_Scoreleft"));
     }
 
     public function get_nuller(User $duser): void

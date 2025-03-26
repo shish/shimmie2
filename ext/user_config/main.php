@@ -43,25 +43,24 @@ final class UserConfig extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $user, $database, $page;
+        global $database, $page;
 
         // if API keys are enabled, then _any_ anonymous page request can
         // be an authed page request if the api_key is set
         if (Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
-            if ($event->get_GET("api_key") && $user->is_anonymous()) {
+            if ($event->get_GET("api_key") && Ctx::$user->is_anonymous()) {
                 $user_id = $database->get_one(
                     "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
                     ["value" => $event->get_GET("api_key"), "name" => UserConfigUserConfig::API_KEY]
                 );
 
                 if (!empty($user_id)) {
-                    $user = User::by_id($user_id);
-                    send_event(new UserLoginEvent($user));
+                    send_event(new UserLoginEvent(User::by_id($user_id)));
                 }
             }
 
             if ($event->page_matches("user_admin/reset_api_key", method: "POST")) {
-                $user->get_config()->set_string(UserConfigUserConfig::API_KEY, "");
+                Ctx::$user->get_config()->set_string(UserConfigUserConfig::API_KEY, "");
 
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
@@ -73,13 +72,13 @@ final class UserConfig extends Extension
             foreach (UserConfigGroup::get_subclasses() as $class) {
                 $group = $class->newInstance();
                 if ($group::is_enabled()) {
-                    $block = $this->theme->config_group_to_block($user->get_config(), $group);
+                    $block = $this->theme->config_group_to_block(Ctx::$user->get_config(), $group);
                     if ($block) {
                         $blocks[] = $block;
                     }
                 }
             }
-            $this->theme->display_user_config_page($blocks, $user);
+            $this->theme->display_user_config_page($blocks, Ctx::$user);
         }
         if ($event->page_matches("user_config/save", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $input = validate_input([
@@ -87,7 +86,7 @@ final class UserConfig extends Extension
             ]);
             $duser = User::by_id($input['id']);
 
-            if ($user->id !== $duser->id && !$user->can(UserAccountsPermission::CHANGE_OTHER_USER_SETTING)) {
+            if (Ctx::$user->id !== $duser->id && !Ctx::$user->can(UserAccountsPermission::CHANGE_OTHER_USER_SETTING)) {
                 throw new PermissionDenied("You do not have permission to change other user's settings");
             }
 

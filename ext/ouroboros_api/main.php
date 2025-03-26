@@ -231,8 +231,6 @@ final class OuroborosAPI extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
-
         if (\Safe\preg_match("%(.*)\.(xml|json)$%", implode('/', $event->args), $matches)) {
             $event_args = $matches[1];
             $this->type = $matches[2];
@@ -240,7 +238,7 @@ final class OuroborosAPI extends Extension
             if ($event_args === 'post/create') {
                 // Create
                 $this->tryAuth();
-                if ($user->can(ImagePermission::CREATE_IMAGE)) {
+                if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
                     $md5 = isset($_REQUEST['md5']) && \Safe\preg_match("%^[0-9A-Fa-f]{32}$%", $_REQUEST['md5']) ? strtolower($_REQUEST['md5']) : null;
                     $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                 } else {
@@ -283,6 +281,7 @@ final class OuroborosAPI extends Extension
                 $this->tagIndex($limit, $p, $order, $name, $name_pattern);
             }
         } elseif ($event->page_matches('post/show')) {
+            $page = Ctx::$page;
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link(str_replace('post/show', 'post/view', implode('/', $event->args))));
             $page->display();
@@ -567,7 +566,7 @@ final class OuroborosAPI extends Extension
      */
     private function tryAuth(): void
     {
-        global $user;
+        $user = Ctx::$user;
 
         if (isset($_REQUEST['user']) && isset($_REQUEST['session'])) {
             //Auth by session data from query

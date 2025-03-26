@@ -8,14 +8,12 @@ final class ReportImageTest extends ShimmiePHPUnitTestCase
 {
     public function testReportImage(): void
     {
-        global $database, $user;
-
         self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::get_page("post/view/$image_id");
 
         // Add image report
-        send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, "report details")));
+        send_event(new AddReportedImageEvent(new ImageReport($image_id, Ctx::$user->id, "report details")));
 
         // Check that the report exists
         self::get_page("image_report/list");
@@ -24,7 +22,7 @@ final class ReportImageTest extends ShimmiePHPUnitTestCase
         self::assert_text("$image_id");
 
         // Remove report
-        $report_id = (int)$database->get_one("SELECT id FROM image_reports");
+        $report_id = (int)Ctx::$database->get_one("SELECT id FROM image_reports");
         send_event(new RemoveReportedImageEvent($report_id));
 
         // Check that the report is gone

@@ -37,9 +37,7 @@ final class TranscodeVideo extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        global $user;
-
-        if ($event->image->video === true && $event->image->video_codec !== null && $user->can(ImagePermission::EDIT_FILES)) {
+        if ($event->image->video === true && $event->image->video_codec !== null && Ctx::$user->can(ImagePermission::EDIT_FILES)) {
             $options = self::get_output_options(VideoContainer::fromMimeType($event->image->get_mime()), $event->image->video_codec);
             if (!empty($options) && sizeof($options) > 1) {
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
@@ -75,14 +73,12 @@ final class TranscodeVideo extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $user, $database, $page;
-
         switch ($event->action) {
             case self::ACTION_BULK_TRANSCODE:
                 if (!isset($event->params['transcode_format'])) {
                     return;
                 }
-                if ($user->can(ImagePermission::EDIT_FILES)) {
+                if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
                     $format = $event->params['transcode_format'];
                     $total = 0;
                     foreach ($event->items as $image) {
@@ -90,7 +86,7 @@ final class TranscodeVideo extends Extension
                             // If a subsequent transcode fails, the database needs to have everything about the previous
                             // transcodes recorded already, otherwise the image entries will be stuck pointing to
                             // missing image files
-                            $transcoded = $database->with_savepoint(function () use ($image, $format) {
+                            $transcoded = Ctx::$database->with_savepoint(function () use ($image, $format) {
                                 return $this->transcode_and_replace_video($image, $format);
                             });
                             if ($transcoded) {
@@ -100,7 +96,7 @@ final class TranscodeVideo extends Extension
                             Log::error("transcode_video", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
                         }
                     }
-                    $page->flash("Transcoded $total items");
+                    Ctx::$page->flash("Transcoded $total items");
                 }
                 break;
         }

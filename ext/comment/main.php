@@ -183,10 +183,10 @@ final class CommentList extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $user, $page;
+        global $database, $page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $i_iid = int_escape($event->req_POST('image_id'));
-            send_event(new CommentPostingEvent($i_iid, $user, $event->req_POST('comment')));
+            send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->req_POST('comment')));
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
         }
@@ -240,7 +240,7 @@ final class CommentList extends Extension
                 LIMIT :limit OFFSET :offset
             ", ["limit" => $threads_per_page, "offset" => $start]);
 
-            $user_ratings = RatingsInfo::is_enabled() ? Ratings::get_user_class_privs($user) : [];
+            $user_ratings = RatingsInfo::is_enabled() ? Ratings::get_user_class_privs(Ctx::$user) : [];
 
             $images = [];
             while ($row = $result->fetch()) {
@@ -263,7 +263,7 @@ final class CommentList extends Extension
                 }
             }
 
-            $this->theme->display_comment_list($images, $current_page + 1, $total_pages, $user->can(CommentPermission::CREATE_COMMENT));
+            $this->theme->display_comment_list($images, $current_page + 1, $total_pages, Ctx::$user->can(CommentPermission::CREATE_COMMENT));
         }
         if ($event->page_matches("comment/beta-search/{search}", paged: true)) {
             $search = $event->get_arg('search');

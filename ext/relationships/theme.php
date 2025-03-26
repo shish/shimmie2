@@ -62,12 +62,10 @@ class RelationshipsTheme extends Themelet
 
     public function get_parent_editor_html(Image $image): HTMLElement
     {
-        global $user;
-
         return SHM_POST_INFO(
             "Parent",
             (string)$image['parent_id'] ?: "None",
-            $user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)
+            Ctx::$user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)
                 ? INPUT(["type" => "number", "name" => "parent", "value" => $image['parent_id']])
                 : null
         );

@@ -83,11 +83,9 @@ final class CronUploader extends Extension
 
     public function onLog(LogEvent $event): void
     {
-        global $user;
-
         if (self::$IMPORT_RUNNING) {
-            $all = $user->get_config()->get_bool(CronUploaderUserConfig::INCLUDE_ALL_LOGS);
-            if ($event->priority >= $user->get_config()->get_int(CronUploaderUserConfig::LOG_LEVEL) &&
+            $all = Ctx::$user->get_config()->get_bool(CronUploaderUserConfig::INCLUDE_ALL_LOGS);
+            if ($event->priority >= Ctx::$user->get_config()->get_int(CronUploaderUserConfig::LOG_LEVEL) &&
                 ($event->section == self::NAME || $all)) {
                 $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LogLevel::from($event->priority)->name . "] " . $event->message;
 
@@ -215,10 +213,10 @@ final class CronUploader extends Extension
 
     private function get_user_dir(): Path
     {
-        global $user;
-        return new Path($user->get_config()->get_string(
-            CronUploaderUserConfig::DIR
-        ) ?? Filesystem::data_path(Filesystem::join_path("cron_uploader", $user->name))->str());
+        return new Path(
+            Ctx::$user->get_config()->get_string(CronUploaderUserConfig::DIR)
+            ?? Filesystem::data_path(Filesystem::join_path("cron_uploader", Ctx::$user->name))->str()
+        );
     }
 
     public function get_queue_dir(): Path
@@ -262,7 +260,7 @@ final class CronUploader extends Extension
      */
     public function process_upload(): bool
     {
-        global $database, $user, $page, $_shm_load_start;
+        global $database, $page, $_shm_load_start;
 
         $max_time = intval(ini_get('max_execution_time')) * .8;
 
@@ -274,13 +272,13 @@ final class CronUploader extends Extension
             throw new ServerError("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 
-        if ($user->is_anonymous()) {
+        if (Ctx::$user->is_anonymous()) {
             throw new UserError("User not present. Please specify the api_key for the user to run cron upload as.");
         }
 
-        Log::info(self::NAME, "Logged in as user {$user->name}");
+        Log::info(self::NAME, "Logged in as user " . Ctx::$user->name);
 
-        if (!$user->can(CronUploaderPermission::CRON_RUN)) {
+        if (!Ctx::$user->can(CronUploaderPermission::CRON_RUN)) {
             throw new PermissionDenied("User does not have permission to run cron upload");
         }
 
@@ -328,7 +326,7 @@ final class CronUploader extends Extension
                     $failed++;
                     Log::error(self::NAME, "(" . gettype($e) . ") " . $e->getMessage());
                     Log::error(self::NAME, $e->getTraceAsString());
-                    if ($user->get_config()->get_bool(CronUploaderUserConfig::STOP_ON_ERROR)) {
+                    if (Ctx::$user->get_config()->get_bool(CronUploaderUserConfig::STOP_ON_ERROR)) {
                         break;
                     } else {
                         $this->move_uploaded($img[0], $img[1], $output_subdir, true);

@@ -323,7 +323,7 @@ final class SourceHistory extends Extension
      */
     private function add_source_history(Image $image, string $source): void
     {
-        global $database, $user;
+        global $database;
 
         $new_source = $source;
         $old_source = $image->source;
@@ -362,7 +362,7 @@ final class SourceHistory extends Extension
             "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (:image_id, :source, :user_id, :user_ip, now())",
-            ["image_id" => $image->id, "source" => $new_source, "user_id" => $user->id, "user_ip" => Network::get_real_ip()]
+            ["image_id" => $image->id, "source" => $new_source, "user_id" => Ctx::$user->id, "user_ip" => Network::get_real_ip()]
         );
         $entries++;
 

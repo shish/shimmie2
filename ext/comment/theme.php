@@ -34,7 +34,7 @@ class CommentListTheme extends Themelet
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
-        global $page, $user;
+        global $page;
 
         $page->set_title("Comments");
         $this->display_navigation([
@@ -68,7 +68,7 @@ class CommentListTheme extends Themelet
             foreach ($comments as $comment) {
                 $comment_html->appendChild($this->comment_to_html($comment));
             }
-            if (!$user->is_anonymous()) {
+            if (!Ctx::$user->is_anonymous()) {
                 if ($can_post) {
                     $comment_html->appendChild($this->build_postbox($image->id));
                 }
@@ -201,8 +201,6 @@ class CommentListTheme extends Themelet
 
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
-        global $user;
-
         if ($comment->owner_id === Ctx::$config->req_int(UserAccountsConfig::ANON_ID)) {
             $anoncode = "";
             $anoncode2 = "";
@@ -211,9 +209,9 @@ class CommentListTheme extends Themelet
                 if (!array_key_exists($comment->poster_ip, $this->anon_map)) {
                     $this->anon_map[$comment->poster_ip] = $this->anon_id;
                 }
-                #if($user->can(UserAbilities::VIEW_IP)) {
+                #if(Ctx::$user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-                if ($user->can(IPBanPermission::VIEW_IP) || Ctx::$config->req_bool(CommentConfig::SHOW_REPEAT_ANONS)) {
+                if (Ctx::$user->can(IPBanPermission::VIEW_IP) || Ctx::$config->req_bool(CommentConfig::SHOW_REPEAT_ANONS)) {
                     if ($this->anon_map[$comment->poster_ip] !== $this->anon_id) {
                         $anoncode2 = SUP("(" . $this->anon_map[$comment->poster_ip] . ")");
                     }
@@ -250,8 +248,8 @@ class CommentListTheme extends Themelet
                         A(["href" => "javascript:replyTo({$comment->image_id}, {$comment->comment_id}, '{$comment->owner_name}')"], "Reply"),
                     ),
                     emptyHTML(
-                        $user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
-                        $user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped)) : null,
+                        Ctx::$user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
+                        Ctx::$user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped)) : null,
                     ),
                 ),
                 $userlink,

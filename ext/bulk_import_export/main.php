@@ -14,10 +14,12 @@ final class BulkImportExport extends DataHandlerExtension
 
     public function onDataUpload(DataUploadEvent $event): void
     {
-        global $user, $database;
+        global $database;
 
-        if ($this->supported_mime($event->mime) &&
-            $user->can(BulkImportExportPermission::BULK_IMPORT)) {
+        if (
+            $this->supported_mime($event->mime)
+            && Ctx::$user->can(BulkImportExportPermission::BULK_IMPORT)
+        ) {
             $zip = new \ZipArchive();
 
             if ($zip->open($event->tmpname->str())) {
@@ -97,11 +99,11 @@ final class BulkImportExport extends DataHandlerExtension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $user, $page;
+        global $page;
 
-        if ($user->can(BulkImportExportPermission::BULK_EXPORT) &&
+        if (Ctx::$user->can(BulkImportExportPermission::BULK_EXPORT) &&
             ($event->action === self::EXPORT_ACTION_NAME)) {
-            $download_filename = $user->name . '-' . date('YmdHis') . '.zip';
+            $download_filename = Ctx::$user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = shm_tempnam("bulk_export");
             $zip = new \ZipArchive();
 

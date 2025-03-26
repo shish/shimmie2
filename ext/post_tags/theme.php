@@ -27,8 +27,6 @@ class PostTagsTheme extends Themelet
 
     public function get_tag_editor_html(Image $image): HTMLElement
     {
-        global $user;
-
         $tag_links = [];
         foreach ($image->get_tag_array() as $tag) {
             $tag_links[] = $this->build_tag($tag);
@@ -37,7 +35,7 @@ class PostTagsTheme extends Themelet
         return SHM_POST_INFO(
             "Tags",
             joinHTML(", ", $tag_links),
-            $user->can(PostTagsPermission::EDIT_IMAGE_TAG) ? TEXTAREA([
+            Ctx::$user->can(PostTagsPermission::EDIT_IMAGE_TAG) ? TEXTAREA([
                 "class" => "autocomplete_tags",
                 "type" => "text",
                 "name" => "tags",

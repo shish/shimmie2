@@ -12,11 +12,10 @@ final class Biography extends Extension
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $user;
         $duser = $event->display_user;
         $bio = $duser->get_config()->get_string("biography") ?? "";
 
-        if ($user->id == $duser->id || $user->can(UserAccountsPermission::EDIT_USER_INFO)) {
+        if (Ctx::$user->id == $duser->id || Ctx::$user->can(UserAccountsPermission::EDIT_USER_INFO)) {
             $this->theme->display_composer($duser, $bio);
         } else {
             $this->theme->display_biography($bio);
@@ -25,10 +24,10 @@ final class Biography extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
         if ($event->page_matches("user/{name}/biography", method: "POST")) {
             $duser = User::by_name($event->get_arg("name"));
-            if ($user->id == $duser->id || $user->can(UserAccountsPermission::EDIT_USER_INFO)) {
+            if (Ctx::$user->id == $duser->id || Ctx::$user->can(UserAccountsPermission::EDIT_USER_INFO)) {
                 $bio = $event->req_POST('biography');
                 Log::info("biography", "Set biography to $bio");
                 $duser->get_config()->set_string("biography", $bio);

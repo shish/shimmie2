@@ -27,11 +27,11 @@ class ReportImageTheme extends Themelet
      */
     public function display_reported_images(array $reports): void
     {
-        global $user, $page;
+        global $page;
 
         $tbody = TBODY();
         foreach ($reports as $report) {
-            $iabbe = send_event(new ImageAdminBlockBuildingEvent($report['image'], $user, "report"));
+            $iabbe = send_event(new ImageAdminBlockBuildingEvent($report['image'], Ctx::$user, "report"));
 
             $tbody->appendChild(TR(
                 TD($this->build_thumb($report['image'])),

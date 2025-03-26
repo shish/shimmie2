@@ -33,7 +33,7 @@ class ForumTheme extends Themelet
 
     public function display_new_thread_composer(?string $threadText = null, ?string $threadTitle = null): void
     {
-        global $user, $page;
+        global $page;
         $max_characters = Ctx::$config->get_int(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
@@ -55,7 +55,7 @@ class ForumTheme extends Themelet
                     TD(),
                     TD(SMALL("Max characters allowed: $max_characters."))
                 ),
-                $user->can(ForumPermission::FORUM_ADMIN) ? TR(
+                Ctx::$user->can(ForumPermission::FORUM_ADMIN) ? TR(
                     TD(),
                     TD(
                         LABEL(["for" => "sticky"], "Sticky:"),

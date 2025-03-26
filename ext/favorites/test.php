@@ -8,7 +8,6 @@ final class FavoritesTest extends ShimmiePHPUnitTestCase
 {
     public function testFavorites(): void
     {
-        global $user;
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 
@@ -18,7 +17,7 @@ final class FavoritesTest extends ShimmiePHPUnitTestCase
         self::assert_no_text("Favorited By");
 
         # Add a favourite
-        send_event(new FavoriteSetEvent($image_id, $user, true));
+        send_event(new FavoriteSetEvent($image_id, Ctx::$user, true));
 
         # Favourite shown on page
         self::get_page("post/view/$image_id");
@@ -34,7 +33,7 @@ final class FavoritesTest extends ShimmiePHPUnitTestCase
         self::assert_text("Posts favorited</a>: 1");
 
         # Delete a favourite
-        send_event(new FavoriteSetEvent($image_id, $user, false));
+        send_event(new FavoriteSetEvent($image_id, Ctx::$user, false));
 
         # No favourites
         self::get_page("post/view/$image_id");

@@ -17,7 +17,8 @@ final class PrivateImage extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        $user = Ctx::$user;
+        $page = Ctx::$page;
 
         if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
@@ -61,9 +62,12 @@ final class PrivateImage extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        global $user, $page;
-
-        if ($event->image['private'] === true && $event->image->owner_id !== $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+        if (
+            $event->image['private'] === true
+            && $event->image->owner_id !== Ctx::$user->id
+            && !Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)
+        ) {
+            $page = Ctx::$page;
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         }
@@ -72,15 +76,14 @@ final class PrivateImage extends Extension
     public const SEARCH_REGEXP = "/^private:(yes|no|any)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $user;
-        $show_private = $user->get_config()->get_bool(PrivateImageUserConfig::VIEW_DEFAULT);
+        $show_private = Ctx::$user->get_config()->get_bool(PrivateImageUserConfig::VIEW_DEFAULT);
 
         if (is_null($event->term) && $this->no_private_query($event->context)) {
             if ($show_private) {
                 $event->add_querylet(
                     new Querylet(
                         "private != :true OR owner_id = :private_owner_id",
-                        ["private_owner_id" => $user->id, "true" => true]
+                        ["private_owner_id" => Ctx::$user->id, "true" => true]
                     )
                 );
             } else {
@@ -103,16 +106,16 @@ final class PrivateImage extends Extension
                     $params["true"] = true;
 
                     // Admins can view others private images, but they have to specify the user
-                    if (!$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES) ||
+                    if (!Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES) ||
                         !UserPage::has_user_query($event->context)) {
                         $query .= " AND owner_id = :private_owner_id";
-                        $params["private_owner_id"] = $user->id;
+                        $params["private_owner_id"] = Ctx::$user->id;
                     }
                     break;
                 case "any":
                     $query .= "private != :true OR owner_id = :private_owner_id";
                     $params["true"] = true;
-                    $params["private_owner_id"] = $user->id;
+                    $params["private_owner_id"] = Ctx::$user->id;
                     break;
             }
             $event->add_querylet(new Querylet($query, $params));
@@ -187,32 +190,34 @@ final class PrivateImage extends Extension
 
     public function onBulkAction(BulkActionEvent $event): void
     {
-        global $page, $user;
-
         switch ($event->action) {
             case "bulk_privatize_image":
-                if ($user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
+                if (Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
                     $total = 0;
                     foreach ($event->items as $image) {
-                        if ($image->owner_id == $user->id ||
-                            $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+                        if (
+                            $image->owner_id == Ctx::$user->id ||
+                            Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)
+                        ) {
                             self::privatize_image($image->id);
                             $total++;
                         }
                     }
-                    $page->flash("Made $total items private");
+                    Ctx::$page->flash("Made $total items private");
                 }
                 break;
             case "bulk_publicize_image":
                 $total = 0;
                 foreach ($event->items as $image) {
-                    if ($image->owner_id == $user->id ||
-                        $user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+                    if (
+                        $image->owner_id == Ctx::$user->id ||
+                        Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)
+                    ) {
                         self::publicize_image($image->id);
                         $total++;
                     }
                 }
-                $page->flash("Made $total items public");
+                Ctx::$page->flash("Made $total items public");
                 break;
         }
     }

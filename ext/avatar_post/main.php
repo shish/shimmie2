@@ -21,7 +21,7 @@ final class AvatarPost extends AvatarExtension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page, $user;
+        global $page;
         if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
             $page->set_mode(PageMode::REDIRECT);
@@ -31,7 +31,7 @@ final class AvatarPost extends AvatarExtension
             $this->theme->display_avatar_edit_page($image_id);
         } elseif ($event->page_matches("save_avatar", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $settings = ConfigSaveEvent::postToSettings($event->POST);
-            send_event(new ConfigSaveEvent($user->get_config(), $settings));
+            send_event(new ConfigSaveEvent(Ctx::$user->get_config(), $settings));
             $page->flash("Image set as avatar");
             $page->set_mode(PageMode::REDIRECT);
             if (key_exists(AvatarPostUserConfig::AVATAR_ID, $settings) && is_int($settings[AvatarPostUserConfig::AVATAR_ID])) {
@@ -51,9 +51,8 @@ final class AvatarPost extends AvatarExtension
 
     public function onConfigSave(ConfigSaveEvent $event): void
     {
-        global $user;
         if (array_key_exists(AvatarPostUserConfig::AVATAR_ID, $event->values)) {
-            Ctx::$cache->delete("Pavatar-{$user->id}");
+            Ctx::$cache->delete("Pavatar-" . Ctx::$user->id);
         }
     }
 

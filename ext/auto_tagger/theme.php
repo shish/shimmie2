@@ -20,7 +20,7 @@ class AutoTaggerTheme extends Themelet
      */
     public function display_auto_tagtable(HTMLElement $table, HTMLElement $paginator): void
     {
-        global $page, $user;
+        global $page;
 
         $page->set_title("Auto-Tag List");
         $this->display_navigation();
@@ -34,7 +34,7 @@ class AutoTaggerTheme extends Themelet
             ))
         )));
 
-        if ($user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
+        if (Ctx::$user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $page->add_block(new Block("Bulk Upload", SHM_FORM(
                 action: make_link("auto_tag/import"),
                 multipart: true,
