@@ -27,6 +27,7 @@ final class User
     public ?string $passhash;
     #[Field]
     public UserClass $class;
+    public bool $hellbanned;
     private ?Config $config = null;
     /** @var array<int, User> */
     private static array $by_id_cache = [];
@@ -54,6 +55,7 @@ final class User
         $this->join_date = $row['joindate'];
         $this->passhash = $row['pass'];
         $this->class = UserClass::get_class($row['class']);
+        $this->hellbanned = $row['hellbanned'] ?? false;
     }
 
     public function get_config(): Config
