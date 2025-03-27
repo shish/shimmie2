@@ -21,13 +21,9 @@ abstract class BaseConfigGroup extends Enablable
     {
         $fields = [];
         $refl_config = new \ReflectionClass($this);
-        foreach ($refl_config->getConstants() as $const => $key) {
-            $refl_const = $refl_config->getReflectionConstant($const);
-            if (!$refl_const) {
-                continue;
-            }
+        foreach ($refl_config->getReflectionConstants() as $refl_const) {
             $attributes = $refl_const->getAttributes(ConfigMeta::class);
-            if (count($attributes) === 0) {
+            if (count($attributes) !== 1) {
                 continue;
             }
             $meta = $attributes[0]->newInstance();
