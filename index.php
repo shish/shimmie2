@@ -40,8 +40,9 @@ Ctx::setTracer(new \EventTracer());
 // Override TS to show that bootstrapping started in the past
 Ctx::$tracer->begin("Bootstrap", raw: ["ts" => $_shm_load_start * 1e6]);
 _load_ext_files();
-// Depends on core files
+// $cache depends on _load_ext_files to use hash($loaded_extensions) as a salt
 $cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
+// $database depends on core files
 $database = Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
 // $config depends on _load_ext_files (to load config.php files and
 // calculate defaults) and $cache (to cache config values)
