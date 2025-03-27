@@ -89,21 +89,21 @@ enum MediaEngine: string
     ];
     public const RESIZE_TYPE_SUPPORT = [
         MediaEngine::GD->value => [
-            Media::RESIZE_TYPE_FIT,
-            Media::RESIZE_TYPE_STRETCH
+            ResizeType::FIT,
+            ResizeType::STRETCH
         ],
         MediaEngine::IMAGICK->value => [
-            Media::RESIZE_TYPE_FIT,
-            Media::RESIZE_TYPE_FIT_BLUR,
-            Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT,
-            Media::RESIZE_TYPE_FILL,
-            Media::RESIZE_TYPE_STRETCH,
+            ResizeType::FIT,
+            ResizeType::FIT_BLUR,
+            ResizeType::FIT_BLUR_PORTRAIT,
+            ResizeType::FILL,
+            ResizeType::STRETCH,
         ],
         MediaEngine::FFMPEG->value => [
-            Media::RESIZE_TYPE_FIT
+            ResizeType::FIT
         ],
         MediaEngine::STATIC->value => [
-            Media::RESIZE_TYPE_FIT
+            ResizeType::FIT
         ]
     ];
 

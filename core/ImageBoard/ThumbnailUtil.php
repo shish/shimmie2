@@ -18,16 +18,16 @@ final class ThumbnailUtil
      */
     public static function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_scaling = false): array
     {
-        $fit = Ctx::$config->req_string(ThumbnailConfig::FIT);
+        $fit = ResizeType::from(Ctx::$config->req_string(ThumbnailConfig::FIT));
         $conf_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
         $conf_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
         assert($conf_width > 0 && $conf_height > 0);
 
         if (in_array($fit, [
-                Media::RESIZE_TYPE_FILL,
-                Media::RESIZE_TYPE_STRETCH,
-                Media::RESIZE_TYPE_FIT_BLUR,
-                Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT
+                ResizeType::FILL,
+                ResizeType::STRETCH,
+                ResizeType::FIT_BLUR,
+                ResizeType::FIT_BLUR_PORTRAIT
             ])) {
             return [$conf_width, $conf_height];
         }
@@ -108,7 +108,7 @@ final class ThumbnailUtil
             self::get_thumbnail_max_size_scaled(),
             $image->get_mime(),
             $engine,
-            Ctx::$config->req_string(ThumbnailConfig::FIT)
+            ResizeType::from(Ctx::$config->req_string(ThumbnailConfig::FIT))
         );
     }
 
@@ -121,10 +121,10 @@ final class ThumbnailUtil
         array $tsize,
         MimeType $mime,
         ?MediaEngine $engine = null,
-        ?string $resize_type = null
+        ?ResizeType $resize_type = null
     ): void {
         $engine ??= MediaEngine::from(Ctx::$config->req_string(ThumbnailConfig::ENGINE));
-        $resize_type ??= Ctx::$config->req_string(ThumbnailConfig::FIT);
+        $resize_type ??= ResizeType::from(Ctx::$config->req_string(ThumbnailConfig::FIT));
         $output_mime = new MimeType(Ctx::$config->req_string(ThumbnailConfig::MIME));
 
         send_event(new MediaResizeEvent(

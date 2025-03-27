@@ -63,7 +63,7 @@ final class ThumbnailConfig extends ConfigGroup
     #[ConfigMeta("Quality", ConfigType::INT, default: 75, advanced: true)]
     public const QUALITY = 'thumb_quality';
 
-    #[ConfigMeta("Resize type", ConfigType::STRING, default: Media::RESIZE_TYPE_FIT, options: "Shimmie2\ThumbnailConfig::get_fit_options")]
+    #[ConfigMeta("Resize type", ConfigType::STRING, default: ResizeType::FIT->value, options: "Shimmie2\ThumbnailConfig::get_fit_options")]
     public const FIT = 'thumb_fit';
 
     #[ConfigMeta("Allow upscaling", ConfigType::BOOL, advanced: true)]
@@ -79,7 +79,7 @@ final class ThumbnailConfig extends ConfigGroup
     {
         $options = [];
         foreach (MediaEngine::RESIZE_TYPE_SUPPORT[Ctx::$config->req_string(ThumbnailConfig::ENGINE)] as $type) {
-            $options[$type] = $type;
+            $options[$type->value] = $type->value;
         }
         return $options;
     }
