@@ -615,7 +615,11 @@ function load_cache(?string $dsn): CacheInterface
     if (is_null($c)) {
         $c = new \Sabre\Cache\Memory();
     }
-    return new EventTracingCache($c, Ctx::$tracer);
+
+    $v = "_" . SysConfig::getVersion() . "_" . md5(Extension::get_enabled_extensions_as_string());
+    $c = new VersionedCache($c, $v);
+    $c = new EventTracingCache($c, Ctx::$tracer);
+    return $c;
 }
 
 /**
