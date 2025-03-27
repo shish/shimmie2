@@ -67,9 +67,9 @@ final class Network
      * Get the currently active IP, masked to make it not change when the last
      * octet or two change, for use in session cookies and such
      */
-    public static function get_session_ip(Config $config): string
+    public static function get_session_ip(): string
     {
-        $mask = $config->get_string(UserAccountsConfig::SESSION_HASH_MASK);
+        $mask = Ctx::$config->get_string(UserAccountsConfig::SESSION_HASH_MASK);
         // even if the database says "null", the default setting should take effect
         assert($mask !== null);
         $addr = Network::get_real_ip();
