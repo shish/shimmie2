@@ -45,14 +45,10 @@ class AvatarPostTheme extends Themelet
             // simulate user config page
             SHM_SIMPLE_FORM(
                 make_link("save_avatar"),
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_ID, "value" => $image->id]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_ID, "value" => "int"]),
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_SCALE, "id" => "avatar-post-scale", "value" => 100]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_SCALE, "value" => "int"]),
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_X, "id" => "avatar-post-x", "value" => 0]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_X, "value" => "int"]),
-                INPUT(["type" => "hidden", "name" => "_config_".AvatarPostUserConfig::AVATAR_Y, "id" => "avatar-post-y", "value" => 0]),
-                INPUT(["type" => "hidden", "name" => "_type_".AvatarPostUserConfig::AVATAR_Y, "value" => "int"]),
+                INPUT(["type" => "hidden", "name" => "id", "value" => $image->id]),
+                INPUT(["type" => "hidden", "name" => "scale", "id" => "avatar-post-scale", "value" => 100]),
+                INPUT(["type" => "hidden", "name" => "x", "id" => "avatar-post-x", "value" => 0]),
+                INPUT(["type" => "hidden", "name" => "y", "id" => "avatar-post-y", "value" => 0]),
                 INPUT(["type" => "submit", "value" => "Set avatar"]),
             )
         );
