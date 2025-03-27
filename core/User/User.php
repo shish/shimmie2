@@ -59,12 +59,9 @@ final class User
     public function get_config(): Config
     {
         if (is_null($this->config)) {
-            $this->config = new DatabaseConfig(
+            $this->config = new DatabaseUserConfig(
                 Ctx::$database,
-                "user_config",
-                "user_id",
-                "{$this->id}",
-                defaults: UserConfigGroup::get_all_defaults()
+                $this->id
             );
         }
         return $this->config;
