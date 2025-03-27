@@ -30,8 +30,6 @@ final class Media extends Extension
         MimeType::PNG,
     ];
 
-    public const DEFAULT_ALPHA_CONVERSION_COLOR = "#00000000";
-
     public static function imagick_available(): bool
     {
         return extension_loaded("imagick");
@@ -362,14 +360,17 @@ final class Media extends Extension
         int $new_height,
         Path $output_filename,
         ?MimeType $output_mime = null,
-        string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
+        ?string $alpha_color = null,
         ResizeType $resize_type = ResizeType::FIT,
         int $output_quality = 80,
         bool $minimize = false,
         bool $allow_upscale = true
     ): void {
-        if (empty($output_mime)) {
+        if (is_null($output_mime)) {
             $output_mime = $input_mime;
+        }
+        if (is_null($alpha_color)) {
+            $alpha_color = Ctx::$config->req_string(ThumbnailConfig::ALPHA_COLOR);
         }
 
         if ($output_mime->base === MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
@@ -458,7 +459,7 @@ final class Media extends Extension
         int $new_height,
         Path $output_filename,
         ?MimeType $output_mime = null,
-        string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
+        ?string $alpha_color = null,
         ResizeType $resize_type = ResizeType::FIT,
         int $output_quality = 80,
         bool $allow_upscale = true
@@ -467,7 +468,7 @@ final class Media extends Extension
         $height = $info[1];
         assert($width > 0 && $height > 0);
 
-        if ($output_mime === null) {
+        if (is_null($output_mime)) {
             /* If not specified, output to the same format as the original image */
             $output_mime = new MimeType(match($info[2]) {
                 IMAGETYPE_GIF => MimeType::GIF,
@@ -477,6 +478,9 @@ final class Media extends Extension
                 IMAGETYPE_BMP => MimeType::BMP,
                 default => throw new MediaException("Failed to save the new image - Unsupported MIME type."),
             });
+        }
+        if (is_null($alpha_color)) {
+            $alpha_color = Ctx::$config->req_string(ThumbnailConfig::ALPHA_COLOR);
         }
 
         $memory_use = self::calc_memory_use($info);

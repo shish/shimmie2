@@ -69,7 +69,7 @@ final class ThumbnailConfig extends ConfigGroup
     #[ConfigMeta("Allow upscaling", ConfigType::BOOL, advanced: true)]
     public const UPSCALE = 'thumb_upscale';
 
-    #[ConfigMeta("Background color", ConfigType::STRING, default: Media::DEFAULT_ALPHA_CONVERSION_COLOR, input: "color")]
+    #[ConfigMeta("Background color", ConfigType::STRING, default: "#00000000", input: "color")]
     public const ALPHA_COLOR = 'thumb_alpha_color';
 
     /**
