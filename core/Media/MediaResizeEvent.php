@@ -19,14 +19,14 @@ final class MediaResizeEvent extends Event
         public int $target_height,
         public ResizeType $resize_type = ResizeType::FIT,
         public ?MimeType $target_mime = null,
-        public string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
+        public ?string $alpha_color = null,
         public int $target_quality = 80,
         public bool $minimize = false,
         public bool $allow_upscale = true
     ) {
         parent::__construct();
         if (empty($alpha_color)) {
-            $this->alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR;
+            $this->alpha_color = Ctx::$config->req_string(ThumbnailConfig::ALPHA_COLOR);
         }
     }
 }
