@@ -29,14 +29,9 @@ final class AvatarPost extends AvatarExtension
             $image_id = int_escape($event->get_arg('image_id'));
             $this->theme->display_avatar_edit_page($image_id);
         } elseif ($event->page_matches("save_avatar", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
-            $settings = ConfigSaveEvent::postToSettings($event->POST);
-            send_event(new ConfigSaveEvent(Ctx::$user->get_config(), $settings));
+            send_event(new ConfigSaveEvent(Ctx::$user->get_config(), ConfigSaveEvent::postToSettings($event->POST)));
             $page->flash("Image set as avatar");
-            if (key_exists(AvatarPostUserConfig::AVATAR_ID, $settings) && is_int($settings[AvatarPostUserConfig::AVATAR_ID])) {
-                $page->set_redirect(make_link("post/view/".$settings[AvatarPostUserConfig::AVATAR_ID]));
-            } else {
-                $page->set_redirect(make_link("user_config"));
-            }
+            $page->set_redirect(Url::referer_or(make_link("user_config")));
         }
     }
 
