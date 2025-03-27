@@ -198,7 +198,7 @@ final class ResizeImage extends Extension
             $tmp_filename,
             $new_width,
             $new_height,
-            Media::RESIZE_TYPE_STRETCH
+            ResizeType::STRETCH
         ));
 
         send_event(new ImageReplaceEvent($image_obj, $tmp_filename));
