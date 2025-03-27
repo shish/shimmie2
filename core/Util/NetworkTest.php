@@ -4,26 +4,20 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use PHPUnit\Framework\TestCase;
-
-final class NetworkTest extends TestCase
+final class NetworkTest extends ShimmiePHPUnitTestCase
 {
     public function test_get_session_ipv4(): void
     {
         $_SERVER['REMOTE_ADDR'] = "1.2.3.4";
-        self::assertEquals(
-            "1.2.0.0",
-            Network::get_session_ip(new TestConfig([UserAccountsConfig::SESSION_HASH_MASK => "255.255.0.0"]))
-        );
+        Ctx::$config->set_string(UserAccountsConfig::SESSION_HASH_MASK, "255.255.0.0");
+        self::assertEquals("1.2.0.0", Network::get_session_ip());
     }
 
     public function test_get_session_ipv6(): void
     {
         $_SERVER['REMOTE_ADDR'] = "0102::1";
-        self::assertEquals(
-            "1.2.0.0",
-            Network::get_session_ip(new TestConfig([UserAccountsConfig::SESSION_HASH_MASK => "255.255.0.0"]))
-        );
+        Ctx::$config->set_string(UserAccountsConfig::SESSION_HASH_MASK, "255.255.0.0");
+        self::assertEquals("1.2.0.0", Network::get_session_ip());
     }
 
     public function test_ip_in_range(): void

@@ -98,7 +98,7 @@ final class User
                 $user = $user_by_name;
             }
             // For 2.12, check old session IDs and convert to new IDs
-            if (md5($user_by_name->passhash . Network::get_session_ip(Ctx::$config)) === $session) {
+            if (md5($user_by_name->passhash . Network::get_session_ip()) === $session) {
                 $user = $user_by_name;
                 $user->set_login_cookie();
             }
@@ -243,13 +243,13 @@ final class User
      */
     public function get_auth_token(): string
     {
-        return hash("sha3-256", $this->passhash . Network::get_session_ip(Ctx::$config) . SysConfig::getSecret());
+        return hash("sha3-256", $this->passhash . Network::get_session_ip() . SysConfig::getSecret());
     }
 
 
     public function get_session_id(): string
     {
-        return hash("sha3-256", $this->passhash . Network::get_session_ip(Ctx::$config) . SysConfig::getSecret());
+        return hash("sha3-256", $this->passhash . Network::get_session_ip() . SysConfig::getSecret());
     }
 
     public function set_login_cookie(): void
