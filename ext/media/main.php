@@ -30,11 +30,6 @@ final class Media extends Extension
         MimeType::PNG,
     ];
 
-    public const RESIZE_TYPE_FIT = "Fit";
-    public const RESIZE_TYPE_FIT_BLUR = "Fit Blur";
-    public const RESIZE_TYPE_FIT_BLUR_PORTRAIT = "Fit Blur Tall, Fill Wide";
-    public const RESIZE_TYPE_FILL =  "Fill";
-    public const RESIZE_TYPE_STRETCH =  "Stretch";
     public const DEFAULT_ALPHA_CONVERSION_COLOR = "#00000000";
 
     public static function imagick_available(): bool
@@ -368,7 +363,7 @@ final class Media extends Extension
         Path $output_filename,
         ?MimeType $output_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
-        string $resize_type = self::RESIZE_TYPE_FIT,
+        ResizeType $resize_type = ResizeType::FIT,
         int $output_quality = 80,
         bool $minimize = false,
         bool $allow_upscale = true
@@ -390,7 +385,7 @@ final class Media extends Extension
         if (!$allow_upscale) {
             $resize_suffix .= "\>";
         }
-        if ($resize_type === Media::RESIZE_TYPE_STRETCH) {
+        if ($resize_type === ResizeType::STRETCH) {
             $resize_suffix .= "\!";
         }
 
@@ -403,23 +398,23 @@ final class Media extends Extension
 
         $input_ext = self::determine_ext($input_mime);
 
-        if ($resize_type === Media::RESIZE_TYPE_FIT_BLUR_PORTRAIT) {
+        if ($resize_type === ResizeType::FIT_BLUR_PORTRAIT) {
             if ($new_height > $new_width) {
-                $resize_type = Media::RESIZE_TYPE_FIT_BLUR;
+                $resize_type = ResizeType::FIT_BLUR;
             } else {
-                $resize_type = Media::RESIZE_TYPE_FILL;
+                $resize_type = ResizeType::FILL;
             }
         }
 
         switch ($resize_type) {
-            case Media::RESIZE_TYPE_FIT:
-            case Media::RESIZE_TYPE_STRETCH:
+            case ResizeType::FIT:
+            case ResizeType::STRETCH:
                 $args .= "{$resize_arg} {$new_width}x{$new_height}{$resize_suffix} -background {$bg} -flatten ";
                 break;
-            case Media::RESIZE_TYPE_FILL:
+            case ResizeType::FILL:
                 $args .= "{$resize_arg} {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -extent {$new_width}x{$new_height} ";
                 break;
-            case Media::RESIZE_TYPE_FIT_BLUR:
+            case ResizeType::FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
                 $args .= " ".
                     "\( -clone 0 -auto-orient -resize {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -fill black -colorize 50% -extent {$new_width}x{$new_height} -blur 0x{$blur_size} \) ".
@@ -464,7 +459,7 @@ final class Media extends Extension
         Path $output_filename,
         ?MimeType $output_mime = null,
         string $alpha_color = Media::DEFAULT_ALPHA_CONVERSION_COLOR,
-        string $resize_type = self::RESIZE_TYPE_FIT,
+        ResizeType $resize_type = ResizeType::FIT,
         int $output_quality = 80,
         bool $allow_upscale = true
     ): void {
@@ -490,7 +485,7 @@ final class Media extends Extension
             throw new InsufficientMemoryException("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
         }
 
-        if ($resize_type === Media::RESIZE_TYPE_FIT) {
+        if ($resize_type === ResizeType::FIT) {
             list($new_width, $new_height) = ThumbnailUtil::get_scaled_by_aspect_ratio($width, $height, $new_width, $new_height);
         }
         if (!$allow_upscale &&
