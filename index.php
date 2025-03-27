@@ -45,7 +45,7 @@ $cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
 $database = Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
 // $config depends on _load_ext_files (to load config.php files and
 // calculate defaults) and $cache (to cache config values)
-$config = Ctx::setConfig(new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults()));
+$config = Ctx::setConfig(new DatabaseConfig($database));
 // theme files depend on $config (theme name is a config value)
 _load_theme_files();
 // $page depends on theme files (to load theme-specific Page class)

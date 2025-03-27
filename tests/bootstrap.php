@@ -45,7 +45,7 @@ $cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
 $database = Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
 Installer::create_dirs();
 Installer::create_tables($database);
-$config = Ctx::setConfig(new DatabaseConfig($database, defaults: ConfigGroup::get_all_defaults()));
+$config = Ctx::setConfig(new DatabaseConfig($database));
 _load_theme_files();
 $page = Ctx::setPage(new Page());
 Ctx::setEventBus(new EventBus());
