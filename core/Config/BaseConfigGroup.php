@@ -52,7 +52,7 @@ abstract class BaseConfigGroup extends Enablable
     public static function get_all_defaults(): array
     {
         return cache_get_or_set(
-            get_called_class() . "_defaults_" . SysConfig::getVersion() . "_" . md5(Extension::get_enabled_extensions_as_string()),
+            get_called_class() . "_defaults",
             fn () => self::_get_all_defaults(),
             60
         );
