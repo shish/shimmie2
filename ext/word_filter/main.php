@@ -41,7 +41,7 @@ final class WordFilter extends Extension
      */
     private function get_map(): array
     {
-        $raw = Ctx::$config->get_string(WordFilterConfig::FILTER) ?? "";
+        $raw = Ctx::$config->get(WordFilterConfig::FILTER) ?? "";
         $lines = explode("\n", $raw);
         $map = [];
         foreach ($lines as $line) {

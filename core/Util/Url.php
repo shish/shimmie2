@@ -158,7 +158,7 @@ final readonly class Url
              * "/v2/index.php?q=foo/bar" (uglyurls)
              */
             $install_dir = (string)Url::base();
-            if (Ctx::$config->req_bool(SetupConfig::NICE_URLS)) {
+            if (Ctx::$config->req(SetupConfig::NICE_URLS)) {
                 $path = "$install_dir/{$this->page}";
             } else {
                 $path = "$install_dir/index.php";
@@ -191,7 +191,7 @@ final readonly class Url
         $path     = $this->getPath();
 
         $query = $this->query;
-        if ($this->page !== null && !Ctx::$config->req_bool(SetupConfig::NICE_URLS)) {
+        if ($this->page !== null && !Ctx::$config->req(SetupConfig::NICE_URLS)) {
             //$query["q"] = $this->page;
             $query = array_merge(["q" => $this->page], $query);
         }

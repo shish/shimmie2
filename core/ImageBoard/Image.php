@@ -395,7 +395,7 @@ final class Image implements \ArrayAccess
     #[Field(name: "thumb_link")]
     public function get_thumb_link(): Url
     {
-        $mime = new MimeType(Ctx::$config->req_string(ThumbnailConfig::MIME));
+        $mime = new MimeType(Ctx::$config->req(ThumbnailConfig::MIME));
         $ext = FileExtension::get_for_mime($mime);
         return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
     }
@@ -405,14 +405,14 @@ final class Image implements \ArrayAccess
      */
     private function get_link(string $template, string $nice, string $plain): Url
     {
-        $image_link = Ctx::$config->get_string($template);
+        $image_link = Ctx::$config->get($template);
 
-        if (!empty($image_link)) {
+        if (is_string($image_link)) {
             if (!str_contains($image_link, "://") && !str_starts_with($image_link, "/")) {
                 $image_link = make_link($image_link);
             }
             $chosen = $image_link;
-        } elseif (Ctx::$config->req_bool(SetupConfig::NICE_URLS)) {
+        } elseif (Ctx::$config->req(SetupConfig::NICE_URLS)) {
             $chosen = make_link($nice);
         } else {
             $chosen = make_link($plain);
@@ -433,7 +433,7 @@ final class Image implements \ArrayAccess
     #[Field(name: "tooltip")]
     public function get_tooltip(): string
     {
-        return send_event(new ParseLinkTemplateEvent(Ctx::$config->req_string(ThumbnailConfig::TIP), $this))->text;
+        return send_event(new ParseLinkTemplateEvent(Ctx::$config->req(ThumbnailConfig::TIP), $this))->text;
     }
 
     /**

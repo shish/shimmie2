@@ -17,7 +17,7 @@ final class LinkScan extends Extension
     {
         $search = $event->get_GET('search') ?? $event->get_POST('search') ?? "";
         if ($event->page_matches("post/list") && !empty($search)) {
-            $trigger = Ctx::$config->req_string(LinkScanConfig::TRIGGER);
+            $trigger = Ctx::$config->req(LinkScanConfig::TRIGGER);
             if (\Safe\preg_match("#.*{$trigger}.*#", $search)) {
                 $ids = $this->scan($search);
                 Ctx::$page->set_redirect(search_link(["id=".implode(",", $ids)]));

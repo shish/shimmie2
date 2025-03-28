@@ -72,7 +72,7 @@ final class Upgrade extends Extension
         if ($this->get_version() < 11) {
             Log::info("upgrade", "Converting user flags to classes");
             $database->execute("ALTER TABLE users ADD COLUMN class VARCHAR(32) NOT NULL default :user", ["user" => "user"]);
-            $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name" => "anonymous", "id" => Ctx::$config->req_int(UserAccountsConfig::ANON_ID)]);
+            $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name" => "anonymous", "id" => Ctx::$config->req(UserAccountsConfig::ANON_ID)]);
             $database->execute("UPDATE users SET class = :name WHERE admin=:admin", ["name" => "admin", "admin" => 'Y']);
 
             $this->set_version(11);

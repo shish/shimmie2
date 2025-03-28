@@ -12,7 +12,7 @@ use MicroHTML\HTMLElement;
 
 function get_theme(): string
 {
-    $theme = Ctx::$config->req_string(SetupConfig::THEME);
+    $theme = Ctx::$config->req(SetupConfig::THEME);
     if (!file_exists("themes/$theme")) {
         $theme = "default";
     }
@@ -21,7 +21,7 @@ function get_theme(): string
 
 function contact_link(?string $contact = null): ?string
 {
-    $text = $contact ?? Ctx::$config->get_string(SetupConfig::CONTACT_LINK);
+    $text = $contact ?? Ctx::$config->get(SetupConfig::CONTACT_LINK);
     if (is_null($text)) {
         return null;
     }
@@ -52,7 +52,7 @@ function get_memory_limit(): int
 {
     // thumbnail generation requires lots of memory
     $shimmie_limit = max(
-        Ctx::$config->get_int(MediaConfig::MEM_LIMIT),
+        Ctx::$config->get(MediaConfig::MEM_LIMIT),
         8 * 1024 * 1024 // don't go below 8MB
     );
 
@@ -99,8 +99,8 @@ function get_upload_limits(): array
     $sys_filesize = empty($ini_filesize) ? null : parse_shorthand_int($ini_filesize);
     $sys_post = empty($ini_post) ? null : parse_shorthand_int($ini_post);
 
-    $conf_files = Ctx::$config->req_int(UploadConfig::COUNT);
-    $conf_filesize = Ctx::$config->req_int(UploadConfig::SIZE);
+    $conf_files = Ctx::$config->req(UploadConfig::COUNT);
+    $conf_filesize = Ctx::$config->req(UploadConfig::SIZE);
     $conf_post = $conf_files * $conf_filesize;
 
     $limits = [
@@ -363,7 +363,7 @@ function _get_user(): User
         $my_user = User::by_session(Ctx::$page->get_cookie("user"), Ctx::$page->get_cookie("session"));
     }
     if (is_null($my_user)) {
-        $my_user = User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
+        $my_user = User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
     }
 
     return $my_user;

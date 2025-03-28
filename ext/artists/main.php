@@ -726,7 +726,7 @@ final class Artists extends Extension
      */
     private function get_listing(int $pageNumber): void
     {
-        $artistsPerPage = Ctx::$config->req_int(ArtistsConfig::ARTISTS_PER_PAGE);
+        $artistsPerPage = Ctx::$config->req(ArtistsConfig::ARTISTS_PER_PAGE);
 
         /** @var ArtistArtist[] $listing */
         $listing = Ctx::$database->get_all(

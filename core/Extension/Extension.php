@@ -39,13 +39,13 @@ abstract class Extension extends Enablable
     protected function get_version(): int
     {
         $name = static::VERSION_KEY ?? "ext_" . static::KEY . "_version";
-        return Ctx::$config->get_int($name) ?? 0;
+        return Ctx::$config->get($name, ConfigType::INT) ?? 0;
     }
 
     protected function set_version(int $ver): void
     {
         $name = static::VERSION_KEY ?? "ext_" . static::KEY . "_version";
-        Ctx::$config->set_int($name, $ver);
+        Ctx::$config->set($name, $ver);
         Log::info("upgrade", "Set version for $name to $ver");
     }
 }

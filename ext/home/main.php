@@ -16,7 +16,7 @@ final class Home extends Extension
     {
         if ($event->page_matches("home")) {
             $this->theme->display_page(
-                Ctx::$config->req_string(SetupConfig::TITLE),
+                Ctx::$config->req(SetupConfig::TITLE),
                 $this->get_body()
             );
         }
@@ -25,8 +25,8 @@ final class Home extends Extension
     private function get_body(): HTMLElement
     {
         // get the homelinks and process them
-        if (!empty(Ctx::$config->get_string(HomeConfig::LINKS))) {
-            $main_links = Ctx::$config->get_string(HomeConfig::LINKS);
+        if (!empty(Ctx::$config->get(HomeConfig::LINKS))) {
+            $main_links = Ctx::$config->get(HomeConfig::LINKS);
         } else {
             $main_links = '[url=site://post/list]Posts[/url][url=site://comment/list]Comments[/url][url=site://tags]Tags[/url]';
             if (PoolsInfo::is_enabled()) {
@@ -39,9 +39,9 @@ final class Home extends Extension
         }
 
         return $this->theme->build_body(
-            Ctx::$config->req_string(SetupConfig::TITLE),
+            Ctx::$config->req(SetupConfig::TITLE),
             format_text($main_links),
-            Ctx::$config->get_string(HomeConfig::TEXT),
+            Ctx::$config->get(HomeConfig::TEXT),
             contact_link(),
             Search::count_images(),
         );

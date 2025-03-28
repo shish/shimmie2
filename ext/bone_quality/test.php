@@ -33,7 +33,7 @@ final class BoneQualityTest extends ShimmiePHPUnitTestCase
 
     public function testChoreThreshold(): void
     {
-        Ctx::$config->set_int(BoneQualityConfig::CHORE_THRESHOLD, 0);
+        Ctx::$config->set(BoneQualityConfig::CHORE_THRESHOLD, 0);
 
         self::log_in_as_user();
 

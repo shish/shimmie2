@@ -34,7 +34,7 @@ final class PostTitles extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        if (Ctx::$config->get_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
+        if (Ctx::$config->get(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
             Ctx::$page->set_title(self::get_title($event->image));
         }
     }
@@ -84,7 +84,7 @@ final class PostTitles extends Extension
     public static function get_title(Image $image): string
     {
         $title = $image['title'] ?? "";
-        if (empty($title) && Ctx::$config->get_bool(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
+        if (empty($title) && Ctx::$config->get(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
             $info = pathinfo($image->filename);
             if (array_key_exists("extension", $info)) {
                 $title = basename($image->filename, '.' . $info['extension']);

@@ -22,9 +22,9 @@ class AvatarPostTheme extends Themelet
         if (!$image) {
             throw new PostNotFound("Image $image_id not found");
         }
-        $html = $this->avatar_editor_html($image);
 
-        $page->add_block(new Block("Avatar Editor", $html));
+        $page->set_title("Edit Avatar");
+        $page->add_block(new Block("Avatar Editor", $this->avatar_editor_html($image)));
     }
 
     public function avatar_editor_html(Image $image): HTMLElement

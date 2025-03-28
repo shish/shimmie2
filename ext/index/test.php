@@ -86,7 +86,7 @@ final class IndexTest extends ShimmiePHPUnitTestCase
 
     public function testUserNoTagLimit(): void
     {
-        Ctx::$config->set_int(IndexConfig::BIG_SEARCH, 1);
+        Ctx::$config->set(IndexConfig::BIG_SEARCH, 1);
 
         self::log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "asdf post1");
@@ -99,7 +99,7 @@ final class IndexTest extends ShimmiePHPUnitTestCase
 
     public function testAnonTagLimit(): void
     {
-        Ctx::$config->set_int(IndexConfig::BIG_SEARCH, 1);
+        Ctx::$config->set(IndexConfig::BIG_SEARCH, 1);
 
         self::log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "asdf post1");
@@ -115,7 +115,7 @@ final class IndexTest extends ShimmiePHPUnitTestCase
 
     public function testAnonPostNext(): void
     {
-        Ctx::$config->set_int(IndexConfig::BIG_SEARCH, 1);
+        Ctx::$config->set(IndexConfig::BIG_SEARCH, 1);
 
         self::log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "asdf post1");

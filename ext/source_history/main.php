@@ -335,7 +335,7 @@ final class SourceHistory extends Extension
             Log::debug("source_history", "adding source history: [$old_source] -> [$new_source]");
         }
 
-        $allowed = Ctx::$config->get_int(SourceHistoryConfig::MAX_HISTORY);
+        $allowed = Ctx::$config->get(SourceHistoryConfig::MAX_HISTORY);
         if ($allowed == 0) {
             return;
         }
@@ -348,7 +348,7 @@ final class SourceHistory extends Extension
                 "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (:image_id, :source, :user_id, :user_ip, now())",
-                ["image_id" => $image->id, "source" => $old_source, "user_id" => Ctx::$config->req_int(UserAccountsConfig::ANON_ID), "user_ip" => '127.0.0.1']
+                ["image_id" => $image->id, "source" => $old_source, "user_id" => Ctx::$config->req(UserAccountsConfig::ANON_ID), "user_ip" => '127.0.0.1']
             );
             $entries++;
         }

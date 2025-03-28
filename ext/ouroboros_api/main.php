@@ -90,8 +90,8 @@ class _SafeOuroborosImage
         $this->has_notes = false;
 
         // thumb
-        $this->preview_height = Ctx::$config->req_int(ThumbnailConfig::HEIGHT);
-        $this->preview_width = Ctx::$config->req_int(ThumbnailConfig::WIDTH);
+        $this->preview_height = Ctx::$config->req(ThumbnailConfig::HEIGHT);
+        $this->preview_width = Ctx::$config->req(ThumbnailConfig::WIDTH);
         $this->preview_url = (string)$img->get_thumb_link()->asAbsolute();
 
         // sample (use the full image here)
@@ -294,7 +294,7 @@ final class OuroborosAPI extends Extension
      */
     protected function postCreate(OuroborosPost $post, ?string $md5 = ''): void
     {
-        $handler = Ctx::$config->get_string(UploadConfig::COLLISION_HANDLER);
+        $handler = Ctx::$config->get(UploadConfig::COLLISION_HANDLER);
         if (!empty($md5) && !($handler === 'merge')) {
             $img = Image::by_hash($md5);
             if (!is_null($img)) {
@@ -312,7 +312,7 @@ final class OuroborosAPI extends Extension
         // Check where we should try for the file
         if (empty($post->file) && !empty($post->file_url)) {
             // Transload from source
-            $meta['file'] = shm_tempnam('transload_' . Ctx::$config->req_string(UploadConfig::TRANSLOAD_ENGINE))->str();
+            $meta['file'] = shm_tempnam('transload_' . Ctx::$config->req(UploadConfig::TRANSLOAD_ENGINE))->str();
             $meta['filename'] = basename($post->file_url);
             try {
                 Network::fetch_url($post->file_url, new Path($meta['file']));
@@ -334,7 +334,7 @@ final class OuroborosAPI extends Extension
         }
         $img = Image::by_hash($meta['hash']);
         if (!is_null($img)) {
-            $handler = Ctx::$config->get_string(UploadConfig::COLLISION_HANDLER);
+            $handler = Ctx::$config->get(UploadConfig::COLLISION_HANDLER);
             if ($handler === 'merge') {
                 $postTags = Tag::explode($post->tags);
                 $merged = array_merge($postTags, $img->get_tag_array());
@@ -400,7 +400,7 @@ final class OuroborosAPI extends Extension
         global $database;
 
         // This class will only exist if the tag map plugin is enabled
-        $tags_min = Ctx::$config->get_int(TagMapConfig::TAGS_MIN);
+        $tags_min = Ctx::$config->get(TagMapConfig::TAGS_MIN);
 
         $start = ($page - 1) * $limit;
         switch ($order) {
@@ -560,7 +560,7 @@ final class OuroborosAPI extends Extension
             //Auth by session data from query
             $name = $_REQUEST['user'];
             $session = $_REQUEST['session'];
-            $user = User::by_session($name, $session) ?? User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
+            $user = User::by_session($name, $session) ?? User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
             send_event(new UserLoginEvent($user));
         } elseif (isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session']) &&
             isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'])
@@ -568,7 +568,7 @@ final class OuroborosAPI extends Extension
             //Auth by session data from cookies
             $session = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session'];
             $user = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'];
-            $user = User::by_session($user, $session) ?? User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
+            $user = User::by_session($user, $session) ?? User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
             send_event(new UserLoginEvent($user));
         }
     }

@@ -45,7 +45,7 @@ final class PageRequestEvent extends Event
         // if we're looking at the root of the install,
         // use the default front page
         if ($path === "") {
-            $path = Ctx::$config->req_string(SetupConfig::FRONT_PAGE);
+            $path = Ctx::$config->req(SetupConfig::FRONT_PAGE);
         }
         $this->path = $path;
         $this->GET = $get;

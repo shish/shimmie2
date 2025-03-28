@@ -290,7 +290,7 @@ final class Pools extends Extension
             self::assert_permission($user, $pool);
 
             $images = Search::find_images(
-                limit: Ctx::$config->get_int(PoolsConfig::MAX_IMPORT_RESULTS),
+                limit: Ctx::$config->get(PoolsConfig::MAX_IMPORT_RESULTS),
                 tags: Tag::explode($event->req_POST("pool_tag"))
             );
             $this->theme->pool_result($images, $pool);
@@ -372,11 +372,11 @@ final class Pools extends Extension
      */
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        if (Ctx::$config->req_bool(PoolsConfig::INFO_ON_VIEW_IMAGE)) {
+        if (Ctx::$config->req(PoolsConfig::INFO_ON_VIEW_IMAGE)) {
             $imageID = $event->image->id;
             $poolsIDs = $this->get_pool_ids($imageID);
 
-            $show_nav = Ctx::$config->req_bool(PoolsConfig::SHOW_NAV_LINKS);
+            $show_nav = Ctx::$config->req(PoolsConfig::SHOW_NAV_LINKS);
 
             $navInfo = [];
             foreach ($poolsIDs as $poolID) {
@@ -394,7 +394,7 @@ final class Pools extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $database;
-        if (Ctx::$config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && Ctx::$user->can(PoolsPermission::UPDATE)) {
+        if (Ctx::$config->get(PoolsConfig::ADDER_ON_VIEW_IMAGE) && Ctx::$user->can(PoolsPermission::UPDATE)) {
             $pools = [];
             if (Ctx::$user->can(PoolsPermission::ADMIN)) {
                 $pools = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
@@ -539,7 +539,7 @@ final class Pools extends Extension
 
     private function list_pools(int $pageNumber, string $search): void
     {
-        $poolsPerPage = Ctx::$config->req_int(PoolsConfig::LISTS_PER_PAGE);
+        $poolsPerPage = Ctx::$config->req(PoolsConfig::LISTS_PER_PAGE);
 
         $order_by = "";
         $order = Ctx::$page->get_cookie("ui-order-pool");
@@ -715,7 +715,7 @@ final class Pools extends Extension
     private function get_posts(int $pageNumber, int $poolID): void
     {
         $pool = $this->get_single_pool($poolID);
-        $imagesPerPage = Ctx::$config->req_int(PoolsConfig::IMAGES_PER_PAGE);
+        $imagesPerPage = Ctx::$config->req(PoolsConfig::IMAGES_PER_PAGE);
 
         $query = "
             INNER JOIN images AS i ON i.id = p.image_id
@@ -794,7 +794,7 @@ final class Pools extends Extension
 
     private function get_history(int $pageNumber): void
     {
-        $historiesPerPage = Ctx::$config->req_int(PoolsConfig::UPDATED_PER_PAGE);
+        $historiesPerPage = Ctx::$config->req(PoolsConfig::UPDATED_PER_PAGE);
 
         /** @var PoolHistory[] $history */
         $history = Ctx::$database->get_all("
@@ -873,7 +873,7 @@ final class Pools extends Extension
         );
 
         if ($result === 0) {
-            if (Ctx::$config->get_bool(PoolsConfig::AUTO_INCREMENT_ORDER) && $imageOrder === 0) {
+            if (Ctx::$config->get(PoolsConfig::AUTO_INCREMENT_ORDER) && $imageOrder === 0) {
                 $imageOrder = (int) $database->get_one(
                     "
 						SELECT COALESCE(MAX(image_order),0) + 1

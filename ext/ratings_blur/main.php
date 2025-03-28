@@ -12,9 +12,9 @@ final class RatingsBlur extends Extension
     // Called from CommonElements::build_thumb()
     public function blur(string $rating): bool
     {
-        $blur_ratings = Ctx::$user->get_config()->get_array(
+        $blur_ratings = Ctx::$user->get_config()->get(
             RatingsBlurUserConfig::USER_DEFAULTS
-        ) ?? Ctx::$config->req_array(RatingsBlurConfig::GLOBAL_DEFAULTS);
+        ) ?? Ctx::$config->req(RatingsBlurConfig::GLOBAL_DEFAULTS);
         if (in_array(RatingsBlur::NULL_OPTION, $blur_ratings)) {
             return false;
         }

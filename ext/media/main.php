@@ -169,7 +169,7 @@ final class Media extends Extension
         }
 
         // TODO: Get output optimization tools working better
-        //        if ($config->get_bool("thumb_optim")) {
+        //        if ($config->get("thumb_optim")) {
         //            exec("jpegoptim $outname", $output, $ret);
         //        }
     }
@@ -263,7 +263,7 @@ final class Media extends Extension
      */
     public static function create_thumbnail_ffmpeg(Image $image): bool
     {
-        $ffmpeg = Ctx::$config->get_string(MediaConfig::FFMPEG_PATH);
+        $ffmpeg = Ctx::$config->get(MediaConfig::FFMPEG_PATH);
         if (empty($ffmpeg)) {
             throw new MediaException("ffmpeg command not configured");
         }
@@ -305,7 +305,7 @@ final class Media extends Extension
      */
     public static function get_ffprobe_data(string $filename): array
     {
-        $ffprobe = Ctx::$config->get_string(MediaConfig::FFPROBE_PATH);
+        $ffprobe = Ctx::$config->get(MediaConfig::FFPROBE_PATH);
         if (empty($ffprobe)) {
             throw new MediaException("ffprobe command not configured");
         }
@@ -370,7 +370,7 @@ final class Media extends Extension
             $output_mime = $input_mime;
         }
         if (is_null($alpha_color)) {
-            $alpha_color = Ctx::$config->req_string(ThumbnailConfig::ALPHA_COLOR);
+            $alpha_color = Ctx::$config->req(ThumbnailConfig::ALPHA_COLOR);
         }
 
         if ($output_mime->base === MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
@@ -434,7 +434,7 @@ final class Media extends Extension
 
         $output_ext = self::determine_ext($output_mime);
 
-        $command = new CommandBuilder(Ctx::$config->req_string(MediaConfig::CONVERT_PATH));
+        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::CONVERT_PATH));
         $command->add_escaped_arg("{$input_ext}:\"{$input_path->str()}[0]\"");
         $command->add_flag($args);
         $command->add_escaped_arg("$output_ext:{$output_filename->str()}");
@@ -480,7 +480,7 @@ final class Media extends Extension
             });
         }
         if (is_null($alpha_color)) {
-            $alpha_color = Ctx::$config->req_string(ThumbnailConfig::ALPHA_COLOR);
+            $alpha_color = Ctx::$config->req(ThumbnailConfig::ALPHA_COLOR);
         }
 
         $memory_use = self::calc_memory_use($info);
@@ -627,7 +627,7 @@ final class Media extends Extension
      */
     public static function video_size(Path $filename): array
     {
-        $ffmpeg = Ctx::$config->req_string(MediaConfig::FFMPEG_PATH);
+        $ffmpeg = Ctx::$config->req(MediaConfig::FFMPEG_PATH);
         $cmd = escapeshellcmd(implode(" ", [
             escapeshellarg($ffmpeg),
             "-y", "-i", escapeshellarg($filename->str()),

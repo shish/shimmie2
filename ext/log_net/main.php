@@ -25,7 +25,7 @@ final class LogNet extends Extension
 
     private function msg(string $data): void
     {
-        $host = Ctx::$config->get_string(LogNetConfig::HOST);
+        $host = Ctx::$config->get(LogNetConfig::HOST);
 
         if (!$host) {
             return;

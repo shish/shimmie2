@@ -11,7 +11,7 @@ final class LogConsole extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (
-            Ctx::$config->req_bool(LogConsoleConfig::LOG_ACCESS) &&
+            Ctx::$config->req(LogConsoleConfig::LOG_ACCESS) &&
             isset($_SERVER['REQUEST_URI'])
         ) {
             $this->log(new LogEvent(
@@ -33,7 +33,7 @@ final class LogConsole extends Extension
 
     public function onLog(LogEvent $event): void
     {
-        if ($event->priority >= Ctx::$config->get_int(LogConsoleConfig::LEVEL)) {
+        if ($event->priority >= Ctx::$config->get(LogConsoleConfig::LEVEL)) {
             $this->log($event);
         }
     }
@@ -73,7 +73,7 @@ final class LogConsole extends Extension
             $event->message
         ]);
 
-        if (strlen($color) > 0 && Ctx::$config->get_bool(LogConsoleConfig::COLOUR)) {
+        if (strlen($color) > 0 && Ctx::$config->get(LogConsoleConfig::COLOUR)) {
             $str = "$color$str\033[0m\n";
         } else {
             $str = "$str\n";

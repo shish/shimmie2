@@ -262,7 +262,7 @@ final class LogDatabase extends Extension
             return;
         }
 
-        if ($event->priority >= Ctx::$config->get_int(LogDatabaseConfig::LEVEL)) {
+        if ($event->priority >= Ctx::$config->get(LogDatabaseConfig::LEVEL)) {
             Ctx::$database->execute("
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
 				VALUES(now(), :section, :priority, :username, :address, :message)

@@ -45,7 +45,7 @@ final class StatsDInterface extends Extension
             $this->_stats("other");
         }
 
-        $host = Ctx::$config->get_string(StatsDInterfaceConfig::HOST);
+        $host = Ctx::$config->get(StatsDInterfaceConfig::HOST);
         if (!is_null($host)) {
             $this->send($host, StatsDInterface::$stats, 1.0);
         }

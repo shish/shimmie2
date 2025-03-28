@@ -9,7 +9,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected const ANON_NAME = "anonymous";
     protected const ADMIN_NAME = "demo";
     protected const USER_NAME = "test";
-    /** @var array<string, string> */
+    /** @var array<string, bool|int|string|array<string>> */
     private array $config_snapshot = [];
 
     /**
@@ -257,7 +257,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     protected static function log_out(): void
     {
-        send_event(new UserLoginEvent(User::by_id(Ctx::$config->req_int(UserAccountsConfig::ANON_ID))));
+        send_event(new UserLoginEvent(User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID))));
     }
 
     // post things

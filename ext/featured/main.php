@@ -14,12 +14,12 @@ final class Featured extends Extension
     {
         if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: FeaturedPermission::EDIT_FEATURE)) {
             $id = $event->get_iarg('image_id');
-            Ctx::$config->set_int(FeaturedConfig::ID, $id);
+            Ctx::$config->set(FeaturedConfig::ID, $id);
             Log::info("featured", "Featured post set to >>$id", "Featured post set");
             Ctx::$page->set_redirect(make_link("post/view/$id"));
         }
         if ($event->page_matches("featured_image/download")) {
-            $fid = Ctx::$config->get_int(FeaturedConfig::ID);
+            $fid = Ctx::$config->get(FeaturedConfig::ID);
             if (!is_null($fid)) {
                 $image = Image::by_id($fid);
                 if (!is_null($image)) {
@@ -28,7 +28,7 @@ final class Featured extends Extension
             }
         }
         if ($event->page_matches("featured_image/view")) {
-            $fid = Ctx::$config->get_int(FeaturedConfig::ID);
+            $fid = Ctx::$config->get(FeaturedConfig::ID);
             if (!is_null($fid)) {
                 $image = Image::by_id($fid);
                 if (!is_null($image)) {
@@ -40,7 +40,7 @@ final class Featured extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        $fid = Ctx::$config->get_int(FeaturedConfig::ID);
+        $fid = Ctx::$config->get(FeaturedConfig::ID);
         if (!is_null($fid)) {
             $image = cache_get_or_set(
                 "featured_image_object:$fid",
@@ -66,7 +66,7 @@ final class Featured extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
-        if ($event->image->id === Ctx::$config->get_int(FeaturedConfig::ID)) {
+        if ($event->image->id === Ctx::$config->get(FeaturedConfig::ID)) {
             Ctx::$config->delete(FeaturedConfig::ID);
         }
     }

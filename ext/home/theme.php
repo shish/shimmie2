@@ -94,7 +94,7 @@ class HomeTheme extends Themelet
 
     protected function build_counter(int $post_count): ?HTMLElement
     {
-        $counter_dir = Ctx::$config->get_string(HomeConfig::COUNTER);
+        $counter_dir = Ctx::$config->get(HomeConfig::COUNTER);
         if ($counter_dir === 'none' || $counter_dir === 'text-only') {
             return null;
         }

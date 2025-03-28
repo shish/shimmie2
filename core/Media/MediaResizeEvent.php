@@ -26,7 +26,7 @@ final class MediaResizeEvent extends Event
     ) {
         parent::__construct();
         if (empty($alpha_color)) {
-            $this->alpha_color = Ctx::$config->req_string(ThumbnailConfig::ALPHA_COLOR);
+            $this->alpha_color = Ctx::$config->req(ThumbnailConfig::ALPHA_COLOR);
         }
     }
 }

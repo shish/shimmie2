@@ -45,7 +45,7 @@ class WarmUserPageTheme extends UserPageTheme
                 )
             )
         );
-        if (Ctx::$config->req_bool(UserAccountsConfig::SIGNUP_ENABLED)) {
+        if (Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED)) {
             $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
         Ctx::$page->add_block(new Block("Login", $html, "head", 90));

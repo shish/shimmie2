@@ -91,7 +91,7 @@ final class Setup extends Extension
             $page->set_data(MimeType::JSON, \Safe\json_encode([
                 "args" => $event->args,
                 "theme" => get_theme(),
-                "nice_urls" => $config->req_bool(SetupConfig::NICE_URLS),
+                "nice_urls" => $config->req(SetupConfig::NICE_URLS),
                 "base" => (string)Url::base(),
                 "absolute_base" => (string)Url::base()->asAbsolute(),
                 "base_link" => (string)make_link(""),
@@ -128,10 +128,7 @@ final class Setup extends Extension
         foreach ($event->values as $key => $value) {
             match(true) {
                 is_null($value) => $config->delete($key),
-                is_string($value) => $config->set_string($key, $value),
-                is_int($value) => $config->set_int($key, $value),
-                is_bool($value) => $config->set_bool($key, $value),
-                is_array($value) => $config->set_array($key, $value),
+                default => $config->set($key, $value),
             };
         }
         Log::warning("setup", "Configuration updated");
@@ -142,8 +139,8 @@ final class Setup extends Extension
         $event->app->register('config:defaults')
             ->setDescription('Show defaults')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                foreach (ConfigGroup::get_all_defaults() as $key => $value) {
-                    $output->writeln("$key: " . var_export($value, true));
+                foreach (ConfigGroup::get_all_metas() as $key => $meta) {
+                    $output->writeln("$key: " . var_export($meta->default, true));
                 }
                 return Command::SUCCESS;
             });
@@ -151,7 +148,7 @@ final class Setup extends Extension
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription('Get a config value')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $output->writeln(Ctx::$config->req_string($input->getArgument('key')));
+                $output->writeln(\Safe\json_encode(Ctx::$config->req($input->getArgument('key'))));
                 return Command::SUCCESS;
             });
         $event->app->register('config:set')
@@ -159,7 +156,7 @@ final class Setup extends Extension
             ->addArgument('value', InputArgument::REQUIRED)
             ->setDescription('Set a config value')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                Ctx::$config->set_string($input->getArgument('key'), $input->getArgument('value'));
+                Ctx::$config->set($input->getArgument('key'), $input->getArgument('value'));
                 Ctx::$cache->delete("config");
                 return Command::SUCCESS;
             });
@@ -183,6 +180,6 @@ final class Setup extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        $event->replace('$title', Ctx::$config->req_string(SetupConfig::TITLE));
+        $event->replace('$title', Ctx::$config->req(SetupConfig::TITLE));
     }
 }

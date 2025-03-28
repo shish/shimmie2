@@ -16,10 +16,10 @@ class FilterTheme extends Themelet
     {
         // If user is not able to set their own filters, use the default filters.
         if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
-            $tags = Ctx::$user->get_config()->get_string(FilterUserConfig::TAGS)
-                ?? Ctx::$config->get_string(FilterConfig::TAGS);
+            $tags = Ctx::$user->get_config()->get(FilterUserConfig::TAGS)
+                ?? Ctx::$config->get(FilterConfig::TAGS);
         } else {
-            $tags = Ctx::$config->get_string(FilterConfig::TAGS);
+            $tags = Ctx::$config->get(FilterConfig::TAGS);
         }
         $html = emptyHTML(
             NOSCRIPT("Post filtering requires JavaScript"),
