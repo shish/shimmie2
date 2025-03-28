@@ -140,16 +140,12 @@ final class IPBan extends Extension
             $msg .= "<!-- $active_ban_id / {$row["mode"]} -->";
 
             if ($row["mode"] == "ghost") {
-                $b = new Block(null, \MicroHTML\rawHTML($msg), "main", 0);
-                $b->is_content = false;
-                Ctx::$page->add_block($b);
+                Ctx::$page->add_block(new Block(null, \MicroHTML\rawHTML($msg), "main", 0, is_content: false));
                 Ctx::$page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
                 $event->user->class = UserClass::$known_classes["ghost"];
             } elseif ($row["mode"] == "anon-ghost") {
                 if ($event->user->is_anonymous()) {
-                    $b = new Block(null, \MicroHTML\rawHTML($msg), "main", 0);
-                    $b->is_content = false;
-                    Ctx::$page->add_block($b);
+                    Ctx::$page->add_block(new Block(null, \MicroHTML\rawHTML($msg), "main", 0, is_content: false));
                     Ctx::$page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
                     $event->user->class = UserClass::$known_classes["ghost"];
                 }

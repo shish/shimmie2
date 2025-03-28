@@ -26,9 +26,7 @@ class UploadTheme extends Themelet
 {
     public function display_block(): void
     {
-        $b = new Block("Upload", $this->build_upload_block(), "left", 20);
-        $b->is_content = false;
-        Ctx::$page->add_block($b);
+        Ctx::$page->add_block(new Block("Upload", $this->build_upload_block(), "left", 20, is_content: false));
     }
 
     public function display_full(): void
