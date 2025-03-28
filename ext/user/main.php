@@ -154,7 +154,6 @@ final class UserPage extends Extension
             $this->page_recover($event->req_POST('username'));
         }
         if ($event->page_matches("user_admin/create", method: "GET", permission: UserAccountsPermission::CREATE_USER)) {
-            global $page;
             if (!Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled();
                 return;
@@ -484,8 +483,6 @@ final class UserPage extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $user;
-
         if ($matches = $event->matches(self::USER_SEARCH_REGEX)) {
             $duser = User::by_name($matches[2]);
             $event->add_querylet(new Querylet("images.owner_id {$matches[1]}= {$duser->id}"));

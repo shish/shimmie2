@@ -145,7 +145,6 @@ final class PostTags extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $page;
         if (
             Ctx::$user->can(PostTagsPermission::EDIT_IMAGE_TAG) && (
                 isset($event->params['tags'])
@@ -159,9 +158,9 @@ final class PostTags extends Extension
                 send_event(new TagSetEvent($event->image, $tags));
             } catch (TagSetException $e) {
                 if ($e->redirect) {
-                    $page->flash("{$e->getMessage()}, please see {$e->redirect}");
+                    Ctx::$page->flash("{$e->getMessage()}, please see {$e->redirect}");
                 } else {
-                    $page->flash($e->getMessage());
+                    Ctx::$page->flash($e->getMessage());
                 }
                 throw $e;
             }

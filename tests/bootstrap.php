@@ -35,25 +35,25 @@ if (file_exists("data/test-trace.json")) {
 }
 
 sanitize_php();
-global $database, $user, $page;
+global $database;
 _set_up_shimmie_environment();
 Ctx::$tracer_enabled = true;
 Ctx::setTracer(new \EventTracer());
 Ctx::$tracer->begin("bootstrap");
 _load_ext_files();
-$cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
+Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
 $database = Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
 Installer::create_dirs();
 Installer::create_tables($database);
 $config = Ctx::setConfig(new DatabaseConfig($database));
-_load_theme_files();
-$page = Ctx::setPage(new Page());
-Ctx::setEventBus(new EventBus());
 $config->set(ThumbnailConfig::ENGINE, "static");
 $config->set(SetupConfig::NICE_URLS, true);
+_load_theme_files();
+Ctx::setPage(new Page());
+Ctx::setEventBus(new EventBus());
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
-$user = Ctx::setUser(User::by_id($config->req(UserAccountsConfig::ANON_ID)));
+Ctx::setUser(User::by_id($config->req(UserAccountsConfig::ANON_ID)));
 $userPage = new UserPage();
 $userPage->onUserCreation(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
 $userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@test.com", false));

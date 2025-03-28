@@ -61,13 +61,12 @@ class NumericScoreTheme extends Themelet
 
     public function get_nuller(User $duser): void
     {
-        global $page;
         $html = SHM_SIMPLE_FORM(
             make_link("numeric_score/remove_votes_by"),
             INPUT(["type" => "hidden", "name" => "user_id", "value" => $duser->id]),
             SHM_SUBMIT("Delete all votes by this user")
         );
-        $page->add_block(new Block("Votes", $html, "main", 80));
+        Ctx::$page->add_block(new Block("Votes", $html, "main", 80));
     }
 
     /**

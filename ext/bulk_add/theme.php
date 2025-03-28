@@ -23,9 +23,6 @@ class BulkAddTheme extends Themelet
      */
     public function display_upload_results(array $results): void
     {
-        global $page;
-        $page->set_title("Adding folder");
-        $this->display_navigation();
         $html = UL();
         foreach ($results as $r) {
             if (is_a($r, UploadError::class)) {
@@ -34,7 +31,10 @@ class BulkAddTheme extends Themelet
                 $html->appendChild(LI("{$r->name} ok"));
             }
         }
-        $page->add_block(new Block("Results", $html));
+
+        Ctx::$page->set_title("Adding folder");
+        $this->display_navigation();
+        Ctx::$page->add_block(new Block("Results", $html));
     }
 
     /*
@@ -44,7 +44,6 @@ class BulkAddTheme extends Themelet
      */
     public function display_admin_block(): void
     {
-        global $page;
         $html = emptyHTML(
             "Add a folder full of images; any subfolders will have their names
 			used as tags for the images within.",
@@ -61,6 +60,6 @@ class BulkAddTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Bulk Add", $html));
+        Ctx::$page->add_block(new Block("Bulk Add", $html));
     }
 }

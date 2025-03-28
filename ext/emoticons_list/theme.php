@@ -17,7 +17,6 @@ class EmoticonListTheme extends Themelet
      */
     public function display_emotes(array $list): void
     {
-        global $page;
         $data_href = Url::base();
 
         $table = TABLE();
@@ -28,7 +27,7 @@ class EmoticonListTheme extends Themelet
             ));
         }
 
-        $page->set_data(MimeType::HTML, (string)$page->html_html(
+        Ctx::$page->set_data(MimeType::HTML, (string)Ctx::$page->html_html(
             TITLE("Emoticon list"),
             $table
         ));

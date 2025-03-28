@@ -141,9 +141,8 @@ final class AutoTagger extends Extension
 
     public function onAddAutoTag(AddAutoTagEvent $event): void
     {
-        global $page;
         $this->add_auto_tag($event->tag, $event->additional_tags);
-        $page->flash("Added Auto-Tag");
+        Ctx::$page->flash("Added Auto-Tag");
     }
 
     public function onDeleteAutoTag(DeleteAutoTagEvent $event): void

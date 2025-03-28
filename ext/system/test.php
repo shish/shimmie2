@@ -8,8 +8,7 @@ final class SystemTest extends ShimmiePHPUnitTestCase
 {
     public function testView(): void
     {
-        global $page;
-        self::get_page("system");
+        $page = self::get_page("system");
         self::assertEquals(PageMode::REDIRECT, $page->mode);
     }
 }

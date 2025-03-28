@@ -85,7 +85,7 @@ final class IPBan extends Extension
 
     public function onUserLogin(UserLoginEvent $event): void
     {
-        global $database, $page;
+        global $database;
 
         // Get lists of banned IPs and banned networks
         $ips = Ctx::$cache->get("ip_bans");
@@ -142,15 +142,15 @@ final class IPBan extends Extension
             if ($row["mode"] == "ghost") {
                 $b = new Block(null, \MicroHTML\rawHTML($msg), "main", 0);
                 $b->is_content = false;
-                $page->add_block($b);
-                $page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
+                Ctx::$page->add_block($b);
+                Ctx::$page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
                 $event->user->class = UserClass::$known_classes["ghost"];
             } elseif ($row["mode"] == "anon-ghost") {
                 if ($event->user->is_anonymous()) {
                     $b = new Block(null, \MicroHTML\rawHTML($msg), "main", 0);
                     $b->is_content = false;
-                    $page->add_block($b);
-                    $page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
+                    Ctx::$page->add_block($b);
+                    Ctx::$page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
                     $event->user->class = UserClass::$known_classes["ghost"];
                 }
             } else {
@@ -163,7 +163,7 @@ final class IPBan extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
+        $page = Ctx::$page;
         if ($event->page_matches("ip_ban/create", method: "POST", permission: IPBanPermission::BAN_IP)) {
             $input = validate_input(["c_ip" => "string", "c_mode" => "string", "c_reason" => "string", "c_expires" => "optional,date"]);
             send_event(new AddIPBanEvent($input['c_ip'], $input['c_mode'], $input['c_reason'], $input['c_expires']));

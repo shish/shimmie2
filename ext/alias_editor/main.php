@@ -61,7 +61,8 @@ final class AliasEditor extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
+        global $database;
+        $page = Ctx::$page;
 
         if ($event->page_matches("alias/add", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $input = validate_input(["c_oldtag" => "string", "c_newtag" => "string"]);

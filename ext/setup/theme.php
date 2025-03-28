@@ -26,7 +26,6 @@ class SetupTheme extends Themelet
      */
     public function display_page(array $config_blocks): void
     {
-        global $page;
         usort($config_blocks, Block::cmp(...));
 
         $blocks = DIV(["class" => "setupblocks"]);
@@ -44,9 +43,9 @@ class SetupTheme extends Themelet
             A(["href" => make_link("setup")], "Simple") :
             A(["href" => make_link("setup", ["advanced" => "on"])], "Advanced");
 
-        $page->set_title("Shimmie Setup");
+        Ctx::$page->set_title("Shimmie Setup");
         $this->display_navigation(extra: $nav);
-        $page->add_block(new Block(null, $table, id: "Setupmain"));
+        Ctx::$page->add_block(new Block(null, $table, id: "Setupmain"));
     }
 
     protected function sb_to_html(Block $block): HTMLElement

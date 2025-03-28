@@ -13,7 +13,8 @@ final class ETServer extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
+        global $database;
+        $page = Ctx::$page;
         if ($event->page_matches("register.php")) {
             $data = $event->get_POST("data");
             if ($data) {

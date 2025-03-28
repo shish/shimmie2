@@ -445,12 +445,7 @@ final class OuroborosAPI extends Extension
      */
     private function sendResponse(int $code = 200, string $reason = '', bool $location = false): void
     {
-        global $page;
-        if ($code === 200) {
-            $success = true;
-        } else {
-            $success = false;
-        }
+        $success = ($code === 200);
         if (empty($reason)) {
             if (defined("self::MSG_HTTP_{$code}")) {
                 $reason = constant("self::MSG_HTTP_{$code}");
@@ -475,7 +470,7 @@ final class OuroborosAPI extends Extension
                 $response['location'] = $response['reason'];
                 unset($response['reason']);
             }
-            $page->set_data(MimeType::JSON, \Safe\json_encode($response));
+            Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode($response));
         } elseif ($this->type === 'xml') {
             // Seriously, XML sucks...
             $xml = new \XMLWriter();
@@ -490,7 +485,7 @@ final class OuroborosAPI extends Extension
             }
             $xml->endElement();
             $xml->endDocument();
-            $page->set_data(MimeType::XML, $xml->outputMemory(true));
+            Ctx::$page->set_data(MimeType::XML, $xml->outputMemory(true));
             unset($xml);
         } else {
             throw new \Exception("Unsupported response type: {$this->type}");
@@ -502,10 +497,9 @@ final class OuroborosAPI extends Extension
      */
     private function sendData(string $type = '', array $data = [], int $offset = 0): void
     {
-        global $page;
         $response = '';
         if ($this->type === 'json') {
-            $page->set_data(MimeType::JSON, \Safe\json_encode($data));
+            Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode($data));
         } elseif ($this->type === 'xml') {
             $xml = new \XMLWriter();
             $xml->openMemory();
@@ -525,7 +519,7 @@ final class OuroborosAPI extends Extension
             $xml->endElement();
 
             $xml->endDocument();
-            $page->set_data(MimeType::XML, $xml->outputMemory(true));
+            Ctx::$page->set_data(MimeType::XML, $xml->outputMemory(true));
             unset($xml);
         }
     }

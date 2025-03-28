@@ -100,7 +100,6 @@ final class CronUploader extends Extension
 
     private function restage_folder(Path $folder): void
     {
-        global $page;
         $queue_dir = $this->get_queue_dir();
         $stage_dir = Filesystem::join_path($this->get_failed_dir(), $folder);
 
@@ -114,9 +113,9 @@ final class CronUploader extends Extension
 
         if (count($results) == 0) {
             if (Filesystem::remove_empty_dirs($stage_dir) === false) {
-                $page->flash("Nothing to stage from {$folder->str()}, cannot remove folder");
+                Ctx::$page->flash("Nothing to stage from {$folder->str()}, cannot remove folder");
             } else {
-                $page->flash("Nothing to stage from {$folder->str()}, removing folder");
+                Ctx::$page->flash("Nothing to stage from {$folder->str()}, removing folder");
             }
             return;
         }
@@ -124,7 +123,7 @@ final class CronUploader extends Extension
             $new_path = Filesystem::join_path($queue_dir, $result->relative_to($stage_dir));
 
             if ($new_path->exists()) {
-                $page->flash("File already exists in queue folder: " .$result->str());
+                Ctx::$page->flash("File already exists in queue folder: " .$result->str());
                 return;
             }
         }
@@ -140,9 +139,9 @@ final class CronUploader extends Extension
             $result->rename($new_path);
         }
 
-        $page->flash("Re-staged {$folder->str()} to queue");
+        Ctx::$page->flash("Re-staged {$folder->str()} to queue");
         if (Filesystem::remove_empty_dirs($stage_dir) === false) {
-            $page->flash("Could not remove {$folder->str()}");
+            Ctx::$page->flash("Could not remove {$folder->str()}");
         }
     }
 

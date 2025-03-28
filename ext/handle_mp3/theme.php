@@ -16,10 +16,9 @@ class MP3FileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
-        global $page;
         $ilink = $image->get_image_link();
 
-        $page->add_html_header(SCRIPT([
+        Ctx::$page->add_html_header(SCRIPT([
             'src' => Url::base() . "/ext/handle_mp3/lib/jsmediatags.min.js",
             'type' => 'text/javascript'
         ]));
@@ -38,6 +37,6 @@ class MP3FileHandlerTheme extends Themelet
             ),
             P(A(["href" => $ilink, "id" => "audio-download"], "Download"))
         );
-        $page->add_block(new Block(null, $html, "main", 10));
+        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 }

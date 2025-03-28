@@ -19,7 +19,6 @@ class RandomListTheme extends Themelet
      */
     public function display_page(array $search_terms, array $images): void
     {
-        global $page;
         $html = emptyHTML(B("Refresh the page to view more posts"));
         if (count($images)) {
             $list = DIV(["class" => "shm-image-list"]);
@@ -32,8 +31,8 @@ class RandomListTheme extends Themelet
             $html->appendChild(P("No posts were found to match the search criteria"));
         }
 
-        $page->add_block(new Block("Random Posts", $html));
-        $page->set_title("Random Posts");
+        Ctx::$page->add_block(new Block("Random Posts", $html));
+        Ctx::$page->set_title("Random Posts");
         $this->display_navigation(extra: SHM_FORM(
             action: make_link("random"),
             method: "GET",

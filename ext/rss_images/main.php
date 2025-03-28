@@ -11,19 +11,18 @@ final class RSSImages extends Extension
     public const KEY = "rss_images";
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        global $page;
         $title = Ctx::$config->req(SetupConfig::TITLE);
 
         if (count($event->search_terms) > 0) {
             $search = Tag::implode($event->search_terms);
-            $page->add_html_header(LINK([
+            Ctx::$page->add_html_header(LINK([
                 'rel' => 'alternate',
                 'type' => 'application/rss+xml',
                 'title' => "$title - Posts with tags: $search",
                 'href' => make_link("rss/images/" . url_escape($search) . "/1")
             ]));
         } else {
-            $page->add_html_header(LINK([
+            Ctx::$page->add_html_header(LINK([
                 'rel' => 'alternate',
                 'type' => 'application/rss+xml',
                 'title' => "$title - Posts",

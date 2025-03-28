@@ -12,7 +12,7 @@ final class Terms extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
+        $page = Ctx::$page;
         if ($event->page_starts_with("accept_terms")) {
             $page->add_cookie("accepted_terms", "true", time() + 60 * 60 * 24 * Ctx::$config->req(UserAccountsConfig::LOGIN_MEMORY), "/");
             $page->set_redirect(make_link(explode('/', $event->path, 2)[1]));

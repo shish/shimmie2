@@ -16,7 +16,6 @@ class CBZFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
-        global $page;
         $data_href = Url::base();
         $ilink = $image->get_image_link();
         $html = emptyHTML(
@@ -38,6 +37,6 @@ class CBZFileHandlerTheme extends Themelet
             SCRIPT(["src" => "{$data_href}/ext/handle_cbz/comic.js"]),
             SCRIPT("window.comic = new Comic('comicMain', '$ilink');")
         );
-        $page->add_block(new Block(null, $html, "main", 10, "comicBlock"));
+        Ctx::$page->add_block(new Block(null, $html, "main", 10, "comicBlock"));
     }
 }

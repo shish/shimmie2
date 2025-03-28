@@ -22,7 +22,6 @@ class BoneQualityTheme extends Themelet
 
     public function display_page(string $failure_string, bool $boned, ?HTMLElement $results): void
     {
-        global $page;
         $bones = emptyHTML();
         $heading = "Congratulations. We appear to be un$failure_string, but remain ever vigilant.";
         if ($boned) {
@@ -38,9 +37,9 @@ class BoneQualityTheme extends Themelet
             $results,
         );
 
-        $page->set_title("review your fate");
+        Ctx::$page->set_title("review your fate");
         $this->display_navigation();
-        $page->add_block(new Block($heading, $html, "main", 20));
+        Ctx::$page->add_block(new Block($heading, $html, "main", 20));
     }
 
     public function generate_chore_search_html(string $search, bool $search_boned, int $search_count): HTMLElement

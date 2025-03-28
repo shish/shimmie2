@@ -12,19 +12,17 @@ class AvatarPostTheme extends Themelet
 {
     public function display_avatar_edit_page(int $image_id): void
     {
-        global $page;
-        /** @var BuildAvatarEvent $avatar_e */
         $avatar_e = send_event(new BuildAvatarEvent(Ctx::$user));
         $current = $avatar_e->html;
-        $page->add_block(new Block("Current Avatar", DIV(["class" => "avatar-editor"], $current)));
 
         $image = Image::by_id($image_id);
         if (!$image) {
             throw new PostNotFound("Image $image_id not found");
         }
 
-        $page->set_title("Edit Avatar");
-        $page->add_block(new Block("Avatar Editor", $this->avatar_editor_html($image)));
+        Ctx::$page->set_title("Edit Avatar");
+        Ctx::$page->add_block(new Block("Current Avatar", DIV(["class" => "avatar-editor"], $current)));
+        Ctx::$page->add_block(new Block("Avatar Editor", $this->avatar_editor_html($image)));
     }
 
     public function avatar_editor_html(Image $image): HTMLElement

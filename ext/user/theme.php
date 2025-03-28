@@ -27,10 +27,9 @@ class UserPageTheme extends Themelet
 {
     public function display_login_page(): void
     {
-        global $page;
-        $page->set_title("Login");
+        Ctx::$page->set_title("Login");
         $this->display_navigation();
-        $page->add_block(new Block(
+        Ctx::$page->add_block(new Block(
             "Login There",
             emptyHTML("There should be a login box to the left")
         ));
@@ -49,7 +48,6 @@ class UserPageTheme extends Themelet
      */
     public function display_user_block(User $user, array $parts): void
     {
-        global $page;
         $html = emptyHTML('Logged in as ', $user->name);
         foreach ($parts as $part) {
             $html->appendChild(BR());
@@ -57,7 +55,7 @@ class UserPageTheme extends Themelet
         }
         $b = new Block("User Links", $html, "left", 90);
         $b->is_content = false;
-        $page->add_block($b);
+        Ctx::$page->add_block($b);
     }
 
     public function display_signup_page(): void
@@ -241,12 +239,11 @@ class UserPageTheme extends Themelet
      */
     public function display_user_page(User $duser, array $stats): void
     {
-        global $page;
         $stats[] = emptyHTML('User ID: '.$duser->id);
 
-        $page->set_title("{$duser->name}'s Page");
+        Ctx::$page->set_title("{$duser->name}'s Page");
         $this->display_navigation();
-        $page->add_block(new Block("Stats", joinHTML(BR(), $stats), "main", 10));
+        Ctx::$page->add_block(new Block("Stats", joinHTML(BR(), $stats), "main", 10));
     }
 
 

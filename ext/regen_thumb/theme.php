@@ -25,11 +25,10 @@ class RegenThumbTheme extends Themelet
      */
     public function display_results(Image $image): void
     {
-        global $page;
-        $page->set_title("Thumbnail Regenerated");
-        $page->add_html_header(META(['http-equiv' => 'cache-control', 'content' => 'no-cache']));
+        Ctx::$page->set_title("Thumbnail Regenerated");
+        Ctx::$page->add_html_header(META(['http-equiv' => 'cache-control', 'content' => 'no-cache']));
         $this->display_navigation();
-        $page->add_block(new Block("Thumbnail", $this->build_thumb($image)));
+        Ctx::$page->add_block(new Block("Thumbnail", $this->build_thumb($image)));
     }
 
     public function bulk_html(): HTMLElement
@@ -39,7 +38,7 @@ class RegenThumbTheme extends Themelet
 
     public function display_admin_block(): void
     {
-        global $page, $database;
+        global $database;
 
         $options = [OPTION(["value" => ''], "All")];
         $results = $database->get_all("SELECT mime, count(*) count FROM images group by mime");
@@ -73,6 +72,6 @@ class RegenThumbTheme extends Themelet
                 ],
             )),
         );
-        $page->add_block(new Block("Regen Thumbnails", $html));
+        Ctx::$page->add_block(new Block("Regen Thumbnails", $html));
     }
 }

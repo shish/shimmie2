@@ -10,7 +10,6 @@ class SVGFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
-        global $page;
         $html = IMG([
             'alt' => 'main image',
             'src' => make_link("get_svg/{$image->id}/{$image->id}.svg"),
@@ -19,6 +18,6 @@ class SVGFileHandlerTheme extends Themelet
             'data-width' => $image->width,
             'data-height' => $image->height,
         ]);
-        $page->add_block(new Block(null, $html, "main", 10));
+        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 }

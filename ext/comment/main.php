@@ -183,7 +183,8 @@ final class CommentList extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
+        global $database;
+        $page = Ctx::$page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $i_iid = int_escape($event->req_POST('image_id'));
             send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->req_POST('comment')));

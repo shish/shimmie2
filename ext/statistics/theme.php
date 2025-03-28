@@ -16,7 +16,6 @@ class StatisticsTheme extends Themelet
 {
     public function display_page(int $limit, ?HTMLElement $tag_table, ?HTMLElement $upload_table, ?HTMLElement $comment_table, ?HTMLElement $favorite_table): void
     {
-        global $page;
         $html = emptyHTML(
             $tag_table,
             $upload_table,
@@ -24,9 +23,9 @@ class StatisticsTheme extends Themelet
             $favorite_table,
         );
 
-        $page->set_title("Stats - Top $limit");
+        Ctx::$page->set_title("Stats - Top $limit");
         $this->display_navigation();
-        $page->add_block(new Block("Stats", $html, "main", 20));
+        Ctx::$page->add_block(new Block("Stats", $html, "main", 20));
     }
 
     /**

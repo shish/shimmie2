@@ -150,7 +150,6 @@ final class Ratings extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        global $page;
         if (
             Ctx::$user->can(RatingsPermission::EDIT_IMAGE_RATING) && (
                 isset($event->params['rating'])
@@ -165,9 +164,9 @@ final class Ratings extends Extension
                     send_event(new RatingSetEvent($event->image, $rating));
                 } catch (RatingSetException $e) {
                     if ($e->redirect) {
-                        $page->flash("{$e->getMessage()}, please see {$e->redirect}");
+                        Ctx::$page->flash("{$e->getMessage()}, please see {$e->redirect}");
                     } else {
-                        $page->flash($e->getMessage());
+                        Ctx::$page->flash($e->getMessage());
                     }
                     throw $e;
                 }
