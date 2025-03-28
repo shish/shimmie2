@@ -12,6 +12,9 @@ final class UserClass
 {
     /** @var array<string, UserClass> */
     public static array $known_classes = [];
+    public static UserClassSource $loading = UserClassSource::UNKNOWN;
+    /** @var list<UserClassSource> */
+    public array $sources = [];
 
     /**
      * @param array<string, bool> $abilities
@@ -23,6 +26,10 @@ final class UserClass
         private array $abilities = [],
         public string $description = "",
     ) {
+        if (in_array($name, self::$known_classes)) {
+            $this->sources = self::$known_classes[$name]->sources;
+        }
+        $this->sources[] = self::$loading;
         self::$known_classes[$name] = $this;
     }
 
