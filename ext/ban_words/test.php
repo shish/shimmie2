@@ -18,7 +18,7 @@ final class BanWordsTest extends ShimmiePHPUnitTestCase
 
     public function testWordBan(): void
     {
-        Ctx::$config->set_string("banned_words", "viagra\nporn\n\n/http:.*\.cn\//");
+        Ctx::$config->set("banned_words", "viagra\nporn\n\n/http:.*\.cn\//");
 
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
@@ -37,7 +37,7 @@ final class BanWordsTest extends ShimmiePHPUnitTestCase
 
     public function testCyrillicBan(): void
     {
-        Ctx::$config->set_string("banned_words", "СОЮЗ\nсоветских\nСоциалистических\n/Республик/\n");
+        Ctx::$config->set("banned_words", "СОЮЗ\nсоветских\nСоциалистических\n/Республик/\n");
 
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");

@@ -91,8 +91,8 @@ class Danbooru2Page extends Page
             $subheading = DIV(["id" => "subtitle"], $this->subheading);
         }
 
-        $site_name = Ctx::$config->req_string(SetupConfig::TITLE); // bzchan: change from normal default to get title for top of page
-        $main_page = Ctx::$config->req_string(SetupConfig::MAIN_PAGE); // bzchan: change from normal default to get main page for top of page
+        $site_name = Ctx::$config->req(SetupConfig::TITLE); // bzchan: change from normal default to get title for top of page
+        $main_page = Ctx::$config->req(SetupConfig::MAIN_PAGE); // bzchan: change from normal default to get main page for top of page
 
         $custom_links = emptyHTML();
         foreach ($nav_links as $nav_link) {

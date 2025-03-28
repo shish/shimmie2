@@ -54,7 +54,7 @@ final class BanWords extends Extension
     {
         $words = [];
 
-        $banned = Ctx::$config->req_string(BanWordsConfig::BANNED_WORDS);
+        $banned = Ctx::$config->req(BanWordsConfig::BANNED_WORDS);
         foreach (explode("\n", $banned) as $word) {
             $word = trim(mb_strtolower($word));
             if (strlen($word) == 0) {

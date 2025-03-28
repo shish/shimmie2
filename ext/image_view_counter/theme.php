@@ -21,7 +21,7 @@ class ImageViewCounterTheme extends Themelet
             $pop_images[] = $this->build_thumb($image);
         }
 
-        $page->set_title(Ctx::$config->req_string(SetupConfig::TITLE));
+        $page->set_title(Ctx::$config->req(SetupConfig::TITLE));
         $this->display_navigation();
         $page->add_block(new Block(null, joinHTML(" ", $pop_images), "main", 30));
     }

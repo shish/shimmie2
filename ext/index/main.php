@@ -32,11 +32,11 @@ final class Index extends Extension
             $search_terms = Tag::explode($event->get_arg('search', ""), false);
             $count_search_terms = count($search_terms);
             $page_number = $event->get_iarg('page_num', 1);
-            $page_size = Ctx::$config->req_int(IndexConfig::IMAGES);
+            $page_size = Ctx::$config->req(IndexConfig::IMAGES);
 
-            $search_results_limit = Ctx::$config->get_int(IndexConfig::SEARCH_RESULTS_LIMIT);
+            $search_results_limit = Ctx::$config->get(IndexConfig::SEARCH_RESULTS_LIMIT);
 
-            if (Ctx::$config->get_bool(IndexConfig::SIMPLE_BOTS_ONLY) && Network::is_bot()) {
+            if (Ctx::$config->get(IndexConfig::SIMPLE_BOTS_ONLY) && Network::is_bot()) {
                 // Bots aren't allowed to use negative tags or wildcards at all
                 foreach ($search_terms as $term) {
                     if ($term[0] == "-" || str_contains($term[0], "*")) {
@@ -58,13 +58,13 @@ final class Index extends Extension
                 );
             }
 
-            $total_pages = (int)ceil(Search::count_images($search_terms) / Ctx::$config->req_int(IndexConfig::IMAGES));
+            $total_pages = (int)ceil(Search::count_images($search_terms) / Ctx::$config->req(IndexConfig::IMAGES));
             if ($search_results_limit && $total_pages > $search_results_limit / $page_size && !Ctx::$user->can(IndexPermission::BIG_SEARCH)) {
                 $total_pages = (int)ceil($search_results_limit / $page_size);
             }
 
             $images = null;
-            if (Ctx::$config->get_bool(IndexConfig::CACHE_FIRST_FEW)) {
+            if (Ctx::$config->get(IndexConfig::CACHE_FIRST_FEW)) {
                 if ($count_search_terms === 0 && ($page_number < 10)) {
                     // extra caching for the first few post/list pages
                     $images = cache_get_or_set(

@@ -98,7 +98,7 @@ final class Blotter extends Extension
         /** @var BlotterEntry[] $entries */
         $entries = Ctx::$database->get_all(
             'SELECT * FROM blotter ORDER BY id DESC LIMIT :limit',
-            ["limit" => Ctx::$config->req_int(BlotterConfig::RECENT)]
+            ["limit" => Ctx::$config->req(BlotterConfig::RECENT)]
         );
         $this->theme->display_blotter($entries);
     }

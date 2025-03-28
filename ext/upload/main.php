@@ -123,7 +123,7 @@ final class Upload extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         $this->is_full = false;
-        $min_free_space = Ctx::$config->get_int(UploadConfig::MIN_FREE_SPACE);
+        $min_free_space = Ctx::$config->get(UploadConfig::MIN_FREE_SPACE);
         if ($min_free_space > 0) {
             // SHIT: fucking PHP "security" measures -_-;;;
             $img_path = realpath("./images/");
@@ -157,9 +157,9 @@ final class Upload extends Extension
         if ($this->is_full) {
             throw new UploadException("Upload failed; disk nearly full");
         }
-        if ($event->size > Ctx::$config->req_int(UploadConfig::SIZE)) {
+        if ($event->size > Ctx::$config->req(UploadConfig::SIZE)) {
             $size = to_shorthand_int($event->size);
-            $limit = to_shorthand_int(Ctx::$config->req_int(UploadConfig::SIZE));
+            $limit = to_shorthand_int(Ctx::$config->req(UploadConfig::SIZE));
             throw new UploadException("File too large ($size > $limit)");
         }
     }

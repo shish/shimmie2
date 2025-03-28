@@ -195,7 +195,7 @@ final class User
 
     public function is_anonymous(): bool
     {
-        return ($this->id === Ctx::$config->req_int(UserAccountsConfig::ANON_ID));
+        return ($this->id === Ctx::$config->req(UserAccountsConfig::ANON_ID));
     }
 
     public function set_class(string $class): void
@@ -263,7 +263,7 @@ final class User
         Ctx::$page->add_cookie(
             "session",
             $this->get_session_id(),
-            time() + 60 * 60 * 24 * Ctx::$config->req_int(UserAccountsConfig::LOGIN_MEMORY),
+            time() + 60 * 60 * 24 * Ctx::$config->req(UserAccountsConfig::LOGIN_MEMORY),
             '/'
         );
     }

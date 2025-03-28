@@ -225,7 +225,7 @@ final class Wiki extends Extension
         $exists = Ctx::$database->exists("SELECT id FROM wiki_pages WHERE title = :title", ["title" => $wpage->title]);
 
         try {
-            if (Ctx::$config->get_bool(WikiConfig::ENABLE_REVISIONS) || !$exists) {
+            if (Ctx::$config->get(WikiConfig::ENABLE_REVISIONS) || !$exists) {
                 Ctx::$database->execute(
                     "
                         INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
@@ -343,7 +343,7 @@ final class Wiki extends Extension
 
             // correct the default
             $row["title"] = $title;
-            $row["owner_id"] = Ctx::$config->req_int(UserAccountsConfig::ANON_ID);
+            $row["owner_id"] = Ctx::$config->req(UserAccountsConfig::ANON_ID);
         }
 
         return new WikiPage($row);

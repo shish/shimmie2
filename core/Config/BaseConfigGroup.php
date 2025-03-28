@@ -43,44 +43,21 @@ abstract class BaseConfigGroup extends Enablable
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, ConfigMeta>
      */
-    public static function get_all_defaults(): array
+    public static function get_all_metas(): array
     {
-        return cache_get_or_set(
-            get_called_class() . "_defaults_" . SysConfig::getVersion() . "_" . md5(Extension::get_enabled_extensions_as_string()),
-            fn () => self::_get_all_defaults(),
-            60
-        );
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public static function _get_all_defaults(): array
-    {
-        $defaults = [];
-        foreach (self::get_subclasses() as $class) {
+        $metas = [];
+        foreach (self::get_subclasses(true) as $class) {
             foreach ($class->getReflectionConstants() as $const) {
                 $attributes = $const->getAttributes(ConfigMeta::class);
                 if (count($attributes) !== 1) {
                     continue;
                 }
                 $meta = $attributes[0]->newInstance();
-                if ($meta->default !== null) {
-                    $defaults[$const->getValue()] = match ($meta->type) {
-                        ConfigType::BOOL => $meta->default ? "true" : "false",
-                        // phpstan doesn't know that if type=X then default=Y
-                        // @phpstan-ignore-next-line
-                        ConfigType::INT => (string)($meta->default),
-                        // @phpstan-ignore-next-line
-                        ConfigType::STRING => (string)($meta->default),
-                        // @phpstan-ignore-next-line
-                        ConfigType::ARRAY => implode(",", $meta->default),
-                    };
-                }
+                $metas[$const->getValue()] = $meta;
             }
         }
-        return $defaults;
+        return $metas;
     }
 }

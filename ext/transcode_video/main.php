@@ -150,7 +150,7 @@ final class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
         }
 
-        $ffmpeg = Ctx::$config->get_string(MediaConfig::FFMPEG_PATH);
+        $ffmpeg = Ctx::$config->get(MediaConfig::FFMPEG_PATH);
 
         if (empty($ffmpeg)) {
             throw new VideoTranscodeException("ffmpeg path not configured");

@@ -62,14 +62,14 @@ class UserPageTheme extends Themelet
 
     public function display_signup_page(): void
     {
-        $tac = Ctx::$config->get_string(UserAccountsConfig::LOGIN_TAC) ?? "";
+        $tac = Ctx::$config->get(UserAccountsConfig::LOGIN_TAC) ?? "";
 
-        if (Ctx::$config->get_bool(UserAccountsConfig::LOGIN_TAC_BBCODE)) {
+        if (Ctx::$config->get(UserAccountsConfig::LOGIN_TAC_BBCODE)) {
             $tac = format_text($tac);
         }
 
         $email_required = (
-            Ctx::$config->get_bool(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
+            Ctx::$config->get(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
             !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)
         );
 
@@ -155,7 +155,7 @@ class UserPageTheme extends Themelet
         $this->display_navigation();
         Ctx::$page->add_block(new Block(
             "Signups Disabled",
-            format_text(Ctx::$config->req_string(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
+            format_text(Ctx::$config->req(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
         ));
     }
 
@@ -188,7 +188,7 @@ class UserPageTheme extends Themelet
 
         $html = emptyHTML();
         $html->appendChild($form);
-        if (Ctx::$config->req_bool(UserAccountsConfig::SIGNUP_ENABLED) && Ctx::$user->can(UserAccountsPermission::CREATE_USER)) {
+        if (Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED) && Ctx::$user->can(UserAccountsPermission::CREATE_USER)) {
             $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
 
@@ -255,7 +255,7 @@ class UserPageTheme extends Themelet
         $html = emptyHTML();
 
         // just a fool-admin protection so they dont mess around with anon users.
-        if ($duser->id !== Ctx::$config->req_int(UserAccountsConfig::ANON_ID)) {
+        if ($duser->id !== Ctx::$config->req(UserAccountsConfig::ANON_ID)) {
             if (Ctx::$user->can(UserAccountsPermission::EDIT_USER_NAME)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,

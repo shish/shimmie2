@@ -11,11 +11,19 @@ final class DatabaseConfig extends Config
     public function __construct(
         private Database $database
     ) {
-        $this->cache_name = "config";
-        $this->defaults = ConfigGroup::get_all_defaults();
-        $this->values = cache_get_or_set($this->cache_name, fn () => $this->database->get_pairs(
-            "SELECT name, value FROM config WHERE value IS NOT NULL"
-        ));
+        $this->cache_name = "config2";  // config is untyped, config2 is typed
+        $this->metas = ConfigGroup::get_all_metas();
+        $this->values = cache_get_or_set($this->cache_name, function () {
+            $values = [];
+            foreach ($this->database->get_pairs(
+                "SELECT name, value FROM config WHERE value IS NOT NULL"
+            ) as $name => $value) {
+                $values[$name] = isset($this->metas[$name])
+                    ? $this->metas[$name]->type->fromString($value)
+                    : $value;
+            }
+            return $values;
+        });
     }
 
     protected function save(string $name): void
@@ -24,7 +32,7 @@ final class DatabaseConfig extends Config
         if (isset($this->values[$name])) {
             $this->database->execute(
                 "INSERT INTO config (name, value) VALUES (:name, :value)",
-                ["name" => $name, "value" => $this->values[$name]]
+                ["name" => $name, "value" => self::val2str($this->values[$name])]
             );
         }
 

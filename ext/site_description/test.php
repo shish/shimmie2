@@ -10,7 +10,7 @@ final class SiteDescriptionTest extends ShimmiePHPUnitTestCase
 {
     public function testSiteDescription(): void
     {
-        Ctx::$config->set_string(SiteDescriptionConfig::DESCRIPTION, "A Shimmie testbed");
+        Ctx::$config->set(SiteDescriptionConfig::DESCRIPTION, "A Shimmie testbed");
         self::get_page("post/list");
         self::assertStringContainsString(
             "<meta name='description' content='A Shimmie testbed' />",
@@ -20,7 +20,7 @@ final class SiteDescriptionTest extends ShimmiePHPUnitTestCase
 
     public function testSiteKeywords(): void
     {
-        Ctx::$config->set_string(SiteDescriptionConfig::KEYWORDS, "foo,bar,baz");
+        Ctx::$config->set(SiteDescriptionConfig::KEYWORDS, "foo,bar,baz");
         self::get_page("post/list");
         self::assertStringContainsString(
             "<meta name='keywords' content='foo,bar,baz' />",

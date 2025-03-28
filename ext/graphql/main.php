@@ -85,7 +85,7 @@ final class GraphQL extends Extension
 
     private function cors(): void
     {
-        $pat = Ctx::$config->get_string(GraphQLConfig::CORS_PATTERN);
+        $pat = Ctx::$config->get(GraphQLConfig::CORS_PATTERN);
 
         if ($pat && isset($_SERVER['HTTP_ORIGIN'])) {
             if (\Safe\preg_match("#$pat#", $_SERVER['HTTP_ORIGIN'])) {
@@ -120,7 +120,7 @@ final class GraphQL extends Extension
             $resp = $server->executeRequest();
             assert(!is_array($resp));
             assert(is_a($resp, \GraphQL\Executor\ExecutionResult::class));
-            if (Ctx::$config->req_bool(GraphQLConfig::DEBUG)) {
+            if (Ctx::$config->req(GraphQLConfig::DEBUG)) {
                 $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
                 $body = $resp->toArray($debug);
             } else {

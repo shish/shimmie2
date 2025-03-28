@@ -15,7 +15,7 @@ final class RSSComments extends Extension
         Ctx::$page->add_html_header(LINK([
             'rel' => 'alternate',
             'type' => 'application/rss+xml',
-            'title' => Ctx::$config->req_string(SetupConfig::TITLE) . " - Comments",
+            'title' => Ctx::$config->req(SetupConfig::TITLE) . " - Comments",
             'href' => (string)make_link("rss/comments")
         ]));
     }
@@ -57,7 +57,7 @@ final class RSSComments extends Extension
 				";
             }
 
-            $title = Ctx::$config->req_string(SetupConfig::TITLE);
+            $title = Ctx::$config->req(SetupConfig::TITLE);
             $base_href = Url::base()->asAbsolute();
             $version = SysConfig::getVersion();
             $xml = <<<EOD

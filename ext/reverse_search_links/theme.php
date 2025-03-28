@@ -22,7 +22,7 @@ class ReverseSearchLinksTheme extends Themelet
         ];
 
         // only generate links for enabled reverse search services
-        $enabled_services = Ctx::$config->req_array(ReverseSearchLinksConfig::ENABLED_SERVICES);
+        $enabled_services = Ctx::$config->req(ReverseSearchLinksConfig::ENABLED_SERVICES);
 
         $parts = [];
         foreach ($links as $name => $link) {

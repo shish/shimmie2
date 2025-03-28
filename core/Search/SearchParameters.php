@@ -36,7 +36,7 @@ final class SearchParameters
             $tag_conditions = array_merge($tag_conditions, $stpe->tag_conditions);
         }
 
-        $order ??= "images.".Ctx::$config->get_string(IndexConfig::ORDER);
+        $order ??= "images.".Ctx::$config->get(IndexConfig::ORDER);
 
         return new SearchParameters($tag_conditions, $img_conditions, $order);
     }

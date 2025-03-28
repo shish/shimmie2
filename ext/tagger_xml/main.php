@@ -38,8 +38,8 @@ final class TaggerXML extends Extension
 
     private function match_tag_list(string $s): string
     {
-        $max_rows = Ctx::$config->req_int(TaggerXMLConfig::TAG_MAX);
-        $limit_rows = Ctx::$config->req_int(TaggerXMLConfig::LIMIT);
+        $max_rows = Ctx::$config->req(TaggerXMLConfig::TAG_MAX);
+        $limit_rows = Ctx::$config->req(TaggerXMLConfig::LIMIT);
 
         $p = strlen($s) == 1 ? " " : "\_";
         $values = [
@@ -53,7 +53,7 @@ final class TaggerXML extends Extension
         //		$exclude = $event->get_arg('exclude')? "AND NOT IN ".$this->image_tags($event->get_arg('exclude')) : null;
 
         // Hidden Tags
-        $hidden = Ctx::$config->req_bool(TaggerXMLConfig::SHOW_HIDDEN)
+        $hidden = Ctx::$config->req(TaggerXMLConfig::SHOW_HIDDEN)
             ? null
             : "AND substring(tag,1,1) != '.'";
 

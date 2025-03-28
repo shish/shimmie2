@@ -47,7 +47,7 @@ final class UserConfig extends Extension
 
         // if API keys are enabled, then _any_ anonymous page request can
         // be an authed page request if the api_key is set
-        if (Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
+        if (Ctx::$config->req(UserAccountsConfig::ENABLE_API_KEYS)) {
             if ($event->get_GET("api_key") && Ctx::$user->is_anonymous()) {
                 $user_id = $database->get_one(
                     "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
@@ -60,7 +60,7 @@ final class UserConfig extends Extension
             }
 
             if ($event->page_matches("user_admin/reset_api_key", method: "POST")) {
-                Ctx::$user->get_config()->set_string(UserConfigUserConfig::API_KEY, "");
+                Ctx::$user->get_config()->set(UserConfigUserConfig::API_KEY, "");
                 Ctx::$page->set_redirect(make_link("user"));
             }
         }
@@ -96,11 +96,11 @@ final class UserConfig extends Extension
 
     public function onUserOperationsBuilding(UserOperationsBuildingEvent $event): void
     {
-        if (Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
-            $key = $event->user_config->get_string(UserConfigUserConfig::API_KEY);
+        if (Ctx::$config->req(UserAccountsConfig::ENABLE_API_KEYS)) {
+            $key = $event->user_config->get(UserConfigUserConfig::API_KEY);
             if (empty($key)) {
                 $key = generate_key();
-                $event->user_config->set_string(UserConfigUserConfig::API_KEY, $key);
+                $event->user_config->set(UserConfigUserConfig::API_KEY, $key);
             }
             $event->add_part($this->theme->get_user_operations($key));
         }

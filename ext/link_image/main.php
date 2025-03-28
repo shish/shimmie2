@@ -20,7 +20,7 @@ final class LinkImage extends Extension
      */
     private function data(Image $image): array
     {
-        $text_link = $image->parse_link_template(Ctx::$config->req_string(LinkImageConfig::TEXT_FORMAT));
+        $text_link = $image->parse_link_template(Ctx::$config->req(LinkImageConfig::TEXT_FORMAT));
         $text_link = trim($text_link) == "" ? null : $text_link; // null blank setting so the url gets filled in on the text links.
 
         return [
