@@ -20,7 +20,8 @@ final class UserClass
         #[Field]
         public string $name,
         private ?string $parent_name = null,
-        private array $abilities = []
+        private array $abilities = [],
+        public string $description = "",
     ) {
         self::$known_classes[$name] = $this;
     }
