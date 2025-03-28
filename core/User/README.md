@@ -39,8 +39,7 @@ Shimmie sets a `$user` variable containing a `User` object, which is mostly usef
 
 ```php
 <?php
-global $user;
-if($user->can(MyExtensionPermission::DELETE_FOOS)) {
+if(Ctx::$user->can(MyExtensionPermission::DELETE_FOOS)) {
     // show a "delete foo" button
 }
 ```

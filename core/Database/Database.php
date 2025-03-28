@@ -58,18 +58,12 @@ class Database
             throw new ServerError("Can't figure out database engine");
         }
 
-        if ($db_proto === DatabaseDriverID::MYSQL->value) {
-            $this->engine = new MySQL();
-        } elseif ($db_proto === DatabaseDriverID::PGSQL->value) {
-            $this->engine = new PostgreSQL();
-        } elseif ($db_proto === DatabaseDriverID::SQLITE->value) {
-            $this->engine = new SQLite();
-        } else {
-            die_nicely(
-                'Unknown PDO driver: '.$db_proto,
-                "Please check that this is a valid driver, installing the PHP modules if needed"
-            );
-        }
+        $this->engine = match($db_proto) {
+            DatabaseDriverID::MYSQL->value => new MySQL(),
+            DatabaseDriverID::PGSQL->value => new PostgreSQL(),
+            DatabaseDriverID::SQLITE->value => new SQLite(),
+            default => throw new ServerError('Unknown PDO driver: '.$db_proto),
+        };
     }
 
     public function begin_transaction(): void

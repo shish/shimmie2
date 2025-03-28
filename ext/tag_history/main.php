@@ -354,8 +354,7 @@ final class TagHistory extends Extension
                 if (empty($result)) {
                     // there is no history entry with that id so either the image was deleted
                     // while the user was viewing the history,  or something messed up
-                    /* calling die() is probably not a good idea, we should throw an Exception */
-                    die('Error: No tag history with specified id ('.$revert_id.') was found in the database.'."\n\n".
+                    throw new ObjectNotFound('Error: No tag history with specified id ('.$revert_id.') was found in the database.'."\n\n".
                         'Perhaps the image was deleted while processing this request.');
                 }
 
