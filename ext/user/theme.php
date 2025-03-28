@@ -53,9 +53,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(BR());
             $html->appendChild(A(["href" => (string)$part["link"]], $part["name"]));
         }
-        $b = new Block("User Links", $html, "left", 90);
-        $b->is_content = false;
-        Ctx::$page->add_block($b);
+        Ctx::$page->add_block(new Block("User Links", $html, "left", 90, is_content: false));
     }
 
     public function display_signup_page(): void

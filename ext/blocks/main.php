@@ -60,13 +60,10 @@ final class Blocks extends Extension
         foreach ($blocks as $block) {
             $path = implode("/", $event->args);
             if (strlen($path) < 4000 && fnmatch($block['pages'], $path)) {
-                $b = new Block($block['title'], \MicroHTML\rawHTML($block['content']), $block['area'], (int)$block['priority']);
-                $b->is_content = false;
-
                 # Split by comma, trimming whitespaces, and not allowing empty elements.
                 $userclasses = preg_split('/\s*,+\s*/', strtolower($block['userclass'] ?? ""), 0, PREG_SPLIT_NO_EMPTY);
                 if (empty($userclasses) || in_array(strtolower(Ctx::$user->class->name), $userclasses)) {
-                    $page->add_block($b);
+                    $page->add_block(new Block($block['title'], \MicroHTML\rawHTML($block['content']), $block['area'], (int)$block['priority'], is_content: false));
                 }
             }
         }

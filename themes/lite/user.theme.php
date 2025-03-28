@@ -68,9 +68,7 @@ class LiteUserPageTheme extends UserPageTheme
             }
             $html[] = A(["href" => $part["link"], "class" => "tab"], $part["name"]);
         }
-        $b = new Block("User Links", joinHTML(" ", $html), "user", 90);
-        $b->is_content = false;
-        Ctx::$page->add_block($b);
+        Ctx::$page->add_block(new Block("User Links", joinHTML(" ", $html), "user", 90, is_content: false));
     }
 
     public function display_signup_page(): void
