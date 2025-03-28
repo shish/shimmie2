@@ -34,11 +34,10 @@ class SourceHistoryTheme extends Themelet
      */
     public function display_history_page(int $image_id, array $history): void
     {
-        global $page;
-        $page->set_title('Post '.$image_id.' Source History');
-        $page->set_heading('Source History: '.$image_id);
+        Ctx::$page->set_title('Post '. $image_id .' Source History');
+        Ctx::$page->set_heading('Source History: '.$image_id);
         $this->display_navigation();
-        $page->add_block(new Block("Source History", $this->history_list($history, true), "main", 10));
+        Ctx::$page->add_block(new Block("Source History", $this->history_list($history, true), "main", 10));
     }
 
     /**
@@ -46,14 +45,13 @@ class SourceHistoryTheme extends Themelet
      */
     public function display_global_page(array $history, int $page_number): void
     {
-        global $page;
-        $page->set_title("Global Source History");
+        Ctx::$page->set_title("Global Source History");
         $this->display_navigation([
             ($page_number <= 1) ? null : make_link('source_history/all/'.($page_number - 1)),
             make_link(),
             make_link('source_history/all/'.($page_number + 1))
         ]);
-        $page->add_block(new Block("Source History", $this->history_list($history, false), "main", 10));
+        Ctx::$page->add_block(new Block("Source History", $this->history_list($history, false), "main", 10));
     }
 
     /**
@@ -96,8 +94,7 @@ class SourceHistoryTheme extends Themelet
      */
     public function display_revert_ip_results(): void
     {
-        global $page;
-        $page->add_block(new Block("Bulk Revert Results", emptyHTML(...$this->messages)));
+        Ctx::$page->add_block(new Block("Bulk Revert Results", emptyHTML(...$this->messages)));
     }
 
     public function add_status(string $title, string $body): void

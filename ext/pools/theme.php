@@ -51,7 +51,6 @@ class PoolsTheme extends Themelet
      */
     public function list_pools(array $pools, string $search, int $pageNumber, int $totalPages): void
     {
-        global $page;
         // Build up the list of pools.
         $pool_rows = [];
         foreach ($pools as $pool) {
@@ -73,13 +72,12 @@ class PoolsTheme extends Themelet
         );
 
         $order_arr = ['created' => 'Recently created', 'updated' => 'Last updated', 'name' => 'Name', 'count' => 'Post Count'];
-        $order_selected = $page->get_cookie('ui-order-pool') ?? "";
+        $order_selected = Ctx::$page->get_cookie('ui-order-pool') ?? "";
         $order_sel = SHM_SELECT("order_pool", $order_arr, selected_options: [$order_selected], attrs: ["id" => "order_pool"]);
 
         $this->display_top(null, "Pools");
-        $page->add_block(new Block("Order By", $order_sel, "left", 15));
-
-        $page->add_block(new Block("Pools", $table, position: 10));
+        Ctx::$page->add_block(new Block("Order By", $order_sel, "left", 15));
+        Ctx::$page->add_block(new Block("Pools", $table, position: 10));
 
         if ($search !== "" and !str_starts_with($search, '/')) {
             $search = '/'.$search;
@@ -92,7 +90,6 @@ class PoolsTheme extends Themelet
      */
     public function new_pool_composer(): void
     {
-        global $page;
         $form = SHM_SIMPLE_FORM(make_link("pool/create"), TABLE(
             TR(TD("Title:"), TD(INPUT(["type" => "text", "name" => "title"]))),
             TR(TD("Public?:"), TD("Yes", INPUT(["type" => "radio", "name" => "public", "value" => "Y", "checked" => "checked"]), "No", INPUT(["type" => "radio", "name" => "public", "value" => "N"]))),
@@ -101,7 +98,7 @@ class PoolsTheme extends Themelet
         ));
 
         $this->display_top(null, "Create Pool");
-        $page->add_block(new Block("Create Pool", $form, position: 20));
+        Ctx::$page->add_block(new Block("Create Pool", $form, position: 20));
     }
 
     private function display_top(?Pool $pool, string $heading, bool $check_all = false): void
@@ -210,7 +207,6 @@ class PoolsTheme extends Themelet
      */
     public function pool_result(array $images, Pool $pool): void
     {
-        global $page;
         $this->display_top($pool, "Importing Posts", true);
 
         $form = SHM_FORM(make_link("pool/add_posts/{$pool->id}"), name: "checks");
@@ -226,7 +222,7 @@ class PoolsTheme extends Themelet
             SHM_SUBMIT("Add Selected", ["name" => "edit", "id" => "edit_pool_add_btn", "onclick" => "return confirm('Are you sure you want to add selected posts to this pool?')"]),
         );
 
-        $page->add_block(new Block("Import", $form, "main", 30));
+        Ctx::$page->add_block(new Block("Import", $form, "main", 30));
     }
 
 
@@ -238,7 +234,6 @@ class PoolsTheme extends Themelet
      */
     public function edit_order(Pool $pool, array $images): void
     {
-        global $page;
         $this->display_top($pool, "Sorting Pool");
 
         $form = SHM_FORM(make_link("pool/save_order/{$pool->id}"), name: "checks");
@@ -256,7 +251,7 @@ class PoolsTheme extends Themelet
             SHM_SUBMIT("Order", ["name" => "edit", "id" => "edit_pool_order"])
         );
 
-        $page->add_block(new Block("Sorting Posts", $form, position: 30));
+        Ctx::$page->add_block(new Block("Sorting Posts", $form, position: 30));
     }
 
     /**
@@ -269,7 +264,6 @@ class PoolsTheme extends Themelet
      */
     public function edit_pool(Pool $pool, array $images): void
     {
-        global $page;
         $desc_form = SHM_SIMPLE_FORM(
             make_link("pool/edit_description/{$pool->id}"),
             TEXTAREA(["name" => "description"], $pool->description),
@@ -295,8 +289,8 @@ class PoolsTheme extends Themelet
 
         $pool->description = ""; //This is a rough fix to avoid showing the description twice.
         $this->display_top($pool, "Editing Pool", true);
-        $page->add_block(new Block("Editing Description", $desc_form, position: 28));
-        $page->add_block(new Block("Editing Posts", $images_form, position: 30));
+        Ctx::$page->add_block(new Block("Editing Description", $desc_form, position: 28));
+        Ctx::$page->add_block(new Block("Editing Posts", $images_form, position: 30));
     }
 
     /**

@@ -63,7 +63,6 @@ final class AdminPage extends Extension
             ->addArgument('args', InputArgument::OPTIONAL)
             ->setDescription('Get a page, eg /post/list')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $page;
                 $query = $input->getArgument('query');
                 $query = ltrim($query, '/');
                 $args = $input->getArgument('args');
@@ -74,7 +73,7 @@ final class AdminPage extends Extension
                     $_SERVER['REQUEST_URI'] .= "?" . $args;
                 }
                 send_event(new PageRequestEvent("GET", $query, $_GET, []));
-                $page->display();
+                Ctx::$page->display();
                 return Command::SUCCESS;
             });
         $event->app->register('page:post')

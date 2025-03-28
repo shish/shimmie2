@@ -17,7 +17,6 @@ class PermManagerTheme extends Themelet
      */
     public function display_user_classes(array $classes, array $permissions): void
     {
-        global $page;
         $table = TABLE(["class" => "zebra"]);
 
         $row = TR();
@@ -50,8 +49,8 @@ class PermManagerTheme extends Themelet
             $table->appendChild($row);
         }
 
-        $page->set_title("User Classes");
+        Ctx::$page->set_title("User Classes");
         $this->display_navigation();
-        $page->add_block(new Block("Classes", $table, "main", 10));
+        Ctx::$page->add_block(new Block("Classes", $table, "main", 10));
     }
 }

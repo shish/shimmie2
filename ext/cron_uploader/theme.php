@@ -42,7 +42,7 @@ class CronUploaderTheme extends Themelet
         string $cron_url,
         ?array $log_entries
     ): void {
-        global $page;
+        $page = Ctx::$page;
         $page->set_title("Cron Uploader");
 
         $info_html = emptyHTML();

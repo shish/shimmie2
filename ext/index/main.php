@@ -19,13 +19,12 @@ final class Index extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         if (
             $event->page_matches("post/list", paged: true)
             || $event->page_matches("post/list/{search}", paged: true)
         ) {
             if ($event->get_GET('search')) {
-                $page->set_redirect(search_link(Tag::explode($event->get_GET('search'), false)));
+                Ctx::$page->set_redirect(search_link(Tag::explode($event->get_GET('search'), false)));
                 return;
             }
 
@@ -84,7 +83,7 @@ final class Index extends Extension
                 $this->theme->display_intro();
                 send_event(new PostListBuildingEvent($search_terms));
             } elseif ($count_search_terms > 0 && $count_images === 1 && $page_number === 1) {
-                $page->set_redirect(make_link('post/view/'.$images[0]->id));
+                Ctx::$page->set_redirect(make_link('post/view/'.$images[0]->id));
             } else {
                 send_event(new PostListBuildingEvent($search_terms));
 

@@ -16,7 +16,6 @@ class TermsTheme extends Themelet
 {
     public function display_page(string $sitename, string $path, HTMLElement $body): void
     {
-        global $page;
         $html = DIV(
             ["id" => "terms-modal-bg"],
             DIALOG(
@@ -29,6 +28,6 @@ class TermsTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block(null, $html, "main", 1));
+        Ctx::$page->add_block(new Block(null, $html, "main", 1));
     }
 }

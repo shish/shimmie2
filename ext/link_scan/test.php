@@ -8,7 +8,6 @@ final class LinkScanTest extends ShimmiePHPUnitTestCase
 {
     public function testScanPostView(): void
     {
-        global $page;
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase");
         $image_id_2 = $this->post_image("tests/favicon.png", "TeStCase");
 
@@ -27,7 +26,6 @@ final class LinkScanTest extends ShimmiePHPUnitTestCase
 
     public function testScanPostHash(): void
     {
-        global $page;
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase");
         $image_id_2 = $this->post_image("tests/favicon.png", "TeStCase");
 
@@ -43,7 +41,6 @@ final class LinkScanTest extends ShimmiePHPUnitTestCase
 
     public function testNotTriggered(): void
     {
-        global $page;
         $this->post_image("tests/pbx_screenshot.jpg", "TeStCase");
         $this->post_image("tests/favicon.png", "TeStCase");
 

@@ -12,7 +12,6 @@ class PostTagsTheme extends Themelet
 {
     public function display_mass_editor(): void
     {
-        global $page;
         $html = SHM_SIMPLE_FORM(
             make_link("tag_edit/replace"),
             TABLE(
@@ -22,7 +21,7 @@ class PostTagsTheme extends Themelet
                 TR(TD(["colspan" => "2"], SHM_SUBMIT("Replace")))
             )
         );
-        $page->add_block(new Block("Mass Tag Edit", $html));
+        Ctx::$page->add_block(new Block("Mass Tag Edit", $html));
     }
 
     public function get_tag_editor_html(Image $image): HTMLElement

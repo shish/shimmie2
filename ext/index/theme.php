@@ -30,7 +30,6 @@ class IndexTheme extends Themelet
 
     public function display_intro(): void
     {
-        global $page;
         $text = DIV(
             ["style" => "text-align: left;"],
             P("The first thing you'll probably want to do is create a new account; note
@@ -40,9 +39,9 @@ class IndexTheme extends Themelet
          and of course start organising your images :-)"),
             P("This message will go away once your first image is uploaded~"),
         );
-        $page->set_title("Welcome to Shimmie ".SysConfig::getVersion(false));
-        $page->set_heading("Welcome to Shimmie");
-        $page->add_block(new Block("Nothing here yet!", $text, "main", 0));
+        Ctx::$page->set_title("Welcome to Shimmie ".SysConfig::getVersion(false));
+        Ctx::$page->set_heading("Welcome to Shimmie");
+        Ctx::$page->add_block(new Block("Nothing here yet!", $text, "main", 0));
     }
 
     /**
@@ -144,17 +143,16 @@ class IndexTheme extends Themelet
      */
     protected function display_page_images(array $images): void
     {
-        global $page;
         if (count($this->search_terms) > 0) {
             if ($this->page_number > 3) {
                 // only index the first pages of each term
-                $page->add_html_header(META(["name" => "robots", "content" => "noindex, nofollow"]));
+                Ctx::$page->add_html_header(META(["name" => "robots", "content" => "noindex, nofollow"]));
             }
             $query = url_escape(Tag::implode($this->search_terms));
-            $page->add_block(new Block(null, $this->build_table($images, "search=$query"), "main", 10, "image-list"));
+            Ctx::$page->add_block(new Block(null, $this->build_table($images, "search=$query"), "main", 10, "image-list"));
             $this->display_paginator("post/list/$query", null, $this->page_number, $this->total_pages, true);
         } else {
-            $page->add_block(new Block(null, $this->build_table($images, null), "main", 10, "image-list"));
+            Ctx::$page->add_block(new Block(null, $this->build_table($images, null), "main", 10, "image-list"));
             $this->display_paginator("post/list", null, $this->page_number, $this->total_pages, true);
         }
     }

@@ -234,7 +234,6 @@ final class BulkActions extends Extension
      */
     private function delete_posts(iterable $posts): array
     {
-        global $page;
         $total = 0;
         $size = 0;
         foreach ($posts as $post) {
@@ -249,7 +248,7 @@ final class BulkActions extends Extension
                 $total++;
                 $size += $post->filesize;
             } catch (\Exception $e) {
-                $page->flash("Error while removing {$post->id}: " . $e->getMessage());
+                Ctx::$page->flash("Error while removing {$post->id}: " . $e->getMessage());
             }
         }
         return [$total, $size];
@@ -305,14 +304,13 @@ final class BulkActions extends Extension
      */
     private function set_source(iterable $items, string $source): int
     {
-        global $page;
         $total = 0;
         foreach ($items as $image) {
             try {
                 send_event(new SourceSetEvent($image, $source));
                 $total++;
             } catch (\Exception $e) {
-                $page->flash("Error while setting source for {$image->id}: " . $e->getMessage());
+                Ctx::$page->flash("Error while setting source for {$image->id}: " . $e->getMessage());
             }
         }
         return $total;

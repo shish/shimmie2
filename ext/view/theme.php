@@ -34,7 +34,7 @@ class ViewPostTheme extends Themelet
      */
     public function display_page(Image $image, array $editor_parts): void
     {
-        global $page;
+        $page = Ctx::$page;
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());
         $page->set_heading($image->get_tag_list());
         $page->add_block(new Block("Post {$image->id}", $this->build_navigation($image), "left", 0, "Navigationleft"));
@@ -53,9 +53,8 @@ class ViewPostTheme extends Themelet
      */
     public function display_admin_block(array $parts): void
     {
-        global $page;
         if (count($parts) > 0) {
-            $page->add_block(new Block("Post Controls", DIV(["class" => "post_controls"], joinHTML("", $parts)), "left", 50));
+            Ctx::$page->add_block(new Block("Post Controls", DIV(["class" => "post_controls"], joinHTML("", $parts)), "left", 50));
         }
     }
 

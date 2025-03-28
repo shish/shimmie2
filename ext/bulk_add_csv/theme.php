@@ -21,11 +21,10 @@ class BulkAddCSVTheme extends Themelet
      */
     public function display_upload_results(): void
     {
-        global $page;
-        $page->set_title("Adding posts from csv");
+        Ctx::$page->set_title("Adding posts from csv");
         $this->display_navigation();
         foreach ($this->messages as $block) {
-            $page->add_block($block);
+            Ctx::$page->add_block($block);
         }
     }
 
@@ -36,7 +35,6 @@ class BulkAddCSVTheme extends Themelet
      */
     public function display_admin_block(): void
     {
-        global $page;
         $html = emptyHTML(
             "Add posts from a csv. Posts will be tagged and have their
 			source and rating set (if \"Post Ratings\" is enabled).
@@ -58,7 +56,7 @@ class BulkAddCSVTheme extends Themelet
                 )
             )
         );
-        $page->add_block(new Block("Bulk Add CSV", $html));
+        Ctx::$page->add_block(new Block("Bulk Add CSV", $html));
     }
 
     public function add_status(string $title, string $body): void

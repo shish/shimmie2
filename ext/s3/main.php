@@ -33,14 +33,14 @@ final class S3 extends Extension
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
-        global $database, $page;
+        global $database;
         $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
         $html = SHM_SIMPLE_FORM(
             make_link("admin/s3_process"),
             INPUT(["type" => 'number', "name" => 'count', 'value' => '10']),
             SHM_SUBMIT("Sync N/$count posts"),
         );
-        $page->add_block(new Block("Process S3 Queue", $html));
+        Ctx::$page->add_block(new Block("Process S3 Queue", $html));
     }
 
     public function onAdminAction(AdminActionEvent $event): void

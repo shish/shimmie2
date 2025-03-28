@@ -102,12 +102,11 @@ class ReportImageTheme extends Themelet
 
     public function get_nuller(User $duser): void
     {
-        global $page;
         $html = SHM_SIMPLE_FORM(
             make_link("image_report/remove_reports_by"),
             INPUT(["type" => 'hidden', "name" => 'user_id', "value" => $duser->id]),
             SHM_SUBMIT('Delete all reports by this user')
         );
-        $page->add_block(new Block("Reports", $html, "main", 80));
+        Ctx::$page->add_block(new Block("Reports", $html, "main", 80));
     }
 }

@@ -122,14 +122,13 @@ class CommentListTheme extends Themelet
      */
     public function display_recent_comments(array $comments): void
     {
-        global $page;
         $this->show_anon_id = false;
         $html = emptyHTML();
         foreach ($comments as $comment) {
             $html->appendChild($this->comment_to_html($comment, true));
         }
         $html->appendChild(A(["class" => "more", "href" => make_link("comment/list")], "Full List"));
-        $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-recent"));
+        Ctx::$page->add_block(new Block("Comments", $html, "left", 70, "comment-list-recent"));
     }
 
     /**
@@ -139,7 +138,6 @@ class CommentListTheme extends Themelet
      */
     public function display_image_comments(Image $image, array $comments, bool $postbox): void
     {
-        global $page;
         $this->show_anon_id = true;
         $html = emptyHTML();
         foreach ($comments as $comment) {
@@ -148,7 +146,7 @@ class CommentListTheme extends Themelet
         if ($postbox) {
             $html->appendChild($this->build_postbox($image->id));
         }
-        $page->add_block(new Block("Comments", $html, "main", 30, "comment-list-image"));
+        Ctx::$page->add_block(new Block("Comments", $html, "main", 30, "comment-list-image"));
     }
 
     /**
@@ -158,7 +156,6 @@ class CommentListTheme extends Themelet
      */
     public function display_recent_user_comments(array $comments, User $user): void
     {
-        global $page;
         $html = emptyHTML();
         foreach ($comments as $comment) {
             $html->appendChild($this->comment_to_html($comment, true));
@@ -168,7 +165,7 @@ class CommentListTheme extends Themelet
         } else {
             $html->appendChild(P(A(["href" => make_link("comment/beta-search/{$user->name}/1")], "More")));
         }
-        $page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
+        Ctx::$page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
     }
 
     /**

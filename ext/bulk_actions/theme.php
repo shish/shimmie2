@@ -18,7 +18,6 @@ class BulkActionsTheme extends Themelet
      */
     public function display_selector(array $actions, string $query): void
     {
-        global $page;
         $header = emptyHTML(
             INPUT(["type" => "hidden", "name" => "bulk_selected_ids", "id" => "bulk_selected_ids"]),
             INPUT(["type" => "button", "id" => "bulk_selector_activate", "onclick" => 'activate_bulk_selector();' , "value" => "Activate (M)anual Select", "accesskey" => "m"])
@@ -63,8 +62,7 @@ class BulkActionsTheme extends Themelet
                 $actions
             );
         }
-        $block = new Block("Bulk Actions", $html, "left", 30);
-        $page->add_block($block);
+        Ctx::$page->add_block(new Block("Bulk Actions", $html, "left", 30));
     }
 
     public function render_ban_reason_input(): ?HTMLElement

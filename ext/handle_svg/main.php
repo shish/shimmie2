@@ -16,7 +16,6 @@ final class SVGFileHandler extends DataHandlerExtension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         if ($event->page_matches("get_svg/{id}")) {
             $id = $event->get_iarg('id');
             $image = Image::by_id_ex($id);
@@ -27,7 +26,7 @@ final class SVGFileHandler extends DataHandlerExtension
             $dirtySVG = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash)->get_contents();
             $cleanSVG = false_throws($sanitizer->sanitize($dirtySVG));
 
-            $page->set_data(MimeType::SVG, $cleanSVG);
+            Ctx::$page->set_data(MimeType::SVG, $cleanSVG);
         }
     }
 

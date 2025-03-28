@@ -14,8 +14,7 @@ class RandomImageTheme extends Themelet
 {
     public function display_random(Image $image): void
     {
-        global $page;
-        $page->add_block(new Block("Random Post", $this->build_random_html($image), "left", 8));
+        Ctx::$page->add_block(new Block("Random Post", $this->build_random_html($image), "left", 8));
     }
 
     public function build_random_html(Image $image): HTMLElement

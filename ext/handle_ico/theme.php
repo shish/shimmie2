@@ -10,7 +10,6 @@ class IcoFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
-        global $page;
         $ilink = $image->get_image_link();
         $html = IMG([
             'id' => 'main_image',
@@ -20,6 +19,6 @@ class IcoFileHandlerTheme extends Themelet
             'data-width' => $image->width,
             'data-height' => $image->height,
         ]);
-        $page->add_block(new Block(null, $html, "main", 10));
+        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 }

@@ -210,7 +210,7 @@ final class PrivMsg extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database, $page;
+        global $database;
         $user = Ctx::$user;
         $page = Ctx::$page;
         if ($event->page_matches("pm/read/{pm_id}", permission: PrivMsgPermission::READ_PM)) {

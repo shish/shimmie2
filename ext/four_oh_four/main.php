@@ -10,9 +10,8 @@ final class FourOhFour extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         // hax.
-        if ($page->mode == PageMode::PAGE && $this->count_main($page->blocks) == 0) {
+        if (Ctx::$page->mode == PageMode::PAGE && $this->count_main(Ctx::$page->blocks) == 0) {
             Log::debug("four_oh_four", "Hit 404: {$event->path}");
             throw new ObjectNotFound("No handler could be found for the page '{$event->path}'");
         }

@@ -21,10 +21,9 @@ final class AvatarPost extends AvatarExtension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $page;
         if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
-            $page->set_redirect(make_link("set_avatar/$image_id"));
+            Ctx::$page->set_redirect(make_link("set_avatar/$image_id"));
         } elseif ($event->page_matches("set_avatar/{image_id}", method: "GET", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $image_id = int_escape($event->get_arg('image_id'));
             $this->theme->display_avatar_edit_page($image_id);
@@ -34,8 +33,8 @@ final class AvatarPost extends AvatarExtension
             $c->set(AvatarPostUserConfig::AVATAR_SCALE, (int)$event->req_POST("scale"));
             $c->set(AvatarPostUserConfig::AVATAR_X, (int)$event->req_POST("x"));
             $c->set(AvatarPostUserConfig::AVATAR_Y, (int)$event->req_POST("y"));
-            $page->flash("Image set as avatar");
-            $page->set_redirect(Url::referer_or(make_link("user_config")));
+            Ctx::$page->flash("Image set as avatar");
+            Ctx::$page->set_redirect(Url::referer_or(make_link("user_config")));
         }
     }
 
