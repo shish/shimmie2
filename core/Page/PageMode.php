@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-enum PageMode: string
+enum PageMode
 {
-    case REDIRECT = 'redirect';
-    case DATA = 'data';
-    case PAGE = 'page';
-    case FILE = 'file';
-    case MANUAL = 'manual';
+    case REDIRECT;
+    case DATA;
+    case PAGE;
+    case FILE;
+    case MANUAL;
 }

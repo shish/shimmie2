@@ -128,11 +128,7 @@ final class SourceHistory extends Extension
 
         Log::debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
 
-        $image = Image::by_id($stored_image_id);
-
-        if (is_null($image)) {
-            die('Error: No image with the id ('.$stored_image_id.') was found. Perhaps the image was deleted while processing this request.');
-        }
+        $image = Image::by_id_ex($stored_image_id);
 
         // all should be ok so we can revert by firing the SetUserSources event.
         send_event(new SourceSetEvent($image, $stored_source));
@@ -291,8 +287,7 @@ final class SourceHistory extends Extension
                 if (empty($result)) {
                     // there is no history entry with that id so either the image was deleted
                     // while the user was viewing the history,  or something messed up
-                    /* calling die() is probably not a good idea, we should throw an Exception */
-                    die('Error: No source history with specified id ('.$revert_id.') was found in the database.'."\n\n".
+                    throw new ObjectNotFound('Error: No source history with specified id ('.$revert_id.') was found in the database.'."\n\n".
                         'Perhaps the image was deleted while processing this request.');
                 }
 

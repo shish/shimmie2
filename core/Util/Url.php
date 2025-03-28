@@ -39,7 +39,9 @@ final readonly class Url
         private array $query = [],
         private ?string $fragment = null
     ) {
-        assert($page === null || $path === null);
+        if ($page !== null && $path !== null) {
+            throw new \InvalidArgumentException("Url(page: $page, path: $path): page and path cannot be used together");
+        }
         if ($page !== null && str_starts_with($page, "/")) {
             throw new \InvalidArgumentException("Url(page: $page): page cannot start with a slash");
         }

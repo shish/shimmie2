@@ -261,7 +261,7 @@ class Page
      */
     public function display(): void
     {
-        Ctx::$tracer->begin("Display ({$this->mode->value})");
+        Ctx::$tracer->begin("Display ({$this->mode->name})");
         match($this->mode) {
             PageMode::MANUAL => null,
             PageMode::PAGE => $this->display_page(),
