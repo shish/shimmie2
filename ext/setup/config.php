@@ -58,4 +58,21 @@ final class SetupConfig extends ConfigGroup
         }
         return $themes;
     }
+
+    /**
+     * @return array<string, ConfigMeta>
+     */
+    public function get_config_fields(): array
+    {
+        $fields = parent::get_config_fields();
+
+        // If niceurls are force-enabled at the system level, don't show the option
+        foreach ($fields as $key => $field) {
+            if (SysConfig::getNiceUrls() && $key === SetupConfig::NICE_URLS) {
+                unset($fields[$key]);
+            }
+        }
+
+        return $fields;
+    }
 }
