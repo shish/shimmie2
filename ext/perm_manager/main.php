@@ -18,6 +18,7 @@ final class PermManager extends Extension
 
     private function add_default_classes(): void
     {
+        UserClass::$loading = UserClassSource::DEFAULT;
         $_all_false = [];
         $_all_true = [];
         foreach (PermissionGroup::get_subclasses(all: true) as $class) {
@@ -80,11 +81,14 @@ final class PermManager extends Extension
             ],
             description: "The default class for people who are logged in",
         );
+        UserClass::$loading = UserClassSource::UNKNOWN;
     }
 
     private function add_config_classes(): void
     {
+        UserClass::$loading = UserClassSource::FILE;
         @include_once "data/config/user-classes.conf.php";
+        UserClass::$loading = UserClassSource::UNKNOWN;
     }
 
     public function onPageRequest(PageRequestEvent $event): void
