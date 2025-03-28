@@ -11,7 +11,7 @@ final class BlotterConfig extends ConfigGroup
     #[ConfigMeta("Recent updates", ConfigType::INT, default: 5)]
     public const RECENT = "blotter_recent";
 
-    #[ConfigMeta("Important updates", ConfigType::STRING, input: "color", default: "#FF0000")]
+    #[ConfigMeta("Important updates", ConfigType::STRING, input: ConfigInput::COLOR, default: "#FF0000")]
     public const COLOR = "blotter_color";
 
     #[ConfigMeta("Position", ConfigType::STRING, default: "subheading", options: [

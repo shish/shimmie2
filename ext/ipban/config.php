@@ -12,7 +12,7 @@ final class IPBanConfig extends ConfigGroup
     #[ConfigMeta(
         "Message for banned users",
         ConfigType::STRING,
-        input: "longtext",
+        input: ConfigInput::TEXTAREA,
         default: '<p>IP <b>$IP</b> has been banned until <b>$DATE</b> by <b>$ADMIN</b> because of <b>$REASON</b>
 <p>If you couldn\'t possibly be guilty of what you\'re banned for, the person we banned probably had a dynamic IP address and so do you.
 <p>See <a href="http://whatismyipaddress.com/dynamic-static">http://whatismyipaddress.com/dynamic-static</a> for more information.
@@ -21,9 +21,9 @@ final class IPBanConfig extends ConfigGroup
     )]
     public const MESSAGE = "ipban_message";
 
-    #[ConfigMeta("Message for ghost users", ConfigType::STRING, input: "longtext", advanced: true)]
+    #[ConfigMeta("Message for ghost users", ConfigType::STRING, input: ConfigInput::TEXTAREA, advanced: true)]
     public const MESSAGE_GHOST = "ipban_message_ghost";
 
-    #[ConfigMeta("Message for ghost anons", ConfigType::STRING, input: "longtext", advanced: true)]
+    #[ConfigMeta("Message for ghost anons", ConfigType::STRING, input: ConfigInput::TEXTAREA, advanced: true)]
     public const MESSAGE_ANON_GHOST = "ipban_message_anon-ghost";
 }
