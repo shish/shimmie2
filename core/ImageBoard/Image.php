@@ -403,11 +403,11 @@ final class Image implements \ArrayAccess
     /**
      * Check configured template for a link, then try nice URL, then plain URL
      */
-    private function get_link(string $template, string $nice, string $plain): Url
+    private function get_link(string $config_name, string $nice, string $plain): Url
     {
-        $image_link = Ctx::$config->get($template);
+        $image_link = Ctx::$config->get($config_name);
 
-        if (is_string($image_link)) {
+        if (is_string($image_link) && !empty($image_link)) {
             if (!str_contains($image_link, "://") && !str_starts_with($image_link, "/")) {
                 $image_link = make_link($image_link);
             }
