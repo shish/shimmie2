@@ -12,7 +12,7 @@ final class RSSImages extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         global $page;
-        $title = Ctx::$config->req_string(SetupConfig::TITLE);
+        $title = Ctx::$config->req(SetupConfig::TITLE);
 
         if (count($event->search_terms) > 0) {
             $search = Tag::implode($event->search_terms);
@@ -40,8 +40,8 @@ final class RSSImages extends Extension
         ) {
             $search_terms = Tag::explode($event->get_arg('search', ""));
             $page_number = $event->get_iarg('page_num', 1);
-            $page_size = Ctx::$config->req_int(IndexConfig::IMAGES);
-            if (Ctx::$config->req_bool(RSSImagesConfig::RSS_LIMIT) && $page_number > 9) {
+            $page_size = Ctx::$config->req(IndexConfig::IMAGES);
+            if (Ctx::$config->req(RSSImagesConfig::RSS_LIMIT) && $page_number > 9) {
                 return;
             }
             $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
@@ -65,7 +65,7 @@ final class RSSImages extends Extension
             $data .= $this->thumb($image);
         }
 
-        $title = Ctx::$config->req_string(SetupConfig::TITLE);
+        $title = Ctx::$config->req(SetupConfig::TITLE);
         $base_href = Url::base()->asAbsolute();
         $search = "";
         if (count($search_terms) > 0) {

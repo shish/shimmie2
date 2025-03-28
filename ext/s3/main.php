@@ -155,12 +155,12 @@ final class S3 extends Extension
     // utils
     private function get_client(): \S3Client\S3
     {
-        $access_key_id = Ctx::$config->get_string(S3Config::ACCESS_KEY_ID);
-        $access_key_secret = Ctx::$config->get_string(S3Config::ACCESS_KEY_SECRET);
+        $access_key_id = Ctx::$config->get(S3Config::ACCESS_KEY_ID);
+        $access_key_secret = Ctx::$config->get(S3Config::ACCESS_KEY_SECRET);
         if (is_null($access_key_id) || is_null($access_key_secret)) {
             throw new ServerError("S3 credentials not set");
         }
-        $endpoint = Ctx::$config->req_string(S3Config::ENDPOINT);
+        $endpoint = Ctx::$config->req(S3Config::ENDPOINT);
 
         return new \S3Client\S3(
             $access_key_id,
@@ -182,7 +182,7 @@ final class S3 extends Extension
         if (PHP_SAPI == "cli") {
             return false; // CLI can go on for as long as it wants
         }
-        return $this->synced > Ctx::$config->req_int(UploadConfig::COUNT);
+        return $this->synced > Ctx::$config->req(UploadConfig::COUNT);
     }
 
     // underlying s3 interaction functions
@@ -207,7 +207,7 @@ final class S3 extends Extension
             }
             $client = $this->get_client();
             $client->putObject(
-                Ctx::$config->req_string(S3Config::IMAGE_BUCKET),
+                Ctx::$config->req(S3Config::IMAGE_BUCKET),
                 $this->hash_to_path($image->hash),
                 $image->get_image_filename()->get_contents(),
                 [
@@ -230,7 +230,7 @@ final class S3 extends Extension
         } else {
             $client = $this->get_client();
             $client->deleteObject(
-                Ctx::$config->req_string(S3Config::IMAGE_BUCKET),
+                Ctx::$config->req(S3Config::IMAGE_BUCKET),
                 $this->hash_to_path($hash),
             );
             $this->dequeue($hash);

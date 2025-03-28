@@ -28,7 +28,7 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
 
         # enabled, no image = no text
-        Ctx::$config->set_bool(RandomImageConfig::SHOW_RANDOM_BLOCK, true);
+        Ctx::$config->set(RandomImageConfig::SHOW_RANDOM_BLOCK, true);
         $page = self::get_page("post/list");
         self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
 
@@ -38,7 +38,7 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
         $page->find_block("Random Post"); // will throw if missing
 
         # disabled, image = no text
-        Ctx::$config->set_bool(RandomImageConfig::SHOW_RANDOM_BLOCK, false);
+        Ctx::$config->set(RandomImageConfig::SHOW_RANDOM_BLOCK, false);
         $page = self::get_page("post/list");
         self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
 

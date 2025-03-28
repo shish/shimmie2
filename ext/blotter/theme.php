@@ -83,7 +83,7 @@ class BlotterTheme extends Themelet
      */
     public function display_blotter_page(array $entries): void
     {
-        $i_color = Ctx::$config->get_string(BlotterConfig::COLOR);
+        $i_color = Ctx::$config->get(BlotterConfig::COLOR);
 
         $html = P();
         foreach ($entries as $entry) {
@@ -105,8 +105,8 @@ class BlotterTheme extends Themelet
      */
     public function display_blotter(array $entries): void
     {
-        $i_color = Ctx::$config->get_string(BlotterConfig::COLOR);
-        $position = Ctx::$config->get_string(BlotterConfig::POSITION);
+        $i_color = Ctx::$config->get(BlotterConfig::COLOR);
+        $position = Ctx::$config->get(BlotterConfig::POSITION);
 
         $entries_list = UL();
         foreach ($entries as $entry) {
@@ -150,7 +150,7 @@ class BlotterTheme extends Themelet
             DIV(["id" => "blotter2", "class" => "shm-blotter2"], $in_text)
         );
 
-        $position = Ctx::$config->req_string(BlotterConfig::POSITION);
+        $position = Ctx::$config->req(BlotterConfig::POSITION);
         Ctx::$page->add_block(new Block(null, $html, $position, 20));
     }
 }

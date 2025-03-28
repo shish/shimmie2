@@ -40,7 +40,7 @@ final class LogLogstash extends Extension
      */
     private function send_data(array $data): void
     {
-        $host = Ctx::$config->get_string(LogLogstashConfig::HOST);
+        $host = Ctx::$config->get(LogLogstashConfig::HOST);
         if (!$host) {
             return;
         }

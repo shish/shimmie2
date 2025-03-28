@@ -49,8 +49,8 @@ final class PrivateImage extends Extension
             $set_default = array_key_exists("set_default", $event->POST);
             $view_default = array_key_exists("view_default", $event->POST);
 
-            $user->get_config()->set_bool(PrivateImageUserConfig::SET_DEFAULT, $set_default);
-            $user->get_config()->set_bool(PrivateImageUserConfig::VIEW_DEFAULT, $view_default);
+            $user->get_config()->set(PrivateImageUserConfig::SET_DEFAULT, $set_default);
+            $user->get_config()->set(PrivateImageUserConfig::VIEW_DEFAULT, $view_default);
 
             Ctx::$page->set_redirect(make_link("user"));
         }
@@ -70,7 +70,7 @@ final class PrivateImage extends Extension
     public const SEARCH_REGEXP = "/^private:(yes|no|any)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        $show_private = Ctx::$user->get_config()->get_bool(PrivateImageUserConfig::VIEW_DEFAULT);
+        $show_private = Ctx::$user->get_config()->get(PrivateImageUserConfig::VIEW_DEFAULT);
 
         if (is_null($event->term) && $this->no_private_query($event->context)) {
             if ($show_private) {
@@ -169,7 +169,7 @@ final class PrivateImage extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        if (Ctx::$user->get_config()->get_bool(PrivateImageUserConfig::SET_DEFAULT) && Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
+        if (Ctx::$user->get_config()->get(PrivateImageUserConfig::SET_DEFAULT) && Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             self::privatize_image($event->image->id);
         }
     }

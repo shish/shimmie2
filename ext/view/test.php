@@ -26,7 +26,7 @@ final class ViewPostTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
 
-        Ctx::$config->set_string(ImageConfig::INFO, '$size // $filesize // $ext');
+        Ctx::$config->set(ImageConfig::INFO, '$size // $filesize // $ext');
         self::get_page("post/view/$image_id_1");
         self::assert_text("640x480 // 19KB // jpg");
     }

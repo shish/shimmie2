@@ -33,3 +33,7 @@ services:
     class: Shimmie2\GenericStringTypeNodeResolverExtension
     tags:
       - phpstan.phpDoc.typeNodeResolverExtension
+  -
+    class: Shimmie2\ConfigGetReturnTypeExtension
+    tags:
+      - phpstan.broker.dynamicMethodReturnTypeExtension

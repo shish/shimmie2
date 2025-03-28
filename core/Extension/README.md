@@ -1,6 +1,6 @@
 ## Extension Context
 
-Shimmie has historically used global variables to hold some things that pretty much every extension needs (config, database, logged in user, etc) - but that doesn't play well with automated testing or static analysis tools. As of 2.12 there is a new `Ctx` class which wraps the global Shimmie context in a _slightly_-less-bad way, so instead of `global $config; $config->get_bool(...);` you can do `Ctx::$config->get_bool(...);`.
+Shimmie has historically used global variables to hold some things that pretty much every extension needs (config, database, logged in user, etc) - but that doesn't play well with automated testing or static analysis tools. As of 2.12 there is a new `Ctx` class which wraps the global Shimmie context in a _slightly_-less-bad way, so instead of `global $config; $config->get(...);` you can do `Ctx::$config->get(...);`.
 
 ## Base Classes for Extensions
 

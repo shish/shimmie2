@@ -24,8 +24,8 @@ final readonly class Captcha
         }
 
         $captcha = null;
-        if (Ctx::$user->is_anonymous() && Ctx::$config->req_bool(CommentConfig::CAPTCHA)) {
-            $r_publickey = Ctx::$config->get_string(CommentConfig::RECAPTCHA_PUBKEY);
+        if (Ctx::$user->is_anonymous() && Ctx::$config->req(CommentConfig::CAPTCHA)) {
+            $r_publickey = Ctx::$config->get(CommentConfig::RECAPTCHA_PUBKEY);
             if (!empty($r_publickey)) {
                 $captcha = emptyHTML(
                     DIV(["class" => "g-recaptcha", "data-sitekey" => $r_publickey]),
@@ -45,8 +45,8 @@ final readonly class Captcha
             return true;
         }
 
-        if (Ctx::$user->is_anonymous() && Ctx::$config->req_bool(CommentConfig::CAPTCHA)) {
-            $r_privatekey = Ctx::$config->get_string(CommentConfig::RECAPTCHA_PRIVKEY);
+        if (Ctx::$user->is_anonymous() && Ctx::$config->req(CommentConfig::CAPTCHA)) {
+            $r_privatekey = Ctx::$config->get(CommentConfig::RECAPTCHA_PRIVKEY);
             if (!empty($r_privatekey)) {
                 $recaptcha = new ReCaptcha($r_privatekey);
                 $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", Network::get_real_ip());

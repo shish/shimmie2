@@ -13,7 +13,7 @@ final class ArchiveFileHandler extends DataHandlerExtension
     {
         if ($this->supported_mime($event->mime)) {
             $tmpdir = shm_tempdir("archive");
-            $cmd = Ctx::$config->req_string(ArchiveFileHandlerConfig::EXTRACT_COMMAND);
+            $cmd = Ctx::$config->req(ArchiveFileHandlerConfig::EXTRACT_COMMAND);
             $cmd = str_replace('"%f"', "%f", $cmd);
             $cmd = str_replace('"%d"', "%d", $cmd);
             $cmd = str_replace('%f', escapeshellarg($event->tmpname->str()), $cmd);

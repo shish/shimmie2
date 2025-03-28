@@ -84,8 +84,8 @@ final class CronUploader extends Extension
     public function onLog(LogEvent $event): void
     {
         if (self::$IMPORT_RUNNING) {
-            $all = Ctx::$user->get_config()->get_bool(CronUploaderUserConfig::INCLUDE_ALL_LOGS);
-            if ($event->priority >= Ctx::$user->get_config()->get_int(CronUploaderUserConfig::LOG_LEVEL) &&
+            $all = Ctx::$user->get_config()->get(CronUploaderUserConfig::INCLUDE_ALL_LOGS);
+            if ($event->priority >= Ctx::$user->get_config()->get(CronUploaderUserConfig::LOG_LEVEL) &&
                 ($event->section == self::NAME || $all)) {
                 $output = "[" . date('Y-m-d H:i:s') . "] " . ($all ? '[' . $event->section . '] ' : '') . "[" . LogLevel::from($event->priority)->name . "] " . $event->message;
 
@@ -155,7 +155,7 @@ final class CronUploader extends Extension
 
     private function get_cron_url(): string
     {
-        $user_api_key = Ctx::$user->get_config()->get_string(UserConfigUserConfig::API_KEY) ?? "API_KEY";
+        $user_api_key = Ctx::$user->get_config()->get(UserConfigUserConfig::API_KEY) ?? "API_KEY";
         return (string)make_link("cron_upload/run", ["api_key" => $user_api_key])->asAbsolute();
     }
 
@@ -214,7 +214,7 @@ final class CronUploader extends Extension
     private function get_user_dir(): Path
     {
         return new Path(
-            Ctx::$user->get_config()->get_string(CronUploaderUserConfig::DIR)
+            Ctx::$user->get_config()->get(CronUploaderUserConfig::DIR)
             ?? Filesystem::data_path(Filesystem::join_path("cron_uploader", Ctx::$user->name))->str()
         );
     }
@@ -268,7 +268,7 @@ final class CronUploader extends Extension
         Ctx::$page->add_http_header("Content-Type: text/plain");
         Ctx::$page->send_headers();
 
-        if (!Ctx::$config->req_bool(UserAccountsConfig::ENABLE_API_KEYS)) {
+        if (!Ctx::$config->req(UserAccountsConfig::ENABLE_API_KEYS)) {
             throw new ServerError("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 
@@ -326,7 +326,7 @@ final class CronUploader extends Extension
                     $failed++;
                     Log::error(self::NAME, "(" . gettype($e) . ") " . $e->getMessage());
                     Log::error(self::NAME, $e->getTraceAsString());
-                    if (Ctx::$user->get_config()->get_bool(CronUploaderUserConfig::STOP_ON_ERROR)) {
+                    if (Ctx::$user->get_config()->get(CronUploaderUserConfig::STOP_ON_ERROR)) {
                         break;
                     } else {
                         $this->move_uploaded($img[0], $img[1], $output_subdir, true);

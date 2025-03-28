@@ -46,8 +46,8 @@ class CommentListTheme extends Themelet
         // parts for each image
         $position = 10;
 
-        $comment_limit = Ctx::$config->req_int(CommentConfig::LIST_COUNT);
-        $comment_captcha = Ctx::$config->req_bool(CommentConfig::CAPTCHA);
+        $comment_limit = Ctx::$config->req(CommentConfig::LIST_COUNT);
+        $comment_captcha = Ctx::$config->req(CommentConfig::CAPTCHA);
 
         foreach ($images as $pair) {
             $image = $pair[0];
@@ -195,7 +195,7 @@ class CommentListTheme extends Themelet
 
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
-        if ($comment->owner_id === Ctx::$config->req_int(UserAccountsConfig::ANON_ID)) {
+        if ($comment->owner_id === Ctx::$config->req(UserAccountsConfig::ANON_ID)) {
             $anoncode = "";
             $anoncode2 = "";
             if ($this->show_anon_id) {
@@ -205,7 +205,7 @@ class CommentListTheme extends Themelet
                 }
                 #if(Ctx::$user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-                if (Ctx::$user->can(IPBanPermission::VIEW_IP) || Ctx::$config->req_bool(CommentConfig::SHOW_REPEAT_ANONS)) {
+                if (Ctx::$user->can(IPBanPermission::VIEW_IP) || Ctx::$config->req(CommentConfig::SHOW_REPEAT_ANONS)) {
                     if ($this->anon_map[$comment->poster_ip] !== $this->anon_id) {
                         $anoncode2 = SUP("(" . $this->anon_map[$comment->poster_ip] . ")");
                     }
@@ -273,7 +273,7 @@ class CommentListTheme extends Themelet
                 INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
                 INPUT(["type" => "hidden", "name" => "hash", "value" => CommentList::get_hash()]),
                 TEXTAREA(["id" => "comment_on_$image_id", "name" => "comment", "rows" => 5, "cols" => 50]),
-                Ctx::$config->req_bool(CommentConfig::CAPTCHA) ? Captcha::get_html() : null,
+                Ctx::$config->req(CommentConfig::CAPTCHA) ? Captcha::get_html() : null,
                 BR(),
                 INPUT(["type" => "submit", "value" => "Post Comment"])
             ),

@@ -42,7 +42,7 @@ final class XMLSitemap extends Extension
 
         // add index
         $urls[] = new XMLSitemapURL(
-            make_link(Ctx::$config->req_string(SetupConfig::FRONT_PAGE)),
+            make_link(Ctx::$config->req(SetupConfig::FRONT_PAGE)),
             "weekly",
             "1",
             date("Y-m-d")

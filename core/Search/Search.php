@@ -32,8 +32,8 @@ final class Search
             $limit = 1;
         }
 
-        if (Ctx::$config->get_int(IndexConfig::BIG_SEARCH) > 0) {
-            $anon_limit = Ctx::$config->get_int(IndexConfig::BIG_SEARCH);
+        if (Ctx::$config->get(IndexConfig::BIG_SEARCH) > 0) {
+            $anon_limit = Ctx::$config->get(IndexConfig::BIG_SEARCH);
             $counted_tags = $tags;
             // exclude tags which start with "id>", "id<", or "order:id_"
             // because those are added internally for post/next and post/prev
@@ -129,7 +129,7 @@ final class Search
 
         // speed_hax ignores the fact that extensions can add img_conditions
         // even when there are no tags being searched for
-        $limit_complex = (Ctx::$config->get_bool(IndexConfig::LIMIT_COMPLEX));
+        $limit_complex = (Ctx::$config->get(IndexConfig::LIMIT_COMPLEX));
         if ($limit_complex && $tag_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();

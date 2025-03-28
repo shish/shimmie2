@@ -72,7 +72,7 @@ final class ImageViewCounter extends Extension
     {
         global $database;
 
-        if (Ctx::$config->get_bool("image_viewcounter_installed")) {
+        if (Ctx::$config->get("image_viewcounter_installed") !== null) {
             $this->set_version(1);
             Ctx::$config->delete("image_viewcounter_installed");
         }

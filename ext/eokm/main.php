@@ -15,8 +15,8 @@ final class Eokm extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        $username = Ctx::$config->get_string(EokmConfig::USERNAME);
-        $password = Ctx::$config->get_string(EokmConfig::PASSWORD);
+        $username = Ctx::$config->get(EokmConfig::USERNAME);
+        $password = Ctx::$config->get(EokmConfig::PASSWORD);
 
         if ($username && $password) {
             $ch = \Safe\curl_init("https://api.eokmhashdb.nl/v1/check/md5");

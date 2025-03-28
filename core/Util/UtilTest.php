@@ -150,7 +150,7 @@ final class UtilTest extends TestCase
 
     public function tearDown(): void
     {
-        Ctx::$config->set_bool(SetupConfig::NICE_URLS, true);
+        Ctx::$config->set(SetupConfig::NICE_URLS, true);
         parent::tearDown();
     }
 }

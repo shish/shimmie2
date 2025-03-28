@@ -6,38 +6,36 @@ namespace Shimmie2;
 
 final class ConfigTest extends ShimmiePHPUnitTestCase
 {
-    public function testGetInt(): void
+    public function testGet(): void
     {
         self::assertEquals(
-            (new TestConfig([], ["foo" => "42"]))->get_int("foo"),
+            (new TestConfig([], ["foo" => 42]))->get("foo"),
             42,
-            "get_int should return the value of a setting when it is set correctly"
+            "should return the value of a setting when it is set correctly"
         );
 
         self::assertEquals(
-            (new TestConfig(["foo" => "42"], []))->get_int("foo"),
+            (new TestConfig(["foo" => new ConfigMeta("", type: ConfigType::INT, default: 42)], []))->get("foo"),
             42,
-            "get_int should return default when a value is not set"
+            "should return default when a value is not set"
         );
 
         self::assertEquals(
-            (new TestConfig(["foo" => "42"], ["foo" => "123"]))->get_int("foo"),
+            (new TestConfig(["foo" => new ConfigMeta("", type: ConfigType::INT, default: 42)], ["foo" => 123]))->get("foo"),
             123,
-            "get_int should return value when value and default are set"
+            "should return value when value and default are set"
         );
 
         self::assertNull(
-            (new TestConfig(["foo" => "42"], ["foo" => "waffo"]))->get_int("foo"),
-            "get_int should return default when a setting is set incorrectly"
+            (new TestConfig([], []))->get("foo"),
+            "should return null when a setting is not set"
         );
+    }
 
-        self::assertNull(
-            (new TestConfig([], []))->get_int("foo"),
-            "get_int should return null when a setting is not set"
-        );
-
+    public function testReq(): void
+    {
         self::assertException(ConfigException::class, function () {
-            (new TestConfig([], []))->req_int("foo");
-        }, "req_int should throw an exception when a setting is not set");
+            (new TestConfig([], []))->req("foo");
+        }, "req should throw an exception when a setting is not set");
     }
 }

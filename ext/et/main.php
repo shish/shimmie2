@@ -74,13 +74,13 @@ final class ET extends Extension
         $disk_free = \Safe\disk_free_space("./");
         $info = [
             "about" => [
-                'title' => $config->req_string(SetupConfig::TITLE),
-                'theme' => $config->req_string(SetupConfig::THEME),
+                'title' => $config->req(SetupConfig::TITLE),
+                'theme' => $config->req(SetupConfig::THEME),
                 'url'   => (string)(make_link("")->asAbsolute()),
             ],
             "versions" => [
                 'shimmie' => SysConfig::getVersion(),
-                'schema'  => $config->get_int("db_version"),
+                'schema'  => $config->get("db_version"),
                 'php'     => phpversion(),
                 'db'      => $database->get_driver_id()->value . " " . $database->get_version(),
                 'os'      => php_uname(),
@@ -97,17 +97,17 @@ final class ET extends Extension
                 'users'    => (int)$database->get_one("SELECT COUNT(*) FROM users"),
             ],
             "media" => [
-                "memory_limit" => to_shorthand_int($config->req_int(MediaConfig::MEM_LIMIT)),
+                "memory_limit" => to_shorthand_int($config->req(MediaConfig::MEM_LIMIT)),
                 "disk_use" => to_shorthand_int($disk_total - $disk_free),
                 "disk_total" => to_shorthand_int($disk_total),
             ],
             "thumbnails" => [
-                "engine" => $config->req_string(ThumbnailConfig::ENGINE),
-                "quality" => $config->req_int(ThumbnailConfig::QUALITY),
-                "width" => $config->req_int(ThumbnailConfig::WIDTH),
-                "height" => $config->req_int(ThumbnailConfig::HEIGHT),
-                "scaling" => $config->req_int(ThumbnailConfig::SCALING),
-                "mime" => $config->req_string(ThumbnailConfig::MIME),
+                "engine" => $config->req(ThumbnailConfig::ENGINE),
+                "quality" => $config->req(ThumbnailConfig::QUALITY),
+                "width" => $config->req(ThumbnailConfig::WIDTH),
+                "height" => $config->req(ThumbnailConfig::HEIGHT),
+                "scaling" => $config->req(ThumbnailConfig::SCALING),
+                "mime" => $config->req(ThumbnailConfig::MIME),
             ],
         ];
 
