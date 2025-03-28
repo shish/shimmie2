@@ -8,6 +8,7 @@ use function MicroHTML\TABLE;
 use function MicroHTML\TD;
 use function MicroHTML\TH;
 use function MicroHTML\TR;
+use function MicroHTML\SPAN;
 
 class PermManagerTheme extends Themelet
 {
@@ -17,7 +18,7 @@ class PermManagerTheme extends Themelet
      */
     public function display_user_classes(array $classes, array $permissions): void
     {
-        $table = TABLE(["class" => "zebra"]);
+        $table = TABLE(["class" => "zebra", "id" => "permission_table"]);
 
         $row = TR();
         $row->appendChild(TH("Permission"));
@@ -36,13 +37,13 @@ class PermManagerTheme extends Themelet
             $row->appendChild(TH($meta->label));
 
             foreach ($classes as $class) {
-                $opacity = $class->has_own_permission($name) ? 1 : 0.2;
+                $inherited = $class->has_own_permission($name) ? "" : "inherited";
                 if ($class->can($name)) {
-                    $cell = TD(["style" => "color: green; opacity: $opacity;"], "✔");
+                    $cell = SPAN(["class" => "allowed $inherited;"], "✔");
                 } else {
-                    $cell = TD(["style" => "color: red; opacity: $opacity;"], "✘");
+                    $cell = SPAN(["class" => "denied $inherited"], "✘");
                 }
-                $row->appendChild($cell);
+                $row->appendChild(TD($cell));
             }
 
             $row->appendChild(TD(["style" => "text-align: left;"], $meta->help));
