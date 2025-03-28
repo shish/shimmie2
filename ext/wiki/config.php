@@ -8,7 +8,7 @@ final class WikiConfig extends ConfigGroup
 {
     public const KEY = "wiki";
 
-    #[ConfigMeta("Tag page template", ConfigType::STRING, input: "longtext", default: "{body}\n\n[b]Aliases: [/b][i]{aliases}[/i]")]
+    #[ConfigMeta("Tag page template", ConfigType::STRING, input: ConfigInput::TEXTAREA, default: "{body}\n\n[b]Aliases: [/b][i]{aliases}[/i]")]
     public const TAG_PAGE_TEMPLATE = "wiki_tag_page_template";
 
     #[ConfigMeta("Empty list text", ConfigType::STRING, default: "none")]

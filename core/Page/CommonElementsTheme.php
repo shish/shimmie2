@@ -249,19 +249,19 @@ class CommonElementsTheme extends Themelet
             $row = TR(["class" => $meta->advanced ? "advanced" : ""]);
             $row->appendChild(TH(LABEL(["for" => $key], $meta->label)));
             switch ($meta->input) {
-                case "bool":
+                case ConfigInput::CHECKBOX:
                     $val = $config->get_bool($key);
                     $input = INPUT(["type" => "checkbox", "id" => $key, "name" => "_config_$key", "checked" => $val]);
                     break;
-                case "int":
+                case ConfigInput::NUMBER:
                     $val = $config->get_int($key);
                     $input = INPUT(["type" => "number", "id" => $key, "name" => "_config_$key", "value" => $val, "size" => 4, "step" => 1]);
                     break;
-                case "shorthand_int":
+                case ConfigInput::BYTES:
                     $val = to_shorthand_int($config->get_int($key) ?? 0);
                     $input = INPUT(["type" => "text", "id" => $key, "name" => "_config_$key", "value" => $val, "size" => 6]);
                     break;
-                case "text":
+                case ConfigInput::TEXT:
                     $val = $config->get_string($key);
                     if ($meta->options) {
                         $options = $meta->options;
@@ -276,16 +276,16 @@ class CommonElementsTheme extends Themelet
                         $input = INPUT(["type" => "text", "id" => $key, "name" => "_config_$key", "value" => $val]);
                     }
                     break;
-                case "longtext":
+                case ConfigInput::TEXTAREA:
                     $val = $config->get_string($key) ?? "";
                     $rows = max(3, min(10, count(explode("\n", $val))));
                     $input = TEXTAREA(["rows" => $rows, "id" => $key, "name" => "_config_$key"], $val);
                     break;
-                case "color":
+                case ConfigInput::COLOR:
                     $val = $config->get_string($key);
                     $input = INPUT(["type" => "color", "id" => $key, "name" => "_config_$key", "value" => $val]);
                     break;
-                case "multichoice":
+                case ConfigInput::MULTICHOICE:
                     $val = $config->get_array($key) ?? [];
                     $input = SELECT(["id" => $key, "name" => "_config_{$key}[]", "multiple" => true, "size" => 5]);
                     $options = $meta->options;

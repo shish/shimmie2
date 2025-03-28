@@ -20,7 +20,7 @@ final class UserAccountsConfig extends ConfigGroup
     #[ConfigMeta("Require email address", ConfigType::BOOL, default: false)]
     public const USER_EMAIL_REQUIRED = "user_email_required";
 
-    #[ConfigMeta("Terms & Conditions", ConfigType::STRING, input: "longtext")]
+    #[ConfigMeta("Terms & Conditions", ConfigType::STRING, input: ConfigInput::TEXTAREA)]
     public const LOGIN_TAC = "login_tac";
 
     #[ConfigMeta("On log in", ConfigType::STRING, default: "previous", options: [
@@ -29,7 +29,7 @@ final class UserAccountsConfig extends ConfigGroup
     ])]
     public const LOGIN_REDIRECT = "user_login_redirect";
 
-    #[ConfigMeta("Message when signups disabled", ConfigType::STRING, input: "longtext", default: "The board admin has disabled the ability to sign up for new accounts", advanced: true)]
+    #[ConfigMeta("Message when signups disabled", ConfigType::STRING, input: ConfigInput::TEXTAREA, default: "The board admin has disabled the ability to sign up for new accounts", advanced: true)]
     public const SIGNUP_DISABLED_MESSAGE = "login_signup_disabled_message";
 
     #[ConfigMeta("Login duration (days)", ConfigType::INT, default: 365, advanced: true)]
