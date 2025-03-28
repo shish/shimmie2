@@ -159,7 +159,7 @@ class UploadTheme extends Themelet
         $title = Ctx::$config->req(SetupConfig::TITLE);
         $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
-        $delimiter = Ctx::$config->req(SetupConfig::NICE_URLS) ? '?' : '&amp;';
+        $delimiter = Url::are_niceurls_enabled() ? '?' : '&amp;';
 
         $js = 'javascript:(
             function() {

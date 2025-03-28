@@ -41,6 +41,11 @@ final class SysConfig
         return defined("DEBUG") ? constant("DEBUG") : false;
     }
 
+    public static function getNiceUrls(): bool
+    {
+        return defined("NICE_URLS") ? constant("NICE_URLS") : Ctx::$config->req(SetupConfig::NICE_URLS);
+    }
+
     public static function getCookiePrefix(): string
     {
         return defined("COOKIE_PREFIX") ? constant("COOKIE_PREFIX") : 'shm';

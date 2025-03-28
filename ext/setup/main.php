@@ -91,7 +91,7 @@ final class Setup extends Extension
             $page->set_data(MimeType::JSON, \Safe\json_encode([
                 "args" => $event->args,
                 "theme" => get_theme(),
-                "nice_urls" => $config->req(SetupConfig::NICE_URLS),
+                "nice_urls" => Url::are_niceurls_enabled(),
                 "base" => (string)Url::base(),
                 "absolute_base" => (string)Url::base()->asAbsolute(),
                 "base_link" => (string)make_link(""),
