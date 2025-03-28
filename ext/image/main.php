@@ -174,8 +174,7 @@ final class ImageIO extends Extension
             $file = $image->get_image_filename();
         }
         if (!$file->exists()) {
-            http_response_code(404);
-            die();
+            throw new PostNotFound("Image not found");
         }
 
         if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {

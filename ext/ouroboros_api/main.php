@@ -278,10 +278,7 @@ final class OuroborosAPI extends Extension
                 $this->tagIndex($limit, $p, $order, $name, $name_pattern);
             }
         } elseif ($event->page_matches('post/show')) {
-            $page = Ctx::$page;
-            $page->set_redirect(make_link(str_replace('post/show', 'post/view', implode('/', $event->args))));
-            $page->display();
-            die();
+            Ctx::$page->set_redirect(make_link(str_replace('post/show', 'post/view', implode('/', $event->args))));
         }
     }
 

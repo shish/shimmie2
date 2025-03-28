@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-final class Path
+final readonly class Path
 {
     public function __construct(private string $name)
     {

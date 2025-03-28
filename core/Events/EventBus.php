@@ -19,7 +19,7 @@ function send_event(Event $event): Event
 final class EventBus
 {
     /** @var array<string, list<Extension>> $event_listeners */
-    private array $event_listeners = [];
+    private readonly array $event_listeners;
     public int $event_count = 0;
     private ?float $deadline = null;
 
