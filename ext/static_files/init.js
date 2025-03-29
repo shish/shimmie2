@@ -11,6 +11,12 @@ function shm_make_link(page, query) {
     if (query) url += joiner + new URLSearchParams(query).toString();
     return url;
 }
+function shm_blink(target) {
+    target.classList.add("blink");
+    setTimeout(() => {
+        target.classList.remove("blink");
+    }, 5000);
+}
 
 function shm_log(section, ...message) {
     window.dispatchEvent(
