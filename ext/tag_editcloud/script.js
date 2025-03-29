@@ -22,27 +22,28 @@ Array.prototype.editcloud_remove = function (ele) {
 
 var hide_text = null;
 function tageditcloud_toggle_extra(hide) {
-	if (hide_text === null) {
-		hide_text = hide.innerHTML;
-	}
+    if (hide_text === null) {
+        hide_text = hide.innerHTML;
+    }
 
-	var el = document.getElementById('tagcloud_extra');
-	el.style.display = (el.style.display !== 'none' ? 'none' : '' );
-	hide.innerHTML = (el.style.display !== 'none' ? 'show fewer tags' : hide_text );
+    var el = document.getElementById("tagcloud_extra");
+    el.style.display = el.style.display !== "none" ? "none" : "";
+    hide.innerHTML =
+        el.style.display !== "none" ? "show fewer tags" : hide_text;
 }
 
-function tageditcloud_toggle_tag(ele,fullTag) {
-    var taglist = document.getElementById('tag_editor');
-    var tags = taglist.value.split(' ');
+function tageditcloud_toggle_tag(ele, fullTag) {
+    var taglist = document.getElementById("tag_editor");
+    var tags = taglist.value.split(" ");
 
     if (tags.editcloud_contains(fullTag)) {
         tags = tags.editcloud_remove(fullTag);
-        ele.className = 'tag-unselected';
+        ele.className = "tag-unselected";
     } else {
         tags.splice(0, 0, fullTag);
-        ele.className = 'tag-selected';
+        ele.className = "tag-selected";
     }
 
-    taglist.value = tags.join(' ');
-    document.getElementById('tag_editor').focus();
+    taglist.value = tags.join(" ");
+    document.getElementById("tag_editor").focus();
 }
