@@ -1,6 +1,9 @@
 :root {
 	--added-background: lightgreen;
 	--removed-background: lightcoral;
+
+	--flash-base-color: #FF7;
+	--flash-blink-color: #FFF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,12 +41,20 @@ H3[class~="shm-toggler"] {
 	cursor: pointer;
 }
 
+@keyframes flash {
+    0% {background-color: var(--flash-base-color);}
+    25% {background-color: var(--flash-blink-color);}
+    100% {background-color: var(--flash-base-color);}
+}
+
 #flash {
-	background: #FF7;
+    animation: flash 1s linear 1;
+	background-color: var(--flash-base-color);
 	color: #444;
 	display: block;
 	padding: 8px;
-	margin: 8px;
+	margin-bottom: 1rem;
+	border-radius: var(--border-radius);
 	border: 1px solid #882;
 }
 
