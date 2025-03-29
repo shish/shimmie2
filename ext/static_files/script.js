@@ -1,4 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // If a page wants to flash a message, but it does a redirect, then the
+    // redirect will have ?flash=... appended to it so that the destination
+    // can flash on its behalf, but we then want to remove the parameter so
+    // that it doesn't stick around (eg if the user hits refresh)
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search.slice(1));
+    if (params.has("flash")) {
+        params.delete("flash");
+        window.history.replaceState(
+            {},
+            "",
+            `${window.location.pathname}?${params}${window.location.hash}`,
+        );
+    }
+
     /** Load jQuery extensions **/
     //Code via: https://stackoverflow.com/a/13106698
     $.fn.highlight = function (fadeOut) {

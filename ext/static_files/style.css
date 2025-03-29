@@ -1,6 +1,11 @@
 :root {
 	--added-background: lightgreen;
 	--removed-background: lightcoral;
+
+	--flash-color: #882;
+	--flash-border: #660;
+	--blink-base-color: #FF70;
+	--blink-blink-color: #FF7F;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,23 +35,38 @@ TABLE.form TEXTAREA,
 TABLE.form BUTTON {width: 100%;}
 
 H1, H2, H3 {
-	overflow-wrap: anywhere;
+    overflow-wrap: anywhere;
 }
 
 *[onclick],
 H3[class~="shm-toggler"] {
-	cursor: pointer;
+    cursor: pointer;
+}
+
+@keyframes blink {
+    0% {background-color: var(--blink-base-color);}
+    25% {background-color: var(--blink-blink-color);}
+    50% {background-color: var(--blink-base-color);}
+    75% {background-color: var(--blink-blink-color);}
+    100% {background-color: var(--blink-base-color);}
+}
+.blink {
+    animation: blink 2s linear 1;
 }
 
 #flash {
-	background: #FF7;
-	color: #444;
-	display: block;
-	padding: 8px;
-	margin: 8px;
-	border: 1px solid #882;
+    color: #444;
+    background-color: var(--flash-color);
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--flash-border);
+}
+#flash B {
+    display: block;
+    padding: 8px;
+    border-radius: var(--border-radius);
 }
 
 .tag {
-	overflow-wrap: anywhere;
+    overflow-wrap: anywhere;
 }

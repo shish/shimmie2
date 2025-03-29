@@ -6,10 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // switching pages
             el.setAttribute("href", target_id);
 
-            // highlight it when clicked
+            // highlight the target comment when clicked
             el.addEventListener("click", function (e) {
-                // This needs jQuery UI
-                $(target_id).highlight();
+                shm_blink(document.getElementById(target_id.substring(1)));
             });
 
             // vanilla target name should already be in the URL tag, but this
