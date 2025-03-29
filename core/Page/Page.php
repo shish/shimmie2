@@ -633,7 +633,7 @@ class Page
     protected function flash_html(): HTMLElement
     {
         if ($this->flash) {
-            return B(["id" => "flash"], joinHTML(BR(), $this->flash));
+            return DIV(["id" => "flash"], B(["class" => "blink"], joinHTML(BR(), $this->flash)));
         }
         return emptyHTML();
     }
