@@ -6,7 +6,7 @@ function calculatePeekerSize(imageWidth, imageHeight, maxWidth, maxHeight) {
     let yscale = maxHeight / imageHeight;
 
     let scale;
-    if(yscale  < xscale) {
+    if (yscale < xscale) {
         scale = yscale;
     } else {
         scale = xscale;
@@ -26,12 +26,12 @@ function postPeekAddPeeker() {
     peekerElement.style.boxShadow = "5px 5px 10px black";
 
     var image_elements = document.querySelectorAll(".shm-image-list a img");
-    image_elements.forEach(function(item) {
+    image_elements.forEach(function (item) {
         var parent = item.parentElement;
         parent.style.position = "relative";
 
-        var mime =parent.dataset["mime"];
-        if(mime.match(mimeRegex)) {
+        var mime = parent.dataset["mime"];
+        if (mime.match(mimeRegex)) {
             var linkElement = document.createElement("DIV");
             linkElement.innerHTML = "&#x1F50D;";
             linkElement.style.position = "absolute";
@@ -45,9 +45,11 @@ function postPeekAddPeeker() {
             var width = parseInt(parent.dataset["width"]);
             var height = parseInt(parent.dataset["height"]);
 
-            linkElement.onmouseenter = function(e) {
+            linkElement.onmouseenter = function (e) {
                 let imgElement = document.createElement("IMG");
-                imgElement.src = item.src.replace("thumb/", "image/").replace("_thumbs/", "_images/");
+                imgElement.src = item.src
+                    .replace("thumb/", "image/")
+                    .replace("_thumbs/", "_images/");
                 imgElement.style.width = "100%";
                 imgElement.style.aheight = "100%";
 
@@ -59,51 +61,88 @@ function postPeekAddPeeker() {
                 // Array is [left, right, top, bottom, [width, height]]
 
                 // Calculate for the right area
-                let dimensions = calculatePeekerSize(width, height,  window.innerWidth - e.clientX - windowMargin, window.innerHeight - windowMargin);
+                let dimensions = calculatePeekerSize(
+                    width,
+                    height,
+                    window.innerWidth - e.clientX - windowMargin,
+                    window.innerHeight - windowMargin,
+                );
                 sizeCandidates.push([
-                    (e.clientX + cursorMargin - window.scrollX) + "px", // left
+                    e.clientX + cursorMargin - window.scrollX + "px", // left
                     "", // right
                     "", // top
-                    ((window.innerHeight - dimensions[1]) / 2  - window.scrollY) + "px", // bottom
-                    dimensions
+                    (window.innerHeight - dimensions[1]) / 2 -
+                        window.scrollY +
+                        "px", // bottom
+                    dimensions,
                 ]);
 
                 // Calculate for the bottom area
-                dimensions = calculatePeekerSize(width, height,  window.innerWidth - windowMargin, window.innerHeight - e.clientY - windowMargin);
+                dimensions = calculatePeekerSize(
+                    width,
+                    height,
+                    window.innerWidth - windowMargin,
+                    window.innerHeight - e.clientY - windowMargin,
+                );
                 sizeCandidates.push([
-                    ((window.innerWidth - dimensions[0]) / 2  - window.scrollX) + "px", // left
+                    (window.innerWidth - dimensions[0]) / 2 -
+                        window.scrollX +
+                        "px", // left
                     "", // right
-                    (e.clientY + cursorMargin + window.scrollY) + "px", // top
+                    e.clientY + cursorMargin + window.scrollY + "px", // top
                     "", // bottom
-                    dimensions
+                    dimensions,
                 ]);
 
                 // Calculate for the left area
-                dimensions = calculatePeekerSize(width, height, e.clientX - windowMargin, window.innerHeight - windowMargin);
+                dimensions = calculatePeekerSize(
+                    width,
+                    height,
+                    e.clientX - windowMargin,
+                    window.innerHeight - windowMargin,
+                );
                 sizeCandidates.push([
                     "", // left
-                    (window.innerWidth - e.clientX + cursorMargin - window.scrollX) + "px", // right
+                    window.innerWidth -
+                        e.clientX +
+                        cursorMargin -
+                        window.scrollX +
+                        "px", // right
                     "", // top
-                    ((window.innerHeight - dimensions[1]) / 2 - window.scrollY) + "px", // bottom
-                    dimensions
+                    (window.innerHeight - dimensions[1]) / 2 -
+                        window.scrollY +
+                        "px", // bottom
+                    dimensions,
                 ]);
 
                 // Calculate for the top area
-                dimensions = calculatePeekerSize(width, height,  window.innerWidth - windowMargin, e.clientY - windowMargin);
+                dimensions = calculatePeekerSize(
+                    width,
+                    height,
+                    window.innerWidth - windowMargin,
+                    e.clientY - windowMargin,
+                );
                 sizeCandidates.push([
-                    ((window.innerWidth - dimensions[0]) / 2  - window.scrollX) + "px", // left
+                    (window.innerWidth - dimensions[0]) / 2 -
+                        window.scrollX +
+                        "px", // left
                     "", // right
                     "", // top
-                    (window.innerHeight - e.clientY + cursorMargin - window.scrollY) + "px", // bottom
-                    dimensions
+                    window.innerHeight -
+                        e.clientY +
+                        cursorMargin -
+                        window.scrollY +
+                        "px", // bottom
+                    dimensions,
                 ]);
 
                 let candidate = null;
                 let candidateSize = 0;
-                for(let i = 0; i < sizeCandidates.length; i++) {
+                for (let i = 0; i < sizeCandidates.length; i++) {
                     let newCandidate = sizeCandidates[i];
-                    let newCandidateSize = newCandidate[4][0] * newCandidate[4][1];
-                    if(newCandidateSize>candidateSize) {
+                    let newCandidateSize =
+                        newCandidate[4][0] * newCandidate[4][1];
+                    if (newCandidateSize > candidateSize) {
                         candidateSize = newCandidateSize;
                         candidate = newCandidate;
                     }
@@ -111,30 +150,28 @@ function postPeekAddPeeker() {
 
                 peekerElement.style.left = candidate[0];
                 peekerElement.style.right = candidate[1];
-                peekerElement.style.top =candidate[2];
+                peekerElement.style.top = candidate[2];
                 peekerElement.style.bottom = candidate[3];
 
                 peekerElement.style.width = candidate[4][0] + "px";
-                peekerElement.style.height =  candidate[4][1]  + "px";
-
+                peekerElement.style.height = candidate[4][1] + "px";
 
                 peekerElement.appendChild(imgElement);
 
-                if(!peekerOpen) {
+                if (!peekerOpen) {
                     document.body.appendChild(peekerElement);
                 }
 
                 peekerOpen = true;
-            }
+            };
             linkElement.onmouseleave = function (e) {
-                if(peekerOpen) {
+                if (peekerOpen) {
                     document.body.removeChild(peekerElement);
                     peekerOpen = false;
                 }
-            }
+            };
 
             parent.appendChild(linkElement);
-
 
             //
             // var offsetX = (item.offsetWidth - newWidth)/2;
@@ -159,7 +196,6 @@ function postPeekAddPeeker() {
     });
 }
 
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     postPeekAddPeeker();
 });
