@@ -143,29 +143,47 @@ final class PermManager extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("perm_manager", method: "GET")) {
-            $permissions = [];
-            foreach (PermissionGroup::get_subclasses() as $class) {
-                $group = $class->newInstance();
-                if (!$group::is_enabled()) {
-                    continue;
-                }
-                foreach ($class->getConstants() as $const => $key) {
-                    $refl_const = $class->getReflectionConstant($const);
-                    if (!$refl_const) {
-                        continue;
-                    }
-                    $attributes = $refl_const->getAttributes(PermissionMeta::class);
-                    if (count($attributes) == 0) {
-                        continue;
-                    }
-                    $meta = $attributes[0]->newInstance();
-                    $permissions[$key] = $meta;
-                }
-            }
             $this->theme->display_user_classes(
                 UserClass::$known_classes,
-                $permissions
+                PermissionGroup::get_all_metas(),
             );
+            if (Ctx::$user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+                $counts = Ctx::$database->get_pairs("SELECT class, COUNT(*) FROM users GROUP BY class");
+                $this->theme->display_create_delete(UserClass::$known_classes, $counts);
+            }
+        }
+        if ($event->page_matches("user_class", method: "POST", permission: PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+            $class_name = $event->req_POST("name");
+            $parent = $event->req_POST("parent");
+            $description = $event->req_POST("description");
+            Ctx::$database->execute(
+                "INSERT INTO user_classes (name, parent, description) VALUES (:name, :parent, :description)",
+                ["name" => $class_name, "parent" => $parent, "description" => $description]
+            );
+            Ctx::$page->flash("User Class $class_name created");
+            Ctx::$page->set_redirect(make_link("user_class/$class_name"));
+        }
+        if ($event->page_matches("user_class/{class}", method: "GET", permission: PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+            $class_name = $event->get_arg("class");
+            $class = UserClass::get_class($class_name);
+            $this->theme->display_edit($class, PermissionGroup::get_all_metas());
+        }
+        if ($event->page_matches("user_class/{class}", method: "POST", permission: PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+            $class_name = $event->get_arg("class");
+            $parent = $event->req_POST("parent");
+            $description = $event->req_POST("description");
+            Ctx::$database->execute(
+                "UPDATE user_classes SET parent = :parent, description = :description WHERE name = :name",
+                ["name" => $class_name, "parent" => $parent, "description" => $description]
+            );
+            Ctx::$page->flash("User Class $class_name updated");
+            Ctx::$page->set_redirect(make_link("user_class/$class_name"));
+        }
+        if ($event->page_matches("user_class/{class}/delete", method: "POST", permission: PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
+            $class_name = $event->get_arg("class");
+            Ctx::$database->execute("DELETE FROM user_classes WHERE name = :name", ["name" => $class_name]);
+            Ctx::$page->flash("User Class $class_name deleted");
+            Ctx::$page->set_redirect(Url::referer_or());
         }
     }
 
