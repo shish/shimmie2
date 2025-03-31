@@ -6,8 +6,19 @@ namespace Shimmie2;
 
 abstract class BaseConfigGroup extends Enablable
 {
-    public ?string $title = null;
+    protected ?string $title = null;
     public ?int $position = null;
+
+    public function get_title(): string
+    {
+        return $this->title ?? implode(
+            " ",
+            \Safe\preg_split(
+                '/(?=[A-Z])/',
+                \Safe\preg_replace("/^Shimmie2.(.*?)Permission$/", "\$1", get_class($this))
+            )
+        );
+    }
 
     /**
      * Get all config fields from this config group.
