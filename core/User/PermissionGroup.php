@@ -19,4 +19,27 @@ abstract class PermissionGroup extends Enablable
             ), fn ($x) => strlen($x) > 0)
         );
     }
+
+    /**
+     * @return array<string, array<string, PermissionMeta>>
+     */
+    public static function get_all_metas_grouped(): array
+    {
+        $permissions = [];
+        foreach (PermissionGroup::get_subclasses() as $class) {
+            $group_arr = [];
+            $group = $class->newInstance();
+            if (!$group::is_enabled()) {
+                continue;
+            }
+            foreach ($class->getReflectionConstants() as $const) {
+                $attributes = $const->getAttributes(PermissionMeta::class);
+                if (count($attributes) === 1) {
+                    $group_arr[$const->getValue()] = $attributes[0]->newInstance();
+                }
+            }
+            $permissions[$group->get_title()] = $group_arr;
+        }
+        return $permissions;
+    }
 }

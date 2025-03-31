@@ -94,28 +94,9 @@ final class PermManager extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("perm_manager", method: "GET")) {
-            $permissions = [];
-            foreach (PermissionGroup::get_subclasses() as $class) {
-                $group = $class->newInstance();
-                if (!$group::is_enabled()) {
-                    continue;
-                }
-                foreach ($class->getConstants() as $const => $key) {
-                    $refl_const = $class->getReflectionConstant($const);
-                    if (!$refl_const) {
-                        continue;
-                    }
-                    $attributes = $refl_const->getAttributes(PermissionMeta::class);
-                    if (count($attributes) == 0) {
-                        continue;
-                    }
-                    $meta = $attributes[0]->newInstance();
-                    $permissions[$key] = $meta;
-                }
-            }
             $this->theme->display_user_classes(
                 UserClass::$known_classes,
-                $permissions
+                PermissionGroup::get_all_metas_grouped(),
             );
         }
     }
