@@ -7,6 +7,7 @@ namespace Shimmie2;
 final class PrivMsgPermission extends PermissionGroup
 {
     public const KEY = "pm";
+    public ?string $title = "Private Messages";
 
     #[PermissionMeta("Send PMs")]
     public const SEND_PM = "send_pm";

@@ -7,6 +7,7 @@ namespace Shimmie2;
 final class ImagePermission extends PermissionGroup
 {
     public const KEY = "image";
+    public ?string $title = "Posts";
 
     #[PermissionMeta("Create post")]
     public const CREATE_IMAGE = "create_image";
