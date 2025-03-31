@@ -13,10 +13,10 @@ abstract class BaseConfigGroup extends Enablable
     {
         return $this->title ?? implode(
             " ",
-            \Safe\preg_split(
+            array_filter(\Safe\preg_split(
                 '/(?=[A-Z])/',
-                \Safe\preg_replace("/^Shimmie2.(.*?)Permission$/", "\$1", get_class($this))
-            )
+                \Safe\preg_replace("/^Shimmie2.(.*?)(User)?Config/", "\$1", get_class($this))
+            ))
         );
     }
 
