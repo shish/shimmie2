@@ -233,7 +233,7 @@ class CommonElementsTheme extends Themelet
 
     public function config_group_to_block(Config $config, BaseConfigGroup $group): ?Block
     {
-        $title = trim($group->title ?? implode(" ", \Safe\preg_split('/(?=[A-Z])/', \Safe\preg_replace("/^Shimmie2.(.*?)(User)?Config$/", "\$1", get_class($group)))));
+        $title = $group->get_title();
         $fields = $group->get_config_fields();
         $fields = array_filter($fields, fn ($field) => !$field->advanced || @$_GET["advanced"] == "on");
         if (count($fields) == 0) {
