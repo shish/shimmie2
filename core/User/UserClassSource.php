@@ -9,4 +9,5 @@ enum UserClassSource
     case UNKNOWN;
     case DEFAULT;
     case FILE;
+    case DATABASE;
 }
