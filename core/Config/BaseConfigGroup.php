@@ -62,11 +62,9 @@ abstract class BaseConfigGroup extends Enablable
         foreach (self::get_subclasses(true) as $class) {
             foreach ($class->getReflectionConstants() as $const) {
                 $attributes = $const->getAttributes(ConfigMeta::class);
-                if (count($attributes) !== 1) {
-                    continue;
+                if (count($attributes) === 1) {
+                    $metas[$const->getValue()] = $attributes[0]->newInstance();
                 }
-                $meta = $attributes[0]->newInstance();
-                $metas[$const->getValue()] = $meta;
             }
         }
         return $metas;
