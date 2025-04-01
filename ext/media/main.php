@@ -293,9 +293,40 @@ final class Media extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array{
+     *     streams: array<array{
+     *         codec_type: "audio",
+     *         codec_name: string,
+     *         codec_tag_string: string,
+     *         tags?: array<string, string>
+     *     }|array{
+     *         codec_type: "video",
+     *         codec_name: string,
+     *         codec_tag_string: string,
+     *         width: int,
+     *         height: int,
+     *         coded_width: int,
+     *         coded_height: int,
+     *         pix_fmt: string,
+     *         tags?: array<string, string>
+     *     }>,
+     *     format: array{
+     *         filename: string,
+     *         nb_streams: int,
+     *         nb_programs: int,
+     *         nb_stream_groups: int,
+     *         format_name: string,
+     *         format_long_name: string,
+     *         start_time: string,
+     *         duration: string,
+     *         size: string,
+     *         bit_rate: string,
+     *         probe_score: int,
+     *         tags?: array<string, string>
+     *     }
+     * }
      */
-    public static function get_ffprobe_data(string $filename): array
+    public static function get_ffprobe_data(Path $filename): array
     {
         $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFPROBE_PATH));
         $command->add_flag("-print_format");
@@ -304,7 +335,7 @@ final class Media extends Extension
         $command->add_flag("quiet");
         $command->add_flag("-show_format");
         $command->add_flag("-show_streams");
-        $command->add_escaped_arg($filename);
+        $command->add_escaped_arg($filename->str());
         $command->execute();
         $output = $command->get_output();
         return json_decode($output, true);
@@ -604,27 +635,18 @@ final class Media extends Extension
      */
     public static function video_size(Path $filename): array
     {
-        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFMPEG_PATH));
-        $command->add_flag("-y");
-        $command->add_flag("-i");
-        $command->add_escaped_arg($filename->str());
-        $command->add_flag("-vstats");
-        $command->execute();
-        $output = $command->get_output();
+        $data = Media::get_ffprobe_data($filename);
 
-        if (\Safe\preg_match("/Video: .* ([0-9]{1,4})x([0-9]{1,4})/", $output, $regs)) {
-            $x = (int)$regs[1];
-            $y = (int)$regs[2];
-            assert($x > 0 && $y > 0);
-            if (\Safe\preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
-                $size = [$y, $x];
-            } else {
-                $size = [$x, $y];
+        $width = 1;
+        $height = 1;
+        foreach ($data["streams"] as $stream) {
+            if ($stream["codec_type"] == "video") {
+                $width = max($width, $stream["width"]);
+                $height = max($height, $stream["height"]);
             }
-        } else {
-            $size = [1, 1];
         }
-        return $size;
+
+        return [$width, $height];
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
