@@ -167,11 +167,6 @@ final class Media extends Extension
             default:
                 throw new MediaException("Engine not supported for resize: " . $event->engine->value);
         }
-
-        // TODO: Get output optimization tools working better
-        //        if ($config->get("thumb_optim")) {
-        //            exec("jpegoptim $outname", $output, $ret);
-        //        }
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
@@ -263,10 +258,7 @@ final class Media extends Extension
      */
     public static function create_thumbnail_ffmpeg(Image $image): bool
     {
-        $ffmpeg = Ctx::$config->get(MediaConfig::FFMPEG_PATH);
-        if (empty($ffmpeg)) {
-            throw new MediaException("ffmpeg command not configured");
-        }
+        $ffmpeg = Ctx::$config->req(MediaConfig::FFMPEG_PATH);
 
         $ok = false;
         $inname = $image->get_image_filename();
@@ -305,32 +297,17 @@ final class Media extends Extension
      */
     public static function get_ffprobe_data(string $filename): array
     {
-        $ffprobe = Ctx::$config->get(MediaConfig::FFPROBE_PATH);
-        if (empty($ffprobe)) {
-            throw new MediaException("ffprobe command not configured");
-        }
-
-        $args = [
-            escapeshellarg($ffprobe),
-            "-print_format", "json",
-            "-v", "quiet",
-            "-show_format",
-            "-show_streams",
-            escapeshellarg($filename),
-        ];
-
-        $cmd = escapeshellcmd(implode(" ", $args));
-
-        exec($cmd, $output, $ret);
-
-        if ($ret === 0) {
-            Log::debug('media', "Getting media data `$cmd`, returns $ret");
-            $output = implode($output);
-            return json_decode($output, true);
-        } else {
-            Log::error('media', "Getting media data `$cmd`, returns $ret");
-            return [];
-        }
+        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFPROBE_PATH));
+        $command->add_flag("-print_format");
+        $command->add_flag("json");
+        $command->add_flag("-v");
+        $command->add_flag("quiet");
+        $command->add_flag("-show_format");
+        $command->add_flag("-show_streams");
+        $command->add_escaped_arg($filename);
+        $command->execute();
+        $output = $command->get_output();
+        return json_decode($output, true);
     }
 
     public static function determine_ext(MimeType $mime): string
@@ -627,19 +604,13 @@ final class Media extends Extension
      */
     public static function video_size(Path $filename): array
     {
-        $ffmpeg = Ctx::$config->req(MediaConfig::FFMPEG_PATH);
-        $cmd = escapeshellcmd(implode(" ", [
-            escapeshellarg($ffmpeg),
-            "-y", "-i", escapeshellarg($filename->str()),
-            "-vstats"
-        ]));
-        // \Safe\shell_exec is a little broken
-        // https://github.com/thecodingmachine/safe/issues/281
-        $output = shell_exec($cmd . " 2>&1");
-        if (is_null($output) || $output === false) {
-            throw new MediaException("Failed to execute command: $cmd");
-        }
-        // error_log("Getting size with `$cmd`");
+        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFMPEG_PATH));
+        $command->add_flag("-y");
+        $command->add_flag("-i");
+        $command->add_escaped_arg($filename->str());
+        $command->add_flag("-vstats");
+        $command->execute();
+        $output = $command->get_output();
 
         if (\Safe\preg_match("/Video: .* ([0-9]{1,4})x([0-9]{1,4})/", $output, $regs)) {
             $x = (int)$regs[1];
@@ -653,7 +624,6 @@ final class Media extends Extension
         } else {
             $size = [1, 1];
         }
-        Log::debug('media', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
         return $size;
     }
 
