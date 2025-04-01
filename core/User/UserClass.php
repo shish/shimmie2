@@ -14,22 +14,26 @@ final class UserClass
     public static array $known_classes = [];
     public static UserClassSource $loading = UserClassSource::UNKNOWN;
     /** @var list<UserClassSource> */
-    public array $sources = [];
+    public readonly array $sources;
 
     /**
      * @param array<string, bool> $abilities
      */
     public function __construct(
         #[Field]
-        public string $name,
-        private ?string $parent_name = null,
-        private array $abilities = [],
-        public string $description = "",
+        public readonly string $name,
+        private readonly ?string $parent_name = null,
+        private readonly array $abilities = [],
+        public readonly string $description = "",
     ) {
-        if (in_array($name, self::$known_classes)) {
-            $this->sources = self::$known_classes[$name]->sources;
+        if (array_key_exists($name, self::$known_classes)) {
+            if (self::$loading == UserClassSource::DEFAULT) {
+                throw new ServerError("Duplicate default class: {$name}");
+            }
+            $this->sources = array_merge(self::$known_classes[$name]->sources, [self::$loading]);
+        } else {
+            $this->sources = [self::$loading];
         }
-        $this->sources[] = self::$loading;
         self::$known_classes[$name] = $this;
     }
 
@@ -98,6 +102,7 @@ final class UserClass
         if (!defined("UNITTEST")) {
             throw new ServerError("Cannot set permission '$permission' outside of unit tests.");
         }
-        $this->abilities[$permission] = $value;
+        // create a new userclass with the same name but updated abilities
+        new UserClass($this->name, $this->parent_name, $this->abilities + [$permission => $value], $this->description);
     }
 }
