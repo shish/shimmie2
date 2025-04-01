@@ -295,7 +295,7 @@ final class Media extends Extension
     /**
      * @return array<string, mixed>
      */
-    public static function get_ffprobe_data(string $filename): array
+    public static function get_ffprobe_data(Path $filename): array
     {
         $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFPROBE_PATH));
         $command->add_flag("-print_format");
@@ -304,7 +304,7 @@ final class Media extends Extension
         $command->add_flag("quiet");
         $command->add_flag("-show_format");
         $command->add_flag("-show_streams");
-        $command->add_escaped_arg($filename);
+        $command->add_escaped_arg($filename->str());
         $command->execute();
         $output = $command->get_output();
         return json_decode($output, true);
