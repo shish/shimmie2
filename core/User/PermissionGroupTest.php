@@ -6,10 +6,6 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-class MyExamplePermission extends PermissionGroup
-{
-}
-
 final class PermissionGroupTest extends TestCase
 {
     public function testTitle(): void
