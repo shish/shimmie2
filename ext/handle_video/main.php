@@ -23,7 +23,7 @@ final class VideoFileHandler extends DataHandlerExtension
         $event->image->video = true;
         $event->image->image = false;
         try {
-            $data = Media::get_ffprobe_data($event->image->get_image_filename()->str());
+            $data = Media::get_ffprobe_data($event->image->get_image_filename());
 
             if (array_key_exists("streams", $data)) {
                 $video = false;
