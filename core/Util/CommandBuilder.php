@@ -13,7 +13,7 @@ final class CommandBuilder
     /** @var string[] */
     private array $args = [];
     /** @var string[] */
-    public array $output = [];
+    private array $output = [];
 
     public function __construct(string $executable)
     {
@@ -45,7 +45,7 @@ final class CommandBuilder
         return escapeshellcmd($command)." 2>&1";
     }
 
-    public function combineOutput(string $empty_output = ""): string
+    public function get_output(string $empty_output = ""): string
     {
         if (empty($this->output)) {
             return $empty_output;
@@ -59,7 +59,7 @@ final class CommandBuilder
         $cmd = $this->generate();
         exec($cmd, $this->output, $ret);
 
-        $output = $this->combineOutput("nothing");
+        $output = $this->get_output("nothing");
 
         Log::debug('command_builder', "Command `$cmd` returned $ret and outputted $output");
 
