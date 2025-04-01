@@ -16,9 +16,18 @@ final class ArchiveFileHandler extends DataHandlerExtension
             $cmd = Ctx::$config->req(ArchiveFileHandlerConfig::EXTRACT_COMMAND);
             $cmd = str_replace('"%f"', "%f", $cmd);
             $cmd = str_replace('"%d"', "%d", $cmd);
-            $cmd = str_replace('%f', escapeshellarg($event->tmpname->str()), $cmd);
-            $cmd = str_replace('%d', escapeshellarg($tmpdir->str()), $cmd);
-            exec($cmd);
+            $parts = explode(" ", $cmd);
+
+            $command = new CommandBuilder($parts[0]);
+            foreach (array_splice($parts, 1) as $part) {
+                match($part) {
+                    "%f" => $command->add_escaped_arg($event->tmpname->str()),
+                    "%d" => $command->add_escaped_arg($tmpdir->str()),
+                    default => $command->add_flag($part),
+                };
+            }
+            $command->execute();
+
             if ($tmpdir->exists()) {
                 try {
                     $results = send_event(new DirectoryUploadEvent($tmpdir, Tag::explode($event->metadata['tags'])))->results;
