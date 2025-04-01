@@ -26,16 +26,6 @@ final class UtilTest extends TestCase
         self::assertGreaterThan(0, get_memory_limit());
     }
 
-    public function test_check_gd_version(): void
-    {
-        self::assertGreaterThanOrEqual(0, check_gd_version());
-    }
-
-    public function test_check_im_version(): void
-    {
-        self::assertGreaterThanOrEqual(0, check_im_version());
-    }
-
     public function test_human_filesize(): void
     {
         self::assertEquals("123.00B", human_filesize(123));

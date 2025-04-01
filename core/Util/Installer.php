@@ -65,12 +65,12 @@ final class Installer
         $warnings = [];
         $errors = [];
 
-        if (check_gd_version() === 0 && check_im_version() === 0) {
+        if (!function_exists('gd_info') && !self::is_im_installed()) {
             $errors[] = "
             No thumbnailers could be found - install the imagemagick
             tools (or the PHP-GD library, if imagemagick is unavailable).
         ";
-        } elseif (check_im_version() === 0) {
+        } elseif (!self::is_im_installed()) {
             $warnings[] = "
             The 'convert' command (from the imagemagick package)
             could not be found - PHP-GD can be used instead, but
@@ -227,7 +227,7 @@ final class Installer
             $db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", ["name" => 'Anonymous', "pass" => null, "class" => 'anonymous']);
             $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')]);
 
-            if (check_im_version() > 0) {
+            if (self::is_im_installed()) {
                 $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'thumb_engine', "value" => 'convert']);
             }
 
@@ -324,5 +324,22 @@ final class Installer
                 0
             );
         }
+    }
+
+    private static function is_im_installed(): bool
+    {
+        $ext = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? ".exe" : "";
+        $path_env = getenv('PATH');
+        if (!$path_env) {
+            return false;
+        }
+        $paths = explode(PATH_SEPARATOR, $path_env);
+        foreach ($paths as $path) {
+            if (file_exists("$path/convert$ext")) {
+                return true;
+            }
+        }
+        return false;
+
     }
 }
