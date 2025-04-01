@@ -147,9 +147,9 @@ TD {
 TABLE.zebra {border-spacing: 0; border: 2px solid var(--zebra-border);}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
 TABLE.zebra THEAD {position: sticky;top: 0;}
-TABLE.zebra THEAD TR:last-child TD, TABLE.zebra TR:last-child THEAD TH {border-bottom: 2px solid var(--zebra-border);}
-TABLE.zebra TFOOT TR:first-child TD, TABLE.zebra TFOOT TR:first-child TH {border-top: 2px solid var(--zebra-border);}
-TABLE.zebra TR TD {border-bottom: 1px solid var(--zebra-header);}
+TABLE.zebra THEAD TR:last-of-type TD, TABLE.zebra THEAD TR:last-of-type TH {border-bottom: 2px solid var(--zebra-border);}
+TABLE.zebra TFOOT TR:first-of-type TD, TABLE.zebra TFOOT TR:first-of-type TH {border-top: 2px solid var(--zebra-border);}
+TABLE.zebra TBODY TR TD, TABLE.zebra TBODY TR TH {border-bottom: 1px solid var(--zebra-header);}
 TABLE.zebra TR:nth-child(odd) {background: var(--zebra-odd);}
 TABLE.zebra TR:nth-child(even) {background: var(--zebra-even);}
 
