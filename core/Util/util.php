@@ -116,36 +116,6 @@ function get_upload_limits(): array
 }
 
 /**
- * Check if PHP has the GD library installed
- */
-function check_gd_version(): int
-{
-    $gdversion = 0;
-
-    if (function_exists('gd_info')) {
-        $gd_info = gd_info();
-        if (substr_count($gd_info['GD Version'], '2.')) {
-            $gdversion = 2;
-        } elseif (substr_count($gd_info['GD Version'], '1.')) {
-            $gdversion = 1;
-        }
-    }
-
-    return $gdversion;
-}
-
-/**
- * Check whether ImageMagick's `convert` command
- * is installed and working
- */
-function check_im_version(): int
-{
-    $convert_check = exec("convert --version");
-
-    return (empty($convert_check) ? 0 : 1);
-}
-
-/**
  * A shorthand way to send a TextFormattingEvent and get the results.
  */
 function format_text(string $string): HTMLElement
