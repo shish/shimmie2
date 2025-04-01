@@ -13,8 +13,18 @@ final class UserClassTest extends ShimmiePHPUnitTestCase
             IndexPermission::BIG_SEARCH => false,
         ]);
         self::assertEquals("user2", $cls->name);
+        self::assertEquals([UserClassSource::UNKNOWN], $cls->sources);
         self::assertTrue($cls->can(CommentPermission::CREATE_COMMENT));
         self::assertFalse($cls->can(IndexPermission::BIG_SEARCH));
+    }
+
+    public function test_override_class(): void
+    {
+        $cls = new UserClass("anonymous", "base", [
+            CommentPermission::CREATE_COMMENT => true,
+            UserAccountsPermission::CREATE_USER => true,
+        ]);
+        self::assertEquals([UserClassSource::DEFAULT, UserClassSource::UNKNOWN], $cls->sources);
     }
 
     public function test_not_found(): void

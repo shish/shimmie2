@@ -10,6 +10,8 @@ final class InitExtEventTest extends TestCase
 {
     public function testInitExt(): void
     {
+        // InitExt loads default classes, and we don't want to duplicate them
+        UserClass::$known_classes = [];
         $e = send_event(new InitExtEvent());
         self::assertFalse($e->stop_processing);
     }
