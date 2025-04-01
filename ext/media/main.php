@@ -635,27 +635,18 @@ final class Media extends Extension
      */
     public static function video_size(Path $filename): array
     {
-        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFMPEG_PATH));
-        $command->add_flag("-y");
-        $command->add_flag("-i");
-        $command->add_escaped_arg($filename->str());
-        $command->add_flag("-vstats");
-        $command->execute();
-        $output = $command->get_output();
+        $data = Media::get_ffprobe_data($filename);
 
-        if (\Safe\preg_match("/Video: .* ([0-9]{1,4})x([0-9]{1,4})/", $output, $regs)) {
-            $x = (int)$regs[1];
-            $y = (int)$regs[2];
-            assert($x > 0 && $y > 0);
-            if (\Safe\preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
-                $size = [$y, $x];
-            } else {
-                $size = [$x, $y];
+        $width = 1;
+        $height = 1;
+        foreach ($data["streams"] as $stream) {
+            if ($stream["codec_type"] == "video") {
+                $width = max($width, $stream["width"]);
+                $height = max($height, $stream["height"]);
             }
-        } else {
-            $size = [1, 1];
         }
-        return $size;
+
+        return [$width, $height];
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
