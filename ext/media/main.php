@@ -293,7 +293,38 @@ final class Media extends Extension
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array{
+     *     streams: array<array{
+     *         codec_type: "audio",
+     *         codec_name: string,
+     *         codec_tag_string: string,
+     *         tags?: array<string, string>
+     *     }|array{
+     *         codec_type: "video",
+     *         codec_name: string,
+     *         codec_tag_string: string,
+     *         width: int,
+     *         height: int,
+     *         coded_width: int,
+     *         coded_height: int,
+     *         pix_fmt: string,
+     *         tags?: array<string, string>
+     *     }>,
+     *     format: array{
+     *         filename: string,
+     *         nb_streams: int,
+     *         nb_programs: int,
+     *         nb_stream_groups: int,
+     *         format_name: string,
+     *         format_long_name: string,
+     *         start_time: string,
+     *         duration: string,
+     *         size: string,
+     *         bit_rate: string,
+     *         probe_score: int,
+     *         tags?: array<string, string>
+     *     }
+     * }
      */
     public static function get_ffprobe_data(Path $filename): array
     {
