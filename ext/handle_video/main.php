@@ -50,7 +50,7 @@ final class VideoFileHandler extends DataHandlerExtension
                         }
                     }
                     $event->image->video = $video;
-                    $event->image->video_codec = $video_codec;
+                    $event->image->video_codec = VideoCodec::from($video_codec);
                     $event->image->audio = $audio;
                     if ($event->image->get_mime()->base === MimeType::MKV &&
                         $event->image->video_codec !== null &&
