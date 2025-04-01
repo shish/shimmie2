@@ -2,9 +2,11 @@ backup
 data
 .docker/entrypoint.d/config.json
 .sl
+*.phar
+.phpactor.json
+.zed
 
 #Composer
-composer.phar
 /vendor/
 
 # Created by http://www.gitignore.io
