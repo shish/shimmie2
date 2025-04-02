@@ -11,6 +11,7 @@ parameters:
     hash-string: non-empty-string&internal-hash-string
     query-array: "array<string,string|string[]>"
     header-array: "array<string,string|string[]>"
+    sql-params-array: "array<string,string|int|bool|null>"
   ignoreErrors:
     -
       message: '#Function .* is unsafe to use.*$#'
