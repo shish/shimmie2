@@ -56,7 +56,16 @@ final class Pool
     public int $posts;
 
     /**
-     * @param array<string,mixed> $row
+     * @param array{
+     *     id: string|int,
+     *     user_id: string|int,
+     *     user_name: ?string,
+     *     public: string|bool,
+     *     title: string,
+     *     description: string,
+     *     date: string,
+     *     posts: string|int,
+     * } $row
      */
     public function __construct(array $row)
     {
@@ -68,14 +77,6 @@ final class Pool
         $this->description = $row['description'];
         $this->date = $row['date'];
         $this->posts = (int) $row['posts'];
-    }
-
-    /**
-     * @param array<string,mixed> $row
-     */
-    public static function makePool(array $row): Pool
-    {
-        return new Pool($row);
     }
 
     public static function get_pool_id_by_title(string $poolTitle): ?int
@@ -556,7 +557,7 @@ final class Pools extends Extension
         $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
 
         // @phpstan-ignore-next-line
-        $pools = array_map([Pool::class, "makePool"], Ctx::$database->get_all("
+        $pools = array_map(fn ($row) => new Pool($row), Ctx::$database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
 			INNER JOIN users AS u
