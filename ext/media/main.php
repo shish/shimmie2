@@ -385,28 +385,19 @@ final class Media extends Extension
             $output_mime = new MimeType(MimeType::WEBP_LOSSLESS);
         }
 
-        $bg = "\"$alpha_color\"";
-        if (self::supports_alpha($output_mime)) {
-            $bg = "none";
-        }
+        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::CONVERT_PATH));
 
-        $resize_suffix = "";
-        if (!$allow_upscale) {
-            $resize_suffix .= "\>";
-        }
-        if ($resize_type === ResizeType::STRETCH) {
-            $resize_suffix .= "\!";
-        }
-
-        $args = " -auto-orient ";
-        $resize_arg = "-resize";
-        if ($minimize) {
-            $args .= "-strip ";
-            $resize_arg = "-thumbnail";
-        }
-
+        // read input
         $input_ext = self::determine_ext($input_mime);
+        $command->add_escaped_arg("{$input_ext}:{$input_path->str()}[0]");
 
+        // strip data
+        $command->add_flag("-auto-orient");
+        if ($minimize) {
+            $command->add_flag("-strip");
+        }
+
+        $resize_arg = $minimize ? "-thumbnail" : "-resize";
         if ($resize_type === ResizeType::FIT_BLUR_PORTRAIT) {
             if ($new_height > $new_width) {
                 $resize_type = ResizeType::FIT_BLUR;
@@ -415,37 +406,97 @@ final class Media extends Extension
             }
         }
 
+        $bg = self::supports_alpha($output_mime) ? "none" : $alpha_color;
         switch ($resize_type) {
             case ResizeType::FIT:
             case ResizeType::STRETCH:
-                $args .= "{$resize_arg} {$new_width}x{$new_height}{$resize_suffix} -background {$bg} -flatten ";
+                $resize_suffix = "";
+                if (!$allow_upscale) {
+                    $resize_suffix .= ">";
+                }
+                if ($resize_type === ResizeType::STRETCH) {
+                    $resize_suffix .= "!";
+                }
+                $command->add_flag($resize_arg);
+                $command->add_escaped_arg("{$new_width}x{$new_height}{$resize_suffix}");
+                $command->add_flag("-background");
+                $command->add_escaped_arg($bg);
+                $command->add_flag("-flatten");
                 break;
             case ResizeType::FILL:
-                $args .= "{$resize_arg} {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -extent {$new_width}x{$new_height} ";
+                $command->add_flag($resize_arg);
+                $command->add_escaped_arg("{$new_width}x{$new_height}^");
+                $command->add_flag("-background");
+                $command->add_escaped_arg($bg);
+                $command->add_flag("-flatten");
+                $command->add_flag("-gravity");
+                $command->add_escaped_arg("center");
+                $command->add_flag("-extent");
+                $command->add_escaped_arg("{$new_width}x{$new_height}");
                 break;
             case ResizeType::FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
-                $args .= " ".
-                    "\( -clone 0 -auto-orient -resize {$new_width}x{$new_height}\^ -background {$bg} -flatten -gravity center -fill black -colorize 50% -extent {$new_width}x{$new_height} -blur 0x{$blur_size} \) ".
-                    "\( -clone 0 -auto-orient -resize {$new_width}x{$new_height} \) ".
-                    "-delete 0 -gravity center -compose over -composite";
+                // add blurred background
+                $command->add_flag("(");
+                $command->add_flag("-clone");
+                $command->add_escaped_arg("0");
+                $command->add_flag("-auto-orient");
+                $command->add_flag("-resize");
+                $command->add_escaped_arg("{$new_width}x{$new_height}^");
+                $command->add_flag("-background");
+                $command->add_escaped_arg($bg);
+                $command->add_flag("-flatten");
+                $command->add_flag("-gravity");
+                $command->add_escaped_arg("center");
+                $command->add_flag("-fill");
+                $command->add_escaped_arg("black");
+                $command->add_flag("-colorize");
+                $command->add_escaped_arg("50%");
+                $command->add_flag("-extent");
+                $command->add_escaped_arg("{$new_width}x{$new_height}");
+                $command->add_flag("-blur");
+                $command->add_escaped_arg("0x{$blur_size}");
+                $command->add_flag(")");
+
+                // add main image
+                $command->add_flag("(");
+                $command->add_flag("-clone");
+                $command->add_escaped_arg("0");
+                $command->add_flag("-auto-orient");
+                $command->add_flag("-resize");
+                $command->add_escaped_arg("{$new_width}x{$new_height}");
+                $command->add_flag(")");
+
+                // compose
+                $command->add_flag("-delete");
+                $command->add_escaped_arg("0");
+                $command->add_flag("-gravity");
+                $command->add_escaped_arg("center");
+                $command->add_flag("-compose");
+                $command->add_escaped_arg("over");
+                $command->add_flag("-composite");
                 break;
         }
 
+        // format-specific compression options
         if ($output_mime->base === MimeType::PNG) {
-            $args .= ' -define png:compression-level=9';
+            $command->add_flag("-define");
+            $command->add_escaped_arg("png:compression-level=9");
         } elseif ($output_mime->base == MimeType::WEBP && $output_mime->parameters == MimeType::LOSSLESS_PARAMETER) {
-            $args .= ' -define webp:lossless=true -quality 100 ';
+            $command->add_flag("-define");
+            $command->add_escaped_arg("webp:lossless=true");
+            $command->add_flag("-quality");
+            $command->add_escaped_arg("100");
         } else {
-            $args .= ' -quality '.$output_quality;
+            $command->add_flag("-quality");
+            $command->add_escaped_arg((string)Ctx::$config->req(TranscodeImageConfig::QUALITY));
         }
 
+        // write output
         $output_ext = self::determine_ext($output_mime);
-
-        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::CONVERT_PATH));
-        $command->add_escaped_arg("{$input_ext}:\"{$input_path->str()}[0]\"");
-        $command->add_flag($args);
         $command->add_escaped_arg("$output_ext:{$output_filename->str()}");
+
+        // go
         $command->execute();
     }
 
