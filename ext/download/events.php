@@ -9,7 +9,7 @@ class ImageDownloadingEvent extends Event
     public bool $file_modified = false;
 
     /**
-     * @param array<string, mixed> $params
+     * @param query-array $params
      */
     public function __construct(
         public Image $image,

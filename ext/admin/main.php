@@ -20,7 +20,7 @@ final class AdminActionEvent extends Event
     public bool $redirect = true;
 
     /**
-     * @param array<string, mixed> $params
+     * @param query-array $params
      */
     public function __construct(
         public string $action,
