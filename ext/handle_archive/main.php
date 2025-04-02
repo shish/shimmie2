@@ -21,9 +21,9 @@ final class ArchiveFileHandler extends DataHandlerExtension
             $command = new CommandBuilder($parts[0]);
             foreach (array_splice($parts, 1) as $part) {
                 match($part) {
-                    "%f" => $command->add_escaped_arg($event->tmpname->str()),
-                    "%d" => $command->add_escaped_arg($tmpdir->str()),
-                    default => $command->add_flag($part),
+                    "%f" => $command->add_args($event->tmpname->str()),
+                    "%d" => $command->add_args($tmpdir->str()),
+                    default => $command->add_args($part),
                 };
             }
             $command->execute();

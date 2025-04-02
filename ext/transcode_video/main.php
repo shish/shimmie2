@@ -150,32 +150,20 @@ final class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
         }
 
-        $ffmpeg = Ctx::$config->get(MediaConfig::FFMPEG_PATH);
-
-        if (empty($ffmpeg)) {
-            throw new VideoTranscodeException("ffmpeg path not configured");
-        }
-
-        $command = new CommandBuilder($ffmpeg);
-        $command->add_flag("-y"); // Bypass y/n prompts
-        $command->add_flag("-i");
-        $command->add_escaped_arg($source_file->str());
-
         if (!VideoContainer::is_video_codec_supported(VideoContainer::from($target_mime), $source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec {$source_video_codec->value}");
         }
 
+        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFMPEG_PATH));
+        $command->add_args("-y"); // Bypass y/n prompts
+        $command->add_args("-i", $source_file->str()); // input file
+
         // TODO: Implement transcoding the codec as well. This will be much more advanced than just picking a container.
-        $command->add_flag("-c");
-        $command->add_flag("copy");
+        $command->add_args("-c", "copy");
+        $command->add_args("-map", "0"); // Copies all streams
 
-        $command->add_flag("-map"); // Copies all streams
-        $command->add_flag("0");
-
-        $command->add_flag("-f");
-        $format = self::FORMAT_NAMES[$target_mime];
-        $command->add_flag($format);
-        $command->add_escaped_arg($target_file->str());
+        $command->add_args("-f", self::FORMAT_NAMES[$target_mime]);
+        $command->add_args($target_file->str());
 
         $command->execute();
 
