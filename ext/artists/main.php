@@ -17,7 +17,7 @@ final class AuthorSetEvent extends Event
 
 /**
  * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:string,name:string,notes:string,type:string,posts:int}
- * @phpstan-type ArtistAlias array{id:int,alias_id:int,alias_name:string,alias:string}
+ * @phpstan-type ArtistAlias array{id:int,alias:string}
  * @phpstan-type ArtistMember array{id:int,name:string}
  * @phpstan-type ArtistUrl array{id:int,url:string}
  */
@@ -893,12 +893,13 @@ final class Artists extends Extension
     /**
      * HERE WE GET THE INFO OF THE ALIAS
      *
-     * @return array<string, mixed>
+     * @return ArtistAlias[]
      */
     private function get_alias(int $artistID): array
     {
+        /** @var array<array{id: int, alias: string}> */
         $result = Ctx::$database->get_all("
-            SELECT id AS alias_id, alias AS alias_name
+            SELECT id, alias
             FROM artist_alias
             WHERE artist_id = :artist_id
             ORDER BY alias ASC

@@ -113,7 +113,7 @@ final class OuroborosPost extends _SafeOuroborosImage
      * Mainly just acts as a wrapper and validation layer
      * @noinspection PhpMissingParentConstructorInspection
      *
-     * @param array<string,mixed> $post
+     * @param array<string, mixed> $post
      */
     // @phpstan-ignore-next-line
     public function __construct(array $post)
