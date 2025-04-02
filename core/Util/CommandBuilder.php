@@ -9,11 +9,8 @@ namespace Shimmie2;
 // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
 final class CommandBuilder
 {
-    private string $executable;
     /** @var string[] */
     private array $args = [];
-    /** @var string[] */
-    private array $output = [];
 
     public function __construct(string $executable)
     {
@@ -21,51 +18,33 @@ final class CommandBuilder
             throw new \InvalidArgumentException("executable cannot be empty");
         }
 
-        $this->executable = $executable;
+        $this->add_args($executable);
     }
 
-    public function add_flag(string $value): void
+    public function add_args(string ...$args): void
     {
-        $this->args[] = $value;
-    }
-
-    public function add_escaped_arg(string $value): void
-    {
-        $this->args[] = escapeshellarg($value);
-    }
-
-    public function generate(): string
-    {
-        $command = escapeshellarg($this->executable);
-        if (!empty($this->args)) {
-            $command .= " ";
-            $command .= join(" ", $this->args);
-        }
-
-        return $command . " 2>&1";
-    }
-
-    public function get_output(string $empty_output = ""): string
-    {
-        if (empty($this->output)) {
-            return $empty_output;
-        } else {
-            return implode("\r\n", $this->output);
+        foreach ($args as $arg) {
+            $this->args[] = escapeshellarg($arg);
         }
     }
 
-    public function execute(): int
+    public function execute(): string
     {
-        $cmd = $this->generate();
-        exec($cmd, $this->output, $ret);
+        $cmd = join(" ", $this->args) . " 2>&1";
 
-        $output = $this->get_output("nothing");
+        $output = [];
+        $ret = -1;
+        exec($cmd, $output, $ret);
 
-        Log::debug('command_builder', "Command `$cmd` returned $ret and outputted $output");
+        $output = implode("\n", $output);
+        $log_output = empty($output) ? "nothing" : $output;
+
+        Log::debug('command_builder', "Command `$cmd` returned $ret and outputted $log_output");
 
         if ($ret !== 0) {
-            throw new ServerError("Command `$cmd` failed, returning $ret and outputting $output");
+            throw new ServerError("Command `$cmd` failed, returning $ret and outputting $log_output");
         }
-        return $ret;
+
+        return $output;
     }
 }

@@ -258,8 +258,6 @@ final class Media extends Extension
      */
     public static function create_thumbnail_ffmpeg(Image $image): bool
     {
-        $ffmpeg = Ctx::$config->req(MediaConfig::FFMPEG_PATH);
-
         $ok = false;
         $inname = $image->get_image_filename();
         $tmpname = shm_tempnam("ffmpeg_thumb");
@@ -269,19 +267,14 @@ final class Media extends Extension
             $orig_size = self::video_size($inname);
             $scaled_size = ThumbnailUtil::get_thumbnail_size($orig_size[0], $orig_size[1], true);
 
-            $command = new CommandBuilder($ffmpeg);
-            $command->add_flag("-y");
-            $command->add_flag("-i");
-            $command->add_escaped_arg($inname->str());
-            $command->add_flag("-vf");
-            $command->add_escaped_arg("scale=$scaled_size[0]:$scaled_size[1],thumbnail");
-            $command->add_flag("-f");
-            $command->add_escaped_arg("image2");
-            $command->add_flag("-vframes");
-            $command->add_escaped_arg("1");
-            $command->add_flag("-c:v");
-            $command->add_escaped_arg("png");
-            $command->add_escaped_arg($tmpname->str());
+            $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFMPEG_PATH));
+            $command->add_args("-y");
+            $command->add_args("-i", $inname->str());
+            $command->add_args("-vf", "scale=$scaled_size[0]:$scaled_size[1],thumbnail");
+            $command->add_args("-f", "image2");
+            $command->add_args("-vframes", "1");
+            $command->add_args("-c:v", "png");
+            $command->add_args($tmpname->str());
             $command->execute();
 
             ThumbnailUtil::create_scaled_image($tmpname, $outname, $scaled_size, new MimeType(MimeType::PNG));
@@ -329,15 +322,12 @@ final class Media extends Extension
     public static function get_ffprobe_data(Path $filename): array
     {
         $command = new CommandBuilder(Ctx::$config->req(MediaConfig::FFPROBE_PATH));
-        $command->add_flag("-print_format");
-        $command->add_flag("json");
-        $command->add_flag("-v");
-        $command->add_flag("quiet");
-        $command->add_flag("-show_format");
-        $command->add_flag("-show_streams");
-        $command->add_escaped_arg($filename->str());
-        $command->execute();
-        $output = $command->get_output();
+        $command->add_args("-print_format", "json");
+        $command->add_args("-v", "quiet");
+        $command->add_args("-show_format");
+        $command->add_args("-show_streams");
+        $command->add_args($filename->str());
+        $output = $command->execute();
         return json_decode($output, true);
     }
 
@@ -389,12 +379,12 @@ final class Media extends Extension
 
         // read input
         $input_ext = self::determine_ext($input_mime);
-        $command->add_escaped_arg("{$input_ext}:{$input_path->str()}[0]");
+        $command->add_args("{$input_ext}:{$input_path->str()}[0]");
 
         // strip data
-        $command->add_flag("-auto-orient");
+        $command->add_args("-auto-orient");
         if ($minimize) {
-            $command->add_flag("-strip");
+            $command->add_args("-strip");
         }
 
         $resize_arg = $minimize ? "-thumbnail" : "-resize";
@@ -417,84 +407,61 @@ final class Media extends Extension
                 if ($resize_type === ResizeType::STRETCH) {
                     $resize_suffix .= "!";
                 }
-                $command->add_flag($resize_arg);
-                $command->add_escaped_arg("{$new_width}x{$new_height}{$resize_suffix}");
-                $command->add_flag("-background");
-                $command->add_escaped_arg($bg);
-                $command->add_flag("-flatten");
+                $command->add_args($resize_arg, "{$new_width}x{$new_height}{$resize_suffix}");
+                $command->add_args("-background", $bg);
+                $command->add_args("-flatten");
                 break;
             case ResizeType::FILL:
-                $command->add_flag($resize_arg);
-                $command->add_escaped_arg("{$new_width}x{$new_height}^");
-                $command->add_flag("-background");
-                $command->add_escaped_arg($bg);
-                $command->add_flag("-flatten");
-                $command->add_flag("-gravity");
-                $command->add_escaped_arg("center");
-                $command->add_flag("-extent");
-                $command->add_escaped_arg("{$new_width}x{$new_height}");
+                $command->add_args($resize_arg, "{$new_width}x{$new_height}^");
+                $command->add_args("-background", $bg);
+                $command->add_args("-flatten");
+                $command->add_args("-gravity", "center");
+                $command->add_args("-extent", "{$new_width}x{$new_height}");
                 break;
             case ResizeType::FIT_BLUR:
                 $blur_size = max(ceil(max($new_width, $new_height) / 25), 5);
                 // add blurred background
-                $command->add_flag("(");
-                $command->add_flag("-clone");
-                $command->add_escaped_arg("0");
-                $command->add_flag("-auto-orient");
-                $command->add_flag("-resize");
-                $command->add_escaped_arg("{$new_width}x{$new_height}^");
-                $command->add_flag("-background");
-                $command->add_escaped_arg($bg);
-                $command->add_flag("-flatten");
-                $command->add_flag("-gravity");
-                $command->add_escaped_arg("center");
-                $command->add_flag("-fill");
-                $command->add_escaped_arg("black");
-                $command->add_flag("-colorize");
-                $command->add_escaped_arg("50%");
-                $command->add_flag("-extent");
-                $command->add_escaped_arg("{$new_width}x{$new_height}");
-                $command->add_flag("-blur");
-                $command->add_escaped_arg("0x{$blur_size}");
-                $command->add_flag(")");
+                $command->add_args("(");
+                $command->add_args("-clone", "0");
+                $command->add_args("-auto-orient");
+                $command->add_args("-resize", "{$new_width}x{$new_height}^");
+                $command->add_args("-background", $bg);
+                $command->add_args("-flatten");
+                $command->add_args("-gravity", "center");
+                $command->add_args("-fill", "black");
+                $command->add_args("-colorize", "50%");
+                $command->add_args("-extent", "{$new_width}x{$new_height}");
+                $command->add_args("-blur", "0x{$blur_size}");
+                $command->add_args(")");
 
                 // add main image
-                $command->add_flag("(");
-                $command->add_flag("-clone");
-                $command->add_escaped_arg("0");
-                $command->add_flag("-auto-orient");
-                $command->add_flag("-resize");
-                $command->add_escaped_arg("{$new_width}x{$new_height}");
-                $command->add_flag(")");
+                $command->add_args("(");
+                $command->add_args("-clone", "0");
+                $command->add_args("-auto-orient");
+                $command->add_args("-resize", "{$new_width}x{$new_height}");
+                $command->add_args(")");
 
                 // compose
-                $command->add_flag("-delete");
-                $command->add_escaped_arg("0");
-                $command->add_flag("-gravity");
-                $command->add_escaped_arg("center");
-                $command->add_flag("-compose");
-                $command->add_escaped_arg("over");
-                $command->add_flag("-composite");
+                $command->add_args("-delete", "0");
+                $command->add_args("-gravity", "center");
+                $command->add_args("-compose", "over");
+                $command->add_args("-composite");
                 break;
         }
 
         // format-specific compression options
         if ($output_mime->base === MimeType::PNG) {
-            $command->add_flag("-define");
-            $command->add_escaped_arg("png:compression-level=9");
+            $command->add_args("-define", "png:compression-level=9");
         } elseif ($output_mime->base == MimeType::WEBP && $output_mime->parameters == MimeType::LOSSLESS_PARAMETER) {
-            $command->add_flag("-define");
-            $command->add_escaped_arg("webp:lossless=true");
-            $command->add_flag("-quality");
-            $command->add_escaped_arg("100");
+            $command->add_args("-define", "webp:lossless=true");
+            $command->add_args("-quality", "100");
         } else {
-            $command->add_flag("-quality");
-            $command->add_escaped_arg((string)Ctx::$config->req(TranscodeImageConfig::QUALITY));
+            $command->add_args("-quality", (string)Ctx::$config->req(TranscodeImageConfig::QUALITY));
         }
 
         // write output
         $output_ext = self::determine_ext($output_mime);
-        $command->add_escaped_arg("$output_ext:{$output_filename->str()}");
+        $command->add_args("$output_ext:{$output_filename->str()}");
 
         // go
         $command->execute();
