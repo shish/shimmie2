@@ -281,14 +281,11 @@ final class TranscodeImage extends Extension
             throw new ImageTranscodeException("Engine {$engine->value} does not support output MIME $target_mime");
         }
 
-        switch ($engine) {
-            case MediaEngine::GD:
-                return $this->transcode_image_gd($source_name, $source_mime, $target_mime);
-            case MediaEngine::IMAGICK:
-                return $this->transcode_image_convert($source_name, $source_mime, $target_mime);
-            default:
-                throw new ImageTranscodeException("No engine specified");
-        }
+        return match ($engine) {
+            MediaEngine::GD => $this->transcode_image_gd($source_name, $source_mime, $target_mime),
+            MediaEngine::IMAGICK => $this->transcode_image_convert($source_name, $source_mime, $target_mime),
+            default => throw new ImageTranscodeException("No engine specified"),
+        };
     }
 
     private function transcode_image_gd(Path $source_name, MimeType $source_mime, MimeType $target_mime): Path
@@ -340,39 +337,41 @@ final class TranscodeImage extends Extension
 
     private function transcode_image_convert(Path $source_name, MimeType $source_mime, MimeType $target_mime): Path
     {
-        $q = Ctx::$config->req(TranscodeImageConfig::QUALITY);
-        $convert = Ctx::$config->req(MediaConfig::CONVERT_PATH);
+        $command = new CommandBuilder(Ctx::$config->req(MediaConfig::CONVERT_PATH));
 
-        if (empty($convert)) {
-            throw new ImageTranscodeException("ImageMagick path not configured");
-        }
-        $ext = Media::determine_ext($target_mime);
-
-        $args = " -background ";
-
-        if (Media::supports_alpha($target_mime)) {
-            $args .= "none ";
-        } else {
-            $args .= "\"".Ctx::$config->req(TranscodeImageConfig::ALPHA_COLOR)."\" ";
-        }
-        $args .= " -flatten ";
-
-        if ($target_mime->base === MimeType::PNG) {
-            $args .= ' -define png:compression-level=9';
-        } elseif ($target_mime->base == MimeType::WEBP && $target_mime->parameters == MimeType::LOSSLESS_PARAMETER) {
-            $args .= ' -define webp:lossless=true -quality 100 ';
-        } else {
-            $args .= ' -quality '.$q;
-        }
-
-        $tmp_name = shm_tempnam("transcode");
-
+        // load file
         $source_type = FileExtension::get_for_mime($source_mime);
-
-        $command = new CommandBuilder(executable: $convert);
         $command->add_escaped_arg("$source_type:{$source_name->str()}");
-        $command->add_flag($args);
+
+        // flatten with optional solid background color
+        $command->add_flag("-background");
+        $command->add_escaped_arg(
+            Media::supports_alpha($target_mime)
+                ? "none"
+                : Ctx::$config->req(TranscodeImageConfig::ALPHA_COLOR)
+        );
+        $command->add_flag("-flatten");
+
+        // format-specific compression options
+        if ($target_mime->base === MimeType::PNG) {
+            $command->add_flag("-define");
+            $command->add_escaped_arg("png:compression-level=9");
+        } elseif ($target_mime->base == MimeType::WEBP && $target_mime->parameters == MimeType::LOSSLESS_PARAMETER) {
+            $command->add_flag("-define");
+            $command->add_escaped_arg("webp:lossless=true");
+            $command->add_flag("-quality");
+            $command->add_escaped_arg("100");
+        } else {
+            $command->add_flag("-quality");
+            $command->add_escaped_arg((string)Ctx::$config->req(TranscodeImageConfig::QUALITY));
+        }
+
+        // write file
+        $tmp_name = shm_tempnam("transcode");
+        $ext = Media::determine_ext($target_mime);
         $command->add_escaped_arg("$ext:{$tmp_name->str()}");
+
+        // go
         $command->execute();
 
         return $tmp_name;

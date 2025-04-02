@@ -42,7 +42,7 @@ final class CommandBuilder
             $command .= join(" ", $this->args);
         }
 
-        return escapeshellcmd($command)." 2>&1";
+        return $command . " 2>&1";
     }
 
     public function get_output(string $empty_output = ""): string
