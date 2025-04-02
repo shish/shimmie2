@@ -20,7 +20,7 @@ use function MicroHTML\joinHTML;
 
 /**
  * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:string,name:string,notes:string,type:string,posts:int}
- * @phpstan-type ArtistAlias array{id:int,alias_id:int,alias_name:string,alias:string}
+ * @phpstan-type ArtistAlias array{alias_id:int,alias_name:string}
  * @phpstan-type ArtistMember array{id:int,name:string}
  * @phpstan-type ArtistUrl array{id:int,url:string}
  */
