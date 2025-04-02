@@ -23,7 +23,7 @@ final class Querylet
 {
     /**
      * @param string $sql
-     * @param array<string, mixed> $variables
+     * @param sql-params-array $variables
      */
     public function __construct(
         public string $sql,
