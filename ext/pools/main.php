@@ -56,7 +56,16 @@ final class Pool
     public int $posts;
 
     /**
-     * @param array<string,mixed> $row
+     * @param array{
+     *     id: string|int,
+     *     user_id: string|int,
+     *     user_name: ?string,
+     *     public: string|bool,
+     *     title: string,
+     *     description: string,
+     *     date: string,
+     *     posts: string|int,
+     * } $row
      */
     public function __construct(array $row)
     {
@@ -68,14 +77,6 @@ final class Pool
         $this->description = $row['description'];
         $this->date = $row['date'];
         $this->posts = (int) $row['posts'];
-    }
-
-    /**
-     * @param array<string,mixed> $row
-     */
-    public static function makePool(array $row): Pool
-    {
-        return new Pool($row);
     }
 
     public static function get_pool_id_by_title(string $poolTitle): ?int
@@ -556,7 +557,7 @@ final class Pools extends Extension
         $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
 
         // @phpstan-ignore-next-line
-        $pools = array_map([Pool::class, "makePool"], Ctx::$database->get_all("
+        $pools = array_map(fn ($row) => new Pool($row), Ctx::$database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
 			INNER JOIN users AS u
@@ -573,8 +574,6 @@ final class Pools extends Extension
 
     public function onPoolCreation(PoolCreationEvent $event): void
     {
-        global $database;
-
         if (!Ctx::$user->can(PoolsPermission::UPDATE)) {
             throw new PermissionDenied("You must be registered and logged in to add a image.");
         }
@@ -585,14 +584,14 @@ final class Pools extends Extension
             throw new InvalidInput("A pool using this title already exists.");
         }
 
-        $database->execute(
+        Ctx::$database->execute(
             "
 				INSERT INTO pools (user_id, public, title, description, date)
 				VALUES (:uid, :public, :title, :desc, now())",
             ["uid" => $event->user->id, "public" => $event->public, "title" => $event->title, "desc" => $event->description]
         );
 
-        $poolID = $database->get_last_insert_id('pools_id_seq');
+        $poolID = Ctx::$database->get_last_insert_id('pools_id_seq');
         Log::info("pools", "Pool {$poolID} created by " . Ctx::$user->name);
 
         $event->new_id = $poolID;
@@ -603,9 +602,9 @@ final class Pools extends Extension
      */
     private function get_single_pool(int $poolID): Pool
     {
-        /** @var array<string, mixed> $pool_row */
-        $pool_row = Ctx::$database->get_row("SELECT * FROM pools WHERE id=:id", ["id" => $poolID]);
-        return new Pool($pool_row);
+        $row = Ctx::$database->get_row("SELECT * FROM pools WHERE id=:id", ["id" => $poolID]);
+        // @phpstan-ignore-next-line
+        return new Pool($row);
     }
 
     /**
@@ -613,8 +612,8 @@ final class Pools extends Extension
      */
     private function get_single_pool_from_title(string $poolTitle): ?Pool
     {
-        global $database;
-        $row = $database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
+        $row = Ctx::$database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
+        // @phpstan-ignore-next-line
         return $row ? new Pool($row) : null;
     }
 
@@ -624,8 +623,7 @@ final class Pools extends Extension
      */
     private function get_pool_ids(int $imageID): array
     {
-        global $database;
-        $col = $database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", ["iid" => $imageID]);
+        $col = Ctx::$database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", ["iid" => $imageID]);
         $col = array_map(intval(...), $col);
         return $col;
     }
@@ -635,8 +633,9 @@ final class Pools extends Extension
      */
     private function get_last_userpool(int $userID): Pool
     {
-        global $database;
-        return new Pool($database->get_row("SELECT * FROM pools WHERE user_id=:uid ORDER BY id DESC", ["uid" => $userID]));
+        $row = Ctx::$database->get_row("SELECT * FROM pools WHERE user_id=:uid ORDER BY id DESC", ["uid" => $userID]);
+        // @phpstan-ignore-next-line
+        return new Pool($row);
     }
 
     /**

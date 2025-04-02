@@ -55,7 +55,16 @@ final class WikiPage
     public string $body;
 
     /**
-     * @param array<string, mixed> $row
+     * @param array{
+     *     id: string|int,
+     *     owner_id: string|int,
+     *     owner_ip: string,
+     *     date: string,
+     *     title: string,
+     *     revision: string|int,
+     *     locked: string|bool,
+     *     body: string
+     * }|null $row
      */
     public function __construct(?array $row = null)
     {
@@ -346,6 +355,7 @@ final class Wiki extends Extension
             $row["owner_id"] = Ctx::$config->req(UserAccountsConfig::ANON_ID);
         }
 
+        // @phpstan-ignore-next-line
         return new WikiPage($row);
     }
 }
