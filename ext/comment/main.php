@@ -59,7 +59,17 @@ final class Comment
     public string $posted;
 
     /**
-     * @param array<string,mixed> $row
+     * @param array{
+     *     user_id: string|int,
+     *     user_name: string,
+     *     user_email: ?string,
+     *     user_class: string,
+     *     comment: string,
+     *     comment_id: string|int,
+     *     image_id: string|int,
+     *     poster_ip: string,
+     *     posted: string,
+     * } $row
      */
     public function __construct(array $row)
     {

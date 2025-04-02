@@ -56,7 +56,16 @@ final class PM
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param array{
+     *     id: string|int,
+     *     from_id: string|int,
+     *     from_ip: string,
+     *     to_id: string|int,
+     *     subject: string,
+     *     message: string,
+     *     is_read: string|bool,
+     *     sent_date: string
+     * } $row
      */
     public static function from_row(array $row): PM
     {
