@@ -893,7 +893,7 @@ final class Artists extends Extension
     /**
      * HERE WE GET THE INFO OF THE ALIAS
      *
-     * @return array<string, mixed>
+     * @return array{alias_id: int, alias_name: string}
      */
     private function get_alias(int $artistID): array
     {
