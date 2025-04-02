@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/**
+ * Signal that a given image is being exported, requesting
+ * any extra metadata to be included in the export.
+ */
 class BulkExportEvent extends Event
 {
     public Image $image;
-    /** @var array<string,mixed> */
+    /**
+     * Arbitrary data to be included in the export JSON.
+     * @var array<string, mixed>
+     */
     public array $fields = [];
 
     public function __construct(Image $image)
@@ -21,7 +28,7 @@ class BulkExportEvent extends Event
 class BulkImportEvent extends Event
 {
     /**
-     * @param array<string,mixed> $fields
+     * @param array<string, mixed> $fields
      */
     public function __construct(
         public Image $image,

@@ -101,7 +101,6 @@ final class BulkImportExport extends DataHandlerExtension
     {
         if (Ctx::$user->can(BulkImportExportPermission::BULK_EXPORT) &&
             ($event->action === self::EXPORT_ACTION_NAME)) {
-            $download_filename = Ctx::$user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = shm_tempnam("bulk_export");
             $zip = new \ZipArchive();
 
@@ -109,8 +108,6 @@ final class BulkImportExport extends DataHandlerExtension
 
             if ($zip->open($zip_filename->str(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
                 foreach ($event->items as $image) {
-                    $img_loc = Filesystem::warehouse_path(Image::IMAGE_DIR, $image->hash, false);
-
                     $export_event = send_event(new BulkExportEvent($image));
                     $data = $export_event->fields;
                     $data["hash"] = $image->hash;
@@ -120,7 +117,7 @@ final class BulkImportExport extends DataHandlerExtension
 
                     $json_data[] = $data;
 
-                    $zip->addFile($img_loc->str(), $image->hash);
+                    $zip->addFile($image->get_image_filename()->str(), $image->hash);
                 }
 
                 $json_data = \Safe\json_encode($json_data, JSON_PRETTY_PRINT);
@@ -129,7 +126,7 @@ final class BulkImportExport extends DataHandlerExtension
                 $zip->close();
 
                 Ctx::$page->set_file(MimeType::ZIP, $zip_filename, true);
-                Ctx::$page->set_filename($download_filename);
+                Ctx::$page->set_filename(Ctx::$user->name . '-' . date('YmdHis') . '.zip');
 
                 $event->redirect = false;
             }
