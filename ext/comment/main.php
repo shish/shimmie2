@@ -356,7 +356,7 @@ final class CommentList extends Extension
 
     /**
      * @param literal-string $query
-     * @param array<string,mixed> $args
+     * @param sql-params-array $args
      * @return Comment[]
      */
     private static function get_generic_comments(string $query, array $args): array

@@ -9,8 +9,6 @@ use FFSPHP\PDOStatement;
 
 /**
  * A class for controlled database access
- *
- * @phpstan-type QueryArgs array<string, string|int|bool|null>
  */
 class Database
 {
@@ -143,7 +141,7 @@ class Database
     }
 
     /**
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      */
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
@@ -170,7 +168,7 @@ class Database
     }
 
     /**
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      */
     public function _execute(string $query, array $args = []): PDOStatement
     {
@@ -190,7 +188,7 @@ class Database
      * Execute an SQL query with no return
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      */
     public function execute(string $query, array $args = []): PDOStatement
     {
@@ -204,7 +202,7 @@ class Database
      * Execute an SQL query and return a 2D array.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      * @return array<array<string, mixed>>
      */
     public function get_all(string $query, array $args = []): array
@@ -219,7 +217,7 @@ class Database
      * Execute an SQL query and return a iterable object for use with generators.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      */
     public function get_all_iterable(string $query, array $args = []): PDOStatement
     {
@@ -233,7 +231,7 @@ class Database
      * Execute an SQL query and return a single row.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      * @return array<string, mixed>
      */
     public function get_row(string $query, array $args = []): ?array
@@ -248,7 +246,7 @@ class Database
      * Execute an SQL query and return the first column of each row.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      * @return list<mixed>
      */
     public function get_col(string $query, array $args = []): array
@@ -264,7 +262,7 @@ class Database
      * Execute an SQL query and return the first column of each row as a single iterable object.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      * @return \Generator<mixed>
      */
     public function get_col_iterable(string $query, array $args = []): \Generator
@@ -281,7 +279,7 @@ class Database
      * Execute an SQL query and return the the first column => the second column.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      * @return array<string, mixed>
      */
     public function get_pairs(string $query, array $args = []): array
@@ -297,7 +295,7 @@ class Database
      * Execute an SQL query and return the the first column => the second column as an iterable object.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      * @return \Generator<string, mixed>
      */
     public function get_pairs_iterable(string $query, array $args = []): \Generator
@@ -314,7 +312,7 @@ class Database
      * Execute an SQL query and return a single value, or null.
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      */
     public function get_one(string $query, array $args = []): mixed
     {
@@ -328,7 +326,7 @@ class Database
      * Execute an SQL query and returns a bool indicating if any data was returned
      *
      * @param literal-string $query
-     * @param QueryArgs $args
+     * @param sql-params-array $args
      */
     public function exists(string $query, array $args = []): bool
     {
