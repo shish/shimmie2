@@ -66,8 +66,8 @@ final class Blotter extends Extension
             $this->theme->display_editor($entries);
         }
         if ($event->page_matches("blotter/add", method: "POST", permission: BlotterPermission::ADMIN)) {
-            $entry_text = $event->req_POST('entry_text');
-            $important = !is_null($event->get_POST('important'));
+            $entry_text = $event->POST->req('entry_text');
+            $important = !is_null($event->POST->get('important'));
             // Now insert into db:
             $database->execute(
                 "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
@@ -77,7 +77,7 @@ final class Blotter extends Extension
             Ctx::$page->set_redirect(make_link("blotter/editor"));
         }
         if ($event->page_matches("blotter/remove", method: "POST", permission: BlotterPermission::ADMIN)) {
-            $id = int_escape($event->req_POST('id'));
+            $id = int_escape($event->POST->req('id'));
             $database->execute("DELETE FROM blotter WHERE id=:id", ["id" => $id]);
             Log::info("blotter", "Removed Entry #$id");
             Ctx::$page->set_redirect(make_link("blotter/editor"));

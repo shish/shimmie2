@@ -29,10 +29,10 @@ final class AvatarPost extends AvatarExtension
             $this->theme->display_avatar_edit_page($image_id);
         } elseif ($event->page_matches("save_avatar", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $c = Ctx::$user->get_config();
-            $c->set(AvatarPostUserConfig::AVATAR_ID, (int)$event->req_POST("id"));
-            $c->set(AvatarPostUserConfig::AVATAR_SCALE, (int)$event->req_POST("scale"));
-            $c->set(AvatarPostUserConfig::AVATAR_X, (int)$event->req_POST("x"));
-            $c->set(AvatarPostUserConfig::AVATAR_Y, (int)$event->req_POST("y"));
+            $c->set(AvatarPostUserConfig::AVATAR_ID, (int)$event->POST->req("id"));
+            $c->set(AvatarPostUserConfig::AVATAR_SCALE, (int)$event->POST->req("scale"));
+            $c->set(AvatarPostUserConfig::AVATAR_X, (int)$event->POST->req("x"));
+            $c->set(AvatarPostUserConfig::AVATAR_Y, (int)$event->POST->req("y"));
             Ctx::$page->flash("Image set as avatar");
             Ctx::$page->set_redirect(Url::referer_or(make_link("user_config")));
         }

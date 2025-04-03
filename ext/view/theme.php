@@ -58,13 +58,10 @@ class ViewPostTheme extends Themelet
         }
     }
 
-    /**
-     * @return array<string, string>|null
-     */
-    protected function get_query(): ?array
+    protected function get_query(): ?QueryArray
     {
         if (isset($_GET['search'])) {
-            $query = ["search" => $_GET['search']];
+            $query = new QueryArray(["search" => $_GET['search']]);
         } else {
             $query = null;
         }

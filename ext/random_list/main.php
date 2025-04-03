@@ -13,9 +13,9 @@ final class RandomList extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("random")) {
-            if ($event->get_GET('search')) {
+            if ($event->GET->get('search')) {
                 // implode(explode()) to resolve aliases and sanitise
-                $search = Tag::implode(Tag::explode($event->get_GET('search'), false));
+                $search = Tag::implode(Tag::explode($event->GET->get('search'), false));
                 if (empty($search)) {
                     Ctx::$page->set_redirect(make_link("random"));
                 } else {

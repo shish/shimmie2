@@ -18,14 +18,14 @@ final class TagToolsTest extends ShimmiePHPUnitTestCase
         self::assertEquals("Post $image_id_1: TeStCase$ts", $page->title);
 
         // Fix
-        send_event(new AdminActionEvent('lowercase_all_tags', []));
+        send_event(new AdminActionEvent('lowercase_all_tags', new QueryArray([])));
 
         // Validate fix
         self::get_page("post/view/$image_id_1");
         self::assert_title("Post $image_id_1: testcase$ts");
 
         // Change
-        send_event(new AdminActionEvent('set_tag_case', ["tag" => "TestCase$ts"]));
+        send_event(new AdminActionEvent('set_tag_case', new QueryArray(["tag" => "TestCase$ts"])));
 
         // Validate change
         self::get_page("post/view/$image_id_1");
@@ -46,7 +46,7 @@ final class TagToolsTest extends ShimmiePHPUnitTestCase
         );
 
         // Fix
-        send_event(new AdminActionEvent('recount_tag_use', []));
+        send_event(new AdminActionEvent('recount_tag_use', new QueryArray([])));
 
         // Validate fix
         self::assertEquals(

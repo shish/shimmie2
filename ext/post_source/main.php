@@ -24,7 +24,7 @@ final class PostSource extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("tag_edit/mass_source_set", method: "POST", permission: PostTagsPermission::MASS_TAG_EDIT)) {
-            $this->mass_source_edit($event->req_POST('tags'), $event->req_POST('source'));
+            $this->mass_source_edit($event->POST->req('tags'), $event->POST->req('source'));
             Ctx::$page->set_redirect(search_link());
         }
     }
@@ -36,7 +36,7 @@ final class PostSource extends Extension
             $source = $event->get_param('url');
         }
         if (Ctx::$user->can(PostSourcePermission::EDIT_IMAGE_SOURCE) && !is_null($source)) {
-            if (isset($event->params['tags']) ? !\Safe\preg_match('/source[=|:]/', $event->params["tags"]) : true) {
+            if ($event->params['tags'] ? !\Safe\preg_match('/source[=|:]/', $event->params->req("tags")) : true) {
                 send_event(new SourceSetEvent($event->image, $source));
             }
         }

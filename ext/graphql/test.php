@@ -113,7 +113,7 @@ final class GraphQLTest extends ShimmiePHPUnitTestCase
         ];
         $page = self::post_page("graphql_upload", ["tags" => "foo", "tags0" => "bar"]);
         self::assertEquals(200, $page->code);
-        self::assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
+        self::assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"), $page->data);
         $id = $database->get_one("SELECT id FROM images");
         self::assertEquals("{\"results\":[{\"image_ids\":[$id]}]}", $page->data);
     }

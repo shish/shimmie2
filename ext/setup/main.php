@@ -42,12 +42,12 @@ final class ConfigSaveEvent extends Event
      *         "myint" => 43008,
      *     ]
      *
-     * @param array<string, string|string[]> $post
      * @return array<string, null|string|int|boolean|array<string>>
      */
-    public static function postToSettings(array $post): array
+    public static function postToSettings(QueryArray $post): array
     {
         $settings = [];
+        $post = $post->toArray();
         foreach ($post as $key => $type) {
             if (str_starts_with($key, "_type_")) {
                 $key = str_replace("_type_", "", $key);

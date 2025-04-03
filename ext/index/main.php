@@ -23,8 +23,8 @@ final class Index extends Extension
             $event->page_matches("post/list", paged: true)
             || $event->page_matches("post/list/{search}", paged: true)
         ) {
-            if ($event->get_GET('search')) {
-                Ctx::$page->set_redirect(search_link(Tag::explode($event->get_GET('search'), false)));
+            if ($event->GET->get('search')) {
+                Ctx::$page->set_redirect(search_link(Tag::explode($event->GET->get('search'), false)));
                 return;
             }
 

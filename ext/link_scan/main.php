@@ -15,7 +15,7 @@ final class LinkScan extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $search = $event->get_GET('search') ?? $event->get_POST('search') ?? "";
+        $search = $event->GET->get('search') ?? $event->POST->get('search') ?? "";
         if ($event->page_matches("post/list") && !empty($search)) {
             $trigger = Ctx::$config->req(LinkScanConfig::TRIGGER);
             if (\Safe\preg_match("#.*{$trigger}.*#", $search)) {

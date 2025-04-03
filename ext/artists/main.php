@@ -219,16 +219,16 @@ final class Artists extends Extension
             }
         }
         if ($event->page_matches("artist/edit_artist")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $page->set_redirect(make_link("artist/edit/" . $artistID));
         }
         if ($event->page_matches("artist/edited")) {
-            $artistID = int_escape($event->get_POST('id'));
+            $artistID = int_escape($event->POST->get('id'));
             $this->update_artist();
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/nuke_artist")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $page->set_redirect(make_link("artist/nuke/" . $artistID));
         }
         if ($event->page_matches("artist/nuke/{artistID}")) {
@@ -237,19 +237,19 @@ final class Artists extends Extension
             $page->set_redirect(make_link("artist/list"));
         }
         if ($event->page_matches("artist/add_alias")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $this->theme->show_new_alias_composer($artistID);
         }
         if ($event->page_matches("artist/add_member")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $this->theme->show_new_member_composer($artistID);
         }
         if ($event->page_matches("artist/add_url")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $this->theme->show_new_url_composer($artistID);
         }
         if ($event->page_matches("artist/alias/add")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $this->add_alias();
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
@@ -266,12 +266,12 @@ final class Artists extends Extension
         }
         if ($event->page_matches("artist/alias/edited")) {
             $this->update_alias();
-            $aliasID = int_escape($event->req_POST('aliasID'));
+            $aliasID = int_escape($event->POST->req('aliasID'));
             $artistID = $this->get_artistID_by_aliasID($aliasID);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/url/add")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $this->add_urls();
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
@@ -288,12 +288,12 @@ final class Artists extends Extension
         }
         if ($event->page_matches("artist/url/edited")) {
             $this->update_url();
-            $urlID = int_escape($event->req_POST('urlID'));
+            $urlID = int_escape($event->POST->req('urlID'));
             $artistID = $this->get_artistID_by_urlID($urlID);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
         if ($event->page_matches("artist/member/add")) {
-            $artistID = int_escape($event->req_POST('artist_id'));
+            $artistID = int_escape($event->POST->req('artist_id'));
             $this->add_members();
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }
@@ -310,7 +310,7 @@ final class Artists extends Extension
         }
         if ($event->page_matches("artist/member/edited")) {
             $this->update_member();
-            $memberID = int_escape($event->req_POST('memberID'));
+            $memberID = int_escape($event->POST->req('memberID'));
             $artistID = $this->get_artistID_by_memberID($memberID);
             $page->set_redirect(make_link("artist/view/" . $artistID));
         }

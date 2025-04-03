@@ -26,16 +26,16 @@ final class TagMapTest extends ShimmiePHPUnitTestCase
     public function testMinCount(): void
     {
         foreach ($this->pages as $page) {
-            self::get_page("tags/$page", ["mincount" => 999999]);
+            self::get_page("tags/$page", ["mincount" => "999999"]);
             self::assert_title("Tag List");
 
-            self::get_page("tags/$page", ["mincount" => 1]);
+            self::get_page("tags/$page", ["mincount" => "1"]);
             self::assert_title("Tag List");
 
-            self::get_page("tags/$page", ["mincount" => 0]);
+            self::get_page("tags/$page", ["mincount" => "0"]);
             self::assert_title("Tag List");
 
-            self::get_page("tags/$page", ["mincount" => -1]);
+            self::get_page("tags/$page", ["mincount" => "-1"]);
             self::assert_title("Tag List");
         }
     }

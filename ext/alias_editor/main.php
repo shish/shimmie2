@@ -77,7 +77,7 @@ final class AliasEditor extends Extension
         if ($event->page_matches("alias/list")) {
             $t = new AliasTable($database->raw_db());
             $t->token = Ctx::$user->get_auth_token();
-            $t->inputs = $event->GET;
+            $t->inputs = $event->GET->toArray();
             $t->size = 100;
             if (Ctx::$user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
                 $t->create_url = make_link("alias/add");

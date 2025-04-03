@@ -6,17 +6,10 @@ namespace Shimmie2;
 
 class ImageInfoSetEvent extends Event
 {
-    /**
-     * currently all post metadata is string => string - in the future
-     * we might want to have a more complex type system, but for now
-     * we just filter out non-string keys (eg, `only_strings($_POST)`)
-     *
-     * @param array<string, string> $params
-     */
     public function __construct(
         public Image $image,
         public int $slot,
-        public array $params
+        public QueryArray $params
     ) {
         parent::__construct();
     }

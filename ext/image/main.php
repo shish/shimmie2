@@ -40,12 +40,12 @@ final class ImageIO extends Extension
         Ctx::$page->add_html_header(STYLE(":root {--thumb-width: {$thumb_width}px; --thumb-height: {$thumb_height}px;}"));
 
         if ($event->page_matches("image/delete", method: "POST")) {
-            $image = Image::by_id_ex(int_escape($event->req_POST('image_id')));
+            $image = Image::by_id_ex(int_escape($event->POST->req('image_id')));
             if ($this->can_user_delete_image(Ctx::$user, $image)) {
                 send_event(new ImageDeletionEvent($image));
 
                 if (Ctx::$config->get(ImageConfig::ON_DELETE) === 'next') {
-                    $this->redirect_to_next_image($image, $event->get_GET('search'));
+                    $this->redirect_to_next_image($image, $event->GET->get('search'));
                 } else {
                     Ctx::$page->set_redirect(Url::referer_or(ignore: ['post/view']));
                 }
@@ -158,10 +158,7 @@ final class ImageIO extends Extension
         return $user->can(ImagePermission::DELETE_IMAGE);
     }
 
-    /**
-     * @param array<string, string|string[]> $params
-     */
-    private function send_file(int $image_id, string $type, array $params): void
+    private function send_file(int $image_id, string $type, QueryArray $params): void
     {
         $page = Ctx::$page;
         $image = Image::by_id_ex($image_id);

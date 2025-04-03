@@ -70,12 +70,12 @@ final class DanbooruApi extends Extension
      */
     private function authenticate_user(PageRequestEvent $event): void
     {
-        if ($event->get_POST('login') && $event->get_POST('password')) {
+        if ($event->POST->get('login') && $event->POST->get('password')) {
             // Get this user from the db, if it fails the user becomes anonymous
             // Code borrowed from /ext/user
             try {
-                $name = $event->req_POST('login');
-                $pass = $event->req_POST('password');
+                $name = $event->POST->req('login');
+                $pass = $event->POST->req('password');
                 Ctx::$user = User::by_name_and_pass($name, $pass);
             } catch (UserNotFound $e) {
                 Ctx::$user = User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
@@ -97,11 +97,11 @@ final class DanbooruApi extends Extension
     private function api_find_tags(PageRequestEvent $event): HTMLElement
     {
         global $database;
-        $GET = only_strings($event->GET);
+        $params = $event->GET;
 
         $results = [];
-        if (isset($GET['id'])) {
-            $idlist = explode(",", $GET['id']);
+        if (isset($params['id'])) {
+            $idlist = explode(",", $params['id']);
             foreach ($idlist as $id) {
                 $sqlresult = $database->get_all(
                     "SELECT id,tag,count FROM tags WHERE id = :id",
@@ -111,8 +111,8 @@ final class DanbooruApi extends Extension
                     $results[] = [$row['count'], $row['tag'], $row['id']];
                 }
             }
-        } elseif (isset($GET['name'])) {
-            $namelist = explode(",", $GET['name']);
+        } elseif (isset($params['name'])) {
+            $namelist = explode(",", $params['name']);
             foreach ($namelist as $name) {
                 $sqlresult = $database->get_all(
                     "SELECT id,tag,count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
@@ -125,13 +125,13 @@ final class DanbooruApi extends Extension
         }
         // Currently disabled to maintain identical functionality to danbooru 1.0's own "broken" find_tags
         /*
-        elseif (isset($GET['tags'])) {
-            $start = isset($GET['after_id']) ? int_escape($GET['offset']) : 0;
-            $tags = Tag::explode($GET['tags']);
+        elseif (isset($params['tags'])) {
+            $start = isset($params['after_id']) ? int_escape($params['offset']) : 0;
+            $tags = Tag::explode($params['tags']);
             assert(!is_null($start) && !is_null($tags));
         }
         */ else {
-            $start = isset($GET['after_id']) ? int_escape($GET['offset']) : 0;
+            $start = isset($params['after_id']) ? int_escape($params['offset']) : 0;
             $sqlresult = $database->get_all(
                 "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= :id ORDER BY id DESC",
                 ['id' => $start]
@@ -168,38 +168,38 @@ final class DanbooruApi extends Extension
      */
     private function api_find_posts(PageRequestEvent $event): HTMLElement
     {
-        $GET = only_strings($event->GET);
+        $params = $event->GET;
         $results = [];
 
         $this->authenticate_user($event);
         $start = 0;
 
-        if (isset($GET['md5'])) {
-            $md5list = explode(",", $GET['md5']);
+        if (isset($params['md5'])) {
+            $md5list = explode(",", $params['md5']);
             foreach ($md5list as $md5) {
                 assert($md5 !== '');
                 $results[] = Image::by_hash($md5);
             }
             $count = count($results);
-        } elseif (isset($GET['id'])) {
-            $idlist = explode(",", $GET['id']);
+        } elseif (isset($params['id'])) {
+            $idlist = explode(",", $params['id']);
             foreach ($idlist as $id) {
                 $results[] = Image::by_id(int_escape($id));
             }
             $count = count($results);
         } else {
-            $limit = isset($GET['limit']) ? int_escape($GET['limit']) : 100;
+            $limit = isset($params['limit']) ? int_escape($params['limit']) : 100;
 
             // Calculate start offset.
-            if (isset($GET['page'])) { // Danbooru API uses 'page' >= 1
-                $start = (int_escape($GET['page']) - 1) * $limit;
-            } elseif (isset($GET['pid'])) { // Gelbooru API uses 'pid' >= 0
-                $start = int_escape($GET['pid']) * $limit;
+            if (isset($params['page'])) { // Danbooru API uses 'page' >= 1
+                $start = (int_escape($params['page']) - 1) * $limit;
+            } elseif (isset($params['pid'])) { // Gelbooru API uses 'pid' >= 0
+                $start = int_escape($params['pid']) * $limit;
             } else {
                 $start = 0;
             }
 
-            $tags = isset($GET['tags']) ? Tag::explode($GET['tags']) : [];
+            $tags = isset($params['tags']) ? Tag::explode($params['tags']) : [];
             // danbooru API clients often set tags=*
             $tags = array_filter($tags, static function ($element) {
                 return $element !== "*";
@@ -350,10 +350,10 @@ final class DanbooruApi extends Extension
         try {
             $newimg = $database->with_savepoint(function () use ($file, $filename, $posttags, $source) {
                 // Fire off an event which should process the new file and add it to the db
-                $dae = send_event(new DataUploadEvent($file, $filename, 0, [
+                $dae = send_event(new DataUploadEvent($file, $filename, 0, new QueryArray([
                     'tags' => $posttags,
                     'source' => $source,
-                ]));
+                ])));
 
                 //Log::debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
                 // If it went ok, grab the id for the newly uploaded image and pass it in the header

@@ -15,8 +15,8 @@ final class TagMap extends Extension
         if ($event->page_matches("tags/{sub}", method: "GET")) {
             $sub = $event->get_arg('sub');
 
-            if ($event->get_GET('starts_with')) {
-                $starts_with = $event->get_GET('starts_with') . "%";
+            if ($event->GET->get('starts_with')) {
+                $starts_with = $event->GET->get('starts_with') . "%";
             } else {
                 if (Ctx::$config->get(TagMapConfig::PAGES)) {
                     $starts_with = "a%";
@@ -25,8 +25,8 @@ final class TagMap extends Extension
                 }
             }
 
-            if ($event->get_GET('mincount')) {
-                $tags_min = int_escape($event->get_GET('mincount'));
+            if ($event->GET->get('mincount')) {
+                $tags_min = int_escape($event->GET->get('mincount'));
             } else {
                 $tags_min = Ctx::$config->req(TagMapConfig::TAGS_MIN);
             }

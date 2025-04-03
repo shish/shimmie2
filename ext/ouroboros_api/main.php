@@ -299,8 +299,7 @@ final class OuroborosAPI extends Extension
                 return;
             }
         }
-        /** @var array<string, string> $meta */
-        $meta = [];
+        $meta = new QueryArray([]);
         $meta['tags'] = $post->tags;
         $meta['source'] = $post->source ?? '';
         if (RatingsInfo::is_enabled() !== false) {
@@ -312,24 +311,25 @@ final class OuroborosAPI extends Extension
             $meta['file'] = shm_tempnam('transload_' . Ctx::$config->req(UploadConfig::TRANSLOAD_ENGINE))->str();
             $meta['filename'] = basename($post->file_url);
             try {
-                Network::fetch_url($post->file_url, new Path($meta['file']));
+                Network::fetch_url($post->file_url, new Path($meta->req('file')));
             } catch (FetchException $e) {
                 $this->sendResponse(500, "Transloading failed: $e");
                 return;
             }
-            $meta['hash'] = \Safe\md5_file($meta['file']);
+            $meta['hash'] = \Safe\md5_file($meta->req('file'));
         } else {
             // Use file
             assert(!is_null($post->file));
             $meta['file'] = $post->file['tmp_name'];
             $meta['filename'] = $post->file['name'];
-            $meta['hash'] = \Safe\md5_file($meta['file']);
+            $meta['hash'] = \Safe\md5_file($meta->req('file'));
         }
         if (!empty($md5) && $md5 !== $meta['hash']) {
             $this->sendResponse(420, self::ERROR_POST_CREATE_MD5);
             return;
         }
-        $img = Image::by_hash($meta['hash']);
+        // @phpstan-ignore-next-line
+        $img = Image::by_hash($meta->req('hash'));
         if (!is_null($img)) {
             $handler = Ctx::$config->get(UploadConfig::COLLISION_HANDLER);
             if ($handler === 'merge') {
@@ -350,7 +350,12 @@ final class OuroborosAPI extends Extension
         }
         try {
             $image = Ctx::$database->with_savepoint(function () use ($meta) {
-                $dae = send_event(new DataUploadEvent(new Path($meta['file']), basename($meta['file']), 0, $meta));
+                $dae = send_event(new DataUploadEvent(
+                    new Path($meta->req('file')),
+                    basename($meta->req('file')),
+                    0,
+                    $meta
+                ));
                 return $dae->images[0];
             });
             $this->sendResponse(200, (string)make_link('post/view/' . $image->id), true);

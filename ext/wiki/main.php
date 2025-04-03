@@ -167,9 +167,9 @@ final class Wiki extends Extension
                 // pain, so we accept the POST and do a GET redirect
                 $page->set_redirect(make_link("wiki/$title/edit"));
             } elseif ($action === "save") {
-                $rev = int_escape($event->req_POST('revision'));
-                $body = $event->req_POST('body');
-                $lock = $user->can(WikiPermission::ADMIN) && ($event->get_POST('lock') == "on");
+                $rev = int_escape($event->POST->req('revision'));
+                $body = $event->POST->req('body');
+                $lock = $user->can(WikiPermission::ADMIN) && ($event->POST->get('lock') == "on");
 
                 if (self::can_edit($user, self::get_page($title))) {
                     $wikipage = self::get_page($title);
@@ -185,7 +185,7 @@ final class Wiki extends Extension
             } elseif ($action === "delete_revision") {
                 $content = self::get_page($title);
                 if ($user->can(WikiPermission::ADMIN)) {
-                    $revision = int_escape($event->req_POST('revision'));
+                    $revision = int_escape($event->POST->req('revision'));
                     send_event(new WikiDeleteRevisionEvent($title, $revision));
                     $u_title = url_escape($title);
                     $page->set_redirect(make_link("wiki/$u_title"));
@@ -204,7 +204,7 @@ final class Wiki extends Extension
             if ($title === "wiki:list") {
                 $this->theme->display_list_page(self::get_page("wiki:sidebar"));
             } else {
-                $revision = int_escape($event->get_GET('revision') ?? "-1");
+                $revision = int_escape($event->GET->get('revision') ?? "-1");
                 $content = self::get_page($title, $revision);
                 $this->theme->display_page($content, self::get_page("wiki:sidebar"));
             }
