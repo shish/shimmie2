@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Type;
-use GQLA\Field;
-
 /**
  * A fairly standard URL class with a couple of Shimmie-specific helpers:
  *
@@ -15,7 +12,6 @@ use GQLA\Field;
  *   /index.php?q=post/list as appropriate.
  * - forming a URL with a page _and_ a path at the same time is invalid
  */
-#[Type(name: "Url")]
 final readonly class Url
 {
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -181,7 +177,6 @@ final readonly class Url
         return $this->query ?? [];
     }
 
-    #[Field(name: "url")]
     public function __toString(): string
     {
         $scheme   = !is_null($this->scheme) ? $this->scheme . '://' : '';
