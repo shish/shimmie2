@@ -19,10 +19,10 @@ use function MicroHTML\TR;
 use function MicroHTML\joinHTML;
 
 /**
- * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:string,name:string,notes:string,type:string,posts:int}
- * @phpstan-type ArtistAlias array{id:int,alias_id:int,alias_name:string,alias:string}
- * @phpstan-type ArtistMember array{id:int,name:string}
- * @phpstan-type ArtistUrl array{id:int,url:string}
+ * @phpstan-import-type ArtistArtist from Artists
+ * @phpstan-import-type ArtistAlias from Artists
+ * @phpstan-import-type ArtistMember from Artists
+ * @phpstan-import-type ArtistUrl from Artists
  */
 class ArtistsTheme extends Themelet
 {
@@ -100,8 +100,8 @@ class ArtistsTheme extends Themelet
         $aliasesString = "";
         $aliasesIDsString = "";
         foreach ($aliases as $alias) {
-            $aliasesString .= $alias["alias_name"]." ";
-            $aliasesIDsString .= $alias["alias_id"]." ";
+            $aliasesString .= $alias["alias"]." ";
+            $aliasesIDsString .= $alias["id"]." ";
         }
         $aliasesString = rtrim($aliasesString);
         $aliasesIDsString = rtrim($aliasesIDsString);
@@ -409,9 +409,9 @@ class ArtistsTheme extends Themelet
     {
         $html = "";
         if (count($aliases) > 0) {
-            $aliasViewLink = str_replace("_", " ", $aliases[0]['alias_name']); // no link anymore
-            $aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[0]['alias_id']) . "'>Edit</a>";
-            $aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[0]['alias_id']) . "'>Delete</a>";
+            $aliasViewLink = str_replace("_", " ", $aliases[0]['alias']); // no link anymore
+            $aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[0]['id']) . "'>Edit</a>";
+            $aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[0]['id']) . "'>Delete</a>";
 
             $html .= "<tr>
 							  <td class='left'>Aliases:</td>
@@ -430,9 +430,9 @@ class ArtistsTheme extends Themelet
             if (count($aliases) > 1) {
                 $ac = count($aliases);
                 for ($i = 1; $i < $ac; $i++) {
-                    $aliasViewLink = str_replace("_", " ", $aliases[$i]['alias_name']); // no link anymore
-                    $aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[$i]['alias_id']) . "'>Edit</a>";
-                    $aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[$i]['alias_id']) . "'>Delete</a>";
+                    $aliasViewLink = str_replace("_", " ", $aliases[$i]['alias']); // no link anymore
+                    $aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[$i]['id']) . "'>Edit</a>";
+                    $aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[$i]['id']) . "'>Delete</a>";
 
                     $html .= "<tr>
 									  <td class='left'></td>
