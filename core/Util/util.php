@@ -427,12 +427,18 @@ function search_link(array $terms = [], int $page = 1): Url
 
 /**
  * @param page-string $page
- * @param query-array $query
+ * @param QueryArray|array<string, string>|null $query
  * @param fragment-string $fragment
  */
-function make_link(?string $page = null, ?array $query = null, ?string $fragment = null): Url
+function make_link(?string $page = null, QueryArray|array|null $query = null, ?string $fragment = null): Url
 {
-    return new Url(page: $page ?? "", query: $query ?? [], fragment: $fragment);
+    if (is_null($query)) {
+        $query = new QueryArray([]);
+    }
+    if (is_array($query)) {
+        $query = new QueryArray($query);
+    }
+    return new Url(page: $page ?? "", query: $query, fragment: $fragment);
 }
 
 /**

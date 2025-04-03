@@ -19,12 +19,9 @@ final class AdminActionEvent extends Event
 {
     public bool $redirect = true;
 
-    /**
-     * @param array<string, mixed> $params
-     */
     public function __construct(
         public string $action,
-        public array $params
+        public QueryArray $params
     ) {
         parent::__construct();
     }
@@ -72,7 +69,7 @@ final class AdminPage extends Extension
                     parse_str($args, $_GET);
                     $_SERVER['REQUEST_URI'] .= "?" . $args;
                 }
-                send_event(new PageRequestEvent("GET", $query, $_GET, []));
+                send_event(new PageRequestEvent("GET", $query, new QueryArray($_GET), new QueryArray([])));
                 Ctx::$page->display();
                 return Command::SUCCESS;
             });
@@ -89,7 +86,7 @@ final class AdminPage extends Extension
                 }
                 $_SERVER['REQUEST_METHOD'] = 'GET';
                 $_SERVER['REQUEST_URI'] = (string)make_link($query);
-                send_event(new PageRequestEvent("POST", $query, [], $_POST));
+                send_event(new PageRequestEvent("POST", $query, new QueryArray([]), new QueryArray($_POST)));
                 Ctx::$page->display();
                 return Command::SUCCESS;
             });

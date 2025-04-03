@@ -147,7 +147,7 @@ final class NotATag extends Extension
         if ($event->page_matches("untag/list")) {
             $t = new NotATagTable($database->raw_db());
             $t->token = Ctx::$user->get_auth_token();
-            $t->inputs = $event->GET;
+            $t->inputs = $event->GET->toArray();
             $page->set_title("UnTags");
             $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));

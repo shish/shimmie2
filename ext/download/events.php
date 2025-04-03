@@ -8,14 +8,11 @@ class ImageDownloadingEvent extends Event
 {
     public bool $file_modified = false;
 
-    /**
-     * @param array<string, mixed> $params
-     */
     public function __construct(
         public Image $image,
         public Path $path,
         public MimeType $mime,
-        public array $params
+        public QueryArray $params
     ) {
         parent::__construct();
     }

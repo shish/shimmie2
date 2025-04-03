@@ -11,13 +11,13 @@ final class PageRequestEventTest extends TestCase
     // Event::__toString() is only for debugging and nothing else tests it
     public function testToString(): void
     {
-        $e = new PageRequestEvent("GET", "foo/bar", [], []);
+        $e = new PageRequestEvent("GET", "foo/bar");
         self::assertNotEmpty((string)$e);
     }
 
     public function testPageMatches(): void
     {
-        $e = new PageRequestEvent("GET", "foo/bar", [], []);
+        $e = new PageRequestEvent("GET", "foo/bar");
 
         self::assertFalse($e->page_matches("foo"));
         self::assertFalse($e->page_matches("foo/qux"));
@@ -37,7 +37,7 @@ final class PageRequestEventTest extends TestCase
 
     public function testPageMatchesPaged(): void
     {
-        $e = new PageRequestEvent("GET", "foo/bar/4", [], []);
+        $e = new PageRequestEvent("GET", "foo/bar/4");
 
         self::assertFalse($e->page_matches("foo", paged: true));
         self::assertEquals(1, $e->get_iarg('page_num', 1));

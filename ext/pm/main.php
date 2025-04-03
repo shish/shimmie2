@@ -243,7 +243,7 @@ final class PrivMsg extends Extension
             }
         }
         if ($event->page_matches("pm/delete", method: "POST", permission: PrivMsgPermission::READ_PM)) {
-            $pm_id = int_escape($event->req_POST("pm_id"));
+            $pm_id = int_escape($event->POST->req("pm_id"));
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
                 throw new ObjectNotFound("No such PM");
@@ -255,10 +255,10 @@ final class PrivMsg extends Extension
             }
         }
         if ($event->page_matches("pm/send", method: "POST", permission: PrivMsgPermission::SEND_PM)) {
-            $to_id = int_escape($event->req_POST("to_id"));
+            $to_id = int_escape($event->POST->req("to_id"));
             $from_id = $user->id;
-            $subject = $event->req_POST("subject");
-            $message = $event->req_POST("message");
+            $subject = $event->POST->req("subject");
+            $message = $event->POST->req("message");
             send_event(new SendPMEvent(new PM($from_id, Network::get_real_ip(), $to_id, $subject, $message)));
             $page->flash("PM sent");
             $page->set_redirect(Url::referer_or());

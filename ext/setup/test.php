@@ -21,7 +21,7 @@ final class SetupTest extends ShimmiePHPUnitTestCase
                 "emptybool" => null,
                 "emptyarray" => null,
             ],
-            ConfigSaveEvent::postToSettings([
+            ConfigSaveEvent::postToSettings(new QueryArray([
                 // keys in POST that don't start with _type or _config are ignored
                 "some_post" => "value",
                 // _type with no _config means the value is null
@@ -48,14 +48,14 @@ final class SetupTest extends ShimmiePHPUnitTestCase
                 "_config_emptybool" => "",
                 "_type_emptyarray" => "array",
                 "_config_emptyarray" => "",
-            ])
+            ]))
         );
 
         self::assertException(InvalidInput::class, function () {
-            ConfigSaveEvent::postToSettings([
+            ConfigSaveEvent::postToSettings(new QueryArray([
                 "_type_myint" => "cake",
                 "_config_myint" => "tasty",
-            ]);
+            ]));
         });
     }
     public function testNiceUrlsTest(): void

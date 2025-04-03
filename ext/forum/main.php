@@ -141,7 +141,7 @@ final class Forum extends Extension
             $page->set_redirect(make_link("forum/index"));
         }
         if ($event->page_matches("forum/answer", permission: ForumPermission::FORUM_CREATE)) {
-            $threadID = int_escape($event->req_POST("threadID"));
+            $threadID = int_escape($event->POST->req("threadID"));
             $total_pages = $this->get_total_pages_for_thread($threadID);
             $errors = $this->sanity_check_new_post();
             if (count($errors) > 0) {

@@ -9,7 +9,6 @@ parameters:
   typeAliases:
     tag-string: non-empty-string
     hash-string: non-empty-string&internal-hash-string
-    query-array: "array<string,string|string[]>"
     header-array: "array<string,string|string[]>"
     sql-params-array: "array<string,string|int|bool|null>"
   ignoreErrors:

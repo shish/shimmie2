@@ -74,8 +74,8 @@ final class CronUploader extends Extension
                 break;
             case "cron_uploader_restage":
                 $event->redirect = true;
-                if (array_key_exists("failed_dir", $event->params) && !empty($event->params["failed_dir"])) {
-                    $this->restage_folder($event->params["failed_dir"]);
+                if (!empty($event->params["failed_dir"])) {
+                    $this->restage_folder(new Path($event->params["failed_dir"]));
                 }
                 break;
         }
@@ -384,9 +384,9 @@ final class CronUploader extends Extension
      */
     private function add_image(Path $tmpname, string $filename, array $tags): DataUploadEvent
     {
-        $event = send_event(new DataUploadEvent($tmpname, basename($filename), 0, [
+        $event = send_event(new DataUploadEvent($tmpname, basename($filename), 0, new QueryArray([
             'tags' => Tag::implode($tags),
-        ]));
+        ])));
 
         // Generate info message
         if (count($event->images) == 0) {

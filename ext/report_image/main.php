@@ -44,16 +44,16 @@ final class ReportImage extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("image_report/add")) {
-            $image_id = int_escape($event->req_POST('image_id'));
-            send_event(new AddReportedImageEvent(new ImageReport($image_id, Ctx::$user->id, $event->req_POST('reason'))));
+            $image_id = int_escape($event->POST->req('image_id'));
+            send_event(new AddReportedImageEvent(new ImageReport($image_id, Ctx::$user->id, $event->POST->req('reason'))));
             Ctx::$page->set_redirect(make_link("post/view/$image_id"));
         }
         if ($event->page_matches("image_report/remove", method: "POST", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {
-            send_event(new RemoveReportedImageEvent(int_escape($event->req_POST('id'))));
+            send_event(new RemoveReportedImageEvent(int_escape($event->POST->req('id'))));
             Ctx::$page->set_redirect(make_link("image_report/list"));
         }
         if ($event->page_matches("image_report/remove_reports_by", method: "POST", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {
-            $this->delete_reports_by(int_escape($event->req_POST('user_id')));
+            $this->delete_reports_by(int_escape($event->POST->req('user_id')));
             Ctx::$page->set_redirect(make_link());
         }
         if ($event->page_matches("image_report/list", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {

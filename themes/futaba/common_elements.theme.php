@@ -14,10 +14,7 @@ use function MicroHTML\joinHTML;
 
 class FutabaCommonElementsTheme extends CommonElementsTheme
 {
-    /**
-     * @param ?query-array $query
-     */
-    public function display_paginator(string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
+    public function display_paginator(string $base, ?QueryArray $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
         if ($total_pages === 0) {
             $total_pages = 1;
@@ -26,18 +23,12 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
         Ctx::$page->add_block(new Block(null, $body, "main", 90));
     }
 
-    /**
-     * @param ?query-array $query
-     */
-    public function futaba_gen_page_link(string $base_url, ?array $query, int $page, string $name): HTMLElement
+    public function futaba_gen_page_link(string $base_url, ?QueryArray $query, int $page, string $name): HTMLElement
     {
         return emptyHTML("[", A(["href" => make_link("$base_url/$page", $query)], $name), "]");
     }
 
-    /**
-     * @param ?query-array $query
-     */
-    public function futaba_gen_page_link_block(string $base_url, ?array $query, int $page, int $current_page, string $name): HTMLElement
+    public function futaba_gen_page_link_block(string $base_url, ?QueryArray $query, int $page, int $current_page, string $name): HTMLElement
     {
         $paginator = $this->futaba_gen_page_link($base_url, $query, $page, $name);
         if ($page === $current_page) {
@@ -46,10 +37,7 @@ class FutabaCommonElementsTheme extends CommonElementsTheme
         return $paginator;
     }
 
-    /**
-     * @param ?query-array $query
-     */
-    public function futaba_build_paginator(int $current_page, int $total_pages, string $base_url, ?array $query): HTMLElement
+    public function futaba_build_paginator(int $current_page, int $total_pages, string $base_url, ?QueryArray $query): HTMLElement
     {
         $next = $current_page + 1;
         $prev = $current_page - 1;

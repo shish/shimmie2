@@ -16,7 +16,7 @@ final class ETServer extends Extension
         global $database;
         $page = Ctx::$page;
         if ($event->page_matches("register.php")) {
-            $data = $event->get_POST("data");
+            $data = $event->POST->get("data");
             if ($data) {
                 $database->execute(
                     "INSERT INTO registration(data) VALUES(:data)",

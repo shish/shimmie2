@@ -177,7 +177,7 @@ final class IPBan extends Extension
             $event->GET['c_added'] = date('Y-m-d');
             $t = new IPBanTable(Ctx::$database->raw_db());
             $t->token = Ctx::$user->get_auth_token();
-            $t->inputs = $event->GET;
+            $t->inputs = $event->GET->toArray();
             $this->theme->display_bans($t->table($t->query()), $t->paginator());
         }
     }

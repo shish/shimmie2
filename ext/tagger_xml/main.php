@@ -18,9 +18,9 @@ final class TaggerXML extends Extension
     {
         if ($event->page_matches("tagger/tags")) {
             $tags = null;
-            if ($event->get_GET('s')) { // tagger/tags[/...]?s=$string
+            if ($event->GET->get('s')) { // tagger/tags[/...]?s=$string
                 // return matching tags in XML form
-                $tags = $this->match_tag_list($event->get_GET('s'));
+                $tags = $this->match_tag_list($event->GET->get('s'));
             } elseif ($event->page_matches("tagger/tags/{image_id}")) {
                 // return arg[1] AS image_id's tag list in XML form
                 $tags = $this->image_tag_list($event->get_iarg('image_id'));

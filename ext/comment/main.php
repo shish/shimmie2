@@ -196,8 +196,8 @@ final class CommentList extends Extension
         global $database;
         $page = Ctx::$page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
-            $i_iid = int_escape($event->req_POST('image_id'));
-            send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->req_POST('comment')));
+            $i_iid = int_escape($event->POST->req('image_id'));
+            send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->POST->req('comment')));
             $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
         }
         if ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: CommentPermission::DELETE_COMMENT)) {
@@ -207,7 +207,7 @@ final class CommentList extends Extension
             $page->set_redirect(Url::referer_or(make_link("post/view/" . $event->get_iarg('image_id'))));
         }
         if ($event->page_matches("comment/bulk_delete", method: "POST", permission: CommentPermission::DELETE_COMMENT)) {
-            $ip = $event->req_POST('ip');
+            $ip = $event->POST->req('ip');
 
             $comment_ids = $database->get_col("
                 SELECT id

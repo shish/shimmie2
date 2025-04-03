@@ -72,24 +72,24 @@ final class Blocks extends Extension
             $database->execute("
                     INSERT INTO blocks (pages, title, area, priority, content, userclass)
                     VALUES (:pages, :title, :area, :priority, :content, :userclass)
-                ", ['pages' => $event->req_POST('pages'), 'title' => $event->req_POST('title'), 'area' => $event->req_POST('area'), 'priority' => (int)$event->req_POST('priority'), 'content' => $event->req_POST('content'), 'userclass' => $event->req_POST('userclass')]);
-            Log::info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$event->req_POST('title').")");
+                ", ['pages' => $event->POST->req('pages'), 'title' => $event->POST->req('title'), 'area' => $event->POST->req('area'), 'priority' => (int)$event->POST->req('priority'), 'content' => $event->POST->req('content'), 'userclass' => $event->POST->req('userclass')]);
+            Log::info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$event->POST->req('title').")");
             Ctx::$cache->delete("blocks");
             $page->set_redirect(make_link("blocks/list"));
         }
         if ($event->page_matches("blocks/update", method: "POST", permission: BlocksPermission::MANAGE_BLOCKS)) {
-            if (!is_null($event->get_POST('delete'))) {
+            if (!is_null($event->POST->get('delete'))) {
                 $database->execute("
                         DELETE FROM blocks
                         WHERE id=:id
-                    ", ['id' => $event->req_POST('id')]);
-                Log::info("blocks", "Deleted Block #".$event->req_POST('id'));
+                    ", ['id' => $event->POST->req('id')]);
+                Log::info("blocks", "Deleted Block #".$event->POST->req('id'));
             } else {
                 $database->execute("
                         UPDATE blocks SET pages=:pages, title=:title, area=:area, priority=:priority, content=:content, userclass=:userclass
                         WHERE id=:id
-                    ", ['pages' => $event->req_POST('pages'), 'title' => $event->req_POST('title'), 'area' => $event->req_POST('area'), 'priority' => (int)$event->req_POST('priority'), 'content' => $event->req_POST('content'), 'userclass' => $event->req_POST('userclass'), 'id' => $event->req_POST('id')]);
-                Log::info("blocks", "Updated Block #".$event->req_POST('id')." (".$event->req_POST('title').")");
+                    ", ['pages' => $event->POST->req('pages'), 'title' => $event->POST->req('title'), 'area' => $event->POST->req('area'), 'priority' => (int)$event->POST->req('priority'), 'content' => $event->POST->req('content'), 'userclass' => $event->POST->req('userclass'), 'id' => $event->POST->req('id')]);
+                Log::info("blocks", "Updated Block #".$event->POST->req('id')." (".$event->POST->req('title').")");
             }
             Ctx::$cache->delete("blocks");
             $page->set_redirect(make_link("blocks/list"));

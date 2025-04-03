@@ -27,7 +27,7 @@ final class UrlTest extends TestCase
     public function test_parse(): void
     {
         self::assertEquals(
-            new Url(path: "/index.php", query: ["q" => "thumb/2/thumb.jpg"]),
+            new Url(path: "/index.php", query: new QueryArray(["q" => "thumb/2/thumb.jpg"])),
             Url::parse("/index.php?q=thumb/2/thumb.jpg")
         );
     }
@@ -39,7 +39,7 @@ final class UrlTest extends TestCase
         Ctx::$config->set(SetupConfig::NICE_URLS, $niceurls);
         self::assertUrlEquals(
             "/index.php?q=thumb%2F2%2Fthumb.jpg",
-            new Url(path: "/index.php", query: ["q" => "thumb/2/thumb.jpg"]),
+            new Url(path: "/index.php", query: new QueryArray(["q" => "thumb/2/thumb.jpg"])),
         );
     }
 
@@ -53,7 +53,7 @@ final class UrlTest extends TestCase
 
         Ctx::$config->set(SetupConfig::NICE_URLS, false);
         self::assertUrlEquals(
-            "/test/index.php?q=foo&a=1&b=2",
+            "/test/index.php?a=1&b=2&q=foo",
             make_link("foo", ["a" => "1", "b" => "2"])
         );
     }
@@ -107,7 +107,7 @@ final class UrlTest extends TestCase
          * @return array<string>
          */
         $gst = function (array $terms): array {
-            $pre = new PageRequestEvent("GET", _get_query((string)search_link($terms)), [], []);
+            $pre = new PageRequestEvent("GET", _get_query((string)search_link($terms)), new QueryArray([]), new QueryArray([]));
             $pre->page_matches("post/list/{search}/{page}");
             return Tag::explode($pre->get_arg('search'));
         };
@@ -167,7 +167,7 @@ final class UrlTest extends TestCase
     public function test_arg_decode(): void
     {
         self::assertEquals(
-            ["api_key" => "Something // not-friendly"],
+            new QueryArray(["api_key" => "Something // not-friendly"]),
             Url::parse("/test/foo?api_key=Something+%2F%2F+not-friendly")->getQueryArray()
         );
         /*
@@ -249,7 +249,7 @@ final class UrlTest extends TestCase
 
         // query
         self::assertUrlEquals(
-            $nice_urls ? "/test/foo?a=1&b=2" : "/test/index.php?q=foo&a=1&b=2",
+            $nice_urls ? "/test/foo?a=1&b=2" : "/test/index.php?a=1&b=2&q=foo",
             make_link("foo", ["a" => "1", "b" => "2"])
         );
 
@@ -261,7 +261,7 @@ final class UrlTest extends TestCase
 
         // query + hash
         self::assertUrlEquals(
-            $nice_urls ? "/test/foo?a=1&b=2#cake" : "/test/index.php?q=foo&a=1&b=2#cake",
+            $nice_urls ? "/test/foo?a=1&b=2#cake" : "/test/index.php?a=1&b=2&q=foo#cake",
             make_link("foo", ["a" => "1", "b" => "2"], "cake")
         );
     }

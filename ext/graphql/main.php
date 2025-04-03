@@ -31,7 +31,7 @@ final class MetadataInput
     public static function update_post_metadata(int $post_id, array $metadata): Image
     {
         $image = Image::by_id_ex($post_id);
-        $pairs = [];
+        $pairs = new QueryArray([]);
         foreach ($metadata as $m) {
             $pairs[$m->key] = $m->value;
         }
@@ -134,31 +134,29 @@ final class GraphQL extends Extension
         }
         if ($event->page_matches("graphql_upload")) {
             $this->cors();
-            Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode(self::handle_uploads()));
+            Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode(self::handle_uploads($event->POST)));
         }
     }
 
     /**
      * @return array{error?:string,results?:array<array{error?:string,image_ids?:int[]}>}
      */
-    private static function handle_uploads(): array
+    private static function handle_uploads(QueryArray $post): array
     {
         if (!Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
             return ["error" => "User cannot create posts"];
         }
 
-        $metadata = only_strings($_POST);
-
         $results = [];
         for ($n = 0; $n < 100; $n++) {
-            if (empty($_POST["url$n"]) && empty($_FILES["data$n"])) {
+            if (empty($post["url$n"]) && empty($_FILES["data$n"])) {
                 break;
             }
             if (isset($_FILES["data$n"]) && ($_FILES["data$n"]["size"] == 0 || $_FILES["data$n"]["error"] == UPLOAD_ERR_NO_FILE)) {
                 break;
             }
             try {
-                $results[] = ["image_ids" => self::handle_upload($n, $metadata)];
+                $results[] = ["image_ids" => self::handle_upload($n, $post)];
             } catch (\Exception $e) {
                 $results[] = ["error" => $e->getMessage()];
             }
@@ -167,13 +165,11 @@ final class GraphQL extends Extension
     }
 
     /**
-     * @param array<string, string> $metadata
      * @return int[]
      */
-    private static function handle_upload(int $n, array $metadata): array
+    private static function handle_upload(int $n, QueryArray $post): array
     {
-        global $database;
-        if (!empty($_POST["url$n"])) {
+        if (!empty($post["url$n"])) {
             throw new UploadException("URLs not handled yet");
         } else {
             $ec = $_FILES["data$n"]["error"];
@@ -189,8 +185,8 @@ final class GraphQL extends Extension
             }
         }
 
-        $event = $database->with_savepoint(function () use ($tmpname, $filename, $n, $metadata) {
-            return send_event(new DataUploadEvent($tmpname, $filename, $n, $metadata));
+        $event = Ctx::$database->with_savepoint(function () use ($tmpname, $filename, $n, $post) {
+            return send_event(new DataUploadEvent($tmpname, $filename, $n, $post));
         });
 
         return array_map(fn ($im) => $im->id, $event->images);

@@ -81,7 +81,7 @@ final class AutoTagger extends Extension
         if ($event->page_matches("auto_tag/list")) {
             $t = new AutoTaggerTable(Ctx::$database->raw_db());
             $t->token = Ctx::$user->get_auth_token();
-            $t->inputs = $event->GET;
+            $t->inputs = $event->GET->toArray();
             $t->size = Ctx::$config->req(AutoTaggerConfig::ITEMS_PER_PAGE);
             if (Ctx::$user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
                 $t->create_url = make_link("auto_tag/add");

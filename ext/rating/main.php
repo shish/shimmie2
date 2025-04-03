@@ -261,14 +261,11 @@ final class Ratings extends Extension
         switch ($event->action) {
             case "update_ratings":
                 $event->redirect = true;
-                if (!array_key_exists("rating_old", $event->params) || empty($event->params["rating_old"])) {
+                $old = $event->params["rating_old"] ?? null;
+                $new = $event->params["rating_new"] ?? null;
+                if (!$old || !$new) {
                     return;
                 }
-                if (!array_key_exists("rating_new", $event->params) || empty($event->params["rating_new"])) {
-                    return;
-                }
-                $old = $event->params["rating_old"];
-                $new = $event->params["rating_new"];
 
                 if (Ctx::$user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
                     Ctx::$database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new" => $new, "old" => $old ]);
@@ -310,7 +307,7 @@ final class Ratings extends Extension
         if ($event->page_matches("admin/bulk_rate", method: "POST", permission: RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
             $n = 0;
             while (true) {
-                $images = Search::find_images($n, 100, Tag::explode($event->req_POST("query")));
+                $images = Search::find_images($n, 100, Tag::explode($event->POST->req("query")));
                 if (count($images) == 0) {
                     break;
                 }
@@ -318,7 +315,7 @@ final class Ratings extends Extension
                 reset($images); // rewind to first element in array.
 
                 foreach ($images as $image) {
-                    send_event(new RatingSetEvent($image, $event->req_POST('rating')));
+                    send_event(new RatingSetEvent($image, $event->POST->req('rating')));
                 }
                 $n += 100;
             }

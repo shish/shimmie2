@@ -16,8 +16,8 @@ final class AutoComplete extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("api/internal/autocomplete")) {
-            $limit = (int)($event->get_GET("limit") ?? 1000);
-            $s = $event->get_GET("s") ?? "";
+            $limit = (int)($event->GET->get("limit") ?? 1000);
+            $s = $event->GET->get("s") ?? "";
 
             $res = $this->complete($s, $limit);
 

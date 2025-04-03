@@ -14,24 +14,24 @@ final class PostLockTest extends ShimmiePHPUnitTestCase
 
         // admin can lock
         self::log_in_as_admin();
-        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, ["locked" => "on"]));
+        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, new QueryArray(["locked" => "on"])));
 
         // user can't edit locked post
         self::log_in_as_user();
         self::assertException(PermissionDenied::class, function () use ($image_id) {
-            send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, ["source" => "http://example.com"]));
+            send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, new QueryArray(["source" => "http://example.com"])));
         });
 
         // admin can edit locked post
         self::log_in_as_admin();
-        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, ["source" => "http://example.com"]));
+        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, new QueryArray(["source" => "http://example.com"])));
 
         // admin can unlock
         self::log_in_as_admin();
-        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, [])); // "locked" is not set
+        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, new QueryArray([]))); // "locked" is not set
 
         // user can edit un-locked post
         self::log_in_as_user();
-        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, ["source" => "http://example.com"]));
+        send_event(new ImageInfoSetEvent(Image::by_id_ex($image_id), 0, new QueryArray(["source" => "http://example.com"])));
     }
 }
