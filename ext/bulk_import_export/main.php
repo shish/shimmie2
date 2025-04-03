@@ -52,9 +52,9 @@ final class BulkImportExport extends DataHandlerExtension
                         $tmpfile->put_contents($stream);
 
                         $database->with_savepoint(function () use ($item, $tmpfile, $event) {
-                            $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, [
+                            $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, new QueryArray([
                                 'tags' => $item->new_tags,
-                            ]))->images;
+                            ])))->images;
 
                             if (count($images) === 0) {
                                 throw new UserError("Unable to import file $item->hash");

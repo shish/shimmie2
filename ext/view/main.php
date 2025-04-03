@@ -20,7 +20,7 @@ final class ViewPost extends Extension
         if ($event->page_matches("post/prev/{image_id}") || $event->page_matches("post/next/{image_id}")) {
             $image_id = $event->get_iarg('image_id');
 
-            $search = $event->get_GET('search');
+            $search = $event->GET->get('search');
             if ($search) {
                 $search_terms = Tag::explode($search);
                 $fragment = "search=".url_escape($search);
@@ -55,13 +55,13 @@ final class ViewPost extends Extension
             $image = Image::by_id_ex($image_id);
             send_event(new DisplayingImageEvent($image));
         } elseif ($event->page_matches("post/set", method: "POST")) {
-            $image_id = int_escape($event->req_POST('image_id'));
+            $image_id = int_escape($event->POST->req('image_id'));
             $image = Image::by_id_ex($image_id);
             if (!$image->is_locked() || Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
-                send_event(new ImageInfoSetEvent($image, 0, only_strings($event->POST)));
+                send_event(new ImageInfoSetEvent($image, 0, $event->POST));
 
-                if ($event->get_GET('search')) {
-                    $fragment = "search=" . url_escape($event->get_GET('search'));
+                if ($event->GET->get('search')) {
+                    $fragment = "search=" . url_escape($event->GET->get('search'));
                 } else {
                     $fragment = null;
                 }

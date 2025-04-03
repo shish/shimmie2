@@ -69,27 +69,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array<string, mixed> $args
-     * @return query-array
-     */
-    private static function check_args(array $args): array
-    {
-        if (!$args) {
-            return [];
-        }
-        foreach ($args as $k => $v) {
-            if (is_array($v)) {
-                $args[$k] = $v;
-            } else {
-                $args[$k] = (string)$v;
-            }
-        }
-        return $args;
-    }
-
-    /**
-     * @param query-array $get_args
-     * @param query-array $post_args
+     * @param array<string, string|string[]> $get_args
+     * @param array<string, string|string[]> $post_args
      * @param array<string, string> $cookies
      */
     protected static function request(
@@ -100,8 +81,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         array $cookies = ["shm_accepted_terms" => "true"],
     ): Page {
         // use a fresh page
-        $get_args = self::check_args($get_args);
-        $post_args = self::check_args($post_args);
+        $get_args = new QueryArray($get_args);
+        $post_args = new QueryArray($post_args);
 
         if (str_contains($page_name, "?")) {
             throw new \RuntimeException("Query string included in page name");
@@ -120,7 +101,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array<string, mixed> $args
+     * @param array<string, string|string[]> $args
      */
     protected static function get_page(string $page_name, array $args = []): Page
     {
@@ -128,7 +109,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array<string, mixed> $args
+     * @param array<string, string|string[]> $args
      */
     protected static function post_page(string $page_name, array $args = []): Page
     {
@@ -264,10 +245,10 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected function post_image(string $filename, string $tags): int
     {
         $file = new Path($filename);
-        $dae = send_event(new DataUploadEvent($file, $file->basename()->str(), 0, [
+        $dae = send_event(new DataUploadEvent($file, $file->basename()->str(), 0, new QueryArray([
             "filename" => $file->basename()->str(),
             "tags" => $tags,
-        ]));
+        ])));
         if (count($dae->images) === 0) {
             throw new \Exception("Upload failed :(");
         }

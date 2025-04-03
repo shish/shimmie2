@@ -22,22 +22,22 @@ final class ReplaceFile extends Extension
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
 
-            if (empty($event->get_POST("url")) && count($_FILES) == 0) {
+            if (empty($event->POST->get("url")) && count($_FILES) == 0) {
                 Ctx::$page->set_redirect(make_link("replace/$image_id"));
                 return;
             }
 
-            if (!empty($event->get_POST("url"))) {
+            if (!empty($event->POST->get("url"))) {
                 $tmp_filename = shm_tempnam("transload");
-                $url = $event->req_POST("url");
+                $url = $event->POST->req("url");
                 assert(!empty($url));
                 Network::fetch_url($url, $tmp_filename);
                 send_event(new ImageReplaceEvent($image, $tmp_filename));
             } elseif (count($_FILES) > 0) {
                 send_event(new ImageReplaceEvent($image, new Path($_FILES["data"]['tmp_name'])));
             }
-            if ($event->get_POST("source")) {
-                send_event(new SourceSetEvent($image, $event->req_POST("source")));
+            if ($event->POST->get("source")) {
+                send_event(new SourceSetEvent($image, $event->POST->req("source")));
             }
             Ctx::$cache->delete("thumb-block:{$image_id}");
             Ctx::$page->set_redirect(make_link("post/view/$image_id"));

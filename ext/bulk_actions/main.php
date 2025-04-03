@@ -62,13 +62,10 @@ final class BulkActionEvent extends Event
 {
     public bool $redirect = true;
 
-    /**
-     * @param array<string, mixed> $params
-     */
     public function __construct(
         public string $action,
         public \Generator $items,
-        public array $params
+        public QueryArray $params
     ) {
         parent::__construct();
     }
@@ -127,7 +124,7 @@ final class BulkActions extends Extension
                 $query = $input->getArgument('query');
                 $items = $this->yield_search_results($query);
                 Log::info("bulk_actions", "Performing $action on $query");
-                send_event(new BulkActionEvent($action, $items, []));
+                send_event(new BulkActionEvent($action, $items, new QueryArray([])));
                 return Command::SUCCESS;
             });
     }
@@ -172,16 +169,16 @@ final class BulkActions extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("bulk_action", method: "POST", permission: BulkActionsPermission::PERFORM_BULK_ACTIONS)) {
-            $action = $event->req_POST('bulk_action');
+            $action = $event->POST->req('bulk_action');
             $items = null;
-            if ($event->get_POST('bulk_selected_ids')) {
-                $data = json_decode($event->req_POST('bulk_selected_ids'));
+            if ($event->POST->get('bulk_selected_ids')) {
+                $data = json_decode($event->POST->req('bulk_selected_ids'));
                 if (!is_array($data) || empty($data)) {
                     throw new InvalidInput("No ids specified in bulk_selected_ids");
                 }
                 $items = $this->yield_items($data);
-            } elseif ($event->get_POST('bulk_query')) {
-                $query = $event->req_POST('bulk_query');
+            } elseif ($event->POST->get('bulk_query')) {
+                $query = $event->POST->req('bulk_query');
                 $items = $this->yield_search_results($query);
             } else {
                 throw new InvalidInput("No ids selected and no query present, cannot perform bulk operation on entire collection");

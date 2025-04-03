@@ -43,7 +43,7 @@ final class RotateImage extends Extension
             $image_id = $event->get_iarg('image_id');
             Image::by_id_ex($image_id);
             /* Check if options were given to rotate an image. */
-            $deg = int_escape($event->req_POST('rotate_deg'));
+            $deg = int_escape($event->POST->req('rotate_deg'));
 
             /* Attempt to rotate the image */
             $this->rotate_image($image_id, $deg);

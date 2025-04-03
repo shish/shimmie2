@@ -48,10 +48,10 @@ final class UserConfig extends Extension
         // if API keys are enabled, then _any_ anonymous page request can
         // be an authed page request if the api_key is set
         if (Ctx::$config->req(UserAccountsConfig::ENABLE_API_KEYS)) {
-            if ($event->get_GET("api_key") && Ctx::$user->is_anonymous()) {
+            if ($event->GET->get("api_key") && Ctx::$user->is_anonymous()) {
                 $user_id = $database->get_one(
                     "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
-                    ["value" => $event->get_GET("api_key"), "name" => UserConfigUserConfig::API_KEY]
+                    ["value" => $event->GET->get("api_key"), "name" => UserConfigUserConfig::API_KEY]
                 );
 
                 if (!empty($user_id)) {

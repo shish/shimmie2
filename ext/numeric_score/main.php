@@ -159,14 +159,14 @@ final class NumericScore extends Extension
             }
             $page->set_data(MimeType::HTML, $html);
         } elseif ($event->page_matches("numeric_score/vote", method: "POST", permission: NumericScorePermission::CREATE_VOTE)) {
-            $image_id = int_escape($event->req_POST("image_id"));
-            $score = int_escape($event->req_POST("vote"));
+            $image_id = int_escape($event->POST->req("image_id"));
+            $score = int_escape($event->POST->req("vote"));
             if (($score === -1 || $score === 0 || $score === 1) && $image_id > 0) {
                 send_event(new NumericScoreSetEvent($image_id, $user, $score));
             }
             $page->set_redirect(make_link("post/view/$image_id"));
         } elseif ($event->page_matches("numeric_score/remove_votes_on", method: "POST", permission: NumericScorePermission::EDIT_OTHER_VOTE)) {
-            $image_id = int_escape($event->req_POST("image_id"));
+            $image_id = int_escape($event->POST->req("image_id"));
             $database->execute(
                 "DELETE FROM numeric_score_votes WHERE image_id=:image_id",
                 ['image_id' => $image_id]
@@ -177,22 +177,22 @@ final class NumericScore extends Extension
             );
             $page->set_redirect(make_link("post/view/$image_id"));
         } elseif ($event->page_matches("numeric_score/remove_votes_by", method: "POST", permission: NumericScorePermission::EDIT_OTHER_VOTE)) {
-            $this->delete_votes_by(int_escape($event->req_POST('user_id')));
+            $this->delete_votes_by(int_escape($event->POST->req('user_id')));
             $page->set_redirect(make_link());
         } elseif ($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
             //FIXME: popular_by isn't linked from anywhere
             list($day, $month, $year) = [date("d"), date("m"), date("Y")];
 
-            if ($event->get_GET('day')) {
-                $D = (int) $event->get_GET('day');
+            if ($event->GET->get('day')) {
+                $D = (int) $event->GET->get('day');
                 $day = clamp($D, 1, 31);
             }
-            if ($event->get_GET('month')) {
-                $M = (int) $event->get_GET('month');
+            if ($event->GET->get('month')) {
+                $M = (int) $event->GET->get('month');
                 $month = clamp($M, 1, 12);
             }
-            if ($event->get_GET('year')) {
-                $Y = (int) $event->get_GET('year');
+            if ($event->GET->get('year')) {
+                $Y = (int) $event->GET->get('year');
                 $year = clamp($Y, 1970, 2100);
             }
 

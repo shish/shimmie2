@@ -96,10 +96,7 @@ final class ExtManager extends Extension
         return $extensions;
     }
 
-    /**
-     * @param array<string, mixed> $settings
-     */
-    private function set_things(array $settings): void
+    private function set_things(QueryArray $settings): void
     {
         $extras = [];
 
@@ -107,7 +104,7 @@ final class ExtManager extends Extension
             if ($info->core) {
                 continue;  // core extensions are always enabled
             }
-            if (isset($settings["ext_$key"]) && $settings["ext_$key"] === "on") {
+            if ($settings["ext_$key"] === "on") {
                 $extras[] = $key;
             }
         }

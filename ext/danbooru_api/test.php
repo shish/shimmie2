@@ -13,12 +13,12 @@ final class DanbooruApiTest extends ShimmiePHPUnitTestCase
         $image_id = $this->post_image("tests/bedroom_workshop.jpg", "data");
 
         self::get_page("api/danbooru/find_posts");
-        self::get_page("api/danbooru/find_posts", ["id" => $image_id]);
+        self::get_page("api/danbooru/find_posts", ["id" => (string)$image_id]);
         self::get_page("api/danbooru/find_posts", ["md5" => "17fc89f372ed3636e28bd25cc7f3bac1"]);
         self::get_page("api/danbooru/find_posts", ["tags" => "*"]);
 
         self::get_page("api/danbooru/find_tags");
-        self::get_page("api/danbooru/find_tags", ["id" => 1]);
+        self::get_page("api/danbooru/find_tags", ["id" => "1"]);
         self::get_page("api/danbooru/find_tags", ["name" => "data"]);
 
         $page = self::get_page("api/danbooru/post/show/$image_id");

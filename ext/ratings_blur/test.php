@@ -109,8 +109,8 @@ final class RatingsBlurTest extends ShimmiePHPUnitTestCase
         send_event(new PageRequestEvent(
             "POST",
             "user_admin/delete_user",
-            [],
-            ['id' => (string)User::by_name($username)->id, 'with_images' => '', 'with_comments' => '']
+            new QueryArray([]),
+            new QueryArray(['id' => (string)User::by_name($username)->id, 'with_images' => '', 'with_comments' => ''])
         ));
         self::log_out();
     }

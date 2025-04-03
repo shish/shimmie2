@@ -76,10 +76,7 @@ class Themelet
         return self::get_common()->build_thumb($image);
     }
 
-    /**
-     * @param ?query-array $query
-     */
-    public function display_paginator(string $base, ?array $query, int $page_number, int $total_pages, bool $show_random = false): void
+    public function display_paginator(string $base, ?QueryArray $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
         self::get_common()->display_paginator($base, $query, $page_number, $total_pages, $show_random);
     }

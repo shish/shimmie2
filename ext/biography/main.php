@@ -27,7 +27,7 @@ final class Biography extends Extension
         if ($event->page_matches("user/{name}/biography", method: "POST")) {
             $duser = User::by_name($event->get_arg("name"));
             if (Ctx::$user->id == $duser->id || Ctx::$user->can(UserAccountsPermission::EDIT_USER_INFO)) {
-                $bio = $event->req_POST('biography');
+                $bio = $event->POST->req('biography');
                 Log::info("biography", "Set biography to $bio");
                 $duser->get_config()->set(BiographyConfig::BIOGRAPHY, $bio);
                 Ctx::$page->flash("Bio Updated");

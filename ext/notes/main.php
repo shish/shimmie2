@@ -116,12 +116,12 @@ final class Notes extends Extension
             $page->set_redirect(make_link("note/updated"));
         }
         if ($event->page_matches("note/add_request", permission: NotesPermission::REQUEST)) {
-            $image_id = int_escape($event->req_POST("image_id"));
+            $image_id = int_escape($event->POST->req("image_id"));
             $this->add_note_request($image_id);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
         if ($event->page_matches("note/nuke_requests", permission: NotesPermission::ADMIN)) {
-            $image_id = int_escape($event->req_POST("image_id"));
+            $image_id = int_escape($event->POST->req("image_id"));
             $this->nuke_requests($image_id);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
@@ -141,7 +141,7 @@ final class Notes extends Extension
             $page->set_data(MimeType::JSON, \Safe\json_encode(['status' => 'success']));
         }
         if ($event->page_matches("note/nuke_notes", permission: NotesPermission::ADMIN)) {
-            $image_id = int_escape($event->req_POST("image_id"));
+            $image_id = int_escape($event->POST->req("image_id"));
             $this->nuke_notes($image_id);
             $page->set_redirect(make_link("post/view/$image_id"));
         }

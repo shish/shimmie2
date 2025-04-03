@@ -143,7 +143,7 @@ final class TranscodeImage extends Extension
         if ($event->page_matches("transcode/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
             $image_obj = Image::by_id_ex($image_id);
-            $this->transcode_and_replace_image($image_obj, new MimeType($event->req_POST('transcode_mime')));
+            $this->transcode_and_replace_image($image_obj, new MimeType($event->POST->req('transcode_mime')));
             Ctx::$page->set_redirect(make_link("post/view/".$image_id));
         }
     }
@@ -202,7 +202,7 @@ final class TranscodeImage extends Extension
                     return;
                 }
                 if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
-                    $mime = $event->params['transcode_mime'];
+                    $mime = new MimeType($event->params['transcode_mime']);
                     $total = 0;
                     $size_difference = 0;
                     foreach ($event->items as $image) {

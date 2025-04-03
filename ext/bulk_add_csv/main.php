@@ -17,7 +17,7 @@ final class BulkAddCSV extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("bulk_add_csv", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
-            $csv = $event->req_POST('csv');
+            $csv = $event->POST->req('csv');
             Ctx::$event_bus->set_timeout(null);
             $this->add_csv(new Path($csv));
             $this->theme->display_upload_results();
@@ -55,11 +55,11 @@ final class BulkAddCSV extends Extension
     {
         global $database;
         $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
-            $event = send_event(new DataUploadEvent($tmpname, basename($filename), 0, [
+            $event = send_event(new DataUploadEvent($tmpname, basename($filename), 0, new QueryArray([
                 'tags' => Tag::implode($tags),
                 'source' => $source,
                 'rating' => $rating,
-            ]));
+            ])));
 
             if (count($event->images) === 0) {
                 throw new UploadException("File type not recognised");

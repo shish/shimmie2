@@ -42,15 +42,13 @@ final class PrivateImage extends Extension
         }
 
         if ($event->page_matches("user_admin/private_image", method: "POST")) {
-            $id = int_escape($event->req_POST('id'));
+            $id = int_escape($event->POST->req('id'));
             if ($id !== $user->id) {
                 throw new PermissionDenied("Cannot change another user's settings");
             }
-            $set_default = array_key_exists("set_default", $event->POST);
-            $view_default = array_key_exists("view_default", $event->POST);
 
-            $user->get_config()->set(PrivateImageUserConfig::SET_DEFAULT, $set_default);
-            $user->get_config()->set(PrivateImageUserConfig::VIEW_DEFAULT, $view_default);
+            $user->get_config()->set(PrivateImageUserConfig::SET_DEFAULT, $event->POST->offsetExists("set_default"));
+            $user->get_config()->set(PrivateImageUserConfig::VIEW_DEFAULT, $event->POST->offsetExists("view_default"));
 
             Ctx::$page->set_redirect(make_link("user"));
         }

@@ -74,7 +74,7 @@ final class TagHistoryTest extends ShimmiePHPUnitTestCase
         send_event(new TagSetEvent($image, ["new_tag"]));
 
         // Revert tags
-        self::post_page("tag_history/revert", ["revert" => $revert_id]);
+        self::post_page("tag_history/revert", ["revert" => (string)$revert_id]);
 
         // Check post
         self::get_page("post/view/$image_id");

@@ -15,10 +15,8 @@ final class PageRequestEvent extends Event
 {
     private string $method;
     public string $path;
-    /** @var query-array */
-    public array $GET;
-    /** @var query-array */
-    public array $POST;
+    public QueryArray $GET;
+    public QueryArray $POST;
 
     /**
      * @var string[]
@@ -30,14 +28,12 @@ final class PageRequestEvent extends Event
     private array $named_args = [];
     public int $page_num;
 
-    /**
-     * @param string $method The HTTP method used to make the request
-     * @param string $path The path of the request
-     * @param array<string, string|string[]> $get The GET parameters
-     * @param array<string, string|string[]> $post The POST parameters
-     */
-    public function __construct(string $method, string $path, array $get, array $post)
-    {
+    public function __construct(
+        string $method,
+        string $path,
+        QueryArray $get = new QueryArray([]),
+        QueryArray $post = new QueryArray([]),
+    ) {
         parent::__construct();
 
         $this->method = $method;
@@ -53,75 +49,6 @@ final class PageRequestEvent extends Event
 
         // break the path into parts
         $this->args = explode('/', $path);
-    }
-
-    public function get_GET(string $key): ?string
-    {
-        if (array_key_exists($key, $this->GET)) {
-            if (is_array($this->GET[$key])) {
-                throw new UserError("GET parameter {$key} is an array, expected single value");
-            }
-            return $this->GET[$key];
-        } else {
-            return null;
-        }
-    }
-
-    public function req_GET(string $key): string
-    {
-        $value = $this->get_GET($key);
-        if ($value === null) {
-            throw new UserError("Missing GET parameter {$key}");
-        }
-        return $value;
-    }
-
-    public function get_POST(string $key): ?string
-    {
-        if (array_key_exists($key, $this->POST)) {
-            if (is_array($this->POST[$key])) {
-                throw new UserError("POST parameter {$key} is an array, expected single value");
-            }
-            return $this->POST[$key];
-        } else {
-            return null;
-        }
-    }
-
-    public function req_POST(string $key): string
-    {
-        $value = $this->get_POST($key);
-        if ($value === null) {
-            throw new UserError("Missing POST parameter {$key}");
-        }
-        return $value;
-    }
-
-    /**
-     * @return string[]|null
-     */
-    public function get_POST_array(string $key): ?array
-    {
-        if (array_key_exists($key, $this->POST)) {
-            if (!is_array($this->POST[$key])) {
-                throw new UserError("POST parameter {$key} is a single value, expected array");
-            }
-            return $this->POST[$key];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @return string[]
-     */
-    public function req_POST_array(string $key): array
-    {
-        $value = $this->get_POST_array($key);
-        if ($value === null) {
-            throw new UserError("Missing POST parameter {$key}");
-        }
-        return $value;
     }
 
     public function page_starts_with(string $name): bool

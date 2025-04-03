@@ -148,10 +148,10 @@ final class UserPage extends Extension
             $this->theme->display_login_page();
         }
         if ($event->page_matches("user_admin/login", method: "POST", authed: false)) {
-            $this->page_login($event->req_POST('user'), $event->req_POST('pass'));
+            $this->page_login($event->POST->req('user'), $event->POST->req('pass'));
         }
         if ($event->page_matches("user_admin/recover", method: "POST")) {
-            $this->page_recover($event->req_POST('username'));
+            $this->page_recover($event->POST->req('username'));
         }
         if ($event->page_matches("user_admin/create", method: "GET", permission: UserAccountsPermission::CREATE_USER)) {
             if (!Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED)) {
@@ -168,10 +168,10 @@ final class UserPage extends Extension
             try {
                 $uce = send_event(
                     new UserCreationEvent(
-                        $event->req_POST('name'),
-                        $event->req_POST('pass1'),
-                        $event->req_POST('pass2'),
-                        $event->req_POST('email'),
+                        $event->POST->req('name'),
+                        $event->POST->req('pass1'),
+                        $event->POST->req('pass2'),
+                        $event->POST->req('email'),
                         true
                     )
                 );
@@ -184,10 +184,10 @@ final class UserPage extends Extension
         if ($event->page_matches("user_admin/create_other", method: "POST", permission: UserAccountsPermission::CREATE_OTHER_USER)) {
             send_event(
                 new UserCreationEvent(
-                    $event->req_POST("name"),
-                    $event->req_POST("pass1"),
-                    $event->req_POST("pass2"),
-                    $event->req_POST("email"),
+                    $event->POST->req("name"),
+                    $event->POST->req("pass1"),
+                    $event->POST->req("pass2"),
+                    $event->POST->req("email"),
                     false
                 )
             );
@@ -197,7 +197,7 @@ final class UserPage extends Extension
         if ($event->page_matches("user_admin/list", method: "GET")) {
             $t = new UserTable($database->raw_db());
             $t->token = $user->get_auth_token();
-            $t->inputs = $event->GET;
+            $t->inputs = $event->GET->toArray();
             if ($user->can(UserAccountsPermission::DELETE_USER)) {
                 $col = new TextColumn("email", "Email");
                 // $t->columns[] = $col;
@@ -273,9 +273,9 @@ final class UserPage extends Extension
         }
         if ($event->page_matches("user_admin/delete_user", method: "POST", permission: UserAccountsPermission::DELETE_USER)) {
             $this->delete_user(
-                int_escape($event->req_POST('id')),
-                $event->get_POST("with_images") == "on",
-                $event->get_POST("with_comments") == "on"
+                int_escape($event->POST->req('id')),
+                $event->POST->get("with_images") == "on",
+                $event->POST->get("with_comments") == "on"
             );
         }
 

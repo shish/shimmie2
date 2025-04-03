@@ -97,8 +97,8 @@ final class ResizeImage extends Extension
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
             /* Check if options were given to resize an image. */
-            $width = int_escape($event->get_POST('resize_width'));
-            $height = int_escape($event->get_POST('resize_height'));
+            $width = int_escape($event->POST->get('resize_width'));
+            $height = int_escape($event->POST->get('resize_height'));
             if ($width || $height) {
                 $this->resize_image($image, $width, $height);
                 Ctx::$page->set_redirect(make_link("post/view/".$image_id));

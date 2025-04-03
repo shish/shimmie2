@@ -30,7 +30,7 @@ final class ArchiveFileHandler extends DataHandlerExtension
 
             if ($tmpdir->exists()) {
                 try {
-                    $results = send_event(new DirectoryUploadEvent($tmpdir, Tag::explode($event->metadata['tags'])))->results;
+                    $results = send_event(new DirectoryUploadEvent($tmpdir, Tag::explode($event->metadata->req('tags'))))->results;
                     foreach ($results as $r) {
                         if (is_a($r, UploadError::class)) {
                             Ctx::$page->flash($r->name." failed: ".$r->error);
