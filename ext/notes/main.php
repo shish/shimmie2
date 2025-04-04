@@ -277,8 +277,6 @@ final class Notes extends Extension
     private function update_note(): void
     {
         $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
-
-        // validate parameters
         if (empty($note['note'])) {
             return;
         }
@@ -321,13 +319,15 @@ final class Notes extends Extension
         $notesPerPage = Ctx::$config->req(NotesConfig::NOTES_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 
-        //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
         $image_ids = $database->get_col(
             "
 			SELECT DISTINCT image_id
-			FROM notes
-			WHERE enable = :enable
-			ORDER BY date DESC, id DESC LIMIT :limit OFFSET :offset",
+			FROM (
+			    SELECT * FROM notes
+			    WHERE enable = :enable
+			    ORDER BY date DESC, id DESC
+			) AS subquery
+			LIMIT :limit OFFSET :offset",
             ['enable' => 1, 'offset' => $pageNumber * $notesPerPage, 'limit' => $notesPerPage]
         );
 
@@ -345,13 +345,15 @@ final class Notes extends Extension
 
         $requestsPerPage = Ctx::$config->req(NotesConfig::REQUESTS_PER_PAGE);
 
-        //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
-
         $result = $database->execute(
             "
 				SELECT DISTINCT image_id
-				FROM note_request
-				ORDER BY date DESC, id DESC LIMIT :limit OFFSET :offset",
+				FROM (
+				    SELECT *
+					FROM note_request
+				    ORDER BY date DESC, id DESC
+				) AS subquery
+				LIMIT :limit OFFSET :offset",
             ["offset" => $pageNumber * $requestsPerPage, "limit" => $requestsPerPage]
         );
 
@@ -401,11 +403,12 @@ final class Notes extends Extension
 
         //ORDER BY IMAGE & DATE
         $histories = $database->get_all(
-            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
-            "FROM note_histories AS h " .
-            "INNER JOIN users AS u " .
-            "ON u.id = h.user_id " .
-            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
+            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
+            FROM note_histories AS h
+            INNER JOIN users AS u
+            ON u.id = h.user_id
+            ORDER BY date DESC, note_id DESC
+            LIMIT :limit OFFSET :offset",
             ['offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
@@ -421,12 +424,13 @@ final class Notes extends Extension
         $historiesPerPage = Ctx::$config->req(NotesConfig::HISTORIES_PER_PAGE);
 
         $histories = $database->get_all(
-            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
-            "FROM note_histories AS h " .
-            "INNER JOIN users AS u " .
-            "ON u.id = h.user_id " .
-            "WHERE note_id = :note_id " .
-            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
+            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
+            FROM note_histories AS h
+            INNER JOIN users AS u
+            ON u.id = h.user_id
+            WHERE note_id = :note_id
+            ORDER BY date DESC, note_id DESC
+            LIMIT :limit OFFSET :offset",
             ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
@@ -445,16 +449,20 @@ final class Notes extends Extension
 
         /** @var array<NoteHistory> $histories */
         $histories = Ctx::$database->get_all(
-            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name " .
-            "FROM note_histories AS h " .
-            "INNER JOIN users AS u " .
-            "ON u.id = h.user_id " .
-            "WHERE image_id = :image_id " .
-            "ORDER BY date DESC, note_id DESC LIMIT :limit OFFSET :offset",
+            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
+            FROM note_histories AS h
+            INNER JOIN users AS u
+            ON u.id = h.user_id
+            WHERE image_id = :image_id
+            ORDER BY date DESC, note_id DESC
+            LIMIT :limit OFFSET :offset",
             ['image_id' => $imageID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $count = Ctx::$database->get_one("SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id", ['image_id' => $imageID]);
+        $count = Ctx::$database->get_one(
+            "SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id",
+            ['image_id' => $imageID]
+        );
         if ($count === 0) {
             throw new HistoryNotFound("No note history for Post #$imageID was found.");
         }
@@ -470,7 +478,10 @@ final class Notes extends Extension
     {
         global $database;
 
-        $history = $database->get_row("SELECT * FROM note_histories WHERE note_id = :note_id AND review_id = :review_id", ['note_id' => $noteID, 'review_id' => $reviewID]);
+        $history = $database->get_row(
+            "SELECT * FROM note_histories WHERE note_id = :note_id AND review_id = :review_id",
+            ['note_id' => $noteID, 'review_id' => $reviewID]
+        );
 
         $noteEnable = $history['note_enable'];
         $noteID = $history['note_id'];
