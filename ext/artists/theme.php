@@ -241,14 +241,14 @@ class ArtistsTheme extends Themelet
             $edit_link = A(["href" => make_link($editionLinkActionArray[$artist['type']].$artist['id'])], "Edit");
             $del_link = A(["href" => make_link($deletionLinkActionArray[$artist['type']].$artist['id'])], "Delete");
 
-            $tbody->appendChild(TR([
+            $tbody->appendChild(TR(
                 TD(["class" => "left"], $elementLink),
                 TD($typeTextArray[$artist['type']]),
                 TD($user_link),
                 TD($artist['posts']),
                 Ctx::$user->is_anonymous() ? null : TD($edit_link),
                 Ctx::$user->can(ArtistsPermission::ADMIN) ? TD($del_link) : null,
-            ]));
+            ));
         }
 
         $html = TABLE(

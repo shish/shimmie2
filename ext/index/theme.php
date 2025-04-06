@@ -92,7 +92,7 @@ class IndexTheme extends Themelet
     protected function build_table(array $images, ?string $query): HTMLElement
     {
         $thumbs = array_map(fn ($image) => $this->build_thumb($image), $images);
-        return DIV(["class" => "shm-image-list", "data-query", $query], ...$thumbs);
+        return DIV(["class" => "shm-image-list", "data-query" => $query], ...$thumbs);
     }
 
     protected function display_shortwiki(): void
