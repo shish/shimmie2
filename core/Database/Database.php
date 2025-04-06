@@ -232,7 +232,7 @@ class Database
      *
      * @param literal-string $query
      * @param sql-params-array $args
-     * @return array<string, mixed>
+     * @return array<string, mixed>|null
      */
     public function get_row(string $query, array $args = []): ?array
     {
