@@ -21,9 +21,9 @@ enum ConfigType
     {
         return match ($this) {
             self::BOOL => $value ? "Y" : "N",
-            self::INT => (string)$value,
+            self::INT => (string)$value,  // @phpstan-ignore-line
             self::STRING => $value,
-            self::ARRAY => implode(",", $value),
+            self::ARRAY => implode(",", $value),  // @phpstan-ignore-line
         };
     }
 
