@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/**
+ * @phpstan-import-type ConfigValue from Config
+ */
 enum ConfigType
 {
     case BOOL;
@@ -11,6 +14,9 @@ enum ConfigType
     case STRING;
     case ARRAY;
 
+    /**
+     * @param ConfigValue $value
+     */
     public function toString(mixed $value): string
     {
         return match ($this) {
@@ -21,6 +27,9 @@ enum ConfigType
         };
     }
 
+    /**
+     * @return ConfigValue
+     */
     public function fromString(string $value): mixed
     {
         return match ($this) {
