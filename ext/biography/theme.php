@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{TABLE, TD, TR};
 use function MicroHTML\{TEXTAREA};
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TR;
 
 class BiographyTheme extends Themelet
 {

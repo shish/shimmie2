@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\A;
-use function MicroHTML\DIV;
-use function MicroHTML\IMG;
-use function MicroHTML\SCRIPT;
-use function MicroHTML\SELECT;
-use function MicroHTML\SPAN;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{A, DIV, IMG, SCRIPT, SELECT, SPAN, emptyHTML};
 
 class CBZFileHandlerTheme extends Themelet
 {

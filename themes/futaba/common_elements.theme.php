@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, B, P, emptyHTML, joinHTML};
 
-use function MicroHTML\A;
-use function MicroHTML\B;
-use function MicroHTML\P;
-use function MicroHTML\emptyHTML;
-use function MicroHTML\joinHTML;
+use MicroHTML\HTMLElement;
 
 class FutabaCommonElementsTheme extends CommonElementsTheme
 {

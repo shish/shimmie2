@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, AUDIO, P, SOURCE, SPAN, emptyHTML};
 use function MicroHTML\{SCRIPT};
-use function MicroHTML\A;
-use function MicroHTML\AUDIO;
-use function MicroHTML\P;
-use function MicroHTML\SOURCE;
-use function MicroHTML\SPAN;
-use function MicroHTML\emptyHTML;
 
 class MP3FileHandlerTheme extends Themelet
 {

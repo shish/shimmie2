@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroCRUD\ActionColumn;
-use MicroCRUD\TextColumn;
-use MicroCRUD\Table;
+use MicroCRUD\{ActionColumn, Table, TextColumn};
 
 use function MicroHTML\{emptyHTML};
 

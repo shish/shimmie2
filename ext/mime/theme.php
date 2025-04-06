@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\HR;
-use function MicroHTML\P;
-use function MicroHTML\UL;
 use function MicroHTML\{emptyHTML, joinHTML};
+use function MicroHTML\{HR, P, UL};
+
+use MicroHTML\HTMLElement;
 
 class MimeSystemTheme extends Themelet
 {

@@ -4,18 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, B, BR, P, TABLE, TBODY, TD, THEAD, TR, emptyHTML, joinHTML};
 use function MicroHTML\{INPUT};
-use function MicroHTML\A;
-use function MicroHTML\B;
-use function MicroHTML\BR;
-use function MicroHTML\P;
-use function MicroHTML\TABLE;
-use function MicroHTML\TBODY;
-use function MicroHTML\TD;
-use function MicroHTML\THEAD;
-use function MicroHTML\TR;
-use function MicroHTML\emptyHTML;
-use function MicroHTML\joinHTML;
 
 /**
  * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}

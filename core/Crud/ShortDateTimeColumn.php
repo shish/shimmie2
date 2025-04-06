@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use MicroCRUD\DateTimeColumn;
-use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML, INPUT, BR};
+use function MicroHTML\{BR, INPUT, emptyHTML};
+
+use MicroHTML\HTMLElement;
 
 class ShortDateTimeColumn extends DateTimeColumn
 {

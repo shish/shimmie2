@@ -6,8 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\PRE;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{PRE, emptyHTML};
 
 final class HelpPageListBuildingEvent extends Event
 {

@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, NOSCRIPT, UL, emptyHTML};
 use function MicroHTML\{META};
-use function MicroHTML\A;
-use function MicroHTML\NOSCRIPT;
-use function MicroHTML\UL;
-use function MicroHTML\emptyHTML;
 
 class FilterTheme extends Themelet
 {

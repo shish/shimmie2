@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{B, BR, DIV, P, emptyHTML};
 use function MicroHTML\{INPUT};
-use function MicroHTML\B;
-use function MicroHTML\BR;
-use function MicroHTML\DIV;
-use function MicroHTML\P;
-use function MicroHTML\emptyHTML;
 
 class RandomListTheme extends Themelet
 {

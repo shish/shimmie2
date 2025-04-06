@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\{InputInterface,InputArgument};
-use Symfony\Component\Console\Output\OutputInterface;
+use function MicroHTML\{A, INPUT, STYLE, emptyHTML};
 
-use function MicroHTML\{INPUT, STYLE, A, emptyHTML};
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputArgument, InputInterface};
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * A class to handle adding / getting / removing image files from the disk.

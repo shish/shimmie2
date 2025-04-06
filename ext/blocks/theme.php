@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\TABLE;
-use function MicroHTML\TR;
-use function MicroHTML\TH;
-use function MicroHTML\TD;
-use function MicroHTML\INPUT;
-use function MicroHTML\TEXTAREA;
-use function MicroHTML\SELECT;
-use function MicroHTML\OPTION;
+use function MicroHTML\{INPUT, OPTION, SELECT, TABLE, TD, TEXTAREA, TH, TR};
 
 /**
  * @phpstan-type BlockArray array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}

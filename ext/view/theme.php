@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\{A, P, joinHTML, TABLE, TR, TD, INPUT, emptyHTML, DIV, META, LINK};
+use function MicroHTML\{A, DIV, INPUT, LINK, META, P, TABLE, TD, TR, emptyHTML, joinHTML};
 use function MicroHTML\BR;
+
+use MicroHTML\HTMLElement;
 
 class ViewPostTheme extends Themelet
 {

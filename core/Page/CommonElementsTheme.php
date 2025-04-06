@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, B, BR, IMG, LINK, emptyHTML, joinHTML};
+
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A,B,BR,IMG,emptyHTML,joinHTML,LINK};
-use function MicroHTML\INPUT;
-use function MicroHTML\LABEL;
-use function MicroHTML\OPTION;
-use function MicroHTML\SELECT;
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TEXTAREA;
-use function MicroHTML\TH;
-use function MicroHTML\TR;
+use function MicroHTML\{INPUT, LABEL, OPTION, SELECT, TABLE, TD, TEXTAREA, TH, TR};
 
 class CommonElementsTheme extends Themelet
 {

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\A;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{A, emptyHTML};
 
 final class FavoriteSetEvent extends Event
 {

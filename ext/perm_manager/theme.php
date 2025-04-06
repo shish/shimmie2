@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TH;
-use function MicroHTML\TR;
-use function MicroHTML\SPAN;
+use function MicroHTML\{SPAN, TABLE, TD, TH, TR};
 
 class PermManagerTheme extends Themelet
 {

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\BR;
-use function MicroHTML\INPUT;
-use function MicroHTML\LABEL;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{BR, INPUT, LABEL, emptyHTML};
 
 final class ImageResizeException extends ServerError
 {

@@ -4,18 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{BUTTON, DIV, INPUT, P, SPAN, TABLE, TD, TR, emptyHTML, joinHTML};
 
-use function MicroHTML\BUTTON;
-use function MicroHTML\DIV;
-use function MicroHTML\INPUT;
-use function MicroHTML\P;
-use function MicroHTML\SPAN;
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TR;
-use function MicroHTML\emptyHTML;
-use function MicroHTML\joinHTML;
+use MicroHTML\HTMLElement;
 
 class TagCategoriesTheme extends Themelet
 {

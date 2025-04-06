@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{BR, joinHTML};
 use function MicroHTML\{IMG};
-use function MicroHTML\BR;
-use function MicroHTML\joinHTML;
 
 class PixelFileHandlerTheme extends Themelet
 {

@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, INPUT, P, emptyHTML};
 
-use function MicroHTML\A;
-use function MicroHTML\INPUT;
-use function MicroHTML\P;
-use function MicroHTML\emptyHTML;
+use MicroHTML\HTMLElement;
 
 class AutoTaggerTheme extends Themelet
 {

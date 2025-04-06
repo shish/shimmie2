@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\emptyHTML;
 use function MicroHTML\{A,BR,CODE,INPUT};
+use function MicroHTML\emptyHTML;
+
+use MicroHTML\HTMLElement;
 
 class AliasEditorTheme extends Themelet
 {

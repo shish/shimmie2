@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\INPUT;
-use function MicroHTML\OPTION;
-use function MicroHTML\SELECT;
+use function MicroHTML\{INPUT, OPTION, SELECT};
 
 class TranscodeVideoTheme extends Themelet
 {

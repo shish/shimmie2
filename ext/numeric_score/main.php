@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Type;
-use GQLA\Field;
-use GQLA\Mutation;
+use GQLA\{Field, Mutation, Type};
 
-use function MicroHTML\A;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{A, emptyHTML};
 
 #[Type(name: "NumericScoreVote")]
 final class NumericScoreVote

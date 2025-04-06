@@ -4,20 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\LABEL;
-use function MicroHTML\A;
-use function MicroHTML\B;
-use function MicroHTML\BR;
-use function MicroHTML\IMG;
-use function MicroHTML\TABLE;
-use function MicroHTML\TFOOT;
-use function MicroHTML\TBODY;
-use function MicroHTML\TR;
-use function MicroHTML\TD;
-use function MicroHTML\INPUT;
-use function MicroHTML\DIV;
-use function MicroHTML\P;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{A, B, BR, DIV, IMG, INPUT, LABEL, P, TABLE, TBODY, TD, TFOOT, TR, emptyHTML};
 
 class ExtManagerTheme extends Themelet
 {

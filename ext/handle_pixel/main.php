@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{FORM, SELECT, OPTION};
+use function MicroHTML\{FORM, OPTION, SELECT};
 
 final class PixelFileHandler extends DataHandlerExtension
 {

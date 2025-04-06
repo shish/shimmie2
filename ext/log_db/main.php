@@ -4,19 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-use MicroCRUD\ActionColumn;
-use MicroCRUD\Column;
-use MicroCRUD\TextColumn;
-use MicroCRUD\Table;
+use MicroCRUD\{ActionColumn, Column, Table, TextColumn};
 
-use function MicroHTML\A;
-use function MicroHTML\SPAN;
-use function MicroHTML\emptyHTML;
-use function MicroHTML\INPUT;
-use function MicroHTML\BR;
-use function MicroHTML\SELECT;
-use function MicroHTML\OPTION;
+use function MicroHTML\{A, BR, INPUT, OPTION, SELECT, SPAN, emptyHTML};
+
+use MicroHTML\HTMLElement;
 
 final class ActorColumn extends Column
 {

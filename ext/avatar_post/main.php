@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
 use function MicroHTML\{DIV,IMG};
+
+use MicroHTML\HTMLElement;
 
 final class AvatarPost extends AvatarExtension
 {
