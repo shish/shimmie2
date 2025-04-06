@@ -4,23 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\A;
-use function MicroHTML\BR;
-use function MicroHTML\DIV;
-use function MicroHTML\INPUT;
-use function MicroHTML\LI;
-use function MicroHTML\P;
-use function MicroHTML\SPAN;
-use function MicroHTML\TABLE;
-use function MicroHTML\TBODY;
-use function MicroHTML\TD;
-use function MicroHTML\TEXTAREA;
-use function MicroHTML\TFOOT;
-use function MicroHTML\TH;
-use function MicroHTML\THEAD;
-use function MicroHTML\TR;
-use function MicroHTML\UL;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{A, BR, DIV, INPUT, LI, P, SPAN, TABLE, TBODY, TD, TEXTAREA, TFOOT, TH, THEAD, TR, UL, emptyHTML};
 
 /**
  * @phpstan-type BlotterEntry array{id:int,entry_date:string,entry_text:string,important:bool}

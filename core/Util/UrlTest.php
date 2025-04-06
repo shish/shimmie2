@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use PHPUnit\Framework\Attributes\{DataProvider, Depends};
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Depends;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 final class UrlTest extends TestCase
 {

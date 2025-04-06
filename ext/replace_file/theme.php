@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{TABLE,TR,TD};
-use function MicroHTML\SMALL;
-use function MicroHTML\INPUT;
-use function MicroHTML\emptyHTML;
-use function MicroHTML\BR;
-use function MicroHTML\P;
+use function MicroHTML\{BR, INPUT, P, SMALL, emptyHTML};
+use function MicroHTML\{TABLE, TD, TR};
 
 class ReplaceFileTheme extends Themelet
 {

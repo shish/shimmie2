@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Type;
-use GQLA\Field;
+use GQLA\{Field, Type};
 
 #[Type(name: "UserClass")]
 final class UserClass

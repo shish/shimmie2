@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{IMG, TABLE, TD, TR};
 use function MicroHTML\{TITLE};
-use function MicroHTML\IMG;
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TR;
 
 class EmoticonListTheme extends Themelet
 {

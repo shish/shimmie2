@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, emptyHTML};
 
-use function MicroHTML\{emptyHTML, A};
+use MicroHTML\HTMLElement;
 
 class IPBanTheme extends Themelet
 {

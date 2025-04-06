@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, ARTICLE, BODY, DIV, FOOTER, H1, HEADER, NAV, SMALL, TD};
 
-use function MicroHTML\{BODY, A, TD, SMALL, DIV, ARTICLE, FOOTER, HEADER, H1, NAV};
+use MicroHTML\HTMLElement;
 
 class WarmPage extends Page
 {

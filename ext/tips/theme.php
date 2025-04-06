@@ -4,19 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\A;
-use function MicroHTML\DIV;
-use function MicroHTML\IMG;
-use function MicroHTML\INPUT;
-use function MicroHTML\OPTION;
-use function MicroHTML\SELECT;
-use function MicroHTML\TABLE;
-use function MicroHTML\TBODY;
-use function MicroHTML\TD;
-use function MicroHTML\TEXTAREA;
-use function MicroHTML\TH;
-use function MicroHTML\THEAD;
-use function MicroHTML\TR;
+use function MicroHTML\{A, DIV, IMG, INPUT, OPTION, SELECT, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR};
 
 /**
  * @phpstan-type Tip array{id: int, image: string, text: string, enable: bool}

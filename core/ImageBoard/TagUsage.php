@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Type;
-use GQLA\Field;
-use GQLA\Query;
+use GQLA\{Field, Query, Type};
 
 #[Type(name: "TagUsage")]
 final class TagUsage

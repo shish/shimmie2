@@ -6,17 +6,8 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+use function MicroHTML\{INPUT, LABEL, OPTION, P, SELECT, TABLE, TD, TH, TR, emptyHTML};
 use function MicroHTML\{META};
-use function MicroHTML\INPUT;
-use function MicroHTML\LABEL;
-use function MicroHTML\OPTION;
-use function MicroHTML\P;
-use function MicroHTML\SELECT;
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TH;
-use function MicroHTML\TR;
-use function MicroHTML\emptyHTML;
 
 class RegenThumbTheme extends Themelet
 {

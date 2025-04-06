@@ -6,18 +6,12 @@ namespace Shimmie2;
 
 require_once "events.php";
 
-use GQLA\Field;
-use GQLA\Type;
-use GQLA\Mutation;
-use MicroHTML\HTMLElement;
-use MicroCRUD\ActionColumn;
-use MicroCRUD\EnumColumn;
-use MicroCRUD\IntegerColumn;
-use MicroCRUD\TextColumn;
-use MicroCRUD\DateColumn;
-use MicroCRUD\Table;
+use GQLA\{Field, Mutation, Type};
+use MicroCRUD\{ActionColumn, DateColumn, EnumColumn, IntegerColumn, Table, TextColumn};
 
-use function MicroHTML\{A, emptyHTML, P};
+use function MicroHTML\{A, P, emptyHTML};
+
+use MicroHTML\HTMLElement;
 
 final class UserNameColumn extends TextColumn
 {

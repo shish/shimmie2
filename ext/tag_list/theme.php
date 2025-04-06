@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, BR, COL, COLGROUP, SPAN, TABLE, TD, TH, THEAD, TR, emptyHTML};
+
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{A, BR, emptyHTML, TABLE, COLGROUP, COL, THEAD, TH, TR, TD, SPAN};
 use function MicroHTML\joinHTML;
 
 class TagListTheme extends Themelet

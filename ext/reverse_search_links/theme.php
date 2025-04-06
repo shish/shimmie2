@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\A;
-use function MicroHTML\IMG;
-use function MicroHTML\joinHTML;
+use function MicroHTML\{A, IMG, joinHTML};
 
 class ReverseSearchLinksTheme extends Themelet
 {

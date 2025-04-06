@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroCRUD\ActionColumn;
-use MicroCRUD\InetColumn;
-use MicroCRUD\StringColumn;
-use MicroCRUD\DateColumn;
-use MicroCRUD\EnumColumn;
-use MicroCRUD\Table;
+use MicroCRUD\{ActionColumn, DateColumn, EnumColumn, InetColumn, StringColumn, Table};
 
 final class IPBanTable extends Table
 {

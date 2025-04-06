@@ -4,20 +4,12 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, CODE, DIV, FORM, INPUT, OPTION, P, SELECT, SPAN, TIME};
+use function MicroHTML\{emptyHTML};
+
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{emptyHTML};
-use function MicroHTML\A;
-use function MicroHTML\CODE;
-use function MicroHTML\TIME;
-use function MicroHTML\DIV;
-use function MicroHTML\FORM;
-use function MicroHTML\INPUT;
-use function MicroHTML\OPTION;
-use function MicroHTML\P;
-use function MicroHTML\SELECT;
-use function MicroHTML\SPAN;
-use function MicroHTML\{TABLE,THEAD,TFOOT,TR,TH,TD};
+use function MicroHTML\{TABLE, TD, TFOOT, TH, THEAD, TR};
 
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc

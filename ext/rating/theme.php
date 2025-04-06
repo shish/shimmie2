@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
-use function MicroHTML\emptyHTML;
 use function MicroHTML\{A,P,TABLE,TD,TH,TR};
+use function MicroHTML\emptyHTML;
+
+use MicroHTML\HTMLElement;
 
 class RatingsTheme extends Themelet
 {

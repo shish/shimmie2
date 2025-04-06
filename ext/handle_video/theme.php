@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, BR, VIDEO, SOURCE, emptyHTML};
+use function MicroHTML\{A, BR, SOURCE, VIDEO, emptyHTML};
 
 class VideoFileHandlerTheme extends Themelet
 {

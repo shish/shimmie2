@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use GQLA\Type;
-use GQLA\Field;
-use GQLA\Mutation;
+use GQLA\{Field, Mutation, Type};
 
-use function MicroHTML\{emptyHTML, SPAN};
+use function MicroHTML\{SPAN, emptyHTML};
 
 final class SendPMEvent extends Event
 {

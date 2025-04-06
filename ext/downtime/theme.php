@@ -4,18 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{emptyHTML, TITLE, LINK};
-use function MicroHTML\B;
-use function MicroHTML\DIV;
-use function MicroHTML\H3;
-use function MicroHTML\INPUT;
-use function MicroHTML\LABEL;
-use function MicroHTML\SECTION;
-use function MicroHTML\SPAN;
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TH;
-use function MicroHTML\TR;
+use function MicroHTML\{B, DIV, H3, INPUT, LABEL, SECTION, SPAN, TABLE, TD, TH, TR};
+use function MicroHTML\{LINK, TITLE, emptyHTML};
 
 class DowntimeTheme extends Themelet
 {
