@@ -35,8 +35,8 @@ final class Installer
 
     private static function get_dsn(): ?string
     {
-        if (getenv("INSTALL_DSN")) {
-            $dsn = getenv("INSTALL_DSN");
+        if ($env = getenv("INSTALL_DSN")) {
+            $dsn = $env;
         } elseif (@$_POST["database_type"] === DatabaseDriverID::SQLITE->value) {
             /** @noinspection PhpUnhandledExceptionInspection */
             $id = bin2hex(random_bytes(8));

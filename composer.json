@@ -39,7 +39,7 @@
         "shish/ffsphp": "^1.3",
         "shish/microbundler": "^1.0",
         "shish/microcrud": "^2.3",
-        "shish/microhtml": "^2.4.1",
+        "shish/microhtml": "^2.5.0",
         "shish/gqla": "^1.0",
         "thecodingmachine/safe": "^3.0.2",
         "enshrined/svg-sanitize": "^0.16",
