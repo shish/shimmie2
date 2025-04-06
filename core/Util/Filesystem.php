@@ -176,9 +176,10 @@ final class Filesystem
             \FilesystemIterator::CURRENT_AS_FILEINFO |
             \FilesystemIterator::SKIP_DOTS
         );
-        foreach (new \RecursiveIteratorIterator($ite) as $_filename => $cur) {
+        /** @var \SplFileInfo $file */
+        foreach (new \RecursiveIteratorIterator($ite) as $_filename => $file) {
             try {
-                $filesize = $cur->getSize();
+                $filesize = $file->getSize();
                 $bytestotal += $filesize;
                 $nbfiles++;
             } catch (\RuntimeException $e) {
@@ -199,6 +200,7 @@ final class Filesystem
     {
         $di = new \RecursiveDirectoryIterator($dir->str(), \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::KEY_AS_PATHNAME);
         $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
+        /** @var string $filename */
         /** @var \SplFileInfo $file */
         foreach ($ri as $filename => $file) {
             $file->isDir() ? rmdir($filename) : unlink($filename);

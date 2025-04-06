@@ -307,7 +307,7 @@ class Page
         header("Content-Length: " . $size);
         header('Accept-Ranges: bytes');
 
-        if (isset($_SERVER['HTTP_RANGE'])) {
+        if (isset($_SERVER['HTTP_RANGE']) && is_string($_SERVER['HTTP_RANGE'])) {
             list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
             if (str_contains($range, ',')) {
                 header('HTTP/1.1 416 Requested Range Not Satisfiable');
