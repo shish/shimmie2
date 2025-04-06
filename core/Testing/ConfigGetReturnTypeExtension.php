@@ -5,8 +5,8 @@ namespace Shimmie2;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\{ArrayType, BooleanType, IntegerType, NullType, StringType, Type, UnionType};
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\{Type, IntegerType, StringType, BooleanType, ArrayType, UnionType, NullType};
 
 class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {

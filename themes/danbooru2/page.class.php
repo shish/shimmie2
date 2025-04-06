@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, ARTICLE, BODY, DIV, FOOTER, H1, HEADER, IMG, LI, NAV, UL, emptyHTML};
 
-use function MicroHTML\{BODY, DIV, LI, A, IMG, emptyHTML, UL, ARTICLE, FOOTER, HEADER, H1, NAV};
+use MicroHTML\HTMLElement;
 
 /**
  * Name: Danbooru 2 Theme

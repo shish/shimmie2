@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use PHPStan\Type\AcceptsResult;
-use PHPStan\Type\CompoundType;
-use PHPStan\Type\IsSuperTypeOfResult;
-use PHPStan\Type\StringType;
-use PHPStan\Type\ConstantStringType;
-use PHPStan\Type\Type;
-use PHPStan\Type\VerbosityLevel;
+use PHPStan\Type\{AcceptsResult, CompoundType, ConstantStringType, IsSuperTypeOfResult, StringType, Type, VerbosityLevel};
 
 class MatchyStringType extends StringType
 {

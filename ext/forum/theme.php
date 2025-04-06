@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, BR, DIV, INPUT, LABEL, SMALL, SUP, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR, emptyHTML};
 
-use function MicroHTML\{INPUT, LABEL, SMALL, TEXTAREA, TR, TD, TABLE, TH, TBODY, THEAD, DIV, A, BR, emptyHTML, SUP};
+use MicroHTML\HTMLElement;
 
 /**
  * @phpstan-type Thread array{id:int,title:string,sticky:bool,user_name:string,uptodate:string,response_count:int}

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, DIV, INPUT, TD, TH, TR, emptyHTML};
 
-use function MicroHTML\{TR, TH, TD, DIV, INPUT, A, emptyHTML};
+use MicroHTML\HTMLElement;
 
 class PostSourceTheme extends Themelet
 {

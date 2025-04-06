@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, H2, SUP};
+use function MicroHTML\{BR, DIV, H3, HR, INPUT, META, P, emptyHTML};
 
-use function MicroHTML\{BR,H3,HR,P,META,DIV,emptyHTML,INPUT};
-use function MicroHTML\A;
-use function MicroHTML\H2;
-use function MicroHTML\SUP;
+use MicroHTML\HTMLElement;
 
 class IndexTheme extends Themelet
 {

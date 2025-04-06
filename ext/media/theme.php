@@ -6,8 +6,7 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\P;
-use function MicroHTML\emptyHTML;
+use function MicroHTML\{P, emptyHTML};
 
 class MediaTheme extends Themelet
 {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{ARTICLE, BODY, DIV, FOOTER, H1, HEADER, HR, NAV};
 
-use function MicroHTML\{BODY, DIV, ARTICLE, FOOTER, HR, HEADER, H1, NAV};
+use MicroHTML\HTMLElement;
 
 class FutabaPage extends Page
 {

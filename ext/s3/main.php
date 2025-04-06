@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\{InputInterface,InputArgument,InputOption};
-use Symfony\Component\Console\Output\OutputInterface;
-
 use function MicroHTML\INPUT;
+
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputArgument, InputInterface, InputOption};
+use Symfony\Component\Console\Output\OutputInterface;
 
 require_once __DIR__ . "/S3.php";
 

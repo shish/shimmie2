@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, DIV, IMG};
 
-use function MicroHTML\DIV;
-use function MicroHTML\A;
-use function MicroHTML\IMG;
+use MicroHTML\HTMLElement;
 
 class RandomImageTheme extends Themelet
 {

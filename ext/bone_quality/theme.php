@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, BR, DIV, IMG, SPAN, emptyHTML};
 
-use function MicroHTML\A;
-use function MicroHTML\BR;
-use function MicroHTML\DIV;
-use function MicroHTML\SPAN;
-use function MicroHTML\IMG;
-use function MicroHTML\emptyHTML;
+use MicroHTML\HTMLElement;
 
 class BoneQualityTheme extends Themelet
 {

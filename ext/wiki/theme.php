@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, BR, DIV, HR, INPUT, P, TABLE, TD, TEXTAREA, TR, emptyHTML};
 
-use function MicroHTML\{INPUT, TABLE, TR, TD, emptyHTML, BR, TEXTAREA, DIV, HR, P, A};
+use MicroHTML\HTMLElement;
 
 class WikiTheme extends Themelet
 {

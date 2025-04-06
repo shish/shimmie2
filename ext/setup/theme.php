@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, DIV, H3, INPUT, SECTION};
 
-use function MicroHTML\A;
-use function MicroHTML\DIV;
-use function MicroHTML\H3;
-use function MicroHTML\INPUT;
-use function MicroHTML\SECTION;
+use MicroHTML\HTMLElement;
 
 class SetupTheme extends Themelet
 {

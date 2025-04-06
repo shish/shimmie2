@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\A;
-use function MicroHTML\INPUT;
-use function MicroHTML\LABEL;
-use function MicroHTML\SMALL;
-use function MicroHTML\TABLE;
-use function MicroHTML\TD;
-use function MicroHTML\TR;
-use function MicroHTML\joinHTML;
+use function MicroHTML\{A, INPUT, LABEL, SMALL, TABLE, TD, TR, joinHTML};
 
 class Danbooru2UserPageTheme extends UserPageTheme
 {

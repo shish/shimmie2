@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\DIV;
+
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\{INPUT,P};
-use function MicroHTML\DIV;
 
 class Danbooru2IndexTheme extends IndexTheme
 {

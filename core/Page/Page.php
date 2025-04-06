@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{A, ARTICLE, B, BODY, BR, DIV, FOOTER, H1, H3, HEAD, HEADER as HTML_HEADER, HTML, LINK, NAV, SCRIPT, SECTION, TITLE, emptyHTML, joinHTML};
 
-use function MicroHTML\{emptyHTML, HTML, HEAD, BODY, TITLE, LINK, SCRIPT, A, B, joinHTML, BR, H1, HEADER as HTML_HEADER, NAV, ARTICLE, FOOTER, SECTION, H3, DIV};
+use MicroHTML\HTMLElement;
 
 /**
  * A data structure for holding all the bits of data that make up a page.

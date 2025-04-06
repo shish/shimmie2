@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{A, DIV, P, SPAN, emptyHTML, joinHTML};
+
 use MicroHTML\HTMLElement;
 
 use function MicroHTML\{INPUT};
-use function MicroHTML\A;
-use function MicroHTML\DIV;
-use function MicroHTML\P;
-use function MicroHTML\SPAN;
-use function MicroHTML\emptyHTML;
-use function MicroHTML\joinHTML;
 
 class RelationshipsTheme extends Themelet
 {

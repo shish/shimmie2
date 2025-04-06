@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use Symfony\Component\Console\Input\{ArgvInput,InputOption,InputDefinition,InputInterface};
-use Symfony\Component\Console\Output\{OutputInterface,ConsoleOutput};
+use Symfony\Component\Console\Input\{ArgvInput, InputDefinition, InputInterface, InputOption};
+use Symfony\Component\Console\Output\{ConsoleOutput, OutputInterface};
 
 final class CliApp extends \Symfony\Component\Console\Application
 {

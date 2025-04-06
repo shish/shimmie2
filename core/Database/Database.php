@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use FFSPHP\PDO;
-use FFSPHP\PDOStatement;
+use FFSPHP\{PDO, PDOStatement};
 
 /**
  * A class for controlled database access

@@ -8,19 +8,11 @@ require_once "events/upload_common_building_event.php";
 require_once "events/upload_specific_building_event.php";
 require_once "events/upload_header_building_event.php";
 
+use function MicroHTML\{A, BR, DIV, INPUT, NOSCRIPT, P, SCRIPT, SMALL, SPAN, emptyHTML};
+
 use MicroHTML\HTMLElement;
 
-use function MicroHTML\{TABLE,TR,TH,TD};
-use function MicroHTML\SCRIPT;
-use function MicroHTML\SMALL;
-use function MicroHTML\INPUT;
-use function MicroHTML\emptyHTML;
-use function MicroHTML\NOSCRIPT;
-use function MicroHTML\DIV;
-use function MicroHTML\BR;
-use function MicroHTML\A;
-use function MicroHTML\SPAN;
-use function MicroHTML\P;
+use function MicroHTML\{TABLE, TD, TH, TR};
 
 class UploadTheme extends Themelet
 {
