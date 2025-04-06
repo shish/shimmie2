@@ -55,8 +55,8 @@ class BulkAddTheme extends Themelet
                 make_link("bulk_add"),
                 TABLE(
                     ["class" => "form"],
-                    TR([TH("Folder"), TD(INPUT(["type" => "text", "name" => "dir", "size" => "40"]))]),
-                    TR([TD(["colspan" => 2], INPUT(["type" => "submit", "value" => "Add"]))])
+                    TR(TH("Folder"), TD(INPUT(["type" => "text", "name" => "dir", "size" => "40"]))),
+                    TR(TD(["colspan" => 2], INPUT(["type" => "submit", "value" => "Add"])))
                 )
             )
         );

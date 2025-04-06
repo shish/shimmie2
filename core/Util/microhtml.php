@@ -81,7 +81,7 @@ function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string 
 /**
  * For when you just want a <form> with default settings and some children
  *
- * @param array<string|HTMLElement|null> $children
+ * @param string|HTMLElement|null $children
  */
 function SHM_SIMPLE_FORM(Url $action, ...$children): HTMLElement
 {
