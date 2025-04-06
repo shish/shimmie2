@@ -128,17 +128,17 @@ function main(): int
         $exit_code = 1;
     } finally {
         Ctx::$tracer->end();
-        if (!is_null(SysConfig::getTraceFile())) {
-            if (
-                empty($_SERVER["REQUEST_URI"])
-                || (@$_GET["trace"] === "on")
-                || (
-                    (ftime() - $_shm_load_start) > SysConfig::getTraceThreshold()
-                    && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
-                )
-            ) {
-                Ctx::$tracer->flush(SysConfig::getTraceFile());
-            }
+        if (
+            PHP_SAPI !== 'cli'
+            && PHP_SAPI !== 'phpdbg'
+            && SysConfig::getTraceFile() !== null
+            && (
+                @$_GET["trace"] === "on"
+                || (ftime() - $_shm_load_start) > SysConfig::getTraceThreshold()
+            )
+            && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
+        ) {
+            Ctx::$tracer->flush(SysConfig::getTraceFile());
         }
     }
     return $exit_code;
