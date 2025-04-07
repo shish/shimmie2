@@ -10,6 +10,6 @@ final class PermManagerTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_admin();
         self::get_page('perm_manager');
-        self::assert_title("User Classes");
+        self::assert_title("Permission Manager");
     }
 }
