@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\{ConsoleOutput, OutputInterface};
 
 final class CliApp extends \Symfony\Component\Console\Application
 {
-    public ?string $traceFile = null;
+    public static ?string $traceFile = null;
     public static int $logLevel = 0;
 
     public function __construct()
@@ -47,8 +47,8 @@ final class CliApp extends \Symfony\Component\Console\Application
             Ctx::setUser(User::by_name($name));
             send_event(new UserLoginEvent(Ctx::$user));
         }
-        $this->traceFile = $input->getParameterOption(['--trace', '-t'], null);
-        Ctx::$tracer_enabled = !is_null($this->traceFile);
+        self::$traceFile = $input->getParameterOption(['--trace', '-t'], null);
+        Ctx::$tracer_enabled = !is_null(self::$traceFile);
 
         $log_level = LogLevel::WARNING->value;
         if (true === $input->hasParameterOption(['--quiet', '-q'], true)) {

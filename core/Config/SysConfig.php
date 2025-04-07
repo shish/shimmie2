@@ -105,12 +105,20 @@ final class SysConfig
 
     public static function getTraceFile(): ?string
     {
-        return defined("TRACE_FILE") ? constant("TRACE_FILE") : null;
+        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+            return CliApp::$traceFile;
+        } else {
+            return defined("TRACE_FILE") ? constant("TRACE_FILE") : null;
+        }
     }
 
     public static function getTraceThreshold(): float
     {
-        return defined("TRACE_THRESHOLD") ? constant("TRACE_THRESHOLD") : 0.0;
+        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+            return 0.0;
+        } else {
+            return defined("TRACE_THRESHOLD") ? constant("TRACE_THRESHOLD") : 0.0;
+        }
     }
 
     /**
