@@ -89,10 +89,6 @@ function main(): int
             if ($app->run() !== 0) {
                 throw new \Exception("CLI command failed");
             }
-            if ($app->traceFile !== null) {
-                Ctx::$tracer->end();
-                Ctx::$tracer->flush($app->traceFile);
-            }
         } else {
             send_event(new PageRequestEvent(
                 $_SERVER['REQUEST_METHOD'],
@@ -129,9 +125,7 @@ function main(): int
     } finally {
         Ctx::$tracer->end();
         if (
-            PHP_SAPI !== 'cli'
-            && PHP_SAPI !== 'phpdbg'
-            && SysConfig::getTraceFile() !== null
+            SysConfig::getTraceFile() !== null
             && (
                 @$_GET["trace"] === "on"
                 || (ftime() - $_shm_load_start) > SysConfig::getTraceThreshold()
