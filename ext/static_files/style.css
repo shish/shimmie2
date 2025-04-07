@@ -21,7 +21,7 @@ INPUT, TEXTAREA, SELECT, BUTTON {
 }
 
 TABLE.form {width: 300px;}
-TABLE.form.zebra {width: 100%;}
+TABLE.zebra {width: 100%;}
 
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}
 TABLE.form TBODY TR TD {text-align: left;}
