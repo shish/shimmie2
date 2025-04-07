@@ -12,11 +12,6 @@ final class PermManager extends Extension
 
     public function onInitExt(InitExtEvent $event): void
     {
-        $this->add_database_classes();
-    }
-
-    private function add_database_classes(): void
-    {
         UserClass::$loading = UserClassSource::DATABASE;
         if ($this->get_version() >= 1) {
             foreach (Ctx::$database->get_all("SELECT * FROM user_classes") as $class_row) {
