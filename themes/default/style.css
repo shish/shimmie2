@@ -152,6 +152,10 @@ TABLE.zebra TFOOT TR:first-of-type TD, TABLE.zebra TFOOT TR:first-of-type TH {bo
 TABLE.zebra TBODY TR TD, TABLE.zebra TBODY TR TH {border-bottom: 1px solid var(--zebra-header);}
 TABLE.zebra TR:nth-child(odd) {background: var(--zebra-odd);}
 TABLE.zebra TR:nth-child(even) {background: var(--zebra-even);}
+TABLE.zebra INPUT:not([type="checkbox"]):not([type="radio"]),
+TABLE.zebra SELECT,
+TABLE.zebra TEXTAREA,
+TABLE.zebra BUTTON {width: 100%;}
 
 A {
 	text-decoration: none;
