@@ -145,13 +145,6 @@ final class UserPage extends Extension
         new UserClass("base", null, $_all_false);
         new UserClass("admin", null, $_all_true);
 
-        new UserClass(
-            "ghost",
-            "base",
-            [PrivMsgPermission::READ_PM => true],
-            description: "Ghost users can log in and do read-only stuff with their own account (eg. reading their PMs to find out why they have been ghosted), but no writing",
-        );
-
         // Anonymous users can't do anything except sign
         // up to become regular users
         new UserClass(

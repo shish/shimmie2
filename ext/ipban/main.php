@@ -78,6 +78,18 @@ final class IPBan extends Extension
         return 10;
     }
 
+    public function onInitExt(InitExtEvent $event): void
+    {
+        UserClass::$loading = UserClassSource::DEFAULT;
+        new UserClass(
+            "ghost",
+            "base",
+            [PrivMsgPermission::READ_PM => true],
+            description: "Ghost users can log in and do read-only stuff with their own account (eg. reading their PMs to find out why they have been ghosted), but no writing",
+        );
+        UserClass::$loading = UserClassSource::UNKNOWN;
+    }
+
     public function onUserLogin(UserLoginEvent $event): void
     {
         global $database;
