@@ -150,7 +150,10 @@ final class UserPage extends Extension
         new UserClass(
             "anonymous",
             "base",
-            [UserAccountsPermission::CREATE_USER => true],
+            [
+                UserAccountsPermission::CREATE_USER => true,
+                UserAccountsPermission::SKIP_LOGIN_CAPTCHA => true,
+            ],
             description: "The default class for people who are not logged in",
         );
 
@@ -571,6 +574,10 @@ final class UserPage extends Extension
 
     private function page_login(string $name, string $pass): void
     {
+        if (!Captcha::check(UserAccountsPermission::SKIP_LOGIN_CAPTCHA)) {
+            throw new PermissionDenied("Captcha failed");
+        }
+
         $duser = User::by_name_and_pass($name, $pass);
         send_event(new UserLoginEvent($duser));
         $duser->set_login_cookie();

@@ -24,4 +24,7 @@ final class UserAccountsPermission extends PermissionGroup
 
     #[PermissionMeta("Skip Signup CAPTCHA")]
     public const SKIP_SIGNUP_CAPTCHA = "bypass_signup_captcha";
+
+    #[PermissionMeta("Skip login CAPTCHA")]
+    public const SKIP_LOGIN_CAPTCHA = "bypass_login_captcha";
 }
