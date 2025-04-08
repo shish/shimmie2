@@ -164,6 +164,7 @@ final class UserPage extends Extension
                 IndexPermission::BIG_SEARCH => true,
                 ImagePermission::CREATE_IMAGE => true,
                 CommentPermission::CREATE_COMMENT => true,
+                CommentPermission::SKIP_CAPTCHA => true,
                 PostTagsPermission::EDIT_IMAGE_TAG => true,
                 PostSourcePermission::EDIT_IMAGE_SOURCE => true,
                 PostTitlesPermission::EDIT_IMAGE_TITLE => true,
