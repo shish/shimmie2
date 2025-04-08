@@ -27,7 +27,13 @@ final class ExtManager extends Extension
     {
         if ($event->page_matches("ext_manager/set", method: "POST", permission: ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
             if (is_writable("data/config")) {
-                $this->set_things($event->POST);
+                $extras = $event->POST->getAll("extensions");
+                $infos = ExtensionInfo::get_all();
+                $extras = array_filter($extras, fn ($x) => array_key_exists($x, $infos) && !$infos[$x]->core);
+                \Safe\file_put_contents(
+                    "data/config/extensions.conf.php",
+                    "<?php\ndefine(\"EXTRA_EXTS\", " . \Safe\json_encode($extras) . ");\n"
+                );
                 Log::warning("ext_manager", "Active extensions changed", "Active extensions changed");
                 Ctx::$page->set_redirect(make_link("ext_manager"));
             } else {
@@ -52,7 +58,7 @@ final class ExtManager extends Extension
         $event->app->register('disable-all-ext')
             ->setDescription('Disable all extensions')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $this->write_config([]);
+                \Safe\unlink("data/config/extensions.conf.php");
                 return Command::SUCCESS;
             });
     }
@@ -94,34 +100,5 @@ final class ExtManager extends Extension
             return strcmp($a->name, $b->name);
         });
         return $extensions;
-    }
-
-    private function set_things(QueryArray $settings): void
-    {
-        $extras = [];
-
-        foreach (ExtensionInfo::get_all() as $key => $info) {
-            if ($info->core) {
-                continue;  // core extensions are always enabled
-            }
-            if ($settings["ext_$key"] === "on") {
-                $extras[] = $key;
-            }
-        }
-
-        $this->write_config($extras);
-    }
-
-    /**
-     * @param string[] $extras
-     */
-    private function write_config(array $extras): void
-    {
-        $contents = implode(", ", array_map(fn ($x) => "'$x'", $extras));
-        file_put_contents(
-            "data/config/extensions.conf.php",
-            '<' . '?php' . "\n" .
-            'define("EXTRA_EXTS", [' . $contents . ']);' . "\n"
-        );
     }
 }

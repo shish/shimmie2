@@ -50,8 +50,9 @@ class ExtManagerTheme extends Themelet
                 ["data-ext" => $extension->name],
                 $editable ? TD(INPUT([
                     "type" => 'checkbox',
-                    "name" => "ext_" . $extension::KEY,
+                    "name" => "extensions[]",
                     "id" => "ext_" . $extension::KEY,
+                    "value" => $extension::KEY,
                     "checked" => ($extension::is_enabled() === true),
                     "disabled" => ($extension->is_supported() === false || $extension->core === true)
                 ])) : null,
@@ -82,11 +83,15 @@ class ExtManagerTheme extends Themelet
 
         if ($editable) {
             foreach ($extensions as $extension) {
-                if ($extension->visibility === ExtensionVisibility::HIDDEN && !$extension->core) {
+                if (
+                    $extension->visibility === ExtensionVisibility::HIDDEN
+                    && !$extension->core
+                    && $extension::is_enabled()
+                ) {
                     $form->appendChild(INPUT([
                         "type" => 'hidden',
-                        "name" => "ext_" . $extension::KEY,
-                        "value" => ($extension::is_enabled() === true) ? "on" : "off"
+                        "name" => "extensions[]",
+                        "value" => $extension::KEY
                     ]));
                 }
             }
