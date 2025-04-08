@@ -42,6 +42,7 @@ class UploadTheme extends Themelet
         foreach ($ucbe->get_parts() as $part) {
             $common_fields->appendChild($part);
         }
+        $captcha = Captcha::get_html(UploadPermission::SKIP_UPLOAD_CAPTCHA);
 
         $form = SHM_FORM(make_link("upload"), multipart: true, id: "file_upload");
         $form->appendChild(
@@ -49,6 +50,9 @@ class UploadTheme extends Themelet
                 ["id" => "large_upload_form", "class" => "form"],
                 $common_fields,
                 $upload_list,
+                $captcha ? TR(
+                    TD(["colspan" => "7"], $captcha)
+                ) : null,
                 TR(
                     TD(["colspan" => "7"], INPUT(["id" => "uploadbutton", "type" => "submit", "value" => "Post"]))
                 ),
@@ -248,6 +252,7 @@ class UploadTheme extends Themelet
             emptyHTML(
                 INPUT(["id" => "data[]", "name" => "data[]", "size" => "16", "type" => "file", "accept" => $accept, "multiple" => true]),
                 INPUT(["name" => "tags", "type" => "text", "placeholder" => "tagme", "class" => "autocomplete_tags", "required" => true]),
+                Captcha::get_html(UploadPermission::SKIP_UPLOAD_CAPTCHA),
                 INPUT(["type" => "submit", "value" => "Post"]),
             )
         );
