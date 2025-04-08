@@ -8,14 +8,12 @@ namespace Shimmie2;
  * ParseLinkTemplateEvent:
  *   $link     -- the formatted text (with each element URL Escape'd)
  *   $text     -- the formatted text (not escaped)
- *   $original -- the formatting string, for reference
  *   $image    -- the image who's link is being parsed
  */
 final class ParseLinkTemplateEvent extends Event
 {
     public string $link;
     public string $text;
-    public string $original;
     public Image $image;
 
     public function __construct(string $link, Image $image)
@@ -23,7 +21,6 @@ final class ParseLinkTemplateEvent extends Event
         parent::__construct();
         $this->link = $link;
         $this->text = $link;
-        $this->original = $link;
         $this->image = $image;
     }
 
