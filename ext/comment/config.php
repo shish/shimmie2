@@ -23,12 +23,6 @@ final class CommentConfig extends ConfigGroup
     #[ConfigMeta("Akismet API key", ConfigType::STRING)]
     public const WORDPRESS_KEY = "comment_wordpress_key";
 
-    #[ConfigMeta("ReCAPTCHA secret key", ConfigType::STRING)]
-    public const RECAPTCHA_PRIVKEY = "api_recaptcha_privkey";
-
-    #[ConfigMeta("ReCAPTCHA site key", ConfigType::STRING)]
-    public const RECAPTCHA_PUBKEY = "api_recaptcha_pubkey";
-
     #[ConfigMeta("Show repeat anons publicly", ConfigType::BOOL, default: false)]
     public const SHOW_REPEAT_ANONS = "comment_samefags_public";
 

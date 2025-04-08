@@ -53,6 +53,7 @@ class UserPageTheme extends Themelet
             Ctx::$config->get(UserAccountsConfig::USER_EMAIL_REQUIRED) &&
             !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)
         );
+        $captcha = Captcha::get_html(UserAccountsPermission::SKIP_SIGNUP_CAPTCHA);
 
         $form = SHM_SIMPLE_FORM(
             make_link("user_admin/create"),
@@ -75,9 +76,9 @@ class UserPageTheme extends Themelet
                         TH($email_required ? "Email" : \MicroHTML\rawHTML("Email&nbsp;(Optional)")),
                         TD(INPUT(["type" => 'email', "name" => 'email', "required" => $email_required]))
                     ),
-                    TR(
-                        TD(["colspan" => "2"], Captcha::get_html())
-                    ),
+                    $captcha ? TR(
+                        TD(["colspan" => "2"], $captcha)
+                    ) : null,
                 ),
                 TFOOT(
                     TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Create Account"])))

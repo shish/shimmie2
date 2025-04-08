@@ -482,7 +482,7 @@ final class UserPage extends Extension
         } catch (UserNotFound $ex) {
             // user not found is good
         }
-        if (!Captcha::check()) {
+        if (!Captcha::check(UserAccountsPermission::SKIP_SIGNUP_CAPTCHA)) {
             throw new UserCreationException("Error in captcha");
         }
         if ($event->password !== $event->password2) {

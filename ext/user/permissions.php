@@ -21,4 +21,7 @@ final class UserAccountsPermission extends PermissionGroup
     public const CHANGE_OTHER_USER_SETTING = "change_other_user_setting";
     /** only admins can modify protected users (stops a moderator from changing an admin's password) */
     public const PROTECTED = "protected";
+
+    #[PermissionMeta("Skip Signup CAPTCHA")]
+    public const SKIP_SIGNUP_CAPTCHA = "bypass_signup_captcha";
 }
