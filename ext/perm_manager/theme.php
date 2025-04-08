@@ -143,6 +143,9 @@ class PermManagerTheme extends Themelet
                     TD($parent->can($permission)
                         ? SPAN(["class" => "allowed"], "✔")
                         : SPAN(["class" => "denied"], "✘")),
+                    TD($class->can($permission)
+                        ? SPAN(["class" => "allowed"], "✔")
+                        : SPAN(["class" => "denied"], "✘")),
                     TD(SHM_SELECT(
                         "permissions[$permission]",
                         [
@@ -162,9 +165,9 @@ class PermManagerTheme extends Themelet
         }
         $perms_edit = SHM_SIMPLE_FORM(make_link("user_class/{$class->name}/permissions"), TABLE(
             ["class" => "zebra", "id" => "permission_table"],
-            THEAD(TR(TH("Extension"), TH("Permission"), TH("Parent ($parent_name)"), TH("Setting"))),
+            THEAD(TR(TH("Extension"), TH("Permission"), TH("Parent ($parent_name)"), TH("Current"), TH("Setting"))),
             $tbody,
-            TFOOT(TR(TD(["colspan" => 4], SHM_SUBMIT("Save Permissions"))))
+            TFOOT(TR(TD(["colspan" => 5], SHM_SUBMIT("Save Permissions"))))
         ));
 
         Ctx::$page->add_block(new Block("Edit Permissions", $perms_edit, "main", 30));
