@@ -4,54 +4,33 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-* CAPTCHA abstraction                                                       *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-use function MicroHTML\{DIV, SCRIPT, emptyHTML};
-
 use MicroHTML\HTMLElement;
-use ReCaptcha\ReCaptcha;
 
-final readonly class Captcha
+final class Captcha
 {
-    public static function get_html(): ?HTMLElement
+    public static function get_html(?string $bypass_if = null): ?HTMLElement
     {
+        if ($bypass_if !== null && Ctx::$user->can($bypass_if)) {
+            return null;
+        }
+
         if (SysConfig::getDebug() && Network::ip_in_range(Network::get_real_ip(), "127.0.0.0/8")) {
             return null;
         }
 
-        $captcha = null;
-        $r_publickey = Ctx::$config->get(CommentConfig::RECAPTCHA_PUBKEY);
-        if (!empty($r_publickey)) {
-            $captcha = emptyHTML(
-                DIV(["class" => "g-recaptcha", "data-sitekey" => $r_publickey]),
-                SCRIPT([
-                    "type" => "text/javascript",
-                    "src" => "https://www.google.com/recaptcha/api.js"
-                ])
-            );
-        }
-        return $captcha;
+        return send_event(new BuildCaptchaEvent())->html;
     }
 
-    public static function check(): bool
+    public static function check(?string $bypass_if = null): bool
     {
+        if ($bypass_if !== null && Ctx::$user->can($bypass_if)) {
+            return true;
+        }
+
         if (SysConfig::getDebug() && Network::ip_in_range(Network::get_real_ip(), "127.0.0.0/8")) {
             return true;
         }
 
-        $r_privatekey = Ctx::$config->get(CommentConfig::RECAPTCHA_PRIVKEY);
-        if (!empty($r_privatekey)) {
-            $recaptcha = new ReCaptcha($r_privatekey);
-            $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", Network::get_real_ip());
-
-            if (!$resp->isSuccess()) {
-                Log::info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));
-                return false;
-            }
-        }
-
-        return true;
+        return (bool)send_event(new CheckCaptchaEvent())->passed;
     }
 }

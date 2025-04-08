@@ -560,7 +560,7 @@ final class CommentList extends Extension
         }
 
         // rate-limited external service checks last
-        elseif (Ctx::$user->can(CommentPermission::SKIP_CAPTCHA) && !Captcha::check()) {
+        elseif (!Captcha::check(CommentPermission::SKIP_CAPTCHA)) {
             throw new CommentPostingException("Error in captcha");
         } elseif (Ctx::$user->is_anonymous() && $this->is_spam_akismet($comment)) {
             throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");

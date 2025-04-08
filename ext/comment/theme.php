@@ -258,7 +258,7 @@ class CommentListTheme extends Themelet
                 INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
                 INPUT(["type" => "hidden", "name" => "hash", "value" => CommentList::get_hash()]),
                 TEXTAREA(["id" => "comment_on_$image_id", "name" => "comment", "rows" => 5, "cols" => 50]),
-                Ctx::$user->can(CommentPermission::SKIP_CAPTCHA) ? null : Captcha::get_html(),
+                Captcha::get_html(CommentPermission::SKIP_CAPTCHA),
                 BR(),
                 INPUT(["type" => "submit", "value" => "Post Comment"])
             ),
