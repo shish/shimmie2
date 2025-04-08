@@ -35,7 +35,7 @@ class CommentListTheme extends Themelet
         $position = 10;
 
         $comment_limit = Ctx::$config->req(CommentConfig::LIST_COUNT);
-        $comment_captcha = Ctx::$config->req(CommentConfig::CAPTCHA);
+        $comment_captcha = !Ctx::$user->can(CommentPermission::SKIP_CAPTCHA);
 
         foreach ($images as $pair) {
             $image = $pair[0];
@@ -258,7 +258,7 @@ class CommentListTheme extends Themelet
                 INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
                 INPUT(["type" => "hidden", "name" => "hash", "value" => CommentList::get_hash()]),
                 TEXTAREA(["id" => "comment_on_$image_id", "name" => "comment", "rows" => 5, "cols" => 50]),
-                Ctx::$config->req(CommentConfig::CAPTCHA) ? Captcha::get_html() : null,
+                Ctx::$user->can(CommentPermission::SKIP_CAPTCHA) ? null : Captcha::get_html(),
                 BR(),
                 INPUT(["type" => "submit", "value" => "Post Comment"])
             ),
