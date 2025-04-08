@@ -148,6 +148,8 @@ class UserPageTheme extends Themelet
 
     public function create_login_block(): HTMLElement
     {
+        $captcha = Captcha::get_html(UserAccountsPermission::SKIP_LOGIN_CAPTCHA);
+
         $form = SHM_SIMPLE_FORM(
             make_link("user_admin/login"),
             TABLE(
@@ -160,7 +162,11 @@ class UserPageTheme extends Themelet
                     TR(
                         TH(LABEL(["for" => "pass"], "Password")),
                         TD(INPUT(["id" => "pass", "type" => "password", "name" => "pass", "autocomplete" => "current-password", "required" => true]))
-                    )
+                    ),
+                    $captcha ? TR(
+                        TH(LABEL(["for" => "captcha"], "Captcha")),
+                        TD($captcha)
+                    ) : null
                 ),
                 TFOOT(
                     TR(TD(["colspan" => "2"], INPUT(["type" => "submit", "value" => "Log In"])))
