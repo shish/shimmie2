@@ -215,6 +215,10 @@ final class Upload extends Extension
             if ($this->is_full) {
                 throw new ServerError("Can't upload images: disk nearly full");
             }
+            if (!Captcha::check(UploadPermission::SKIP_UPLOAD_CAPTCHA)) {
+                throw new PermissionDenied("Invalid CAPTCHA");
+            }
+
             $results = [];
 
             $files = array_filter($_FILES, function ($file) {
