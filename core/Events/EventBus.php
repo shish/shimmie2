@@ -39,6 +39,7 @@ final class EventBus
 
             if ($speed_hax) {
                 $cache_path->put_contents($this->dump_event_listeners());
+                opcache_reset();
             }
         }
 
