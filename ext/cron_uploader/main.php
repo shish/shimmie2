@@ -259,7 +259,7 @@ final class CronUploader extends Extension
      */
     public function process_upload(): bool
     {
-        global $database, $_shm_load_start;
+        global $database;
 
         $max_time = intval(ini_get('max_execution_time')) * .8;
 
@@ -302,7 +302,7 @@ final class CronUploader extends Extension
 
             // Upload the file(s)
             foreach ($image_queue as $img) {
-                $execution_time = ftime() - $_shm_load_start;
+                $execution_time = ftime() - $_SERVER["REQUEST_TIME_FLOAT"];
                 if ($execution_time > $max_time) {
                     break;
                 } else {
