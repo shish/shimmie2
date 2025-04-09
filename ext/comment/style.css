@@ -24,10 +24,10 @@
 	visibility: visible;
 }
 
-.comment_add TEXTAREA {
-	width: 100%;
-}
-.comment_add INPUT {
+.comment_add INPUT:not([type="checkbox"]):not([type="radio"]),
+.comment_add TEXTAREA,
+.comment_add BUTTON,
+.comment_add SELECT {
 	width: 100%;
 }
 
