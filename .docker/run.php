@@ -1,5 +1,6 @@
 #!/bin/env php
 <?php
+
 // Check install is valid and dirs exist
 if (!is_dir('/app/data')) {
     mkdir('/app/data', 0755, true);
@@ -9,9 +10,9 @@ chgrp('/app/data', 'shimmie');
 
 // Get php.ini settings from PHP_INI_XXX environment variables
 $php_ini = [];
-foreach(getenv() as $key => $value) {
-    if (strpos($key, 'PHP_INI_') === 0) {
-        $php_ini_key = strtolower(substr($key, 8));
+foreach (getenv() as $key => $value) {
+    if (str_starts_with($key, 'PHP_INI_')) {
+        $php_ini_key = str_replace("_dot_", ".", strtolower(substr($key, 8)));
         $php_ini[$php_ini_key] = $value;
     }
 }
@@ -102,7 +103,7 @@ $config = [
 ];
 file_put_contents(
     '/var/lib/unit/conf.json',
-    json_encode($config, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)
+    json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
 );
 
 // Start the web server
