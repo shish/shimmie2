@@ -89,7 +89,7 @@ final class ET extends Extension
             "extensions" => [
                 "core" => $core_exts,
                 "extra" => $extra_exts,
-                "handled_mimes" => DataHandlerExtension::get_all_supported_mimes(),
+                "handled_mimes" => array_map(fn ($mime) => (string)$mime, DataHandlerExtension::get_all_supported_mimes()),
             ],
             "stats" => [
                 'images'   => (int)$database->get_one("SELECT COUNT(*) FROM images"),
