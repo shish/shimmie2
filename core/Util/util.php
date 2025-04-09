@@ -301,11 +301,11 @@ function _fatal_error(\Throwable $e): void
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Internal error - SCore-'.$version.'</title>
+		<title>Internal Error</title>
 	</head>
 	<body>
 		<h1>Internal Error</h1>
-		<p><b>Message:</b> '.html_escape($message).'
+		<p><b>Message:</b> '.$e::class . ": " . html_escape($message).'
 		'.$q.'
 		<p><b>Version:</b> '.$version.' (on '.$phpver.')
         <p><b>Stack Trace:</b></p><pre><code>'.$e->getTraceAsString().'</code></pre>
