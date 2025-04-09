@@ -464,6 +464,24 @@ final class Image implements \ArrayAccess
     }
 
     /**
+     * @return array{0: positive-int, 1: positive-int}
+     */
+    public function get_thumb_size(): array
+    {
+        // TODO: Set up a function for fetching what kind of files are currently thumbnailable
+        if (in_array($this->get_mime()->base, [MimeType::MP3])) {
+            //Use max thumbnail size if using thumbless filetype
+            $config_width = Ctx::$config->req(ThumbnailConfig::WIDTH);
+            $config_height = Ctx::$config->req(ThumbnailConfig::HEIGHT);
+            assert($config_width >= 0 && $config_height >= 0);
+            $tsize = ThumbnailUtil::get_thumbnail_size($config_width, $config_height);
+        } else {
+            $tsize = ThumbnailUtil::get_thumbnail_size($this->width, $this->height);
+        }
+        return $tsize;
+    }
+
+    /**
      * Get the image's extension.
      */
     #[Field(name: "ext")]

@@ -79,17 +79,7 @@ class CommonElementsTheme extends Themelet
         $thumb_link = $image->get_thumb_link();
         $tip = $image->get_tooltip();
         $tags = strtolower($image->get_tag_list());
-
-        // TODO: Set up a function for fetching what kind of files are currently thumbnailable
-        if (!in_array($image->get_mime()->base, [MimeType::MP3])) {
-            $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
-        } else {
-            //Use max thumbnail size if using thumbless filetype
-            $config_width = Ctx::$config->req(ThumbnailConfig::WIDTH);
-            $config_height = Ctx::$config->req(ThumbnailConfig::HEIGHT);
-            assert($config_width >= 0 && $config_height >= 0);
-            $tsize = ThumbnailUtil::get_thumbnail_size($config_width, $config_height);
-        }
+        $tsize = $image->get_thumb_size();
 
         $custom_classes = "";
         if (RelationshipsInfo::is_enabled()) {
