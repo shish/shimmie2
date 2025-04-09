@@ -194,9 +194,9 @@ NAV .blockbody {
 NAV TABLE {
 	width: 100%;
 }
-NAV INPUT {
-	width: 100%;
-}
+NAV INPUT:not([type="checkbox"]):not([type="radio"]),
+NAV TEXTAREA,
+NAV BUTTON,
 NAV SELECT {
 	width: 100%;
 }
