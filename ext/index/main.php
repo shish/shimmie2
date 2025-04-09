@@ -191,11 +191,20 @@ final class Index extends Extension
         } elseif ($matches = $event->matches("/^(filename|name)[=|:](.+)$/i")) {
             $filename = strtolower($matches[2]);
             $event->add_querylet(new Querylet("lower(images.filename) LIKE :filename{$event->id}", ["filename{$event->id}" => "%$filename%"]));
-        } elseif ($matches = $event->matches("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9-]*)$/i")) {
-            // TODO Make this able to search = without needing a time component.
+        } elseif ($matches = $event->matches("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]{4}[-\/][0-9]{2}[-\/][0-9]{2})$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
-            $val = $matches[2];
-            $event->add_querylet(new Querylet("images.posted $cmp :posted{$event->id}", ["posted{$event->id}" => $val]));
+            $dt = new \Safe\DateTimeImmutable($matches[2]);
+            if ($cmp === "=") {
+                $event->add_querylet(new Querylet(
+                    "images.posted >= :posted{$event->id}_1 AND images.posted < :posted{$event->id}_2",
+                    ["posted{$event->id}_1" => $dt->format('Y-m-d'), "posted{$event->id}_2" => $dt->modify('+1 day')->format('Y-m-d')]
+                ));
+            } else {
+                $event->add_querylet(new Querylet(
+                    "images.posted $cmp :posted{$event->id}",
+                    ["posted{$event->id}" => $dt->format('Y-m-d')]
+                ));
+            }
         } elseif ($matches = $event->matches("/^order[=|:](id|width|height|length|filesize|filename)[_]?(desc|asc)?$/i")) {
             $ord = strtolower($matches[1]);
             $default_order_for_column = \Safe\preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
