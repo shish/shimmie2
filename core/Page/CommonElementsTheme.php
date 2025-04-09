@@ -119,6 +119,9 @@ class CommonElementsTheme extends Themelet
         if (RatingsInfo::is_enabled()) {
             $attrs["data-rating"] = $image['rating'];
         }
+        if (NotesInfo::is_enabled()) {
+            $attrs["data-notes"] = $image['notes'];
+        }
 
         return A(
             $attrs,
