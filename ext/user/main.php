@@ -164,6 +164,7 @@ final class UserPage extends Extension
             "user",
             "base",
             [
+                ArtistsPermission::EDIT_ARTIST_INFO => true,
                 ArtistsPermission::EDIT_IMAGE_ARTIST => true,
                 BulkActionsPermission::PERFORM_BULK_ACTIONS => true,
                 BulkDownloadPermission::BULK_DOWNLOAD => true,
