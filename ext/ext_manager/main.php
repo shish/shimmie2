@@ -34,6 +34,9 @@ final class ExtManager extends Extension
                     "data/config/extensions.conf.php",
                     "<?php\ndefine(\"EXTRA_EXTS\", " . \Safe\json_encode($extras) . ");\n"
                 );
+                // force PHP to re-read extensions.conf.php on the next request,
+                // otherwise it will use an old version for a few seconds
+                opcache_reset();
                 Log::warning("ext_manager", "Active extensions changed", "Active extensions changed");
                 Ctx::$page->set_redirect(make_link("ext_manager"));
             } else {
