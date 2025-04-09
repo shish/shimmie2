@@ -79,9 +79,9 @@ class NumericScoreTheme extends Themelet
         $html = emptyHTML(
             H3(
                 ["style" => "text-align: center;"],
-                A(["href" => $b_dte], "&laquo;"),
-                $current,
-                A(["href" => $f_dte], "&raquo;")
+                A(["href" => $b_dte], "<<"),
+                " $current ",
+                A(["href" => $f_dte], ">>")
             ),
             BR(),
             joinHTML("\n", $pop_images)
