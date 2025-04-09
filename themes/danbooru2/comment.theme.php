@@ -27,7 +27,6 @@ class Danbooru2CommentListTheme extends CommentListTheme
         // parts for each image
         $position = 10;
 
-        $comment_captcha = !Ctx::$user->can(CommentPermission::SKIP_CAPTCHA);
         $comment_limit = Ctx::$config->get(CommentConfig::LIST_COUNT);
 
         foreach ($images as $pair) {
@@ -68,17 +67,7 @@ class Danbooru2CommentListTheme extends CommentListTheme
             foreach ($comments as $comment) {
                 $comment_html->appendChild($this->comment_to_html($comment));
             }
-            if ($can_post) {
-                if (!Ctx::$user->is_anonymous()) {
-                    $comment_html->appendChild($this->build_postbox($image->id));
-                } else {
-                    if (!$comment_captcha) {
-                        $comment_html->appendChild($this->build_postbox($image->id));
-                    } else {
-                        $comment_html->appendChild(A(["href" => make_link("post/view/".$image->id)], "Add Comment"));
-                    }
-                }
-            }
+            $comment_html->appendChild($this->build_postbox($image->id));
 
             $html = TABLE(
                 TR(
