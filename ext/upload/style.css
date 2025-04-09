@@ -2,6 +2,9 @@ TABLE#large_upload_form.form {
 	width: 100%;
 }
 
-.mini_upload INPUT {
+.mini_upload INPUT:not([type="checkbox"]):not([type="radio"]),
+.mini_upload TEXTAREA,
+.mini_upload BUTTON,
+.mini_upload SELECT {
 	width: 100%;
 }
