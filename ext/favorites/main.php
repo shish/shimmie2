@@ -30,7 +30,7 @@ final class Favorites extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        if (!Ctx::$user->is_anonymous()) {
+        if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
             $user_id = Ctx::$user->id;
             $image_id = $event->image->id;
 
@@ -57,16 +57,12 @@ final class Favorites extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if (Ctx::$user->is_anonymous()) {
-            return;
-        } // FIXME: proper permissions
-
-        if ($event->page_matches("favourite/add/{image_id}", method: "POST")) {
+        if ($event->page_matches("favourite/add/{image_id}", method: "POST", permission: FavouritesPermission::EDIT_FAVOURITES)) {
             $image_id = $event->get_iarg('image_id');
             send_event(new FavoriteSetEvent($image_id, Ctx::$user, true));
             Ctx::$page->set_redirect(make_link("post/view/$image_id"));
         }
-        if ($event->page_matches("favourite/remove/{image_id}", method: "POST")) {
+        if ($event->page_matches("favourite/remove/{image_id}", method: "POST", permission: FavouritesPermission::EDIT_FAVOURITES)) {
             $image_id = $event->get_iarg('image_id');
             send_event(new FavoriteSetEvent($image_id, Ctx::$user, false));
             Ctx::$page->set_redirect(make_link("post/view/$image_id"));
@@ -154,7 +150,7 @@ final class Favorites extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (!Ctx::$user->is_anonymous()) {
+        if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
             $event->add_action("bulk_favorite", "Favorite");
             $event->add_action("bulk_unfavorite", "Un-Favorite");
         }
@@ -164,7 +160,7 @@ final class Favorites extends Extension
     {
         switch ($event->action) {
             case "bulk_favorite":
-                if (!Ctx::$user->is_anonymous()) {
+                if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         send_event(new FavoriteSetEvent($image->id, Ctx::$user, true));
@@ -174,7 +170,7 @@ final class Favorites extends Extension
                 }
                 break;
             case "bulk_unfavorite":
-                if (!Ctx::$user->is_anonymous()) {
+                if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         send_event(new FavoriteSetEvent($image->id, Ctx::$user, false));
