@@ -121,8 +121,7 @@ class IndexTheme extends Themelet
         if (count($this->search_terms) === 0) {
             $page_title = Ctx::$config->req(SetupConfig::TITLE);
         } else {
-            $search_string = implode(' ', $this->search_terms);
-            $page_title = html_escape($search_string);
+            $page_title = implode(' ', $this->search_terms);
             if (count($images) > 0) {
                 Ctx::$page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
             }
