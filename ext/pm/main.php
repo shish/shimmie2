@@ -204,14 +204,18 @@ final class PrivMsg extends Extension
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $duser = $event->display_user;
-        if (!Ctx::$user->is_anonymous() && !$duser->is_anonymous()) {
-            $pms = PM::get_pms($duser);
-            if (!is_null($pms)) {
-                $this->theme->display_pms($pms);
-            }
-            if (Ctx::$user->can(PrivMsgPermission::SEND_PM) && Ctx::$user->id !== $duser->id) {
-                $this->theme->display_composer(Ctx::$user, $duser);
-            }
+
+        $pms = PM::get_pms($duser);
+        if (!is_null($pms)) {
+            $this->theme->display_pms($pms);
+        }
+
+        if (
+            Ctx::$user->can(PrivMsgPermission::SEND_PM)
+            && $duser->can(PrivMsgPermission::READ_PM)
+            && Ctx::$user->id !== $duser->id
+        ) {
+            $this->theme->display_composer(Ctx::$user, $duser);
         }
     }
 

@@ -43,7 +43,7 @@ final class Artists extends Extension
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $artistName = $this->get_artistName_by_imageID($event->image->id);
-        if (!Ctx::$user->is_anonymous()) {
+        if (Ctx::$user->can(ArtistsPermission::EDIT_ARTIST_INFO)) {
             $event->add_part($this->theme->get_author_editor_html($artistName), 42);
         }
     }
@@ -162,7 +162,7 @@ final class Artists extends Extension
             $this->theme->sidebar_options("neutral");
         }
         if ($event->page_matches("artist/new")) {
-            if (!$user->is_anonymous()) {
+            if ($user->can(ArtistsPermission::EDIT_ARTIST_INFO)) {
                 $this->theme->new_artist_composer();
             } else {
                 throw new PermissionDenied("You must be registered and logged in to create a new artist.");
@@ -172,7 +172,7 @@ final class Artists extends Extension
             $page->set_redirect(make_link("artist/new"));
         }
         if ($event->page_matches("artist/create")) {
-            if (!$user->is_anonymous()) {
+            if ($user->can(ArtistsPermission::EDIT_ARTIST_INFO)) {
                 $newArtistID = $this->add_artist();
                 $page->set_redirect(make_link("artist/view/" . $newArtistID));
             } else {
@@ -186,19 +186,12 @@ final class Artists extends Extension
             $members = $this->get_members($artist['id']);
             $urls = $this->get_urls($artist['id']);
 
-            $userIsLogged = !$user->is_anonymous();
+            $userIsLogged = $user->can(ArtistsPermission::EDIT_ARTIST_INFO);
             $userIsAdmin = $user->can(ArtistsPermission::ADMIN);
 
             $images = Search::find_images(limit: 4, tags: Tag::explode($artist['name']));
 
             $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
-            /*
-            if ($userIsLogged) {
-                $this->theme->show_new_alias_composer($artistID);
-                $this->theme->show_new_member_composer($artistID);
-                $this->theme->show_new_url_composer($artistID);
-            }
-            */
 
             $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
         }
@@ -209,7 +202,7 @@ final class Artists extends Extension
             $members = $this->get_members($artistID);
             $urls = $this->get_urls($artistID);
 
-            if (!$user->is_anonymous()) {
+            if ($user->can(ArtistsPermission::EDIT_ARTIST_INFO)) {
                 $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
 
                 $userIsAdmin = $user->can(ArtistsPermission::ADMIN);
