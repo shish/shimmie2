@@ -32,7 +32,11 @@ final class VideoFileHandler extends DataHandlerExtension
                         break;
                     case "video":
                         $event->image->video = true;
-                        $event->image->video_codec = VideoCodec::from($stream["codec_name"]);
+                        try {
+                            $event->image->video_codec = VideoCodec::from($stream["codec_name"]);
+                        } catch (\ValueError $e) {
+                            throw new UserError("Unrecognised video codec: {$stream["codec_name"]}");
+                        }
                         $event->image->width = max($event->image->width, $stream["width"]);
                         $event->image->height = max($event->image->height, $stream["height"]);
                         break;
