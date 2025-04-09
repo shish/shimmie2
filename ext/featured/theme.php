@@ -15,7 +15,7 @@ class FeaturedTheme extends Themelet
 
     public function build_featured_html(Image $image): \MicroHTML\HTMLElement
     {
-        $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
+        $tsize = $image->get_thumb_size();
 
         return DIV(
             ["style" => "text-align: center;"],
