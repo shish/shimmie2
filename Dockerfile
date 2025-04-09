@@ -69,8 +69,12 @@ EXPOSE 8000
 FROM base AS run
 EXPOSE 8000
 # HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
-ARG BUILD_TIME=unknown BUILD_HASH=unknown
+ARG BUILD_TIME=unknown
+ARG BUILD_HASH=unknown
 ENV UID=1000 GID=1000
+ENV PHP_INI_opcache_dot_blacklist_filename=/app/.docker/opcache-blacklist.txt
+ENV PHP_INI_opcache_dot_revalidate_freq=60
+ENV PHP_INI_opcache_dot_jit=tracing
 COPY --from=build /app /app
 WORKDIR /app
 RUN echo "define('BUILD_TIME', '$BUILD_TIME');" >> core/Config/SysConfig.php && \
