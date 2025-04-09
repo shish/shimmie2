@@ -133,7 +133,7 @@ class PoolsTheme extends Themelet
 
         if (!is_null($pool)) {
             if ($pool->public || Ctx::$user->can(PoolsPermission::ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
-                if (!Ctx::$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
+                if (Ctx::$user->can(PoolsPermission::UPDATE)) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
                     $this->sidebar_options($pool, $check_all);
                 }
             }
