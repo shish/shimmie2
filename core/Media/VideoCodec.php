@@ -8,6 +8,7 @@ enum VideoCodec: string
 {
     case VP8 = "vp8";
     case VP9 = "vp9";
+    case AV1 = "av1";
     case THEORA = "theora";
     case MPEG4 = "mpeg4";
     case H264 = "h264";
