@@ -17,7 +17,7 @@ class RandomImageTheme extends Themelet
 
     public function build_random_html(Image $image): HTMLElement
     {
-        $tsize = ThumbnailUtil::get_thumbnail_size($image->width, $image->height);
+        $tsize = $image->get_thumb_size();
 
         return DIV(
             ["style" => "text-align: center;"],

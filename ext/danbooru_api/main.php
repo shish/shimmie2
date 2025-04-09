@@ -220,7 +220,7 @@ final class DanbooruApi extends Extension
             }
             $taglist = $img->get_tag_list();
             $owner = $img->get_owner();
-            $previewsize = ThumbnailUtil::get_thumbnail_size($img->width, $img->height);
+            $previewsize = $img->get_thumb_size();
             $xml->appendChild(TAG([
                 "id" => $img->id,
                 "md5" => $img->hash,
