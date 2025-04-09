@@ -178,10 +178,8 @@ function get_debug_info(): string
  */
 function get_debug_info_arr(): array
 {
-    global $_shm_load_start;
-
     return [
-        "time" => round(ftime() - $_shm_load_start, 2),
+        "time" => round(ftime() - $_SERVER["REQUEST_TIME_FLOAT"], 2),
         "dbtime" => round(Ctx::$database->dbtime, 2),
         "mem_mb" => round(((memory_get_peak_usage(true) + 512) / 1024) / 1024, 2),
         "files" => count(get_included_files()),

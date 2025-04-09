@@ -12,8 +12,8 @@ final class StatsDInterface extends Extension
 
     private function _stats(string $type): void
     {
-        global $database, $_shm_load_start;
-        $time = ftime() - $_shm_load_start;
+        global $database;
+        $time = ftime() - $_SERVER["REQUEST_TIME_FLOAT"];
         StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
         StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
         StatsDInterface::$stats["shimmie.$type.time-db"] = "{$database->dbtime}|ms";
