@@ -238,7 +238,7 @@ class ArtistsTheme extends Themelet
                 TD($typeTextArray[$artist['type']]),
                 TD($user_link),
                 TD($artist['posts']),
-                Ctx::$user->is_anonymous() ? null : TD($edit_link),
+                Ctx::$user->can(ArtistsPermission::EDIT_ARTIST_INFO) ? TD($edit_link) : null,
                 Ctx::$user->can(ArtistsPermission::ADMIN) ? TD($del_link) : null,
             ));
         }
@@ -251,7 +251,7 @@ class ArtistsTheme extends Themelet
                     TH("Type"),
                     TH("Last updater"),
                     TH("Posts"),
-                    Ctx::$user->is_anonymous() ? null : TH(["colspan" => "2"], "Action")
+                    Ctx::$user->can(ArtistsPermission::EDIT_ARTIST_INFO) ? TH(["colspan" => "2"], "Action") : null
                 )
             ),
             $tbody
