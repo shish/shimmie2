@@ -22,20 +22,23 @@ final class ReplaceFile extends Extension
             $image_id = $event->get_iarg('image_id');
             $image = Image::by_id_ex($image_id);
 
-            if (empty($event->POST->get("url")) && count($_FILES) == 0) {
-                Ctx::$page->set_redirect(make_link("replace/$image_id"));
-                return;
-            }
-
             if (!empty($event->POST->get("url"))) {
                 $tmp_filename = shm_tempnam("transload");
                 $url = $event->POST->req("url");
                 assert(!empty($url));
                 Network::fetch_url($url, $tmp_filename);
-                send_event(new ImageReplaceEvent($image, $tmp_filename));
             } elseif (count($_FILES) > 0) {
-                send_event(new ImageReplaceEvent($image, new Path($_FILES["data"]['tmp_name'])));
+                $tmp_filename = new Path($_FILES["data"]['tmp_name']);
+            } else {
+                Ctx::$page->set_redirect(make_link("replace/$image_id"));
+                return;
             }
+            if ($tmp_filename->filesize() > Ctx::$config->req(UploadConfig::SIZE)) {
+                $size = to_shorthand_int($tmp_filename->filesize());
+                $limit = to_shorthand_int(Ctx::$config->req(UploadConfig::SIZE));
+                throw new UploadException("File too large ($size > $limit)");
+            }
+            send_event(new ImageReplaceEvent($image, $tmp_filename));
             if ($event->POST->get("source")) {
                 send_event(new SourceSetEvent($image, $event->POST->req("source")));
             }
