@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, B, DIV, emptyHTML};
+use function MicroHTML\{A, B, DIV, SPAN, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -27,7 +27,7 @@ class StatisticsTheme extends Themelet
     }
 
     /**
-     * @param array<string, int|string> $data
+     * @param array<string, int|HTMLElement> $data
      */
     public function build_table(array $data, string $id, string $title, ?int $limit = 10): HTMLElement
     {
@@ -57,6 +57,15 @@ class StatisticsTheme extends Themelet
         return DIV(
             ["id" => "table$id", "class" => "stats-container"],
             $table
+        );
+    }
+
+    public function build_tag_field(int $tally, int $diff): HTMLElement
+    {
+        return emptyHTML(
+            SPAN(["title" => "Tags changed (ignoring aliases) edits"], $diff),
+            " ",
+            SPAN(["class" => "tag_count", "title" => "Total edits"], $tally)
         );
     }
 }

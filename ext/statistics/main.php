@@ -27,11 +27,7 @@ final class Statistics extends Extension
                 arsort($tallies[0], SORT_NUMERIC);
                 $stats = [];
                 foreach ($tallies[0] as $name => $tag_diff) {
-                    $entries = "";
-                    if (isset($tallies[1][$name])) {
-                        $entries = " <span class='tag_count' title='Total edits'>" . $tallies[1][$name] . "</span>";
-                    }
-                    $stats[$name] = "<span title='Tags changed (ignoring aliases)'>$tag_diff</span>$entries";
+                    $stats[$name] = $this->theme->build_tag_field($tallies[1][$name], $tag_diff);
                 }
                 $tag_table = $this->theme->build_table($stats, "Taggers", "Top $limit taggers", $limit);
             } else {
