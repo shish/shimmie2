@@ -32,8 +32,8 @@ final class ResizeImage extends Extension
             $this->can_resize_mime($event->image->get_mime())
         ) {
             /* Add a link to resize the image */
-            $default_width = Ctx::$config->get(ResizeConfig::DEFAULT_WIDTH) ?? $event->image->width;
-            $default_height = Ctx::$config->get(ResizeConfig::DEFAULT_HEIGHT) ?? $event->image->height;
+            $default_width = Ctx::$config->get(ResizeConfig::DEFAULT_WIDTH) ?: $event->image->width;
+            $default_height = Ctx::$config->get(ResizeConfig::DEFAULT_HEIGHT) ?: $event->image->height;
 
             $event->add_part(SHM_SIMPLE_FORM(
                 make_link("resize/{$event->image->id}"),

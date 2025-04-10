@@ -42,6 +42,7 @@ class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
         Scope $scope
     ): ?Type {
         $configType = null;
+        $hasDefault = false;
         if (count($methodCall->getArgs()) === 2) {
             $type = $scope->getType($methodCall->getArgs()[1]->value);
             if ($type->getEnumCases()) {
@@ -65,10 +66,11 @@ class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
                         ConfigType::BOOL => new BooleanType(),
                         ConfigType::ARRAY => new ArrayType(new IntegerType(), new StringType()),
                     };
+                    $hasDefault = $this->metas[$key]->default !== null;
                 }
             }
         }
-        if ($configType !== null && $methodReflection->getName() == 'get') {
+        if ($configType !== null && $methodReflection->getName() == 'get' && !$hasDefault) {
             $configType = new UnionType([$configType, new NullType()]);
         }
         return $configType;

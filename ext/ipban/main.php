@@ -132,7 +132,7 @@ final class IPBan extends Extension
 
             $row_banner_id_int = intval($row['banner_id']);
 
-            $msg = Ctx::$config->get("ipban_message_{$row['mode']}") ?? Ctx::$config->get("ipban_message") ?? "(no message)";
+            $msg = Ctx::$config->get("ipban_message_{$row['mode']}") ?? Ctx::$config->get(IPBanConfig::MESSAGE);
             assert(is_string($msg));
             $msg = str_replace('$IP', $row["ip"], $msg);
             $msg = str_replace('$DATE', $row['expires'] ?? 'the end of time', $msg);
