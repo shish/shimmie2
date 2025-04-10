@@ -70,8 +70,6 @@ final class Network
     public static function get_session_ip(): string
     {
         $mask = Ctx::$config->get(UserAccountsConfig::SESSION_HASH_MASK);
-        // even if the database says "null", the default setting should take effect
-        assert($mask !== null);
         $addr = Network::get_real_ip();
         try {
             $addr = \Safe\inet_ntop(\Safe\inet_pton($addr) & \Safe\inet_pton($mask));
