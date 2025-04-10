@@ -31,6 +31,10 @@ final class Captcha
             return true;
         }
 
-        return (bool)send_event(new CheckCaptchaEvent())->passed;
+        $passed = send_event(new CheckCaptchaEvent())->passed;
+        if ($passed === null) {
+            $passed = true;
+        }
+        return $passed;
     }
 }
