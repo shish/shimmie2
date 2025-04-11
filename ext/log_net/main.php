@@ -17,7 +17,7 @@ final class LogNet extends Extension
                 $username = isset(Ctx::$user) ? Ctx::$user->name : "Anonymous";
                 $str = sprintf("%-15s %-10s: %s", Network::get_real_ip(), $username, $event->message);
                 $this->msg($str);
-            } elseif ($this->count == 10) {
+            } elseif ($this->count === 10) {
                 $this->msg('suppressing flood, check the web log');
             }
         }

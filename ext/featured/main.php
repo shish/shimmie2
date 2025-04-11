@@ -73,7 +73,7 @@ final class Featured extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(FeaturedPermission::EDIT_FEATURE) && $event->context == "view") {
+        if (Ctx::$user->can(FeaturedPermission::EDIT_FEATURE) && $event->context === "view") {
             $event->add_button("Feature This", "featured_image/set/{$event->image->id}");
         }
     }

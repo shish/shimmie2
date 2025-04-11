@@ -26,7 +26,7 @@ final class UserClass
         public readonly string $description = "",
     ) {
         if (array_key_exists($name, self::$known_classes)) {
-            if (self::$loading == UserClassSource::DEFAULT) {
+            if (self::$loading === UserClassSource::DEFAULT) {
                 throw new ServerError("Duplicate default class: {$name}");
             }
             $this->sources = array_merge(self::$known_classes[$name]->sources, [self::$loading]);

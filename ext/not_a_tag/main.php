@@ -97,7 +97,7 @@ final class NotATag extends Extension
             }
         }
 
-        if (count($ok_tags) == 0) {
+        if (count($ok_tags) === 0) {
             $ok_tags = ["tagme"];
         }
 

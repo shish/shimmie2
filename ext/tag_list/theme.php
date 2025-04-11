@@ -56,7 +56,7 @@ class TagListTheme extends Themelet
      */
     public function display_split_related_block(array $tag_infos): void
     {
-        if (Ctx::$config->get(TagListConfig::RELATED_SORT) == TagListConfig::SORT_ALPHABETICAL) {
+        if (Ctx::$config->get(TagListConfig::RELATED_SORT) === TagListConfig::SORT_ALPHABETICAL) {
             usort($tag_infos, fn ($a, $b) => strcasecmp($a['tag'], $b['tag']));
         }
 
@@ -84,7 +84,7 @@ class TagListTheme extends Themelet
 
         ksort($tag_categories_html);
         foreach (array_keys($tag_categories_html) as $category) {
-            if ($category == '') {
+            if ($category === '') {
                 $category_display_name = 'Tags';
                 $prio = 10;
             } elseif ($tag_categories_count[$category] < 2) {

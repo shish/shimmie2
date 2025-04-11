@@ -21,7 +21,7 @@ final class LinkImage extends Extension
     private function data(Image $image): array
     {
         $text_link = $image->parse_link_template(Ctx::$config->get(LinkImageConfig::TEXT_FORMAT));
-        $text_link = trim($text_link) == "" ? null : $text_link; // null blank setting so the url gets filled in on the text links.
+        $text_link = trim($text_link) === "" ? null : $text_link; // null blank setting so the url gets filled in on the text links.
 
         return [
             'thumb_src' => $image->get_thumb_link()->asAbsolute(),

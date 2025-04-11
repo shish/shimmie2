@@ -110,7 +110,7 @@ final class MiniSVGParser
      */
     public function startElement(mixed $parser, string $name, array $attrs): void
     {
-        if ($name == "SVG" && $this->xml_depth == 0) {
+        if ($name === "SVG" && $this->xml_depth === 0) {
             $w = int_escape($attrs["WIDTH"]);
             $h = int_escape($attrs["HEIGHT"]);
             assert($w > 0);

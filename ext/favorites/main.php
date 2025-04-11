@@ -87,9 +87,9 @@ final class Favorites extends Extension
         if (
             Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES) &&
             !is_null($action) &&
-            ($action == "set" || $action == "unset")
+            ($action === "set" || $action === "unset")
         ) {
-            send_event(new FavoriteSetEvent($event->image->id, Ctx::$user, $action == "set"));
+            send_event(new FavoriteSetEvent($event->image->id, Ctx::$user, $action === "set"));
         }
     }
 
@@ -143,7 +143,7 @@ final class Favorites extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "posts") {
+        if ($event->parent === "posts") {
             $event->add_nav_link(search_link(["favorited_by=" . Ctx::$user->name]), "My Favorites");
         }
     }

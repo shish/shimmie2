@@ -20,7 +20,7 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
 
         $page = self::get_page("random_image/download");
         self::assertEquals($page->mode, PageMode::FILE);
-        # FIXME: assert($raw == file(blah.jpg))
+        # FIXME: assert($raw === file(blah.jpg))
     }
 
     public function testPostListBlock(): void

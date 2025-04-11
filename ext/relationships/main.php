@@ -74,13 +74,13 @@ final class Relationships extends Extension
             $parentID = $matches[1];
 
             if (\Safe\preg_match("/^(any|none)$/", $parentID)) {
-                $not = ($parentID == "any" ? "NOT" : "");
+                $not = ($parentID === "any" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.parent_id IS $not NULL"));
             } else {
                 $event->add_querylet(new Querylet("images.parent_id = :pid", ["pid" => $parentID]));
             }
         } elseif ($matches = $event->matches("/^child[=|:](any|none)$/")) {
-            $not = ($matches[1] == "any" ? "=" : "!=");
+            $not = ($matches[1] === "any" ? "=" : "!=");
             $event->add_querylet(new Querylet("images.has_children $not :true", ["true" => true]));
         }
     }
@@ -103,7 +103,7 @@ final class Relationships extends Extension
     {
         if ($matches = $event->matches("/^parent[=|:]([0-9]+|none)$/")) {
             $parentID = $matches[1];
-            if ($parentID == "none" || $parentID == "0") {
+            if ($parentID === "none" || $parentID === "0") {
                 $this->remove_parent($event->image_id);
             } else {
                 send_event(new ImageRelationshipSetEvent($event->image_id, (int)$parentID));
@@ -141,7 +141,7 @@ final class Relationships extends Extension
             $old_parent = (int)$old_parent;
         }
 
-        if ($old_parent == $event->parent_id) {
+        if ($old_parent === $event->parent_id) {
             return;  // no change
         }
         if (!Image::by_id($event->parent_id) || !Image::by_id($event->child_id)) {

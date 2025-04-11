@@ -49,7 +49,7 @@ final class TagHistory extends Extension
         $new_tags = Tag::implode($event->new_tags);
         $old_tags = Tag::implode($event->old_tags);
 
-        if ($new_tags == $old_tags) {
+        if ($new_tags === $old_tags) {
             return;
         }
 
@@ -61,14 +61,14 @@ final class TagHistory extends Extension
         }
 
         $allowed = Ctx::$config->get(TagHistoryConfig::MAX_HISTORY);
-        if ($allowed == 0) {
+        if ($allowed === 0) {
             return;
         }
 
         // if the image has no history, make one with the old tags
         $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = :id", ["id" => $event->image->id]);
         assert(is_int($entries));
-        if ($entries == 0 && !empty($old_tags)) {
+        if ($entries === 0 && !empty($old_tags)) {
             $database->execute(
                 "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
@@ -88,7 +88,7 @@ final class TagHistory extends Extension
         $entries++;
 
         // if needed remove oldest one
-        if ($allowed == -1) {
+        if ($allowed === -1) {
             return;
         }
         if ($entries > $allowed) {
@@ -141,13 +141,13 @@ final class TagHistory extends Extension
             $this->set_version(3);
         }
 
-        if ($this->get_version() == 1) {
+        if ($this->get_version() === 1) {
             $database->execute("ALTER TABLE tag_histories ADD COLUMN user_id INTEGER NOT NULL");
             $database->execute("ALTER TABLE tag_histories ADD COLUMN date_set TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
             $this->set_version(2);
         }
 
-        if ($this->get_version() == 2) {
+        if ($this->get_version() === 2) {
             $database->execute("ALTER TABLE tag_histories ADD COLUMN user_ip CHAR(15) NOT NULL");
             $this->set_version(3);
         }
@@ -319,7 +319,7 @@ final class TagHistory extends Extension
             $select_args['date_set'] = $date;
         }
 
-        if (count($select_code) == 0) {
+        if (count($select_code) === 0) {
             Log::error("tag_history", "Tried to mass revert without any conditions");
             return;
         }

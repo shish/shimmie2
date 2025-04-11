@@ -50,7 +50,7 @@ final class Upgrade extends Extension
         }
 
         if ($this->get_version() < 9) {
-            if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $tables = $database->get_col("SHOW TABLES");
                 foreach ($tables as $table) {
                     Log::info("upgrade", "converting $table to innodb");
@@ -79,7 +79,7 @@ final class Upgrade extends Extension
         }
 
         if ($this->get_version() < 12) {
-            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 Log::info("upgrade", "Changing ext column to VARCHAR");
                 $database->execute("ALTER TABLE images ALTER COLUMN ext SET DATA TYPE VARCHAR(4)");
             }
@@ -92,9 +92,9 @@ final class Upgrade extends Extension
 
         if ($this->get_version() < 13) {
             Log::info("upgrade", "Changing password column to VARCHAR(250)");
-            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute("ALTER TABLE users ALTER COLUMN pass SET DATA TYPE VARCHAR(250)");
-            } elseif ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
+            } elseif ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $database->execute("ALTER TABLE users CHANGE pass pass VARCHAR(250)");
             }
 
@@ -103,11 +103,11 @@ final class Upgrade extends Extension
 
         if ($this->get_version() < 14) {
             Log::info("upgrade", "Changing tag column to VARCHAR(255)");
-            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute('ALTER TABLE tags ALTER COLUMN tag SET DATA TYPE VARCHAR(255)');
                 $database->execute('ALTER TABLE aliases ALTER COLUMN oldtag SET DATA TYPE VARCHAR(255)');
                 $database->execute('ALTER TABLE aliases ALTER COLUMN newtag SET DATA TYPE VARCHAR(255)');
-            } elseif ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
+            } elseif ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $database->execute('ALTER TABLE tags MODIFY COLUMN tag VARCHAR(255) NOT NULL');
                 $database->execute('ALTER TABLE aliases MODIFY COLUMN oldtag VARCHAR(255) NOT NULL');
                 $database->execute('ALTER TABLE aliases MODIFY COLUMN newtag VARCHAR(255) NOT NULL');
@@ -118,7 +118,7 @@ final class Upgrade extends Extension
 
         if ($this->get_version() < 15) {
             Log::info("upgrade", "Adding lower indexes for postgresql use");
-            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute('CREATE INDEX tags_lower_tag_idx ON tags ((lower(tag)))');
                 $database->execute('CREATE INDEX users_lower_name_idx ON users ((lower(name)))');
             }
@@ -131,13 +131,13 @@ final class Upgrade extends Extension
             $database->execute('CREATE UNIQUE INDEX image_tags_tag_id_image_id_idx ON image_tags(tag_id,image_id) ');
 
             Log::info("upgrade", "Changing filename column to VARCHAR(255)");
-            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute('ALTER TABLE images ALTER COLUMN filename SET DATA TYPE VARCHAR(255)');
                 // Postgresql creates a unique index for unique columns, not just a constraint,
                 // so we don't need two indexes on the same column
                 $database->execute('DROP INDEX IF EXISTS images_hash_idx');
                 $database->execute('DROP INDEX IF EXISTS users_name_idx');
-            } elseif ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
+            } elseif ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $database->execute('ALTER TABLE images MODIFY COLUMN filename VARCHAR(255) NOT NULL');
             }
             // SQLite doesn't support altering existing columns? This seems like a problem?

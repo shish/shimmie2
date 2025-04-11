@@ -15,7 +15,7 @@ final class Biography extends Extension
         $duser = $event->display_user;
         $bio = $duser->get_config()->get(BiographyConfig::BIOGRAPHY) ?? "";
 
-        if (Ctx::$user->id == $duser->id || Ctx::$user->can(UserAccountsPermission::EDIT_USER_INFO)) {
+        if (Ctx::$user->id === $duser->id || Ctx::$user->can(UserAccountsPermission::EDIT_USER_INFO)) {
             $this->theme->display_composer($duser, $bio);
         } else {
             $this->theme->display_biography($bio);
@@ -26,7 +26,7 @@ final class Biography extends Extension
     {
         if ($event->page_matches("user/{name}/biography", method: "POST")) {
             $duser = User::by_name($event->get_arg("name"));
-            if (Ctx::$user->id == $duser->id || Ctx::$user->can(UserAccountsPermission::EDIT_USER_INFO)) {
+            if (Ctx::$user->id === $duser->id || Ctx::$user->can(UserAccountsPermission::EDIT_USER_INFO)) {
                 $bio = $event->POST->req('biography');
                 Log::info("biography", "Set biography to $bio");
                 $duser->get_config()->set(BiographyConfig::BIOGRAPHY, $bio);

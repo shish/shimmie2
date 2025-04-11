@@ -41,7 +41,7 @@ final class TaggerXML extends Extension
         $max_rows = Ctx::$config->get(TaggerXMLConfig::TAG_MAX);
         $limit_rows = Ctx::$config->get(TaggerXMLConfig::LIMIT);
 
-        $p = strlen($s) == 1 ? " " : "\_";
+        $p = strlen($s) === 1 ? " " : "\_";
         $values = [
             'p' => $p,
             'sq' => "%".$p.$s."%"

@@ -19,7 +19,7 @@ parameters:
   reportMaybesInMethodSignatures: false
   reportMaybesInPropertyPhpDocTypes: false
   strictRules:
-    disallowedLooseComparison: false
+    disallowedLooseComparison: true
     booleansInConditions: false
     disallowedEmpty: false
     disallowedShortTernary: false
