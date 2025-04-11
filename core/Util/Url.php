@@ -102,7 +102,7 @@ final readonly class Url
             $dir = str_replace("\\", "/", $dir);
             $dir = rtrim($dir, "/");
         }
-        if (empty($dir)) {
+        if ($dir === "") {
             $dir = null;
         }
         return new Url(path: $dir);

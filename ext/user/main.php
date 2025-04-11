@@ -501,7 +501,7 @@ final class UserPage extends Extension
             throw new UserCreationException("Email address is required");
         }
 
-        $email = (!empty($event->email)) ? $event->email : null;
+        $email = $event->email ?: null;
 
         // if there are currently no admins, the new user should be one
         $need_admin = (Ctx::$database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") === 0);

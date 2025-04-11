@@ -119,7 +119,7 @@ final class Media extends Extension
             $event->resize_type,
             MediaEngine::RESIZE_TYPE_SUPPORT[$event->engine->value]
         )) {
-            throw new MediaException("Resize type $event->resize_type not supported by selected media engine {$event->engine->value}");
+            throw new MediaException("Resize type {$event->resize_type->name} not supported by selected media engine {$event->engine->value}");
         }
 
         switch ($event->engine) {

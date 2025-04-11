@@ -224,7 +224,7 @@ class S3Request
         $string_to_sign .= "{$this->headers['Content-Type']}\n";
         $string_to_sign .= "{$this->headers['Date']}\n";
 
-        if (!empty($canonical_amz_headers)) {
+        if (count($canonical_amz_headers) > 0) {
             $string_to_sign .= implode("\n", $canonical_amz_headers) . "\n";
         }
 
