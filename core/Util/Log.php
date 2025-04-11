@@ -20,7 +20,9 @@ final class Log
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
             if (($priority->value >= CliApp::$logLevel)) {
                 print date("c")." $section: $message\n";
-                ob_flush();
+                if (ob_get_length() > 0) {
+                    ob_flush();
+                }
             }
         }
         if (!is_null($flash)) {
