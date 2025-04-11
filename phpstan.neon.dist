@@ -29,3 +29,5 @@ services:
     tags: [phpstan.phpDoc.typeNodeResolverExtension]
   - class: Shimmie2\ConfigGetReturnTypeExtension
     tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
+  - class: Shimmie2\DatabaseGetReturnTypeExtension
+    tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
