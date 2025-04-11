@@ -62,7 +62,7 @@ class PostTagsTheme extends Themelet
                 "type" => "text",
                 "name" => "tags{$suffix}",
                 "class" => "autocomplete_tags",
-                "value" => ($suffix == 0) ? @$_GET['tags'] : null,
+                "value" => ($suffix === "0") ? @$_GET['tags'] : null,
             ])
         );
     }
