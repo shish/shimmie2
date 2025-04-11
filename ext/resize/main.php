@@ -64,7 +64,7 @@ final class ResizeImage extends Extension
             $width = Ctx::$config->get(ResizeConfig::DEFAULT_WIDTH);
             $height = Ctx::$config->get(ResizeConfig::DEFAULT_HEIGHT);
             $isanigif = 0;
-            if ($image_obj->get_mime() == MimeType::GIF) {
+            if ($image_obj->get_mime()->base === MimeType::GIF) {
                 $image_filename = Filesystem::warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
                 $fh = \Safe\fopen($image_filename->str(), 'rb');
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
@@ -73,7 +73,7 @@ final class ResizeImage extends Extension
                     $isanigif += \Safe\preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk);
                 }
             }
-            if ($isanigif == 0) {
+            if ($isanigif === 0) {
                 $this->resize_image($image_obj, $width, $height);
 
                 //Need to generate thumbnail again...
