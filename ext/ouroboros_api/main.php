@@ -556,7 +556,7 @@ final class OuroborosAPI extends Extension
             //Auth by session data from query
             $name = $_REQUEST['user'];
             $session = $_REQUEST['session'];
-            $user = User::by_session($name, $session) ?? User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
+            $user = User::by_session($name, $session) ?? User::get_anonymous();
             send_event(new UserLoginEvent($user));
         } elseif (isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session']) &&
             isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'])
@@ -564,7 +564,7 @@ final class OuroborosAPI extends Extension
             //Auth by session data from cookies
             $session = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session'];
             $user = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'];
-            $user = User::by_session($user, $session) ?? User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
+            $user = User::by_session($user, $session) ?? User::get_anonymous();
             send_event(new UserLoginEvent($user));
         }
     }
