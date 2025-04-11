@@ -331,7 +331,7 @@ function _get_user(): User
         $my_user = User::by_session(Ctx::$page->get_cookie("user"), Ctx::$page->get_cookie("session"));
     }
     if (is_null($my_user)) {
-        $my_user = User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
+        $my_user = User::get_anonymous();
     }
 
     return $my_user;

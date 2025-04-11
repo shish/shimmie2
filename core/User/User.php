@@ -182,6 +182,10 @@ final class User
         }
     }
 
+    public static function get_anonymous(): User
+    {
+        return User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
+    }
 
     /* useful user object functions start here */
 

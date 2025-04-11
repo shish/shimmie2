@@ -78,7 +78,7 @@ final class DanbooruApi extends Extension
                 $pass = $event->POST->req('password');
                 Ctx::$user = User::by_name_and_pass($name, $pass);
             } catch (UserNotFound $e) {
-                Ctx::$user = User::by_id(Ctx::$config->req(UserAccountsConfig::ANON_ID));
+                Ctx::$user = User::get_anonymous();
             }
             send_event(new UserLoginEvent(Ctx::$user));
         }
