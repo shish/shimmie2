@@ -127,11 +127,6 @@ final class XMLSitemap extends Extension
         $sitemap_generation_interval = 86400; // allow new site map every day
         $last_generated_time = $cache_path->filemtime();
 
-        // if file doesn't exist, return true
-        if ($last_generated_time == false) {
-            return true;
-        }
-
         // if it's been a day since last sitemap creation, return true
         return ($last_generated_time + $sitemap_generation_interval < time());
     }
