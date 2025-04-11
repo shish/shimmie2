@@ -38,6 +38,15 @@ function array_iunique(array $array): array
 }
 
 /**
+ * override \in_array with \Shimmie2\in_array which always works in strict mode
+ * @param array<int|string, mixed> $haystack
+ */
+function in_array(mixed $needle, array $haystack): bool
+{
+    return \in_array($needle, $haystack, true);
+}
+
+/**
  * Perform callback on each item returned by an iterator.
  *
  * @template T

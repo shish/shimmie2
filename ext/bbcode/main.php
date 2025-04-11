@@ -164,7 +164,7 @@ final class BBCode extends FormatterExtension
             }
 
             $beginning = substr($text, 0, $start);
-            $middle = base64_decode(substr($text, $start + $l1, ($end - $start - $l1)));
+            $middle = base64_decode(substr($text, $start + $l1, ($end - $start - $l1)), true);
             $ending = substr($text, $end + $l2, (strlen($text) - $end + $l2));
 
             $text = $beginning . "<pre><code>" . $middle . "</code></pre>" . $ending;

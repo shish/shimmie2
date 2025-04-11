@@ -73,7 +73,7 @@ class LitePage extends Page
         }
 
         $custom_sublinks = null;
-        if (!empty($sub_links)) {
+        if (count($sub_links) > 0) {
             $custom_sublinks = DIV(["class" => "sbar"]);
             foreach ($sub_links as $nav_link) {
                 $custom_sublinks->appendChild($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active));

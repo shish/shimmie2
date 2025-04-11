@@ -173,7 +173,7 @@ final class BulkActions extends Extension
             $items = null;
             if ($event->POST->get('bulk_selected_ids')) {
                 $data = json_decode($event->POST->req('bulk_selected_ids'));
-                if (!is_array($data) || empty($data)) {
+                if (!is_array($data) || count($data) === 0) {
                     throw new InvalidInput("No ids specified in bulk_selected_ids");
                 }
                 $items = $this->yield_items($data);

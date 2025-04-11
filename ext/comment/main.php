@@ -95,7 +95,7 @@ final class Comment
     #[Field(name: "owner")]
     public function get_owner(): User
     {
-        if (empty($this->owner)) {
+        if (is_null($this->owner)) {
             $this->owner = User::by_id_dangerously_cached($this->owner_id);
         }
         return $this->owner;
