@@ -31,9 +31,9 @@ final class Eokm extends Extension
             curl_close($ch);
 
             /** @noinspection PhpStatementHasEmptyBodyInspection */
-            if ($return == "false") {
+            if ($return === "false") {
                 // all ok
-            } elseif ($return == "true") {
+            } elseif ($return === "true") {
                 Log::warning("eokm", "User tried to upload banned image {$event->image->hash}");
                 throw new UploadException("Post banned");
             } else {

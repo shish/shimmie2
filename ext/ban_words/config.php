@@ -48,7 +48,7 @@ xanax
     {
         $failed = [];
         foreach (BanWords::get_words() as $word) {
-            if ($word[0] == '/') {
+            if ($word[0] === '/') {
                 try {
                     \Safe\preg_match($word, "");
                 } catch (\Exception $e) {

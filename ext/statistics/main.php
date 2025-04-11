@@ -77,7 +77,7 @@ final class Statistics extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "stats") {
+        if ($event->parent === "stats") {
             $event->add_nav_link(make_link('stats/100'), "Top 100");
         }
     }

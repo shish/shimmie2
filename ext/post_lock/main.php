@@ -26,7 +26,7 @@ final class PostLock extends Extension
             throw new PermissionDenied("Error: This image is locked and cannot be edited.");
         }
         if (Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
-            $locked = $event->get_param('locked') == "on";
+            $locked = $event->get_param('locked') === "on";
             send_event(new LockSetEvent($event->image, $locked));
         }
     }

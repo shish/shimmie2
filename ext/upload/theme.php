@@ -136,7 +136,7 @@ class UploadTheme extends Themelet
                         $tl_enabled ? INPUT([
                             "type" => "text",
                             "name" => "url{$i}",
-                            "value" => ($i == 0) ? @$_GET['url'] : null,
+                            "value" => ($i === 0) ? @$_GET['url'] : null,
                         ]) : null
                     ),
                     $specific_fields,
@@ -222,11 +222,11 @@ class UploadTheme extends Themelet
             foreach ($errors as $error) {
                 $page->add_block(new Block($error->name, format_text($error->error)));
             }
-        } elseif (count($successes) == 0) {
+        } elseif (count($successes) === 0) {
             $page->set_title("No images uploaded");
             $this->display_navigation();
             $page->add_block(new Block("No images uploaded", emptyHTML("Upload attempted, but nothing succeeded and nothing failed?")));
-        } elseif (count($successes) == 1) {
+        } elseif (count($successes) === 1) {
             $page->set_redirect(make_link("post/view/{$successes[0]->image_id}"));
             $page->add_http_header("X-Shimmie-Post-ID: " . $successes[0]->image_id);
         } else {

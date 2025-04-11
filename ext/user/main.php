@@ -298,7 +298,7 @@ final class UserPage extends Extension
                 } else {
                     // FIXME: send_event()
                     $duser->set_password($input['pass1']);
-                    if ($duser->id == $user->id) {
+                    if ($duser->id === $user->id) {
                         $duser->set_login_cookie();
                     }
                     $page->flash("Password changed");
@@ -325,7 +325,7 @@ final class UserPage extends Extension
             ]);
             $duser = User::by_id($input['id']);
             // hard-coded that only admins can change people's classes
-            if ($user->class->name == "admin") {
+            if ($user->class->name === "admin") {
                 $duser->set_class($input['class']);
                 $page->flash("Class changed");
                 $this->redirect_to_user($duser);
@@ -334,14 +334,14 @@ final class UserPage extends Extension
         if ($event->page_matches("user_admin/delete_user", method: "POST", permission: UserAccountsPermission::DELETE_USER)) {
             $this->delete_user(
                 int_escape($event->POST->req('id')),
-                $event->POST->get("with_images") == "on",
-                $event->POST->get("with_comments") == "on"
+                $event->POST->get("with_images") === "on",
+                $event->POST->get("with_comments") === "on"
             );
         }
 
         if ($event->page_matches("user/{name}")) {
             $display_user = User::by_name($event->get_arg('name'));
-            if ($display_user->id == Ctx::$config->get(UserAccountsConfig::ANON_ID)) {
+            if ($display_user->id === Ctx::$config->get(UserAccountsConfig::ANON_ID)) {
                 throw new UserNotFound("No such user");
             }
             $e = send_event(new UserPageBuildingEvent($display_user));
@@ -357,7 +357,7 @@ final class UserPage extends Extension
         $class = $duser->class;
 
         $event->add_part(emptyHTML("Joined: ", SHM_DATE($duser->join_date)), 10);
-        if (Ctx::$user->name == $duser->name) {
+        if (Ctx::$user->name === $duser->name) {
             $event->add_part(emptyHTML("Current IP: " . Network::get_real_ip()), 80);
         }
         $event->add_part(emptyHTML("Class: {$class->name}"), 90);
@@ -367,7 +367,7 @@ final class UserPage extends Extension
         $av = $avatar_e->html;
         if ($av) {
             $event->add_part($av, 0);
-        } elseif ($duser->id == Ctx::$user->id) {
+        } elseif ($duser->id === Ctx::$user->id) {
             if (AvatarPostInfo::is_enabled() || AvatarGravatarInfo::is_enabled()) {
                 $part = emptyHTML(P("No avatar?"));
                 if (AvatarPostInfo::is_enabled()) {
@@ -405,7 +405,7 @@ final class UserPage extends Extension
         $this->theme->display_user_page($event->display_user, $event->get_parts());
 
         if (!$user->is_anonymous()) {
-            if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
+            if ($user->id === $event->display_user->id || $user->can("edit_user_info")) {
                 $uobe = send_event(new UserOperationsBuildingEvent($event->display_user, $event->display_user->get_config()));
                 Ctx::$page->add_block(new Block("Operations", $this->theme->build_operations($event->display_user, $uobe), "main", 60));
             }
@@ -504,7 +504,7 @@ final class UserPage extends Extension
         $email = (!empty($event->email)) ? $event->email : null;
 
         // if there are currently no admins, the new user should be one
-        $need_admin = (Ctx::$database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
+        $need_admin = (Ctx::$database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") === 0);
         $class = $need_admin ? 'admin' : 'user';
 
         Ctx::$database->execute(

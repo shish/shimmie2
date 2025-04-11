@@ -15,13 +15,13 @@ final class ImageRating
         public string $search_term,
         public int $order
     ) {
-        assert(strlen($code) == 1, "Rating code must be exactly one character");
+        assert(strlen($code) === 1, "Rating code must be exactly one character");
     }
 }
 
 function add_rating(ImageRating $rating): void
 {
-    if ($rating->code == "?" && array_key_exists("?", ImageRating::$known_ratings)) {
+    if ($rating->code === "?" && array_key_exists("?", ImageRating::$known_ratings)) {
         throw new \RuntimeException("? is a reserved rating code that cannot be overridden");
     }
     if ($rating->code !== "?" && in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
@@ -204,7 +204,7 @@ final class Ratings extends Extension
                 $ratings = "?";
             }
 
-            if ($ratings == '*') {
+            if ($ratings === '*') {
                 $ratings = Ratings::get_user_class_privs(Ctx::$user);
             } else {
                 $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs(Ctx::$user));
@@ -308,7 +308,7 @@ final class Ratings extends Extension
             $n = 0;
             while (true) {
                 $images = Search::find_images($n, 100, Tag::explode($event->POST->req("query")));
-                if (count($images) == 0) {
+                if (count($images) === 0) {
                     break;
                 }
 
@@ -400,7 +400,7 @@ final class Ratings extends Extension
         foreach ($privs as $i) {
             $arr[] = "'" . $i . "'";
         }
-        if (sizeof($arr) == 0) {
+        if (count($arr) === 0) {
             return "' '";
         }
         return join(', ', $arr);

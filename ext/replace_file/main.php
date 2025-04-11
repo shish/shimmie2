@@ -77,7 +77,7 @@ final class ReplaceFile extends Extension
         // update metadata and save metadata to DB
         $event->image->hash = $event->new_hash;
         $filesize = $target->filesize();
-        if ($filesize == 0) {
+        if ($filesize === 0) {
             throw new ImageReplaceException("Replacement file size is zero");
         }
         $event->image->filesize = $filesize;

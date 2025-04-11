@@ -218,9 +218,9 @@ final class ResizeImage extends Extension
             $image_height = $image_obj->height;
             assert($image_width > 0 && $image_height > 0);
 
-            if ($width == 0) {
+            if ($width === 0) {
                 $factor = $height / $image_height;
-            } elseif ($height == 0) {
+            } elseif ($height === 0) {
                 $factor = $width / $image_width;
             } else {
                 $factor = min($width / $image_width, $height / $image_height);

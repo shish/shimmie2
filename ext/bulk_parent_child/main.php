@@ -24,7 +24,7 @@ final class BulkParentChild extends Extension
     {
         if (
             Ctx::$user->can(BulkParentChildPermission::BULK_PARENT_CHILD)
-            && ($event->action == BulkParentChild::PARENT_CHILD_ACTION_NAME)
+            && ($event->action === BulkParentChild::PARENT_CHILD_ACTION_NAME)
         ) {
             $prev_id = null;
             foreach ($event->items as $image) {

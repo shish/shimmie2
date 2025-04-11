@@ -63,7 +63,7 @@ final class PixelFileHandler extends DataHandlerExtension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        if ($event->context == "view") {
+        if ($event->context === "view") {
             $event->add_part(FORM(
                 SELECT(
                     ["class" => "shm-zoomer"],

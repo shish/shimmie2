@@ -109,14 +109,14 @@ final class TranscodeImage extends Extension
         // the post-transcode mime type instead). This is to  give user feedback on what the mime type
         // was before potential transcoding (the original) at the time of upload, and that it failed if not allowed.
         // does it break bulk image importing? ZIP? SVG? there are a few flows that are untested!
-        if (Ctx::$config->get(TranscodeImageConfig::MIME_CHECK_ENABLED) == true) {
+        if (Ctx::$config->get(TranscodeImageConfig::MIME_CHECK_ENABLED)) {
             $allowed_mimes = Ctx::$config->get(TranscodeImageConfig::ALLOWED_MIME_STRINGS);
             if (!MimeType::matches_array($event->mime, $allowed_mimes)) {
                 throw new UploadException("MIME type not supported: " . $event->mime);
             }
         }
 
-        if (Ctx::$config->get(TranscodeImageConfig::UPLOAD) == true) {
+        if (Ctx::$config->get(TranscodeImageConfig::UPLOAD)) {
             if ($event->mime->base === MimeType::GIF && MimeType::is_animated_gif($event->tmpname)) {
                 return;
             }
@@ -246,7 +246,7 @@ final class TranscodeImage extends Extension
         $output = [];
 
         foreach (self::OUTPUT_MIMES as $name => $mime) {
-            if ($mime == "") {
+            if ($mime === "") {
                 $output[$name] = null;
                 continue;
             }
@@ -268,7 +268,7 @@ final class TranscodeImage extends Extension
 
     private function transcode_image(Path $source_name, MimeType $source_mime, MimeType $target_mime): Path
     {
-        if ($source_mime == $target_mime) {
+        if ($source_mime === $target_mime) {
             throw new ImageTranscodeException("Source and target MIMEs are the same: ".$source_mime);
         }
 
@@ -355,7 +355,7 @@ final class TranscodeImage extends Extension
         // format-specific compression options
         if ($target_mime->base === MimeType::PNG) {
             $command->add_args("-define", "png:compression-level=9");
-        } elseif ($target_mime->base == MimeType::WEBP && $target_mime->parameters == MimeType::LOSSLESS_PARAMETER) {
+        } elseif ($target_mime->base === MimeType::WEBP && $target_mime->parameters === MimeType::LOSSLESS_PARAMETER) {
             $command->add_args("-define", "webp:lossless=true");
             $command->add_args("-quality", "100");
         } else {

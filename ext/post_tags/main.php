@@ -206,7 +206,7 @@ final class PostTags extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "tags") {
+        if ($event->parent === "tags") {
             $event->add_nav_link(make_link('ext_doc/post_tags'), "Help");
         }
     }
@@ -261,9 +261,9 @@ final class PostTags extends Extension
 
         Log::info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
-        if (count($search_set) == 1 && count($replace_set) == 1) {
+        if (count($search_set) === 1 && count($replace_set) === 1) {
             $images = Search::find_images(limit: 10, tags: $replace_set);
-            if (count($images) == 0) {
+            if (count($images) === 0) {
                 Log::info("tag_edit", "No images found with target tag, doing in-place rename");
                 $database->execute(
                     "DELETE FROM tags WHERE tag=:replace",
@@ -289,7 +289,7 @@ final class PostTags extends Extension
             }
 
             $images = Search::find_images(limit: 100, tags: $search_forward);
-            if (count($images) == 0) {
+            if (count($images) === 0) {
                 break;
             }
 

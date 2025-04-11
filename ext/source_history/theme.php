@@ -96,7 +96,7 @@ class SourceHistoryTheme extends Themelet
     {
         $history_list = [];
         foreach ($history as $n => $fields) {
-            $history_list[] = $this->history_entry($fields, $select_2nd && $n == 1);
+            $history_list[] = $this->history_entry($fields, $select_2nd && $n === 1);
         }
 
         return DIV(

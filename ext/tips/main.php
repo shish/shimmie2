@@ -63,7 +63,7 @@ final class Tips extends Extension
         }
         if ($event->page_matches("tips/save", method: "POST", permission: TipsPermission::ADMIN)) {
             send_event(new CreateTipEvent(
-                $event->POST->get("enable") == "on",
+                $event->POST->get("enable") === "on",
                 $event->POST->req("image"),
                 $event->POST->req("text")
             ));
