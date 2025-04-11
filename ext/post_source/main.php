@@ -61,7 +61,7 @@ final class PostSource extends Extension
             $source = \Safe\preg_replace('/^https?:/', '', $source);
 
             if (\Safe\preg_match("/^(any|none)$/i", $source)) {
-                $not = ($source == "any" ? "NOT" : "");
+                $not = ($source === "any" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.source IS $not NULL"));
             } else {
                 $event->add_querylet(new Querylet('LOWER(images.source) LIKE :src', ["src" => "%$source%"]));
@@ -114,7 +114,7 @@ final class PostSource extends Extension
             }
 
             $images = Search::find_images(limit: 100, tags: $search_forward);
-            if (count($images) == 0) {
+            if (count($images) === 0) {
                 break;
             }
 

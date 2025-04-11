@@ -46,17 +46,17 @@ final class S3 extends Extension
     public function onAdminAction(AdminActionEvent $event): void
     {
         global $database;
-        if ($event->action == "s3_process") {
+        if ($event->action === "s3_process") {
             foreach ($database->get_all(
                 "SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT :count",
                 ["count" => isset($event->params['count']) ? int_escape($event->params["count"]) : 10]
             ) as $row) {
-                if ($row['action'] == "S") {
+                if ($row['action'] === "S") {
                     $image = Image::by_hash($row['hash']);
                     if ($image) {
                         $this->sync_post($image);
                     }
-                } elseif ($row['action'] == "D") {
+                } elseif ($row['action'] === "D") {
                     $this->remove_file($row['hash']);
                 }
             }
@@ -77,13 +77,13 @@ final class S3 extends Extension
                     "SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT :count",
                     ["count" => $input->getOption('count') ?? $count]
                 ) as $row) {
-                    if ($row['action'] == "S") {
+                    if ($row['action'] === "S") {
                         $image = Image::by_hash($row['hash']);
                         if ($image) {
                             $output->writeln("SYN {$row['hash']} ($image->id)");
                             $this->sync_post($image);
                         }
-                    } elseif ($row['action'] == "D") {
+                    } elseif ($row['action'] === "D") {
                         $output->writeln("DEL {$row['hash']}");
                         $this->remove_file($row['hash']);
                     } else {
@@ -179,7 +179,7 @@ final class S3 extends Extension
     private function is_busy(): bool
     {
         $this->synced++;
-        if (PHP_SAPI == "cli") {
+        if (PHP_SAPI === "cli") {
             return false; // CLI can go on for as long as it wants
         }
         return $this->synced > Ctx::$config->get(UploadConfig::COUNT);

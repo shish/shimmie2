@@ -95,7 +95,7 @@ final class GraphQL extends Extension
             }
         }
 
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
                 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
             }
@@ -152,7 +152,7 @@ final class GraphQL extends Extension
             if (empty($post["url$n"]) && empty($_FILES["data$n"])) {
                 break;
             }
-            if (isset($_FILES["data$n"]) && ($_FILES["data$n"]["size"] == 0 || $_FILES["data$n"]["error"] == UPLOAD_ERR_NO_FILE)) {
+            if (isset($_FILES["data$n"]) && ($_FILES["data$n"]["size"] === 0 || $_FILES["data$n"]["error"] === UPLOAD_ERR_NO_FILE)) {
                 break;
             }
             try {

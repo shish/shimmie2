@@ -44,7 +44,7 @@ final class TagEditCloud extends Extension
         switch ($sort_method) {
             case 'r':
                 $relevant_tags = array_diff($image->get_tag_array(), $ignore_tags);
-                if (count($relevant_tags) == 0) {
+                if (count($relevant_tags) === 0) {
                     return null;
                 }
                 $relevant_tag_ids = implode(',', array_map(fn ($t) => Tag::get_or_create_id($t), $relevant_tags));
@@ -87,7 +87,7 @@ final class TagEditCloud extends Extension
             case 'a':
             case 'p':
             default:
-                $order_by = $sort_method == 'a' ? "tag" : "count DESC";
+                $order_by = $sort_method === 'a' ? "tag" : "count DESC";
                 $tag_data = $database->get_all(
                     "
 					SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count

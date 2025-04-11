@@ -85,7 +85,7 @@ final class HelpPages extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "help") {
+        if ($event->parent === "help") {
             $pages = send_event(new HelpPageListBuildingEvent())->pages;
             foreach ($pages as $key => $value) {
                 $event->add_nav_link(make_link('help/'.$key), $value);
@@ -100,7 +100,7 @@ final class HelpPages extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
-        if ($event->key == "licenses") {
+        if ($event->key === "licenses") {
             $event->add_section(
                 "Software Licenses",
                 emptyHTML("The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license.")

@@ -107,7 +107,7 @@ final class AutoTagger extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "tags") {
+        if ($event->parent === "tags") {
             $event->add_nav_link(make_link('auto_tag/list'), "Auto-Tag", ["auto_tag"]);
         }
     }
@@ -123,7 +123,7 @@ final class AutoTagger extends Extension
                     additional_tags VARCHAR(2000) NOT NULL
                 ");
 
-            if ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute('CREATE INDEX auto_tag_lower_tag_idx ON auto_tag ((lower(tag)))');
             }
             $this->set_version(1);
@@ -173,7 +173,7 @@ final class AutoTagger extends Extension
         $i = 0;
         foreach (explode("\n", $csv) as $line) {
             $parts = str_getcsv($line);
-            if (count($parts) == 2) {
+            if (count($parts) === 2) {
                 assert(is_string($parts[0]));
                 assert(is_string($parts[1]));
                 send_event(new AddAutoTagEvent($parts[0], $parts[1]));

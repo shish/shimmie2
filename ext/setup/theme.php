@@ -35,7 +35,7 @@ class SetupTheme extends Themelet
             INPUT(['class' => 'setupsubmit', 'type' => 'submit', 'value' => 'Save Settings'])
         );
 
-        $nav = @$_GET["advanced"] == "on" ?
+        $nav = @$_GET["advanced"] === "on" ?
             A(["href" => make_link("setup")], "Simple") :
             A(["href" => make_link("setup", ["advanced" => "on"])], "Advanced");
 

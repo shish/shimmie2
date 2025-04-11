@@ -17,11 +17,11 @@ class CommonElementsTheme extends Themelet
      */
     public function display_navigation(array $links = [], ?HTMLElement $extra = null): void
     {
-        if (count($links) == 0) {
+        if (count($links) === 0) {
             $content = A(["href" => make_link()], "Index");
-        } elseif (count($links) == 1) {
+        } elseif (count($links) === 1) {
             $content = A(["href" => $links[0]], "Index");
-        } elseif (count($links) == 3) {
+        } elseif (count($links) === 3) {
             $content = joinHTML(" | ", [
                 $links[0] === null ? "Prev" : A(["href" => $links[0], "id" => "prevlink"], "Prev"),
                 $links[1] === null ? "Index" : A(["href" => $links[1]], "Index"),
@@ -130,7 +130,7 @@ class CommonElementsTheme extends Themelet
 
     public function display_paginator(string $base, ?QueryArray $query, int $page_number, int $total_pages, bool $show_random = false): void
     {
-        if ($total_pages == 0) {
+        if ($total_pages === 0) {
             $total_pages = 1;
         }
         $body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
@@ -155,7 +155,7 @@ class CommonElementsTheme extends Themelet
     private function gen_page_link_block(string $base_url, ?QueryArray $query, int $page, int $current_page, string $name): HTMLElement
     {
         $paginator = $this->gen_page_link($base_url, $query, $page, $name);
-        if ($page == $current_page) {
+        if ($page === $current_page) {
             $paginator = B($paginator);
         }
         return $paginator;
@@ -209,8 +209,8 @@ class CommonElementsTheme extends Themelet
     {
         $title = $group->get_title();
         $fields = $group->get_config_fields();
-        $fields = array_filter($fields, fn ($field) => !$field->advanced || @$_GET["advanced"] == "on");
-        if (count($fields) == 0) {
+        $fields = array_filter($fields, fn ($field) => !$field->advanced || @$_GET["advanced"] === "on");
+        if (count($fields) === 0) {
             return null;
         }
 
@@ -244,7 +244,7 @@ class CommonElementsTheme extends Themelet
                         }
                         $input = SELECT(["id" => $key, "name" => "_config_$key"]);
                         foreach ($options as $optname => $optval) {
-                            $input->appendChild(OPTION(["value" => $optval, "selected" => $optval == $val ], $optname));
+                            $input->appendChild(OPTION(["value" => $optval, "selected" => $optval === $val ], $optname));
                         }
                     } else {
                         $input = INPUT(["type" => "text", "id" => $key, "name" => "_config_$key", "value" => $val]);

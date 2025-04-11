@@ -19,7 +19,7 @@ class ForumTheme extends Themelet
      */
     public function display_thread_list(array $threads, bool $showAdminOptions, int $pageNumber, int $totalPages): void
     {
-        if (count($threads) == 0) {
+        if (count($threads) === 0) {
             $html = emptyHTML("There are no threads to show.");
         } else {
             $html = $this->make_thread_list($threads, $showAdminOptions);

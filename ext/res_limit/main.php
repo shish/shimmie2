@@ -49,7 +49,7 @@ final class ResolutionLimit extends Extension
                 $valids++;
                 $width = (int)$parts[0];
                 $height = (int)$parts[1];
-                if ($image->width / $width == $image->height / $height) {
+                if ($image->width / $width === $image->height / $height) {
                     $ok = true;
                     break;
                 }

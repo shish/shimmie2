@@ -77,7 +77,7 @@ class ViewPostTheme extends Themelet
         if (isset($_GET['search'])) {
             $tags = Tag::explode($_GET['search']);
             foreach ($tags as $tag) {
-                if (\Safe\preg_match("/^order[=:]/", $tag) == 1) {
+                if (\Safe\preg_match("/^order[=:]/", $tag) === 1) {
                     return true;
                 }
             }
@@ -128,7 +128,7 @@ class ViewPostTheme extends Themelet
      */
     protected function build_info(Image $image, array $editor_parts): HTMLElement
     {
-        if (count($editor_parts) == 0) {
+        if (count($editor_parts) === 0) {
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
         }
 

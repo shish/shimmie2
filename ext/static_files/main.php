@@ -12,7 +12,7 @@ final class StaticFiles extends Extension
     {
         $page = Ctx::$page;
         // hax.
-        if ($page->mode == PageMode::PAGE && $this->count_main($page->blocks) == 0) {
+        if ($page->mode === PageMode::PAGE && $this->count_main($page->blocks) === 0) {
             $h_pagename = html_escape(implode('/', $event->args));
             $f_pagename = \Safe\preg_replace("/[^a-z_\-\.]+/", "_", $h_pagename);
             $theme_name = Ctx::$config->get(SetupConfig::THEME);
@@ -37,7 +37,7 @@ final class StaticFiles extends Extension
     {
         $n = 0;
         foreach ($blocks as $block) {
-            if ($block->section == "main" && $block->is_content) {
+            if ($block->section === "main" && $block->is_content) {
                 $n++;
             } // more hax.
         }

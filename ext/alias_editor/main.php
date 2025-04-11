@@ -137,7 +137,7 @@ final class AliasEditor extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent == "tags") {
+        if ($event->parent === "tags") {
             $event->add_nav_link(make_link('alias/list'), "Aliases", ["alias"]);
         }
     }
@@ -166,7 +166,7 @@ final class AliasEditor extends Extension
         $i = 0;
         foreach (explode("\n", $csv) as $line) {
             $parts = str_getcsv($line);
-            if (count($parts) == 2) {
+            if (count($parts) === 2) {
                 assert(is_string($parts[0]));
                 assert(is_string($parts[1]));
                 send_event(new AddAliasEvent($parts[0], $parts[1]));
