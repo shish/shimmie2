@@ -34,7 +34,7 @@ class CommentListTheme extends Themelet
         // parts for each image
         $position = 10;
 
-        $comment_limit = Ctx::$config->req(CommentConfig::LIST_COUNT);
+        $comment_limit = Ctx::$config->get(CommentConfig::LIST_COUNT);
 
         foreach ($images as $pair) {
             $image = $pair[0];
@@ -166,7 +166,7 @@ class CommentListTheme extends Themelet
 
     protected function comment_to_html(Comment $comment, bool $trim = false): HTMLElement
     {
-        if ($comment->owner_id === Ctx::$config->req(UserAccountsConfig::ANON_ID)) {
+        if ($comment->owner_id === Ctx::$config->get(UserAccountsConfig::ANON_ID)) {
             $anoncode = "";
             $anoncode2 = "";
             if ($this->show_anon_id) {
@@ -176,7 +176,7 @@ class CommentListTheme extends Themelet
                 }
                 #if(Ctx::$user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-                if (Ctx::$user->can(IPBanPermission::VIEW_IP) || Ctx::$config->req(CommentConfig::SHOW_REPEAT_ANONS)) {
+                if (Ctx::$user->can(IPBanPermission::VIEW_IP) || Ctx::$config->get(CommentConfig::SHOW_REPEAT_ANONS)) {
                     if ($this->anon_map[$comment->poster_ip] !== $this->anon_id) {
                         $anoncode2 = SUP("(" . $this->anon_map[$comment->poster_ip] . ")");
                     }

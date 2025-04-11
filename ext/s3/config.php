@@ -15,7 +15,7 @@ final class S3Config extends ConfigGroup
     #[ConfigMeta("Access key secret", ConfigType::STRING)]
     public const ACCESS_KEY_SECRET = 's3_access_key_secret';
 
-    #[ConfigMeta("Endpoint", ConfigType::STRING)]
+    #[ConfigMeta("Endpoint", ConfigType::STRING, default: "s3.amazonaws.com")]
     public const ENDPOINT = 's3_endpoint';
 
     #[ConfigMeta("Image bucket", ConfigType::STRING)]

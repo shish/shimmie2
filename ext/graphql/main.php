@@ -119,7 +119,7 @@ final class GraphQL extends Extension
             $resp = $server->executeRequest();
             assert(!is_array($resp));
             assert(is_a($resp, \GraphQL\Executor\ExecutionResult::class));
-            if (Ctx::$config->req(GraphQLConfig::DEBUG)) {
+            if (Ctx::$config->get(GraphQLConfig::DEBUG)) {
                 $debug = DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::RETHROW_INTERNAL_EXCEPTIONS;
                 $body = $resp->toArray($debug);
             } else {

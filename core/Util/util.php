@@ -12,7 +12,7 @@ use MicroHTML\HTMLElement;
 
 function get_theme(): string
 {
-    $theme = Ctx::$config->req(SetupConfig::THEME);
+    $theme = Ctx::$config->get(SetupConfig::THEME);
     if (!file_exists("themes/$theme")) {
         $theme = "default";
     }
@@ -99,8 +99,8 @@ function get_upload_limits(): array
     $sys_filesize = empty($ini_filesize) ? null : parse_shorthand_int($ini_filesize);
     $sys_post = empty($ini_post) ? null : parse_shorthand_int($ini_post);
 
-    $conf_files = Ctx::$config->req(UploadConfig::COUNT);
-    $conf_filesize = Ctx::$config->req(UploadConfig::SIZE);
+    $conf_files = Ctx::$config->get(UploadConfig::COUNT);
+    $conf_filesize = Ctx::$config->get(UploadConfig::SIZE);
     $conf_post = $conf_files * $conf_filesize;
 
     $limits = [

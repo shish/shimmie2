@@ -90,8 +90,8 @@ class _SafeOuroborosImage
         $this->has_notes = false;
 
         // thumb
-        $this->preview_height = Ctx::$config->req(ThumbnailConfig::HEIGHT);
-        $this->preview_width = Ctx::$config->req(ThumbnailConfig::WIDTH);
+        $this->preview_height = Ctx::$config->get(ThumbnailConfig::HEIGHT);
+        $this->preview_width = Ctx::$config->get(ThumbnailConfig::WIDTH);
         $this->preview_url = (string)$img->get_thumb_link()->asAbsolute();
 
         // sample (use the full image here)
@@ -308,7 +308,7 @@ final class OuroborosAPI extends Extension
         // Check where we should try for the file
         if (empty($post->file) && !empty($post->file_url)) {
             // Transload from source
-            $meta['file'] = shm_tempnam('transload_' . Ctx::$config->req(UploadConfig::TRANSLOAD_ENGINE))->str();
+            $meta['file'] = shm_tempnam('transload_' . Ctx::$config->get(UploadConfig::TRANSLOAD_ENGINE))->str();
             $meta['filename'] = basename($post->file_url);
             try {
                 Network::fetch_url($post->file_url, new Path($meta->req('file')));

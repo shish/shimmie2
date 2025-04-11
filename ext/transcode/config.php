@@ -49,7 +49,7 @@ final class TranscodeImageConfig extends ConfigGroup
     {
         $fields = parent::get_config_fields();
 
-        $engine = MediaEngine::from(Ctx::$config->req(TranscodeImageConfig::ENGINE));
+        $engine = MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE));
         foreach (TranscodeImage::INPUT_MIMES as $display => $mime) {
             $mime = new MimeType($mime);
             if (MediaEngine::is_input_supported($engine, $mime)) {

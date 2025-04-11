@@ -316,7 +316,7 @@ final class Notes extends Extension
     {
         global $database;
 
-        $notesPerPage = Ctx::$config->req(NotesConfig::NOTES_PER_PAGE);
+        $notesPerPage = Ctx::$config->get(NotesConfig::NOTES_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 
         $image_ids = $database->get_col(
@@ -343,7 +343,7 @@ final class Notes extends Extension
     {
         global $database;
 
-        $requestsPerPage = Ctx::$config->req(NotesConfig::REQUESTS_PER_PAGE);
+        $requestsPerPage = Ctx::$config->get(NotesConfig::REQUESTS_PER_PAGE);
 
         $result = $database->execute(
             "
@@ -399,7 +399,7 @@ final class Notes extends Extension
     {
         global $database;
 
-        $historiesPerPage = Ctx::$config->req(NotesConfig::HISTORIES_PER_PAGE);
+        $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
         //ORDER BY IMAGE & DATE
         $histories = $database->get_all(
@@ -421,7 +421,7 @@ final class Notes extends Extension
     {
         global $database;
 
-        $historiesPerPage = Ctx::$config->req(NotesConfig::HISTORIES_PER_PAGE);
+        $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
         $histories = $database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
@@ -445,7 +445,7 @@ final class Notes extends Extension
 
     private function get_image_history(int $imageID, int $pageNumber): void
     {
-        $historiesPerPage = Ctx::$config->req(NotesConfig::HISTORIES_PER_PAGE);
+        $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
         /** @var array<NoteHistory> $histories */
         $histories = Ctx::$database->get_all(

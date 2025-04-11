@@ -397,7 +397,7 @@ final class Image implements \ArrayAccess
      */
     public function get_thumb_link(): Url
     {
-        $mime = new MimeType(Ctx::$config->req(ThumbnailConfig::MIME));
+        $mime = new MimeType(Ctx::$config->get(ThumbnailConfig::MIME));
         $ext = FileExtension::get_for_mime($mime);
         return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
     }
@@ -441,7 +441,7 @@ final class Image implements \ArrayAccess
     #[Field(name: "tooltip")]
     public function get_tooltip(): string
     {
-        return send_event(new ParseLinkTemplateEvent(Ctx::$config->req(ThumbnailConfig::TIP), $this))->text;
+        return send_event(new ParseLinkTemplateEvent(Ctx::$config->get(ThumbnailConfig::TIP), $this))->text;
     }
 
     /**
@@ -471,8 +471,8 @@ final class Image implements \ArrayAccess
         // TODO: Set up a function for fetching what kind of files are currently thumbnailable
         if (in_array($this->get_mime()->base, [MimeType::MP3])) {
             //Use max thumbnail size if using thumbless filetype
-            $config_width = Ctx::$config->req(ThumbnailConfig::WIDTH);
-            $config_height = Ctx::$config->req(ThumbnailConfig::HEIGHT);
+            $config_width = Ctx::$config->get(ThumbnailConfig::WIDTH);
+            $config_height = Ctx::$config->get(ThumbnailConfig::HEIGHT);
             assert($config_width >= 0 && $config_height >= 0);
             $tsize = ThumbnailUtil::get_thumbnail_size($config_width, $config_height);
         } else {

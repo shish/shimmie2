@@ -202,7 +202,7 @@ final class NumericScore extends Extension
             } else {
                 $sql = "SELECT id FROM images WHERE EXTRACT(YEAR FROM posted) = :year";
             }
-            $args = ["limit" => Ctx::$config->req(IndexConfig::IMAGES), "year" => $year];
+            $args = ["limit" => Ctx::$config->get(IndexConfig::IMAGES), "year" => $year];
 
             if ($event->page_matches("popular_by_day")) {
                 if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {

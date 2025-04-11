@@ -31,7 +31,7 @@ final class Index extends Extension
             $search_terms = Tag::explode($event->get_arg('search', ""), false);
             $count_search_terms = count($search_terms);
             $page_number = $event->get_iarg('page_num', 1);
-            $page_size = Ctx::$config->req(IndexConfig::IMAGES);
+            $page_size = Ctx::$config->get(IndexConfig::IMAGES);
 
             $search_results_limit = Ctx::$config->get(IndexConfig::SEARCH_RESULTS_LIMIT);
 
@@ -57,7 +57,7 @@ final class Index extends Extension
                 );
             }
 
-            $total_pages = (int)ceil(Search::count_images($search_terms) / Ctx::$config->req(IndexConfig::IMAGES));
+            $total_pages = (int)ceil(Search::count_images($search_terms) / Ctx::$config->get(IndexConfig::IMAGES));
             if ($search_results_limit && $total_pages > $search_results_limit / $page_size && !Ctx::$user->can(IndexPermission::BIG_SEARCH)) {
                 $total_pages = (int)ceil($search_results_limit / $page_size);
             }

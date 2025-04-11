@@ -39,7 +39,7 @@ final class TagList extends Extension
      */
     private static function get_omitted_tags(): array
     {
-        $tags_config = Ctx::$config->req(TagListConfig::OMIT_TAGS);
+        $tags_config = Ctx::$config->get(TagListConfig::OMIT_TAGS);
         $results = Ctx::$cache->get("tag_list_omitted_tags:".$tags_config);
 
         if (is_null($results)) {
@@ -151,7 +151,7 @@ final class TagList extends Extension
                     ";
             }
 
-            $args = ["popular_tag_list_length" => Ctx::$config->req(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
+            $args = ["popular_tag_list_length" => Ctx::$config->get(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
 
             // @phpstan-ignore-next-line
             $tags = Ctx::$database->get_all($query, $args);
@@ -172,7 +172,7 @@ final class TagList extends Extension
             return;
         }
 
-        $related_tags = self::get_related_tags($search, Ctx::$config->req(TagListConfig::LENGTH));
+        $related_tags = self::get_related_tags($search, Ctx::$config->get(TagListConfig::LENGTH));
 
         if (!empty($related_tags)) {
             $this->theme->display_refine_block($related_tags, $search);

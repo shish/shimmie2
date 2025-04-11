@@ -157,9 +157,9 @@ final class Upload extends Extension
         if ($this->is_full) {
             throw new UploadException("Upload failed; disk nearly full");
         }
-        if ($event->size > Ctx::$config->req(UploadConfig::SIZE)) {
+        if ($event->size > Ctx::$config->get(UploadConfig::SIZE)) {
             $size = to_shorthand_int($event->size);
-            $limit = to_shorthand_int(Ctx::$config->req(UploadConfig::SIZE));
+            $limit = to_shorthand_int(Ctx::$config->get(UploadConfig::SIZE));
             throw new UploadException("File too large ($size > $limit)");
         }
     }

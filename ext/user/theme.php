@@ -137,7 +137,7 @@ class UserPageTheme extends Themelet
         $this->display_navigation();
         Ctx::$page->add_block(new Block(
             "Signups Disabled",
-            format_text(Ctx::$config->req(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
+            format_text(Ctx::$config->get(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
         ));
     }
 
@@ -176,7 +176,7 @@ class UserPageTheme extends Themelet
 
         $html = emptyHTML();
         $html->appendChild($form);
-        if (Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED) && Ctx::$user->can(UserAccountsPermission::CREATE_USER)) {
+        if (Ctx::$config->get(UserAccountsConfig::SIGNUP_ENABLED) && Ctx::$user->can(UserAccountsPermission::CREATE_USER)) {
             $html->appendChild(SMALL(A(["href" => make_link("user_admin/create")], "Create Account")));
         }
 
@@ -242,7 +242,7 @@ class UserPageTheme extends Themelet
         $html = emptyHTML();
 
         // just a fool-admin protection so they dont mess around with anon users.
-        if ($duser->id !== Ctx::$config->req(UserAccountsConfig::ANON_ID)) {
+        if ($duser->id !== Ctx::$config->get(UserAccountsConfig::ANON_ID)) {
             if (Ctx::$user->can(UserAccountsPermission::EDIT_USER_NAME)) {
                 $html->appendChild(SHM_USER_FORM(
                     $duser,
