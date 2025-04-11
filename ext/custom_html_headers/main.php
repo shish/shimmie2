@@ -17,7 +17,7 @@ final class CustomHtmlHeaders extends Extension
         }
 
         // check sitename is not already in title (can occur on index & other pages)
-        $site_title = Ctx::$config->req(SetupConfig::TITLE);
+        $site_title = Ctx::$config->get(SetupConfig::TITLE);
         $sitename_in_title = Ctx::$config->get(CustomHtmlHeadersConfig::SITENAME_IN_TITLE);
         if (!str_contains($page->title, $site_title)) {
             if ($sitename_in_title === "prefix") {

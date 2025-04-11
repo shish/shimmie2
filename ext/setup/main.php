@@ -148,7 +148,7 @@ final class Setup extends Extension
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription('Get a config value')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $output->writeln(\Safe\json_encode(Ctx::$config->req($input->getArgument('key'))));
+                $output->writeln(\Safe\json_encode(Ctx::$config->get($input->getArgument('key'))));
                 return Command::SUCCESS;
             });
         $event->app->register('config:set')
@@ -180,6 +180,6 @@ final class Setup extends Extension
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
-        $event->replace('$title', Ctx::$config->req(SetupConfig::TITLE));
+        $event->replace('$title', Ctx::$config->get(SetupConfig::TITLE));
     }
 }

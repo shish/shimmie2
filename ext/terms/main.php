@@ -14,7 +14,7 @@ final class Terms extends Extension
     {
         $page = Ctx::$page;
         if ($event->page_starts_with("accept_terms")) {
-            $page->add_cookie("accepted_terms", "true", time() + 60 * 60 * 24 * Ctx::$config->req(UserAccountsConfig::LOGIN_MEMORY), "/");
+            $page->add_cookie("accepted_terms", "true", time() + 60 * 60 * 24 * Ctx::$config->get(UserAccountsConfig::LOGIN_MEMORY), "/");
             $page->set_redirect(make_link(explode('/', $event->path, 2)[1]));
         } else {
             // run on all pages unless any of:
@@ -26,8 +26,8 @@ final class Terms extends Extension
                 && !$page->get_cookie('accepted_terms')
                 && !$event->page_starts_with("wiki")
             ) {
-                $sitename = Ctx::$config->req(SetupConfig::TITLE);
-                $body = format_text(Ctx::$config->req(TermsConfig::MESSAGE));
+                $sitename = Ctx::$config->get(SetupConfig::TITLE);
+                $body = format_text(Ctx::$config->get(TermsConfig::MESSAGE));
                 $this->theme->display_page($sitename, $event->path, $body);
             }
         }

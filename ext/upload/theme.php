@@ -30,7 +30,7 @@ class UploadTheme extends Themelet
     {
         $limits = get_upload_limits();
 
-        $tl_enabled = (Ctx::$config->req(UploadConfig::TRANSLOAD_ENGINE) !== "none");
+        $tl_enabled = (Ctx::$config->get(UploadConfig::TRANSLOAD_ENGINE) !== "none");
         $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
         $max_total_size = $limits['shm_post'];
@@ -87,8 +87,8 @@ class UploadTheme extends Themelet
     protected function build_upload_list(): HTMLElement
     {
         $upload_list = emptyHTML();
-        $upload_count = Ctx::$config->req(UploadConfig::COUNT);
-        $tl_enabled = (Ctx::$config->req(UploadConfig::TRANSLOAD_ENGINE) !== "none");
+        $upload_count = Ctx::$config->get(UploadConfig::COUNT);
+        $tl_enabled = (Ctx::$config->get(UploadConfig::TRANSLOAD_ENGINE) !== "none");
         $accept = $this->get_accept();
 
         $headers = emptyHTML();
@@ -152,7 +152,7 @@ class UploadTheme extends Themelet
         $limits = get_upload_limits();
         $link = make_link("upload")->asAbsolute();
         $main_page = make_link()->asAbsolute();
-        $title = Ctx::$config->req(SetupConfig::TITLE);
+        $title = Ctx::$config->get(SetupConfig::TITLE);
         $max_size = $limits['shm_filesize'];
         $max_kb = to_shorthand_int($max_size);
         $delimiter = Url::are_niceurls_enabled() ? '?' : '&amp;';
@@ -185,7 +185,7 @@ class UploadTheme extends Themelet
         // Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
         $supported_ext = join(" ", DataHandlerExtension::get_all_supported_exts());
 
-        $title = "Booru to " . Ctx::$config->req(SetupConfig::TITLE);
+        $title = "Booru to " . Ctx::$config->get(SetupConfig::TITLE);
         // CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
         $js = '
             javascript:

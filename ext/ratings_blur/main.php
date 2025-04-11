@@ -14,7 +14,7 @@ final class RatingsBlur extends Extension
     {
         $blur_ratings = Ctx::$user->get_config()->get(
             RatingsBlurUserConfig::USER_DEFAULTS
-        ) ?? Ctx::$config->req(RatingsBlurConfig::GLOBAL_DEFAULTS);
+        ) ?? Ctx::$config->get(RatingsBlurConfig::GLOBAL_DEFAULTS);
         if (in_array(RatingsBlur::NULL_OPTION, $blur_ratings)) {
             return false;
         }

@@ -150,7 +150,7 @@ class ViewPostTheme extends Themelet
         if ($bae->html) {
             array_values($editor_parts)[0]->appendChild(
                 TD(
-                    ["class" => "image-info-avatar-box", "width" => Ctx::$config->req(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => count($editor_parts) - 2],
+                    ["class" => "image-info-avatar-box", "width" => Ctx::$config->get(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => count($editor_parts) - 2],
                     $bae->html
                 )
             );

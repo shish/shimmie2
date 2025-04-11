@@ -214,14 +214,14 @@ final class UserPage extends Extension
             $this->page_recover($event->POST->req('username'));
         }
         if ($event->page_matches("user_admin/create", method: "GET", permission: UserAccountsPermission::CREATE_USER)) {
-            if (!Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED)) {
+            if (!Ctx::$config->get(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled();
                 return;
             }
             $this->theme->display_signup_page();
         }
         if ($event->page_matches("user_admin/create", method: "POST", authed: false, permission: UserAccountsPermission::CREATE_USER)) {
-            if (!Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED)) {
+            if (!Ctx::$config->get(UserAccountsConfig::SIGNUP_ENABLED)) {
                 $this->theme->display_signups_disabled();
                 return;
             }
@@ -341,7 +341,7 @@ final class UserPage extends Extension
 
         if ($event->page_matches("user/{name}")) {
             $display_user = User::by_name($event->get_arg('name'));
-            if ($display_user->id == Ctx::$config->req(UserAccountsConfig::ANON_ID)) {
+            if ($display_user->id == Ctx::$config->get(UserAccountsConfig::ANON_ID)) {
                 throw new UserNotFound("No such user");
             }
             $e = send_event(new UserPageBuildingEvent($display_user));
@@ -420,7 +420,7 @@ final class UserPage extends Extension
                 $user->can(IPBanPermission::VIEW_IP) ||  # user can view all IPS
                 ($user->id === $event->display_user->id)  # or user is viewing themselves
             ) &&
-            ($event->display_user->id !== Ctx::$config->req(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
+            ($event->display_user->id !== Ctx::$config->get(UserAccountsConfig::ANON_ID)) # don't show anon's IP list, it is le huge
         ) {
             $this->theme->display_ip_list(
                 $this->count_upload_ips($event->display_user),
@@ -468,7 +468,7 @@ final class UserPage extends Extension
         if (!Ctx::$user->can(UserAccountsPermission::CREATE_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (!Ctx::$config->req(UserAccountsConfig::SIGNUP_ENABLED) && !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
+        if (!Ctx::$config->get(UserAccountsConfig::SIGNUP_ENABLED) && !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
         if (strlen($name) < 1) {
@@ -592,11 +592,11 @@ final class UserPage extends Extension
 
     private function page_logout(): void
     {
-        Ctx::$page->add_cookie("session", "", time() + 60 * 60 * 24 * Ctx::$config->req(UserAccountsConfig::LOGIN_MEMORY), "/");
-        if (Ctx::$config->req(UserAccountsConfig::PURGE_COOKIE)) {
+        Ctx::$page->add_cookie("session", "", time() + 60 * 60 * 24 * Ctx::$config->get(UserAccountsConfig::LOGIN_MEMORY), "/");
+        if (Ctx::$config->get(UserAccountsConfig::PURGE_COOKIE)) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
-            Ctx::$page->add_cookie("user", "", time() + 60 * 60 * 24 * Ctx::$config->req(UserAccountsConfig::LOGIN_MEMORY), "/");
+            Ctx::$page->add_cookie("user", "", time() + 60 * 60 * 24 * Ctx::$config->get(UserAccountsConfig::LOGIN_MEMORY), "/");
         }
         Log::info("user", "Logged out");
         Ctx::$page->set_redirect(make_link());
@@ -708,7 +708,7 @@ final class UserPage extends Extension
         } else {
             $database->execute(
                 "UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                ["new_owner_id" => Ctx::$config->req(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
+                ["new_owner_id" => Ctx::$config->get(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
             );
         }
 
@@ -718,7 +718,7 @@ final class UserPage extends Extension
         } else {
             $database->execute(
                 "UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-                ["new_owner_id" => Ctx::$config->req(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
+                ["new_owner_id" => Ctx::$config->get(UserAccountsConfig::ANON_ID), "old_owner_id" => $uid]
             );
         }
 

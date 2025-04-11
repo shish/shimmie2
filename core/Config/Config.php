@@ -45,18 +45,6 @@ abstract class Config
         return $value;
     }
 
-    /**
-     * @return ConfigValue $value
-     */
-    public function req(string $name): mixed
-    {
-        $val = $this->get($name);
-        if ($val === null) {
-            throw new ConfigException("Required config value '$name' is not set");
-        }
-        return $val;
-    }
-
     public function delete(string $name): void
     {
         unset($this->values[$name]);

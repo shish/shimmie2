@@ -120,7 +120,7 @@ class WikiTheme extends Themelet
         // if this is a tag page, add tag info
         $tag = $database->get_one("SELECT tag FROM tags WHERE tag = :tag", ["tag" => $page->title]);
         if (!is_null($tag)) {
-            $text = Ctx::$config->req(WikiConfig::TAG_PAGE_TEMPLATE);
+            $text = Ctx::$config->get(WikiConfig::TAG_PAGE_TEMPLATE);
 
             if (AliasEditorInfo::is_enabled()) {
                 $aliases = $database->get_col("
@@ -133,7 +133,7 @@ class WikiTheme extends Themelet
                 if (!empty($aliases)) {
                     $text = str_replace("{aliases}", implode(", ", $aliases), $text);
                 } else {
-                    $text = str_replace("{aliases}", Ctx::$config->req(WikiConfig::EMPTY_TAGINFO), $text);
+                    $text = str_replace("{aliases}", Ctx::$config->get(WikiConfig::EMPTY_TAGINFO), $text);
                 }
             }
 
@@ -147,7 +147,7 @@ class WikiTheme extends Themelet
                 if (!empty($auto_tags)) {
                     $text = str_replace("{autotags}", $auto_tags, $text);
                 } else {
-                    $text = str_replace("{autotags}", Ctx::$config->req(WikiConfig::EMPTY_TAGINFO), $text);
+                    $text = str_replace("{autotags}", Ctx::$config->get(WikiConfig::EMPTY_TAGINFO), $text);
                 }
             }
         }

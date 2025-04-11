@@ -14,10 +14,10 @@ class ReplaceFileTheme extends Themelet
      */
     public function display_replace_page(int $image_id): void
     {
-        $tl_enabled = (Ctx::$config->req(UploadConfig::TRANSLOAD_ENGINE) !== "none");
+        $tl_enabled = (Ctx::$config->get(UploadConfig::TRANSLOAD_ENGINE) !== "none");
         $accept = $this->get_accept();
 
-        $max_size = Ctx::$config->req(UploadConfig::SIZE);
+        $max_size = Ctx::$config->get(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
 
         $image = Image::by_id_ex($image_id);

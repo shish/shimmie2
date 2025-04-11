@@ -350,7 +350,7 @@ final class Wiki extends Extension
 
             // correct the default
             $row["title"] = $title;
-            $row["owner_id"] = Ctx::$config->req(UserAccountsConfig::ANON_ID);
+            $row["owner_id"] = Ctx::$config->get(UserAccountsConfig::ANON_ID);
         }
 
         // @phpstan-ignore-next-line

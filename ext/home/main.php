@@ -16,7 +16,7 @@ final class Home extends Extension
     {
         if ($event->page_matches("home")) {
             $this->theme->display_page(
-                Ctx::$config->req(SetupConfig::TITLE),
+                Ctx::$config->get(SetupConfig::TITLE),
                 $this->get_body()
             );
         }
@@ -39,7 +39,7 @@ final class Home extends Extension
         }
 
         return $this->theme->build_body(
-            Ctx::$config->req(SetupConfig::TITLE),
+            Ctx::$config->get(SetupConfig::TITLE),
             format_text($main_links),
             Ctx::$config->get(HomeConfig::TEXT),
             contact_link(),

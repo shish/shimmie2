@@ -18,7 +18,7 @@ class FutabaCommentListTheme extends CommentListTheme
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
-        Ctx::$page->set_title(Ctx::$config->req(SetupConfig::TITLE));
+        Ctx::$page->set_title(Ctx::$config->get(SetupConfig::TITLE));
         Ctx::$page->set_layout("no-left");
         Ctx::$page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
         Ctx::$page->add_block(new Block(null, HR(), "main", 80));

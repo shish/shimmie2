@@ -74,8 +74,8 @@ final class ET extends Extension
         $disk_free = \Safe\disk_free_space("./");
         $info = [
             "about" => [
-                'title' => $config->req(SetupConfig::TITLE),
-                'theme' => $config->req(SetupConfig::THEME),
+                'title' => $config->get(SetupConfig::TITLE),
+                'theme' => $config->get(SetupConfig::THEME),
                 'url'   => (string)(make_link("")->asAbsolute()),
             ],
             "versions" => [
@@ -97,17 +97,17 @@ final class ET extends Extension
                 'users'    => (int)$database->get_one("SELECT COUNT(*) FROM users"),
             ],
             "media" => [
-                "memory_limit" => to_shorthand_int($config->req(MediaConfig::MEM_LIMIT)),
+                "memory_limit" => to_shorthand_int($config->get(MediaConfig::MEM_LIMIT)),
                 "disk_use" => to_shorthand_int($disk_total - $disk_free),
                 "disk_total" => to_shorthand_int($disk_total),
             ],
             "thumbnails" => [
-                "engine" => $config->req(ThumbnailConfig::ENGINE),
-                "quality" => $config->req(ThumbnailConfig::QUALITY),
-                "width" => $config->req(ThumbnailConfig::WIDTH),
-                "height" => $config->req(ThumbnailConfig::HEIGHT),
-                "scaling" => $config->req(ThumbnailConfig::SCALING),
-                "mime" => $config->req(ThumbnailConfig::MIME),
+                "engine" => $config->get(ThumbnailConfig::ENGINE),
+                "quality" => $config->get(ThumbnailConfig::QUALITY),
+                "width" => $config->get(ThumbnailConfig::WIDTH),
+                "height" => $config->get(ThumbnailConfig::HEIGHT),
+                "scaling" => $config->get(ThumbnailConfig::SCALING),
+                "mime" => $config->get(ThumbnailConfig::MIME),
             ],
         ];
 

@@ -267,7 +267,7 @@ final class CronUploader extends Extension
         Ctx::$page->add_http_header("Content-Type: text/plain");
         Ctx::$page->send_headers();
 
-        if (!Ctx::$config->req(UserAccountsConfig::ENABLE_API_KEYS)) {
+        if (!Ctx::$config->get(UserAccountsConfig::ENABLE_API_KEYS)) {
             throw new ServerError("User API keys are not enabled. Please enable them for the cron upload functionality to work.");
         }
 

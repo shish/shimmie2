@@ -223,7 +223,7 @@ final class CommentList extends Extension
         if ($event->page_matches("comment/list", paged: true)) {
             $threads_per_page = 10;
 
-            $where = Ctx::$config->req(CommentConfig::RECENT_COMMENTS)
+            $where = Ctx::$config->get(CommentConfig::RECENT_COMMENTS)
                 ? "WHERE posted > now() - interval '24 hours'"
                 : "";
 

@@ -11,7 +11,7 @@ final class LogConsole extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (
-            Ctx::$config->req(LogConsoleConfig::LOG_ACCESS) &&
+            Ctx::$config->get(LogConsoleConfig::LOG_ACCESS) &&
             isset($_SERVER['REQUEST_URI'])
         ) {
             $this->log(new LogEvent(

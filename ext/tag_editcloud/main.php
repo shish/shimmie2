@@ -26,12 +26,12 @@ final class TagEditCloud extends Extension
     {
         global $database;
 
-        $sort_method = Ctx::$config->req(TagEditCloudConfig::SORT);
-        $tags_min = Ctx::$config->req(TagEditCloudConfig::MIN_USAGE);
-        $used_first = Ctx::$config->req(TagEditCloudConfig::USED_FIRST);
-        $max_count = Ctx::$config->req(TagEditCloudConfig::MAX_COUNT);
-        $def_count = Ctx::$config->req(TagEditCloudConfig::DEF_COUNT);
-        $ignore_tags = Tag::explode(Ctx::$config->req(TagEditCloudConfig::IGNORE_TAGS));
+        $sort_method = Ctx::$config->get(TagEditCloudConfig::SORT);
+        $tags_min = Ctx::$config->get(TagEditCloudConfig::MIN_USAGE);
+        $used_first = Ctx::$config->get(TagEditCloudConfig::USED_FIRST);
+        $max_count = Ctx::$config->get(TagEditCloudConfig::MAX_COUNT);
+        $def_count = Ctx::$config->get(TagEditCloudConfig::DEF_COUNT);
+        $ignore_tags = Tag::explode(Ctx::$config->get(TagEditCloudConfig::IGNORE_TAGS));
 
         $cat_color = [];
         if (TagCategoriesInfo::is_enabled()) {

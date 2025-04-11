@@ -161,7 +161,7 @@ final class Forum extends Extension
             WHERE thread_id = :thread_id
         ", ['thread_id' => $threadID]);
 
-        return (int) ceil($count / Ctx::$config->req(ForumConfig::POSTS_PER_PAGE));
+        return (int) ceil($count / Ctx::$config->get(ForumConfig::POSTS_PER_PAGE));
     }
 
     /**
@@ -228,7 +228,7 @@ final class Forum extends Extension
     private function show_last_threads(int $pageNumber, bool $showAdminOptions = false): void
     {
         $database = Ctx::$database;
-        $threadsPerPage = Ctx::$config->req(ForumConfig::THREADS_PER_PAGE);
+        $threadsPerPage = Ctx::$config->get(ForumConfig::THREADS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
 
         /** @var Thread[] $threads */
@@ -250,7 +250,7 @@ final class Forum extends Extension
     private function show_posts(int $threadID, int $pageNumber, bool $showAdminOptions = false): void
     {
         global $database;
-        $postsPerPage = Ctx::$config->req(ForumConfig::POSTS_PER_PAGE);
+        $postsPerPage = Ctx::$config->get(ForumConfig::POSTS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id' => $threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
 

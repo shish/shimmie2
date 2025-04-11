@@ -16,7 +16,7 @@ final class BrowserSearch extends Extension
 
         // Add in header code to let the browser know that the search plugin exists
         // We need to build the data for the header
-        $search_title = Ctx::$config->req(SetupConfig::TITLE);
+        $search_title = Ctx::$config->get(SetupConfig::TITLE);
         Ctx::$page->add_html_header(LINK([
             'rel' => 'search',
             'type' => 'application/opensearchdescription+xml',
@@ -27,7 +27,7 @@ final class BrowserSearch extends Extension
         // The search.xml file that is generated on the fly
         if ($event->page_matches("browser_search.xml")) {
             // First, we need to build all the variables we'll need
-            $search_title = Ctx::$config->req(SetupConfig::TITLE);
+            $search_title = Ctx::$config->get(SetupConfig::TITLE);
             $search_form_url =  search_link(['{searchTerms}']);
             $suggenton_url = make_link('browser_search/')."{searchTerms}";
             $icon_b64 = base64_encode(\Safe\file_get_contents("ext/static_files/static/favicon.ico"));

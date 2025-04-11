@@ -25,19 +25,18 @@ final class MyExtensionConfig extends ConfigGroup
 }
 ```
 
-Once this file exists, if the extension is enabled, you should see a "My Extension" section in the board config screen, with a "Display Foos" checkbox.
+Once this file exists, if the extension is enabled, you should see a "My Extension" section in the Board Config screen, with a "Display Foos" checkbox.
 
 Note that a general "extension is active" option is unnecessary (Eg putting a "show comments on posts" option on the "Post Comments" extension) - extensions should be enabled or disabled as a whole, via the Extension Manager.
 
-Once the config exists, you can access it in your extension code with `get` or `req` like:
+Once the config exists, you can access it in your extension code with `get`:
 
 ```php
 <?php
-// returns bool or null
 $displayFoos = Ctx::$config->get(MyExtensionConfig::DISPLAY_FOOS);
-// returns bool or throws exception
-$displayFoos = Ctx::$config->req(MyExtensionConfig::DISPLAY_FOOS);
 ```
+
+(Note that `get` is typed as `mixed`, but we have a `phpstan` plugin which gets the appropriate type from the config metadata, eg `$displayFoos` above will have the type `bool`)
 
 ## Advanced Features
 

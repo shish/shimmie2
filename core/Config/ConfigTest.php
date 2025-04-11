@@ -31,11 +31,4 @@ final class ConfigTest extends ShimmiePHPUnitTestCase
             "should return null when a setting is not set"
         );
     }
-
-    public function testReq(): void
-    {
-        self::assertException(ConfigException::class, function () {
-            (new TestConfig([], []))->req("foo");
-        }, "req should throw an exception when a setting is not set");
-    }
 }

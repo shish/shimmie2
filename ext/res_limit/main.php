@@ -16,11 +16,11 @@ final class ResolutionLimit extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event): void
     {
-        $min_w = Ctx::$config->req(ResolutionLimitConfig::MIN_WIDTH);
-        $min_h = Ctx::$config->req(ResolutionLimitConfig::MIN_HEIGHT);
-        $max_w = Ctx::$config->req(ResolutionLimitConfig::MAX_WIDTH);
-        $max_h = Ctx::$config->req(ResolutionLimitConfig::MAX_HEIGHT);
-        $rs = Ctx::$config->req(ResolutionLimitConfig::RATIOS);
+        $min_w = Ctx::$config->get(ResolutionLimitConfig::MIN_WIDTH);
+        $min_h = Ctx::$config->get(ResolutionLimitConfig::MIN_HEIGHT);
+        $max_w = Ctx::$config->get(ResolutionLimitConfig::MAX_WIDTH);
+        $max_h = Ctx::$config->get(ResolutionLimitConfig::MAX_HEIGHT);
+        $rs = Ctx::$config->get(ResolutionLimitConfig::RATIOS);
         $ratios = trim($rs) ? explode(" ", $rs) : [];
 
         $image = $event->image;

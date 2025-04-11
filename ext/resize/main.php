@@ -61,8 +61,8 @@ final class ResizeImage extends Extension
                 && $this->can_resize_mime($event->mime)) {
             $image_obj = $event->images[0];
 
-            $width = Ctx::$config->req(ResizeConfig::DEFAULT_WIDTH);
-            $height = Ctx::$config->req(ResizeConfig::DEFAULT_HEIGHT);
+            $width = Ctx::$config->get(ResizeConfig::DEFAULT_WIDTH);
+            $height = Ctx::$config->get(ResizeConfig::DEFAULT_HEIGHT);
             $isanigif = 0;
             if ($image_obj->get_mime() == MimeType::GIF) {
                 $image_filename = Filesystem::warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
@@ -133,7 +133,7 @@ final class ResizeImage extends Extension
                 $tmp_filename = shm_tempnam('resize');
 
                 send_event(new MediaResizeEvent(
-                    MediaEngine::from(Ctx::$config->req(ResizeConfig::ENGINE)),
+                    MediaEngine::from(Ctx::$config->get(ResizeConfig::ENGINE)),
                     $event->path,
                     $event->mime,
                     $tmp_filename,
@@ -154,7 +154,7 @@ final class ResizeImage extends Extension
 
     private function can_resize_mime(MimeType $mime): bool
     {
-        $engine = MediaEngine::from(Ctx::$config->req(ResizeConfig::ENGINE));
+        $engine = MediaEngine::from(Ctx::$config->get(ResizeConfig::ENGINE));
         return MediaEngine::is_input_supported($engine, $mime)
                 && MediaEngine::is_output_supported($engine, $mime);
     }
@@ -168,7 +168,7 @@ final class ResizeImage extends Extension
             throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
         }
 
-        $engine = MediaEngine::from(Ctx::$config->req(ResizeConfig::ENGINE));
+        $engine = MediaEngine::from(Ctx::$config->get(ResizeConfig::ENGINE));
 
         if (!$this->can_resize_mime($image_obj->get_mime())) {
             throw new ImageResizeException("Engine {$engine->value} cannot resize selected image");

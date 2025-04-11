@@ -119,7 +119,7 @@ class IndexTheme extends Themelet
     protected function display_page_header(array $images): void
     {
         if (count($this->search_terms) === 0) {
-            $page_title = Ctx::$config->req(SetupConfig::TITLE);
+            $page_title = Ctx::$config->get(SetupConfig::TITLE);
         } else {
             $page_title = implode(' ', $this->search_terms);
             if (count($images) > 0) {

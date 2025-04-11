@@ -70,14 +70,15 @@ final class AvatarPost extends AvatarExtension
             return null;
         }
 
-        $scale = $user_config->req(AvatarPostUserConfig::AVATAR_SCALE) / 100;
-        $x = $user_config->req(AvatarPostUserConfig::AVATAR_X);
-        $y = $user_config->req(AvatarPostUserConfig::AVATAR_Y);
+        $scale = $user_config->get(AvatarPostUserConfig::AVATAR_SCALE);
+        $x = $user_config->get(AvatarPostUserConfig::AVATAR_X);
+        $y = $user_config->get(AvatarPostUserConfig::AVATAR_Y);
 
         $ar = $image->width / $image->height;
 
-        $thumb_height = Ctx::$config->req(SetupConfig::AVATAR_SIZE);
-        $thumb_width = Ctx::$config->req(SetupConfig::AVATAR_SIZE);
+        $scale = $scale / 100;
+        $thumb_height = Ctx::$config->get(SetupConfig::AVATAR_SIZE);
+        $thumb_width = Ctx::$config->get(SetupConfig::AVATAR_SIZE);
         $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
         $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
 

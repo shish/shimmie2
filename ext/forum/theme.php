@@ -109,7 +109,7 @@ class ForumTheme extends Themelet
      */
     public function display_thread(array $posts, bool $showAdminOptions, string $threadTitle, int $threadID, int $pageNumber, int $totalPages): void
     {
-        $posts_per_page = Ctx::$config->req(ForumConfig::POSTS_PER_PAGE);
+        $posts_per_page = Ctx::$config->get(ForumConfig::POSTS_PER_PAGE);
 
         $current_post = 0;
 
@@ -214,7 +214,7 @@ class ForumTheme extends Themelet
         );
 
         foreach ($threads as $thread) {
-            $titleSubString = Ctx::$config->req(ForumConfig::TITLE_SUBSTRING);
+            $titleSubString = Ctx::$config->get(ForumConfig::TITLE_SUBSTRING);
             $title = truncate($thread["title"], $titleSubString);
 
             $tbody->appendChild(
