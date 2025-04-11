@@ -12,5 +12,7 @@ enum VideoCodec: string
     case THEORA = "theora";
     case MPEG4 = "mpeg4";
     case H264 = "h264";
+    case AVC = "avc";
     case H265 = "h265";
+    case HEVC = "hevc";
 }
