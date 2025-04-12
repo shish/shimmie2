@@ -14,9 +14,7 @@ final class BulkParentChild extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(BulkParentChildPermission::BULK_PARENT_CHILD)) {
-            $event->add_action("parent-child", "Set Parent Child");
-        }
+        $event->add_action("parent-child", "Set Parent Child", permission: BulkParentChildPermission::BULK_PARENT_CHILD);
     }
 
     public function onBulkAction(BulkActionEvent $event): void

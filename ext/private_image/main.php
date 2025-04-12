@@ -174,10 +174,8 @@ final class PrivateImage extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
-            $event->add_action("privatize-post", "Make Private");
-            $event->add_action("publicize-post", "Make Public");
-        }
+        $event->add_action("privatize-post", "Make Private", permission: PrivateImagePermission::SET_PRIVATE_IMAGE);
+        $event->add_action("publicize-post", "Make Public", permission: PrivateImagePermission::SET_PRIVATE_IMAGE);
     }
 
     public function onBulkAction(BulkActionEvent $event): void

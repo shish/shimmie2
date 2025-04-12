@@ -17,7 +17,8 @@ final readonly class BulkAction
         public ?string $access_key = null,
         public string $confirmation_message = "",
         public ?HTMLElement $block = null,
-        public int $position = 40
+        public int $position = 40,
+        public ?string $permission = null,
     ) {
     }
 }
@@ -36,7 +37,8 @@ final class BulkActionBlockBuildingEvent extends Event
         ?string $access_key = null,
         string $confirmation_message = "",
         ?HTMLElement $block = null,
-        int $position = 40
+        int $position = 40,
+        ?string $permission = null,
     ): void {
         if (!empty($access_key)) {
             assert(strlen($access_key) === 1);
@@ -53,7 +55,8 @@ final class BulkActionBlockBuildingEvent extends Event
             $access_key,
             $confirmation_message,
             $block,
-            $position
+            $position,
+            $permission,
         );
     }
 }
@@ -90,27 +93,21 @@ final class BulkActions extends Extension
 
         send_event($babbe);
 
-        if (count($babbe->actions) === 0) {
+        $actions = $babbe->actions;
+        if (count($actions) === 0) {
             return;
         }
 
-        usort($babbe->actions, $this->sort_blocks(...));
-        $this->theme->display_selector($babbe->actions, Tag::implode($event->search_terms));
+        $actions = array_filter($actions, fn ($a) => $a->permission === null || Ctx::$user->can($a->permission));
+        usort($actions, $this->sort_blocks(...));
+        $this->theme->display_selector($actions, Tag::implode($event->search_terms));
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
-            $event->add_action("delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10);
-        }
-
-        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-            $event->add_action("tag", "Tag", "t", "", $this->theme->render_tag_input(), 10);
-        }
-
-        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
-            $event->add_action("source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10);
-        }
+        $event->add_action("delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10, permission: ImagePermission::DELETE_IMAGE);
+        $event->add_action("tag", "Tag", "t", "", $this->theme->render_tag_input(), 10, permission: BulkActionsPermission::BULK_EDIT_IMAGE_TAG);
+        $event->add_action("source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10, permission: BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE);
     }
 
     public function onCliGen(CliGenEvent $event): void

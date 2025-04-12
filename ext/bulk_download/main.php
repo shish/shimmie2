@@ -10,9 +10,7 @@ final class BulkDownload extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(BulkDownloadPermission::BULK_DOWNLOAD)) {
-            $event->add_action("download", "Download ZIP");
-        }
+        $event->add_action("download", "Download ZIP", permission: BulkDownloadPermission::BULK_DOWNLOAD);
     }
 
     public function onBulkAction(BulkActionEvent $event): void
