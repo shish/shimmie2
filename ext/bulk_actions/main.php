@@ -112,18 +112,19 @@ final class BulkActions extends Extension
 
     public function onCliGen(CliGenEvent $event): void
     {
-        $event->app->register('bulk-action')
-            ->addArgument('action', InputArgument::REQUIRED)
-            ->addArgument('query', InputArgument::REQUIRED)
-            ->setDescription('Perform a bulk action on a given query')
-            ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $action = $input->getArgument('action');
-                $query = $input->getArgument('query');
-                $items = $this->yield_search_results($query);
-                Log::info("bulk_actions", "Performing $action on $query");
-                send_event(new BulkActionEvent($action, $items, new QueryArray([])));
-                return Command::SUCCESS;
-            });
+        foreach (send_event(new BulkActionBlockBuildingEvent())->actions as $action) {
+            $event->app->register("bulk:" . $action->action)
+                ->addArgument('query', InputArgument::REQUIRED)
+                ->setDescription($action->button_text)
+                ->setCode(function (InputInterface $input, OutputInterface $output) use ($action): int {
+                    $query = $input->getArgument('query');
+                    $items = $this->yield_search_results($query);
+                    Log::info("bulk_actions", "Performing {$action->action} on $query");
+                    send_event(new BulkActionEvent($action->action, $items, new QueryArray([])));
+                    return Command::SUCCESS;
+                });
+
+        }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
