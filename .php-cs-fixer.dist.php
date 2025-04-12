@@ -20,6 +20,6 @@ return $_phpcs_config
     'ordered_imports' => true,
   ])
   ->setFinder($_phpcs_finder)
-  ->setCacheFile("data/php-cs-fixer.cache")
+  ->setCacheFile("data/cache/php-cs-fixer.cache")
   //->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
 ;
