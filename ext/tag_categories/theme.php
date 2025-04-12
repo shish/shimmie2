@@ -125,7 +125,6 @@ class TagCategoriesTheme extends Themelet
                 ),
                 BUTTON(["class" => "tc_submit", "type" => "submit", "name" => "tc_status", "value" => "new"], "Submit"),
             ),
-            
         );
 
         // add html to stuffs
