@@ -21,7 +21,7 @@ RUN apt update && \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
     php${PHP_VERSION}-memcached \
-    curl imagemagick zip unzip && \
+    curl imagemagick zip unzip librsvg2-bin && \
     rm -rf /var/lib/apt/lists/*
 
 # copy individual files from unit:php rather than inheriting
