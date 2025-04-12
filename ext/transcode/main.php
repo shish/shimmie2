@@ -18,8 +18,6 @@ final class TranscodeImage extends Extension
     /** @var TranscodeImageTheme */
     protected Themelet $theme;
 
-    public const ACTION_BULK_TRANSCODE = "bulk_transcode";
-
     public const INPUT_MIMES = [
         "BMP" => MimeType::BMP,
         "GIF" => MimeType::GIF,
@@ -190,14 +188,14 @@ final class TranscodeImage extends Extension
     {
         if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
             $engine = MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE));
-            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode Image", null, "", $this->theme->get_transcode_picker_html(self::get_supported_output_mimes($engine)));
+            $event->add_action("transcode-image", "Transcode Image", null, "", $this->theme->get_transcode_picker_html(self::get_supported_output_mimes($engine)));
         }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case self::ACTION_BULK_TRANSCODE:
+            case "transcode-image":
                 if (!isset($event->params['transcode_mime'])) {
                     return;
                 }

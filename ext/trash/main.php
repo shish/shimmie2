@@ -134,14 +134,14 @@ final class Trash extends Extension
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(TrashPermission::VIEW_TRASH) && in_array("in:trash", $event->search_terms)) {
-            $event->add_action("bulk_trash_restore", "(U)ndelete", "u");
+            $event->add_action("trash-restore", "(U)ndelete", "u");
         }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_trash_restore":
+            case "trash-restore":
                 if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
                     $total = 0;
                     foreach ($event->items as $image) {

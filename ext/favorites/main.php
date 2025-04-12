@@ -151,15 +151,15 @@ final class Favorites extends Extension
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
-            $event->add_action("bulk_favorite", "Favorite");
-            $event->add_action("bulk_unfavorite", "Un-Favorite");
+            $event->add_action("favorite", "Favorite");
+            $event->add_action("unfavorite", "Un-Favorite");
         }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_favorite":
+            case "favorite":
                 if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
                     $total = 0;
                     foreach ($event->items as $image) {
@@ -169,7 +169,7 @@ final class Favorites extends Extension
                     $event->log_action("Added $total items to favorites");
                 }
                 break;
-            case "bulk_unfavorite":
+            case "unfavorite":
                 if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
                     $total = 0;
                     foreach ($event->items as $image) {
