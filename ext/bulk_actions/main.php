@@ -101,15 +101,15 @@ final class BulkActions extends Extension
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
-            $event->add_action("bulk_delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10);
+            $event->add_action("delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10);
         }
 
         if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-            $event->add_action("bulk_tag", "Tag", "t", "", $this->theme->render_tag_input(), 10);
+            $event->add_action("tag", "Tag", "t", "", $this->theme->render_tag_input(), 10);
         }
 
         if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
-            $event->add_action("bulk_source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10);
+            $event->add_action("source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10);
         }
     }
 
@@ -132,13 +132,13 @@ final class BulkActions extends Extension
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_delete":
+            case "delete":
                 if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $i = $this->delete_posts($event->items);
                     $event->log_action("Deleted $i[0] items, totaling ".human_filesize($i[1]));
                 }
                 break;
-            case "bulk_tag":
+            case "tag":
                 if (!isset($event->params['bulk_tags'])) {
                     return;
                 }
@@ -153,7 +153,7 @@ final class BulkActions extends Extension
                     $event->log_action("Tagged $i items");
                 }
                 break;
-            case "bulk_source":
+            case "source":
                 if (!isset($event->params['bulk_source'])) {
                     return;
                 }

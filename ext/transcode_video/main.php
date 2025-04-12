@@ -59,7 +59,7 @@ final class TranscodeVideo extends Extension
     {
         if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
             $event->add_action(
-                self::ACTION_BULK_TRANSCODE,
+                "transcode-video",
                 "Transcode Video",
                 null,
                 "",
@@ -71,7 +71,7 @@ final class TranscodeVideo extends Extension
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case self::ACTION_BULK_TRANSCODE:
+            case "transcode-video":
                 if (!isset($event->params['transcode_format'])) {
                     return;
                 }
