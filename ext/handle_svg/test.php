@@ -11,7 +11,7 @@ final class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->post_image("tests/test.svg", "something");
         self::get_page("post/view/$image_id"); // test for no crash
-        self::get_page("get_svg/$image_id"); // test for no crash
+        self::get_page("image/$image_id/foo.svg"); // test for no crash
         self::assert_content("www.w3.org");
 
         # FIXME: test that the thumb works
@@ -23,7 +23,7 @@ final class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->post_image("tests/alert.svg", "something");
         self::get_page("post/view/$image_id");
-        self::get_page("get_svg/$image_id");
+        self::get_page("image/$image_id/foo.svg");
         self::assert_no_content("script");
     }
 }
