@@ -2,7 +2,7 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.3/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
-         cacheDirectory="data/phpunit.cache"
+         cacheDirectory="data/cache/phpunit.cache"
          colors="true"
          executionOrder="depends,defects"
          shortenArraysForExportThreshold="10"
