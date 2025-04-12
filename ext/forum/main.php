@@ -321,9 +321,9 @@ final class Forum extends Extension
         Ctx::$database->execute("DELETE FROM forum_posts WHERE id = :id", ['id' => $postID]);
     }
 
-    private function threadExists(int $threadID): bool
+    private function threadExists(int $threadID): bool|int
     {
         $result = Ctx::$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id' => $threadID]);
-        return $result === 1;
+        return $result;
     }
 }
