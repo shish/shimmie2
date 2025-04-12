@@ -62,7 +62,7 @@ class TagCategoriesTheme extends Themelet
                     BUTTON([
                         "class" => "tc_edit",
                         "type" => "button",
-                        "onclick" => "$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') tr + tr td span\').hide(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') td input\').show(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_edit\').hide(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_colorswatch\').hide(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_submit\').show();"
+                        "onclick" => "$('.tagcategoryblock:nth-of-type($tc_block_index) tr + tr td span').hide(); $('.tagcategoryblock:nth-of-type($tc_block_index) td input').show(); $('.tagcategoryblock:nth-of-type($tc_block_index) .tc_edit').hide(); $('.tagcategoryblock:nth-of-type($tc_block_index) .tc_colorswatch').hide(); $('.tagcategoryblock:nth-of-type($tc_block_index) .tc_submit').show();"
                     ], "Edit"),
                     BUTTON([
                         "class" => "tc_submit",
@@ -75,7 +75,7 @@ class TagCategoriesTheme extends Themelet
                         "class" => "tc_submit",
                         "type" => "button",
                         "style" => "display:none;",
-                        "onclick" => "$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_delete\').show(); $(this).hide();",
+                        "onclick" => "$('.tagcategoryblock:nth-of-type($tc_block_index) .tc_delete').show(); $(this).hide();",
                     ], "Delete"),
                     BUTTON([
                         "class" => "tc_delete",
@@ -122,9 +122,10 @@ class TagCategoriesTheme extends Themelet
                             INPUT(["type" => "color", "name" => "tc_color", "value" => $tag_color])
                         )
                     ),
-                )
+                ),
+                BUTTON(["class" => "tc_submit", "type" => "submit", "name" => "tc_status", "value" => "new"], "Submit"),
             ),
-            BUTTON(["class" => "tc_submit", "type" => "submit", "name" => "tc_status", "value" => "new"], "Submit")
+            
         );
 
         // add html to stuffs
