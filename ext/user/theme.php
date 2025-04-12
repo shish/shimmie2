@@ -288,7 +288,7 @@ class UserPageTheme extends Themelet
                 $select = SELECT(["name" => "class"]);
                 foreach (UserClass::$known_classes as $name => $values) {
                     $select->appendChild(
-                        OPTION(["value" => $name, "selected" => $name == $duser->class->name], ucwords($name))
+                        OPTION(["value" => $name, "selected" => $name === $duser->class->name], ucwords($name))
                     );
                 }
                 $html->appendChild(SHM_USER_FORM(

@@ -20,7 +20,7 @@ final class BulkDownload extends Extension
     {
         if (
             Ctx::$user->can(BulkDownloadPermission::BULK_DOWNLOAD)
-            && ($event->action == BulkDownload::DOWNLOAD_ACTION_NAME)
+            && ($event->action === BulkDownload::DOWNLOAD_ACTION_NAME)
         ) {
             $download_filename = Ctx::$user->name . '-' . date('YmdHis') . '.zip';
             $zip_filename = shm_tempnam("bulk_download");

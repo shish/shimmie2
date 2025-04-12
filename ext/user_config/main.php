@@ -98,7 +98,7 @@ final class UserConfig extends Extension
     {
         if (Ctx::$config->get(UserAccountsConfig::ENABLE_API_KEYS)) {
             $key = $event->user_config->get(UserConfigUserConfig::API_KEY);
-            if (empty($key)) {
+            if (!$key) {
                 $key = generate_key();
                 $event->user_config->set(UserConfigUserConfig::API_KEY, $key);
             }

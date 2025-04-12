@@ -88,13 +88,13 @@ final class SourceHistory extends Extension
             $this->set_version(3);
         }
 
-        if ($this->get_version() == 1) {
+        if ($this->get_version() === 1) {
             $database->execute("ALTER TABLE source_histories ADD COLUMN user_id INTEGER NOT NULL");
             $database->execute("ALTER TABLE source_histories ADD COLUMN date_set DATETIME NOT NULL");
             $this->set_version(2);
         }
 
-        if ($this->get_version() == 2) {
+        if ($this->get_version() === 2) {
             $database->execute("ALTER TABLE source_histories ADD COLUMN user_ip CHAR(15) NOT NULL");
             $this->set_version(3);
         }
@@ -252,7 +252,7 @@ final class SourceHistory extends Extension
             $select_args['date_set'] = $date;
         }
 
-        if (count($select_code) == 0) {
+        if (count($select_code) === 0) {
             Log::error("source_history", "Tried to mass revert without any conditions");
             return;
         }
@@ -319,7 +319,7 @@ final class SourceHistory extends Extension
         $new_source = $source;
         $old_source = $image->source;
 
-        if ($new_source == $old_source) {
+        if ($new_source === $old_source) {
             return;
         }
 
@@ -331,14 +331,14 @@ final class SourceHistory extends Extension
         }
 
         $allowed = Ctx::$config->get(SourceHistoryConfig::MAX_HISTORY);
-        if ($allowed == 0) {
+        if ($allowed === 0) {
             return;
         }
 
         // if the image has no history, make one with the old source
         $entries = $database->get_one("SELECT COUNT(*) FROM source_histories WHERE image_id = :image_id", ['image_id' => $image->id]);
         assert(is_int($entries));
-        if ($entries == 0 && !empty($old_source)) {
+        if ($entries === 0 && !empty($old_source)) {
             $database->execute(
                 "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
@@ -358,7 +358,7 @@ final class SourceHistory extends Extension
         $entries++;
 
         // if needed remove oldest one
-        if ($allowed == -1) {
+        if ($allowed === -1) {
             return;
         }
         if ($entries > $allowed) {

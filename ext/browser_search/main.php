@@ -50,7 +50,7 @@ final class BrowserSearch extends Extension
             Ctx::$page->set_data(MimeType::XML, $xml);
         } elseif ($event->page_matches("browser_search/{tag_search}")) {
             $suggestions = Ctx::$config->get(BrowserSearchConfig::RESULTS_ORDER);
-            if ($suggestions == "n") {
+            if ($suggestions === "n") {
                 return;
             }
 
@@ -58,7 +58,7 @@ final class BrowserSearch extends Extension
             $tag_search = $event->get_arg('tag_search');
 
             // Now to get DB results
-            if ($suggestions == "a") {
+            if ($suggestions === "a") {
                 $order = "tag ASC";
             } else {
                 $order = "count DESC";

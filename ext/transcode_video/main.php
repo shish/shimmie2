@@ -107,7 +107,7 @@ final class TranscodeVideo extends Extension
         $output = ["" => null];
 
         foreach (VideoContainer::cases() as $container) {
-            if ($starting_container == $container) {
+            if ($starting_container === $container) {
                 continue;
             }
             if (!empty($starting_codec) &&
@@ -124,7 +124,7 @@ final class TranscodeVideo extends Extension
 
     private function transcode_and_replace_video(Image $image, string $target_mime): bool
     {
-        if ($image->get_mime() == $target_mime) {
+        if ($image->get_mime()->base === $target_mime) {
             return false;
         }
 

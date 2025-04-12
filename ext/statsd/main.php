@@ -96,7 +96,7 @@ final class StatsDInterface extends Extension
             $sampledData = $data;
         }
 
-        if (empty($sampledData)) {
+        if (count($sampledData) === 0) {
             return;
         }
 

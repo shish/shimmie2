@@ -146,11 +146,11 @@ final class IPBan extends Extension
             }
             $msg .= "<!-- $active_ban_id / {$row["mode"]} -->";
 
-            if ($row["mode"] == "ghost") {
+            if ($row["mode"] === "ghost") {
                 Ctx::$page->add_block(new Block(null, \MicroHTML\rawHTML($msg), "main", 0, is_content: false));
                 Ctx::$page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
                 $event->user->class = UserClass::$known_classes["ghost"];
-            } elseif ($row["mode"] == "anon-ghost") {
+            } elseif ($row["mode"] === "anon-ghost") {
                 if ($event->user->is_anonymous()) {
                     Ctx::$page->add_block(new Block(null, \MicroHTML\rawHTML($msg), "main", 0, is_content: false));
                     Ctx::$page->add_cookie("nocache", "Ghost Banned", time() + 60 * 60 * 2, "/");
@@ -262,12 +262,12 @@ final class IPBan extends Extension
             $this->set_version(1);
         }
 
-        if ($this->get_version() == 1) {
+        if ($this->get_version() === 1) {
             $database->execute("ALTER TABLE bans ADD COLUMN banner_id INTEGER NOT NULL AFTER id");
             $this->set_version(2);
         }
 
-        if ($this->get_version() == 2) {
+        if ($this->get_version() === 2) {
             $database->execute("ALTER TABLE bans DROP COLUMN date");
             $database->execute("ALTER TABLE bans CHANGE ip ip CHAR(20) NOT NULL");
             $database->execute("ALTER TABLE bans CHANGE reason reason TEXT NOT NULL");
@@ -275,14 +275,14 @@ final class IPBan extends Extension
             $this->set_version(3);
         }
 
-        if ($this->get_version() == 3) {
+        if ($this->get_version() === 3) {
             $database->execute("ALTER TABLE bans CHANGE end old_end DATE NOT NULL");
             $database->execute("ALTER TABLE bans ADD COLUMN end INTEGER");
-            if ($database->get_driver_id() == DatabaseDriverID::MYSQL) {
+            if ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $database->execute("UPDATE bans SET end = UNIX_TIMESTAMP(old_end)");
-            } elseif ($database->get_driver_id() == DatabaseDriverID::PGSQL) {
+            } elseif ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute("UPDATE bans SET end = EXTRACT(EPOCH FROM old_end)");
-            } elseif ($database->get_driver_id() == DatabaseDriverID::SQLITE) {
+            } elseif ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
                 $database->execute("UPDATE bans SET end = unixepoch(old_end)");
             }
             $database->execute("ALTER TABLE bans DROP COLUMN old_end");
@@ -290,34 +290,34 @@ final class IPBan extends Extension
             $this->set_version(4);
         }
 
-        if ($this->get_version() == 4) {
+        if ($this->get_version() === 4) {
             $database->execute("ALTER TABLE bans CHANGE end end_timestamp INTEGER");
             $this->set_version(5);
         }
 
-        if ($this->get_version() == 5) {
+        if ($this->get_version() === 5) {
             $database->execute("ALTER TABLE bans CHANGE ip ip VARCHAR(15)");
             $this->set_version(6);
         }
 
-        if ($this->get_version() == 6) {
+        if ($this->get_version() === 6) {
             $database->execute("ALTER TABLE bans ADD FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
             $this->set_version(7);
         }
 
-        if ($this->get_version() == 7) {
+        if ($this->get_version() === 7) {
             // @phpstan-ignore-next-line
             Ctx::$database->execute($database->scoreql_to_sql("ALTER TABLE bans CHANGE ip ip SCORE_INET"));
             $database->execute("ALTER TABLE bans ADD COLUMN added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
             $this->set_version(8);
         }
 
-        if ($this->get_version() == 8) {
+        if ($this->get_version() === 8) {
             $database->execute("ALTER TABLE bans ADD COLUMN mode VARCHAR(16) NOT NULL DEFAULT 'block'");
             $this->set_version(9);
         }
 
-        if ($this->get_version() == 9) {
+        if ($this->get_version() === 9) {
             $database->execute("ALTER TABLE bans ADD COLUMN expires TIMESTAMP DEFAULT NULL");
             $database->execute("UPDATE bans SET expires = to_date('1970/01/01', 'YYYY/MM/DD') + (end_timestamp * interval '1 seconds')");
             $database->execute("ALTER TABLE bans DROP COLUMN end_timestamp");

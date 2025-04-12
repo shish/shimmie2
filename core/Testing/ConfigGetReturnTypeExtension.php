@@ -33,7 +33,7 @@ class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['get', 'req']);
+        return $methodReflection->getName() === 'get';
     }
 
     public function getTypeFromMethodCall(
@@ -70,7 +70,7 @@ class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
                 }
             }
         }
-        if ($configType !== null && $methodReflection->getName() == 'get' && !$hasDefault) {
+        if ($configType !== null && !$hasDefault) {
             $configType = new UnionType([$configType, new NullType()]);
         }
         return $configType;

@@ -119,7 +119,7 @@ final class Media extends Extension
             $event->resize_type,
             MediaEngine::RESIZE_TYPE_SUPPORT[$event->engine->value]
         )) {
-            throw new MediaException("Resize type $event->resize_type not supported by selected media engine {$event->engine->value}");
+            throw new MediaException("Resize type {$event->resize_type->name} not supported by selected media engine {$event->engine->value}");
         }
 
         switch ($event->engine) {
@@ -452,7 +452,7 @@ final class Media extends Extension
         // format-specific compression options
         if ($output_mime->base === MimeType::PNG) {
             $command->add_args("-define", "png:compression-level=9");
-        } elseif ($output_mime->base == MimeType::WEBP && $output_mime->parameters == MimeType::LOSSLESS_PARAMETER) {
+        } elseif ($output_mime->base === MimeType::WEBP && $output_mime->parameters === MimeType::LOSSLESS_PARAMETER) {
             $command->add_args("-define", "webp:lossless=true");
             $command->add_args("-quality", "100");
         } else {
@@ -658,7 +658,7 @@ final class Media extends Extension
         $width = 1;
         $height = 1;
         foreach ($data["streams"] as $stream) {
-            if ($stream["codec_type"] == "video") {
+            if ($stream["codec_type"] === "video") {
                 $width = max($width, $stream["width"]);
                 $height = max($height, $stream["height"]);
             }

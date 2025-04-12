@@ -46,7 +46,7 @@ class PermManagerTheme extends Themelet
             } elseif (in_array(UserClassSource::DATABASE, $class->sources) && in_array(UserClassSource::DEFAULT, $class->sources)) {
                 $form->appendChild(SHM_SUBMIT("Revert to Default"));
             } elseif (in_array(UserClassSource::DATABASE, $class->sources)) {
-                if ($counts[$class->name] == 0) {
+                if ($counts[$class->name] === 0) {
                     $form->appendChild(SHM_SUBMIT("Delete"));
                 } else {
                     $form->appendChild(BUTTON(["disabled" => true], "Can't delete in-use classes"));

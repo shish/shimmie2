@@ -63,7 +63,7 @@ final class RegenThumb extends Extension
                 if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $force = true;
                     if (isset($event->params["bulk_regen_thumb_missing_only"])
-                        && $event->params["bulk_regen_thumb_missing_only"] == "true") {
+                        && $event->params["bulk_regen_thumb_missing_only"] === "true") {
                         $force = false;
                     }
 
@@ -90,7 +90,7 @@ final class RegenThumb extends Extension
             case "regen_thumbs":
                 $event->redirect = true;
                 $force = false;
-                if (isset($event->params["regen_thumb_force"]) && $event->params["regen_thumb_force"] == "true") {
+                if (isset($event->params["regen_thumb_force"]) && $event->params["regen_thumb_force"] === "true") {
                     $force = true;
                 }
                 $limit = 1000;

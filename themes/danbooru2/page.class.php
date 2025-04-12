@@ -85,7 +85,7 @@ class Danbooru2Page extends Page
             }
         }
 
-        if (empty($this->subheading)) {
+        if ($this->subheading === "") {
             $subheading = null;
         } else {
             $subheading = DIV(["id" => "subtitle"], $this->subheading);
@@ -100,7 +100,7 @@ class Danbooru2Page extends Page
         }
 
         $custom_sublinks = "";
-        if (!empty($sub_links)) {
+        if (count($sub_links) > 0) {
             $custom_sublinks = DIV(["class" => "sbar"]);
             foreach ($sub_links as $nav_link) {
                 $custom_sublinks->appendChild(LI($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active)));

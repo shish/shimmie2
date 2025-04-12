@@ -63,7 +63,7 @@ class PostSourceTheme extends Themelet
             INPUT([
                 "type" => "text",
                 "name" => "source{$suffix}",
-                "value" => ($suffix == 0) ? @$_GET['source'] : null,
+                "value" => ($suffix === "0") ? @$_GET['source'] : null,
             ])
         );
     }

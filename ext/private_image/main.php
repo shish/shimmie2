@@ -156,7 +156,7 @@ final class PrivateImage extends Extension
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
-        if ((Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE) && Ctx::$user->id == $event->image->owner_id) || Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
+        if ((Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE) && Ctx::$user->id === $event->image->owner_id) || Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
             if ($event->image['private'] === false) {
                 $event->add_button("Make Private", "privatize_image/".$event->image->id);
             } else {
@@ -188,7 +188,7 @@ final class PrivateImage extends Extension
                     $total = 0;
                     foreach ($event->items as $image) {
                         if (
-                            $image->owner_id == Ctx::$user->id ||
+                            $image->owner_id === Ctx::$user->id ||
                             Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)
                         ) {
                             self::privatize_image($image->id);
@@ -202,7 +202,7 @@ final class PrivateImage extends Extension
                 $total = 0;
                 foreach ($event->items as $image) {
                     if (
-                        $image->owner_id == Ctx::$user->id ||
+                        $image->owner_id === Ctx::$user->id ||
                         Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)
                     ) {
                         self::publicize_image($image->id);

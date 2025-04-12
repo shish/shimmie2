@@ -81,7 +81,7 @@ final class RotateImage extends Extension
 
         /* Attempt to load the image */
         $image = imagecreatefromstring(data: $image_filename->get_contents());
-        if ($image == false) {
+        if ($image === false) {
             throw new ImageRotateException("Could not load image: ".$image_filename->str());
         }
 

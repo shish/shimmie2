@@ -43,7 +43,7 @@ final class CBZFileHandler extends DataHandlerExtension
         $fp = \Safe\fopen($tmpname->str(), "r");
         $head = fread($fp, 4);
         fclose($fp);
-        return $head == "PK\x03\x04";
+        return $head === "PK\x03\x04";
     }
 
     private function get_representative_image(Path $archive): Path

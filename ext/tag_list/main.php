@@ -25,10 +25,10 @@ final class TagList extends Extension
     {
         if (Ctx::$config->get(TagListConfig::LENGTH) > 0) {
             $type = Ctx::$config->get(TagListConfig::IMAGE_TYPE);
-            if ($type == TagListConfig::TYPE_TAGS || $type == TagListConfig::TYPE_BOTH) {
+            if ($type === TagListConfig::TYPE_TAGS || $type === TagListConfig::TYPE_BOTH) {
                 $this->add_tags_block($event->image);
             }
-            if ($type == TagListConfig::TYPE_RELATED || $type == TagListConfig::TYPE_BOTH) {
+            if ($type === TagListConfig::TYPE_RELATED || $type === TagListConfig::TYPE_BOTH) {
                 $this->add_related_block($event->image);
             }
         }
@@ -45,7 +45,7 @@ final class TagList extends Extension
         if (is_null($results)) {
             $tags = Tag::explode($tags_config, false);
 
-            if (count($tags) == 0) {
+            if (count($tags) === 0) {
                 return [];
             }
 
@@ -194,7 +194,7 @@ final class TagList extends Extension
             $starting_tags = [];
             $tags_ok = true;
             foreach ($search as $tag) {
-                if ($tag[0] == "-" || str_starts_with($tag, "tagme")) {
+                if ($tag[0] === "-" || str_starts_with($tag, "tagme")) {
                     continue;
                 }
                 $tag = Tag::sqlify($tag);

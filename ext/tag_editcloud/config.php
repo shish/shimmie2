@@ -39,7 +39,7 @@ final class TagEditCloudConfig extends ConfigGroup
         ];
         if (
             TagCategoriesInfo::is_enabled()
-            && $database->get_driver_id() == DatabaseDriverID::MYSQL
+            && $database->get_driver_id() === DatabaseDriverID::MYSQL
         ) {
             $sort_by['Categories'] = 'c';
         }

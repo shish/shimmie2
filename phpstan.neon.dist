@@ -12,28 +12,20 @@ parameters:
     header-array: "array<string,string|string[]>"
     sql-params-array: "array<string,string|int|bool|null>"
   ignoreErrors:
-    -
-      message: '#Function .* is unsafe to use.*$#'
-    -
-      message: '#Path in include_once\(\) "data/.*" is not a file or it does not exist.#'
+    - message: '#Function .* is unsafe to use.*$#'
+    - message: '#Path in include_once\(\) "data/.*" is not a file or it does not exist.#'
   reportMaybesInMethodSignatures: false
   reportMaybesInPropertyPhpDocTypes: false
   strictRules:
-    disallowedLooseComparison: false
     booleansInConditions: false
     disallowedEmpty: false
     disallowedShortTernary: false
-    strictFunctionCalls: false
     noVariableVariables: false
 includes:
   - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
   - vendor/phpstan/phpstan-strict-rules/rules.neon
 services:
-  -
-    class: Shimmie2\GenericStringTypeNodeResolverExtension
-    tags:
-      - phpstan.phpDoc.typeNodeResolverExtension
-  -
-    class: Shimmie2\ConfigGetReturnTypeExtension
-    tags:
-      - phpstan.broker.dynamicMethodReturnTypeExtension
+  - class: Shimmie2\GenericStringTypeNodeResolverExtension
+    tags: [phpstan.phpDoc.typeNodeResolverExtension]
+  - class: Shimmie2\ConfigGetReturnTypeExtension
+    tags: [phpstan.broker.dynamicMethodReturnTypeExtension]

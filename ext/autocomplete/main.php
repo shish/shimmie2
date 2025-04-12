@@ -32,9 +32,9 @@ final class AutoComplete extends Extension
     {
         $search = mb_strtolower($search);
         if (
-            $search == '' ||
-            $search[0] == '_' ||
-            $search[0] == '%' ||
+            $search === '' ||
+            $search[0] === '_' ||
+            $search[0] === '%' ||
             mb_strlen($search) > 32
         ) {
             return [];

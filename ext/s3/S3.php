@@ -224,7 +224,7 @@ class S3Request
         $string_to_sign .= "{$this->headers['Content-Type']}\n";
         $string_to_sign .= "{$this->headers['Date']}\n";
 
-        if (!empty($canonical_amz_headers)) {
+        if (count($canonical_amz_headers) > 0) {
             $string_to_sign .= implode("\n", $canonical_amz_headers) . "\n";
         }
 
@@ -366,7 +366,7 @@ class S3Response
     {
         $header = explode(':', $data);
 
-        if (count($header) == 2) {
+        if (count($header) === 2) {
             list($key, $value) = $header;
             $this->headers[$key] = trim($value);
         }
@@ -385,7 +385,7 @@ class S3Response
             $this->code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
-            if ($this->code > 300 && $content_type == 'application/xml') {
+            if ($this->code > 300 && $content_type === 'application/xml') {
                 $response = simplexml_load_string($this->body);
 
                 if ($response) {

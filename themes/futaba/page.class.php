@@ -33,7 +33,7 @@ class FutabaPage extends Page
             }
         }
 
-        if (empty($this->subheading)) {
+        if ($this->subheading === "") {
             $subheading = null;
         } else {
             $subheading = DIV(["id" => "subtitle"], $this->subheading);
