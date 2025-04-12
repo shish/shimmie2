@@ -150,10 +150,8 @@ final class Favorites extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
-            $event->add_action("favorite", "Favorite");
-            $event->add_action("unfavorite", "Un-Favorite");
-        }
+        $event->add_action("favorite", "Favorite", permission: FavouritesPermission::EDIT_FAVOURITES);
+        $event->add_action("unfavorite", "Un-Favorite", permission: FavouritesPermission::EDIT_FAVOURITES);
     }
 
     public function onBulkAction(BulkActionEvent $event): void

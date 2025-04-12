@@ -186,10 +186,15 @@ final class TranscodeImage extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
-            $engine = MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE));
-            $event->add_action("transcode-image", "Transcode Image", null, "", $this->theme->get_transcode_picker_html(self::get_supported_output_mimes($engine)));
-        }
+        $engine = MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE));
+        $event->add_action(
+            "transcode-image",
+            "Transcode Image",
+            null,
+            "",
+            $this->theme->get_transcode_picker_html(self::get_supported_output_mimes($engine)),
+            permission: ImagePermission::EDIT_FILES,
+        );
     }
 
     public function onBulkAction(BulkActionEvent $event): void
