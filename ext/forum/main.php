@@ -92,21 +92,16 @@ final class Forum extends Extension
     {
         $user = Ctx::$user;
         $page = Ctx::$page;
-        if ($event->page_matches("forum/index", paged: true)) {
+        if ($event->page_matches("forum/index", method: "GET", paged: true)) {
             $pageNumber = $event->get_iarg('page_num', 1) - 1;
             $this->show_last_threads($pageNumber, $user->can(ForumPermission::FORUM_ADMIN));
             if ($user->can(ForumPermission::FORUM_CREATE)) {
                 $this->theme->display_new_thread_composer();
             }
         }
-        if ($event->page_matches("forum/view/{threadID}", paged: true)) {
+        if ($event->page_matches("forum/view/{threadID}", method: "GET", paged: true)) {
             $threadID = $event->get_iarg('threadID');
             $pageNumber = $event->get_iarg('page_num', 1) - 1;
-            $errors = $this->sanity_check_viewed_thread($threadID);
-
-            if (count($errors) > 0) {
-                throw new InvalidInput(implode("<br>", $errors));
-            }
 
             $this->show_posts($threadID, $pageNumber, $user->can(ForumPermission::FORUM_ADMIN));
             if ($user->can(ForumPermission::FORUM_ADMIN)) {
@@ -116,11 +111,11 @@ final class Forum extends Extension
                 $this->theme->display_new_post_composer($threadID);
             }
         }
-        if ($event->page_matches("forum/new", permission: ForumPermission::FORUM_CREATE)) {
+        if ($event->page_matches("forum/new", method: "GET", permission: ForumPermission::FORUM_CREATE)) {
             $this->theme->display_new_thread_composer();
         }
-        if ($event->page_matches("forum/create", permission: ForumPermission::FORUM_CREATE)) {
-            $errors = $this->sanity_check_new_thread();
+        if ($event->page_matches("forum/create", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
+            $errors = $this->sanity_check_new_thread($event->POST);
             if (count($errors) > 0) {
                 throw new InvalidInput(implode("<br>", $errors));
             }
@@ -129,28 +124,27 @@ final class Forum extends Extension
             $redirectTo = "forum/view/" . $newThreadID . "/1";
             $page->set_redirect(make_link($redirectTo));
         }
-        if ($event->page_matches("forum/delete/{threadID}/{postID}", permission: ForumPermission::FORUM_ADMIN)) {
+        if ($event->page_matches("forum/delete/{threadID}/{postID}", method: "GET", permission: ForumPermission::FORUM_ADMIN)) {
             $threadID = $event->get_iarg('threadID');
             $postID = $event->get_iarg('postID');
             $this->delete_post($postID);
             $page->set_redirect(make_link("forum/view/" . $threadID));
         }
-        if ($event->page_matches("forum/nuke/{threadID}", permission: ForumPermission::FORUM_ADMIN)) {
+        if ($event->page_matches("forum/nuke/{threadID}", method: "GET", permission: ForumPermission::FORUM_ADMIN)) {
             $threadID = $event->get_iarg('threadID');
             $this->delete_thread($threadID);
             $page->set_redirect(make_link("forum/index"));
         }
-        if ($event->page_matches("forum/answer", permission: ForumPermission::FORUM_CREATE)) {
+        if ($event->page_matches("forum/answer", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
             $threadID = int_escape($event->POST->req("threadID"));
-            $total_pages = $this->get_total_pages_for_thread($threadID);
-            $errors = $this->sanity_check_new_post();
+            $errors = $this->sanity_check_new_post($event->POST);
             if (count($errors) > 0) {
                 throw new InvalidInput(implode("<br>", $errors));
             }
+            $total_pages = $this->get_total_pages_for_thread($threadID);
             $this->save_new_post($threadID, $user);
             $page->set_redirect(make_link("forum/view/" . $threadID . "/" . $total_pages));
         }
-
     }
 
     private function get_total_pages_for_thread(int $threadID): int
@@ -167,20 +161,16 @@ final class Forum extends Extension
     /**
      * @return string[]
      */
-    private function sanity_check_new_thread(): array
+    private function sanity_check_new_thread(QueryArray $data): array
     {
         $errors = [];
-        if (!array_key_exists("title", $_POST)) {
-            $errors[] = "No title supplied.";
-        } elseif (strlen($_POST["title"]) === 0) {
+        if (empty($data["title"])) {
             $errors[] = "You cannot have an empty title.";
-        } elseif (strlen($_POST["title"]) > 255) {
+        } elseif (strlen($data["title"]) > 255) {
             $errors[] = "Your title is too long.";
         }
 
-        if (!array_key_exists("message", $_POST)) {
-            $errors[] = "No message supplied.";
-        } elseif (strlen($_POST["message"]) === 0) {
+        if (empty($data["message"])) {
             $errors[] = "You cannot have an empty message.";
         }
 
@@ -190,33 +180,16 @@ final class Forum extends Extension
     /**
      * @return string[]
      */
-    private function sanity_check_new_post(): array
+    private function sanity_check_new_post(QueryArray $data): array
     {
         $errors = [];
-        if (!array_key_exists("threadID", $_POST)) {
+        if (empty($data["threadID"]) || !is_numeric($data["threadID"])) {
             $errors[] = "No thread ID supplied.";
-        } elseif (strlen($_POST["threadID"]) === 0) {
-            $errors[] = "No thread ID supplied.";
-        } elseif (is_numeric($_POST["threadID"])) {
-            if (!array_key_exists("message", $_POST)) {
-                $errors[] = "No message supplied.";
-            } elseif (strlen($_POST["message"]) === 0) {
-                $errors[] = "You cannot have an empty message.";
-            }
+        }
+        if (empty($data["message"])) {
+            $errors[] = "You cannot have an empty message.";
         }
 
-        return $errors;
-    }
-
-    /**
-     * @return string[]
-     */
-    private function sanity_check_viewed_thread(int $threadID): array
-    {
-        $errors = [];
-        if (!$this->threadExists($threadID)) {
-            $errors[] = "Inexistent thread.";
-        }
         return $errors;
     }
 
@@ -250,6 +223,12 @@ final class Forum extends Extension
     private function show_posts(int $threadID, int $pageNumber, bool $showAdminOptions = false): void
     {
         global $database;
+
+        $result = Ctx::$database->get_one("SELECT COUNT(*) FROM forum_threads WHERE id=:id", ['id' => $threadID]);
+        if ($result !== 1) {
+            throw new ObjectNotFound("Thread not found");
+        }
+
         $postsPerPage = Ctx::$config->get(ForumConfig::POSTS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id' => $threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
@@ -319,11 +298,5 @@ final class Forum extends Extension
     private function delete_post(int $postID): void
     {
         Ctx::$database->execute("DELETE FROM forum_posts WHERE id = :id", ['id' => $postID]);
-    }
-
-    private function threadExists(int $threadID): bool
-    {
-        $result = Ctx::$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id' => $threadID]);
-        return $result === 1;
     }
 }
