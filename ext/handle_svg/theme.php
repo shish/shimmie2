@@ -12,7 +12,7 @@ class SVGFileHandlerTheme extends Themelet
     {
         $html = IMG([
             'alt' => 'main image',
-            'src' => make_link("get_svg/{$image->id}/{$image->id}.svg"),
+            'src' => $image->get_image_link(),
             'id' => 'main_image',
             'class' => 'shm-main-image',
             'data-width' => $image->width,

@@ -14,22 +14,6 @@ final class SVGFileHandler extends DataHandlerExtension
     /** @var SVGFileHandlerTheme */
     protected Themelet $theme;
 
-    public function onPageRequest(PageRequestEvent $event): void
-    {
-        if ($event->page_matches("get_svg/{id}")) {
-            $id = $event->get_iarg('id');
-            $image = Image::by_id_ex($id);
-            $hash = $image->hash;
-
-            $sanitizer = new Sanitizer();
-            $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash)->get_contents();
-            $cleanSVG = false_throws($sanitizer->sanitize($dirtySVG));
-
-            Ctx::$page->set_data(MimeType::SVG, $cleanSVG);
-        }
-    }
-
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {
