@@ -51,15 +51,13 @@ final class RegenThumb extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
-            $event->add_action("bulk_regen", "Regen Thumbnails", block: $this->theme->bulk_html());
-        }
+        $event->add_action("regen-thumb", "Regen Thumbnails", block: $this->theme->bulk_html(), permission: ImagePermission::DELETE_IMAGE);
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_regen":
+            case "regen-thumb":
                 if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $force = true;
                     if (isset($event->params["bulk_regen_thumb_missing_only"])

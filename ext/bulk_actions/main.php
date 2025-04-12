@@ -17,7 +17,8 @@ final readonly class BulkAction
         public ?string $access_key = null,
         public string $confirmation_message = "",
         public ?HTMLElement $block = null,
-        public int $position = 40
+        public int $position = 40,
+        public ?string $permission = null,
     ) {
     }
 }
@@ -36,7 +37,8 @@ final class BulkActionBlockBuildingEvent extends Event
         ?string $access_key = null,
         string $confirmation_message = "",
         ?HTMLElement $block = null,
-        int $position = 40
+        int $position = 40,
+        ?string $permission = null,
     ): void {
         if (!empty($access_key)) {
             assert(strlen($access_key) === 1);
@@ -53,7 +55,8 @@ final class BulkActionBlockBuildingEvent extends Event
             $access_key,
             $confirmation_message,
             $block,
-            $position
+            $position,
+            $permission,
         );
     }
 }
@@ -90,55 +93,50 @@ final class BulkActions extends Extension
 
         send_event($babbe);
 
-        if (count($babbe->actions) === 0) {
+        $actions = $babbe->actions;
+        if (count($actions) === 0) {
             return;
         }
 
-        usort($babbe->actions, $this->sort_blocks(...));
-        $this->theme->display_selector($babbe->actions, Tag::implode($event->search_terms));
+        $actions = array_filter($actions, fn ($a) => $a->permission === null || Ctx::$user->can($a->permission));
+        usort($actions, $this->sort_blocks(...));
+        $this->theme->display_selector($actions, Tag::implode($event->search_terms));
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
-            $event->add_action("bulk_delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10);
-        }
-
-        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-            $event->add_action("bulk_tag", "Tag", "t", "", $this->theme->render_tag_input(), 10);
-        }
-
-        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
-            $event->add_action("bulk_source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10);
-        }
+        $event->add_action("delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10, permission: ImagePermission::DELETE_IMAGE);
+        $event->add_action("tag", "Tag", "t", "", $this->theme->render_tag_input(), 10, permission: BulkActionsPermission::BULK_EDIT_IMAGE_TAG);
+        $event->add_action("source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10, permission: BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE);
     }
 
     public function onCliGen(CliGenEvent $event): void
     {
-        $event->app->register('bulk-action')
-            ->addArgument('action', InputArgument::REQUIRED)
-            ->addArgument('query', InputArgument::REQUIRED)
-            ->setDescription('Perform a bulk action on a given query')
-            ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $action = $input->getArgument('action');
-                $query = $input->getArgument('query');
-                $items = $this->yield_search_results($query);
-                Log::info("bulk_actions", "Performing $action on $query");
-                send_event(new BulkActionEvent($action, $items, new QueryArray([])));
-                return Command::SUCCESS;
-            });
+        foreach (send_event(new BulkActionBlockBuildingEvent())->actions as $action) {
+            $event->app->register("bulk:" . $action->action)
+                ->addArgument('query', InputArgument::REQUIRED)
+                ->setDescription($action->button_text)
+                ->setCode(function (InputInterface $input, OutputInterface $output) use ($action): int {
+                    $query = $input->getArgument('query');
+                    $items = $this->yield_search_results($query);
+                    Log::info("bulk_actions", "Performing {$action->action} on $query");
+                    send_event(new BulkActionEvent($action->action, $items, new QueryArray([])));
+                    return Command::SUCCESS;
+                });
+
+        }
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_delete":
+            case "delete":
                 if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $i = $this->delete_posts($event->items);
                     $event->log_action("Deleted $i[0] items, totaling ".human_filesize($i[1]));
                 }
                 break;
-            case "bulk_tag":
+            case "tag":
                 if (!isset($event->params['bulk_tags'])) {
                     return;
                 }
@@ -153,7 +151,7 @@ final class BulkActions extends Extension
                     $event->log_action("Tagged $i items");
                 }
                 break;
-            case "bulk_source":
+            case "source":
                 if (!isset($event->params['bulk_source'])) {
                     return;
                 }

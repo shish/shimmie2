@@ -277,15 +277,20 @@ final class Ratings extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
-            $event->add_action("bulk_rate", "Set (R)ating", "r", "", $this->theme->get_selection_rater_html(selected_options: ["?"]));
-        }
+        $event->add_action(
+            "rate",
+            "Set (R)ating",
+            "r",
+            "",
+            $this->theme->get_selection_rater_html(selected_options: ["?"]),
+            permission: RatingsPermission::BULK_EDIT_IMAGE_RATING
+        );
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_rate":
+            case "rate":
                 if (!isset($event->params['rating'])) {
                     return;
                 }

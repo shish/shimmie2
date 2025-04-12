@@ -64,15 +64,13 @@ final class Media extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(MediaPermission::RESCAN_MEDIA)) {
-            $event->add_action("bulk_media_rescan", "Scan Media Properties");
-        }
+        $event->add_action("media-rescan", "Scan Media Properties", permission: MediaPermission::RESCAN_MEDIA);
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_media_rescan":
+            case "media-rescan":
                 if (Ctx::$user->can(MediaPermission::RESCAN_MEDIA)) {
                     $total = 0;
                     $failed = 0;

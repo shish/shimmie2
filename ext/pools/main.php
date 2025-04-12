@@ -480,19 +480,17 @@ final class Pools extends Extension
     {
         global $database;
 
-        if (!Ctx::$user->can(PoolsPermission::UPDATE)) {
-            $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
+        $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
-            // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.
-            $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", $this->theme->get_bulk_pool_selector($options));
-            $event->add_action("bulk_pool_add_new", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms));
-        }
+        // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.
+        $event->add_action("pool-extend", "Add To (P)ool", "p", "", $this->theme->get_bulk_pool_selector($options), permission: PoolsPermission::UPDATE);
+        $event->add_action("pool-create", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms), permission: PoolsPermission::UPDATE);
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case "bulk_pool_add_existing":
+            case "pool-extend":
                 $pool_id = intval($event->params['bulk_pool_select']);
                 $pool = $this->get_single_pool($pool_id);
 
@@ -502,7 +500,7 @@ final class Pools extends Extension
                     );
                 }
                 break;
-            case "bulk_pool_add_new":
+            case "pool-create":
                 $new_pool_title = $event->params->req('bulk_pool_new');
                 $pce = send_event(new PoolCreationEvent($new_pool_title));
                 send_event(new PoolAddPostsEvent($pce->new_id, iterator_map_to_array(_image_to_id(...), $event->items)));

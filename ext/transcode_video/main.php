@@ -57,21 +57,20 @@ final class TranscodeVideo extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(ImagePermission::EDIT_FILES)) {
-            $event->add_action(
-                self::ACTION_BULK_TRANSCODE,
-                "Transcode Video",
-                null,
-                "",
-                $this->theme->get_transcode_picker_html(self::get_output_options())
-            );
-        }
+        $event->add_action(
+            "transcode-video",
+            "Transcode Video",
+            null,
+            "",
+            $this->theme->get_transcode_picker_html(self::get_output_options()),
+            permission: ImagePermission::EDIT_FILES,
+        );
     }
 
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
-            case self::ACTION_BULK_TRANSCODE:
+            case "transcode-video":
                 if (!isset($event->params['transcode_format'])) {
                     return;
                 }
