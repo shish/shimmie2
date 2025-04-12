@@ -37,13 +37,13 @@ class ForumTheme extends Themelet
         $html = SHM_SIMPLE_FORM(
             make_link("forum/create"),
             TABLE(
-                ["style" => "width: 500px;"],
+                ["class" => "form"],
                 TR(
-                    TD("Title:"),
+                    TH("Title"),
                     TD(INPUT(["type" => "text", "name" => "title", "value" => $threadTitle]))
                 ),
                 TR(
-                    TD("Message:"),
+                    TH("Message"),
                     TD(TEXTAREA(
                         ["id" => "message", "name" => "message"],
                         $threadText
@@ -63,7 +63,7 @@ class ForumTheme extends Themelet
                 TR(
                     TD(
                         ["colspan" => 2],
-                        INPUT(["type" => "submit", "value" => "Submit"])
+                        SHM_SUBMIT("Create"),
                     )
                 )
             )
@@ -82,9 +82,9 @@ class ForumTheme extends Themelet
             make_link("forum/answer"),
             INPUT(["type" => "hidden", "name" => "threadID", "value" => $threadID]),
             TABLE(
-                ["style" => "width: 500px;"],
+                ["class" => "form"],
                 TR(
-                    TD("Message:"),
+                    TH("Message"),
                     TD(TEXTAREA(["id" => "message", "name" => "message"]))
                 ),
                 TR(
@@ -94,7 +94,7 @@ class ForumTheme extends Themelet
                 TR(
                     TD(
                         ["colspan" => 2],
-                        INPUT(["type" => "submit", "value" => "Submit"])
+                        SHM_SUBMIT("Reply"),
                     )
                 )
             )
@@ -131,7 +131,12 @@ class ForumTheme extends Themelet
                             ["class" => "forumSupmessage"],
                             DIV(
                                 ["class" => "deleteLink"],
-                                $showAdminOptions ? A(["href" => make_link("forum/delete/".$threadID."/".$post['id'])], "Delete") : null
+                                $showAdminOptions
+                                    ? SHM_SIMPLE_FORM(
+                                        make_link("forum/delete/$threadID/" . $post['id']),
+                                        SHM_SUBMIT("Delete"),
+                                    )
+                                    : null
                             )
                         )
                     ),
@@ -166,7 +171,7 @@ class ForumTheme extends Themelet
         $html = emptyHTML(
             DIV(
                 ["id" => "returnLink"],
-                A(["href" => make_link("forum/index/")], "Return")
+                A(["href" => make_link("forum/index")], "Return")
             ),
             BR(),
             BR(),
@@ -189,8 +194,11 @@ class ForumTheme extends Themelet
 
     public function add_actions_block(int $threadID): void
     {
-        $html = A(["href" => make_link("forum/nuke/".$threadID)], "Delete this thread and its posts.");
-        Ctx::$page->add_block(new Block("Admin Actions", $html, "main", 140));
+        $html = SHM_SIMPLE_FORM(
+            make_link("forum/nuke/".$threadID),
+            SHM_SUBMIT("Delete Thread"),
+        );
+        Ctx::$page->add_block(new Block("Admin Actions", $html, "left"));
     }
 
     /**
@@ -229,7 +237,12 @@ class ForumTheme extends Themelet
                     ),
                     TD(SHM_DATE($thread["uptodate"])),
                     TD($thread["response_count"]),
-                    $showAdminOptions ? TD(A(["href" => make_link("forum/nuke/".$thread["id"])], "Delete")) : null
+                    $showAdminOptions ? TD(
+                        SHM_SIMPLE_FORM(
+                            make_link("forum/nuke/".$thread["id"]),
+                            SHM_SUBMIT("Delete"),
+                        )
+                    ) : null
                 )
             );
         }
