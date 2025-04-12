@@ -102,11 +102,6 @@ final class Forum extends Extension
         if ($event->page_matches("forum/view/{threadID}", method: "GET", paged: true)) {
             $threadID = $event->get_iarg('threadID');
             $pageNumber = $event->get_iarg('page_num', 1) - 1;
-            $errors = $this->sanity_check_viewed_thread($threadID);
-
-            if (count($errors) > 0) {
-                throw new InvalidInput(implode("<br>", $errors));
-            }
 
             $this->show_posts($threadID, $pageNumber, $user->can(ForumPermission::FORUM_ADMIN));
             if ($user->can(ForumPermission::FORUM_ADMIN)) {
@@ -150,7 +145,6 @@ final class Forum extends Extension
             $this->save_new_post($threadID, $user);
             $page->set_redirect(make_link("forum/view/" . $threadID . "/" . $total_pages));
         }
-
     }
 
     private function get_total_pages_for_thread(int $threadID): int
@@ -199,18 +193,6 @@ final class Forum extends Extension
         return $errors;
     }
 
-    /**
-     * @return string[]
-     */
-    private function sanity_check_viewed_thread(int $threadID): array
-    {
-        $errors = [];
-        if (!$this->threadExists($threadID)) {
-            $errors[] = "Inexistent thread.";
-        }
-        return $errors;
-    }
-
     private function get_thread_title(int $threadID): string
     {
         return Ctx::$database->get_one("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id' => $threadID]);
@@ -241,6 +223,12 @@ final class Forum extends Extension
     private function show_posts(int $threadID, int $pageNumber, bool $showAdminOptions = false): void
     {
         global $database;
+
+        $result = Ctx::$database->get_one("SELECT COUNT(*) FROM forum_threads WHERE id=:id", ['id' => $threadID]);
+        if ($result !== 1) {
+            throw new ObjectNotFound("Thread not found");
+        }
+
         $postsPerPage = Ctx::$config->get(ForumConfig::POSTS_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id' => $threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
@@ -310,11 +298,5 @@ final class Forum extends Extension
     private function delete_post(int $postID): void
     {
         Ctx::$database->execute("DELETE FROM forum_posts WHERE id = :id", ['id' => $postID]);
-    }
-
-    private function threadExists(int $threadID): bool
-    {
-        $result = Ctx::$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id=:id)", ['id' => $threadID]);
-        return $result === 1;
     }
 }
