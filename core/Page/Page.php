@@ -104,6 +104,16 @@ class Page
 
     // ==============================================
 
+    public ?UserError $error = null;
+
+    public function set_error(UserError $error): void
+    {
+        $this->mode = PageMode::ERROR;
+        $this->error = $error;
+    }
+
+    // ==============================================
+
     public int $code = 200;
     public string $title = "";
     public string $heading = "";
@@ -265,6 +275,7 @@ class Page
         match($this->mode) {
             PageMode::MANUAL => null,
             PageMode::PAGE => $this->display_page(),
+            PageMode::ERROR => $this->display_error(),
             PageMode::DATA => $this->display_data(),
             PageMode::FILE => $this->display_file(),
             PageMode::REDIRECT => $this->display_redirect(),
@@ -272,7 +283,7 @@ class Page
         Ctx::$tracer->end();
     }
 
-    private function display_page(): void
+    protected function display_page(): void
     {
         $this->send_headers();
         usort($this->blocks, Block::cmp(...));
@@ -280,7 +291,18 @@ class Page
         $this->render();
     }
 
-    private function display_data(): void
+    protected function display_error(): void
+    {
+        $error = $this->error;
+        assert($error !== null);
+        $this->set_code($error->http_code);
+        $this->set_title("Error");
+        $this->blocks = [];
+        $this->add_block(new Block(null, \MicroHTML\SPAN($error->getMessage())));
+        $this->display_page();
+    }
+
+    protected function display_data(): void
     {
         $this->send_headers();
         header("Content-Length: " . strlen($this->data));
@@ -290,7 +312,7 @@ class Page
         print $this->data;
     }
 
-    private function display_file(): void
+    protected function display_file(): void
     {
         $this->send_headers();
         if (!is_null($this->filename)) {
@@ -345,7 +367,7 @@ class Page
         }
     }
 
-    private function display_redirect(): void
+    protected function display_redirect(): void
     {
         $this->send_headers();
         if ($this->flash) {
