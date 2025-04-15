@@ -59,65 +59,66 @@ Ctx::$tracer->end();
 
 function main(): int
 {
+    // nested try-catch blocks so that we can try to handle user-errors
+    // in a pretty and theme-customisable way, but if that breaks, the
+    // breakage will be handled by the server-error handler
     try {
-        // Ctx::$tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
-        Ctx::$tracer->begin(
-            $_SERVER["REQUEST_URI"] ?? "No Request",
-            [
-                "user" => $_COOKIE["shm_user"] ?? "No User",
-                "ip" => Network::get_real_ip(),
-                "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
-            ]
-        );
+        try {
+            // Ctx::$tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
+            Ctx::$tracer->begin(
+                $_SERVER["REQUEST_URI"] ?? "No Request",
+                [
+                    "user" => $_COOKIE["shm_user"] ?? "No User",
+                    "ip" => Network::get_real_ip(),
+                    "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
+                ]
+            );
 
-        if (!Ctx::$config->get(SetupConfig::NO_AUTO_DB_UPGRADE)) {
-            send_event(new DatabaseUpgradeEvent());
-        }
-        send_event(new InitExtEvent());
-
-        // start the page generation waterfall
-        Ctx::setUser(_get_user());
-        send_event(new UserLoginEvent(Ctx::$user));
-        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
-            ob_end_flush();
-            ob_implicit_flush(true);
-            $app = new CliApp();
-            send_event(new CliGenEvent($app));
-            if ($app->run() !== 0) {
-                throw new \Exception("CLI command failed");
+            if (!Ctx::$config->get(SetupConfig::NO_AUTO_DB_UPGRADE)) {
+                send_event(new DatabaseUpgradeEvent());
             }
-        } else {
-            send_event(new PageRequestEvent(
-                $_SERVER['REQUEST_METHOD'],
-                _get_query(),
-                new QueryArray($_GET),
-                new QueryArray($_POST)
-            ));
+            send_event(new InitExtEvent());
+
+            // start the page generation waterfall
+            Ctx::setUser(_get_user());
+            send_event(new UserLoginEvent(Ctx::$user));
+            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+                ob_end_flush();
+                ob_implicit_flush(true);
+                $app = new CliApp();
+                send_event(new CliGenEvent($app));
+                if ($app->run() !== 0) {
+                    throw new \Exception("CLI command failed");
+                }
+            } else {
+                send_event(new PageRequestEvent(
+                    $_SERVER['REQUEST_METHOD'],
+                    _get_query(),
+                    new QueryArray($_GET),
+                    new QueryArray($_POST)
+                ));
+                Ctx::$page->display();
+            }
+
+            if (Ctx::$database->is_transaction_open()) {
+                Ctx::$database->commit();
+            }
+
+            // saving cache data and profiling data to disk can happen later
+            if (function_exists("fastcgi_finish_request")) {
+                fastcgi_finish_request();
+            }
+            $exit_code = 0;
+        } catch (UserError $e) {
+            if (Ctx::$database->is_transaction_open()) {
+                Ctx::$database->rollback();
+            }
+            Ctx::$page->set_error($e);
             Ctx::$page->display();
+            $exit_code = 2;
         }
-
-        if (Ctx::$database->is_transaction_open()) {
-            Ctx::$database->commit();
-        }
-
-        // saving cache data and profiling data to disk can happen later
-        if (function_exists("fastcgi_finish_request")) {
-            fastcgi_finish_request();
-        }
-        $exit_code = 0;
     } catch (\Throwable $e) {
-        if (Ctx::$database->is_transaction_open()) {
-            Ctx::$database->rollback();
-        }
-        if (is_a($e, \Shimmie2\UserError::class)) {
-            Ctx::$page->set_mode(PageMode::PAGE);
-            Ctx::$page->set_code($e->http_code);
-            Ctx::$page->set_title("Error");
-            Ctx::$page->add_block(new Block(null, \MicroHTML\SPAN($e->getMessage())));
-            Ctx::$page->display();
-        } else {
-            _fatal_error($e);
-        }
+        _fatal_error($e);
         $exit_code = 1;
     } finally {
         Ctx::$tracer->end();
