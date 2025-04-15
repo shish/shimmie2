@@ -48,7 +48,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
             "public" => "Y",
             "description" => "My pool description",
         ]);
-        $pool_id = (int)(explode("/", $page->redirect)[4]);
+        $pool_id = (int)(explode("/", (string)$page->redirect)[4]);
         send_event(new PoolAddPostsEvent($pool_id, [$image_id_1, $image_id_2]));
 
         self::assertGreaterThan(0, $pool_id);
@@ -174,7 +174,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
             "public" => "Y",
             "description" => "My pool description",
         ]);
-        $pool_id = (int)(explode("/", $page->redirect)[4]);
+        $pool_id = (int)(explode("/", (string)$page->redirect)[4]);
         send_event(new PoolAddPostsEvent($pool_id, [$image_id_1, $image_id_2]));
 
         $page = self::post_page("pool/nuke/$pool_id");

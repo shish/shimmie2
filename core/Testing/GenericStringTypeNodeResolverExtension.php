@@ -3,23 +3,12 @@
 namespace Shimmie2;
 
 use PHPStan\Analyser\NameScope;
-use PHPStan\PhpDoc\{TypeNodeResolver, TypeNodeResolverAwareExtension, TypeNodeResolverExtension};
+use PHPStan\PhpDoc\{TypeNodeResolverExtension};
 use PHPStan\PhpDocParser\Ast\Type\{IdentifierTypeNode, TypeNode};
 use PHPStan\Type\Type;
 
-//use PHPStan\Type\TypeCombinator;
-
-class GenericStringTypeNodeResolverExtension implements TypeNodeResolverExtension //, TypeNodeResolverAwareExtension
+class GenericStringTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
-    /*
-    // @ phpstan-ignore-next-line
-    private TypeNodeResolver $typeNodeResolver;
-
-    public function setTypeNodeResolver(TypeNodeResolver $typeNodeResolver): void
-    {
-        $this->typeNodeResolver = $typeNodeResolver;
-    }
-*/
     public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
     {
         if ($typeNode instanceof IdentifierTypeNode) {
@@ -35,7 +24,7 @@ class GenericStringTypeNodeResolverExtension implements TypeNodeResolverExtensio
                 // 'page-string' => new PageStringType(),
                 'fragment-string' => new MatchyStringType(
                     'fragment-string',
-                    fn ($v) => preg_match('/^[a-z\-]+$/', $v) === 1
+                    fn ($v) => preg_match('/^[a-z\-=]+$/', $v) === 1
                 ),
                 'internal-hash-string' => new MatchyStringType(
                     'hash-string',

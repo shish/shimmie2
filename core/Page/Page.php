@@ -90,7 +90,7 @@ class Page
 
     // ==============================================
 
-    public string $redirect = "";
+    public ?Url $redirect = null;
 
     /**
      * Set the URL to redirect to (remember to use make_link() if linking
@@ -99,7 +99,7 @@ class Page
     public function set_redirect(Url $redirect): void
     {
         $this->mode = PageMode::REDIRECT;
-        $this->redirect = (string)$redirect;
+        $this->redirect = $redirect;
     }
 
     // ==============================================
@@ -370,8 +370,11 @@ class Page
     protected function display_redirect(): void
     {
         $this->send_headers();
+        if ($this->redirect === null) {
+            throw new ServerError("PageMode is REDIRECT but no redirect is set");
+        }
         if ($this->flash) {
-            $this->redirect = (string)Url::parse($this->redirect)->withModifiedQuery(["flash" => implode("\n", $this->flash)]);
+            $this->redirect = $this->redirect->withModifiedQuery(["flash" => implode("\n", $this->flash)]);
         }
         header('Location: ' . $this->redirect);
         print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
