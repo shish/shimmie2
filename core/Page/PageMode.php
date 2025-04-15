@@ -11,4 +11,5 @@ enum PageMode
     case PAGE;
     case FILE;
     case MANUAL;
+    case ERROR;
 }

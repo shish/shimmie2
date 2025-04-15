@@ -163,7 +163,6 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             PageMode::DATA => $page->data,
             PageMode::REDIRECT => self::fail("Page mode is REDIRECT ({$page->redirect}) (only PAGE and DATA are supported)"),
             PageMode::FILE => self::fail("Page mode is FILE (only PAGE and DATA are supported)"),
-            // @phpstan-ignore-next-line
             PageMode::MANUAL => self::fail("Page mode is MANUAL (only PAGE and DATA are supported)"),
             default => self::fail("Unknown page mode {$page->mode->name}"),  // just for phpstan
         };
