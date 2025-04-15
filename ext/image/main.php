@@ -186,11 +186,11 @@ final class ImageIO extends Extension
             $page->set_data(MimeType::TEXT, "");
         } else {
             $page->add_http_header("Last-Modified: $gmdate_mod");
-            if ($type !== "thumb") {
-                $page->set_filename($image->get_nice_image_name(), 'inline');
+            if ($type === "thumb") {
+                $page->set_file($mime, $file);
+            } else {
+                $page->set_file($mime, $file, filename: $image->get_nice_image_name(), disposition: "inline");
             }
-
-            $page->set_file($mime, $file);
 
             if (Ctx::$config->get(ImageConfig::EXPIRES)) {
                 $expires = date(DATE_RFC1123, time() + Ctx::$config->get(ImageConfig::EXPIRES));
