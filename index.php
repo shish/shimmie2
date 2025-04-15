@@ -110,10 +110,7 @@ function main(): int
             Ctx::$database->rollback();
         }
         if (is_a($e, \Shimmie2\UserError::class)) {
-            Ctx::$page->set_mode(PageMode::PAGE);
-            Ctx::$page->set_code($e->http_code);
-            Ctx::$page->set_title("Error");
-            Ctx::$page->add_block(new Block(null, \MicroHTML\SPAN($e->getMessage())));
+            Ctx::$page->set_error($e);
             Ctx::$page->display();
         } else {
             _fatal_error($e);
