@@ -123,8 +123,7 @@ final class BulkImportExport extends DataHandlerExtension
 
                 $zip->close();
 
-                Ctx::$page->set_file(MimeType::ZIP, $zip_filename, true);
-                Ctx::$page->set_filename(Ctx::$user->name . '-' . date('YmdHis') . '.zip');
+                Ctx::$page->set_file(MimeType::ZIP, $zip_filename, true, filename: Ctx::$user->name . '-' . date('YmdHis') . '.zip');
 
                 $event->redirect = false;
             }

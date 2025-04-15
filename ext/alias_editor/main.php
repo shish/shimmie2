@@ -85,8 +85,7 @@ final class AliasEditor extends Extension
             $this->theme->display_aliases($t->table($t->query()), $t->paginator());
         }
         if ($event->page_matches("alias/export/aliases.csv")) {
-            $page->set_filename("aliases.csv");
-            $page->set_data(MimeType::CSV, $this->get_alias_csv($database));
+            $page->set_data(MimeType::CSV, $this->get_alias_csv($database), filename: "aliases.csv");
         }
         if ($event->page_matches("alias/import", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             if (count($_FILES) > 0) {

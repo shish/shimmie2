@@ -1,4 +1,22 @@
-# Themes in Shimmie
+# Shimmie HTTP Responses
+
+## Page
+
+The class handling HTTP responses is `Page` (which ideally would've been called `Response`, but hindsight is 20/20) - it has several modes:
+
+* The default mode is `PAGE` which generates an HTML page by merging all the `Block`s according to the current theme's layout code
+  * When in page mode, several parts of the page can be customised:
+    * `$page->set_title($text)` (this will also set the heading if the heading is empty, so that you can avoid needing to call both functions every time)
+    * `$page->set_heading($text)`
+    * `$page->set_layout($name)`
+    * `$page->add_block($block)`
+* `$page->set_redirect($url)` redirects the user to the given URL
+* `$page->set_data($type, $data)` returns raw data
+* `$page->set_file($type, $filename)` will output the given file from disk
+* There are some other modes for niche and internal use-cases, but those cover 99% of what you need to know when writing extensions
+
+
+## Themes
 
 Theme customisation is done by creating files in `themes/<theme name>`.
 

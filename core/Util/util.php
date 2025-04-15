@@ -149,6 +149,19 @@ function ftime(): float
     return microtime(true);
 }
 
+function truncate_filename(?string $filename, int $max_len = 250): ?string
+{
+    if ($filename === null) {
+        return null;
+    }
+    if (strlen($filename) > $max_len) {
+        // remove extension, truncate filename, apply extension
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        $filename = substr($filename, 0, $max_len - strlen($ext) - 1) . '.' . $ext;
+    }
+    return $filename;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Debugging functions                                                       *
