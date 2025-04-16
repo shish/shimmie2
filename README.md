@@ -10,7 +10,7 @@
 
 # Shimmie
 
-[![Tests](https://github.com/shish/shimmie2/workflows/Tests/badge.svg?branch=main)](https://github.com/shish/shimmie2/actions)
+[![Tests](https://github.com/shish/shimmie2/actions/workflows/tests.yml/badge.svg)](https://github.com/shish/shimmie2/actions/workflows/tests.yml)
 [![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/#shimmie:matrix.org)
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/shish/shimmie2?quickstart=1)
