@@ -223,8 +223,6 @@ final class AutoTagger extends Extension
                 "Added auto-tag for {$tag} -> {".implode(" ", $additional_tags)."}"
             );
         }
-        // Now we apply it to existing items
-        $this->apply_new_auto_tag($tag);
     }
 
     private function remove_auto_tag(string $tag): void

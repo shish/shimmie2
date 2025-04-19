@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @var \Shimmie2\Database $database */
+global $database;
+
 final class ImageRating
 {
     /** @var array<string, ImageRating> */
@@ -113,35 +116,38 @@ final class Ratings extends Extension
         }
     }
 
-    public function onBulkExport(BulkExportEvent $event): void
-    {
-        $event->fields["rating"] = $event->image['rating'];
-    }
     public function onBulkImport(BulkImportEvent $event): void
     {
-        if (array_key_exists("rating", $event->fields)
-            && $event->fields['rating'] !== null
-            && Ratings::rating_is_valid($event->fields['rating'])) {
-            $this->set_rating($event->image->id, $event->fields['rating'], "");
+        if (!array_key_exists("rating", $event->fields) || $event->fields['rating'] === null) {
+            return;
+        }
+
+        /** @var string $raw_rating */
+        $raw_rating = is_string($event->fields['rating']) ? $event->fields['rating'] : '';
+
+        $rating = self::safe_rating($raw_rating);
+
+        if (self::rating_is_valid($rating)) {
+            $this->set_rating($event->image->id, $rating, "");
         }
     }
 
     public function onRatingSet(RatingSetEvent $event): void
     {
-        if (empty($event->image['rating'])) {
-            $old_rating = "";
-        } else {
-            $old_rating = $event->image['rating'];
-        }
-        $this->set_rating($event->image->id, $event->rating, $old_rating);
+        /** @var string $old_rating */
+        $old_rating = is_string($event->image['rating']) ? $event->image['rating'] : '';
+
+        $this->set_rating($event->image->id, $event->rating, self::safe_rating($old_rating));
     }
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
+        $rating = is_string($event->image['rating']) ? $event->image['rating'] : '?';
+
         $event->add_part(
             $this->theme->get_image_rater_html(
                 $event->image->id,
-                $event->image['rating'],
+                $rating,
                 Ctx::$user->can(RatingsPermission::EDIT_IMAGE_RATING)
             ),
             80
@@ -152,32 +158,30 @@ final class Ratings extends Extension
     {
         if (
             Ctx::$user->can(RatingsPermission::EDIT_IMAGE_RATING) && (
-                isset($event->params['rating'])
-                || isset($event->params["rating{$event->slot}"])
+                isset($event->params['rating']) || isset($event->params["rating{$event->slot}"])
             )
         ) {
-            $common_rating = $event->params['rating'] ?? "";
-            $my_rating = $event->params["rating{$event->slot}"] ?? "";
-            $rating = Ratings::rating_is_valid($my_rating) ? $my_rating : $common_rating;
-            if (Ratings::rating_is_valid($rating)) {
-                try {
-                    send_event(new RatingSetEvent($event->image, $rating));
-                } catch (RatingSetException $e) {
-                    if ($e->redirect) {
-                        Ctx::$page->flash("{$e->getMessage()}, please see {$e->redirect}");
-                    } else {
-                        Ctx::$page->flash($e->getMessage());
-                    }
-                    throw $e;
-                }
-            }
+            /** @var string|null $common_rating */
+            $common_rating = $event->params['rating'] ?? null;
+
+            /** @var string|null $my_rating */
+            $my_rating = $event->params["rating{$event->slot}"] ?? null;
+
+            // Sanitize inputs to guaranteed strings
+            $sanitized_my_rating = Ratings::safe_rating($my_rating);
+            $sanitized_common_rating = Ratings::safe_rating($common_rating);
+            $sanitized_old_rating = Ratings::safe_rating($event->image['rating'] ?? null);
+
+            $final_rating = Ratings::rating_is_valid($sanitized_my_rating) ? $sanitized_my_rating : $sanitized_common_rating;
+
+            $this->set_rating($event->image->id, $final_rating, $sanitized_old_rating);
         }
     }
 
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         if (!is_null($event->image['rating'])) {
-            $event->replace('$rating', self::rating_to_human($event->image['rating']));
+            $event->replace('$rating', self::rating_to_human(self::safe_rating($event->image['rating'])));
         }
     }
 
@@ -233,13 +237,15 @@ final class Ratings extends Extension
 
             $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs(Ctx::$user));
             $rating = $ratings[0];
+            /** @var Image $image */
             $image = Image::by_id_ex($event->image_id);
-            send_event(new RatingSetEvent($image, $rating));
+            send_event(new RatingSetEvent($image, self::safe_rating($rating)));
         }
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
+        /** @var \Shimmie2\Database $database */
         global $database;
 
         $results = $database->get_col("SELECT DISTINCT rating FROM images ORDER BY rating");
@@ -298,7 +304,8 @@ final class Ratings extends Extension
                     $rating = $event->params['rating'];
                     $total = 0;
                     foreach ($event->items as $image) {
-                        send_event(new RatingSetEvent($image, $rating));
+                        /** @var Image $image */
+                        send_event(new RatingSetEvent($image, self::safe_rating($rating)));
                         $total++;
                     }
                     $event->log_action("Rating set for $total items");
@@ -363,15 +370,16 @@ final class Ratings extends Extension
 
         $dict = [];
         foreach ($ratings as $r) {
+            $code = $r->code ?? null;
+            $name = $r->name ?? "Unknown";
+
             if (
-                isset($r->code, $r->name) &&
-                is_string($r->code) && is_string($r->name) &&
-                trim($r->code) !== "" && trim($r->name) !== ""
+                is_string($code) &&
+                trim($code) !== "" && trim($name) !== ""
             ) {
                 $dict[trim($r->code)] = trim($r->name);
             }
         }
-
         return $dict;
     }
 
@@ -430,6 +438,17 @@ final class Ratings extends Extension
     }
 
     /**
+    * Ensure a value is a valid rating string, or return '?' if not.
+    *
+    * @param mixed $value
+    * @return string
+    */
+    public static function safe_rating(mixed $value): string
+    {
+        return is_string($value) && self::rating_is_valid($value) ? $value : '?';
+    }
+
+    /**
      * @param string[] $context
      */
     private function no_rating_query(array $context): bool
@@ -444,6 +463,7 @@ final class Ratings extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
+        /** @var \Shimmie2\Database $database */
         global $database;
 
         if ($this->get_version() < 1) {
@@ -504,6 +524,7 @@ final class Ratings extends Extension
 
     private function set_rating(int $image_id, string $rating, string $old_rating): void
     {
+        /** @var \Shimmie2\Database $database */
         global $database;
         if ($old_rating !== $rating) {
             $database->execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating' => $rating, 'id' => $image_id]);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, B, BR, CODE, INPUT, P, emptyHTML};
+use function MicroHTML\{A, B, INPUT, P, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
