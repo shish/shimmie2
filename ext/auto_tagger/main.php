@@ -196,8 +196,8 @@ final class AutoTagger extends Extension
             $additional_tags = Tag::explode($additional_tags);
             $existing_tags = Tag::explode($existing_tags);
             foreach ($additional_tags as $t) {
-                if (!in_array(strtolower($t), $existing_tags)) {
-                    $existing_tags[] = strtolower($t);
+                if (!\in_array($t, $existing_tags, true)) {
+                    $existing_tags[] = $t;
                 }
             }
 
@@ -241,14 +241,14 @@ final class AutoTagger extends Extension
         global $database;
 
         // Normalize all tags
-        $tags = array_map('strtolower', $tags_mixed);
+        $tags = $tags_mixed;
         $tag_set = array_flip($tags);
 
         // Load all rules once
         $rows = $database->get_all("SELECT tag, additional_tags FROM auto_tag");
         $rules = [];
         foreach ($rows as $row) {
-            $rules[strtolower($row['tag'])] = Tag::explode($row['additional_tags']);
+            $rules[$row['tag']] = Tag::explode($row['additional_tags']);
         }
 
         $changed = true;
@@ -282,7 +282,6 @@ final class AutoTagger extends Extension
 
                 if ($match) {
                     foreach ($additions as $tag) {
-                        $tag = strtolower($tag);
                         if (!isset($tag_set[$tag])) {
                             $tags[] = $tag;
                             $tag_set[$tag] = true;
