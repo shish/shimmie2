@@ -240,54 +240,59 @@ final class AutoTagger extends Extension
     {
         global $database;
 
-        // Convert tags to lowercase set for fast lookup
-        $tag_set = array_map('strtolower', $tags_mixed);
-        $tag_lookup = array_flip($tag_set);
+        // Normalize all tags
+        $tags = array_map('strtolower', $tags_mixed);
+        $tag_set = array_flip($tags);
 
-        // Fetch all auto-tag rules
+        // Load all rules once
         $rows = $database->get_all("SELECT tag, additional_tags FROM auto_tag");
-        $new_tags = [];
-
+        $rules = [];
         foreach ($rows as $row) {
-            $rule = strtolower($row['tag']);
-            $additions = Tag::explode($row['additional_tags']);
+            $rules[strtolower($row['tag'])] = Tag::explode($row['additional_tags']);
+        }
 
-            // Handle compound AND logic
-            if (str_contains($rule, '+')) {
-                $parts = explode('+', $rule);
-                $matched = true;
+        $changed = true;
+        while ($changed) {
+            $changed = false;
+            foreach ($rules as $rule => $additions) {
+                $match = false;
 
-                foreach ($parts as $part) {
-                    $part = trim($part);
-                    if (str_starts_with($part, '!')) {
-                        $check = substr($part, 1);
-                        if (isset($tag_lookup[$check])) {
-                            $matched = false;
-                            break;
+                if (str_contains($rule, '+')) {
+                    $parts = explode('+', $rule);
+                    $match = true;
+
+                    foreach ($parts as $part) {
+                        $part = trim($part);
+                        if (str_starts_with($part, '!')) {
+                            $check = substr($part, 1);
+                            if (isset($tag_set[$check])) {
+                                $match = false;
+                                break;
+                            }
+                        } else {
+                            if (!isset($tag_set[$part])) {
+                                $match = false;
+                                break;
+                            }
                         }
-                    } else {
-                        if (!isset($tag_lookup[$part])) {
-                            $matched = false;
-                            break;
+                    }
+                } else {
+                    $match = isset($tag_set[$rule]);
+                }
+
+                if ($match) {
+                    foreach ($additions as $tag) {
+                        $tag = strtolower($tag);
+                        if (!isset($tag_set[$tag])) {
+                            $tags[] = $tag;
+                            $tag_set[$tag] = true;
+                            $changed = true;
                         }
                     }
                 }
-
-                if ($matched) {
-                    $new_tags = array_merge($new_tags, $additions);
-                }
-            }
-            // Handle basic tag match
-            elseif (isset($tag_lookup[$rule])) {
-                $new_tags = array_merge($new_tags, $additions);
             }
         }
 
-        // Deduplicate and preserve original
-        $all_tags = array_merge($tags_mixed, $new_tags);
-        return array_values(array_intersect_key(
-            $all_tags,
-            array_unique(array_map('strtolower', $all_tags))
-        ));
+        return $tags;
     }
 }
