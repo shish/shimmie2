@@ -16,7 +16,11 @@ final class ETServerTest extends ShimmiePHPUnitTestCase
         });
 
         self::log_in_as_admin();
-        self::get_page("register.php");
+        self::get_page("et/stats");
+        self::assert_text("Database Versions");
+
+        self::log_in_as_admin();
+        self::get_page("et/registrations");
         self::assert_text("test entry");
     }
 }

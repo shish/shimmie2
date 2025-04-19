@@ -1,0 +1,9 @@
+TABLE.et-stats {
+    width: auto;
+}
+TABLE.zebra.et-stats TH {
+    text-align: right;
+}
+TABLE.et-stats TD {
+    text-align: left;
+}
