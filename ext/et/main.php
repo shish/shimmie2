@@ -7,6 +7,7 @@ namespace Shimmie2;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 final class ET extends Extension
 {
@@ -18,8 +19,8 @@ final class ET extends Extension
     {
         if ($event->page_matches("system_info", permission: ETPermission::VIEW_SYSINFO)) {
             $this->theme->display_info_page(
-                $this->to_yaml($this->get_site_info()),
-                $this->to_yaml($this->get_system_info()),
+                \Safe\preg_replace("/\n([a-z])/", "\n\n\$1", Yaml::dump($this->get_site_info(), 2, 2)),
+                Yaml::dump($this->get_system_info(), 2, 2),
             );
         }
     }
@@ -45,7 +46,7 @@ final class ET extends Extension
         $event->app->register('info')
             ->setDescription('List a bunch of info')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                print($this->to_yaml($this->get_site_info()));
+                print(Yaml::dump($this->get_site_info(), 2, 2));
                 return Command::SUCCESS;
             });
     }
@@ -80,7 +81,7 @@ final class ET extends Extension
             ],
             "versions" => [
                 'shimmie' => SysConfig::getVersion(),
-                'schema'  => $config->get("db_version"),
+                'schema'  => $config->get(Upgrade::VERSION_KEY, ConfigType::INT),
                 'php'     => phpversion(),
                 'db'      => $database->get_driver_id()->value . " " . $database->get_version(),
                 'os'      => php_uname(),
@@ -89,7 +90,7 @@ final class ET extends Extension
             "extensions" => [
                 "core" => $core_exts,
                 "extra" => $extra_exts,
-                "handled_mimes" => array_map(fn ($mime) => (string)$mime, DataHandlerExtension::get_all_supported_mimes()),
+                "handled_mimes" => array_values(array_map(fn ($mime) => (string)$mime, DataHandlerExtension::get_all_supported_mimes())),
             ],
             "stats" => [
                 'images'   => (int)$database->get_one("SELECT COUNT(*) FROM images"),
@@ -156,27 +157,5 @@ final class ET extends Extension
             "php_ini" => ini_get_all(),
         ];
         return $info;
-    }
-
-    /**
-     * @param array<string, mixed> $info
-     */
-    private function to_yaml(array $info): string
-    {
-        $data = "";
-        foreach ($info as $title => $section) {
-            if (!empty($section)) {
-                $data .= "$title:\n";
-                foreach ($section as $k => $v) {
-                    try {
-                        $data .= "  $k: " . \Safe\json_encode($v, JSON_UNESCAPED_SLASHES) . "\n";
-                    } catch (\Exception $e) {
-                        $data .= "  $k: \"(encode error)\"\n";
-                    }
-                }
-                $data .= "\n";
-            }
-        }
-        return $data;
     }
 }
