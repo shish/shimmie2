@@ -133,7 +133,7 @@ body {
 BODY.layout-grid {
 	display: grid;
 	grid-template-columns: 11.5rem auto;
-	grid-gap: 0 2rem;
+	grid-gap: 0 4rem;
 }
 BODY.layout-no-left NAV {
 	display: none;
