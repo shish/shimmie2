@@ -17,7 +17,12 @@ class RatingsTheme extends Themelet
      */
     public function get_selection_rater_html(string $name = "rating", array $ratings = [], array $selected_options = []): HTMLElement
     {
-        return SHM_SELECT($name, !empty($ratings) ? $ratings : Ratings::get_ratings_dict(), required: true, selected_options: $selected_options);
+        return SHM_SELECT(
+            $name,
+            !empty($ratings) ? Ratings::get_ratings_dict($ratings) : Ratings::get_ratings_dict(),
+            required: true,
+            selected_options: $selected_options
+        );
     }
 
     public function get_image_rater_html(int $image_id, string $rating, bool $can_rate): HTMLElement

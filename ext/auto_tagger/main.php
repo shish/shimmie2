@@ -67,16 +67,19 @@ final class AutoTagger extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
+
         if ($event->page_matches("auto_tag/add", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
             send_event(new AddAutoTagEvent($input['c_tag'], $input['c_additional_tags']));
             $page->set_redirect(make_link("auto_tag/list"));
         }
+
         if ($event->page_matches("auto_tag/remove", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             $input = validate_input(["d_tag" => "string"]);
             send_event(new DeleteAutoTagEvent($input['d_tag']));
             $page->set_redirect(make_link("auto_tag/list"));
         }
+
         if ($event->page_matches("auto_tag/list")) {
             $t = new AutoTaggerTable(Ctx::$database->raw_db());
             $t->token = Ctx::$user->get_auth_token();
@@ -88,22 +91,23 @@ final class AutoTagger extends Extension
             }
             $this->theme->display_auto_tagtable($t->table($t->query()), $t->paginator());
         }
+
         if ($event->page_matches("auto_tag/export/auto_tag.csv")) {
             $page->set_data(MimeType::CSV, $this->get_auto_tag_csv(Ctx::$database), filename: "auto_tag.csv");
         }
+
         if ($event->page_matches("auto_tag/import", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
             if (count($_FILES) > 0) {
                 $tmp = $_FILES['auto_tag_file']['tmp_name'];
                 $contents = \Safe\file_get_contents($tmp);
                 $count = $this->add_auto_tag_csv($contents);
-                Log::info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file from file", "Imported $count auto-tag definitions");
+                Log::info(AutoTaggerInfo::KEY, "Imported $count auto-tag definitions from file", "Imported $count auto-tag definitions");
                 $page->set_redirect(make_link("auto_tag/list"));
             } else {
                 throw new InvalidInput("No File Specified");
             }
         }
     }
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
@@ -223,20 +227,6 @@ final class AutoTagger extends Extension
         $this->apply_new_auto_tag($tag);
     }
 
-    private function apply_new_auto_tag(string $tag): void
-    {
-        global $database;
-        $tag_id = $database->get_one("SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)", ["tag" => $tag]);
-        if (!empty($tag_id)) {
-            $image_ids = $database->get_col_iterable("SELECT image_id FROM  image_tags WHERE tag_id = :tag_id", ["tag_id" => $tag_id]);
-            foreach ($image_ids as $image_id) {
-                $image_id = (int) $image_id;
-                $image = Image::by_id_ex($image_id);
-                send_event(new TagSetEvent($image, $image->get_tag_array()));
-            }
-        }
-    }
-
     private function remove_auto_tag(string $tag): void
     {
         global $database;
@@ -252,36 +242,54 @@ final class AutoTagger extends Extension
     {
         global $database;
 
-        while (true) {
-            $new_tags = [];
-            foreach ($tags_mixed as $tag) {
-                $additional_tags = $database->get_one(
-                    "SELECT additional_tags FROM auto_tag WHERE LOWER(tag) = LOWER(:input)",
-                    ["input" => $tag]
-                );
+        // Convert tags to lowercase set for fast lookup
+        $tag_set = array_map('strtolower', $tags_mixed);
+        $tag_lookup = array_flip($tag_set);
 
-                if (!empty($additional_tags)) {
-                    $additional_tags = Tag::explode($additional_tags);
-                    $new_tags = array_merge(
-                        $new_tags,
-                        array_udiff($additional_tags, $tags_mixed, strcasecmp(...))
-                    );
+        // Fetch all auto-tag rules
+        $rows = $database->get_all("SELECT tag, additional_tags FROM auto_tag");
+        $new_tags = [];
+
+        foreach ($rows as $row) {
+            $rule = strtolower($row['tag']);
+            $additions = Tag::explode($row['additional_tags']);
+
+            // Handle compound AND logic
+            if (str_contains($rule, '+')) {
+                $parts = explode('+', $rule);
+                $matched = true;
+
+                foreach ($parts as $part) {
+                    $part = trim($part);
+                    if (str_starts_with($part, '!')) {
+                        $check = substr($part, 1);
+                        if (isset($tag_lookup[$check])) {
+                            $matched = false;
+                            break;
+                        }
+                    } else {
+                        if (!isset($tag_lookup[$part])) {
+                            $matched = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($matched) {
+                    $new_tags = array_merge($new_tags, $additions);
                 }
             }
-            if (empty($new_tags)) {
-                break;
+            // Handle basic tag match
+            elseif (isset($tag_lookup[$rule])) {
+                $new_tags = array_merge($new_tags, $additions);
             }
-            $tags_mixed = array_merge($tags_mixed, $new_tags);
         }
 
+        // Deduplicate and preserve original
+        $all_tags = array_merge($tags_mixed, $new_tags);
         return array_values(array_intersect_key(
-            $tags_mixed,
-            array_unique(array_map(strtolower(...), $tags_mixed))
+            $all_tags,
+            array_unique(array_map('strtolower', $all_tags))
         ));
-    }
-
-    public function get_priority(): int
-    {
-        return 30;
     }
 }

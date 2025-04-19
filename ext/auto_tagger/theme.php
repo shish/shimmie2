@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, INPUT, P, emptyHTML};
+use function MicroHTML\{A, B, BR, CODE, INPUT, P, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -22,6 +22,10 @@ class AutoTaggerTheme extends Themelet
         $this->display_navigation();
 
         $page->add_block(new Block("Auto-Tag", emptyHTML(
+            P("Use the following formats:"),
+            P(B("Basic: "), "tag → auto-tagged"),
+            P(B("AND: "), "tag1+tag2 → auto-tagged"),
+            P(B("AND NOT: "), "tag1+!tag2 → auto-tagged"),
             $table,
             $paginator,
             P(A(

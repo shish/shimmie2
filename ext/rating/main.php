@@ -360,14 +360,19 @@ final class Ratings extends Extension
         if (!isset($ratings)) {
             $ratings = self::get_sorted_ratings();
         }
-        return array_combine(
-            array_map(function ($o) {
-                return $o->code;
-            }, $ratings),
-            array_map(function ($o) {
-                return $o->name;
-            }, $ratings)
-        );
+
+        $dict = [];
+        foreach ($ratings as $r) {
+            if (
+                isset($r->code, $r->name) &&
+                is_string($r->code) && is_string($r->name) &&
+                trim($r->code) !== "" && trim($r->name) !== ""
+            ) {
+                $dict[trim($r->code)] = trim($r->name);
+            }
+        }
+
+        return $dict;
     }
 
     /**
