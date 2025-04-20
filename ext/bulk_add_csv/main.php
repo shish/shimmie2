@@ -102,7 +102,7 @@ final class BulkAddCSV extends Extension
             $list .= "<br>".html_escape("$shortpath (".implode(", ", $tags).")... ");
             if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
                 try {
-                    $this->add_image($fullpath, $shortpath, $tags, $source, $rating, $thumbfile);
+                    $this->add_image(new Path($fullpath), $shortpath, $tags, $source, $rating, new Path($thumbfile));
                     $list .= "ok\n";
                 } catch (\Exception $ex) {
                     $list .= "failed:<br>". $ex->getMessage();
