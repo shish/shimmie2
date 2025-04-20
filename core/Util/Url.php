@@ -45,7 +45,7 @@ final readonly class Url
 
     public static function parse(string $url): Url
     {
-        $parsed = parse_url($url);
+        $parsed = \Safe\parse_url($url);
 
         $query_array = [];
         if (isset($parsed['query'])) {
@@ -140,6 +140,9 @@ final readonly class Url
         return $this->page;
     }
 
+    /**
+     * @return url-string
+     */
     public function getPath(): string
     {
         assert(is_null($this->path) || is_null($this->page));
@@ -174,6 +177,9 @@ final readonly class Url
         return $this->query;
     }
 
+    /**
+     * @return url-string
+     */
     public function __toString(): string
     {
         $scheme   = !is_null($this->scheme) ? $this->scheme . '://' : '';
