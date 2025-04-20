@@ -69,12 +69,14 @@ EXPOSE 8000
 FROM base AS run
 EXPOSE 8000
 # HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
-ARG BUILD_TIME=unknown BUILD_HASH=unknown
-ENV UID=1000 GID=1000
+ARG BUILD_TIME=unknown
+ARG BUILD_HASH=unknown
+ENV UID=1000
+ENV GID=1000
+ENV SHM_NICE_URLS=true
 COPY --from=build /app /app
 WORKDIR /app
 RUN echo "define('BUILD_TIME', '$BUILD_TIME');" >> core/Config/SysConfig.php && \
-    echo "define('BUILD_HASH', '$BUILD_HASH');" >> core/Config/SysConfig.php && \
-    echo "define('NICE_URLS', true);" >> core/Config/SysConfig.php
+    echo "define('BUILD_HASH', '$BUILD_HASH');" >> core/Config/SysConfig.php
 ENTRYPOINT ["/app/.docker/entrypoint.sh"]
 CMD ["php", "/app/.docker/run.php"]

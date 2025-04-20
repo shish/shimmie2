@@ -43,7 +43,7 @@ final class SysConfig
 
     public static function getNiceUrls(): bool
     {
-        return defined("NICE_URLS") ? constant("NICE_URLS") : Ctx::$config->get(SetupConfig::NICE_URLS);
+        return getenv("SHM_NICE_URLS") === "true" || Ctx::$config->get(SetupConfig::NICE_URLS);
     }
 
     public static function getCookiePrefix(): string
