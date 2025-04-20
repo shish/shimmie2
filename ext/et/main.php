@@ -133,6 +133,22 @@ final class ET extends Extension
             }
         }
 
+        if (getenv('SHM_CONTAINER') === 'docker') {
+            try {
+                $mountinfos = explode("\n", \Safe\file_get_contents('/proc/self/mounts'));
+                $mounts = [];
+                foreach ($mountinfos as $mountinfo) {
+                    $path = explode(' ', $mountinfo)[1];
+                    if (!empty($path) && str_starts_with($path, '/app')) {
+                        $mounts[] = $path;
+                    }
+                }
+                $info['about']['mounts'] = $mounts;
+            } catch (\Exception $e) {
+                // If we can't get mount data, just skip it
+            }
+        }
+
         return $info;
     }
 
