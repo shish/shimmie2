@@ -104,10 +104,6 @@ final class ET extends Extension
             ],
             "thumbnails" => [
                 "engine" => $config->get(ThumbnailConfig::ENGINE),
-                "quality" => $config->get(ThumbnailConfig::QUALITY),
-                "width" => $config->get(ThumbnailConfig::WIDTH),
-                "height" => $config->get(ThumbnailConfig::HEIGHT),
-                "scaling" => $config->get(ThumbnailConfig::SCALING),
                 "mime" => $config->get(ThumbnailConfig::MIME),
             ],
         ];
@@ -117,20 +113,42 @@ final class ET extends Extension
                 $commitHash = trim(\Safe\exec('git log --pretty="%h" -n1 HEAD', result_code: $r1));
                 $commitBranch = trim(\Safe\exec('git rev-parse --abbrev-ref HEAD', result_code: $r2));
                 $commitOrigin = trim(\Safe\exec('git config --get remote.origin.url', result_code: $r3));
-                if ($r1 !== 0 || $r2 !== 0 || $r3 !== 0) {
+                $changes = \Safe\exec('git status -z', result_code: $r4);
+                if ($r1 !== 0 || $r2 !== 0 || $r3 !== 0 || $r4 !== 0) {
                     throw new \Exception("Failed to get git data");
                 }
                 $commitOrigin = \Safe\preg_replace("#//.*@#", "//xxx@", $commitOrigin);
+                $changeList = [];
+                foreach (explode("\0", $changes) as $change) {
+                    $parts = explode(" ", $change, 3);
+                    if (count($parts) > 1) {
+                        $changeList[] = $parts[2];
+                    }
+                }
                 $info['versions']['shimmie'] .= $commitHash;
-                $info['versions']['origin'] = "$commitOrigin ($commitBranch)";
                 $info['git'] = [
                     'commit' => $commitHash,
                     'branch' => $commitBranch,
                     'origin' => $commitOrigin,
+                    'changes' => $changeList
                 ];
             } catch (\Exception $e) {
                 // If we can't get git data, just skip it
             }
+        }
+
+        try {
+            $mountinfos = explode("\n", \Safe\file_get_contents('/proc/self/mounts'));
+            $mounts = [];
+            foreach ($mountinfos as $mountinfo) {
+                $parts = explode(' ', $mountinfo);
+                if (count($parts) > 1 && str_starts_with($parts[1], $_SERVER['DOCUMENT_ROOT'])) {
+                    $mounts[] = $parts[1];
+                }
+            }
+            $info['media']['mounts'] = $mounts;
+        } catch (\Exception $e) {
+            // If we can't get mount data, just skip it
         }
 
         return $info;

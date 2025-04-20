@@ -21,7 +21,7 @@ RUN apt update && \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
     php${PHP_VERSION}-memcached \
-    curl imagemagick zip unzip librsvg2-bin && \
+    curl imagemagick zip unzip librsvg2-bin git && \
     rm -rf /var/lib/apt/lists/*
 
 # copy individual files from unit:php rather than inheriting
@@ -46,7 +46,7 @@ RUN true \
 # dependencies, so let's avoid including that in the final image
 FROM base AS dev-tools
 RUN apt update && apt upgrade -y && \
-    apt install -y composer php${PHP_VERSION}-xdebug git procps net-tools vim && \
+    apt install -y composer php${PHP_VERSION}-xdebug procps net-tools vim && \
     rm -rf /var/lib/apt/lists/*
 ENV XDEBUG_MODE=coverage
 
