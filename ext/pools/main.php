@@ -234,11 +234,15 @@ final class Pools extends Extension
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
 
-            $image_ids = $database->get_col(
-                "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC",
+            $image_rows = $database->get_all(
+                "SELECT images.*, pool_images.image_order
+                FROM images
+                JOIN pool_images ON images.id = pool_images.image_id
+                WHERE pool_images.pool_id = :pid
+                ORDER BY pool_images.image_order ASC",
                 ["pid" => $pool_id]
             );
-            $images = array_filter(array_map(Image::by_id(...), $image_ids));
+            $images = array_map(fn ($row) => new Image($row), $image_rows);
             $this->theme->edit_order($pool, $images);
         }
         if ($event->page_matches("pool/save_order/{pool_id}", method: "POST")) {
