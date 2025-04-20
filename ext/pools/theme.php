@@ -25,7 +25,7 @@ class PoolsTheme extends Themelet
         //TODO: Use a 3 column table?
         $linksPools = emptyHTML();
         foreach ($navIDs as $poolID => $poolInfo) {
-            $div = DIV(A(["href" => "pool/view/" . $poolID], $poolInfo["info"]->title));
+            $div = DIV(A(["href" => make_link("pool/view/" . $poolID)], $poolInfo["info"]->title));
 
             if (!empty($poolInfo["nav"])) {
                 if (!empty($poolInfo["nav"]["prev"])) {
