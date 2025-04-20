@@ -74,6 +74,7 @@ ARG BUILD_HASH=unknown
 ENV UID=1000
 ENV GID=1000
 ENV SHM_NICE_URLS=true
+ENV SHM_CONTAINER=docker
 COPY --from=build /app /app
 WORKDIR /app
 RUN echo "define('BUILD_TIME', '$BUILD_TIME');" >> core/Config/SysConfig.php && \
