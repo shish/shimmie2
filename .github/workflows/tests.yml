@@ -139,7 +139,7 @@ jobs:
         run: composer test
 
   build:
-    name: Build
+    name: Build ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     needs:
       - format
@@ -160,16 +160,16 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
         run: |
           docker build \
-              --tag ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:tmp-${{ matrix.arch }} \
+              --tag ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-${{ matrix.arch }} \
               --build-arg BUILD_TIME="$(date +'%Y-%m-%dT%H:%M:%S')" \
               --build-arg BUILD_HASH="$GITHUB_SHA" \
               .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:${{ matrix.arch }}
+          docker push ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-${{ matrix.arch }}
 
   publish:
     name: Publish
@@ -186,15 +186,15 @@ jobs:
       - name: Login to Docker registry
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Create and push manifest
         run: |
           docker manifest create \
-              ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} \
-              ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:tmp-amd64 \
-              ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:tmp-arm64
-          for tag in $(./.github/get-tags.py ${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_IMAGE }}) ; do
-              docker image tag ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:$tag
+              ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }} \
+              ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-amd64 \
+              ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-arm64
+          for tag in $(./.github/get-tags.py ${{ vars.DOCKER_USERNAME }} ${{ vars.DOCKER_IMAGE }}) ; do
+              docker image tag ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:$tag
           done
-          docker manifest push --all-tags ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+          docker manifest push --all-tags ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}
