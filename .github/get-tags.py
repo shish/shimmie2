@@ -12,12 +12,12 @@ docker_image = sys.argv[2] if len(sys.argv) > 2 else "shimmie2"
 image_name = f"{docker_username}/{docker_image}"
 
 if branch == "main":
-    print(f"tags={image_name}:latest")
+    print(f"{image_name}:latest {image_name}:dev")
 elif branch.startswith("branch-2."):
     if "-" in describe:
-        print(f"tags={image_name}:{a},{image_name}:{a}.{b}")
+        print(f"{image_name}:{a} {image_name}:{a}.{b}")
     else:
-        print(f"tags={image_name}:{a},{image_name}:{a}.{b},{image_name}:{a}.{b}.{c}")
+        print(f"{image_name}:{a} {image_name}:{a}.{b} {image_name}:{a}.{b}.{c}")
 else:
     print("Only run from main or branch-2.X")
     sys.exit(1)
