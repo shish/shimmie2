@@ -223,5 +223,5 @@ jobs:
       - name: Create manifest list and push
         run: |
           docker buildx imagetools create \
-            $(printf "-t %s " $(./.github/get-tags.py)) \
-            $(printf '${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}@sha256:%s ' $(ls -1 ${{ runner.temp }}/digests))
+            $(printf -- "-t %s " $(./.github/get-tags.py)) \
+            $(printf -- '${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}@sha256:%s ' $(ls -1 ${{ runner.temp }}/digests))
