@@ -157,21 +157,39 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          build-args: |
+            BUILD_TIME=$(date +'%Y-%m-%dT%H:%M:%S')
+            BUILD_HASH=$GITHUB_SHA
+      - name: Export digest
         run: |
-          docker build \
-              --tag ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-${{ matrix.arch }} \
-              --build-arg BUILD_TIME="$(date +'%Y-%m-%dT%H:%M:%S')" \
-              --build-arg BUILD_HASH="$GITHUB_SHA" \
-              .
-      - name: Push
-        run: |
-          docker push ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-${{ matrix.arch }}
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
   publish:
     name: Publish
@@ -185,24 +203,22 @@ jobs:
         with:
           fetch-tags: true
           fetch-depth: 0
-      - name: Login to Docker registry
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Create manifest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
         run: |
-          docker manifest create \
-              ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }} \
-              ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-amd64 \
-              ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-arm64
-      - name: Apply tags
-        run: |
-          for tag in $(./.github/get-tags.py) ; do
-              docker image tag \
-                  ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }} \
-                  ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:$tag
-          done
-      - name: Publish manifest
-        run: |
-          docker manifest push --all-tags ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}
+          docker buildx imagetools create \
+            $(./.github/get-tags.py) \
+            $(printf '${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}@sha256:%s ' *)
