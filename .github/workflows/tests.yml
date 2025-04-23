@@ -162,13 +162,15 @@ jobs:
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push
+      - name: Build
         run: |
           docker build \
               --tag ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-${{ matrix.arch }} \
               --build-arg BUILD_TIME="$(date +'%Y-%m-%dT%H:%M:%S')" \
               --build-arg BUILD_HASH="$GITHUB_SHA" \
               .
+      - name: Push
+        run: |
           docker push ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-${{ matrix.arch }}
 
   publish:
@@ -188,13 +190,17 @@ jobs:
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Create and push manifest
+      - name: Create manifest
         run: |
           docker manifest create \
               ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }} \
               ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-amd64 \
               ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-arm64
+      - name: Apply tags
+        run: |
           for tag in $(./.github/get-tags.py ${{ vars.DOCKER_USERNAME }} ${{ vars.DOCKER_IMAGE }}) ; do
               docker image tag ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }} ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:$tag
           done
+      - name: Publish manifest
+        run: |
           docker manifest push --all-tags ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}
