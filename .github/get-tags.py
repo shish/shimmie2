@@ -7,17 +7,15 @@ branch = check_output(["git", "branch", "--show-current"], text=True).strip()
 describe = check_output(["git", "describe", "--tags"], text=True).strip()
 tag = describe.split("-")[0][1:]
 a, b, c = tag.split(".")
-docker_username = sys.argv[1]
-docker_image = sys.argv[2] if len(sys.argv) > 2 else "shimmie2"
-image_name = f"{docker_username}/{docker_image}"
 
 if branch == "main":
-    print(f"{image_name}:latest {image_name}:dev")
+    print("latest")
+    print("dev")
 elif branch.startswith("branch-2."):
-    if "-" in describe:
-        print(f"{image_name}:{a} {image_name}:{a}.{b}")
-    else:
-        print(f"{image_name}:{a} {image_name}:{a}.{b} {image_name}:{a}.{b}.{c}")
+    print(f"{a}")
+    print(f"{a}.{b}")
+    if "-" not in describe:
+        print(f"{a}.{b}.{c}")
 else:
-    print("Only run from main or branch-2.X")
+    print("Only run from main or branch-2.X", file=sys.stderr)
     sys.exit(1)
