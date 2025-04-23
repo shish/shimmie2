@@ -219,8 +219,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Create manifest list and push
-        working-directory: ${{ runner.temp }}/digests
         run: |
           docker buildx imagetools create \
-            $(./.github/get-tags.py) \
-            $(printf '${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}@sha256:%s ' *)
+            $(printf "-t %s " $(./.github/get-tags.py)) \
+            $(printf '${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}@sha256:%s ' $(ls -1 ${{ runner.temp }}/digests))
