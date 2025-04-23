@@ -198,8 +198,10 @@ jobs:
               ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:tmp-arm64
       - name: Apply tags
         run: |
-          for tag in $(./.github/get-tags.py ${{ vars.DOCKER_USERNAME }} ${{ vars.DOCKER_IMAGE }}) ; do
-              docker image tag ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }} ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:$tag
+          for tag in $(./.github/get-tags.py) ; do
+              docker image tag \
+                  ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }} \
+                  ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}:$tag
           done
       - name: Publish manifest
         run: |
