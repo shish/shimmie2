@@ -9,13 +9,13 @@ tag = describe.split("-")[0][1:]
 a, b, c = tag.split(".")
 
 if branch == "main":
-    print("latest")
-    print("dev")
+    print("-t latest")
+    print("-t dev")
 elif branch.startswith("branch-2."):
-    print(f"{a}")
-    print(f"{a}.{b}")
+    print(f"-t {a}")
+    print(f"-t {a}.{b}")
     if "-" not in describe:
-        print(f"{a}.{b}.{c}")
+        print(f"-t {a}.{b}.{c}")
 else:
     print("Only run from main or branch-2.X", file=sys.stderr)
     sys.exit(1)
