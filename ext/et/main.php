@@ -125,13 +125,14 @@ final class ET extends Extension
                         $changeList[] = $parts[2];
                     }
                 }
-                $info['versions']['shimmie'] .= $commitHash;
                 $info['git'] = [
                     'commit' => $commitHash,
                     'branch' => $commitBranch,
                     'origin' => $commitOrigin,
-                    'changes' => $changeList
                 ];
+                if (count($changeList) > 0) {
+                    $info["git"]['changes'] = $changeList;
+                }
             } catch (\Exception $e) {
                 // If we can't get git data, just skip it
             }
@@ -140,10 +141,11 @@ final class ET extends Extension
         try {
             $mountinfos = explode("\n", \Safe\file_get_contents('/proc/self/mounts'));
             $mounts = [];
+            $root = $_SERVER['DOCUMENT_ROOT'];
             foreach ($mountinfos as $mountinfo) {
                 $parts = explode(' ', $mountinfo);
-                if (count($parts) > 1 && str_starts_with($parts[1], $_SERVER['DOCUMENT_ROOT'])) {
-                    $mounts[] = $parts[1];
+                if (count($parts) > 1 && str_starts_with($parts[1], $root)) {
+                    $mounts[] = "./" . substr($parts[1], strlen($root));
                 }
             }
             $info['media']['mounts'] = $mounts;
