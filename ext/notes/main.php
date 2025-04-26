@@ -184,7 +184,7 @@ final class Notes extends Extension
         if ($matches = $event->matches("/^note[=|:](.*)$/i")) {
             $notes = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE note = $notes)"));
-        } elseif ($matches = $event->matches("/^notes([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)%/i")) {
+        } elseif ($matches = $event->matches("/^notes([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $notes = $matches[2];
             $event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE notes $cmp $notes)"));
