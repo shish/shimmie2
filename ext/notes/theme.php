@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, P, TABLE, TBODY, TD, TH, THEAD, TR, emptyHTML, joinHTML};
+use function MicroHTML\{A, DIV, P, TABLE, TBODY, TD, TH, THEAD, TR, emptyHTML, joinHTML};
 use function MicroHTML\{FORM, INPUT, SCRIPT};
 
 use MicroHTML\HTMLElement;
@@ -100,70 +100,95 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param NoteHistory[] $histories
+     * @param NoteHistory[] $history
      */
-    private function get_history(array $histories): HTMLElement
+    protected function history_list(array $history, bool $allowRevert): HTMLElement
     {
-        $tbody = TBODY();
-        foreach ($histories as $history) {
-            $tbody->appendChild(TR(
-                TD(A(["href" => make_link("post/view/".$history['image_id'])], $history['image_id'])),
-                TD(A(["href" => make_link("note/view/".$history['note_id'])], $history['note_id'].".".$history['review_id'])),
-                TD(["style" => "text-align:left;"], $history['note']),
-                TD(A(["href" => make_link("user/".$history['user_name'])], $history['user_name'])),
-                TD(SHM_DATE($history['date'])),
-                TD(Ctx::$user->can(NotesPermission::EDIT) ? TD(A(["href" => make_link("note/revert/".$history['note_id']."/".$history['review_id'])], "Revert")) : null),
-            ));
+        $history_list = [];
+        foreach ($history as $n => $fields) {
+            $history_list[] = $this->history_entry($fields, $allowRevert && $n !== 0);
         }
 
-        return TABLE(
-            ["class" => "zebra"],
-            THEAD(
-                TR(
-                    TH("Post"),
-                    TH("Note"),
-                    TH("Body"),
-                    TH("Updater"),
-                    TH("Date"),
-                    Ctx::$user->can(NotesPermission::EDIT) ? TH("Action") : null
-                )
-            ),
-            $tbody
+        return DIV(
+            TABLE(
+                ["class" => "zebra", "style" => "text-align: left"],
+                THEAD(
+                    TR(
+                        TH("Post"),
+                        TH("Note"),
+                        TH("Body"),
+                        TH("Updater"),
+                        TH("Date"),
+                        Ctx::$user->can(NotesPermission::EDIT) && $allowRevert ? TH("Action") : null
+                    )
+                ),
+                TBODY(
+                    ...$history_list
+                ),
+            )
         );
     }
 
     /**
-     * @param NoteHistory[] $histories
+     * @param NoteHistory $fields
      */
-    public function display_histories(array $histories, int $pageNumber, int $totalPages): void
+    protected function history_entry(array $fields, bool $revertable): HTMLElement
+    {
+        $image_id = $fields['image_id'];
+        $note_id = $fields['note_id'];
+        $review_id = $fields['review_id'];
+        $note_text = $fields['note'];
+        $name = $fields['user_name'];
+        $date_set = SHM_DATE($fields['date']);
+        $setter = A(["href" => make_link("user/" . url_escape($name))], $name);
+
+        return TR(
+            TD(A(["href" => make_link("post/view/$image_id")], $image_id)),
+            TD(A(["href" => make_link("note/history/$note_id")], "$note_id.$review_id")),
+            TD($note_text),
+            TD($setter),
+            TD($date_set),
+            TD(
+                Ctx::$user->can(NotesPermission::EDIT) && $revertable ?
+                SHM_FORM(
+                    action: make_link("note/revert/$note_id/$review_id"),
+                    children: [SHM_SUBMIT("Revert To")]
+                ) : null
+            )
+        );
+    }
+
+    /**
+     * @param NoteHistory[] $history
+     */
+    public function display_histories(array $history, int $pageNumber, int $totalPages): void
     {
         $page = Ctx::$page;
         $page->set_title("Note Updates");
-        $page->add_block(new Block("Note Updates", $this->get_history($histories), "main", 10));
+        $page->add_block(new Block("Note Updates", $this->history_list($history, false), "main", 10));
         $this->display_paginator("note/updated", null, $pageNumber, $totalPages);
     }
 
     /**
-     * @param NoteHistory[] $histories
+     * @param NoteHistory[] $history
      */
-    public function display_history(array $histories, int $pageNumber, int $totalPages): void
+    public function display_history(array $history, int $pageNumber, int $totalPages): void
     {
         $page = Ctx::$page;
         $page->set_title("Note History");
-        $page->add_block(new Block("Note History", $this->get_history($histories), "main", 10));
+        $page->add_block(new Block("Note History", $this->history_list($history, true), "main", 10));
         $this->display_paginator("note/updated", null, $pageNumber, $totalPages);
     }
 
     /**
-     * @param NoteHistory[] $histories
+     * @param NoteHistory[] $history
      */
-    public function display_image_history(array $histories, int $imageID, int $pageNumber, int $totalPages): void
+    public function display_image_history(array $history, int $imageID, int $pageNumber, int $totalPages): void
     {
         $page = Ctx::$page;
         $page->set_title("Note History #$imageID");
         $page->set_heading("Note History #$imageID");
-        $page->add_block(new Block("Note History #$imageID", $this->get_history($histories), "main", 10));
-
+        $page->add_block(new Block("Note History #$imageID", $this->history_list($history, true), "main", 10));
         $this->display_paginator("note_history/$imageID", null, $pageNumber, $totalPages);
     }
 
