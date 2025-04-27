@@ -184,7 +184,7 @@ final class Notes extends Extension
         if ($matches = $event->matches("/^note[=|:](.*)$/i")) {
             $notes = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE note = $notes)"));
-        } elseif ($matches = $event->matches("/^notes([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)%/i")) {
+        } elseif ($matches = $event->matches("/^notes([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $notes = $matches[2];
             $event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE notes $cmp $notes)"));
@@ -244,7 +244,7 @@ final class Notes extends Extension
 
         Log::info("notes", "Note added {$noteID} by " . Ctx::$user->name);
 
-        $database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id) WHERE id=:id", ['id' => $note['image_id']]);
+        $this->update_notes_count($note['image_id']);
 
         $this->add_history(
             1,
@@ -297,12 +297,15 @@ final class Notes extends Extension
 			WHERE image_id = :image_id AND id = :id
 		", ['enable' => 0, 'image_id' => $note["image_id"], 'id' => $note["note_id"]]);
 
+        $this->update_notes_count($note["image_id"]);
+
         Log::info("notes", "Note deleted {$note["note_id"]} by " . Ctx::$user->name);
     }
 
     private function nuke_notes(int $image_id): void
     {
         Ctx::$database->execute("DELETE FROM notes WHERE image_id = :image_id", ['image_id' => $image_id]);
+        $this->update_notes_count($image_id);
         Log::info("notes", "Notes deleted from {$image_id} by " . Ctx::$user->name);
     }
 
@@ -498,6 +501,13 @@ final class Notes extends Extension
 			WHERE image_id = :image_id AND id = :id
 		", ['enable' => 1, 'x1' => $noteX1, 'y1' => $noteY1, 'height' => $noteHeight, 'width' => $noteWidth, 'note' => $noteText, 'image_id' => $imageID, 'id' => $noteID]);
 
+        $this->update_notes_count($imageID);
+
         $this->add_history($noteEnable, $noteID, $imageID, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText);
+    }
+
+    private function update_notes_count(int $imageID): void
+    {
+        Ctx::$database->execute("UPDATE images SET notes=(SELECT COUNT(*) FROM notes WHERE image_id=:id AND enable=:enable) WHERE id=:id", ['id' => $imageID, 'enable' => 1]);
     }
 }
