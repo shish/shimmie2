@@ -693,6 +693,8 @@ final class UserPage extends Extension
     {
         global $database;
 
+        Ctx::$event_bus->set_timeout(null);
+
         $duser = User::by_id($uid);
         Log::warning("user", "Deleting user #{$uid} (@{$duser->name})");
 
