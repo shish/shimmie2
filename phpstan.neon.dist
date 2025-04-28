@@ -22,16 +22,24 @@ parameters:
     noVariableVariables: false
   matchyStrings:
     types:
-      url-string: '#^(http://|https://|/|$)#'
-      page-string: '/^(|[a-z\$][a-zA-Z0-9\/_:\$\.]*)$/'
-      fragment-string: '/^[a-z\-=]+$/'
-      hash-string: '#^[0-9a-fA-F]{32}$#'
+      url-string:
+        regex: '#^(http://|https://|/|$)#'
+      page-string:
+        regex: '/^(|[a-z\$][a-zA-Z0-9\/_:\$\.]*)$/'
+      fragment-string:
+        regex: '/^[a-z\-=]+$/'
+      hash-string:
+        regex: '#^[0-9a-fA-F]{32}$#'
 includes:
   - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
   - vendor/phpstan/phpstan-strict-rules/rules.neon
 parametersSchema:
   matchyStrings: structure([
-    types: arrayOf('string')
+    types: arrayOf(anyOf(
+        structure([
+            regex: string()
+        ])
+    ))
   ])
 services:
   - class: Shimmie2\MatchyStringTypeNodeResolverExtension
