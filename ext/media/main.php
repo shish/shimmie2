@@ -373,7 +373,7 @@ final class Media extends Extension
             $output_mime = new MimeType(MimeType::WEBP_LOSSLESS);
         }
 
-        $command = new CommandBuilder(Ctx::$config->get(MediaConfig::CONVERT_PATH));
+        $command = new CommandBuilder(Ctx::$config->get(MediaConfig::MAGICK_PATH));
 
         // read input
         $input_ext = self::determine_ext($input_mime);
