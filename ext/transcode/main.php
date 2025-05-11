@@ -340,7 +340,7 @@ final class TranscodeImage extends Extension
 
     private function transcode_image_convert(Path $source_name, MimeType $source_mime, MimeType $target_mime): Path
     {
-        $command = new CommandBuilder(Ctx::$config->get(MediaConfig::CONVERT_PATH));
+        $command = new CommandBuilder(Ctx::$config->get(MediaConfig::MAGICK_PATH));
 
         // load file
         $source_type = FileExtension::get_for_mime($source_mime);
