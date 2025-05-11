@@ -466,11 +466,6 @@ function is_valid_date(string $date): bool
 ///////////////////////////////////////////////////////////////////////
 // Misc things
 
-/*
- * A small number of PHP-sanity things (eg don't silently ignore errors) to
- * be included right at the very start of index.php and tests/bootstrap.php
- */
-
 function die_nicely(string $title, string $body, int $code = 0): void
 {
     $data_href = Url::base();
@@ -508,6 +503,10 @@ function version_check(string $min_php): void
     }
 }
 
+/*
+ * A small number of PHP-sanity things (eg don't silently ignore errors) to
+ * be included right at the very start of index.php and tests/bootstrap.php
+ */
 function sanitize_php(): void
 {
     # ini_set('zend.assertions', '1');  // generate assertions
