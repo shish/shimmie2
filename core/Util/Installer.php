@@ -72,7 +72,7 @@ final class Installer
         ";
         } elseif (!self::is_im_installed()) {
             $warnings[] = "
-            The 'convert' command (from the imagemagick package)
+            The 'magick' command (from the imagemagick package)
             could not be found - PHP-GD can be used instead, but
             the size of thumbnails will be limited.
         ";
@@ -335,7 +335,7 @@ final class Installer
         }
         $paths = explode(PATH_SEPARATOR, $path_env);
         foreach ($paths as $path) {
-            if (file_exists("$path/convert$ext")) {
+            if (file_exists("$path/magick$ext")) {
                 return true;
             }
         }
