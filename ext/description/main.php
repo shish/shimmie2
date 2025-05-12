@@ -18,7 +18,7 @@ final class ImageDescription extends Extension
 {
     public const KEY = "image_description";
 
-    /** @var ImageDescriptionsTheme */
+    /** @var ImageDescriptionTheme */
     protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
