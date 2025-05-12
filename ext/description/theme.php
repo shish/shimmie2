@@ -10,9 +10,8 @@ use MicroHTML\HTMLElement;
 
 class ImageDescriptionTheme extends Themelet
 {
-    public function get_description_editor_html(Image $image): HTMLElement
-        {
-        $raw_description = (string) $image['description'] ?: "None";
+    public function get_description_editor_html(string $raw_description): HTMLElement
+    {
         $tfe = send_event(new TextFormattingEvent($raw_description));
 
         return SHM_POST_INFO(

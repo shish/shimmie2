@@ -20,18 +20,18 @@ final class ImageDescription extends Extension
 
     /** @var ImageDescriptionsTheme */
     protected Themelet $theme;
-    
-    public function onInitExt(InitExtEvent $event): void
-    {
-        Image::$prop_types["description"] = ImagePropType::STRING;
-    }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
 
         if ($this->get_version() < 1) {
-            $database->execute("ALTER TABLE images ADD description TEXT");
+            $database->create_table("image_descriptions", "
+                image_id INTEGER NOT NULL,
+                description TEXT,
+                UNIQUE(image_id),
+                FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+            ");
             $this->set_version(1);
         }
     }
@@ -49,14 +49,25 @@ final class ImageDescription extends Extension
         global $database;
 
         $database->execute("
-            UPDATE images 
-            SET description = :description 
-            WHERE id = :pid
-        ", ["pid" => $event->image_id, "description" => $event->description]);
+            DELETE
+            FROM image_descriptions
+            WHERE image_id=:id
+        ", ["id" => $event->image_id]);
+        $database->execute("
+            INSERT
+            INTO image_descriptions
+            VALUES (:id, :description)
+        ", ["id" => $event->image_id, "description" => $event->description]);
     }
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
-        $event->add_part($this->theme->get_description_editor_html($event->image), 35);
+        global $database;
+
+        $description = (string) $database->get_one(
+            "SELECT description FROM image_descriptions WHERE image_id = :id",
+            ["id" => $event->image->id]
+        ) ?: "None";
+        $event->add_part($this->theme->get_description_editor_html($description), 35);
     }
 }
