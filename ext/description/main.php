@@ -10,4 +10,9 @@ final class ImageDescription extends Extension
 
     /** @var ImageDescriptionsTheme */
     protected Themelet $theme;
+
+    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
+    {
+        $event->add_part($this->theme->get_description_editor_html($event->image), 35);
+    }
 }
