@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{rawHTML};
+use function MicroHTML\{TEXTAREA, rawHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -18,7 +18,13 @@ class ImageDescriptionTheme extends Themelet
         return SHM_POST_INFO(
             "Description",
             rawHTML($tfe->formatted),
-            null
+            true // TODO : Add permisions check
+            ? TEXTAREA([
+                "type" => "text",
+                "name" => "description",
+                "id" => "description_editor",
+                ], $raw_description)
+            : null
         );
     }
 }
