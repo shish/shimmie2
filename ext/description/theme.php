@@ -12,7 +12,7 @@ class ImageDescriptionTheme extends Themelet
 {
     public function get_description_editor_html(Image $image): HTMLElement
         {
-        $raw_description = "Here is [i]sample[/i] description with [b]formatting[/b].";
+        $raw_description = (string) $image['description'] ?: "None";
         $tfe = send_event(new TextFormattingEvent($raw_description));
 
         return SHM_POST_INFO(
