@@ -39,7 +39,7 @@ final class ImageDescription extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $description = $event->get_param("description");
-        if ($description) {
+        if (Ctx::$user->can(ImageDescriptionPermission::EDIT_IMAGE_DESCRIPTIONS) && $description) {
             send_event(new ImageDescriptionSetEvent($event->image->id, $description));
         }
     }
