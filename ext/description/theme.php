@@ -18,7 +18,7 @@ class ImageDescriptionTheme extends Themelet
         return SHM_POST_INFO(
             "Description",
             rawHTML($tfe->formatted),
-            true // TODO : Add permisions check
+            Ctx::$user->can(ImageDescriptionPermission::EDIT_IMAGE_DESCRIPTIONS)
             ? TEXTAREA([
                 "type" => "text",
                 "name" => "description",
