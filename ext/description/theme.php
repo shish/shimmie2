@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{TEXTAREA, rawHTML};
-
 use MicroHTML\HTMLElement;
+
+use function MicroHTML\{TEXTAREA, rawHTML};
 
 class ImageDescriptionTheme extends Themelet
 {
