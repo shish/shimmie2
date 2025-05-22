@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-final class ImageDescriptionSetEvent extends Event
+final class PostDescriptionSetEvent extends Event
 {
     public function __construct(
         public int $image_id,
@@ -14,11 +14,11 @@ final class ImageDescriptionSetEvent extends Event
     }
 }
 
-final class ImageDescription extends Extension
+final class PostDescription extends Extension
 {
-    public const KEY = "image_description";
+    public const KEY = "post_description";
 
-    /** @var ImageDescriptionTheme */
+    /** @var PostDescriptionTheme */
     protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
@@ -39,12 +39,12 @@ final class ImageDescription extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $description = $event->get_param("description");
-        if (Ctx::$user->can(ImageDescriptionPermission::EDIT_IMAGE_DESCRIPTIONS) && $description) {
-            send_event(new ImageDescriptionSetEvent($event->image->id, $description));
+        if (Ctx::$user->can(PostDescriptionPermission::EDIT_IMAGE_DESCRIPTIONS) && $description) {
+            send_event(new PostDescriptionSetEvent($event->image->id, $description));
         }
     }
 
-    public function onImageDescriptionSet(ImageDescriptionSetEvent $event): void
+    public function onPostDescriptionSet(PostDescriptionSetEvent $event): void
     {
         global $database;
 
