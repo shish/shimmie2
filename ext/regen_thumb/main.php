@@ -125,7 +125,7 @@ final class RegenThumb extends Extension
 
     public function onCliGen(CliGenEvent $event): void
     {
-        $event->app->register('regen-thumb')
+        $event->app->register('post:regen-thumb')
             ->addArgument('id_or_hash', InputArgument::REQUIRED)
             ->setDescription("Regenerate a post's thumbnail")
             ->setCode(function (InputInterface $input, OutputInterface $output): int {

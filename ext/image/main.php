@@ -78,7 +78,7 @@ final class ImageIO extends Extension
 
     public function onCliGen(CliGenEvent $event): void
     {
-        $event->app->register('delete')
+        $event->app->register('post:delete')
             ->addArgument('id', InputArgument::REQUIRED)
             ->setDescription('Delete a specific post')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
