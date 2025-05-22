@@ -121,7 +121,7 @@ final class ET extends Extension
                 $changeList = [];
                 foreach (explode("\0", $changes) as $change) {
                     $parts = explode(" ", $change, 3);
-                    if (count($parts) > 1) {
+                    if (count($parts) > 2) {
                         $changeList[] = $parts[2];
                     }
                 }
