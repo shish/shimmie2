@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use PHPStan\Type\{AcceptsResult, CompoundType, ConstantStringType, IsSuperTypeOfResult, StringType, Type, VerbosityLevel};
+use PHPStan\Type\{AcceptsResult, CompoundType, IsSuperTypeOfResult, StringType, Type, VerbosityLevel};
 
 class MatchyStringType extends StringType
 {
@@ -20,7 +20,7 @@ class MatchyStringType extends StringType
 
     public function describe(VerbosityLevel $level): string
     {
-        return $this->name ?? 'matchy-string';
+        return $this->name;
     }
 
     protected function match(string $value): bool

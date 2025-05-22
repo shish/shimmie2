@@ -102,6 +102,7 @@ final class EventBus
         foreach ($this->event_listeners as $event => $listeners) {
             $t = [];
             foreach ($listeners as $_id => $listener) {
+                // @phpstan-ignore-next-line
                 $class_name = $this->namespaced_class_name(get_class($listener));
                 $classes[] = $class_name;
                 $t[] = "\$".$class_name;
@@ -154,6 +155,7 @@ final class EventBus
                 throw new TimeoutException("Timeout while sending $event_name");
             }
             if (Ctx::$tracer_enabled) {
+                // @phpstan-ignore-next-line
                 Ctx::$tracer->begin($this->namespaced_class_name(get_class($listener)));
             }
             if (method_exists($listener, $method_name)) {
