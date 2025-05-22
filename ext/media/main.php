@@ -92,7 +92,7 @@ final class Media extends Extension
 
     public function onCliGen(CliGenEvent $event): void
     {
-        $event->app->register('media-rescan')
+        $event->app->register('post:media-rescan')
             ->addArgument('id_or_hash', InputArgument::REQUIRED)
             ->setDescription('Refresh metadata for a given post')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
