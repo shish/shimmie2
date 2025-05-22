@@ -8,7 +8,7 @@ use MicroHTML\HTMLElement;
 
 use function MicroHTML\{TEXTAREA, rawHTML};
 
-class ImageDescriptionTheme extends Themelet
+class PostDescriptionTheme extends Themelet
 {
     public function get_description_editor_html(string $raw_description): HTMLElement
     {
@@ -17,7 +17,7 @@ class ImageDescriptionTheme extends Themelet
         return SHM_POST_INFO(
             "Description",
             rawHTML($tfe->formatted),
-            Ctx::$user->can(ImageDescriptionPermission::EDIT_IMAGE_DESCRIPTIONS)
+            Ctx::$user->can(PostDescriptionPermission::EDIT_IMAGE_DESCRIPTIONS)
             ? TEXTAREA([
                 "type" => "text",
                 "name" => "description",
