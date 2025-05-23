@@ -60,4 +60,111 @@ final class SQLTest extends ShimmiePHPUnitTestCase
     {
         self::assertEquals("советских", Ctx::$database->get_one("SELECT LOWER('Советских')"), "LOWER");
     }
+
+    /**
+     * - MySQL and Postgres use '\' for sql escaping by default,
+     *   and don't accept ESCAPE
+     * - SQLite requires the user to add an explicit "ESCAPE '\'" on
+     *   every LIKE statement
+     */
+    public function test_like_escape(): void
+    {
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "abcd1"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "ABCD2"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "a_cd3"]);
+
+        // with regular SQL there's no one query that works on all DBs
+        self::assertEquals(
+            ["a_cd3"],
+            Ctx::$database->get_col(match(Ctx::$database->get_driver_id()) {
+                DatabaseDriverID::SQLITE => "SELECT tag FROM tags WHERE tag LIKE :pattern ESCAPE '\\'",
+                DatabaseDriverID::MYSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+                DatabaseDriverID::PGSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+            }, ["pattern" => "a\\_%"]),
+            "LIKE escaping is weird"
+        );
+
+        // with SCORE_ILIKE, we can use the same query on all DBs
+        self::assertEquals(
+            ["a_cd3"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE SCORE_ILIKE(tag, :pattern)", ["pattern" => "a\\_%"]),
+            "SCORE_ILIKE consistently uses backslash as an escape character"
+        );
+    }
+
+    /**
+     * - SQLITE is case-insensitive for ASCII
+     * - MYSQL is case-insensitive for ASCII
+     * - PGSQL is case-sensitive for ASCII, but has ILIKE
+     */
+    public function test_like_case_ascii(): void
+    {
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "abcd1"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "ABCD2"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "a_cd3"]);
+
+        // With regular SQL lower(x) == lower(y) works across DBs, but that
+        // requires running lower() a lot, and on mysql that's not needed at all
+        self::assertEquals(
+            ["abcd1", "ABCD2"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE lower(tag) LIKE lower(:pattern)", ["pattern" => "ab%"]),
+            "LIKE case-sensitivity is weird"
+        );
+
+        // Other than mass-lower(), we need to use dabase-specific syntax
+        self::assertEquals(
+            ["abcd1", "ABCD2"],
+            Ctx::$database->get_col(match(Ctx::$database->get_driver_id()) {
+                DatabaseDriverID::SQLITE => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+                DatabaseDriverID::MYSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+                DatabaseDriverID::PGSQL => "SELECT tag FROM tags WHERE tag ILIKE :pattern",
+            }, ["pattern" => "ab%"]),
+            "LIKE case-sensitivity is weird"
+        );
+
+        // With SCORE_ILIKE, we can use the same query on all DBs
+        self::assertEquals(
+            ["abcd1", "ABCD2"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE SCORE_ILIKE(tag, :pattern)", ["pattern" => "ab%"]),
+            "SCORE_ILIKE is consistently case-insensitive for ascii"
+        );
+    }
+
+    /**
+     * - SQLITE is case-sensitive for UTF-8
+     * - MYSQL is case-insensitive for UTF-8
+     * - PGSQL is case-sensitive for UTF-8, but has ILIKE
+     */
+    public function test_like_case_utf8(): void
+    {
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "советских1"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "Советских2"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "С_ветских3"]);
+
+        // With regular SQL lower(x) == lower(y) works across DBs, but that
+        // requires running lower() a lot, and on mysql that's not needed at all
+        self::assertEquals(
+            ["советских1", "Советских2"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE lower(tag) LIKE lower(:pattern)", ["pattern" => "со%"]),
+            "LIKE case-sensitivity is weird"
+        );
+
+        // Other than mass-lower(), we need to use dabase-specific syntax
+        self::assertEquals(
+            ["советских1", "Советских2"],
+            Ctx::$database->get_col(match(Ctx::$database->get_driver_id()) {
+                DatabaseDriverID::SQLITE => "SELECT tag FROM tags WHERE lower(tag) LIKE lower(:pattern)",
+                DatabaseDriverID::MYSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+                DatabaseDriverID::PGSQL => "SELECT tag FROM tags WHERE tag ILIKE :pattern",
+            }, ["pattern" => "со%"]),
+            "LIKE case-sensitivity is weird"
+        );
+
+        // With SCORE_ILIKE, we can use the same query on all DBs
+        self::assertEquals(
+            ["советских1", "Советских2"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE SCORE_ILIKE(tag, :pattern)", ["pattern" => "со%"]),
+            "SCORE_ILIKE is consistently case-insensitive for utf-8"
+        );
+    }
 }
