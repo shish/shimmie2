@@ -60,4 +60,88 @@ final class SQLTest extends ShimmiePHPUnitTestCase
     {
         self::assertEquals("советских", Ctx::$database->get_one("SELECT LOWER('Советских')"), "LOWER");
     }
+
+    /**
+     * - MySQL and Postgres use '\' for sql escaping by default,
+     *   and don't accept ESCAPE
+     * - SQLite requires the user to add an explicit "ESCAPE '\'" on
+     *   every LIKE statement
+     */
+    public function test_like_escape(): void
+    {
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "abcd1"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "ABCD2"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "a_cd3"]);
+        $db_query = match(Ctx::$database->get_driver_id()) {
+            DatabaseDriverID::SQLITE => "SELECT tag FROM tags WHERE tag LIKE :pattern ESCAPE '\\'",
+            DatabaseDriverID::MYSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+            DatabaseDriverID::PGSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+        };
+        self::assertEquals(
+            ["a_cd3"],
+            Ctx::$database->get_col($db_query, ["pattern" => "a\_%"]),
+            "LIKE escaping is weird"
+        );
+        self::assertEquals(
+            ["a_cd3"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE SCORE_ILIKE(tag, :pattern)", ["pattern" => "ab%"]),
+            "SCORE_ILIKE is consistent"
+        );
+    }
+
+    /**
+     * - SQLITE is case-insensitive for ASCII
+     * - MYSQL is case-insensitive for ASCII
+     * - PGSQL is case-sensitive for ASCII, but has ILIKE
+     */
+    public function test_like_case_ascii(): void
+    {
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "abcd1"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "ABCD2"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "a_cd3"]);
+        $db_query = match(Ctx::$database->get_driver_id()) {
+            DatabaseDriverID::SQLITE => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+            DatabaseDriverID::MYSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+            DatabaseDriverID::PGSQL => "SELECT tag FROM tags WHERE tag ILIKE :pattern",
+        };
+        self::assertEquals(
+            ["abcd1", "ABCD2"],
+            Ctx::$database->get_col($db_query, ["pattern" => "ab%"]),
+            "LIKE case-sensitivity is weird"
+        );
+        self::assertEquals(
+            ["abcd1", "ABCD2"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE SCORE_ILIKE(tag, :pattern)", ["pattern" => "ab%"]),
+            "SCORE_ILIKE is consistent"
+        );
+    }
+
+    /**
+     * - SQLITE is case-sensitive for UTF-8
+     * - MYSQL is case-insensitive for UTF-8
+     * - PGSQL is case-sensitive for UTF-8, but has ILIKE
+     */
+     * @return void
+     */
+    public function test_like_case_utf8(): void
+    {
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "советских1"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "Советских2"]);
+        Ctx::$database->execute("INSERT INTO tags(tag) VALUES (:val)", ["val" => "С_ветских3"]);
+        $db_query = match(Ctx::$database->get_driver_id()) {
+            DatabaseDriverID::SQLITE => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+            DatabaseDriverID::MYSQL => "SELECT tag FROM tags WHERE tag LIKE :pattern",
+            DatabaseDriverID::PGSQL => "SELECT tag FROM tags WHERE tag ILIKE :pattern",
+        };
+        self::assertEquals(
+            ["советских1", "Советских2"],
+            Ctx::$database->get_col(query: $db_query, ["pattern" => "со%"]),
+            "LIKE case-sensitivity is weird"
+        );
+        self::assertEquals(
+            ["советских1", "Советских2"],
+            Ctx::$database->get_col("SELECT tag FROM tags WHERE SCORE_ILIKE(tag, :pattern)", ["pattern" => "ab%"]),
+            "SCORE_ILIKE is consistent"
+        );
+    }
 }
