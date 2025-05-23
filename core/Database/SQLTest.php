@@ -60,4 +60,34 @@ final class SQLTest extends ShimmiePHPUnitTestCase
     {
         self::assertEquals("советских", Ctx::$database->get_one("SELECT LOWER('Советских')"), "LOWER");
     }
+
+    /**
+     * MySQL and Postgres use '\' for sql escaping by default
+     * SQLite requires the user to add "ESCAPE '\'" on every LIKE
+     */
+    public function test_like_escape(): void
+    {
+        Ctx::$database->execute("CREATE TABLE test(val TEXT)");
+        Ctx::$database->execute("INSERT INTO test VALUES (:val)", ["val"=>"abcd"]);
+        Ctx::$database->execute("INSERT INTO test VALUES (:val)", ["val"=>"ABCD"]);
+        Ctx::$database->execute("INSERT INTO test VALUES (:val)", ["val"=>"a_cd"]);
+        self::assertEquals(
+            ["a_cd"],
+            Ctx::$database->get_col("SELECT * FROM test WHERE val LIKE :pattern", ["pattern"=>"a\_%"]),
+            "LIKE escaping is weird"
+        );
+    }
+
+    public function test_like_case(): void
+    {
+        Ctx::$database->execute("CREATE TABLE test(val TEXT)");
+        Ctx::$database->execute("INSERT INTO test VALUES (:val)", ["val"=>"abcd"]);
+        Ctx::$database->execute("INSERT INTO test VALUES (:val)", ["val"=>"ABCD"]);
+        Ctx::$database->execute("INSERT INTO test VALUES (:val)", ["val"=>"a_cd"]);
+        self::assertEquals(
+            ["abcd", "ABCD"],
+            Ctx::$database->get_col("SELECT * FROM test WHERE val LIKE :pattern", ["pattern"=>"ab%"]),
+            "LIKE case-sensitivity is weird"
+        );
+    }
 }
