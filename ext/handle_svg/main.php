@@ -6,13 +6,11 @@ namespace Shimmie2;
 
 use enshrined\svgSanitize\Sanitizer;
 
+/** @extends DataHandlerExtension<SVGFileHandlerTheme> */
 final class SVGFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_svg";
     public const SUPPORTED_MIME = [MimeType::SVG];
-
-    /** @var SVGFileHandlerTheme */
-    protected Themelet $theme;
 
     public function onDataUpload(DataUploadEvent $event): void
     {

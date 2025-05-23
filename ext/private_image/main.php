@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<PrivateImageTheme> */
 final class PrivateImage extends Extension
 {
     public const KEY = "private_image";
-    /** @var PrivateImageTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

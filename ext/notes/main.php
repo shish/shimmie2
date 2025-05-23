@@ -7,12 +7,11 @@ namespace Shimmie2;
 /**
  * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
  * @phpstan-type Note array{id:int,x1:int,y1:int,height:int,width:int,note:string}
+ * @extends Extension<NotesTheme>
  */
 final class Notes extends Extension
 {
     public const KEY = "notes";
-    /** @var NotesTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

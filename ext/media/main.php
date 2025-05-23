@@ -8,11 +8,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 
+/** @extends Extension<MediaTheme> */
 final class Media extends Extension
 {
     public const KEY = "media";
-    /** @var MediaTheme */
-    protected Themelet $theme;
 
     private const LOSSLESS_FORMATS = [
         MimeType::WEBP_LOSSLESS,

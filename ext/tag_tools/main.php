@@ -5,11 +5,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagToolsTheme> */
 final class TagTools extends Extension
 {
     public const KEY = "tag_tools";
-    /** @var TagToolsTheme */
-    protected Themelet $theme;
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {

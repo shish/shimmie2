@@ -14,7 +14,7 @@ parameters:
     - message: '#Function .* is unsafe to use.*$#'
     - message: '#Path in include_once\(\) "data/.*" is not a file or it does not exist.#'
   reportMaybesInMethodSignatures: false
-  reportMaybesInPropertyPhpDocTypes: false
+  reportMaybesInPropertyPhpDocTypes: true
   strictRules:
     booleansInConditions: false
     disallowedEmpty: false

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagHistoryTheme> */
 final class TagHistory extends Extension
 {
     public const KEY = "tag_history";
-    /** @var TagHistoryTheme */
-    protected Themelet $theme;
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {

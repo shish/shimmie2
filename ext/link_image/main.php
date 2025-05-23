@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<LinkImageTheme> */
 final class LinkImage extends Extension
 {
     public const KEY = "link_image";
-    /** @var LinkImageTheme */
-    protected Themelet $theme;
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {

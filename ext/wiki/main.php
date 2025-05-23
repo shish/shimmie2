@@ -99,11 +99,10 @@ final class WikiPage
     }
 }
 
+/** @extends Extension<WikiTheme> */
 final class Wiki extends Extension
 {
     public const KEY = "wiki";
-    /** @var WikiTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

@@ -52,11 +52,10 @@ final class AddAliasException extends UserError
 {
 }
 
+/** @extends Extension<AliasEditorTheme> */
 final class AliasEditor extends Extension
 {
     public const KEY = "alias_editor";
-    /** @var AliasEditorTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

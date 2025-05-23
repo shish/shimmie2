@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagCategoriesTheme> */
 final class TagCategories extends Extension
 {
     public const KEY = "tag_categories";
-    /** @var TagCategoriesTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

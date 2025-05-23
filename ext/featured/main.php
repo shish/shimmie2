@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<FeaturedTheme> */
 final class Featured extends Extension
 {
     public const KEY = "featured";
-    /** @var FeaturedTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

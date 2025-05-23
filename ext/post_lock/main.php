@@ -14,11 +14,10 @@ final class LockSetEvent extends Event
     }
 }
 
+/** @extends Extension<PostLockTheme> */
 final class PostLock extends Extension
 {
     public const KEY = "post_lock";
-    /** @var PostLockTheme */
-    protected Themelet $theme;
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {

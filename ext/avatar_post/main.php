@@ -8,11 +8,10 @@ use function MicroHTML\{DIV,IMG};
 
 use MicroHTML\HTMLElement;
 
+/** @extends AvatarExtension<AvatarPostTheme> */
 final class AvatarPost extends AvatarExtension
 {
     public const KEY = "avatar_post";
-    /** @var AvatarPostTheme */
-    protected Themelet $theme;
 
     public function get_priority(): int
     {

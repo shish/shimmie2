@@ -59,13 +59,11 @@ final class RatingSetEvent extends Event
     }
 }
 
+/** @extends Extension<RatingsTheme> */
 final class Ratings extends Extension
 {
     public const KEY = "rating";
     public const VERSION_KEY = "ext_ratings2_version";
-
-    /** @var RatingsTheme */
-    protected Themelet $theme;
 
     public const UNRATED_KEYWORDS = ["unknown", "unrated"];
 

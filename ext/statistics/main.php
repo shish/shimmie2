@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<StatisticsTheme> */
 final class Statistics extends Extension
 {
     public const KEY = "statistics";
-    /** @var StatisticsTheme */
-    protected Themelet $theme;
+
     /** @var String[] */
     private array $unlisted = ['anonymous', 'ghost'];
 

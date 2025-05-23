@@ -135,13 +135,11 @@ final class PM
     }
 }
 
+/** @extends Extension<PrivMsgTheme> */
 final class PrivMsg extends Extension
 {
     public const KEY = "pm";
     public const VERSION_KEY = "pm_version";
-
-    /** @var PrivMsgTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

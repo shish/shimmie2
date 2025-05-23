@@ -22,11 +22,10 @@ final class BulkAddEvent extends Event
     }
 }
 
+/** @extends Extension<BulkAddTheme> */
 final class BulkAdd extends Extension
 {
     public const KEY = "bulk_add";
-    /** @var BulkAddTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

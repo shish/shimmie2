@@ -15,11 +15,10 @@ final class ImageRelationshipSetEvent extends Event
 }
 
 
+/** @extends Extension<RelationshipsTheme> */
 final class Relationships extends Extension
 {
     public const KEY = "relationships";
-    /** @var RelationshipsTheme */
-    protected Themelet $theme;
 
     public const NAME = "Relationships";
 

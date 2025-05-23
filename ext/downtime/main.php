@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<DowntimeTheme> */
 final class Downtime extends Extension
 {
     public const KEY = "downtime";
-    /** @var DowntimeTheme */
-    protected Themelet $theme;
 
     public function get_priority(): int
     {

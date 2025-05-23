@@ -8,11 +8,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 
+/** @extends Extension<RegenThumbTheme> */
 final class RegenThumb extends Extension
 {
     public const KEY = "regen_thumb";
-    /** @var RegenThumbTheme */
-    protected Themelet $theme;
 
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<BiographyTheme> */
 final class Biography extends Extension
 {
     public const KEY = "biography";
-    /** @var BiographyTheme */
-    protected Themelet $theme;
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
