@@ -23,6 +23,8 @@ class PostgreSQL extends DBEngine
     {
         $data = str_replace("SCORE_AIPK", "INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY", $data);
         $data = str_replace("SCORE_INET", "INET", $data);
+        $data = preg_replace(DBEngine::ILIKE_PATTERN, "$1 ILIKE $2", $data);
+        assert($data !== null, "preg_replace failed");
         return $data;
     }
 

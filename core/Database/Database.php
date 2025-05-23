@@ -124,11 +124,6 @@ class Database
         return $this->engine;
     }
 
-    public function scoreql_to_sql(string $input): string
-    {
-        return $this->get_engine()->scoreql_to_sql($input);
-    }
-
     public function get_driver_id(): DatabaseDriverID
     {
         return $this->get_engine()->id;
@@ -172,6 +167,7 @@ class Database
     public function _execute(string $query, array $args = []): PDOStatement
     {
         try {
+            $query = $this->get_engine()->scoreql_to_sql($query);
             $uri = $_SERVER['REQUEST_URI'] ?? "unknown uri";
             return $this->get_db()->execute(
                 "-- $uri\n" .
