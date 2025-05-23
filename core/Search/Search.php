@@ -167,10 +167,7 @@ final class Search
      */
     private static function tag_or_wildcard_to_ids(string $tag): array
     {
-        $sq = "SELECT id FROM tags WHERE LOWER(tag) LIKE LOWER(:tag)";
-        if (Ctx::$database->get_driver_id() === DatabaseDriverID::SQLITE) {
-            $sq .= "ESCAPE '\\'";
-        }
+        $sq = "SELECT id FROM tags WHERE SCORE_ILIKE(tag, :tag)";
         return Ctx::$database->get_col($sq, ["tag" => Tag::sqlify($tag)]);
     }
 

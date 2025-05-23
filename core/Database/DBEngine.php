@@ -10,6 +10,8 @@ abstract class DBEngine
 {
     public DatabaseDriverID $id;
 
+    public const ILIKE_PATTERN = "/\bSCORE_ILIKE\s*\(\s*([^,()]+)\s*,\s*([^,()]+)\s*\)/";
+
     abstract public function init(PDO $db): void;
 
     abstract public function scoreql_to_sql(string $data): string;
