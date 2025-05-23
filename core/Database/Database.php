@@ -172,6 +172,7 @@ class Database
     public function _execute(string $query, array $args = []): PDOStatement
     {
         try {
+            $query = $this->get_engine()->scoreql_to_sql($query);
             $uri = $_SERVER['REQUEST_URI'] ?? "unknown uri";
             return $this->get_db()->execute(
                 "-- $uri\n" .
