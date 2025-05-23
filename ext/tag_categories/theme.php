@@ -137,8 +137,8 @@ class TagCategoriesTheme extends Themelet
     {
         return emptyHTML(
             P("Search for posts containing a certain number of tags with the specified tag category."),
-            SHM_COMMAND_EXAMPLE("persontags=1", "Returns posts with exactly 1 tag with the tag category 'person'."),
-            SHM_COMMAND_EXAMPLE("cattags>0", "Returns posts with 1 or more tags with the tag category 'cat'."),
+            SHM_COMMAND_EXAMPLE("person_tags=1", "Returns posts with exactly 1 tag with the tag category 'person'."),
+            SHM_COMMAND_EXAMPLE("cat_tags>0", "Returns posts with 1 or more tags with the tag category 'cat'."),
             P("Can use <, <=, >, >=, or =."),
             P("Category name is not case sensitive, category must exist for search to work.")
         );

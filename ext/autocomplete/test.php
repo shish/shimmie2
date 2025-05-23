@@ -27,6 +27,12 @@ final class AutoCompleteTest extends ShimmiePHPUnitTestCase
         self::assertEquals(200, $page->code);
         self::assertEquals(PageMode::DATA, $page->mode);
         self::assertEquals('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
+
+        # regression test for #1797, underscores stop tab-completion working
+        $page = self::get_page('api/internal/autocomplete', ["s" => "prince_"]);
+        self::assertEquals(200, $page->code);
+        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertEquals('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
     }
 
     public function testCategories(): void

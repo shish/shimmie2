@@ -189,7 +189,7 @@ final class Index extends Extension
             $event->add_querylet(new Querylet('images.phash = :phash', ["phash" => $phash]));
         } elseif ($matches = $event->matches("/^(filename|name)[=|:](.+)$/i")) {
             $filename = strtolower($matches[2]);
-            $event->add_querylet(new Querylet("lower(images.filename) LIKE :filename{$event->id}", ["filename{$event->id}" => "%$filename%"]));
+            $event->add_querylet(new Querylet("SCORE_ILIKE(images.filename, :filename{$event->id})", ["filename{$event->id}" => "%$filename%"]));
         } elseif ($matches = $event->matches("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]{4}[-\/][0-9]{2}[-\/][0-9]{2})$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $dt = new \Safe\DateTimeImmutable($matches[2]);
