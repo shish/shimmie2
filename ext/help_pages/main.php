@@ -41,11 +41,10 @@ final class HelpPageBuildingEvent extends PartListBuildingEvent
     }
 }
 
+/** @extends Extension<HelpPagesTheme> */
 final class HelpPages extends Extension
 {
     public const KEY = "help_pages";
-    /** @var HelpPagesTheme */
-    protected Themelet $theme;
     public const SEARCH = "search";
 
     public function onPageRequest(PageRequestEvent $event): void

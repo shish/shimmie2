@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TermsTheme> */
 final class Terms extends Extension
 {
     public const KEY = "terms";
-    /** @var TermsTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

@@ -104,12 +104,12 @@ final class UploadSuccess extends UploadResult
  * Main upload class.
  * All files that are uploaded to the site are handled through this class.
  * This also includes transloaded files as well.
+ *
+ * @extends Extension<UploadTheme>
  */
 final class Upload extends Extension
 {
     public const KEY = "upload";
-    /** @var UploadTheme */
-    protected Themelet $theme;
     public bool $is_full;
 
     /**

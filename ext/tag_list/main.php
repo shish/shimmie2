@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagListTheme> */
 final class TagList extends Extension
 {
     public const KEY = "tag_list";
-    /** @var TagListTheme */
-    protected Themelet $theme;
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
@@ -40,36 +39,29 @@ final class TagList extends Extension
     private static function get_omitted_tags(): array
     {
         $tags_config = Ctx::$config->get(TagListConfig::OMIT_TAGS);
-        $results = Ctx::$cache->get("tag_list_omitted_tags:".$tags_config);
 
-        if (is_null($results)) {
-            $tags = Tag::explode($tags_config, false);
+        return cache_get_or_set(
+            "tag_list_omitted_tags:" . $tags_config,
+            function () use ($tags_config) {
+                $tags = Tag::explode($tags_config, false);
 
-            if (count($tags) === 0) {
-                return [];
-            }
-
-            $where = [];
-            $args = [];
-            $i = 0;
-            foreach ($tags as $tag) {
-                $i++;
-                $arg = "tag$i";
-                $args[$arg] = Tag::sqlify($tag);
-                if (!str_contains($tag, '*')
-                    && !str_contains($tag, '?')) {
-                    $where[] = " tag = :$arg ";
-                } else {
-                    $where[] = " tag LIKE :$arg ";
+                if (count($tags) === 0) {
+                    return [];
                 }
-            }
 
-            // @phpstan-ignore-next-line
-            $results = Ctx::$database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
+                $where = [];
+                $args = [];
+                foreach ($tags as $i => $tag) {
+                    $arg = "tag$i";
+                    $args[$arg] = Tag::sqlify($tag);
+                    $where[] = "SCORE_ILIKE(tag, :$arg)";
+                }
 
-            Ctx::$cache->set("tag_list_omitted_tags:" . $tags_config, $results, 600);
-        }
-        return $results;
+                // @phpstan-ignore-next-line
+                return Ctx::$database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
+            },
+            600
+        );
     }
 
     private function add_related_block(Image $image): void
@@ -197,10 +189,10 @@ final class TagList extends Extension
                 if ($tag[0] === "-" || str_starts_with($tag, "tagme")) {
                     continue;
                 }
-                $tag = Tag::sqlify($tag);
-                $tag_ids = Ctx::$database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", ["tag" => $tag]);
-                // $search_tags = array_merge($search_tags,
-                //                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
+                $tag_ids = Ctx::$database->get_col(
+                    "SELECT id FROM tags WHERE SCORE_ILIKE(tag, :tag) AND count < 25000",
+                    ["tag" => Tag::sqlify($tag)]
+                );
                 $starting_tags = array_merge($starting_tags, $tag_ids);
                 $tags_ok = count($tag_ids) > 0;
                 if (!$tags_ok) {

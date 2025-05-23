@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<CronUploaderTheme> */
 final class CronUploader extends Extension
 {
     public const KEY = "cron_uploader";
-    /** @var CronUploaderTheme */
-    protected Themelet $theme;
 
     public const NAME = "cron_uploader";
 

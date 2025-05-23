@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TrashTheme> */
 final class Trash extends Extension
 {
     public const KEY = "trash";
-    /** @var TrashTheme */
-    protected Themelet $theme;
 
     public function get_priority(): int
     {

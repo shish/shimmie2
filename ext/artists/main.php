@@ -20,12 +20,11 @@ final class AuthorSetEvent extends Event
  * @phpstan-type ArtistAlias array{id:int,alias:string}
  * @phpstan-type ArtistMember array{id:int,name:string}
  * @phpstan-type ArtistUrl array{id:int,url:string}
+ * @extends Extension<ArtistsTheme>
  */
 final class Artists extends Extension
 {
     public const KEY = "artists";
-    /** @var ArtistsTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<RandomImageTheme> */
 final class RandomImage extends Extension
 {
     public const KEY = "random_image";
-    /** @var RandomImageTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

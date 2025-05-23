@@ -99,11 +99,10 @@ final class WikiPage
     }
 }
 
+/** @extends Extension<WikiTheme> */
 final class Wiki extends Extension
 {
     public const KEY = "wiki";
-    /** @var WikiTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
@@ -304,7 +303,7 @@ final class Wiki extends Extension
             "
 				SELECT revision, date
 				FROM wiki_pages
-				WHERE LOWER(title) LIKE LOWER(:title)
+				WHERE SCORE_ILIKE(title, :title)
 				ORDER BY revision DESC
 			",
             ["title" => $title]
@@ -319,7 +318,7 @@ final class Wiki extends Extension
             "
 				SELECT *
 				FROM wiki_pages
-				WHERE LOWER(title) LIKE LOWER(:title)
+				WHERE SCORE_ILIKE(title, :title)
 				AND (:revision = -1 OR revision = :revision)
 				ORDER BY revision DESC
 			",
@@ -331,7 +330,7 @@ final class Wiki extends Extension
             $row = Ctx::$database->get_row("
                 SELECT *
                 FROM wiki_pages
-                WHERE title LIKE :title
+                WHERE title = :title
                 ORDER BY revision DESC
 			", ["title" => "wiki:default"]);
 

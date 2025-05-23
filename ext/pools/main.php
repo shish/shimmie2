@@ -95,12 +95,11 @@ function _image_to_id(Image $image): int
 
 /**
  * @phpstan-type PoolHistory array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
+ * @extends Extension<PoolsTheme>
  */
 final class Pools extends Extension
 {
     public const KEY = "pools";
-    /** @var PoolsTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

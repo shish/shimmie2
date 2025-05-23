@@ -80,11 +80,10 @@ final class BulkActionEvent extends Event
     }
 }
 
+/** @extends Extension<BulkActionsTheme> */
 final class BulkActions extends Extension
 {
     public const KEY = "bulk_actions";
-    /** @var BulkActionsTheme */
-    protected Themelet $theme;
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {

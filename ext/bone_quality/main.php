@@ -6,11 +6,10 @@ namespace Shimmie2;
 
 use function MicroHTML\emptyHTML;
 
+/** @extends Extension<BoneQualityTheme> */
 final class BoneQuality extends Extension
 {
     public const KEY = "bone_quality";
-    /** @var BoneQualityTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

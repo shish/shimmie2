@@ -14,12 +14,10 @@ final class PostDescriptionSetEvent extends Event
     }
 }
 
+/** @extends Extension<PostDescriptionTheme> */
 final class PostDescription extends Extension
 {
     public const KEY = "post_description";
-
-    /** @var PostDescriptionTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

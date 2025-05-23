@@ -8,11 +8,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 
+/** @extends Extension<BulkAddCSVTheme> */
 final class BulkAddCSV extends Extension
 {
     public const KEY = "bulk_add_csv";
-    /** @var BulkAddCSVTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagCategoriesTheme> */
 final class TagCategories extends Extension
 {
     public const KEY = "tag_categories";
-    /** @var TagCategoriesTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
@@ -70,7 +69,7 @@ final class TagCategories extends Extension
     {
         global $database;
 
-        if ($matches = $event->matches("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i")) {
+        if ($matches = $event->matches("/^(.+)_?tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i")) {
             $type = strtolower($matches[1]);
             $cmp = ltrim($matches[2], ":") ?: "=";
             $count = $matches[3];

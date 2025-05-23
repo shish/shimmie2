@@ -6,11 +6,10 @@ namespace Shimmie2;
 
 require_once "events/post_title_set_event.php";
 
+/** @extends Extension<PostTitlesTheme> */
 final class PostTitles extends Extension
 {
     public const KEY = "post_titles";
-    /** @var PostTitlesTheme */
-    protected Themelet $theme;
 
     public function get_priority(): int
     {

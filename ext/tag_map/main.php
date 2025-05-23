@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagMapTheme> */
 final class TagMap extends Extension
 {
     public const KEY = "tag_map";
-    /** @var TagMapTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {
@@ -69,7 +68,7 @@ final class TagMap extends Extension
                 FLOOR(LN(LN(count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
             FROM tags
             WHERE count >= :tags_min
-            AND LOWER(tag) LIKE LOWER(:starts_with)
+            AND SCORE_ILIKE(tag, :starts_with)
             ORDER BY LOWER(tag)
         ", ["tags_min" => $tags_min, "starts_with" => $starts_with]);
     }
@@ -85,7 +84,7 @@ final class TagMap extends Extension
             SELECT tag, count
             FROM tags
             WHERE count >= :tags_min
-            AND LOWER(tag) LIKE LOWER(:starts_with)
+            AND SCORE_ILIKE(tag, :starts_with)
             ORDER BY LOWER(tag)
         ", ["tags_min" => $tags_min, "starts_with" => $starts_with]);
     }

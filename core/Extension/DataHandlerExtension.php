@@ -20,6 +20,9 @@ namespace Shimmie2;
  *
  * create_thumb()
  *   ...?
+ *
+ * @template TThemelet of Themelet = Themelet
+ * @extends Extension<TThemelet>
  */
 abstract class DataHandlerExtension extends Extension
 {

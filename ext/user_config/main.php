@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<UserConfigTheme> */
 final class UserConfig extends Extension
 {
     public const KEY = "user_config";
-    /** @var UserConfigTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

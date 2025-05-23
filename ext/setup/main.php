@@ -76,11 +76,10 @@ final class ConfigSaveEvent extends Event
     }
 }
 
+/** @extends Extension<SetupTheme> */
 final class Setup extends Extension
 {
     public const KEY = "setup";
-    /** @var SetupTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

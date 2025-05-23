@@ -13,6 +13,9 @@ use MicroHTML\HTMLElement;
  *   Should return an HTMLElement representing an
  *   avatar, and it should have the CSS property
  *   of "display:inline-block" to emulate an <img>
+ *
+ * @template TThemelet of Themelet = Themelet
+ * @extends Extension<TThemelet>
  */
 abstract class AvatarExtension extends Extension
 {

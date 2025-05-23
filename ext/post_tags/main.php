@@ -114,11 +114,10 @@ final class TagTermParseEvent extends Event
     }
 }
 
+/** @extends Extension<PostTagsTheme> */
 final class PostTags extends Extension
 {
     public const KEY = "post_tags";
-    /** @var PostTagsTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {
