@@ -124,11 +124,6 @@ class Database
         return $this->engine;
     }
 
-    public function scoreql_to_sql(string $input): string
-    {
-        return $this->get_engine()->scoreql_to_sql($input);
-    }
-
     public function get_driver_id(): DatabaseDriverID
     {
         return $this->get_engine()->id;
