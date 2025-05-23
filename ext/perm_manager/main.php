@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<PermManagerTheme> */
 final class PermManager extends Extension
 {
     public const KEY = "perm_manager";
-    /** @var PermManagerTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

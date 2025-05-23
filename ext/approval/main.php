@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<ApprovalTheme> */
 final class Approval extends Extension
 {
     public const KEY = "approval";
-
-    /** @var ApprovalTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

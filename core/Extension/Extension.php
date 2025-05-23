@@ -16,14 +16,20 @@ namespace Shimmie2;
  * --> https://github.com/Artanis/simple-extension/tree/master
  * Then re-implemented by Shish after he broke the forum and couldn't
  * find the thread where the original was posted >_<
+ *
+ * @template TThemelet of Themelet = Themelet
  */
 abstract class Extension extends Enablable
 {
+    /** @var TThemelet $theme */
     protected Themelet $theme;
     public const VERSION_KEY = null;
 
     public function __construct()
     {
+        // When we say "$theme should be any Themelet", phpstan interprets
+        // that as "subclass of Themelet, but not the parent class"...
+        // @phpstan-ignore-next-line
         $this->theme = Themelet::get_for_extension_class(get_called_class());
     }
 

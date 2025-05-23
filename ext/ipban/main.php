@@ -67,11 +67,10 @@ final class AddIPBanEvent extends Event
     }
 }
 
+/** @extends Extension<IPBanTheme> */
 final class IPBan extends Extension
 {
     public const KEY = "ipban";
-    /** @var IPBanTheme */
-    protected Themelet $theme;
 
     public function get_priority(): int
     {

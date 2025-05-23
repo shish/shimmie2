@@ -118,13 +118,11 @@ final class Comment
     }
 }
 
+/** @extends Extension<CommentListTheme> */
 final class CommentList extends Extension
 {
     public const KEY = "comment";
     public const VERSION_KEY = "ext_comments_version";
-
-    /** @var CommentListTheme $theme */
-    public Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagMapTheme> */
 final class TagMap extends Extension
 {
     public const KEY = "tag_map";
-    /** @var TagMapTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

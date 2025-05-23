@@ -14,11 +14,10 @@ final class OwnerSetEvent extends Event
     }
 }
 
+/** @extends Extension<PostOwnerTheme> */
 final class PostOwner extends Extension
 {
     public const KEY = "post_owner";
-    /** @var PostOwnerTheme */
-    protected Themelet $theme;
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {

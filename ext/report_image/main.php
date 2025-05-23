@@ -34,12 +34,11 @@ final class ImageReport
 
 /**
  * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}
+ * @extends Extension<ReportImageTheme>
  */
 final class ReportImage extends Extension
 {
     public const KEY = "report_image";
-    /** @var ReportImageTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

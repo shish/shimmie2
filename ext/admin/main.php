@@ -27,11 +27,10 @@ final class AdminActionEvent extends Event
     }
 }
 
+/** @extends Extension<AdminPageTheme> */
 final class AdminPage extends Extension
 {
     public const KEY = "admin";
-    /** @var AdminPageTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

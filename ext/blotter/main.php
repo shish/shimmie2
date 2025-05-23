@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 /**
  * @phpstan-type BlotterEntry array{id:int,entry_date:string,entry_text:string,important:bool}
+ * @extends Extension<BlotterTheme>
  */
 final class Blotter extends Extension
 {

@@ -12,11 +12,10 @@ final class ImageTranscodeException extends SCoreException
 }
 
 
+/** @extends Extension<TranscodeImageTheme> */
 final class TranscodeImage extends Extension
 {
     public const KEY = "transcode";
-    /** @var TranscodeImageTheme */
-    protected Themelet $theme;
 
     public const INPUT_MIMES = [
         "BMP" => MimeType::BMP,

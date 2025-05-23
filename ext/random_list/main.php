@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<RandomListTheme> */
 final class RandomList extends Extension
 {
     public const KEY = "random_list";
-    /** @var RandomListTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

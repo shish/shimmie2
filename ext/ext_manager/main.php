@@ -17,11 +17,10 @@ final class ExtensionAuthor
     }
 }
 
+/** @extends Extension<ExtManagerTheme> */
 final class ExtManager extends Extension
 {
     public const KEY = "ext_manager";
-    /** @var ExtManagerTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

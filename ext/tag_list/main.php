@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<TagListTheme> */
 final class TagList extends Extension
 {
     public const KEY = "tag_list";
-    /** @var TagListTheme */
-    protected Themelet $theme;
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {

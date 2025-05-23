@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<ReplaceFileTheme> */
 final class ReplaceFile extends Extension
 {
     public const KEY = "replace_file";
-    /** @var ReplaceFileTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

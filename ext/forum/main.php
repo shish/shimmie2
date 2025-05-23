@@ -17,13 +17,12 @@ Todo:
 /**
  * @phpstan-type Thread array{id:int,title:string,sticky:bool,user_name:string,uptodate:string,response_count:int}
  * @phpstan-type Post array{id:int,user_name:string,user_class:string,date:string,message:string}
+ * @extends Extension<ForumTheme>
  */
 final class Forum extends Extension
 {
     public const KEY = "forum";
     public const VERSION_KEY = "forum_version";
-    /** @var ForumTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

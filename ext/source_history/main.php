@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/** @extends Extension<SourceHistoryTheme> */
 final class SourceHistory extends Extension
 {
     public const KEY = "source_history";
-    /** @var SourceHistoryTheme */
-    protected Themelet $theme;
 
     // in before source are actually set, so that "get current source" works
     public function get_priority(): int

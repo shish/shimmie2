@@ -119,11 +119,10 @@ final class LoginResult
     }
 }
 
+/** @extends Extension<UserPageTheme> */
 final class UserPage extends Extension
 {
     public const KEY = "user";
-    /** @var UserPageTheme $theme */
-    public Themelet $theme;
 
     public function onUserLogin(UserLoginEvent $event): void
     {

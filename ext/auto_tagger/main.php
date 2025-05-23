@@ -56,13 +56,11 @@ final class AddAutoTagException extends SCoreException
 {
 }
 
+/** @extends Extension<AutoTaggerTheme> */
 final class AutoTagger extends Extension
 {
     public const KEY = "auto_tagger";
     public const VERSION_KEY = "ext_auto_tagger_ver";
-
-    /** @var AutoTaggerTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

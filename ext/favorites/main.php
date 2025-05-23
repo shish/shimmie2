@@ -17,11 +17,10 @@ final class FavoriteSetEvent extends Event
     }
 }
 
+/** @extends Extension<FavoritesTheme> */
 final class Favorites extends Extension
 {
     public const KEY = "favorites";
-    /** @var FavoritesTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

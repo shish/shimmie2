@@ -96,11 +96,10 @@ final class NumericScoreSetEvent extends Event
     }
 }
 
+/** @extends Extension<NumericScoreTheme> */
 final class NumericScore extends Extension
 {
     public const KEY = "numeric_score";
-    /** @var NumericScoreTheme */
-    protected Themelet $theme;
 
     public function onInitExt(InitExtEvent $event): void
     {

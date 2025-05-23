@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-/**
- * Class EmoticonList
- */
+/** @extends Extension<EmoticonListTheme> */
 final class EmoticonList extends Extension
 {
     public const KEY = "emoticons_list";
-    /** @var EmoticonListTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

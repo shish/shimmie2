@@ -26,12 +26,11 @@ final class DeleteTipEvent extends Event
 
 /**
  * @phpstan-type Tip array{id: int, image: string, text: string, enable: bool}
+ * @extends Extension<TipsTheme>
  */
 final class Tips extends Extension
 {
     public const KEY = "tips";
-    /** @var TipsTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

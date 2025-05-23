@@ -12,11 +12,10 @@ final class VideoTranscodeException extends SCoreException
 }
 
 
+/** @extends Extension<TranscodeVideoTheme> */
 final class TranscodeVideo extends Extension
 {
     public const KEY = "transcode_video";
-    /** @var TranscodeVideoTheme */
-    protected Themelet $theme;
 
     public const ACTION_BULK_TRANSCODE = "bulk_transcode_video";
 

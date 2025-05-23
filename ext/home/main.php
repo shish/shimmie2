@@ -6,11 +6,10 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
+/** @extends Extension<HomeTheme> */
 final class Home extends Extension
 {
     public const KEY = "home";
-    /** @var HomeTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {

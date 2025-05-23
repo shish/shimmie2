@@ -6,12 +6,11 @@ namespace Shimmie2;
 
 /**
  * @phpstan-type BlockArray array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}
+ * @extends Extension<BlocksTheme>
  */
 final class Blocks extends Extension
 {
     public const KEY = "blocks";
-    /** @var BlocksTheme */
-    protected Themelet $theme;
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {

@@ -15,11 +15,10 @@ final class SourceSetEvent extends Event
     }
 }
 
+/** @extends Extension<PostSourceTheme> */
 final class PostSource extends Extension
 {
     public const KEY = "post_source";
-    /** @var PostSourceTheme */
-    protected Themelet $theme;
 
     public function onPageRequest(PageRequestEvent $event): void
     {
