@@ -50,8 +50,8 @@ final class TagUsage
                 "
                 SELECT tag, count
                 FROM tags
-                WHERE LOWER(tag) LIKE LOWER(:search)
-                -- OR LOWER(tag) LIKE LOWER(:cat_search)
+                WHERE SCORE_ILIKE(tag, :search)
+                -- OR SCORE_ILIKE(tag, :cat_search)
                 AND count > 0
                 ORDER BY count DESC
                 $limitSQL

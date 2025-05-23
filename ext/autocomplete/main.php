@@ -61,8 +61,8 @@ final class AutoComplete extends Extension
                         SELECT tag, NULL AS newtag, count
                         FROM tags
                         WHERE (
-                            LOWER(tag) LIKE LOWER(:search)
-                            OR LOWER(tag) LIKE LOWER(:cat_search)
+                            SCORE_ILIKE(tag, :search)
+                            OR SCORE_ILIKE(tag, :cat_search)
                         )
                         AND count > 0
                     -- )
@@ -72,8 +72,8 @@ final class AutoComplete extends Extension
                         FROM aliases
                         JOIN tags ON tag = newtag
                         WHERE (
-                            (LOWER(oldtag) LIKE LOWER(:search) AND LOWER(newtag) NOT LIKE LOWER(:search))
-                            OR (LOWER(oldtag) LIKE LOWER(:cat_search) AND LOWER(newtag) NOT LIKE LOWER(:cat_search))
+                            (SCORE_ILIKE(oldtag, :search) AND NOT SCORE_ILIKE(newtag, :search))
+                            OR (SCORE_ILIKE(oldtag, :cat_search) AND NOT SCORE_ILIKE(newtag, :cat_search))
                         )
                         AND count > 0
                     -- )
