@@ -83,8 +83,8 @@ final class TagCategories extends Extension
 					    SELECT count(distinct t.id)
 					    FROM tags t
 					    INNER JOIN image_tags it ON it.tag_id = t.id AND images.id = it.image_id
-					    WHERE LOWER(t.tag) LIKE LOWER('$type:%')) $cmp $count
-					")
+					    WHERE SCORE_ILIKE(t.tag, :cat{$event->id}) $cmp :count{$event->id}
+					", ["cat{$event->id}" => '$type:%', "count{$event->id}" => $count])
                 );
             }
         }

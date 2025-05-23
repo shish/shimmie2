@@ -63,7 +63,7 @@ final class PostSource extends Extension
                 $not = ($source === "any" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.source IS $not NULL"));
             } else {
-                $event->add_querylet(new Querylet('LOWER(images.source) LIKE :src', ["src" => "%$source%"]));
+                $event->add_querylet(new Querylet('SCORE_ILIKE(images.source, :src)', ["src" => "%$source%"]));
             }
         }
     }
