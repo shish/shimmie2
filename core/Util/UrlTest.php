@@ -63,6 +63,7 @@ final class UrlTest extends TestCase
         // relative to the document root"
         self::assertUrlEquals("", Url::base(["PHP_SELF" => "/index.php"]));
         self::assertUrlEquals("/mydir", Url::base(["PHP_SELF" => "/mydir/index.php"]));
+        self::assertUrlEquals("/my%20dir", Url::base(["PHP_SELF" => "/my dir/index.php"]));
 
         // SCRIPT_FILENAME should point to "the absolute pathname of
         // the currently executing script" and DOCUMENT_ROOT should
