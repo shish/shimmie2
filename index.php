@@ -129,6 +129,7 @@ function main(): int
                 || (ftime() - $_SERVER["REQUEST_TIME_FLOAT"]) > SysConfig::getTraceThreshold()
             )
             && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
+            && is_writable(SysConfig::getTraceFile())
         ) {
             Ctx::$tracer->flush(SysConfig::getTraceFile());
         }
