@@ -70,3 +70,7 @@ H3[class~="shm-toggler"] {
 .tag {
     overflow-wrap: anywhere;
 }
+
+PRE {
+    text-align: left;
+}
