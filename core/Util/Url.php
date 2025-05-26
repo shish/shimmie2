@@ -101,6 +101,11 @@ final readonly class Url
             $dir = dirname($self);
             $dir = str_replace("\\", "/", $dir);
             $dir = rtrim($dir, "/");
+            // if the install directory has a space in the dirname, we need to
+            // encode that to match the URL encoding, so that
+            // "URL == basepath + path" - but we can't just rawurlencode it because
+            // that would encode the slashes too, see #1792
+            $dir = str_replace(" ", "%20", $dir);
         }
         if ($dir === "") {
             $dir = null;
