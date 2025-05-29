@@ -1,3 +1,7 @@
+.blockbody:has(#main_image) {
+    position: relative;
+}
+
 .notes-container {
 	position: absolute;
 	pointer-events: none;
