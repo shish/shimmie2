@@ -1,6 +1,8 @@
 .notes-container {
 	position: absolute;
 	pointer-events: none;
+	top: 0px;
+	left: 0px;
 }
 
 .notes-container .note {
