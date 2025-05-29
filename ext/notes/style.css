@@ -48,7 +48,6 @@
 }
 .notes-container .editor TEXTAREA {
 	grid-area: text;
-	// resize: none;
 }
 .notes-container .editor BUTTON[value="Save"] {
 	grid-area: save;
