@@ -12,3 +12,7 @@ div.zoom-container {
     max-height: 95vh;
     max-width: 100vw;
 }
+
+.blockbody:has(img#main_image) {
+    position: relative;
+}
