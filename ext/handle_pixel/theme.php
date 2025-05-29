@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{BR, joinHTML};
-use function MicroHTML\{IMG};
+use function MicroHTML\{BR, DIV, IMG, joinHTML};
 
 class PixelFileHandlerTheme extends Themelet
 {
     public function display_image(Image $image): void
     {
-        $html = IMG([
-            'alt' => 'main image',
-            'class' => 'shm-main-image shm-click-to-scale',
-            'id' => 'main_image',
-            'src' => $image->get_image_link(),
-            'data-width' => $image->width,
-            'data-height' => $image->height,
-            'data-mime' => $image->get_mime(),
-            'onerror' => "shm_log('Error loading >>{$image->id}')",
-        ]);
+        $html = DIV(
+            ["id" => "main_image-container"],
+            IMG([
+                'alt' => 'main image',
+                'class' => 'shm-main-image shm-click-to-scale',
+                'id' => 'main_image',
+                'src' => $image->get_image_link(),
+                'data-width' => $image->width,
+                'data-height' => $image->height,
+                'data-mime' => $image->get_mime(),
+                'onerror' => "shm_log('Error loading >>{$image->id}')",
+            ])
+        );
         Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 

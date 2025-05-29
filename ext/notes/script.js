@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let resizeObserver = new ResizeObserver(renderNotes);
         resizeObserver.observe(noteImage);
 
-        noteImage.parentElement.addEventListener("scroll", renderNotes);
+        noteImage.parentNode.addEventListener("scroll", renderNotes);
     }
 });
 
