@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroCRUD\{ActionColumn, DateColumn, EnumColumn, InetColumn, StringColumn, Table};
+use MicroCRUD\{ActionColumn, DateColumn, EnumColumn, InetColumn, SelectColumn, StringColumn, Table};
 
 final class IPBanTable extends Table
 {
@@ -21,6 +21,7 @@ final class IPBanTable extends Table
         $this->size = 100;
         $this->limit = 1000000;
         $this->set_columns([
+            new SelectColumn("id"),
             new InetColumn("ip", "IP"),
             new EnumColumn("mode", "Mode", [
                 "Block" => "block",
@@ -39,6 +40,7 @@ final class IPBanTable extends Table
             "all" => ["((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))", null],
         ];
         $this->create_url = make_link("ip_ban/create");
+        $this->bulk_url = make_link("ip_ban/bulk");
         $this->delete_url = make_link("ip_ban/delete");
         $this->table_attrs = ["class" => "zebra form"];
     }
@@ -177,6 +179,17 @@ final class IPBan extends Extension
             send_event(new RemoveIPBanEvent($input['d_id']));
             $page->flash("Ban removed");
             $page->set_redirect(make_link("ip_ban/list"));
+        }
+        if ($event->page_matches("ip_ban/bulk", method: "POST", permission: IPBanPermission::BAN_IP)) {
+            $action = $event->POST->req("bulk_action");
+            if ($action === "delete") {
+                $ids = $event->POST->getAll("id");
+                foreach ($ids as $id) {
+                    send_event(new RemoveIPBanEvent(int_escape($id)));
+                }
+                $page->flash(count($ids) . " bans removed");
+            }
+            $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("ip_ban/list", method: "GET", permission: IPBanPermission::BAN_IP)) {
             $event->GET['c_banner'] = Ctx::$user->name;
