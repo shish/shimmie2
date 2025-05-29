@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroCRUD\{ActionColumn, DateColumn, StringColumn, Table};
+use MicroCRUD\{ActionColumn, DateColumn, SelectColumn, StringColumn, Table};
 
 use function MicroHTML\{INPUT,emptyHTML};
 
@@ -19,6 +19,7 @@ final class HashBanTable extends Table
         $this->size = 100;
         $this->limit = 1000000;
         $this->set_columns([
+            new SelectColumn("hash"),
             new StringColumn("hash", "Hash"),
             new BBCodeColumn("reason", "Reason"),
             new DateColumn("date", "Date"),
@@ -26,6 +27,7 @@ final class HashBanTable extends Table
         ]);
         $this->order_by = ["date DESC", "id"];
         $this->create_url = make_link("image_hash_ban/add");
+        $this->bulk_url = make_link("image_hash_ban/bulk");
         $this->delete_url = make_link("image_hash_ban/remove");
         $this->table_attrs = ["class" => "zebra form"];
     }
@@ -99,6 +101,17 @@ final class ImageBan extends Extension
 
                 $page->set_redirect(Url::referer_or());
             }
+        }
+        if ($event->page_matches("image_hash_ban/bulk", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
+            $action = $event->POST->req("bulk_action");
+            if ($action === "delete") {
+                $hashes = $event->POST->getAll("hash");
+                foreach ($hashes as $hash) {
+                    send_event(new RemoveImageHashBanEvent($hash));
+                }
+                $page->flash(count($hashes) . " bans removed");
+            }
+            $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("image_hash_ban/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
             $input = validate_input(["d_hash" => "string"]);
