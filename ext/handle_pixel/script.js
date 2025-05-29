@@ -1,82 +1,65 @@
 document.addEventListener("DOMContentLoaded", () => {
-    function zoom(zoom_type, save_cookie) {
-        save_cookie = save_cookie === undefined ? true : save_cookie;
+    function resize(type) {
+        let $img = $("#main_image");
+        let image_width = $img.data("width");
+        let image_height = $img.data("height");
 
-        var img = $(".shm-click-to-scale");
-
-        /* get dimensions for the image when zoomed out to fit the screen */
-        zoom_height = Math.min(window.innerHeight * 0.8, img.data("height"));
-        // check max width of parent element when the image isn't extending it
-        img.css("display", "none");
-        zoom_width = Math.min(img.parent().width(), img.data("width"));
-        img.css("display", "");
-        // keep the image in ratio
-        if (zoom_width / zoom_height > img.data("width") / img.data("height")) {
-            zoom_width = img.data("width") * (zoom_height / img.data("height"));
-        } else {
-            zoom_height = img.data("height") * (zoom_width / img.data("width"));
+        $img.css("translate", '');
+        $img.removeClass();
+        if (type !== "full") {
+            $img.addClass(`fit-${type}`);
         }
-
-        if (zoom_type === "full") {
-            img.attr("width", img.data("width"));
-            img.attr("height", img.data("height"));
+        if (window.innerWidth * 0.9 < image_width || window.innerHeight * 0.9 < image_height) {
+            $img.css("cursor", "zoom-in");
         }
-        if (zoom_type === "width") {
-            img.attr("width", zoom_width);
-            img.attr("height", img.data("height"));
-        }
-        if (zoom_type === "height") {
-            img.attr("width", img.data("width"));
-            img.attr("height", zoom_height);
-        }
-        if (zoom_type === "both") {
-            img.attr("width", zoom_width);
-            img.attr("height", zoom_height);
-        }
-
-        const zoom_height_diff = Math.round(zoom_height - img.data("height"));
-        const zoom_width_diff = Math.round(zoom_width - img.data("width"));
-
-        if (zoom_height_diff == 0 && zoom_width_diff == 0) {
-            img.css("cursor", "");
-        } else if (zoom_type == "full") {
-            img.css("cursor", "zoom-out");
-        } else {
-            img.css("cursor", "zoom-in");
-        }
-
-        $(".shm-zoomer").val(zoom_type);
-
-        if (save_cookie) {
-            shm_cookie_set("ui-image-zoom", zoom_type);
-        }
+        shm_cookie_set("ui-image-zoom", type);
+        $(".shm-zoomer").val(type);
     }
 
-    $(".shm-zoomer").change(function (e) {
-        zoom(this.options[this.selectedIndex].value);
-    });
-    $(window).resize(function (e) {
-        $(".shm-zoomer").each(function (e) {
-            zoom(this.options[this.selectedIndex].value, false);
-        });
-    });
+    function zoom(point = {}) {
+        let $img = $("#main_image");
+        let image_width = $img.data("width");
+        let image_height = $img.data("height");
 
-    $("img.shm-main-image").click(function (e) {
-        var val = $(".shm-zoomer")[0].value;
-        var cookie = shm_cookie_get("ui-image-zoom");
-
-        if (val == "full" && cookie == "full") {
-            zoom("both", false);
-        } else if (val != "full") {
-            zoom("full", false);
-        } else {
-            zoom(cookie, false);
+        if (window.innerWidth * 0.9 >= image_width && window.innerHeight * 0.9 >= image_height) {
+            $img.css("cursor", '');
+            $img.css("translate", '');
+            return
         }
+
+        $img.css("translate", '');
+        if ($img.hasClass("zoom-point")) {
+            $img.removeClass();
+            $img.parent().removeClass("zoom-container");
+            $img.addClass("fit-both");
+            $img.css("cursor", "zoom-in");
+        } else {
+            let width = $img.width();
+            let height = $img.height();
+
+            $img.removeClass();
+            $img.addClass("zoom-point");
+            $img.css("cursor", "zoom-out");
+
+            let $parent = $img.parent();
+            $parent.addClass("zoom-container");
+            $parent.scrollTop((point.y / height)*image_height - ($parent.height()/2));
+            $parent.scrollLeft((point.x / width)*image_width - ($parent.width()/2));
+        }
+        $(".shm-zoomer").val("both");
+    }
+
+    $(".shm-zoomer").on("change", function (e) {
+        resize(this.options[this.selectedIndex].value);
+    });
+
+    $("img#main_image").on("click", function (e) {
+        zoom({x: e.offsetX, y: e.offsetY})
     });
 
     if (shm_cookie_get("ui-image-zoom")) {
-        zoom(shm_cookie_get("ui-image-zoom"));
+        resize(shm_cookie_get("ui-image-zoom"));
     } else {
-        zoom("both");
+        resize("both");
     }
 });

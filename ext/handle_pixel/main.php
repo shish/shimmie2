@@ -67,12 +67,11 @@ final class PixelFileHandler extends DataHandlerExtension
             $event->add_part(FORM(
                 SELECT(
                     ["class" => "shm-zoomer"],
-                    OPTION(["value" => "full"], "Full Size"),
-                    OPTION(["value" => "width"], "Fit Width"),
-                    OPTION(["value" => "height"], "Fit Height"),
-                    OPTION(["value" => "both"], "Fit Both")
+                    OPTION(["value" => "full"], "Full"),
+                    OPTION(["value" => "both"], "Fit"),
+                    OPTION(["value" => "width"], "Fit Width")
                 )
-            ), 20);
+            ), 19);
         }
     }
 }
