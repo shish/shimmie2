@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e16a9f2fa20da002ae2a45b3bfd5ef74",
+    "content-hash": "9573fe07b41a77c7820205a479a05fea",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -47,21 +47,18 @@
         },
         {
             "name": "bower-asset/js-cookie",
-            "version": "v2.2.1",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:js-cookie/js-cookie.git",
-                "reference": "54962f884e9ae33f93e13ac903ffaf1d5a523598"
+                "reference": "0ba77141dd215782cc7770347a457906908c66ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/54962f884e9ae33f93e13ac903ffaf1d5a523598",
-                "reference": "54962f884e9ae33f93e13ac903ffaf1d5a523598"
+                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/0ba77141dd215782cc7770347a457906908c66ff",
+                "reference": "0ba77141dd215782cc7770347a457906908c66ff"
             },
-            "type": "bower-asset",
-            "license": [
-                "MIT"
-            ]
+            "type": "bower-asset"
         },
         {
             "name": "enshrined/svg-sanitize",

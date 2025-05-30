@@ -45,7 +45,7 @@
         "enshrined/svg-sanitize": "^0.21",
         "bower-asset/jquery": "^1.12",
         "bower-asset/jquery-timeago": "^1.5",
-        "bower-asset/js-cookie": "^2.1",
+        "bower-asset/js-cookie": "^3.0",
         "psr/simple-cache": "^1.0.1",
         "sabre/cache": "^2.0.1",
         "naroga/redis-cache": "^1.2",
