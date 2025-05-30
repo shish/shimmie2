@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e16a9f2fa20da002ae2a45b3bfd5ef74",
+    "content-hash": "992ad335175ccabf3d9077bb14de10f3",
     "packages": [
         {
             "name": "bower-asset/jquery",
-            "version": "1.12.4",
+            "version": "3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jquery/jquery-dist.git",
-                "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
+                "reference": "fde1f76e2799dd877c176abde0ec836553246991"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/5e89585e0121e72ff47de177c5ef604f3089a53d",
-                "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
+                "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/fde1f76e2799dd877c176abde0ec836553246991",
+                "reference": "fde1f76e2799dd877c176abde0ec836553246991"
             },
             "type": "bower-asset",
             "license": [

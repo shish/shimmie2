@@ -43,7 +43,7 @@
         "shish/gqla": "^1.0",
         "thecodingmachine/safe": "^3.0.2",
         "enshrined/svg-sanitize": "^0.21",
-        "bower-asset/jquery": "^1.12",
+        "bower-asset/jquery": "^3.7",
         "bower-asset/jquery-timeago": "^1.5",
         "bower-asset/js-cookie": "^2.1",
         "psr/simple-cache": "^1.0.1",
