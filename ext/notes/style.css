@@ -1,6 +1,12 @@
+.blockbody:has(#main_image) {
+    position: relative;
+}
+
 .notes-container {
 	position: absolute;
 	pointer-events: none;
+	top: 0px;
+	left: 0px;
 }
 
 .notes-container .note {
@@ -46,7 +52,6 @@
 }
 .notes-container .editor TEXTAREA {
 	grid-area: text;
-	// resize: none;
 }
 .notes-container .editor BUTTON[value="Save"] {
 	grid-area: save;

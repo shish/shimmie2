@@ -8,15 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (noteImage.complete) {
             renderNotes();
         } else {
-            noteImage.addEventListener("load", () => {
-                renderNotes();
-            });
+            noteImage.addEventListener("load", renderNotes);
         }
 
-        let resizeObserver = new ResizeObserver((entries) => {
-            renderNotes();
-        });
+        let resizeObserver = new ResizeObserver(renderNotes);
         resizeObserver.observe(noteImage);
+
+        noteImage.parentNode.addEventListener("scroll", renderNotes);
     }
 });
 
@@ -33,8 +31,6 @@ function renderNotes() {
     // render a container full of notes
     notesContainer = document.createElement("div");
     notesContainer.className = "notes-container";
-    notesContainer.style.left = window.scrollX + br.left + "px";
-    notesContainer.style.top = window.scrollY + br.top + "px";
     notesContainer.style.width = br.width + "px";
     notesContainer.style.height = br.height + "px";
 

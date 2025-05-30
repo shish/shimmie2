@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{BR, joinHTML};
-use function MicroHTML\{IMG};
+use function MicroHTML\{BR, IMG, joinHTML};
 
 class PixelFileHandlerTheme extends Themelet
 {
@@ -16,8 +15,6 @@ class PixelFileHandlerTheme extends Themelet
             'class' => 'shm-main-image shm-click-to-scale',
             'id' => 'main_image',
             'src' => $image->get_image_link(),
-            'width' => $image->width,
-            'height' => $image->height,
             'data-width' => $image->width,
             'data-height' => $image->height,
             'data-mime' => $image->get_mime(),
