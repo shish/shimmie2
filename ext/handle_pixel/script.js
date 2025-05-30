@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let image_width = $img.data("width");
         let image_height = $img.data("height");
 
-        $img.css("translate", '');
         $img.removeClass();
         if (type !== "full") {
             $img.addClass(`fit-${type}`);
@@ -23,11 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (window.innerWidth * 0.9 >= image_width && window.innerHeight * 0.9 >= image_height) {
             $img.css("cursor", '');
-            $img.css("translate", '');
-            return
+            if ($img.hasClass("zoom-point")) {
+                $img.removeClass();
+                $img.parent().removeClass("zoom-container");
+                $img.addClass("fit-both");
+            }
+            return;
         }
-
-        $img.css("translate", '');
         if ($img.hasClass("zoom-point")) {
             $img.removeClass();
             $img.parent().removeClass("zoom-container");
@@ -36,15 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             let width = $img.width();
             let height = $img.height();
-
             $img.removeClass();
             $img.addClass("zoom-point");
             $img.css("cursor", "zoom-out");
 
             let $parent = $img.parent();
             $parent.addClass("zoom-container");
-            $parent.scrollTop((point.y / height)*image_height - ($parent.height()/2));
-            $parent.scrollLeft((point.x / width)*image_width - ($parent.width()/2));
+            $parent.scrollLeft((image_width * point.x / width) - ($parent.width() / 2));
+            $parent.scrollTop((image_height * point.y / height) - ($parent.height() / 2));
         }
         $(".shm-zoomer").val("both");
     }
