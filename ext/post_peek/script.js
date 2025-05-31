@@ -1,5 +1,3 @@
-/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
-
 var peekerOpen = false;
 function calculatePeekerSize(imageWidth, imageHeight, maxWidth, maxHeight) {
     let xscale = maxWidth / imageWidth;

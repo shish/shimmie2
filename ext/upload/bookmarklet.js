@@ -1,5 +1,3 @@
-/*jshint bitwise:true, curly:true, devel:true, forin:false, noarg:true, undef:true, strict:false, browser:true, jquery:true */
-
 /* Imageboard to Shimmie */
 // This should work with "most" sites running Danbooru/Gelbooru/Shimmie
 // maxsize, supext, CA are set inside the bookmarklet (see theme.php)
@@ -71,10 +69,9 @@ if (document.getElementById("image-container") !== null) {
         alert(notsup);
     }
 } else if (document.getElementById("tag-sidebar") !== null) {
-
-/*
- * konachan | sankakucomplex | gelbooru (old versions) | etc.
- */
+    /*
+     * konachan | sankakucomplex | gelbooru (old versions) | etc.
+     */
     if (typeof tag !== "ftp://ftp." && chk !== 1) {
         var tag = document
             .getElementById("tag-sidebar")
@@ -139,10 +136,9 @@ if (document.getElementById("image-container") !== null) {
         alert(notsup);
     }
 } else if (document.getElementById("tag-list") !== null) {
-
-/*
- * gelbooru
- */
+    /*
+     * gelbooru
+     */
     if (typeof tag !== "ftp://ftp." && chk !== 1) {
         var tags = [];
         $('#tag-list h3:contains("Tags")')
@@ -191,19 +187,18 @@ if (document.getElementById("image-container") !== null) {
         alert(notsup);
     }
 } else if (
-
-/*
- * Shimmie
- *
- * One problem with shimmie is each theme does not show the same info
- * as other themes (I.E only the danbooru & lite themes show statistics)
- * Shimmie doesn't seem to have any way to grab tags via id unless you
- * have the ability to edit tags.
- *
- * Have to go the round about way of checking the title for tags.
- * This crazy way of checking "should" work with older releases though
- * (Seems to work with 2009~ ver)
- */
+    /*
+     * Shimmie
+     *
+     * One problem with shimmie is each theme does not show the same info
+     * as other themes (I.E only the danbooru & lite themes show statistics)
+     * Shimmie doesn't seem to have any way to grab tags via id unless you
+     * have the ability to edit tags.
+     *
+     * Have to go the round about way of checking the title for tags.
+     * This crazy way of checking "should" work with older releases though
+     * (Seems to work with 2009~ ver)
+     */
     document
         .getElementsByTagName("title")[0]
         .innerHTML.search("Image [0-9.-]+\: ") === 0

@@ -23,9 +23,9 @@ class CommonElementsTheme extends Themelet
             $content = A(["href" => $links[0]], "Index");
         } elseif (count($links) === 3) {
             $content = joinHTML(" | ", [
-                $links[0] === null ? "Prev" : A(["href" => $links[0], "id" => "prevlink"], "Prev"),
+                $links[0] === null ? "Prev" : A(["href" => $links[0], "class" => "prevlink"], "Prev"),
                 $links[1] === null ? "Index" : A(["href" => $links[1]], "Index"),
-                $links[2] === null ? "Next" : A(["href" => $links[2], "id" => "nextlink"], "Next"),
+                $links[2] === null ? "Next" : A(["href" => $links[2], "class" => "nextlink"], "Next"),
             ]);
         } else {
             throw new \Exception("Invalid navigation array");
