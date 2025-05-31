@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, ARTICLE, B, BODY, DIV, FOOTER, HEADER, IMG, NAV, SCRIPT, SECTION};
+use function MicroHTML\{A, ARTICLE, B, BODY, DIV, FOOTER, HEADER, IMG, NAV, SECTION};
 
 use MicroHTML\HTMLElement;
 
@@ -28,7 +28,6 @@ class LitePage extends Page
 
         $menu = DIV(
             ["class" => "menu"],
-            SCRIPT(["type" => "text/javascript", "src" => "{$data_href}/themes/{$theme_name}/wz_tooltip.js"]),
             A(
                 ["href" => make_link()],
                 IMG(["title" => "Home", "src" => "{$data_href}/favicon.ico", "style" => "position: relative; top: 3px;"])
