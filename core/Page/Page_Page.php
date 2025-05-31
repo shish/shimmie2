@@ -184,6 +184,9 @@ trait Page_Page
     private function get_initjs_cache_file(string $theme_name, int $config_latest): Path
     {
         $files = array_merge(
+            [
+                new Path("vendor/bower-asset/js-cookie/src/js.cookie.js"),
+            ],
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/init.js"),
             Filesystem::zglob("themes/$theme_name/init.js")
         );
@@ -196,7 +199,6 @@ trait Page_Page
             [
                 new Path("vendor/bower-asset/jquery/dist/jquery.min.js"),
                 new Path("vendor/bower-asset/jquery-timeago/jquery.timeago.js"),
-                new Path("vendor/bower-asset/js-cookie/src/js.cookie.js"),
             ],
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/script.js"),
             Filesystem::zglob("themes/$theme_name/{" . implode(",", $this->get_theme_scripts()) . "}")
