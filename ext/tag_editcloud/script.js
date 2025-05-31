@@ -1,5 +1,3 @@
-/*jshint bitwise:true, curly:true, eqeqeq: false, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
-
 Array.prototype.editcloud_contains = function (ele) {
     for (var i = 0; i < this.length; i++) {
         if (this[i] === ele) {

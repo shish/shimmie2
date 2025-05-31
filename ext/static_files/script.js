@@ -14,58 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    /** Load jQuery extensions **/
-    //Code via: https://stackoverflow.com/a/13106698
-    $.fn.highlight = function (fadeOut) {
-        fadeOut = typeof fadeOut !== "undefined" ? fadeOut : 5000;
-        $(this).each(function () {
-            let el = $(this);
-            $("<div/>")
-                .width(el.outerWidth())
-                .height(el.outerHeight())
-                .css({
-                    position: "absolute",
-                    left: el.offset().left,
-                    top: el.offset().top,
-                    "background-color": "#ffff99",
-                    opacity: ".7",
-                    "z-index": "9999999",
-                    "border-top-left-radius": parseInt(
-                        el.css("borderTopLeftRadius"),
-                        10,
-                    ),
-                    "border-top-right-radius": parseInt(
-                        el.css("borderTopRightRadius"),
-                        10,
-                    ),
-                    "border-bottom-left-radius": parseInt(
-                        el.css("borderBottomLeftRadius"),
-                        10,
-                    ),
-                    "border-bottom-right-radius": parseInt(
-                        el.css("borderBottomRightRadius"),
-                        10,
-                    ),
-                })
-                .appendTo("body")
-                .fadeOut(fadeOut)
-                .queue(function () {
-                    $(this).remove();
-                });
-        });
-    };
-
-    /** Setup jQuery.timeago **/
+    /** time-ago dates **/
     $.timeago.settings.cutoff = 365 * 24 * 60 * 60 * 1000; // Display original dates older than 1 year
     $("time").timeago();
 
-    /** Setup sidebar toggle **/
+    /** sidebar toggle **/
     let sidebar_hidden = [];
     try {
         sidebar_hidden = (shm_cookie_get("ui-sidebar-hidden") || "").split("|");
         for (let i = 0; i < sidebar_hidden.length; i++) {
             if (sidebar_hidden[i].length > 0) {
-                $(sidebar_hidden[i] + " .blockbody").hide();
+                document
+                    .querySelectorAll(sidebar_hidden[i] + " .blockbody")
+                    .forEach((e) => {
+                        e.style.display = "none";
+                    });
             }
         }
     } catch (err) {}
@@ -87,55 +50,63 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    /** setup unlocker buttons **/
-    $(".shm-unlocker").each(function (idx, elm) {
-        let tid = $(elm).data("unlock-sel");
-        let tob = $(tid);
-        $(elm).click(function (e) {
-            $(elm).attr("disabled", true);
-            tob.attr("disabled", false);
+    /** unlocker buttons **/
+    document.querySelectorAll(".shm-unlocker").forEach(function (elm) {
+        let tid = elm.dataset.unlockSel;
+        let tob = document.querySelector(tid);
+        elm.addEventListener("click", function () {
+            elm.disabled = true;
+            tob.disabled = false;
         });
     });
 
-    /** setup copyable things */
-    $(".shm-clicktocopy").each(function (idx, elm) {
-        $(elm).click(function (e) {
-            navigator.clipboard.writeText($(elm).text());
+    /** click-to-copy */
+    document.querySelectorAll(".shm-clicktocopy").forEach(function (elm) {
+        elm.addEventListener("click", function () {
+            navigator.clipboard.writeText(elm.textContent);
         });
     });
 
-    /** setup arrow key bindings **/
+    /** left/right arrow key bindings for next/prev page **/
     document.addEventListener("keyup", function (e) {
-        if ($(e.target).is("input,textarea")) {
+        if (e.target.matches("input,textarea")) {
             return;
         }
         if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) {
             return;
         }
-        if (e.keyCode === 37 && $("[rel='previous']").length) {
-            window.location.href = $("[rel='previous']").attr("href");
-        } else if (e.keyCode === 39 && $("[rel='next']").length) {
-            window.location.href = $("[rel='next']").attr("href");
+        const prevLink = document.querySelector("link[rel='previous']");
+        const nextLink = document.querySelector("link[rel='next']");
+        if (e.key === "ArrowLeft" && prevLink) {
+            window.location.href = prevLink.getAttribute("href");
+        } else if (e.key === "ArrowRight" && nextLink) {
+            window.location.href = nextLink.getAttribute("href");
         }
     });
 
-    var $chkboxes = $('input[type="checkbox"]');
-    var lastChecked = null;
-    $chkboxes.click(function (e) {
-        if (!lastChecked) {
+    /** checkbox range selection **/
+    const chkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let lastChecked = null;
+    chkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("click", function (e) {
+            if (!lastChecked) {
+                lastChecked = this;
+                return;
+            }
+
+            if (e.shiftKey) {
+                const checkboxesArray = Array.from(chkboxes);
+                const start = checkboxesArray.indexOf(this);
+                const end = checkboxesArray.indexOf(lastChecked);
+
+                checkboxesArray
+                    .slice(Math.min(start, end), Math.max(start, end) + 1)
+                    .forEach((checkbox) => {
+                        checkbox.checked = lastChecked.checked;
+                    });
+            }
+
             lastChecked = this;
-            return;
-        }
-
-        if (e.shiftKey) {
-            var start = $chkboxes.index(this);
-            var end = $chkboxes.index(lastChecked);
-
-            $chkboxes
-                .slice(Math.min(start, end), Math.max(start, end) + 1)
-                .prop("checked", lastChecked.checked);
-        }
-
-        lastChecked = this;
+        });
     });
 });

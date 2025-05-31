@@ -1,5 +1,3 @@
-/*jshint bitwise:false, curly:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:false, strict:false, browser:true, jquery:true */
-
 document.addEventListener("DOMContentLoaded", () => {
     let blocked_tags = (shm_cookie_get("ui-blocked-tags") || "").split(" ");
     let blocked_css = blocked_tags
@@ -14,20 +12,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     //Generate a random seed when using order:random
-    $('form > input[placeholder="Search"]')
-        .parent()
-        .submit(function (e) {
-            var input = $('form > input[placeholder="Search"]');
-            var tagArr = input.val().split(" ");
+    document
+        .querySelectorAll('form > input[placeholder="Search"]')
+        .forEach((input) => {
+            input.parentNode.addEventListener("submit", function () {
+                const tagArr = input.value.split(" ");
 
-            var rand =
-                ($.inArray("order:random", tagArr) + 1 ||
-                    $.inArray("order=random", tagArr) + 1) - 1;
-            if (rand !== -1) {
-                tagArr[rand] =
-                    "order:random_" + Math.floor(Math.random() * 9999 + 1);
-                input.val(tagArr.join(" "));
-            }
+                const randomIndex = Math.max(
+                    tagArr.indexOf("order:random"),
+                    tagArr.indexOf("order=random"),
+                );
+
+                if (randomIndex !== -1) {
+                    tagArr[randomIndex] =
+                        "order:random_" + Math.floor(Math.random() * 9999 + 1);
+                    input.value = tagArr.join(" ");
+                }
+            });
         });
 
     /*

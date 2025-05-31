@@ -1,5 +1,3 @@
-/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
-
 var bulk_selector_active = false;
 var bulk_selector_initialized = false;
 var bulk_selector_valid = false;
