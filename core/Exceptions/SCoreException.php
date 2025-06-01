@@ -10,6 +10,7 @@ namespace Shimmie2;
 class SCoreException extends \RuntimeException
 {
     public int $http_code = 500;
+    public ?\MicroHTML\HTMLElement $debug = null;
 
     public function __construct(
         public string $error

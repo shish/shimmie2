@@ -31,6 +31,9 @@ trait Page_Error
         $this->blocks = [];
         $this->add_block(new Block("Navigation", \MicroHTML\A(["href" => make_link()], "Index"), "left"));
         $this->add_block(new Block(null, \MicroHTML\SPAN($error->getMessage())));
+        if ($error->debug) {
+            $this->add_block(new Block("Debug", $error->debug));
+        }
         $this->display_page();
     }
 }
