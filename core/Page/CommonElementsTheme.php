@@ -36,6 +36,9 @@ class CommonElementsTheme extends Themelet
         Ctx::$page->add_block(new Block("Navigation", $content, "left", 0));
     }
 
+    /**
+     * @param tag-string $tag
+     */
     public function build_tag(
         string $tag,
         bool $show_underscores = true,

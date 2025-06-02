@@ -6,20 +6,26 @@ namespace Shimmie2;
 
 final class AuthorSetEvent extends Event
 {
+    /**
+     * @param non-empty-string $author
+     */
     public function __construct(
         public Image $image,
         public User $user,
         public string $author
     ) {
         parent::__construct();
+        if (strpos($author, " ")) {
+            throw new InvalidInput("Author name cannot be empty or contain spaces");
+        }
     }
 }
 
 /**
- * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:string,name:string,notes:string,type:string,posts:int}
- * @phpstan-type ArtistAlias array{id:int,alias:string}
- * @phpstan-type ArtistMember array{id:int,name:string}
- * @phpstan-type ArtistUrl array{id:int,url:string}
+ * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:non-empty-string,name:non-empty-string,notes:string,type:string,posts:int}
+ * @phpstan-type ArtistAlias array{id:int,alias:non-empty-string}
+ * @phpstan-type ArtistMember array{id:int,name:non-empty-string}
+ * @phpstan-type ArtistUrl array{id:int,url:non-empty-string}
  * @extends Extension<ArtistsTheme>
  */
 final class Artists extends Extension
@@ -115,9 +121,6 @@ final class Artists extends Extension
     public function onAuthorSet(AuthorSetEvent $event): void
     {
         $author = strtolower($event->author);
-        if (strlen($author) === 0 || strpos($author, " ")) {
-            return;
-        }
 
         $paddedAuthor = str_replace(" ", "_", $author);
 
@@ -188,7 +191,7 @@ final class Artists extends Extension
             $userIsLogged = $user->can(ArtistsPermission::EDIT_ARTIST_INFO);
             $userIsAdmin = $user->can(ArtistsPermission::ADMIN);
 
-            $images = Search::find_images(limit: 4, tags: Tag::explode($artist['name']));
+            $images = Search::find_images(limit: 4, terms: SearchTerm::explode($artist['name']));
 
             $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
 
@@ -883,13 +886,11 @@ final class Artists extends Extension
     }
 
     /**
-     * HERE WE GET THE INFO OF THE ALIAS
-     *
      * @return ArtistAlias[]
      */
     private function get_alias(int $artistID): array
     {
-        /** @var array<array{id: int, alias: string}> */
+        /** @var array<array{id: int, alias: tag-string}> */
         $result = Ctx::$database->get_all("
             SELECT id, alias
             FROM artist_alias

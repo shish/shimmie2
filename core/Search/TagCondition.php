@@ -9,6 +9,9 @@ namespace Shimmie2;
  */
 final readonly class TagCondition
 {
+    /**
+     * @param tag-pattern-string $tag
+     */
     public function __construct(
         public string $tag,
         public bool $positive = true,

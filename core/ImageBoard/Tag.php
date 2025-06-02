@@ -13,9 +13,12 @@ namespace Shimmie2;
  */
 final class Tag
 {
-    /** @var array<string, int> */
+    /** @var array<tag-string, int> */
     private static array $tag_id_cache = [];
 
+    /**
+     * @param tag-string $tag
+     */
     public static function get_or_create_id(string $tag): int
     {
         // don't cache in unit tests, because the test suite doesn't
@@ -44,7 +47,9 @@ final class Tag
         return $id;
     }
 
-    /** @param string[] $tags */
+    /**
+     * @param tag-string[] $tags
+     */
     public static function implode(array $tags): string
     {
         sort($tags, SORT_FLAG_CASE | SORT_STRING);
@@ -54,7 +59,7 @@ final class Tag
     /**
      * Turn a human-supplied string into a valid tag array.
      *
-     * @return list<tag-string>
+     * @return tag-array
      */
     public static function explode(string $tags, bool $tagme = true): array
     {
@@ -190,6 +195,10 @@ final class Tag
         return $tag_array;
     }
 
+    /**
+     * @param search-term-string $term
+     * @return string
+     */
     public static function sqlify(string $term): string
     {
         if (Ctx::$database->get_driver_id() === DatabaseDriverID::SQLITE) {

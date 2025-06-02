@@ -62,6 +62,9 @@ class Themelet
         self::get_common()->display_navigation($links, $extra);
     }
 
+    /**
+     * @param tag-string $tag
+     */
     public function build_tag(
         string $tag,
         bool $show_underscores = true,

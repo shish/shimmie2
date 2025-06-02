@@ -13,7 +13,7 @@ use function MicroHTML\SUB;
 class TagMapTheme extends Themelet
 {
     /**
-     * @param array<array{tag:string,scaled:float}> $tag_data
+     * @param array<array{tag:tag-string,scaled:float}> $tag_data
      */
     public function display_map(int $tags_min, array $tag_data): void
     {
@@ -36,7 +36,7 @@ class TagMapTheme extends Themelet
     }
 
     /**
-     * @param array<array{tag:string,count:int}> $tag_data
+     * @param array<array{tag:tag-string,count:int}> $tag_data
      */
     public function display_alphabetic(string $starts_with, int $tags_min, array $tag_data): void
     {
@@ -67,6 +67,7 @@ class TagMapTheme extends Themelet
         $n = 0;
         foreach ($tag_data as $tag => $count) {
             // In PHP, $array["10"] sets the array key as int(10), not string("10")...
+            /** @var tag-string $tag */
             $tag = (string)$tag;
             if ($lastLetter !== mb_strtolower(substr($tag, 0, strlen($starts_with) + 1))) {
                 $lastLetter = mb_strtolower(substr($tag, 0, strlen($starts_with) + 1));
@@ -88,7 +89,7 @@ class TagMapTheme extends Themelet
     }
 
     /**
-     * @param array<array{tag:string,count:int,scaled:float}> $tag_data
+     * @param array<array{tag:tag-string,count:int,scaled:float}> $tag_data
      */
     public function display_popularity(array $tag_data): void
     {

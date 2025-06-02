@@ -151,6 +151,7 @@ class TagHistoryTheme extends Themelet
                     $class = "deleted-tag";
                 }
             }
+            /** @var search-term-string $tag */
             $taglinks->appendChild(A(["href" => search_link([$tag]), "class" => $class], $tag));
             $taglinks->appendChild(" ");
         }
