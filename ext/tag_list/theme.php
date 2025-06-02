@@ -35,8 +35,8 @@ class TagListTheme extends Themelet
     }
 
     /**
-     * @param array<array{tag: string, count: int}> $tag_infos
-     * @param string[] $search
+     * @param array<array{tag: tag-string, count: int}> $tag_infos
+     * @param search-term-array $search
      */
     private function get_tag_list_html(array $tag_infos, string $sort, array $search = []): HTMLElement
     {
@@ -52,7 +52,7 @@ class TagListTheme extends Themelet
     }
 
     /**
-     * @param array<array{tag: string, count: int}> $tag_infos
+     * @param array<array{tag: tag-string, count: int}> $tag_infos
      */
     public function display_split_related_block(array $tag_infos): void
     {
@@ -99,7 +99,7 @@ class TagListTheme extends Themelet
     }
 
     /**
-     * @param array<array{tag: string, count: int}> $tag_infos
+     * @param array<array{tag: tag-string, count: int}> $tag_infos
      */
     public function display_related_block(array $tag_infos, string $block_name): void
     {
@@ -112,7 +112,7 @@ class TagListTheme extends Themelet
     }
 
     /**
-     * @param array<array{tag: string, count: int}> $tag_infos
+     * @param array<array{tag: tag-string, count: int}> $tag_infos
      */
     public function display_popular_block(array $tag_infos): void
     {
@@ -129,8 +129,8 @@ class TagListTheme extends Themelet
     }
 
     /**
-     * @param array<array{tag: string, count: int}> $tag_infos
-     * @param string[] $search
+     * @param array<array{tag: tag-string, count: int}> $tag_infos
+     * @param search-term-array $search
      */
     public function display_refine_block(array $tag_infos, array $search): void
     {
@@ -149,8 +149,8 @@ class TagListTheme extends Themelet
     }
 
     /**
-     * @param array{tag: string, count: int} $row
-     * @param string[] $search
+     * @param array{tag: tag-string, count: int} $row
+     * @param search-term-array $search
      */
     protected function build_tag_row(array $row, array $search = []): HTMLElement
     {
@@ -218,6 +218,7 @@ class TagListTheme extends Themelet
     protected function get_remove_link(array $search, string $tag): ?HTMLElement
     {
         if (in_array($tag, $search) || in_array("-$tag", $search)) {
+            /** @var search-term-array $new_search */
             $new_search = array_diff($search, [$tag, "-$tag"]);
             return A(["href" => search_link($new_search), "title" => "Remove", "rel" => "nofollow",], "[x]");
         }
@@ -230,6 +231,7 @@ class TagListTheme extends Themelet
     protected function get_add_link(array $search, string $tag): ?HTMLElement
     {
         if (!in_array($tag, $search)) {
+            /** @var search-term-array $new_search */
             $new_search = array_merge(array_diff($search, ["-$tag"]), [$tag]);
             return A(["href" => search_link($new_search), "title" => "Add", "rel" => "nofollow"], "[+]");
         }
@@ -242,8 +244,9 @@ class TagListTheme extends Themelet
     protected function get_subtract_link(array $search, string $tag): ?HTMLElement
     {
         if (!in_array("-$tag", $search)) {
-            $search = array_merge(array_diff($search, [$tag]), ["-$tag"]);
-            return A(["href" => search_link($search), "title" => "Subtract", "rel" => "nofollow"], "[-]");
+            /** @var search-term-array $new_search */
+            $new_search = array_merge(array_diff($search, [$tag]), ["-$tag"]);
+            return A(["href" => search_link($new_search), "title" => "Subtract", "rel" => "nofollow"], "[-]");
         }
         return null;
     }

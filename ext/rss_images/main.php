@@ -55,7 +55,7 @@ final class RSSImages extends Extension
 
     /**
      * @param Image[] $images
-     * @param string[] $search_terms
+     * @param search-term-array $search_terms
      */
     private function do_rss(array $images, array $search_terms, int $page_number): void
     {

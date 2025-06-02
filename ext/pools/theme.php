@@ -351,7 +351,7 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * @param string[] $search_terms
+     * @param search-term-array $search_terms
      */
     public function get_bulk_pool_input(array $search_terms): HTMLElement
     {

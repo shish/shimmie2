@@ -67,7 +67,7 @@ final class SearchTest extends ShimmiePHPUnitTestCase
     /** ******************************************************
      * Test turning an abstract query into SQL + fetching the results
      *
-     * @param string[] $tcs
+     * @param search-term-array $tcs
      * @param string[] $ics
      * @param string $order
      * @param int $limit
@@ -86,6 +86,7 @@ final class SearchTest extends ShimmiePHPUnitTestCase
     ): void {
         $tcs = array_map(
             fn ($tag) => ($tag[0] === "-") ?
+                // @phpstan-ignore-next-line
                 new TagCondition(substr($tag, 1), false) :
                 new TagCondition($tag),
             $tcs
