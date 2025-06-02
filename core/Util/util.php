@@ -424,12 +424,12 @@ function shm_tempdir(string $prefix = ""): Path
  * Build a link to a search page for given terms,
  * with all the appropriate escaping
  *
- * @param string[] $terms
+ * @param search-term-array $terms
  */
 function search_link(array $terms = [], int $page = 1): Url
 {
     if ($terms) {
-        $q = url_escape(Tag::implode($terms));
+        $q = url_escape(SearchTerm::implode($terms));
         return make_link("post/list/$q/$page");
     } else {
         return make_link("post/list/$page");

@@ -93,7 +93,7 @@ final class TagList extends Extension
 
         // @phpstan-ignore-next-line
         $tags = Ctx::$database->get_all($query, $args);
-        /** @var array<array{tag: string, count: int}> $tags */
+        /** @var array<array{tag: tag-string, count: int}> $tags */
         if (count($tags) > 0) {
             $this->theme->display_related_block($tags, "Related Tags");
         }
@@ -101,7 +101,7 @@ final class TagList extends Extension
 
     private function add_tags_block(Image $image): void
     {
-        /** @var array<array{tag: string, count: int}> $tags */
+        /** @var array<array{tag: tag-string, count: int}> $tags */
         $tags = Ctx::$database->get_all("
 			SELECT tags.tag, tags.count
 			FROM tags, image_tags
@@ -156,7 +156,7 @@ final class TagList extends Extension
     }
 
     /**
-     * @param string[] $search
+     * @param search-term-array $search
      */
     private function add_refine_block(array $search): void
     {
@@ -172,8 +172,8 @@ final class TagList extends Extension
     }
 
     /**
-     * @param string[] $search
-     * @return array<array{tag: string, count: int}>
+     * @param search-term-array $search
+     * @return array<array{tag: tag-string, count: int}>
      */
     public static function get_related_tags(array $search, int $limit): array
     {

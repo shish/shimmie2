@@ -103,13 +103,14 @@ final class UrlTest extends TestCase
     public function test_get_search_terms_from_search_link(bool $nice_urls): void
     {
         /**
-         * @param array<string> $vars
-         * @return array<string>
+         * @param search-term-array $terms
+         * @return search-term-array
          */
         $gst = function (array $terms): array {
+            /** @var search-term-array $terms */
             $pre = new PageRequestEvent("GET", _get_query((string)search_link($terms)), new QueryArray([]), new QueryArray([]));
             $pre->page_matches("post/list/{search}/{page}");
-            return Tag::explode($pre->get_arg('search'));
+            return SearchTerm::explode($pre->get_arg('search'));
         };
 
         Ctx::$config->set(SetupConfig::NICE_URLS, $nice_urls);

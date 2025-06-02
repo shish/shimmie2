@@ -18,12 +18,12 @@ final class Search
     public static array $_search_path = [];
 
     /**
-     * Build a search query for a given set of tags and return
+     * Build a search query for a given set of terms and return
      * the results as a PDOStatement (raw SQL rows)
      *
-     * @param array<tag-string> $tags
+     * @param search-term-array $terms
      */
-    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags = []): \FFSPHP\PDOStatement
+    private static function find_images_internal(int $start = 0, ?int $limit = null, array $terms = []): \FFSPHP\PDOStatement
     {
         if ($start < 0) {
             $start = 0;
@@ -34,7 +34,7 @@ final class Search
 
         if (Ctx::$config->get(IndexConfig::BIG_SEARCH) > 0) {
             $anon_limit = Ctx::$config->get(IndexConfig::BIG_SEARCH);
-            $counted_tags = $tags;
+            $counted_tags = $terms;
             // exclude tags which start with "id>", "id<", or "order:id_"
             // because those are added internally for post/next and post/prev
             $counted_tags = array_filter($counted_tags, fn ($tag) => !\Safe\preg_match("/^id[><]|^order:id_/", $tag));
@@ -43,7 +43,7 @@ final class Search
             }
         }
 
-        $params = SearchParameters::from_terms($tags);
+        $params = SearchParameters::from_terms($terms);
         $querylet = self::build_search_querylet($params, $limit, $start);
         // @phpstan-ignore-next-line
         return Ctx::$database->get_all_iterable($querylet->sql, $querylet->variables);
@@ -52,13 +52,13 @@ final class Search
     /**
      * Search for an array of images
      *
-     * @param array<tag-string> $tags
+     * @param search-term-array $terms
      * @return Image[]
      */
-    #[Query(name: "posts", type: "[Post!]!", args: ["tags" => "[string!]"])]
-    public static function find_images(int $offset = 0, ?int $limit = null, array $tags = []): array
+    #[Query(name: "posts", type: "[Post!]!", args: ["terms" => "[string!]"])]
+    public static function find_images(int $offset = 0, ?int $limit = null, array $terms = []): array
     {
-        $result = self::find_images_internal($offset, $limit, $tags);
+        $result = self::find_images_internal($offset, $limit, $terms);
 
         $images = [];
         foreach ($result as $row) {
@@ -70,12 +70,12 @@ final class Search
     /**
      * Search for an array of images, returning a iterable object of Image
      *
-     * @param array<tag-string> $tags
+     * @param search-term-array $terms
      * @return \Generator<Image>
      */
-    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags = []): \Generator
+    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $terms = []): \Generator
     {
-        $result = self::find_images_internal($start, $limit, $tags);
+        $result = self::find_images_internal($start, $limit, $terms);
         foreach ($result as $row) {
             yield new Image($row);
         }
@@ -91,7 +91,7 @@ final class Search
     public static function get_images(array $ids): array
     {
         $visible_images = [];
-        foreach (Search::find_images(tags: ["id=" . implode(",", $ids)]) as $image) {
+        foreach (Search::find_images(terms: ["id=" . implode(",", $ids)]) as $image) {
             $visible_images[$image->id] = $image;
         }
         $visible_ids = array_keys($visible_images);
@@ -105,6 +105,9 @@ final class Search
      * Image-related utility functions
      */
 
+    /**
+     * @param tag-string $tag
+     */
     public static function count_tag(string $tag): int
     {
         return (int)Ctx::$database->get_one(
@@ -121,33 +124,35 @@ final class Search
     /**
      * Count the number of image results for a given search
      *
-     * @param list<tag-string> $tags
+     * @param search-term-array $terms
      */
-    public static function count_images(array $tags = []): int
+    public static function count_images(array $terms = []): int
     {
-        $tag_count = count($tags);
+        $term_count = count($terms);
 
         // speed_hax ignores the fact that extensions can add img_conditions
         // even when there are no tags being searched for
         $limit_complex = (Ctx::$config->get(IndexConfig::LIMIT_COMPLEX));
-        if ($limit_complex && $tag_count === 0) {
+        if ($limit_complex && $term_count === 0) {
             // total number of images in the DB
             $total = self::count_total_images();
-        } elseif ($limit_complex && $tag_count === 1 && !\Safe\preg_match("/[:=><\*\?]/", $tags[0])) {
-            if (!str_starts_with($tags[0], "-")) {
-                // one positive tag - we can look that up directly
-                $total = self::count_tag($tags[0]);
-            } else {
+        } elseif ($limit_complex && $term_count === 1 && !\Safe\preg_match("/[:=><\*\?]/", $terms[0])) {
+            if (str_starts_with($terms[0], "-")) {
                 // one negative tag - subtract from the total
-                $total = self::count_total_images() - self::count_tag(substr($tags[0], 1));
+                $tag = substr($terms[0], 1);
+                assert(strlen($tag) > 0);
+                $total = self::count_total_images() - self::count_tag($tag);
+            } else {
+                // one positive tag - we can look that up directly
+                $total = self::count_tag($terms[0]);
             }
         } else {
             // complex query
             // implode(tags) can be too long for memcache, so use the hash of tags as the key
-            $cache_key = "image-count:" . md5(Tag::implode($tags));
+            $cache_key = "image-count:" . md5(Tag::implode($terms));
             $total = Ctx::$cache->get($cache_key);
             if (is_null($total)) {
-                $params = SearchParameters::from_terms($tags);
+                $params = SearchParameters::from_terms($terms);
                 $querylet = self::build_search_querylet($params, count: true);
                 // @phpstan-ignore-next-line
                 $total = (int)Ctx::$database->get_one($querylet->sql, $querylet->variables);
@@ -163,6 +168,7 @@ final class Search
 
 
     /**
+     * @param tag-pattern-string $tag
      * @return list<int>
      */
     private static function tag_or_wildcard_to_ids(string $tag): array

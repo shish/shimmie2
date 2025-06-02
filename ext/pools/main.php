@@ -295,7 +295,7 @@ final class Pools extends Extension
 
             $images = Search::find_images(
                 limit: Ctx::$config->get(PoolsConfig::MAX_IMPORT_RESULTS),
-                tags: Tag::explode($event->POST->req("pool_tag"))
+                terms: Tag::explode($event->POST->req("pool_tag"))
             );
             $this->theme->pool_result($images, $pool);
         }
