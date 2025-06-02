@@ -20,7 +20,7 @@ final class SearchParameters
     /**
      * Turn a human input string into a an abstract search query
      *
-     * @param string[] $terms
+     * @param search-term-array $terms
      */
     public static function from_terms(array $terms): SearchParameters
     {

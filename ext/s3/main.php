@@ -96,8 +96,8 @@ final class S3 extends Extension
             ->addArgument('query', InputArgument::REQUIRED)
             ->setDescription('Search for some images, and sync them to s3')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $query = Tag::explode($input->getArgument('query'));
-                foreach (Search::find_images_iterable(tags: $query) as $image) {
+                $query = SearchTerm::explode($input->getArgument('query'));
+                foreach (Search::find_images_iterable(terms: $query) as $image) {
                     print("{$image->id}: {$image->hash}\n");
                 }
                 return Command::SUCCESS;

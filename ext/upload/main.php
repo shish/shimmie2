@@ -58,7 +58,7 @@ final class DirectoryUploadEvent extends Event
     public array $results = [];
 
     /**
-     * @param string[] $extra_tags
+     * @param tag-array $extra_tags
      */
     public function __construct(
         public Path $base,

@@ -6,7 +6,8 @@ namespace Shimmie2;
 
 /**
  * When somebody has searched for a specific image property, like "rating:safe",
- * "id:123", "width:100", etc
+ * "id:123", "width:100", etc - an extension will spot those meta-tags and turn
+ * them into a little chunk of SQL
  */
 final readonly class ImgCondition
 {

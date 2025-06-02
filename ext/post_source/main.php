@@ -112,7 +112,7 @@ final class PostSource extends Extension
                 $search_forward[] = "id<$last_id";
             }
 
-            $images = Search::find_images(limit: 100, tags: $search_forward);
+            $images = Search::find_images(limit: 100, terms: $search_forward);
             if (count($images) === 0) {
                 break;
             }

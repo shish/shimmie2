@@ -28,7 +28,7 @@ final class BulkActionBlockBuildingEvent extends Event
      * @var array<BulkAction>
      */
     public array $actions = [];
-    /** @var string[] */
+    /** @var search-term-array */
     public array $search_terms = [];
 
     public function add_action(

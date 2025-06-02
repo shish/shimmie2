@@ -7,7 +7,25 @@ parameters:
     - tests
     - themes
   typeAliases:
+    # mostly "a-z, 0-9, _" -- but for legacy reasons this is practically "all
+    # non-empty strings unless explicitly excluded" (As of this writing, "*"
+    # is excluded anywhere, and "-" is excluded as a first-character)
     tag-string: non-empty-string
+    # a list of tags, sorted, deduplicated, zero-indexed
+    tag-array: list<tag-string>
+    # a tag, but with an optional "*" wildcard in it
+    tag-pattern-string: non-empty-string
+    # something entered into the search box or tag-input box which has special
+    # behaviour, eg searching for "height>=1080" or setting a tag of "parent_id:123".
+    # Ideally this would be "any string with : or = in it", but those do get used
+    # in regular tags, so in practice whether something is a tag or a meta-tag
+    # depends on whether or not an extension claims it during SearchTermParseEvent
+    # or TagTermParseEvent...
+    meta-tag-string: non-empty-string
+    # a tag, a tag pattern, or a meta-tag (or any of those three, negated)
+    search-term-string: non-empty-string
+    # an ordered list of search terms, in the order the user specified them
+    search-term-array: list<search-term-string>
     header-array: "array<string,string|string[]>"
     sql-params-array: "array<string,string|int|bool|null>"
   ignoreErrors:

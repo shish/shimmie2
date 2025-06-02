@@ -48,7 +48,7 @@ final class BulkAddCSV extends Extension
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
      *
-     * @param string[] $tags
+     * @param tag-array $tags
      */
     private function add_image(Path $tmpname, string $filename, array $tags, string $source, string $rating, Path $thumbfile): void
     {

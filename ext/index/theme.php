@@ -13,11 +13,11 @@ class IndexTheme extends Themelet
 {
     protected int $page_number;
     protected int $total_pages;
-    /** @var string[] */
+    /** @var search-term-array */
     protected array $search_terms;
 
     /**
-     * @param string[] $search_terms
+     * @param search-term-array $search_terms
      */
     public function set_page(int $page_number, int $total_pages, array $search_terms): void
     {

@@ -117,8 +117,8 @@ final class Index extends Extension
             ->addArgument('query', InputArgument::REQUIRED)
             ->setDescription('Search the database and print results')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $query = Tag::explode($input->getArgument('query'));
-                $items = Search::find_images(limit: 1000, tags: $query);
+                $query = SearchTerm::explode($input->getArgument('query'));
+                $items = Search::find_images(limit: 1000, terms: $query);
                 foreach ($items as $item) {
                     $output->writeln($item->hash);
                 }

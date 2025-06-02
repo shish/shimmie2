@@ -15,6 +15,7 @@ const TAG_OPERANDS = [
 class SearchTermParseEvent extends Event
 {
     public int $id = 0;
+    /** @var search-term-string|null */
     public ?string $term = null;
     public bool $negative = false;
     /** @var string[] */
