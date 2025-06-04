@@ -55,7 +55,7 @@ class SearchTermParseEvent extends Event
 
     public function add_querylet(Querylet $q): void
     {
-        $this->add_img_condition(new ImgCondition($q, !$this->negative));
+        $this->add_img_condition(new ImgCondition($q, $this->negative, $this->disjunctive));
     }
 
     public function add_img_condition(ImgCondition $c): void

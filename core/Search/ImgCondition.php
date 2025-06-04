@@ -13,7 +13,8 @@ final readonly class ImgCondition
 {
     public function __construct(
         public Querylet $qlet,
-        public bool $positive = true,
+        public bool $negative = false,
+        public bool $disjunctive = false
     ) {
     }
 }

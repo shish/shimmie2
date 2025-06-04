@@ -207,7 +207,7 @@ final class Search
             // subquery, and applying extra conditions to the top-level
             // query might reduce the total results below the target limit
             && $params->img_count === 0
-            && !$params->tracker->first()->negative // @phpstan-ignore-line
+            && !$params->tracker->first()->negative
             // We can only do this if we're sorting by ID, because
             // we're going to be using the image_tags table, which
             // only has image_id and tag_id, not any other columns
@@ -218,9 +218,7 @@ final class Search
             && !is_null($offset)
         ) {
             static::$_search_path[] = "fast";
-            /**
-             * @var TagCondition $tc
-             */
+            /** @var TagCondition $tc */
             $tc = $params->tracker->first();
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
