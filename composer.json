@@ -57,7 +57,8 @@
         "friendsofphp/php-cs-fixer": "^3.75",
         "phpstan/phpstan": "^2.1",
         "thecodingmachine/phpstan-safe-rule": "^1.4",
-        "phpstan/phpstan-strict-rules": "^2.0"
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "shish/phpstan-matchy-string": "^0.0.0"
     },
     "suggest": {
         "ext-pdo_sqlite": "database - sqlite",
