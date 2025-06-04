@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e16a9f2fa20da002ae2a45b3bfd5ef74",
+    "content-hash": "0361e96bda0a60e04506d5e5b359ed10",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -4542,6 +4542,49 @@
             "time": "2024-10-09T05:16:32+00:00"
         },
         {
+            "name": "shish/phpstan-matchy-string",
+            "version": "v0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shish/phpstan-matchy-string.git",
+                "reference": "adef043da929eab8a3f8b99be8a98315d2773070"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shish/phpstan-matchy-string/zipball/adef043da929eab8a3f8b99be8a98315d2773070",
+                "reference": "adef043da929eab8a3f8b99be8a98315d2773070",
+                "shasum": ""
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.75",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^12.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Shish\\PhpstanMatchyString\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shish",
+                    "email": "shish@shishnet.org"
+                }
+            ],
+            "description": "PHPStan rule for strings that match certain conditions",
+            "support": {
+                "issues": "https://github.com/shish/phpstan-matchy-string/issues",
+                "source": "https://github.com/shish/phpstan-matchy-string/tree/v0.0.0"
+            },
+            "time": "2025-06-04T00:37:40+00:00"
+        },
+        {
             "name": "staabm/side-effects-detector",
             "version": "1.0.5",
             "source": {
@@ -5336,7 +5379,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -5345,9 +5388,9 @@
         "ext-json": "*",
         "ext-fileinfo": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.2.0"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
