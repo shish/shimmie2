@@ -14,7 +14,8 @@ final readonly class TagCondition
      */
     public function __construct(
         public string $tag,
-        public bool $positive = true,
+        public bool $negative = false,
+        public bool $disjunctive = false
     ) {
     }
 }

@@ -41,7 +41,7 @@ class BoneQualityTheme extends Themelet
     {
         $search_boned_class = $search_boned ? $this->boned_class : [];
         return emptyHTML(
-            A(["class" => "search", "href" => search_link(Tag::explode($search))], $search),
+            A(["class" => "search", "href" => search_link(SearchTerm::explode($search))], $search),
             " remaining: ",
             SPAN($search_boned ? $search_boned_class : [], "$search_count"),
             BR()

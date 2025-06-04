@@ -192,7 +192,7 @@ final class Search
         $columns = $count ? "COUNT(*)" : "images.*";
 
         // no tags, do a simple search
-        if (count($params->tag_conditions) === 0) {
+        if ($params->tag_count === 0) {
             static::$_search_path[] = "no_tags";
             $query = new Querylet("SELECT $columns FROM images WHERE 1=1");
         }
@@ -201,13 +201,13 @@ final class Search
         // and do the offset / limit there, which is 10x faster than fetching
         // all the image_tags and doing the offset / limit on the result.
         elseif (
-            count($params->tag_conditions) === 1
-            && $params->tag_conditions[0]->positive
+            $params->tag_count === 1
             // We can only do this if img_conditions is empty, because
             // we're going to apply the offset / limit to the image_tags
             // subquery, and applying extra conditions to the top-level
             // query might reduce the total results below the target limit
-            && empty($params->img_conditions)
+            && $params->img_count === 0
+            && !$params->tracker->first()->negative // @phpstan-ignore-line
             // We can only do this if we're sorting by ID, because
             // we're going to be using the image_tags table, which
             // only has image_id and tag_id, not any other columns
@@ -218,7 +218,10 @@ final class Search
             && !is_null($offset)
         ) {
             static::$_search_path[] = "fast";
-            $tc = $params->tag_conditions[0];
+            /**
+             * @var TagCondition $tc
+             */
+            $tc = $params->tracker->first();
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
             $tag_array = self::tag_or_wildcard_to_ids($tc->tag);
@@ -258,7 +261,7 @@ final class Search
                 $tag_ids = self::tag_or_wildcard_to_ids($tq->tag);
                 $tag_count = count($tag_ids);
 
-                if ($tq->positive) {
+                if (!$tq->negative) {
                     $all_nonexistent_negatives = false;
                     if ($tag_count === 0) {
                         # one of the positive tags had zero results, therefor there

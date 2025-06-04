@@ -14,12 +14,10 @@ const TAG_OPERANDS = [
  */
 class SearchTermParseEvent extends Event
 {
-    public int $id = 0;
     /** @var search-term-string|null */
     public ?string $term = null;
     public bool $negative = false;
-    /** @var string[] */
-    public array $context = [];
+    public bool $disjunctive = false;
     /** @var ImgCondition[] */
     public array $img_conditions = [];
     /** @var TagCondition[] */
@@ -29,15 +27,15 @@ class SearchTermParseEvent extends Event
     /**
      * @param string[] $context
      */
-    public function __construct(int $id, ?string $term = null, array $context = [])
+    public function __construct(public int $id = 0, ?string $term = null, public array $context = [])
     {
         parent::__construct();
         $original_term = $term;
 
         if ($term !== null) {
             // pull any operands off the start of the search term
-            while (!empty($term) && array_key_exists($term[0], TAG_OPERANDS)) {
-                $operand = TAG_OPERANDS[$term[0]];
+            while (!empty($term) && array_key_exists($term[0], SearchTerm::TERM_OPERANDS)) {
+                $operand = SearchTerm::TERM_OPERANDS[$term[0]];
                 $term = substr($term, 1);
                 $this->$operand = true;
             }
@@ -52,10 +50,7 @@ class SearchTermParseEvent extends Event
                 throw new SearchTermParseException("'$original_term' is not a valid search term");
             }
         }
-
-        $this->id = $id;
         $this->term = $term;
-        $this->context = $context;
     }
 
     public function add_querylet(Querylet $q): void

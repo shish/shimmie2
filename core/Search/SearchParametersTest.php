@@ -20,7 +20,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
         array $expected_img_conditions,
         string $expected_order,
     ): void {
-        $params = SearchParameters::from_terms(Tag::explode($tags, false));
+        $params = SearchParameters::from_terms(SearchTerm::explode($tags));
 
         static::assertThat(
             [
