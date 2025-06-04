@@ -51,18 +51,7 @@ parameters:
 includes:
   - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
   - vendor/phpstan/phpstan-strict-rules/rules.neon
-parametersSchema:
-  matchyStrings: structure([
-    types: arrayOf(anyOf(
-        structure([
-            regex: string()
-        ])
-    ))
-  ])
+  - vendor/shish/phpstan-matchy-string/rules.neon
 services:
-  - class: Shimmie2\MatchyStringTypeNodeResolverExtension
-    tags: [phpstan.phpDoc.typeNodeResolverExtension]
-    arguments:
-      types: %matchyStrings.types%
   - class: Shimmie2\ConfigGetReturnTypeExtension
     tags: [phpstan.broker.dynamicMethodReturnTypeExtension]
