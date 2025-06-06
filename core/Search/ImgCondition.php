@@ -9,7 +9,7 @@ namespace Shimmie2;
  * "id:123", "width:100", etc - an extension will spot those meta-tags and turn
  * them into a little chunk of SQL
  */
-final readonly class ImgCondition
+final class ImgCondition
 {
     public function __construct(
         public Querylet $qlet,

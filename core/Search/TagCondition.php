@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * When somebody has searched for a tag, "cat", "cute", "-angry", etc
  */
-final readonly class TagCondition
+final class TagCondition
 {
     /**
      * @param tag-pattern-string $tag

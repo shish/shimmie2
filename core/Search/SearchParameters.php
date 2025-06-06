@@ -41,7 +41,10 @@ final class SearchParameters
                     $tracker = $tracker->appendgroup($ntracker);
                     $depth++;
                 } elseif ($depth > 0) {
-                    $tracker = $tracker->getparent();
+                    $ntracker = $tracker->getparent();
+                    if (!is_null($ntracker)) {
+                        $tracker = $ntracker;
+                    }
                     $depth--;
                 }
             } else {
@@ -57,8 +60,11 @@ final class SearchParameters
                 }
             }
         }
-
         $order ??= "images.".Ctx::$config->get(IndexConfig::ORDER);
+        $tracker->simplify();
+        echo "<div>";
+        echo $tracker->create_search_string();
+        echo "</div>";
         return new SearchParameters($output_tracker, $tag_count, $img_count, $order);
     }
 }
