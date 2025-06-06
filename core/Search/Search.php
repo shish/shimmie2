@@ -171,7 +171,7 @@ final class Search
      * @param tag-pattern-string $tag
      * @return list<int>
      */
-    private static function tag_or_wildcard_to_ids(string $tag): array
+    public static function tag_or_wildcard_to_ids(string $tag): array
     {
         $sq = "SELECT id FROM tags WHERE SCORE_ILIKE(tag, :tag)";
         return Ctx::$database->get_col($sq, ["tag" => Tag::sqlify($tag)]);
@@ -249,37 +249,15 @@ final class Search
 
         // more than one tag, or more than zero other conditions, or a non-default sort order
         else {
-            $query = new Querylet("
+            $params->tracker->check_all_dis();
+            $sub_query = $params->tracker->generate_sql();
+            echo $sub_query;
+
+            return new Querylet("
                     SELECT $columns
                     FROM images
-                    INNER JOIN (
+                    INNER JOIN ($sub_query) a on a.image_id = images.id
                 ");
-            $params->tracker->iterate_all(function ($child, $query) {
-                $query->append(new Querylet("aaa"));
-            }, $query);
-            $query->append(new Querylet(") a on a.image_id = images.id"));
-            echo $query->sql;
-            // $parent = $params->tracker;
-            // while (true) {
-            //     $child = $parent->traverse();
-            //     if (is_null($child)) { // have to go back up!
-
-            //         $parent = $parent->getparent();
-            //         if (is_null($parent)) {
-            //             break; // done!
-            //         }
-            //     } else {
-            //         if ($child->no_child_groups) { // no need to go deeper
-            //             if ($parent->all_disjunctive) { // we can start building the query here, as it will be connected with a UNION either way
-            //                 // union code
-            //             }
-            //         } else {
-            //             // $parent = $child;
-            //         }
-            //     }
-
-            // }
-
 
             static::$_search_path[] = "general";
             $positive_tag_id_array = [];
