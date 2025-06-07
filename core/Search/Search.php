@@ -250,8 +250,11 @@ final class Search
         // more than one tag, or more than zero other conditions, or a non-default sort order
         else {
             $params->tracker->check_all_dis();
-            $sub_query = $params->tracker->generate_sql();
-            echo $sub_query;
+            if ($params->tracker->no_child_groups) {
+                $sub_query = $params->tracker->everything_sql(); // simpler
+            } else {
+                $sub_query = $params->tracker->generate_sql();
+            }
 
             return new Querylet("
                     SELECT $columns

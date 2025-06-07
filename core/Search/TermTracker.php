@@ -97,7 +97,7 @@ final class TermTracker
                 $this->no_child_groups = false;
                 $this->all_disjunctive_tags = false;
             }
-            if (!$c->disjunctive ) {
+            if (!$c->disjunctive) {
                 $this->all_disjunctive = false;
             } elseif ($c->disjunctive) {
                 $this->has_disjunctive = true;
@@ -142,111 +142,277 @@ final class TermTracker
         $this->childcount = count($this->children); // not keeping great track, but it works
     }
 
-    public function generate_sql(int $pi = 0): string {
+    public function everything_sql(int $mi = 0): string
+    {
         global $rc;
-        $q = "";
-        $mi = $rc++;
-        // TODO negative
-        // TODO img_condition
-        if ($this->all_disjunctive_tags) {
-            $tag_ids = [];
-            foreach ($this->children as $c) {
-                $tag_ids = array_merge($tag_ids, search::tag_or_wildcard_to_ids($c->tag));
-            }
-            $tc = count($tag_ids);
-            if (count($tag_ids) <= 0) {
-                // uuuuh
-            } elseif ($tc === 1) {
-                $tag_id = array_shift($tag_ids);
-                $in = "= $tag_id";
-            } else {
-                $tag_list = join(', ', $tag_ids);
-                $in = "IN ($tag_list)";
-            }
-            
-            if ($this->disjunctive) {
-                $q = " SELECT DISTINCT it$mi.image_id FROM image_tags it$mi
-                WHERE it$mi.tag_id IN ($tag_list) ";
-            } else {
-                $q = " INNER JOIN image_tags it$mi ON it$mi.image_id = it$pi.image_id AND it$mi.tag_id $in ";
-            }
-            
-        } 
-        elseif ($this->all_disjunctive) {
-            $tag_ids = [];
-            $dis_group_sql = [];
-            foreach ($this->children as $c) {
-                if ($c instanceof TermTracker) {
-                    $dis_group_sql[] = $c->generate_sql($mi);
-                } else {
-                    $tag_ids = array_merge($tag_ids, search::tag_or_wildcard_to_ids($c->tag));
-                }
-            }
-            $tc = count($tag_ids);
-            if ($tc > 0){
-                if ($tc === 1) {
-                    $tag_id = array_shift($tag_ids);
-                    $q = " SELECT DISTINCT it$mi.image_id FROM image_tags it$mi
-                        WHERE it$mi.tag_id = $tag_id ";
-                } else {
-                    $tag_list = join(', ', $tag_ids);
-                    $q = " SELECT DISTINCT it$mi.image_id FROM image_tags it$mi
-                        WHERE it$mi.tag_id IN ($tag_list) ";
-                }
-                
-                foreach($dis_group_sql as $dsql) {
-                    $q .= " UNION $dsql ";
-                } 
-            } else {
-                $q .= join(" UNION ", $dis_group_sql);
-            }
-            
-        } 
-        else {
-            $q = " SELECT DISTINCT it$mi.image_id FROM image_tags it$mi ";
-            $dis_tag_ids = [];
-            $dis_group_sql = [];
-            $and_group_sql = [];
-            foreach ($this->children as $c) {
-                if ($c instanceof TermTracker) {
+        $q = " SELECT DISTINCT it$mi.image_id FROM image_tags it$mi ";
+        $extra_q = "";
+        $pos_tag_ids = [];
+        $neg_tag_ids = [];
+        $dis_pos_tag_ids = [];
+        $dis_neg_tags = [];
+        $dis_pos_group_sql = [];
+        $dis_neg_group_sql = [];
+        $and_pos_group_sql = [];
+        $and_neg_group_sql = [];
+        foreach ($this->children as $c) {
+            if ($c instanceof TermTracker) {
+                $sql = $c->generate_sql($mi);
+                if (!empty($sql)) {
                     if ($c->disjunctive) {
-                        $dis_group_sql[] = $c->generate_sql($mi);
+                        if ($c->negative) {
+                            $dis_neg_group_sql[] = $sql;
+                        } else {
+                            $dis_pos_group_sql[] = $sql;
+                        }
                     } elseif ($c->all_disjunctive_tags) {
-                        $q .= $c->generate_sql($mi);
+                        $q .= $sql;
+                    } else { // and
+                        if ($c->negative) {
+                            $and_neg_group_sql[] = $sql;
+                        } else {
+                            $and_pos_group_sql[] = $sql;
+                        }
+                    }
+                }
+            } elseif ($c instanceof ImgCondition) {
+                echo $c->qlet->sql;
+            } else {
+                $tag_ids = search::tag_or_wildcard_to_ids($c->tag);
+                if ($c->disjunctive) {
+                    if ($c->negative) {
+                        $tc = count($tag_ids);
+                        if ($tc === 1) {
+                            $tag_id = array_shift($tag_ids);
+                            $dis_neg_tags[] = "= $tag_id";
+                        } elseif ($tc > 1) {
+                            $tag_list = join(', ', $tag_ids);
+                            $dis_neg_tags[] = "IN ($tag_list)";
+                        }
                     } else {
-                        $and_group_sql[] = $c->generate_sql($mi);
+                        $dis_pos_tag_ids = array_merge($dis_pos_tag_ids, $tag_ids);
                     }
                 } else {
-                    if ($c->disjunctive) {
-                        $dis_tag_ids = array_merge($dis_tag_ids, search::tag_or_wildcard_to_ids($c->tag));
+                    if ($c->negative) {
+                        $neg_tag_ids = array_merge($neg_tag_ids, $tag_ids);
                     } else {
-                        $ids = search::tag_or_wildcard_to_ids($c->tag);
-                        $i = $rc++;
-                        if (count($ids) > 1) {
-                            $tag_list = join(', ', $ids);
-                            $q .= " INNER JOIN image_tags it$i ON it$mi.image_id = it$mi.image_id AND it$i.tag_id IN ($tag_list) ";
-                        } else {
-                            $q .= " INNER JOIN image_tags it$i ON it$i.image_id = it$mi.image_id AND it$i.tag_id = $ids[0] ";
+                        if (!empty($tag_ids)) {
+                            $pos_tag_ids[] = $tag_ids;
                         }
                     }
                 }
             }
-            if (count($dis_tag_ids) > 1){
-                $i = $rc++;
-                $tag_list = join(', ', $dis_tag_ids);
-                $q .= " INNER JOIN image_tags it$i ON it$i.image_id = it$mi.image_id AND it$i.tag_id IN ($tag_list) ";
+        }
+        if (!empty($pos_tag_ids)) {
+            $first = array_shift($pos_tag_ids);
+            if (count($first) > 1) {
+                $tag_list = join(', ', $tag_ids);
+                $extra_q .= " WHERE it$mi.tag_id IN ($tag_list) ";
+            } else {
+                $tag = array_shift($tag_ids);
+                $extra_q .= " WHERE it$mi.tag_id = $tag ";
             }
-            foreach($and_group_sql as $asql) {
+
+            foreach ($pos_tag_ids as $tag_ids) {
                 $i = $rc++;
-                $q .= " INNER JOIN ( $asql ) b$i on b$i.image_id = it$mi.image_id";
+                if (count($tag_ids) > 1) {
+                    $tag_list = join(', ', $tag_ids);
+                    $q .= " INNER JOIN image_tags it$i ON it$i.image_id = it$mi.image_id AND it$i.tag_id IN ($tag_list) ";
+                } else {
+                    $tag = array_shift($tag_ids);
+                    $q .= " INNER JOIN image_tags it$i ON it$i.image_id = it$mi.image_id AND it$i.tag_id = $tag ";
+                }
             }
-            foreach($dis_group_sql as $dsql) {
-                $q .= " UNION $dsql ";
+        } elseif (!empty($dis_pos_tag_ids)) {
+            $tag_list = join(', ', $dis_pos_tag_ids);
+            $extra_q .= " WHERE it$mi.tag_id IN ($tag_list) ";
+        } else {
+            $extra_q .= " WHERE 1=1 ";
+        }
+
+        if (!empty($neg_tag_ids)) {
+            $i = $rc++;
+            $tag_list = join(', ', $neg_tag_ids);
+            $q .= " LEFT JOIN image_tags neg$i ON neg$i.image_id = it$mi.image_id AND neg$i.tag_id IN ($tag_list) ";
+            $extra_q .= " AND neg$i.image_id IS NULL ";
+        }
+
+        if (!empty($dis_pos_tag_ids)) {
+            $i = $rc++;
+            $tag_list = join(', ', $dis_pos_tag_ids);
+            $q .= " INNER JOIN image_tags it$i ON it$i.image_id = it$mi.image_id AND it$i.tag_id IN ($tag_list) ";
+        }
+
+        foreach ($and_pos_group_sql as $asql) {
+            $i = $rc++;
+            $q .= " INNER JOIN ( $asql ) b$i on b$i.image_id = it$mi.image_id ";
+        }
+        foreach ($and_neg_group_sql as $sql) {
+            $i = $rc++;
+            $q .= " LEFT JOIN ( $sql ) neg$i ON neg$i.image_id = it$mi.image_id ";
+            $extra_q .= " AND neg$i.image_id IS NULL ";
+        }
+        $q .= $extra_q;
+        foreach ($dis_pos_group_sql as $dsql) {
+            $q .= " UNION $dsql ";
+        }
+
+        foreach ($dis_neg_tags as $in) {
+            $i = $rc++;
+            $q .= " UNION SELECT gne$i.image_id FROM image_tags gne$i
+                    LEFT JOIN image_tags neg$i ON neg$i.image_id = gne$i.image_id AND neg$i.tag_id $in
+                    WHERE neg$i.image_id IS NULL ";
+        }
+
+        foreach ($dis_neg_group_sql as $sql) {
+            $i = $rc++;
+            $q .= " UNION SELECT image_id FROM (SELECT ne$i.image_id FROM image_tags ne$i EXCEPT $sql ) ";
+        }
+        return $q;
+    }
+
+    private function all_disjuctive(int $mi): string
+    {
+        global $rc;
+        $q = " SELECT DISTINCT it$mi.image_id FROM image_tags it$mi ";
+        $tags_only = [];
+        $trackers_only = [];
+        foreach ($this->children as $c) {
+            if ($c instanceof TermTracker) {
+                $trackers_only[] = $c;
+            } else {
+                $tags_only[] = $c;
             }
         }
-        // TODO make sure every query has a WHERE clause
-
+        if (!empty($tags_only)) {
+            $q .= $this->all_disjunctive_tags($tags_only, ++$rc, $mi);
+        }
+        $pos_sql = [];
+        $neg_sql = [];
+        foreach ($trackers_only as $tracker) {
+            $sql = $tracker->generate_sql($mi);
+            if (!empty($sql)) {
+                if ($tracker->negative) {
+                    $neg_sql[] = $tracker->generate_sql($mi);
+                } else {
+                    $pos_sql[] = $tracker->generate_sql($mi);
+                }
+            }
+        }
+        if (!empty($pos_sql)) {
+            $q .= " UNION ";
+            $q .= join(" UNION ", $pos_sql);
+        }
+        foreach ($neg_sql as $sql) {
+            $i = $rc++;
+            $q .= " UNION SELECT image_id FROM (SELECT ne$i.image_id FROM image_tags ne$i EXCEPT $sql ) ";
+        }
         return $q;
+    }
+    private function all_disjunctive_tags(array $tags, int $mi, int $pi): string
+    {
+        global $rc;
+        $q = "";
+        $pos_tag_ids = [];
+        $neg_tags = [];
+        foreach ($tags as $t) {
+            $tag_ids = search::tag_or_wildcard_to_ids($t->tag);
+            if ($t->negative) {
+                $tc = count($tag_ids);
+                if ($tc === 1) {
+                    $tag_id = array_shift($tag_ids);
+                    $neg_tags[] = "= $tag_id";
+                } elseif ($tc > 1) {
+                    $tag_list = join(', ', $tag_ids);
+                    $neg_tags[] = "IN ($tag_list)";
+                }
+            } else {
+                $pos_tag_ids = array_merge($pos_tag_ids, $tag_ids);
+            }
+        }
+        $ptc = count($pos_tag_ids);
+        $ne = empty($neg_tags);
+        if ($ptc === 0 && $ne === 0) { // maybe raise to user that a tag doesnt have results?
+            return $this->disjunctive ? "" : " INNER JOIN image_tags no$mi ON no$mi.image_id = it$pi.image_id AND 1=0 ";
+        }
+        $pos_tags = "";
+        if ($ptc === 1) {
+            $tag_id = array_shift($pos_tag_ids);
+            $pos_tags = "= $tag_id";
+        } else {
+            $tag_list = join(', ', $pos_tag_ids);
+            $pos_tags = "IN ($tag_list)";
+        }
+
+        if ($this->disjunctive) {
+            if ($ptc !== 0) {
+                $q = " SELECT dp$mi.image_id FROM image_tags dp$mi
+                    WHERE dp$mi.tag_id $pos_tags ";
+            }
+            if ($ptc !== 0 && !$ne) {
+                $q .= " UNION ";
+            }
+            if (!$ne) {
+                $ni = $rc++;
+                $q .= " SELECT de$ni.image_id FROM image_tags de$ni  EXCEPT SELECT DISTINCT de$ni.image_id FROM image_tags de$ni";
+                foreach ($neg_tags as $in) {
+                    $i = $rc++;
+                    $q .= " INNER JOIN image_tags de$i ON de$i.image_id = de$ni.image_id AND de$i.tag_id $in";
+                }
+            }
+        } else {
+            if ($ptc !== 0 && !$ne) { // positive and negative
+                $q .= " INNER JOIN ( ";
+                $i = $rc++;
+                $q .= " SELECT ap$i.image_id FROM image_tags ap$i
+                        WHERE ap$i.image_id $pos_tags 
+                        UNION ";
+                $qs = [];
+                foreach ($neg_tags as $in) {
+                    $i = $rc++;
+                    $qs[] = " SELECT ac$i.image_id FROM image_tags ac$i
+                            LEFT JOIN image_tags an$i ON an$i.image_id = ac$i.image_id AND an$i.tag_id $in
+                            WHERE an$i.image_id IS NULL ";
+                }
+                $i = $rc++;
+                $q .= join(" UNION ", $qs);
+                $q .= ") c$i on c$i.image_id = it$pi.image_id ";
+            } elseif ($ptc !== 0) { // only positives
+                $q = " INNER JOIN image_tags it$mi ON it$mi.image_id = it$pi.image_id AND it$mi.tag_id $pos_tags ";
+            } elseif (!$ne) { // only negatives
+                $q .= " INNER JOIN ( ";
+                $qs = [];
+                foreach ($neg_tags as $in) {
+                    $i = $rc++;
+                    $qs[] = " SELECT de$i.image_id FROM image_tags de$i
+                            LEFT JOIN image_tags an$i ON an$i.image_id = de$i.image_id AND an$i.tag_id $in
+                            WHERE an$i.image_id IS NULL ";
+                }
+                $i = $rc++;
+                $q .= join(" UNION ", $qs);
+                $q .= ") c$i on c$i.image_id = it$pi.image_id ";
+            }
+        }
+        return $q;
+    }
+
+    public function generate_sql(int $pi = 0): string
+    {
+        global $rc;
+        $mi = $rc++;
+        // TODO img_condition
+        if ($this->all_disjunctive_tags) {
+            return $this->all_disjunctive_tags($this->children, $mi, $pi);
+        }
+        // TODO img_condition
+        elseif ($this->all_disjunctive) {
+            return $this->all_disjuctive($mi);
+        }
+        // TODO img_condition
+        else {
+            return $this->everything_sql($mi);
+        }
+        // TODO make sure every query has a WHERE clause
     }
 
     public function create_search_string(int $depth = 0): string
