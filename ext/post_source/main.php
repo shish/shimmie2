@@ -98,16 +98,16 @@ final class PostSource extends Extension
         $event->add_part($this->theme->get_upload_specific_html($event->suffix), 11);
     }
 
-    private function mass_source_edit(string $tags, string $source): void
+    private function mass_source_edit(string $terms, string $source): void
     {
-        $tags = Tag::explode($tags);
+        $terms = SearchTerm::explode($terms);
 
         $last_id = -1;
         while (true) {
             // make sure we don't look at the same images twice.
             // search returns high-ids first, so we want to look
             // at images with lower IDs than the previous.
-            $search_forward = $tags;
+            $search_forward = $terms;
             if ($last_id >= 0) {
                 $search_forward[] = "id<$last_id";
             }

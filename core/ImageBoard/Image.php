@@ -233,9 +233,9 @@ final class Image implements \ArrayAccess
      * Rather than simply $this_id + 1, one must take into account
      * deleted images and search queries
      *
-     * @param list<tag-string> $tags
+     * @param search-term-array $terms
      */
-    public function get_next(array $tags = [], bool $next = true): ?Image
+    public function get_next(array $terms = [], bool $next = true): ?Image
     {
         if ($next) {
             $gtlt = "<";
@@ -245,20 +245,20 @@ final class Image implements \ArrayAccess
             $dir = "ASC";
         }
 
-        $tags[] = 'id'. $gtlt . $this->id;
-        $tags[] = 'order:id_'. strtolower($dir);
-        $images = Search::find_images(0, 1, $tags);
+        $terms[] = 'id'. $gtlt . $this->id;
+        $terms[] = 'order:id_'. strtolower($dir);
+        $images = Search::find_images(0, 1, $terms);
         return (count($images) > 0) ? $images[0] : null;
     }
 
     /**
      * The reverse of get_next
      *
-     * @param list<tag-string> $tags
+     * @param search-term-array $terms
      */
-    public function get_prev(array $tags = []): ?Image
+    public function get_prev(array $terms = []): ?Image
     {
-        return $this->get_next($tags, false);
+        return $this->get_next($terms, false);
     }
 
     /**

@@ -310,7 +310,7 @@ final class Ratings extends Extension
         if ($event->page_matches("admin/bulk_rate", method: "POST", permission: RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
             $n = 0;
             while (true) {
-                $images = Search::find_images($n, 100, Tag::explode($event->POST->req("query")));
+                $images = Search::find_images($n, 100, SearchTerm::explode($event->POST->req("query")));
                 if (count($images) === 0) {
                     break;
                 }
