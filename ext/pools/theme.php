@@ -361,7 +361,7 @@ class PoolsTheme extends Themelet
                 "name" => "bulk_pool_new",
                 "placeholder" => "New Pool",
                 "required" => "",
-                "value" => Tag::implode($search_terms)
+                "value" => SearchTerm::implode($search_terms)
             ]
         );
     }

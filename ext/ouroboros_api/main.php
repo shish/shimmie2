@@ -257,7 +257,7 @@ final class OuroborosAPI extends Extension
                 if ($p <= 0) {
                     $p = 1;
                 }
-                $tags = Tag::explode(@$_REQUEST['tags'] ?: '');
+                $tags = SearchTerm::explode(@$_REQUEST['tags'] ?: '');
                 $this->postIndex($limit, $p, $tags);
             } elseif ($event_args === 'tag/index' || $event_args === 'tag/list') {
                 $this->tryAuth();
@@ -380,12 +380,12 @@ final class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of posts
-     * @param list<tag-string> $tags
+     * @param search-term-array $terms
      */
-    protected function postIndex(int $limit, int $page, array $tags): void
+    protected function postIndex(int $limit, int $page, array $terms): void
     {
         $start = ($page - 1) * $limit;
-        $results = Search::find_images(max($start, 0), min($limit, 100), $tags);
+        $results = Search::find_images(max($start, 0), min($limit, 100), $terms);
         $posts = [];
         foreach ($results as $img) {
             $posts[] = new _SafeOuroborosImage($img);

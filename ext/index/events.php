@@ -96,7 +96,7 @@ class SearchTermParseException extends InvalidInput
 class PostListBuildingEvent extends Event
 {
     /**
-     * @param list<tag-string> $search_terms
+     * @param search-term-array $search_terms
      */
     public function __construct(
         public array $search_terms

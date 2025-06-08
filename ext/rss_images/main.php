@@ -14,7 +14,7 @@ final class RSSImages extends Extension
         $title = Ctx::$config->get(SetupConfig::TITLE);
 
         if (count($event->search_terms) > 0) {
-            $search = Tag::implode($event->search_terms);
+            $search = SearchTerm::implode($event->search_terms);
             Ctx::$page->add_html_header(LINK([
                 'rel' => 'alternate',
                 'type' => 'application/rss+xml',
@@ -37,7 +37,7 @@ final class RSSImages extends Extension
             $event->page_matches("rss/images", paged: true)
             || $event->page_matches("rss/images/{search}", paged: true)
         ) {
-            $search_terms = Tag::explode($event->get_arg('search', ""));
+            $search_terms = SearchTerm::explode($event->get_arg('search', ""));
             $page_number = $event->get_iarg('page_num', 1);
             $page_size = Ctx::$config->get(IndexConfig::IMAGES);
             if (Ctx::$config->get(RSSImagesConfig::RSS_LIMIT) && $page_number > 9) {
@@ -68,7 +68,7 @@ final class RSSImages extends Extension
         $base_href = Url::base()->asAbsolute();
         $search = "";
         if (count($search_terms) > 0) {
-            $search = url_escape(Tag::implode($search_terms)) . "/";
+            $search = url_escape(SearchTerm::implode($search_terms)) . "/";
         }
 
         if ($page_number > 1) {

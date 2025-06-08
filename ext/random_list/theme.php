@@ -36,7 +36,7 @@ class RandomListTheme extends Themelet
                 INPUT([
                     "type" => "search",
                     "name" => "search",
-                    "value" => Tag::implode($search_terms),
+                    "value" => SearchTerm::implode($search_terms),
                     "placeholder" => "Search random list",
                     "class" => "autocomplete_tags"
                 ]),
