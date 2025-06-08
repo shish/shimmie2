@@ -133,14 +133,14 @@ final class ImageIO extends Extension
     private function redirect_to_next_image(Image $image, ?string $search = null): void
     {
         if (!is_null($search)) {
-            $search_terms = Tag::explode($search);
+            $terms = SearchTerm::explode($search);
             $fragment = "search=" . url_escape($search);
         } else {
-            $search_terms = [];
+            $terms = [];
             $fragment = null;
         }
 
-        $target_image = $image->get_next($search_terms);
+        $target_image = $image->get_next($terms);
 
         if ($target_image === null) {
             $redirect_target = Url::referer_or(search_link(), ['post/view']);

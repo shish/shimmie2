@@ -37,7 +37,7 @@ final class RSSImages extends Extension
             $event->page_matches("rss/images", paged: true)
             || $event->page_matches("rss/images/{search}", paged: true)
         ) {
-            $search_terms = Tag::explode($event->get_arg('search', ""));
+            $search_terms = SearchTerm::explode($event->get_arg('search', ""));
             $page_number = $event->get_iarg('page_num', 1);
             $page_size = Ctx::$config->get(IndexConfig::IMAGES);
             if (Ctx::$config->get(RSSImagesConfig::RSS_LIMIT) && $page_number > 9) {

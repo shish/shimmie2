@@ -16,7 +16,7 @@ final class SearchTerm
      */
     public static function explode(string $str): array
     {
-        return Tag::explode($str);
+        return Tag::explode($str, false);
     }
 
     /**
