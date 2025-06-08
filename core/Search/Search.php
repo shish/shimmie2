@@ -149,7 +149,7 @@ final class Search
         } else {
             // complex query
             // implode(tags) can be too long for memcache, so use the hash of tags as the key
-            $cache_key = "image-count:" . md5(Tag::implode($terms));
+            $cache_key = "image-count:" . md5(SearchTerm::implode($terms));
             $total = Ctx::$cache->get($cache_key);
             if (is_null($total)) {
                 $params = SearchParameters::from_terms($terms);

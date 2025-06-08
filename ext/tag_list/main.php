@@ -177,7 +177,7 @@ final class TagList extends Extension
      */
     public static function get_related_tags(array $search, int $limit): array
     {
-        $cache_key = "related_tags:" . md5(Tag::implode($search));
+        $cache_key = "related_tags:" . md5(SearchTerm::implode($search));
         $related_tags = Ctx::$cache->get($cache_key);
 
         if (is_null($related_tags)) {

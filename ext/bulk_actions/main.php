@@ -99,7 +99,7 @@ final class BulkActions extends Extension
 
         $actions = array_filter($actions, fn ($a) => $a->permission === null || Ctx::$user->can($a->permission));
         usort($actions, $this->sort_blocks(...));
-        $this->theme->display_selector($actions, Tag::implode($event->search_terms));
+        $this->theme->display_selector($actions, SearchTerm::implode($event->search_terms));
     }
 
     public function onCliGen(CliGenEvent $event): void
@@ -209,8 +209,8 @@ final class BulkActions extends Extension
      */
     private function yield_search_results(string $query): \Generator
     {
-        $tags = Tag::explode($query);
-        return Search::find_images_iterable(0, null, $tags);
+        $terms = SearchTerm::explode($query);
+        return Search::find_images_iterable(0, null, $terms);
     }
 
     /**

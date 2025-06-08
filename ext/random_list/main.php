@@ -14,7 +14,7 @@ final class RandomList extends Extension
         if ($event->page_matches("random")) {
             if ($event->GET->get('search')) {
                 // implode(explode()) to resolve aliases and sanitise
-                $search = Tag::implode(Tag::explode($event->GET->get('search'), false));
+                $search = SearchTerm::implode(SearchTerm::explode($event->GET->get('search')));
                 if (empty($search)) {
                     Ctx::$page->set_redirect(make_link("random"));
                 } else {
@@ -25,7 +25,7 @@ final class RandomList extends Extension
 
             $search_terms = [];
             if ($event->page_matches("random/{search}")) {
-                $search_terms = Tag::explode($event->get_arg('search'));
+                $search_terms = SearchTerm::explode($event->get_arg('search'));
             }
 
             $images_per_page = Ctx::$config->get(RandomListConfig::LIST_COUNT);
