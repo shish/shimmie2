@@ -24,7 +24,7 @@ final class BoneQuality extends Extension
             if ($chore_searches) {
                 foreach ($chore_searches as $search) {
                     $search_boned = false;
-                    $search_count = Search::count_images(Tag::explode($search));
+                    $search_count = Search::count_images(SearchTerm::explode($search));
                     if ($search_count >= $chore_threshold) {
                         $boned = true;
                         $search_boned = true;

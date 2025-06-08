@@ -209,8 +209,8 @@ final class BulkActions extends Extension
      */
     private function yield_search_results(string $query): \Generator
     {
-        $tags = Tag::explode($query);
-        return Search::find_images_iterable(0, null, $tags);
+        $terms = SearchTerm::explode($query);
+        return Search::find_images_iterable(0, null, $terms);
     }
 
     /**
