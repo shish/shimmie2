@@ -171,7 +171,7 @@ final class Search
      * @param tag-pattern-string $tag
      * @return list<int>
      */
-    private static function tag_or_wildcard_to_ids(string $tag): array
+    public static function tag_or_wildcard_to_ids(string $tag): array
     {
         $sq = "SELECT id FROM tags WHERE SCORE_ILIKE(tag, :tag)";
         return Ctx::$database->get_col($sq, ["tag" => Tag::sqlify($tag)]);
@@ -192,7 +192,7 @@ final class Search
         $columns = $count ? "COUNT(*)" : "images.*";
 
         // no tags, do a simple search
-        if (count($params->tag_conditions) === 0) {
+        if ($params->tag_count === 0) {
             static::$_search_path[] = "no_tags";
             $query = new Querylet("SELECT $columns FROM images WHERE 1=1");
         }
@@ -201,13 +201,13 @@ final class Search
         // and do the offset / limit there, which is 10x faster than fetching
         // all the image_tags and doing the offset / limit on the result.
         elseif (
-            count($params->tag_conditions) === 1
-            && $params->tag_conditions[0]->positive
+            $params->tag_count === 1
             // We can only do this if img_conditions is empty, because
             // we're going to apply the offset / limit to the image_tags
             // subquery, and applying extra conditions to the top-level
             // query might reduce the total results below the target limit
-            && empty($params->img_conditions)
+            && $params->img_count === 0
+            && !$params->tracker->first()->negative
             // We can only do this if we're sorting by ID, because
             // we're going to be using the image_tags table, which
             // only has image_id and tag_id, not any other columns
@@ -218,7 +218,8 @@ final class Search
             && !is_null($offset)
         ) {
             static::$_search_path[] = "fast";
-            $tc = $params->tag_conditions[0];
+            /** @var TagCondition $tc */
+            $tc = $params->tracker->first();
             // IN (SELECT id FROM tags) is 100x slower than doing a separate
             // query and then a second query for IN(first_query_results)??
             $tag_array = self::tag_or_wildcard_to_ids($tc->tag);
@@ -248,117 +249,21 @@ final class Search
 
         // more than one tag, or more than zero other conditions, or a non-default sort order
         else {
-            static::$_search_path[] = "general";
-            $positive_tag_id_array = [];
-            $positive_wildcard_id_array = [];
-            $negative_tag_id_array = [];
-            $all_nonexistent_negatives = true;
-
-            foreach ($params->tag_conditions as $tq) {
-                $tag_ids = self::tag_or_wildcard_to_ids($tq->tag);
-                $tag_count = count($tag_ids);
-
-                if ($tq->positive) {
-                    $all_nonexistent_negatives = false;
-                    if ($tag_count === 0) {
-                        # one of the positive tags had zero results, therefor there
-                        # can be no results; "where 1=0" should shortcut things
-                        static::$_search_path[] = "invalid_tag";
-                        return new Querylet("SELECT $columns FROM images WHERE 1=0");
-                    } elseif ($tag_count === 1) {
-                        // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
-                        $positive_tag_id_array[] = $tag_ids[0];
-                    } else {
-                        // Terms that resolve to multiple tags act as an OR within themselves
-                        // and as an AND in relation to all other terms,
-                        $positive_wildcard_id_array[] = $tag_ids;
-                    }
-                } else {
-                    if ($tag_count > 0) {
-                        $all_nonexistent_negatives = false;
-                        // Unlike positive criteria, negative criteria are all handled in an OR fashion,
-                        // so we can just compile them all into a single sub-query.
-                        $negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
-                    }
-                }
-            }
-
-            assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array || $all_nonexistent_negatives, _get_query());
-
-            if ($all_nonexistent_negatives) {
-                static::$_search_path[] = "all_nonexistent_negatives";
-                $query = new Querylet("SELECT $columns FROM images WHERE 1=1");
-            } elseif (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
-                static::$_search_path[] = "some_positives";
-                $inner_joins = [];
-                if (!empty($positive_tag_id_array)) {
-                    foreach ($positive_tag_id_array as $tag) {
-                        $inner_joins[] = "= $tag";
-                    }
-                }
-                if (!empty($positive_wildcard_id_array)) {
-                    foreach ($positive_wildcard_id_array as $tags) {
-                        $positive_tag_id_list = join(', ', $tags);
-                        $inner_joins[] = "IN ($positive_tag_id_list)";
-                    }
-                }
-
-                $first = array_shift($inner_joins);
-                $sub_query = "SELECT DISTINCT it.image_id FROM image_tags it ";
-                $i = 0;
-                foreach ($inner_joins as $inner_join) {
-                    $i++;
-                    $sub_query .= " INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id $inner_join ";
-                }
-                if (!empty($negative_tag_id_array)) {
-                    $negative_tag_id_list = join(', ', $negative_tag_id_array);
-                    $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
-                }
-                $sub_query .= "WHERE it.tag_id $first ";
-                if (!empty($negative_tag_id_array)) {
-                    $sub_query .= " AND negative.image_id IS NULL";
-                }
-                $sub_query .= " GROUP BY it.image_id ";
-
-                $query = new Querylet("
-                    SELECT $columns
-                    FROM images
-                    INNER JOIN ($sub_query) a on a.image_id = images.id
-                ");
-            } elseif (!empty($negative_tag_id_array)) {
-                static::$_search_path[] = "only_negative_tags";
-                $negative_tag_id_list = join(', ', $negative_tag_id_array);
-                $query = new Querylet("
-                    SELECT $columns
-                    FROM images
-                    LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)
-                    WHERE negative.image_id IS NULL
-                ");
+            $params->tracker->check_all_dis();
+            if ($params->tracker->no_child_groups) {
+                $sub_query = $params->tracker->everything_sql(); // simpler
             } else {
-                throw new InvalidInput("No criteria specified");
+                $sub_query = $params->tracker->generate_sql();
             }
-        }
+            if (is_null($sub_query)) {
+                throw new PostNotFound("No posts were found to match the search criteria");
+            }
 
-        /*
-         * Merge all the image metadata searches into one generic querylet
-         * and append to the base querylet with "AND blah"
-         */
-        if (!empty($params->img_conditions)) {
-            $n = 0;
-            $img_sql = "";
-            $img_vars = [];
-            foreach ($params->img_conditions as $iq) {
-                if ($n++ > 0) {
-                    $img_sql .= " AND";
-                }
-                if (!$iq->positive) {
-                    $img_sql .= " NOT";
-                }
-                $img_sql .= " (" . $iq->qlet->sql . ")";
-                $img_vars = array_merge($img_vars, $iq->qlet->variables);
-            }
-            $query->append(new Querylet(" AND "));
-            $query->append(new Querylet($img_sql, $img_vars));
+            $query = new Querylet("
+                    SELECT $columns
+                    FROM images
+                    INNER JOIN ({$sub_query->sql}) a on a.image_id = images.id
+                ", $sub_query->variables);
         }
 
         if (!is_null($params->order) && $count === false) {
@@ -369,7 +274,6 @@ final class Search
             $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
             $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
         }
-
         return $query;
     }
 }

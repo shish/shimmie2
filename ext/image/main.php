@@ -133,7 +133,7 @@ final class ImageIO extends Extension
     private function redirect_to_next_image(Image $image, ?string $search = null): void
     {
         if (!is_null($search)) {
-            $search_terms = Tag::explode($search);
+            $search_terms = SearchTerm::explode($search);
             $fragment = "search=" . url_escape($search);
         } else {
             $search_terms = [];

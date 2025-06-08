@@ -7,14 +7,15 @@ namespace Shimmie2;
 /**
  * When somebody has searched for a tag, "cat", "cute", "-angry", etc
  */
-final readonly class TagCondition
+final class TagCondition
 {
     /**
      * @param tag-pattern-string $tag
      */
     public function __construct(
         public string $tag,
-        public bool $positive = true,
+        public bool $negative = false,
+        public bool $disjunctive = false
     ) {
     }
 }

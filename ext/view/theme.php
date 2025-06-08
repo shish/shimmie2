@@ -75,9 +75,9 @@ class ViewPostTheme extends Themelet
     protected function is_ordered_search(): bool
     {
         if (isset($_GET['search'])) {
-            $tags = Tag::explode($_GET['search']);
-            foreach ($tags as $tag) {
-                if (\Safe\preg_match("/^order[=:]/", $tag) === 1) {
+            $terms = SearchTerm::explode($_GET['search']);
+            foreach ($terms as $term) {
+                if (\Safe\preg_match("/^order[=:]/", $term) === 1) {
                     return true;
                 }
             }
