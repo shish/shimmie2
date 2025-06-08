@@ -59,7 +59,7 @@ class IndexTheme extends Themelet
                 INPUT([
                     "type" => "search",
                     "name" => "search",
-                    "value" => Tag::implode($this->search_terms),
+                    "value" => SearchTerm::implode($this->search_terms),
                     "placeholder" => "Search",
                     "class" => "autocomplete_tags"
                 ]),
@@ -97,7 +97,7 @@ class IndexTheme extends Themelet
     {
         if (WikiInfo::is_enabled() && Ctx::$config->get(WikiConfig::TAG_SHORTWIKIS)) {
             if (count($this->search_terms) === 1) {
-                $st = Tag::implode($this->search_terms);
+                $st = SearchTerm::implode($this->search_terms);
                 $wikiPage = Wiki::get_page($st);
                 if ($wikiPage->id !== -1) {
                     if (TagCategoriesInfo::is_enabled()) {
@@ -145,7 +145,7 @@ class IndexTheme extends Themelet
                 // only index the first pages of each term
                 Ctx::$page->add_html_header(META(["name" => "robots", "content" => "noindex, nofollow"]));
             }
-            $query = url_escape(Tag::implode($this->search_terms));
+            $query = url_escape(SearchTerm::implode($this->search_terms));
             Ctx::$page->add_block(new Block(null, $this->build_table($images, "search=$query"), "main", 10, "image-list"));
             $this->display_paginator("post/list/$query", null, $this->page_number, $this->total_pages, true);
         } else {
