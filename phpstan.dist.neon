@@ -22,8 +22,9 @@ parameters:
     # depends on whether or not an extension claims it during SearchTermParseEvent
     # or TagTermParseEvent...
     meta-tag-string: non-empty-string
-    # a tag, a tag pattern, or a meta-tag (or any of those three, negated)
-    search-term-string: non-empty-string
+    # a tag, a tag pattern, or a meta-tag (or any of those three, with an operand
+    # like "-" at the start for "exclude posts which match this")
+    search-term-string: tag-string|tag-pattern-string|meta-tag-string|non-empty-string
     # an ordered list of search terms, in the order the user specified them
     search-term-array: list<search-term-string>
     header-array: "array<string,string|string[]>"

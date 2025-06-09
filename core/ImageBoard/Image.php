@@ -203,11 +203,11 @@ final class Image implements \ArrayAccess
     }
 
     /**
-     * @param list<tag-string> $tags
+     * @param search-term-array $terms
      */
-    public static function by_random(array $tags = [], int $limit_range = 0): ?Image
+    public static function by_random(array $terms = [], int $limit_range = 0): ?Image
     {
-        $max = Search::count_images($tags);
+        $max = Search::count_images($terms);
         if ($max < 1) {
             return null;
         }        // From Issue #22 - opened by HungryFeline on May 30, 2011.
@@ -215,7 +215,7 @@ final class Image implements \ArrayAccess
             $max = $limit_range;
         }
         $rand = mt_rand(0, $max - 1);
-        $set = Search::find_images($rand, 1, $tags);
+        $set = Search::find_images($rand, 1, $terms);
         if (count($set) > 0) {
             return $set[0];
         } else {
