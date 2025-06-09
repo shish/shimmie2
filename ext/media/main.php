@@ -29,11 +29,6 @@ final class Media extends Extension
         MimeType::PNG,
     ];
 
-    public static function imagick_available(): bool
-    {
-        return extension_loaded("imagick");
-    }
-
     /**
      * High priority just so that it can be early in the settings
      */
@@ -141,8 +136,6 @@ final class Media extends Extension
 
                 break;
             case MediaEngine::IMAGICK:
-                //                if (self::imagick_available()) {
-                //                } else {
                 self::image_resize_convert(
                     $event->input_path,
                     $event->input_mime,
@@ -156,7 +149,6 @@ final class Media extends Extension
                     $event->minimize,
                     $event->allow_upscale
                 );
-                //}
                 break;
             case MediaEngine::STATIC:
                 $event->input_path->copy($event->output_path);

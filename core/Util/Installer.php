@@ -65,24 +65,24 @@ final class Installer
         $warnings = [];
         $errors = [];
 
-        if (!function_exists('gd_info') && !self::is_im_installed()) {
+        if (!function_exists('gd_info') && !self::get_im_command()) {
             $errors[] = "
-            No thumbnailers could be found - install the imagemagick
-            tools (or the PHP-GD library, if imagemagick is unavailable).
-        ";
-        } elseif (!self::is_im_installed()) {
+                No thumbnailers could be found - install the imagemagick
+                tools (or the PHP-GD library, if imagemagick is unavailable).
+            ";
+        } elseif (!self::get_im_command()) {
             $warnings[] = "
-            The 'magick' command (from the imagemagick package)
-            could not be found - PHP-GD can be used instead, but
-            the size of thumbnails will be limited.
-        ";
+                The 'magick' command (from the imagemagick package)
+                could not be found - PHP-GD can be used instead, but
+                the size of thumbnails will be limited.
+            ";
         }
 
         if (!function_exists('mb_strlen')) {
             $errors[] = "
-            The mbstring PHP extension is missing - multibyte languages
-            (eg non-english languages) may not work right.
-        ";
+                The mbstring PHP extension is missing - multibyte languages
+                (eg non-english languages) may not work right.
+            ";
         }
 
         $drivers = \PDO::getAvailableDrivers();
@@ -92,9 +92,9 @@ final class Installer
             !in_array(DatabaseDriverID::SQLITE->value, $drivers)
         ) {
             $errors[] = "
-            No database connection library could be found; shimmie needs
-            PDO with either Postgres, MySQL, or SQLite drivers
-        ";
+                No database connection library could be found; shimmie needs
+                PDO with either Postgres, MySQL, or SQLite drivers
+            ";
         }
 
         $db_s = in_array(DatabaseDriverID::SQLITE->value, $drivers) ? '<option value="'. DatabaseDriverID::SQLITE->value .'">SQLite</option>' : "";
@@ -197,7 +197,7 @@ final class Installer
                 throw new InstallerException(
                     "Warning: The Database schema is not empty!",
                     "<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
-                <p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>",
+                    <p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>",
                     2
                 );
             }
@@ -227,8 +227,15 @@ final class Installer
             $db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", ["name" => 'Anonymous', "pass" => null, "class" => 'anonymous']);
             $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')]);
 
-            if (self::is_im_installed()) {
-                $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'thumb_engine', "value" => 'convert']);
+            if ($cmd = self::get_im_command()) {
+                $db->execute(
+                    "INSERT INTO config(name, value) VALUES(:name, :value)",
+                    ["name" => 'thumb_engine', "value" => 'convert']
+                );
+                $db->execute(
+                    "INSERT INTO config(name, value) VALUES(:name, :value)",
+                    ["name" => 'media_convert_path', "value" => $cmd]
+                );
             }
 
             $db->create_table("images", "
@@ -326,20 +333,22 @@ final class Installer
         }
     }
 
-    private static function is_im_installed(): bool
+    /**
+     * @return non-empty-string|null
+     */
+    private static function get_im_command(): ?string
     {
         $ext = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? ".exe" : "";
-        $path_env = getenv('PATH');
-        if (!$path_env) {
-            return false;
-        }
-        $paths = explode(PATH_SEPARATOR, $path_env);
-        foreach ($paths as $path) {
-            if (file_exists("$path/magick$ext")) {
-                return true;
+        if ($path_env = getenv('PATH')) {
+            foreach (explode(PATH_SEPARATOR, $path_env) as $path) {
+                if (file_exists("$path/magick$ext")) {
+                    return "magick$ext";
+                }
+                if (file_exists("$path/convert$ext")) {
+                    return "convert$ext";
+                }
             }
         }
-        return false;
-
+        return null;
     }
 }
