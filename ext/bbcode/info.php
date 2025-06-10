@@ -35,8 +35,8 @@ final class BBCodeInfo extends ExtensionInfo
    <ul>
      <li>[img]url[/img]
      <li>[img]site://_images/image.jpg[/img]
-     <li>[url]<a href=\"{self::SHIMMIE_URL}\">https://code.shishnet.org/</a>[/url]
-     <li>[url=<a href=\"{self::SHIMMIE_URL}\">https://code.shishnet.org/</a>]some text[/url]
+     <li>[url]<a href=\"{self::SHIMMIE_URL}\">{self::SHIMMIE_URL}</a>[/url]
+     <li>[url=<a href=\"{self::SHIMMIE_URL}\">{self::SHIMMIE_URL}</a>]some text[/url]
      <li>[url]site://ext_doc/bbcode[/url]
      <li>[url=site://ext_doc/bbcode]Link to BBCode docs[/url]
      <li>[email]<a href=\"mailto:{self::SHISH_EMAIL}\">webmaster@shishnet.org</a>[/email]
