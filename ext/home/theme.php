@@ -116,7 +116,7 @@ class HomeTheme extends Themelet
                     : emptyHTML(A(["href" => $contact_link], "Contact"), " - "),
                 " Serving $num_comma posts - ",
                 " Running ",
-                A(["href" => "https://code.shishnet.org/shimmie2/"], "Shimmie2")
+                A(["href" => "https://github.com/shish/shimmie2/"], "Shimmie2")
             ))
         );
     }
