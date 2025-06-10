@@ -11,7 +11,6 @@ use MicroHTML\HTMLElement;
 /**
  * Name: Danbooru 2 Theme
  * Author: Bzchan <bzchan@animemahou.com>, updated by Daniel Oaks <daniel@danieloaks.net>
- * Link: https://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: This is a simple theme changing the css to make shimme
  *              look more like danbooru as well as adding a custom links
