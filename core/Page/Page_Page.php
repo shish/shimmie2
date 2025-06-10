@@ -391,7 +391,7 @@ trait Page_Page
         $contact_link = contact_link();
         return joinHTML("", [
             "Media © their respective owners, ",
-            A(["href" => "https://code.shishnet.org/shimmie2/", "title" => $debug], "Shimmie"),
+            A(["href" => "https://github.com/shish/shimmie2/", "title" => $debug], "Shimmie"),
             " © ",
             A(["href" => "https://www.shishnet.org/"], "Shish"),
             " & ",
