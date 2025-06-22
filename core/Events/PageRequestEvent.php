@@ -17,6 +17,8 @@ final class PageRequestEvent extends Event
     public string $path;
     public QueryArray $GET;
     public QueryArray $POST;
+    /** @var array<string, UploadedFile> */
+    public array $FILES;
 
     /**
      * @var string[]
@@ -33,6 +35,7 @@ final class PageRequestEvent extends Event
         string $path,
         QueryArray $get = new QueryArray([]),
         QueryArray $post = new QueryArray([]),
+        array $files = [],
     ) {
         parent::__construct();
 
@@ -46,6 +49,7 @@ final class PageRequestEvent extends Event
         $this->path = $path;
         $this->GET = $get;
         $this->POST = $post;
+        $this->FILES = $files;
 
         // break the path into parts
         $this->args = explode('/', $path);
