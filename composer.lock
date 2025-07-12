@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0361e96bda0a60e04506d5e5b359ed10",
+    "content-hash": "37f63363dd459824f70eda05a6e8f105",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -504,16 +504,16 @@
         },
         {
             "name": "shish/ffsphp",
-            "version": "v1.3.3",
+            "version": "v1.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/ffsphp.git",
-                "reference": "c386822954dd56fe513d75b22ee651f98a201f6e"
+                "reference": "9f66d9c167772e3a2e6ee17789650b076aba8e5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/ffsphp/zipball/c386822954dd56fe513d75b22ee651f98a201f6e",
-                "reference": "c386822954dd56fe513d75b22ee651f98a201f6e",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/9f66d9c167772e3a2e6ee17789650b076aba8e5c",
+                "reference": "9f66d9c167772e3a2e6ee17789650b076aba8e5c",
                 "shasum": ""
             },
             "require": {
@@ -522,7 +522,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.64",
-                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan": "^2.0",
                 "phpunit/phpunit": "^11.0"
             },
             "type": "library",
@@ -547,9 +547,9 @@
             "homepage": "https://github.com/shish/ffsphp",
             "support": {
                 "issues": "https://github.com/shish/ffsphp/issues",
-                "source": "https://github.com/shish/ffsphp/tree/v1.3.3"
+                "source": "https://github.com/shish/ffsphp/tree/v1.3.4"
             },
-            "time": "2024-08-31T23:18:43+00:00"
+            "time": "2025-07-12T11:40:18+00:00"
         },
         {
             "name": "shish/gqla",
