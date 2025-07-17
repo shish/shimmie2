@@ -343,6 +343,9 @@ function _get_user(): User
     if (is_null($my_user) && Ctx::$page->get_cookie("user") && Ctx::$page->get_cookie("session")) {
         $my_user = User::by_session(Ctx::$page->get_cookie("user"), Ctx::$page->get_cookie("session"));
     }
+    if (is_null($my_user) && defined("AUTOLOGIN_USER")) {
+        $my_user = User::by_id(constant("AUTOLOGIN_USER"));
+    }
     if (is_null($my_user)) {
         $my_user = User::get_anonymous();
     }
