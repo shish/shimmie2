@@ -42,7 +42,7 @@
         "shish/microhtml": "^2.5.0",
         "shish/gqla": "^1.0",
         "thecodingmachine/safe": "^3.0.2",
-        "enshrined/svg-sanitize": "^0.21",
+        "enshrined/svg-sanitize": "^0.22",
         "bower-asset/jquery": "^1.12",
         "bower-asset/jquery-timeago": "^1.5",
         "bower-asset/js-cookie": "^2.1",
