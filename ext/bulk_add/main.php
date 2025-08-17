@@ -33,7 +33,7 @@ final class BulkAdd extends Extension
             $dir = $event->POST->req('dir');
             assert(!empty($dir), "Directory cannot be empty");
             Ctx::$event_bus->set_timeout(null);
-            $bae = send_event(new BulkAddEvent(new Path($dir)));
+            $bae = send_event(new BulkAddEvent(new Path("$dir/")));
             $this->theme->display_upload_results($bae->results);
         }
     }
@@ -51,7 +51,7 @@ final class BulkAdd extends Extension
                 }
                 /** @var string $dir */
                 $dir = $input->getArgument('directory');
-                $bae = send_event(new BulkAddEvent(new Path($dir)));
+                $bae = send_event(new BulkAddEvent(new Path("$dir/")));
                 foreach ($bae->results as $r) {
                     if (is_a($r, UploadError::class)) {
                         $output->writeln($r->name." failed: ".$r->error);
