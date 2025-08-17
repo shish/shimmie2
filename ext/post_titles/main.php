@@ -4,7 +4,15 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "events/post_title_set_event.php";
+class PostTitleSetEvent extends Event
+{
+    public function __construct(
+        public Image $image,
+        public string $title
+    ) {
+        parent::__construct();
+    }
+}
 
 /** @extends Extension<PostTitlesTheme> */
 final class PostTitles extends Extension
@@ -71,6 +79,20 @@ final class PostTitles extends Extension
     {
         if (array_key_exists("title", $event->fields) && $event->fields['title'] !== null) {
             $this->set_title($event->image->id, $event->fields['title']);
+        }
+    }
+
+    public function onSearchTermParse(SearchTermParseEvent $event): void
+    {
+        if ($matches = $event->matches("/^(title)[=|:](.*)$/i")) {
+            $title = strtolower($matches[2]);
+
+            if (\Safe\preg_match("/^(any|none)$/i", $title)) {
+                $not = ($title === "any" ? "NOT" : "");
+                $event->add_querylet(new Querylet("images.title IS $not NULL"));
+            } else {
+                $event->add_querylet(new Querylet('SCORE_ILIKE(images.title, :title)', ["title" => "%$title%"]));
+            }
         }
     }
 
