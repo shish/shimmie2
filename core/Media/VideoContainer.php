@@ -6,23 +6,24 @@ namespace Shimmie2;
 
 enum VideoContainer: string
 {
-    case WEBM = MimeType::WEBM;
+    case ASF = MimeType::ASF;
+    case AVI = MimeType::AVI;
+    case FLV = MimeType::FLASH_VIDEO;
+    case MKV = MimeType::MKV;
     case MP4 = MimeType::MP4_VIDEO;
     case OGG = MimeType::OGG_VIDEO;
-    case MKV = MimeType::MKV;
+    case QUICKTIME = MimeType::QUICKTIME;
+    case WEBM = MimeType::WEBM;
 
     public const VIDEO_CODEC_SUPPORT = [
-        VideoContainer::WEBM->value => [
-            VideoCodec::VP8,
-            VideoCodec::VP9,
-        ],
-        VideoContainer::OGG->value => [
-            VideoCodec::THEORA,
-        ],
-        VideoContainer::MP4->value => [
-            VideoCodec::H264,
-            VideoCodec::H265,
+        VideoContainer::ASF->value => [
             VideoCodec::MPEG4,
+        ],
+        VideoContainer::AVI->value => [
+            VideoCodec::MPEG4,
+        ],
+        VideoContainer::FLV->value => [
+            VideoCodec::FLV1,
         ],
         VideoContainer::MKV->value => [
             VideoCodec::VP8,
@@ -31,6 +32,23 @@ enum VideoContainer: string
             VideoCodec::H264,
             VideoCodec::H265,
             VideoCodec::MPEG4,
+        ],
+        VideoContainer::MP4->value => [
+            VideoCodec::H264,
+            VideoCodec::H265,
+            VideoCodec::MPEG4,
+        ],
+        VideoContainer::OGG->value => [
+            VideoCodec::THEORA,
+        ],
+        VideoContainer::QUICKTIME->value => [
+            VideoCodec::H264,
+            VideoCodec::H265,
+            VideoCodec::MPEG4,
+        ],
+        VideoContainer::WEBM->value => [
+            VideoCodec::VP8,
+            VideoCodec::VP9,
         ],
     ];
 
