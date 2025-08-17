@@ -49,8 +49,9 @@ final class BulkAdd extends Extension
                     $output->writeln("You do not have permission to bulk add images");
                     return Command::FAILURE;
                 }
+                /** @var string $dir */
                 $dir = $input->getArgument('directory');
-                $bae = send_event(new BulkAddEvent($dir));
+                $bae = send_event(new BulkAddEvent(new Path($dir)));
                 foreach ($bae->results as $r) {
                     if (is_a($r, UploadError::class)) {
                         $output->writeln($r->name." failed: ".$r->error);
