@@ -66,7 +66,7 @@ abstract class DataHandlerExtension extends Extension
             $image->filesize = $filesize;
             $image->hash = $filename->md5();
             // DB limits to 255 char filenames
-            $image->filename = substr($event->filename, -250);
+            $image->filename = truncate_filename($event->filename);
             $image->set_mime($event->mime);
             try {
                 send_event(new MediaCheckPropertiesEvent($image));

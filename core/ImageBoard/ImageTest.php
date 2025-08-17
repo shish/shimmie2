@@ -14,6 +14,11 @@ final class ImageTest extends ShimmiePHPUnitTestCase
         self::assertNull($image->source);
         self::assertEquals("pbx_screenshot.jpg", $image->filename);
 
+        self::assertEquals(
+            "1 - ACDC.jpg",
+            $image->get_nice_image_name()
+        );
+
         Ctx::$config->set(SetupConfig::NICE_URLS, true);
         self::assertEquals(
             "/test/_images/feb01bab5698a11dd87416724c7a89e3/1%20-%20ACDC.jpg",
