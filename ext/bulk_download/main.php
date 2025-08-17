@@ -33,9 +33,7 @@ final class BulkDownload extends Extension
                         throw new UserError("Bulk download limited to ".human_filesize($max_size));
                     }
 
-                    $filename = urldecode($image->get_nice_image_name());
-                    $filename = str_replace(":", ";", $filename);
-                    $zip->addFile($img_loc->str(), $filename);
+                    $zip->addFile($img_loc->str(), $image->get_nice_image_name());
                 }
 
                 $zip->close();

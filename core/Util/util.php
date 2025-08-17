@@ -149,6 +149,13 @@ function ftime(): float
     return microtime(true);
 }
 
+/**
+ * Truncate a filename to a maximum length, preserving the extension.
+ *
+ * @param ?string $filename The filename to truncate, or null.
+ * @param int $max_len The maximum length of the filename, including the extension.
+ * @return ($filename is null ? null : string) The truncated filename, or null if the input was null.
+ */
 function truncate_filename(?string $filename, int $max_len = 250): ?string
 {
     if ($filename === null) {

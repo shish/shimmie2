@@ -288,7 +288,7 @@ final class Image implements \ArrayAccess
     public function save_to_db(): void
     {
         $props_to_save = [
-            "filename" => substr($this->filename, 0, 255),
+            "filename" => truncate_filename($this->filename, 250),
             "filesize" => $this->filesize,
             "hash" => $this->hash,
             "mime" => (string)$this->mime,
@@ -385,11 +385,16 @@ final class Image implements \ArrayAccess
 
     /**
      * Get the nicely formatted version of the file name
+     * in a filesystem-safe manner
      */
     #[Field(name: "nice_name")]
     public function get_nice_image_name(): string
     {
-        return send_event(new ParseLinkTemplateEvent('$id - $tags.$ext', $this))->text;
+        $text = send_event(new ParseLinkTemplateEvent('$id - $tags.$ext', $this))->text;
+        $text = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $text);
+        $text = rawurldecode($text);
+        $text = truncate_filename($text);
+        return $text;
     }
 
     /**
