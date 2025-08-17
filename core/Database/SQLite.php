@@ -16,7 +16,7 @@ class SQLite extends DBEngine
         $db->exec("PRAGMA foreign_keys = ON;");
         $db->sqliteCreateFunction('now', fn (): string => date("Y-m-d H:i:s"), 0);
         $db->sqliteCreateFunction('md5', fn (string $a): string => md5($a), 1);
-        $db->sqliteCreateFunction('lower', fn (string $a): string => mb_strtolower($a), 1);
+        $db->sqliteCreateFunction('lower', fn (?string $a): ?string => is_null($a) ? null : mb_strtolower($a), 1);
         $db->sqliteCreateFunction('rand', fn (): int => rand(), 0);
     }
 
