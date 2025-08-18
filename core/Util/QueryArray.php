@@ -80,6 +80,7 @@ final class QueryArray implements \ArrayAccess
      * @param string $offset
      * @param string|string[] $value
      */
+    // @phpstan-ignore-next-line
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->params[$offset] = $value;
