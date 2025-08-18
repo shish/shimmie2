@@ -168,14 +168,24 @@ final class IPBan extends Extension
     {
         $page = Ctx::$page;
         if ($event->page_matches("ip_ban/create", method: "POST", permission: IPBanPermission::BAN_IP)) {
-            $input = validate_input(["c_ip" => "string", "c_mode" => "string", "c_reason" => "string", "c_expires" => "optional,date"]);
-            send_event(new AddIPBanEvent(IPAddress::parse($input['c_ip']), $input['c_mode'], $input['c_reason'], $input['c_expires']));
-            $page->flash("Ban for {$input['c_ip']} added");
+            $c_ip = $event->POST->req("c_ip");
+            $c_mode = $event->POST->req("c_mode");
+            $c_reason = $event->POST->req("c_reason");
+            $c_expires = nullify($event->POST->get("c_expires"));
+            if ($c_expires !== null) {
+                $c_expires = date("Y-m-d H:i:s", \Safe\strtotime(trim($c_expires)));
+            }
+            send_event(new AddIPBanEvent(
+                IPAddress::parse($c_ip),
+                $c_mode,
+                $c_reason,
+                $c_expires
+            ));
+            $page->flash("Ban for {$c_ip} added");
             $page->set_redirect(make_link("ip_ban/list"));
         }
         if ($event->page_matches("ip_ban/delete", method: "POST", permission: IPBanPermission::BAN_IP)) {
-            $input = validate_input(["d_id" => "int"]);
-            send_event(new RemoveIPBanEvent($input['d_id']));
+            send_event(new RemoveIPBanEvent(int_escape($event->POST->req('d_id'))));
             $page->flash("Ban removed");
             $page->set_redirect(make_link("ip_ban/list"));
         }

@@ -85,10 +85,13 @@ final class ImageBan extends Extension
     {
         $page = Ctx::$page;
         if ($event->page_matches("image_hash_ban/add", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
-            $input = validate_input(["c_hash" => "optional,string", "c_reason" => "string", "c_image_id" => "optional,int"]);
-            $image = isset($input['c_image_id']) ? Image::by_id_ex($input['c_image_id']) : null;
-            $hash = isset($input["c_hash"]) ? $input["c_hash"] : ($image ? $image->hash : null);
-            $reason = isset($input['c_reason']) ? $input['c_reason'] : "DNP";
+            $c_hash = $event->POST->get("c_hash");
+            $c_reason = $event->POST->get("c_reason");
+            $c_image_id = $event->POST->get("c_image_id");
+
+            $image = !empty($c_image_id) ? Image::by_id_ex(int_escape($c_image_id)) : null;
+            $hash = !empty($c_hash) ? $c_hash : $image?->hash;
+            $reason = !empty($c_reason) ? $c_reason : "DNP";
 
             if ($hash) {
                 send_event(new AddImageHashBanEvent($hash, $reason));
@@ -114,8 +117,7 @@ final class ImageBan extends Extension
             $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("image_hash_ban/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
-            $input = validate_input(["d_hash" => "string"]);
-            send_event(new RemoveImageHashBanEvent($input['d_hash']));
+            send_event(new RemoveImageHashBanEvent($event->POST->req('d_hash')));
             $page->flash("Post ban removed");
             $page->set_redirect(Url::referer_or());
         }

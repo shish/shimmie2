@@ -116,27 +116,6 @@ final class PolyfillsTest extends TestCase
         self::assertEquals(50000000000, parse_to_milliseconds("1y 213d 16h 53m 20s"));
     }
 
-    public function test_validate_input(): void
-    {
-        $_POST = [
-            "foo" => " bar ",
-            "to_null" => "  ",
-            "num" => "42",
-        ];
-        self::assertEquals(
-            ["foo" => "bar"],
-            validate_input(["foo" => "string,trim,lower"])
-        );
-        //self::assertEquals(
-        //    ["to_null"=>null],
-        //    validate_input(["to_null"=>"string,trim,nullify"])
-        //);
-        self::assertEquals(
-            ["num" => 42],
-            validate_input(["num" => "int"])
-        );
-    }
-
     public function test_stringer(): void
     {
         self::assertEquals(
