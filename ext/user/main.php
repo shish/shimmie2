@@ -272,31 +272,25 @@ final class UserPage extends Extension
         }
 
         if ($event->page_matches("user_admin/change_name", method: "POST", permission: UserAccountsPermission::EDIT_USER_NAME)) {
-            $input = validate_input([
-                'id' => 'user_id,exists',
-                'name' => 'user_name',
-            ]);
-            $duser = User::by_id($input['id']);
+            $duser = User::by_id(int_escape($event->POST->req('id')));
+            $name = $this->validate_user_name($event->POST->req('name'));
             if ($this->user_can_edit_user($user, $duser)) {
-                $duser->set_name($input['name']);
+                $duser->set_name($name);
                 $page->flash("Username changed");
                 // TODO: set login cookie if user changed themselves
                 $this->redirect_to_user($duser);
             }
         }
         if ($event->page_matches("user_admin/change_pass", method: "POST")) {
-            $input = validate_input([
-                'id' => 'user_id,exists',
-                'pass1' => 'password',
-                'pass2' => 'password',
-            ]);
-            $duser = User::by_id($input['id']);
+            $duser = User::by_id(int_escape($event->POST->req('id')));
+            $pass1 = $event->POST->req('pass1');
+            $pass2 = $event->POST->req('pass2');
             if ($this->user_can_edit_user($user, $duser)) {
-                if ($input['pass1'] !== $input['pass2']) {
+                if ($pass1 !== $pass2) {
                     throw new InvalidInput("Passwords don't match");
                 } else {
                     // FIXME: send_event()
-                    $duser->set_password($input['pass1']);
+                    $duser->set_password($pass1);
                     if ($duser->id === $user->id) {
                         $duser->set_login_cookie();
                     }
@@ -306,26 +300,21 @@ final class UserPage extends Extension
             }
         }
         if ($event->page_matches("user_admin/change_email", method: "POST")) {
-            $input = validate_input([
-                'id' => 'user_id,exists',
-                'address' => 'email',
-            ]);
-            $duser = User::by_id($input['id']);
+            $duser = User::by_id(int_escape($event->POST->req('id')));
+            $address = $event->POST->req('address');
             if ($this->user_can_edit_user($user, $duser)) {
-                $duser->set_email($input['address']);
+                $duser->set_email($address);
                 $page->flash("Email changed");
                 $this->redirect_to_user($duser);
             }
         }
         if ($event->page_matches("user_admin/change_class", method: "POST")) {
-            $input = validate_input([
-                'id' => 'user_id,exists',
-                'class' => 'user_class',
-            ]);
-            $duser = User::by_id($input['id']);
+            $duser = User::by_id(int_escape($event->POST->req('id')));
+            $class = $event->POST->req('class');
+
             // hard-coded that only admins can change people's classes
             if ($user->class->name === "admin") {
-                $duser->set_class($input['class']);
+                $duser->set_class($class);
                 $page->flash("Class changed");
                 $this->redirect_to_user($duser);
             }
@@ -395,6 +384,25 @@ final class UserPage extends Extension
         } else {
             $event->add_nav_link(make_link('user'), "Account", ["user"], "user", 10);
         }
+    }
+
+    private function validate_user_name(string $input): string
+    {
+        if (strlen($input) < 1) {
+            throw new InvalidInput("Username must be at least 1 character");
+        } elseif (!\Safe\preg_match('/^[a-zA-Z0-9-_]+$/', $input)) {
+            throw new InvalidInput(
+                "Username contains invalid characters. Allowed characters are ".
+                "letters, numbers, dash, and underscore"
+            );
+        }
+        try {
+            User::by_name($input);
+            throw new InvalidInput("That username is already taken");
+        } catch (UserNotFound $ex) {
+            // user not found is good
+        }
+        return $input;
     }
 
     private function display_stats(UserPageBuildingEvent $event): void
@@ -470,20 +478,10 @@ final class UserPage extends Extension
         if (!Ctx::$config->get(UserAccountsConfig::SIGNUP_ENABLED) && !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
             throw new UserCreationException("Account creation is currently disabled");
         }
-        if (strlen($name) < 1) {
-            throw new UserCreationException("Username must be at least 1 character");
-        }
-        if (!\Safe\preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
-            throw new UserCreationException(
-                "Username contains invalid characters. Allowed characters are " .
-                "letters, numbers, dash, and underscore"
-            );
-        }
         try {
-            User::by_name($name);
-            throw new UserCreationException("That username is already taken");
-        } catch (UserNotFound $ex) {
-            // user not found is good
+            $name = $this->validate_user_name($name);
+        } catch (InvalidInput $ex) {
+            throw new UserCreationException("Invalid username: " . $ex->getMessage());
         }
         if (!Captcha::check(UserAccountsPermission::SKIP_SIGNUP_CAPTCHA)) {
             throw new UserCreationException("Error in captcha");

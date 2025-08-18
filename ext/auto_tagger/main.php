@@ -66,13 +66,11 @@ final class AutoTagger extends Extension
     {
         $page = Ctx::$page;
         if ($event->page_matches("auto_tag/add", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
-            $input = validate_input(["c_tag" => "string", "c_additional_tags" => "string"]);
-            send_event(new AddAutoTagEvent($input['c_tag'], $input['c_additional_tags']));
+            send_event(new AddAutoTagEvent($event->POST->req('c_tag'), $event->POST->req('c_additional_tags')));
             $page->set_redirect(make_link("auto_tag/list"));
         }
         if ($event->page_matches("auto_tag/remove", method: "POST", permission: AutoTaggerPermission::MANAGE_AUTO_TAG)) {
-            $input = validate_input(["d_tag" => "string"]);
-            send_event(new DeleteAutoTagEvent($input['d_tag']));
+            send_event(new DeleteAutoTagEvent($event->POST->req('d_tag')));
             $page->set_redirect(make_link("auto_tag/list"));
         }
         if ($event->page_matches("auto_tag/list")) {
