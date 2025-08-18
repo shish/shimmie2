@@ -27,7 +27,7 @@ final class IPBanTest extends ShimmiePHPUnitTestCase
 
         // Add ban
         send_event(new AddIPBanEvent(
-            '42.42.42.42',
+            IPAddress::parse('42.42.42.42'),
             'block',
             'unit testing',
             '2030-01-01'

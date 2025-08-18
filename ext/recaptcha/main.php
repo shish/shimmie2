@@ -34,7 +34,10 @@ final class ReCaptcha extends CaptchaExtension
         $r_privatekey = Ctx::$config->get(ReCaptchaConfig::RECAPTCHA_PRIVKEY);
         if (!empty($r_privatekey)) {
             $recaptcha = new ReCaptchaLib($r_privatekey);
-            $resp = $recaptcha->verify($_POST['g-recaptcha-response'] ?? "", Network::get_real_ip());
+            $resp = $recaptcha->verify(
+                $_POST['g-recaptcha-response'] ?? "",
+                (string)Network::get_real_ip()
+            );
 
             if (!$resp->isSuccess()) {
                 Log::info("recaptcha", "Captcha failed: " . implode("", $resp->getErrorCodes()));

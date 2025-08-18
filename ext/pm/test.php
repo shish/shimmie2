@@ -12,7 +12,7 @@ final class PrivMsgTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
         send_event(new SendPMEvent(new PM(
             User::by_name(self::ADMIN_NAME)->id,
-            "0.0.0.0",
+            IPAddress::parse("0.0.0.0"),
             User::by_name(self::USER_NAME)->id,
             "message demo to test",
             "test body"
@@ -43,7 +43,7 @@ final class PrivMsgTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
         send_event(new SendPMEvent(new PM(
             User::by_name(self::ADMIN_NAME)->id,
-            "0.0.0.0",
+            IPAddress::parse("0.0.0.0"),
             User::by_name(self::USER_NAME)->id,
             "message demo to test",
             "test body"
