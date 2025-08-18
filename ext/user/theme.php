@@ -29,7 +29,7 @@ class UserPageTheme extends Themelet
     }
 
     /**
-     * @param array<array{link: Url, name: string|HTMLElement}> $parts
+     * @param array<array{name: string|HTMLElement, link: Url}> $parts
      */
     public function display_user_block(User $user, array $parts): void
     {

@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use function MicroHTML\{A, INPUT, LABEL, SMALL, TABLE, TD, TR, joinHTML};
 
+use MicroHTML\HTMLElement;
+
 class LiteUserPageTheme extends UserPageTheme
 {
     public function display_login_page(): void
@@ -36,7 +38,7 @@ class LiteUserPageTheme extends UserPageTheme
     }
 
     /**
-     * @param array<int, array{name: string, link: Url}> $parts
+     * @param array<int, array{name: string|HTMLElement, link: Url}> $parts
      */
     public function display_user_links(User $user, array $parts): void
     {
@@ -49,7 +51,7 @@ class LiteUserPageTheme extends UserPageTheme
     }
 
     /**
-     * @param array<array{link: Url, name: string}> $parts
+     * @param array<array{name: string|HTMLElement, link: Url}> $parts
      */
     public function display_user_block(User $user, array $parts): void
     {
@@ -71,7 +73,7 @@ class LiteUserPageTheme extends UserPageTheme
     }
 
     /**
-     * @param \MicroHTML\HTMLElement[] $stats
+     * @param array<\MicroHTML\HTMLElement|string> $stats
      */
     public function display_user_page(User $duser, array $stats): void
     {
