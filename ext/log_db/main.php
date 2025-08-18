@@ -67,6 +67,7 @@ final class ActorColumn extends Column
     /**
      * @param array{username: string, address: string} $row
      */
+    // @phpstan-ignore-next-line
     public function display(array $row): HTMLElement
     {
         $ret = emptyHTML();

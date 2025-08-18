@@ -6,10 +6,12 @@ namespace Shimmie2;
 
 use function MicroHTML\{A, INPUT, SMALL, TABLE, TD, TR, joinHTML};
 
+use MicroHTML\HTMLElement;
+
 class WarmUserPageTheme extends UserPageTheme
 {
     /**
-     * @param array<array{link: Url, name: string}> $parts
+     * @param array<array{name: string|HTMLElement, link: Url}> $parts
      */
     public function display_user_block(User $user, array $parts): void
     {

@@ -70,6 +70,7 @@ class EventTracingCache implements CacheInterface
      * @param mixed $default
      * @return iterable<mixed>
      */
+    // @phpstan-ignore-next-line
     public function getMultiple($keys, $default = null)
     {
         $this->tracer->begin("Cache Get Multiple", ["keys" => $keys]);
@@ -81,6 +82,7 @@ class EventTracingCache implements CacheInterface
     /**
      * @param array<string, mixed> $values
      */
+    // @phpstan-ignore-next-line
     public function setMultiple($values, $ttl = null)
     {
         $this->tracer->begin("Cache Set Multiple", ["keys" => array_keys($values)]);
@@ -92,6 +94,7 @@ class EventTracingCache implements CacheInterface
     /**
      * @param string[] $keys
      */
+    // @phpstan-ignore-next-line
     public function deleteMultiple($keys)
     {
         $this->tracer->begin("Cache Delete Multiple", ["keys" => $keys]);
