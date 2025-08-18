@@ -305,7 +305,7 @@ final class Image implements \ArrayAccess
         ];
         if (!$this->in_db) {
             $props_to_save["owner_id"] = Ctx::$user->id;
-            $props_to_save["owner_ip"] = Network::get_real_ip();
+            $props_to_save["owner_ip"] = (string)Network::get_real_ip();
             $props_to_save["posted"] = date('Y-m-d H:i:s', time());
 
             $props_sql = implode(", ", array_keys($props_to_save));

@@ -9,11 +9,13 @@ final class Network
     public static function is_trusted_proxy(): bool
     {
         $ra = $_SERVER['REMOTE_ADDR'] ?? "0.0.0.0";
+        if ($ra === "unix:") {
+            return true;
+        }
+
+        $ra = IPAddress::parse($ra);
         foreach (SysConfig::getTrustedProxies() as $proxy) {
-            if ($ra === $proxy) { // check for "unix:" before checking IPs
-                return true;
-            }
-            if (Network::ip_in_range($ra, $proxy)) {
+            if (IPRange::parse($proxy)->contains($ra)) {
                 return true;
             }
         }
@@ -36,7 +38,7 @@ final class Network
     /**
      * Get real IP if behind a reverse proxy
      */
-    public static function get_real_ip(): string
+    public static function get_real_ip(): IPAddress
     {
         $ip = $_SERVER['REMOTE_ADDR'];
 
@@ -60,23 +62,23 @@ final class Network
             }
         }
 
-        return $ip;
+        return IPAddress::parse($ip);
     }
 
     /**
      * Get the currently active IP, masked to make it not change when the last
      * octet or two change, for use in session cookies and such
      */
-    public static function get_session_ip(): string
+    public static function get_session_ip(): IPAddress
     {
         $mask = Ctx::$config->get(UserAccountsConfig::SESSION_HASH_MASK);
-        $addr = Network::get_real_ip();
+        $addr = (string)Network::get_real_ip();
         try {
             $addr = \Safe\inet_ntop(\Safe\inet_pton($addr) & \Safe\inet_pton($mask));
         } catch (\Safe\Exceptions\NetworkException $e) {
             throw new ServerError("Failed to mask IP address ($addr/$mask)");
         }
-        return $addr;
+        return IPAddress::parse($addr);
     }
 
     /**
@@ -147,29 +149,6 @@ final class Network
         }
 
         return $headers;
-    }
-
-    /**
-     * Figure out if an IP is in a specified range
-     *
-     * from https://uk.php.net/network
-     */
-    public static function ip_in_range(string $IP, string $CIDR): bool
-    {
-        $parts = explode("/", $CIDR);
-        if (count($parts) === 1) {
-            $parts[1] = "32";
-        }
-        list($net, $mask) = $parts;
-
-        $ip_net = ip2long($net);
-        $ip_mask = ~((1 << (32 - (int)$mask)) - 1);
-
-        $ip_ip = ip2long($IP);
-
-        $ip_ip_net = $ip_ip & $ip_mask;
-
-        return ($ip_ip_net === $ip_net);
     }
 
     /**
