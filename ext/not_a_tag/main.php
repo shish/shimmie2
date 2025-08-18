@@ -126,18 +126,16 @@ final class NotATag extends Extension
         $database = Ctx::$database;
 
         if ($event->page_matches("untag/add", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
-            $input = validate_input(["c_tag" => "string", "c_redirect" => "string"]);
             $database->execute(
                 "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
-                ["tag" => $input['c_tag'], "redirect" => $input['c_redirect']]
+                ["tag" => $event->POST->req('c_tag'), "redirect" => $event->POST->req('c_redirect')]
             );
             $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("untag/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
-            $input = validate_input(["d_tag" => "string"]);
             $database->execute(
                 "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",
-                ["tag" => $input['d_tag']]
+                ["tag" => $event->POST->req('d_tag')]
             );
             $page->flash("Post ban removed");
             $page->set_redirect(Url::referer_or());

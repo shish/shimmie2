@@ -63,13 +63,11 @@ final class AliasEditor extends Extension
         $page = Ctx::$page;
 
         if ($event->page_matches("alias/add", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
-            $input = validate_input(["c_oldtag" => "string", "c_newtag" => "string"]);
-            send_event(new AddAliasEvent($input['c_oldtag'], $input['c_newtag']));
+            send_event(new AddAliasEvent($event->POST->req('c_oldtag'), $event->POST->req('c_newtag')));
             $page->set_redirect(make_link("alias/list"));
         }
         if ($event->page_matches("alias/remove", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
-            $input = validate_input(["d_oldtag" => "string"]);
-            send_event(new DeleteAliasEvent($input['d_oldtag']));
+            send_event(new DeleteAliasEvent($event->POST->req('d_oldtag')));
             $page->set_redirect(make_link("alias/list"));
         }
         if ($event->page_matches("alias/list")) {
