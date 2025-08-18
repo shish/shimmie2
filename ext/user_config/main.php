@@ -78,10 +78,7 @@ final class UserConfig extends Extension
             $this->theme->display_user_config_page($blocks, Ctx::$user);
         }
         if ($event->page_matches("user_config/save", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
-            $input = validate_input([
-                'id' => 'user_id,exists'
-            ]);
-            $duser = User::by_id($input['id']);
+            $duser = User::by_id(int_escape($event->POST->req('id')));
 
             if (Ctx::$user->id !== $duser->id && !Ctx::$user->can(UserAccountsPermission::CHANGE_OTHER_USER_SETTING)) {
                 throw new PermissionDenied("You do not have permission to change other user's settings");

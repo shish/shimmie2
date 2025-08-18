@@ -206,6 +206,9 @@ final class User
 
     public function set_class(string $class): void
     {
+        if (!array_key_exists($class, UserClass::$known_classes)) {
+            throw new InvalidInput("Invalid user class: $class");
+        }
         Ctx::$database->execute("UPDATE users SET class=:class WHERE id=:id", ["class" => $class, "id" => $this->id]);
         Log::info("core-user", 'Set class for '.$this->name.' to '.$class);
     }

@@ -64,7 +64,6 @@ final class AddIPBanEvent extends Event
         public ?string $expires
     ) {
         parent::__construct();
-        $this->ip = trim($ip);
         $this->reason = trim($reason);
     }
 }
