@@ -236,7 +236,7 @@ final class Wiki extends Extension
                     "
                         INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
                         VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
-                    ["owner_id" => $event->user->id, "owner_ip" => Network::get_real_ip(),
+                    ["owner_id" => $event->user->id, "owner_ip" => (string)Network::get_real_ip(),
                     "title" => $wpage->title, "revision" => $wpage->revision, "locked" => $wpage->locked, "body" => $wpage->body]
                 );
             } else {
@@ -244,7 +244,7 @@ final class Wiki extends Extension
                     "
                         UPDATE wiki_pages SET owner_id=:owner_id, owner_ip=:owner_ip, date=now(), locked=:locked, body=:body
                         WHERE title = :title ORDER BY revision DESC LIMIT 1",
-                    ["owner_id" => $event->user->id, "owner_ip" => Network::get_real_ip(),
+                    ["owner_id" => $event->user->id, "owner_ip" => (string)Network::get_real_ip(),
                     "title" => $wpage->title, "locked" => $wpage->locked, "body" => $wpage->body]
                 );
             }

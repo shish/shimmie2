@@ -92,6 +92,7 @@
                 "core/Extension/",
                 "core/ImageBoard/",
                 "core/Media/",
+                "core/Network/",
                 "core/Page/",
                 "core/Search/",
                 "core/Testing/",

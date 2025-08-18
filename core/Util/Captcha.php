@@ -14,7 +14,7 @@ final class Captcha
             return null;
         }
 
-        if (SysConfig::getDebug() && Network::ip_in_range(Network::get_real_ip(), "127.0.0.0/8")) {
+        if (SysConfig::getDebug() && Network::get_real_ip()->is_localhost()) {
             return null;
         }
 
@@ -27,7 +27,7 @@ final class Captcha
             return true;
         }
 
-        if (SysConfig::getDebug() && Network::ip_in_range(Network::get_real_ip(), "127.0.0.0/8")) {
+        if (SysConfig::getDebug() && Network::get_real_ip()->is_localhost()) {
             return true;
         }
 

@@ -58,13 +58,12 @@ final class RemoveIPBanEvent extends Event
 final class AddIPBanEvent extends Event
 {
     public function __construct(
-        public string $ip,
+        public IPAddress $ip,
         public string $mode,
         public string $reason,
         public ?string $expires
     ) {
         parent::__construct();
-        $this->ip = trim($ip);
         $this->reason = trim($reason);
     }
 }
@@ -170,7 +169,7 @@ final class IPBan extends Extension
         $page = Ctx::$page;
         if ($event->page_matches("ip_ban/create", method: "POST", permission: IPBanPermission::BAN_IP)) {
             $input = validate_input(["c_ip" => "string", "c_mode" => "string", "c_reason" => "string", "c_expires" => "optional,date"]);
-            send_event(new AddIPBanEvent($input['c_ip'], $input['c_mode'], $input['c_reason'], $input['c_expires']));
+            send_event(new AddIPBanEvent(IPAddress::parse($input['c_ip']), $input['c_mode'], $input['c_reason'], $input['c_expires']));
             $page->flash("Ban for {$input['c_ip']} added");
             $page->set_redirect(make_link("ip_ban/list"));
         }
@@ -221,7 +220,7 @@ final class IPBan extends Extension
     {
         Ctx::$database->execute(
             "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)",
-            ["ip" => $event->ip, "mode" => $event->mode, "reason" => $event->reason, "expires" => $event->expires, "admin_id" => Ctx::$user->id]
+            ["ip" => (string)$event->ip, "mode" => $event->mode, "reason" => $event->reason, "expires" => $event->expires, "admin_id" => Ctx::$user->id]
         );
         Ctx::$cache->delete("ip_bans");
         Ctx::$cache->delete("network_bans");
@@ -342,14 +341,15 @@ final class IPBan extends Extension
      * @param array<string,int> $ips
      * @param array<string,int> $networks
      */
-    public function find_active_ban(string $remote, array $ips, array $networks): ?int
+    public function find_active_ban(IPAddress $remote, array $ips, array $networks): ?int
     {
         $active_ban_id = null;
-        if (isset($ips[$remote])) {
-            $active_ban_id = $ips[$remote];
+        $str = (string) $remote;
+        if (isset($ips[$str])) {
+            $active_ban_id = $ips[$str];
         } else {
             foreach ($networks as $range => $ban_id) {
-                if (Network::ip_in_range($remote, $range)) {
+                if (IPRange::parse($range)->contains($remote)) {
                     $active_ban_id = $ban_id;
                 }
             }

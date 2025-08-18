@@ -20,15 +20,6 @@ final class NetworkTest extends ShimmiePHPUnitTestCase
         self::assertEquals("1.2.0.0", Network::get_session_ip());
     }
 
-    public function test_ip_in_range(): void
-    {
-        self::assertTrue(Network::ip_in_range("1.2.3.4", "1.2.0.0/16"));
-        self::assertFalse(Network::ip_in_range("4.3.2.1", "1.2.0.0/16"));
-
-        // A single IP should be interpreted as a /32
-        self::assertTrue(Network::ip_in_range("1.2.3.4", "1.2.3.4"));
-    }
-
     public function test_is_bot(): void
     {
         $_SERVER["HTTP_USER_AGENT"] = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
