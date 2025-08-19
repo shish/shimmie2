@@ -20,7 +20,8 @@ final class VideoFileHandler extends DataHandlerExtension
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        $event->image->video = true;
+        $event->image->video = false;
+        $event->image->audio = false;
         $event->image->image = false;
         try {
             $data = Media::get_ffprobe_data($event->image->get_image_filename());
