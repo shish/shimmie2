@@ -20,49 +20,48 @@ final class VideoFileHandler extends DataHandlerExtension
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        try {
-            $video = false;
-            $audio = false;
-            $width = 0;
-            $height = 0;
-            $video_codec = VideoCodec::UNKNOWN;
+        $video = false;
+        $audio = false;
+        $width = 0;
+        $height = 0;
+        $video_codec = null;
 
-            $data = Media::get_ffprobe_data($event->image->get_image_filename());
-            foreach ($data["streams"] as $stream) {
-                switch ($stream["codec_type"]) {
-                    case "audio":
-                        $audio = true;
-                        break;
-                    case "video":
-                        $video = true;
-                        $video_codec = VideoCodec::from_or_unknown($stream["codec_name"]);
-                        $width = max($event->image->width, $stream["width"]);
-                        $height = max($event->image->height, $stream["height"]);
-                        break;
-                }
+        $data = Media::get_ffprobe_data($event->image->get_image_filename());
+        foreach ($data["streams"] as $stream) {
+            switch ($stream["codec_type"]) {
+                case "audio":
+                    $audio = true;
+                    break;
+                case "video":
+                    $video = true;
+                    $video_codec = VideoCodec::from_or_unknown($stream["codec_name"]);
+                    $width = max($event->image->width, $stream["width"]);
+                    $height = max($event->image->height, $stream["height"]);
+                    break;
             }
-            $length = (int)floor(floatval($data["format"]["duration"]) * 1000);
-
-            if ($event->image->get_mime()->base === MimeType::MKV &&
-                VideoContainer::is_video_codec_supported(VideoContainer::WEBM, $video_codec)) {
-                // WEBMs are MKVs with the VP9 or VP8 codec
-                // For browser-friendliness, we'll just change the mime type
-                $event->image->set_mime(MimeType::WEBM);
-            }
-
-            $event->image->set_media_properties(
-                width: $width,
-                height: $height,
-                lossless: false,
-                video: $video,
-                audio: $audio,
-                image: false,
-                video_codec: $video_codec,
-                length: $length,
-            );
-        } catch (MediaException $e) {
-            // a post with no metadata is better than no post
         }
+        $length = (int)floor(floatval($data["format"]["duration"]) * 1000);
+
+        if (
+            $event->image->get_mime()->base === MimeType::MKV &&
+            $video_codec !== null &&
+            VideoContainer::is_video_codec_supported(VideoContainer::WEBM, $video_codec)
+        ) {
+            // WEBMs are MKVs with the VP9 or VP8 codec
+            // For browser-friendliness, we'll just change the mime type
+            $event->image->set_mime(MimeType::WEBM);
+        }
+
+        $event->image->set_media_properties(
+            width: $width,
+            height: $height,
+            lossless: false,
+            video: $video,
+            audio: $audio,
+            image: false,
+            video_codec: $video_codec,
+            length: $length,
+        );
     }
 
     protected function supported_mime(MimeType $mime): bool
