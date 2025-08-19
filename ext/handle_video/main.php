@@ -18,7 +18,7 @@ final class VideoFileHandler extends DataHandlerExtension
         MimeType::WEBM,
     ];
 
-    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    protected function media_check_properties(Image $image): MediaProperties
     {
         $video = false;
         $audio = false;
@@ -26,7 +26,7 @@ final class VideoFileHandler extends DataHandlerExtension
         $height = 0;
         $video_codec = null;
 
-        $data = Media::get_ffprobe_data($event->image->get_image_filename());
+        $data = Media::get_ffprobe_data($image->get_image_filename());
         foreach ($data["streams"] as $stream) {
             switch ($stream["codec_type"]) {
                 case "audio":
@@ -35,24 +35,25 @@ final class VideoFileHandler extends DataHandlerExtension
                 case "video":
                     $video = true;
                     $video_codec = VideoCodec::from_or_unknown($stream["codec_name"]);
-                    $width = max($event->image->width, $stream["width"]);
-                    $height = max($event->image->height, $stream["height"]);
+                    $width = max($image->width, $stream["width"]);
+                    $height = max($image->height, $stream["height"]);
                     break;
             }
         }
         $length = (int)floor(floatval($data["format"]["duration"]) * 1000);
+        assert($length >= 0);
 
         if (
-            $event->image->get_mime()->base === MimeType::MKV &&
+            $image->get_mime()->base === MimeType::MKV &&
             $video_codec !== null &&
             VideoContainer::is_video_codec_supported(VideoContainer::WEBM, $video_codec)
         ) {
             // WEBMs are MKVs with the VP9 or VP8 codec
             // For browser-friendliness, we'll just change the mime type
-            $event->image->set_mime(MimeType::WEBM);
+            $image->set_mime(MimeType::WEBM);
         }
 
-        $event->image->set_media_properties(
+        return new MediaProperties(
             width: $width,
             height: $height,
             lossless: false,

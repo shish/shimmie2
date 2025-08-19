@@ -12,9 +12,9 @@ final class MP3FileHandler extends DataHandlerExtension
     public const KEY = "handle_mp3";
     public const SUPPORTED_MIME = [MimeType::MP3];
 
-    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    protected function media_check_properties(Image $image): MediaProperties
     {
-        $event->image->set_media_properties(
+        return new MediaProperties(
             width: 0,
             height: 0,
             lossless: false,

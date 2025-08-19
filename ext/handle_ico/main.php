@@ -9,10 +9,10 @@ final class IcoFileHandler extends DataHandlerExtension
     public const KEY = "handle_ico";
     public const SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
 
-    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    protected function media_check_properties(Image $image): MediaProperties
     {
-        $video = $event->image->get_mime()->base === MimeType::ANI;
-        $fp = \Safe\fopen($event->image->get_image_filename()->str(), "r");
+        $video = $image->get_mime()->base === MimeType::ANI;
+        $fp = \Safe\fopen($image->get_image_filename()->str(), "r");
         try {
             fseek($fp, 6); // skip header
             $subheader = \Safe\unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", \Safe\fread($fp, 16));
@@ -24,7 +24,7 @@ final class IcoFileHandler extends DataHandlerExtension
             fclose($fp);
         }
 
-        $event->image->set_media_properties(
+        return new MediaProperties(
             width: $width,
             height: $height,
             lossless: true,
