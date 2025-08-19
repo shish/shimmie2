@@ -26,12 +26,12 @@ final class PixelFileHandler extends DataHandlerExtension
         switch ($mime->base) {
             case MimeType::GIF:
                 $video = MimeType::is_animated_gif($filename);
-                $video_codec = VideoCodec::UNKNOWN;
+                $video_codec = $video ? VideoCodec::UNKNOWN : null;
                 $length = null; // FIXME
                 break;
             case MimeType::WEBP:
                 $video = MimeType::is_animated_webp($filename);
-                $video_codec = VideoCodec::UNKNOWN;
+                $video_codec = $video ? VideoCodec::UNKNOWN : null;
                 $length = null; // FIXME
                 break;
             default:
