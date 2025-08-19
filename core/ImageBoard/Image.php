@@ -94,7 +94,7 @@ final class Image implements \ArrayAccess
                                 "bool" => bool_escape((string)$value),
                                 "string" => (string)$value,
                                 "Shimmie2\MimeType" => new MimeType($value),
-                                "Shimmie2\VideoCodec" => VideoCodec::from($value),
+                                "Shimmie2\VideoCodec" => VideoCodec::from_or_unknown($value),
                                 default => $value,
                             };
                         }
