@@ -327,8 +327,7 @@ final class IPBan extends Extension
         }
 
         if ($this->get_version() === 7) {
-            // @phpstan-ignore-next-line
-            Ctx::$database->execute($database->scoreql_to_sql("ALTER TABLE bans CHANGE ip ip SCORE_INET"));
+            Ctx::$database->execute("ALTER TABLE bans CHANGE ip ip SCORE_INET");
             $database->execute("ALTER TABLE bans ADD COLUMN added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
             $this->set_version(8);
         }
