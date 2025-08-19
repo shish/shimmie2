@@ -55,7 +55,7 @@ final class PixelFileHandler extends DataHandlerExtension
             height: $height,
             lossless: $lossless,
             video: $video,
-            audio: true,
+            audio: false,
             image: $image,
             video_codec: $video_codec,
             length: $length,
