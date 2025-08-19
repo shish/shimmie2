@@ -285,30 +285,6 @@ final class Image implements \ArrayAccess
         }
     }
 
-    /**
-     * @param int<0, max> $width
-     * @param int<0, max> $height
-     */
-    public function set_media_properties(
-        int $width,
-        int $height,
-        bool $lossless,
-        bool $video,
-        ?VideoCodec $video_codec,
-        bool $image,
-        bool $audio,
-        ?int $length
-    ): void {
-        $this->width = $width;
-        $this->height = $height;
-        $this->lossless = $lossless;
-        $this->video = $video;
-        $this->video_codec = $video_codec;
-        $this->image = $image;
-        $this->audio = $audio;
-        $this->length = $length;
-    }
-
     public function save_to_db(): void
     {
         $props_to_save = [

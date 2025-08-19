@@ -17,10 +17,10 @@ final class PixelFileHandler extends DataHandlerExtension
         MimeType::AVIF,
     ];
 
-    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    protected function media_check_properties(Image $image): MediaProperties
     {
-        $filename = $event->image->get_image_filename();
-        $mime = $event->image->get_mime();
+        $filename = $image->get_image_filename();
+        $mime = $image->get_mime();
 
         $lossless = Media::is_lossless($filename, $mime);
         switch ($mime->base) {
@@ -40,9 +40,8 @@ final class PixelFileHandler extends DataHandlerExtension
                 $length = null;
                 break;
         }
-        $image = !$video;
 
-        $info = getimagesize($event->image->get_image_filename()->str());
+        $info = getimagesize($image->get_image_filename()->str());
         if ($info) {
             $width = $info[0];
             $height = $info[1];
@@ -50,13 +49,13 @@ final class PixelFileHandler extends DataHandlerExtension
             throw new MediaException("Could not get image size");
         }
 
-        $event->image->set_media_properties(
+        return new MediaProperties(
             width: $width,
             height: $height,
             lossless: $lossless,
             video: $video,
             audio: false,
-            image: $image,
+            image: !$video,
             video_codec: $video_codec,
             length: $length,
         );

@@ -30,10 +30,10 @@ final class SVGFileHandler extends DataHandlerExtension
         }
     }
 
-    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    protected function media_check_properties(Image $image): MediaProperties
     {
-        $msp = new MiniSVGParser($event->image->get_image_filename()->str());
-        $event->image->set_media_properties(
+        $msp = new MiniSVGParser($image->get_image_filename()->str());
+        return new MediaProperties(
             width: $msp->width,
             height: $msp->height,
             lossless: true,

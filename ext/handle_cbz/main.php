@@ -9,9 +9,9 @@ final class CBZFileHandler extends DataHandlerExtension
     public const KEY = "handle_cbz";
     public const SUPPORTED_MIME = [MimeType::COMIC_ZIP];
 
-    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    protected function media_check_properties(Image $image): MediaProperties
     {
-        $tmp = $this->get_representative_image($event->image->get_image_filename());
+        $tmp = $this->get_representative_image($image->get_image_filename());
         $info = getimagesize($tmp->str());
         if ($info) {
             $width = $info[0];
@@ -23,7 +23,7 @@ final class CBZFileHandler extends DataHandlerExtension
         }
         $tmp->unlink();
 
-        $event->image->set_media_properties(
+        return new MediaProperties(
             width: $width,
             height: $height,
             lossless: false,

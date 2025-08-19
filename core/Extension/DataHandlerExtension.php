@@ -123,11 +123,25 @@ abstract class DataHandlerExtension extends Extension
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
-            $this->media_check_properties($event);
+            $properties = $this->media_check_properties($event->image);
+            if (is_null($properties)) {
+                // No properties were found, so we can't do anything
+                Log::debug(static::KEY, "No properties found for image {$event->image->hash}");
+                return;
+            }
+            $event->image->width = $properties->width ?? 0;
+            $event->image->height = $properties->height ?? 0;
+            $event->image->lossless = $properties->lossless;
+            $event->image->image = $properties->image;
+            $event->image->audio = $properties->audio;
+            $event->image->video = $properties->video;
+            $event->image->video_codec = $properties->video_codec;
+            $event->image->length = $properties->length;
+            Log::debug(static::KEY, "Scanned properties for {$event->image->hash}: " . json_encode($properties));
         }
     }
 
-    abstract protected function media_check_properties(MediaCheckPropertiesEvent $event): void;
+    abstract protected function media_check_properties(Image $image): ?MediaProperties;
     abstract protected function check_contents(Path $tmpname): bool;
     abstract protected function create_thumb(Image $image): bool;
 
