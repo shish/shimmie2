@@ -11,18 +11,28 @@ final class CBZFileHandler extends DataHandlerExtension
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        $event->image->lossless = false;
-        $event->image->video = false;
-        $event->image->audio = false;
-        $event->image->image = false;
-
         $tmp = $this->get_representative_image($event->image->get_image_filename());
         $info = getimagesize($tmp->str());
         if ($info) {
-            $event->image->width = $info[0];
-            $event->image->height = $info[1];
+            $width = $info[0];
+            $height = $info[1];
+        } else {
+            throw new MediaException(
+                "The representative image in the CBZ file is not a valid image."
+            );
         }
         $tmp->unlink();
+
+        $event->image->set_media_properties(
+            width: $width,
+            height: $height,
+            lossless: false,
+            video: false,
+            audio: false,
+            image: true,
+            video_codec: null,
+            length: null,
+        );
     }
 
     protected function create_thumb(Image $image): bool

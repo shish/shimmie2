@@ -32,14 +32,17 @@ final class SVGFileHandler extends DataHandlerExtension
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        $event->image->lossless = true;
-        $event->image->video = false;
-        $event->image->audio = false;
-        $event->image->image = true;
-
         $msp = new MiniSVGParser($event->image->get_image_filename()->str());
-        $event->image->width = $msp->width;
-        $event->image->height = $msp->height;
+        $event->image->set_media_properties(
+            width: $msp->width,
+            height: $msp->height,
+            lossless: true,
+            video: false,
+            audio: false,
+            image: true,
+            video_codec: null,
+            length: null,
+        );
     }
 
     protected function create_thumb(Image $image): bool

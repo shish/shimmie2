@@ -14,13 +14,16 @@ final class MP3FileHandler extends DataHandlerExtension
 
     protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        $event->image->audio = true;
-        $event->image->video = false;
-        $event->image->lossless = false;
-        $event->image->image = false;
-        $event->image->width = 0;
-        $event->image->height = 0;
-        // TODO: ->length = ???
+        $event->image->set_media_properties(
+            width: 0,
+            height: 0,
+            lossless: false,
+            video: false,
+            audio: true,
+            image: false,
+            video_codec: null,
+            length: null, // FIXME
+        );
     }
 
     protected function create_thumb(Image $image): bool
