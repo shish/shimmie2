@@ -30,7 +30,7 @@ final class Notes extends Extension
 					enable INTEGER NOT NULL,
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					user_ip CHAR(15) NOT NULL,
+					user_ip SCORE_INET NOT NULL,
 					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					x1 INTEGER NOT NULL,
 					y1 INTEGER NOT NULL,
@@ -59,7 +59,7 @@ final class Notes extends Extension
 					review_id INTEGER NOT NULL,
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					user_ip CHAR(15) NOT NULL,
+					user_ip SCORE_INET NOT NULL,
 					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					x1 INTEGER NOT NULL,
 					y1 INTEGER NOT NULL,
@@ -71,7 +71,12 @@ final class Notes extends Extension
 					");
             $database->execute("CREATE INDEX note_histories_image_id_idx ON note_histories(image_id)", []);
 
-            $this->set_version(1);
+            $this->set_version(2);
+        }
+        if ($this->get_version() === 1) {
+            $database->execute("ALTER TABLE notes CHANGE user_ip user_ip SCORE_INET");
+            $database->execute("ALTER TABLE note_histories CHANGE user_ip user_ip SCORE_INET");
+            $this->set_version(2);
         }
     }
 
