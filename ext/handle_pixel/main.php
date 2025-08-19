@@ -47,7 +47,7 @@ final class PixelFileHandler extends DataHandlerExtension
             $width = $info[0];
             $height = $info[1];
         } else {
-            throw new UploadException("Could not get image size");
+            throw new MediaException("Could not get image size");
         }
 
         $event->image->set_media_properties(
