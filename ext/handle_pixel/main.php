@@ -22,26 +22,44 @@ final class PixelFileHandler extends DataHandlerExtension
         $filename = $event->image->get_image_filename();
         $mime = $event->image->get_mime();
 
-        $event->image->lossless = Media::is_lossless($filename, $mime);
-        $event->image->audio = false;
+        $lossless = Media::is_lossless($filename, $mime);
         switch ($mime->base) {
             case MimeType::GIF:
-                $event->image->video = MimeType::is_animated_gif($filename);
+                $video = MimeType::is_animated_gif($filename);
+                $video_codec = VideoCodec::UNKNOWN;
+                $length = null; // FIXME
                 break;
             case MimeType::WEBP:
-                $event->image->video = MimeType::is_animated_webp($filename);
+                $video = MimeType::is_animated_webp($filename);
+                $video_codec = VideoCodec::UNKNOWN;
+                $length = null; // FIXME
                 break;
             default:
-                $event->image->video = false;
+                $video = false;
+                $video_codec = null;
+                $length = null;
                 break;
         }
-        $event->image->image = !$event->image->video;
+        $image = !$video;
 
         $info = getimagesize($event->image->get_image_filename()->str());
         if ($info) {
-            $event->image->width = $info[0];
-            $event->image->height = $info[1];
+            $width = $info[0];
+            $height = $info[1];
+        } else {
+            throw new UploadException("Could not get image size");
         }
+
+        $event->image->set_media_properties(
+            width: $width,
+            height: $height,
+            lossless: $lossless,
+            video: $video,
+            audio: true,
+            image: $image,
+            video_codec: $video_codec,
+            length: $length,
+        );
     }
 
     protected function check_contents(Path $tmpname): bool
