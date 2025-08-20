@@ -11,6 +11,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected const USER_NAME = "test";
     /** @var array<string, bool|int|string|array<string>> */
     private array $config_snapshot = [];
+    private bool $savepoint_created = false;
 
     /**
      * Start a DB transaction for each test class
@@ -40,6 +41,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
         // Set up a clean environment for each test
         Ctx::$database->execute("SAVEPOINT test_start");
+        $this->savepoint_created = true;
         self::log_out();
         foreach (Ctx::$database->get_col("SELECT id FROM images") as $image_id) {
             send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
@@ -53,7 +55,9 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     public function tearDown(): void
     {
-        Ctx::$database->execute("ROLLBACK TO test_start");
+        if ($this->savepoint_created) {
+            Ctx::$database->execute("ROLLBACK TO test_start");
+        }
         Ctx::$config->values = $this->config_snapshot;
         Ctx::$tracer->end();  # test
         Ctx::$tracer->end();  # $this->getName()
