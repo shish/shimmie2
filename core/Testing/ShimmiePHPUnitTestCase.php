@@ -30,13 +30,6 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         Ctx::$tracer->begin($this->name());
         Ctx::$tracer->begin("setUp");
         $class = str_replace("Test", "Info", get_class($this));
-        try {
-            if (defined("$class::KEY") && !ExtensionInfo::get_all()[$class::KEY]->is_supported()) {
-                self::markTestSkipped("$class not supported with this database");
-            }
-        } catch (ExtensionNotFound $e) {
-            // ignore - this is a core test rather than an extension test
-        }
 
         // Set up a clean environment for each test
         Ctx::$database->execute("SAVEPOINT test_start");
@@ -46,6 +39,17 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         }
         Ctx::setPage(new Page());
         $this->config_snapshot = Ctx::$config->values;
+
+        // Do skipping at the end of setUp to ensure that setUp and tearDown
+        // are in-sync (if we skip creating a savepoint in setUp, but then
+        // tearDown tries to roll back to it, it will fail)
+        try {
+            if (defined("$class::KEY") && !ExtensionInfo::get_all()[$class::KEY]->is_supported()) {
+                self::markTestSkipped("$class not supported with this database");
+            }
+        } catch (ExtensionNotFound $e) {
+            // ignore - this is a core test rather than an extension test
+        }
 
         Ctx::$tracer->end();  # setUp
         Ctx::$tracer->begin("test");
