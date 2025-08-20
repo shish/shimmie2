@@ -54,7 +54,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5",
-        "friendsofphp/php-cs-fixer": "^3.75",
+        "friendsofphp/php-cs-fixer": "^3.86",
         "phpstan/phpstan": "^2.1",
         "thecodingmachine/phpstan-safe-rule": "^1.4",
         "phpstan/phpstan-strict-rules": "^2.0",
@@ -111,7 +111,7 @@
             "@analyse"
         ],
         "xstan": "rm -rf /tmp/phpstan/ && XDEBUG_MODE=debug phpstan --xdebug analyse --memory-limit 1G --error-format=raw | sed 's/:/ /g; s/ /:/'",
-        "format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
+        "format": "php-cs-fixer fix",
         "analyse-ci": "phpstan analyse --memory-limit 1G --error-format=github",
         "analyse": "phpstan analyse --memory-limit 1G --error-format=raw | sed -E 's/:([0-9]+):/:\\1 /'",
         "test-cover": "XDEBUG_MODE=coverage phpunit --coverage-html=./data/coverage",
