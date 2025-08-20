@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3ff6729eb5f31a1dffe2a10a8ce2377",
+    "content-hash": "0610ae04744567556a86be304d013c4f",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -553,26 +553,26 @@
         },
         {
             "name": "shish/gqla",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/gqla.git",
-                "reference": "04cdf7a34230388a719e148a894007cc97c8d31a"
+                "reference": "6869bfcf82ce6bc8435acbb91ff4021f7d007c91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/gqla/zipball/04cdf7a34230388a719e148a894007cc97c8d31a",
-                "reference": "04cdf7a34230388a719e148a894007cc97c8d31a",
+                "url": "https://api.github.com/repos/shish/gqla/zipball/6869bfcf82ce6bc8435acbb91ff4021f7d007c91",
+                "reference": "6869bfcf82ce6bc8435acbb91ff4021f7d007c91",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1",
-                "webonyx/graphql-php": "^15.0"
+                "php": "^8.2",
+                "webonyx/graphql-php": "v15.20.1"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "3.41.1",
-                "phpstan/phpstan": "1.10.50",
-                "phpunit/phpunit": "10.5.3"
+                "friendsofphp/php-cs-fixer": "^3.86",
+                "phpstan/phpstan": "^2.0",
+                "phpunit/phpunit": "^11.0"
             },
             "type": "library",
             "autoload": {
@@ -599,9 +599,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/gqla/issues",
-                "source": "https://github.com/shish/gqla/tree/v1.0.0"
+                "source": "https://github.com/shish/gqla/tree/v1.0.1"
             },
-            "time": "2024-02-25T14:48:53+00:00"
+            "time": "2025-08-20T20:37:13+00:00"
         },
         {
             "name": "shish/microbundler",
@@ -1639,16 +1639,16 @@
         },
         {
             "name": "webonyx/graphql-php",
-            "version": "v15.20.0",
+            "version": "v15.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webonyx/graphql-php.git",
-                "reference": "60feb7ad5023c0ef411efbdf9792d3df5812e28f"
+                "reference": "10fc7f1b4a87a39f68579f6dee55ccd8e39a75e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/60feb7ad5023c0ef411efbdf9792d3df5812e28f",
-                "reference": "60feb7ad5023c0ef411efbdf9792d3df5812e28f",
+                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/10fc7f1b4a87a39f68579f6dee55ccd8e39a75e4",
+                "reference": "10fc7f1b4a87a39f68579f6dee55ccd8e39a75e4",
                 "shasum": ""
             },
             "require": {
@@ -1661,13 +1661,13 @@
                 "amphp/http-server": "^2.1",
                 "dms/phpunit-arraysubset-asserts": "dev-master",
                 "ergebnis/composer-normalize": "^2.28",
-                "friendsofphp/php-cs-fixer": "3.73.1",
+                "friendsofphp/php-cs-fixer": "3.76.0",
                 "mll-lab/php-cs-fixer-config": "5.11.0",
                 "nyholm/psr7": "^1.5",
                 "phpbench/phpbench": "^1.2",
                 "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan": "2.1.8",
-                "phpstan/phpstan-phpunit": "2.0.4",
+                "phpstan/phpstan": "2.1.17",
+                "phpstan/phpstan-phpunit": "2.0.6",
                 "phpstan/phpstan-strict-rules": "2.0.4",
                 "phpunit/phpunit": "^9.5 || ^10.5.21 || ^11",
                 "psr/http-message": "^1 || ^2",
@@ -1701,7 +1701,7 @@
             ],
             "support": {
                 "issues": "https://github.com/webonyx/graphql-php/issues",
-                "source": "https://github.com/webonyx/graphql-php/tree/v15.20.0"
+                "source": "https://github.com/webonyx/graphql-php/tree/v15.20.1"
             },
             "funding": [
                 {
@@ -1709,7 +1709,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2025-03-21T08:45:04+00:00"
+            "time": "2025-07-04T07:47:56+00:00"
         }
     ],
     "packages-dev": [
