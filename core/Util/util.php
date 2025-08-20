@@ -252,7 +252,7 @@ function _load_theme_files(): void
 function _set_up_shimmie_environment(): void
 {
     if (file_exists("images") && !file_exists("data/images")) {
-        die_nicely("Upgrade error", "As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
+        die("As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
     }
 
     if (SysConfig::getTimezone()) {

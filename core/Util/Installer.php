@@ -11,8 +11,8 @@ final class Installer
         date_default_timezone_set('UTC');
 
         if (is_readable("data/config/shimmie.conf.php")) {
-            die_nicely(
-                "Shimmie is already installed.",
+            Installer::screen(
+                "Shimmie is already installed",
                 "data/config/shimmie.conf.php exists, how did you get here?"
             );
         }
@@ -31,6 +31,29 @@ final class Installer
                 self::ask_questions();
             }
         }
+    }
+
+    private static function screen(string $title, string $body, int $code = 0): void
+    {
+        $data_href = Url::base();
+        print("<!DOCTYPE html>
+    <html lang='en'>
+	<head>
+		<title>Shimmie</title>
+		<link rel='shortcut icon' href='$data_href/ext/static_files/static/favicon.ico'>
+		<link rel='stylesheet' href='$data_href/ext/static_files/installer.css' type='text/css'>
+	</head>
+	<body>
+		<div id='installer'>
+		    <h1>$title</h1>
+			$body
+		</div>
+        </body>
+    </html>");
+        if ($code !== 0) {
+            http_response_code(500);
+        }
+        exit($code);
     }
 
     private static function get_dsn(): ?string
@@ -56,7 +79,7 @@ final class Installer
             self::create_tables(new Database($dsn));
             self::write_config($dsn);
         } catch (InstallerException $e) {
-            die_nicely($e->title, $e->body, $e->exit_code);
+            Installer::screen($e->title, $e->body, $e->exit_code);
         }
     }
 
@@ -79,9 +102,24 @@ final class Installer
         }
 
         if (!function_exists('mb_strlen')) {
-            $errors[] = "
+            $warnings[] = "
                 The mbstring PHP extension is missing - multibyte languages
                 (eg non-english languages) may not work right.
+            ";
+        }
+
+        if (!file_exists("data") && !is_writable(".")) {
+            $errors[] = "
+                The <code>data</code> directory does not exist, and the web server
+                does not have permission to create it. Please create a
+                <code>data</code> directory inside the shimmie folder, and make
+                sure the web server has permission to write to it.
+            ";
+        } elseif (!is_writable("data")) {
+            $errors[] = "
+                The <code>data</code> directory exists, but is not writable by the web server.
+                Please make sure the web server has permission to write to the
+                <code>data</code> directory.
             ";
         }
 
@@ -101,17 +139,29 @@ final class Installer
         $db_m = in_array(DatabaseDriverID::MYSQL->value, $drivers) ? '<option value="'. DatabaseDriverID::MYSQL->value .'">MySQL</option>' : "";
         $db_p = in_array(DatabaseDriverID::PGSQL->value, $drivers) ? '<option value="'. DatabaseDriverID::PGSQL->value .'">PostgreSQL</option>' : "";
 
-        $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
-        $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
+        $msg = "";
+        if ($errors) {
+            $msg .= "<h3>Errors</h3>";
+            $msg .= implode("", array_map(fn ($x) => "<p class='error'>$x</p>", $errors));
+        }
+        if ($warnings) {
+            $msg .= "<h3>Warnings</h3>";
+            $msg .= implode("", array_map(fn ($x) => "<p class='warning'>$x</p>", $warnings));
+        }
+        if (!$errors) {
+            $button = '<input type="submit" value="Go!">';
+        } else {
+            $button = "<input type='submit' value='Install disabled due to errors above' disabled>";
+        }
 
         $data_href = Url::base();
 
-        die_nicely(
-            "Install Options",
+        Installer::screen(
+            "Shimmie Installer",
             <<<EOD
-        $warn_msg
-        $err_msg
+        $msg
 
+        <h3>Database Options</h3>
         <form action="$data_href/index.php" method="POST">
         <table class='form' style="margin: 1em auto;">
             <tr>
@@ -138,7 +188,7 @@ final class Installer
                 <th>DB&nbsp;Name:</th>
                 <td><input type="text" name="database_name" size="40" value="shimmie"></td>
             </tr>
-            <tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
+            <tr><td colspan="2">$button</td></tr>
         </table>
             <script>
             document.addEventListener('DOMContentLoaded', update_qs);
@@ -165,7 +215,7 @@ final class Installer
         </p>
         <p class="dbconf none">
             Drivers can generally be downloaded with your OS package manager;
-            for Debian / Ubuntu you want php-pgsql, php-mysql, or php-sqlite.
+            for Debian / Ubuntu you want php-pgsql, php-mysql, or php-sqlite3.
         </p>
     EOD
         );
@@ -311,7 +361,7 @@ final class Installer
                 exit(0);
             } else {
                 header("Location: index.php?flash=Installation%20complete");
-                die_nicely(
+                Installer::screen(
                     "Installation Successful",
                     "<p>If you aren't redirected, <a href=\"index.php\">click here to Continue</a>."
                 );

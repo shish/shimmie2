@@ -389,40 +389,13 @@ function is_valid_date(string $date): bool
 ///////////////////////////////////////////////////////////////////////
 // Misc things
 
-function die_nicely(string $title, string $body, int $code = 0): void
-{
-    $data_href = Url::base();
-    print("<!DOCTYPE html>
-<html lang='en'>
-	<head>
-		<title>Shimmie</title>
-		<link rel='shortcut icon' href='$data_href/ext/static_files/static/favicon.ico'>
-		<link rel='stylesheet' href='$data_href/ext/static_files/style.css' type='text/css'>
-		<link rel='stylesheet' href='$data_href/ext/static_files/installer.css' type='text/css'>
-	</head>
-	<body>
-		<div id='installer'>
-		    <h1>Shimmie</h1>
-		    <h3>$title</h3>
-			<div class='container'>
-			    $body
-			</div>
-		</div>
-    </body>
-</html>");
-    if ($code !== 0) {
-        http_response_code(500);
-    }
-    exit($code);
-}
-
 function version_check(string $min_php): void
 {
     if (version_compare(phpversion(), $min_php, ">=") === false) {
-        die_nicely("Not Supported", "
-            Shimmie does not support versions of PHP lower than $min_php
-            (PHP reports that it is version ".phpversion().").
-        ", 1);
+        die(
+            "PHP " . phpversion(). " Not Supported: " .
+            "Shimmie does not support versions of PHP lower than $min_php."
+        );
     }
 }
 
