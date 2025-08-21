@@ -28,6 +28,11 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
      */
     public function setUp(): void
     {
+        // If the test is skipped, that means we skip creating a savepoint,
+        // which means we need to avoid rolling back to the savepoint
+        // in tearDown (because that would crash)
+        $this->savepoint_created = false;
+
         Ctx::$tracer->begin($this->name());
         Ctx::$tracer->begin("setUp");
         $class = str_replace("Test", "Info", get_class($this));
