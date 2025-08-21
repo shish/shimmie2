@@ -121,6 +121,9 @@ final class PostTags extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
+        if (Ctx::$config->get(PostTagsConfig::FORCE_LOWERCASE)) {
+            Ctx::$page->add_html_header(\MicroHTML\STYLE(".autocomplete_tags {text-transform: lowercase;}"));
+        }
         if ($event->page_matches("tag_edit/replace", method: "POST", permission: PostTagsPermission::MASS_TAG_EDIT)) {
             $this->mass_tag_edit($event->POST->req('search'), $event->POST->req('replace'), true);
             Ctx::$page->set_redirect(make_link("admin"));
@@ -193,6 +196,7 @@ final class PostTags extends Extension
             send_event(new TagTermParseEvent($tag, $event->image->id));
         }
     }
+
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $event->image->delete_tags_from_image();

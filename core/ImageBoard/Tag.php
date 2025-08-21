@@ -33,6 +33,11 @@ final class Tag
         );
         if (empty($id)) {
             // a new tag
+            // lowercase extension ruins unit tests, so disable during testing
+            if (!defined("UNITTEST") && Ctx::$config->get(PostTagsConfig::FORCE_LOWERCASE)) {
+                $tag = mb_strtolower($tag);
+            }
+
             Ctx::$database->execute(
                 "INSERT INTO tags(tag) VALUES (:tag)",
                 ["tag" => $tag]
