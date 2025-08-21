@@ -286,7 +286,6 @@ final class TranscodeImage extends Extension
         return match ($engine) {
             MediaEngine::GD => $this->transcode_image_gd($source_name, $source_mime, $target_mime),
             MediaEngine::IMAGICK => $this->transcode_image_convert($source_name, $source_mime, $target_mime),
-            default => throw new ImageTranscodeException("No engine specified"),
         };
     }
 

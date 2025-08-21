@@ -6,6 +6,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\{ArrayType, BooleanType, IntegerType, NullType, StringType, Type, UnionType};
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 
 class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -66,12 +67,27 @@ class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
                         ConfigType::BOOL => new BooleanType(),
                         ConfigType::ARRAY => new ArrayType(new IntegerType(), new StringType()),
                     };
+                    if (
+                        $this->metas[$key]->type !== ConfigType::ARRAY
+                        && is_array($this->metas[$key]->options)
+                    ) {
+                        $configType = new UnionType(
+                            array_map(
+                                fn ($option) => new ConstantStringType($option),
+                                $this->metas[$key]->options
+                            )
+                        );
+                    }
                     $hasDefault = $this->metas[$key]->default !== null;
                 }
             }
         }
         if ($configType !== null && !$hasDefault) {
-            $configType = new UnionType([$configType, new NullType()]);
+            if ($configType instanceof UnionType) {
+                $configType = new UnionType($configType->getTypes() + [new NullType()]);
+            } else {
+                $configType = new UnionType([$configType, new NullType()]);
+            }
         }
         return $configType;
     }
