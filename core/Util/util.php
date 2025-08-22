@@ -456,7 +456,7 @@ function make_link(?string $page = null, QueryArray|array|null $query = null, ?s
     if (is_array($query)) {
         $query = new QueryArray($query);
     }
-    return new Url(page: $page ?? "", query: $query, fragment: $fragment);
+    return new Url(page: $page ?? Ctx::$config->get(SetupConfig::MAIN_PAGE), query: $query, fragment: $fragment);
 }
 
 /**
