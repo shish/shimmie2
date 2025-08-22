@@ -94,7 +94,7 @@ final class UrlTest extends TestCase
     /**
      * An integration test for
      * - search_link()
-     *   - make_link_str()
+     *   - make_link()
      * - _get_query()
      * - get_search_terms()
      */

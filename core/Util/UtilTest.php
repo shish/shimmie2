@@ -58,6 +58,27 @@ final class UtilTest extends TestCase
         );
     }
 
+    public function test_make_link(): void
+    {
+        Ctx::$config->set(SetupConfig::NICE_URLS, true);
+        self::assertEquals(
+            "/test/foo",
+            (string)make_link("foo")
+        );
+
+        Ctx::$config->set(SetupConfig::NICE_URLS, false);
+        self::assertEquals(
+            "/test/index.php?q=foo",
+            (string)make_link("foo")
+        );
+
+        Ctx::$config->set(SetupConfig::NICE_URLS, false);
+        self::assertEquals(
+            "/test/index.php?q=post%2Flist",
+            (string)make_link()
+        );
+    }
+
     public function test_get_user(): void
     {
         // TODO: HTTP_AUTHORIZATION
