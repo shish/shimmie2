@@ -16,8 +16,9 @@ use Psr\SimpleCache\CacheInterface;
 /**
  * Return the unique elements of an array, case insensitively
  *
- * @param array<string> $array
- * @return list<string>
+ * @template T of string
+ * @param array<T> $array
+ * @return list<T>
  */
 function array_iunique(array $array): array
 {
