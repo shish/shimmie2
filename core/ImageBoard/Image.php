@@ -598,7 +598,7 @@ final class Image implements \ArrayAccess
      */
     public function set_tags(array $unfiltered_tags): void
     {
-        $tags = array_unique($unfiltered_tags);
+        $tags = array_iunique($unfiltered_tags);
 
         foreach ($tags as $tag) {
             if (mb_strlen($tag, 'UTF-8') > 255) {
