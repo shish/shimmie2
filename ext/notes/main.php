@@ -74,8 +74,12 @@ final class Notes extends Extension
             $this->set_version(2);
         }
         if ($this->get_version() === 1) {
-            $database->execute("ALTER TABLE notes CHANGE user_ip user_ip SCORE_INET");
-            $database->execute("ALTER TABLE note_histories CHANGE user_ip user_ip SCORE_INET");
+            // SQLite doesn't support modifying column types, but it also allows
+            // storing an IPv6 sized address in an IPv4 sized column, so...
+            if ($database->get_driver_id() !== DatabaseDriverID::SQLITE) {
+                $database->execute("ALTER TABLE notes CHANGE user_ip user_ip SCORE_INET");
+                $database->execute("ALTER TABLE note_histories CHANGE user_ip user_ip SCORE_INET");
+            }
             $this->set_version(2);
         }
     }
