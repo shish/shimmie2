@@ -21,10 +21,13 @@ final class Tag
      */
     public static function get_or_create_id(string $tag): int
     {
+        // use a lowercase key for the cache, but preserve case in the DB
+        $key = mb_strtolower($tag);
+
         // don't cache in unit tests, because the test suite doesn't
         // reset static variables but it does reset the database
-        if (!defined("UNITTEST") && array_key_exists($tag, self::$tag_id_cache)) {
-            return self::$tag_id_cache[$tag];
+        if (!defined("UNITTEST") && array_key_exists($key, self::$tag_id_cache)) {
+            return self::$tag_id_cache[$key];
         }
 
         $id = Ctx::$database->get_one(
@@ -48,7 +51,7 @@ final class Tag
             );
         }
 
-        self::$tag_id_cache[$tag] = $id;
+        self::$tag_id_cache[$key] = $id;
         return $id;
     }
 
