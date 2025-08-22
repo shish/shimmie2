@@ -122,16 +122,28 @@ function main(): int
         $exit_code = 1;
     } finally {
         Ctx::$tracer->end();
+        $traceFile = SysConfig::getTraceFile();
         if (
-            SysConfig::getTraceFile() !== null
+            // If tracing is enabled
+            $traceFile !== null
+            // And we either asked for it, are running CLI, or took a long time
             && (
                 @$_GET["trace"] === "on"
+                || PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg'
                 || (ftime() - $_SERVER["REQUEST_TIME_FLOAT"]) > SysConfig::getTraceThreshold()
             )
+            // Ignore upload because that always takes forever and isn't worth tracing
             && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
-            && is_writable(SysConfig::getTraceFile())
+            // Sanity check to avoid crashing if misconfigured
+            && (
+                is_writable($traceFile)
+                || (
+                    !file_exists($traceFile)
+                    && is_writable(dirname($traceFile))
+                )
+            )
         ) {
-            Ctx::$tracer->flush(SysConfig::getTraceFile());
+            Ctx::$tracer->flush($traceFile);
         }
     }
     return $exit_code;
