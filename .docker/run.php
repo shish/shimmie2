@@ -25,6 +25,7 @@ $php_ini['post_max_size'] ??= (string)(
     intval($php_ini['max_file_uploads'])
 );
 
+@include_once "data/config/shimmie.conf.php";
 $php_version = preg_replace('/^(\d+\.\d+).*$/', '$1', phpversion());
 $date = date("c");
 
@@ -64,6 +65,13 @@ EOD
 );
 
 $client_max_body_size = ini_parse_quantity($php_ini['post_max_size']) * 1.1;
+$wh_splits = defined("WH_SPLITS") ? constant("WH_SPLITS") : 1;
+$wh_split_path = match ($wh_splits) {
+    1 => '$1/$1$2$3',
+    2 => '$1/$2/$1$2$3',
+    default => throw new \Exception("Invalid WH_SPLITS value"),
+};
+
 file_put_contents(
     '/etc/nginx/nginx.conf',
     <<<EOD
@@ -89,13 +97,13 @@ http {
 
         # Serve images and thumbs from the warehouse
         # use alias instead of rewrite so nginx can determine the content-type
-        location ~ "^/_images/([0-9a-f]{2})([0-9a-f]{30}).*$" {
-            alias /app/data/images/\$1/\$1\$2;
+        location ~ "^/_images/([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{28}).*$" {
+            alias /app/data/images/$wh_split_path;
             expires 30d;
         }
 
-        location ~ "^/_thumbs/([0-9a-f]{2})([0-9a-f]{30}).*$" {
-            alias /app/data/thumbs/\$1/\$1\$2;
+        location ~ "^/_thumbs/([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{28}).*$" {
+            alias /app/data/thumbs/$wh_split_path;
             expires 30d;
         }
 
