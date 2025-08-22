@@ -114,11 +114,7 @@ final class SysConfig
 
     public static function getTraceThreshold(): float
     {
-        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
-            return 0.0;
-        } else {
-            return defined("TRACE_THRESHOLD") ? constant("TRACE_THRESHOLD") : 0.0;
-        }
+        return defined("TRACE_THRESHOLD") ? constant("TRACE_THRESHOLD") : 0.0;
     }
 
     /**
