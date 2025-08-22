@@ -72,18 +72,11 @@ file_put_contents(
 worker_processes 1;
 
 events {
-    worker_connections  1024;
+    worker_connections 1024;
 }
 
 http {
-    types {
-        text/css      css;
-        application/javascript    js;
-        image/jpeg    jpg;
-        image/jpeg    jpeg;
-        image/png     png;
-        image/gif     gif;
-    }
+    include mime.types;
 
     server {
         listen 8000;
