@@ -15,29 +15,14 @@ RUN apt update && \
     apt upgrade -y && \
     apt install -y curl && \
     apt update && apt install -y --no-install-recommends \
-    php${PHP_VERSION}-cli libphp${PHP_VERSION}-embed \
+    supervisor \
+    nginx \
+    php${PHP_VERSION}-cli php${PHP_VERSION}-fpm \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
     php${PHP_VERSION}-memcached \
     curl imagemagick zip unzip librsvg2-bin git && \
     rm -rf /var/lib/apt/lists/*
-
-# copy individual files from unit:php rather than inheriting
-# `FROM unit:php` because we don't want to inherit EXPOSE settings
-COPY --from=unit:php8.4 /var/lib/unit /var/lib/unit/
-COPY --from=unit:php8.4 /usr/lib/unit /usr/lib/unit/
-COPY --from=unit:php8.4 /usr/sbin/unitd /usr/sbin/unitd
-RUN true \
-    && groupadd --gid 999 unit \
-    && useradd \
-    --uid 999 \
-    --gid unit \
-    --no-create-home \
-    --home /nonexistent \
-    --comment "unit user" \
-    --shell /bin/false \
-    unit \
-    && ln -sf /dev/stderr /var/log/unit.log
 
 # Install dev packages
 # Things which are only needed during development - Composer has 100MB of
