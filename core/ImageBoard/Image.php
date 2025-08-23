@@ -656,26 +656,17 @@ final class Image implements \ArrayAccess
      */
     public function remove_image_only(bool $quiet = false): void
     {
-        $img_del = false;
-        $thumb_del = false;
-
-        try {
-            $this->get_image_filename()->unlink();
-            $img_del = true;
-        } catch (\Exception $e) {
-            Log::error('core_image', "Failed to delete image file for Post #{$this->id}: {$e->getMessage()}");
+        $img = $this->get_image_filename();
+        if ($img->exists()) {
+            $img->unlink();
         }
 
-        try {
-            $this->get_thumb_filename()->unlink();
-            $thumb_del = true;
-        } catch (\Exception $e) {
-            Log::error('core_image', "Failed to delete thumbnail file for Post #{$this->id}: {$e->getMessage()}");
+        $thumb = $this->get_thumb_filename();
+        if ($thumb->exists()) {
+            $thumb->unlink();
         }
 
-        if ($img_del && $thumb_del && !$quiet) {
-            Log::info("core_image", "Deleted files for Post #{$this->id} ({$this->hash})");
-        }
+        Log::info("core_image", "Deleted files for Post #{$this->id} ({$this->hash})");
     }
 
     public function parse_link_template(string $tmpl, int $n = 0): string
