@@ -15,4 +15,5 @@ final class AvatarPostInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Lets users set a post as their avatar";
     public ExtensionCategory $category = ExtensionCategory::GENERAL;
+    public array $dependencies = [UserConfigEditorInfo::KEY];
 }
