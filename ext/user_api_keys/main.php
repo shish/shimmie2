@@ -13,7 +13,7 @@ final class UserApiKeys extends Extension
     {
         global $database;
 
-        if ($event->GET->get("api_key") && Ctx::$user->is_anonymous()) {
+        if ($event->GET->get("api_key")) {
             $user_id = $database->get_one(
                 "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
                 ["value" => $event->GET->get("api_key"), "name" => UserApiKeysUserConfig::API_KEY]
