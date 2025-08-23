@@ -365,7 +365,7 @@ final class TranscodeImage extends Extension
 
         // write file
         $tmp_name = shm_tempnam("transcode");
-        $ext = Media::determine_ext($target_mime);
+        $ext = FileExtension::get_for_mime($target_mime);
         $command->add_args("$ext:{$tmp_name->str()}");
 
         // go
