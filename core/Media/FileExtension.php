@@ -72,21 +72,13 @@ final class FileExtension
     /**
      * Returns the main file extension associated with the specified mimetype.
      */
-    public static function get_for_mime(?MimeType $mime): ?string
+    public static function get_for_mime(MimeType $mime): string
     {
-        if (is_null($mime)) {
-            return null;
-        }
-
-        if ($mime->base === MimeType::OCTET_STREAM) {
-            return null;
-        }
-
         $data = MimeMap::get_for_mime($mime);
         if ($data !== null) {
             return $data[MimeMap::MAP_EXT][0];
         }
-        return null;
+        throw new MediaException("No file extension found for mimetype: ".$mime->base);
     }
 
     /**
