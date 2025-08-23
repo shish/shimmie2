@@ -29,14 +29,6 @@ final class Media extends Extension
         MimeType::PNG,
     ];
 
-    /**
-     * High priority just so that it can be early in the settings
-     */
-    public function get_priority(): int
-    {
-        return 30;
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("media_rescan/{image_id}", method: "POST", permission: MediaPermission::RESCAN_MEDIA)) {
