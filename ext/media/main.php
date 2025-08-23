@@ -229,15 +229,6 @@ final class Media extends Extension
         return (int)$memory_use;
     }
 
-    public static function determine_ext(MimeType $mime): string
-    {
-        $ext = FileExtension::get_for_mime($mime);
-        if (empty($ext)) {
-            throw new ServerError("Could not determine extension for $mime");
-        }
-        return $ext;
-    }
-
     public static function is_lossless(Path $filename, MimeType $mime): bool
     {
         if (in_array((string)$mime, self::LOSSLESS_FORMATS)) {
@@ -276,7 +267,7 @@ final class Media extends Extension
         $command = new CommandBuilder(Ctx::$config->get(MediaConfig::MAGICK_PATH));
 
         // read input
-        $input_ext = self::determine_ext($input_mime);
+        $input_ext = FileExtension::get_for_mime($input_mime);
         $command->add_args("{$input_ext}:{$input_path->str()}[0]");
 
         // strip data
@@ -358,7 +349,7 @@ final class Media extends Extension
         }
 
         // write output
-        $output_ext = self::determine_ext($output_mime);
+        $output_ext = FileExtension::get_for_mime($output_mime);
         $command->add_args("$output_ext:{$output_filename->str()}");
 
         // go

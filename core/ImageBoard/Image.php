@@ -521,9 +521,7 @@ final class Image implements \ArrayAccess
             $mime = new MimeType($mime);
         }
         $this->mime = $mime;
-        $ext = FileExtension::get_for_mime($this->get_mime());
-        assert($ext !== null);
-        $this->ext = $ext;
+        $this->ext = FileExtension::get_for_mime($this->get_mime());
     }
 
 
