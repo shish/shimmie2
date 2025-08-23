@@ -266,15 +266,11 @@ final class CronUploader extends Extension
         Ctx::$page->add_http_header("Content-Type: text/plain");
         Ctx::$page->send_headers();
 
-        if (Ctx::$user->is_anonymous()) {
-            throw new UserError("User not present. Please specify the api_key for the user to run cron upload as.");
-        }
-
-        Log::info(self::NAME, "Logged in as user " . Ctx::$user->name);
-
         if (!Ctx::$user->can(CronUploaderPermission::CRON_RUN)) {
             throw new PermissionDenied("User does not have permission to run cron upload");
         }
+
+        Log::info(self::NAME, "Logged in as user " . Ctx::$user->name);
 
         $lockfile = \Safe\fopen($this->get_lock_file()->str(), "w");
         if (!flock($lockfile, LOCK_EX | LOCK_NB)) {

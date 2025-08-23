@@ -11,14 +11,14 @@ final class UserConfigEditor extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
-        if ($event->parent === "user" && !Ctx::$user->is_anonymous()) {
+        if ($event->parent === "user" && Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $event->add_nav_link(make_link('user_config'), "User Options", order: 40);
         }
     }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        if (!Ctx::$user->is_anonymous()) {
+        if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $event->add_link("User Options", make_link("user_config"), 40);
         }
     }

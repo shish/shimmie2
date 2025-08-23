@@ -459,12 +459,20 @@ final class CommentList extends Extension
      * get a hash which semi-uniquely identifies a submission form,
      * to stop spam bots which download the form once then submit
      * many times.
-     *
-     * FIXME: assumes comments are posted via HTTP...
      */
-    public static function get_hash(): string
+    public static function get_hash(int $offset = 0): string
     {
-        return md5((string)Network::get_real_ip() . date("%Y%m%d"));
+        return md5((string)Network::get_real_ip() . date("%Y%m%d%H", time() - $offset));
+    }
+
+    private static function check_hash(string $hash): bool
+    {
+        $valid_hashes = [
+            self::get_hash(0),
+            self::get_hash(3600),
+            self::get_hash(7200),
+        ];
+        return in_array($hash, $valid_hashes);
     }
 
     private function is_spam_akismet(string $text): bool
@@ -511,9 +519,6 @@ final class CommentList extends Extension
         }
 
         // all checks passed
-        if ($user->is_anonymous()) {
-            Ctx::$page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");
-        }
         Ctx::$database->execute(
             "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
                 "VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
@@ -537,13 +542,9 @@ final class CommentList extends Extension
             throw new CommentPostingException("Comments need text...");
         } elseif (strlen($comment) > 9000) {
             throw new CommentPostingException("Comment too long~");
-        }
-
-        // advanced sanity checks
-        elseif (strlen($comment) / strlen(\Safe\gzcompress($comment)) > 10) {
+        } elseif (strlen($comment) / strlen(\Safe\gzcompress($comment)) > 10) {
             throw new CommentPostingException("Comment too repetitive~");
-        } elseif (Ctx::$user->is_anonymous() && ($_POST['hash'] !== self::get_hash())) {
-            Ctx::$page->add_cookie("nocache", "Anonymous Commenter", time() + 60 * 60 * 24, "/");
+        } elseif (!defined("UNITTEST") && !self::check_hash($_POST['hash'])) {
             throw new CommentPostingException(
                 "Comment submission form is out of date; refresh the ".
                     "comment form to show you aren't a spammer~"
