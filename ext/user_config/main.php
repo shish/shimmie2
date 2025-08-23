@@ -44,26 +44,6 @@ final class UserConfig extends Extension
     {
         global $database;
 
-        // if API keys are enabled, then _any_ anonymous page request can
-        // be an authed page request if the api_key is set
-        if (Ctx::$config->get(UserAccountsConfig::ENABLE_API_KEYS)) {
-            if ($event->GET->get("api_key") && Ctx::$user->is_anonymous()) {
-                $user_id = $database->get_one(
-                    "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
-                    ["value" => $event->GET->get("api_key"), "name" => UserConfigUserConfig::API_KEY]
-                );
-
-                if (!empty($user_id)) {
-                    send_event(new UserLoginEvent(User::by_id($user_id)));
-                }
-            }
-
-            if ($event->page_matches("user_admin/reset_api_key", method: "POST")) {
-                Ctx::$user->get_config()->set(UserConfigUserConfig::API_KEY, "");
-                Ctx::$page->set_redirect(make_link("user"));
-            }
-        }
-
         if ($event->page_matches("user_config", method: "GET", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $blocks = [];
             foreach (UserConfigGroup::get_subclasses() as $class) {
@@ -88,23 +68,5 @@ final class UserConfig extends Extension
             Ctx::$page->flash("Config saved");
             Ctx::$page->set_redirect(make_link("user_config"));
         }
-    }
-
-    public function onUserOperationsBuilding(UserOperationsBuildingEvent $event): void
-    {
-        if (Ctx::$config->get(UserAccountsConfig::ENABLE_API_KEYS)) {
-            $key = $event->user_config->get(UserConfigUserConfig::API_KEY);
-            if (!$key) {
-                $key = generate_key();
-                $event->user_config->set(UserConfigUserConfig::API_KEY, $key);
-            }
-            $event->add_part($this->theme->get_user_operations($key));
-        }
-    }
-
-    // This needs to happen before any other events, but after db upgrade
-    public function get_priority(): int
-    {
-        return 6;
     }
 }
