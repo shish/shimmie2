@@ -8,12 +8,6 @@ final class MediaConfig extends ConfigGroup
 {
     public const KEY = "media";
 
-    #[ConfigMeta("FFmpeg path", ConfigType::STRING, default: "ffmpeg")]
-    public const FFMPEG_PATH = "media_ffmpeg_path";
-
-    #[ConfigMeta("FFprobe path", ConfigType::STRING, default: "ffprobe")]
-    public const FFPROBE_PATH = "media_ffprobe_path";
-
     #[ConfigMeta("Magick path", ConfigType::STRING, default: "magick")]
     public const MAGICK_PATH = "media_convert_path";
 
