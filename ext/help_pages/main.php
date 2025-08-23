@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
+use function MicroHTML\{DIV, PRE, emptyHTML};
 
-use function MicroHTML\{PRE, emptyHTML};
+use MicroHTML\HTMLElement;
 
 final class HelpPageListBuildingEvent extends Event
 {
@@ -30,14 +30,13 @@ final class HelpPageBuildingEvent extends PartListBuildingEvent
         parent::__construct();
     }
 
-    public function add_block(Block $block, int $position = 50): void
+    public function add_section(string $title, HTMLElement $html, int $position = 50): void
     {
-        $this->add_part($block, $position);
-    }
-
-    public function add_section(string $title, HTMLElement $html): void
-    {
-        $this->add_block(new Block($title, $html));
+        $this->add_part(new Block(
+            $title,
+            DIV(["class" => "prose"], $html),
+            position: $position,
+        ));
     }
 }
 
@@ -59,15 +58,13 @@ final class HelpPages extends Extension
                 return;
             }
 
-            $this->theme->display_help_page($title);
+            $this->theme->display_help_page($title, $pages);
             $hpbe = send_event(new HelpPageBuildingEvent($name));
             foreach ($hpbe->get_parts() as $block) {
                 $page->add_block($block);
             }
         } elseif ($event->page_matches("help")) {
-            $pages = send_event(new HelpPageListBuildingEvent())->pages;
-            $name = array_key_first($pages);
-            $page->set_redirect(make_link("help/".$name));
+            $page->set_redirect(make_link("help/search"));
         }
     }
 
@@ -102,7 +99,8 @@ final class HelpPages extends Extension
         if ($event->key === "licenses") {
             $event->add_section(
                 "Software Licenses",
-                emptyHTML("The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license.")
+                emptyHTML("The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license."),
+                0
             );
 
             $event->add_section(

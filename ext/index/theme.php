@@ -29,7 +29,7 @@ class IndexTheme extends Themelet
     public function display_intro(): void
     {
         $text = DIV(
-            ["style" => "text-align: left;"],
+            ["class" => "prose"],
             P("The first thing you'll probably want to do is create a new account; note
          that the first account you create will by default be marked as the board's
          administrator, and any further accounts will be regular users."),
