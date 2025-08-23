@@ -11,9 +11,6 @@ final class UserAccountsConfig extends ConfigGroup
     #[ConfigMeta("Anonymous ID", ConfigType::INT, advanced: true)]
     public const ANON_ID = "anon_id";
 
-    #[ConfigMeta("Enable API keys", ConfigType::BOOL, default: false)]
-    public const ENABLE_API_KEYS = "ext_user_config_enable_api_keys";
-
     #[ConfigMeta("Allow new signups", ConfigType::BOOL, default: true)]
     public const SIGNUP_ENABLED = "login_signup_enabled";
 
