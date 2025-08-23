@@ -269,10 +269,6 @@ final class Media extends Extension
             $alpha_color = Ctx::$config->get(ThumbnailConfig::ALPHA_COLOR);
         }
 
-        if ($output_mime->base === MimeType::WEBP && self::is_lossless($input_path, $input_mime)) {
-            $output_mime = new MimeType(MimeType::WEBP_LOSSLESS);
-        }
-
         $command = new CommandBuilder(Ctx::$config->get(MediaConfig::MAGICK_PATH));
 
         // read input
@@ -350,11 +346,11 @@ final class Media extends Extension
         // format-specific compression options
         if ($output_mime->base === MimeType::PNG) {
             $command->add_args("-define", "png:compression-level=9");
-        } elseif ($output_mime->base === MimeType::WEBP && $output_mime->parameters === MimeType::LOSSLESS_PARAMETER) {
+        } elseif ($output_mime->base === MimeType::WEBP && $output_quality === 100) {
             $command->add_args("-define", "webp:lossless=true");
             $command->add_args("-quality", "100");
         } else {
-            $command->add_args("-quality", (string)Ctx::$config->get(TranscodeImageConfig::QUALITY));
+            $command->add_args("-quality", (string)$output_quality);
         }
 
         // write output
