@@ -13,5 +13,5 @@ final class RatingsBlurInfo extends ExtensionInfo
     public array $authors = ["Discomrade" => ""];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Blurs thumbs based on rating, users can override. Requires 'Post Ratings'.";
-    public array $dependencies = [RatingsInfo::KEY];
+    public array $dependencies = [RatingsInfo::KEY, UserConfigEditorInfo::KEY];
 }
