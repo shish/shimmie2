@@ -107,7 +107,7 @@ final class Index extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            $event->add_block(new Block("General", $this->theme->get_help_html()), 0);
+            $event->add_section("General", $this->theme->get_help_html(), 0);
         }
     }
 
