@@ -44,8 +44,7 @@ final class BulkAdd extends Extension
             ->addArgument('directory', InputArgument::REQUIRED)
             ->setDescription('Import a directory of images')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $user;
-                if (!$user->can(BulkAddPermission::BULK_ADD)) {
+                if (!Ctx::$user->can(BulkAddPermission::BULK_ADD)) {
                     $output->writeln("You do not have permission to bulk add images");
                     return Command::FAILURE;
                 }
