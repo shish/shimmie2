@@ -14,4 +14,5 @@ final class BiographyInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public string $description = "Allow users to write a bit about themselves";
+    public array $dependencies = [UserConfigEditorInfo::KEY];
 }

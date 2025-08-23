@@ -8,7 +8,7 @@ use function MicroHTML\{DIV, H3, INPUT, SECTION};
 
 use MicroHTML\HTMLElement;
 
-class UserConfigTheme extends Themelet
+class UserConfigEditorTheme extends Themelet
 {
     /**
      * Display a set of setup option blocks

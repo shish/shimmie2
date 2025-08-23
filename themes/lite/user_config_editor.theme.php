@@ -8,7 +8,7 @@ use function MicroHTML\DIV;
 
 use MicroHTML\HTMLElement;
 
-class LiteUserConfigTheme extends UserConfigTheme
+class LiteUserConfigEditorTheme extends UserConfigEditorTheme
 {
     protected function sb_to_html(Block $block): HTMLElement
     {
