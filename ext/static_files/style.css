@@ -70,3 +70,13 @@ H3[class~="shm-toggler"] {
 .tag {
     overflow-wrap: anywhere;
 }
+
+.prose {
+    text-align: left;
+}
+.prose P:first-child {
+    margin-top: 0;
+}
+.prose P:last-child {
+    margin-bottom: 0;
+}
