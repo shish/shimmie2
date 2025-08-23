@@ -152,7 +152,7 @@ final class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec {$source_video_codec->value}");
         }
 
-        $command = new CommandBuilder(Ctx::$config->get(MediaConfig::FFMPEG_PATH));
+        $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFMPEG_PATH));
         $command->add_args("-y"); // Bypass y/n prompts
         $command->add_args("-i", $source_file->str()); // input file
 

@@ -26,7 +26,15 @@ final class VideoFileHandler extends DataHandlerExtension
         $height = 0;
         $video_codec = null;
 
-        $data = Media::get_ffprobe_data($image->get_image_filename());
+        $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFPROBE_PATH));
+        $command->add_args("-print_format", "json");
+        $command->add_args("-v", "quiet");
+        $command->add_args("-show_format");
+        $command->add_args("-show_streams");
+        $command->add_args($image->get_image_filename()->str());
+        $output = $command->execute();
+        $data = json_decode($output, true);
+
         foreach ($data["streams"] as $stream) {
             switch ($stream["codec_type"]) {
                 case "audio":
@@ -73,7 +81,30 @@ final class VideoFileHandler extends DataHandlerExtension
 
     protected function create_thumb(Image $image): bool
     {
-        return Media::create_thumbnail_ffmpeg($image);
+        $inname = $image->get_image_filename();
+        $outname = $image->get_thumb_filename();
+
+        $ok = false;
+        $tmpname = shm_tempnam("ffmpeg_thumb");
+        try {
+            $scaled_size = ThumbnailUtil::get_thumbnail_size($image->width, $image->height, true);
+
+            $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFMPEG_PATH));
+            $command->add_args("-y");
+            $command->add_args("-i", $inname->str());
+            $command->add_args("-vf", "scale=$scaled_size[0]:$scaled_size[1],thumbnail");
+            $command->add_args("-f", "image2");
+            $command->add_args("-vframes", "1");
+            $command->add_args("-c:v", "png");
+            $command->add_args($tmpname->str());
+            $command->execute();
+
+            ThumbnailUtil::create_scaled_image($tmpname, $outname, $scaled_size, new MimeType(MimeType::PNG));
+            $ok = true;
+        } finally {
+            @$tmpname->unlink();
+        }
+        return $ok;
     }
 
     protected function check_contents(Path $tmpname): bool
