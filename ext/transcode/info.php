@@ -19,4 +19,5 @@ final class TranscodeImageInfo extends ExtensionInfo
 Supports GD and ImageMagick. Both support bmp, gif, jpg, png, and webp as inputs, and jpg, png, and lossy webp as outputs.
 ImageMagick additionally supports tiff and psd inputs, and webp lossless output.
 If and image is unable to be transcoded for any reason, the upload will continue unaffected.";
+    public array $dependencies = [PixelFileHandlerInfo::KEY];
 }
