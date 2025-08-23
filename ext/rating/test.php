@@ -97,13 +97,4 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         self::assertEquals(2, Search::count_images(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
         self::assertEquals(1, Search::count_images(), "If search doesn't specify anything, check the user defaults");
     }
-
-    // reset the user config to defaults at the end of every test so
-    // that it doesn't mess with other unrelated tests
-    public function tearDown(): void
-    {
-        self::log_in_as_user();
-        Ctx::$user->get_config()->set(RatingsUserConfig::DEFAULTS, ["?", "s", "q", "e"]);
-        parent::tearDown();
-    }
 }

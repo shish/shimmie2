@@ -9,8 +9,6 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected const ANON_NAME = "anonymous";
     protected const ADMIN_NAME = "demo";
     protected const USER_NAME = "test";
-    /** @var array<string, bool|int|string|array<string>> */
-    private array $config_snapshot = [];
 
     /**
      * Start a DB transaction for each test class
@@ -29,21 +27,14 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         Ctx::$tracer->begin($this->name());
         Ctx::$tracer->begin("setUp");
-        $class = str_replace("Test", "Info", get_class($this));
 
-        // Set up a clean environment for each test
+        // Start a savepoint so we can roll back to it in tearDown
         Ctx::$database->execute("SAVEPOINT test_start");
-        self::log_out();
-        foreach (Ctx::$database->get_col("SELECT id FROM images") as $image_id) {
-            send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
-        }
-        Ctx::setPage(new Page());
-        $this->config_snapshot = Ctx::$config->values;
 
-        // Do skipping at the end of setUp to ensure that setUp and tearDown
-        // are in-sync (if we skip creating a savepoint in setUp, but then
-        // tearDown tries to roll back to it, it will fail)
+        // Do skipping after creating a savepoint, because even if we skip the
+        // test we still call tearDown, which needs a savepoint to roll back to.
         try {
+            $class = str_replace("Test", "Info", get_class($this));
             if (defined("$class::KEY") && !ExtensionInfo::get_all()[$class::KEY]->is_supported()) {
                 self::markTestSkipped("$class not supported with this database");
             }
@@ -51,14 +42,28 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             // ignore - this is a core test rather than an extension test
         }
 
+        // Set up a clean environment for each test, except for:
+        // - the database (we roll back the transaction)
+        // - the event bus (this is static)
+        // - the tracer (we want one trace for the whole test suite)
+        Ctx::setUser(User::get_anonymous());
+        Ctx::setPage(new Page());
+        Ctx::setCache(load_cache(null));
+        Ctx::setConfig(new DatabaseConfig(Ctx::$database));
+
         Ctx::$tracer->end();  # setUp
         Ctx::$tracer->begin("test");
     }
 
     public function tearDown(): void
     {
+        // Rolling back the transaction will remove any metadata,
+        // but we also want to delete any uploaded files.
+        foreach (Ctx::$database->get_col("SELECT id FROM images") as $image_id) {
+            send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
+        }
+
         Ctx::$database->execute("ROLLBACK TO test_start");
-        Ctx::$config->values = $this->config_snapshot;
         Ctx::$tracer->end();  # test
         Ctx::$tracer->end();  # $this->getName()
     }
