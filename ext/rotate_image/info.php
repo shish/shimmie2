@@ -10,14 +10,15 @@ namespace Shimmie2;
  *  function copyright 2008 Maxim Chernyak, released under a MIT-style license.
  */
 
-final class ResizeImageInfo extends ExtensionInfo
+final class RotateImageInfo extends ExtensionInfo
 {
-    public const KEY = "resize";
+    public const KEY = "rotate";
 
     public string $key = self::KEY;
-    public string $name = "Resize Post";
-    public array $authors = ["jgen" => "jgen.tech@gmail.com"];
+    public string $name = "Rotate Image";
+    public array $authors = ["jgen" => "jgen.tech@gmail.com","Agasa" => "hiroshiagasa@gmail.com"];
     public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
-    public string $description = "This extension allows admins to resize images.";
+    public string $description = "Allows admins to rotate images.";
+    public array $dependencies = [PixelFileHandlerInfo::KEY];
 }
