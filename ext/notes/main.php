@@ -174,11 +174,10 @@ final class Notes extends Extension
     {
         if (Ctx::$user->can(NotesPermission::CREATE)) {
             $event->add_part($this->theme->note_button($event->image->id));
-
-            if (Ctx::$user->can(NotesPermission::ADMIN)) {
-                $event->add_part($this->theme->nuke_notes_button($event->image->id));
-                $event->add_part($this->theme->nuke_requests_button($event->image->id));
-            }
+        }
+        if (Ctx::$user->can(NotesPermission::ADMIN)) {
+            $event->add_part($this->theme->nuke_notes_button($event->image->id));
+            $event->add_part($this->theme->nuke_requests_button($event->image->id));
         }
         if (Ctx::$user->can(NotesPermission::REQUEST)) {
             $event->add_part($this->theme->request_button($event->image->id));
