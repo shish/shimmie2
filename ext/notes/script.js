@@ -92,6 +92,7 @@ function renderEditor(noteDiv, note) {
             ),
         };
         noteDiv.classList.add("dragging");
+        notesContainer.classList.add("dragging");
     });
     noteDiv.addEventListener("mousemove", (e) => {
         if (dragStart) {
@@ -137,6 +138,7 @@ function renderEditor(noteDiv, note) {
     });
     function _commit() {
         noteDiv.classList.remove("dragging");
+        notesContainer.classList.remove("dragging");
         dragStart = null;
         note.x1 = Math.round(noteDiv.offsetLeft / scale);
         note.y1 = Math.round(noteDiv.offsetTop / scale);
