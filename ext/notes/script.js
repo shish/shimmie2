@@ -26,7 +26,7 @@ function renderNotes() {
 
     // check the image we're adding notes on top of
     let br = noteImage.getBoundingClientRect();
-    let scale = br.width / noteImage.getAttribute("data-width");
+    let scale = br.width / noteImage.dataset.width;
 
     // render a container full of notes
     notesContainer = document.createElement("div");
@@ -73,7 +73,7 @@ function renderNotes() {
 function renderEditor(noteDiv, note) {
     // check the image we're adding notes on top of
     let br = noteImage.getBoundingClientRect();
-    let scale = br.width / noteImage.getAttribute("data-width");
+    let scale = br.width / noteImage.dataset.width;
 
     // set the note itself into drag & resize mode
     // NOTE: to avoid re-rendering the whole DOM every time the mouse
@@ -257,10 +257,10 @@ function addNewNote() {
         return;
     }
     window.notes.push({
-        x1: 10,
-        y1: 10,
-        width: 100,
-        height: 40,
+        x1: noteImage.dataset.width * 0.1,
+        y1: noteImage.dataset.height * 0.1,
+        width: noteImage.dataset.width * 0.2,
+        height: noteImage.dataset.height * 0.1,
         note: "new note",
         note_id: null,
         image_id: window.notes_image_id,
