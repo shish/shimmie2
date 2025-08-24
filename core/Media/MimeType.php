@@ -85,15 +85,6 @@ final class MimeType
         return $this->base . ($this->parameters ? '; ' . $this->parameters : '');
     }
 
-    //RIFF####WEBPVP8?..............ANIM
-    private const WEBP_ANIMATION_HEADER =
-        [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0x41, 0x4E, 0x49, 0x4D];
-
-    //RIFF####WEBPVP8L
-    private const WEBP_LOSSLESS_HEADER =
-        [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, 0x4C];
-
     /**
      * @param array<string> $mime_array
      */
@@ -117,44 +108,6 @@ final class MimeType
             return $mime1->base === $mime2->base;
         }
     }
-
-
-    /**
-     * Determines if a file is an animated gif.
-     *
-     * @param Path $image_filename The path of the file to check.
-     * @return bool true if the file is an animated gif, false if it is not.
-     */
-    public static function is_animated_gif(Path $image_filename): bool
-    {
-        $is_anim_gif = 0;
-        if (($fh = @fopen($image_filename->str(), 'rb'))) {
-            try {
-                //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
-                $chunk = false;
-
-                while (!feof($fh) && $is_anim_gif < 2) {
-                    $chunk =  ($chunk ? substr($chunk, -20) : "") . fread($fh, 1024 * 100); //read 100kb at a time
-                    $is_anim_gif += \Safe\preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk);
-                }
-            } finally {
-                @fclose($fh);
-            }
-        }
-        return ($is_anim_gif >= 2);
-    }
-
-    public static function is_animated_webp(Path $image_filename): bool
-    {
-        return compare_file_bytes($image_filename, self::WEBP_ANIMATION_HEADER);
-    }
-
-    public static function is_lossless_webp(Path $image_filename): bool
-    {
-        return compare_file_bytes($image_filename, self::WEBP_LOSSLESS_HEADER);
-    }
-
-
 
     /**
      * Returns the mimetype that matches the provided extension.

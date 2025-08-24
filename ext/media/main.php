@@ -13,16 +13,6 @@ final class Media extends Extension
 {
     public const KEY = "media";
 
-    private const LOSSLESS_FORMATS = [
-        MimeType::WEBP_LOSSLESS,
-        MimeType::PNG,
-        MimeType::PSD,
-        MimeType::BMP,
-        MimeType::ICO,
-        MimeType::ANI,
-        MimeType::GIF
-    ];
-
     private const ALPHA_FORMATS = [
         MimeType::WEBP_LOSSLESS,
         MimeType::WEBP,
@@ -227,17 +217,6 @@ final class Media extends Extension
             $memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
         }
         return (int)$memory_use;
-    }
-
-    public static function is_lossless(Path $filename, MimeType $mime): bool
-    {
-        if (in_array((string)$mime, self::LOSSLESS_FORMATS)) {
-            return true;
-        }
-        if ($mime->base === MimeType::WEBP) {
-            return MimeType::is_lossless_webp($filename);
-        }
-        return false;
     }
 
     public static function image_resize_convert(

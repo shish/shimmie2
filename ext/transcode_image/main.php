@@ -114,7 +114,7 @@ final class TranscodeImage extends Extension
         }
 
         if (Ctx::$config->get(TranscodeImageConfig::UPLOAD)) {
-            if ($event->mime->base === MimeType::GIF && MimeType::is_animated_gif($event->tmpname)) {
+            if ($event->mime->base === MimeType::GIF && PixelFileHandler::is_animated_gif($event->tmpname)) {
                 return;
             }
 
