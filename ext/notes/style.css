@@ -12,7 +12,7 @@
 .notes-container .note {
 	display: flex;
 	justify-content: center;
-	align-items: center;	
+	align-items: center;
 	color: black;
 	background-color: #FFE;
 	border: 1px dashed black;
@@ -36,6 +36,9 @@
 	z-index: 3;
 }
 
+.notes-container.dragging .editor {
+    display: none;
+}
 .notes-container .editor {
 	display: grid;
 	color: black;
