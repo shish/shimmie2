@@ -15,7 +15,7 @@
 	align-items: center;
 	color: black;
 	background-color: #FFE;
-	border: 1px dashed black;
+	border: 1px solid #DDC;
 	overflow: hidden;
 	position: absolute;
 	opacity: 0.5;
@@ -24,7 +24,6 @@
 }
 .notes-container .note.editing {
 	opacity: 1;
-	border: 1px dashed red;
 	z-index: 2;
 }
 .notes-container .note.editing.dragging {
@@ -43,7 +42,7 @@
 	display: grid;
 	color: black;
 	background-color: #EFE;
-	border: 1px dashed blue;
+	border: 1px solid #000;
 	position: absolute;
 	grid-template-columns: 1fr 1fr;
 	grid-template-areas:
