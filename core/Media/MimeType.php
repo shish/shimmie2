@@ -144,51 +144,14 @@ final class MimeType
         return ($is_anim_gif >= 2);
     }
 
-
-    /**
-     * @param non-empty-array<int|null> $comparison
-     */
-    private static function compare_file_bytes(Path $file_name, array $comparison): bool
-    {
-        $size = $file_name->filesize();
-        $cc = count($comparison);
-        if ($size < $cc) {
-            // Can't match because it's too small
-            return false;
-        }
-
-        if (($fh = @fopen($file_name->str(), 'rb'))) {
-            try {
-                $chunk = \Safe\unpack("C*", \Safe\fread($fh, $cc));
-
-                for ($i = 0; $i < $cc; $i++) {
-                    $byte = $comparison[$i];
-                    if ($byte === null) {
-                        continue;
-                    } else {
-                        $fileByte = $chunk[$i + 1];
-                        if ($fileByte !== $byte) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            } finally {
-                @fclose($fh);
-            }
-        } else {
-            throw new MediaException("Unable to open file for byte check: {$file_name->str()}");
-        }
-    }
-
     public static function is_animated_webp(Path $image_filename): bool
     {
-        return self::compare_file_bytes($image_filename, self::WEBP_ANIMATION_HEADER);
+        return compare_file_bytes($image_filename, self::WEBP_ANIMATION_HEADER);
     }
 
     public static function is_lossless_webp(Path $image_filename): bool
     {
-        return self::compare_file_bytes($image_filename, self::WEBP_LOSSLESS_HEADER);
+        return compare_file_bytes($image_filename, self::WEBP_LOSSLESS_HEADER);
     }
 
 

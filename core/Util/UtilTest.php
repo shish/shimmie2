@@ -159,6 +159,24 @@ final class UtilTest extends TestCase
         );
     }
 
+    public function test_compare_file_bytes(): void
+    {
+        $path = shm_tempnam("test_compare_file_bytes");
+        try {
+            $path->put_contents("abcd");
+            // starts with abc
+            self::assertTrue(compare_file_bytes($path, [0x61, 0x62, 0x63]));
+            // starts with abd
+            self::assertFalse(compare_file_bytes($path, [0x61, 0x62, 0x64]));
+            // starts with a?c
+            self::assertTrue(compare_file_bytes($path, [0x61, null, 0x63]));
+            // starts with abcde
+            self::assertFalse(compare_file_bytes($path, [0x61, 0x62, 0x63, 0x64, 0x65]));
+        } finally {
+            $path->unlink();
+        }
+    }
+
     public function tearDown(): void
     {
         Ctx::$config->set(SetupConfig::NICE_URLS, true);
