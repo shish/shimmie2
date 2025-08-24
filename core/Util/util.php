@@ -532,3 +532,39 @@ function _get_query(?string $uri = null): string
     assert(!str_starts_with($q, "/"));
     return $q;
 }
+
+/**
+ * @param non-empty-array<int|null> $comparison
+ */
+function compare_file_bytes(Path $file_name, array $comparison): bool
+{
+    $size = $file_name->filesize();
+    $cc = count($comparison);
+    if ($size < $cc) {
+        // Can't match because it's too small
+        return false;
+    }
+
+    if (($fh = @fopen($file_name->str(), 'rb'))) {
+        try {
+            $chunk = \Safe\unpack("C*", \Safe\fread($fh, $cc));
+
+            for ($i = 0; $i < $cc; $i++) {
+                $byte = $comparison[$i];
+                if ($byte === null) {
+                    continue;
+                } else {
+                    $fileByte = $chunk[$i + 1];
+                    if ($fileByte !== $byte) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } finally {
+            @fclose($fh);
+        }
+    } else {
+        throw new MediaException("Unable to open file for byte check: {$file_name->str()}");
+    }
+}
