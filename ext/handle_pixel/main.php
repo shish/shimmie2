@@ -38,13 +38,7 @@ final class PixelFileHandler extends DataHandlerExtension
                 break;
         }
 
-        $info = getimagesize($image->get_image_filename()->str());
-        if ($info) {
-            $width = $info[0];
-            $height = $info[1];
-        } else {
-            throw new MediaException("Could not get image size");
-        }
+        [$width, $height] = self::get_image_size($filename);
 
         return new MediaProperties(
             width: $width,
@@ -87,6 +81,33 @@ final class PixelFileHandler extends DataHandlerExtension
                 )
             ), 19);
         }
+    }
+
+    /**
+     * Get the dimensions of an image file.
+     *
+     * @return array{0:int<0,max>, 1:int<0,max>} An array containing the width and height of the image.
+     */
+    private static function get_image_size(Path $filename): array
+    {
+        $info = getimagesize($filename->str());
+        if (!$info) {
+            throw new MediaException("Could not get image size");
+        }
+        $width = $info[0];
+        $height = $info[1];
+
+        if (function_exists('exif_read_data')) {
+            $exif = exif_read_data($filename->str());
+            if ($exif && isset($exif['Orientation'])) {
+                $orientation = $exif['Orientation'];
+                if ($orientation === 6 || $orientation === 8) {
+                    [$width, $height] = [$height, $width];
+                }
+            }
+        }
+
+        return [$width, $height];
     }
 
     private const LOSSLESS_FORMATS = [
