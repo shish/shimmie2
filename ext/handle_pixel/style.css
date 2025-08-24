@@ -1,14 +1,3 @@
-#main_image.fit-width {
+IMG#main_image {
     max-width: 100%;
-}
-
-#main_image.fit-both {
-    max-height: 95vh;
-    max-width: 100%;
-}
-
-div.zoom-container {
-    overflow: scroll;
-    max-height: 95vh;
-    max-width: 100vw;
 }

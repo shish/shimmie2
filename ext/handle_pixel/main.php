@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{FORM, OPTION, SELECT};
-
 final class PixelFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_pixel";
@@ -66,20 +64,6 @@ final class PixelFileHandler extends DataHandlerExtension
             return true;
         } catch (\Exception $e) {
             throw new UploadException("Error while creating thumbnail: ".$e->getMessage());
-        }
-    }
-
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
-    {
-        if ($event->context === "view") {
-            $event->add_part(FORM(
-                SELECT(
-                    ["class" => "shm-zoomer"],
-                    OPTION(["value" => "full"], "Full"),
-                    OPTION(["value" => "both"], "Fit"),
-                    OPTION(["value" => "width"], "Fit Width")
-                )
-            ), 19);
         }
     }
 

@@ -1,0 +1,12 @@
+IMG#main_image.fit-full {
+    max-width: none;
+}
+
+IMG#main_image.fit-width {
+    max-width: 100%;
+}
+
+IMG#main_image.fit-both {
+    max-height: 95vh;
+    max-width: 100%;
+}
