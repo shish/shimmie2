@@ -5,6 +5,7 @@ data
 *.phar
 .phpactor.json
 .zed
+tmp/
 
 #Composer
 /vendor/
