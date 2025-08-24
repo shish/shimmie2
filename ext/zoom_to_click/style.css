@@ -1,0 +1,4 @@
+div.zoom-container {
+    overflow: scroll;
+    max-height: 95vh;
+}
