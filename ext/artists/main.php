@@ -159,8 +159,8 @@ final class Artists extends Extension
         $page = Ctx::$page;
         $user = Ctx::$user;
 
-        if ($event->page_matches("artist/list/{page}")) {
-            $this->get_listing(page_number($event->get_arg('page')));
+        if ($event->page_matches("artist/list", paged: true)) {
+            $this->get_listing($event->get_iarg('page_num') - 1);
             $this->theme->sidebar_options("neutral");
         }
         if ($event->page_matches("artist/new")) {

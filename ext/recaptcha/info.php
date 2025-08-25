@@ -14,5 +14,5 @@ final class ReCaptchaInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
-    public string $description = "Adds ReCaptcha to various pages.";
+    public string $description = "Adds ReCaptcha to various pages";
 }
