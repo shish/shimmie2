@@ -19,28 +19,7 @@ class VideoFileHandlerTheme extends Themelet
             $height = $image->height."px";
         }
 
-        $serve_mode = Ctx::$config->get(VideoFileHandlerConfig::SERVE_MODE);
         $src = $image->get_image_link();
-        if ($serve_mode === "auto") {
-            // Unit doesn't support range requests, so if:
-            // - the server is Unit
-            // - we're trying to serve a video file from the filesystem
-            // - there's no reverse-proxy in front of it
-            // then we need to serve the video ourselves
-            if (
-                str_starts_with($_SERVER["SERVER_SOFTWARE"] ?? 'unknown', "Unit/")
-                && str_starts_with((string)$src, "/_images/")
-                && (string)Network::get_real_ip() === ($_SERVER["REMOTE_ADDR"] ?? '')
-            ) {
-                $serve_mode = "shimmie";
-            } else {
-                $serve_mode = "ilink";
-            }
-        }
-        if ($serve_mode === "shimmie") {
-            $src = $image->parse_link_template('image/$id/$id%20-%20$tags.$ext');
-        }
-
 
         $html = emptyHTML(
             "Video not playing? ",
