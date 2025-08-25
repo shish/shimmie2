@@ -113,7 +113,8 @@ abstract class DataHandlerExtension extends Extension
     {
         if ($this->supported_mime($event->image->get_mime())) {
             // @phpstan-ignore-next-line
-            $this->theme->display_image($event->image);
+            $media = $this->theme->build_media($event->image);
+            Ctx::$page->add_block(new Block(null, $media, "main", 10, id: static::KEY . "_media"));
             if (Ctx::$config->get(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
                 $this->theme->display_metadata($event->image);
             }

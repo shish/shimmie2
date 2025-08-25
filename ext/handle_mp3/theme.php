@@ -9,7 +9,7 @@ use function MicroHTML\{SCRIPT};
 
 class MP3FileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image): void
+    public function build_media(Image $image): \MicroHTML\HTMLElement
     {
         $ilink = $image->get_image_link();
 
@@ -18,9 +18,9 @@ class MP3FileHandlerTheme extends Themelet
             'type' => 'text/javascript'
         ]));
 
-        $html = emptyHTML(
+        return emptyHTML(
             AUDIO(
-                ["controls" => true, "class" => "shm-main-image audio_image", "id" => "main_image", "alt" => "main image"],
+                ["controls" => true, "class" => "shm-main-image", "id" => "main_image", "alt" => "main image"],
                 SOURCE(["id" => "audio_src", "src" => $ilink, "type" => "audio/mpeg"])
             ),
             P(
@@ -32,6 +32,5 @@ class MP3FileHandlerTheme extends Themelet
             ),
             P(A(["href" => $ilink, "id" => "audio-download"], "Download"))
         );
-        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 }

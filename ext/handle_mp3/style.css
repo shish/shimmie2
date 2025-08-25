@@ -1,14 +1,14 @@
-.audio_image {
+#handle_mp3_media AUDIO {
 	min-width: 300px;
 	width: 65%;
 }
 /* Hide download button as we use our own */
-audio::-internal-media-controls-download-button {
+#handle_mp3_media audio::-internal-media-controls-download-button {
     display:none;
 }
-audio::-webkit-media-controls-enclosure {
+#handle_mp3_media audio::-webkit-media-controls-enclosure {
     overflow:hidden;
 }
-audio::-webkit-media-controls-panel {
+#handle_mp3_media audio::-webkit-media-controls-panel {
     width: calc(100% + 30px); /* Adjust as needed */
 }

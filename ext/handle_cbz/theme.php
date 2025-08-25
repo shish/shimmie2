@@ -8,11 +8,11 @@ use function MicroHTML\{A, DIV, IMG, SCRIPT, SELECT, SPAN, emptyHTML};
 
 class CBZFileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image): void
+    public function build_media(Image $image): \MicroHTML\HTMLElement
     {
         $data_href = Url::base();
         $ilink = $image->get_image_link();
-        $html = emptyHTML(
+        return emptyHTML(
             DIV(
                 ["id" => "comicMain"],
                 DIV(
@@ -31,6 +31,5 @@ class CBZFileHandlerTheme extends Themelet
             SCRIPT(["src" => "{$data_href}/ext/handle_cbz/comic.js"]),
             SCRIPT("window.comic = new Comic('comicMain', '$ilink');")
         );
-        Ctx::$page->add_block(new Block(null, $html, "main", 10, "comicBlock"));
     }
 }
