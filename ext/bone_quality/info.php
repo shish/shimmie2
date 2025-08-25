@@ -12,7 +12,7 @@ final class BoneQualityInfo extends ExtensionInfo
     public string $name = "Bone Quality";
     public array $authors = ["Discomrade" => ""];
     public string $license = self::LICENSE_WTFPL;
-    public string $description = "Displays a summary page of booru quality metrics.";
+    public string $description = "Displays a summary page of booru quality metrics";
     public ?string $documentation =
         "Inspired by Hydrus's \"how boned am i?\" feature.<br>
         Assumes statistics extension is enabled, so that a navigation link is added under Stats. Otherwise, you can still link to the page at /bone_quality.<br>
