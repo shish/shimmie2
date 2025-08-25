@@ -36,7 +36,6 @@ class VideoFileHandlerTheme extends Themelet
                     'autoplay' => Ctx::$config->get(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY),
                     'loop' => Ctx::$config->get(VideoFileHandlerConfig::PLAYBACK_LOOP),
                     'muted' => Ctx::$config->get(VideoFileHandlerConfig::PLAYBACK_MUTE),
-                    'style' => "height: $height; width: $width; max-width: 100%; object-fit: contain; background-color: black;",
                     'onloadstart' => 'this.volume = 0.25',
                 ],
                 SOURCE([
