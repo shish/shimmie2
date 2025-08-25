@@ -8,14 +8,19 @@ final class VideoFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_video";
     public const SUPPORTED_MIME = [
-        MimeType::ASF,
-        MimeType::AVI,
-        MimeType::FLASH_VIDEO,
-        MimeType::MKV,
         MimeType::MP4_VIDEO,
-        MimeType::OGG_VIDEO,
-        MimeType::QUICKTIME,
         MimeType::WEBM,
+    ];
+    private const VIDEO_CODEC_SUPPORT = [
+        MimeType::MP4_VIDEO => [
+            VideoCodec::H264,
+            VideoCodec::H265,
+        ],
+        MimeType::WEBM => [
+            VideoCodec::VP8,
+            VideoCodec::VP9,
+            VideoCodec::AV1,
+        ],
     ];
 
     protected function media_check_properties(Image $image): MediaProperties
@@ -51,14 +56,13 @@ final class VideoFileHandler extends DataHandlerExtension
         $length = (int)floor(floatval($data["format"]["duration"]) * 1000);
         assert($length >= 0);
 
-        if (
-            $image->get_mime()->base === MimeType::MKV &&
-            $video_codec !== null &&
-            VideoContainer::is_video_codec_supported(VideoContainer::WEBM, $video_codec)
-        ) {
-            // WEBMs are MKVs with the VP9 or VP8 codec
-            // For browser-friendliness, we'll just change the mime type
-            $image->set_mime(MimeType::WEBM);
+        if (is_null($video_codec)) {
+            throw new MediaException("Could not determine video codec");
+        }
+
+        $supported_codecs = self::VIDEO_CODEC_SUPPORT[$image->get_mime()->base];
+        if (!in_array($video_codec, $supported_codecs)) {
+            throw new MediaException("Unsupported video codec '{$video_codec->name}' for '{$image->get_mime()->base}' container. Supported codecs are " . implode(", ", array_map(fn ($c) => $c->name, $supported_codecs)) . ".");
         }
 
         return new MediaProperties(
@@ -71,12 +75,6 @@ final class VideoFileHandler extends DataHandlerExtension
             video_codec: $video_codec,
             length: $length,
         );
-    }
-
-    protected function supported_mime(MimeType $mime): bool
-    {
-        $enabled_formats = Ctx::$config->get(VideoFileHandlerConfig::ENABLED_FORMATS);
-        return MimeType::matches_array($mime, $enabled_formats, true);
     }
 
     protected function create_thumb(Image $image): bool
@@ -109,14 +107,9 @@ final class VideoFileHandler extends DataHandlerExtension
 
     protected function check_contents(Path $tmpname): bool
     {
-        if ($tmpname->exists()) {
-            $mime = MimeType::get_for_file($tmpname);
-
-            $enabled_formats = Ctx::$config->get(VideoFileHandlerConfig::ENABLED_FORMATS);
-            if (MimeType::matches_array($mime, $enabled_formats)) {
-                return true;
-            }
-        }
-        return false;
+        return MimeType::matches_array(
+            MimeType::get_for_file($tmpname),
+            self::SUPPORTED_MIME
+        );
     }
 }
